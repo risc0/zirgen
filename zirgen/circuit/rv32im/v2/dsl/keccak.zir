@@ -61,7 +61,7 @@ component ConcatZeros<N: Val, M: Val>(a: Array<Val, N>) {
 component ConcatElem<T: Type, N: Val>(a: Array<T, N>, b: T) {
   for i : 0..(N + 1) {
     in_a := InRange<N>(i);
-    [in_a, 1 - in_a] -> (a[in_a * i], b)
+    [in_a, 1 - in_a] -> (a[i], b)
   }
 }
 // EOF concatenate.zir
@@ -86,8 +86,8 @@ component RetTuple(a: Array<Val, BLEN()>,
   outer := Reg(out_count);
 }
 
-component xor3(x: Val, y: Val, z: Val) {
-  ((x*y + (1-x)*(1-y)) * z)  +  ((1-(x*y + (1-x)*(1-y))) * (1-z))
+component xor2(x: Val, y: Val) {
+  x + y - 2*x*y
 }
 
 component xor5words_inner0<idx: Val>(rvprev01: RetTuple) {
@@ -95,195 +95,192 @@ component xor5words_inner0<idx: Val>(rvprev01: RetTuple) {
   FromBits<BLEN()>(unpack_a) = rvprev01.arr_a[0+3*idx+15*0];
 
   nxt := Isz(idx-3)+Isz(idx-4);
-  v := [1-nxt, nxt] ->
+  val_b := [1-nxt, nxt] ->
          (rvprev01.arr_a[0+3*idx+15*1], rvprev01.arr_b[0+3*idx+15*1 - 22*1]);
-  unpack_b := ToBits<BLEN()>(v);
-  FromBits<BLEN()>(unpack_b) = v;
+  unpack_b := ToBits<BLEN()>(val_b);
+  FromBits<BLEN()>(unpack_b) = val_b;
 
   unpack_c := ToBits<BLEN()>(rvprev01.arr_b[0+3*idx+15*2 - 22*1]);
   FromBits<BLEN()>(unpack_c) = rvprev01.arr_b[0+3*idx+15*2 - 22*1];
 
-  eregs := for i : 0.. RLEN() { NondetReg(0) };
-  RetTuple(unpack_a, unpack_b, unpack_c, eregs, 1, idx)
+  unpack_d := ToBits<BLEN()>(rvprev01.arr_c[0+3*idx+15*3 - 22*2]);
+  FromBits<BLEN()>(unpack_d) = rvprev01.arr_c[0+3*idx+15*3 - 22*2];
+
+  xor_ab := for i : 0..BLEN() {
+    Reg(xor2(unpack_a[i], unpack_b[i])) };
+
+  xor_cd := for i : 0..BLEN() {
+    Reg(xor2(unpack_c[i], unpack_d[i])) };
+
+  padded_b := ConcatZeros<BLEN(),RLEN()-BLEN()>(unpack_b);
+  RetTuple(xor_ab, xor_cd, unpack_a, padded_b, 1, idx)
 }
 
 component xor5words_inner1<idx: Val>(rvprev01: RetTuple, rvprev02: RetTuple) {
-  xor_regs := for i : 0..BLEN() {
-    Reg(xor3(rvprev01.arr_a[i], rvprev01.arr_b[i], rvprev01.arr_c[i])) };
-
-  unpack_d := ToBits<BLEN()>(rvprev02.arr_c[0+3*idx+15*3 - 22*2]);
-  FromBits<BLEN()>(unpack_d) = rvprev02.arr_c[0+3*idx+15*3 - 22*2];
-
   nxt := Isz(idx)+Isz(idx-1);
-  v := [nxt, 1-nxt] ->
+  val_e := [nxt, 1-nxt] ->
          (rvprev02.arr_c[0+3*idx+15*4 - 22*2], rvprev02.arr_d[0+3*idx+15*4 - 22*3]);
-  unpack_e := ToBits<BLEN()>(v);
-  FromBits<BLEN()>(unpack_e) = v;
+  unpack_e := ToBits<BLEN()>(val_e);
+  FromBits<BLEN()>(unpack_e) = val_e;
 
-  eregs := for i : 0.. RLEN() { NondetReg(0) };
-  RetTuple(xor_regs, unpack_d, unpack_e, eregs, 2, idx)
+  unpack_a2 := ToBits<SLEN()>(rvprev02.arr_a[1+3*idx+15*0]);
+  FromBits<SLEN()>(unpack_a2) = rvprev02.arr_a[1+3*idx+15*0];
+
+  val_b2 := [nxt, 1-nxt] ->
+         (rvprev02.arr_a[1+3*idx+15*1], rvprev02.arr_b[1+3*idx+15*1 - 22*1]);
+  unpack_b2 := ToBits<SLEN()>(val_b2);
+  FromBits<SLEN()>(unpack_b2) = val_b2;
+
+  unpack_c2 := ToBits<SLEN()>(rvprev02.arr_b[1+3*idx+15*2 - 22*1]);
+  FromBits<SLEN()>(unpack_c2) = rvprev02.arr_b[1+3*idx+15*2 - 22*1];
+
+  xor_abcd := for i : 0..BLEN() {
+    Reg(xor2(rvprev01.arr_a[i], rvprev01.arr_b[i])) };
+
+  xor_ab2 := for i : 0..SLEN() {
+    Reg(xor2(unpack_a2[i], unpack_b2[i])) };
+
+  xor_vals := for i : 0..BLEN() {
+    xor2(xor_abcd[i], unpack_e[i]) };
+  result := Reg(FromBits<BLEN()>(xor_vals));
+  withr_ab2 := ConcatElem<Val,SLEN()>(xor_ab2, result); //super of Reg and NondetReg
+
+  padded_c2 := ConcatZeros<SLEN(),RLEN()-SLEN()>(unpack_c2);
+  RetTuple(xor_abcd, unpack_e, withr_ab2, padded_c2, 2, idx)
 }
 
 component xor5words_inner2<idx: Val>(rvprev01: RetTuple, rvprev03: RetTuple) {
-  xor_vals := for i : 0..BLEN() {
-    xor3(rvprev01.arr_a[i], rvprev01.arr_b[i], rvprev01.arr_c[i]) };
-  result := Reg(FromBits<BLEN()>(xor_vals));
-
-  unpack_a := ToBits<SLEN()>(rvprev03.arr_a[1+3*idx+15*0]);
-  FromBits<SLEN()>(unpack_a) = rvprev03.arr_a[1+3*idx+15*0];
+  unpack_d2 := ToBits<SLEN()>(rvprev03.arr_c[1+3*idx+15*3 - 22*2]);
+  FromBits<SLEN()>(unpack_d2) = rvprev03.arr_c[1+3*idx+15*3 - 22*2];
 
   nxt := Isz(idx)+Isz(idx-1);
-  v := [nxt, 1-nxt] ->
-         (rvprev03.arr_a[1+3*idx+15*1], rvprev03.arr_b[1+3*idx+15*1 - 22*1]);
-  unpack_b := ToBits<SLEN()>(v);
-  FromBits<SLEN()>(unpack_b) = v;
+  val_e2 := [nxt, 1-nxt] ->
+          (rvprev03.arr_c[1+3*idx+15*4 - 22*2], rvprev03.arr_d[1+3*idx+15*4 - 22*3]);
+  unpack_e2 := ToBits<SLEN()>(val_e2);
+  FromBits<SLEN()>(unpack_e2) = val_e2;
 
-  unpack_c := ToBits<SLEN()>(rvprev03.arr_b[1+3*idx+15*2 - 22*1]);
-  FromBits<SLEN()>(unpack_c) = rvprev03.arr_b[1+3*idx+15*2 - 22*1];
+  unpack_a3 := ToBits<SLEN()>(rvprev03.arr_a[2+3*idx+15*0]);
+  FromBits<SLEN()>(unpack_a3) = rvprev03.arr_a[2+3*idx+15*0];
 
-  unpack_a2 := ConcatElem<Val,SLEN()>(unpack_a, result); //super of Reg and NondetReg
-  unpack_b2 := ConcatElem<Val,SLEN()>(unpack_b, NondetReg(0));
-  unpack_c2 := ConcatElem<Val,SLEN()>(unpack_c, NondetReg(0));
-  eregs := for i : 0.. RLEN() { NondetReg(0) };
-  RetTuple(unpack_a2, unpack_b2, unpack_c2, eregs, 3, idx)
+  val_b3 := [nxt, 1-nxt] ->
+          (rvprev03.arr_a[2+3*idx+15*1], rvprev03.arr_b[2+3*idx+15*1 - 22*1]);
+  unpack_b3 := ToBits<SLEN()>(val_b3);
+  FromBits<SLEN()>(unpack_b3) = val_b3;
+
+  xor_cd2 := for i : 0..SLEN() {
+    Reg(xor2(rvprev01.arr_d[i], unpack_d2[i])) };
+
+  xor_abcd2 := for i : 0..SLEN() {
+    Reg(xor2(rvprev01.arr_c[i], xor_cd2[i])) };
+
+  xor_vals := for i : 0..SLEN() {
+    xor2(xor_abcd2[i], unpack_e2[i]) };
+  result := Reg(FromBits<SLEN()>(xor_vals));
+
+  withr_a3 := ConcatElem<Val,SLEN()>(unpack_a3, result);
+  padded_b3 := ConcatZeros<SLEN(),RLEN()-SLEN()>(unpack_b3);
+  withr_cd2 := ConcatElem<Val,SLEN()>(xor_cd2, rvprev01.arr_c[BLEN()-1]);
+  padded_abcd2 := ConcatZeros<SLEN(),BLEN()-SLEN()>(xor_abcd2);
+  RetTuple(padded_abcd2, withr_cd2, withr_a3, padded_b3, 3, idx)
 }
 
 component xor5words_inner3<idx: Val>(rvprev01: RetTuple, rvprev04: RetTuple) {
-  xor_regs := for i : 0..SLEN() {
-    Reg(xor3(rvprev01.arr_a[i], rvprev01.arr_b[i], rvprev01.arr_c[i])) };
+  val_c3 := [1-Isz(4-idx), Isz(4-idx)] ->
+           (rvprev04.arr_b[2+3*idx+15*2 - 22*1], rvprev04.arr_c[2+3*idx+15*2 - 22*2]);
+  unpack_c3 := ToBits<SLEN()>(val_c3);
+  FromBits<SLEN()>(unpack_c3) = val_c3;
 
-  unpack_d := ToBits<SLEN()>(rvprev04.arr_c[1+3*idx+15*3 - 22*2]);
-  FromBits<SLEN()>(unpack_d) = rvprev04.arr_c[1+3*idx+15*3 - 22*2];
+  unpack_d3 := ToBits<SLEN()>(rvprev04.arr_c[2+3*idx+15*3 - 22*2]);
+  FromBits<SLEN()>(unpack_d3) = rvprev04.arr_c[2+3*idx+15*3 - 22*2];
 
   nxt := Isz(idx)+Isz(idx-1);
-  v := [nxt, 1-nxt] ->
-         (rvprev04.arr_c[1+3*idx+15*4 - 22*2], rvprev04.arr_d[1+3*idx+15*4 - 22*3]);
-  unpack_e := ToBits<SLEN()>(v);
-  FromBits<SLEN()>(unpack_e) = v;
+  val_e3 := [nxt, 1-nxt] ->
+         (rvprev04.arr_c[2+3*idx+15*4 - 22*2], rvprev04.arr_d[2+3*idx+15*4 - 22*3]);
+  unpack_e3 := ToBits<SLEN()>(val_e3);
+  FromBits<SLEN()>(unpack_e3) = val_e3;
 
-  xor_regs2 := ConcatElem<Val,SLEN()>(xor_regs, NondetReg(0));
-  unpack_d2 := ConcatElem<Val,SLEN()>(unpack_d, NondetReg(0));
-  unpack_e2 := ConcatElem<Val,SLEN()>(unpack_e, NondetReg(0));
-  eregs := for i : 0.. RLEN() { NondetReg(0) };
-  RetTuple(xor_regs2, unpack_d2, unpack_e2, eregs, 4, idx)
+  xor_ab3 := for i : 0..SLEN() {
+    Reg(xor2(rvprev01.arr_c[i], rvprev01.arr_d[i])) };
+
+  xor_cd3 := for i : 0..SLEN() {
+    Reg(xor2(unpack_c3[i], unpack_d3[i])) };
+
+  xor_abcd3 := for i : 0..SLEN() {
+    Reg(xor2(xor_ab3[i], xor_cd3[i])) };
+
+  xor_vals := for i : 0..SLEN() {
+    xor2(xor_abcd3[i], unpack_e3[i]) };
+  result := Reg(FromBits<SLEN()>(xor_vals));
+
+  withr_cd3 := ConcatElem<Val,SLEN()>(xor_cd3, result);
+  withr_ab3 := ConcatElem<Val,SLEN()>(xor_ab3, rvprev01.arr_c[BLEN()-1]);
+  withr_abcd3 := ConcatElem<Val,SLEN()>(xor_abcd3, rvprev01.arr_b[BLEN()-1]);
+  padded_c3 := ConcatZeros<SLEN(),RLEN()-SLEN()>(unpack_c3);
+
+  RetTuple(withr_abcd3, withr_ab3, withr_cd3, padded_c3, 4, idx)
 }
 
 component xor5words_inner4<idx: Val>(rvprev01: RetTuple, rvprev05: RetTuple) {
-  xor_vals := for i : 0..SLEN() {
-    xor3(rvprev01.arr_a[i], rvprev01.arr_b[i], rvprev01.arr_c[i]) };
-  result := Reg(FromBits<SLEN()>(xor_vals));
-
-  unpack_a := ToBits<SLEN()>(rvprev05.arr_a[2+3*idx+15*0]);
-  FromBits<SLEN()>(unpack_a) = rvprev05.arr_a[2+3*idx+15*0];
-
-  nxt := Isz(idx)+Isz(idx-1);
-  v_b := [nxt, 1-nxt] ->
-           (rvprev05.arr_a[2+3*idx+15*1], rvprev05.arr_b[2+3*idx+15*1 - 22*1]);
-  unpack_b := ToBits<SLEN()>(v_b);
-  FromBits<SLEN()>(unpack_b) = v_b;
-
-  v_c := [1-Isz(4-idx), Isz(4-idx)] ->
-           (rvprev05.arr_b[2+3*idx+15*2 - 22*1], rvprev05.arr_c[2+3*idx+15*2 - 22*2]);
-  unpack_c := ToBits<SLEN()>(v_c);
-  FromBits<SLEN()>(unpack_c) = v_c;
-
-  unpack_a2 := ConcatElem<Val,SLEN()>(unpack_a, result);
-  unpack_b2 := ConcatElem<Val,SLEN()>(unpack_b, NondetReg(0));
-  unpack_c2 := ConcatElem<Val,SLEN()>(unpack_c, NondetReg(0));
-  eregs := for i : 0.. RLEN() { NondetReg(0) };
-  RetTuple(unpack_a2, unpack_b2, unpack_c2, eregs, 5, idx)
-}
-
-component xor5words_inner5<idx: Val>(rvprev01: RetTuple, rvprev06: RetTuple) {
-  xor_regs := for i : 0..SLEN() {
-    Reg(xor3(rvprev01.arr_a[i], rvprev01.arr_b[i], rvprev01.arr_c[i])) };
-
-  unpack_d := ToBits<SLEN()>(rvprev06.arr_c[2+3*idx+15*3 - 22*2]);
-  FromBits<SLEN()>(unpack_d) = rvprev06.arr_c[2+3*idx+15*3 - 22*2];
-
-  nxt := Isz(idx)+Isz(idx-1);
-  v := [nxt, 1-nxt] ->
-         (rvprev06.arr_c[2+3*idx+15*4 - 22*2], rvprev06.arr_d[2+3*idx+15*4 - 22*3]);
-  unpack_e := ToBits<SLEN()>(v);
-  FromBits<SLEN()>(unpack_e) = v;
-
-  xor_regs2 := ConcatElem<Val,SLEN()>(xor_regs, NondetReg(0));
-  unpack_d2 := ConcatElem<Val,SLEN()>(unpack_d, NondetReg(0));
-  unpack_e2 := ConcatElem<Val,SLEN()>(unpack_e, NondetReg(0));
-  eregs := for i : 0.. RLEN() { NondetReg(0) };
-  RetTuple(xor_regs2, unpack_d2, unpack_e2, eregs, 6, idx)
-}
-
-component xor5words_inner6<idx: Val>(rvprev01: RetTuple, rvprev02: RetTuple,
-                                     rvprev04: RetTuple, rvprev07: RetTuple) {
-  xor_vals := for i : 0..SLEN() {
-    xor3(rvprev01.arr_a[i], rvprev01.arr_b[i], rvprev01.arr_c[i]) };
-  result := Reg(FromBits<SLEN()>(xor_vals));
-
-  inp_a := for i : 0..BLEN() { Reg(rvprev07.arr_a[i]) };
-  inp_b := for i : 0..BLEN() { Reg(rvprev07.arr_b[i]) };
-  inp_c := for i : 0..BLEN() { Reg(rvprev07.arr_c[i]) };
-  tmp_1 := for i : 0..INPLEN()-BLEN()*3+3*idx { Reg(rvprev07.arr_d[i]) };
-  tmp_2 := ConcatElem<Val,INPLEN()-BLEN()*3+3*idx>(tmp_1, Reg(rvprev04.arr_a[BLEN()-1]));
-  tmp_3 := ConcatElem<Val,INPLEN()-BLEN()*3+3*idx+1>(tmp_2, Reg(rvprev02.arr_a[BLEN()-1]));
-  tmp_4 := ConcatElem<Val,INPLEN()-BLEN()*3+3*idx+2>(tmp_3, result);
+  inp_a := for i : 0..BLEN() { Reg(rvprev05.arr_a[i]) };
+  inp_b := for i : 0..BLEN() { Reg(rvprev05.arr_b[i]) };
+  inp_c := for i : 0..BLEN() { Reg(rvprev05.arr_c[i]) };
+  tmp_1 := for i : 0..INPLEN()-BLEN()*3+3*idx { Reg(rvprev05.arr_d[i]) };
+  tmp_2 := ConcatElem<Val,INPLEN()-BLEN()*3+3*idx>(tmp_1, Reg(rvprev01.arr_a[BLEN()-1]));
+  tmp_3 := ConcatElem<Val,INPLEN()-BLEN()*3+3*idx+1>(tmp_2, Reg(rvprev01.arr_b[BLEN()-1]));
+  tmp_4 := ConcatElem<Val,INPLEN()-BLEN()*3+3*idx+2>(tmp_3, Reg(rvprev01.arr_c[BLEN()-1]));
   inp_d := ConcatZeros<INPLEN()-BLEN()*3+3*(idx+1),EREGLEN()-3*(idx+1)>(tmp_4);
   RetTuple(inp_a, inp_b, inp_c, inp_d, 0, idx+1)
 }
 
-component xor5words_outer<idx: Val>(inner_onehot: Array<Val, 7>,
-            rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple, rvprev04: RetTuple,
-            rvprev05: RetTuple, rvprev06: RetTuple, rvprev07: RetTuple) {
+component xor5words_outer<idx: Val>(inner_onehot: Array<Val, 5>, rvprev01: RetTuple,
+            rvprev02: RetTuple, rvprev03: RetTuple, rvprev04: RetTuple, rvprev05: RetTuple) {
   inner_onehot -> (
     xor5words_inner0<idx>(rvprev01),
     xor5words_inner1<idx>(rvprev01, rvprev02),
     xor5words_inner2<idx>(rvprev01, rvprev03),
     xor5words_inner3<idx>(rvprev01, rvprev04),
-    xor5words_inner4<idx>(rvprev01, rvprev05),
-    xor5words_inner5<idx>(rvprev01, rvprev06),
-    xor5words_inner6<idx>(rvprev01, rvprev02, rvprev04, rvprev07)
+    xor5words_inner4<idx>(rvprev01, rvprev05)
   )
 }
 
-component xor525(inp_vals: Array<Val, INPLEN()>) {
+component fstep(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
+                rvprev04: RetTuple, rvprev05: RetTuple) {
+  outer_onehot := OneHot<5>(rvprev01.outer);
+  inner_onehot := OneHot<5>(rvprev01.inner);
+  outer_onehot -> (
+    xor5words_outer<0>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05),
+    xor5words_outer<1>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05),
+    xor5words_outer<2>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05),
+    xor5words_outer<3>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05),
+    xor5words_outer<4>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05)
+  )
+}
+
+component fill_input(inp_vals: Array<Val, INPLEN()>) {
+  inp_a := for i : 0..BLEN() { Reg(inp_vals[i]) };
+  inp_b := for i : BLEN()..BLEN()*2 { Reg(inp_vals[i]) };
+  inp_c := for i : BLEN()*2..BLEN()*3 { Reg(inp_vals[i]) };
+  tmp := for i : BLEN()*3..INPLEN() { Reg(inp_vals[i]) };
+  inp_d := ConcatZeros<INPLEN()-BLEN()*3, EREGLEN()>(tmp);
+  inner_counter := 0;
+  outer_counter := 0;
+  RetTuple(inp_a, inp_b, inp_c, inp_d, inner_counter, outer_counter)
+}
+
+component fkeccak(inp_vals: Array<Val, INPLEN()>) {
   retvals : RetTuple;
   PC := NondetReg( GetCycle() );
 
   round := [Isz(PC), 1-Isz(PC)];
   retvals := round -> (
-    {
-      inp_a := for i : 0..BLEN() { Reg(inp_vals[i]) };
-      inp_b := for i : BLEN()..BLEN()*2 { Reg(inp_vals[i]) };
-      inp_c := for i : BLEN()*2..BLEN()*3 { Reg(inp_vals[i]) };
-      tmp := for i : BLEN()*3..INPLEN() { Reg(inp_vals[i]) };
-      inp_d := ConcatZeros<INPLEN()-BLEN()*3, EREGLEN()>(tmp);
-      inner_counter := 0;
-      outer_counter := 0;
-
-      RetTuple(inp_a, inp_b, inp_c, inp_d, inner_counter, outer_counter)
-    },
-    {
-      outer_onehot := OneHot<5>(retvals@1.outer);
-      inner_onehot := OneHot<7>(retvals@1.inner);
-      outer_onehot -> (
-        xor5words_outer<0>(inner_onehot, retvals@1, retvals@2, retvals@3,
-                           retvals@4, retvals@5, retvals@6, retvals@7),
-        xor5words_outer<1>(inner_onehot, retvals@1, retvals@2, retvals@3,
-                           retvals@4, retvals@5, retvals@6, retvals@7),
-        xor5words_outer<2>(inner_onehot, retvals@1, retvals@2, retvals@3,
-                           retvals@4, retvals@5, retvals@6, retvals@7),
-        xor5words_outer<3>(inner_onehot, retvals@1, retvals@2, retvals@3,
-                           retvals@4, retvals@5, retvals@6, retvals@7),
-        xor5words_outer<4>(inner_onehot, retvals@1, retvals@2, retvals@3,
-                           retvals@4, retvals@5, retvals@6, retvals@7)
-      )
-    }
+    fill_input(inp_vals),
+    fstep(retvals@1, retvals@2, retvals@3, retvals@4, retvals@5)
   );
 }
 
 test XOR525001 {
   arr := for i : 0..75 { (999+7*i)*(977-9*i) };
-  x := xor525(arr);
+  x := fkeccak(arr);
   Isz(5-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[9+0]-1032419) = 0;
   Isz(5-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[9+1]-933460) = 0;
   Isz(5-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[9+2]-923463) = 0;
