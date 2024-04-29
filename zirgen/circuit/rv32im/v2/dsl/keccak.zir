@@ -72,6 +72,23 @@ component INPLEN() { 75 }
 component EREGLEN() { 15 }
 component RLEN() { INPLEN()+EREGLEN()-3*BLEN() }
 
+component rtable<x: Val, y:Val>() {
+  arr := [ [0,0,0], [1,0,0], [21,21,20], [21,7,0], [21,6,0],
+           [21,15,0], [21,21,2], [6,0,0], [21,21,13], [20,0,0],
+           [3,0,0], [10,0,0], [21,21,1], [21,4,0], [21,18,0],
+           [21,20,0], [21,21,3], [15,0,0], [21,0,0], [8,0,0],
+           [18,0,0], [2,0,0], [21,21,19], [21,21,14], [14,0,0]];
+  arr[5*y + x]
+}
+
+component WordTriple(a: Array<Val, BLEN()>,
+                     b: Array<Val, SLEN()>,
+                     c: Array<Val, SLEN()>) {
+  a := a;
+  b := b;
+  c := c;
+}
+
 component RetTuple(a: Array<Val, BLEN()>,
                   b: Array<Val, BLEN()>,
                   c: Array<Val, BLEN()>,
@@ -84,6 +101,36 @@ component RetTuple(a: Array<Val, BLEN()>,
   arr_d := for elem : d { Reg(elem) };
   inner := Reg(in_count);
   outer := Reg(out_count);
+}
+
+component RotLeft3impl<T: Type, A: Val, B: Val, C: Val, S: Val>
+    (a: Array<T, A>, b: Array<T, B>, c: Array<T, C>) {
+  ra := for i : 0..A {
+    wraparound := InRange<S>(i);
+    [wraparound, 1-wraparound] -> (c[C-S+i], a[i-S])
+  };
+  rb := for i : 0..B {
+    wraparound := InRange<S>(i);
+    [wraparound, 1-wraparound] -> (a[A-S+i], b[i-S])
+  };
+  rc := for i : 0..C {
+    wraparound := InRange<S>(i);
+    [wraparound, 1-wraparound] -> (b[B-S+i], c[i-S])
+  };
+}
+component RotLeft3<T: Type, A: Val, B: Val, C: Val, S1: Val, S2: Val, S3: Val>
+    (a: Array<T, A>, b: Array<T, B>, c: Array<T, C>) {
+  za := Isz(S1);
+  rot := [za, 1-za] -> ( WordTriple(a,b,c),
+      { arr1 := RotLeft3impl<T, A, B, C, S1+za>(a, b, c);
+        zb := Isz(S2);
+        [zb, 1-zb] -> ( WordTriple(arr1.ra, arr1.rb, arr1.rc),
+          { arr2 := RotLeft3impl<T, A, B, C, S2+zb>(arr1.ra, arr1.rb, arr1.rc);
+            zc := Isz(S3);
+            [zc, 1-zc] -> ( WordTriple(arr2.ra, arr2.rb, arr2.rc),
+              { arr3 := RotLeft3impl<T, A, B, C, S3+zc>(arr2.ra, arr2.rb, arr2.rc);
+                WordTriple(arr3.ra, arr3.rb, arr3.rc)
+              })})});
 }
 
 component xor2(x: Val, y: Val) {
@@ -276,6 +323,23 @@ component fkeccak(inp_vals: Array<Val, INPLEN()>) {
     fill_input(inp_vals),
     fstep(retvals@1, retvals@2, retvals@3, retvals@4, retvals@5)
   );
+}
+
+test RotateLeft64bit {
+  arr := for i : 0..3 { (999+7*i)*(977-9*i) };
+  ua := ToBits<BLEN()>(arr[0]);
+  ub := ToBits<SLEN()>(arr[1]);
+  uc := ToBits<SLEN()>(arr[2]);
+  t20 := rtable<2,0>();
+  result1 := RotLeft3<Val, BLEN(), SLEN(), SLEN(), t20[0],t20[1],t20[2]>(ua, ub, uc);
+  FromBits<BLEN()>(result1.rot.a) = 244005;
+  FromBits<SLEN()>(result1.rot.b) = 1816316;
+  FromBits<SLEN()>(result1.rot.c) = 1815730;
+  t32 := rtable<3,2>();
+  result2 := RotLeft3<Val, BLEN(), SLEN(), SLEN(), t32[0],t32[1],t32[2]>(ua, ub, uc);
+  FromBits<BLEN()>(result2.rot.a) = 2960567;
+  FromBits<SLEN()>(result2.rot.b) = 1516731;
+  FromBits<SLEN()>(result2.rot.c) = 900867;
 }
 
 test XOR525001 {
