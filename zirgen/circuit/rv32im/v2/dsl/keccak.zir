@@ -71,6 +71,9 @@ component SLEN() { 21 }
 component INPLEN() { 75 }
 component EREGLEN() { 15 }
 component RLEN() { INPLEN()+EREGLEN()-3*BLEN() }
+component dummyS() { for i : 0.. SLEN() { 0 } }
+component dummyB() { for i : 0.. BLEN() { 0 } }
+component dummyE() { for i : 0.. RLEN() { 0 } }
 
 component rtable<x: Val, y:Val>() {
   arr := [ [0,0,0], [1,0,0], [21,21,20], [21,7,0], [21,6,0],
@@ -81,9 +84,7 @@ component rtable<x: Val, y:Val>() {
   arr[5*y + x]
 }
 
-component WordTriple(a: Array<Val, BLEN()>,
-                     b: Array<Val, SLEN()>,
-                     c: Array<Val, SLEN()>) {
+component WordTriple(a: Array<Val, BLEN()>, b: Array<Val, SLEN()>, c: Array<Val, SLEN()>) {
   a := a;
   b := b;
   c := c;
@@ -93,14 +94,31 @@ component RetTuple(a: Array<Val, BLEN()>,
                   b: Array<Val, BLEN()>,
                   c: Array<Val, BLEN()>,
                   d: Array<Val, RLEN()>,
+                  e: Array<Val, SLEN()>,
+                  f: Array<Val, SLEN()>,
                   in_count: Val,
                   out_count: Val) {
   arr_a := for elem : a { Reg(elem) };
   arr_b := for elem : b { Reg(elem) };
   arr_c := for elem : c { Reg(elem) };
   arr_d := for elem : d { Reg(elem) };
+  arr_e := for elem : e { Reg(elem) };
+  arr_f := for elem : f { Reg(elem) };
   inner := Reg(in_count);
   outer := Reg(out_count);
+}
+
+component xor2(x: Val, y: Val) {
+  x + y - 2*x*y
+}
+
+component IncMod5(v: Val) {
+  d := Isz(4-v);
+  [1-d, d] -> (v+1, 0)
+}
+component DecMod5(v: Val) {
+  d := Isz(v);
+  [1-d, d] -> (v-1, 4)
 }
 
 component RotLeft3impl<T: Type, A: Val, B: Val, C: Val, S: Val>
@@ -133,10 +151,6 @@ component RotLeft3<T: Type, A: Val, B: Val, C: Val, S1: Val, S2: Val, S3: Val>
               })})});
 }
 
-component xor2(x: Val, y: Val) {
-  x + y - 2*x*y
-}
-
 component xor5words_inner0<idx: Val>(rvprev01: RetTuple) {
   unpack_a := ToBits<BLEN()>(rvprev01.arr_a[0+3*idx+15*0]);
   FromBits<BLEN()>(unpack_a) = rvprev01.arr_a[0+3*idx+15*0];
@@ -159,8 +173,7 @@ component xor5words_inner0<idx: Val>(rvprev01: RetTuple) {
   xor_cd := for i : 0..BLEN() {
     Reg(xor2(unpack_c[i], unpack_d[i])) };
 
-  padded_b := ConcatZeros<BLEN(),RLEN()-BLEN()>(unpack_b);
-  RetTuple(xor_ab, xor_cd, unpack_a, padded_b, 1, idx)
+  RetTuple(xor_ab, xor_cd, dummyB(), dummyE(), dummyS(), dummyS(), 1, idx)
 }
 
 component xor5words_inner1<idx: Val>(rvprev01: RetTuple, rvprev02: RetTuple) {
@@ -190,10 +203,10 @@ component xor5words_inner1<idx: Val>(rvprev01: RetTuple, rvprev02: RetTuple) {
   xor_vals := for i : 0..BLEN() {
     xor2(xor_abcd[i], unpack_e[i]) };
   result := Reg(FromBits<BLEN()>(xor_vals));
-  withr_ab2 := ConcatElem<Val,SLEN()>(xor_ab2, result); //super of Reg and NondetReg
+  withr_ab2 := ConcatElem<Val,SLEN()>(xor_ab2, result);
 
-  padded_c2 := ConcatZeros<SLEN(),RLEN()-SLEN()>(unpack_c2);
-  RetTuple(xor_abcd, unpack_e, withr_ab2, padded_c2, 2, idx)
+  padded_c2 := ConcatZeros<SLEN(),BLEN()-SLEN()>(unpack_c2);
+  RetTuple(padded_c2, dummyB(), withr_ab2, dummyE(), dummyS(), dummyS(), 2, idx)
 }
 
 component xor5words_inner2<idx: Val>(rvprev01: RetTuple, rvprev03: RetTuple) {
@@ -215,7 +228,7 @@ component xor5words_inner2<idx: Val>(rvprev01: RetTuple, rvprev03: RetTuple) {
   FromBits<SLEN()>(unpack_b3) = val_b3;
 
   xor_cd2 := for i : 0..SLEN() {
-    Reg(xor2(rvprev01.arr_d[i], unpack_d2[i])) };
+    Reg(xor2(rvprev01.arr_a[i], unpack_d2[i])) };
 
   xor_abcd2 := for i : 0..SLEN() {
     Reg(xor2(rvprev01.arr_c[i], xor_cd2[i])) };
@@ -228,7 +241,7 @@ component xor5words_inner2<idx: Val>(rvprev01: RetTuple, rvprev03: RetTuple) {
   padded_b3 := ConcatZeros<SLEN(),RLEN()-SLEN()>(unpack_b3);
   withr_cd2 := ConcatElem<Val,SLEN()>(xor_cd2, rvprev01.arr_c[BLEN()-1]);
   padded_abcd2 := ConcatZeros<SLEN(),BLEN()-SLEN()>(xor_abcd2);
-  RetTuple(padded_abcd2, withr_cd2, withr_a3, padded_b3, 3, idx)
+  RetTuple(dummyB(), withr_cd2, withr_a3, padded_b3, dummyS(), dummyS(), 3, idx)
 }
 
 component xor5words_inner3<idx: Val>(rvprev01: RetTuple, rvprev04: RetTuple) {
@@ -262,9 +275,8 @@ component xor5words_inner3<idx: Val>(rvprev01: RetTuple, rvprev04: RetTuple) {
   withr_cd3 := ConcatElem<Val,SLEN()>(xor_cd3, result);
   withr_ab3 := ConcatElem<Val,SLEN()>(xor_ab3, rvprev01.arr_c[BLEN()-1]);
   withr_abcd3 := ConcatElem<Val,SLEN()>(xor_abcd3, rvprev01.arr_b[BLEN()-1]);
-  padded_c3 := ConcatZeros<SLEN(),RLEN()-SLEN()>(unpack_c3);
 
-  RetTuple(withr_abcd3, withr_ab3, withr_cd3, padded_c3, 4, idx)
+  RetTuple(withr_abcd3, withr_ab3, withr_cd3, dummyE(), dummyS(), dummyS(), 4, idx)
 }
 
 component xor5words_inner4<idx: Val>(rvprev01: RetTuple, rvprev05: RetTuple) {
@@ -276,12 +288,13 @@ component xor5words_inner4<idx: Val>(rvprev01: RetTuple, rvprev05: RetTuple) {
   tmp_3 := ConcatElem<Val,INPLEN()-BLEN()*3+3*idx+1>(tmp_2, Reg(rvprev01.arr_b[BLEN()-1]));
   tmp_4 := ConcatElem<Val,INPLEN()-BLEN()*3+3*idx+2>(tmp_3, Reg(rvprev01.arr_c[BLEN()-1]));
   inp_d := ConcatZeros<INPLEN()-BLEN()*3+3*(idx+1),EREGLEN()-3*(idx+1)>(tmp_4);
-  RetTuple(inp_a, inp_b, inp_c, inp_d, 0, idx+1)
+  RetTuple(inp_a, inp_b, inp_c, inp_d, dummyS(), dummyS(), 0, idx+1)
 }
 
-component xor5words_outer<idx: Val>(inner_onehot: Array<Val, 5>, rvprev01: RetTuple,
+component xor5words_outer<idx: Val>(inner_onehot: Array<Val, 11>, rvprev01: RetTuple,
             rvprev02: RetTuple, rvprev03: RetTuple, rvprev04: RetTuple, rvprev05: RetTuple) {
-  inner_onehot -> (
+  inner_onehot2 := [inner_onehot[0],inner_onehot[1],inner_onehot[2],inner_onehot[3],inner_onehot[4]];
+  inner_onehot2 -> (
     xor5words_inner0<idx>(rvprev01),
     xor5words_inner1<idx>(rvprev01, rvprev02),
     xor5words_inner2<idx>(rvprev01, rvprev03),
@@ -290,16 +303,227 @@ component xor5words_outer<idx: Val>(inner_onehot: Array<Val, 5>, rvprev01: RetTu
   )
 }
 
+component rho_inner0<X: Val, Y: Val>(rvpstate: RetTuple) {
+  v_dec1 := rvpstate.arr_d[INPLEN()-3*BLEN()+3*DecMod5(X)+0];
+  unpack_m1 := ToBits<BLEN()>(v_dec1);
+  FromBits<BLEN()>(unpack_m1) = v_dec1;
+
+  v_dec2 := rvpstate.arr_d[INPLEN()-3*BLEN()+3*DecMod5(X)+1];
+  unpack_m2 := ToBits<SLEN()>(v_dec2);
+  FromBits<SLEN()>(unpack_m2) = v_dec2;
+
+  v_dec3 := rvpstate.arr_d[INPLEN()-3*BLEN()+3*DecMod5(X)+2];
+  unpack_m3 := ToBits<SLEN()>(v_dec3);
+  FromBits<SLEN()>(unpack_m3) = v_dec3;
+
+  v_inc1 := rvpstate.arr_d[INPLEN()-3*BLEN()+3*IncMod5(X)+0];
+  unpack_p1 := ToBits<BLEN()>(v_inc1);
+  FromBits<BLEN()>(unpack_p1) = v_inc1;
+
+  v_inc2 := rvpstate.arr_d[INPLEN()-3*BLEN()+3*IncMod5(X)+1];
+  unpack_p2 := ToBits<SLEN()>(v_inc2);
+  FromBits<SLEN()>(unpack_p2) = v_inc2;
+
+  v_inc3 := rvpstate.arr_d[INPLEN()-3*BLEN()+3*IncMod5(X)+2];
+  unpack_p3 := ToBits<SLEN()>(v_inc3);
+  FromBits<SLEN()>(unpack_p3) = v_inc3;
+  rotp := RotLeft3<Val, BLEN(), SLEN(), SLEN(), 1, 0, 0>(unpack_p1, unpack_p2, unpack_p3);
+  pad_rb := ConcatZeros<SLEN(),BLEN()-SLEN()>(rotp.rot.b);
+  pad_rc := ConcatZeros<SLEN(),BLEN()-SLEN()>(rotp.rot.c);
+
+  padded_m1 := ConcatZeros<BLEN(),RLEN()-BLEN()>(unpack_m1);
+  RetTuple(rotp.rot.a, pad_rb, pad_rc, padded_m1, unpack_m2, unpack_m3, 2*X+1, Y+5)
+}
+
+component rho_inner1<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
+  xor_mp1 := for i : 0..BLEN() {
+    Reg(xor2(rvprev01.arr_a[i], rvprev01.arr_d[i])) };
+  xor_mp2 := for i : 0..SLEN() {
+    Reg(xor2(rvprev01.arr_b[i], rvprev01.arr_e[i])) };
+  xor_mp3 := for i : 0..SLEN() {
+    Reg(xor2(rvprev01.arr_c[i], rvprev01.arr_f[i])) };
+
+  idx1 := (X+5*Y)*3 + 0;
+  in_a := InRange<BLEN()>(idx1);
+  v_xy1 := [in_a, 1-in_a] -> (rvpstate.arr_a[idx1],
+    { idx2 := idx1 - BLEN();
+      in_b := InRange<BLEN()>(idx2);
+      [in_b, 1-in_b] -> (rvpstate.arr_b[idx2],
+        { idx3 := idx2 - BLEN();
+          in_c := InRange<BLEN()>(idx3);
+          [in_c, 1-in_c] -> (rvpstate.arr_c[idx3], rvpstate.arr_d[idx3-BLEN()]) })});
+  unpack_xy1 := ToBits<BLEN()>(v_xy1);
+  FromBits<BLEN()>(unpack_xy1) = v_xy1;
+
+  idx12 := idx1 + 1;
+  in_a2 := InRange<BLEN()>(idx12);
+  v_xy2 := [in_a2, 1-in_a2] -> (rvpstate.arr_a[idx12],
+    { idx22 := idx12 - BLEN();
+      in_b2 := InRange<BLEN()>(idx22);
+      [in_b2, 1-in_b2] -> (rvpstate.arr_b[idx22],
+        { idx32 := idx22 - BLEN();
+          in_c2 := InRange<BLEN()>(idx32);
+          [in_c2, 1-in_c2] -> (rvpstate.arr_c[idx32], rvpstate.arr_d[idx32-BLEN()]) })});
+  unpack_xy2 := ToBits<SLEN()>(v_xy2);
+  FromBits<SLEN()>(unpack_xy2) = v_xy2;
+
+  idx13 := idx12 + 1;
+  in_a3 := InRange<BLEN()>(idx13);
+  v_xy3 := [in_a3, 1-in_a3] -> (rvpstate.arr_a[idx13],
+    { idx23 := idx13 - BLEN();
+      in_b3 := InRange<BLEN()>(idx23);
+      [in_b3, 1-in_b3] -> (rvpstate.arr_b[idx23],
+        { idx33 := idx23 - BLEN();
+          in_c3 := InRange<BLEN()>(idx33);
+          [in_c3, 1-in_c3] -> (rvpstate.arr_c[idx33], rvpstate.arr_d[idx33-BLEN()]) })});
+  unpack_xy3 := ToBits<SLEN()>(v_xy3);
+  FromBits<SLEN()>(unpack_xy3) = v_xy3;
+
+  xor_1 := for i : 0..BLEN() { xor2(unpack_xy1[i], xor_mp1[i]) };
+  xor_2 := for i : 0..SLEN() { xor2(unpack_xy2[i], xor_mp2[i]) };
+  xor_3 := for i : 0..SLEN() { xor2(unpack_xy3[i], xor_mp3[i]) };
+  t := rtable<X,Y>();
+  rotxor := RotLeft3<Val, BLEN(), SLEN(), SLEN(), t[0], t[1], t[2]>(xor_1, xor_2, xor_3);
+  result := [Reg(FromBits<BLEN()>(rotxor.rot.a)),
+             Reg(FromBits<SLEN()>(rotxor.rot.b)),
+             Reg(FromBits<SLEN()>(rotxor.rot.c))];
+
+  withrs_f := ConcatZeros<3,SLEN()-3>(result);
+  z := Isz(X-4);
+  RetTuple(dummyB(), dummyB(), dummyB(), dummyE(), dummyS(), withrs_f, 2*(X+1), Y+5)
+}
+
+component rho_inner2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: RetTuple,
+  rvprev05: RetTuple, rvprev07: RetTuple, rvprev09: RetTuple) {
+  [Isz(Y), 1-Isz(Y)] -> (
+    { rs1 := Concatenate<Reg,12,3>(
+               Concatenate<Reg,9,3>(
+                 Concatenate<Reg,6,3>(
+                   Concatenate<Reg,3,3>(
+                    for i : 0..3 { rvprev09.arr_f[i] },
+                    for i : 0..3 { rvprev07.arr_f[i] }),
+                   for i : 0..3 { rvprev05.arr_f[i] }),
+                 for i : 0..3 { rvprev03.arr_f[i] }),
+               for i : 0..3 { rvprev01.arr_f[i] });
+      a := Concatenate<Reg, 15, 7>(rs1, for i : 15..22 { rvpstate.arr_a[i] });
+      RetTuple(a, rvpstate.arr_b, rvpstate.arr_c, rvpstate.arr_d,
+               dummyS(), dummyS(), 0, Y+6)
+    },
+    [Isz(Y-1), 1-Isz(Y-1)] -> (
+      { rs1 := [rvprev09.arr_f[0], rvprev09.arr_f[1], rvprev09.arr_f[2],
+                rvprev07.arr_f[0], rvprev07.arr_f[1], rvprev07.arr_f[2],
+                rvprev05.arr_f[0]+0];
+        a := Concatenate<Val, 15, 7>(for i : 0..15 { rvpstate.arr_a[i] }, rs1);
+        rs2 := [rvprev05.arr_f[1], rvprev05.arr_f[2],
+                rvprev03.arr_f[0], rvprev03.arr_f[1], rvprev03.arr_f[2],
+                rvprev01.arr_f[0], rvprev01.arr_f[1], rvprev01.arr_f[2]+0];
+        b := Concatenate<Val, 8, 14>(rs2, for i : 8..22 { rvpstate.arr_b[i] });
+        RetTuple(a, b, rvpstate.arr_c, rvpstate.arr_d,
+                 dummyS(), dummyS(), 0, Y+6)
+      },
+      [Isz(Y-2), 1-Isz(Y-2)] -> (
+        { rs1 := [rvprev09.arr_f[0], rvprev09.arr_f[1], rvprev09.arr_f[2],
+                  rvprev07.arr_f[0], rvprev07.arr_f[1], rvprev07.arr_f[2],
+                  rvprev05.arr_f[0], rvprev05.arr_f[1], rvprev05.arr_f[2],
+                  rvprev03.arr_f[0], rvprev03.arr_f[1], rvprev03.arr_f[2],
+                  rvprev01.arr_f[0], rvprev01.arr_f[1]+0];
+          b := Concatenate<Val, 8, 14>(for i : 0..8 { rvpstate.arr_b[i] }, rs1);
+          rs2 := for i : 2..3 { rvprev01.arr_f[i] };
+          c := Concatenate<Reg, 1, 21>(rs2, for i : 1..22 { rvpstate.arr_c[i] });
+          RetTuple(rvpstate.arr_a, b, c, rvpstate.arr_d,
+                   dummyS(), dummyS(), 0, Y+6)
+        },
+        [Isz(Y-3), 1-Isz(Y-3)] -> (
+          { rs1 := [rvprev09.arr_f[0], rvprev09.arr_f[1], rvprev09.arr_f[2],
+                    rvprev07.arr_f[0], rvprev07.arr_f[1], rvprev07.arr_f[2],
+                    rvprev05.arr_f[0], rvprev05.arr_f[1], rvprev05.arr_f[2],
+                    rvprev03.arr_f[0], rvprev03.arr_f[1], rvprev03.arr_f[2],
+                    rvprev01.arr_f[0], rvprev01.arr_f[1], rvprev01.arr_f[2]+0];
+            c1 := Concatenate<Val, 1, 15>([rvpstate.arr_c[0]+0], rs1);
+            c := Concatenate<Val, 16, 6>(c1, for i : 16..22 { rvpstate.arr_c[i] });
+            RetTuple(rvpstate.arr_a, rvpstate.arr_b, c, rvpstate.arr_d,
+                     dummyS(), dummyS(), 0, Y+6)
+          },
+          { // Keccak pi permuation:
+            //c': arr_c[0,1,2,3,...,15],p09f[0],p09f[1],p09f[2],p07f[0],p07f[1],p07f[2]
+            //d': p05f[0],p05f[1],p05f[2],p03f[0],p03f[1],p03f[2],p01f[0],p01f[1],p01f[2]
+            a := [rvpstate.arr_a[0], rvpstate.arr_a[1], rvpstate.arr_a[2],     //B(0,0)=A(0,0)
+                  rvpstate.arr_a[18], rvpstate.arr_a[19], rvpstate.arr_a[20],  //B(1,0)=A(1,1)
+                  rvpstate.arr_b[14], rvpstate.arr_b[15], rvpstate.arr_b[16],  //B(2,0)=A(2,2)
+                  rvpstate.arr_c[10], rvpstate.arr_c[11], rvpstate.arr_c[12],  //B(3,0)=A(3,3)
+                  rvprev01.arr_f[0], rvprev01.arr_f[1], rvprev01.arr_f[2],     //B(4,0)=A(4,4)
+                  rvpstate.arr_a[9], rvpstate.arr_a[10], rvpstate.arr_a[11],   //B(0,1)=A(3,0)
+                  rvpstate.arr_b[5], rvpstate.arr_b[6], rvpstate.arr_b[7],     //B(1,1)=A(4,1)
+                  rvpstate.arr_b[8]+0                                          //B(2,1)=A(0,2)
+                 ];
+            b := [rvpstate.arr_b[9], rvpstate.arr_b[10],                       //B(2,1)=A(0,2)
+                  rvpstate.arr_c[4], rvpstate.arr_c[5], rvpstate.arr_c[6],     //B(3,1)=A(1,3)
+                  rvprev05.arr_f[0], rvprev05.arr_f[1], rvprev05.arr_f[2],     //B(4,1)=A(2,4)
+                  rvpstate.arr_a[3], rvpstate.arr_a[4], rvpstate.arr_a[5],     //B(0,2)=A(1,0)
+                  rvpstate.arr_a[21], rvpstate.arr_b[0], rvpstate.arr_b[1],    //B(1,2)=A(2,1)
+                  rvpstate.arr_b[17], rvpstate.arr_b[18], rvpstate.arr_b[19],  //B(2,2)=A(3,2)
+                  rvpstate.arr_c[13], rvpstate.arr_c[14], rvpstate.arr_c[15],  //B(3,2)=A(4,3)
+                  rvprev09.arr_f[0], rvprev09.arr_f[1]+0                       //B(4,2)=A(0,4)
+                 ];
+            c := [rvprev09.arr_f[2],                                           //B(4,2)=A(0,4)
+                  rvpstate.arr_a[12], rvpstate.arr_a[13], rvpstate.arr_a[14],  //B(0,3)=A(4,0)
+                  rvpstate.arr_a[15], rvpstate.arr_a[16], rvpstate.arr_a[17],  //B(1,3)=A(0,1)
+                  rvpstate.arr_b[11], rvpstate.arr_b[12], rvpstate.arr_b[13],  //B(2,3)=A(1,2)
+                  rvpstate.arr_c[7], rvpstate.arr_c[8], rvpstate.arr_c[9],     //B(3,3)=A(2,3)
+                  rvprev03.arr_f[0], rvprev03.arr_f[1], rvprev03.arr_f[2],     //B(4,3)=A(3,4)
+                  rvpstate.arr_a[6], rvpstate.arr_a[7], rvpstate.arr_a[8],     //B(0,4)=A(2,0)
+                  rvpstate.arr_b[2], rvpstate.arr_b[3], rvpstate.arr_b[4]+0    //B(1,4)=A(3,1)
+                 ];
+            d := [rvpstate.arr_b[20], rvpstate.arr_b[21], rvpstate.arr_c[0],   //B(2,4)=A(4,2)
+                  rvpstate.arr_c[1], rvpstate.arr_c[2], rvpstate.arr_c[3],     //B(3,4)=A(0,3)
+                  rvprev07.arr_f[0], rvprev07.arr_f[1], rvprev07.arr_f[2],     //B(4,4)=A(1,4)
+                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+            RetTuple(a, b, c, d, dummyS(), dummyS(), 0, Y+6)
+          }))))
+}
+
+component rho_outer<Y: Val>(inner_onehot: Array<Val, 11>,
+                           rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
+                           rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
+                           rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple,
+                           rvprev10: RetTuple, rvprev11: RetTuple) {
+  inner_onehot -> (
+    rho_inner0<0,Y>(rvprev01),
+    rho_inner1<0,Y>(rvprev02, rvprev01),
+    rho_inner0<1,Y>(rvprev03),
+    rho_inner1<1,Y>(rvprev04, rvprev01),
+    rho_inner0<2,Y>(rvprev05),
+    rho_inner1<2,Y>(rvprev06, rvprev01),
+    rho_inner0<3,Y>(rvprev07),
+    rho_inner1<3,Y>(rvprev08, rvprev01),
+    rho_inner0<4,Y>(rvprev09),
+    rho_inner1<4,Y>(rvprev10, rvprev01),
+    rho_inner2<Y>(rvprev11, rvprev01, rvprev03, rvprev05, rvprev07, rvprev09)
+  )
+}
+
 component fstep(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
-                rvprev04: RetTuple, rvprev05: RetTuple) {
-  outer_onehot := OneHot<5>(rvprev01.outer);
-  inner_onehot := OneHot<5>(rvprev01.inner);
+                rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
+                rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple,
+                rvprev10: RetTuple, rvprev11: RetTuple) {
+  outer_onehot := OneHot<10>(rvprev01.outer);
+  inner_onehot := OneHot<11>(rvprev01.inner);
   outer_onehot -> (
     xor5words_outer<0>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05),
     xor5words_outer<1>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05),
     xor5words_outer<2>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05),
     xor5words_outer<3>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05),
-    xor5words_outer<4>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05)
+    xor5words_outer<4>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05),
+    rho_outer<0>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05,
+                  rvprev06, rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
+    rho_outer<1>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05,
+                  rvprev06, rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
+    rho_outer<2>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05,
+                  rvprev06, rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
+    rho_outer<3>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05,
+                  rvprev06, rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
+    rho_outer<4>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05,
+                  rvprev06, rvprev07, rvprev08, rvprev09, rvprev10, rvprev11)
   )
 }
 
@@ -311,7 +535,7 @@ component fill_input(inp_vals: Array<Val, INPLEN()>) {
   inp_d := ConcatZeros<INPLEN()-BLEN()*3, EREGLEN()>(tmp);
   inner_counter := 0;
   outer_counter := 0;
-  RetTuple(inp_a, inp_b, inp_c, inp_d, inner_counter, outer_counter)
+  RetTuple(inp_a, inp_b, inp_c, inp_d, dummyS(), dummyS(), inner_counter, outer_counter)
 }
 
 component fkeccak(inp_vals: Array<Val, INPLEN()>) {
@@ -321,10 +545,12 @@ component fkeccak(inp_vals: Array<Val, INPLEN()>) {
   round := [Isz(PC), 1-Isz(PC)];
   retvals := round -> (
     fill_input(inp_vals),
-    fstep(retvals@1, retvals@2, retvals@3, retvals@4, retvals@5)
+    fstep(retvals@1, retvals@2, retvals@3, retvals@4, retvals@5, retvals@6, retvals@7,
+          retvals@8, retvals@9, retvals@10, retvals@11)
   );
 }
 
+/*
 test RotateLeft64bit {
   arr := for i : 0..3 { (999+7*i)*(977-9*i) };
   ua := ToBits<BLEN()>(arr[0]);
@@ -341,23 +567,84 @@ test RotateLeft64bit {
   FromBits<SLEN()>(result2.rot.b) = 1516731;
   FromBits<SLEN()>(result2.rot.c) = 900867;
 }
+*/
 
-test XOR525001 {
+test KeccakTest01 {
   arr := for i : 0..75 { (999+7*i)*(977-9*i) };
   x := fkeccak(arr);
-  Isz(5-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[9+0]-1032419) = 0;
-  Isz(5-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[9+1]-933460) = 0;
-  Isz(5-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[9+2]-923463) = 0;
-  Isz(5-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[9+3]-913348) = 0;
-  Isz(5-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[9+4]-907779) = 0;
-  Isz(5-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[9+5]-890364) = 0;
-  Isz(5-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[9+6]-862151) = 0;
-  Isz(5-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[9+7]-885564) = 0;
-  Isz(5-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[9+8]-865667) = 0;
-  Isz(5-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[9+9]-881540) = 0;
-  Isz(5-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[9+10]-182855) = 0;
-  Isz(5-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[9+11]-350868) = 0;
-  Isz(5-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[9+12]-437603) = 0;
-  Isz(5-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[9+13]-417612) = 0;
-  Isz(5-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[9+14]-401447) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[0]-1283708) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[1]-1257658) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[2]-1300756) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[3]-2314385) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[4]-1264781) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[5]-1107405) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[6]-533578) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[7]-745759) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[8]-1802187) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[9]-753626) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[10]-333317) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[11]-725108) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[12]-3505293) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[13]-1824121) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[14]-1864658) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[15]-1034941) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[16]-1966174) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[17]-337821) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[18]-2763489) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[19]-519966) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[20]-640852) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[21]-245764) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[0]-575058) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[1]-950852) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[2]-4067299) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[3]-1742123) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[4]-1725931) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[5]-2879520) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[6]-787908) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[7]-1958650) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[8]-3574923) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[9]-1510998) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[10]-1413203) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[11]-3395861) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[12]-1999258) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[13]-28939) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[14]-2734294) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[15]-187274) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[16]-1274675) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[17]-1548935) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[18]-1557612) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[19]-1041083) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[20]-3310678) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[21]-606282) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[0]-1218410) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[1]-1223777) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[2]-1425591) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[3]-2020828) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[4]-2609105) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[5]-1238538) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[6]-960187) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[7]-3241757) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[8]-630164) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[9]-1222450) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[10]-144716) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[11]-342910) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[12]-920418) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[13]-3917937) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[14]-2074335) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[15]-1910466) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[16]-1468513) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[17]-1684687) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[18]-1731664) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[19]-2131704) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[20]-419362) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[21]-91659) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[0]-3579998) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[1]-1256997) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[2]-1937970) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[3]-3889456) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[4]-1936527) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[5]-1409348) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[6]-3290295) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[7]-1542893) = 0;
+  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[8]-1259719) = 0;
 }
