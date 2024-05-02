@@ -112,6 +112,10 @@ component xor2(x: Val, y: Val) {
   x + y - 2*x*y
 }
 
+component nand2(x: Val, y: Val) {
+  (1-x)*y
+}
+
 component IncMod5(v: Val) {
   d := Isz(4-v);
   [1-d, d] -> (v+1, 0)
@@ -291,10 +295,10 @@ component xor5words_inner4<idx: Val>(rvprev01: RetTuple, rvprev05: RetTuple) {
   RetTuple(inp_a, inp_b, inp_c, inp_d, dummyS(), dummyS(), 0, idx+1)
 }
 
-component xor5words_outer<idx: Val>(inner_onehot: Array<Val, 11>, rvprev01: RetTuple,
-            rvprev02: RetTuple, rvprev03: RetTuple, rvprev04: RetTuple, rvprev05: RetTuple) {
-  inner_onehot2 := [inner_onehot[0],inner_onehot[1],inner_onehot[2],inner_onehot[3],inner_onehot[4]];
-  inner_onehot2 -> (
+component xor5words_outer<idx: Val>(rvprev01: RetTuple, rvprev02: RetTuple,
+            rvprev03: RetTuple, rvprev04: RetTuple, rvprev05: RetTuple) {
+  inner_onehot := OneHot<5>(rvprev01.inner);
+  inner_onehot -> (
     xor5words_inner0<idx>(rvprev01),
     xor5words_inner1<idx>(rvprev01, rvprev02),
     xor5words_inner2<idx>(rvprev01, rvprev03),
@@ -389,7 +393,6 @@ component rho_inner1<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
              Reg(FromBits<SLEN()>(rotxor.rot.c))];
 
   withrs_f := ConcatZeros<3,SLEN()-3>(result);
-  z := Isz(X-4);
   RetTuple(dummyB(), dummyB(), dummyB(), dummyE(), dummyS(), withrs_f, 2*(X+1), Y+5)
 }
 
@@ -407,7 +410,7 @@ component rho_inner2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: R
                for i : 0..3 { rvprev01.arr_f[i] });
       a := Concatenate<Reg, 15, 7>(rs1, for i : 15..22 { rvpstate.arr_a[i] });
       RetTuple(a, rvpstate.arr_b, rvpstate.arr_c, rvpstate.arr_d,
-               dummyS(), dummyS(), 0, Y+6)
+               dummyS(), dummyS(), 0, 6)
     },
     [Isz(Y-1), 1-Isz(Y-1)] -> (
       { rs1 := [rvprev09.arr_f[0], rvprev09.arr_f[1], rvprev09.arr_f[2],
@@ -419,7 +422,7 @@ component rho_inner2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: R
                 rvprev01.arr_f[0], rvprev01.arr_f[1], rvprev01.arr_f[2]+0];
         b := Concatenate<Val, 8, 14>(rs2, for i : 8..22 { rvpstate.arr_b[i] });
         RetTuple(a, b, rvpstate.arr_c, rvpstate.arr_d,
-                 dummyS(), dummyS(), 0, Y+6)
+                 dummyS(), dummyS(), 0, 7)
       },
       [Isz(Y-2), 1-Isz(Y-2)] -> (
         { rs1 := [rvprev09.arr_f[0], rvprev09.arr_f[1], rvprev09.arr_f[2],
@@ -431,7 +434,7 @@ component rho_inner2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: R
           rs2 := for i : 2..3 { rvprev01.arr_f[i] };
           c := Concatenate<Reg, 1, 21>(rs2, for i : 1..22 { rvpstate.arr_c[i] });
           RetTuple(rvpstate.arr_a, b, c, rvpstate.arr_d,
-                   dummyS(), dummyS(), 0, Y+6)
+                   dummyS(), dummyS(), 0, 8)
         },
         [Isz(Y-3), 1-Isz(Y-3)] -> (
           { rs1 := [rvprev09.arr_f[0], rvprev09.arr_f[1], rvprev09.arr_f[2],
@@ -442,7 +445,7 @@ component rho_inner2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: R
             c1 := Concatenate<Val, 1, 15>([rvpstate.arr_c[0]+0], rs1);
             c := Concatenate<Val, 16, 6>(c1, for i : 16..22 { rvpstate.arr_c[i] });
             RetTuple(rvpstate.arr_a, rvpstate.arr_b, c, rvpstate.arr_d,
-                     dummyS(), dummyS(), 0, Y+6)
+                     dummyS(), dummyS(), 0, 9)
           },
           { // Keccak pi permuation:
             //c': arr_c[0,1,2,3,...,15],p09f[0],p09f[1],p09f[2],p07f[0],p07f[1],p07f[2]
@@ -478,15 +481,15 @@ component rho_inner2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: R
                   rvpstate.arr_c[1], rvpstate.arr_c[2], rvpstate.arr_c[3],     //B(3,4)=A(0,3)
                   rvprev07.arr_f[0], rvprev07.arr_f[1], rvprev07.arr_f[2],     //B(4,4)=A(1,4)
                   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-            RetTuple(a, b, c, d, dummyS(), dummyS(), 0, Y+6)
+            RetTuple(a, b, c, d, dummyS(), dummyS(), 0, 10)
           }))))
 }
 
-component rho_outer<Y: Val>(inner_onehot: Array<Val, 11>,
-                           rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
-                           rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
-                           rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple,
-                           rvprev10: RetTuple, rvprev11: RetTuple) {
+component rho_outer<Y: Val>(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
+                            rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
+                            rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple,
+                            rvprev10: RetTuple, rvprev11: RetTuple) {
+  inner_onehot := OneHot<11>(rvprev01.inner);
   inner_onehot -> (
     rho_inner0<0,Y>(rvprev01),
     rho_inner1<0,Y>(rvprev02, rvprev01),
@@ -502,28 +505,247 @@ component rho_outer<Y: Val>(inner_onehot: Array<Val, 11>,
   )
 }
 
+component chi_inner0<X: Val, Y: Val>(rvpstate: RetTuple) {
+  XP1 := IncMod5(X);
+  idx0xp1 := (XP1+5*Y)*3 + 0;
+  in_a0xp1 := InRange<BLEN()>(idx0xp1);
+  v_0xp1 := [in_a0xp1, 1-in_a0xp1] -> (rvpstate.arr_a[idx0xp1],
+    { idx0xp1b := idx0xp1 - BLEN();
+      in_b0xp1 := InRange<BLEN()>(idx0xp1b);
+      [in_b0xp1, 1-in_b0xp1] -> (rvpstate.arr_b[idx0xp1b],
+        { idx0xp1c := idx0xp1b - BLEN();
+          in_c0xp1 := InRange<BLEN()>(idx0xp1c);
+          [in_c0xp1, 1-in_c0xp1] -> (rvpstate.arr_c[idx0xp1c], rvpstate.arr_d[idx0xp1c-BLEN()]) })});
+  unpack_0xp1 := ToBits<BLEN()>(v_0xp1);
+  FromBits<BLEN()>(unpack_0xp1) = v_0xp1;
+
+  idx0xp2 := (IncMod5(XP1)+5*Y)*3 + 0;
+  in_a0xp2 := InRange<BLEN()>(idx0xp2);
+  v_0xp2 := [in_a0xp2, 1-in_a0xp2] -> (rvpstate.arr_a[idx0xp2],
+    { idx0xp2b := idx0xp2 - BLEN();
+      in_b0xp2 := InRange<BLEN()>(idx0xp2b);
+      [in_b0xp2, 1-in_b0xp2] -> (rvpstate.arr_b[idx0xp2b],
+        { idx0xp2c := idx0xp2b - BLEN();
+          in_c0xp2 := InRange<BLEN()>(idx0xp2c);
+          [in_c0xp2, 1-in_c0xp2] -> (rvpstate.arr_c[idx0xp2c], rvpstate.arr_d[idx0xp2c-BLEN()]) })});
+  unpack_0xp2 := ToBits<BLEN()>(v_0xp2);
+  FromBits<BLEN()>(unpack_0xp2) = v_0xp2;
+
+  idx1xp1 := idx0xp1 + 1;
+  in_a1xp1 := InRange<BLEN()>(idx1xp1);
+  v_1xp1 := [in_a1xp1, 1-in_a1xp1] -> (rvpstate.arr_a[idx1xp1],
+    { idx1xp1b := idx1xp1 - BLEN();
+      in_b1xp1 := InRange<BLEN()>(idx1xp1b);
+      [in_b1xp1, 1-in_b1xp1] -> (rvpstate.arr_b[idx1xp1b],
+        { idx1xp1c := idx1xp1b - BLEN();
+          in_c1xp1 := InRange<BLEN()>(idx1xp1c);
+          [in_c1xp1, 1-in_c1xp1] -> (rvpstate.arr_c[idx1xp1c], rvpstate.arr_d[idx1xp1c-BLEN()]) })});
+  unpack_1xp1 := ToBits<SLEN()>(v_1xp1);
+  FromBits<SLEN()>(unpack_1xp1) = v_1xp1;
+
+  idx1xp2 := idx0xp2 + 1;
+  in_a1xp2 := InRange<BLEN()>(idx1xp2);
+  v_1xp2 := [in_a1xp2, 1-in_a1xp2] -> (rvpstate.arr_a[idx1xp2],
+    { idx1xp2b := idx1xp2 - BLEN();
+      in_b1xp2 := InRange<BLEN()>(idx1xp2b);
+      [in_b1xp2, 1-in_b1xp2] -> (rvpstate.arr_b[idx1xp2b],
+        { idx1xp2c := idx1xp2b - BLEN();
+          in_c1xp2 := InRange<BLEN()>(idx1xp2c);
+          [in_c1xp2, 1-in_c1xp2] -> (rvpstate.arr_c[idx1xp2c], rvpstate.arr_d[idx1xp2c-BLEN()]) })});
+  unpack_1xp2 := ToBits<SLEN()>(v_1xp2);
+  FromBits<SLEN()>(unpack_1xp2) = v_1xp2;
+
+  nand2_0 := for i : 0..BLEN() {
+    Reg(nand2(unpack_0xp1[i], unpack_0xp2[i])) };
+  nand2_1 := for i : 0..SLEN() {
+    Reg(nand2(unpack_1xp1[i], unpack_1xp2[i])) };
+  RetTuple(nand2_0, dummyB(), dummyB(), dummyE(), dummyS(), nand2_1, 2*X+1, Y+10)
+}
+
+component chi_inner1<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
+  idx0x := (X+5*Y)*3 + 0;
+  in_a0x := InRange<BLEN()>(idx0x);
+  v_0x := [in_a0x, 1-in_a0x] -> (rvpstate.arr_a[idx0x],
+    { idx0xb := idx0x - BLEN();
+      in_b0x := InRange<BLEN()>(idx0xb);
+      [in_b0x, 1-in_b0x] -> (rvpstate.arr_b[idx0xb],
+        { idx0xc := idx0xb - BLEN();
+          in_c0x := InRange<BLEN()>(idx0xc);
+          [in_c0x, 1-in_c0x] -> (rvpstate.arr_c[idx0xc], rvpstate.arr_d[idx0xc-BLEN()]) })});
+  unpack_0x := ToBits<BLEN()>(v_0x);
+  FromBits<BLEN()>(unpack_0x) = v_0x;
+
+  idx1x := idx0x + 1;
+  in_a1x := InRange<BLEN()>(idx1x);
+  v_1x := [in_a1x, 1-in_a1x] -> (rvpstate.arr_a[idx1x],
+    { idx1xb := idx1x - BLEN();
+      in_b1x := InRange<BLEN()>(idx1xb);
+      [in_b1x, 1-in_b1x] -> (rvpstate.arr_b[idx1xb],
+        { idx1xc := idx1xb - BLEN();
+          in_c1x := InRange<BLEN()>(idx1xc);
+          [in_c1x, 1-in_c1x] -> (rvpstate.arr_c[idx1xc], rvpstate.arr_d[idx1xc-BLEN()]) })});
+  unpack_1x := ToBits<SLEN()>(v_1x);
+  FromBits<SLEN()>(unpack_1x) = v_1x;
+
+  idx2x := idx1x + 1;
+  in_a2x := InRange<BLEN()>(idx2x);
+  v_2x := [in_a2x, 1-in_a2x] -> (rvpstate.arr_a[idx2x],
+    { idx2xb := idx2x - BLEN();
+      in_b2x := InRange<BLEN()>(idx2xb);
+      [in_b2x, 1-in_b2x] -> (rvpstate.arr_b[idx2xb],
+        { idx2xc := idx2xb - BLEN();
+          in_c2x := InRange<BLEN()>(idx2xc);
+          [in_c2x, 1-in_c2x] -> (rvpstate.arr_c[idx2xc], rvpstate.arr_d[idx2xc-BLEN()]) })});
+  unpack_2x := ToBits<SLEN()>(v_2x);
+  FromBits<SLEN()>(unpack_2x) = v_2x;
+
+  XP1 := IncMod5(X);
+  idx2xp1 := (XP1+5*Y)*3 + 2;
+  in_a2xp1 := InRange<BLEN()>(idx2xp1);
+  v_2xp1 := [in_a2xp1, 1-in_a2xp1] -> (rvpstate.arr_a[idx2xp1],
+    { idx2xp1b := idx2xp1 - BLEN();
+      in_b2xp1 := InRange<BLEN()>(idx2xp1b);
+      [in_b2xp1, 1-in_b2xp1] -> (rvpstate.arr_b[idx2xp1b],
+        { idx2xp1c := idx2xp1b - BLEN();
+          in_c2xp1 := InRange<BLEN()>(idx2xp1c);
+          [in_c2xp1, 1-in_c2xp1] -> (rvpstate.arr_c[idx2xp1c], rvpstate.arr_d[idx2xp1c-BLEN()]) })});
+  unpack_2xp1 := ToBits<SLEN()>(v_2xp1);
+  FromBits<SLEN()>(unpack_2xp1) = v_2xp1;
+
+  idx2xp2 := (IncMod5(XP1)+5*Y)*3 + 2;
+  in_a2xp2 := InRange<BLEN()>(idx2xp2);
+  v_2xp2 := [in_a2xp2, 1-in_a2xp2] -> (rvpstate.arr_a[idx2xp2],
+    { idx2xp2b := idx2xp2 - BLEN();
+      in_b2xp2 := InRange<BLEN()>(idx2xp2b);
+      [in_b2xp2, 1-in_b2xp2] -> (rvpstate.arr_b[idx2xp2b],
+        { idx2xp2c := idx2xp2b - BLEN();
+          in_c2xp2 := InRange<BLEN()>(idx2xp2c);
+          [in_c2xp2, 1-in_c2xp2] -> (rvpstate.arr_c[idx2xp2c], rvpstate.arr_d[idx2xp2c-BLEN()]) })});
+  unpack_2xp2 := ToBits<SLEN()>(v_2xp2);
+  FromBits<SLEN()>(unpack_2xp2) = v_2xp2;
+
+  nand2_2 := for i : 0..SLEN() {
+    Reg(nand2(unpack_2xp1[i], unpack_2xp2[i])) };
+
+  result := [Reg(FromBits<BLEN()>(for i : 0..BLEN() {xor2(unpack_0x[i], rvprev01.arr_a[i])})),
+             Reg(FromBits<SLEN()>(for i : 0..SLEN() {xor2(unpack_1x[i], rvprev01.arr_f[i])})),
+             Reg(FromBits<SLEN()>(for i : 0..SLEN() {xor2(unpack_2x[i], nand2_2[i])}))];
+  withrs_f := ConcatZeros<3,SLEN()-3>(result);
+
+  RetTuple(dummyB(), dummyB(), dummyB(), dummyE(), dummyS(), withrs_f, 2*(X+1), Y+10)
+}
+
+component chi_inner2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: RetTuple,
+  rvprev05: RetTuple, rvprev07: RetTuple, rvprev09: RetTuple) {
+  [Isz(Y), 1-Isz(Y)] -> (
+    { a := [rvprev09.arr_f[0],rvprev09.arr_f[1],rvprev09.arr_f[2],
+            rvprev07.arr_f[0],rvprev07.arr_f[1],rvprev07.arr_f[2],
+            rvprev05.arr_f[0],rvprev05.arr_f[1],rvprev05.arr_f[2],
+            rvprev03.arr_f[0],rvprev03.arr_f[1],rvprev03.arr_f[2],
+            rvprev01.arr_f[0],rvprev01.arr_f[1],rvprev01.arr_f[2],
+            rvpstate.arr_a[15],rvpstate.arr_a[16],rvpstate.arr_a[17],
+            rvpstate.arr_a[18],rvpstate.arr_a[19],rvpstate.arr_a[20],
+            rvpstate.arr_a[21]];
+      RetTuple(a, rvpstate.arr_b, rvpstate.arr_c, rvpstate.arr_d,
+               dummyS(), dummyS(), 0, 11)
+    },
+    [Isz(Y-1), 1-Isz(Y-1)] -> (
+      { rs1 := [rvprev09.arr_f[0], rvprev09.arr_f[1], rvprev09.arr_f[2],
+                rvprev07.arr_f[0], rvprev07.arr_f[1], rvprev07.arr_f[2],
+                rvprev05.arr_f[0]+0];
+        a := Concatenate<Val, 15, 7>(for i : 0..15 { rvpstate.arr_a[i] }, rs1);
+        rs2 := [rvprev05.arr_f[1], rvprev05.arr_f[2],
+                rvprev03.arr_f[0], rvprev03.arr_f[1], rvprev03.arr_f[2],
+                rvprev01.arr_f[0], rvprev01.arr_f[1], rvprev01.arr_f[2]+0];
+        b := Concatenate<Val, 8, 14>(rs2, for i : 8..22 { rvpstate.arr_b[i] });
+        RetTuple(a, b, rvpstate.arr_c, rvpstate.arr_d,
+                 dummyS(), dummyS(), 0, 12)
+      },
+      [Isz(Y-2), 1-Isz(Y-2)] -> (
+        { rs1 := [rvprev09.arr_f[0], rvprev09.arr_f[1], rvprev09.arr_f[2],
+                  rvprev07.arr_f[0], rvprev07.arr_f[1], rvprev07.arr_f[2],
+                  rvprev05.arr_f[0], rvprev05.arr_f[1], rvprev05.arr_f[2],
+                  rvprev03.arr_f[0], rvprev03.arr_f[1], rvprev03.arr_f[2],
+                  rvprev01.arr_f[0], rvprev01.arr_f[1]+0];
+          b := Concatenate<Val, 8, 14>(for i : 0..8 { rvpstate.arr_b[i] }, rs1);
+          rs2 := for i : 2..3 { rvprev01.arr_f[i] };
+          c := Concatenate<Reg, 1, 21>(rs2, for i : 1..22 { rvpstate.arr_c[i] });
+          RetTuple(rvpstate.arr_a, b, c, rvpstate.arr_d,
+                   dummyS(), dummyS(), 0, 13)
+        },
+        [Isz(Y-3), 1-Isz(Y-3)] -> (
+          { rs1 := [rvprev09.arr_f[0], rvprev09.arr_f[1], rvprev09.arr_f[2],
+                    rvprev07.arr_f[0], rvprev07.arr_f[1], rvprev07.arr_f[2],
+                    rvprev05.arr_f[0], rvprev05.arr_f[1], rvprev05.arr_f[2],
+                    rvprev03.arr_f[0], rvprev03.arr_f[1], rvprev03.arr_f[2],
+                    rvprev01.arr_f[0], rvprev01.arr_f[1], rvprev01.arr_f[2]+0];
+            c1 := Concatenate<Val, 1, 15>([rvpstate.arr_c[0]+0], rs1);
+            c := Concatenate<Val, 16, 6>(c1, for i : 16..22 { rvpstate.arr_c[i] });
+            RetTuple(rvpstate.arr_a, rvpstate.arr_b, c, rvpstate.arr_d,
+                     dummyS(), dummyS(), 0, 14)
+          },
+          { rs1 := [rvprev09.arr_f[0], rvprev09.arr_f[1], rvprev09.arr_f[2],
+                    rvprev07.arr_f[0], rvprev07.arr_f[1], rvprev07.arr_f[2]+0];
+            c := Concatenate<Val, 16, 6>(for i : 0..16 { rvpstate.arr_c[i] }, rs1); 
+            rs2 := [rvprev05.arr_f[0], rvprev05.arr_f[1], rvprev05.arr_f[2],
+                    rvprev03.arr_f[0], rvprev03.arr_f[1], rvprev03.arr_f[2],
+                    rvprev01.arr_f[0], rvprev01.arr_f[1], rvprev01.arr_f[2]+0];
+            d := ConcatZeros<9, 15>(rs2);
+            RetTuple(rvpstate.arr_a, rvpstate.arr_b, c, d, dummyS(), dummyS(), 0, 15)
+          }))))
+}
+
+component chi_outer<Y: Val>(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
+                            rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
+                            rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple,
+                            rvprev10: RetTuple, rvprev11: RetTuple) {
+  inner_onehot := OneHot<11>(rvprev01.inner);
+  inner_onehot -> (
+    chi_inner0<0,Y>(rvprev01),
+    chi_inner1<0,Y>(rvprev02, rvprev01),
+    chi_inner0<1,Y>(rvprev03),
+    chi_inner1<1,Y>(rvprev04, rvprev01),
+    chi_inner0<2,Y>(rvprev05),
+    chi_inner1<2,Y>(rvprev06, rvprev01),
+    chi_inner0<3,Y>(rvprev07),
+    chi_inner1<3,Y>(rvprev08, rvprev01),
+    chi_inner0<4,Y>(rvprev09),
+    chi_inner1<4,Y>(rvprev10, rvprev01),
+    chi_inner2<Y>(rvprev11, rvprev01, rvprev03, rvprev05, rvprev07, rvprev09)
+  )
+}
+
 component fstep(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
                 rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
                 rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple,
                 rvprev10: RetTuple, rvprev11: RetTuple) {
-  outer_onehot := OneHot<10>(rvprev01.outer);
-  inner_onehot := OneHot<11>(rvprev01.inner);
+  outer_onehot := OneHot<15>(rvprev01.outer);
   outer_onehot -> (
-    xor5words_outer<0>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05),
-    xor5words_outer<1>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05),
-    xor5words_outer<2>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05),
-    xor5words_outer<3>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05),
-    xor5words_outer<4>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05),
-    rho_outer<0>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05,
-                  rvprev06, rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
-    rho_outer<1>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05,
-                  rvprev06, rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
-    rho_outer<2>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05,
-                  rvprev06, rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
-    rho_outer<3>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05,
-                  rvprev06, rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
-    rho_outer<4>(inner_onehot, rvprev01, rvprev02, rvprev03, rvprev04, rvprev05,
-                  rvprev06, rvprev07, rvprev08, rvprev09, rvprev10, rvprev11)
+    xor5words_outer<0>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05),
+    xor5words_outer<1>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05),
+    xor5words_outer<2>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05),
+    xor5words_outer<3>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05),
+    xor5words_outer<4>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05),
+    rho_outer<0>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+                 rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
+    rho_outer<1>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+                 rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
+    rho_outer<2>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+                 rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
+    rho_outer<3>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+                 rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
+    rho_outer<4>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+                 rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
+    chi_outer<0>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+                 rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
+    chi_outer<1>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+                 rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
+    chi_outer<2>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+                 rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
+    chi_outer<3>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+                 rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
+    chi_outer<4>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+                 rvprev07, rvprev08, rvprev09, rvprev10, rvprev11)
   )
 }
 
@@ -572,79 +794,79 @@ test RotateLeft64bit {
 test KeccakTest01 {
   arr := for i : 0..75 { (999+7*i)*(977-9*i) };
   x := fkeccak(arr);
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[0]-1283708) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[1]-1257658) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[2]-1300756) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[3]-2314385) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[4]-1264781) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[5]-1107405) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[6]-533578) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[7]-745759) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[8]-1802187) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[9]-753626) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[10]-333317) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[11]-725108) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[12]-3505293) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[13]-1824121) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[14]-1864658) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[15]-1034941) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[16]-1966174) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[17]-337821) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[18]-2763489) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[19]-519966) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[20]-640852) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[21]-245764) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[0]-575058) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[1]-950852) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[2]-4067299) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[3]-1742123) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[4]-1725931) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[5]-2879520) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[6]-787908) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[7]-1958650) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[8]-3574923) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[9]-1510998) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[10]-1413203) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[11]-3395861) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[12]-1999258) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[13]-28939) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[14]-2734294) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[15]-187274) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[16]-1274675) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[17]-1548935) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[18]-1557612) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[19]-1041083) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[20]-3310678) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[21]-606282) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[0]-1218410) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[1]-1223777) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[2]-1425591) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[3]-2020828) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[4]-2609105) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[5]-1238538) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[6]-960187) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[7]-3241757) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[8]-630164) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[9]-1222450) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[10]-144716) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[11]-342910) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[12]-920418) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[13]-3917937) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[14]-2074335) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[15]-1910466) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[16]-1468513) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[17]-1684687) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[18]-1731664) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[19]-2131704) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[20]-419362) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[21]-91659) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[0]-3579998) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[1]-1256997) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[2]-1937970) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[3]-3889456) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[4]-1936527) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[5]-1409348) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[6]-3290295) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[7]-1542893) = 0;
-  Isz(10-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[8]-1259719) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[0]-1815094) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[1]-1773992) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[2]-1622806) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[3]-2099969) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[4]-1530509) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[5]-1107449) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[6]-3941455) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[7]-1155175) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[8]-990281) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[9]-654762) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[10]-341639) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[11]-563312) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[12]-1391628) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[13]-1808764) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[14]-1857307) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[15]-920249) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[16]-1441822) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[17]-206749) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[18]-1451266) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[19]-1441335) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[20]-1676031) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[21]-143364) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[0]-837270) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[1]-729172) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[2]-3802494) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[3]-562481) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[4]-1724654) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[5]-774240) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[6]-912068) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[7]-1385146) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[8]-4105289) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[9]-1528918) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[10]-430691) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[11]-2478868) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[12]-755198) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[13]-848259) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[14]-638086) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[15]-711560) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[16]-222835) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[17]-1288718) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[18]-117368) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[19]-713386) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[20]-3396930) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[21]-115138) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[0]-1242722) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[1]-171117) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[2]-1890595) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[3]-971996) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[4]-2477969) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[5]-1492064) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[6]-175867) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[7]-573228) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[8]-1251605) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[9]-230322) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[10]-135500) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[11]-359262) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[12]-842366) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[13]-2001889) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[14]-1933527) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[15]-1901793) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[16]-18535) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[17]-572618) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[18]-457824) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[19]-2744280) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[20]-714408) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[21]-91983) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[0]-3572953) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[1]-1125445) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[2]-2075313) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[3]-4133232) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[4]-1423501) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[5]-1951060) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[6]-1225263) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[7]-1165517) = 0;
+  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[8]-1194700) = 0;
 }
