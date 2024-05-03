@@ -75,7 +75,83 @@ component dummyS() { for i : 0.. SLEN() { 0 } }
 component dummyB() { for i : 0.. BLEN() { 0 } }
 component dummyE() { for i : 0.. RLEN() { 0 } }
 
-component rtable<x: Val, y:Val>() {
+component rctable(idx: Val) {
+  arr := [ [[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+           [[0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+           [[0,1,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[1,1,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+           [[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+           [[1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[0,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+           [[0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+           [[1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+           [[0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+           [[1,1,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+           [[1,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+           [[0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+           [[0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]] ];
+  arr[idx]
+}
+
+component rot_table<x: Val, y:Val>() {
   arr := [ [0,0,0], [1,0,0], [21,21,20], [21,7,0], [21,6,0],
            [21,15,0], [21,21,2], [6,0,0], [21,21,13], [20,0,0],
            [3,0,0], [10,0,0], [21,21,1], [21,4,0], [21,18,0],
@@ -97,7 +173,8 @@ component RetTuple(a: Array<Val, BLEN()>,
                   e: Array<Val, SLEN()>,
                   f: Array<Val, SLEN()>,
                   in_count: Val,
-                  out_count: Val) {
+                  out_count: Val,
+                  round: Val) {
   arr_a := for elem : a { Reg(elem) };
   arr_b := for elem : b { Reg(elem) };
   arr_c := for elem : c { Reg(elem) };
@@ -106,6 +183,7 @@ component RetTuple(a: Array<Val, BLEN()>,
   arr_f := for elem : f { Reg(elem) };
   inner := Reg(in_count);
   outer := Reg(out_count);
+  rnd := Reg(round);
 }
 
 component xor2(x: Val, y: Val) {
@@ -177,7 +255,7 @@ component xor5words_inner0<idx: Val>(rvprev01: RetTuple) {
   xor_cd := for i : 0..BLEN() {
     Reg(xor2(unpack_c[i], unpack_d[i])) };
 
-  RetTuple(xor_ab, xor_cd, dummyB(), dummyE(), dummyS(), dummyS(), 1, idx)
+  RetTuple(xor_ab, xor_cd, dummyB(), dummyE(), dummyS(), dummyS(), 1, idx, rvprev01.rnd)
 }
 
 component xor5words_inner1<idx: Val>(rvprev01: RetTuple, rvprev02: RetTuple) {
@@ -210,7 +288,7 @@ component xor5words_inner1<idx: Val>(rvprev01: RetTuple, rvprev02: RetTuple) {
   withr_ab2 := ConcatElem<Val,SLEN()>(xor_ab2, result);
 
   padded_c2 := ConcatZeros<SLEN(),BLEN()-SLEN()>(unpack_c2);
-  RetTuple(padded_c2, dummyB(), withr_ab2, dummyE(), dummyS(), dummyS(), 2, idx)
+  RetTuple(padded_c2, dummyB(), withr_ab2, dummyE(), dummyS(), dummyS(), 2, idx, rvprev01.rnd)
 }
 
 component xor5words_inner2<idx: Val>(rvprev01: RetTuple, rvprev03: RetTuple) {
@@ -245,7 +323,7 @@ component xor5words_inner2<idx: Val>(rvprev01: RetTuple, rvprev03: RetTuple) {
   padded_b3 := ConcatZeros<SLEN(),RLEN()-SLEN()>(unpack_b3);
   withr_cd2 := ConcatElem<Val,SLEN()>(xor_cd2, rvprev01.arr_c[BLEN()-1]);
   padded_abcd2 := ConcatZeros<SLEN(),BLEN()-SLEN()>(xor_abcd2);
-  RetTuple(dummyB(), withr_cd2, withr_a3, padded_b3, dummyS(), dummyS(), 3, idx)
+  RetTuple(dummyB(), withr_cd2, withr_a3, padded_b3, dummyS(), dummyS(), 3, idx, rvprev01.rnd)
 }
 
 component xor5words_inner3<idx: Val>(rvprev01: RetTuple, rvprev04: RetTuple) {
@@ -280,7 +358,7 @@ component xor5words_inner3<idx: Val>(rvprev01: RetTuple, rvprev04: RetTuple) {
   withr_ab3 := ConcatElem<Val,SLEN()>(xor_ab3, rvprev01.arr_c[BLEN()-1]);
   withr_abcd3 := ConcatElem<Val,SLEN()>(xor_abcd3, rvprev01.arr_b[BLEN()-1]);
 
-  RetTuple(withr_abcd3, withr_ab3, withr_cd3, dummyE(), dummyS(), dummyS(), 4, idx)
+  RetTuple(withr_abcd3, withr_ab3, withr_cd3, dummyE(), dummyS(), dummyS(), 4, idx, rvprev01.rnd)
 }
 
 component xor5words_inner4<idx: Val>(rvprev01: RetTuple, rvprev05: RetTuple) {
@@ -292,7 +370,7 @@ component xor5words_inner4<idx: Val>(rvprev01: RetTuple, rvprev05: RetTuple) {
   tmp_3 := ConcatElem<Val,INPLEN()-BLEN()*3+3*idx+1>(tmp_2, Reg(rvprev01.arr_b[BLEN()-1]));
   tmp_4 := ConcatElem<Val,INPLEN()-BLEN()*3+3*idx+2>(tmp_3, Reg(rvprev01.arr_c[BLEN()-1]));
   inp_d := ConcatZeros<INPLEN()-BLEN()*3+3*(idx+1),EREGLEN()-3*(idx+1)>(tmp_4);
-  RetTuple(inp_a, inp_b, inp_c, inp_d, dummyS(), dummyS(), 0, idx+1)
+  RetTuple(inp_a, inp_b, inp_c, inp_d, dummyS(), dummyS(), 0, idx+1, rvprev01.rnd)
 }
 
 component xor5words_outer<idx: Val>(rvprev01: RetTuple, rvprev02: RetTuple,
@@ -336,7 +414,7 @@ component rho_inner0<X: Val, Y: Val>(rvpstate: RetTuple) {
   pad_rc := ConcatZeros<SLEN(),BLEN()-SLEN()>(rotp.rot.c);
 
   padded_m1 := ConcatZeros<BLEN(),RLEN()-BLEN()>(unpack_m1);
-  RetTuple(rotp.rot.a, pad_rb, pad_rc, padded_m1, unpack_m2, unpack_m3, 2*X+1, Y+5)
+  RetTuple(rotp.rot.a, pad_rb, pad_rc, padded_m1, unpack_m2, unpack_m3, 2*X+1, Y+5, rvpstate.rnd)
 }
 
 component rho_inner1<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
@@ -386,14 +464,14 @@ component rho_inner1<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
   xor_1 := for i : 0..BLEN() { xor2(unpack_xy1[i], xor_mp1[i]) };
   xor_2 := for i : 0..SLEN() { xor2(unpack_xy2[i], xor_mp2[i]) };
   xor_3 := for i : 0..SLEN() { xor2(unpack_xy3[i], xor_mp3[i]) };
-  t := rtable<X,Y>();
+  t := rot_table<X,Y>();
   rotxor := RotLeft3<Val, BLEN(), SLEN(), SLEN(), t[0], t[1], t[2]>(xor_1, xor_2, xor_3);
   result := [Reg(FromBits<BLEN()>(rotxor.rot.a)),
              Reg(FromBits<SLEN()>(rotxor.rot.b)),
              Reg(FromBits<SLEN()>(rotxor.rot.c))];
 
   withrs_f := ConcatZeros<3,SLEN()-3>(result);
-  RetTuple(dummyB(), dummyB(), dummyB(), dummyE(), dummyS(), withrs_f, 2*(X+1), Y+5)
+  RetTuple(dummyB(), dummyB(), dummyB(), dummyE(), dummyS(), withrs_f, 2*(X+1), Y+5, rvprev01.rnd)
 }
 
 component rho_inner2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: RetTuple,
@@ -410,7 +488,7 @@ component rho_inner2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: R
                for i : 0..3 { rvprev01.arr_f[i] });
       a := Concatenate<Reg, 15, 7>(rs1, for i : 15..22 { rvpstate.arr_a[i] });
       RetTuple(a, rvpstate.arr_b, rvpstate.arr_c, rvpstate.arr_d,
-               dummyS(), dummyS(), 0, 6)
+               dummyS(), dummyS(), 0, 6, rvprev01.rnd)
     },
     [Isz(Y-1), 1-Isz(Y-1)] -> (
       { rs1 := [rvprev09.arr_f[0], rvprev09.arr_f[1], rvprev09.arr_f[2],
@@ -422,7 +500,7 @@ component rho_inner2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: R
                 rvprev01.arr_f[0], rvprev01.arr_f[1], rvprev01.arr_f[2]+0];
         b := Concatenate<Val, 8, 14>(rs2, for i : 8..22 { rvpstate.arr_b[i] });
         RetTuple(a, b, rvpstate.arr_c, rvpstate.arr_d,
-                 dummyS(), dummyS(), 0, 7)
+                 dummyS(), dummyS(), 0, 7, rvprev01.rnd)
       },
       [Isz(Y-2), 1-Isz(Y-2)] -> (
         { rs1 := [rvprev09.arr_f[0], rvprev09.arr_f[1], rvprev09.arr_f[2],
@@ -434,7 +512,7 @@ component rho_inner2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: R
           rs2 := for i : 2..3 { rvprev01.arr_f[i] };
           c := Concatenate<Reg, 1, 21>(rs2, for i : 1..22 { rvpstate.arr_c[i] });
           RetTuple(rvpstate.arr_a, b, c, rvpstate.arr_d,
-                   dummyS(), dummyS(), 0, 8)
+                   dummyS(), dummyS(), 0, 8, rvprev01.rnd)
         },
         [Isz(Y-3), 1-Isz(Y-3)] -> (
           { rs1 := [rvprev09.arr_f[0], rvprev09.arr_f[1], rvprev09.arr_f[2],
@@ -445,7 +523,7 @@ component rho_inner2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: R
             c1 := Concatenate<Val, 1, 15>([rvpstate.arr_c[0]+0], rs1);
             c := Concatenate<Val, 16, 6>(c1, for i : 16..22 { rvpstate.arr_c[i] });
             RetTuple(rvpstate.arr_a, rvpstate.arr_b, c, rvpstate.arr_d,
-                     dummyS(), dummyS(), 0, 9)
+                     dummyS(), dummyS(), 0, 9, rvprev01.rnd)
           },
           { // Keccak pi permuation:
             //c': arr_c[0,1,2,3,...,15],p09f[0],p09f[1],p09f[2],p07f[0],p07f[1],p07f[2]
@@ -481,7 +559,7 @@ component rho_inner2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: R
                   rvpstate.arr_c[1], rvpstate.arr_c[2], rvpstate.arr_c[3],     //B(3,4)=A(0,3)
                   rvprev07.arr_f[0], rvprev07.arr_f[1], rvprev07.arr_f[2],     //B(4,4)=A(1,4)
                   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-            RetTuple(a, b, c, d, dummyS(), dummyS(), 0, 10)
+            RetTuple(a, b, c, d, dummyS(), dummyS(), 0, 10, rvprev01.rnd)
           }))))
 }
 
@@ -559,7 +637,7 @@ component chi_inner0<X: Val, Y: Val>(rvpstate: RetTuple) {
     Reg(nand2(unpack_0xp1[i], unpack_0xp2[i])) };
   nand2_1 := for i : 0..SLEN() {
     Reg(nand2(unpack_1xp1[i], unpack_1xp2[i])) };
-  RetTuple(nand2_0, dummyB(), dummyB(), dummyE(), dummyS(), nand2_1, 2*X+1, Y+10)
+  RetTuple(nand2_0, dummyB(), dummyB(), dummyE(), dummyS(), nand2_1, 2*X+1, Y+10, rvpstate.rnd)
 }
 
 component chi_inner1<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
@@ -632,7 +710,7 @@ component chi_inner1<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
              Reg(FromBits<SLEN()>(for i : 0..SLEN() {xor2(unpack_2x[i], nand2_2[i])}))];
   withrs_f := ConcatZeros<3,SLEN()-3>(result);
 
-  RetTuple(dummyB(), dummyB(), dummyB(), dummyE(), dummyS(), withrs_f, 2*(X+1), Y+10)
+  RetTuple(dummyB(), dummyB(), dummyB(), dummyE(), dummyS(), withrs_f, 2*(X+1), Y+10, rvprev01.rnd)
 }
 
 component chi_inner2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: RetTuple,
@@ -647,7 +725,7 @@ component chi_inner2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: R
             rvpstate.arr_a[18],rvpstate.arr_a[19],rvpstate.arr_a[20],
             rvpstate.arr_a[21]];
       RetTuple(a, rvpstate.arr_b, rvpstate.arr_c, rvpstate.arr_d,
-               dummyS(), dummyS(), 0, 11)
+               dummyS(), dummyS(), 0, 11, rvprev01.rnd)
     },
     [Isz(Y-1), 1-Isz(Y-1)] -> (
       { rs1 := [rvprev09.arr_f[0], rvprev09.arr_f[1], rvprev09.arr_f[2],
@@ -659,7 +737,7 @@ component chi_inner2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: R
                 rvprev01.arr_f[0], rvprev01.arr_f[1], rvprev01.arr_f[2]+0];
         b := Concatenate<Val, 8, 14>(rs2, for i : 8..22 { rvpstate.arr_b[i] });
         RetTuple(a, b, rvpstate.arr_c, rvpstate.arr_d,
-                 dummyS(), dummyS(), 0, 12)
+                 dummyS(), dummyS(), 0, 12, rvprev01.rnd)
       },
       [Isz(Y-2), 1-Isz(Y-2)] -> (
         { rs1 := [rvprev09.arr_f[0], rvprev09.arr_f[1], rvprev09.arr_f[2],
@@ -671,7 +749,7 @@ component chi_inner2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: R
           rs2 := for i : 2..3 { rvprev01.arr_f[i] };
           c := Concatenate<Reg, 1, 21>(rs2, for i : 1..22 { rvpstate.arr_c[i] });
           RetTuple(rvpstate.arr_a, b, c, rvpstate.arr_d,
-                   dummyS(), dummyS(), 0, 13)
+                   dummyS(), dummyS(), 0, 13, rvprev01.rnd)
         },
         [Isz(Y-3), 1-Isz(Y-3)] -> (
           { rs1 := [rvprev09.arr_f[0], rvprev09.arr_f[1], rvprev09.arr_f[2],
@@ -682,7 +760,7 @@ component chi_inner2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: R
             c1 := Concatenate<Val, 1, 15>([rvpstate.arr_c[0]+0], rs1);
             c := Concatenate<Val, 16, 6>(c1, for i : 16..22 { rvpstate.arr_c[i] });
             RetTuple(rvpstate.arr_a, rvpstate.arr_b, c, rvpstate.arr_d,
-                     dummyS(), dummyS(), 0, 14)
+                     dummyS(), dummyS(), 0, 14, rvprev01.rnd)
           },
           { rs1 := [rvprev09.arr_f[0], rvprev09.arr_f[1], rvprev09.arr_f[2],
                     rvprev07.arr_f[0], rvprev07.arr_f[1], rvprev07.arr_f[2]+0];
@@ -690,16 +768,34 @@ component chi_inner2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: R
             rs2 := [rvprev05.arr_f[0], rvprev05.arr_f[1], rvprev05.arr_f[2],
                     rvprev03.arr_f[0], rvprev03.arr_f[1], rvprev03.arr_f[2],
                     rvprev01.arr_f[0], rvprev01.arr_f[1], rvprev01.arr_f[2]+0];
-            d := ConcatZeros<9, 15>(rs2);
-            RetTuple(rvpstate.arr_a, rvpstate.arr_b, c, d, dummyS(), dummyS(), 0, 15)
+            d := ConcatZeros<9, SLEN()-9>(rs2);
+            unpack_rnd := OneHot<24>(rvprev01.rnd);
+            unpack_a002 := ToBits<SLEN()>(rvpstate.arr_a[2]);
+            RetTuple(rvpstate.arr_a, rvpstate.arr_b, c, unpack_rnd, d, unpack_a002, 11, 14, rvprev01.rnd)
           }))))
+}
+
+component iota_xor_rc(rvprev01: RetTuple) {
+  unpack_a000 := ToBits<BLEN()>(rvprev01.arr_a[0]);
+  unpack_a001 := ToBits<SLEN()>(rvprev01.arr_a[1]);
+  rc := rvprev01.arr_d -> (rctable(0),rctable(1),rctable(2),rctable(3),rctable(4),
+    rctable(5),rctable(6),rctable(7),rctable(8),rctable(9),rctable(10),rctable(11),
+    rctable(12),rctable(13),rctable(14),rctable(15),rctable(16),rctable(17),
+    rctable(18),rctable(19),rctable(20),rctable(21),rctable(22),rctable(23));
+  next_rnd := rvprev01.arr_d -> (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,0);
+  a00 := [FromBits<BLEN()>(for i : 0..BLEN() {xor2(rc[0][i],unpack_a000[i])}),
+          FromBits<SLEN()>(for i : 0..SLEN() {xor2(rc[1][i],unpack_a001[i])}),
+          FromBits<SLEN()>(for i : 0..SLEN() {xor2(rc[2][i],rvprev01.arr_f[i])})];
+  a := Concatenate<Val,3,BLEN()-3>(a00, for i : 3..BLEN() {rvprev01.arr_a[i]});
+  d := ConcatZeros<SLEN(),RLEN()-SLEN()>(rvprev01.arr_e);
+  RetTuple(a, rvprev01.arr_b, rvprev01.arr_c, d, dummyS(), dummyS(), 0, 0, next_rnd)
 }
 
 component chi_outer<Y: Val>(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
                             rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
                             rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple,
                             rvprev10: RetTuple, rvprev11: RetTuple) {
-  inner_onehot := OneHot<11>(rvprev01.inner);
+  inner_onehot := OneHot<12>(rvprev01.inner);
   inner_onehot -> (
     chi_inner0<0,Y>(rvprev01),
     chi_inner1<0,Y>(rvprev02, rvprev01),
@@ -711,7 +807,8 @@ component chi_outer<Y: Val>(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: Re
     chi_inner1<3,Y>(rvprev08, rvprev01),
     chi_inner0<4,Y>(rvprev09),
     chi_inner1<4,Y>(rvprev10, rvprev01),
-    chi_inner2<Y>(rvprev11, rvprev01, rvprev03, rvprev05, rvprev07, rvprev09)
+    chi_inner2<Y>(rvprev11, rvprev01, rvprev03, rvprev05, rvprev07, rvprev09),
+    iota_xor_rc(rvprev01)
   )
 }
 
@@ -755,17 +852,14 @@ component fill_input(inp_vals: Array<Val, INPLEN()>) {
   inp_c := for i : BLEN()*2..BLEN()*3 { Reg(inp_vals[i]) };
   tmp := for i : BLEN()*3..INPLEN() { Reg(inp_vals[i]) };
   inp_d := ConcatZeros<INPLEN()-BLEN()*3, EREGLEN()>(tmp);
-  inner_counter := 0;
-  outer_counter := 0;
-  RetTuple(inp_a, inp_b, inp_c, inp_d, dummyS(), dummyS(), inner_counter, outer_counter)
+  RetTuple(inp_a, inp_b, inp_c, inp_d, dummyS(), dummyS(), 0, 0, 0)
 }
 
 component fkeccak(inp_vals: Array<Val, INPLEN()>) {
   retvals : RetTuple;
   PC := NondetReg( GetCycle() );
 
-  round := [Isz(PC), 1-Isz(PC)];
-  retvals := round -> (
+  retvals := [Isz(PC), 1-Isz(PC)] -> (
     fill_input(inp_vals),
     fstep(retvals@1, retvals@2, retvals@3, retvals@4, retvals@5, retvals@6, retvals@7,
           retvals@8, retvals@9, retvals@10, retvals@11)
@@ -778,12 +872,12 @@ test RotateLeft64bit {
   ua := ToBits<BLEN()>(arr[0]);
   ub := ToBits<SLEN()>(arr[1]);
   uc := ToBits<SLEN()>(arr[2]);
-  t20 := rtable<2,0>();
+  t20 := rot_table<2,0>();
   result1 := RotLeft3<Val, BLEN(), SLEN(), SLEN(), t20[0],t20[1],t20[2]>(ua, ub, uc);
   FromBits<BLEN()>(result1.rot.a) = 244005;
   FromBits<SLEN()>(result1.rot.b) = 1816316;
   FromBits<SLEN()>(result1.rot.c) = 1815730;
-  t32 := rtable<3,2>();
+  t32 := rot_table<3,2>();
   result2 := RotLeft3<Val, BLEN(), SLEN(), SLEN(), t32[0],t32[1],t32[2]>(ua, ub, uc);
   FromBits<BLEN()>(result2.rot.a) = 2960567;
   FromBits<SLEN()>(result2.rot.b) = 1516731;
@@ -794,79 +888,154 @@ test RotateLeft64bit {
 test KeccakTest01 {
   arr := for i : 0..75 { (999+7*i)*(977-9*i) };
   x := fkeccak(arr);
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[0]-1815094) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[1]-1773992) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[2]-1622806) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[3]-2099969) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[4]-1530509) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[5]-1107449) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[6]-3941455) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[7]-1155175) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[8]-990281) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[9]-654762) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[10]-341639) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[11]-563312) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[12]-1391628) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[13]-1808764) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[14]-1857307) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[15]-920249) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[16]-1441822) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[17]-206749) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[18]-1451266) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[19]-1441335) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[20]-1676031) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_a[21]-143364) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[0]-837270) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[1]-729172) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[2]-3802494) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[3]-562481) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[4]-1724654) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[5]-774240) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[6]-912068) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[7]-1385146) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[8]-4105289) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[9]-1528918) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[10]-430691) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[11]-2478868) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[12]-755198) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[13]-848259) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[14]-638086) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[15]-711560) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[16]-222835) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[17]-1288718) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[18]-117368) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[19]-713386) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[20]-3396930) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_b[21]-115138) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[0]-1242722) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[1]-171117) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[2]-1890595) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[3]-971996) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[4]-2477969) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[5]-1492064) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[6]-175867) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[7]-573228) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[8]-1251605) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[9]-230322) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[10]-135500) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[11]-359262) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[12]-842366) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[13]-2001889) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[14]-1933527) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[15]-1901793) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[16]-18535) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[17]-572618) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[18]-457824) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[19]-2744280) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[20]-714408) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_c[21]-91983) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[0]-3572953) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[1]-1125445) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[2]-2075313) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[3]-4133232) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[4]-1423501) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[5]-1951060) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[6]-1225263) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[7]-1165517) = 0;
-  Isz(15-x.retvals.outer)*Isz(x.retvals.inner)*(x.retvals.arr_d[8]-1194700) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_a[0]-2156009) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_a[1]-894020) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_a[2]-1635079) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_a[3]-2974912) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_a[4]-1714914) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_a[5]-233431) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_a[6]-1498990) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_a[7]-1392255) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_a[8]-1765233) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_a[9]-2636423) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_a[10]-939155) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_a[11]-1990383) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_a[12]-3286682) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_a[13]-590144) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_a[14]-394569) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_a[15]-3202450) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_a[16]-1983480) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_a[17]-1437837) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_a[18]-2218102) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_a[19]-995541) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_a[20]-951287) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_a[21]-1825249) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_b[0]-466515) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_b[1]-26578) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_b[2]-2809454) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_b[3]-896606) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_b[4]-1249455) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_b[5]-1638935) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_b[6]-359204) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_b[7]-1382447) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_b[8]-1773568) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_b[9]-317000) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_b[10]-1389863) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_b[11]-1519576) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_b[12]-1768787) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_b[13]-1628985) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_b[14]-1920360) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_b[15]-543691) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_b[16]-580697) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_b[17]-1284275) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_b[18]-767539) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_b[19]-651) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_b[20]-875740) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_b[21]-1703373) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_c[0]-44770) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_c[1]-1517619) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_c[2]-1466171) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_c[3]-1817254) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_c[4]-421050) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_c[5]-474393) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_c[6]-232247) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_c[7]-1371926) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_c[8]-1697912) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_c[9]-1840060) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_c[10]-2563680) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_c[11]-1777645) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_c[12]-1025633) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_c[13]-2968453) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_c[14]-1435481) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_c[15]-101454) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_c[16]-2755276) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_c[17]-1139445) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_c[18]-1568850) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_c[19]-1531165) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_c[20]-1353305) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_c[21]-133120) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_d[0]-2037496) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_d[1]-1555136) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_d[2]-1883106) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_d[3]-524859) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_d[4]-934765) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_d[5]-1737377) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_d[6]-180792) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_d[7]-1945152) = 0;
+  GetCycle()*Isz(x.retvals.rnd)*Isz(x.retvals.outer)*Isz(x.retvals.inner)*
+    (x.retvals.arr_d[8]-153532) = 0;
 }
