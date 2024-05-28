@@ -331,7 +331,10 @@ private:
 
       SmallVector<ZStruct::FieldInfo> submembers;
       for (auto field : type.getFields().drop_front()) {
-        assert(field.type == Zhlt::getNondetRegLayoutType(ctx));
+        if (field.type != Zhlt::getNondetRegLayoutType(ctx)) {
+          llvm::errs() << "Expected a nondet reg layout type, but got " << field.type << "\n";
+          abort();
+        }
         submembers.push_back({field.name, extType});
       }
       auto fieldName = StringAttr::get(ctx, type.getId());

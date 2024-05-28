@@ -175,6 +175,14 @@ struct TestExternHandler : public zirgen::Zll::ExternHandler {
       check(args.size() == 0, "GetCycle expects no arguments");
       check(outCount == 1, "GetCycle returns one result");
       results.push_back(cycle);
+    } else if (name == "SimpleMemoryPoke") {
+      check(args.size() == 2, "SimpleMemoryPoke expects 2 arguments");
+      auto fpArgs = asFpArray(args);
+      memory[fpArgs[0]] = fpArgs[1];
+    } else if (name == "SimpleMemoryPeek") {
+      check(args.size() == 1, "SimpleMemoryPeek expects 1 arguments");
+      auto fpArgs = asFpArray(args);
+      results.push_back(memory[fpArgs[0]]);
     } else if (name == "MemoryPoke") {
       auto fpArgs = asFpArray(args);
       check(args.size() == 3, "MemoryPoke expects 3 arguments");

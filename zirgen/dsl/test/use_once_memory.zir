@@ -1,0 +1,61 @@
+// RUN: zirgen --test %s --test-cycles=2 2>&1 | FileCheck %s
+
+extern SimpleMemoryPoke(index: Val, data: Val);
+extern SimpleMemoryPeek(index: Val) : Val;
+extern IsFirstCycle() : Val;
+
+component NUM_DIGEST_ELEMS() { 16 }
+
+component Digest(elems: Array<Val, NUM_DIGEST_ELEMS()>) {
+  elems
+}
+
+component NondetDigestReg(elems: Digest) {
+  elemRegs := for elem : elems { NondetReg(elem) };
+  Digest(elemRegs)
+}
+
+// Argument for memory element where each (index, digest) is written
+// exactly once then is read exactly once.
+argument UseOnceMemoryElement(c: Val, i: Val, d: Digest) {
+  count := Reg(c);
+  index := Reg(i);
+  digest := NondetDigestReg(d);
+}
+
+component ReadMemory(i: Val) {
+  digest := Digest(for elemIdx : 0..NUM_DIGEST_ELEMS() { SimpleMemoryPeek(i * NUM_DIGEST_ELEMS() + elemIdx) });
+  elem := UseOnceMemoryElement(-1, i, digest);
+  elem.digest
+}
+
+component WriteMemory(i: Val, d: Digest) {
+  for elemIdx : 0..NUM_DIGEST_ELEMS() {
+     SimpleMemoryPoke(i * NUM_DIGEST_ELEMS() + elemIdx, d[elemIdx]);
+  };
+  elem := UseOnceMemoryElement(1, i, d);
+  for elemIdx : 0..NUM_DIGEST_ELEMS()  {
+    elem.digest[elemIdx] = d[elemIdx];
+  }
+}
+
+// TODO: Change these two from "component" to "comp_major" when
+// we can handle these complicated memory arguments.
+component WriteStep() {
+    WriteMemory(0, Digest(1000..1016));
+}
+component ReadStep() {
+    mem := ReadMemory(0);
+    for elemIdx : 0..NUM_DIGEST_ELEMS() {
+       Log("read %u = %u", elemIdx, mem[elemIdx])
+    }
+}
+
+test {
+  isFirst := NondetReg(IsFirstCycle());
+  [isFirst, 1 - isFirst] -> (
+     WriteStep(),
+     ReadStep()
+  )
+}
+
