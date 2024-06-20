@@ -1207,6 +1207,7 @@ component fstep(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
   PC := NondetReg(GetCycle());
   invPC := NondetReg(Inv(PC));
   is_first_cycle := 1 - PC*invPC;
+  is_first_cycle * PC = 0;
   outer_idx := [is_first_cycle, 1-is_first_cycle] -> (
     {
       // PC@1 = total_cycles - 1;
@@ -1260,7 +1261,7 @@ component fkeccak() {
 }
 
 test KeccakTest01 {
-  x := fkeccak();
+  fkeccak();
 }
 
 /*
