@@ -121,7 +121,10 @@ void openMainFile(llvm::SourceMgr& sourceManager, std::string filename) {
 struct TestExternHandler : public zirgen::Zll::ExternHandler {
   std::map<uint32_t, uint32_t> memory;
   std::map<uint64_t, std::map<uint64_t, uint64_t>> lookups;
+  std::ifstream accel_bytes;
   TestExternHandler() {
+    accel_bytes = std::ifstream("/tmp/accel_inp", std::ios::binary | std::ios::in);
+    accel_bytes.exceptions(std::ios_base::failbit | std::ios_base::badbit);
     if (testElf != "") {
       llvm::outs() << "LOADING FILE: '" << testElf << "'\n";
       auto file = risc0::loadFile(testElf);
@@ -225,6 +228,19 @@ struct TestExternHandler : public zirgen::Zll::ExternHandler {
         }
       }
       results.push_back(ret);
+    } else if (name == "ReadNext") {
+        check(args.size() == 0, "ReadNext expects no arguments");
+        check(outCount == 1, "ReadNext returns one result");
+        char w[4];
+        int r = 0;
+        try {
+          accel_bytes.read(w, 4);
+          r = std::stoi(w, nullptr, 16);
+        }
+        catch (...) {
+          os << "fail ";
+        }
+        results.push_back(r);
     } else if (name == "Divide") {
       check(args.size() == 5, "Divide expects 5 arguments");
       check(outCount == 4, "Divide returns 5 results");
