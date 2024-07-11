@@ -1,101 +1,6 @@
 import one_hot;
 extern GetCycle() : Val;
-
-component IOBLKS() {
- arr := [0x0000,0x6854,0x2065,0x7571,0x6369,0x206B, //quickBrownFox
-         0x7262,0x776F,0x206E,0x6F66,0x2078,
-         0x756A,0x706D,0x2073,0x766F,0x7265,
-         0x7420,0x6568,0x6C20,0x7A61,0x2079,
-         0x6F64,0x2E67,0x6854,0x2065,0x7571,
-         0x6369,0x206B,0x7262,0x776F,0x206E,
-         0x6F66,0x2078,0x756A,0x706D,0x2073,
-         0x766F,0x7265,0x7420,0x6568,0x6C20,
-         0x7A61,0x2079,0x6F64,0x2E67,0x6854,
-         0x2065,0x7571,0x6369,0x206B,0x7262,
-         0x776F,0x206E,0x6F66,0x2078,0x756A,
-         0x706D,0x2073,0x766F,0x7265,0x7420,
-         0x6568,0x6C20,0x7A61,0x2079,0x6F64,
-         0x2E67,0x6854,0x2065,
-         0x0000,0x7571,0x6369,0x206B,0x7262,0x776F,
-         0x206E,0x6F66,0x2078,0x756A,0x706D,
-         0x2073,0x766F,0x7265,0x7420,0x6568,
-         0x6C20,0x7A61,0x2079,0x6F64,0x2E67,
-         0x6854,0x2065,0x7571,0x6369,0x206B,
-         0x7262,0x776F,0x206E,0x6F66,0x2078,
-         0x756A,0x706D,0x2073,0x766F,0x7265,
-         0x7420,0x6568,0x6C20,0x7A61,0x2079,
-         0x6F64,0x2E67,0x6854,0x2065,0x7571,
-         0x6369,0x206B,0x7262,0x776F,0x206E,
-         0x6F66,0x2078,0x756A,0x706D,0x2073,
-         0x766F,0x7265,0x7420,0x6568,0x6C20,
-         0x7A61,0x2079,0x6F64,0x2E67,0x6854,
-         0x2065,0x7571,0x6369,
-         0x0000,0x206B,0x7262,0x776F,0x206E,0x6F66,
-         0x2078,0x756A,0x706D,0x2073,0x766F,
-         0x7265,0x7420,0x6568,0x6C20,0x7A61,
-         0x2079,0x6F64,0x2E67,0x6854,0x2065,
-         0x7571,0x6369,0x206B,0x7262,0x776F,
-         0x206E,0x6F66,0x2078,0x756A,0x706D,
-         0x2073,0x766F,0x7265,0x7420,0x6568,
-         0x6C20,0x7A61,0x2079,0x6F64,0x2E67,
-         0x6854,0x2065,0x7571,0x6369,0x206B,
-         0x7262,0x776F,0x206E,0x6F66,0x2078,
-         0x756A,0x706D,0x2073,0x766F,0x7265,
-         0x7420,0x6568,0x6C20,0x7A61,0x2079,
-         0x6F64,0x2E67,0x6854,0x2065,0x7571,
-         0x6369,0x206B,0x7262,
-         0x0000,0x776F,0x206E,0x6F66,0x2078,0x756A,
-         0x706D,0x2073,0x766F,0x7265,0x7420,
-         0x6568,0x6C20,0x7A61,0x2079,0x6F64,
-         0x2E67,0x6854,0x2065,0x7571,0x6369,
-         0x206B,0x7262,0x776F,0x206E,0x6F66,
-         0x2078,0x756A,0x706D,0x2073,0x766F,
-         0x7265,0x7420,0x6568,0x6C20,0x7A61,
-         0x2079,0x6F64,0x2E67,0x6854,0x2065,
-         0x7571,0x6369,0x206B,0x7262,0x776F,
-         0x206E,0x6F66,0x2078,0x756A,0x706D,
-         0x2073,0x766F,0x7265,0x7420,0x6568,
-         0x6C20,0x7A61,0x2079,0x6F64,0x2E67,
-         0x6854,0x2065,0x7571,0x6369,0x206B,
-         0x7262,0x776F,0x206E,
-         0x0000,0x6F66,0x2078,0x756A,0x706D,0x2073,
-         0x766F,0x7265,0x7420,0x6568,0x6C20,
-         0x7A61,0x2079,0x6F64,0x2E67,0x2E2E,
-         0x0001,0x0000,0x0000,0x0000,0x0000,
-         0x0000,0x0000,0x0000,0x0000,0x0000,
-         0x0000,0x0000,0x0000,0x0000,0x0000,
-         0x0000,0x0000,0x0000,0x0000,0x0000,
-         0x0000,0x0000,0x0000,0x0000,0x0000,
-         0x0000,0x0000,0x0000,0x0000,0x0000,
-         0x0000,0x0000,0x0000,0x0000,0x0000,
-         0x0000,0x0000,0x0000,0x0000,0x0000,
-         0x0000,0x0000,0x0000,0x0000,0x0000,
-         0x0000,0x0000,0x0000,0x0000,0x0000,
-         0x0000,0x0000,0x8000,
-         0x0001,0xbd77,0x3c88,0xb4ce,0x72b6, //output of quickBrownFox
-                0x5d44,0xb79e,0x9008,0xbe08,
-                0xcbbe,0x0bd3,0x62ac,0xe9d6,
-                0xfee5,0x47c1,0xa0e9,0x1e89,
-         0x0000,0x654b,0x6363,0x6b61,0x322d,0x3635, //SHA256Test
-         0x5420,0x7365,0x2074,0x6148,0x6873,
-         0x0001,0x0000,0x0000,0x0000,0x0000,
-         0x0000,0x0000,0x0000,0x0000,0x0000,
-         0x0000,0x0000,0x0000,0x0000,0x0000,
-         0x0000,0x0000,0x0000,0x0000,0x0000,
-         0x0000,0x0000,0x0000,0x0000,0x0000,
-         0x0000,0x0000,0x0000,0x0000,0x0000,
-         0x0000,0x0000,0x0000,0x0000,0x0000,
-         0x0000,0x0000,0x0000,0x0000,0x0000,
-         0x0000,0x0000,0x0000,0x0000,0x0000,
-         0x0000,0x0000,0x0000,0x0000,0x0000,
-         0x0000,0x0000,0x0000,0x0000,0x0000,
-         0x0000,0x0000,0x8000,
-         0x0001,0xD7A8,0x071B,0xAFF4,0xA426, //output of SHA256Test
-         0x21FF,0x7F02,0xFF62,0x2660,
-         0xF97F,0xC955,0xF063,0xC442,
-         0xA56D,0xE32E,0xAFCF,0x3C3D];
-  arr
-}
+extern ReadNext() : Val;
 
 // po2.zir unpacking up to 24 bits:
 component Po2(n: Val) {
@@ -170,9 +75,6 @@ component RLEN() { INPLEN()+EREGLEN()-3*BLEN() }
 component dummyS() { for i : 0.. SLEN() { 0 } }
 component dummyB() { for i : 0.. BLEN() { 0 } }
 component dummyE() { for i : 0.. RLEN() { 0 } }
-component OUTWORDS() { 16 } // 16*16==256bit output
-component BLKWORDS() { 68 } // 136/2
-component LENALL() {(BLKWORDS()+1)*6 + (OUTWORDS()+1)*2}
 component WORDLEN() { 16 }
 
 component rctable(idx: Val) {
@@ -958,18 +860,27 @@ component chi_inner2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: R
           }))))
 }
 
-component iota_xor_rc(rvprev01: RetTuple, blkvals: Array<Val, LENALL()>) {
+component iota_xor_rc(rvprev01: RetTuple) {
+  b := rvprev01.blk;
   unpack_a000 := ToBits<BLEN()>(rvprev01.arr_a[0]);
   unpack_a001 := ToBits<SLEN()>(rvprev01.arr_a[1]);
+
   rc := rvprev01.arr_d -> (rctable(0),rctable(1),rctable(2),rctable(3),rctable(4),
     rctable(5),rctable(6),rctable(7),rctable(8),rctable(9),rctable(10),rctable(11),
     rctable(12),rctable(13),rctable(14),rctable(15),rctable(16),rctable(17),
     rctable(18),rctable(19),rctable(20),rctable(21),rctable(22),rctable(23));
-  nxt := rvprev01.arr_d -> ([0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8],[0,9],
-                            [0,10],[0,11],[0,12],[0,13],[0,14],[0,15],[0,16],[0,17],
-                            [0,18],[0,19],[0,20],[0,21],[0,22],[0,23],
-                            { io := blkvals[0+rvprev01.blk];
-                              [1-io, io] -> ([15,0], [17,0]) });
+
+  // TODO: merge rc & nxt muxes
+
+  nxt := rvprev01.arr_d -> (
+    [0,1,b],[0,2,b],[0,3,b],[0,4,b],[0,5,b],[0,6,b],[0,7,b],[0,8,b],[0,9,b],
+    [0,10,b],[0,11,b],[0,12,b],[0,13,b],[0,14,b],[0,15,b],[0,16,b],[0,17,b],
+    [0,18,b],[0,19,b],[0,20,b],[0,21,b],[0,22,b],[0,23,b],
+    { newBlk := b-1;
+      invNewBlk := NondetReg(Inv(newBlk));
+      newBlk*(1-newBlk*invNewBlk) = 0;
+      [newBlk*invNewBlk, 1-newBlk*invNewBlk] -> ([15,0,newBlk], [17,0,0]) });
+
   a00 := [FromBits<BLEN()>(for i : 0..BLEN() {xor2(rc[0][i],unpack_a000[i])}),
           FromBits<SLEN()>(for i : 0..SLEN() {xor2(rc[1][i],unpack_a001[i])}),
           FromBits<SLEN()>(for i : 0..SLEN() {xor2(rc[2][i],rvprev01.arr_f[i])})];
@@ -977,7 +888,7 @@ component iota_xor_rc(rvprev01: RetTuple, blkvals: Array<Val, LENALL()>) {
   d := ConcatZeros<BLEN(),RLEN()-BLEN()>(rvprev01.arr_e);
 
   RetTuple(a, rvprev01.arr_b, rvprev01.arr_c, d, dummyB(), dummyB(),
-           0, nxt[0], nxt[1], rvprev01.blk)
+           0, nxt[0], nxt[1], nxt[2])
 }
 
 component chi_outer<Y: Val>(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
@@ -995,11 +906,11 @@ component chi_outer<Y: Val>(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: Re
     chi_inner0<4,Y>(rvprev07),
     chi_inner1<4,Y>(rvprev08, rvprev01),
     chi_inner2<Y>(rvprev09, rvprev01, rvprev03, rvprev04, rvprev06, rvprev07),
-    iota_xor_rc(rvprev01, IOBLKS())
+    iota_xor_rc(rvprev01)
   )
 }
 
-component absorb_word<X: Val, Y: Val>(rvprev: RetTuple, blkvals: Array<Val, LENALL()>) {
+component absorb_word<X: Val, Y: Val>(rvprev: RetTuple) {
   idx1 := 3*X + 15*Y + 0;
   idx2 := 3*X + 15*Y + 1;
   idx3 := 3*X + 15*Y + 2;
@@ -1025,15 +936,14 @@ component absorb_word<X: Val, Y: Val>(rvprev: RetTuple, blkvals: Array<Val, LENA
   unpack_f := ToBits<BLEN()>(v3);
   FromBits<BLEN()>(unpack_f) = v3;
 
-  idxinp := 1 + 4*X + 20*Y + rvprev.blk;
-  unpack_1 := ToBits<WORDLEN()>(blkvals[idxinp]);
-  FromBits<WORDLEN()>(unpack_1) = blkvals[idxinp];
-  unpack_2 := ToBits<WORDLEN()>(blkvals[idxinp+1]);
-  FromBits<WORDLEN()>(unpack_2) = blkvals[idxinp+1];
-  unpack_3 := ToBits<WORDLEN()>(blkvals[idxinp+2]);
-  FromBits<WORDLEN()>(unpack_3) = blkvals[idxinp+2];
-  unpack_4 := ToBits<WORDLEN()>(blkvals[idxinp+3]);
-  FromBits<WORDLEN()>(unpack_4) = blkvals[idxinp+3];
+  inp1 := ReadNext();
+  unpack_1 := ToBits<WORDLEN()>(inp1);
+  inp2 := ReadNext();
+  unpack_2 := ToBits<WORDLEN()>(inp2);
+  inp3 := ReadNext();
+  unpack_3 := ToBits<WORDLEN()>(inp3);
+  inp4 := ReadNext();
+  unpack_4 := ToBits<WORDLEN()>(inp4);
 
   arr12 := for i : 0..BLEN() {
     in_first12 := InRange<WORDLEN()>(i);
@@ -1091,18 +1001,18 @@ component absorb_copy1(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTupl
 component absorb_outer1(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
                         rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
                         rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple,
-                        rvprev10: RetTuple, blkvals: Array<Val, LENALL()>) {
+                        rvprev10: RetTuple) {
   inner_onehot := OneHot<10>(rvprev01.inner);
   inner_onehot -> (
-    absorb_word<0,0>(rvprev01, blkvals),
-    absorb_word<1,0>(rvprev02, blkvals),
-    absorb_word<2,0>(rvprev03, blkvals),
-    absorb_word<3,0>(rvprev04, blkvals),
-    absorb_word<4,0>(rvprev05, blkvals),
-    absorb_word<0,1>(rvprev06, blkvals),
-    absorb_word<1,1>(rvprev07, blkvals),
-    absorb_word<2,1>(rvprev08, blkvals),
-    absorb_word<3,1>(rvprev09, blkvals),
+    absorb_word<0,0>(rvprev01),
+    absorb_word<1,0>(rvprev02),
+    absorb_word<2,0>(rvprev03),
+    absorb_word<3,0>(rvprev04),
+    absorb_word<4,0>(rvprev05),
+    absorb_word<0,1>(rvprev06),
+    absorb_word<1,1>(rvprev07),
+    absorb_word<2,1>(rvprev08),
+    absorb_word<3,1>(rvprev09),
     absorb_copy1(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06, 
                  rvprev07, rvprev08, rvprev09, rvprev10)
   )
@@ -1127,29 +1037,28 @@ component absorb_copy2(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTupl
             rvprev09.arr_c[15], rvprev09.arr_c[16], rvprev09.arr_c[17], rvprev09.arr_c[18],
             rvprev09.arr_c[19], rvprev09.arr_c[20], rvprev09.arr_c[21]];
   RetTuple(rvprev09.arr_a, arr_b, arr_c, rvprev09.arr_d, dummyB(), dummyB(),
-           0, 0, 0, rvprev01.blk+BLKWORDS()+1)
+           0, 0, 0, rvprev01.blk)
 }
 
 component absorb_outer2(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
                         rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
-                        rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple,
-                        blkvals: Array<Val, LENALL()>) {
+                        rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple) {
   inner_onehot := OneHot<9>(rvprev01.inner);
   inner_onehot -> (
-    absorb_word<4,1>(rvprev01, blkvals),
-    absorb_word<0,2>(rvprev02, blkvals),
-    absorb_word<1,2>(rvprev03, blkvals),
-    absorb_word<2,2>(rvprev04, blkvals),
-    absorb_word<3,2>(rvprev05, blkvals),
-    absorb_word<4,2>(rvprev06, blkvals),
-    absorb_word<0,3>(rvprev07, blkvals),
-    absorb_word<1,3>(rvprev08, blkvals),
+    absorb_word<4,1>(rvprev01),
+    absorb_word<0,2>(rvprev02),
+    absorb_word<1,2>(rvprev03),
+    absorb_word<2,2>(rvprev04),
+    absorb_word<3,2>(rvprev05),
+    absorb_word<4,2>(rvprev06),
+    absorb_word<0,3>(rvprev07),
+    absorb_word<1,3>(rvprev08),
     absorb_copy2(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06, 
                  rvprev07, rvprev08, rvprev09)
   )
 }
 
-component equal_word<X: Val>(rvprev: RetTuple, blkvals: Array<Val, LENALL()>) {
+component equal_word<X: Val>(rvprev: RetTuple) {
   v1 := rvprev.arr_a[3*X + 0];
   v2 := rvprev.arr_a[3*X + 1];
   v3 := rvprev.arr_a[3*X + 2];
@@ -1160,15 +1069,14 @@ component equal_word<X: Val>(rvprev: RetTuple, blkvals: Array<Val, LENALL()>) {
   unpack_f := ToBits<SLEN()>(v3);
   FromBits<SLEN()>(unpack_f) = v3;
 
-  idxinp := 1 + 4*X + rvprev.blk;
-  unpack_1 := ToBits<WORDLEN()>(blkvals[idxinp]);
-  FromBits<WORDLEN()>(unpack_1) = blkvals[idxinp];
-  unpack_2 := ToBits<WORDLEN()>(blkvals[idxinp+1]);
-  FromBits<WORDLEN()>(unpack_2) = blkvals[idxinp+1];
-  unpack_3 := ToBits<WORDLEN()>(blkvals[idxinp+2]);
-  FromBits<WORDLEN()>(unpack_3) = blkvals[idxinp+2];
-  unpack_4 := ToBits<WORDLEN()>(blkvals[idxinp+3]);
-  FromBits<WORDLEN()>(unpack_4) = blkvals[idxinp+3];
+  inp1 := ReadNext();
+  unpack_1 := ToBits<WORDLEN()>(inp1);
+  inp2 := ReadNext();
+  unpack_2 := ToBits<WORDLEN()>(inp2);
+  inp3 := ReadNext();
+  unpack_3 := ToBits<WORDLEN()>(inp3);
+  inp4 := ReadNext();
+  unpack_4 := ToBits<WORDLEN()>(inp4);
 
   for i : 0..WORDLEN()
     { unpack_a[i] = unpack_1[i]; };
@@ -1184,19 +1092,28 @@ component equal_word<X: Val>(rvprev: RetTuple, blkvals: Array<Val, LENALL()>) {
     { unpack_f[i+3*WORDLEN()-BLEN()-SLEN()] = unpack_4[i]; };
 
   Z := Isz(X-3);
-  nxt := [Z, 1-Z] -> ([0,15,rvprev.blk+OUTWORDS()+1],[X+1,17,rvprev.blk]);
+  nxt := [1-Z, Z] -> (
+    [X+1, 17, 0],
+    { blk := NondetReg(ReadNext());
+      invBlk := NondetReg(Inv(blk));
+      [blk*invBlk, 1-blk*invBlk] -> (
+        [0, 15, blk],
+        [4, 17, 0])
+    });
   RetTuple(dummyB(), dummyB(), dummyB(), dummyE(), dummyB(), dummyB(),
            nxt[0], nxt[1], 0, nxt[2])
 }
 
-component equal_outer(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
-                      rvprev04: RetTuple, blkvals: Array<Val, LENALL()>) {
-  inner_onehot := OneHot<4>(rvprev01.inner);
+component setup_outer(rvprev01: RetTuple, rvprev02: RetTuple,
+                      rvprev03: RetTuple, rvprev04: RetTuple) {
+  inner_onehot := OneHot<5>(rvprev01.inner);
   inner_onehot -> (
-    equal_word<0,0>(rvprev01, blkvals),
-    equal_word<1,0>(rvprev02, blkvals),
-    equal_word<2,0>(rvprev03, blkvals),
-    equal_word<3,0>(rvprev04, blkvals)
+    equal_word<0,0>(rvprev01),
+    equal_word<1,0>(rvprev02),
+    equal_word<2,0>(rvprev03),
+    equal_word<3,0>(rvprev04),
+    RetTuple(rvprev01.arr_a, rvprev01.arr_b, rvprev01.arr_c, rvprev01.arr_d,
+             dummyB(), dummyB(), 4, 17, 0, 0)
   )
 }
 
@@ -1245,11 +1162,15 @@ component fstep(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
     chi_outer<4>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
                  rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
     absorb_outer1(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
-                  rvprev07, rvprev08, rvprev09, rvprev10, IOBLKS()),
+                  rvprev07, rvprev08, rvprev09, rvprev10),
     absorb_outer2(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
-                  rvprev07, rvprev08, rvprev09, IOBLKS()),
-    equal_outer(rvprev01, rvprev02, rvprev03, rvprev04, IOBLKS()),
-    RetTuple(dummyB(), dummyB(), dummyB(), dummyE(), dummyB(), dummyB(), 0, 15, 0, 0)
+                  rvprev07, rvprev08, rvprev09),
+    setup_outer(rvprev01, rvprev02, rvprev03, rvprev04),
+    { blk := NondetReg(ReadNext());
+      //invBlk := NondetReg(Inv(Blk)); Blk*InvBlk = 1; //maybe unneeded
+      RetTuple(dummyB(), dummyB(), dummyB(), dummyE(), dummyB(), dummyB(),
+               0, 15, 0, blk)
+    }
   )
 }
 
