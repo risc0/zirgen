@@ -117,8 +117,8 @@ component RetTuple(a: Array<Val, BLEN()>,
                    d: Array<Val, RLEN()>,
                    e: Array<Val, BLEN()>,
                    f: Array<Val, BLEN()>,
-                   in_count: Val,
-                   out_count: Val,
+                   minor_count: Val,
+                   major_count: Val,
                    round: Val,
                    block: Val,
                    memIdx: Val) {
@@ -128,8 +128,8 @@ component RetTuple(a: Array<Val, BLEN()>,
   arr_d := for elem : d { Reg(elem) };
   arr_e := for elem : e { Reg(elem) };
   arr_f := for elem : f { Reg(elem) };
-  inner := Reg(in_count);
-  outer := Reg(out_count);
+  minor := Reg(minor_count);
+  major := Reg(major_count);
   rnd := Reg(round);
   blk := Reg(block);
   midx := Reg(memIdx);
@@ -318,7 +318,7 @@ component sha256load<I: Val>(rvprev01: RetTuple, rvprev02: RetTuple,
 
 component sha256load_all(rvprev01: RetTuple, rvprev02: RetTuple,
                          rvprev03: RetTuple, rvprev04: RetTuple) {
-  minor_onehot := OneHot<16>(rvprev01.inner);
+  minor_onehot := OneHot<16>(rvprev01.minor);
   minor_onehot -> (
     sha256load<0>(rvprev01, rvprev02, rvprev03, rvprev04),
     sha256load<1>(rvprev01, rvprev02, rvprev03, rvprev04),
@@ -370,7 +370,7 @@ component sha256mix_all<S: Val>(rvprev01: RetTuple, rvprev02: RetTuple,
                                 rvprev03: RetTuple, rvprev04: RetTuple,
                                 rvprev07: RetTuple, rvprev15: RetTuple,
                                 rvprev16: RetTuple) {
-  minor_onehot := OneHot<16>(rvprev01.inner);
+  minor_onehot := OneHot<16>(rvprev01.minor);
   minor_onehot -> (
     sha256mix<S,0>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16),
     sha256mix<S,1>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16),
