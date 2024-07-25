@@ -192,14 +192,14 @@ component xor5words_result<Xidx: Val, Sidx: Val>(rvpst: RetTuple) {
   FromBits<CURRLEN>(xor_abcde)
 }
 
-component xor5words_inner0<Xidx: Val>(rvp01: RetTuple, rvpst: RetTuple) {
+component xor5words_minor0<Xidx: Val>(rvp01: RetTuple, rvpst: RetTuple) {
   result := Reg(xor5words_result<Xidx,0>(rvpst));
   withr_d := Concatenate<Val,BLEN(),2>(dummyB(), [result, 0]);
   RetTuple(dummyB(), dummyB(), dummyB(), withr_d, dummyB(), dummyB(),
            1, Xidx, rvpst.rnd, rvpst.blk, rvpst.midx)
 }
 
-component xor5words_inner1<Xidx: Val>(rvp01: RetTuple, rvpst: RetTuple) {
+component xor5words_minor1<Xidx: Val>(rvp01: RetTuple, rvpst: RetTuple) {
   result := Reg(xor5words_result<Xidx,1>(rvpst));
   withr_a := ConcatElem<Val,SLEN()>(dummyS(), rvp01.arr_d[0+BLEN()]);
   withr_b := ConcatElem<Val,SLEN()>(dummyS(), result);
@@ -207,7 +207,7 @@ component xor5words_inner1<Xidx: Val>(rvp01: RetTuple, rvpst: RetTuple) {
            2, Xidx, rvp01.rnd, rvp01.blk, rvp01.midx)
 }
 
-component xor5words_inner2<Xidx: Val>(rvp01: RetTuple, rvpst: RetTuple) {
+component xor5words_minor2<Xidx: Val>(rvp01: RetTuple, rvpst: RetTuple) {
   result := Reg(xor5words_result<Xidx,2>(rvpst));
   withr_a := ConcatElem<Val,SLEN()>(dummyS(), rvp01.arr_a[0+SLEN()]);
   withr_b := ConcatElem<Val,SLEN()>(dummyS(), rvp01.arr_b[0+SLEN()]);
@@ -216,7 +216,7 @@ component xor5words_inner2<Xidx: Val>(rvp01: RetTuple, rvpst: RetTuple) {
            3, Xidx, rvp01.rnd, rvp01.blk, rvp01.midx)
 }
 
-component xor5words_inner3<Xidx: Val>(rvprev01: RetTuple, rvprev04: RetTuple) {
+component xor5words_minor3<Xidx: Val>(rvprev01: RetTuple, rvprev04: RetTuple) {
   inp_a := for i : 0..BLEN() { Reg(rvprev04.arr_a[i]) };
   inp_b := for i : 0..BLEN() { Reg(rvprev04.arr_b[i]) };
   inp_c := for i : 0..BLEN() { Reg(rvprev04.arr_c[i]) };
@@ -229,18 +229,18 @@ component xor5words_inner3<Xidx: Val>(rvprev01: RetTuple, rvprev04: RetTuple) {
            0, Xidx+1, rvprev01.rnd, rvprev01.blk, rvprev01.midx)
 }
 
-component xor5words_outer<Xidx: Val>(rvprev01: RetTuple, rvprev02: RetTuple,
+component xor5words_major<Xidx: Val>(rvprev01: RetTuple, rvprev02: RetTuple,
             rvprev03: RetTuple, rvprev04: RetTuple) {
-  inner_onehot := OneHot<4>(rvprev01.inner);
-  inner_onehot -> (
-    xor5words_inner0<Xidx>(rvprev01, rvprev01),
-    xor5words_inner1<Xidx>(rvprev01, rvprev02),
-    xor5words_inner2<Xidx>(rvprev01, rvprev03),
-    xor5words_inner3<Xidx>(rvprev01, rvprev04)
+  minor_onehot := OneHot<4>(rvprev01.minor);
+  minor_onehot -> (
+    xor5words_minor0<Xidx>(rvprev01, rvprev01),
+    xor5words_minor1<Xidx>(rvprev01, rvprev02),
+    xor5words_minor2<Xidx>(rvprev01, rvprev03),
+    xor5words_minor3<Xidx>(rvprev01, rvprev04)
   )
 }
 
-component rho_inner0<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
+component rho_minor0<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
   v_dec1 := rvpstate.arr_d[INPLEN()-3*BLEN()+3*DecMod5(X)+0];
   unpack_m1 := ToBits<BLEN()>(v_dec1);
   FromBits<BLEN()>(unpack_m1) = v_dec1;
@@ -276,7 +276,7 @@ component rho_inner0<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
            3*(X/2)+1, Y+5, rvpstate.rnd, rvpstate.blk, rvpstate.midx)
 }
 
-component rho_inner1<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
+component rho_minor1<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
   idx1 := (X+5*Y)*3 + 0;
   in_a := InRange(0,idx1,BLEN());
   v_xy1 := [in_a, 1-in_a] -> (rvpstate.arr_a[idx1],
@@ -345,7 +345,7 @@ component rho_inner1<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
     })
 }
 
-component rho_inner2<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
+component rho_minor2<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
   v_inc1 := rvpstate.arr_d[INPLEN()-3*BLEN()+3*IncMod5(X+1)+0];
   unpack_p1 := ToBits<BLEN()>(v_inc1);
   FromBits<BLEN()>(unpack_p1) = v_inc1;
@@ -410,7 +410,7 @@ component rho_inner2<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
            3*(X/2)+3, Y+5, rvprev01.rnd, rvprev01.blk, rvprev01.midx)
 }
 
-component rho_inner3<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: RetTuple,
+component rho_minor3<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: RetTuple,
   rvprev04: RetTuple, rvprev06: RetTuple, rvprev07: RetTuple) {
   [Isz(Y), 1-Isz(Y)] -> (
     { rs1 := Concatenate<Val,12,3>(
@@ -500,24 +500,24 @@ component rho_inner3<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: R
           }))))
 }
 
-component rho_outer<Y: Val>(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
+component rho_major<Y: Val>(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
                             rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
                             rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple) {
-  inner_onehot := OneHot<9>(rvprev01.inner);
-  inner_onehot -> (
-    rho_inner0<0,Y>(rvprev01, rvprev01),
-    rho_inner1<0,Y>(rvprev02, rvprev01),
-    rho_inner2<0,Y>(rvprev03, rvprev01),
-    rho_inner0<2,Y>(rvprev04, rvprev01),
-    rho_inner1<2,Y>(rvprev05, rvprev01),
-    rho_inner2<2,Y>(rvprev06, rvprev01),
-    rho_inner0<4,Y>(rvprev07, rvprev01),
-    rho_inner1<4,Y>(rvprev08, rvprev01),
-    rho_inner3<Y>(rvprev09, rvprev01, rvprev03, rvprev04, rvprev06, rvprev07)
+  minor_onehot := OneHot<9>(rvprev01.minor);
+  minor_onehot -> (
+    rho_minor0<0,Y>(rvprev01, rvprev01),
+    rho_minor1<0,Y>(rvprev02, rvprev01),
+    rho_minor2<0,Y>(rvprev03, rvprev01),
+    rho_minor0<2,Y>(rvprev04, rvprev01),
+    rho_minor1<2,Y>(rvprev05, rvprev01),
+    rho_minor2<2,Y>(rvprev06, rvprev01),
+    rho_minor0<4,Y>(rvprev07, rvprev01),
+    rho_minor1<4,Y>(rvprev08, rvprev01),
+    rho_minor3<Y>(rvprev09, rvprev01, rvprev03, rvprev04, rvprev06, rvprev07)
   )
 }
 
-component chi_inner0<X: Val, Y: Val>(rvpstate: RetTuple) {
+component chi_minor0<X: Val, Y: Val>(rvpstate: RetTuple) {
   XP1 := IncMod5(X);
   idx0xp1 := (XP1+5*Y)*3 + 0;
   in_a0xp1 := InRange(0,idx0xp1,BLEN());
@@ -604,12 +604,12 @@ component chi_inner0<X: Val, Y: Val>(rvpstate: RetTuple) {
 
   withrs_d := Concatenate<Val,BLEN(),2>(dummyB(), result);
   Z := (X-1)*(X-3);
-  inner_new := [Isz(Z), 1-Isz(Z)] -> (3*(1+(X-1)/2), 1+3*(X/2)); 
+  minor_new := [Isz(Z), 1-Isz(Z)] -> (3*(1+(X-1)/2), 1+3*(X/2)); 
   RetTuple(dummyB(), dummyB(), dummyB(), withrs_d, dummyB(), dummyB(),
-           inner_new, Y+10, rvpstate.rnd, rvpstate.blk, rvpstate.midx)
+           minor_new, Y+10, rvpstate.rnd, rvpstate.blk, rvpstate.midx)
 }
 
-component chi_inner1<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
+component chi_minor1<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
   idx2x := (X+5*Y)*3 + 2;
   in_a2x := InRange(0,idx2x,BLEN());
   v_2x := [in_a2x, 1-in_a2x] -> (rvpstate.arr_a[idx2x],
@@ -655,11 +655,11 @@ component chi_inner1<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
   withr_a := ConcatElem<Val,SLEN()>(dummyS(), rvprev01.arr_d[0+BLEN()]);
   withr_b := ConcatElem<Val,SLEN()>(dummyS(), rvprev01.arr_d[1+BLEN()]);
   withr_c := ConcatElem<Val,SLEN()>(dummyS(), res3);
-  inner_new := 2 + 3*(X/2);
+  minor_new := 2 + 3*(X/2);
 
   [Isz(X-4), 1-Isz(X-4)] -> (
     RetTuple(withr_a, withr_b, withr_c, dummyE(), dummyB(), dummyB(),
-             inner_new, Y+10, rvprev01.rnd, rvprev01.blk, rvprev01.midx),
+             minor_new, Y+10, rvprev01.rnd, rvprev01.blk, rvprev01.midx),
     { NXTX := IncMod5(X); //TODO
       idx2nx := (NXTX+5*Y)*3 + 2;
       in_a2nx := InRange(0,idx2nx,BLEN());
@@ -706,11 +706,11 @@ component chi_inner1<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
 
       withr_f := ConcatElem<Val,SLEN()>(dummyS(), res3n);
       RetTuple(withr_a, withr_b, withr_c, dummyE(), dummyB(), withr_f,
-               inner_new, Y+10, rvprev01.rnd, rvprev01.blk, rvprev01.midx)
+               minor_new, Y+10, rvprev01.rnd, rvprev01.blk, rvprev01.midx)
     })
 }
 
-component chi_inner2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: RetTuple,
+component chi_minor2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: RetTuple,
   rvprev04: RetTuple, rvprev06: RetTuple, rvprev07: RetTuple) {
   [Isz(Y), 1-Isz(Y)] -> (
     { a := [rvprev07.arr_a[0+SLEN()],rvprev07.arr_b[0+SLEN()],rvprev07.arr_c[0+SLEN()],
@@ -805,21 +805,21 @@ component iota_xor_rc(rvprev01: RetTuple) {
            0, nxt[0], nxt[1], nxt[2], rvprev01.midx)
 }
 
-component chi_outer<Y: Val>(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
+component chi_major<Y: Val>(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
                             rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
                             rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple,
                             rvprev10: RetTuple, rvprev11: RetTuple) {
-  inner_onehot := OneHot<10>(rvprev01.inner);
-  inner_onehot -> (
-    chi_inner0<0,Y>(rvprev01),
-    chi_inner1<0,Y>(rvprev02, rvprev01),
-    chi_inner0<1,Y>(rvprev03),
-    chi_inner0<2,Y>(rvprev04),
-    chi_inner1<2,Y>(rvprev05, rvprev01),
-    chi_inner0<3,Y>(rvprev06),
-    chi_inner0<4,Y>(rvprev07),
-    chi_inner1<4,Y>(rvprev08, rvprev01),
-    chi_inner2<Y>(rvprev09, rvprev01, rvprev03, rvprev04, rvprev06, rvprev07),
+  minor_onehot := OneHot<10>(rvprev01.minor);
+  minor_onehot -> (
+    chi_minor0<0,Y>(rvprev01),
+    chi_minor1<0,Y>(rvprev02, rvprev01),
+    chi_minor0<1,Y>(rvprev03),
+    chi_minor0<2,Y>(rvprev04),
+    chi_minor1<2,Y>(rvprev05, rvprev01),
+    chi_minor0<3,Y>(rvprev06),
+    chi_minor0<4,Y>(rvprev07),
+    chi_minor1<4,Y>(rvprev08, rvprev01),
+    chi_minor2<Y>(rvprev09, rvprev01, rvprev03, rvprev04, rvprev06, rvprev07),
     iota_xor_rc(rvprev01)
   )
 }
@@ -887,11 +887,11 @@ component absorb_word<X: Val, Y: Val>(rvprev: RetTuple) {
 
   inc_idx := X+5*Y+1;
   in_first := InRange(0,inc_idx,10);
-  nxt_out := 1 - in_first;
-  nxt_in := [in_first, nxt_out] -> (inc_idx, inc_idx-9); 
+  nxt_major := 1 - in_first;
+  nxt_in := [in_first, nxt_major] -> (inc_idx, inc_idx-9); 
   
   RetTuple(unpack_a, arr12, padded23, padded34, unpack_e, unpack_f,
-           nxt_in, 15+nxt_out, 0, rvprev.blk, rvprev.midx)
+           nxt_in, 15+nxt_major, 0, rvprev.blk, rvprev.midx)
 }
 
 component absorb_copy1(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
@@ -918,12 +918,12 @@ component absorb_copy1(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTupl
 }
 
 
-component absorb_outer1(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
+component absorb_major1(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
                         rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
                         rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple,
                         rvprev10: RetTuple) {
-  inner_onehot := OneHot<10>(rvprev01.inner);
-  inner_onehot -> (
+  minor_onehot := OneHot<10>(rvprev01.minor);
+  minor_onehot -> (
     absorb_word<0,0>(rvprev01),
     absorb_word<1,0>(rvprev02),
     absorb_word<2,0>(rvprev03),
@@ -960,11 +960,11 @@ component absorb_copy2(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTupl
            0, 0, 0, rvprev01.blk, rvprev01.midx+17)
 }
 
-component absorb_outer2(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
+component absorb_major2(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
                         rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
                         rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple) {
-  inner_onehot := OneHot<9>(rvprev01.inner);
-  inner_onehot -> (
+  minor_onehot := OneHot<9>(rvprev01.minor);
+  minor_onehot -> (
     absorb_word<4,1>(rvprev01),
     absorb_word<0,2>(rvprev02),
     absorb_word<1,2>(rvprev03),
@@ -1037,10 +1037,10 @@ component equal_word<X: Val>(rvprev: RetTuple) {
            nxt[0], nxt[1], 0, nxt[2], nxt[3])
 }
 
-component setup_outer(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
+component setup_major(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
                       rvprev04: RetTuple, rvprev68: RetTuple) {
-  inner_onehot := OneHot<13>(rvprev01.inner);
-  inner_onehot -> (
+  minor_onehot := OneHot<13>(rvprev01.minor);
+  minor_onehot -> (
     equal_word<0>(rvprev01),
     equal_word<1>(rvprev02),
     equal_word<2>(rvprev03),
@@ -1073,47 +1073,47 @@ component fstep(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
   invPC := NondetReg(Inv(PC));
   is_first_cycle := 1 - PC*invPC;
   is_first_cycle * PC = 0;
-  outer_idx := [is_first_cycle, 1-is_first_cycle] -> (
+  major_idx := [is_first_cycle, 1-is_first_cycle] -> (
     {
       // PC@1 = total_cycles - 1;
       18
     },
     {
       PC = PC@1 + 1;
-      rvprev01.outer
+      rvprev01.major
     });
-  outer_onehot := OneHot<23>(outer_idx);
-  outer_onehot -> (
-    xor5words_outer<0>(rvprev01, rvprev02, rvprev03, rvprev04),
-    xor5words_outer<1>(rvprev01, rvprev02, rvprev03, rvprev04),
-    xor5words_outer<2>(rvprev01, rvprev02, rvprev03, rvprev04),
-    xor5words_outer<3>(rvprev01, rvprev02, rvprev03, rvprev04),
-    xor5words_outer<4>(rvprev01, rvprev02, rvprev03, rvprev04),
-    rho_outer<0>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+  major_onehot := OneHot<23>(major_idx);
+  major_onehot -> (
+    xor5words_major<0>(rvprev01, rvprev02, rvprev03, rvprev04),
+    xor5words_major<1>(rvprev01, rvprev02, rvprev03, rvprev04),
+    xor5words_major<2>(rvprev01, rvprev02, rvprev03, rvprev04),
+    xor5words_major<3>(rvprev01, rvprev02, rvprev03, rvprev04),
+    xor5words_major<4>(rvprev01, rvprev02, rvprev03, rvprev04),
+    rho_major<0>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
                  rvprev07, rvprev08, rvprev09),
-    rho_outer<1>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+    rho_major<1>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
                  rvprev07, rvprev08, rvprev09),
-    rho_outer<2>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+    rho_major<2>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
                  rvprev07, rvprev08, rvprev09),
-    rho_outer<3>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+    rho_major<3>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
                  rvprev07, rvprev08, rvprev09),
-    rho_outer<4>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+    rho_major<4>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
                  rvprev07, rvprev08, rvprev09),
-    chi_outer<0>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+    chi_major<0>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
                  rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
-    chi_outer<1>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+    chi_major<1>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
                  rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
-    chi_outer<2>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+    chi_major<2>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
                  rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
-    chi_outer<3>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+    chi_major<3>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
                  rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
-    chi_outer<4>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+    chi_major<4>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
                  rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
-    absorb_outer1(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+    absorb_major1(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
                   rvprev07, rvprev08, rvprev09, rvprev10),
-    absorb_outer2(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+    absorb_major2(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
                   rvprev07, rvprev08, rvprev09),
-    setup_outer(rvprev01, rvprev02, rvprev03, rvprev04, rvprev68),
+    setup_major(rvprev01, rvprev02, rvprev03, rvprev04, rvprev68),
     { blk := NondetReg(ReadNext());
       //invBlk := NondetReg(Inv(Blk)); Blk*InvBlk = 1; //maybe unneeded
       ReadNext(); ReadNext(); ReadNext();
