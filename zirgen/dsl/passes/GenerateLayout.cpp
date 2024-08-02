@@ -14,6 +14,7 @@
 
 #include "mlir/Transforms/DialectConversion.h"
 #include "mlir/Transforms/GreedyPatternRewriteDriver.h"
+#include "llvm/ADT/BitVector.h"
 #include "llvm/ADT/TypeSwitch.h"
 
 #include "zirgen/Dialect/ZHLT/IR/TypeUtils.h"
@@ -30,6 +31,52 @@ namespace zirgen {
 namespace dsl {
 namespace {
 
+class AllocationTable {
+public:
+  AllocationTable() : parent(nullptr), storage(256, /*set=*/false) {}
+  AllocationTable(AllocationTable* parent) : parent(parent), storage(parent->storage) {}
+
+  // Return the index of the first k consecutive unallocated columns, and mark
+  // them as allocated. If pinned, also mark them as allocated in the parent.
+  size_t allocate(size_t k, bool pinned) {
+    int n = 0;
+    while (storage.find_first_in(n, n + k, /*set=*/true) != -1) {
+      n = nextIndex(n);
+    }
+    storage.set(n, n + k);
+    if (pinned && parent)
+      parent->storage.set(n, n + k);
+    return n;
+  }
+
+  // If a column is allocated in either this or other, mark it as allocated
+  AllocationTable& operator|=(const AllocationTable& other) {
+    storage |= other.storage;
+    return *this;
+  }
+
+private:
+  // Return the index of the next unallocated column, resizing storage if necessary
+  int nextIndex(int n) {
+    int next = storage.find_next_unset(n);
+    size_t capacity = storage.getBitCapacity();
+    if (next == -1 || next >= capacity) {
+      storage.resize(2 * capacity);
+
+      AllocationTable* ancestor = parent;
+      while (ancestor) {
+        ancestor->storage.resize(2 * capacity);
+        ancestor = ancestor->parent;
+      }
+      next = storage.find_next_unset(n);
+    }
+    return next;
+  }
+
+  AllocationTable* parent;
+  BitVector storage;
+};
+
 struct LayoutGenerator {
   LayoutGenerator(StringAttr bufferName, DataFlowSolver& solver)
       : bufferName(bufferName), solver(solver) {}
@@ -40,8 +87,9 @@ struct LayoutGenerator {
       return Attribute();
 
     Memo memo;
+    AllocationTable allocator;
     auto layout = solver.lookupState<LayoutDAGAnalysis::Element>(component.getLayout());
-    return materialize(layout->getValue().get(), memo);
+    return materialize(layout->getValue().get(), memo, allocator);
   }
 
 private:
@@ -49,46 +97,48 @@ private:
   using Memo = DenseMap<LayoutDAG*, Attribute>;
 
   // Materialize a concrete layout attribute from an abstract layout
-  Attribute materialize(const std::shared_ptr<LayoutDAG>& abstract, Memo& memo) {
-    // If a layout is already in the memo, increase refCounter past the end so
-    // that we don't allocate other things on top of it
+  Attribute materialize(const std::shared_ptr<LayoutDAG>& abstract,
+                        Memo& memo,
+                        AllocationTable& allocator,
+                        bool pinned = false) {
     if (memo.contains(abstract.get())) {
-      Attribute attr = memo.at(abstract.get());
-      refCounter = std::max(refCounter, getNextColumnIndex(attr));
-      return attr;
+      return memo.at(abstract.get());
     }
 
     Attribute attr;
     if (const auto* reg = std::get_if<AbstractRegister>(abstract.get())) {
       // Allocate multiple columns for extension field elements
-      attr = RefAttr::get(reg->type.getContext(), refCounter, reg->type);
-      refCounter += reg->type.getElement().getFieldK();
+      size_t size = reg->type.getElement().getFieldK();
+      size_t index = allocator.allocate(size, pinned);
+      attr = RefAttr::get(reg->type.getContext(), index, reg->type);
     } else if (const auto* arr = std::get_if<AbstractArray>(abstract.get())) {
       SmallVector<Attribute, 4> elements;
       for (auto element : arr->elements) {
-        elements.push_back(materialize(element, memo));
+        elements.push_back(materialize(element, memo, allocator, pinned));
       }
       attr = ArrayAttr::get(arr->type.getContext(), elements);
     } else if (const auto* str = std::get_if<AbstractStructure>(abstract.get())) {
       SmallVector<NamedAttribute> fields;
       if (str->type.getKind() == LayoutKind::Mux) {
-        unsigned initialRefCounter = refCounter;
-        unsigned finalRefCounter = refCounter;
+        AllocationTable finalAllocator = allocator;
         for (auto field : str->fields) {
-          refCounter = initialRefCounter;
-          fields.emplace_back(field.first, materialize(field.second, memo));
-          finalRefCounter = std::max(finalRefCounter, refCounter);
+          AllocationTable armAllocator(&allocator);
+          bool armPinned = pinned || field.first == "@super";
+          fields.emplace_back(field.first,
+                              materialize(field.second, memo, armAllocator, armPinned));
+          finalAllocator |= armAllocator;
         }
-        refCounter = finalRefCounter;
+        allocator = finalAllocator;
       } else {
+        bool strPinned = pinned || (str->type.getKind() == LayoutKind::Argument);
         for (auto field : str->fields) {
-          fields.emplace_back(field.first, materialize(field.second, memo));
+          fields.emplace_back(field.first, materialize(field.second, memo, allocator, strPinned));
         }
       }
       auto members = DictionaryAttr::get(str->type.getContext(), fields);
       attr = StructAttr::get(str->type.getContext(), members, str->type);
     } else if (const auto* ref = std::get_if<std::shared_ptr<LayoutDAG>>(abstract.get())) {
-      attr = materialize(*ref, memo);
+      attr = materialize(*ref, memo, allocator, pinned);
     } else {
       llvm_unreachable("bad variant");
     }
@@ -96,23 +146,11 @@ private:
     return attr;
   }
 
-  unsigned getNextColumnIndex(Attribute attr) {
-    unsigned nextColumnIndex = 0;
-    attr.walk([&](RefAttr ref) {
-      unsigned refNext = ref.getIndex() + ref.getType().getElement().getFieldK();
-      nextColumnIndex = std::max(nextColumnIndex, refNext);
-    });
-    return nextColumnIndex;
-  }
-
   // Name of buffer to allocate registers in
   StringAttr bufferName;
 
   // The solver used to query data flow analysis results
   DataFlowSolver& solver;
-
-  // The offset of the next register to assign
-  unsigned refCounter = 0;
 };
 
 struct GenerateLayoutPass : public GenerateLayoutBase<GenerateLayoutPass> {
