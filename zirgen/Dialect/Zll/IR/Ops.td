@@ -67,6 +67,7 @@ def NondetOp : ZllOp<"nondet", [
 }
 
 def IfOp : ZllOp<"if", [
+    RecursiveMemoryEffects,
     SingleBlockImplicitTerminator<"TerminateOp">, EvalOpAdaptor,
     DeclareOpInterfaceMethods<CodegenStatementOpInterface>]> {
   let summary = "Execute this region if input is nonzero";
