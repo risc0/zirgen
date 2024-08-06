@@ -286,7 +286,7 @@ component sha256load<I: Val>(rvprev01: RetTuple, rvprev02: RetTuple,
   idx := rvprev01.blk;
   end := rvprev01.midx + 1 - idx;
   invEnd := NondetReg(Inv(end));
-  prod := end*invEnd;
+  prod := Reg(end*invEnd);
   end*(1-prod) = 0;
   vals := [1-prod, prod] -> (
     [0,0,0,0,0,idx],
