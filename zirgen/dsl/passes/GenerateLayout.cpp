@@ -40,7 +40,7 @@ public:
   // them as allocated. If pinned, also mark them as allocated in the parent.
   size_t allocate(size_t k, bool pinned) {
     int n = 0;
-    while (storage.find_first_in(n, n + k, /*set=*/true) != -1) {
+    while (!canAllocateContiguously(n, k)) {
       n = nextIndex(n);
     }
     storage.set(n, n + k);
@@ -56,6 +56,14 @@ public:
   }
 
 private:
+  // True iff k columns starting at n are all unallocated
+  bool canAllocateContiguously(int n, size_t k) {
+    // BitVector::find_first_in returns the index of the first set bit in a
+    // range, or -1 if they're all unset. If they're all unset, all k of them
+    // are unallocated.
+    return storage.find_first_in(n, n + k, /*set=*/true) == -1;
+  }
+
   // Return the index of the next unallocated column, resizing storage if necessary
   int nextIndex(int n) {
     int next = storage.find_next_unset(n);
