@@ -791,7 +791,7 @@ component iota_xor_rc(rvprev01: RetTuple) {
     [0,18,b],[0,19,b],[0,20,b],[0,21,b],[0,22,b],[0,23,b],
     { newBlk := b-1;
       invNewBlk := NondetReg(Inv(newBlk));
-      prod := newBlk*invNewBlk;
+      prod := Reg(newBlk*invNewBlk);
       newBlk*(1-prod) = 0;
       [prod, 1-prod] -> ([15,0,newBlk], [17,0,0]) });
 
@@ -852,18 +852,14 @@ component absorb_word<X: Val, Y: Val>(rvprev: RetTuple) {
 
   inp1 := ReadNext();
   unpack_1 := ToBits<WORDLEN()>(inp1);
-  FromBits<WORDLEN()>(unpack_1) = inp1;
   inp2 := ReadNext();
   unpack_2 := ToBits<WORDLEN()>(inp2);
-  FromBits<WORDLEN()>(unpack_2) = inp2;
   inp3 := ReadNext();
   unpack_3 := ToBits<WORDLEN()>(inp3);
-  FromBits<WORDLEN()>(unpack_3) = inp3;
   inp4 := ReadNext();
   unpack_4 := ToBits<WORDLEN()>(inp4);
-  FromBits<WORDLEN()>(unpack_4) = inp4;
   memidx := rvprev.midx + 1 + X+5*Y;
-  WriteMemory(memidx, MemDigest([inp1,inp2,inp3,inp4]));
+  WriteMemory(memidx, MemDigest([FromBits<WORDLEN()>(unpack_1),FromBits<WORDLEN()>(unpack_2),FromBits<WORDLEN()>(unpack_3),FromBits<WORDLEN()>(unpack_4)]));
 
   arr12 := for i : 0..BLEN() {
     in_first12 := InRange(0,i,WORDLEN());
@@ -991,18 +987,14 @@ component equal_word<X: Val>(rvprev: RetTuple) {
 
   inp1 := ReadNext();
   unpack_1 := ToBits<WORDLEN()>(inp1);
-  FromBits<WORDLEN()>(unpack_1) = inp1;
   inp2 := ReadNext();
   unpack_2 := ToBits<WORDLEN()>(inp2);
-  FromBits<WORDLEN()>(unpack_2) = inp2;
   inp3 := ReadNext();
   unpack_3 := ToBits<WORDLEN()>(inp3);
-  FromBits<WORDLEN()>(unpack_3) = inp3;
   inp4 := ReadNext();
   unpack_4 := ToBits<WORDLEN()>(inp4);
-  FromBits<WORDLEN()>(unpack_4) = inp4;
   memidx := rvprev.midx + 1 + X;
-  WriteMemory(memidx, MemDigest([inp1,inp2,inp3,inp4]));
+  WriteMemory(memidx, MemDigest([FromBits<WORDLEN()>(unpack_1),FromBits<WORDLEN()>(unpack_2),FromBits<WORDLEN()>(unpack_3),FromBits<WORDLEN()>(unpack_4)]));
 
   for i : 0..WORDLEN()
     { unpack_a[i] = unpack_1[i]; };
