@@ -28,7 +28,7 @@ A particular circuit, then, is responsible for defining a few things:
 
 The core unit of abstraction in Zirgen is a component. A component,
 fundamentally, is an answer to these three questions. The whole circuit is a
-special component called `Top` (compare the `main` function from Rust) which
+special component called `Top` (compare the `main` function from C/Rust) which
 must be self-contained, but the smaller components that make it up don't have to
 be. This means that a component can add constraints to columns that it did not
 allocate, but were instead allocated by another component. Components can also
@@ -42,14 +42,6 @@ value" for all the computations done by the circuit. As such, a `Val` does not
 allocate any columns in the witness, generates no constraints, and has no impact
 on the witness. It is purely a value that exists "on the side" of the circuit
 execution.
-
-`Val`s can be represented syntactically with numeric literals like `42`
-(decimal), `0xFF` (hexadecimal), or `0b10101` (binary) notation, and since they
-are finite field elements they can be added, subtracted, multiplied, and divided
-according to the rules of modular arithmetic. These operations are themselves
-components that can be coerced to `Val`, and have "identifier" names (`Add`,
-`Sub`, `Mul`, `Div`) as well as the more familiar infix operators (`+`, `-`,
-`*`, `/`).
 
 ## Registers
 
