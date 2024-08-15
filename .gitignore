@@ -1,0 +1,14 @@
+*~
+*.swp
+*.swo
+.bazelrc.local
+.cache
+.DS_Store
+.idea/
+bazel-*
+Cargo.lock
+dist/
+rust-project.json
+target/
+tmp/
+ceremony/

@@ -1,0 +1,16 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_binary(
+    name = "test",
+    srcs = [
+        "test.cpp",
+    ],
+    deps = [
+        "//zirgen/Dialect/BigInt/IR",
+        "//zirgen/Dialect/BigInt/Transforms",
+        "//zirgen/circuit/bigint:lib",
+        "//zirgen/compiler/codegen",
+    ],
+)

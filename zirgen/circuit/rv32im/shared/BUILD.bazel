@@ -1,0 +1,8 @@
+cc_library(
+    name = "shared",
+    hdrs = [
+        "rv32im.h",
+    ],
+    visibility = ["//visibility:public"],
+    deps = ["//risc0/core"],
+)

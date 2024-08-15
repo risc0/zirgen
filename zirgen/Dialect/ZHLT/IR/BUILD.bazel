@@ -1,0 +1,152 @@
+load("@llvm-project//mlir:tblgen.bzl", "gentbl_cc_library", "td_library")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+td_library(
+    name = "TdFiles",
+    srcs = [
+        "Attrs.td",
+        "ComponentOps.td",
+        "Dialect.td",
+        "NamedVariadic.td",
+        "Ops.td",
+        "Types.td",
+    ],
+    deps = [
+        "//zirgen/Dialect/ZStruct/IR:TdFiles",
+        "@llvm-project//mlir:CallInterfacesTdFiles",
+        "@llvm-project//mlir:ControlFlowInterfacesTdFiles",
+        "@llvm-project//mlir:FunctionInterfacesTdFiles",
+        "@llvm-project//mlir:InferTypeOpInterfaceTdFiles",
+        "@llvm-project//mlir:OpBaseTdFiles",
+        "@llvm-project//mlir:SideEffectInterfacesTdFiles",
+    ],
+)
+
+gentbl_cc_library(
+    name = "DialectIncGen",
+    tbl_outs = [
+        (
+            [
+                "-gen-dialect-decls",
+                "-dialect=zhlt",
+            ],
+            "Dialect.h.inc",
+        ),
+        (
+            [
+                "-gen-dialect-defs",
+                "-dialect=zhlt",
+            ],
+            "Dialect.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Dialect.td",
+    deps = [":TdFiles"],
+)
+
+gentbl_cc_library(
+    name = "OpsIncGen",
+    tbl_outs = [
+        (
+            ["-gen-op-decls"],
+            "Ops.h.inc",
+        ),
+        (
+            ["-gen-op-defs"],
+            "Ops.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Ops.td",
+    deps = [":TdFiles"],
+)
+
+gentbl_cc_library(
+    name = "ComponentOpsIncGen",
+    tbl_outs = [
+        (
+            ["-gen-op-decls"],
+            "ComponentOps.h.inc",
+        ),
+        (
+            ["-gen-op-defs"],
+            "ComponentOps.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":ComponentOps.td",
+    deps = [":TdFiles"],
+)
+
+gentbl_cc_library(
+    name = "AttrsIncGen",
+    tbl_outs = [
+        (
+            ["-gen-attrdef-decls"],
+            "Attrs.h.inc",
+        ),
+        (
+            ["-gen-attrdef-defs"],
+            "Attrs.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Attrs.td",
+    deps = [":TdFiles"],
+)
+
+gentbl_cc_library(
+    name = "TypesIncGen",
+    tbl_outs = [
+        (
+            ["-gen-typedef-decls"],
+            "Types.h.inc",
+        ),
+        (
+            ["-gen-typedef-defs"],
+            "Types.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Types.td",
+    deps = [":TdFiles"],
+)
+
+cc_library(
+    name = "IR",
+    srcs = [
+        "ComponentOps.cpp",
+        "Dialect.cpp",
+        "Ops.cpp",
+        "TypeUtils.cpp",
+    ],
+    hdrs = [
+        "TypeUtils.h",
+        "ZHLT.h",
+    ],
+    deps = [
+        ":AttrsIncGen",
+        ":ComponentOpsIncGen",
+        ":DialectIncGen",
+        ":OpsIncGen",
+        ":TypesIncGen",
+        "//zirgen/Dialect/ZStruct/Analysis",
+        "//zirgen/Dialect/ZStruct/IR",
+        "@llvm-project//mlir:FuncDialect",
+        "@llvm-project//mlir:IR",
+    ],
+)
+
+cc_library(
+    name = "Codegen",
+    srcs = ["Codegen.cpp"],
+    hdrs = ["Codegen.h"],
+    deps = [
+        ":IR",
+        "//zirgen/Dialect/ZStruct/Analysis",
+    ],
+)

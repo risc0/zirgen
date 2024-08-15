@@ -1,0 +1,36 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "test_utils",
+    srcs = [
+        "test_runner.cpp",
+    ],
+    hdrs = [
+        "test_runner.h",
+        "test_with_bytes.h",
+    ],
+    deps = [
+        "//zirgen/components",
+    ],
+)
+
+cc_test(
+    name = "test",
+    srcs = [
+        "bits.cpp",
+        "bytes.cpp",
+        # "fpext.cpp", # TODO: add this back later!
+        "mux.cpp",
+        "onehot.cpp",
+        "plonk.cpp",
+        "ram.cpp",
+        "reg.cpp",
+        "u32.cpp",
+    ],
+    deps = [
+        ":test_utils",
+        "@com_google_googletest//:gtest_main",
+    ],
+)

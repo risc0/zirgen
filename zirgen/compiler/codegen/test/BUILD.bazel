@@ -1,0 +1,11 @@
+load("//bazel/rules/lit:defs.bzl", "glob_lit_tests")
+
+filegroup(
+    name = "lit_cfg",
+    srcs = ["lit.site.cfg"],
+)
+
+glob_lit_tests(data = [
+    ":lit_cfg",
+    "//zirgen/compiler/codegen:data",
+])

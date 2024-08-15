@@ -1,0 +1,39 @@
+load("//bazel/rules/lit:defs.bzl", "glob_lit_tests")
+load("//bazel/toolchain/rv32im-linux:defs.bzl", "risc0_cc_binary")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "r1cs-bins",
+    srcs = glob(["*.r1cs"]),
+)
+
+glob_lit_tests(
+    data = [
+        ":r1cs-bins",
+    ],
+    size_override = {
+        "sha256_448.mlir": "medium",
+        "sha256_2.mlir": "medium",
+        "sha256_512.mlir": "medium",
+        "eddsa.mlir": "medium",
+    },
+)
+
+cc_test(
+    name = "r1csfile",
+    size = "small",
+    srcs = [
+        "r1csfile.cpp",
+    ],
+    data = [
+        "example.r1cs",
+    ],
+    deps = [
+        "//risc0/core/test:gtest_main",
+        "//zirgen/compiler/r1cs",
+        "@bazel_tools//tools/cpp/runfiles",
+    ],
+)

@@ -1,0 +1,114 @@
+#ifndef ZIRGEN_PASSES
+#define ZIRGEN_PASSES
+
+include "mlir/Pass/PassBase.td"
+include "mlir/Rewrite/PassUtil.td"
+
+def GenerateExec : Pass<"generate-exec", "mlir::ModuleOp"> {
+  let summary = "Lowers the ZHLT dialect to produce circuit execution functions";
+  let description = [{
+    Generates execution functions for all components present and adds them to the module.
+    Each generated function takes two arguments:
+     * A Value specifying how many cycles back the component should be retrieved at
+     * The component's layout.
+    This function returns the component's value at the given number of cycles in the past.
+  }];
+
+  let constructor = "zirgen::dsl::createGenerateExecPass()";
+  let dependentDialects = ["zirgen::ZStruct::ZStructDialect"];
+}
+
+def GenerateBack : Pass<"generate-back", "mlir::ModuleOp"> {
+  let summary = "Lowers the ZHLT dialect to produce functions to evaluate `back' operations";
+  let description = [{
+    Generates back retrieval functions for all components present and adds them to the module.
+    Each generated function has the same function type as the zhlt.component operation:
+    Constructor inputs and its layout.
+
+    It populates any registers in the layout, and returns the value of the component.
+  }];
+  let constructor = "zirgen::dsl::createGenerateBackPass()";
+  let dependentDialects = ["zirgen::ZStruct::ZStructDialect"];
+}
+
+def GenerateCheck : Pass<"generate-check", "mlir::ModuleOp"> {
+  let summary = "Lowers the ZHLT dialect to produce functions to check constraints";
+  let description = [{
+    Generates constraint checks (zirgen.eqz) for all components present and adds them to the module.
+    Each generated function takes the same arguments and has the same return type as the "exec"
+    function, but only checks constraints without storing values in any registers.
+
+    The generated function has all of its callees inlined.
+  }];
+  let constructor = "zirgen::dsl::createGenerateCheckPass()";
+  let dependentDialects = ["zirgen::ZStruct::ZStructDialect"];
+}
+
+def GenerateTaps : Pass<"generate-taps", "mlir::ModuleOp"> {
+  let summary = "Generates a list of taps as register references.";
+  let description = [{
+    Analyzes the check function and generates an array of the taps needed.
+  }];
+  let constructor = "zirgen::dsl::createGenerateTapsPass()";
+  let dependentDialects = ["zirgen::ZStruct::ZStructDialect"];
+}
+
+def GenerateLayout : Pass<"generate-layout", "mlir::ModuleOp"> {
+  let summary = "Generates layout constructors for all zstruct components";
+  let description = [{
+    Generates layout creation functions for all components present and adds them to the module.
+    Each generated function returns the component's layout type, and uses zirgen.alloc_reg to
+    generate values for any "Ref" types needed to construct the layout.
+  }];
+  let constructor = "zirgen::dsl::createGenerateLayoutPass()";
+  let dependentDialects = ["zirgen::ZStruct::ZStructDialect"];
+}
+
+def GenerateValidityRegs : Pass<"generate-validity-regs", "mlir::ModuleOp"> {
+  let summary = "Generates validity polynomial evaluation functions on reigsters";
+  let description = [{
+    Generates validity polynomial evaluation functions for all
+    components present and adds them to the module.  Each generated
+    function takes an initial mix state as input and a layout, and
+    mixes in all constraints present.
+  }];
+  let constructor = "zirgen::dsl::createGenerateValidityRegsPass()";
+  let dependentDialects = ["zirgen::ZStruct::ZStructDialect"];
+}
+
+def GenerateValidityTaps : Pass<"generate-validity-taps", "mlir::ModuleOp"> {
+  let summary = "Generates validity polynomial evaluation functions on taps";
+  let description = [{
+    Generates validity polynomial evaluation functions for all
+    components present and adds them to the module.  Each generated
+    function takes an initial mix state as input and a buffer of taps,
+    and mixes in all constraints present.
+  }];
+  let constructor = "zirgen::dsl::createGenerateValidityTapsPass()";
+  let dependentDialects = ["zirgen::ZStruct::ZStructDialect"];
+}
+
+def GenerateAccum : Pass<"generate-accum", "mlir::ModuleOp"> {
+  let summary = "Generates code that evaluates all accum columns for a module";
+  let description = [{
+    Identifies the major mux of a circuit (if any), collects all of
+    the arguments it contains, allocates accum registers for them, and
+    generates an evaluation function to compute a LogUp-style grand sum.
+  }];
+  let constructor = "zirgen::dsl::createGenerateAccumPass()";
+  let dependentDialects = ["zirgen::ZStruct::ZStructDialect"];
+}
+
+def GenerateGlobals : Pass<"generate-globals", "mlir::ModuleOp"> {
+  let summary = "Generates a component for all globals referenced in the module";
+  let constructor = "zirgen::dsl::createGenerateGlobalsPass()";
+  let dependentDialects = ["zirgen::Zhlt::ZhltDialect"];
+}
+
+def ElideTrivialStructs : Pass<"elide-trivial-structs", "mlir::ModuleOp"> {
+  let summary = "Removes trivial structures with just a @super member";
+  let constructor = "zirgen::dsl::createElideTrivialStructsPass()";
+  let dependentDialects = ["zirgen::ZStruct::ZStructDialect"];
+}
+
+#endif // ZIRGEN_PASSES

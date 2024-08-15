@@ -1,0 +1,37 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "lib",
+    srcs = [
+        "fri.cpp",
+        "merkle.cpp",
+        "poly.cpp",
+        "verify.cpp",
+        "wrap_recursion.cpp",
+        "wrap_rv32im.cpp",
+        "wrap_zirgen.cpp",
+    ],
+    hdrs = [
+        "fri.h",
+        "merkle.h",
+        "poly.h",
+        "verify.h",
+        "wrap.h",
+        "wrap_recursion.h",
+        "wrap_rv32im.h",
+        "wrap_zirgen.h",
+        "//zirgen/circuit/recursion",
+        "//zirgen/circuit/rv32im/v1/edsl:rv32im",
+    ],
+    deps = [
+        "//zirgen/Dialect/ZHLT/IR",
+        "//zirgen/Dialect/ZStruct/Analysis",
+        "//zirgen/Dialect/Zll/Analysis",
+        "//zirgen/circuit/recursion:lib",
+        "//zirgen/compiler/codegen:protocol_info_const",
+        "//zirgen/compiler/edsl",
+        "@llvm-project//mlir:TranslateLib",
+    ],
+)

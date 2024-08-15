@@ -1,0 +1,22 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "r1cs",
+    srcs = [
+        "lower.cpp",
+        "r1csfile.cpp",
+        "validate.cpp",
+        "wtnsfile.cpp",
+    ],
+    hdrs = [
+        "lower.h",
+        "r1csfile.h",
+        "validate.h",
+        "wtnsfile.h",
+    ],
+    deps = [
+        "//zirgen/Dialect/R1CS/IR",
+    ],
+)

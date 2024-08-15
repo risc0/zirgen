@@ -1,0 +1,28 @@
+load("//bazel/rules/zirgen:edsl-defs.bzl", "DEFAULT_OUTS", "build_circuit")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "base",
+    hdrs = ["constants.h"],
+)
+
+cc_library(
+    name = "platform",
+    srcs = [
+        "opcodes.cpp",
+        "page_table.cpp",
+    ],
+    hdrs = [
+        "constants.h",
+        "opcodes.h",
+        "page_table.h",
+        "rv32im.inl",
+    ],
+    deps = [
+        "//zirgen/compiler/zkp",
+        "//zirgen/components",
+    ],
+)

@@ -1,0 +1,35 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_test(
+    name = "test",
+    size = "small",
+    srcs = [
+        "fri.cpp",
+        "merkle.cpp",
+        "verify.cpp",
+    ],
+    deps = [
+        "//risc0/core/test:gtest_main",
+        "//zirgen/circuit/verify:lib",
+    ],
+)
+
+cc_test(
+    name = "verify-zirgen",
+    size = "small",
+    srcs = [
+        "fri.cpp",
+        "merkle.cpp",
+        "verify-zirgen.cpp",
+    ],
+    data = [
+        "//zirgen/dsl/examples:CalculatorIncs",
+    ],
+    deps = [
+        "//risc0/core/test:gtest_main",
+        "//zirgen/Dialect/ZHLT/IR",
+        "//zirgen/circuit/verify:lib",
+    ],
+)

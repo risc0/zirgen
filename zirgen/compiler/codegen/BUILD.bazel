@@ -1,0 +1,52 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "codegen",
+    srcs = [
+        "CppLanguageSyntax.cpp",
+        "RustLanguageSyntax.cpp",
+        "codegen.cpp",
+        "gen_cpp.cpp",
+        "gen_gpu.cpp",
+        "gen_recursion.cpp",
+        "gen_rust.cpp",
+        "mustache.h",
+    ],
+    hdrs = ["codegen.h"],
+    data = [":data"],
+    deps = [
+        ":protocol_info_const",
+        "//zirgen/Dialect/Zll/Analysis",
+        "//zirgen/Dialect/Zll/Transforms:passes",
+        "//zirgen/circuit/recursion:lib",
+    ],
+)
+
+cc_library(
+    name = "protocol_info_const",
+    srcs = ["protocol_info_const.h"],
+)
+
+filegroup(
+    name = "data",
+    srcs = [
+        "cpp/poly.tmpl.cpp",
+        "cpp/recursion/step.tmpl.cpp",
+        "cpp/step.tmpl.cpp",
+        "gpu/eval_check.tmpl.cu",
+        "gpu/eval_check.tmpl.metal",
+        "gpu/recursion/eval_check.tmpl.cu",
+        "gpu/recursion/step.tmpl.cu",
+        "gpu/recursion/step_compute_accum.tmpl.cu",
+        "gpu/recursion/step_compute_accum.tmpl.metal",
+        "gpu/recursion/step_verify_accum.tmpl.cu",
+        "gpu/recursion/step_verify_accum.tmpl.metal",
+        "gpu/step.tmpl.cu",
+        "gpu/step.tmpl.metal",
+        "rust/info.tmpl.rs",
+        "rust/poly_ext_def.tmpl.rs",
+        "rust/taps.tmpl.rs",
+    ],
+)

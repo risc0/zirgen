@@ -1,0 +1,210 @@
+// RUN: (zirgen --emit=zhlt %s 2>&1 >/dev/null ; exit 0) | FileCheck %s
+
+component ExampleComponent() {}
+component ExampleComponentWithArgument(x: ExampleComponent) {}
+component ExampleComponentWithVariadicArgument(x: ExampleComponent, y: Val...) {}
+
+// CHECK: error: detected recursion in component `Recursion`
+// CHECK: note: `Recursion` depends on `Foo`
+// CHECK: note: `Foo` depends on `Bar`
+// CHECK: note: `Bar` depends on `Recursion`
+component Recursion() {
+  foo := Foo();
+}
+
+component Foo() {
+  bar := Bar();
+}
+
+component Bar() {
+  recursion := Recursion();
+}
+
+component NonconstantParameterType(x: Val, y: x) {
+  // CHECK: error: unknown component `x`
+}
+
+component UndefinedComponent() {
+  // CHECK: error: unknown component `Undefined`
+  Undefined()
+}
+
+component RuntimeConstructor() {
+  x := Reg(1);
+  // CHECK: error: component type must be a compile-time constant
+  y := x();
+}
+
+component ArgumentTypeError() {
+  // CHECK: error: argument of type `Reg` is not convertible to `ExampleComponent`
+  ExampleComponentWithArgument(Reg(1))
+}
+
+component TooManyArguments() {
+  // CHECK: error: expected 1 arguments in component constructor, got 2
+  ExampleComponentWithArgument(ExampleComponent(), Reg(1))
+}
+
+component NotEnoughArguments() {
+  // CHECK: error: expected 1 arguments in component constructor, got 0
+  ExampleComponentWithArgument()
+}
+
+component NotEnoughArgumentsVariadic() {
+  // CHECK: error: expected at least 1 arguments in component constructor, got 0
+  ExampleComponentWithVariadicArgument()
+}
+
+component LookupNonmember() {
+  // CHECK: error: type `Component` has no member named "foo"
+  Component().foo
+}
+
+component SubscriptOnNonArray() {
+  arr := 1;
+  // error: subscripted component of type `Val` is not convertible to an array type.
+  arr[0]
+}
+
+// TODO: Make sure that array indexes are *eventually* compile-time constants
+// after all transformations and passes are done.
+//
+// component ArrayRuntimeIndex(i: Val) {
+//   arr := [0, 1, 2];
+//   // error: array index must be a compile-time constant
+//   arr[i];
+// }
+//
+// component ArrayOutOfBounds() {
+//   arr := [0, 1, 2];
+//   // error: array index out of bounds
+//   arr[3]
+// }
+
+component ExampleGenericVal<n: Val>() {}
+component ExampleGenericType<T: Type>() {}
+
+component SpecializeRuntimeValue(t: Val) {
+  // CHECK: error: component type must be a compile-time constant
+  t<1>()
+}
+
+component SpecializeWithRuntimeValue(i: Val) {
+  // CHECK: error: type parameter must be a compile-time constant
+  ExampleGenericVal<i>()
+}
+
+component SpecializeWithWrongType1() {
+  // CHECK: error: expected a type parameter of type `Val`
+  ExampleGenericVal<Val>()
+}
+
+component SpecializeWithWrongType2() {
+  // CHECK: error: expected a type parameter of type `Type`
+  ExampleGenericType<1>()
+}
+
+component TestBlock() {
+  block := {
+    a := 1;
+    b := 2;
+  };
+  // CHECK: error: type `{{.*}}` has no member named "c"
+  block.c;
+}
+
+component ReduceWithWrongArity() {
+  arr := [1, 2, 3];
+  // CHECK: error: The constructor of a reduce expression should take 2 arguments, but "Component" takes 0
+  reduce arr init 0 with Component
+}
+
+component ReduceWithBadInitType() {
+  arr := [1, 2, 3];
+  // CHECK: error: this reduce expression's initial value must be coercible to `Val`
+  reduce arr init Component() with Add
+}
+
+component ReduceWithBadArrayType() {
+  arr := [Component(), Component()];
+  // CHECK: error: this reduce expression's array's elements must be coercible to `Val`
+  reduce arr init 0 with Add
+}
+
+component BadReducer(x: Val, y: Val) {}
+
+component ReduceWithBadReducer() {
+  arr := [1, 2, 3];
+  // CHECK: error: this reduce expression's constructor must be coercible to its own first argument type, `Val`
+  reduce arr init 0 with BadReducer
+}
+
+component MuxWithWrongSizeSelector() {
+  // CHECK: error: the selector of a mux with 2 arms must be convertible to Array<Val, 2>
+  [1, 2, 3] -> (42, 45)
+}
+
+component RangeWithRuntimeStart() {
+  r := Reg(1);
+  // CHECK: error: the start of range must be a compile-time constant
+  r..5
+}
+
+component RangeWithRuntimeEnd() {
+  r := Reg(5);
+  // CHECK: error: the end of range must be a compile-time constant
+  1..r
+}
+
+component RangeWithStartGreaterThanEnd() {
+  // CHECK: error: the start of a range must be strictly less than its end
+  5..1
+}
+
+component BackWithRuntimeDistance() {
+  r := Reg(1);
+  v := Val(r);
+  // CHECK: error: the distance of a back expression must be a compile-time constant
+  r@v
+}
+
+component ConstraintWithNonValLHS() {
+  // CHECK: error: a component of type `Component` cannot be coerced to `Val`, but the left side of a constraint must be a `Val`
+  Component() = 0;
+}
+
+component ConstraintWithNonValRHS() {
+  // CHECK: error: a component of type `Component` cannot be coerced to `Val`, but the right side of a constraint must be a `Val`
+  0 = Component();
+}
+
+component Top() {
+  Recursion();
+  NonconstantParameterType(1, 2);
+  UndefinedComponent();
+  RuntimeConstructor();
+  ArgumentTypeError();
+  TooManyArguments();
+  NotEnoughArguments();
+  NotEnoughArgumentsVariadic();
+  LookupNonmember();
+  SubscriptOnNonArray();
+  ArrayRuntimeIndex(1);
+  ArrayOutOfBounds();
+  SpecializeRuntimeValue(0);
+  SpecializeWithRuntimeValue(0);
+  SpecializeWithWrongType1();
+  SpecializeWithWrongType2();
+  TestBlock();
+  ReduceWithWrongArity();
+  ReduceWithBadInitType();
+  ReduceWithBadArrayType();
+  ReduceWithBadReducer();
+  MuxWithWrongSizeSelector();
+  RangeWithRuntimeStart();
+  RangeWithRuntimeEnd();
+  RangeWithStartGreaterThanEnd();
+  BackWithRuntimeDistance();
+  ConstraintWithNonValLHS();
+  ConstraintWithNonValRHS();
+}

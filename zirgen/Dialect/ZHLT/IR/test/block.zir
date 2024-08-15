@@ -1,0 +1,25 @@
+// RUN: zirgen --emit=zhlt %s
+// TODO: Re-enable FileCheck once the IR settles down a bit.  | FileCheck %s
+
+// CHECK-LABEL: zhlt.component @"anonymous component at
+// CHECK-SAME: [[LOC:[0-9]+:[0-9]+]]"(%arg0: !zstruct$Component) -> !zstruct$[[TYPE:[a-zA-Z0-9_]+]]
+// CHECK-DAG: %[[A:[0-9]+]] = zhlt.literal 1 : !zll.val<BabyBear>
+// CHECK-DAG: %[[B:[0-9]+]] = zhlt.literal 2 : !zll.val<BabyBear>
+// CHECK-DAG: %[[SUPER:[0-9]+]] = zstruct.pack() : !zstruct$Component
+// CHECK: %[[RET:[0-9]+]] = zstruct.pack(%[[A]], %[[B]], %[[SUPER]] : !zll.val<BabyBear>, !zll.val<BabyBear>, !zstruct$Component) : !zstruct$[[TYPE]]
+// CHECK: return %[[RET]] : !zstruct$[[TYPE]]
+
+// CHECK: zhlt.component @TestBlock(%arg0: !zstruct$Component) -> !zstruct$TestBlock
+// CHECK: %{{[0-9]+}} = zhlt.construct @"anonymous component at [[LOC]]"(%0) : (!zstruct$Component) -> !zstruct$[[TYPE]]
+component TestBlock() {
+  block := {
+    a := 1;
+    b := 2;
+  };
+}
+
+
+component Top() {
+  TestBlock();
+}
+

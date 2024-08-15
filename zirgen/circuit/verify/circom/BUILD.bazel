@@ -1,0 +1,35 @@
+load("//bazel/rules/zirgen:edsl-defs.bzl", "build_circuit")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "circom",
+    srcs = [
+        "circom.cpp",
+        "circom.h",
+    ],
+    deps = [
+        "//zirgen/Dialect/IOP/IR",
+        "//zirgen/Dialect/Zll/IR",
+    ],
+)
+
+build_circuit(
+    name = "circuit",
+    srcs = ["to_snark.cpp"],
+    outs = [
+        # do not sort
+        "stark_verify.circom",
+        "seal_format.rs",
+    ],
+    deps = [
+        ":circom",
+        "//zirgen/Dialect/IOP/IR",
+        "//zirgen/Dialect/Zll/IR",
+        "//zirgen/Dialect/Zll/Transforms:passes",
+        "//zirgen/circuit/recursion:lib",
+        "//zirgen/circuit/verify:lib",
+    ],
+)

@@ -1,0 +1,194 @@
+// RUN: zirgen --emit=zhlt %s
+// TODO: Re-enable FileCheck once the IR settles down a bit.  | FileCheck %s
+
+// CHECK-LABEL: zhlt.component @TestTrivial(%arg0: !zstruct$Component) -> !zstruct$TestTrivial
+
+component TestTrivial() {
+  // CHECK-NEXT:    %0 = zhlt.new !zstruct$Component()
+  // CHECK-NEXT:    %1 = zhlt.new !zstruct$TestTrivial(%0 : !zstruct$Component)
+  // CHECK-NEXT:    return %1 : !zstruct$TestTrivial
+}
+
+component Trivial() {}
+component ExampleGenericVal<n: Val>() {}
+component ExampleGenericType<T: Type>() {}
+
+component Bit(x: Val) {
+  x * (x - 1) = 0;
+  NondetReg(x)
+}
+
+// CHECK-LABEL: zhlt.component @TestParameters(%arg0: !zll.val<BabyBear>, %arg1: !zstruct$Trivial, %arg2: !zstruct$Component) -> !zstruct$TestParameters
+component TestParameters(x: Val, trivial: Trivial) {}
+
+// Check for the instantiations requested by Top
+// CHECK-LABEL: zhlt.component @"TestTypeParameters<0, Val>"(%arg0: !zstruct$Component) -> !zstruct$TestTypeParameters3C02C_Val3E
+// CHECK-LABEL: zhlt.component @"TestTypeParameters<5, Add>"(%arg0: !zstruct$Component) -> !zstruct$TestTypeParameters3C52C_Add3E
+component TestTypeParameters<n: Val, t: Type>() {}
+
+// CHECK-LABEL: zhlt.component @TestSpecialization(%arg0: !zstruct$Component) -> !zstruct$TestSpecialization
+component TestSpecialization() {
+  // CHECK: %{{[0-9]+}} = zhlt.construct @"ExampleGenericVal<3>"(%{{[0-9]+}}) : (!zstruct$Component) -> !zstruct$ExampleGenericVal3C33E
+  ExampleGenericVal<3>();
+  // CHECK: %{{[0-9]+}} = zhlt.construct @"ExampleGenericType<NondetReg>"(%{{[0-9]+}}) : (!zstruct$Component) -> !zstruct$ExampleGenericType3CNondetReg3E
+  ExampleGenericType<NondetReg>();
+}
+
+// CHECK-LABEL: zhlt.component @TestLiteral(%arg0: !zstruct$Component) -> !zstruct$TestLiteral
+component TestLiteral() {
+  // CHECK-NEXT: %0 = zhlt.literal 5 : !zll.val<BabyBear>
+  5
+}
+
+component A(a: Val, b: B) {
+  a := a;
+  b
+}
+
+component B(b: Val, c: Val) {
+  b := b;
+  c := c;
+}
+
+component TestLookup() {
+  // CHECK: %[[STRUCT:[0-9]+]] = zhlt.construct @A(%{{[0-9]+}}, %{{[0-9]+}}, %{{[0-9]+}}) : (!zll.val<BabyBear>, !zstruct$B, !zstruct$Component) -> !zstruct$A
+  data := A(1, B(2, 3));
+  // CHECK: %{{[0-9]+}} = zhlt.lookup %[[STRUCT]] : !zstruct$A ["a"] : !zll.val<BabyBear>
+  data.a;
+  // CHECK: %[[SUPER:[0-9]+]] = zhlt.lookup %[[STRUCT]] : !zstruct$A ["@super"] : !zstruct$B
+  // CHECK: %{{[0-9]+}} = zhlt.lookup %[[SUPER]] : !zstruct$B ["b"] : !zll.val<BabyBear>
+  data.b;
+  // CHECK: %[[SUPER:[0-9]+]] = zhlt.lookup %[[STRUCT]] : !zstruct$A ["@super"] : !zstruct$B
+  // CHECK: %{{[0-9]+}} = zhlt.lookup %[[SUPER]] : !zstruct$B ["c"] : !zll.val<BabyBear>
+  data.c;
+}
+
+// CHECK-LABEL: zhlt.component @TestArray(%arg0: !zstruct$Component) -> !zstruct$TestArray
+component TestArray() {
+  // CHECK-NEXT: %0 = zhlt.literal 1 : !zll.val<BabyBear>
+  // CHECK-NEXT: %1 = zhlt.literal 2 : !zll.val<BabyBear>
+  // CHECK-NEXT: %2 = zhlt.literal 3 : !zll.val<BabyBear>
+  // CHECK-NEXT: %3 = zhlt.array[%0, %1, %2 : !zll.val<BabyBear>, !zll.val<BabyBear>, !zll.val<BabyBear>]
+  [1, 2, 3];
+}
+
+// CHECK-LABEL: zhlt.component @TestArrayElementCoercion(%arg0: !zstruct$TestArrayElementCoercion$layout) -> !zstruct$TestArrayElementCoercion
+component TestArrayElementCoercion() {
+  // CHECK-DAG: %[[BIT:[0-9]+]] = zhlt.construct @Bit(%{{[0-9]+}}, %{{[0-9]+}}) : (!zll.val<BabyBear>, !zstruct$Bit$layout) -> !zstruct$Bit
+  // CHECK-DAG: %[[REG:[0-9]+]] = zhlt.construct @NondetReg(%{{[0-9]+}}, %{{[0-9]+}}) : (!zll.val<BabyBear>, !zstruct.ref) -> !zstruct$NondetReg
+  // CHECK-DAG: %[[LIT:[0-9]+]] = zhlt.literal 2 : !zll.val<BabyBear>
+  // CHECK: %[[SUPER:[0-9]+]] = zhlt.lookup %[[BIT]] : !zstruct$Bit ["@super"] : !zstruct$NondetReg
+  // CHECK: %[[SUPSUP:[0-9]+]] = zhlt.lookup %[[SUPER]] : !zstruct$NondetReg ["@super"] : !zll.val<BabyBear>
+  // CHECK: %[[SUPREG:[0-9]+]] = zhlt.lookup %[[REG]] : !zstruct$NondetReg ["@super"] : !zll.val<BabyBear>
+  // CHECK: %{{[0-9]+}} = zhlt.array[%[[SUPSUP]], %[[SUPREG]], %[[LIT]] : !zll.val<BabyBear>, !zll.val<BabyBear>, !zll.val<BabyBear>]
+  [Bit(1), NondetReg(7), 2];
+}
+
+// CHECK-LABEL: zhlt.component @TestSubscript(%arg0: !zstruct$Array3CVal2C_33E, %arg1: !zstruct$Component) -> !zstruct$TestSubscript
+component TestSubscript(arr: Array<Val, 3>) {
+  // CHECK: %{{[0-9]+}} = zhlt.subscript %arg0 : !zstruct$Array3CVal2C_33E [1]
+  arr[1];
+}
+
+component DerivedArray(x: Val) {
+  [x, x + 1, x + 2]
+}
+
+// CHECK-LABEL: zhlt.component @TestSubscriptOnDerivedType(%arg0: !zstruct$Component) -> !zstruct$TestSubscriptOnDerivedType
+component TestSubscriptOnDerivedType() {
+  // CHECK: %[[ARR:[0-9]+]] = zhlt.construct @DerivedArray
+  arr := DerivedArray(5);
+  // CHECK: %[[SUPER:[0-9]+]] = zhlt.lookup %[[ARR]] : !zstruct$DerivedArray ["@super"] : !zstruct$Array3CVal2C_33E
+  // CHECK: %{{[0-9]+}} = zhlt.subscript %[[SUPER]] : !zstruct$Array3CVal2C_33E [1]
+  arr[1]
+}
+
+
+
+// CHECK-LABEL: zhlt.component @TestReduce(%arg0: !zstruct$Component) -> !zstruct$TestReduce
+component TestReduce() {
+  // CHECK: %[[INIT:[0-9]+]] = zhlt.literal 0 : !zll.val<BabyBear>
+  // CHECK: %{{[0-9]+}} = zhlt.reduce %{{[0-9]+}} : !zstruct$Array3CVal2C_33E, %[[INIT]] : !zll.val<BabyBear>, !zstruct$Add
+  reduce [1, 2, 3] init 0 with Add
+}
+
+// CHECK-LABEL: zhlt.component @TestMux(%arg0: !zstruct$Component) -> !zstruct$TestMux
+component TestMux() {
+  // CHECK-DAG: %[[ZERO:[0-9]+]] = zhlt.literal 0 : !zll.val<BabyBear>
+  // CHECK-DAG: %[[ONE:[0-9]+]] = zhlt.literal 1 : !zll.val<BabyBear>
+  // CHECK-DAG: %[[EIGHT:[0-9]+]] = zhlt.literal 8 : !zll.val<BabyBear>
+  // CHECK-DAG: %[[TEN:[0-9]+]] = zhlt.literal 10 : !zll.val<BabyBear>
+  // CHECK: %[[ONEHOT:[0-9]+]] = zhlt.array[%[[ZERO]], %[[ONE]] : !zll.val<BabyBear>, !zll.val<BabyBear>]
+  // CHECK: %5 = zhlt.switch %[[ONEHOT]] : !zstruct$Array3CVal2C_23E -> (%[[TEN]], %[[EIGHT]] : !zll.val<BabyBear>, !zll.val<BabyBear>) : !zstruct$[[MUX:[a-zA-Z0-9_]+]]
+  [0, 1] -> (10, 8);
+}
+
+// CHECK-LABEL: zhlt.component @TestRange(%arg0: !zstruct$Component) -> !zstruct$TestRange
+component TestRange() {
+  // The range expression should lower to an array attribute, which will then
+  // be materialized in order to be passed into the NewOp
+  // CHECK-NEXT: %0 = zhlt.literal 1 : !zll.val<BabyBear>
+  // CHECK-NEXT: %1 = zhlt.literal 2 : !zll.val<BabyBear>
+  // CHECK-NEXT: %2 = zhlt.literal 3 : !zll.val<BabyBear>
+  // CHECK-NEXT: %3 = zhlt.literal 4 : !zll.val<BabyBear>
+  // CHECK-NEXT: %4 = zhlt.array[%0, %1, %2, %3 : !zll.val<BabyBear>, !zll.val<BabyBear>, !zll.val<BabyBear>, !zll.val<BabyBear>]
+  // CHECK-NEXT: %5 = zhlt.new !zstruct$TestRange(%4 : !zstruct$Array3CVal2C_43E)
+  1..5
+}
+
+// CHECK: zhlt.component @TestBack(%arg0: !zstruct$TestBack$layout) -> !zstruct$TestBack
+component TestBack() {
+  // CHECK: %[[REG:[0-9]+]] = zhlt.construct @NondetReg
+  a := NondetReg(1);
+  // CHECK: %[[LOOKUP:[0-9]+]] = zhlt.lookup %arg{{.*}} ["a"]
+  // CHECK: %{{[0-9]+}} = zhlt.back @NondetReg(1, %[[LOOKUP]] : !zstruct.ref) -> !zstruct$NondetReg
+  b := a@1;
+}
+
+// CHECK-LABEL: zhlt.component @TestDefinition(%arg0: !zstruct$Component) -> !zstruct$TestDefinition
+component TestDefinition() {
+  // CHECK-NEXT: %0 = zhlt.literal 1 : !zll.val<BabyBear>
+  // CHECK-NEXT: %1 = zhlt.declare !zll.val<BabyBear>
+  // CHECK-NEXT: zhlt.define %1 = %0 : !zll.val<BabyBear>
+  // CHECK-NEXT: %2 = zhlt.new !zstruct$Component()
+  // CHECK-NEXT: %3 = zhlt.new !zstruct$TestDefinition(%0, %2 : !zll.val<BabyBear>, !zstruct$Component)
+  // CHECK-NEXT: return %3 : !zstruct$TestDefinition
+  member := 1;
+}
+
+// CHECK-LABEL: zhlt.component @TestConstraint(%arg0: !zll.val<BabyBear>, %arg1: !zstruct$Component) -> !zstruct$TestConstraint
+component TestConstraint(x: Val) {
+  // CHECK-NEXT: %0 = zhlt.literal 0 : !zll.val<BabyBear>
+  // CHECK-NEXT: zhlt.constrain %arg0 : !zll.val<BabyBear> = %0 : !zll.val<BabyBear>
+  x = 0;
+}
+
+// CHECK-LABEL: zhlt.component @TestVoid(%arg0: !zstruct$Component) -> !zstruct$TestVoid
+component TestVoid() {
+  // CHECK: %[[V:[0-9]+]] = zhlt.literal 7 : !zll.val<BabyBear>
+  // CHECK: %[[S:[0-9]+]] = zhlt.new !zstruct$Component()
+  // CHECK: %[[RET:[0-9]+]] = zhlt.new !zstruct$TestVoid(%[[V]], %[[S]] : !zll.val<BabyBear>, !zstruct$Component)
+  // CHECK-NEXT: return %[[RET]] : !zstruct$TestVoid
+  7;
+}
+
+component Top() {
+  TestTrivial();
+  TestParameters(0, Trivial());
+  TestTypeParameters<0, Val>();
+  TestTypeParameters<5, Add>();
+  TestSpecialization();
+  TestLiteral();
+  TestLookup();
+  TestArray();
+  TestArrayElementCoercion();
+  TestSubscript([1, 2, 3]);
+  TestSubscriptOnDerivedType();
+  TestReduce();
+  TestMux();
+  TestRange();
+  TestBack();
+  TestDefinition();
+  TestConstraint(0);
+  TestVoid();
+}

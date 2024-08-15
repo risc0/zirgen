@@ -1,0 +1,44 @@
+load("//bazel/rules/zirgen:edsl-defs.bzl", "DEFAULT_OUTS", "build_circuit")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+build_circuit(
+    name = "recursion",
+    srcs = ["recursion.cpp"],
+    outs = DEFAULT_OUTS,
+    deps = [":lib"],
+)
+
+cc_library(
+    name = "lib",
+    srcs = [
+        "bits.cpp",
+        "checked_bytes.cpp",
+        "code.cpp",
+        "encode.cpp",
+        "macro.cpp",
+        "micro.cpp",
+        "poseidon2.cpp",
+        "sha.cpp",
+        "top.cpp",
+        "wom.cpp",
+    ],
+    hdrs = [
+        "bits.h",
+        "checked_bytes.h",
+        "code.h",
+        "encode.h",
+        "macro.h",
+        "micro.h",
+        "poseidon2.h",
+        "sha.h",
+        "top.h",
+        "wom.h",
+    ],
+    deps = [
+        "//zirgen/compiler/codegen:protocol_info_const",
+        "//zirgen/components",
+    ],
+)

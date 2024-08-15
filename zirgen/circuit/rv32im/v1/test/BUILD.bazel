@@ -1,0 +1,193 @@
+load("//bazel/toolchain/risc0:defs.bzl", "risc0_cc_binary")
+load("//bazel/toolchain/rv32im-linux:defs.bzl", "risc0_cc_kernel_binary_v1", linux_risc0_cc_binary = "risc0_cc_binary")
+load(":defs.bzl", "riscv_test_suite")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "runner",
+    srcs = [
+        "runner.cpp",
+        "runner.h",
+    ],
+    deps = [
+        "//zirgen/circuit/rv32im/v1/edsl:lib",
+        "//zirgen/compiler/zkp",
+    ],
+)
+
+cc_test(
+    name = "test",
+    srcs = ["smoke.cpp"],
+    deps = [
+        ":runner",
+        "//risc0/core/test:gtest_main",
+    ],
+)
+
+cc_library(
+    name = "guest",
+    hdrs = ["guest.h"],
+)
+
+risc0_cc_binary(
+    name = "test-sha-buffer",
+    srcs = ["test-sha-buffer.cpp"],
+    deps = [":guest"],
+)
+
+risc0_cc_binary(
+    name = "test-sha-pair",
+    srcs = ["test-sha-pair.cpp"],
+    deps = [":guest"],
+)
+
+cc_test(
+    name = "test-sha",
+    timeout = "long",
+    srcs = ["test-sha-host.cpp"],
+    data = [
+        ":test-sha-buffer",
+        ":test-sha-pair",
+    ],
+    deps = [
+        ":runner",
+        "//risc0/core",
+        "//risc0/core/test:gtest_main",
+    ],
+)
+
+risc0_cc_binary(
+    name = "test-bigint-guest",
+    srcs = ["test-bigint-guest.cpp"],
+    deps = [":guest"],
+)
+
+cc_test(
+    name = "test-bigint",
+    timeout = "long",
+    srcs = ["test-bigint-host.cpp"],
+    data = [":test-bigint-guest"],
+    deps = [
+        ":runner",
+        "//risc0/core",
+        "//risc0/core/test:gtest_main",
+    ],
+)
+
+risc0_cc_binary(
+    name = "test-io-guest",
+    srcs = ["test-io-guest.cpp"],
+    deps = [":guest"],
+)
+
+cc_test(
+    name = "test-io",
+    size = "large",
+    srcs = ["test-io-host.cpp"],
+    data = [":test-io-guest"],
+    deps = [
+        ":runner",
+        "//risc0/core",
+        "//risc0/core/test:gtest_main",
+    ],
+)
+
+risc0_cc_binary(
+    name = "test-pause-guest",
+    srcs = ["test-pause-guest.cpp"],
+    deps = [":guest"],
+)
+
+cc_test(
+    name = "test-pause",
+    srcs = ["test-pause-host.cpp"],
+    data = [":test-pause-guest"],
+    deps = [
+        ":runner",
+        "//risc0/core",
+        "//risc0/core/test:gtest_main",
+    ],
+)
+
+risc0_cc_binary(
+    name = "test-input-guest",
+    srcs = ["test-input-guest.cpp"],
+    deps = [":guest"],
+)
+
+cc_test(
+    name = "test-input",
+    size = "large",
+    srcs = ["test-input-host.cpp"],
+    data = [":test-input-guest"],
+    deps = [
+        ":runner",
+        "//risc0/core",
+        "//risc0/core/test:gtest_main",
+    ],
+)
+
+risc0_cc_binary(
+    name = "test-usermode-guest",
+    srcs = ["test-usermode-guest.cpp"],
+    deps = [
+        ":guest",
+        "//zirgen/circuit/rv32im/v1/platform:base",
+    ],
+)
+
+cc_test(
+    name = "test-usermode",
+    size = "large",
+    srcs = ["test-usermode-host.cpp"],
+    data = [":test-usermode-guest"],
+    deps = [
+        ":runner",
+        "//risc0/core",
+        "//risc0/core/test:gtest_main",
+    ],
+)
+
+cc_binary(
+    name = "risc0-simulate",
+    srcs = ["risc0-simulate.cpp"],
+    deps = [
+        ":runner",
+        "//risc0/core",
+    ],
+)
+
+linux_risc0_cc_binary(
+    name = "user-guest",
+    srcs = ["user-guest.cpp"],
+)
+
+risc0_cc_kernel_binary_v1(
+    name = "test-kernel",
+    srcs = [
+        "test-kernel.cpp",
+    ],
+    deps = [
+        "//zirgen/circuit/rv32im/v1/platform:base",
+    ],
+)
+
+cc_test(
+    name = "test-linux-abi",
+    size = "large",
+    srcs = ["test-linux-abi.cpp"],
+    data = [
+        ":test-kernel",
+        ":user-guest",
+    ],
+    deps = [
+        ":runner",
+        "//risc0/core",
+        "//risc0/core/test:gtest_main",
+    ],
+)
+
+riscv_test_suite()

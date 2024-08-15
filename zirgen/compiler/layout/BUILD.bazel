@@ -1,0 +1,25 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "layout",
+    srcs = [
+        "collect.cpp",
+        "convert.cpp",
+        "improve.cpp",
+        "rebuild.cpp",
+        "viz.cpp",
+    ],
+    hdrs = [
+        "collect.h",
+        "convert.h",
+        "improve.h",
+        "rebuild.h",
+        "viz.h",
+    ],
+    deps = [
+        "//zirgen/Dialect/ZHLT/IR",
+        "//zirgen/Dialect/ZStruct/IR",
+    ],
+)

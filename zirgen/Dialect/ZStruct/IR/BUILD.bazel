@@ -1,0 +1,171 @@
+load("@llvm-project//mlir:tblgen.bzl", "gentbl_cc_library", "td_library")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+td_library(
+    name = "TdFiles",
+    srcs = [
+        "Attrs.td",
+        "Dialect.td",
+        "Enums.td",
+        "Interfaces.td",
+        "Ops.td",
+        "Types.td",
+    ],
+    deps = [
+        "//zirgen/Dialect/Zll/IR:TdFiles",
+        "@llvm-project//mlir:BuiltinDialectTdFiles",
+        "@llvm-project//mlir:ControlFlowInterfacesTdFiles",
+        "@llvm-project//mlir:InferTypeOpInterfaceTdFiles",
+        "@llvm-project//mlir:OpBaseTdFiles",
+        "@llvm-project//mlir:SideEffectInterfacesTdFiles",
+    ],
+)
+
+gentbl_cc_library(
+    name = "AttrsIncGen",
+    tbl_outs = [
+        (
+            ["-gen-attrdef-decls"],
+            "Attrs.h.inc",
+        ),
+        (
+            ["-gen-attrdef-defs"],
+            "Attrs.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Attrs.td",
+    deps = [":TdFiles"],
+)
+
+gentbl_cc_library(
+    name = "DialectIncGen",
+    tbl_outs = [
+        (
+            [
+                "-gen-dialect-decls",
+                "-dialect=zstruct",
+            ],
+            "Dialect.h.inc",
+        ),
+        (
+            [
+                "-gen-dialect-defs",
+                "-dialect=zstruct",
+            ],
+            "Dialect.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Ops.td",
+    deps = [":TdFiles"],
+)
+
+gentbl_cc_library(
+    name = "EnumsIncGen",
+    tbl_outs = [
+        (
+            ["-gen-enum-decls"],
+            "Enums.h.inc",
+        ),
+        (
+            ["-gen-enum-defs"],
+            "Enums.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Enums.td",
+    deps = [":TdFiles"],
+)
+
+gentbl_cc_library(
+    name = "TypesIncGen",
+    tbl_outs = [
+        (
+            [
+                "-gen-typedef-decls",
+                "--typedefs-dialect=zstruct",
+            ],
+            "Types.h.inc",
+        ),
+        (
+            [
+                "-gen-typedef-defs",
+                "--typedefs-dialect=zstruct",
+            ],
+            "Types.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Types.td",
+    deps = [":TdFiles"],
+)
+
+gentbl_cc_library(
+    name = "TypeInterfacesIncGen",
+    tbl_outs = [
+        (
+            ["-gen-type-interface-decls"],
+            "TypeInterfaces.h.inc",
+        ),
+        (
+            ["-gen-type-interface-defs"],
+            "TypeInterfaces.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Interfaces.td",
+    deps = [":TdFiles"],
+)
+
+gentbl_cc_library(
+    name = "OpsIncGen",
+    tbl_outs = [
+        (
+            ["-gen-op-decls"],
+            "Ops.h.inc",
+        ),
+        (
+            ["-gen-op-defs"],
+            "Ops.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Ops.td",
+    deps = [":TdFiles"],
+)
+
+cc_library(
+    name = "IR",
+    srcs = [
+        "Attrs.cpp",
+        "Dialect.cpp",
+        "Ops.cpp",
+        "TypeUtils.cpp",
+        "Types.cpp",
+    ],
+    hdrs = [
+        "Attrs.h",
+        "TypeUtils.h",
+        "Types.h",
+        "ZStruct.h",
+    ],
+    deps = [
+        ":AttrsIncGen",
+        ":DialectIncGen",
+        ":EnumsIncGen",
+        ":OpsIncGen",
+        ":TypeInterfacesIncGen",
+        ":TypesIncGen",
+        "//zirgen/Dialect/Zll/IR",
+        "//zirgen/compiler/zkp",
+        "@llvm-project//mlir:AffineDialect",
+        "@llvm-project//mlir:FuncDialect",
+        "@llvm-project//mlir:IR",
+        "@llvm-project//mlir:SideEffectInterfaces",
+        "@llvm-project//mlir:Transforms",
+    ],
+)

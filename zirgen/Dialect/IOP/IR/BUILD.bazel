@@ -1,0 +1,103 @@
+load("@llvm-project//mlir:tblgen.bzl", "gentbl_cc_library", "td_library")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+td_library(
+    name = "TdFiles",
+    srcs = [
+        "Dialect.td",
+        "Ops.td",
+        "Types.td",
+    ],
+    deps = [
+        "//zirgen/Dialect/Zll/IR:TdFiles",
+        "@llvm-project//mlir:ControlFlowInterfacesTdFiles",
+        "@llvm-project//mlir:InferTypeOpInterfaceTdFiles",
+        "@llvm-project//mlir:OpBaseTdFiles",
+        "@llvm-project//mlir:SideEffectInterfacesTdFiles",
+    ],
+)
+
+gentbl_cc_library(
+    name = "DialectIncGen",
+    tbl_outs = [
+        (
+            [
+                "-gen-dialect-decls",
+                "-dialect=iop",
+            ],
+            "Dialect.h.inc",
+        ),
+        (
+            [
+                "-gen-dialect-defs",
+                "-dialect=iop",
+            ],
+            "Dialect.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Ops.td",
+    deps = [":TdFiles"],
+)
+
+gentbl_cc_library(
+    name = "TypesIncGen",
+    tbl_outs = [
+        (
+            [
+                "-typedefs-dialect=iop",
+                "-gen-typedef-decls",
+            ],
+            "Types.h.inc",
+        ),
+        (
+            [
+                "-typedefs-dialect=iop",
+                "-gen-typedef-defs",
+            ],
+            "Types.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Types.td",
+    deps = [":TdFiles"],
+)
+
+gentbl_cc_library(
+    name = "OpsIncGen",
+    tbl_outs = [
+        (
+            ["-gen-op-decls"],
+            "Ops.h.inc",
+        ),
+        (
+            ["-gen-op-defs"],
+            "Ops.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Ops.td",
+    deps = [":TdFiles"],
+)
+
+cc_library(
+    name = "IR",
+    srcs = [
+        "Dialect.cpp",
+        "Ops.cpp",
+    ],
+    hdrs = [
+        "IR.h",
+    ],
+    deps = [
+        ":DialectIncGen",
+        ":OpsIncGen",
+        ":TypesIncGen",
+        "//zirgen/Dialect/Zll/IR",
+        "//zirgen/compiler/zkp",
+        "@llvm-project//mlir:IR",
+    ],
+)

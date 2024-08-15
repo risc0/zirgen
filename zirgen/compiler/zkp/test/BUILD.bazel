@@ -1,0 +1,18 @@
+load("//bazel/toolchain/rv32im-linux:defs.bzl", "risc0_cc_binary")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_test(
+    name = "test",
+    size = "small",
+    srcs = [
+        "poseidon.cpp",
+        "poseidon2.cpp",
+    ],
+    deps = [
+        "//risc0/core/test:gtest_main",
+        "//zirgen/compiler/zkp",
+    ],
+)

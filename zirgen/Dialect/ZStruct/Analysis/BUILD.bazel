@@ -1,0 +1,21 @@
+load("@llvm-project//mlir:tblgen.bzl", "gentbl_cc_library", "td_library")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "Analysis",
+    srcs = [
+        "BufferAnalysis.cpp",
+        "DegreeAnalysis.cpp",
+    ],
+    hdrs = [
+        "BufferAnalysis.h",
+        "DegreeAnalysis.h",
+    ],
+    deps = [
+        "//zirgen/Dialect/ZStruct/IR",
+        "//zirgen/Dialect/Zll/Analysis",
+    ],
+)

@@ -1,0 +1,51 @@
+load("//bazel/rules/zirgen:edsl-defs.bzl", "DEFAULT_OUTS", "build_circuit")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+build_circuit(
+    name = "rv32im",
+    srcs = ["rv32im.cpp"],
+    outs = DEFAULT_OUTS,
+    deps = [":lib"],
+)
+
+cc_library(
+    name = "lib",
+    srcs = [
+        "bigint.cpp",
+        "body.cpp",
+        "code.cpp",
+        "compute.cpp",
+        "decode.cpp",
+        "divide.cpp",
+        "ecall.cpp",
+        "memio.cpp",
+        "multiply.cpp",
+        "page_fault.cpp",
+        "sha.cpp",
+        "top.cpp",
+    ],
+    hdrs = [
+        "bigint.h",
+        "body.h",
+        "code.h",
+        "compute.h",
+        "decode.h",
+        "divide.h",
+        "ecall.h",
+        "global.h",
+        "memio.h",
+        "multiply.h",
+        "page_fault.h",
+        "sha.h",
+        "top.h",
+    ],
+    deps = [
+        "//zirgen/circuit/rv32im/v1/platform",
+        "//zirgen/compiler/codegen:protocol_info_const",
+        "//zirgen/compiler/zkp",
+        "//zirgen/components",
+    ],
+)

@@ -1,0 +1,48 @@
+load("@rules_pkg//pkg:zip.bzl", "pkg_zip")
+load("//bazel/rules/zirgen:edsl-defs.bzl", "build_circuit")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "lib",
+    srcs = [
+        "predicates.cpp",
+    ],
+    hdrs = [
+        "predicates.h",
+        "//zirgen/circuit/recursion",
+        "//zirgen/circuit/rv32im/v1/edsl:rv32im",
+    ],
+    deps = [
+        "//zirgen/circuit/recursion:lib",
+        "//zirgen/circuit/verify:lib",
+        "//zirgen/compiler/edsl",
+    ],
+)
+
+ZKRS = [
+    ("lift_" + str(po2))
+    for po2 in range(14, 25)
+] + [
+    "test_recursion_circuit",
+    "join",
+    "resolve",
+    "identity",
+]
+
+build_circuit(
+    name = "gen_predicates",
+    srcs = ["gen_predicates.cpp"],
+    outs = [fn for zkr in ZKRS for fn in [
+        zkr + ".zkr",
+        zkr + ".zkr.dbg",
+    ]],
+    deps = [":lib"],
+)
+
+pkg_zip(
+    name = "recursion_zkr",
+    srcs = [x + ".zkr" for x in ZKRS],
+)

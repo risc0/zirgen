@@ -1,0 +1,28 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "edsl",
+    srcs = [
+        "component.cpp",
+        "edsl.cpp",
+        "layout.cpp",
+    ],
+    hdrs = [
+        "component.h",
+        "edsl.h",
+        "source_loc.h",
+    ],
+    deps = [
+        "//zirgen/Dialect/ZStruct/IR",
+        "//zirgen/Dialect/Zll/Transforms:passes",
+    ],
+)
+
+cc_test(
+    name = "test",
+    size = "small",
+    srcs = ["test.cpp"],
+    deps = [":edsl"],
+)

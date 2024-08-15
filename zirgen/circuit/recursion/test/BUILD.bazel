@@ -1,0 +1,21 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_test(
+    name = "test",
+    srcs = [
+        "AB.cpp",
+        "AB.h",
+        "recurse.cpp",
+        "runner.cpp",
+        "runner.h",
+        "smoke.cpp",
+    ],
+    deps = [
+        "//risc0/core/test:gtest_main",
+        "//zirgen/circuit/recursion:lib",
+        "//zirgen/circuit/rv32im/v1/edsl:lib",
+        "//zirgen/circuit/verify:lib",
+    ],
+)

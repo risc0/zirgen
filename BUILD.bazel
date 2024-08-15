@@ -1,0 +1,20 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+exports_files([".clang-format"])
+
+py_binary(
+    name = "clang-format",
+    srcs = ["clang-format.py"],
+)
+
+alias(
+    name = "lit_cfg",
+    actual = "//zirgen:lit_cfg",
+)
+
+alias(
+    name = "lit_utils",
+    actual = "//zirgen:lit_utils",
+)

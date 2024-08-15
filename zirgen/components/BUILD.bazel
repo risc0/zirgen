@@ -1,0 +1,30 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "components",
+    srcs = [
+        "bytes.cpp",
+        "fpext.cpp",
+        "iszero.cpp",
+        "plonk.cpp",
+        "ram.cpp",
+        "u32.cpp",
+    ],
+    hdrs = [
+        "bits.h",
+        "bytes.h",
+        "fpext.h",
+        "iszero.h",
+        "mux.h",
+        "onehot.h",
+        "plonk.h",
+        "ram.h",
+        "reg.h",
+        "u32.h",
+    ],
+    deps = [
+        "//zirgen/compiler/edsl",
+    ],
+)

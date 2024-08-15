@@ -1,0 +1,34 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "zkp",
+    srcs = [
+        "hash.cpp",
+        "poseidon.cpp",
+        "poseidon2.cpp",
+        "poseidon_254.cpp",
+        "sha_rng.cpp",
+        "util.cpp",
+    ],
+    hdrs = [
+        "baby_bear.h",
+        "digest.h",
+        "hash.h",
+        "poseidon.h",
+        "poseidon2.h",
+        "poseidon2_consts.h",
+        "poseidon_254.h",
+        "poseidon_consts.h",
+        "read_iop.h",
+        "sha256.h",
+        "sha_rng.h",
+        "util.h",
+        "zkp.h",
+    ],
+    deps = [
+        "//risc0/core",
+        "@llvm-project//llvm:Support",
+    ],
+)

@@ -1,0 +1,185 @@
+load("@llvm-project//mlir:tblgen.bzl", "gentbl_cc_library", "td_library")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+td_library(
+    name = "TdFiles",
+    srcs = [
+        "Attrs.td",
+        "Dialect.td",
+        "Enums.td",
+        "Interfaces.td",
+        "Ops.td",
+        "Types.td",
+    ],
+    deps = [
+        "@llvm-project//mlir:ControlFlowInterfacesTdFiles",
+        "@llvm-project//mlir:InferTypeOpInterfaceTdFiles",
+        "@llvm-project//mlir:OpBaseTdFiles",
+        "@llvm-project//mlir:SideEffectInterfacesTdFiles",
+    ],
+)
+
+gentbl_cc_library(
+    name = "DialectIncGen",
+    tbl_outs = [
+        (
+            [
+                "-gen-dialect-decls",
+                "-dialect=zll",
+            ],
+            "Dialect.h.inc",
+        ),
+        (
+            [
+                "-gen-dialect-defs",
+                "-dialect=zll",
+            ],
+            "Dialect.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Ops.td",
+    deps = [":TdFiles"],
+)
+
+gentbl_cc_library(
+    name = "TypesIncGen",
+    tbl_outs = [
+        (
+            ["-gen-typedef-decls"],
+            "Types.h.inc",
+        ),
+        (
+            ["-gen-typedef-defs"],
+            "Types.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Types.td",
+    deps = [":TdFiles"],
+)
+
+gentbl_cc_library(
+    name = "EnumsIncGen",
+    tbl_outs = [
+        (
+            ["-gen-enum-decls"],
+            "Enums.h.inc",
+        ),
+        (
+            ["-gen-enum-defs"],
+            "Enums.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Enums.td",
+    deps = [":TdFiles"],
+)
+
+gentbl_cc_library(
+    name = "InterfacesIncGen",
+    tbl_outs = [
+        (
+            ["-gen-op-interface-decls"],
+            "Interfaces.h.inc",
+        ),
+        (
+            ["-gen-op-interface-defs"],
+            "Interfaces.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Interfaces.td",
+    deps = [":TdFiles"],
+)
+
+gentbl_cc_library(
+    name = "TypeInterfacesIncGen",
+    tbl_outs = [
+        (
+            ["-gen-type-interface-decls"],
+            "TypeInterfaces.h.inc",
+        ),
+        (
+            ["-gen-type-interface-defs"],
+            "TypeInterfaces.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Interfaces.td",
+    deps = [":TdFiles"],
+)
+
+gentbl_cc_library(
+    name = "OpsIncGen",
+    tbl_outs = [
+        (
+            ["-gen-op-decls"],
+            "Ops.h.inc",
+        ),
+        (
+            ["-gen-op-defs"],
+            "Ops.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Ops.td",
+    deps = [":TdFiles"],
+)
+
+gentbl_cc_library(
+    name = "AttrsIncGen",
+    tbl_outs = [
+        (
+            ["-gen-attrdef-decls"],
+            "Attrs.h.inc",
+        ),
+        (
+            ["-gen-attrdef-defs"],
+            "Attrs.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Attrs.td",
+    deps = [":TdFiles"],
+)
+
+cc_library(
+    name = "IR",
+    srcs = [
+        "Attrs.cpp",
+        "CodegenEmitter.cpp",
+        "Dialect.cpp",
+        "Field.cpp",
+        "IR.cpp",
+        "Interpreter.cpp",
+        "Ops.cpp",
+        "Types.cpp",
+    ],
+    hdrs = [
+        "Attrs.h",
+        "BigInt.h",
+        "Codegen.h",
+        "Field.h",
+        "IR.h",
+        "Interpreter.h",
+        "Types.h",
+    ],
+    deps = [
+        ":AttrsIncGen",
+        ":DialectIncGen",
+        ":EnumsIncGen",
+        ":InterfacesIncGen",
+        ":OpsIncGen",
+        ":TypeInterfacesIncGen",
+        ":TypesIncGen",
+        "//zirgen/compiler/zkp",
+        "@llvm-project//mlir:FuncDialect",
+        "@llvm-project//mlir:IR",
+        "@llvm-project//mlir:SideEffectInterfaces",
+        "@llvm-project//mlir:Transforms",
+    ],
+)

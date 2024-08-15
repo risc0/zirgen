@@ -1,0 +1,394 @@
+!zlayout$NondetReg = !zstruct.layout<NondetReg, <"@super": !zstruct.ref>>
+!zstruct$Component = !zstruct.struct<Component, <>>
+!zstruct$GetValFromUser = !zstruct.struct<GetValFromUser, <"@super": !zll.val<BabyBear>>>
+!zstruct$NondetReg = !zstruct.struct<NondetReg, <"@super": !zll.val<BabyBear>>>
+!zstruct$OneHot__0_40super = !zstruct.struct<"OneHot__0_@super", <"@super": !zll.val<BabyBear>>>
+!zlayout$40global = !zstruct.layout<"@global", <result: !zlayout$NondetReg>>
+!zlayout$Top_result = !zstruct.layout<Top_result mux, <"@super": !zlayout$NondetReg, arm0: !zlayout$NondetReg, arm1: !zlayout$NondetReg>>
+!zstruct$Reg = !zstruct.struct<Reg, <"@super": !zstruct$NondetReg, reg: !zstruct$NondetReg>>
+!zlayout$OneHot = !zstruct.layout<OneHot, <"@super": !zstruct.layout_array<!zlayout$NondetReg, 2>>>
+!zstruct$OneHot = !zstruct.struct<OneHot, <"@super": !zstruct.array<!zstruct$NondetReg, 2>, N: !zll.val<BabyBear>, bits: !zstruct.array<!zstruct$NondetReg, 2>>>
+!zstruct$Top = !zstruct.struct<Top, <"@super": !zstruct$Component, op: !zstruct$NondetReg, left: !zstruct$NondetReg, right: !zstruct$NondetReg, result: !zstruct$Reg>>
+!zlayout$Top = !zstruct.layout<Top, <op: !zlayout$NondetReg, left: !zlayout$NondetReg, right: !zlayout$NondetReg, _0: !zlayout$OneHot, result: !zlayout$Top_result>>
+module {
+  zstruct.global_const @tapList : !zstruct.array<!zstruct.tap, 8> = [#zll.tap<0, 0, 0>, #zll.tap<1, 0, 0>, #zll.tap<2, 0, 0>, #zll.tap<2, 1, 0>, #zll.tap<2, 2, 0>, #zll.tap<2, 3, 0>, #zll.tap<2, 4, 0>, #zll.tap<2, 5, 0>] attributes {sym_visibility = "public"}
+  zstruct.global_const @layout$Top : !zlayout$Top = #zstruct<struct {_0 = #zstruct<struct {"@super" = [#zstruct<struct {"@super" = #zstruct<ref 3> : !zstruct.ref}> : !zlayout$NondetReg, #zstruct<struct {"@super" = #zstruct<ref 4> : !zstruct.ref}> : !zlayout$NondetReg]}> : !zlayout$OneHot, left = #zstruct<struct {"@super" = #zstruct<ref 1> : !zstruct.ref}> : !zlayout$NondetReg, op = #zstruct<struct {"@super" = #zstruct<ref 0> : !zstruct.ref}> : !zlayout$NondetReg, result = #zstruct<struct {"@super" = #zstruct<struct {"@super" = #zstruct<ref 5> : !zstruct.ref}> : !zlayout$NondetReg, arm0 = #zstruct<struct {"@super" = #zstruct<ref 5> : !zstruct.ref}> : !zlayout$NondetReg, arm1 = #zstruct<struct {"@super" = #zstruct<ref 5> : !zstruct.ref}> : !zlayout$NondetReg}> : !zlayout$Top_result, right = #zstruct<struct {"@super" = #zstruct<ref 2> : !zstruct.ref}> : !zlayout$NondetReg}> : !zlayout$Top attributes {sym_visibility = "public"}
+  zstruct.global_const @layout$global : !zlayout$40global = #zstruct<struct {result = #zstruct<struct {"@super" = #zstruct<ref 0> : !zstruct.ref}> : !zlayout$NondetReg}> : !zlayout$40global attributes {sym_visibility = "public"}
+  zhlt.exec_func private @exec$Isz(%ctx: !zhlt.exec_context, %arg0: !zll.val<BabyBear>) -> !zll.val<BabyBear> attributes {input_segment_sizes = array<i32: 1, 1, 0>, result_segment_sizes = array<i32: 1>} {
+    %0 = zll.isz %arg0 : <BabyBear>
+    zhlt.return %0 : !zll.val<BabyBear>
+  }
+  zhlt.exec_func private @exec$Add(%ctx: !zhlt.exec_context, %arg0: !zll.val<BabyBear>, %arg1: !zll.val<BabyBear>) -> !zll.val<BabyBear> attributes {input_segment_sizes = array<i32: 1, 2, 0>, result_segment_sizes = array<i32: 1>} {
+    %0 = zll.add %arg0 : <BabyBear>, %arg1 : <BabyBear>
+    zhlt.return %0 : !zll.val<BabyBear>
+  }
+  zhlt.exec_func private @exec$Sub(%ctx: !zhlt.exec_context, %arg0: !zll.val<BabyBear>, %arg1: !zll.val<BabyBear>) -> !zll.val<BabyBear> attributes {input_segment_sizes = array<i32: 1, 2, 0>, result_segment_sizes = array<i32: 1>} {
+    %0 = zll.sub %arg0 : <BabyBear>, %arg1 : <BabyBear>
+    zhlt.return %0 : !zll.val<BabyBear>
+  }
+  zhlt.exec_func private @exec$Mul(%ctx: !zhlt.exec_context, %arg0: !zll.val<BabyBear>, %arg1: !zll.val<BabyBear>) -> !zll.val<BabyBear> attributes {input_segment_sizes = array<i32: 1, 2, 0>, result_segment_sizes = array<i32: 1>} {
+    %0 = zll.mul %arg0 : <BabyBear>, %arg1 : <BabyBear>
+    zhlt.return %0 : !zll.val<BabyBear>
+  }
+  zhlt.back_func private @back$NondetReg(%ctx: !zhlt.exec_context, %distance: index, %layout: !zlayout$NondetReg) -> !zstruct$NondetReg attributes {input_segment_sizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>} {
+    %0 = zstruct.lookup %layout["@super"] : (!zlayout$NondetReg) -> !zstruct.ref
+    %1 = zstruct.load %0 back %distance : (!zstruct.ref) -> !zll.val<BabyBear>
+    %2 = zstruct.pack(%1 : !zll.val<BabyBear>) : !zstruct$NondetReg
+    zhlt.return %2 : !zstruct$NondetReg
+  }
+  zhlt.exec_func private @exec$NondetReg(%ctx: !zhlt.exec_context, %arg0: !zll.val<BabyBear>, %layout: !zlayout$NondetReg) -> !zstruct$NondetReg attributes {input_segment_sizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>} {
+    %c0 = arith.constant 0 : index
+    %0 = zstruct.lookup %layout["@super"] : (!zlayout$NondetReg) -> !zstruct.ref
+    zstruct.store %0, %arg0 : (!zll.val<BabyBear>) -> !zstruct.ref
+    %1 = zstruct.load %0 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
+    %2 = zstruct.pack(%1 : !zll.val<BabyBear>) : !zstruct$NondetReg
+    zhlt.return %2 : !zstruct$NondetReg
+  }
+  zhlt.exec_func private @exec$Component(%ctx: !zhlt.exec_context) -> !zstruct$Component attributes {input_segment_sizes = array<i32: 1, 0, 0>, result_segment_sizes = array<i32: 1>} {
+    %0 = zstruct.pack() : !zstruct$Component
+    zhlt.return %0 : !zstruct$Component
+  }
+  zhlt.back_func private @back$Reg(%ctx: !zhlt.exec_context, %distance: index, %layout: !zlayout$NondetReg) -> !zstruct$Reg attributes {input_segment_sizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>} {
+    %0 = zhlt.call_back @back$NondetReg(%ctx, %distance, %layout) : (!zhlt.exec_context, index, !zlayout$NondetReg) -> !zstruct$NondetReg {callee_type = (!zhlt.exec_context, index, !zlayout$NondetReg) -> !zstruct$NondetReg, input_segment_sizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>}
+    %1 = zstruct.pack(%0, %0 : !zstruct$NondetReg, !zstruct$NondetReg) : !zstruct$Reg
+    zhlt.return %1 : !zstruct$Reg
+  }
+  zhlt.exec_func private @exec$Reg(%ctx: !zhlt.exec_context, %arg0: !zll.val<BabyBear>, %layout: !zlayout$NondetReg) -> !zstruct$Reg attributes {input_segment_sizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>} {
+    %0 = zhlt.call_exec @exec$NondetReg(%ctx, %arg0, %layout) : (!zhlt.exec_context, !zll.val<BabyBear>, !zlayout$NondetReg) -> !zstruct$NondetReg {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>, !zlayout$NondetReg) -> !zstruct$NondetReg, input_segment_sizes = array<i32: 1, 1, 1>, operandSegmentSizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>}
+    %1 = zstruct.lookup %0["@super"] : (!zstruct$NondetReg) -> !zll.val<BabyBear>
+    %2 = zll.sub %arg0 : <BabyBear>, %1 : <BabyBear>
+    zll.eqz %2 : <BabyBear>
+    %3 = zstruct.pack(%0, %0 : !zstruct$NondetReg, !zstruct$NondetReg) : !zstruct$Reg
+    zhlt.return %3 : !zstruct$Reg
+  }
+  zhlt.exec_func private @exec$Log(%ctx: !zhlt.exec_context, %arg0: !zll.string, %arg1: !zll<variadic !zll.val<BabyBear>>) -> !zstruct$Component attributes {input_segment_sizes = array<i32: 1, 2, 0>, result_segment_sizes = array<i32: 1>} {
+    zll.extern "Log" "", (%arg0, %arg1) : (!zll.string, !zll<variadic !zll.val<BabyBear>>) -> ()
+    %0 = zstruct.pack() : !zstruct$Component
+    zhlt.return %0 : !zstruct$Component
+  }
+  zhlt.exec_func private @exec$GetValFromUser(%ctx: !zhlt.exec_context) -> !zstruct$GetValFromUser attributes {input_segment_sizes = array<i32: 1, 0, 0>, result_segment_sizes = array<i32: 1>} {
+    %0 = zll.extern "GetValFromUser" "", () : () -> !zll.val<BabyBear>
+    %1 = zstruct.pack(%0 : !zll.val<BabyBear>) : !zstruct$GetValFromUser
+    zhlt.return %1 : !zstruct$GetValFromUser
+  }
+  zhlt.exec_func private @exec$OutputToUser(%ctx: !zhlt.exec_context, %arg0: !zll.val<BabyBear>) -> !zstruct$Component attributes {input_segment_sizes = array<i32: 1, 1, 0>, result_segment_sizes = array<i32: 1>} {
+    zll.extern "OutputToUser" "", (%arg0) : (!zll.val<BabyBear>) -> ()
+    %0 = zstruct.pack() : !zstruct$Component
+    zhlt.return %0 : !zstruct$Component
+  }
+  zhlt.exec_func private @exec$OneHot(%ctx: !zhlt.exec_context, %arg0: !zll.val<BabyBear>, %layout: !zlayout$OneHot) -> !zstruct$OneHot attributes {input_segment_sizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>} {
+    %0 = zll.const 1
+    %1 = zll.const 0
+    %2 = zll.const 2
+    %3 = zstruct.lookup %layout["@super"] : (!zlayout$OneHot) -> !zstruct.layout_array<!zlayout$NondetReg, 2>
+    %4 = zstruct.array[%1, %0 : !zll.val<BabyBear>, !zll.val<BabyBear>]
+    %5 = zstruct.map %4 : <!zll.val<BabyBear>, 2>, %3 : !zstruct.layout_array<!zlayout$NondetReg, 2> -> <!zstruct$NondetReg, 2> {
+    ^bb0(%arg1: !zll.val<BabyBear>, %arg2: !zlayout$NondetReg):
+      %13 = zhlt.call_exec @exec$Sub(%ctx, %arg1, %arg0) : (!zhlt.exec_context, !zll.val<BabyBear>, !zll.val<BabyBear>) -> !zll.val<BabyBear> {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>, !zll.val<BabyBear>) -> !zll.val<BabyBear>, input_segment_sizes = array<i32: 1, 2, 0>, operandSegmentSizes = array<i32: 1, 2, 0>, result_segment_sizes = array<i32: 1>}
+      %14 = zhlt.call_exec @exec$Isz(%ctx, %13) : (!zhlt.exec_context, !zll.val<BabyBear>) -> !zll.val<BabyBear> {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>) -> !zll.val<BabyBear>, input_segment_sizes = array<i32: 1, 1, 0>, operandSegmentSizes = array<i32: 1, 1, 0>, result_segment_sizes = array<i32: 1>}
+      %15 = zhlt.call_exec @exec$NondetReg(%ctx, %14, %arg2) : (!zhlt.exec_context, !zll.val<BabyBear>, !zlayout$NondetReg) -> !zstruct$NondetReg {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>, !zlayout$NondetReg) -> !zstruct$NondetReg, input_segment_sizes = array<i32: 1, 1, 1>, operandSegmentSizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>}
+      zstruct.yield %15 : !zstruct$NondetReg
+    }
+    %6 = zstruct.map %5 : <!zstruct$NondetReg, 2> -> <!zstruct$Component, 2> {
+    ^bb0(%arg1: !zstruct$NondetReg):
+      %13 = zstruct.lookup %arg1["@super"] : (!zstruct$NondetReg) -> !zll.val<BabyBear>
+      %14 = zhlt.call_exec @exec$Sub(%ctx, %0, %13) : (!zhlt.exec_context, !zll.val<BabyBear>, !zll.val<BabyBear>) -> !zll.val<BabyBear> {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>, !zll.val<BabyBear>) -> !zll.val<BabyBear>, input_segment_sizes = array<i32: 1, 2, 0>, operandSegmentSizes = array<i32: 1, 2, 0>, result_segment_sizes = array<i32: 1>}
+      %15 = zhlt.call_exec @exec$Mul(%ctx, %13, %14) : (!zhlt.exec_context, !zll.val<BabyBear>, !zll.val<BabyBear>) -> !zll.val<BabyBear> {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>, !zll.val<BabyBear>) -> !zll.val<BabyBear>, input_segment_sizes = array<i32: 1, 2, 0>, operandSegmentSizes = array<i32: 1, 2, 0>, result_segment_sizes = array<i32: 1>}
+      zll.eqz %15 : <BabyBear>
+      %16 = zhlt.call_exec @exec$Component(%ctx) : (!zhlt.exec_context) -> !zstruct$Component {callee_type = (!zhlt.exec_context) -> !zstruct$Component, input_segment_sizes = array<i32: 1, 0, 0>, operandSegmentSizes = array<i32: 1, 0, 0>, result_segment_sizes = array<i32: 1>}
+      zstruct.yield %16 : !zstruct$Component
+    }
+    %7 = zstruct.reduce %5 : <!zstruct$NondetReg, 2>, %1 : !zll.val<BabyBear> -> !zll.val<BabyBear> {
+    ^bb0(%arg1: !zll.val<BabyBear>, %arg2: !zstruct$NondetReg):
+      %13 = zstruct.lookup %arg2["@super"] : (!zstruct$NondetReg) -> !zll.val<BabyBear>
+      %14 = zhlt.call_exec @exec$Add(%ctx, %arg1, %13) : (!zhlt.exec_context, !zll.val<BabyBear>, !zll.val<BabyBear>) -> !zll.val<BabyBear> {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>, !zll.val<BabyBear>) -> !zll.val<BabyBear>, input_segment_sizes = array<i32: 1, 2, 0>, operandSegmentSizes = array<i32: 1, 2, 0>, result_segment_sizes = array<i32: 1>}
+      zstruct.yield %14 : !zll.val<BabyBear>
+    }
+    %8 = zll.sub %7 : <BabyBear>, %0 : <BabyBear>
+    zll.eqz %8 : <BabyBear>
+    %9 = zstruct.map %4 : <!zll.val<BabyBear>, 2> -> <!zstruct$OneHot__0_40super, 2> {
+    ^bb0(%arg1: !zll.val<BabyBear>):
+      %13 = zstruct.subscript %5[!zll.val<BabyBear> %arg1] : (!zstruct.array<!zstruct$NondetReg, 2>) -> !zstruct$NondetReg
+      %14 = zstruct.lookup %13["@super"] : (!zstruct$NondetReg) -> !zll.val<BabyBear>
+      %15 = zhlt.call_exec @exec$Mul(%ctx, %14, %arg1) : (!zhlt.exec_context, !zll.val<BabyBear>, !zll.val<BabyBear>) -> !zll.val<BabyBear> {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>, !zll.val<BabyBear>) -> !zll.val<BabyBear>, input_segment_sizes = array<i32: 1, 2, 0>, operandSegmentSizes = array<i32: 1, 2, 0>, result_segment_sizes = array<i32: 1>}
+      %16 = zstruct.pack(%15 : !zll.val<BabyBear>) : !zstruct$OneHot__0_40super
+      zstruct.yield %16 : !zstruct$OneHot__0_40super
+    }
+    %10 = zstruct.reduce %9 : <!zstruct$OneHot__0_40super, 2>, %1 : !zll.val<BabyBear> -> !zll.val<BabyBear> {
+    ^bb0(%arg1: !zll.val<BabyBear>, %arg2: !zstruct$OneHot__0_40super):
+      %13 = zstruct.lookup %arg2["@super"] : (!zstruct$OneHot__0_40super) -> !zll.val<BabyBear>
+      %14 = zhlt.call_exec @exec$Add(%ctx, %arg1, %13) : (!zhlt.exec_context, !zll.val<BabyBear>, !zll.val<BabyBear>) -> !zll.val<BabyBear> {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>, !zll.val<BabyBear>) -> !zll.val<BabyBear>, input_segment_sizes = array<i32: 1, 2, 0>, operandSegmentSizes = array<i32: 1, 2, 0>, result_segment_sizes = array<i32: 1>}
+      zstruct.yield %14 : !zll.val<BabyBear>
+    }
+    %11 = zll.sub %10 : <BabyBear>, %arg0 : <BabyBear>
+    zll.eqz %11 : <BabyBear>
+    %12 = zstruct.pack(%5, %2, %5 : !zstruct.array<!zstruct$NondetReg, 2>, !zll.val<BabyBear>, !zstruct.array<!zstruct$NondetReg, 2>) : !zstruct$OneHot
+    zhlt.return %12 : !zstruct$OneHot
+  }
+  zhlt.exec_func private @exec$GetGlobalResult(%ctx: !zhlt.exec_context) -> !zstruct$Reg attributes {input_segment_sizes = array<i32: 1, 0, 0>, result_segment_sizes = array<i32: 1>} {
+    %c0 = arith.constant 0 : index
+    %0 = zstruct.get_buffer "global" : <4, global>
+    %1 = zstruct.bind_layout @layout$global : !zlayout$40global = %0 : <4, global>
+    %2 = zstruct.lookup %1["result"] : (!zlayout$40global) -> !zlayout$NondetReg
+    %3 = zhlt.call_back @back$Reg(%ctx, %c0, %2) : (!zhlt.exec_context, index, !zlayout$NondetReg) -> !zstruct$Reg {callee_type = (!zhlt.exec_context, index, !zlayout$NondetReg) -> !zstruct$Reg, input_segment_sizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>}
+    zhlt.return %3 : !zstruct$Reg
+  }
+  zhlt.exec_func private @exec$SetGlobalResult(%ctx: !zhlt.exec_context, %arg0: !zll.val<BabyBear>) -> !zstruct$Component attributes {input_segment_sizes = array<i32: 1, 1, 0>, result_segment_sizes = array<i32: 1>} {
+    %0 = zstruct.get_buffer "global" : <4, global>
+    %1 = zstruct.bind_layout @layout$global : !zlayout$40global = %0 : <4, global>
+    %2 = zstruct.lookup %1["result"] : (!zlayout$40global) -> !zlayout$NondetReg
+    %3 = zhlt.call_exec @exec$Reg(%ctx, %arg0, %2) : (!zhlt.exec_context, !zll.val<BabyBear>, !zlayout$NondetReg) -> !zstruct$Reg {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>, !zlayout$NondetReg) -> !zstruct$Reg, input_segment_sizes = array<i32: 1, 1, 1>, operandSegmentSizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>}
+    %4 = zhlt.call_exec @exec$Component(%ctx) : (!zhlt.exec_context) -> !zstruct$Component {callee_type = (!zhlt.exec_context) -> !zstruct$Component, input_segment_sizes = array<i32: 1, 0, 0>, operandSegmentSizes = array<i32: 1, 0, 0>, result_segment_sizes = array<i32: 1>}
+    zhlt.return %4 : !zstruct$Component
+  }
+  zhlt.exec_func private @exec$Top(%ctx: !zhlt.exec_context, %layout: !zlayout$Top) -> !zstruct$Top attributes {input_segment_sizes = array<i32: 1, 0, 1>, result_segment_sizes = array<i32: 1>} {
+    %c0 = arith.constant 0 : index
+    %0 = zll.string "result = %u"
+    %1 = zll.const 1
+    %2 = zll.const 0
+    %3 = zstruct.lookup %layout["op"] : (!zlayout$Top) -> !zlayout$NondetReg
+    %4 = zstruct.lookup %layout["left"] : (!zlayout$Top) -> !zlayout$NondetReg
+    %5 = zstruct.lookup %layout["right"] : (!zlayout$Top) -> !zlayout$NondetReg
+    %6 = zstruct.lookup %layout["_0"] : (!zlayout$Top) -> !zlayout$OneHot
+    %7 = zstruct.lookup %layout["result"] : (!zlayout$Top) -> !zlayout$Top_result
+    %8 = zhlt.call_exec @exec$GetValFromUser(%ctx) : (!zhlt.exec_context) -> !zstruct$GetValFromUser {callee_type = (!zhlt.exec_context) -> !zstruct$GetValFromUser, input_segment_sizes = array<i32: 1, 0, 0>, operandSegmentSizes = array<i32: 1, 0, 0>, result_segment_sizes = array<i32: 1>}
+    %9 = zstruct.lookup %8["@super"] : (!zstruct$GetValFromUser) -> !zll.val<BabyBear>
+    %10 = zhlt.call_exec @exec$NondetReg(%ctx, %9, %3) : (!zhlt.exec_context, !zll.val<BabyBear>, !zlayout$NondetReg) -> !zstruct$NondetReg {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>, !zlayout$NondetReg) -> !zstruct$NondetReg, input_segment_sizes = array<i32: 1, 1, 1>, operandSegmentSizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>}
+    %11 = zhlt.call_exec @exec$GetValFromUser(%ctx) : (!zhlt.exec_context) -> !zstruct$GetValFromUser {callee_type = (!zhlt.exec_context) -> !zstruct$GetValFromUser, input_segment_sizes = array<i32: 1, 0, 0>, operandSegmentSizes = array<i32: 1, 0, 0>, result_segment_sizes = array<i32: 1>}
+    %12 = zstruct.lookup %11["@super"] : (!zstruct$GetValFromUser) -> !zll.val<BabyBear>
+    %13 = zhlt.call_exec @exec$NondetReg(%ctx, %12, %4) : (!zhlt.exec_context, !zll.val<BabyBear>, !zlayout$NondetReg) -> !zstruct$NondetReg {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>, !zlayout$NondetReg) -> !zstruct$NondetReg, input_segment_sizes = array<i32: 1, 1, 1>, operandSegmentSizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>}
+    %14 = zhlt.call_exec @exec$GetValFromUser(%ctx) : (!zhlt.exec_context) -> !zstruct$GetValFromUser {callee_type = (!zhlt.exec_context) -> !zstruct$GetValFromUser, input_segment_sizes = array<i32: 1, 0, 0>, operandSegmentSizes = array<i32: 1, 0, 0>, result_segment_sizes = array<i32: 1>}
+    %15 = zstruct.lookup %14["@super"] : (!zstruct$GetValFromUser) -> !zll.val<BabyBear>
+    %16 = zhlt.call_exec @exec$NondetReg(%ctx, %15, %5) : (!zhlt.exec_context, !zll.val<BabyBear>, !zlayout$NondetReg) -> !zstruct$NondetReg {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>, !zlayout$NondetReg) -> !zstruct$NondetReg, input_segment_sizes = array<i32: 1, 1, 1>, operandSegmentSizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>}
+    %17 = zstruct.lookup %10["@super"] : (!zstruct$NondetReg) -> !zll.val<BabyBear>
+    %18 = zhlt.call_exec @exec$OneHot(%ctx, %17, %6) : (!zhlt.exec_context, !zll.val<BabyBear>, !zlayout$OneHot) -> !zstruct$OneHot {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>, !zlayout$OneHot) -> !zstruct$OneHot, input_segment_sizes = array<i32: 1, 1, 1>, operandSegmentSizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>}
+    %19 = zstruct.lookup %18["@super"] : (!zstruct$OneHot) -> !zstruct.array<!zstruct$NondetReg, 2>
+    %20 = zstruct.subscript %19[!zll.val<BabyBear> %2] : (!zstruct.array<!zstruct$NondetReg, 2>) -> !zstruct$NondetReg
+    %21 = zstruct.lookup %20["@super"] : (!zstruct$NondetReg) -> !zll.val<BabyBear>
+    %22 = zstruct.subscript %19[!zll.val<BabyBear> %1] : (!zstruct.array<!zstruct$NondetReg, 2>) -> !zstruct$NondetReg
+    %23 = zstruct.lookup %22["@super"] : (!zstruct$NondetReg) -> !zll.val<BabyBear>
+    %24 = zstruct.lookup %7["@super"] : (!zlayout$Top_result) -> !zlayout$NondetReg
+    %25 = zstruct.lookup %7["arm0"] : (!zlayout$Top_result) -> !zlayout$NondetReg
+    %26 = zstruct.lookup %7["arm1"] : (!zlayout$Top_result) -> !zlayout$NondetReg
+    %27 = zstruct.switch %21, %23 : !zll.val<BabyBear>, !zll.val<BabyBear> : !zstruct$Reg -> {
+      %50 = zstruct.lookup %13["@super"] : (!zstruct$NondetReg) -> !zll.val<BabyBear>
+      %51 = zstruct.lookup %16["@super"] : (!zstruct$NondetReg) -> !zll.val<BabyBear>
+      %52 = zhlt.call_exec @exec$Add(%ctx, %50, %51) : (!zhlt.exec_context, !zll.val<BabyBear>, !zll.val<BabyBear>) -> !zll.val<BabyBear> {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>, !zll.val<BabyBear>) -> !zll.val<BabyBear>, input_segment_sizes = array<i32: 1, 2, 0>, operandSegmentSizes = array<i32: 1, 2, 0>, result_segment_sizes = array<i32: 1>}
+      %53 = zhlt.call_exec @exec$Reg(%ctx, %52, %25) : (!zhlt.exec_context, !zll.val<BabyBear>, !zlayout$NondetReg) -> !zstruct$Reg {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>, !zlayout$NondetReg) -> !zstruct$Reg, input_segment_sizes = array<i32: 1, 1, 1>, operandSegmentSizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>}
+      zstruct.yield %53 : !zstruct$Reg
+    }, {
+      %50 = zstruct.lookup %13["@super"] : (!zstruct$NondetReg) -> !zll.val<BabyBear>
+      %51 = zstruct.lookup %16["@super"] : (!zstruct$NondetReg) -> !zll.val<BabyBear>
+      %52 = zhlt.call_exec @exec$Sub(%ctx, %50, %51) : (!zhlt.exec_context, !zll.val<BabyBear>, !zll.val<BabyBear>) -> !zll.val<BabyBear> {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>, !zll.val<BabyBear>) -> !zll.val<BabyBear>, input_segment_sizes = array<i32: 1, 2, 0>, operandSegmentSizes = array<i32: 1, 2, 0>, result_segment_sizes = array<i32: 1>}
+      %53 = zhlt.call_exec @exec$Reg(%ctx, %52, %26) : (!zhlt.exec_context, !zll.val<BabyBear>, !zlayout$NondetReg) -> !zstruct$Reg {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>, !zlayout$NondetReg) -> !zstruct$Reg, input_segment_sizes = array<i32: 1, 1, 1>, operandSegmentSizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>}
+      zstruct.yield %53 : !zstruct$Reg
+    } {layoutType = !zlayout$Top_result}
+    %28 = zhlt.call_back @back$Reg(%ctx, %c0, %24) : (!zhlt.exec_context, index, !zlayout$NondetReg) -> !zstruct$Reg {callee_type = (!zhlt.exec_context, index, !zlayout$NondetReg) -> !zstruct$Reg, input_segment_sizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>}
+    %29 = zstruct.lookup %28["@super"] : (!zstruct$Reg) -> !zstruct$NondetReg
+    %30 = zstruct.lookup %29["@super"] : (!zstruct$NondetReg) -> !zll.val<BabyBear>
+    %31 = zll.variadic_pack %30 : (!zll.val<BabyBear>) -> !zll<variadic !zll.val<BabyBear>>
+    %32 = zhlt.call_exec @exec$Log(%ctx, %0, %31) : (!zhlt.exec_context, !zll.string, !zll<variadic !zll.val<BabyBear>>) -> !zstruct$Component {callee_type = (!zhlt.exec_context, !zll.string, !zll<variadic !zll.val<BabyBear>>) -> !zstruct$Component, input_segment_sizes = array<i32: 1, 2, 0>, operandSegmentSizes = array<i32: 1, 2, 0>, result_segment_sizes = array<i32: 1>}
+    %33 = zhlt.call_back @back$Reg(%ctx, %c0, %24) : (!zhlt.exec_context, index, !zlayout$NondetReg) -> !zstruct$Reg {callee_type = (!zhlt.exec_context, index, !zlayout$NondetReg) -> !zstruct$Reg, input_segment_sizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>}
+    %34 = zstruct.lookup %33["@super"] : (!zstruct$Reg) -> !zstruct$NondetReg
+    %35 = zstruct.lookup %34["@super"] : (!zstruct$NondetReg) -> !zll.val<BabyBear>
+    %36 = zhlt.call_exec @exec$SetGlobalResult(%ctx, %35) : (!zhlt.exec_context, !zll.val<BabyBear>) -> !zstruct$Component {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>) -> !zstruct$Component, input_segment_sizes = array<i32: 1, 1, 0>, operandSegmentSizes = array<i32: 1, 1, 0>, result_segment_sizes = array<i32: 1>}
+    %37 = zhlt.call_exec @exec$GetGlobalResult(%ctx) : (!zhlt.exec_context) -> !zstruct$Reg {callee_type = (!zhlt.exec_context) -> !zstruct$Reg, input_segment_sizes = array<i32: 1, 0, 0>, operandSegmentSizes = array<i32: 1, 0, 0>, result_segment_sizes = array<i32: 1>}
+    %38 = zstruct.lookup %37["@super"] : (!zstruct$Reg) -> !zstruct$NondetReg
+    %39 = zstruct.lookup %38["@super"] : (!zstruct$NondetReg) -> !zll.val<BabyBear>
+    %40 = zhlt.call_back @back$Reg(%ctx, %c0, %24) : (!zhlt.exec_context, index, !zlayout$NondetReg) -> !zstruct$Reg {callee_type = (!zhlt.exec_context, index, !zlayout$NondetReg) -> !zstruct$Reg, input_segment_sizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>}
+    %41 = zstruct.lookup %40["@super"] : (!zstruct$Reg) -> !zstruct$NondetReg
+    %42 = zstruct.lookup %41["@super"] : (!zstruct$NondetReg) -> !zll.val<BabyBear>
+    %43 = zll.sub %39 : <BabyBear>, %42 : <BabyBear>
+    zll.eqz %43 : <BabyBear>
+    %44 = zhlt.call_back @back$Reg(%ctx, %c0, %24) : (!zhlt.exec_context, index, !zlayout$NondetReg) -> !zstruct$Reg {callee_type = (!zhlt.exec_context, index, !zlayout$NondetReg) -> !zstruct$Reg, input_segment_sizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>}
+    %45 = zstruct.lookup %44["@super"] : (!zstruct$Reg) -> !zstruct$NondetReg
+    %46 = zstruct.lookup %45["@super"] : (!zstruct$NondetReg) -> !zll.val<BabyBear>
+    %47 = zhlt.call_exec @exec$OutputToUser(%ctx, %46) : (!zhlt.exec_context, !zll.val<BabyBear>) -> !zstruct$Component {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>) -> !zstruct$Component, input_segment_sizes = array<i32: 1, 1, 0>, operandSegmentSizes = array<i32: 1, 1, 0>, result_segment_sizes = array<i32: 1>}
+    %48 = zhlt.call_exec @exec$Component(%ctx) : (!zhlt.exec_context) -> !zstruct$Component {callee_type = (!zhlt.exec_context) -> !zstruct$Component, input_segment_sizes = array<i32: 1, 0, 0>, operandSegmentSizes = array<i32: 1, 0, 0>, result_segment_sizes = array<i32: 1>}
+    %49 = zstruct.pack(%48, %10, %13, %16, %28 : !zstruct$Component, !zstruct$NondetReg, !zstruct$NondetReg, !zstruct$NondetReg, !zstruct$Reg) : !zstruct$Top
+    zhlt.return %49 : !zstruct$Top
+  }
+  zhlt.step_func @step$Top(%ctx: !zhlt.exec_context) attributes {input_segment_sizes = array<i32: 1>, result_segment_sizes = array<i32>} {
+    %0 = zstruct.get_buffer "data" : <6, mutable>
+    %1 = zstruct.bind_layout @layout$Top : !zlayout$Top = %0 : <6, mutable>
+    %2 = zhlt.call_exec @exec$Top(%ctx, %1) : (!zhlt.exec_context, !zlayout$Top) -> !zstruct$Top {callee_type = (!zhlt.exec_context, !zlayout$Top) -> !zstruct$Top, input_segment_sizes = array<i32: 1, 0, 1>, operandSegmentSizes = array<i32: 1, 0, 1>, result_segment_sizes = array<i32: 1>}
+    zhlt.return  : 
+  }
+  zhlt.validity_taps_func @validity_taps$(%ctx: !zhlt.validity_taps_context, %polyMix: !zll.poly_mix, %taps: !zstruct.array<!zll.val<BabyBear ext>, 8>) -> !zll.constraint attributes {input_segment_sizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>} {
+    %0 = zll.const [1, 0, 0, 0]
+    %c7 = arith.constant 7 : index
+    %c6 = arith.constant 6 : index
+    %c5 = arith.constant 5 : index
+    %c4 = arith.constant 4 : index
+    %c3 = arith.constant 3 : index
+    %c2 = arith.constant 2 : index
+    %c0 = arith.constant 0 : index
+    %1 = zstruct.subscript %taps[index %c2] : (!zstruct.array<!zll.val<BabyBear ext>, 8>) -> !zll.val<BabyBear ext>
+    %2 = zstruct.subscript %taps[index %c3] : (!zstruct.array<!zll.val<BabyBear ext>, 8>) -> !zll.val<BabyBear ext>
+    %3 = zstruct.subscript %taps[index %c4] : (!zstruct.array<!zll.val<BabyBear ext>, 8>) -> !zll.val<BabyBear ext>
+    %4 = zstruct.subscript %taps[index %c5] : (!zstruct.array<!zll.val<BabyBear ext>, 8>) -> !zll.val<BabyBear ext>
+    %5 = zstruct.subscript %taps[index %c6] : (!zstruct.array<!zll.val<BabyBear ext>, 8>) -> !zll.val<BabyBear ext>
+    %6 = zstruct.subscript %taps[index %c7] : (!zstruct.array<!zll.val<BabyBear ext>, 8>) -> !zll.val<BabyBear ext>
+    %7 = zll.true
+    %8 = zll.sub %0 : <BabyBear ext>, %4 : <BabyBear ext>
+    %9 = zll.mul %4 : <BabyBear ext>, %8 : <BabyBear ext>
+    %10 = zll.and_eqz %7, %9 : <BabyBear ext>
+    %11 = zll.sub %0 : <BabyBear ext>, %5 : <BabyBear ext>
+    %12 = zll.mul %5 : <BabyBear ext>, %11 : <BabyBear ext>
+    %13 = zll.and_eqz %10, %12 : <BabyBear ext>
+    %14 = zll.add %4 : <BabyBear ext>, %5 : <BabyBear ext>
+    %15 = zll.sub %14 : <BabyBear ext>, %0 : <BabyBear ext>
+    %16 = zll.and_eqz %13, %15 : <BabyBear ext>
+    %17 = zll.sub %5 : <BabyBear ext>, %1 : <BabyBear ext>
+    %18 = zll.and_eqz %16, %17 : <BabyBear ext>
+    %19 = zll.add %2 : <BabyBear ext>, %3 : <BabyBear ext>
+    %20 = zll.sub %19 : <BabyBear ext>, %6 : <BabyBear ext>
+    %21 = zll.and_eqz %7, %20 : <BabyBear ext>
+    %22 = zll.and_cond %18, %4 : <BabyBear ext>, %21
+    %23 = zll.sub %2 : <BabyBear ext>, %3 : <BabyBear ext>
+    %24 = zll.sub %23 : <BabyBear ext>, %6 : <BabyBear ext>
+    %25 = zll.and_eqz %7, %24 : <BabyBear ext>
+    %26 = zll.and_cond %22, %5 : <BabyBear ext>, %25
+    %27 = zstruct.get_buffer "global" : <4, global>
+    %28 = zstruct.bind_layout @layout$global : !zlayout$40global = %27 : <4, global>
+    %29 = zstruct.lookup %28["result"] : (!zlayout$40global) -> !zlayout$NondetReg
+    %30 = zstruct.lookup %29["@super"] : (!zlayout$NondetReg) -> !zstruct.ref
+    %31 = zstruct.load %30 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear ext>
+    %32 = zll.sub %6 : <BabyBear ext>, %31 : <BabyBear ext>
+    %33 = zll.and_eqz %26, %32 : <BabyBear ext>
+    %34 = zll.sub %31 : <BabyBear ext>, %6 : <BabyBear ext>
+    %35 = zll.and_eqz %33, %34 : <BabyBear ext>
+    zhlt.return %35 : !zll.constraint
+  }
+  zhlt.validity_regs_func @validity_regs$(%ctx: !zhlt.validity_regs_context, %polyMix: !zll.poly_mix) -> !zll.constraint attributes {input_segment_sizes = array<i32: 1, 1>, result_segment_sizes = array<i32: 1>} {
+    %c0 = arith.constant 0 : index
+    %0 = zll.const 1
+    %1 = zll.const 0
+    %2 = zll.true
+    %3 = zstruct.get_buffer "data" : <6, mutable>
+    %4 = zstruct.bind_layout @layout$Top : !zlayout$Top = %3 : <6, mutable>
+    %5 = zstruct.lookup %4["op"] : (!zlayout$Top) -> !zlayout$NondetReg
+    %6 = zstruct.lookup %4["left"] : (!zlayout$Top) -> !zlayout$NondetReg
+    %7 = zstruct.lookup %4["right"] : (!zlayout$Top) -> !zlayout$NondetReg
+    %8 = zstruct.lookup %4["_0"] : (!zlayout$Top) -> !zlayout$OneHot
+    %9 = zstruct.lookup %4["result"] : (!zlayout$Top) -> !zlayout$Top_result
+    %10 = zstruct.lookup %5["@super"] : (!zlayout$NondetReg) -> !zstruct.ref
+    %11 = zstruct.load %10 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
+    %12 = zstruct.lookup %6["@super"] : (!zlayout$NondetReg) -> !zstruct.ref
+    %13 = zstruct.load %12 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
+    %14 = zstruct.lookup %7["@super"] : (!zlayout$NondetReg) -> !zstruct.ref
+    %15 = zstruct.load %14 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
+    %16 = zstruct.lookup %8["@super"] : (!zlayout$OneHot) -> !zstruct.layout_array<!zlayout$NondetReg, 2>
+    %17 = zstruct.subscript %16[!zll.val<BabyBear> %1] : (!zstruct.layout_array<!zlayout$NondetReg, 2>) -> !zlayout$NondetReg
+    %18 = zstruct.lookup %17["@super"] : (!zlayout$NondetReg) -> !zstruct.ref
+    %19 = zstruct.load %18 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
+    %20 = zstruct.subscript %16[!zll.val<BabyBear> %0] : (!zstruct.layout_array<!zlayout$NondetReg, 2>) -> !zlayout$NondetReg
+    %21 = zstruct.lookup %20["@super"] : (!zlayout$NondetReg) -> !zstruct.ref
+    %22 = zstruct.load %21 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
+    %23 = zll.sub %0 : <BabyBear>, %19 : <BabyBear>
+    %24 = zll.mul %19 : <BabyBear>, %23 : <BabyBear>
+    %25 = zll.and_eqz %2, %24 : <BabyBear>
+    %26 = zll.sub %0 : <BabyBear>, %22 : <BabyBear>
+    %27 = zll.mul %22 : <BabyBear>, %26 : <BabyBear>
+    %28 = zll.and_eqz %25, %27 : <BabyBear>
+    %29 = zll.add %19 : <BabyBear>, %22 : <BabyBear>
+    %30 = zll.sub %29 : <BabyBear>, %0 : <BabyBear>
+    %31 = zll.and_eqz %28, %30 : <BabyBear>
+    %32 = zll.sub %22 : <BabyBear>, %11 : <BabyBear>
+    %33 = zll.and_eqz %31, %32 : <BabyBear>
+    %34 = zstruct.lookup %9["@super"] : (!zlayout$Top_result) -> !zlayout$NondetReg
+    %35 = zstruct.lookup %9["arm0"] : (!zlayout$Top_result) -> !zlayout$NondetReg
+    %36 = zstruct.lookup %9["arm1"] : (!zlayout$Top_result) -> !zlayout$NondetReg
+    %37 = zll.add %13 : <BabyBear>, %15 : <BabyBear>
+    %38 = zstruct.lookup %35["@super"] : (!zlayout$NondetReg) -> !zstruct.ref
+    %39 = zstruct.load %38 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
+    %40 = zll.sub %37 : <BabyBear>, %39 : <BabyBear>
+    %41 = zll.and_eqz %2, %40 : <BabyBear>
+    %42 = zll.and_cond %33, %19 : <BabyBear>, %41
+    %43 = zll.sub %13 : <BabyBear>, %15 : <BabyBear>
+    %44 = zstruct.lookup %36["@super"] : (!zlayout$NondetReg) -> !zstruct.ref
+    %45 = zstruct.load %44 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
+    %46 = zll.sub %43 : <BabyBear>, %45 : <BabyBear>
+    %47 = zll.and_eqz %2, %46 : <BabyBear>
+    %48 = zll.and_cond %42, %22 : <BabyBear>, %47
+    %49 = zstruct.lookup %34["@super"] : (!zlayout$NondetReg) -> !zstruct.ref
+    %50 = zstruct.load %49 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
+    %51 = zstruct.get_buffer "global" : <4, global>
+    %52 = zstruct.bind_layout @layout$global : !zlayout$40global = %51 : <4, global>
+    %53 = zstruct.lookup %52["result"] : (!zlayout$40global) -> !zlayout$NondetReg
+    %54 = zstruct.lookup %53["@super"] : (!zlayout$NondetReg) -> !zstruct.ref
+    %55 = zstruct.load %54 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
+    %56 = zll.sub %50 : <BabyBear>, %55 : <BabyBear>
+    %57 = zll.and_eqz %48, %56 : <BabyBear>
+    %58 = zll.sub %55 : <BabyBear>, %50 : <BabyBear>
+    %59 = zll.and_eqz %57, %58 : <BabyBear>
+    zhlt.return %59 : !zll.constraint
+  }
+  zhlt.check_func @check$(%ctx: !zhlt.exec_context) attributes {input_segment_sizes = array<i32: 1>, result_segment_sizes = array<i32>} {
+    %0 = zll.const 0
+    %1 = zll.const 1
+    %c0 = arith.constant 0 : index
+    %2 = zstruct.get_buffer "data" : <6, mutable>
+    %3 = zstruct.bind_layout @layout$Top : !zlayout$Top = %2 : <6, mutable>
+    %4 = zstruct.lookup %3["op"] : (!zlayout$Top) -> !zlayout$NondetReg
+    %5 = zstruct.lookup %3["left"] : (!zlayout$Top) -> !zlayout$NondetReg
+    %6 = zstruct.lookup %3["right"] : (!zlayout$Top) -> !zlayout$NondetReg
+    %7 = zstruct.lookup %3["_0"] : (!zlayout$Top) -> !zlayout$OneHot
+    %8 = zstruct.lookup %3["result"] : (!zlayout$Top) -> !zlayout$Top_result
+    %9 = zstruct.lookup %4["@super"] : (!zlayout$NondetReg) -> !zstruct.ref
+    %10 = zstruct.load %9 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
+    %11 = zstruct.lookup %5["@super"] : (!zlayout$NondetReg) -> !zstruct.ref
+    %12 = zstruct.load %11 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
+    %13 = zstruct.lookup %6["@super"] : (!zlayout$NondetReg) -> !zstruct.ref
+    %14 = zstruct.load %13 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
+    %15 = zstruct.lookup %7["@super"] : (!zlayout$OneHot) -> !zstruct.layout_array<!zlayout$NondetReg, 2>
+    %16 = zstruct.subscript %15[!zll.val<BabyBear> %0] : (!zstruct.layout_array<!zlayout$NondetReg, 2>) -> !zlayout$NondetReg
+    %17 = zstruct.lookup %16["@super"] : (!zlayout$NondetReg) -> !zstruct.ref
+    %18 = zstruct.load %17 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
+    %19 = zstruct.subscript %15[!zll.val<BabyBear> %1] : (!zstruct.layout_array<!zlayout$NondetReg, 2>) -> !zlayout$NondetReg
+    %20 = zstruct.lookup %19["@super"] : (!zlayout$NondetReg) -> !zstruct.ref
+    %21 = zstruct.load %20 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
+    %22 = zll.sub %1 : <BabyBear>, %18 : <BabyBear>
+    %23 = zll.mul %18 : <BabyBear>, %22 : <BabyBear>
+    zll.eqz %23 : <BabyBear>
+    %24 = zll.sub %1 : <BabyBear>, %21 : <BabyBear>
+    %25 = zll.mul %21 : <BabyBear>, %24 : <BabyBear>
+    zll.eqz %25 : <BabyBear>
+    %26 = zll.add %18 : <BabyBear>, %21 : <BabyBear>
+    %27 = zll.sub %26 : <BabyBear>, %1 : <BabyBear>
+    zll.eqz %27 : <BabyBear>
+    %28 = zll.sub %21 : <BabyBear>, %10 : <BabyBear>
+    zll.eqz %28 : <BabyBear>
+    %29 = zstruct.lookup %8["@super"] : (!zlayout$Top_result) -> !zlayout$NondetReg
+    %30 = zstruct.lookup %8["arm0"] : (!zlayout$Top_result) -> !zlayout$NondetReg
+    %31 = zstruct.lookup %8["arm1"] : (!zlayout$Top_result) -> !zlayout$NondetReg
+    zll.if %18 : <BabyBear> {
+      %43 = zll.add %12 : <BabyBear>, %14 : <BabyBear>
+      %44 = zstruct.lookup %30["@super"] : (!zlayout$NondetReg) -> !zstruct.ref
+      %45 = zstruct.load %44 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
+      %46 = zll.sub %43 : <BabyBear>, %45 : <BabyBear>
+      zll.eqz %46 : <BabyBear>
+    }
+    zll.if %21 : <BabyBear> {
+      %43 = zll.sub %12 : <BabyBear>, %14 : <BabyBear>
+      %44 = zstruct.lookup %31["@super"] : (!zlayout$NondetReg) -> !zstruct.ref
+      %45 = zstruct.load %44 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
+      %46 = zll.sub %43 : <BabyBear>, %45 : <BabyBear>
+      zll.eqz %46 : <BabyBear>
+    }
+    %32 = zstruct.lookup %29["@super"] : (!zlayout$NondetReg) -> !zstruct.ref
+    %33 = zstruct.load %32 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
+    %34 = zstruct.get_buffer "global" : <4, global>
+    %35 = zstruct.bind_layout @layout$global : !zlayout$40global = %34 : <4, global>
+    %36 = zstruct.lookup %35["result"] : (!zlayout$40global) -> !zlayout$NondetReg
+    %37 = zstruct.lookup %36["@super"] : (!zlayout$NondetReg) -> !zstruct.ref
+    %38 = zstruct.load %37 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
+    %39 = zll.sub %33 : <BabyBear>, %38 : <BabyBear>
+    zll.eqz %39 : <BabyBear>
+    %40 = zstruct.load %37 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
+    %41 = zstruct.load %32 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
+    %42 = zll.sub %40 : <BabyBear>, %41 : <BabyBear>
+    zll.eqz %42 : <BabyBear>
+    zhlt.return  : 
+  }
+}

@@ -1,0 +1,42 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_binary(
+    name = "zirgen-opt",
+    srcs = ["zirgen-opt.cpp"],
+    deps = [
+        "//zirgen/Dialect/BigInt/IR",
+        "//zirgen/Dialect/BigInt/Transforms",
+        "//zirgen/Dialect/ZStruct/Transforms:passes",
+        "//zirgen/Dialect/Zll/Conversion/ZStructToZll:passes",
+        "//zirgen/Dialect/Zll/Transforms:passes",
+        "//zirgen/dsl/passes",
+        "@llvm-project//mlir:MlirOptLib",
+    ],
+)
+
+cc_binary(
+    name = "zirgen-translate",
+    srcs = ["zirgen-translate.cpp"],
+    deps = [
+        "//zirgen/Dialect/ZStruct/IR",
+        "//zirgen/Dialect/Zll/Transforms:passes",
+        "//zirgen/compiler/codegen",
+        "@llvm-project//mlir:AllTranslations",
+        "@llvm-project//mlir:MlirOptLib",
+    ],
+)
+
+cc_binary(
+    name = "zirgen-r1cs",
+    srcs = ["zirgen-r1cs.cpp"],
+    deps = [
+        "//zirgen/Dialect/BigInt/Transforms",
+        "//zirgen/Dialect/R1CS/Conversion/R1CSToBigInt:passes",
+        "//zirgen/Dialect/R1CS/IR",
+        "//zirgen/compiler/r1cs",
+        "@llvm-project//mlir:AllTranslations",
+        "@llvm-project//mlir:MlirOptLib",
+    ],
+)

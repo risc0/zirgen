@@ -1,0 +1,21 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "Typing",
+    srcs = [
+        "BuiltinComponents.cpp",
+        "ComponentManager.cpp",
+        "ZhlComponent.cpp",
+        "ZhlComponent.h",
+    ],
+    hdrs = [
+        "BuiltinComponents.h",
+        "ComponentManager.h",
+    ],
+    deps = [
+        "//zirgen/Dialect/ZHL/IR",
+        "//zirgen/Dialect/ZHLT/IR",
+    ],
+)

@@ -1,0 +1,6 @@
+load("//bazel/rules/zirgen:edsl-defs.bzl", "build_circuit")
+
+build_circuit(
+    name = "fib",
+    srcs = ["fib.cpp"],
+)

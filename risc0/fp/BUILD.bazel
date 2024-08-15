@@ -1,0 +1,8 @@
+cc_library(
+    name = "fp",
+    hdrs = [
+        "fp.h",
+        "fpext.h",
+    ],
+    visibility = ["//visibility:public"],
+)
