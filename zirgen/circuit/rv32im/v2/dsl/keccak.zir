@@ -187,7 +187,7 @@ component xor5words_result<Xidx: Val, Sidx: Val>(rvpst: RetTuple) {
     Reg(xor3(unpack_a[i], unpack_b[i], unpack_c[i])) };
 
   xor_abcde := for i : 0..CURRLEN {
-    Reg(xor3(xor_abc[i], unpack_d[i], unpack_e[i])) };
+    xor3(xor_abc[i], unpack_d[i], unpack_e[i]) };
 
   FromBits<CURRLEN>(xor_abcde)
 }
