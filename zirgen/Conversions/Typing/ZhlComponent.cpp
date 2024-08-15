@@ -250,6 +250,7 @@ private:
   void gen(SubscriptOp, ComponentBuilder&);
   void gen(SpecializeOp, ComponentBuilder&);
   void gen(ConstructOp, ComponentBuilder&);
+  void gen(DirectiveOp, ComponentBuilder&);
   void gen(BlockOp, ComponentBuilder&);
   void gen(MapOp, ComponentBuilder&);
   void gen(ReduceOp, ComponentBuilder&);
@@ -264,6 +265,10 @@ private:
   void gen(ExternOp, ComponentBuilder&);
   void gen(ConstructGlobalOp, ComponentBuilder&);
   void gen(GetGlobalOp, ComponentBuilder&);
+
+  // Creates a sequence of lookup ops from the given ZHLT value to the indicated
+  // member, inserting @super lookups as necessary.
+  Value lookup(Value component, StringRef member);
 
   void buildZeroInitialize(Value toInit);
 
@@ -280,6 +285,9 @@ private:
   PolynomialAttr asFieldElement(Value v);
 
   Value asValue(Value zhlVal);
+
+  // Returns the ZHLT layout corresponding to the given ZHL value.
+  Value asLayout(Value zhlVal);
 
   // Same as addLayoutMember, but handles the case where we add a
   // definition for a previously declared member.
@@ -417,6 +425,7 @@ void LoweringImpl::gen(Operation* op, ComponentBuilder& cb) {
             SubscriptOp,
             SpecializeOp,
             ConstructOp,
+            DirectiveOp,
             BlockOp,
             MapOp,
             ReduceOp,
@@ -716,35 +725,44 @@ void LoweringImpl::gen(GlobalOp global, ComponentBuilder& cb) {
   }
 }
 
-void LoweringImpl::gen(LookupOp lookup, ComponentBuilder& cb) {
-  Value originalComponent = asValue(lookup.getComponent());
-  Value component = originalComponent;
+Value LoweringImpl::lookup(Value component, StringRef member) {
+  Value originalComponent = component;
   auto componentType = Zhlt::getComponentType(ctx);
-  while (component.getType() != componentType) {
-    auto structType = dyn_cast<StructType>(component.getType());
-    if (!structType)
+  while (component.getType() && component.getType() != componentType) {
+    ArrayRef<ZStruct::FieldInfo> fields;
+    if (auto structType = dyn_cast<StructType>(component.getType()))
+      fields = structType.getFields();
+    else if (auto layoutType = dyn_cast<LayoutType>(component.getType()))
+      fields = layoutType.getFields();
+    else
       break;
+
     bool foundSuper = false;
-    for (ZStruct::FieldInfo field : structType.getFields()) {
-      if (field.name == lookup.getMember()) {
-        auto lookupOp =
-            builder.create<ZStruct::LookupOp>(lookup.getLoc(), component, lookup.getMember());
-        valueMapping[lookup.getOut()] = lookupOp;
-        return;
+    for (ZStruct::FieldInfo field : fields) {
+      if (field.name == member) {
+        return builder.create<ZStruct::LookupOp>(component.getLoc(), component, member);
       }
       foundSuper |= (field.name == "@super");
     }
     // An error upstream may have produced a malformed component struct.
     if (!foundSuper)
       break;
-    component = builder.create<ZStruct::LookupOp>(lookup.getLoc(), component, "@super");
+    component = builder.create<ZStruct::LookupOp>(component.getLoc(), component, "@super");
   }
   // If we haven't returned yet, we searched the whole super chain and didn't
   // find the member we're looking for. We don't know anything about the type
   // that the member was supposed to be, so we recover by constructing a
   // `Component` instead.
-  lookup.emitError() << "type `" << getTypeId(originalComponent.getType())
-                     << "` has no member named \"" << lookup.getMember() << "\"";
+  emitError(component.getLoc()) << "type `" << getTypeId(originalComponent.getType())
+                                << "` has no member named \"" << member << "\"";
+  return nullptr;
+}
+
+void LoweringImpl::gen(LookupOp lookupOp, ComponentBuilder& cb) {
+  Value component = asValue(lookupOp.getComponent());
+  StringRef member = lookupOp.getMember();
+  Value subcomponent = lookup(component, member);
+  valueMapping[lookupOp.getOut()] = subcomponent;
 }
 
 void LoweringImpl::gen(SubscriptOp subscript, ComponentBuilder& cb) {
@@ -867,6 +885,58 @@ void LoweringImpl::gen(ConstructOp construct, ComponentBuilder& cb) {
 
   valueMapping[construct.getOut()] = call.getOut();
   layoutMapping[construct.getOut()] = layout;
+}
+
+// Gets the value of the layout corresponding to a ZHL value
+Value LoweringImpl::asLayout(Value value) {
+  Value layout = layoutMapping[value];
+  if (layout)
+    return layout;
+
+  layout = TypeSwitch<Operation*, Value>(value.getDefiningOp())
+      .Case<LookupOp>([&](LookupOp op) {
+        Value componentLayout = asLayout(op.getComponent());
+        StringRef member = op.getMember();
+        return lookup(componentLayout, member);
+      })
+      .Case<SubscriptOp>([&](SubscriptOp op) {
+        Value arrayLayout = asLayout(op.getArray());
+        Value index = asValue(op.getElement());
+        return builder.create<ZStruct::SubscriptOp>(value.getLoc(), arrayLayout, index);
+      })
+      .Case<BackOp>([&](BackOp op) {
+        return asLayout(op.getTarget());
+      })
+      .Default([&](Operation* op) {
+        llvm::outs() << "unhandled op: " << *op << "\n";
+        return nullptr;
+      });
+  layoutMapping[value] = layout;
+  return layout;
+}
+
+void LoweringImpl::gen(DirectiveOp directive, ComponentBuilder& cb) {
+  if (directive.getName() == "AliasLayout") {
+    if (directive.getArgs().size() != 2) {
+      size_t args = directive.getArgs().size();
+      directive.emitError() << "'AliasLayout' directive expects two arguments, got " << args;
+    }
+    Value left = asLayout(directive.getArgs()[0]);
+    Value right = asLayout(directive.getArgs()[1]);
+    assert(left);
+    Type type;
+    if (left.getType() == right.getType()) {
+      type = left.getType();
+    } else {
+      directive.emitWarning("layout types don't match; aliasing the common supers");
+      type = Zhlt::getLeastCommonSuper({left.getType(), right.getType()}, /*isLayout=*/1);
+      left = coerceTo(left, type);
+      right = coerceTo(right, type);
+    }
+    builder.create<ZStruct::AliasLayoutOp>(directive.getLoc(), left, right);
+  } else {
+    directive.emitError() << "Unknown compiler directive '" << directive.getName() << "'";
+  }
 }
 
 void LoweringImpl::gen(BlockOp block, ComponentBuilder& cb) {

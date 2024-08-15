@@ -328,6 +328,11 @@ void Impl::gen(ast::Statement* s, SymbolTable& symbols) {
         builder.create<ConstraintOp>(loc(s), left, right);
       })
       .Case<ast::Void>([&](ast::Void* s) { gen(s->getValue(), symbols); })
+      .Case<ast::Directive>([&](ast::Directive* s) {
+        mlir::StringAttr name = builder.getStringAttr(s->getName());
+        ValueVector args = gen(s->getArgs(), symbols);
+        builder.create<DirectiveOp>(loc(s), name, args);
+      })
       .Default([&](auto) { mlir::emitError(loc(s), "Unknown statement type"); });
 }
 

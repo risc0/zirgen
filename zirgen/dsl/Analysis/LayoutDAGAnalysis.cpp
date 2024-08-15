@@ -181,6 +181,10 @@ void LayoutDAGAnalysis::visitOp(AliasLayoutOp op) {
   const auto& rhs = getOrCreateFor<Element>(op, op.getRhs())->getValue();
   if (lhs.isDefined() && rhs.isDefined()) {
     assert(succeeded(LayoutDAG::unify(lhs.get(), rhs.get())));
+  } else {
+    auto diag = op.emitWarning() << "Failed to make layouts properly alias";
+    diag.attachNote(op.getLhs().getLoc()) << "first aliased layout:";
+    diag.attachNote(op.getRhs().getLoc()) << "second aliased layout:";
   }
 }
 
@@ -203,7 +207,10 @@ void LayoutDAGAnalysis::visitOp(SubscriptOp op) {
     ConstantValue indexValue =
         getOrCreateFor<Lattice<ConstantValue>>(op.getOut(), op.getIndex())->getValue();
     if (baseLayout->getValue().isDefined() && !indexValue.isUninitialized()) {
-      size_t index = extractIntAttr(indexValue.getConstantValue());
+      Attribute indexAttr = indexValue.getConstantValue();
+      if (!indexAttr)
+        return;
+      size_t index = extractIntAttr(indexAttr);
       LayoutDAG::Ptr sublayout = baseLayout->getValue().get()->subscript(index);
       auto* lattice = getOrCreate<Element>(op.getOut());
       propagateIfChanged(lattice, lattice->join(sublayout));

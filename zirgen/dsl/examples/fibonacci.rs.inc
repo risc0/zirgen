@@ -362,7 +362,6 @@ pub fn exec_top(
     let x4: BoundLayout<NondetRegLayout, _> = layout_lookup!(layout1, d3);
     // Top(zirgen/dsl/examples/fibonacci.zir:49)
     let x5: CycleCounterStruct = exec_cycle_counter(ctx0, layout_lookup!(layout1, cycle))?;
-    // Top(zirgen/dsl/examples/fibonacci.zir:50)
     let x6: IsZeroStruct = x5.is_first_cycle;
     let x7: Val = x6._super._super;
     // Top(zirgen/dsl/examples/fibonacci.zir:55)

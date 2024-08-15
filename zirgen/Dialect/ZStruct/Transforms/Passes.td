@@ -53,7 +53,7 @@ def StripAliasLayoutOps : Pass<"inline-layout", "mlir::ModuleOp"> {
     concrete layout of the circuit. This pass eliminates all AliasLayoutOps from
     the module.
   }];
-  let constructor = "zirgen::ZStruct::createExpandLayoutPass()";
+  let constructor = "zirgen::ZStruct::createStripAliasLayoutOpsPass()";
 }
 
 
