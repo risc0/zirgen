@@ -1,4 +1,4 @@
-// Copyright (c) 2023 RISC Zero, Inc.
+// Copyright (c) 2024 RISC Zero, Inc.
 //
 // All rights reserved.
 
