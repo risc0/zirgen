@@ -101,3 +101,19 @@ jobs:
       - uses: risc0/risc0/.github/actions/sccache@1a373c71585766e4f6985b96c48389daaf69d528
       - run: cargo doc --no-deps --exclude=bigint-test-methods --workspace
       - run: sccache --show-stats
+
+  # see: https://github.com/orgs/community/discussions/26822
+  main-status-check:
+    if: always()
+    needs:
+      - check
+      - bazel
+      - test
+      - doc
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check all job status
+        # see https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#needs-context
+        # see https://stackoverflow.com/a/67532120/4907315
+        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+        run: exit 1
