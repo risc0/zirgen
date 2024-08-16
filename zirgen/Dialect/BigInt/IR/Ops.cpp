@@ -150,9 +150,9 @@ LogicalResult NondetInvModOp::inferReturnTypes(MLIRContext* ctx,
 }
 
 LogicalResult ModularInvOp::inferReturnTypes(MLIRContext* ctx,
-                                               std::optional<Location> loc,
-                                               Adaptor adaptor,
-                                               SmallVectorImpl<Type>& out) {
+                                             std::optional<Location> loc,
+                                             Adaptor adaptor,
+                                             SmallVectorImpl<Type>& out) {
   auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
   size_t coeffsWidth = ceilDiv(rhsType.getMaxBits(), kBitsPerCoeff);
   out.push_back(BigIntType::get(ctx,

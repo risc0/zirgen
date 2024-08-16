@@ -106,9 +106,10 @@ BytePoly nondetInvMod(const BytePoly& lhs, const BytePoly& rhs, size_t coeffs) {
   auto lhsInt = toAPInt(lhs);
   auto rhsInt = toAPInt(rhs);
   size_t maxSize = rhsInt.getBitWidth();
-  APInt inv(2 * maxSize, 1);  // Initialize inverse to zero, twice the width of `prime` to allow multiplication
-  APInt sqr(lhsInt); // Will be repeatedly squared
-  APInt position(2 * maxSize, 1);  // Bit at `idx` will be 1, other bits will be 0
+  APInt inv(2 * maxSize,
+            1); // Initialize inverse to zero, twice the width of `prime` to allow multiplication
+  APInt sqr(lhsInt);              // Will be repeatedly squared
+  APInt position(2 * maxSize, 1); // Bit at `idx` will be 1, other bits will be 0
   sqr = sqr.zext(2 * maxSize);
   rhsInt = rhsInt.zext(2 * maxSize);
   APInt exp = rhsInt - 2;
@@ -117,10 +118,10 @@ BytePoly nondetInvMod(const BytePoly& lhs, const BytePoly& rhs, size_t coeffs) {
       // multiply in the current power of n (i.e., n^(2^idx))
       inv = (inv * sqr).urem(rhsInt);
     }
-    position <<= 1;  // increment the bit position to test in `exp`
-    sqr = (sqr * sqr).urem(rhsInt);  // square `sqr` to increment to `n^(2^(idx+1))`
+    position <<= 1;                 // increment the bit position to test in `exp`
+    sqr = (sqr * sqr).urem(rhsInt); // square `sqr` to increment to `n^(2^(idx+1))`
   }
-  inv = inv.trunc(maxSize);  // We don't need the extra space used as multiply buffer
+  inv = inv.trunc(maxSize); // We don't need the extra space used as multiply buffer
   LLVM_DEBUG({ dbgs() << "inv (mod " << rhsInt << "): " << inv << "\n"; });
   return fromAPInt(inv, coeffs);
 }

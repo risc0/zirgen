@@ -21,8 +21,8 @@ struct ReplaceModularInv : public OpRewritePattern<ModularInvOp> {
   using OpRewritePattern::OpRewritePattern;
   LogicalResult matchAndRewrite(ModularInvOp op, PatternRewriter& rewriter) const override {
     // Construct the constant 1
-    mlir::Type oneType = rewriter.getIntegerType(1);  // a `1` is bitwidth 1
-    auto oneAttr = rewriter.getIntegerAttr(oneType, 1);  // value 1
+    mlir::Type oneType = rewriter.getIntegerType(1);    // a `1` is bitwidth 1
+    auto oneAttr = rewriter.getIntegerAttr(oneType, 1); // value 1
     auto one = rewriter.create<ConstOp>(op.getLoc(), oneAttr);
 
     auto inv = rewriter.create<NondetInvModOp>(op.getLoc(), op.getLhs(), op.getRhs());

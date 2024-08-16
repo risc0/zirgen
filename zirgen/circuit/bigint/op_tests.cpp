@@ -130,12 +130,12 @@ void makeReduceTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
 
 void makeNondetInvTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto inp = builder.create<BigInt::DefOp>(loc, bits, 0, true);
-  auto prime = builder.create<BigInt::DefOp>(loc, bits, 1, true, bits - 1);   // TODO: Set to 131 if we need an actual number
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 1, true, bits - 1);
   auto expected = builder.create<BigInt::DefOp>(loc, bits, 2, true);
 
   // Construct constants
-  mlir::Type oneType = builder.getIntegerType(1);  // a `1` is bitwidth 1
-  auto oneAttr = builder.getIntegerAttr(oneType, 1);  // value 1
+  mlir::Type oneType = builder.getIntegerType(1);    // a `1` is bitwidth 1
+  auto oneAttr = builder.getIntegerAttr(oneType, 1); // value 1
   auto one = builder.create<BigInt::ConstOp>(loc, oneAttr);
 
   auto inv = builder.create<BigInt::NondetInvModOp>(loc, inp, prime);
