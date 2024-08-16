@@ -120,6 +120,12 @@ int main(int argc, char* argv[]) {
   }
   // TODO: More bitwidth coverage?
   for (size_t numBits : {8}) {
+    module.addFunc<0>("nondet_inv_test_" + std::to_string(numBits), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::makeNondetInvTest(builder, builder.getUnknownLoc(), numBits);
+    });
+  }
+  for (size_t numBits : {8}) {
     module.addFunc<0>("const_add_test_" + std::to_string(numBits), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
       zirgen::BigInt::makeConstAddTest(builder, builder.getUnknownLoc(), numBits);

@@ -10,7 +10,6 @@ using namespace mlir;
 
 namespace zirgen::BigInt {
 
-void makeIsOddTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
 void makeConstAddTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
 void makeConstAddAltTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
 void makeConstMulTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
@@ -21,5 +20,6 @@ void makeConstTwoByteTest(mlir::OpBuilder builder, mlir::Location loc, size_t bi
 void makeSubTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
 void makeMulTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
 void makeReduceTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
+void makeNondetInvTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
 
 } // namespace zirgen::BigInt

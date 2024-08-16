@@ -45,6 +45,7 @@ ZKRS = [
     "mul_test_128",
     "reduce_test_8",
     "reduce_test_128",
+    "nondet_inv_test_8",
 ]
 
 build_circuit(
