@@ -75,7 +75,6 @@ jobs:
       - run: git lfs pull
       - uses: risc0/risc0/.github/actions/rustup@4ab1f0bba1b0515819221bebc59f95aad0a6a3a9
       - uses: risc0/risc0/.github/actions/sccache@1a373c71585766e4f6985b96c48389daaf69d528
-      - run: cargo version
       - uses: risc0/cargo-install@b9307573043522ab0d3e3be64a51763b765b52a4
         with:
           crate: cargo-binstall
