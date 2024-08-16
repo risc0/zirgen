@@ -1,0 +1,2 @@
+[alias]
+bootstrap = "run --release --manifest-path zirgen/bootstrap/Cargo.toml"
