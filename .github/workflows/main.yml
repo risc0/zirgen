@@ -79,6 +79,7 @@ jobs:
         with:
           crate: cargo-binstall
           version: "1.4"
+          locked: false
       - run: cargo binstall -y --force cargo-risczero
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
