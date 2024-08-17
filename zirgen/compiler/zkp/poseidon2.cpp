@@ -180,6 +180,10 @@ Digest poseidon2HashPair(Digest x, Digest y) {
   return out;
 }
 
+void poseidonSponge(std::array<uint32_t, 24>& cells) {
+  cells = poseidon2_mix(cells);
+}
+
 Poseidon2Rng::Poseidon2Rng() : pool_used(0) {
   for (size_t i = 0; i < CELLS; i++) {
     cells[i] = 0;
