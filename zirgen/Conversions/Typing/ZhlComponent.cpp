@@ -270,6 +270,10 @@ private:
   // member, inserting @super lookups as necessary.
   Value lookup(Value component, StringRef member);
 
+  // Coerces the given component to its first array-like super, and then looks
+  // up the given index.
+  Value subscript(Value component, Value index);
+
   void buildZeroInitialize(Value toInit);
 
   /// Walk the value's super chain until type is reached or the chain ends.
@@ -758,6 +762,24 @@ Value LoweringImpl::lookup(Value component, StringRef member) {
   return nullptr;
 }
 
+Value LoweringImpl::subscript(Value array, Value index) {
+  auto derivedType = array.getType();
+  ZStruct::ArrayLikeTypeInterface arrayType = Zhlt::getCoercibleArrayType(derivedType);
+  if (!arrayType) {
+    if (derivedType) {
+      emitError(array.getLoc()) << "subscripted component of type `" << getTypeId(derivedType)
+                                << "` is not convertible to an array type.";
+    } else {
+      emitError(array.getLoc()) << "subscript requires an instance of an array type";
+    }
+    // Since we don't know what the element type is supposed to be, there isn't
+    // a good way to recover from this error.
+    throw MalformedIRException();
+  }
+  Value casted = coerceTo(array, arrayType);
+  return builder.create<ZStruct::SubscriptOp>(array.getLoc(), casted, index);
+}
+
 void LoweringImpl::gen(LookupOp lookupOp, ComponentBuilder& cb) {
   Value component = asValue(lookupOp.getComponent());
   StringRef member = lookupOp.getMember();
@@ -765,25 +787,11 @@ void LoweringImpl::gen(LookupOp lookupOp, ComponentBuilder& cb) {
   valueMapping[lookupOp.getOut()] = subcomponent;
 }
 
-void LoweringImpl::gen(SubscriptOp subscript, ComponentBuilder& cb) {
-  Value array = asValue(subscript.getArray());
-  auto derivedType = array.getType();
-  ArrayType arrayType = Zhlt::getCoercibleArrayType(derivedType);
-  if (!arrayType) {
-    if (derivedType) {
-      subscript.emitError() << "subscripted component of type `" << getTypeId(derivedType)
-                            << "` is not convertible to an array type.";
-    } else {
-      subscript.emitError() << "subscript requires an instance of an array type";
-    }
-    // Since we don't know what the element type is supposed to be, there isn't
-    // a good way to recover from this error.
-    throw MalformedIRException();
-  }
-  Value casted = coerceTo(array, arrayType);
-  auto subscriptOp = builder.create<ZStruct::SubscriptOp>(
-      subscript.getLoc(), casted, asValue(subscript.getElement()));
-  valueMapping[subscript.getOut()] = subscriptOp;
+void LoweringImpl::gen(SubscriptOp subscriptOp, ComponentBuilder& cb) {
+  Value array = asValue(subscriptOp.getArray());
+  Value index = asValue(subscriptOp.getElement());
+  Value newSubscriptOp = subscript(array, index);
+  valueMapping[subscriptOp.getOut()] = newSubscriptOp;
 }
 
 void LoweringImpl::gen(SpecializeOp specialize, ComponentBuilder& cb) {
@@ -902,7 +910,7 @@ Value LoweringImpl::asLayout(Value value) {
       .Case<SubscriptOp>([&](SubscriptOp op) {
         Value arrayLayout = asLayout(op.getArray());
         Value index = asValue(op.getElement());
-        return builder.create<ZStruct::SubscriptOp>(value.getLoc(), arrayLayout, index);
+        return subscript(arrayLayout, index);
       })
       .Case<BackOp>([&](BackOp op) {
         return asLayout(op.getTarget());

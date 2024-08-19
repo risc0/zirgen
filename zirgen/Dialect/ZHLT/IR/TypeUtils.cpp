@@ -255,9 +255,9 @@ Value coerceTo(Value value, Type type, OpBuilder& builder) {
   return casted;
 }
 
-ArrayType getCoercibleArrayType(Type type) {
+ArrayLikeTypeInterface getCoercibleArrayType(Type type) {
   while (type) {
-    if (auto arrayType = dyn_cast<ArrayType>(type)) {
+    if (auto arrayType = dyn_cast<ArrayLikeTypeInterface>(type)) {
       return arrayType;
     }
     type = getSuperType(type);
@@ -378,7 +378,7 @@ std::string getTypeId(Type ty) {
       .Case<RefType>([](auto) { return "Ref"; })
       .Case<StructType>([](auto structType) { return structType.getId(); })
       .Case<LayoutType>([](auto layoutType) { return layoutType.getId(); })
-      .Case<ArrayType>([](auto arrayType) {
+      .Case<ArrayLikeTypeInterface>([](auto arrayType) {
         return "Array<" + getTypeId(arrayType.getElement()) + ", " +
                std::to_string(arrayType.getSize()) + ">";
       })
