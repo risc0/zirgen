@@ -135,6 +135,34 @@ LogicalResult NondetQuotOp::inferReturnTypes(MLIRContext* ctx,
   return success();
 }
 
+LogicalResult NondetInvModOp::inferReturnTypes(MLIRContext* ctx,
+                                               std::optional<Location> loc,
+                                               Adaptor adaptor,
+                                               SmallVectorImpl<Type>& out) {
+  auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
+  size_t coeffsWidth = ceilDiv(rhsType.getMaxBits(), kBitsPerCoeff);
+  out.push_back(BigIntType::get(ctx,
+                                /*coeffs=*/coeffsWidth,
+                                /*maxPos=*/(1 << kBitsPerCoeff) - 1,
+                                /*maxNeg=*/0,
+                                /*minBits=*/0));
+  return success();
+}
+
+LogicalResult ModularInvOp::inferReturnTypes(MLIRContext* ctx,
+                                             std::optional<Location> loc,
+                                             Adaptor adaptor,
+                                             SmallVectorImpl<Type>& out) {
+  auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
+  size_t coeffsWidth = ceilDiv(rhsType.getMaxBits(), kBitsPerCoeff);
+  out.push_back(BigIntType::get(ctx,
+                                /*coeffs=*/coeffsWidth,
+                                /*maxPos=*/(1 << kBitsPerCoeff) - 1,
+                                /*maxNeg=*/0,
+                                /*minBits=*/0));
+  return success();
+}
+
 LogicalResult ReduceOp::inferReturnTypes(MLIRContext* ctx,
                                          std::optional<Location> loc,
                                          Adaptor adaptor,
@@ -183,6 +211,12 @@ void NondetRemOp::emitExpr(codegen::CodegenEmitter& cg) {
 
 void NondetQuotOp::emitExpr(codegen::CodegenEmitter& cg) {
   cg.emitFuncCall(cg.getStringAttr("nondet_quot"),
+                  /*contextArgs=*/{"ctx"},
+                  {getLhs(), getRhs(), toConstantValue(cg, getContext(), getType().getCoeffs())});
+}
+
+void NondetInvModOp::emitExpr(codegen::CodegenEmitter& cg) {
+  cg.emitFuncCall(cg.getStringAttr("nondet_inv"),
                   /*contextArgs=*/{"ctx"},
                   {getLhs(), getRhs(), toConstantValue(cg, getContext(), getType().getCoeffs())});
 }

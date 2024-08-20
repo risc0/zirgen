@@ -128,4 +128,23 @@ void makeReduceTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   builder.create<BigInt::EqualZeroOp>(loc, diff);
 }
 
+void makeNondetInvTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
+  auto inp = builder.create<BigInt::DefOp>(loc, bits, 0, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 1, true, bits - 1);
+  auto expected = builder.create<BigInt::DefOp>(loc, bits, 2, true);
+
+  // Construct constants
+  mlir::Type oneType = builder.getIntegerType(1);    // a `1` is bitwidth 1
+  auto oneAttr = builder.getIntegerAttr(oneType, 1); // value 1
+  auto one = builder.create<BigInt::ConstOp>(loc, oneAttr);
+
+  auto inv = builder.create<BigInt::NondetInvModOp>(loc, inp, prime);
+  auto prod = builder.create<BigInt::MulOp>(loc, inp, inv);
+  auto reduced = builder.create<BigInt::ReduceOp>(loc, prod, prime);
+  auto expect_zero = builder.create<BigInt::SubOp>(loc, reduced, one);
+  builder.create<BigInt::EqualZeroOp>(loc, expect_zero);
+  auto result_match = builder.create<BigInt::SubOp>(loc, inv, expected);
+  builder.create<BigInt::EqualZeroOp>(loc, result_match);
+}
+
 } // namespace zirgen::BigInt

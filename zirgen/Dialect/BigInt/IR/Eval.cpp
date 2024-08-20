@@ -100,6 +100,32 @@ BytePoly nondetRem(const BytePoly& lhs, const BytePoly& rhs, size_t coeffs) {
   return fromAPInt(rem, coeffs);
 }
 
+BytePoly nondetInvMod(const BytePoly& lhs, const BytePoly& rhs, size_t coeffs) {
+  // Uses the formula n^(p-2) * n = 1  (mod p) to invert `lhs` (mod `rhs`)
+  // (via the square and multiply technique)
+  auto lhsInt = toAPInt(lhs);
+  auto rhsInt = toAPInt(rhs);
+  size_t maxSize = rhsInt.getBitWidth();
+  APInt inv(2 * maxSize,
+            1); // Initialize inverse to zero, twice the width of `prime` to allow multiplication
+  APInt sqr(lhsInt);              // Will be repeatedly squared
+  APInt position(2 * maxSize, 1); // Bit at `idx` will be 1, other bits will be 0
+  sqr = sqr.zext(2 * maxSize);
+  rhsInt = rhsInt.zext(2 * maxSize);
+  APInt exp = rhsInt - 2;
+  for (size_t idx = 0; idx < maxSize; idx++) {
+    if (exp.intersects(position)) {
+      // multiply in the current power of n (i.e., n^(2^idx))
+      inv = (inv * sqr).urem(rhsInt);
+    }
+    position <<= 1;                 // increment the bit position to test in `exp`
+    sqr = (sqr * sqr).urem(rhsInt); // square `sqr` to increment to `n^(2^(idx+1))`
+  }
+  inv = inv.trunc(maxSize); // We don't need the extra space used as multiply buffer
+  LLVM_DEBUG({ dbgs() << "inv (mod " << rhsInt << "): " << inv << "\n"; });
+  return fromAPInt(inv, coeffs);
+}
+
 void printEval(const std::string& message, BytePoly poly) {
   risc0::FpExt tot(0);
   risc0::FpExt mul(1);
@@ -187,6 +213,12 @@ EvalOutput eval(func::FuncOp inFunc, ArrayRef<APInt> witnessValues) {
         .Case<NondetQuotOp>([&](auto op) {
           uint32_t coeffs = op.getOut().getType().getCoeffs();
           auto poly = nondetQuot(polys[op.getLhs()], polys[op.getRhs()], coeffs);
+          polys[op.getOut()] = poly;
+          ret.privateWitness.push_back(poly);
+        })
+        .Case<NondetInvModOp>([&](auto op) {
+          uint32_t coeffs = op.getOut().getType().getCoeffs();
+          auto poly = nondetInvMod(polys[op.getLhs()], polys[op.getRhs()], coeffs);
           polys[op.getOut()] = poly;
           ret.privateWitness.push_back(poly);
         })
