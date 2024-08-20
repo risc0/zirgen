@@ -11,8 +11,12 @@
 
 namespace zirgen {
 
+// Hashing functions used by the proof system itself
 Digest poseidon2Hash(const uint32_t* data, size_t size);
 Digest poseidon2HashPair(Digest x, Digest y);
+
+// Raw access to inner poseidon sponge function
+void poseidonSponge(std::array<uint32_t, 24>& cells);
 
 class Poseidon2Rng : public IopRng {
 public:
