@@ -44,6 +44,13 @@ static cl::opt<std::string> inputFilename(cl::Positional,
                                           cl::value_desc("filename"),
                                           cl::Required);
 
+static cl::opt<std::string> inputDataFilename("input-data-file",
+                                              cl::desc("file containing input data for readInput"),
+                                              cl::value_desc("filename"));
+static cl::opt<std::string> inputDataHex("input-data-hex",
+                                         cl::desc("inline hexadecimal input for readInput"),
+                                         cl::value_desc("hex data"));
+
 namespace {
 enum Action {
   None,
@@ -219,6 +226,9 @@ struct TestExternHandler : public zirgen::Zll::ExternHandler {
         valPtrs[i] = &vals[i];
       }
       results = zirgen::Zll::ExternHandler::doExtern("log", message, valPtrs, outCount);
+    } else if (name == "configureInput" || name == "readInput") {
+      // Pass through to common implementation
+      results = zirgen::Zll::ExternHandler::doExtern(name, extra, args, outCount);
     } else {
       // By default, let random externs pass
       // Fill with 0, 1, 2, ...
@@ -323,8 +333,20 @@ int runTests(mlir::ModuleOp& module) {
         interp.setNamedBuf(bufDesc.name, *newBuf, bufDesc.regCount);
       }
     }
-    // Now that we've allocated everything, we can acquire pointers safely.
     TestExternHandler testExterns;
+    if (!inputDataHex.empty() && !inputDataFilename.empty()) {
+      llvm::errs() << "Cannot specify both --input-data-file and --input-data-hex\n";
+      exit(1);
+    } else if (!inputDataFilename.empty()) {
+      auto fileOrErr = llvm::MemoryBuffer::getFile(inputDataFilename);
+      if (fileOrErr.getError()) {
+        llvm::errs() << "Unable to read input data from " << inputDataFilename << "\n";
+        exit(1);
+      }
+      testExterns.addInput((*fileOrErr)->getBuffer());
+    } else if (!inputDataHex.empty()) {
+      testExterns.addInput(llvm::fromHex(inputDataHex));
+    }
     interp.setExternHandler(&testExterns);
     interp.setSilenceErrors(expectFailure);
     // interp.setDebug(true);
