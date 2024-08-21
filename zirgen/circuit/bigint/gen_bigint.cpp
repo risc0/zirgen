@@ -5,6 +5,7 @@
 #include "mlir/Transforms/Passes.h"
 #include "zirgen/Dialect/BigInt/IR/BigInt.h"
 #include "zirgen/Dialect/BigInt/Transforms/Passes.h"
+#include "zirgen/circuit/bigint/elliptic_curve.h"
 #include "zirgen/circuit/bigint/op_tests.h"
 #include "zirgen/circuit/bigint/rsa.h"
 #include "zirgen/circuit/recursion/code.h"
@@ -177,6 +178,50 @@ int main(int argc, char* argv[]) {
     module.addFunc<0>("reduce_test_" + std::to_string(numBits), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
       zirgen::BigInt::makeReduceTest(builder, builder.getUnknownLoc(), numBits);
+    });
+  }
+  // ECDSA
+  for (size_t numBits : {8}) {
+    module.addFunc<0>("ecdsa_verify_" + std::to_string(numBits), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::makeECDSAVerify(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 31), APInt(numBits, 0), APInt(numBits, 3));  // TODO: show values in ZKR name
+    });
+  }
+  // Elliptic Curve tests
+  for (size_t numBits : {8}) {  // TODO: Switch to 5 bits
+    module.addFunc<0>("ec_aff_add_test_" + std::to_string(numBits), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::makeECAffineAddTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 31), APInt(numBits, 0), APInt(numBits, 3));  // TODO: I don't think these values are coordinated with the test
+    });
+  }
+  for (size_t numBits : {8}) {  // TODO: Switch to 5 bits
+    module.addFunc<0>("ec_aff_doub_test_" + std::to_string(numBits), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::makeECAffineDoubleTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 31), APInt(numBits, 0), APInt(numBits, 3));  // TODO: I don't think these values are coordinated with the test
+    });
+  }
+  for (size_t numBits : {8}) {  // TODO: Switch to 5 bits
+    module.addFunc<0>("ec_aff_mul_test_" + std::to_string(numBits), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::makeECAffineMultiplyTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 31), APInt(numBits, 0), APInt(numBits, 3));  // TODO: I don't think these values are coordinated with the test
+    });
+  }
+  for (size_t numBits : {8}) {  // TODO: Switch to 5 bits
+    module.addFunc<0>("ec_aff_neg_test_" + std::to_string(numBits), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::makeECAffineNegateTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 31), APInt(numBits, 0), APInt(numBits, 3));  // TODO: I don't think these values are coordinated with the test
+    });
+  }
+  for (size_t numBits : {8}) {  // TODO: Switch to 5 bits
+    module.addFunc<0>("ec_aff_sub_test_" + std::to_string(numBits), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::makeECAffineSubtractTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 31), APInt(numBits, 0), APInt(numBits, 3));  // TODO: I don't think these values are coordinated with the test
+    });
+  }
+  for (size_t numBits : {8}) {
+    module.addFunc<0>("ec_pts_eq_test_" + std::to_string(numBits), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::makeECAffineValidatePointsEqualTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 31), APInt(numBits, 0), APInt(numBits, 3));  // TODO: I don't think these values are coordinated with the test
     });
   }
 
