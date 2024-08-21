@@ -20,11 +20,59 @@ std::vector<uint64_t> ExternHandler::doExtern(llvm::StringRef name,
                                               llvm::ArrayRef<const InterpVal*> args,
                                               size_t outCount) {
   if (name == "readCoefficients") {
+    // TODO: Migrate users of readCoefficients to use readInput, or
+    // move readCoefficients to a circuit-specific extern handler.
+
     // Produce 'fake' coefficients for now via a PRNG
     assert(outCount == 16);
     std::vector<uint64_t> ret;
     for (size_t i = 0; i < 16; i++) {
       ret.push_back(coeffPRNG() & 0xff);
+    }
+    return ret;
+  }
+  if (name == "configureInput") {
+    // Usage: configureInput(/*extra=*/inputName, bytesPerElem)
+    //
+    // where:
+    //   extra = named input source (default = "")
+    //   bytesPerElem = number of bytes of input per element
+    auto fpArgs = asFpArray(args);
+    if (fpArgs.size() != 1)
+      throw std::runtime_error("wrong number of arguments to configureInput");
+    size_t bytesPerElem = fpArgs[0];
+    inputBytesPerElem[extra] = bytesPerElem;
+    return {};
+  }
+  if (name == "readInput") {
+    // Usage: readInput(/*extra=*/inputName)
+    //
+    // Reads a number of elements from input, specified by the number
+    // of elements returned.  configureInput must be called first to
+    // configure the format of the input.
+
+    size_t bytesPerElem = inputBytesPerElem[extra];
+    if (!bytesPerElem || bytesPerElem > sizeof(uint64_t)) {
+      throw std::runtime_error("invalid bytesPerElem");
+    }
+
+    auto& inputBytes = input[extra];
+
+    auto fpArgs = asFpArray(args);
+    if (fpArgs.size() != 0)
+      throw std::runtime_error("wrong number of arguments to readInput");
+
+    std::vector<uint64_t> ret;
+
+    for (size_t i = 0; i != outCount; ++i) {
+      uint64_t elem = 0;
+      for (size_t byteIdx = 0; byteIdx != bytesPerElem; byteIdx++) {
+        if (inputBytes.empty())
+          throw std::runtime_error("readInput: input underrun");
+        elem |= inputBytes.front() << (byteIdx * 8);
+        inputBytes.pop_front();
+      }
+      ret.push_back(elem);
     }
     return ret;
   }
@@ -108,6 +156,11 @@ std::vector<uint64_t> ExternHandler::doExtern(llvm::StringRef name,
     return {};
   }
   throw std::runtime_error(("Unknown extern: " + name).str());
+}
+
+void ExternHandler::addInput(llvm::StringRef inputName, StringRef newBytes) {
+  auto& bytes = input[inputName];
+  bytes.insert(bytes.end(), newBytes.begin(), newBytes.end());
 }
 
 Interpreter::Interpreter(MLIRContext* ctx, std::unique_ptr<IHashSuite> hashSuite)

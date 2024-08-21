@@ -1,0 +1,35 @@
+// Tests reading input one element at a time
+
+// RUN: zirgen --test %s --input-data-hex 0001020304050607 2>&1 | FileCheck %s
+
+extern configureInput(bytesPerElem: Val);
+extern readInput() : Val;
+
+test bytes {
+// CHECK-LABEL: Running bytes
+  configureInput(1);
+  readInput() = 0;
+  readInput() = 1;
+  readInput() = 2;
+  readInput() = 3;
+  readInput() = 4;
+  readInput() = 5;
+  readInput() = 6;
+  readInput() = 7;
+}
+
+test shorts {
+// CHECK-LABEL: Running shorts
+  configureInput(2);
+  readInput() = 0 + 1 * 256;
+  readInput() = 2 + 3 * 256;
+  readInput() = 4 + 5 * 256;
+  readInput() = 6 + 7 * 256;
+}
+
+test u32s {
+// CHECK-LABEL: Running u32s
+  configureInput(4);
+  readInput() = 0 + 1 * 256 + 2 * 256 * 256 + 3 * 256 * 256 * 256;
+  readInput() = 4 + 5 * 256 + 6 * 256 * 256 + 7 * 256 * 256 * 256;
+}

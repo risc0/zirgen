@@ -80,13 +80,26 @@ inline llvm::raw_ostream& operator<<(llvm::raw_ostream& os, const InterpVal& val
 
 std::vector<uint64_t> asFpArray(llvm::ArrayRef<const Zll::InterpVal*> array);
 
-struct ExternHandler {
+class ExternHandler {
+public:
   virtual ~ExternHandler() {}
   virtual std::vector<uint64_t> doExtern(llvm::StringRef name,
                                          llvm::StringRef extra,
                                          llvm::ArrayRef<const InterpVal*> arg,
                                          size_t outCount);
+
+  // Add input data bytes available through the readInput extern.
+  void addInput(llvm::StringRef inputName, llvm::StringRef inputBytes);
+  // If no input name is specifeid, use default input stream.
+  void addInput(llvm::StringRef inputBytes) { addInput("", inputBytes); }
+
+protected:
   std::mt19937 coeffPRNG;
+
+  // Byte stream inputs for readInput per input stream
+  mlir::DenseMap<llvm::StringRef, std::deque<uint8_t>> input;
+  // Configured number of bytes per input stream set by configureInput.
+  mlir::DenseMap<llvm::StringRef, size_t> inputBytesPerElem;
 };
 
 class OpEvaluator {
