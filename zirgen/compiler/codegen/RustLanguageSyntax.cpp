@@ -56,7 +56,16 @@ void RustLanguageSyntax::fallbackEmitLiteral(CodegenEmitter& cg,
                                              mlir::Type ty,
                                              mlir::Attribute value) {
   TypeSwitch<Attribute>(value)
-      .Case<IntegerAttr>([&](auto intAttr) { cg << intAttr.getValue().getZExtValue(); })
+      .Case<IntegerAttr>([&](auto intAttr) {
+        auto maybeInt = intAttr.getValue().tryZExtValue();
+        // Can we represent the value as a uint64, or is it large enough
+        // to need a more expensive string formatting operation?
+        if (maybeInt) {
+          cg << *maybeInt;
+        } else {
+          intAttr.getValue().print(*cg.getOutputStream(), /*signed*/ false);
+        }
+      })
       .Case<StringAttr>([&](auto strAttr) { cg.emitEscapedString(strAttr); })
       .Default([&](auto) {
         llvm::errs() << "Don't know how to emit type " << ty << " into rust++ with value " << value
