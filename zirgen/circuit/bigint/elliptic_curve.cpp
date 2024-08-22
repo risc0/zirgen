@@ -56,7 +56,7 @@ void AffinePt::validate_order(OpBuilder builder, Location loc, const AffinePt& a
   auto one = builder.create<BigInt::ConstOp>(loc, oneAttr);
 
   Value order_minus_one = builder.create<BigInt::SubOp>(loc, order(), one);
-  AffinePt times_order_minus_one = mul(builder, loc, order_minus_one, *this, arbitrary);  // TODO: This is the line that causes everything to fall apart
+  AffinePt times_order_minus_one = mul(builder, loc, order_minus_one, *this, arbitrary);
   times_order_minus_one.validate_equal(builder, loc, neg(builder, loc, *this));
 }
 
@@ -94,10 +94,10 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
 
 
 
-  // Enforce that xDiffInv is the inverse of x_diff   // TODO: Failing somewhere in here
+  // Enforce that xDiffInv is the inverse of x_diff
   Value x_diff_inv = builder.create<BigInt::NondetInvModOp>(loc, x_diff, prime);
   Value x_diff_inv_check = builder.create<BigInt::MulOp>(loc, x_diff, x_diff_inv);
-  x_diff_inv_check = builder.create<BigInt::ReduceOp>(loc, x_diff_inv_check, prime);  // TODO: Something in here is failing...
+  x_diff_inv_check = builder.create<BigInt::ReduceOp>(loc, x_diff_inv_check, prime);
   x_diff_inv_check = builder.create<BigInt::SubOp>(loc, x_diff_inv_check, one);
   builder.create<BigInt::EqualZeroOp>(loc, x_diff_inv_check);
 
@@ -135,7 +135,6 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
 
 AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt, const AffinePt& arbitrary) {
   assert(arbitrary.on_same_curve_as(pt));
-  // TODO
   // Construct constants
   mlir::Type oneType = builder.getIntegerType(1);  // a `1` is bitwidth 1
   auto oneAttr = builder.getIntegerAttr(oneType, 1);  // value 1
@@ -172,8 +171,6 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt, 
   // `arbitrary` has not need to be constructed in any particular way, so we pretty much always need to validate it's on the curve
   // Hence, we do so here
   arbitrary.validate_on_curve(builder, loc);
-
-  // return pt;  // TODO: Aborting early to test earlier parts // passes
 
   // TODO: Temporarily hacking to the an exponent large enough to cover the prime
   // (i.e., since we have a test on order 43, to 6)
