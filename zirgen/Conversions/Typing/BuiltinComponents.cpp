@@ -169,7 +169,7 @@ void Builtins::addBuiltins() {
   genTrivial("String", Zhlt::getStringType(ctx));
 
   makeSpecialBuiltin<Zhlt::BuiltinArrayOp>("Array");
-  //  makeSpecialBuiltin<Zhlt::BuiltinConcatArrayOp>("ConcatArray");
+  makeSpecialBuiltin<Zhlt::BuiltinArrayOp>("ConcatArray");
   makeSpecialBuiltin<Zhlt::BuiltinLogOp>("Log");
 }
 

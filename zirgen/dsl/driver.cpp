@@ -155,7 +155,7 @@ struct TestExternHandler : public zirgen::Zll::ExternHandler {
     llvm::printEscapedString(name, os);
 
     // Including arguments for Log duplicates information in the output
-    if (name != "log") {
+    if (name != "Log") {
       os << "(";
       if (!extra.empty()) {
         printEscapedString(extra, os);
@@ -230,9 +230,10 @@ struct TestExternHandler : public zirgen::Zll::ExternHandler {
       check(outCount == 4, "Divide returns 5 results");
       auto fpArgs = asFpArray(args);
       divide(results, fpArgs);
-    } else if (name == "log") {
+    } else if (name == "Log") {
       os << ": ";
-    } else if (name == "configureInput" || name == "readInput" || name == "log") {
+      results = zirgen::Zll::ExternHandler::doExtern("log", extra, args, outCount);
+    } else if (name == "configureInput" || name == "readInput") {
       // Pass through to common implementation
       results = zirgen::Zll::ExternHandler::doExtern(name, extra, args, outCount);
     } else {

@@ -13,12 +13,11 @@ def ComponentOpInterface : OpInterface<"ComponentOpInterface"> {
   let methods = [
     // See zirgen::Zhlt::ComponentManager for documentation on what these methods do.
     InterfaceMethod<"",
-      "bool", "isConcrete",
-      (ins "ComponentTypeAttr":$name),
+      "void", "inferType",
+      (ins "ComponentManager*":$manager, "ComponentTypeAttr&":$name, "mlir::ValueRange":$constructArgs),
       "",
       [{
-         // By default, builtin components can be constructed
-         return true;
+        // By default, we don't attempt to infer anything.
       }]
     >,
 
@@ -28,7 +27,7 @@ def ComponentOpInterface : OpInterface<"ComponentOpInterface"> {
            "ComponentTypeAttr":$name),
       "",
       [{
-          // By default, this is a non-generic component.
+          // By default, this is a non-generic component, so we can use it when no type arguments are present.
           if (name.getTypeArgs().empty())
             return mlir::success();
           else

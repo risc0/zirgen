@@ -281,6 +281,7 @@ private:
 
   // Evaluiates the given value as an instantiatable type.
   ComponentTypeAttr asTypeName(Value v);
+  ComponentTypeAttr asTypeNameInferringType(Value v, ValueRange args);
 
   // Evaluiates the given value as a potentially generic type.
   ComponentTypeAttr asAbstractTypeName(Value v);
@@ -689,7 +690,7 @@ void LoweringImpl::gen(StringOp string, ComponentBuilder& cb) {
 }
 
 void LoweringImpl::gen(GlobalOp global, ComponentBuilder& cb) {
-  auto name = ComponentTypeAttr::get(global.getNameAttr());
+  auto name = ComponentTypeAttr::get(global.getNameAttr(), /*typeArgs=*/{});
   if (failed(componentManager->requireAbstractComponent(global.getLoc(), name)))
     throw(MalformedIRException());
   typeNameMapping[global.getOut()] = name;
@@ -769,8 +770,8 @@ void LoweringImpl::gen(SpecializeOp specialize, ComponentBuilder& cb) {
 }
 
 void LoweringImpl::gen(ConstructOp construct, ComponentBuilder& cb) {
-  auto component = asTypeName(construct.getType());
   auto args = llvm::map_to_vector(construct.getArgs(), [&](auto arg) { return asValue(arg); });
+  auto component = asTypeNameInferringType(construct.getType(), args);
   Value layout = addOrExpandLayoutMember(
       construct.getLoc(), cb, construct.getOut(), componentManager->getLayoutType(component));
 
@@ -1042,9 +1043,16 @@ void LoweringImpl::gen(SwitchOp sw, ComponentBuilder& cb) {
 
   Type armResultType = Zhlt::getLeastCommonSuper(armTypes);
   assert(armResultType);
-  Type commonArmLayoutType = Zhlt::getLeastCommonSuper(armLayouts, /*isLayout=*/1);
-  Value superLayout = muxContext.addLayoutMember(sw.getLoc(), "@super", commonArmLayoutType);
-  LLVM_DEBUG({ llvm::dbgs() << "Switch arm common layout: " << commonArmLayoutType << "\n"; });
+
+  Value superLayout;
+  Type commonArmLayoutType;
+  if (armLayouts.size() == size) {
+    // All arms have layouts; save the common super.
+    commonArmLayoutType = Zhlt::getLeastCommonSuper(armLayouts, /*isLayout=*/1);
+    superLayout = muxContext.addLayoutMember(sw.getLoc(), "@super", commonArmLayoutType);
+    LLVM_DEBUG({ llvm::dbgs() << "Switch arm common layout: " << commonArmLayoutType << "\n"; });
+  }
+
   SmallVector<Value> selectorValues;
   for (size_t i = 0; i != size; ++i) {
     auto indexOp = builder.create<Zll::ConstOp>(sw.getLoc(), i);
@@ -1337,6 +1345,16 @@ Attribute LoweringImpl::asConstant(Value arg) {
 ComponentTypeAttr LoweringImpl::asTypeName(Value v) {
   auto typeName = asAbstractTypeName(v);
   if (succeeded(componentManager->requireComponent(v.getLoc(), typeName))) {
+    return typeName;
+  }
+
+  emitError(v.getLoc()) << "component type is not instantiatable";
+  throw MalformedIRException();
+}
+
+ComponentTypeAttr LoweringImpl::asTypeNameInferringType(Value v, ValueRange args) {
+  auto typeName = asAbstractTypeName(v);
+  if (succeeded(componentManager->requireComponentInferringType(v.getLoc(), typeName, args))) {
     return typeName;
   }
 

@@ -134,7 +134,7 @@ void ComponentTypeAttr::buildMangledName(llvm::raw_ostream& os) {
           .Case<PolynomialAttr>([&](auto intAttr) { os << intAttr[0]; })
           .Case<ComponentTypeAttr>([&](auto componentArg) { componentArg.buildMangledName(os); });
     });
-    os << "<";
+    os << ">";
   }
 }
 

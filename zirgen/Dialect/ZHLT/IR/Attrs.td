@@ -46,12 +46,9 @@ def ComponentTypeAttr : ZhltAttr<"ComponentType", "component_type"> {
     AttrBuilder<(ins "mlir::StringRef":$name, "llvm::ArrayRef<mlir::Attribute>":$typeArgs), [{
       return $_get(context, mlir::StringAttr::get(context, name), typeArgs);
     }]>,
-    AttrBuilderWithInferredContext<(ins "mlir::StringAttr":$name), [{
-      return $_get(name.getContext(), name, llvm::ArrayRef<mlir::Attribute>{});
-    }]>,
     AttrBuilderWithInferredContext<(ins "mlir::StringAttr":$name, "llvm::ArrayRef<mlir::Attribute>":$typeArgs), [{
       return $_get(name.getContext(), name, typeArgs);
-    }]>
+    }]>,
   ];
   let assemblyFormat = [{ $name `<` $typeArgs `>` }];
 }

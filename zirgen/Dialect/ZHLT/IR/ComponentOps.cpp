@@ -54,6 +54,13 @@ LogicalResult verifyRegion(Operation* origOp,
 
 } // namespace
 
+LogicalResult
+ComponentOp::requireComponent(ComponentManager* manager, Location loc, ComponentTypeAttr name) {
+  assert(name.getMangledName() == getName());
+
+  return mlir::success();
+}
+
 mlir::Type ComponentOp::getValueType(ComponentManager* manager, ComponentTypeAttr name) {
   assert(name.getMangledName() == getName());
   return getOutType();

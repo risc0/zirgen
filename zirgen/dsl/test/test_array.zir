@@ -1,4 +1,4 @@
-// RUN: zirgen --test %s | FileCheck %s
+// RUN: zirgen --test %s 2>&1 | FileCheck %s
 
 extern Output(v: Val);
 
@@ -6,7 +6,17 @@ component Sequence(x: Val) {
   [x, x + 1, x + 2]
 }
 
-test {
+component Infer<x: Val>() {
+  Array(Sequence(x))
+}
+
+
+component Concat() {
+  ConcatArray(Sequence(2), [7])
+}
+
+// CHECK-LABEL: Running plain
+test plain {
   seq := Sequence(2);
   // CHECK: Output(2) -> ()
   // CHECK: Output(3) -> ()
@@ -14,4 +24,30 @@ test {
   Output(seq[0]);
   Output(seq[1]);
   Output(seq[2]);
+}
+
+// CHECK-LABEL: Running infer
+test infer {
+  seq := Infer<2>();
+
+  // CHECK: Output(2) -> ()
+  // CHECK: Output(3) -> ()
+  // CHECK: Output(4) -> ()
+  Output(seq[0]);
+  Output(seq[1]);
+  Output(seq[2]);
+}
+
+// CHECK-LABEL: Running concat
+test concat {
+  seq := Concat();
+
+  // CHECK: Output(2) -> ()
+  // CHECK: Output(3) -> ()
+  // CHECK: Output(4) -> ()
+  // CHECK: Output(7) -> ()
+  Output(seq[0]);
+  Output(seq[1]);
+  Output(seq[2]);
+  Output(seq[3]);
 }

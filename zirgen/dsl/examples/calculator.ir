@@ -180,7 +180,7 @@ module {
     %27 = zhlt.call_back @back$Reg(%ctx, %c0, %23) : (!zhlt.exec_context, index, !zlayout$NondetReg) -> !zstruct$Reg {callee_type = (!zhlt.exec_context, index, !zlayout$NondetReg) -> !zstruct$Reg, input_segment_sizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>}
     %28 = zstruct.lookup %27["@super"] : (!zstruct$Reg) -> !zstruct$NondetReg
     %29 = zstruct.lookup %28["@super"] : (!zstruct$NondetReg) -> !zll.val<BabyBear>
-    zll.extern "log" "result = %u", (%29) : (!zll.val<BabyBear>) -> ()
+    zll.extern "Log" "result = %u", (%29) : (!zll.val<BabyBear>) -> ()
     %30 = zhlt.call_back @back$Reg(%ctx, %c0, %23) : (!zhlt.exec_context, index, !zlayout$NondetReg) -> !zstruct$Reg {callee_type = (!zhlt.exec_context, index, !zlayout$NondetReg) -> !zstruct$Reg, input_segment_sizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>}
     %31 = zstruct.lookup %30["@super"] : (!zstruct$Reg) -> !zstruct$NondetReg
     %32 = zstruct.lookup %31["@super"] : (!zstruct$NondetReg) -> !zll.val<BabyBear>

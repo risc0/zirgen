@@ -42,22 +42,26 @@ class ComponentTypeAttr;
 // zhl.component, or has some other special handling.
 class ComponentManager {
 public:
-  // Fails and emits an error if the given name isn't resolvable.  Doesn't require it to be any
-  // specific type.
-  virtual ComponentTypeAttr getGlobalReference(mlir::Location loc, mlir::StringAttr name) = 0;
-
-  // Specializes a compenent type, if possible.
-  virtual ComponentTypeAttr specialize(mlir::Location loc,
-                                       ComponentTypeAttr orig,
-                                       llvm::ArrayRef<mlir::Attribute> typeArgs) = 0;
-
   // Require that the given component exists and is a candidate for construction.
   virtual mlir::LogicalResult requireComponent(mlir::Location loc, ComponentTypeAttr name) = 0;
+
+  // Require that the given component exists and is a candidate for
+  // construction.  Provides construction arguments in case they can
+  // be used for type inferrence; if type inferrence is performed, the
+  // provided type name will be updated.
+  virtual mlir::LogicalResult requireComponentInferringType(mlir::Location loc,
+                                                            ComponentTypeAttr& name,
+                                                            mlir::ValueRange constructArgs) = 0;
 
   // Require that the given component exists and is a candidate for either construction or
   // specialization.
   virtual mlir::LogicalResult requireAbstractComponent(mlir::Location loc,
                                                        ComponentTypeAttr name) = 0;
+
+  // Specializes a compenent type, if possible.
+  virtual ComponentTypeAttr specialize(mlir::Location loc,
+                                       ComponentTypeAttr orig,
+                                       llvm::ArrayRef<mlir::Attribute> typeArgs) = 0;
 
   // Returns the layout type, if the component exists and has a layout, or null.  The component must
   // exist.
@@ -82,6 +86,9 @@ public:
                                             mlir::Location loc,
                                             mlir::Value layout,
                                             size_t distance = 0) = 0;
+
+  // Returns the component that returns the given type as a value type, if known.
+  virtual ComponentTypeAttr getNameForType(mlir::Type type) = 0;
 
   // Returns the construct params needed by the given component, if
   // the given component declares a fixed number of arguments with

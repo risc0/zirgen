@@ -14,10 +14,5 @@ class BuiltinComponentOp<string mnemonic, list<string> methods = []>
 
 def BuiltinLogOp : BuiltinComponentOp<"log", ["buildConstruct"]>;
 
-// def BuiltinConcatArrayOp : BuiltinComponentOp<"concat_array",
-//     ["requireComponent", "buildConstruct", "getValueType", "getLayoutType", "reconstructFromLayout",
-//      "isConcrete", "specialize"]>;
-
 def BuiltinArrayOp : BuiltinComponentOp<"array",
-    ["requireComponent", "buildConstruct", "getValueType"//,   "getLayoutType", "reconstructFromLayout"
-    ]>;
+    ["requireComponent", "buildConstruct", "getValueType", "getLayoutType", "inferType"]>;

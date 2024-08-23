@@ -43,11 +43,13 @@ using namespace zirgen::Zhl;
 
 class ComponentManagerImpl : public Zhlt::ComponentManager {
 public:
-  Zhlt::ComponentTypeAttr getGlobalReference(mlir::Location loc, mlir::StringAttr name) override;
   Zhlt::ComponentTypeAttr specialize(mlir::Location loc,
                                      Zhlt::ComponentTypeAttr orig,
                                      llvm::ArrayRef<mlir::Attribute> typeArgs) override;
   mlir::LogicalResult requireComponent(mlir::Location loc, Zhlt::ComponentTypeAttr name) override;
+  mlir::LogicalResult requireComponentInferringType(mlir::Location loc,
+                                                    Zhlt::ComponentTypeAttr& name,
+                                                    mlir::ValueRange constructArgs) override;
   mlir::LogicalResult requireAbstractComponent(mlir::Location loc,
                                                Zhlt::ComponentTypeAttr name) override;
   mlir::Type getLayoutType(Zhlt::ComponentTypeAttr component) override;
@@ -63,6 +65,7 @@ public:
                                     size_t distance = 0) override;
   std::optional<llvm::SmallVector<mlir::Type>>
   getConstructParams(Zhlt::ComponentTypeAttr component) override;
+  Zhlt::ComponentTypeAttr getNameForType(mlir::Type type) override;
 
 private:
   struct TypeInfo;
@@ -113,6 +116,10 @@ private:
   // unmangled component name to use to reconstruct them.
   llvm::DenseMap<mlir::Type, Zhlt::ComponentTypeAttr> reconstructTypes;
 
+  // Value types of components that have been required, and the
+  // unmangled component name.
+  llvm::DenseMap<mlir::Type, Zhlt::ComponentTypeAttr> valueTypes;
+
   friend std::optional<mlir::ModuleOp> typeCheck(mlir::MLIRContext&, mlir::ModuleOp);
 };
 
@@ -134,12 +141,12 @@ mlir::LogicalResult ComponentManagerImpl::requireComponent(Location loc,
 
   // Otherwise, try to instantiate a generic zhl.component
   if (!intf) {
-    if (auto zhlOp = zhlModule.lookupSymbol<ComponentOp>(name.getName()))
+    if (auto zhlOp = getUnloweredComponent(name.getName()))
       intf = genComponent(loc, name.getName(), name.getTypeArgs());
   }
 
   if (!intf) {
-    emitError(loc) << "Unable to instantiate component";
+    emitError(loc) << "Unable to instantiate component " << name;
     return failure();
   }
 
@@ -150,7 +157,30 @@ mlir::LogicalResult ComponentManagerImpl::requireComponent(Location loc,
   if (auto layout = intf.getLayoutType(this, name)) {
     reconstructTypes[layout] = name;
   }
+  if (auto valType = intf.getValueType(this, name)) {
+    valueTypes[valType] = name;
+  }
   return success();
+}
+
+mlir::LogicalResult ComponentManagerImpl::requireComponentInferringType(
+    Location loc, Zhlt::ComponentTypeAttr& name, ValueRange constructArgs) {
+  if (requiredComponents.contains(name))
+    return success();
+
+  // Attempt to find an interface for specialization
+  Zhlt::ComponentOpInterface intf =
+      zhltModule.lookupSymbol<Zhlt::ComponentOpInterface>(name.getName());
+  if (!intf)
+    intf = zhlModule.lookupSymbol<Zhlt::ComponentOpInterface>(name.getName());
+
+  if (intf) {
+    intf.inferType(this, name, constructArgs);
+  } else if (auto zhlOp = zhlModule.lookupSymbol<ComponentOp>(name.getName())) {
+    // TODO: attempt to infer types for user-defined components
+  }
+
+  return requireComponent(loc, name);
 }
 
 mlir::LogicalResult ComponentManagerImpl::requireAbstractComponent(Location loc,
@@ -165,18 +195,6 @@ mlir::LogicalResult ComponentManagerImpl::requireAbstractComponent(Location loc,
   emitError(loc) << "Unable to find anything named " << name << " mangled: " << mangled;
   llvm::errs() << zhltModule;
   return failure();
-}
-
-// Fails and emits an error if the given name isn't resolvable.  Doesn't require it to be any
-// specific type.
-Zhlt::ComponentTypeAttr ComponentManagerImpl::getGlobalReference(mlir::Location loc,
-                                                                 mlir::StringAttr name) {
-  if (zhlModule.lookupSymbol(name) || zhltModule.lookupSymbol(name)) {
-    return Zhlt::ComponentTypeAttr::get(name);
-  }
-
-  emitError(loc) << "Unable to resolve " << name;
-  return {};
 }
 
 Zhlt::ComponentTypeAttr ComponentManagerImpl::specialize(mlir::Location loc,
@@ -229,6 +247,10 @@ mlir::Value ComponentManagerImpl::reconstructFromLayout(mlir::OpBuilder& builder
 std::optional<llvm::SmallVector<mlir::Type>>
 ComponentManagerImpl::getConstructParams(Zhlt::ComponentTypeAttr name) {
   return getComponentInterface(name).getConstructParams(this, name);
+}
+
+Zhlt::ComponentTypeAttr ComponentManagerImpl::getNameForType(mlir::Type type) {
+  return valueTypes.lookup(type);
 }
 
 struct ComponentManagerImpl::DebugListener : public OpBuilder::Listener {

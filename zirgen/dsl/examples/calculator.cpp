@@ -49,8 +49,7 @@ struct CalcExterns {
   // externOutputToUser to output a value;
   void outputToUser(const char* extra, Val val) { toUser.push_back(val); }
 
-  template<typename...T>
-  void log(std::string message, T... args) {
+  template <typename... T> void log(std::string message, T... args) {
     return log_impl(message, {args...});
   }
 };

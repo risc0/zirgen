@@ -332,7 +332,7 @@ def ComponentOp : ZFuncOp</*aspect=*/"",
      Symbol,
      DeclareOpInterfaceMethods<ComponentOpInterface,
         ["getLayoutType", "getValueType", "buildConstruct", "reconstructFromLayout",
-         "getConstructParams"]>],
+         "getConstructParams", "requireComponent"]>],
     /*mnemonic=*/"component"> {
   let symPrefix = "";
   let summary = "Component declaration";
