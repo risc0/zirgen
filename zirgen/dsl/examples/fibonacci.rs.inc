@@ -261,14 +261,9 @@ pub fn exec_reg(
         reg: x3,
     });
 }
-pub fn exec_log(ctx0: &ExecContext, arg1: &str, arg2: &[Val]) -> Result<ComponentStruct> {
-    // Log(<preamble>:16)
-    invoke_extern!(ctx0, log, arg1, arg2);
-    return Ok(ComponentStruct {});
-}
 pub fn exec_get_cycle(ctx0: &ExecContext) -> Result<GetCycleStruct> {
     // GetCycle(zirgen/dsl/examples/fibonacci.zir:2)
-    let x1: Val = invoke_extern!(ctx0, get_cycle);
+    let x1: Val = invoke_extern!(ctx0, get_cycle, "");
     return Ok(GetCycleStruct { _super: x1 });
 }
 pub fn exec_is_zero(
@@ -414,20 +409,20 @@ pub fn exec_top(
         let x28: RegStruct = exec_reg(ctx0, x19._super._super, x27)?;
         let x29: RegStruct = back_reg(ctx0, 0, x27)?;
         // Top(zirgen/dsl/examples/fibonacci.zir:65)
-        let x30: ComponentStruct = exec_log(ctx0, "f_last = %u", &[x29._super._super])?;
+        invoke_extern!(ctx0, log, "f_last = %u", x29._super._super);
         // Top(zirgen/dsl/examples/fibonacci.zir:63)
-        let x31: ComponentStruct = exec_component(ctx0)?;
-        x26 = x31;
+        let x30: ComponentStruct = exec_component(ctx0)?;
+        x26 = x30;
     } else if is_nonzero(x25) {
         // Top(zirgen/dsl/examples/fibonacci.zir:66)
-        let x32: ComponentStruct = exec_component(ctx0)?;
-        x26 = x32;
+        let x31: ComponentStruct = exec_component(ctx0)?;
+        x26 = x31;
     } else {
         bail!("Reached unreachable mux arm")
     } // Top(zirgen/dsl/examples/fibonacci.zir:44)
-    let x33: ComponentStruct = exec_component(ctx0)?;
+    let x32: ComponentStruct = exec_component(ctx0)?;
     return Ok(TopStruct {
-        _super: x33,
+        _super: x32,
         cycle: x5,
         first: x6,
         d1: x12,

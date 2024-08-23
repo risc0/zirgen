@@ -155,7 +155,7 @@ struct TestExternHandler : public zirgen::Zll::ExternHandler {
     llvm::printEscapedString(name, os);
 
     // Including arguments for Log duplicates information in the output
-    if (name != "Log") {
+    if (name != "log") {
       os << "(";
       if (!extra.empty()) {
         printEscapedString(extra, os);
@@ -230,21 +230,9 @@ struct TestExternHandler : public zirgen::Zll::ExternHandler {
       check(outCount == 4, "Divide returns 5 results");
       auto fpArgs = asFpArray(args);
       divide(results, fpArgs);
-    } else if (name == "Log") {
+    } else if (name == "log") {
       os << ": ";
-      // Propagate the extern to the legacy "log" handler, repackaging the
-      // variadic parameters as "regular" parameters
-      using zirgen::Zll::InterpVal;
-      llvm::StringRef message = args[0]->getAttr<mlir::StringAttr>().getValue();
-      auto varArgs = args[1]->getAttr<mlir::ArrayAttr>().getValue();
-      std::vector<InterpVal> vals(varArgs.size());
-      std::vector<InterpVal*> valPtrs(varArgs.size());
-      for (size_t i = 0; i < varArgs.size(); i++) {
-        vals[i].setVal(varArgs[i].cast<mlir::PolynomialAttr>().asArrayRef());
-        valPtrs[i] = &vals[i];
-      }
-      results = zirgen::Zll::ExternHandler::doExtern("log", message, valPtrs, outCount);
-    } else if (name == "configureInput" || name == "readInput") {
+    } else if (name == "configureInput" || name == "readInput" || name = "log") {
       // Pass through to common implementation
       results = zirgen::Zll::ExternHandler::doExtern(name, extra, args, outCount);
     } else {

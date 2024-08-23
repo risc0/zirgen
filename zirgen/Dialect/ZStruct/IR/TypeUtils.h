@@ -16,19 +16,17 @@
 
 namespace zirgen::ZStruct {
 
-using namespace mlir;
+ZStruct::StructType getTypeType(mlir::MLIRContext* ctx);
+ZStruct::StructType getComponentType(mlir::MLIRContext* ctx);
+ZStruct::LayoutType getEmptyLayoutType(mlir::MLIRContext* ctx);
+Zll::ValType getValType(mlir::MLIRContext* ctx);
+Zll::ValType getValExtType(mlir::MLIRContext* ctx);
+Zll::StringType getStringType(mlir::MLIRContext* ctx);
+ZStruct::StructType getNondetRegType(mlir::MLIRContext* ctx);
+ZStruct::LayoutType getNondetRegLayoutType(mlir::MLIRContext* ctx);
+ZStruct::RefType getRefType(mlir::MLIRContext* ctx);
+ZStruct::RefType getExtRefType(mlir::MLIRContext* ctx);
 
-ZStruct::StructType getTypeType(MLIRContext* ctx);
-ZStruct::StructType getComponentType(MLIRContext* ctx);
-ZStruct::LayoutType getEmptyLayoutType(MLIRContext* ctx);
-Zll::ValType getValType(MLIRContext* ctx);
-Zll::ValType getValExtType(MLIRContext* ctx);
-Zll::StringType getStringType(MLIRContext* ctx);
-ZStruct::StructType getNondetRegType(MLIRContext* ctx);
-ZStruct::LayoutType getNondetRegLayoutType(MLIRContext* ctx);
-ZStruct::RefType getRefType(MLIRContext* ctx);
-ZStruct::RefType getExtRefType(MLIRContext* ctx);
-
-Zll::ValType getFieldTypeOfValType(Type valType);
+Zll::ValType getFieldTypeOfValType(mlir::Type valType);
 
 } // namespace zirgen::ZStruct

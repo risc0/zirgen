@@ -42,9 +42,9 @@ namespace {
 
 using namespace mlir;
 using namespace zirgen::Zhl;
+using Zhlt::ComponentTypeAttr;
 using Zhlt::getTypeId;
 using Zhlt::LayoutBuilder;
-using Zhlt::mangledTypeName;
 using Zhlt::StructBuilder;
 using Zll::StringType;
 using Zll::ValType;
@@ -228,7 +228,9 @@ private:
 // single zhl.component to a zhlt.component.
 class LoweringImpl {
 public:
-  LoweringImpl(OpBuilder& builder, ComponentManager* componentManager, Operation* regionAnchor)
+  LoweringImpl(OpBuilder& builder,
+               Zhlt::ComponentManager* componentManager,
+               Operation* regionAnchor)
       : ctx(builder.getContext())
       , builder(builder)
       , componentManager(componentManager)
@@ -276,7 +278,13 @@ private:
   // Converts the given value/attribute into a constant attribute by
   // interpreting it if it's not already an attribute.
   Attribute asConstant(Value v);
-  StringAttr asTypeName(Value v);
+
+  // Evaluiates the given value as an instantiatable type.
+  ComponentTypeAttr asTypeName(Value v);
+
+  // Evaluiates the given value as a potentially generic type.
+  ComponentTypeAttr asAbstractTypeName(Value v);
+
   PolynomialAttr asFieldElement(Value v);
 
   Value asValue(Value zhlVal);
@@ -382,10 +390,10 @@ private:
 
   MLIRContext* ctx;
   OpBuilder builder;
-  ComponentManager* componentManager;
+  Zhlt::ComponentManager* componentManager;
 
   // Type names returned by ZHL operations
-  DenseMap</*ZhlOp=*/Value, /*TypeName=*/StringAttr> typeNameMapping;
+  DenseMap</*ZhlOp=*/Value, /*TypeName=*/ComponentTypeAttr> typeNameMapping;
   // Values in ZHL operations that have been converted to ZHLT operations
   DenseMap</*ZhlOp=*/Value, /*ZHLT value=*/Value> valueMapping;
   // Layouts in ZHL operations that have been converted to ZHLT operations
@@ -440,16 +448,12 @@ void LoweringImpl::gen(ConstructorParamOp ctorParam, Block* topBlock) {
     ctorParam.emitError("constructor parameter must be a type attribute");
     throw MalformedIRException();
   }
-  auto ctor = componentManager->lookupComponent(paramType);
   Type type;
-  if (ctor) {
-    type = ctor.getOutType();
-  } else {
+  if (failed(componentManager->requireComponent(ctorParam.getLoc(), paramType))) {
     ctorParam.emitError("expected a valid parameter type");
     type = Zhlt::getComponentType(ctorParam.getContext());
-  }
-  if (ctorParam.getVariadic()) {
-    type = VariadicType::get(ctx, type);
+  } else {
+    type = componentManager->getValueType(paramType);
   }
   auto argument = topBlock->addArgument(type, ctorParam.getLoc());
   valueMapping[ctorParam.getOut()] = argument;
@@ -462,19 +466,19 @@ void LoweringImpl::gen(TypeParamOp typeParam, ArrayRef<Attribute> typeArgs) {
   }
   Attribute paramValue = typeArgs[typeParam.getIndex()];
 
-  StringAttr paramTypeName = asTypeName(typeParam.getType());
+  ComponentTypeAttr paramTypeName = asTypeName(typeParam.getType());
   if (!paramTypeName) {
     typeParam.emitError("a type parameter's type must be a compile-time constant");
     throw MalformedIRException();
   }
-  if (paramTypeName == "Type") {
-    if (auto typeName = llvm::dyn_cast<StringAttr>(paramValue))
+  if (paramTypeName.getName() == "Type") {
+    if (auto typeName = llvm::dyn_cast<ComponentTypeAttr>(paramValue))
       typeNameMapping[typeParam] = typeName;
     else {
       typeParam.emitError("expected a type parameter of type `Type`");
       throw MalformedIRException();
     }
-  } else if (paramTypeName == "Val") {
+  } else if (paramTypeName.getName() == "Val") {
     if (!paramValue.isa<PolynomialAttr>()) {
       typeParam.emitError("expected a type parameter of type `Val`");
       paramValue = PolynomialAttr::get(ctx, {0});
@@ -564,7 +568,6 @@ void LoweringImpl::gen(ExternOp ext, ComponentBuilder& cb) {
             gatherParams(fieldVal);
           }
         })
-        .Case<VariadicType>([&](auto) { params.push_back(val); })
         .Default([&](auto ty) {
           ext.emitError() << "Unsupported extern parameter type " << ty;
           throw MalformedIRException();
@@ -582,8 +585,7 @@ void LoweringImpl::gen(ExternOp ext, ComponentBuilder& cb) {
     ext.emitError() << "Unsupported non-const extern return type";
     throw MalformedIRException();
   }
-  auto returnCtor = componentManager->lookupComponent(returnTypeAttr);
-  Type returnType = returnCtor.getOutType();
+  auto returnType = componentManager->getValueType(returnTypeAttr);
   llvm::SmallVector<Type> valTypes;
   std::function<void(Type)> countVals;
   countVals = [&](Type ty) {
@@ -630,62 +632,44 @@ void LoweringImpl::gen(ExternOp ext, ComponentBuilder& cb) {
 }
 
 void LoweringImpl::gen(ConstructGlobalOp construct, ComponentBuilder& cb) {
-  StringAttr typeNameAttr = asTypeName(construct.getConstructType());
-  if (!typeNameAttr) {
-    construct.emitError("an invoked constructor must be a compile-time constant");
-    throw MalformedIRException();
-  }
-  Zhlt::ComponentOp ctor = componentManager->lookupComponent(typeNameAttr);
-  if (!ctor) {
-    construct.emitError("cannot construct an undefined type");
-    throw MalformedIRException();
-  }
+  ComponentTypeAttr component = asTypeName(construct.getConstructType());
+  auto ctorLayout = componentManager->getLayoutType(component);
 
   auto& layoutType = globalLayouts[construct.getNameAttr()];
-  if (layoutType && layoutType != ctor.getLayoutType()) {
-    construct.emitError() << "Mismatched types (" << layoutType << " vs " << ctor.getLayoutType()
+  if (layoutType && layoutType != ctorLayout) {
+    construct.emitError() << "Mismatched types (" << layoutType << " vs " << ctorLayout
                           << ") for global";
     throw MalformedIRException();
   }
-  layoutType = llvm::cast<ZStruct::LayoutType>(ctor.getLayoutType());
+  layoutType = llvm::cast<ZStruct::LayoutType>(ctorLayout);
 
-  if (construct.getArgs().size() != ctor.getConstructParamTypes().size()) {
-    construct.emitError() << "Mismatched arguments for global";
-    throw MalformedIRException();
-  }
-
-  SmallVector<Value> args;
-  for (auto argAndType : llvm::zip_equal(construct.getArgs(), ctor.getConstructParamTypes())) {
-    auto [arg, argType] = argAndType;
-    args.push_back(coerceTo(asValue(arg), argType));
-  }
-
+  auto args = llvm::map_to_vector(construct.getArgs(), [&](auto arg) { return asValue(arg); });
   auto layout =
       builder.create<Zhlt::GetGlobalLayoutOp>(construct.getLoc(), layoutType, construct.getName());
-  builder.create<Zhlt::ConstructOp>(
-      construct.getLoc(), typeNameAttr, ctor.getOutType(), args, layout);
+
+  componentManager->buildConstruct(builder, construct.getLoc(), component, args, layout);
 }
 
 void LoweringImpl::gen(GetGlobalOp getGlobal, ComponentBuilder& cb) {
-  StringAttr typeNameAttr = asTypeName(getGlobal.getConstructType());
+  auto typeNameAttr = asTypeName(getGlobal.getConstructType());
   if (!typeNameAttr) {
     getGlobal.emitError("an invoked constructor must be a compile-time constant");
     throw MalformedIRException();
   }
 
-  Zhlt::ComponentOp ctor = componentManager->lookupComponent(typeNameAttr);
-  if (!ctor) {
+  auto ctorLayoutType = componentManager->getLayoutType(typeNameAttr);
+  if (!ctorLayoutType) {
     getGlobal.emitError("cannot get a global with an undefined type");
     throw MalformedIRException();
   }
 
   auto& layoutType = globalLayouts[getGlobal.getNameAttr()];
-  if (layoutType && layoutType != ctor.getLayoutType()) {
-    getGlobal.emitError() << "Mismatched types (" << layoutType << " vs " << ctor.getLayoutType()
+  if (layoutType && layoutType != ctorLayoutType) {
+    getGlobal.emitError() << "Mismatched types (" << layoutType << " vs " << ctorLayoutType
                           << ") for global";
     throw MalformedIRException();
   }
-  layoutType = llvm::cast<ZStruct::LayoutType>(ctor.getLayoutType());
+  layoutType = llvm::cast<ZStruct::LayoutType>(ctorLayoutType);
 
   layoutMapping[getGlobal.getOut()] =
       builder.create<Zhlt::GetGlobalLayoutOp>(getGlobal.getLoc(), layoutType, getGlobal.getName());
@@ -705,15 +689,10 @@ void LoweringImpl::gen(StringOp string, ComponentBuilder& cb) {
 }
 
 void LoweringImpl::gen(GlobalOp global, ComponentBuilder& cb) {
-  if (componentManager->isGeneric(global.getName())) {
-    typeNameMapping[global.getOut()] = global.getNameAttr();
-  } else {
-    Zhlt::ComponentOp c =
-        componentManager->getComponent(global.getLoc(), global.getNameAttr(), /*typeArgs=*/{});
-    if (!c)
-      throw MalformedIRException();
-    typeNameMapping[global.getOut()] = c.getNameAttr();
-  }
+  auto name = ComponentTypeAttr::get(global.getNameAttr());
+  if (failed(componentManager->requireAbstractComponent(global.getLoc(), name)))
+    throw(MalformedIRException());
+  typeNameMapping[global.getOut()] = name;
 }
 
 void LoweringImpl::gen(LookupOp lookup, ComponentBuilder& cb) {
@@ -769,11 +748,7 @@ void LoweringImpl::gen(SubscriptOp subscript, ComponentBuilder& cb) {
 }
 
 void LoweringImpl::gen(SpecializeOp specialize, ComponentBuilder& cb) {
-  StringAttr typeNameAttr = asTypeName(specialize.getType());
-  if (!typeNameAttr) {
-    specialize.emitError("The type to be specialized must be a compile-time constant");
-    return;
-  }
+  ComponentTypeAttr typeNameAttr = asAbstractTypeName(specialize.getType());
 
   SmallVector<Attribute> typeArguments;
   for (Value arg : specialize.getArgs()) {
@@ -786,86 +761,21 @@ void LoweringImpl::gen(SpecializeOp specialize, ComponentBuilder& cb) {
     typeArguments.push_back(typedArg);
   }
 
-  Zhlt::ComponentOp component =
-      componentManager->getComponent(specialize.getLoc(), typeNameAttr, typeArguments);
-  if (!component)
+  ComponentTypeAttr specialized =
+      componentManager->specialize(specialize.getLoc(), typeNameAttr, typeArguments);
+  if (!specialized)
     throw MalformedIRException();
-  typeNameMapping[specialize.getOut()] = component.getNameAttr();
+  typeNameMapping[specialize.getOut()] = specialized;
 }
 
 void LoweringImpl::gen(ConstructOp construct, ComponentBuilder& cb) {
-  StringAttr typeNameAttr = asTypeName(construct.getType());
-  if (!typeNameAttr) {
-    // Since we don't know what type the constructed component is supposed to
-    // be, there isn't a great way to recover and even if we did there would be
-    // spurious diagnostics for every use of the constructed value.
-    construct.emitError("an invoked constructor must be a compile-time constant");
-    throw MalformedIRException();
-  }
-  Zhlt::ComponentOp ctor = componentManager->lookupComponent(typeNameAttr);
-  if (!ctor) {
-    // We might fail to look up an erroneous type name.
-    construct.emitError("cannot construct an undefined type");
-    throw MalformedIRException();
-  }
+  auto component = asTypeName(construct.getType());
+  auto args = llvm::map_to_vector(construct.getArgs(), [&](auto arg) { return asValue(arg); });
+  Value layout = addOrExpandLayoutMember(
+      construct.getLoc(), cb, construct.getOut(), componentManager->getLayoutType(component));
 
-  SmallVector<Value> arguments;
-  auto argumentTypes = ctor.getConstructParamTypes();
-  auto expectedArgType = argumentTypes.begin();
-  SmallVector<Value> variadicArguments;
-  for (Value zhlArg : construct.getArgs()) {
-    Value arg = asValue(zhlArg);
-    if (expectedArgType == argumentTypes.end()) {
-      construct.emitError() << "expected " << argumentTypes.size()
-                            << " arguments in component constructor, got "
-                            << construct.getArgs().size();
-      return;
-    }
-    if (!Zhlt::isCoercibleTo(arg.getType(), *expectedArgType)) {
-      construct.emitError() << "argument of type `" << getTypeId(arg.getType())
-                            << "` is not convertible to `" << getTypeId(*expectedArgType) << "`";
-      return;
-    }
-    Value casted = coerceTo(arg, *expectedArgType);
-    if (isa<VariadicType>(*expectedArgType)) {
-      // Only the last parameter may be variadic, which is caught in the
-      // AST -> ZHL lowering, so we no longer need to advance expectedArgType.
-      variadicArguments.push_back(casted);
-    } else {
-      expectedArgType++;
-      arguments.push_back(casted);
-    }
-  }
-  // If there is a variadic parameter, add its pack to the argument list
-  if (expectedArgType != argumentTypes.end() && expectedArgType->isa<VariadicType>()) {
-    auto packed = builder.create<Zll::VariadicPackOp>(
-        construct.getLoc(), *expectedArgType, variadicArguments);
-    arguments.push_back(packed);
-    // advance the iterator past the (expectedly last) variadic parameter for
-    // the subsequent check that all arguments were provided
-    expectedArgType++;
-  }
-  // If we still haven't reached the end of the parameters, there aren't enough arguments
-  if (expectedArgType != argumentTypes.end()) {
-    bool isVariadic = (!argumentTypes.empty() && argumentTypes.back().isa<VariadicType>());
-    size_t minimumArgCount = isVariadic ? argumentTypes.size() - 1 : argumentTypes.size();
-    size_t actualArgCount = construct.getArgs().size();
-    auto diag = construct.emitError() << "expected ";
-    if (isVariadic)
-      diag << "at least ";
-    diag << minimumArgCount << " arguments in component constructor, got " << actualArgCount;
-    return;
-  }
-
-  Value layout =
-      addOrExpandLayoutMember(construct.getLoc(), cb, construct.getOut(), ctor.getLayoutType());
-  auto call = builder.create<Zhlt::ConstructOp>(construct.getLoc(), ctor, arguments, layout);
-  if (layout && ctor->getAttr("alwaysinline")) {
-    construct.emitError() << "Cannot construct non-trivial layouts inside of a function";
-    throw MalformedIRException();
-  }
-
-  valueMapping[construct.getOut()] = call.getOut();
+  valueMapping[construct.getOut()] =
+      componentManager->buildConstruct(builder, construct.getLoc(), component, args, layout);
   layoutMapping[construct.getOut()] = layout;
 }
 
@@ -924,19 +834,22 @@ void LoweringImpl::gen(ReduceOp reduce, ComponentBuilder& cb) {
   Value array = asValue(reduce.getArray());
   Value init = asValue(reduce.getInit());
   auto typeName = asTypeName(reduce.getType());
-  if (!typeName) {
-    reduce.emitError("constructor of a reduce expression must be compile-time constant");
-    throw MalformedIRException();
-  }
-  auto ctor = componentManager->lookupComponent(typeName);
-  auto type = ctor.getOutType();
-  if (ctor.getConstructParamTypes().size() != 2) {
-    reduce.emitError() << "The constructor of a reduce expression should take 2 arguments, but "
-                       << typeName << " takes " << ctor.getConstructParamTypes().size();
+
+  auto type = componentManager->getValueType(typeName);
+  auto layoutType = componentManager->getLayoutType(typeName);
+  auto constructParamTypes = componentManager->getConstructParams(typeName);
+  if (!constructParamTypes) {
+    reduce.emitError() << "Unable to determine arguments needed by reducer";
     return;
   }
-  auto lhsType = ctor.getConstructParamTypes()[0];
-  auto rhsType = ctor.getConstructParamTypes()[1];
+
+  if (constructParamTypes->size() != 2) {
+    reduce.emitError() << "The constructor of a reduce expression should take 2 arguments, but "
+                       << typeName << " takes " << constructParamTypes->size();
+    return;
+  }
+  auto lhsType = (*constructParamTypes)[0];
+  auto rhsType = (*constructParamTypes)[1];
   if (!Zhlt::isCoercibleTo(init.getType(), lhsType)) {
     reduce.emitError() << "this reduce expression's initial value must be coercible to `"
                        << getTypeId(lhsType) << "`";
@@ -972,17 +885,17 @@ void LoweringImpl::gen(ReduceOp reduce, ComponentBuilder& cb) {
     auto lhs = bodyBlock->addArgument(lhsType, reduce.getLoc());
     auto rhs = bodyBlock->addArgument(elemType, reduce.getLoc());
     Value bodyLayout;
-    if (ctor.getLayoutType())
-      bodyLayout = bodyBlock->addArgument(ctor.getLayoutType(), reduce.getLoc());
+    if (layoutType)
+      bodyLayout = bodyBlock->addArgument(layoutType, reduce.getLoc());
 
-    auto callReduceOp = builder.create<Zhlt::ConstructOp>(
-        loc, typeName, type, ValueRange{lhs, coerceTo(rhs, rhsType)}, bodyLayout);
-    builder.create<ZStruct::YieldOp>(loc, coerceTo(callReduceOp.getOut(), lhsType));
+    auto callReduceOp =
+        componentManager->buildConstruct(builder, loc, typeName, ValueRange{lhs, rhs}, bodyLayout);
+    builder.create<ZStruct::YieldOp>(loc, coerceTo(callReduceOp, lhsType));
   }
 
   Value outLayout;
-  if (ctor.getLayoutType()) {
-    Type outLayoutType = builder.getType<ZStruct::LayoutArrayType>(ctor.getLayoutType(), elems);
+  if (layoutType) {
+    Type outLayoutType = builder.getType<ZStruct::LayoutArrayType>(layoutType, elems);
     outLayout = cb.addLayoutMember(reduce.getLoc(), reduce.getOut(), outLayoutType);
   }
   auto reduceOp =
@@ -1130,22 +1043,7 @@ void LoweringImpl::gen(SwitchOp sw, ComponentBuilder& cb) {
   Type armResultType = Zhlt::getLeastCommonSuper(armTypes);
   assert(armResultType);
   Type commonArmLayoutType = Zhlt::getLeastCommonSuper(armLayouts, /*isLayout=*/1);
-
-  Value superLayout;
-  Zhlt::ComponentOp commonCtor;
-  if (auto layoutType = llvm::dyn_cast_if_present<ZStruct::LayoutType>(commonArmLayoutType)) {
-    commonCtor = componentManager->lookupComponent(layoutType.getId());
-  } else if (auto refType = llvm::dyn_cast_if_present<ZStruct::RefType>(commonArmLayoutType)) {
-    commonCtor = componentManager->lookupComponent("NondetReg");
-  } else if (auto arrayType =
-                 llvm::dyn_cast_if_present<ZStruct::LayoutArrayType>(commonArmLayoutType)) {
-    commonCtor = genArrayCtor(sw, arrayType.getElement(), arrayType.getSize());
-  }
-  if (commonCtor) {
-    assert(commonCtor.getLayoutType() == commonArmLayoutType &&
-           "Mux common type does not have expected layout type");
-    superLayout = muxContext.addLayoutMember(sw.getLoc(), "@super", commonArmLayoutType);
-  }
+  Value superLayout = muxContext.addLayoutMember(sw.getLoc(), "@super", commonArmLayoutType);
   LLVM_DEBUG({ llvm::dbgs() << "Switch arm common layout: " << commonArmLayoutType << "\n"; });
   SmallVector<Value> selectorValues;
   for (size_t i = 0; i != size; ++i) {
@@ -1211,15 +1109,7 @@ void LoweringImpl::gen(SwitchOp sw, ComponentBuilder& cb) {
 void LoweringImpl::gen(RangeOp range, ComponentBuilder& cb) {
   PolynomialAttr startAttr = asFieldElement(range.getStart());
   PolynomialAttr endAttr = asFieldElement(range.getEnd());
-  if (!startAttr) {
-    range.emitError() << "the start of range must be a compile-time constant";
-    startAttr = PolynomialAttr::get(ctx, {0});
-  }
   uint64_t start = startAttr[0];
-  if (!endAttr) {
-    range.emitError() << "the end of range must be a compile-time constant";
-    endAttr = PolynomialAttr::get(ctx, {start + 1});
-  }
   uint64_t end = endAttr[0];
   if (start >= end) {
     range.emitError() << "the start of a range must be strictly less than its end";
@@ -1295,12 +1185,12 @@ void LoweringImpl::gen(DefinitionOp definition, ComponentBuilder& cb) {
   Value def = asValue(definition.getDefinition());
 
   if (declaration.getTypeExp()) {
-    StringAttr declaredTypeName = asTypeName(declaration.getTypeExp());
+    ComponentTypeAttr declaredTypeName = asTypeName(declaration.getTypeExp());
     if (!declaredTypeName) {
       definition.emitError() << "Unable to resolve type name of definition";
       return;
     }
-    Type declaredType = componentManager->lookupComponent(declaredTypeName).getResultType();
+    Type declaredType = componentManager->getValueType(declaredTypeName);
     if (!Zhlt::isCoercibleTo(def.getType(), declaredType)) {
       auto diag = definition->emitError()
                   << "definition of type `" << getTypeId(def.getType())
@@ -1322,13 +1212,12 @@ void LoweringImpl::gen(DeclarationOp declaration, ComponentBuilder& cb) {
     return;
   }
 
-  StringAttr typeName = asTypeName(declaration.getTypeExp());
+  ComponentTypeAttr typeName = asTypeName(declaration.getTypeExp());
   if (!typeName) {
     declaration.emitError() << "Unable to resolve type name of declaration";
     return;
   }
-  auto ctor = componentManager->lookupComponent(typeName);
-  auto layoutType = ctor.getLayoutType();
+  auto layoutType = componentManager->getLayoutType(typeName);
   Value layout = cb.addLayoutMember(declaration.getLoc(), declaration.getMember(), layoutType);
   layoutMapping[declaration.getOut()] = layout;
 }
@@ -1390,13 +1279,6 @@ void LoweringImpl::buildZeroInitialize(Value toInit) {
   }
 }
 
-Zhlt::ComponentOp LoweringImpl::genArrayCtor(Operation* op, Type elementType, size_t size) {
-  MLIRContext* ctx = op->getContext();
-  auto elemNameAttr = StringAttr::get(ctx, mangledTypeName(elementType));
-  SmallVector<Attribute> typeArgs = {elemNameAttr, PolynomialAttr::get(ctx, size)};
-  return componentManager->getComponent(op->getLoc(), "Array", typeArgs);
-}
-
 Value LoweringImpl::coerceTo(Value value, Type type) {
   return Zhlt::coerceTo(value, type, builder);
 }
@@ -1421,8 +1303,7 @@ Value LoweringImpl::asValue(Value zhlVal) {
   }
 
   if (auto typeName = typeNameMapping.lookup(zhlVal))
-    emitError(zhlVal.getLoc()) << "attempted to use type name '" << typeName.strref()
-                               << "' as a value";
+    emitError(zhlVal.getLoc()) << "attempted to use type name '" << typeName << "' as a value";
   else
     emitError(zhlVal.getLoc()) << "Unable to resolve value " << zhlVal;
   throw MalformedIRException();
@@ -1453,13 +1334,23 @@ Attribute LoweringImpl::asConstant(Value arg) {
   return attr;
 }
 
-StringAttr LoweringImpl::asTypeName(Value v) {
+ComponentTypeAttr LoweringImpl::asTypeName(Value v) {
+  auto typeName = asAbstractTypeName(v);
+  if (succeeded(componentManager->requireComponent(v.getLoc(), typeName))) {
+    return typeName;
+  }
+
+  emitError(v.getLoc()) << "component type is not instantiatable";
+  throw MalformedIRException();
+}
+
+ComponentTypeAttr LoweringImpl::asAbstractTypeName(Value v) {
   Attribute attr = asConstant(v);
   if (!attr) {
     emitError(v.getLoc()) << "component type must be a compile-time constant";
     throw MalformedIRException();
   }
-  auto typeName = llvm::dyn_cast<StringAttr>(attr);
+  auto typeName = llvm::dyn_cast<ComponentTypeAttr>(attr);
   if (!typeName) {
     emitError(v.getLoc()) << v << " does not evaluate to a type";
     throw MalformedIRException();
@@ -1468,13 +1359,18 @@ StringAttr LoweringImpl::asTypeName(Value v) {
 }
 
 PolynomialAttr LoweringImpl::asFieldElement(Value v) {
-  return llvm::dyn_cast_if_present<PolynomialAttr>(asConstant(v));
+  auto attr = llvm::dyn_cast_if_present<PolynomialAttr>(asConstant(v));
+  if (!attr) {
+    emitError(v.getLoc()) << "must be a compile-time constant";
+    attr = PolynomialAttr::get(ctx, 0);
+  }
+  return attr;
 }
 
 } // namespace
 
 Zhlt::ComponentOp generateTypedComponent(OpBuilder& builder,
-                                         ComponentManager* componentManager,
+                                         Zhlt::ComponentManager* componentManager,
                                          Zhl::ComponentOp component,
                                          mlir::StringAttr mangledName,
                                          llvm::ArrayRef<mlir::Attribute> typeArgs) {

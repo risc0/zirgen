@@ -1247,7 +1247,9 @@ void ExternOp::emitExpr(codegen::CodegenEmitter& cg) {
   // we don't have to hardcode the name of the "ctx0" context here.
   llvm::SmallVector<codegen::EmitPart> macroParts = {
       /*execContext=*/codegen::CodegenIdent<codegen::IdentKind::Var>(cg.getStringAttr("ctx0")),
-      /*extern name=*/codegen::CodegenIdent<codegen::IdentKind::Func>(getNameAttr())};
+      /*extern name=*/codegen::CodegenIdent<codegen::IdentKind::Func>(getNameAttr()),
+      [&](){ cg.emitEscapedString(getExtra()); }
+      };
   llvm::append_range(macroParts, getOperands());
   cg.emitInvokeMacro(cg.getStringAttr("invokeExtern"), macroParts);
 }

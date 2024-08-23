@@ -199,7 +199,7 @@ struct Tap {
 
 #define INVOKE_EXTERN(CTX, NAME, ...) externs.NAME(__VA_ARGS__)
 
-static void log_impl(std::string& format, const Val* x) {
+static void log_impl(std::string& format, std::vector<Val> x) {
   size_t argNum = 0;
   auto nextArg = [&]() { return x[argNum++]; };
   const char* p = format.c_str();

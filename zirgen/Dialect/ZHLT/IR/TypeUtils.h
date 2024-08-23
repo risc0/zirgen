@@ -22,10 +22,6 @@ namespace zirgen::Zhlt {
 using namespace mlir;
 
 bool isLegalTypeArg(Attribute);
-std::string mangledTypeName(StringRef componentName, llvm::ArrayRef<Attribute> typeArgs);
-
-std::string mangledArrayTypeName(Type element, unsigned size);
-std::string mangledTypeName(Type);
 
 class StructBuilder {
 public:

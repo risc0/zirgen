@@ -23,8 +23,6 @@
 
 namespace zirgen::Typing {
 
-class ComponentManager;
-
 /// An exception type used to signal that the lowering encountered an error in
 /// the IR that it cannot recover from.
 struct MalformedIRException : public std::exception {};
@@ -34,7 +32,7 @@ struct MalformedIRException : public std::exception {};
 // emitted but do not abort the conversion; a stub component is still
 // generated.
 Zhlt::ComponentOp generateTypedComponent(mlir::OpBuilder& builder,
-                                         ComponentManager* typeManager,
+                                         Zhlt::ComponentManager* typeManager,
                                          Zhl::ComponentOp component,
                                          mlir::StringAttr mangledName,
                                          llvm::ArrayRef<mlir::Attribute> typeArgs);

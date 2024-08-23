@@ -19,6 +19,7 @@ include "mlir/Interfaces/FunctionInterfaces.td"
 include "mlir/IR/OpAsmInterface.td"
 include "mlir/Interfaces/CallInterfaces.td"
 include "zirgen/Dialect/ZHLT/IR/Dialect.td"
+include "zirgen/Dialect/ZHLT/IR/Interfaces.td"
 include "zirgen/Dialect/ZHLT/IR/NamedVariadic.td"
 include "zirgen/Dialect/ZHLT/IR/Types.td"
 include "zirgen/Dialect/ZStruct/IR/Types.td"
@@ -326,7 +327,13 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
 }
 
 // Base component that other aspects are generated from.
-def ComponentOp : ZFuncOp</*aspect=*/"",  [CodegenSkip], /*mnemonic=*/"component"> {
+def ComponentOp : ZFuncOp</*aspect=*/"",
+    [CodegenSkip,
+     Symbol,
+     DeclareOpInterfaceMethods<ComponentOpInterface,
+        ["getLayoutType", "getValueType", "buildConstruct", "reconstructFromLayout",
+         "getConstructParams"]>],
+    /*mnemonic=*/"component"> {
   let symPrefix = "";
   let summary = "Component declaration";
   let funcInputs = (ins

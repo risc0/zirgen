@@ -23,6 +23,7 @@
 #include "mlir/Interfaces/CallInterfaces.h"
 #include "mlir/Interfaces/InferTypeOpInterface.h"
 
+#include "zirgen/Dialect/ZStruct/IR/TypeUtils.h"
 #include "zirgen/Dialect/ZStruct/IR/Types.h"
 #include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
 #include "zirgen/Dialect/Zll/IR/IR.h"
@@ -32,6 +33,67 @@
 #include "zirgen/Dialect/ZHLT/IR/Dialect.h.inc"
 
 namespace zirgen::Zhlt {
+
+class ComponentTypeAttr;
+
+// ComponentManager manages the component collection when generating
+// typed components.  Callers can request a component and need not
+// know whether the component is built in or generated from a
+// zhl.component, or has some other special handling.
+class ComponentManager {
+public:
+  // Fails and emits an error if the given name isn't resolvable.  Doesn't require it to be any
+  // specific type.
+  virtual ComponentTypeAttr getGlobalReference(mlir::Location loc, mlir::StringAttr name) = 0;
+
+  // Specializes a compenent type, if possible.
+  virtual ComponentTypeAttr specialize(mlir::Location loc,
+                                       ComponentTypeAttr orig,
+                                       llvm::ArrayRef<mlir::Attribute> typeArgs) = 0;
+
+  // Require that the given component exists and is a candidate for construction.
+  virtual mlir::LogicalResult requireComponent(mlir::Location loc, ComponentTypeAttr name) = 0;
+
+  // Require that the given component exists and is a candidate for either construction or
+  // specialization.
+  virtual mlir::LogicalResult requireAbstractComponent(mlir::Location loc,
+                                                       ComponentTypeAttr name) = 0;
+
+  // Returns the layout type, if the component exists and has a layout, or null.  The component must
+  // exist.
+  virtual mlir::Type getLayoutType(ComponentTypeAttr component) = 0;
+
+  // Returns the value type returned by the given component's constructor.  The component must
+  // exist.
+  virtual mlir::Type getValueType(ComponentTypeAttr component) = 0;
+
+  // Builds a construction of the given component, and returns its value.  The component must exist.
+  // Upon failure, emits an error and returns null.
+  virtual mlir::Value buildConstruct(mlir::OpBuilder& builder,
+                                     mlir::Location loc,
+                                     ComponentTypeAttr component,
+                                     mlir::ValueRange constructArgs,
+                                     mlir::Value layout) = 0;
+
+  // Builds a value to reconstruct a component from a layout value at the given back distance (which
+  // may be zero).
+  // Upon failure, emits an error and returns null.
+  virtual mlir::Value reconstructFromLayout(mlir::OpBuilder& builder,
+                                            mlir::Location loc,
+                                            mlir::Value layout,
+                                            size_t distance = 0) = 0;
+
+  // Returns the construct params needed by the given component, if
+  // the given component declares a fixed number of arguments with
+  // fixed types. Prefer to use buildConstruct to verify the number of
+  // arguments and their types.  The component must exist.
+  virtual std::optional<llvm::SmallVector<mlir::Type>>
+  getConstructParams(Zhlt::ComponentTypeAttr component) = 0;
+
+protected:
+  ComponentManager() = default;
+  virtual ~ComponentManager() = default;
+};
 
 namespace detail {
 
@@ -62,8 +124,16 @@ std::string getTapsConstName();
 #define GET_TYPEDEF_CLASSES
 #include "zirgen/Dialect/ZHLT/IR/Types.h.inc"
 
+#define GET_ATTRDEF_CLASSES
+#include "zirgen/Dialect/ZHLT/IR/Attrs.h.inc"
+
+#include "zirgen/Dialect/ZHLT/IR/Interfaces.h.inc"
+
 #define GET_OP_CLASSES
 #include "zirgen/Dialect/ZHLT/IR/ComponentOps.h.inc"
 
 #define GET_OP_CLASSES
 #include "zirgen/Dialect/ZHLT/IR/Ops.h.inc"
+
+#define GET_OP_CLASSES
+#include "zirgen/Dialect/ZHLT/IR/BuiltinOps.h.inc"

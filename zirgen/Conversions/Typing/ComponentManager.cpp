@@ -41,21 +41,197 @@ namespace zirgen::Typing {
 using namespace mlir;
 using namespace zirgen::Zhl;
 
-/// True iff the component contains any TypeParamOps
-bool ComponentManager::isGeneric(Zhl::ComponentOp component) {
-  return !component.getBody().front().getOps<TypeParamOp>().empty();
+class ComponentManagerImpl : public Zhlt::ComponentManager {
+public:
+  Zhlt::ComponentTypeAttr getGlobalReference(mlir::Location loc, mlir::StringAttr name) override;
+  Zhlt::ComponentTypeAttr specialize(mlir::Location loc,
+                                     Zhlt::ComponentTypeAttr orig,
+                                     llvm::ArrayRef<mlir::Attribute> typeArgs) override;
+  mlir::LogicalResult requireComponent(mlir::Location loc, Zhlt::ComponentTypeAttr name) override;
+  mlir::LogicalResult requireAbstractComponent(mlir::Location loc,
+                                               Zhlt::ComponentTypeAttr name) override;
+  mlir::Type getLayoutType(Zhlt::ComponentTypeAttr component) override;
+  mlir::Type getValueType(Zhlt::ComponentTypeAttr component) override;
+  mlir::Value buildConstruct(mlir::OpBuilder& builder,
+                             mlir::Location loc,
+                             Zhlt::ComponentTypeAttr component,
+                             mlir::ValueRange constructArgs,
+                             mlir::Value layout) override;
+  mlir::Value reconstructFromLayout(mlir::OpBuilder& builder,
+                                    mlir::Location loc,
+                                    mlir::Value layout,
+                                    size_t distance = 0) override;
+  std::optional<llvm::SmallVector<mlir::Type>>
+  getConstructParams(Zhlt::ComponentTypeAttr component) override;
+
+private:
+  struct TypeInfo;
+  struct DebugListener;
+
+private:
+  ComponentManagerImpl(mlir::ModuleOp zhlModule);
+  ~ComponentManagerImpl();
+
+  Zhlt::ComponentOpInterface getComponentInterface(Zhlt::ComponentTypeAttr attr);
+
+  Zhlt::ComponentOp
+  genComponent(mlir::Location loc, llvm::StringRef name, llvm::ArrayRef<mlir::Attribute> typeArgs);
+
+  void gen();
+
+  /// Resolves an unmangled component name to the component's definition in the
+  /// (unlowered) ZHL module.
+  Zhl::ComponentOp getUnloweredComponent(llvm::StringRef name);
+
+  // True if the given ZHL component needs to be specialized before use
+  bool isGeneric(Zhl::ComponentOp component);
+
+  /// True iff the given component type has already been partially instantiated,
+  /// so that attempting to instantiate it again might loop infinitely.
+  std::vector<TypeInfo>::reverse_iterator findIllegalRecursion(Zhl::ComponentOp,
+                                                               llvm::ArrayRef<mlir::Attribute>);
+
+  mlir::MLIRContext* ctx;
+  /// This stack tracks the set of partially instantiated components during
+  /// lowering, analogously to how a call stack tracks the set of partially
+  /// executed functions. It is used to detect recursion during lowering.
+  std::vector<TypeInfo> componentStack;
+
+  /// The module in the ZHL dialect which is being lowered
+  mlir::ModuleOp zhlModule;
+
+  /// The module in the ZHLT dialect which is the output of this lowering
+  mlir::ModuleOp zhltModule;
+
+  std::unique_ptr<DebugListener> debugListener;
+  std::optional<mlir::AsmState> asmState;
+
+  // Components that have been required
+  llvm::DenseMap<Zhlt::ComponentTypeAttr, Zhlt::ComponentOpInterface> requiredComponents;
+
+  // Layout types of components that have been required, and the
+  // unmangled component name to use to reconstruct them.
+  llvm::DenseMap<mlir::Type, Zhlt::ComponentTypeAttr> reconstructTypes;
+
+  friend std::optional<mlir::ModuleOp> typeCheck(mlir::MLIRContext&, mlir::ModuleOp);
+};
+
+Zhlt::ComponentOpInterface
+ComponentManagerImpl::getComponentInterface(Zhlt::ComponentTypeAttr name) {
+  return requiredComponents.at(name);
 }
 
-bool ComponentManager::isGeneric(StringRef name) {
-  if (name == "Array")
-    return true;
-  ComponentOp c = getUnloweredComponent(name);
-  if (!c)
-    return false;
-  return isGeneric(c);
+mlir::LogicalResult ComponentManagerImpl::requireComponent(Location loc,
+                                                           Zhlt::ComponentTypeAttr name) {
+  if (requiredComponents.contains(name))
+    return success();
+
+  // Attempt to find a base generic to specialize
+  Zhlt::ComponentOpInterface intf =
+      zhltModule.lookupSymbol<Zhlt::ComponentOpInterface>(name.getName());
+  if (!intf)
+    intf = zhlModule.lookupSymbol<Zhlt::ComponentOpInterface>(name.getName());
+
+  // Otherwise, try to instantiate a generic zhl.component
+  if (!intf) {
+    if (auto zhlOp = zhlModule.lookupSymbol<ComponentOp>(name.getName()))
+      intf = genComponent(loc, name.getName(), name.getTypeArgs());
+  }
+
+  if (!intf) {
+    emitError(loc) << "Unable to instantiate component";
+    return failure();
+  }
+
+  if (failed(intf.requireComponent(this, loc, name)))
+    return failure();
+
+  requiredComponents[name] = intf;
+  if (auto layout = intf.getLayoutType(this, name)) {
+    reconstructTypes[layout] = name;
+  }
+  return success();
 }
 
-struct ComponentManager::DebugListener : public OpBuilder::Listener {
+mlir::LogicalResult ComponentManagerImpl::requireAbstractComponent(Location loc,
+                                                                   Zhlt::ComponentTypeAttr name) {
+  if (requiredComponents.contains(name))
+    return success();
+  std::string mangled = name.getMangledName();
+  if (zhltModule.lookupSymbol(mangled))
+    return success();
+  if (getUnloweredComponent(name.getName()))
+    return success();
+  emitError(loc) << "Unable to find anything named " << name << " mangled: " << mangled;
+  llvm::errs() << zhltModule;
+  return failure();
+}
+
+// Fails and emits an error if the given name isn't resolvable.  Doesn't require it to be any
+// specific type.
+Zhlt::ComponentTypeAttr ComponentManagerImpl::getGlobalReference(mlir::Location loc,
+                                                                 mlir::StringAttr name) {
+  if (zhlModule.lookupSymbol(name) || zhltModule.lookupSymbol(name)) {
+    return Zhlt::ComponentTypeAttr::get(name);
+  }
+
+  emitError(loc) << "Unable to resolve " << name;
+  return {};
+}
+
+Zhlt::ComponentTypeAttr ComponentManagerImpl::specialize(mlir::Location loc,
+                                                         Zhlt::ComponentTypeAttr orig,
+                                                         llvm::ArrayRef<mlir::Attribute> typeArgs) {
+  if (!orig.getTypeArgs().empty()) {
+    emitError(loc) << orig << " is already specialized";
+    return {};
+  }
+
+  Zhlt::ComponentTypeAttr name = Zhlt::ComponentTypeAttr::get(ctx, orig.getName(), typeArgs);
+  if (succeeded(requireComponent(loc, name)))
+    return name;
+
+  emitError(loc) << "Unable to specialize " << name;
+  return {};
+}
+
+mlir::Type ComponentManagerImpl::getLayoutType(Zhlt::ComponentTypeAttr name) {
+  return getComponentInterface(name).getLayoutType(this, name);
+}
+
+mlir::Type ComponentManagerImpl::getValueType(Zhlt::ComponentTypeAttr name) {
+  return getComponentInterface(name).getValueType(this, name);
+}
+
+mlir::Value ComponentManagerImpl::buildConstruct(mlir::OpBuilder& builder,
+                                                 mlir::Location loc,
+                                                 Zhlt::ComponentTypeAttr name,
+                                                 mlir::ValueRange constructArgs,
+                                                 mlir::Value layout) {
+  return getComponentInterface(name).buildConstruct(
+      this, builder, loc, name, constructArgs, layout);
+}
+
+mlir::Value ComponentManagerImpl::reconstructFromLayout(mlir::OpBuilder& builder,
+                                                        mlir::Location loc,
+                                                        mlir::Value layout,
+                                                        size_t distance) {
+  Zhlt::ComponentTypeAttr name = reconstructTypes.lookup(layout.getType());
+  if (!name) {
+    llvm::errs() << "Don't know how to reconstruct " << layout.getType();
+    return {};
+  }
+
+  return getComponentInterface(name).reconstructFromLayout(
+      this, builder, loc, name, layout, distance);
+}
+
+std::optional<llvm::SmallVector<mlir::Type>>
+ComponentManagerImpl::getConstructParams(Zhlt::ComponentTypeAttr name) {
+  return getComponentInterface(name).getConstructParams(this, name);
+}
+
+struct ComponentManagerImpl::DebugListener : public OpBuilder::Listener {
   void notifyOperationInserted(Operation* op, IRRewriter::InsertPoint previous) override {
     LLVM_DEBUG({
       llvm::dbgs() << "Generated: ";
@@ -65,7 +241,7 @@ struct ComponentManager::DebugListener : public OpBuilder::Listener {
   }
 };
 
-struct ComponentManager::TypeInfo {
+struct ComponentManagerImpl::TypeInfo {
   TypeInfo(ComponentOp component, ArrayRef<Attribute> typeArgs, Location requestedLoc)
       : component(component), typeArgs(typeArgs), requestedLoc(requestedLoc) {}
 
@@ -76,7 +252,7 @@ struct ComponentManager::TypeInfo {
   Location requestedLoc;
 };
 
-ComponentManager::ComponentManager(ModuleOp zhlModule)
+ComponentManagerImpl::ComponentManagerImpl(ModuleOp zhlModule)
     : ctx(zhlModule.getContext())
     , zhlModule(zhlModule)
     , zhltModule(ModuleOp::create(zhlModule.getLoc())) {
@@ -88,20 +264,11 @@ ComponentManager::ComponentManager(ModuleOp zhlModule)
   });
   addBuiltins(builder);
 }
-ComponentManager::~ComponentManager() {}
+ComponentManagerImpl::~ComponentManagerImpl() {}
 
-ComponentOp ComponentManager::getUnloweredComponent(StringRef name) {
-  for (Operation& op : zhlModule.getBodyRegion().front()) {
-    ComponentOp component = llvm::dyn_cast<ComponentOp>(&op);
-    if (component && component.getName() == name) {
-      return component;
-    }
-  }
-  return {};
-}
-
-std::vector<ComponentManager::TypeInfo>::reverse_iterator
-ComponentManager::findIllegalRecursion(Zhl::ComponentOp component, ArrayRef<Attribute> typeArgs) {
+std::vector<ComponentManagerImpl::TypeInfo>::reverse_iterator
+ComponentManagerImpl::findIllegalRecursion(Zhl::ComponentOp component,
+                                           ArrayRef<Attribute> typeArgs) {
   return std::find_if(componentStack.rbegin(), componentStack.rend(), [&](TypeInfo info) {
     if (info.component.getName() != component.getName()) {
       return false;
@@ -121,24 +288,22 @@ ComponentManager::findIllegalRecursion(Zhl::ComponentOp component, ArrayRef<Attr
   });
 }
 
-Zhlt::ComponentOp ComponentManager::getComponent(Location requestedLoc,
-                                                 StringRef name,
-                                                 ArrayRef<Attribute> typeArgs) {
-  std::string mangledName = Zhlt::mangledTypeName(name, typeArgs);
-  if (auto op = zhltModule.lookupSymbol<Zhlt::ComponentOp>(mangledName)) {
-    // Already lowered to ZHLT.
-    return op;
+ComponentOp ComponentManagerImpl::getUnloweredComponent(StringRef name) {
+  for (Operation& op : zhlModule.getBodyRegion().front()) {
+    ComponentOp component = llvm::dyn_cast<ComponentOp>(&op);
+    if (component && component.getName() == name) {
+      return component;
+    }
   }
+  return {};
+}
 
-  auto genericBuiltin = genGenericBuiltin(requestedLoc, name, mangledName, typeArgs);
-  if (failed(genericBuiltin)) {
-    return {};
-  } else {
-    Zhlt::ComponentOp c = *genericBuiltin;
-    if (c)
-      return c;
-  }
-
+Zhlt::ComponentOp ComponentManagerImpl::genComponent(Location requestedLoc,
+                                                     StringRef name,
+                                                     ArrayRef<Attribute> typeArgs) {
+  Zhlt::ComponentTypeAttr newType = Zhlt::ComponentTypeAttr::get(ctx, name, typeArgs);
+  std::string mangledName = newType.getMangledName();
+  assert(!zhltModule.lookupSymbol(mangledName) && "Attempt to re-generate typed component");
   auto component = getUnloweredComponent(name);
   if (!component) {
     if (typeArgs.empty()) {
@@ -158,34 +323,40 @@ Zhlt::ComponentOp ComponentManager::getComponent(Location requestedLoc,
       recursion--;
       Location loc = recursion->requestedLoc;
       std::string nextName =
-          Zhlt::mangledTypeName(recursion->component.getName(), recursion->typeArgs);
+          Zhlt::ComponentTypeAttr::get(ctx, recursion->component.getName(), recursion->typeArgs)
+              .getMangledName();
       diag.attachNote(loc) << "`" << currentName << "` depends on `" << nextName << "`";
       currentName = nextName;
     }
     std::string nextName =
-        Zhlt::mangledTypeName(recursion->component.getName(), recursion->typeArgs);
+        Zhlt::ComponentTypeAttr::get(ctx, recursion->component.getName(), recursion->typeArgs)
+            .getMangledName();
     diag.attachNote(requestedLoc) << "`" << currentName << "` depends on `" << mangledName << "`";
     throw MalformedIRException();
   }
-
   componentStack.emplace_back(component, typeArgs, requestedLoc);
   auto whenDone = llvm::make_scope_exit([&]() { componentStack.pop_back(); });
 
   OpBuilder builder = OpBuilder::atBlockEnd(zhltModule.getBody());
   LLVM_DEBUG({ builder.setListener(&*debugListener); });
 
-  return generateTypedComponent(
+  auto typed = generateTypedComponent(
       builder, this, component, builder.getStringAttr(mangledName), typeArgs);
+  return typed;
 }
 
-void ComponentManager::gen() {
+bool ComponentManagerImpl::isGeneric(Zhl::ComponentOp component) {
+  return !component.getBody().front().getOps<TypeParamOp>().empty();
+}
+
+void ComponentManagerImpl::gen() {
   bool containsErrors = false;
   for (ComponentOp c : zhlModule.getBodyRegion().front().getOps<ComponentOp>()) {
     if (isGeneric(c))
       continue;
 
     try {
-      getComponent(c.getLoc(), c.getName(), /*typeArgs=*/{});
+      genComponent(c.getLoc(), c.getName(), /*typeArgs=*/{});
     } catch (const MalformedIRException& err) {
       // Failed components can be ignored
       containsErrors = true;
@@ -194,67 +365,6 @@ void ComponentManager::gen() {
   if (containsErrors) {
     zhlModule.emitError("Module contains errors");
   }
-}
-
-mlir::FailureOr<Zhlt::ComponentOp> ComponentManager::genGenericBuiltin(
-    Location loc, StringRef name, StringRef mangledName, llvm::ArrayRef<Attribute> typeArgs) {
-  if (name == "Array") {
-    if (typeArgs.size() != 2) {
-      return emitError(loc, "array type specialization must have two parameters");
-    }
-
-    std::string elementTypeName;
-    if (typeArgs[0].isa<StringAttr>()) {
-      elementTypeName = typeArgs[0].cast<StringAttr>().getValue();
-    } else {
-      return emitError(loc, "array element parameter must be a type name");
-    }
-    auto elemCtor = lookupComponent(elementTypeName);
-    if (!elemCtor) {
-      return emitError(loc, "array element type must be defined");
-    }
-
-    unsigned size = 0;
-    if (typeArgs[1].isa<PolynomialAttr>()) {
-      size = typeArgs[1].cast<PolynomialAttr>()[0];
-    } else {
-      return emitError(loc, "array size parameter must be an integer");
-    }
-
-    if (size < 1) {
-      return emitError(loc, "array must have at least one element");
-    }
-
-    auto arrayType = ZStruct::ArrayType::get(ctx, elemCtor.getOutType(), size);
-    auto layoutType = elemCtor.getLayoutType()
-                          ? ZStruct::LayoutArrayType::get(ctx, elemCtor.getLayoutType(), size)
-                          : nullptr;
-
-    OpBuilder builder = OpBuilder::atBlockEnd(zhltModule.getBody());
-    addArrayCtor(builder, mangledName, arrayType, layoutType, elemCtor.getConstructParamTypes());
-    Zhlt::ComponentOp arrayComponent = lookupComponent(mangledName);
-    assert(arrayComponent);
-    return arrayComponent;
-  } else {
-    // No generic builtins matched, but no error encountered; return success.
-    return Zhlt::ComponentOp{};
-  }
-}
-
-mlir::Value ComponentManager::reconstructFromLayout(mlir::OpBuilder& builder,
-                                                    mlir::Location loc,
-                                                    mlir::Value layout,
-                                                    size_t distance) {
-
-  auto layoutType = llvm::dyn_cast<ZStruct::LayoutType>(layout.getType());
-  if (!layoutType)
-    return {};
-  auto ctor = lookupComponent(layoutType.getId());
-  if (!ctor)
-    return {};
-  auto backOp =
-      builder.create<Zhlt::BackOp>(loc, ctor.getOutType(), layoutType.getId(), distance, layout);
-  return backOp;
 }
 
 std::optional<ModuleOp> typeCheck(MLIRContext& ctx, ModuleOp mod) {
@@ -268,7 +378,7 @@ std::optional<ModuleOp> typeCheck(MLIRContext& ctx, ModuleOp mod) {
     return failure();
   });
 
-  ComponentManager componentManager(mod);
+  ComponentManagerImpl componentManager(mod);
   componentManager.gen();
 
   ModuleOp out = componentManager.zhltModule;

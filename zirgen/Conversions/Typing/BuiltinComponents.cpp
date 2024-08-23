@@ -46,6 +46,7 @@ private:
                    const std::function<void(/*args=*/ValueRange)>& buildBody);
   template <typename OpT> void makeBinValOp(StringRef name);
   template <typename OpT> void makeUnaryValOp(StringRef name);
+  template <typename OpT> void makeSpecialBuiltin(StringRef name);
   void genNondetReg();
   void genComponent();
   void genInRange();
@@ -145,36 +146,8 @@ void Builtins::genTrivial(StringRef name, Type type) {
               [&](ValueRange args) { builder.create<Zhlt::ReturnOp>(loc, args[0]); });
 }
 
-void Builtins::genArray(StringRef mangledName,
-                        ZStruct::ArrayType arrayType,
-                        ZStruct::LayoutArrayType layoutType,
-                        TypeRange ctorParams) {
-  auto build = [&](ValueRange args) {
-    Type elemType = arrayType.getElement();
-    SmallVector<Value> elements;
-    for (size_t i = 0; i < arrayType.getSize(); i++) {
-      Value idx = builder.create<Zll::ConstOp>(loc, i);
-      ValueRange ctorParamArgs = args;
-      Value elemLayout;
-      if (layoutType) {
-        ctorParamArgs = args.drop_back();
-        elemLayout = builder.create<ZStruct::SubscriptOp>(loc, args.back(), idx);
-      }
-      Value element = builder.create<Zhlt::ConstructOp>(loc,
-                                                        Zhlt::mangledTypeName(elemType),
-                                                        elemType,
-                                                        /*constructParams=*/ctorParamArgs,
-                                                        /*layout=*/elemLayout);
-      elements.push_back(element);
-    }
-    Value array = builder.create<ZStruct::ArrayOp>(loc, elements);
-    builder.create<Zhlt::ReturnOp>(loc, array);
-  };
-  makeBuiltin(mangledName,
-              /*valueType=*/arrayType,
-              /*constructParams=*/ctorParams,
-              /*layout=*/layoutType,
-              /*buildBody=*/build);
+template <typename OpT> void Builtins::makeSpecialBuiltin(StringRef name) {
+  builder.create<OpT>(builder.getUnknownLoc(), name);
 }
 
 void Builtins::addBuiltins() {
@@ -194,6 +167,10 @@ void Builtins::addBuiltins() {
   genTrivial("Type", Zhlt::getTypeType(ctx));
   genTrivial("Val", valType);
   genTrivial("String", Zhlt::getStringType(ctx));
+
+  makeSpecialBuiltin<Zhlt::BuiltinArrayOp>("Array");
+  //  makeSpecialBuiltin<Zhlt::BuiltinConcatArrayOp>("ConcatArray");
+  makeSpecialBuiltin<Zhlt::BuiltinLogOp>("Log");
 }
 
 // Builtins that are defined using the DSL.
@@ -212,8 +189,6 @@ function Div(lhs: Val, rhs: Val) {
    reciprocal * lhs
 }
 
-extern Log(message: String, vals: Val...);
-
 )";
 
 } // namespace
@@ -225,15 +200,6 @@ void addBuiltins(OpBuilder& builder) {
 
 StringRef getBuiltinPreamble() {
   return zirPreamble;
-}
-
-void addArrayCtor(OpBuilder& builder,
-                  StringRef mangledName,
-                  ZStruct::ArrayType arrayType,
-                  ZStruct::LayoutArrayType layoutType,
-                  TypeRange ctorParams) {
-  Builtins builtins(builder);
-  builtins.genArray(mangledName, arrayType, layoutType, ctorParams);
 }
 
 } // namespace zirgen::Typing

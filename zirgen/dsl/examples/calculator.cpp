@@ -38,7 +38,7 @@ std::deque<int> toUser;
 struct CalcExterns {
   // Provide a mechanism to supply data from the circuit; the generated
   // code calls externGetValFromUser to retrieve a value.
-  Val getValFromUser() {
+  Val getValFromUser(const char* extra) {
     assert(!fromUser.empty());
     int val = fromUser.front();
     fromUser.pop_front();
@@ -47,10 +47,11 @@ struct CalcExterns {
 
   // Provide a mechanism to retrieve data from the circuit; code calls
   // externOutputToUser to output a value;
-  void outputToUser(Val val) { toUser.push_back(val); }
+  void outputToUser(const char* extra, Val val) { toUser.push_back(val); }
 
-  void log(std::string message, std::initializer_list<Val> x) {
-    return log_impl(message, x.begin());
+  template<typename...T>
+  void log(std::string message, T... args) {
+    return log_impl(message, {args...});
   }
 };
 CalcExterns externs;

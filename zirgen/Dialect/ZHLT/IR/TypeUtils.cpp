@@ -25,55 +25,7 @@ using namespace ZStruct;
 
 bool isLegalTypeArg(Attribute attr) {
   // Would this attribute be a legal argument for a mangled component name?
-  return attr && (attr.isa<StringAttr>() || attr.isa<PolynomialAttr>());
-}
-
-std::string mangledTypeName(StringRef componentName, llvm::ArrayRef<Attribute> typeArgs) {
-  std::string out;
-  llvm::raw_string_ostream stream(out);
-  stream << componentName;
-  if (typeArgs.size() != 0) {
-    stream << "<";
-    llvm::interleaveComma(typeArgs, stream, [&](Attribute typeArg) {
-      if (auto strAttr = typeArg.dyn_cast<StringAttr>()) {
-        stream << strAttr.getValue();
-      } else if (auto intAttr = typeArg.dyn_cast<PolynomialAttr>()) {
-        stream << intAttr[0];
-      } else {
-        llvm::errs() << "Mangling type " << typeArg << " not implemented\n";
-        assert(false && "not implemented");
-      }
-    });
-    stream << ">";
-  }
-  return out;
-}
-
-std::string mangledArrayTypeName(Type element, unsigned size) {
-  MLIRContext* ctx = element.getContext();
-  SmallVector<Attribute> typeArgs;
-  typeArgs.push_back(StringAttr::get(ctx, mangledTypeName(element)));
-  typeArgs.push_back(Zll::getUI64Attr(ctx, size));
-  return mangledTypeName("Array", typeArgs);
-}
-
-std::string mangledTypeName(Type type) {
-  if (auto array = dyn_cast<ZStruct::ArrayType>(type)) {
-    return mangledArrayTypeName(array.getElement(), array.getSize());
-  } else if (auto array = dyn_cast<ZStruct::LayoutArrayType>(type)) {
-    return mangledArrayTypeName(array.getElement(), array.getSize());
-  } else if (auto component = dyn_cast<ZStruct::StructType>(type)) {
-    return component.getId().str();
-  } else if (auto component = dyn_cast<ZStruct::LayoutType>(type)) {
-    return component.getId().str();
-  } else if (auto component = dyn_cast<ZStruct::RefType>(type)) {
-    return "Ref";
-  } else if (auto val = dyn_cast<Zll::ValType>(type)) {
-    return "Val";
-  } else {
-    assert(false && "not implemented");
-    return "";
-  }
+  return attr && (attr.isa<StringAttr, PolynomialAttr, ComponentTypeAttr>());
 }
 
 Type getLeastCommonSuper(TypeRange components, bool isLayout) {
@@ -295,14 +247,6 @@ Value coerceToArray(Value value, OpBuilder& builder) {
     }
   }
   return casted;
-}
-
-bool isGenericBuiltin(StringRef name) {
-  if (name == "Array") {
-    return true;
-  } else {
-    return false;
-  }
 }
 
 Value StructBuilder::getValue(Location loc) {

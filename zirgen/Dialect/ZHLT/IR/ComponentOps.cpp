@@ -54,6 +54,62 @@ LogicalResult verifyRegion(Operation* origOp,
 
 } // namespace
 
+mlir::Type ComponentOp::getValueType(ComponentManager* manager, ComponentTypeAttr name) {
+  assert(name.getMangledName() == getName());
+  return getOutType();
+}
+
+mlir::Type ComponentOp::getLayoutType(ComponentManager* manager, ComponentTypeAttr name) {
+  assert(name.getMangledName() == getName());
+  return getLayoutType();
+}
+
+std::optional<llvm::SmallVector<mlir::Type>>
+ComponentOp::getConstructParams(ComponentManager* manager, ComponentTypeAttr name) {
+  assert(name.getMangledName() == getName());
+  return llvm::to_vector(getConstructParamTypes());
+}
+
+mlir::Value ComponentOp::reconstructFromLayout(ComponentManager* manager,
+                                               mlir::OpBuilder& builder,
+                                               mlir::Location loc,
+                                               ComponentTypeAttr name,
+                                               mlir::Value layout,
+                                               size_t distance) {
+  assert(name.getMangledName() == getName());
+
+  return builder.create<Zhlt::BackOp>(
+      loc, manager->getValueType(name), name.getMangledName(), distance, layout);
+}
+
+mlir::Value ComponentOp::buildConstruct(ComponentManager* manager,
+                                        mlir::OpBuilder& builder,
+                                        mlir::Location loc,
+                                        ComponentTypeAttr name,
+                                        mlir::ValueRange constructArgs,
+                                        mlir::Value layout) {
+  assert(name.getMangledName() == getName());
+
+  SmallVector<mlir::Value> coercedArgs;
+  if (constructArgs.size() != getConstructParamTypes().size()) {
+    auto diag = emitError() << "Expected " << getConstructParamTypes().size()
+                            << " arguments but got " << constructArgs.size();
+    diag.attachNote(loc) << "called from here";
+    return {};
+  }
+
+  for (auto [arg, expectedType] : llvm::zip_equal(constructArgs, getConstructParamTypes())) {
+    if (!isCoercibleTo(arg.getType(), expectedType)) {
+      auto diag = emitError() << "Cannot convert argument " << arg << " to type " << expectedType;
+      diag.attachNote(loc) << "called from here";
+    }
+    coercedArgs.push_back(coerceTo(arg, expectedType, builder));
+  }
+
+  return builder.create<Zhlt::ConstructOp>(
+      loc, name.getMangledName(), manager->getValueType(name), coercedArgs, layout);
+}
+
 mlir::LogicalResult CheckFuncOp::verifyRegions() {
   return verifyRegion(*this, getBody(), [&](auto op) -> LogicalResult {
     if (llvm::isa<Zll::PolyOp,

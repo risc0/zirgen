@@ -22,12 +22,13 @@
 #include "llvm/ADT/TypeSwitch.h"
 
 #include "zirgen/Dialect/ZHLT/IR/Dialect.cpp.inc"
-
-#define GET_ATTRDEF_CLASSES
-#include "zirgen/Dialect/ZHLT/IR/Attrs.cpp.inc"
+#include "zirgen/Dialect/ZHLT/IR/Interfaces.cpp.inc"
 
 #define GET_TYPEDEF_CLASSES
 #include "zirgen/Dialect/ZHLT/IR/Types.cpp.inc"
+
+#define GET_ATTRDEF_CLASSES
+#include "zirgen/Dialect/ZHLT/IR/Attrs.cpp.inc"
 
 using namespace mlir;
 
@@ -81,6 +82,11 @@ void ZhltDialect::initialize() {
 #include "zirgen/Dialect/ZHLT/IR/ComponentOps.cpp.inc"
       >();
 
+  addOperations<
+#define GET_OP_LIST
+#include "zirgen/Dialect/ZHLT/IR/BuiltinOps.cpp.inc"
+      >();
+
   addAttributes<
 #define GET_ATTRDEF_LIST
 #include "zirgen/Dialect/ZHLT/IR/Attrs.cpp.inc"
@@ -116,6 +122,20 @@ ZhltDialect::materializeConstant(OpBuilder& builder, Attribute value, Type type,
 // Constant names for generated constants.
 std::string getTapsConstName() {
   return "tapList";
+}
+
+void ComponentTypeAttr::buildMangledName(llvm::raw_ostream& os) {
+  os << getName().getValue();
+  if (!getTypeArgs().empty()) {
+    os << "<";
+    interleaveComma(getTypeArgs(), os, [&](Attribute typeArg) {
+      TypeSwitch<Attribute>(typeArg)
+          .Case<StringAttr>([&](auto strAttr) { os << strAttr.getValue(); })
+          .Case<PolynomialAttr>([&](auto intAttr) { os << intAttr[0]; })
+          .Case<ComponentTypeAttr>([&](auto componentArg) { componentArg.buildMangledName(os); });
+    });
+    os << "<";
+  }
 }
 
 } // namespace zirgen::Zhlt

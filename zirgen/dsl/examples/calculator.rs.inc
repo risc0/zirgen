@@ -233,19 +233,14 @@ pub fn exec_reg(
         reg: x3,
     });
 }
-pub fn exec_log(ctx0: &ExecContext, arg1: &str, arg2: &[Val]) -> Result<ComponentStruct> {
-    // Log(<preamble>:16)
-    invoke_extern!(ctx0, log, arg1, arg2);
-    return Ok(ComponentStruct {});
-}
 pub fn exec_get_val_from_user(ctx0: &ExecContext) -> Result<GetValFromUserStruct> {
     // GetValFromUser(zirgen/dsl/examples/calculator.zir:5)
-    let x1: Val = invoke_extern!(ctx0, get_val_from_user);
+    let x1: Val = invoke_extern!(ctx0, get_val_from_user, "");
     return Ok(GetValFromUserStruct { _super: x1 });
 }
 pub fn exec_output_to_user(ctx0: &ExecContext, arg1: Val) -> Result<ComponentStruct> {
     // OutputToUser(zirgen/dsl/examples/calculator.zir:6)
-    invoke_extern!(ctx0, output_to_user, arg1);
+    invoke_extern!(ctx0, output_to_user, "", arg1);
     return Ok(ComponentStruct {});
 }
 pub fn exec_one_hot(
@@ -349,28 +344,28 @@ pub fn exec_top(
     } // Top(zirgen/dsl/examples/calculator.zir:36)
     let x17: RegStruct = back_reg(ctx0, 0, x11)?;
     // Top(zirgen/dsl/examples/calculator.zir:40)
-    let x18: ComponentStruct = exec_log(ctx0, "result = %u", &[x17._super._super])?;
+    invoke_extern!(ctx0, log, "result = %u", x17._super._super);
     // Top(zirgen/dsl/examples/calculator.zir:36)
-    let x19: RegStruct = back_reg(ctx0, 0, x11)?;
+    let x18: RegStruct = back_reg(ctx0, 0, x11)?;
     // Top(zirgen/dsl/examples/calculator.zir:41)
-    let x20: ComponentStruct = exec_set_global_result(ctx0, x19._super._super)?;
+    let x19: ComponentStruct = exec_set_global_result(ctx0, x18._super._super)?;
     // Top(zirgen/dsl/examples/calculator.zir:42)
-    let x21: RegStruct = exec_get_global_result(ctx0)?;
+    let x20: RegStruct = exec_get_global_result(ctx0)?;
     // Top(zirgen/dsl/examples/calculator.zir:36)
-    let x22: RegStruct = back_reg(ctx0, 0, x11)?;
+    let x21: RegStruct = back_reg(ctx0, 0, x11)?;
     // Top(zirgen/dsl/examples/calculator.zir:42)
     eqz!(
-        (x21._super._super - x22._super._super),
+        (x20._super._super - x21._super._super),
         "Top(zirgen/dsl/examples/calculator.zir:42)"
     );
     // Top(zirgen/dsl/examples/calculator.zir:36)
-    let x23: RegStruct = back_reg(ctx0, 0, x11)?;
+    let x22: RegStruct = back_reg(ctx0, 0, x11)?;
     // Top(zirgen/dsl/examples/calculator.zir:43)
-    let x24: ComponentStruct = exec_output_to_user(ctx0, x23._super._super)?;
+    let x23: ComponentStruct = exec_output_to_user(ctx0, x22._super._super)?;
     // Top(zirgen/dsl/examples/calculator.zir:32)
-    let x25: ComponentStruct = exec_component(ctx0)?;
+    let x24: ComponentStruct = exec_component(ctx0)?;
     return Ok(TopStruct {
-        _super: x25,
+        _super: x24,
         op: x4,
         left: x6,
         right: x8,

@@ -8,8 +8,10 @@ td_library(
     name = "TdFiles",
     srcs = [
         "Attrs.td",
+        "BuiltinOps.td",
         "ComponentOps.td",
         "Dialect.td",
+        "Interfaces.td",
         "NamedVariadic.td",
         "Ops.td",
         "Types.td",
@@ -83,6 +85,40 @@ gentbl_cc_library(
 )
 
 gentbl_cc_library(
+    name = "BuiltinOpsIncGen",
+    tbl_outs = [
+        (
+            ["-gen-op-decls"],
+            "BuiltinOps.h.inc",
+        ),
+        (
+            ["-gen-op-defs"],
+            "BuiltinOps.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":BuiltinOps.td",
+    deps = [":TdFiles"],
+)
+
+gentbl_cc_library(
+    name = "InterfacesIncGen",
+    tbl_outs = [
+        (
+            ["-gen-op-interface-decls"],
+            "Interfaces.h.inc",
+        ),
+        (
+            ["-gen-op-interface-defs"],
+            "Interfaces.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Interfaces.td",
+    deps = [":TdFiles"],
+)
+
+gentbl_cc_library(
     name = "AttrsIncGen",
     tbl_outs = [
         (
@@ -119,6 +155,7 @@ gentbl_cc_library(
 cc_library(
     name = "IR",
     srcs = [
+        "BuiltinOps.cpp",
         "ComponentOps.cpp",
         "Dialect.cpp",
         "Ops.cpp",
@@ -130,8 +167,10 @@ cc_library(
     ],
     deps = [
         ":AttrsIncGen",
+        ":BuiltinOpsIncGen",
         ":ComponentOpsIncGen",
         ":DialectIncGen",
+        ":InterfacesIncGen",
         ":OpsIncGen",
         ":TypesIncGen",
         "//zirgen/Dialect/ZStruct/Analysis",
