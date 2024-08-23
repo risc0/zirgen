@@ -42,8 +42,8 @@ macro_rules! codegen_make_tap {
 
 #[macro_export]
 macro_rules! codegen_invoke_extern {
-    ($ctx:ident, $name:ident $(, $exprs:expr)*) => {
-        $ctx.$name($($exprs),*)?
+    ($ctx:ident, $name:ident, $extra:literal $(, $exprs:expr)*) => {
+        $ctx.$name($extra, &[$($exprs),*])?
     }
 }
 

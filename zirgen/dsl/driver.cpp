@@ -232,7 +232,7 @@ struct TestExternHandler : public zirgen::Zll::ExternHandler {
       divide(results, fpArgs);
     } else if (name == "log") {
       os << ": ";
-    } else if (name == "configureInput" || name == "readInput" || name = "log") {
+    } else if (name == "configureInput" || name == "readInput" || name == "log") {
       // Pass through to common implementation
       results = zirgen::Zll::ExternHandler::doExtern(name, extra, args, outCount);
     } else {

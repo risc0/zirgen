@@ -44,13 +44,13 @@ pub struct CpuExecContext {
 }
 
 impl CpuExecContext {
-    pub fn get_val_from_user(&self) -> Result<Val> {
+    pub fn get_val_from_user(&self, _extra: &str, _: &[Val; 0]) -> Result<Val> {
         let mut from_user = RefCell::borrow_mut(&self.from_user);
         eprintln!("get_val_from_user, from_user = {from_user:?}");
         Ok(from_user.pop_front().unwrap())
     }
 
-    pub fn output_to_user(&self, val: Val) -> Result<()> {
+    pub fn output_to_user(&self, _extra: &str, &[val]: &[Val; 1]) -> Result<()> {
         let mut to_user = RefCell::borrow_mut(&self.to_user);
         to_user.push_back(val);
         eprintln!("output_to_user, to_user = {to_user:?}");
