@@ -547,10 +547,16 @@ private:
   mustache openTemplate(const std::string& path) {
     fs::path fs_path(path);
     if (!fs::exists(fs_path)) {
-      throw std::runtime_error(llvm::formatv("File does not exist: {0}", path));
+      if (fs::exists("../" + path)) {
+        // Some lit tests put us in the "zirgen" subdirectory, so try up
+        // one level.  TODO: Get rid of this lit test directory
+        // confusion
+        fs_path = fs::path("../" + path);
+      } else
+        throw std::runtime_error(llvm::formatv("File does not exist: {0}", path));
     }
 
-    std::ifstream ifs(path);
+    std::ifstream ifs(fs_path);
     ifs.exceptions(std::ios_base::badbit | std::ios_base::failbit);
     std::string str(std::istreambuf_iterator<char>{ifs}, {});
     mustache tmpl(str);
