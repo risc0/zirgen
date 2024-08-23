@@ -44,8 +44,12 @@ public:
       n = nextIndex(n);
     }
     storage.set(n, n + k);
-    if (pinned && parent)
-      parent->storage.set(n, n + k);
+    AllocationTable* ancestor = parent;
+    while (pinned && ancestor) {
+      ancestor->storage.set(n, n + k);
+      ancestor = ancestor->parent;
+    }
+
     return n;
   }
 

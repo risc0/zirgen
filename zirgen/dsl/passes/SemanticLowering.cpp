@@ -279,7 +279,6 @@ struct UnravelSwitchArrayResult : public OpRewritePattern<SwitchOp> {
               .Default([&](auto origOp) { rewriter.clone(*origOp, mapper); });
         }
       }
-      // elementSplitOp->getOpResult(0).setType(ty.getElement()); // TODO?
       splitElements.push_back(elementSplitOp);
     }
 

@@ -457,24 +457,32 @@ LogicalResult SwitchOp::verify() {
 }
 
 namespace {
+
+// If the selector of a mux is a compile time constant, replace it with the
+// active arm and delete the unreachable ones.
 struct RemoveStaticCondition : public OpRewritePattern<SwitchOp> {
   using OpRewritePattern::OpRewritePattern;
   LogicalResult matchAndRewrite(SwitchOp op, PatternRewriter& rewriter) const override {
+    // We can safely delete runtime side effects like witness generation and
+    // constraints, but we need to keep AliasLayoutOps around until layout
+    // generation.
+    auto walkResult = op.walk([](AliasLayoutOp) { return WalkResult::interrupt(); });
+    if (walkResult.wasInterrupted())
+      return failure();
+
     size_t numTrue = 0;
     size_t trueIndex;
-    SmallVector<std::optional<bool>> isTrue;
-    for (auto sel : op.getSelector()) {
+    for (size_t i = 0; i < op.getSelector().size(); i++) {
+      Value sel = op.getSelector()[i];
       Attribute constVal;
       if (matchPattern(sel, m_Constant(&constVal))) {
         auto v = llvm::cast<PolynomialAttr>(constVal);
         bool selTrue = llvm::any_of(v.asArrayRef(), [](auto elem) { return elem != 0; });
         if (selTrue) {
           numTrue++;
-          trueIndex = isTrue.size();
+          trueIndex = i;
         }
-        isTrue.push_back(selTrue);
-      } else
-        isTrue.push_back(std::nullopt);
+      }
     }
 
     if (numTrue > 1)
@@ -484,7 +492,7 @@ struct RemoveStaticCondition : public OpRewritePattern<SwitchOp> {
     if (numTrue == 1) {
       // We found the one true region; inline into parent.
       auto* region = op.getRegions()[trueIndex];
-      assert(llvm::hasSingleElement(*region) && "expected single-region block");
+      assert(region->hasOneBlock() && "expected single-region block");
       Block* block = &region->front();
       Operation* terminator = block->getTerminator();
       ValueRange results = terminator->getOperands();
