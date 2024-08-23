@@ -51,8 +51,6 @@ def _run_lit_test(name, test_name, data, size, tags, driver, features, exec_prop
         tags = tags + ["no_pip", "no_windows"],
         args = [
             "zirgen",
-            "--debug",
-            "--show-suites",
             "-v",
             "--filter",
             test_name,
