@@ -17,6 +17,7 @@
 
 #include "zirgen/Dialect/ZHLT/IR/TypeUtils.h"
 #include "zirgen/Dialect/Zll/IR/IR.h"
+#include "zirgen/Utilities/KeyPath.h"
 #include "zirgen/dsl/passes/PassDetail.h"
 
 using namespace mlir;
@@ -27,6 +28,37 @@ using namespace zirgen::Zll;
 namespace zirgen {
 namespace dsl {
 
+struct RandomnessMap {
+  RandomnessMap() = default;
+  RandomnessMap(OpBuilder& builder, Value pivot, Value zeroDistance) : pivot(pivot) {
+    ValType extValType = Zhlt::getValExtType(builder.getContext());
+
+    if (pivot.getType() == Zhlt::getExtRefType(pivot.getContext())) {
+      this->pivot = builder.create<LoadOp>(pivot.getLoc(), extValType, pivot, zeroDistance);
+    } else if (auto pivotType = dyn_cast<LayoutType>(pivot.getType())) {
+      for (auto field : pivotType.getFields()) {
+        if (field.name == "$offset")
+          continue;
+
+        Value member = builder.create<LookupOp>(pivot.getLoc(), pivot, field.name);
+        map.insert({field.name, RandomnessMap(builder, member, zeroDistance)});
+      }
+    } else if (auto pivotType = dyn_cast<LayoutArrayType>(pivot.getType())) {
+      for (size_t i = 0; i < pivotType.getSize(); i++) {
+        Value index = builder.create<arith::ConstantOp>(pivot.getLoc(), builder.getIndexAttr(i));
+        Value element = builder.create<SubscriptOp>(pivot.getLoc(), pivot, index);
+        map.insert({i, RandomnessMap(builder, element, zeroDistance)});
+      }
+    } else {
+      llvm::errs() << "unhandled case: " << pivot.getType();
+      abort();
+    }
+  }
+
+  Value pivot;
+  std::map<Key, RandomnessMap> map;
+};
+
 class AccumBuilder {
 public:
   AccumBuilder(OpBuilder& builder, Value accumLayout, Value randomnessLayout)
@@ -36,18 +68,8 @@ public:
     zeroDistance =
         builder.create<arith::ConstantOp>(randomnessLayout.getLoc(), builder.getIndexAttr(0));
     ValType extValType = Zhlt::getValExtType(builder.getContext());
-    auto randomnessLayoutType = randomnessLayout.getType().cast<LayoutType>();
-    for (auto field : randomnessLayoutType.getFields().drop_back()) {
-      auto [entry, _] = verifierRandomness.insert({field.name, DenseMap<StringRef, Value>()});
-      Value typeLookup =
-          builder.create<LookupOp>(randomnessLayout.getLoc(), randomnessLayout, field.name);
-      for (auto subfield : field.type.cast<LayoutType>().getFields()) {
-        Value randomness = builder.create<LookupOp>(typeLookup.getLoc(), typeLookup, subfield.name);
-        randomness = builder.create<ZStruct::LoadOp>(
-            randomness.getLoc(), extValType, randomness, zeroDistance);
-        entry->second.insert({subfield.name, randomness});
-      }
-    }
+
+    verifierRandomness = RandomnessMap(builder, randomnessLayout, zeroDistance);
 
     offset = builder.create<LookupOp>(randomnessLayout.getLoc(), randomnessLayout, "$offset");
     offset = builder.create<ZStruct::LoadOp>(offset.getLoc(), extValType, offset, zeroDistance);
@@ -99,20 +121,50 @@ public:
 private:
   // Condense all non-count columns for this argument component down to a
   // single value: v[i] = r_a * a[i] + r_b * b[i] + ...
-  Value condenseArgument(LayoutType type, Value layout) {
-    ValType extValType = Zhlt::getValExtType(builder.getContext());
-    SmallVector<uint64_t> zero(extValType.getFieldK(), 0);
-    Value v = builder.create<ConstOp>(layout.getLoc(), extValType, zero);
-    for (auto field : type.getFields().drop_front()) {
-      Value r = verifierRandomness[type.getId()][field.name];
-      Value colLayout = builder.create<LookupOp>(layout.getLoc(), layout, field.name);
-      colLayout = builder.create<LookupOp>(colLayout.getLoc(), colLayout, "@super");
+  // Since an argument can have a non-trivial layout, define the condensation
+  // inductively on the layout structure. The resulting sum can be flattened to
+  // an expression like the one above.
+  Value condenseArgument(Value layout, const RandomnessMap& randomness) {
+    MLIRContext* ctx = builder.getContext();
+    ValType extValType = Zhlt::getValExtType(ctx);
+
+    if (layout.getType() == Zhlt::getNondetRegLayoutType(ctx)) {
+      // For a single register, compute r_a * a[i]
+      assert(randomness.pivot.getType() == extValType);
+      Value r = randomness.pivot;
+      Value colLayout = builder.create<LookupOp>(layout.getLoc(), layout, "@super");
       Value colValue =
           builder.create<ZStruct::LoadOp>(colLayout.getLoc(), extValType, colLayout, zeroDistance);
-      Value sumTerm = builder.create<MulOp>(colValue.getLoc(), r, colValue);
-      v = builder.create<AddOp>(sumTerm.getLoc(), v, sumTerm);
+      return builder.create<MulOp>(colValue.getLoc(), r, colValue);
+    } else if (auto layoutType = dyn_cast<LayoutType>(layout.getType())) {
+      // for a LayoutType, sum condensations of non-count fields
+      auto fields = layoutType.getFields();
+      if (layoutType.getKind() == LayoutKind::Argument)
+        fields = fields.drop_front();
+
+      SmallVector<uint64_t> zero(extValType.getFieldK(), 0);
+      Value v = builder.create<ConstOp>(layout.getLoc(), extValType, zero);
+      for (auto field : fields) {
+        Value sublayout = builder.create<LookupOp>(layout.getLoc(), layout, field.name);
+        Value sumTerm = condenseArgument(sublayout, randomness.map.at(field.name.getValue()));
+        v = builder.create<AddOp>(sumTerm.getLoc(), v, sumTerm);
+      }
+      return v;
+    } else if (auto layoutType = dyn_cast<LayoutArrayType>(layout.getType())) {
+      // For a LayoutArrayType, sum condensations at all subscripts
+      SmallVector<uint64_t> zero(extValType.getFieldK(), 0);
+      Value v = builder.create<ConstOp>(layout.getLoc(), extValType, zero);
+      for (size_t i = 0; i < layoutType.getSize(); i++) {
+        Value index = builder.create<arith::ConstantOp>(layout.getLoc(), builder.getIndexAttr(i));
+        Value sublayout = builder.create<SubscriptOp>(layout.getLoc(), layout, index);
+        Value sumTerm = condenseArgument(sublayout, randomness.map.at(i));
+        v = builder.create<AddOp>(sumTerm.getLoc(), v, sumTerm);
+      }
+      return v;
+    } else {
+      llvm_unreachable("unhandled layout when condensing argument");
+      return nullptr;
     }
-    return v;
   }
 
   void addConstraint(Value newT) {
@@ -172,12 +224,13 @@ private:
   // Accumulates the given argument into a temporary accumulator value t:
   // t' = t + c[i] / (v[i] + x)
   Value accumulateArgument(Value t, LayoutType type, Value layout) {
+    MLIRContext* ctx = builder.getContext();
     ValType extValType = Zhlt::getValExtType(builder.getContext());
     StringAttr countName = type.getFields()[0].name;
     Value cLayout = builder.create<LookupOp>(layout.getLoc(), layout, countName);
-    cLayout = builder.create<LookupOp>(cLayout.getLoc(), cLayout, "@super");
+    cLayout = Zhlt::coerceTo(cLayout, Zhlt::getRefType(ctx), builder);
     Value c = builder.create<ZStruct::LoadOp>(cLayout.getLoc(), extValType, cLayout, zeroDistance);
-    Value v = condenseArgument(type, layout);
+    Value v = condenseArgument(layout, verifierRandomness.map.at(type.getId()));
     Value vPlusOffset = builder.create<AddOp>(v.getLoc(), v, offset);
     Value denominator = builder.create<InvOp>(v.getLoc(), vPlusOffset);
     Value delta = builder.create<MulOp>(c.getLoc(), c, denominator);
@@ -239,7 +292,7 @@ private:
   Value zeroDistance;
 
   // A map of argument types and member names to global verifier randomness
-  DenseMap<StringRef, DenseMap<StringRef, Value>> verifierRandomness;
+  RandomnessMap verifierRandomness;
 
   // The global "offset" value used for SumCheck summation
   Value offset;
@@ -301,7 +354,7 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
     builder.setInsertionPointToStart(accum.addEntryBlock());
 
     // Create globals for verifier randomness
-    LayoutType mixLayoutType = getRandomnessLayoutType(argumentCounts);
+    LayoutType mixLayoutType = getRandomnessLayoutType();
     auto randomnessLayout =
         builder.create<Zhlt::GetGlobalLayoutOp>(loc, mixLayoutType, "mix", "randomness");
 
@@ -315,7 +368,35 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
   }
 
 private:
-  LayoutType getRandomnessLayoutType(llvm::MapVector<Type, size_t>& argumentCounts) {
+  LayoutType getRandomnessLayoutTypeFor(LayoutType type, bool isRoot) {
+    MLIRContext* ctx = &getContext();
+    RefType extType = Zhlt::getExtRefType(ctx);
+
+    // Add global randomness for all non-count members of type
+    auto fields = type.getFields();
+    if (isRoot)
+      fields = fields.drop_front();
+
+    SmallVector<ZStruct::FieldInfo> members;
+    for (auto field : fields) {
+      if (field.type == Zhlt::getNondetRegLayoutType(ctx)) {
+        members.push_back({field.name, extType});
+      } else if (auto fieldType = dyn_cast<LayoutType>(field.type)) {
+        members.push_back({field.name, getRandomnessLayoutTypeFor(fieldType, false)});
+      } else if (auto fieldType = dyn_cast<LayoutArrayType>(field.type)) {
+        LayoutType elementType =
+            getRandomnessLayoutTypeFor(cast<LayoutType>(fieldType.getElement()), false);
+        members.push_back(
+            {field.name, LayoutArrayType::get(ctx, elementType, fieldType.getSize())});
+      } else {
+        llvm_unreachable("unhandled case");
+      }
+    }
+    auto fieldTypeName = StringAttr::get(ctx, "arg$" + type.getId());
+    return LayoutType::get(ctx, fieldTypeName, members);
+  }
+
+  LayoutType getRandomnessLayoutType() {
     // Allocate verifier randomness in the mix buffer. We need one column for
     // each non-count column of each argument type, and one more for the offset
     // used by the LogUp grand sum.
@@ -329,14 +410,8 @@ private:
       if (!type || type.getKind() != LayoutKind::Argument)
         return;
 
-      SmallVector<ZStruct::FieldInfo> submembers;
-      for (auto field : type.getFields().drop_front()) {
-        assert(field.type == Zhlt::getNondetRegLayoutType(ctx));
-        submembers.push_back({field.name, extType});
-      }
       auto fieldName = StringAttr::get(ctx, type.getId());
-      auto fieldTypeName = StringAttr::get(ctx, "arg$" + type.getId());
-      members.push_back({fieldName, LayoutType::get(ctx, fieldTypeName, submembers)});
+      members.push_back({fieldName, getRandomnessLayoutTypeFor(type, true)});
     });
 
     // Include one extra global column for the LogUp offset

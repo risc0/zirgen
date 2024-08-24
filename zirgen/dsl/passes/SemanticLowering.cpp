@@ -141,6 +141,11 @@ struct SplitSwitchArms : public OpRewritePattern<SwitchOp> {
   }
 };
 
+static bool isIdempotent(Operation* op) {
+  return op->hasTrait<OpTrait::ConstantLike>() || isPure(op) ||
+         llvm::isa<PolyOp, EqualZeroOp, YieldOp, IfOp, TerminateOp, LoadOp>(op);
+}
+
 // Attempts to to unravel the use of the result of a switch operation
 // returning a StructType.  We generate an additional switch operation
 // with the same condition for each member of the structure, having
@@ -171,17 +176,9 @@ struct UnravelSwitchPackResult : public OpRewritePattern<SwitchOp> {
 
     // Make sure all operations are ones we expect
     for (auto& region : op->getRegions()) {
-      for (auto& block : region) {
-        for (auto& blockOp : block) {
-          if (llvm::
-                  isa<PolyOp, EqualZeroOp, YieldOp, IfOp, TerminateOp, PackOp, SubscriptOp, LoadOp>(
-                      &blockOp))
-            continue;
-          if (blockOp.hasTrait<OpTrait::ConstantLike>() || isPure(&blockOp))
-            continue;
-
+      for (auto& nestedOp : region.getOps()) {
+        if (!isIdempotent(&nestedOp))
           return failure();
-        }
       }
     }
 
@@ -218,6 +215,75 @@ struct UnravelSwitchPackResult : public OpRewritePattern<SwitchOp> {
 
     auto packOp = rewriter.create<PackOp>(op.getLoc(), op.getType(), splitFields);
     rewriter.replaceAllUsesWith(op, packOp);
+    return success();
+  }
+};
+
+// Attempts to to unravel the use of the result of a switch operation returning
+// an ArrayType. We generate an additional switch operation with the same
+// condition for each element of the array, having the switch operation only
+// return that member. Then, we add an array operation to reconstruct the array
+// from the individual switch operations.
+//
+// Constraints are left in the original switch operation for processing by
+// SplitSwitchArms, but all uses of the result value are changed to use the
+// repacked value.
+//
+// This requires all operations inside are idempotent, since they may be
+// duplicated between array elements.  As such, we verify that all the
+// operations are ones are allow before we attempt unravelling.
+struct UnravelSwitchArrayResult : public OpRewritePattern<SwitchOp> {
+  using OpRewritePattern::OpRewritePattern;
+
+  LogicalResult matchAndRewrite(SwitchOp op, PatternRewriter& rewriter) const final {
+    // Don't bother unravelling if we don't need these results
+    if (op->use_empty())
+      return failure();
+
+    ArrayType ty = dyn_cast<ArrayType>(op.getType());
+    if (!ty)
+      return failure();
+
+    // Make sure all operations are ones we expect
+    for (auto& region : op->getRegions()) {
+      for (auto& nestedOp : region.getOps()) {
+        if (!isIdempotent(&nestedOp))
+          return failure();
+      }
+    }
+
+    rewriter.setInsertionPointAfter(op);
+    SmallVector<Value> splitElements;
+    for (size_t i = 0; i < ty.getSize(); i++) {
+      Value index = rewriter.create<arith::ConstantOp>(op->getLoc(), rewriter.getIndexAttr(i));
+      auto elementSplitOp = rewriter.create<SwitchOp>(
+          op.getLoc(), ty.getElement(), op.getSelector(), op.getArms().size());
+      for (size_t j = 0; j < op.getArms().size(); j++) {
+        OpBuilder::InsertionGuard insertionGuard(rewriter);
+        rewriter.createBlock(&elementSplitOp.getArms()[j]);
+
+        IRMapping mapper;
+        for (auto& origOp : op.getArms()[j].front()) {
+          TypeSwitch<Operation*>(&origOp)
+              .Case<EqualZeroOp>([&](auto origOp) {
+                // Don't add constraints to any of the copies.
+              })
+              .Case<IfOp>([&](auto origOp) {
+                // If ops can't contribute to the result, so skip them.
+              })
+              .Case<YieldOp>([&](auto origOp) {
+                auto subscriptOp = rewriter.createOrFold<SubscriptOp>(
+                    origOp.getLoc(), mapper.lookupOrDefault(origOp.getOperand()), index);
+                rewriter.create<YieldOp>(origOp.getLoc(), subscriptOp);
+              })
+              .Default([&](auto origOp) { rewriter.clone(*origOp, mapper); });
+        }
+      }
+      splitElements.push_back(elementSplitOp);
+    }
+
+    auto arrayOp = rewriter.create<ArrayOp>(op.getLoc(), op.getType(), splitElements);
+    rewriter.replaceAllUsesWith(op, arrayOp);
     return success();
   }
 };
@@ -592,6 +658,7 @@ struct GenerateCheckPass : public GenerateCheckBase<GenerateCheckPass> {
 
     // Only try these if nothing else work, since they cause a lot of duplication.
     patterns.insert<UnravelSwitchPackResult>(ctx, /*benefit=*/0);
+    patterns.insert<UnravelSwitchArrayResult>(ctx, /*benefit=*/0);
     patterns.insert<UnravelSwitchValResult>(ctx, /*benefit=*/0);
 
     FrozenRewritePatternSet frozenPatterns(std::move(patterns));
