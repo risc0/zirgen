@@ -27,6 +27,44 @@ using namespace mlir;
 using namespace zirgen::Zhlt;
 using namespace zirgen::ZStruct;
 
+/*
+ * Fundamentally, a layout is a mapping between the registers of a component and
+ * the columns of the underlying STARK trace. The goal of GenerateLayoutPass is
+ * to create such mapping that respects all of the layout constraints implied by
+ * the semantics of Zirgen, while using as few total columns as possible. This
+ * is guided by a few simple rules:
+ *   1. LayoutAliasOp operands must be assigned to the same columns
+ *   2. A column may be reused by registers on different arms of the same mux
+ *   3. Registers otherwise must be assigned different columns
+ *
+ * We use LayoutDAGAnalysis to take care of the first rule: this data flow
+ * analysis constructs a DAG with a vertex for each layout in the program,
+ * merging layouts that alias, and edges representing "structural inclusion."
+ * Generating the layout becomes a walk over this DAG, using a memo to ensure
+ * that if a vertex is visited twice (i.e. aliased) that it is assigned to the
+ * same columns.
+ *
+ * The second rule is handled by the AllocationTable, which keeps track of which
+ * columns are allocated in the "current scope." We push a new scope when
+ * visiting the arms of a mux, such that we can "pop" it and reuse those columns
+ * on the next arm. Afterwards, we mark any columns used by any mux arm as used,
+ * pursuant to the third rule. Thus, a mux typically needs as many columns as
+ * its largest arm (keep reading).
+ *
+ * There is an extra complication with layout aliases around muxes: when layouts
+ * are aliased between mux arms, those layouts must be placed in the exact same
+ * columns, regardless of "when" they are visited relative to other layouts in
+ * their respective mux arms. For this reason, it is necessary to reserve those
+ * columns across the arms of the mux where they are shared -- which is referred
+ * to here as "pinning."
+ *
+ * Note: Currently, only argument components and mux supers are aliased, so we
+ * manually pin them rather than using the LayoutDAGAnalysis to figure this out,
+ * and we make the simplifying but suboptimal decision to pin them all the way
+ * up to the root layout since it seems to work relatively well with our own
+ * circuits. This should be generalized when supporting manual layout aliasing.
+ */
+
 namespace zirgen {
 namespace dsl {
 namespace {

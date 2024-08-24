@@ -161,6 +161,9 @@ private:
         v = builder.create<AddOp>(sumTerm.getLoc(), v, sumTerm);
       }
       return v;
+    } else {
+      llvm_unreachable("unhandled layout when condensing argument");
+      return nullptr;
     }
   }
 
