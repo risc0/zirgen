@@ -132,7 +132,7 @@ struct LayoutGenerator {
   LayoutGenerator(StringAttr bufferName, DataFlowSolver& solver)
       : bufferName(bufferName), solver(solver) {}
 
-  Attribute generate(ComponentOp component) {
+  Attribute generate(CheckLayoutFuncOp component) {
     // Empty layout -> empty attribute
     if (!component.getLayout())
       return Attribute();
@@ -222,12 +222,12 @@ struct GenerateLayoutPass : public GenerateLayoutBase<GenerateLayoutPass> {
       if (!bufferName)
         return;
       LayoutGenerator layout(bufferName, solver);
-      Type layoutType = component.getLayoutType();
-      Attribute layoutAttr = layout.generate(component);
+      Attribute layoutAttr = layout.generate(component.getAspect<CheckLayoutFuncOp>());
 
       // Only generate layout symbol for components which contain registers.
       if (layoutAttr) {
         StringAttr symName = builder.getStringAttr(getLayoutConstName(component.getName()));
+        Type layoutType = component.getLayoutType();
         builder.create<GlobalConstOp>(loc, symName, layoutType, layoutAttr);
       }
 
@@ -254,7 +254,8 @@ private:
     else if (component.getName() == "Top")
       return StringAttr::get(ctx, "data");
     else
-      return {};
+      assert(!Zhlt::isBufferComponent(component));
+    return {};
   }
 };
 

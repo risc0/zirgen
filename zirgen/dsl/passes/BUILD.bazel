@@ -35,6 +35,7 @@ cc_library(
         "CommonRewrites.cpp",
         "ElideTrivialStructs.cpp",
         "GenerateAccum.cpp",
+        "GenerateCheckLayout.cpp",
         "GenerateGlobals.cpp",
         "GenerateLayout.cpp",
         "GenerateTaps.cpp",

@@ -27,8 +27,6 @@ std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createExpandLayoutPass();
 std::unique_ptr<mlir::Pass> createInlineLayoutPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createStripAliasLayoutOpsPass();
 
-void getUnrollPatterns(mlir::RewritePatternSet& patterns, mlir::MLIRContext* ctx);
-
 // Generate the code for registering passes.
 #define GEN_PASS_REGISTRATION
 #include "zirgen/Dialect/ZStruct/Transforms/Passes.h.inc"

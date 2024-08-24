@@ -67,3 +67,15 @@ std::string getTapsConstName();
 
 #define GET_OP_CLASSES
 #include "zirgen/Dialect/ZHLT/IR/Ops.h.inc"
+
+namespace zirgen::Zhlt {
+
+/// True iff component represents a "starting point" of execution like Top,
+/// Accum, or a test.
+bool isEntryPoint(ComponentOp component);
+
+/// True iff component is backed by a buffer, including all entry points and
+/// @mix and @global
+bool isBufferComponent(ComponentOp component);
+
+} // namespace zirgen::Zhlt

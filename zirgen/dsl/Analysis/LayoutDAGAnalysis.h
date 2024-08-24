@@ -27,8 +27,6 @@
 namespace zirgen {
 namespace dsl {
 
-int foo();
-
 // Define an abstract directed acyclic graph representing a layout. Each node in
 // the graph represents a particular layout value within the IR, and there is an
 // edge between two nodes if the second one is a direct sublayout of the first.
@@ -125,16 +123,13 @@ public:
     solver.load<mlir::dataflow::SparseConstantPropagation>();
   }
 
-  LogicalResult initialize(Operation* top) override;
-
 private:
   void visitOperation(Operation* op) override;
   void visitOp(ZStruct::AliasLayoutOp op);
   void visitOp(ZStruct::LookupOp op);
   void visitOp(ZStruct::SubscriptOp op);
   void visitOp(ZStruct::LayoutArrayOp op);
-  void visitOp(Zhlt::ComponentOp op);
-  void visitOp(Zhlt::ConstructOp op);
+  void visitOp(Zhlt::CheckLayoutFuncOp op);
 };
 
 } // namespace dsl

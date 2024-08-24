@@ -45,6 +45,19 @@ def GenerateBack : Pass<"generate-back", "mlir::ModuleOp"> {
   let dependentDialects = ["zirgen::ZStruct::ZStructDialect"];
 }
 
+def GenerateCheckLayout : Pass<"generate-check-layout", "mlir::ModuleOp"> {
+  let summary = "Lowers the ZHLT dialect to produce functions to check layout constraints";
+  let description = [{
+    Generates layout constraint checks (zstruct.alias_layout) for all circuit entry points and adds
+    them to the module. Each generated function takes the same layout type as the entry point and
+    returns nothing.
+
+    The generated function has all of its callees inlined.
+  }];
+  let constructor = "zirgen::dsl::createGenerateCheckLayoutPass()";
+  let dependentDialects = ["zirgen::ZStruct::ZStructDialect"];
+}
+
 def GenerateCheck : Pass<"generate-check", "mlir::ModuleOp"> {
   let summary = "Lowers the ZHLT dialect to produce functions to check constraints";
   let description = [{

@@ -321,7 +321,7 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
   void runOnOperation() override {
     getOperation().walk([&](ComponentOp component) {
       llvm::StringRef baseName = component.getName();
-      if (baseName.ends_with("$accum") || (baseName != "Top" && !baseName.starts_with("test$")))
+      if (baseName.ends_with("$accum") || !Zhlt::isEntryPoint(component))
         return;
 
       buildAccumStep(component);

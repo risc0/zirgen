@@ -35,12 +35,14 @@ cc_library(
         "ExpandLayout.cpp",
         "InlineLayout.cpp",
         "OptimizeLayout.cpp",
+        "RewritePatterns.cpp",
         "StripAliasLayoutOps.cpp",
         "Unroll.cpp",
     ],
     hdrs = [
         "PassDetail.h",
         "Passes.h",
+        "RewritePatterns.h",
     ],
     deps = [
         ":PassesIncGen",
