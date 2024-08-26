@@ -16,17 +16,6 @@
 
 namespace zirgen::BigInt {
 
-void makeConstZeroTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
-  auto inp = builder.create<BigInt::DefOp>(
-      loc, bits, 0, true); // Ignored, but not allowed to have no-input BigInt op
-
-  mlir::Type zeroType = builder.getIntegerType(8, false); // unsigned 8 bit
-  auto zeroAttr = builder.getIntegerAttr(zeroType, 0);    // value 0
-  auto zero = builder.create<BigInt::ConstOp>(loc, zeroAttr);
-
-  builder.create<BigInt::EqualZeroOp>(loc, zero);
-}
-
 void makeConstOneTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto expected = builder.create<BigInt::DefOp>(loc, bits, 0, true);
 
