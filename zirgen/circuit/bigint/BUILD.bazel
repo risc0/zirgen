@@ -33,11 +33,11 @@ ZKRS = [
     "rsa_256_x1",
     "rsa_256_x2",
     "rsa_3072_x15",
-    "ecdsa_verify_8",
+    "ecdsa_verify_8",  # TODO
     "ec_aff_add_test_8",
     "ec_aff_sub_test_8",
     "ec_aff_doub_test_8",
-    "ec_aff_mul_test_8",
+    "ec_aff_mul_test_5",  # TODO
     "ec_aff_neg_test_8",
     "ec_pts_eq_test_8",
     "const_add_test_8",

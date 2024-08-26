@@ -183,6 +183,7 @@ int main(int argc, char* argv[]) {
   // ECDSA
   for (size_t numBits : {8}) {
     module.addFunc<0>("ecdsa_verify_" + std::to_string(numBits), {}, [&]() {
+      llvm::outs() << "  Making ecdsa_verify_" + std::to_string(numBits) + "\n";
       auto& builder = Module::getCurModule()->getBuilder();
       zirgen::BigInt::makeECDSAVerify(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 31), APInt(numBits, 0), APInt(numBits, 3));  // TODO: show values in ZKR name
     });
@@ -200,7 +201,8 @@ int main(int argc, char* argv[]) {
       zirgen::BigInt::makeECAffineDoubleTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
     });
   }
-  for (size_t numBits : {8}) {  // TODO: Switch to 5 bits
+  for (size_t numBits : {5}) {  // TODO: Switch to 5 bits
+    llvm::outs() << "  Making ec_aff_mul_test_" + std::to_string(numBits) + "\n";
     module.addFunc<0>("ec_aff_mul_test_" + std::to_string(numBits), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
       zirgen::BigInt::makeECAffineMultiplyTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
@@ -229,6 +231,8 @@ int main(int argc, char* argv[]) {
   if (failed(applyPassManagerCLOptions(pm))) {
     throw std::runtime_error("Failed to apply command line options");
   }
+
+  // llvm::outs() << module.getModule();  // TODO: remove?
 
   pm.addPass(createCanonicalizerPass());
   pm.addPass(createCSEPass());
