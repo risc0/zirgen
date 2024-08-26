@@ -68,7 +68,7 @@ void emitLang(llvm::StringRef langName,
   zirgen::codegen::CodegenOptions codegenOpts;
   codegenOpts.lang = lang;
   if (path.empty()) {
-    llvm::raw_ostream &output = llvm::outs();
+    llvm::raw_ostream& output = llvm::outs();
     zirgen::codegen::CodegenEmitter emitter(codegenOpts, &output, module.getContext());
     emitter.emitModule(module);
   } else {
