@@ -68,6 +68,7 @@ bool AffinePt::on_same_curve_as(const AffinePt& other) const {
 }
 
 AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffinePt& rhs) {
+  // Note: `add` can fail in two ways: A + A (doesn't use doubling algorithm) or A + (-A) (can't write 0)  [TODO: Document?]
   // Formulas (all mod `prime`):
   //   lambda = (yQ - yP) / (xQ - xP)
   //       nu = yP - lambda * xP
@@ -156,10 +157,8 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt, 
   // We can't represent the identity in affine coordinates.
   // Therefore, instead of computing scale * P, compute Arb + scale * P - Arb
   // where Arb is some arbitrary point
-  // This can fail if choosing an unlucky point Arb, but [TODO: Check] no soundness issues and can adjust Arb to get completeness
+  // This can fail if choosing an unlucky point Arb, but no soundness issues and can adjust Arb to get completeness
   auto result = arbitrary;
-
-  // return pt;  // TODO: Aborting early to test earlier parts  // passes
 
   // The repeatedly doubled point
   auto doubled_pt = pt;
@@ -179,7 +178,7 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt, 
   for (size_t it = 0; it < 6 /*small_scale.getOut().getType().getBitWidth()*/; it++) {
     // Compute the remainder of scale mod 2
     // Use BitAnd instead of NondetRem to ensure you get 0 or 1, not something congruent to them mod 2
-    auto rem = builder.create<BigInt::NondetRemOp>(loc, scalar, two);  // TODO: Should we add IsOddOp instead for this?
+    auto rem = builder.create<BigInt::NondetRemOp>(loc, scalar, two);
     auto quot = builder.create<BigInt::NondetQuotOp>(loc, scalar, two);
     auto quot_prod = builder.create<BigInt::MulOp>(loc, two, quot);
     auto resum = builder.create<BigInt::AddOp>(loc, quot_prod, rem);
@@ -198,7 +197,7 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt, 
     auto xIfNotAdd = builder.create<BigInt::MulOp>(loc, result.x(), one_minus_rem);
     auto yIfNotAdd = builder.create<BigInt::MulOp>(loc, result.y(), one_minus_rem);
     auto xMerged = builder.create<BigInt::AddOp>(loc, xIfAdd, xIfNotAdd);
-    auto yMerged = builder.create<BigInt::AddOp>(loc, yIfAdd, yIfNotAdd);  // TODO ... does this work? Or do I need a different accessor approach
+    auto yMerged = builder.create<BigInt::AddOp>(loc, yIfAdd, yIfNotAdd);
     auto newX = builder.create<BigInt::ReduceOp>(loc, xMerged, result.curve()->prime_as_bigint(builder, loc));
     auto newY = builder.create<BigInt::ReduceOp>(loc, yMerged, result.curve()->prime_as_bigint(builder, loc));
 
@@ -282,7 +281,7 @@ AffinePt doub(OpBuilder builder, Location loc, const AffinePt& pt){
 }
 
 AffinePt sub(OpBuilder builder, Location loc, const AffinePt& lhs, const AffinePt& rhs) {
-  // TODO/Note: `sub` can fail in two ways: A - A (can't write 0) or A - (-A) (doesn't use doubling algorithm)
+  // Note: `sub` can fail in two ways: A - A (can't write 0) or A - (-A) (doesn't use doubling algorithm) [TODO: Document?]
   auto neg_rhs = neg(builder, loc, rhs);
   return add(builder, loc, lhs, neg_rhs);
 }
@@ -439,7 +438,7 @@ void makeECAffineMultiplyTest(
   auto scale = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto xArb = builder.create<BigInt::DefOp>(loc, bits, 3, true);
   auto yArb = builder.create<BigInt::DefOp>(loc, bits, 4, true);
-  // auto order = builder.create<BigInt::DefOp>(loc, order_bits, 8, true);  // TODO: Or get from a parameter to this call?  // TODO
+  // auto order = builder.create<BigInt::DefOp>(loc, order_bits, 5, true);  // TODO: Or get from a parameter to this call?  // TODO
   auto order = builder.create<BigInt::DefOp>(loc, bits, 5, true);  // TODO: Or get from a parameter to this call?
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 6, true);
   auto yR = builder.create<BigInt::DefOp>(loc, bits, 7, true);
@@ -469,7 +468,7 @@ void makeECAffineMultiplyTest(
   AffinePt arb(xArb, yArb, curve, order);
   AffinePt expected(xR, yR, curve, order);
   auto result = mul(builder, loc, scale, inp, arb);
-  // result.validate_equal(builder, loc, expected);  // TODO: Disabled to test earlier parts
+  result.validate_equal(builder, loc, expected);
 }
 
 void makeECAffineNegateTest(
