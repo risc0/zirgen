@@ -1,7 +1,8 @@
 import sha256_for_keccak;
 import one_hot;
 extern GetCycle() : Val;
-extern ReadNext() : Val;
+extern configureInput(bytesPerElem: Val);
+extern readInput() : Val;
 
 component SLEN() { 21 }
 component INPLEN() { 75 }
@@ -850,13 +851,13 @@ component absorb_word<X: Val, Y: Val>(rvprev: RetTuple) {
   unpack_f := ToBits<BLEN()>(v3);
   FromBits<BLEN()>(unpack_f) = v3;
 
-  inp1 := ReadNext();
+  inp1 := readInput();
   unpack_1 := ToBits<WORDLEN()>(inp1);
-  inp2 := ReadNext();
+  inp2 := readInput();
   unpack_2 := ToBits<WORDLEN()>(inp2);
-  inp3 := ReadNext();
+  inp3 := readInput();
   unpack_3 := ToBits<WORDLEN()>(inp3);
-  inp4 := ReadNext();
+  inp4 := readInput();
   unpack_4 := ToBits<WORDLEN()>(inp4);
   memidx := rvprev.midx + 1 + X+5*Y;
   WriteMemory(memidx, MemDigest([FromBits<WORDLEN()>(unpack_1),FromBits<WORDLEN()>(unpack_2),FromBits<WORDLEN()>(unpack_3),FromBits<WORDLEN()>(unpack_4)]));
@@ -985,13 +986,13 @@ component equal_word<X: Val>(rvprev: RetTuple) {
   unpack_f := ToBits<SLEN()>(v3);
   FromBits<SLEN()>(unpack_f) = v3;
 
-  inp1 := ReadNext();
+  inp1 := readInput();
   unpack_1 := ToBits<WORDLEN()>(inp1);
-  inp2 := ReadNext();
+  inp2 := readInput();
   unpack_2 := ToBits<WORDLEN()>(inp2);
-  inp3 := ReadNext();
+  inp3 := readInput();
   unpack_3 := ToBits<WORDLEN()>(inp3);
-  inp4 := ReadNext();
+  inp4 := readInput();
   unpack_4 := ToBits<WORDLEN()>(inp4);
   memidx := rvprev.midx + 1 + X;
   WriteMemory(memidx, MemDigest([FromBits<WORDLEN()>(unpack_1),FromBits<WORDLEN()>(unpack_2),FromBits<WORDLEN()>(unpack_3),FromBits<WORDLEN()>(unpack_4)]));
@@ -1012,12 +1013,12 @@ component equal_word<X: Val>(rvprev: RetTuple) {
   Z := Isz(X-3);
   nxt := [1-Z, Z] -> (
     [X+1, 17, 0, memidx],
-    { blk := NondetReg(ReadNext());
+    { blk := NondetReg(readInput());
       invBlk := NondetReg(Inv(blk));
       prod := blk*invBlk;
       blk*(1-prod) = 0;
 
-      ReadNext(); ReadNext(); ReadNext();
+      readInput(); readInput(); readInput();
       memidxNxt := memidx + 1;
       WriteMemory(memidxNxt, MemDigest([blk,0,0,0]));
 
@@ -1106,9 +1107,9 @@ component fstep(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
     absorb_major2(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
                   rvprev07, rvprev08, rvprev09),
     setup_major(rvprev01, rvprev02, rvprev03, rvprev04, rvprev68),
-    { blk := NondetReg(ReadNext());
+    { blk := NondetReg(readInput());
       //invBlk := NondetReg(Inv(Blk)); Blk*InvBlk = 1; //maybe unneeded
-      ReadNext(); ReadNext(); ReadNext();
+      readInput(); readInput(); readInput();
       WriteMemory(0, MemDigest([blk,0,0,0]));
       RetTuple(dummyB(), dummyB(), dummyB(), dummyE(), dummyB(), dummyB(),
                0, 15, 0, blk, 0)
@@ -1128,6 +1129,46 @@ component Top() {
                    retvals@15, retvals@16, retvals@68);
 }
 
-test KeccakTest01 {
-  Top();
+test TestKeccak01 { // test_cycles >= 2897
+  configureInput(2);
+  x := Top();
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 0] - 0x5921) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 1] - 0x0c49) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 2] - 0x33fc) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 3] - 0xafd9) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 4] - 0x7ab6) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 5] - 0x5be2) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 6] - 0x169b) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 7] - 0x843c) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 8] - 0x3b7f) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 9] - 0x1b17) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[10] - 0x47bd) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[11] - 0xcef3) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[12] - 0x05f8) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[13] - 0xa3ec) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[14] - 0x34cb) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[15] - 0xcc6e) = 0;
 }
+
+/*
+test TestKeccak02 { // test_cycles >= 22770
+  configureInput(2);
+  x := Top();
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 0] - 0x7a29) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 1] - 0x67af) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 2] - 0x4320) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 3] - 0x2ca6) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 4] - 0x1f87) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 5] - 0xc8f3) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 6] - 0x0d35) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 7] - 0xeb33) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 8] - 0x6195) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 9] - 0x1191) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[10] - 0xc2a7) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[11] - 0xbb3b) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[12] - 0x95d8) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[13] - 0x0dc2) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[14] - 0xcfd4) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[15] - 0xcc1b) = 0;
+}
+*/
