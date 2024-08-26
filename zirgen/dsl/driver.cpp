@@ -1,6 +1,16 @@
-// Copyright (c) 2024 RISC Zero, Inc.
+// Copyright 2024 RISC Zero, Inc.
 //
-// All rights reserved.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <fstream>
 #include <iostream>
@@ -165,6 +175,14 @@ struct TestExternHandler : public zirgen::Zll::ExternHandler {
       check(args.size() == 0, "GetCycle expects no arguments");
       check(outCount == 1, "GetCycle returns one result");
       results.push_back(cycle);
+    } else if (name == "SimpleMemoryPoke") {
+      check(args.size() == 2, "SimpleMemoryPoke expects 2 arguments");
+      auto fpArgs = asFpArray(args);
+      memory[fpArgs[0]] = fpArgs[1];
+    } else if (name == "SimpleMemoryPeek") {
+      check(args.size() == 1, "SimpleMemoryPeek expects 1 arguments");
+      auto fpArgs = asFpArray(args);
+      results.push_back(memory[fpArgs[0]]);
     } else if (name == "MemoryPoke") {
       auto fpArgs = asFpArray(args);
       check(args.size() == 3, "MemoryPoke expects 3 arguments");

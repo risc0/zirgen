@@ -11,8 +11,8 @@ features and integrating them with the RISC Zero proof system.
 First off, we need to create a new Zirgen file for our circuit. Zirgen files
 conventionally have the extension `.zir`, and the final source code for this
 example lives in `/zirgen/dsl/examples/fibonacci.zir`. For now, we can create
-just a trivial `Top` component in that file which doesn't really do anything to
-satisfy the compiler:
+just a trivial `Top` component in that file which doesn't really do anything,
+but that satisfies the compiler:
 
 ```
 component Top() {}
@@ -54,7 +54,7 @@ That library code doesn't really do anything now because the circuit doesn't do
 anything yet, but at the end of the tutorial we'll talk about what's in the
 generated code and how to integrate it with the proof system. We'll do the bulk
 of our circuit development cycle without it though, using Zirgen tests and the
-interpreter. The following command (replacing the path of `fibonacci.zir`` with
+interpreter. The following command (replacing the path of `fibonacci.zir` with
 the correct path in your project) should quietly succeed:
 
 ```
@@ -348,4 +348,14 @@ test SixthCycle {
 }
 ```
 
-By default, invoking Zirgen on our
+Invoking Zirgen on our circuit with `--test` runs only a single cycle, but now
+we need to run it for at least 6 for all of our new tests to be meaningful! To
+do this, we can simply add `--test-cycles=6` (or any other positive integer) to
+set the number of cycles to run our tests for:
+
+```
+bazel run //zirgen/dsl:zirgen -- $(pwd)/zirgen/dsl/examples/fibonacci.zir --test --test-cycles=6
+```
+
+[Prev](02_Conceptual_Overview.md)
+[Next](04_Components.md)

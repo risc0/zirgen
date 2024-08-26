@@ -6,6 +6,7 @@ cc_library(
     name = "Utilities",
     hdrs = [
         "DataFlow.h",
+        "KeyPath.h",
     ],
     deps = [],
 )

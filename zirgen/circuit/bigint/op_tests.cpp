@@ -1,21 +1,20 @@
-// Copyright (c) 2024 RISC Zero, Inc.
+// Copyright 2024 RISC Zero, Inc.
 //
-// All rights reserved.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include "zirgen/circuit/bigint/op_tests.h"
 
 namespace zirgen::BigInt {
-
-void makeConstZeroTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
-  auto inp = builder.create<BigInt::DefOp>(
-      loc, bits, 0, true); // Ignored, but not allowed to have no-input BigInt op
-
-  mlir::Type zeroType = builder.getIntegerType(8, false); // unsigned 8 bit
-  auto zeroAttr = builder.getIntegerAttr(zeroType, 0);    // value 0
-  auto zero = builder.create<BigInt::ConstOp>(loc, zeroAttr);
-
-  builder.create<BigInt::EqualZeroOp>(loc, zero);
-}
 
 void makeConstOneTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto expected = builder.create<BigInt::DefOp>(loc, bits, 0, true);

@@ -1,6 +1,16 @@
-// Copyright (c) 2024 RISC Zero, Inc.
+// Copyright 2024 RISC Zero, Inc.
 //
-// All rights reserved.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include "zirgen/compiler/codegen/codegen.h"
 
@@ -537,10 +547,16 @@ private:
   mustache openTemplate(const std::string& path) {
     fs::path fs_path(path);
     if (!fs::exists(fs_path)) {
-      throw std::runtime_error(llvm::formatv("File does not exist: {0}", path));
+      if (fs::exists("../" + path)) {
+        // Some lit tests put us in the "zirgen" subdirectory, so try up
+        // one level.  TODO: Get rid of this lit test directory
+        // confusion
+        fs_path = fs::path("../" + path);
+      } else
+        throw std::runtime_error(llvm::formatv("File does not exist: {0}", path));
     }
 
-    std::ifstream ifs(path);
+    std::ifstream ifs(fs_path);
     ifs.exceptions(std::ios_base::badbit | std::ios_base::failbit);
     std::string str(std::istreambuf_iterator<char>{ifs}, {});
     mustache tmpl(str);

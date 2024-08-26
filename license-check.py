@@ -3,14 +3,9 @@
 import sys
 import os
 from pathlib import Path
-from datetime import date
 import subprocess
 
-CWD = Path('.').absolute()
-
-PRIVATE_HEADER = Path('LICENSE').read_text().splitlines()
-
-PUBLIC_HEADER = '''
+PUBLIC_HEADER = """
 // Copyright {YEAR} RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,67 +19,72 @@ PUBLIC_HEADER = '''
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-// This code is automatically generated
-'''.strip().splitlines()
-
-ALL_HEADERS = [PRIVATE_HEADER, PUBLIC_HEADER]
-
-IGNORED_DIRS = [
-    Path('.git').absolute(),
-    Path('target').absolute(),
-    Path('tmp').absolute(),
-    Path('zirgen/bootstrap/target').absolute(),
-]
-
-IGNORED_FILES = []
+""".strip().splitlines()
 
 EXTENSIONS = [
-    '.cpp',
-    '.h',
-    '.rs',
+    ".cpp",
+    ".h",
+    ".rs",
+]
+
+SKIP_DIRS = [
+    str(Path.cwd()) + "/risc0/cargo-risczero/templates/rust-starter",
+    str(Path.cwd()) + "/risc0/sys/cxx/vendor",
+    str(Path.cwd()) + "/risc0/zkvm/src/host/protos",
+    str(Path.cwd()) + "/risc0/zkvm/src/host/server/exec",
 ]
 
 
 def check_header(expected_year, lines_actual):
-    errs = []
-    for lines_expected in ALL_HEADERS:
-        for (expected, actual) in zip(lines_expected, lines_actual):
-            expected = expected.replace('{YEAR}', expected_year)
-            if expected != actual:
-                errs.append((expected, actual))
-                break
-    if len(errs) == len(ALL_HEADERS):
-        return errs[0]
+    for expected, actual in zip(PUBLIC_HEADER, lines_actual):
+        expected = expected.replace("{YEAR}", expected_year)
+        if expected != actual:
+            return (expected, actual)
     return None
 
 
-def check_file(file):
-    cmd = ['git', 'log', '-1', '--format=%ad', '--date=format:%Y', file]
-    expected_year = subprocess.check_output(cmd, encoding='UTF-8').strip()
-    rel_path = file.relative_to(CWD)
+def check_file(root, file):
+    cmd = ["git", "log", "-1", "--format=%ad", "--date=format:%Y", file]
+    expected_year = subprocess.check_output(cmd, encoding="UTF-8").strip()
+    rel_path = file.relative_to(root)
     lines = file.read_text().splitlines()
     result = check_header(expected_year, lines)
     if result:
-        print(f'{rel_path}: invalid header!')
-        print(f'  expected: {result[0]}')
-        print(f'    actual: {result[1]}')
+        print(f"{rel_path}: invalid header!")
+        print(f"  expected: {result[0]}")
+        print(f"    actual: {result[1]}")
         return 1
     return 0
 
 
+def repo_root():
+    """Return an absolute Path to the repo root"""
+    cmd = ["git", "rev-parse", "--show-toplevel"]
+    return Path(subprocess.check_output(cmd, encoding="UTF-8").strip())
+
+
+def tracked_files():
+    """Yield all file paths tracked by git"""
+    cmd = ["git", "ls-tree", "--full-tree", "--name-only", "-r", "HEAD"]
+    tree = subprocess.check_output(cmd, encoding="UTF-8").strip()
+    for path in tree.splitlines():
+        yield (repo_root() / Path(path)).absolute()
+
+
 def main():
+    root = repo_root()
     ret = 0
-    for root, dirs, files in os.walk('.'):
-        root = Path(root).absolute()
-        if root in IGNORED_DIRS:
-            dirs[:] = []
-            continue
-        for file in files:
-            file = Path(file)
-            path = root / file
-            if path not in IGNORED_FILES and file.suffix in EXTENSIONS:
-                ret |= check_file(root / file)
+    for path in tracked_files():
+        if path.suffix in EXTENSIONS and ".inc" not in path.suffixes:
+            skip = False
+            for path_start in SKIP_DIRS:
+                if str(path).startswith(path_start):
+                    skip = True
+                    break
+            if skip:
+                continue
+
+            ret |= check_file(root, path)
     sys.exit(ret)
 
 
