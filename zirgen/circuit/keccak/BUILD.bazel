@@ -1,0 +1,21 @@
+load("//bazel/rules/lit:defs.bzl", "glob_lit_tests")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+glob_lit_tests(
+    data = [
+        "bits.zir",
+        "one_hot.zir",
+        "sha256_for_keccak.zir",
+    ],
+    exclude = [
+        "sha256_for_keccak.zir",
+        "one_hot.zir",
+        "bits.zir",
+    ],
+    test_file_exts = [
+        "zir",
+    ],
+)

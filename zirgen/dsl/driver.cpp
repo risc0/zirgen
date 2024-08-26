@@ -292,6 +292,7 @@ int runTests(mlir::ModuleOp& module) {
     return 1;
   }
   pm.enableVerifier(true);
+    applyDefaultTimingPassManagerCLOptions(pm);
   pm.addPass(mlir::createInlinerPass());
   pm.addPass(zirgen::ZStruct::createUnrollPass());
   pm.addPass(mlir::createCanonicalizerPass());
@@ -503,6 +504,7 @@ int main(int argc, char* argv[]) {
     return 1;
   }
   pm.enableVerifier(true);
+    applyDefaultTimingPassManagerCLOptions(pm);
   pm.addPass(zirgen::dsl::createGenerateAccumPass());
   pm.addPass(zirgen::dsl::createGenerateGlobalsPass());
   pm.addPass(mlir::createSymbolDCEPass());
