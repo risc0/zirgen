@@ -36,6 +36,7 @@ cc_binary(
         "//zirgen/Dialect/R1CS/Conversion/R1CSToBigInt:passes",
         "//zirgen/Dialect/R1CS/IR",
         "//zirgen/compiler/r1cs",
+        "//zirgen/compiler/codegen",
         "@llvm-project//mlir:AllTranslations",
         "@llvm-project//mlir:MlirOptLib",
     ],

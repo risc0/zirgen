@@ -26,6 +26,7 @@
 #include "zirgen/Dialect/IOP/IR/IR.h"
 #include "zirgen/Dialect/R1CS/Conversion/R1CSToBigInt/Passes.h"
 #include "zirgen/Dialect/R1CS/IR/R1CS.h"
+#include "zirgen/compiler/codegen/codegen.h"
 #include "zirgen/compiler/r1cs/lower.h"
 #include "zirgen/compiler/r1cs/r1csfile.h"
 #include "zirgen/compiler/r1cs/validate.h"
@@ -44,7 +45,39 @@ enum Action {
   MLIR,
   BigInt,
   Zll,
+  Rust,
 };
+} // namespace
+
+namespace {
+
+std::unique_ptr<llvm::raw_fd_ostream> openOutputFile(llvm::StringRef path, llvm::StringRef name) {
+  std::string filename = (path + "/" + name).str();
+  std::error_code ec;
+  auto ofs = std::make_unique<llvm::raw_fd_ostream>(filename, ec);
+  if (ec) {
+    throw std::runtime_error("Unable to open file: " + filename);
+  }
+  return ofs;
+}
+
+void emitLang(llvm::StringRef langName,
+              zirgen::codegen::LanguageSyntax* lang,
+              llvm::StringRef path,
+              mlir::ModuleOp module) {
+  zirgen::codegen::CodegenOptions codegenOpts;
+  codegenOpts.lang = lang;
+  if (path.empty()) {
+    llvm::raw_ostream &output = llvm::outs();
+    zirgen::codegen::CodegenEmitter emitter(codegenOpts, &output, module.getContext());
+    emitter.emitModule(module);
+  } else {
+    auto ofs = openOutputFile(path, ("bigint." + langName + ".inc").str());
+    zirgen::codegen::CodegenEmitter emitter(codegenOpts, ofs.get(), module.getContext());
+    emitter.emitModule(module);
+  }
+}
+
 } // namespace
 
 static cl::opt<enum Action>
@@ -52,7 +85,8 @@ static cl::opt<enum Action>
                cl::desc("Desired output"),
                cl::values(clEnumValN(MLIR, "mlir", "Plain MLIR representation of R1CS"),
                           clEnumValN(BigInt, "bigint", "Compute using integers"),
-                          clEnumValN(Zll, "zll", "Lower to ZLL dialect")));
+                          clEnumValN(Zll, "zll", "Lower to ZLL dialect"),
+                          clEnumValN(Rust, "rust", "Generate Rust validation function")));
 
 int main(int argc, char* argv[]) {
   llvm::InitLLVM y(argc, argv);
@@ -123,15 +157,20 @@ int main(int argc, char* argv[]) {
     return 0;
   }
 
-  mlir::PassManager pm2(&context);
-  pm2.addPass(zirgen::BigInt::createLowerZllPass());
-  if (mlir::failed(pm2.run(*op))) {
-    throw std::runtime_error("Failed to apply bigint lowering passes");
-  }
-
   if (emitAction == Action::Zll) {
+    mlir::PassManager pm2(&context);
+    pm2.addPass(zirgen::BigInt::createLowerZllPass());
+    if (mlir::failed(pm2.run(*op))) {
+      throw std::runtime_error("Failed to apply bigint lowering passes");
+    }
+
     op->dump();
     return 0;
+  } else if (emitAction == Action::Rust) {
+    static zirgen::codegen::RustLanguageSyntax rustLang;
+    rustLang.addContextArgument("ctx: &mut BigIntContext");
+    std::string dir = "";
+    emitLang("rs", &rustLang, dir, *op);
   }
 
   return 0;
