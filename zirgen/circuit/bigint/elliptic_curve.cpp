@@ -86,7 +86,6 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
 
   Value y_diff = builder.create<BigInt::SubOp>(loc, rhs.y(), lhs.y());
   y_diff = builder.create<BigInt::AddOp>(loc, y_diff, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
-  // TODO: Investigate whether "Reduce doesn't work with negatives" introduces a security hole
   y_diff = builder.create<BigInt::ReduceOp>(loc, y_diff, prime);
   Value x_diff = builder.create<BigInt::SubOp>(loc, rhs.x(), lhs.x());
   x_diff = builder.create<BigInt::AddOp>(loc, x_diff, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
