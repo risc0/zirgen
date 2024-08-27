@@ -191,7 +191,7 @@ int main(int argc, char* argv[]) {
     });
   }
   // ECDSA
-  for (size_t numBits : {8}) {
+  for (size_t numBits : {8, 256}) {  // TODO: Need separate entries
     module.addFunc<0>("ecdsa_verify_" + std::to_string(numBits), {}, [&]() {
       llvm::outs() << "  Making ecdsa_verify_" + std::to_string(numBits) + "\n";
       auto& builder = Module::getCurModule()->getBuilder();
@@ -211,7 +211,7 @@ int main(int argc, char* argv[]) {
       zirgen::BigInt::makeECAffineDoubleTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
     });
   }
-  for (size_t numBits : {8}) {  // TODO: Switch to 5 bits
+  for (size_t numBits : {8, 256}) {  // TODO: Switch to 5 bits
     llvm::outs() << "  Making ec_aff_mul_test_" + std::to_string(numBits) + "\n";
     module.addFunc<0>("ec_aff_mul_test_" + std::to_string(numBits), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
