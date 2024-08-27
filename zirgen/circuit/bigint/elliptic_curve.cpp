@@ -170,7 +170,7 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt, 
   // (i.e., since we have a test on order 43, to 6)
   // What we should actually do is read this value off the prime
   // Note that until we do this, the small tests will fail due to the extra collision opportunities with Arbitrary
-  llvm::outs() << "    EC mul with " + std::to_string(llvm::cast<BigIntType>(scalar.getType()).getMaxBits()) + " iterations\n";
+  llvm::outs() << "    EC mul with " + std::to_string(llvm::cast<BigIntType>(scalar.getType()).getMaxBits()) + " iterations\n";  // TODO: Temporary log
   for (size_t it = 0; it < 6 /*llvm::cast<BigIntType>(scalar.getType()).getMaxBits()*/; it++) {  // TODO: Re-enable input-based size
     // Compute the remainder of scale mod 2
     // We need exactly 0 or 1, not something congruent to them mod 2
