@@ -454,18 +454,24 @@ void LoweringImpl::gen(ConstructorParamOp ctorParam, Block* topBlock) {
     throw MalformedIRException();
   }
   auto ctor = componentManager->lookupComponent(paramType);
-  Type type;
+  Type valueType;
+  Type layoutType;
   if (ctor) {
-    type = ctor.getOutType();
+    valueType = ctor.getOutType();
+    layoutType = ctor.getLayoutType();
   } else {
     ctorParam.emitError("expected a valid parameter type");
-    type = Zhlt::getComponentType(ctorParam.getContext());
+    valueType = Zhlt::getComponentType(ctorParam.getContext());
   }
   if (ctorParam.getVariadic()) {
-    type = VariadicType::get(ctx, type);
+    valueType = VariadicType::get(ctx, valueType);
   }
-  auto argument = topBlock->addArgument(type, ctorParam.getLoc());
-  valueMapping[ctorParam.getOut()] = argument;
+  auto value = topBlock->addArgument(valueType, ctorParam.getLoc());
+  valueMapping[ctorParam.getOut()] = value;
+  if (layoutType) {
+    auto layout = topBlock->addArgument(layoutType, ctorParam.getLoc());
+    layoutMapping[ctorParam.getOut()] = layout;
+  }
 }
 
 void LoweringImpl::gen(TypeParamOp typeParam, ArrayRef<Attribute> typeArgs) {
@@ -860,6 +866,12 @@ void LoweringImpl::gen(ConstructOp construct, ComponentBuilder& cb) {
     } else {
       expectedArgType++;
       arguments.push_back(casted);
+    }
+    if (expectedArgType != argumentTypes.end() && ZStruct::isLayoutType(*expectedArgType)) {
+      Value layout = asLayout(zhlArg);
+      Value castedLayout = coerceTo(layout, *expectedArgType);
+      expectedArgType++;
+      arguments.push_back(castedLayout);
     }
   }
   // If there is a variadic parameter, add its pack to the argument list
