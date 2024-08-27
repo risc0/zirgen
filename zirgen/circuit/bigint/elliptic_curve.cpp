@@ -146,13 +146,9 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt, 
   auto two = builder.create<BigInt::ConstOp>(loc, twoAttr);
 
   // This algorithm doesn't work if `scalar` is congruent to 0 mod `order`
-  // Confirm safe by multiplying by its inverse and getting 1
-  // TODO: Is it unsafe or merely broken if we use scale = 0? If the latter, could skip this
-  // TODO: Skipping for now to delay implementing "order"
-  // auto scaleinv = builder.create<BigInt::NondetInvModOp>(loc, scalar, order);
-  // auto scaleinv_red = builder.create<BigInt::ReduceOp>(loc, scaleinv, order);
-  // auto nonzero_check = builder.create<BigInt::SubOp>(loc, scaleinv_red, one);
-  // builder.create<BigInt::EqualZeroOp>(loc, nonzero_check);
+  // No separate testing is needed, as this will compute the `result` value (inclusive of `arbitrary`) to
+  // be equal to `arbitrary` in this case, and then compute `sub` of `arbitrary` with itself, which fails
+  // (via attempted division by zero) in `sub`.
 
   // We can't represent the identity in affine coordinates.
   // Therefore, instead of computing scale * P, compute Arb + scale * P - Arb
@@ -178,7 +174,8 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt, 
   llvm::outs() << "    EC mul with " + std::to_string(llvm::cast<BigIntType>(scalar.getType()).getMaxBits()) + " iterations\n";
   for (size_t it = 0; it < 6 /*llvm::cast<BigIntType>(scalar.getType()).getMaxBits()*/; it++) {  // TODO: Re-enable input-based size
     // Compute the remainder of scale mod 2
-    // Use BitAnd instead of NondetRem to ensure you get 0 or 1, not something congruent to them mod 2
+    // We need exactly 0 or 1, not something congruent to them mod 2
+    // Therefore, directly use the nondets, and check not just that the q * d + r = n but also that r * (r - 1) == 0
     auto rem = builder.create<BigInt::NondetRemOp>(loc, scalar, two);
     auto quot = builder.create<BigInt::NondetQuotOp>(loc, scalar, two);
     auto quot_prod = builder.create<BigInt::MulOp>(loc, two, quot);
@@ -187,6 +184,9 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt, 
     builder.create<BigInt::EqualZeroOp>(loc, check);
     // Also need 1 - (scale % 2)
     auto one_minus_rem = builder.create<BigInt::SubOp>(loc, one, rem);
+    // `check_bit` is nonzero iff `rem` is neither 0 nor 1 -- which is not allowed
+    auto check_bit = builder.create<BigInt::MulOp>(loc, rem, one_minus_rem);
+    builder.create<BigInt::EqualZeroOp>(loc, check_bit);
 
     // When the bit is one, add the current doubling point; otherwise retain the current point
     // Compute "If P then =A, else =B" via the formula
