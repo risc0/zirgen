@@ -944,15 +944,9 @@ void LoweringImpl::gen(DirectiveOp directive, ComponentBuilder& cb) {
     Value left = asLayout(directive.getArgs()[0]);
     Value right = asLayout(directive.getArgs()[1]);
     assert(left);
-    Type type;
-    if (left.getType() == right.getType()) {
-      type = left.getType();
-    } else {
-      directive.emitWarning("layout types don't match; aliasing the common supers");
-      type = Zhlt::getLeastCommonSuper({left.getType(), right.getType()}, /*isLayout=*/1);
-      left = coerceTo(left, type);
-      right = coerceTo(right, type);
-    }
+    Type type = Zhlt::getLeastCommonSuper({left.getType(), right.getType()}, /*isLayout=*/1);
+    left = coerceTo(left, type);
+    right = coerceTo(right, type);
     builder.create<ZStruct::AliasLayoutOp>(directive.getLoc(), left, right);
   } else {
     directive.emitError() << "Unknown compiler directive '" << directive.getName() << "'";
