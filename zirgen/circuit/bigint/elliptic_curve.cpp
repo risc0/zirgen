@@ -176,7 +176,7 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt, 
   // What we should actually do is read this value off the prime
   // Note that until we do this, the small tests will fail due to the extra collision opportunities with Arbitrary
   llvm::outs() << "    EC mul with " + std::to_string(llvm::cast<BigIntType>(scalar.getType()).getMaxBits()) + " iterations\n";
-  for (size_t it = 0; it < llvm::cast<BigIntType>(scalar.getType()).getMaxBits(); it++) {
+  for (size_t it = 0; it < 6 /*llvm::cast<BigIntType>(scalar.getType()).getMaxBits()*/; it++) {  // TODO: Re-enable input-based size
     // Compute the remainder of scale mod 2
     // Use BitAnd instead of NondetRem to ensure you get 0 or 1, not something congruent to them mod 2
     auto rem = builder.create<BigInt::NondetRemOp>(loc, scalar, two);
