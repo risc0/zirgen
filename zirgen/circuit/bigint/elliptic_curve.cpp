@@ -85,11 +85,11 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   auto one = builder.create<BigInt::ConstOp>(loc, oneAttr);
 
   Value y_diff = builder.create<BigInt::SubOp>(loc, rhs.y(), lhs.y());
-  y_diff = builder.create<BigInt::AddOp>(loc, y_diff, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
-  y_diff = builder.create<BigInt::ReduceOp>(loc, y_diff, prime);
+  y_diff = builder.create<BigInt::AddOp>(loc, y_diff, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity  // TODO: Can this be removed?
+  // y_diff = builder.create<BigInt::ReduceOp>(loc, y_diff, prime);  // TODO: Not needed for correctness, so can experiment with removing
   Value x_diff = builder.create<BigInt::SubOp>(loc, rhs.x(), lhs.x());
   x_diff = builder.create<BigInt::AddOp>(loc, x_diff, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
-  x_diff = builder.create<BigInt::ReduceOp>(loc, x_diff, prime);
+  // x_diff = builder.create<BigInt::ReduceOp>(loc, x_diff, prime);   // TODO: Can this be removed? Investigate NondetInvMod
 
 
 
@@ -115,7 +115,7 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   nu = builder.create<BigInt::ReduceOp>(loc, nu, prime);
 
   Value xR = builder.create<BigInt::MulOp>(loc, lambda, lambda);
-  xR = builder.create<BigInt::ReduceOp>(loc, xR, prime);
+  // xR = builder.create<BigInt::ReduceOp>(loc, xR, prime);  // TODO: Not needed for correctness, so can experiment with removing
   xR = builder.create<BigInt::SubOp>(loc, xR, lhs.x());
   xR = builder.create<BigInt::AddOp>(loc, xR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
   xR = builder.create<BigInt::SubOp>(loc, xR, rhs.x());
@@ -171,7 +171,7 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt, 
   // What we should actually do is read this value off the prime
   // Note that until we do this, the small tests will fail due to the extra collision opportunities with Arbitrary
   llvm::outs() << "    EC mul with " + std::to_string(llvm::cast<BigIntType>(scalar.getType()).getMaxBits()) + " iterations\n";  // TODO: Temporary log
-  for (size_t it = 0; it < llvm::cast<BigIntType>(scalar.getType()).getMaxBits(); it++) {
+  for (size_t it = 0; it < llvm::cast<BigIntType>(scalar.getType()).getMaxBits(); it++) {  // TODO: Why is this slightly larger than the bitwidth?
     // Compute the remainder of scale mod 2
     // We need exactly 0 or 1, not something congruent to them mod 2
     // Therefore, directly use the nondets, and check not just that the q * d + r = n but also that r * (r - 1) == 0
