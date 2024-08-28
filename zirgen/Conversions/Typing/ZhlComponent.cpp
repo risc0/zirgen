@@ -895,9 +895,27 @@ void LoweringImpl::gen(ConstructOp construct, ComponentBuilder& cb) {
     return;
   }
 
-  Value layout =
-      addOrExpandLayoutMember(construct.getLoc(), cb, construct.getOut(), ctor.getLayoutType());
-  auto call = builder.create<Zhlt::ConstructOp>(construct.getLoc(), ctor, arguments, layout);
+  // Don't expand the member layout until the actual definition -- even in the
+  // arguments to the ConstructOp. This ensures that we don't leave any dangling
+  // uses of the "old" layout after we expand it, since the declaration should
+  // not be referenced after the definition.
+  Zhlt::ConstructOp call;
+  Value tmpLayout;
+  if (ctor.getLayoutType()) {
+      tmpLayout = builder.create<Zhlt::MagicOp>(construct.getLoc(), ctor.getLayoutType());
+  }
+  call = builder.create<Zhlt::ConstructOp>(construct.getLoc(), ctor, arguments, tmpLayout);
+
+  // Now that we've built the constructor call, expand the layout and clean up
+  // the temporary one if necessary.
+  Value layout;
+  if (tmpLayout) {
+    layout =
+        addOrExpandLayoutMember(construct.getLoc(), cb, construct.getOut(), ctor.getLayoutType());
+    tmpLayout.replaceAllUsesWith(layout);
+    tmpLayout.getDefiningOp()->erase();
+  }
+    
   if (layout && ctor->getAttr("alwaysinline")) {
     construct.emitError() << "Cannot construct non-trivial layouts inside of a function";
     throw MalformedIRException();
