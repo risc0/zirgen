@@ -196,13 +196,40 @@ codegen::CodegenValue toConstantValue(codegen::CodegenEmitter& cg, MLIRContext* 
 } // namespace
 
 void DefOp::emitExpr(codegen::CodegenEmitter& cg) {
-  cg.emitFuncCall(cg.getStringAttr("def"),
-                  /*contextArgs=*/{"ctx"},
-                  {
-                      toConstantValue(cg, getContext(), getType().getCoeffs()),
-                      cg.guessAttributeType(getLabelAttr()),
-                      cg.guessAttributeType(getIsPublicAttr()),
-                  });
+  cg.emitInvokeMacro(cg.getStringAttr("bigint_def"),
+                     /*contextArgs=*/{"ctx"},
+                     {
+                         toConstantValue(cg, getContext(), getType().getCoeffs()),
+                         cg.guessAttributeType(getLabelAttr()),
+                         cg.guessAttributeType(getIsPublicAttr()),
+                     });
+}
+
+void AddOp::emitExpr(codegen::CodegenEmitter& cg) {
+  cg.emitInvokeMacro(cg.getStringAttr("bigint_add"),
+                     {
+                         getLhs(),
+                         getRhs(),
+                         toConstantValue(cg, getContext(), getType().getCoeffs()),
+                     });
+}
+
+void SubOp::emitExpr(codegen::CodegenEmitter& cg) {
+  cg.emitInvokeMacro(cg.getStringAttr("bigint_sub"),
+                     {
+                         getLhs(),
+                         getRhs(),
+                         toConstantValue(cg, getContext(), getType().getCoeffs()),
+                     });
+}
+
+void MulOp::emitExpr(codegen::CodegenEmitter& cg) {
+  cg.emitInvokeMacro(cg.getStringAttr("bigint_mul"),
+                     {
+                         getLhs(),
+                         getRhs(),
+                         toConstantValue(cg, getContext(), getType().getCoeffs()),
+                     });
 }
 
 void EqualZeroOp::emitExpr(codegen::CodegenEmitter& cg) {
@@ -214,21 +241,24 @@ void EqualZeroOp::emitExpr(codegen::CodegenEmitter& cg) {
 }
 
 void NondetRemOp::emitExpr(codegen::CodegenEmitter& cg) {
-  cg.emitFuncCall(cg.getStringAttr("nondet_rem"),
-                  /*contextArgs=*/{"ctx"},
-                  {getLhs(), getRhs(), toConstantValue(cg, getContext(), getType().getCoeffs())});
+  cg.emitInvokeMacro(
+      cg.getStringAttr("bigint_nondet_rem"),
+      /*contextArgs=*/{"ctx"},
+      {getLhs(), getRhs(), toConstantValue(cg, getContext(), getType().getCoeffs())});
 }
 
 void NondetQuotOp::emitExpr(codegen::CodegenEmitter& cg) {
-  cg.emitFuncCall(cg.getStringAttr("nondet_quot"),
-                  /*contextArgs=*/{"ctx"},
-                  {getLhs(), getRhs(), toConstantValue(cg, getContext(), getType().getCoeffs())});
+  cg.emitInvokeMacro(
+      cg.getStringAttr("bigint_nondet_quot"),
+      /*contextArgs=*/{"ctx"},
+      {getLhs(), getRhs(), toConstantValue(cg, getContext(), getType().getCoeffs())});
 }
 
 void NondetInvModOp::emitExpr(codegen::CodegenEmitter& cg) {
-  cg.emitFuncCall(cg.getStringAttr("nondet_inv"),
-                  /*contextArgs=*/{"ctx"},
-                  {getLhs(), getRhs(), toConstantValue(cg, getContext(), getType().getCoeffs())});
+  cg.emitInvokeMacro(
+      cg.getStringAttr("bigint_nondet_inv"),
+      /*contextArgs=*/{"ctx"},
+      {getLhs(), getRhs(), toConstantValue(cg, getContext(), getType().getCoeffs())});
 }
 
 void ConstOp::emitExpr(codegen::CodegenEmitter& cg) {

@@ -22,7 +22,7 @@ class BigIntType<string name, string typeMnemonic, list<Trait> traits = []>
 }
 
 def BigInt : BigIntType<"BigInt", "bigint", [
-   DeclareTypeInterfaceMethods<CodegenTypeInterface, ["getTypeName", "allowDuplicateTypeNames"]>,
+   DeclareTypeInterfaceMethods<CodegenTypeInterface, ["getTypeName", "allowDuplicateTypeNames", "emitTypeDefinition"]>,
    CodegenNeedsCloneType
 ]> {
   let summary = "A big interger value represented as a polynomial";
