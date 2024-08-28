@@ -82,14 +82,14 @@ module {
     %2 = zll.const 2
     %3 = zstruct.lookup %layout["@super"] : (!zlayout$OneHot) -> !zstruct.layout_array<!zlayout$NondetReg, 2>
     %4 = zstruct.array[%1, %0 : !zll.val<BabyBear>, !zll.val<BabyBear>]
-    %5 = zstruct.map %4 : <!zll.val<BabyBear>, 2>, %3 : !zstruct.layout_array<!zlayout$NondetReg, 2> -> <!zstruct$NondetReg, 2> {
+    %5 = zstruct.map %4 : <!zll.val<BabyBear>, 2>, %3 : !zstruct.layout_array<!zlayout$NondetReg, 2> -> !zstruct.array<!zstruct$NondetReg, 2> {
     ^bb0(%arg1: !zll.val<BabyBear>, %arg2: !zlayout$NondetReg):
       %13 = zhlt.call_exec @exec$Sub(%ctx, %arg1, %arg0) : (!zhlt.exec_context, !zll.val<BabyBear>, !zll.val<BabyBear>) -> !zll.val<BabyBear> {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>, !zll.val<BabyBear>) -> !zll.val<BabyBear>, input_segment_sizes = array<i32: 1, 2, 0>, operandSegmentSizes = array<i32: 1, 2, 0>, result_segment_sizes = array<i32: 1>}
       %14 = zhlt.call_exec @exec$Isz(%ctx, %13) : (!zhlt.exec_context, !zll.val<BabyBear>) -> !zll.val<BabyBear> {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>) -> !zll.val<BabyBear>, input_segment_sizes = array<i32: 1, 1, 0>, operandSegmentSizes = array<i32: 1, 1, 0>, result_segment_sizes = array<i32: 1>}
       %15 = zhlt.call_exec @exec$NondetReg(%ctx, %14, %arg2) : (!zhlt.exec_context, !zll.val<BabyBear>, !zlayout$NondetReg) -> !zstruct$NondetReg {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>, !zlayout$NondetReg) -> !zstruct$NondetReg, input_segment_sizes = array<i32: 1, 1, 1>, operandSegmentSizes = array<i32: 1, 1, 1>, result_segment_sizes = array<i32: 1>}
       zstruct.yield %15 : !zstruct$NondetReg
     }
-    %6 = zstruct.map %5 : <!zstruct$NondetReg, 2> -> <!zstruct$Component, 2> {
+    %6 = zstruct.map %5 : <!zstruct$NondetReg, 2> -> !zstruct.array<!zstruct$Component, 2> {
     ^bb0(%arg1: !zstruct$NondetReg):
       %13 = zstruct.lookup %arg1["@super"] : (!zstruct$NondetReg) -> !zll.val<BabyBear>
       %14 = zhlt.call_exec @exec$Sub(%ctx, %0, %13) : (!zhlt.exec_context, !zll.val<BabyBear>, !zll.val<BabyBear>) -> !zll.val<BabyBear> {callee_type = (!zhlt.exec_context, !zll.val<BabyBear>, !zll.val<BabyBear>) -> !zll.val<BabyBear>, input_segment_sizes = array<i32: 1, 2, 0>, operandSegmentSizes = array<i32: 1, 2, 0>, result_segment_sizes = array<i32: 1>}
@@ -106,7 +106,7 @@ module {
     }
     %8 = zll.sub %7 : <BabyBear>, %0 : <BabyBear>
     zll.eqz %8 : <BabyBear>
-    %9 = zstruct.map %4 : <!zll.val<BabyBear>, 2> -> <!zstruct$OneHot__0_40super, 2> {
+    %9 = zstruct.map %4 : <!zll.val<BabyBear>, 2> -> !zstruct.array<!zstruct$OneHot__0_40super, 2> {
     ^bb0(%arg1: !zll.val<BabyBear>):
       %13 = zstruct.subscript %5[!zll.val<BabyBear> %arg1] : (!zstruct.array<!zstruct$NondetReg, 2>) -> !zstruct$NondetReg
       %14 = zstruct.lookup %13["@super"] : (!zstruct$NondetReg) -> !zll.val<BabyBear>

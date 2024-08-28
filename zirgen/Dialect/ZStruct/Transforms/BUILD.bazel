@@ -36,7 +36,6 @@ cc_library(
         "InlineLayout.cpp",
         "OptimizeLayout.cpp",
         "RewritePatterns.cpp",
-        "StripAliasLayoutOps.cpp",
         "Unroll.cpp",
     ],
     hdrs = [

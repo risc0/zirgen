@@ -45,16 +45,4 @@ def InlineLayout : Pass<"inline-layout"> {
   let constructor = "zirgen::ZStruct::createExpandLayoutPass()";
 }
 
-def StripAliasLayoutOps : Pass<"inline-layout", "mlir::ModuleOp"> {
-  let summary = "Erase all AliasLayoutOps";
-  let description = [{
-    ZStruct::AliasLayoutOps are introduced during the lowering to ZHLT, and used
-    to indicate layout constraints to GenerateLayoutPass when constructing the
-    concrete layout of the circuit. This pass eliminates all AliasLayoutOps from
-    the module.
-  }];
-  let constructor = "zirgen::ZStruct::createStripAliasLayoutOpsPass()";
-}
-
-
 #endif // ZSTRUCT_TRANSFORM_PASSES

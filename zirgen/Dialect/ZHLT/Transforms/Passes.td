@@ -50,4 +50,16 @@ def GenerateSteps : Pass<"generate-steps", "mlir::ModuleOp"> {
   let dependentDialects = ["zirgen::Zhlt::ZhltDialect"];
 }
 
+def StripAliasLayoutOps : Pass<"inline-layout", "mlir::ModuleOp"> {
+  let summary = "Erase all AliasLayoutOps outside of CheckLayoutFuncOps";
+  let description = [{
+    ZStruct::AliasLayoutOps are introduced during the lowering to ZHLT, and used
+    to indicate layout constraints to GenerateLayoutPass when constructing the
+    concrete layout of the circuit. This pass eliminates all AliasLayoutOps that
+    aren't inside of a CheckLayoutFuncOp.
+  }];
+  let constructor = "zirgen::Zhlt::createStripAliasLayoutOpsPass()";
+  let dependentDialects = ["zirgen::Zhlt::ZhltDialect"];
+}
+
 #endif // ZHLT_TRANSFORM_PASSES

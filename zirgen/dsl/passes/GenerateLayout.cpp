@@ -213,16 +213,18 @@ struct GenerateLayoutPass : public GenerateLayoutBase<GenerateLayoutPass> {
 
     DataFlowSolver solver;
     solver.load<LayoutDAGAnalysis>();
-    if (failed(solver.initializeAndRun(module)))
-      return signalPassFailure();
 
     module.walk([&](ComponentOp component) {
       builder.setInsertionPointToStart(module.getBody());
       StringAttr bufferName = getBufferName(component);
       if (!bufferName)
         return;
+
+      auto checkLayoutFunc = component.getAspect<CheckLayoutFuncOp>();
+      if (failed(solver.initializeAndRun(checkLayoutFunc)))
+        assert(false && "an unexpected error occurred while solving the layout");
       LayoutGenerator layout(bufferName, solver);
-      Attribute layoutAttr = layout.generate(component.getAspect<CheckLayoutFuncOp>());
+      Attribute layoutAttr = layout.generate(checkLayoutFunc);
 
       // Only generate layout symbol for components which contain registers.
       if (layoutAttr) {

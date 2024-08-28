@@ -540,7 +540,7 @@ int main(int argc, char* argv[]) {
     pm.addPass(zirgen::Zhlt::createStripTestsPass());
   pm.addPass(zirgen::dsl::createGenerateCheckLayoutPass());
   pm.addPass(zirgen::dsl::createGenerateLayoutPass());
-  pm.addPass(zirgen::ZStruct::createStripAliasLayoutOpsPass());
+  pm.addPass(zirgen::Zhlt::createStripAliasLayoutOpsPass());
   pm.addPass(zirgen::dsl::createGenerateBackPass());
   pm.addPass(zirgen::dsl::createGenerateExecPass());
   pm.addPass(mlir::createSymbolPrivatizePass({}));
