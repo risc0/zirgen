@@ -17,16 +17,17 @@ it's still a work in progress and has quite a few rough edges.
 
 [Language Overview](zirgen/docs/02_Conceptual_Overview.md)
 
-## RISC-V zkVM
+## Included circuits
 
-This repository also includes the source code of the
-[RISC-V circuit](zirgen/circuit/rv32im/v1/) included in our 1.0 release.
+* [The recursion circuit](/zirgen/circuit/recursion/)
+* [The RISC-V zkVM](/zirgen/circuit/rv32im/) 
 
 ## Circom integration
 
-We also have an integration with Circom in the works -- you'll be able to use
-the Zirgen compiler to accelerate verification of Circom witnesses for arbirary
-Circom circuits.
+We also have an integration with Circom in the works -- this will make it
+possible to generate recursion circuit programs that verify witnesses for
+arbitrary Circom circuits. This can be found
+[here](/zirgen/compiler/tools/zirgen-r1cs.cpp).
 
 ```mermaid
 graph TD;
