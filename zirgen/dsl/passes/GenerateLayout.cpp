@@ -110,7 +110,8 @@ private:
   int nextIndex(int n) {
     int next = storage.find_next_unset(n);
     size_t capacity = storage.getBitCapacity();
-    if (next == -1 || next >= capacity) {
+    assert(next >= -1);
+    if (next == -1 || (size_t)next >= capacity) {
       storage.resize(2 * capacity);
 
       AllocationTable* ancestor = parent;

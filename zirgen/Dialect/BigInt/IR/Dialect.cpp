@@ -41,7 +41,12 @@ void BigIntDialect::initialize() {
 
 codegen::CodegenIdent<codegen::IdentKind::Type>
 BigIntType::getTypeName(codegen::CodegenEmitter& cg) const {
-  return cg.getStringAttr("byte_poly");
+  return cg.getStringAttr("byte_poly_" + std::to_string(getCoeffs()));
+}
+
+void BigIntType::emitTypeDefinition(codegen::CodegenEmitter& cg) const {
+  cg.emitInvokeMacro(cg.getStringAttr("bigint_declare_byte_poly"), {getTypeName(cg), getCoeffs()});
+  cg << ";\n";
 }
 
 bool BigIntType::allowDuplicateTypeNames() const {
