@@ -31,7 +31,7 @@ TEST(RECURSION, Smoke) {
   module.optimize();
   module.dump();
   auto func = module.getModule().lookupSymbol<mlir::func::FuncOp>("test");
-  std::vector<uint32_t> code = encode(recursion::HashType::SHA256, &func.front());
+  std::vector<uint32_t> code = encode(module.getCtx(), recursion::HashType::SHA256, &func.front());
   std::vector<uint32_t> proof = {(kBabyBearToMontgomery * 1) % kBabyBearP,
                                  (kBabyBearToMontgomery * 2) % kBabyBearP};
   runner.setup(code, proof);

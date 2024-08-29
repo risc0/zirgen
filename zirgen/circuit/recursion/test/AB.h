@@ -74,7 +74,7 @@ void doAB(HashType hashType, const std::vector<std::vector<uint32_t>>& proofs, F
   // Now encode it as microcode for the recursion circuit and run there
   Runner runner;
   llvm::DenseMap<mlir::Value, uint64_t> toId;
-  std::vector<uint32_t> code = encode(hashType, &func.front(), &toId);
+  std::vector<uint32_t> code = encode(module.getCtx(), hashType, &func.front(), &toId);
   llvm::errs() << "CYCLES = " << (code.size() / kCodeSize) << "\n";
 
   // 'Reverse' toId so that it is in execution order

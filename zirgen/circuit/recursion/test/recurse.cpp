@@ -75,7 +75,7 @@ TEST(RECURSION, MetricsRec) {
   module.optimize();
   auto func = module.getModule().lookupSymbol<mlir::func::FuncOp>("verify_recursion");
   llvm::DenseMap<mlir::Value, uint64_t> toId;
-  std::vector<uint32_t> code = encode(HashType::POSEIDON2, &func.front(), &toId);
+  std::vector<uint32_t> code = encode(module.getCtx(), HashType::POSEIDON2, &func.front(), &toId);
   llvm::errs() << "CYCLES = " << (code.size() / kCodeSize) << "\n";
 }
 
@@ -88,7 +88,7 @@ TEST(RECURSION, MetricsRV32IM) {
   module.optimize();
   auto func = module.getModule().lookupSymbol<mlir::func::FuncOp>("verify");
   llvm::DenseMap<mlir::Value, uint64_t> toId;
-  std::vector<uint32_t> code = encode(HashType::MIXED_POSEIDON2_SHA, &func.front(), &toId);
+  std::vector<uint32_t> code = encode(module.getCtx(), HashType::MIXED_POSEIDON2_SHA, &func.front(), &toId);
   llvm::errs() << "CYCLES = " << (code.size() / kCodeSize) << "\n";
 }
 
