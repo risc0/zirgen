@@ -43,7 +43,8 @@ void emitRecursion(const std::string& path, func::FuncOp func, recursion::Encode
   auto ofs = openOutputFile(path, name + ".zkr");
 
   llvm::DenseMap<Value, uint64_t> toId;
-  auto encoded = recursion::encode(recursion::HashType::POSEIDON2, &func.front(), &toId, stats);
+  auto encoded = recursion::encode(
+      func.getContext(), recursion::HashType::POSEIDON2, &func.front(), &toId, stats);
   ofs->write(reinterpret_cast<const char*>(encoded.data()), encoded.size() * sizeof(uint32_t));
 
   std::map<uint64_t, mlir::Location> locs;

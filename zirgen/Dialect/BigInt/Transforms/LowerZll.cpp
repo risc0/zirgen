@@ -137,6 +137,7 @@ void lower(func::FuncOp inFunc) {
 
     // Let's go!
     for (Operation& origOp : inFunc.getBody().front().without_terminator()) {
+      loc = origOp.getLoc();
       llvm::TypeSwitch<Operation*>(&origOp)
           .Case<DefOp>([&](auto op) {
             if (op.getIsPublic()) {
@@ -202,6 +203,8 @@ void lower(func::FuncOp inFunc) {
             builder.create<Zll::EqualZeroOp>(loc, diff);
           });
     }
+
+    loc = inFunc.getLoc();
 
     // Hash the constant witness
     Digest constDigest = computeDigest(constantWitness);

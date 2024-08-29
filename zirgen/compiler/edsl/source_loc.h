@@ -81,4 +81,14 @@ public:
   size_t column;
 };
 
+struct AutoSourceLoc {
+  AutoSourceLoc(mlir::MLIRContext* ctx) : ctx(ctx) {}
+
+  mlir::Location operator()(const char* filename = __builtin_FILE(), int line = __builtin_LINE()) {
+    return mlir::FileLineColLoc::get(ctx, filename, line, 0);
+  }
+
+  mlir::MLIRContext* ctx;
+};
+
 } // namespace risc0

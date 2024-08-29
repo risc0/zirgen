@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "llvm/Support/Format.h"
+
 #include "zirgen/circuit/recursion/encode.h"
 
 #include "zirgen/compiler/zkp/baby_bear.h"
@@ -136,8 +138,17 @@ struct Instructions {
   uint64_t padShaCountConst;
   uint64_t shaRngConsts;
   llvm::StringMap<uint64_t> tagConsts;
+  mlir::Location currentLoc;
+  llvm::DenseMap<mlir::Location, size_t> microByLoc;
+  llvm::DenseMap<mlir::Location, size_t> macroByLoc;
+  mlir::MLIRContext* ctx;
 
-  Instructions(HashType hashType) : hashType(hashType), nextOut(1), microUsed(0) {
+  Instructions(mlir::MLIRContext* ctx, HashType hashType)
+      : hashType(hashType)
+      , nextOut(1)
+      , microUsed(0)
+      , currentLoc(mlir::UnknownLoc::get(ctx))
+      , ctx(ctx) {
     addMacro(/*outs=*/0, MacroOpcode::WOM_INIT);
     // Make: [0, 1, 0, 0], [0, 0, 1, 0], and [0, 0, 0, 1]
     fp4Rot1 = addConst(0, 1);
@@ -207,6 +218,7 @@ struct Instructions {
 
   uint64_t
   addMicro(Value out, MicroOpcode opcode, uint64_t op0 = 0, uint64_t op1 = 0, uint64_t op2 = 0) {
+    microByLoc[currentLoc]++;
     if (microUsed == 0) {
       data.emplace_back();
       data.back().opType = OpType::MICRO;
@@ -228,13 +240,17 @@ struct Instructions {
   }
 
   void finishMicros() {
+    auto oldCurrent = currentLoc;
+    currentLoc = risc0::AutoSourceLoc(ctx)();
     while (microUsed) {
       addMicro(Value(), MicroOpcode::CONST, 0, 0);
     }
+    currentLoc = oldCurrent;
   }
 
   uint64_t
   addMacro(size_t outs, MacroOpcode opcode, uint64_t op0 = 0, uint64_t op1 = 0, uint64_t op2 = 0) {
+    macroByLoc[currentLoc]++;
     finishMicros();
     data.emplace_back();
     data.back().opType = OpType::MACRO;
@@ -646,6 +662,7 @@ struct Instructions {
   }
 
   void addInst(Operation& op) {
+    currentLoc = op.getLoc();
     TypeSwitch<Operation*>(&op)
         .Case<Zll::ExternOp>([&](Zll::ExternOp op) {
           if (op.getName() == "write") {
@@ -1098,13 +1115,26 @@ void MixedPoseidon2ShaRng::mix(Instructions& insts, uint64_t digest) {
   step(insts);
 }
 
+void dumpLocs(const char* name, const llvm::DenseMap<mlir::Location, size_t>& locsMap) {
+  SmallVector<std::pair<mlir::Location, size_t>> locs;
+  llvm::append_range(locs, locsMap);
+  llvm::sort(locs, llvm::less_second());
+
+  llvm::errs() << name << " locs:\n";
+  for (auto [loc, count] : locs) {
+    auto locStr = getLocString(loc);
+    llvm::errs() << llvm::format("%-40s %10d", locStr.c_str(), count) << "\n";
+  }
+}
+
 } // namespace
 
-std::vector<uint32_t> encode(HashType hashType,
+std::vector<uint32_t> encode(MLIRContext* ctx,
+                             HashType hashType,
                              mlir::Block* block,
                              llvm::DenseMap<Value, uint64_t>* toIdReturn,
                              EncodeStats* stats) {
-  Instructions insts(hashType);
+  Instructions insts(ctx, hashType);
   for (Operation& op : block->without_terminator()) {
     insts.addInst(op);
   }
@@ -1113,6 +1143,8 @@ std::vector<uint32_t> encode(HashType hashType,
   llvm::errs() << "Actual cycles = " << insts.data.size() << "\n";
   llvm::errs() << "SHA cycles = " << insts.shaUsed << "\n";
   llvm::errs() << "Poseidon2 cycles = " << insts.poseidon2Used << "\n";
+  dumpLocs("micro", insts.microByLoc);
+  dumpLocs("macro", insts.macroByLoc);
   if (stats) {
     stats->totCycles = insts.data.size();
     stats->shaCycles = insts.shaUsed;
@@ -1183,8 +1215,9 @@ std::vector<uint32_t> encode(HashType hashType,
   return code;
 }
 
-std::vector<uint32_t> encode(HashType hashType, mlir::Block* block, EncodeStats* stats) {
-  return encode(hashType, block, /*toIdReturn=*/nullptr, stats);
+std::vector<uint32_t>
+encode(mlir::MLIRContext* ctx, HashType hashType, mlir::Block* block, EncodeStats* stats) {
+  return encode(ctx, hashType, block, /*toIdReturn=*/nullptr, stats);
 }
 
 } // namespace zirgen::recursion

@@ -122,68 +122,68 @@ int main(int argc, char* argv[]) {
   ctx->getOrLoadDialect<BigInt::BigIntDialect>();
   ctx->getOrLoadDialect<Iop::IopDialect>();
 
-  for (auto rsa : kRsaSpecs) {
-    auto funcOp = module.addFunc<0>(std::string(rsa.name), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeRSA(builder, builder.getUnknownLoc(), rsa.numBits);
-    });
-    BigInt::setIterationCount(funcOp, rsa.iters);
-  }
-  // TODO: More bitwidth coverage?
-  for (size_t numBits : {8}) {
-    module.addFunc<0>("nondet_inv_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeNondetInvTest(builder, builder.getUnknownLoc(), numBits);
-    });
-  }
-  for (size_t numBits : {8}) {
-    module.addFunc<0>("const_add_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeConstAddTest(builder, builder.getUnknownLoc(), numBits);
-    });
-  }
-  for (size_t numBits : {16}) {
-    module.addFunc<0>("const_add_alt_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeConstAddAltTest(builder, builder.getUnknownLoc(), numBits);
-    });
-  }
-  for (size_t numBits : {8}) {
-    module.addFunc<0>("const_mul_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeConstMulTest(builder, builder.getUnknownLoc(), numBits);
-    });
-  }
-  for (size_t numBits : {8, 16, 128}) {
-    module.addFunc<0>("add_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeAddTest(builder, builder.getUnknownLoc(), numBits);
-    });
-  }
-  for (size_t numBits : {8}) {
-    module.addFunc<0>("const_one_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeConstOneTest(builder, builder.getUnknownLoc(), numBits);
-    });
-  }
-  for (size_t numBits : {16}) {
-    module.addFunc<0>("const_twobyte_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeConstTwoByteTest(builder, builder.getUnknownLoc(), numBits);
-    });
-  }
-  for (size_t numBits : {8, 128}) {
-    module.addFunc<0>("sub_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeSubTest(builder, builder.getUnknownLoc(), numBits);
-    });
-  }
-  for (size_t numBits : {8, 128}) {
-    module.addFunc<0>("mul_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeMulTest(builder, builder.getUnknownLoc(), numBits);
-    });
-  }
+  /*  for (auto rsa : kRsaSpecs) {
+      auto funcOp = module.addFunc<0>(std::string(rsa.name), {}, [&]() {
+        auto& builder = Module::getCurModule()->getBuilder();
+        zirgen::BigInt::makeRSA(builder, builder.getUnknownLoc(), rsa.numBits);
+      });
+      BigInt::setIterationCount(funcOp, rsa.iters);
+    }
+    // TODO: More bitwidth coverage?
+    for (size_t numBits : {8}) {
+      module.addFunc<0>("nondet_inv_test_" + std::to_string(numBits), {}, [&]() {
+        auto& builder = Module::getCurModule()->getBuilder();
+        zirgen::BigInt::makeNondetInvTest(builder, builder.getUnknownLoc(), numBits);
+      });
+    }
+    for (size_t numBits : {8}) {
+      module.addFunc<0>("const_add_test_" + std::to_string(numBits), {}, [&]() {
+        auto& builder = Module::getCurModule()->getBuilder();
+        zirgen::BigInt::makeConstAddTest(builder, builder.getUnknownLoc(), numBits);
+      });
+    }
+    for (size_t numBits : {16}) {
+      module.addFunc<0>("const_add_alt_test_" + std::to_string(numBits), {}, [&]() {
+        auto& builder = Module::getCurModule()->getBuilder();
+        zirgen::BigInt::makeConstAddAltTest(builder, builder.getUnknownLoc(), numBits);
+      });
+    }
+    for (size_t numBits : {8}) {
+      module.addFunc<0>("const_mul_test_" + std::to_string(numBits), {}, [&]() {
+        auto& builder = Module::getCurModule()->getBuilder();
+        zirgen::BigInt::makeConstMulTest(builder, builder.getUnknownLoc(), numBits);
+      });
+    }
+    for (size_t numBits : {8, 16, 128}) {
+      module.addFunc<0>("add_test_" + std::to_string(numBits), {}, [&]() {
+        auto& builder = Module::getCurModule()->getBuilder();
+        zirgen::BigInt::makeAddTest(builder, builder.getUnknownLoc(), numBits);
+      });
+    }
+    for (size_t numBits : {8}) {
+      module.addFunc<0>("const_one_test_" + std::to_string(numBits), {}, [&]() {
+        auto& builder = Module::getCurModule()->getBuilder();
+        zirgen::BigInt::makeConstOneTest(builder, builder.getUnknownLoc(), numBits);
+      });
+    }
+    for (size_t numBits : {16}) {
+      module.addFunc<0>("const_twobyte_test_" + std::to_string(numBits), {}, [&]() {
+        auto& builder = Module::getCurModule()->getBuilder();
+        zirgen::BigInt::makeConstTwoByteTest(builder, builder.getUnknownLoc(), numBits);
+      });
+    }
+    for (size_t numBits : {8, 128}) {
+      module.addFunc<0>("sub_test_" + std::to_string(numBits), {}, [&]() {
+        auto& builder = Module::getCurModule()->getBuilder();
+        zirgen::BigInt::makeSubTest(builder, builder.getUnknownLoc(), numBits);
+      });
+    }
+    for (size_t numBits : {8, 128}) {
+      module.addFunc<0>("mul_test_" + std::to_string(numBits), {}, [&]() {
+        auto& builder = Module::getCurModule()->getBuilder();
+        zirgen::BigInt::makeMulTest(builder, builder.getUnknownLoc(), numBits);
+      });
+      }*/
   for (size_t numBits : {8, 128}) {
     module.addFunc<0>("reduce_test_" + std::to_string(numBits), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
@@ -191,51 +191,68 @@ int main(int argc, char* argv[]) {
     });
   }
   // ECDSA
-  for (size_t numBits : {8, 256}) {  // TODO: Need separate entries
+  for (size_t numBits : {256}) {
     module.addFunc<0>("ecdsa_verify_" + std::to_string(numBits), {}, [&]() {
       llvm::outs() << "  Making ecdsa_verify_" + std::to_string(numBits) + "\n";
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECDSAVerify(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 31), APInt(numBits, 0), APInt(numBits, 3));  // TODO: show values in ZKR name
+      zirgen::BigInt::makeECDSAVerify(builder,
+                                      builder.getUnknownLoc(),
+                                      numBits,
+                                      APInt(numBits, 31),
+                                      APInt(numBits, 0),
+                                      APInt(numBits, 3)); // TODO: show values in ZKR name
     });
   }
-  // Elliptic Curve tests
-  for (size_t numBits : {8, 256}) {  // TODO: Switch to 5 bits
-    module.addFunc<0>("ec_aff_add_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAffineAddTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
-    });
-  }
-  for (size_t numBits : {8, 256}) {  // TODO: Switch to 5 bits
-    module.addFunc<0>("ec_aff_doub_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAffineDoubleTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
-    });
-  }
-  for (size_t numBits : {8, 256}) {  // TODO: Switch to 5 bits
-    llvm::outs() << "  Making ec_aff_mul_test_" + std::to_string(numBits) + "\n";
-    module.addFunc<0>("ec_aff_mul_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAffineMultiplyTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
-    });
-  }
-  for (size_t numBits : {8}) {  // TODO: Switch to 5 bits
-    module.addFunc<0>("ec_aff_neg_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAffineNegateTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
-    });
-  }
-  for (size_t numBits : {8}) {  // TODO: Switch to 5 bits
-    module.addFunc<0>("ec_aff_sub_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAffineSubtractTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
-    });
-  }
-  for (size_t numBits : {8}) {
-    module.addFunc<0>("ec_pts_eq_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAffineValidatePointsEqualTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
-    });
-  }
+  /*  // Elliptic Curve tests
+    for (size_t numBits : {8}) {  // TODO: Switch to 5 bits
+      module.addFunc<0>("ec_aff_add_test_" + std::to_string(numBits), {}, [&]() {
+        auto& builder = Module::getCurModule()->getBuilder();
+        zirgen::BigInt::makeECAffineAddTest(builder, builder.getUnknownLoc(), numBits,
+    APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values
+    are coordinated with the test
+      });
+    }
+    for (size_t numBits : {8, 256}) {  // TODO: Switch to 5 bits
+      module.addFunc<0>("ec_aff_doub_test_" + std::to_string(numBits), {}, [&]() {
+        auto& builder = Module::getCurModule()->getBuilder();
+        zirgen::BigInt::makeECAffineDoubleTest(builder, builder.getUnknownLoc(), numBits,
+    APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values
+    are coordinated with the test
+      });
+    }
+    for (size_t numBits : {8, 256}) {  // TODO: Switch to 5 bits
+      llvm::outs() << "  Making ec_aff_mul_test_" + std::to_string(numBits) + "\n";
+      module.addFunc<0>("ec_aff_mul_test_" + std::to_string(numBits), {}, [&]() {
+        auto& builder = Module::getCurModule()->getBuilder();
+        zirgen::BigInt::makeECAffineMultiplyTest(builder, builder.getUnknownLoc(), numBits,
+    APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values
+    are coordinated with the test
+      });
+    }
+    for (size_t numBits : {8}) {  // TODO: Switch to 5 bits
+      module.addFunc<0>("ec_aff_neg_test_" + std::to_string(numBits), {}, [&]() {
+        auto& builder = Module::getCurModule()->getBuilder();
+        zirgen::BigInt::makeECAffineNegateTest(builder, builder.getUnknownLoc(), numBits,
+    APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values
+    are coordinated with the test
+      });
+    }
+    for (size_t numBits : {8}) {  // TODO: Switch to 5 bits
+      module.addFunc<0>("ec_aff_sub_test_" + std::to_string(numBits), {}, [&]() {
+        auto& builder = Module::getCurModule()->getBuilder();
+        zirgen::BigInt::makeECAffineSubtractTest(builder, builder.getUnknownLoc(), numBits,
+    APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values
+    are coordinated with the test
+      });
+    }
+    for (size_t numBits : {8}) {
+      module.addFunc<0>("ec_pts_eq_test_" + std::to_string(numBits), {}, [&]() {
+        auto& builder = Module::getCurModule()->getBuilder();
+        zirgen::BigInt::makeECAffineValidatePointsEqualTest(builder, builder.getUnknownLoc(),
+    numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think
+    these values are coordinated with the test
+      });
+      }*/
 
   PassManager pm(ctx);
   if (failed(applyPassManagerCLOptions(pm))) {
@@ -276,6 +293,8 @@ int main(int argc, char* argv[]) {
   if (failed(pm2.run(module.getModule()))) {
     throw std::runtime_error("Failed to apply basic optimization passes (2)");
   }
+
+  //  module.dump();
 
   bool exceeded = false;
   module.getModule().walk([&](mlir::func::FuncOp func) {
