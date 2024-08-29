@@ -9,21 +9,22 @@ namespace zirgen::BigInt {
 void WeierstrassCurve::validate_contains(OpBuilder builder, Location loc, const AffinePt& pt) const {
   auto prime = prime_as_bigint(builder, loc);
   Value y_sqr = builder.create<BigInt::MulOp>(loc, pt.y(), pt.y());
-  y_sqr = builder.create<BigInt::ReduceOp>(loc, y_sqr, prime);
+  // y_sqr = builder.create<BigInt::ReduceOp>(loc, y_sqr, prime);  // TODO: Better to skip reduce here and do it on the difference?
 
   Value x_cube = builder.create<BigInt::MulOp>(loc, pt.x(), pt.x());
-  x_cube = builder.create<BigInt::ReduceOp>(loc, x_cube, prime);
+  x_cube = builder.create<BigInt::ReduceOp>(loc, x_cube, prime);  // TODO: Reduce isn't required for correctness, perf better if skipped?  // TODO: But seems to make an overflow if dropped?
   x_cube = builder.create<BigInt::MulOp>(loc, pt.x(), x_cube);
-  x_cube = builder.create<BigInt::ReduceOp>(loc, x_cube, prime);
+  // x_cube = builder.create<BigInt::ReduceOp>(loc, x_cube, prime);  // TODO: Reduce isn't required for correctness, perf better if skipped?
 
   Value ax = builder.create<BigInt::MulOp>(loc, a_as_bigint(builder, loc), pt.x());
-  ax = builder.create<BigInt::ReduceOp>(loc, ax, prime);
+  // ax = builder.create<BigInt::ReduceOp>(loc, ax, prime);  // TODO: Reduce isn't required for correctness, perf better if skipped?
 
   Value weierstrass_rhs = builder.create<BigInt::AddOp>(loc, x_cube, ax);
   weierstrass_rhs = builder.create<BigInt::AddOp>(loc, weierstrass_rhs, b_as_bigint(builder, loc));
-  weierstrass_rhs = builder.create<BigInt::ReduceOp>(loc, weierstrass_rhs, prime);
+  // weierstrass_rhs = builder.create<BigInt::ReduceOp>(loc, weierstrass_rhs, prime);  // TODO: Better to skip reduce here and do it on the difference?
 
   Value diff = builder.create<BigInt::SubOp>(loc, y_sqr, weierstrass_rhs);
+  diff = builder.create<BigInt::ReduceOp>(loc, diff, prime);  // TODO: Testing doing here instead of on its inputs
   builder.create<BigInt::EqualZeroOp>(loc, diff);
 }
 
@@ -103,13 +104,13 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
 
 
 
-
+  // TODO: Doubling the prime seems to not work weel
 
   Value lambda = builder.create<BigInt::MulOp>(loc, y_diff, x_diff_inv);
-  lambda = builder.create<BigInt::ReduceOp>(loc, lambda, prime);
+  lambda = builder.create<BigInt::ReduceOp>(loc, lambda, prime);  // TODO: Skipping this one breaks an assert; shouldn't be required for correctness but I think it overflows the coeffs
 
   Value nu = builder.create<BigInt::MulOp>(loc, lambda, lhs.x());
-  nu = builder.create<BigInt::ReduceOp>(loc, nu, prime);
+  // nu = builder.create<BigInt::ReduceOp>(loc, nu, prime);  // TODO: Reduce isn't required for correctness, perf better if skipped?
   nu = builder.create<BigInt::SubOp>(loc, lhs.y(), nu);
   nu = builder.create<BigInt::AddOp>(loc, nu, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
   nu = builder.create<BigInt::ReduceOp>(loc, nu, prime);
@@ -119,14 +120,14 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   xR = builder.create<BigInt::SubOp>(loc, xR, lhs.x());
   xR = builder.create<BigInt::AddOp>(loc, xR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
   xR = builder.create<BigInt::SubOp>(loc, xR, rhs.x());
-  xR = builder.create<BigInt::AddOp>(loc, xR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
+  xR = builder.create<BigInt::AddOp>(loc, xR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity  // TODO: Merge the 2 adds? Not without constant propagation
   xR = builder.create<BigInt::ReduceOp>(loc, xR, prime);
 
   Value yR = builder.create<BigInt::MulOp>(loc, lambda, xR);
   yR = builder.create<BigInt::ReduceOp>(loc, yR, prime);
   yR = builder.create<BigInt::AddOp>(loc, yR, nu);
-  yR = builder.create<BigInt::SubOp>(loc, prime, yR);  // i.e., negate (mod prime)
-  yR = builder.create<BigInt::AddOp>(loc, yR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
+  yR = builder.create<BigInt::SubOp>(loc, prime, yR);  // i.e., negate (mod prime) 
+  yR = builder.create<BigInt::AddOp>(loc, yR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity  // TODO: better with using 2*prime for sub?
   yR = builder.create<BigInt::ReduceOp>(loc, yR, prime);
 
   // TODO: This order calculation presumes both points are of the same prime order
@@ -157,10 +158,10 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt, 
 
   // The repeatedly doubled point
   auto doubled_pt = pt;
-  arbitrary.on_same_curve_as(pt);
   // TODO: If we call this multiple times with the same `arbitrary`, then `validate_on_curve` will be called multiple times for it
   // I think this is OK as CSE removes everything except the final eqz, and this doesn't get called _that_ often
   // TODO: Perhaps have CSE remove duplicate eqz's too?
+  // TODO: Removing this slightly reduces the cycle count, so the CSE isn't perfect here. Possible location for minor perf gains
   // NOTE: We assume `pt` is already validated as on the curve (either manually already, or by construction) [TODO: Document better?]
   // `arbitrary` has not need to be constructed in any particular way, so we pretty much always need to validate it's on the curve
   // Hence, we do so here

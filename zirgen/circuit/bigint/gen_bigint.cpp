@@ -199,13 +199,13 @@ int main(int argc, char* argv[]) {
     });
   }
   // Elliptic Curve tests
-  for (size_t numBits : {8}) {  // TODO: Switch to 5 bits
+  for (size_t numBits : {8, 256}) {  // TODO: Switch to 5 bits
     module.addFunc<0>("ec_aff_add_test_" + std::to_string(numBits), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
       zirgen::BigInt::makeECAffineAddTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
     });
   }
-  for (size_t numBits : {8}) {  // TODO: Switch to 5 bits
+  for (size_t numBits : {8, 256}) {  // TODO: Switch to 5 bits
     module.addFunc<0>("ec_aff_doub_test_" + std::to_string(numBits), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
       zirgen::BigInt::makeECAffineDoubleTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
@@ -251,6 +251,8 @@ int main(int argc, char* argv[]) {
   if (failed(pm.run(module.getModule()))) {
     throw std::runtime_error("Failed to apply basic optimization passes");
   }
+
+  // llvm::outs() << module.getModule();  // TODO: remove?
 
   static codegen::RustLanguageSyntax rustLang;
   rustLang.addContextArgument("ctx: &mut BigIntContext");
