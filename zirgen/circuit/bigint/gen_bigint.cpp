@@ -191,7 +191,7 @@ int main(int argc, char* argv[]) {
     });
   }
   // ECDSA
-  for (size_t numBits : {8, 256}) {  // TODO: Need separate entries
+  for (size_t numBits : {8, 64 /*, 256*/}) {
     module.addFunc<0>("ecdsa_verify_" + std::to_string(numBits), {}, [&]() {
       llvm::outs() << "  Making ecdsa_verify_" + std::to_string(numBits) + "\n";
       auto& builder = Module::getCurModule()->getBuilder();
