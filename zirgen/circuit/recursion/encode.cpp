@@ -250,9 +250,9 @@ struct Instructions {
 
   uint64_t
   addMacro(size_t outs, MacroOpcode opcode, uint64_t op0 = 0, uint64_t op1 = 0, uint64_t op2 = 0) {
-    macroByLoc[currentLoc]++;
     finishMicros();
     data.emplace_back();
+    macroByLoc[currentLoc]++;
     data.back().opType = OpType::MACRO;
     data.back().data.macro.opcode = opcode;
     data.back().data.macro.operands[0] = op0;
@@ -292,6 +292,7 @@ struct Instructions {
     poseidon2Used++;
     finishMicros();
     data.emplace_back();
+    macroByLoc[currentLoc]++;
     data.back().opType = OpType::POSEIDON2_LOAD;
     data.back().data.poseidon2Mem.doMont = doMont;
     data.back().data.poseidon2Mem.keepState = keepState;
@@ -308,6 +309,7 @@ struct Instructions {
     poseidon2Used++;
     finishMicros();
     data.emplace_back();
+    macroByLoc[currentLoc]++;
     data.back().opType = OpType::POSEIDON2_FULL;
     data.back().data.poseidon2Full.cycle = cycle;
     data.back().writeAddr = nextOut;
@@ -317,6 +319,7 @@ struct Instructions {
     poseidon2Used++;
     finishMicros();
     data.emplace_back();
+    macroByLoc[currentLoc]++;
     data.back().opType = OpType::POSEIDON2_PARTIAL;
     data.back().writeAddr = nextOut;
   }
@@ -325,6 +328,7 @@ struct Instructions {
     poseidon2Used++;
     finishMicros();
     data.emplace_back();
+    macroByLoc[currentLoc]++;
     data.back().opType = OpType::POSEIDON2_STORE;
     data.back().data.poseidon2Mem.doMont = doMont;
     data.back().data.poseidon2Mem.group = group;

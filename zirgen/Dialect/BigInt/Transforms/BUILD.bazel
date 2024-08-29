@@ -45,5 +45,6 @@ cc_library(
         "//zirgen/Dialect/BigInt/IR",
         "//zirgen/Dialect/IOP/IR",
         "@llvm-project//mlir:Transforms",
+        "//zirgen/compiler/edsl",
     ],
 )

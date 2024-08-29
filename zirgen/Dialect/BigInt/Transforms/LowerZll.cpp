@@ -16,6 +16,7 @@
 #include "mlir/IR/IRMapping.h"
 #include "mlir/IR/PatternMatch.h"
 #include "mlir/Transforms/GreedyPatternRewriteDriver.h"
+#include "zirgen/compiler/edsl/edsl.h"
 #include "llvm/ADT/TypeSwitch.h"
 
 #include "zirgen/Dialect/BigInt/IR/BigInt.h"
@@ -26,6 +27,7 @@
 #include "zirgen/compiler/zkp/hash.h"
 
 using namespace mlir;
+using namespace risc0;
 
 namespace zirgen::BigInt {
 
@@ -35,7 +37,7 @@ void lower(func::FuncOp inFunc) {
   // Do module + function boilerplate
   auto ctx = inFunc.getContext();
   auto builder = OpBuilder(inFunc);
-  auto loc = inFunc.getLoc();
+  AutoSourceLoc autoLoc(inFunc.getContext());
   auto extType = Zll::ValType::getExtensionType(ctx);
   auto baseType = Zll::ValType::getBaseType(ctx);
   auto funcType = FunctionType::get(
@@ -44,7 +46,7 @@ void lower(func::FuncOp inFunc) {
            ctx, baseType, 32 /* recursion global output buffer size */, Zll::BufferKind::Global),
        Iop::IOPType::get(ctx)},
       {});
-  auto func = builder.create<func::FuncOp>(loc, inFunc.getName(), funcType);
+  auto func = builder.create<func::FuncOp>(autoLoc(), inFunc.getName(), funcType);
   size_t iters = getIterationCount(inFunc);
   assert(iters > 0);
   setIterationCount(func, iters);
@@ -80,21 +82,21 @@ void lower(func::FuncOp inFunc) {
   {
     Type digestType = Zll::DigestType::get(builder.getContext(), Zll::DigestKind::Default);
     std::vector<Type> types(1, digestType);
-    auto readOp = builder.create<Iop::ReadOp>(loc, types, iop, /*flip=*/false);
-    builder.create<Zll::SetGlobalDigestOp>(loc, buf, 0, readOp.getOuts()[0]);
+    auto readOp = builder.create<Iop::ReadOp>(autoLoc(), types, iop, /*flip=*/false);
+    builder.create<Zll::SetGlobalDigestOp>(autoLoc(), buf, 0, readOp.getOuts()[0]);
   }
 
-  auto zero = builder.create<Zll::ConstOp>(loc, baseType, 0);
-  auto one = builder.create<Zll::ConstOp>(loc, baseType, 1);
-  auto four = builder.create<Zll::ConstOp>(loc, baseType, 4);
-  auto byte = builder.create<Zll::ConstOp>(loc, baseType, 1 << kBitsPerCoeff);
+  auto zero = builder.create<Zll::ConstOp>(autoLoc(), baseType, 0);
+  auto one = builder.create<Zll::ConstOp>(autoLoc(), baseType, 1);
+  auto four = builder.create<Zll::ConstOp>(autoLoc(), baseType, 4);
+  auto byte = builder.create<Zll::ConstOp>(autoLoc(), baseType, 1 << kBitsPerCoeff);
 
   llvm::errs() << "verifying " << iters << " claims\n";
   std::vector<mlir::Value> digestVals;
   for (size_t iter = 0; iter != iters; ++iter) {
     // Read the value of z
-    auto z = builder.create<Iop::ReadOp>(loc, TypeRange{extType}, iop, false).getOuts()[0];
-    auto byteMinusZ = builder.create<Zll::SubOp>(loc, byte, z);
+    auto z = builder.create<Iop::ReadOp>(autoLoc(), TypeRange{extType}, iop, false).getOuts()[0];
+    auto byteMinusZ = builder.create<Zll::SubOp>(autoLoc(), byte, z);
 
     // Generate polynomials of the form 1 + z + z^2 + ... z^n
     // CSE will make this very cheap when reused.
@@ -102,16 +104,16 @@ void lower(func::FuncOp inFunc) {
       Value tot = zero;
       Value curMul = one;
       for (size_t i = 0; i < count; i++) {
-        tot = builder.create<Zll::AddOp>(loc, tot, curMul);
-        curMul = builder.create<Zll::MulOp>(loc, curMul, z);
+        tot = builder.create<Zll::AddOp>(autoLoc(), tot, curMul);
+        curMul = builder.create<Zll::MulOp>(autoLoc(), curMul, z);
       }
       return tot;
     };
 
     // Make the various witnesses + set starting location
-    auto cbConst = builder.create<Zll::HashCheckedBytesOp>(loc, z, countConst);
-    auto cbPublic = builder.create<Zll::HashCheckedBytesPublicOp>(loc, z, countPublic);
-    auto cbPrivate = builder.create<Zll::HashCheckedBytesOp>(loc, z, countPrivate);
+    auto cbConst = builder.create<Zll::HashCheckedBytesOp>(autoLoc(), z, countConst);
+    auto cbPublic = builder.create<Zll::HashCheckedBytesPublicOp>(autoLoc(), z, countPublic);
+    auto cbPrivate = builder.create<Zll::HashCheckedBytesOp>(autoLoc(), z, countPrivate);
     size_t curConst = 0;
     size_t curPublic = 0;
     size_t curPrivate = 0;
@@ -122,9 +124,9 @@ void lower(func::FuncOp inFunc) {
       Value tot = zero;
       for (size_t i = 0; i < size; i++) {
         Value polyPart = evals[cur++];
-        Value powZ = builder.create<Zll::PowOp>(loc, z, i * kCoeffsPerPoly);
-        Value prod = builder.create<Zll::MulOp>(loc, polyPart, powZ);
-        tot = builder.create<Zll::AddOp>(loc, tot, prod);
+        Value powZ = builder.create<Zll::PowOp>(autoLoc(), z, i * kCoeffsPerPoly);
+        Value prod = builder.create<Zll::MulOp>(autoLoc(), polyPart, powZ);
+        tot = builder.create<Zll::AddOp>(autoLoc(), tot, prod);
       }
       return tot;
     };
@@ -137,7 +139,7 @@ void lower(func::FuncOp inFunc) {
 
     // Let's go!
     for (Operation& origOp : inFunc.getBody().front().without_terminator()) {
-      loc = origOp.getLoc();
+      mlir::Location loc = origOp.getLoc();
       llvm::TypeSwitch<Operation*>(&origOp)
           .Case<DefOp>([&](auto op) {
             if (op.getIsPublic()) {
@@ -204,23 +206,22 @@ void lower(func::FuncOp inFunc) {
           });
     }
 
-    loc = inFunc.getLoc();
-
     // Hash the constant witness
     Digest constDigest = computeDigest(constantWitness);
     // Convert to witness elements
     auto witvec = poseidon2HashSuite()->encode(constDigest, 8);
     std::vector<Value> valvec;
     for (size_t i = 0; i < 8; i++) {
-      valvec.push_back(builder.create<Zll::ConstOp>(loc, witvec[i]));
+      valvec.push_back(builder.create<Zll::ConstOp>(autoLoc(), witvec[i]));
     }
     auto constDigestVal = builder.create<Zll::IntoDigestOp>(
-        loc, Zll::DigestType::get(ctx, Zll::DigestKind::Poseidon2), valvec);
+        autoLoc(), Zll::DigestType::get(ctx, Zll::DigestKind::Poseidon2), valvec);
     // Match it against the computed value
-    builder.create<Zll::HashAssertEqOp>(loc, constDigestVal, cbConst.getDigest());
+    builder.create<Zll::HashAssertEqOp>(autoLoc(), constDigestVal, cbConst.getDigest());
 
     // Combine the public + private
-    auto folded = builder.create<Zll::HashFoldOp>(loc, cbPublic.getDigest(), cbPrivate.getDigest());
+    auto folded =
+        builder.create<Zll::HashFoldOp>(autoLoc(), cbPublic.getDigest(), cbPrivate.getDigest());
     // builder.create<Zll::ExternOp>(loc, TypeRange{}, ValueRange{cbConst.getDigest()}, "log",
     // "Const: %h"); builder.create<Zll::ExternOp>(loc, TypeRange{},
     // ValueRange{cbPublic.getDigest()}, "log", "Public: %h"); builder.create<Zll::ExternOp>(loc,
@@ -228,13 +229,13 @@ void lower(func::FuncOp inFunc) {
     // builder.create<Zll::ExternOp>(loc, TypeRange{}, ValueRange{folded}, "log", "Folded: %h");
 
     // Commit to IOP
-    builder.create<Iop::CommitOp>(loc, iop, folded);
+    builder.create<Iop::CommitOp>(autoLoc(), iop, folded);
     // Use IOP to select a random Z
-    Value newZ = builder.create<Iop::RngValOp>(loc, extType, iop);
+    Value newZ = builder.create<Iop::RngValOp>(autoLoc(), extType, iop);
     // builder.create<Zll::ExternOp>(loc, TypeRange{}, ValueRange{newZ}, "log", "newZ: %p");
     // Compare to the z I initially read
-    Value diffZ = builder.create<Zll::SubOp>(loc, z, newZ);
-    builder.create<Zll::EqualZeroOp>(loc, diffZ);
+    Value diffZ = builder.create<Zll::SubOp>(autoLoc(), z, newZ);
+    builder.create<Zll::EqualZeroOp>(autoLoc(), diffZ);
 
     digestVals.push_back(cbPublic.getPubDigest());
   }
@@ -243,18 +244,18 @@ void lower(func::FuncOp inFunc) {
   // that returned by risc0_binfmt::tagged_list
   std::vector<mlir::Value> zeroDigestVals(16, zero);
   mlir::Value listDigest = builder.create<Zll::IntoDigestOp>(
-      loc, Zll::DigestType::get(ctx, Zll::DigestKind::Sha256), zeroDigestVals);
+      autoLoc(), Zll::DigestType::get(ctx, Zll::DigestKind::Sha256), zeroDigestVals);
 
   while (!digestVals.empty()) {
     listDigest = builder.create<Zll::TaggedStructOp>(
-        loc, "risc0.BigIntClaims", ValueRange{digestVals.back(), listDigest}, ValueRange{});
+        autoLoc(), "risc0.BigIntClaims", ValueRange{digestVals.back(), listDigest}, ValueRange{});
     digestVals.pop_back();
   }
 
-  builder.create<Zll::SetGlobalDigestOp>(loc, buf, 1, listDigest);
+  builder.create<Zll::SetGlobalDigestOp>(autoLoc(), buf, 1, listDigest);
 
   // End the function
-  builder.create<func::ReturnOp>(loc);
+  builder.create<func::ReturnOp>(autoLoc());
 }
 
 struct LowerZllPass : public LowerZllBase<LowerZllPass> {

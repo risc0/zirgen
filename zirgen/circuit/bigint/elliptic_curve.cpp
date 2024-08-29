@@ -218,19 +218,15 @@ mul(OpBuilder builder, Location _loc, Value scalar, const AffinePt& pt, const Af
     // r * (r - 1) == 0
 
     auto rem = builder.create<BigInt::NondetRemOp>(loc(), scalar, two);
-    llvm::errs() << "Rem type: " << rem.getType() << "\n";
     auto quot = builder.create<BigInt::NondetQuotOp>(loc(), scalar, two);
-    llvm::errs() << "quot type: " << quot.getType() << "\n";
     auto quot_prod = builder.create<BigInt::MulOp>(loc(), two, quot);
     auto resum = builder.create<BigInt::AddOp>(loc(), quot_prod, rem);
     auto check = builder.create<BigInt::SubOp>(loc(), resum, scalar);
     builder.create<BigInt::EqualZeroOp>(loc(), check);
     // Also need 1 - (scale % 2)
     auto one_minus_rem = builder.create<BigInt::SubOp>(loc(), one, rem);
-    llvm::errs() << "one-minus-rem: " << one_minus_rem.getType() << "\n";
     // `check_bit` is nonzero iff `rem` is neither 0 nor 1 -- which is not allowed
     auto check_bit = builder.create<BigInt::MulOp>(loc(), rem, one_minus_rem);
-    llvm::errs() << "check-bit type: " << check_bit.getType() << "\n";
     builder.create<BigInt::EqualZeroOp>(loc(), check_bit);
 
     // When the bit is one, add the current doubling point; otherwise retain the current point
