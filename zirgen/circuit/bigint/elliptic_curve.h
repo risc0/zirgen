@@ -141,4 +141,13 @@ void makeECAffineValidatePointsEqualTest(
 );
 // void makeECAffineValidatePointOnCurveTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
 
+// Perf test function
+void makeRepeatedECAffineAddTest(mlir::OpBuilder builder,
+                                 mlir::Location _loc,
+                                 size_t bits,
+                                 size_t reps,
+                                 APInt prime,
+                                 APInt curve_a,
+                                 APInt curve_b);
+
 } // namespace zirgen::BigInt

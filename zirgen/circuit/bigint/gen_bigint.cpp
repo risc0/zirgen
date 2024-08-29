@@ -236,6 +236,15 @@ int main(int argc, char* argv[]) {
       zirgen::BigInt::makeECAffineValidatePointsEqualTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
     });
   }
+  // // Elliptic Curve tests
+  for (size_t numReps : {5, 10, 256}) {
+    const size_t numBits = 256;
+    module.addFunc<0>("rep_ec_aff_add_test_" + std::to_string(numBits) + "_r" + std::to_string(numReps), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::makeRepeatedECAffineAddTest(builder, builder.getUnknownLoc(), numBits, numReps,
+          APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
+    });
+  }
 
   PassManager pm(ctx);
   if (failed(applyPassManagerCLOptions(pm))) {

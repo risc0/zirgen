@@ -557,4 +557,41 @@ void makeECAffineValidatePointsEqualTest(
 // void makeECAffineValidatePointOrderTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
 // void makeECAffineValidatePointOnCurveTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
 
+// Perf Test function
+void makeRepeatedECAffineAddTest(mlir::OpBuilder builder,
+                                 mlir::Location _loc,
+                                 size_t bits,
+                                 size_t reps,
+                                 APInt prime,
+                                 APInt curve_a,
+                                 APInt curve_b) {
+  AutoSourceLoc loc(builder.getContext());
+  // auto order_bits = bits + 1;  // TODO
+  auto order_bits = bits;
+  auto xP = builder.create<BigInt::DefOp>(loc(), bits, 0, true);
+  auto yP = builder.create<BigInt::DefOp>(loc(), bits, 1, true);
+  auto order = builder.create<BigInt::DefOp>(
+      loc(), order_bits, 2, true); // TODO: Or get from a parameter to this call?
+  auto xQ = builder.create<BigInt::DefOp>(loc(), bits, 3, true);
+  auto yQ = builder.create<BigInt::DefOp>(loc(), bits, 4, true);
+  auto xR = builder.create<BigInt::DefOp>(loc(), bits, 5, true);
+  auto yR = builder.create<BigInt::DefOp>(loc(), bits, 6, true);
+
+  // TODO: Empty tests to make the compiler happy
+  auto order_TODO = builder.create<BigInt::SubOp>(loc(), order, order);
+  builder.create<BigInt::EqualZeroOp>(loc(), order_TODO);
+  // END TODO
+
+  auto curve = std::make_shared<WeierstrassCurve>(curve_a, curve_b, prime);
+  AffinePt lhs(xP, yP, curve, order);
+  AffinePt rhs(xQ, yQ, curve, order);
+  AffinePt expected(xR, yR, curve, order);
+  auto result = add(builder, loc(), lhs, rhs);
+  // iterate from 1 because the first repition was already done
+  for (size_t rp = 1; rp < reps; rp++) {
+    result = add(builder, loc(), result, rhs);
+  }
+  result.validate_equal(builder, loc(), expected);
+}
+
 } // namespace zirgen::BigInt
