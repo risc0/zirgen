@@ -42,6 +42,15 @@ let result = hasher.finalize();
 
 In this code snippet, `hasher` carries an internal state which is modified the input using the `update(input)` function. `finalize` will generate a resulting hash. In order to use the accelerator we need to generate an input transcript. As we, we need to keep track of the length of the current input data. To keep the proof under 2 million cycles the maximum amount of data we can hash in the accelerator is approximately 95 kilobytes.
 
-The following will assume a situation where a single call to finalize is less than 95 kb of input data.
+#### Naive implementation
 
-In this situation, the 
+The following assumes a situation where a single call to finalize is compressing less than 95 KB of input data.
+
+* Every time a new hasher is created, we need to associate the with a unique ID. This is due to the fact that one can have multiple hasher instances. On the host-side, we need to be able to differentiate between hasher instances.
+* Each hasher will be associated with the data that it carries and stored as a key value pair. Initially, the value will be empty.
+* On every update function, data will be appended to the hasher's data.
+* Every time `finalize`is called, create an assumption using `sys_verify(...)`. Note, this can be used to create the input transcript.
+
+### Data larger than 95 kb
+
+TODO
