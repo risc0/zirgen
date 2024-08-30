@@ -902,7 +902,7 @@ void LoweringImpl::gen(ConstructOp construct, ComponentBuilder& cb) {
   Zhlt::ConstructOp call;
   Value tmpLayout;
   if (ctor.getLayoutType()) {
-      tmpLayout = builder.create<Zhlt::MagicOp>(construct.getLoc(), ctor.getLayoutType());
+    tmpLayout = builder.create<Zhlt::MagicOp>(construct.getLoc(), ctor.getLayoutType());
   }
   call = builder.create<Zhlt::ConstructOp>(construct.getLoc(), ctor, arguments, tmpLayout);
 
@@ -915,7 +915,7 @@ void LoweringImpl::gen(ConstructOp construct, ComponentBuilder& cb) {
     tmpLayout.replaceAllUsesWith(layout);
     tmpLayout.getDefiningOp()->erase();
   }
-    
+
   if (layout && ctor->getAttr("alwaysinline")) {
     construct.emitError() << "Cannot construct non-trivial layouts inside of a function";
     throw MalformedIRException();
@@ -932,57 +932,56 @@ Value LoweringImpl::asLayout(Value value) {
     return layout;
 
   layout = TypeSwitch<Operation*, Value>(value.getDefiningOp())
-      .Case<LookupOp>([&](LookupOp op) {
-        Value componentLayout = asLayout(op.getComponent());
-        StringRef member = op.getMember();
-        return lookup(componentLayout, member);
-      })
-      .Case<SubscriptOp>([&](SubscriptOp op) {
-        Value arrayLayout = asLayout(op.getArray());
-        Value index = asValue(op.getElement());
-        return subscript(arrayLayout, index);
-      })
-      .Case<BackOp>([&](BackOp op) {
-        return asLayout(op.getTarget());
-      })
-      .Case<ArrayOp>([&](ArrayOp op) {
-        SmallVector<Value> layouts;
-        for (Value element : op.getElements())
-          layouts.push_back(asLayout(element));
-        return builder.create<ZStruct::LayoutArrayOp>(op.getLoc(), layouts);
-      })
-      .Case<MapOp>([&](MapOp op) {
-        Value array = asValue(op.getArray());
-        Type elemType = cast<ArrayType>(array.getType()).getElement();
-        Region mapBody(regionAnchor);
-        Type layoutType;
-        {
-          OpBuilder::InsertionGuard insertionGuard(builder);
-          Block* mapBodyBlock = builder.createBlock(&mapBody);
-          auto mapArg = op.getFunction().getArgument(0);
-          valueMapping[mapArg] = mapBodyBlock->addArgument(elemType, mapArg.getLoc());
-          auto super = cast<SuperOp>(op.getFunction().back().getTerminator());
-          auto layout = asLayout(super.getValue());
-          layoutType = layout.getType();
-          builder.create<ZStruct::YieldOp>(super->getLoc(), layout);
-        }
-        size_t size = cast<ArrayType>(array.getType()).getSize();
-        Type layoutArrayType = LayoutArrayType::get(ctx, layoutType, size);
-        auto map = builder.create<ZStruct::MapOp>(op->getLoc(), layoutArrayType, array, Value());
-        map.getBody().takeBody(mapBody);
-        return map;
-      })
-      .Case<BlockOp>([&](BlockOp op) {
-        // If a block has layout for its members, it will be associated in the
-        // layoutMapping during lowering. At this point that must not be the
-        // case so look for the super's layout coming from outside the block.
-        auto super = cast<SuperOp>(op.getInner().back().getTerminator());
-        return asLayout(super.getValue());
-      })
-      .Default([&](Operation* op) {
-        llvm::outs() << "unhandled op: " << *op << "\n";
-        return nullptr;
-      });
+               .Case<LookupOp>([&](LookupOp op) {
+                 Value componentLayout = asLayout(op.getComponent());
+                 StringRef member = op.getMember();
+                 return lookup(componentLayout, member);
+               })
+               .Case<SubscriptOp>([&](SubscriptOp op) {
+                 Value arrayLayout = asLayout(op.getArray());
+                 Value index = asValue(op.getElement());
+                 return subscript(arrayLayout, index);
+               })
+               .Case<BackOp>([&](BackOp op) { return asLayout(op.getTarget()); })
+               .Case<ArrayOp>([&](ArrayOp op) {
+                 SmallVector<Value> layouts;
+                 for (Value element : op.getElements())
+                   layouts.push_back(asLayout(element));
+                 return builder.create<ZStruct::LayoutArrayOp>(op.getLoc(), layouts);
+               })
+               .Case<MapOp>([&](MapOp op) {
+                 Value array = asValue(op.getArray());
+                 Type elemType = cast<ArrayType>(array.getType()).getElement();
+                 Region mapBody(regionAnchor);
+                 Type layoutType;
+                 {
+                   OpBuilder::InsertionGuard insertionGuard(builder);
+                   Block* mapBodyBlock = builder.createBlock(&mapBody);
+                   auto mapArg = op.getFunction().getArgument(0);
+                   valueMapping[mapArg] = mapBodyBlock->addArgument(elemType, mapArg.getLoc());
+                   auto super = cast<SuperOp>(op.getFunction().back().getTerminator());
+                   auto layout = asLayout(super.getValue());
+                   layoutType = layout.getType();
+                   builder.create<ZStruct::YieldOp>(super->getLoc(), layout);
+                 }
+                 size_t size = cast<ArrayType>(array.getType()).getSize();
+                 Type layoutArrayType = LayoutArrayType::get(ctx, layoutType, size);
+                 auto map =
+                     builder.create<ZStruct::MapOp>(op->getLoc(), layoutArrayType, array, Value());
+                 map.getBody().takeBody(mapBody);
+                 return map;
+               })
+               .Case<BlockOp>([&](BlockOp op) {
+                 // If a block has layout for its members, it will be associated in the
+                 // layoutMapping during lowering. At this point that must not be the
+                 // case so look for the super's layout coming from outside the block.
+                 auto super = cast<SuperOp>(op.getInner().back().getTerminator());
+                 return asLayout(super.getValue());
+               })
+               .Default([&](Operation* op) {
+                 llvm::outs() << "unhandled op: " << *op << "\n";
+                 return nullptr;
+               });
   layoutMapping[value] = layout;
   return layout;
 }

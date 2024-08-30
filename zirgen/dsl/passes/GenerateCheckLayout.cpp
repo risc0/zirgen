@@ -39,7 +39,7 @@ struct DeconditionalizeIfOp : public OpRewritePattern<Zll::IfOp> {
   }
 };
 
-}
+} // namespace
 
 // Transform ComponentOps into constraint-checking functions.
 struct GenerateCheckLayoutPass : public GenerateCheckLayoutBase<GenerateCheckLayoutPass> {
