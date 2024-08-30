@@ -87,10 +87,10 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
 
   Value y_diff = builder.create<BigInt::SubOp>(loc, rhs.y(), lhs.y());
   y_diff = builder.create<BigInt::AddOp>(loc, y_diff, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity  // TODO: Can this be removed?
-  // y_diff = builder.create<BigInt::ReduceOp>(loc, y_diff, prime);  // TODO: Not needed for correctness, so can experiment with removing
+  y_diff = builder.create<BigInt::ReduceOp>(loc, y_diff, prime);  // TODO: Not needed for correctness, so can experiment with removing
   Value x_diff = builder.create<BigInt::SubOp>(loc, rhs.x(), lhs.x());
   x_diff = builder.create<BigInt::AddOp>(loc, x_diff, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
-  // x_diff = builder.create<BigInt::ReduceOp>(loc, x_diff, prime);   // TODO: Can this be removed? Investigate NondetInvMod
+  x_diff = builder.create<BigInt::ReduceOp>(loc, x_diff, prime);   // TODO: Can this be removed? Investigate NondetInvMod
 
 
 
@@ -110,13 +110,13 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   lambda = builder.create<BigInt::ReduceOp>(loc, lambda, prime);  // TODO: Skipping this one breaks an assert; shouldn't be required for correctness but I think it overflows the coeffs
 
   Value nu = builder.create<BigInt::MulOp>(loc, lambda, lhs.x());
-  // nu = builder.create<BigInt::ReduceOp>(loc, nu, prime);  // TODO: Reduce isn't required for correctness, perf better if skipped?
+  nu = builder.create<BigInt::ReduceOp>(loc, nu, prime);  // TODO: Reduce isn't required for correctness, perf better if skipped?
   nu = builder.create<BigInt::SubOp>(loc, lhs.y(), nu);
   nu = builder.create<BigInt::AddOp>(loc, nu, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
   nu = builder.create<BigInt::ReduceOp>(loc, nu, prime);
 
   Value xR = builder.create<BigInt::MulOp>(loc, lambda, lambda);
-  // xR = builder.create<BigInt::ReduceOp>(loc, xR, prime);  // TODO: Not needed for correctness, so can experiment with removing
+  xR = builder.create<BigInt::ReduceOp>(loc, xR, prime);  // TODO: Not needed for correctness, so can experiment with removing
   xR = builder.create<BigInt::SubOp>(loc, xR, lhs.x());
   xR = builder.create<BigInt::AddOp>(loc, xR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
   xR = builder.create<BigInt::SubOp>(loc, xR, rhs.x());
@@ -128,7 +128,10 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   yR = builder.create<BigInt::AddOp>(loc, yR, nu);
   yR = builder.create<BigInt::SubOp>(loc, prime, yR);  // i.e., negate (mod prime) 
   yR = builder.create<BigInt::AddOp>(loc, yR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity  // TODO: better with using 2*prime for sub?
+  // return AffinePt(xR, yR, lhs.curve(), lhs.order());  // TODO: Only for testing
+  yR = builder.create<BigInt::AddOp>(loc, yR, prime); // TODO: Just more testing...
   yR = builder.create<BigInt::ReduceOp>(loc, yR, prime);
+
 
   // TODO: This order calculation presumes both points are of the same prime order
   return AffinePt(xR, yR, lhs.curve(), lhs.order());
