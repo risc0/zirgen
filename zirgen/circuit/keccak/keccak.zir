@@ -57,7 +57,7 @@ component fstep(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
     DummyRetTuple(),
     DummyRetTuple(),
     DummyRetTuple(),
-	DummyRetTuple(),
+    DummyRetTuple(),
     DummyRetTuple(),
     DummyRetTuple(),
     sha256mix_all<2>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16)
