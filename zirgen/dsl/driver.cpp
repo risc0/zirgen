@@ -302,6 +302,11 @@ int runTests(mlir::ModuleOp& module) {
     module.print(llvm::errs());
     return 1;
   }
+  size_t ops = 0;
+  module.walk([&](mlir::Operation* op) {
+    ops++;
+  });
+  llvm::errs() << "OPS AFTER INLINE & UNROLL PASSES: " << ops << "\n";
 
   zirgen::ZStruct::BufferAnalysis bufferAnalysis(module);
   // Finally, run the tests
@@ -488,6 +493,13 @@ int main(int argc, char* argv[]) {
     zhlModule->print(llvm::outs());
     return 0;
   }
+  size_t countOps = 0;
+  zhlModule->walk([&](mlir::Operation* op) {++countOps;});
+  llvm::errs() << "INITIAL ZHL OPS: " << countOps << "\n";
+  countOps = 0;
+  zhlModule->walk([&](zirgen::Zhl::ComponentOp comp){++countOps;});
+  llvm::errs() << "INITIAL COMPONENTS: " << countOps << "\n";
+
 
   context.getOrLoadDialect<zirgen::Zhlt::ZhltDialect>();
   context.getOrLoadDialect<zirgen::ZStruct::ZStructDialect>();
@@ -497,6 +509,12 @@ int main(int argc, char* argv[]) {
   if (!typedModule) {
     return 1;
   }
+  countOps = 0;
+  typedModule->walk([&](mlir::Operation* op) {++countOps;});
+  llvm::errs() << "OPS AFTER TYPING: " << countOps << "\n";
+  countOps = 0;
+  typedModule->walk([&](zirgen::Zhlt::ComponentOp comp){++countOps;});
+  llvm::errs() << "TYPED COMPONENTS: " << countOps << "\n";
 
   mlir::PassManager pm(&context);
   if (failed(applyPassManagerCLOptions(pm))) {
@@ -515,6 +533,10 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
+  countOps = 0;
+  typedModule->walk([&](mlir::Operation* op) {++countOps;});
+  llvm::errs() << "OPS AFTER ACCUM & GLOBALS: " << countOps << "\n";
+
   if (emitAction == Action::PrintZHLT) {
     typedModule->print(llvm::outs());
     return 0;
@@ -531,6 +553,10 @@ int main(int argc, char* argv[]) {
     typedModule->print(llvm::errs());
     return 1;
   }
+
+  countOps = 0;
+  typedModule->walk([&](mlir::Operation* op) {++countOps;});
+  llvm::errs() << "OPS AFTER OPTIMIZE LAYOUT: " << countOps << "\n";
 
   if (emitAction == Action::OptimizeZHLT) {
     typedModule->print(llvm::outs());

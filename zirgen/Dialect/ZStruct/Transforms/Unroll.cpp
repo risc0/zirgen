@@ -122,9 +122,24 @@ struct UnrollPass : public UnrollBase<UnrollPass> {
     RewritePatternSet patterns(ctx);
     patterns.insert<UnrollMaps>(ctx);
     patterns.insert<UnrollReduces>(ctx);
-    if (applyPatternsAndFoldGreedily(op, std::move(patterns)).failed()) {
+    GreedyRewriteConfig conf {};
+    conf.enableRegionSimplification = false;
+    size_t ops = 0;
+    op->walk([&](Operation* op) {
+        ops++;
+    });
+    llvm::errs() << "OPS BEFORE UNROLL PASS: " << ops << "\n";
+
+    if (applyPatternsAndFoldGreedily(op, std::move(patterns), conf).failed()) {
       signalPassFailure();
     }
+
+    ops = 0;
+    op->walk([&](Operation* op) {
+        ops++;
+    });
+    llvm::errs() << "OPS AFTER UNROLL PASS: " << ops << "\n";
+
   }
 };
 

@@ -87,7 +87,9 @@ struct GenerateStepsPass : public GenerateStepsBase<GenerateStepsPass> {
     RewritePatternSet patterns(&getContext());
     addAttachGlobalLayoutPattern(patterns, "global");
     addAttachGlobalLayoutPattern(patterns, "mix");
-    if (applyPatternsAndFoldGreedily(getOperation(), std::move(patterns)).failed()) {
+    GreedyRewriteConfig conf {};
+    conf.enableRegionSimplification = false;
+    if (applyPatternsAndFoldGreedily(getOperation(), std::move(patterns), conf).failed()) {
       getOperation().emitError("Unable to apply layout patterns");
       signalPassFailure();
     }

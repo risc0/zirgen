@@ -684,7 +684,8 @@ struct GenerateCheckPass : public GenerateCheckBase<GenerateCheckPass> {
     // Now, inline everything and get rid of everything that's not a constraint.
     builder.create<Zhlt::ReturnOp>(mod.getLoc());
     GreedyRewriteConfig config;
-    config.maxIterations = 100;
+    config.maxIterations = 10;
+    config.enableRegionSimplification = false;
     if (applyPatternsAndFoldGreedily(checkFuncOp, frozenPatterns, config).failed()) {
       checkFuncOp->emitError("Could not generate check function");
       signalPassFailure();
