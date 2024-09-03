@@ -860,6 +860,8 @@ component absorb_word<X: Val, Y: Val>(rvprev: RetTuple) {
   inp4 := readInput();
   unpack_4 := ToBits<WORDLEN()>(inp4);
   memidx := rvprev.midx + 1 + X+5*Y;
+  invmidx := NondetReg(Inv(memidx));
+  invmidx*memidx = 1;
   WriteMemory(memidx, MemDigest([FromBits<WORDLEN()>(unpack_1),FromBits<WORDLEN()>(unpack_2),FromBits<WORDLEN()>(unpack_3),FromBits<WORDLEN()>(unpack_4)]));
 
   arr12 := for i : 0..BLEN() {
@@ -995,6 +997,8 @@ component equal_word<X: Val>(rvprev: RetTuple) {
   inp4 := readInput();
   unpack_4 := ToBits<WORDLEN()>(inp4);
   memidx := rvprev.midx + 1 + X;
+  invmidx := NondetReg(Inv(memidx));
+  invmidx*memidx = 1;
   WriteMemory(memidx, MemDigest([FromBits<WORDLEN()>(unpack_1),FromBits<WORDLEN()>(unpack_2),FromBits<WORDLEN()>(unpack_3),FromBits<WORDLEN()>(unpack_4)]));
 
   for i : 0..WORDLEN()
@@ -1020,6 +1024,8 @@ component equal_word<X: Val>(rvprev: RetTuple) {
 
       readInput(); readInput(); readInput();
       memidxNxt := memidx + 1;
+      invmidxnxt := NondetReg(Inv(memidxNxt));
+      invmidxnxt*memidxNxt = 1;
       WriteMemory(memidxNxt, MemDigest([blk,0,0,0]));
 
       [prod, 1-prod] -> (
