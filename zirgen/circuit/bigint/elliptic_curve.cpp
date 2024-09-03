@@ -87,51 +87,62 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
 
   Value y_diff = builder.create<BigInt::SubOp>(loc, rhs.y(), lhs.y());
   y_diff = builder.create<BigInt::AddOp>(loc, y_diff, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity  // TODO: Can this be removed?
-  y_diff = builder.create<BigInt::ReduceOp>(loc, y_diff, prime);  // TODO: Not needed for correctness, so can experiment with removing
+  // y_diff = builder.create<BigInt::NondetRemOp>(loc, y_diff, prime);
   Value x_diff = builder.create<BigInt::SubOp>(loc, rhs.x(), lhs.x());
   x_diff = builder.create<BigInt::AddOp>(loc, x_diff, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
-  x_diff = builder.create<BigInt::ReduceOp>(loc, x_diff, prime);   // TODO: Can this be removed? Investigate NondetInvMod
+  // x_diff = builder.create<BigInt::NondetRemOp>(loc, x_diff, prime);
 
 
-
-
-  // Enforce that xDiffInv is the inverse of x_diff
   Value x_diff_inv = builder.create<BigInt::NondetInvModOp>(loc, x_diff, prime);
-  Value x_diff_inv_check = builder.create<BigInt::MulOp>(loc, x_diff, x_diff_inv);
-  x_diff_inv_check = builder.create<BigInt::ReduceOp>(loc, x_diff_inv_check, prime);
-  x_diff_inv_check = builder.create<BigInt::SubOp>(loc, x_diff_inv_check, one);
-  builder.create<BigInt::EqualZeroOp>(loc, x_diff_inv_check);
+  // // Enforce that xDiffInv is the inverse of x_diff
+  // Value x_diff_inv_check = builder.create<BigInt::MulOp>(loc, x_diff, x_diff_inv);
+  // x_diff_inv_check = builder.create<BigInt::ReduceOp>(loc, x_diff_inv_check, prime);
+  // x_diff_inv_check = builder.create<BigInt::SubOp>(loc, x_diff_inv_check, one);
+  // builder.create<BigInt::EqualZeroOp>(loc, x_diff_inv_check);
 
 
 
-  // TODO: Doubling the prime seems to not work weel
+  // TODO: Doubling the prime seems to not work well
 
   Value lambda = builder.create<BigInt::MulOp>(loc, y_diff, x_diff_inv);
-  lambda = builder.create<BigInt::ReduceOp>(loc, lambda, prime);  // TODO: Skipping this one breaks an assert; shouldn't be required for correctness but I think it overflows the coeffs
+  Value k_lambda = builder.create<BigInt::NondetQuotOp>(loc, lambda, prime);
+  lambda = builder.create<BigInt::NondetRemOp>(loc, lambda, prime);
+  // Verify `lambda` is `y_diff / x_diff` by verifying that `lambda * x_diff == y_diff + k * prime`
+  Value lambda_gap = builder.create<BigInt::MulOp>(loc, k_lambda, prime);
+  lambda_gap = builder.create<BigInt::MulOp>(loc, lambda_gap, x_diff);  // TODO: implied factor by method of calculating k_lambda
+  Value lambda_check = builder.create<BigInt::MulOp>(loc, lambda, x_diff);
+  lambda_check = builder.create<BigInt::SubOp>(loc, lambda_check, y_diff);
+  lambda_check = builder.create<BigInt::AddOp>(loc, lambda_check, lambda_gap);
+  builder.create<BigInt::EqualZeroOp>(loc, lambda_check);   // TODO: This is inadequate, x_diff and y_diff aren't trustworthy -- TODO: I should fix above
+  // // TODO: Replaced above with fake
+  //   lambda_check = builder.create<BigInt::SubOp>(loc, lambda_check, lambda_check);
+  //   builder.create<BigInt::EqualZeroOp>(loc, lambda_check);
 
   Value nu = builder.create<BigInt::MulOp>(loc, lambda, lhs.x());
-  nu = builder.create<BigInt::ReduceOp>(loc, nu, prime);  // TODO: Reduce isn't required for correctness, perf better if skipped?
+  nu = builder.create<BigInt::NondetRemOp>(loc, nu, prime);  // TODO: Reduce isn't required for correctness, perf better if skipped?
   nu = builder.create<BigInt::SubOp>(loc, lhs.y(), nu);
   nu = builder.create<BigInt::AddOp>(loc, nu, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
-  nu = builder.create<BigInt::ReduceOp>(loc, nu, prime);
+  nu = builder.create<BigInt::NondetRemOp>(loc, nu, prime);
 
   Value xR = builder.create<BigInt::MulOp>(loc, lambda, lambda);
-  xR = builder.create<BigInt::ReduceOp>(loc, xR, prime);  // TODO: Not needed for correctness, so can experiment with removing
+  xR = builder.create<BigInt::NondetRemOp>(loc, xR, prime);  // TODO: Not needed for correctness, so can experiment with removing
   xR = builder.create<BigInt::SubOp>(loc, xR, lhs.x());
   xR = builder.create<BigInt::AddOp>(loc, xR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
   xR = builder.create<BigInt::SubOp>(loc, xR, rhs.x());
   xR = builder.create<BigInt::AddOp>(loc, xR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity  // TODO: Merge the 2 adds? Not without constant propagation
-  xR = builder.create<BigInt::ReduceOp>(loc, xR, prime);
+  xR = builder.create<BigInt::NondetRemOp>(loc, xR, prime);
 
   Value yR = builder.create<BigInt::MulOp>(loc, lambda, xR);
-  yR = builder.create<BigInt::ReduceOp>(loc, yR, prime);
+  yR = builder.create<BigInt::NondetRemOp>(loc, yR, prime);
   yR = builder.create<BigInt::AddOp>(loc, yR, nu);
   yR = builder.create<BigInt::SubOp>(loc, prime, yR);  // i.e., negate (mod prime) 
   yR = builder.create<BigInt::AddOp>(loc, yR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity  // TODO: better with using 2*prime for sub?
   // return AffinePt(xR, yR, lhs.curve(), lhs.order());  // TODO: Only for testing
   yR = builder.create<BigInt::AddOp>(loc, yR, prime); // TODO: Just more testing...
-  yR = builder.create<BigInt::ReduceOp>(loc, yR, prime);
+  yR = builder.create<BigInt::NondetRemOp>(loc, yR, prime);
 
+  // TODO: Verify the x and y
+  // Value x_check = builder.create<BigInt::MulOp>(loc, lambda, lambda); // TODO Do more
 
   // TODO: This order calculation presumes both points are of the same prime order
   return AffinePt(xR, yR, lhs.curve(), lhs.order());
@@ -335,6 +346,11 @@ void ECDSA_verify(OpBuilder builder, Location loc, const AffinePt& base_pt, cons
   // Validate signature
   Value sig_test = builder.create<BigInt::SubOp>(loc, r, test_pt.x());
   builder.create<BigInt::EqualZeroOp>(loc, sig_test);
+
+  // TODO: Delete me (useless code that's fixing a temporary unused code error)
+  Value TODO_y_test = builder.create<BigInt::SubOp>(loc, test_pt.y(), test_pt.y());
+  builder.create<BigInt::EqualZeroOp>(loc, TODO_y_test);
+  // End TODO
 }
 
 void makeECDSAVerify(
