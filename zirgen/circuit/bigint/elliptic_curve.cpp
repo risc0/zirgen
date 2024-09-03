@@ -117,10 +117,10 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   builder.create<BigInt::EqualZeroOp>(loc, lambda_check);   // TODO: This is inadequate, x_diff and y_diff aren't trustworthy -- TODO: I should fix above
 
   Value nu = builder.create<BigInt::MulOp>(loc, lambda, lhs.x());
-  nu = builder.create<BigInt::NondetRemOp>(loc, nu, prime);  // TODO: Reduce isn't required for correctness, perf better if skipped?
+  // nu = builder.create<BigInt::NondetRemOp>(loc, nu, prime);  // TODO: Reduce isn't required for correctness, perf better if skipped?
   nu = builder.create<BigInt::SubOp>(loc, lhs.y(), nu);
   nu = builder.create<BigInt::AddOp>(loc, nu, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
-  nu = builder.create<BigInt::NondetRemOp>(loc, nu, prime);
+  // nu = builder.create<BigInt::NondetRemOp>(loc, nu, prime);
 
   Value lambda_sqr = builder.create<BigInt::MulOp>(loc, lambda, lambda);
         // Value xR = builder.create<BigInt::NondetRemOp>(loc, lambda_sqr, prime);  // TODO: Not needed for correctness, so can experiment with removing
@@ -159,8 +159,11 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   Value y_check_other = builder.create<BigInt::SubOp>(loc, lhs.x(), xR);
   y_check_other = builder.create<BigInt::MulOp>(loc, lambda, y_check_other);
   y_check_other = builder.create<BigInt::SubOp>(loc, y_check_other, lhs.y());
+  y_check_other = builder.create<BigInt::AddOp>(loc, y_check_other, prime);
+  y_check_other = builder.create<BigInt::AddOp>(loc, y_check_other, prime);
   y_check = builder.create<BigInt::SubOp>(loc, y_check, y_check_other);
   builder.create<BigInt::EqualZeroOp>(loc, y_check);
+    // builder.create<BigInt::EqualZeroOp>(loc, builder.create<BigInt::SubOp>(loc, y_check, y_check));  // TODO: Temp for testing
 
   // TODO: This order calculation presumes both points are of the same prime order
   return AffinePt(xR, yR, lhs.curve(), lhs.order());
