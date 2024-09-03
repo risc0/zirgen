@@ -105,15 +105,13 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   // TODO: Doubling the prime seems to not work well
 
   Value lambda = builder.create<BigInt::MulOp>(loc, y_diff, x_diff_inv);
-  Value k_lambda = builder.create<BigInt::NondetQuotOp>(loc, lambda, prime);
-  // TODO: The way we're calculating k_lambda seems to be fundamentally inadequate for lambda verification; rework
-    k_lambda = builder.create<BigInt::AddOp>(loc, k_lambda, one);  // TODO: Testing
   lambda = builder.create<BigInt::NondetRemOp>(loc, lambda, prime);
   // Verify `lambda` is `y_diff / x_diff` by verifying that `lambda * x_diff == y_diff + k * prime`
-  Value lambda_gap = builder.create<BigInt::MulOp>(loc, k_lambda, prime);
   Value lambda_check = builder.create<BigInt::MulOp>(loc, lambda, x_diff);
   lambda_check = builder.create<BigInt::SubOp>(loc, lambda_check, y_diff);
-  lambda_check = builder.create<BigInt::SubOp>(loc, lambda_check, lambda_gap);
+  lambda_check = builder.create<BigInt::AddOp>(loc, lambda_check, prime);
+  Value k_lambda = builder.create<BigInt::NondetQuotOp>(loc, lambda_check, prime);
+  lambda_check = builder.create<BigInt::SubOp>(loc, lambda_check, builder.create<BigInt::MulOp>(loc, k_lambda, prime));
   builder.create<BigInt::EqualZeroOp>(loc, lambda_check);   // TODO: This is inadequate, x_diff and y_diff aren't trustworthy -- TODO: I should fix above
 
   Value nu = builder.create<BigInt::MulOp>(loc, lambda, lhs.x());
