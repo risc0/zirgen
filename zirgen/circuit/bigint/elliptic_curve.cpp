@@ -139,7 +139,7 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   yR = builder.create<BigInt::AddOp>(loc, yR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity  // TODO: better with using 2*prime for sub?
   // return AffinePt(xR, yR, lhs.curve(), lhs.order());  // TODO: Only for testing
   yR = builder.create<BigInt::AddOp>(loc, yR, prime); // TODO: Just more testing...
-  // Value k_y = builder.create<BigInt::NondetQuotOp>(loc, yR, prime);  // TODO: Reinstate
+  Value k_y = builder.create<BigInt::NondetQuotOp>(loc, yR, prime);
   yR = builder.create<BigInt::NondetRemOp>(loc, yR, prime);
 
   // Verify xR
@@ -153,8 +153,14 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   x_check = builder.create<BigInt::SubOp>(loc, x_check, xR);
   builder.create<BigInt::EqualZeroOp>(loc, x_check);
 
-  // TODO: Verify yR
-  // Value y_check = builder.create<BigInt::MulOp>(loc, k_y, prime);
+  // Verify yR
+  Value y_check = builder.create<BigInt::MulOp>(loc, k_y, prime);
+  y_check = builder.create<BigInt::AddOp>(loc, y_check, yR);
+  Value y_check_other = builder.create<BigInt::SubOp>(loc, lhs.x(), xR);
+  y_check_other = builder.create<BigInt::MulOp>(loc, lambda, y_check_other);
+  y_check_other = builder.create<BigInt::SubOp>(loc, y_check_other, lhs.y());
+  y_check = builder.create<BigInt::SubOp>(loc, y_check, y_check_other);
+  builder.create<BigInt::EqualZeroOp>(loc, y_check);
 
   // TODO: This order calculation presumes both points are of the same prime order
   return AffinePt(xR, yR, lhs.curve(), lhs.order());
