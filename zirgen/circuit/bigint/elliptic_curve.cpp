@@ -123,8 +123,9 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   nu = builder.create<BigInt::NondetRemOp>(loc, nu, prime);
 
   Value lambda_sqr = builder.create<BigInt::MulOp>(loc, lambda, lambda);
-  Value xR = builder.create<BigInt::NondetRemOp>(loc, lambda_sqr, prime);  // TODO: Not needed for correctness, so can experiment with removing
-  xR = builder.create<BigInt::SubOp>(loc, xR, lhs.x());
+        // Value xR = builder.create<BigInt::NondetRemOp>(loc, lambda_sqr, prime);  // TODO: Not needed for correctness, so can experiment with removing
+        // xR = builder.create<BigInt::SubOp>(loc, xR, lhs.x());  // TODO: pairs with above
+  Value xR = builder.create<BigInt::SubOp>(loc, lambda_sqr, lhs.x());
   xR = builder.create<BigInt::AddOp>(loc, xR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
   xR = builder.create<BigInt::SubOp>(loc, xR, rhs.x());
   xR = builder.create<BigInt::AddOp>(loc, xR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity  // TODO: Merge the 2 adds? Not without constant propagation
@@ -132,15 +133,17 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   xR = builder.create<BigInt::NondetRemOp>(loc, xR, prime);
 
   Value yR = builder.create<BigInt::MulOp>(loc, lambda, xR);
-  yR = builder.create<BigInt::NondetRemOp>(loc, yR, prime);
+  // yR = builder.create<BigInt::NondetRemOp>(loc, yR, prime);  // TODO: good to skip, right?
   yR = builder.create<BigInt::AddOp>(loc, yR, nu);
   yR = builder.create<BigInt::SubOp>(loc, prime, yR);  // i.e., negate (mod prime) 
   yR = builder.create<BigInt::AddOp>(loc, yR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity  // TODO: better with using 2*prime for sub?
   // return AffinePt(xR, yR, lhs.curve(), lhs.order());  // TODO: Only for testing
   yR = builder.create<BigInt::AddOp>(loc, yR, prime); // TODO: Just more testing...
+  // Value k_y = builder.create<BigInt::NondetQuotOp>(loc, yR, prime);  // TODO: Reinstate
   yR = builder.create<BigInt::NondetRemOp>(loc, yR, prime);
 
-  // TODO: Verify the x and y
+  // Verify xR
+  // TODO: Can skip recomputing the things calculated pre-nondet above
   Value x_check = builder.create<BigInt::MulOp>(loc, k_x, prime);
   x_check = builder.create<BigInt::SubOp>(loc, lambda_sqr, x_check);
   x_check = builder.create<BigInt::SubOp>(loc, x_check, lhs.x());
@@ -149,7 +152,9 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   x_check = builder.create<BigInt::AddOp>(loc, x_check, prime);
   x_check = builder.create<BigInt::SubOp>(loc, x_check, xR);
   builder.create<BigInt::EqualZeroOp>(loc, x_check);
-  
+
+  // TODO: Verify yR
+  // Value y_check = builder.create<BigInt::MulOp>(loc, k_y, prime);
 
   // TODO: This order calculation presumes both points are of the same prime order
   return AffinePt(xR, yR, lhs.curve(), lhs.order());
