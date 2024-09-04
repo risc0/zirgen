@@ -195,7 +195,7 @@ int main(int argc, char* argv[]) {
     module.addFunc<0>("ecdsa_verify_" + std::to_string(numBits), {}, [&]() {
       llvm::outs() << "  Making ecdsa_verify_" + std::to_string(numBits) + "\n";
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECDSAVerify(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 31), APInt(numBits, 0), APInt(numBits, 3));  // TODO: show values in ZKR name
+      zirgen::BigInt::makeECDSAVerify(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 31), APInt(numBits, 0), APInt(numBits, 3), APInt(numBits, 43));  // TODO: show values in ZKR name
     });
   }
   // Elliptic Curve tests

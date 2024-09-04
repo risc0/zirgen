@@ -43,24 +43,6 @@ void AffinePt::validate_on_curve(OpBuilder builder, Location loc) const {
   _curve->validate_contains(builder, loc, *this);
 }
 
-void AffinePt::validate_order(OpBuilder builder, Location loc, const AffinePt& arbitrary) const {
-  // This validates that the true order is _at most_ the claimed order (it could be smaller)
-  // It does so by confirming that `order * pt == identity`
-  // (Specifically, via the equivalent calculation that `(order - 1) * pt == -pt`)
-  // NOTE: If the claimed order is prime, this validates that the true order is _exactly_ the claimed order
-  // This is because the true order must divide any scalar that sends the point to the identity, and
-  // the order can't be 1 b/c the identity can't be represented in affine coords.
-
-  // Construct the constant 1
-  mlir::Type oneType = builder.getIntegerType(1);  // a `1` is bitwidth 1
-  auto oneAttr = builder.getIntegerAttr(oneType, 1);  // value 1
-  auto one = builder.create<BigInt::ConstOp>(loc, oneAttr);
-
-  Value order_minus_one = builder.create<BigInt::SubOp>(loc, order(), one);
-  AffinePt times_order_minus_one = mul(builder, loc, order_minus_one, *this, arbitrary);
-  times_order_minus_one.validate_equal(builder, loc, neg(builder, loc, *this));
-}
-
 bool AffinePt::on_same_curve_as(const AffinePt& other) const {
   // Curves are only treated as equal if they are equal as pointers
   // Probably fine b/c we don't really want multiple copies of curves floating around
@@ -133,7 +115,6 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   yR = builder.create<BigInt::AddOp>(loc, yR, nu);
   yR = builder.create<BigInt::SubOp>(loc, prime, yR);  // i.e., negate (mod prime) 
   yR = builder.create<BigInt::AddOp>(loc, yR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity  // TODO: better with using 2*prime for sub?
-  // return AffinePt(xR, yR, lhs.curve(), lhs.order());  // TODO: Only for testing
   yR = builder.create<BigInt::AddOp>(loc, yR, prime); // TODO: Just more testing...
   Value k_y = builder.create<BigInt::NondetQuotOp>(loc, yR, prime);
   yR = builder.create<BigInt::NondetRemOp>(loc, yR, prime);
@@ -160,8 +141,7 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   y_check = builder.create<BigInt::SubOp>(loc, y_check, y_check_other);
   builder.create<BigInt::EqualZeroOp>(loc, y_check);
 
-  // TODO: This order calculation presumes both points are of the same prime order
-  return AffinePt(xR, yR, lhs.curve(), lhs.order());
+  return AffinePt(xR, yR, lhs.curve());
 }
 
 AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt, const AffinePt& arbitrary) {
@@ -175,7 +155,7 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt, 
   auto twoAttr = builder.getIntegerAttr(twoType, 2);  // value 2
   auto two = builder.create<BigInt::ConstOp>(loc, twoAttr);
 
-  // This algorithm doesn't work if `scalar` is congruent to 0 mod `order`
+  // This algorithm doesn't work if `scalar` is a multiple of `pt`'s order
   // No separate testing is needed, as this will compute the `result` value (inclusive of `arbitrary`) to
   // be equal to `arbitrary` in this case, and then compute `sub` of `arbitrary` with itself, which fails
   // (via attempted division by zero) in `sub`.
@@ -232,8 +212,7 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt, 
     auto newX = builder.create<BigInt::ReduceOp>(loc, xMerged, result.curve()->prime_as_bigint(builder, loc));
     auto newY = builder.create<BigInt::ReduceOp>(loc, yMerged, result.curve()->prime_as_bigint(builder, loc));
 
-    // TODO: This assume arbitrary has the same prime order as pt
-    result = AffinePt(newX, newY, result.curve(), pt.order());
+    result = AffinePt(newX, newY, result.curve());
     // Double the doubling point
     doubled_pt = doub(builder, loc, doubled_pt);
     // The lowest order bit has been used, so halve the scale factor and iterate
@@ -247,7 +226,7 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt, 
 
 AffinePt neg(OpBuilder builder, Location loc, const AffinePt& pt){
   Value yR = builder.create<BigInt::SubOp>(loc, pt.curve()->prime_as_bigint(builder, loc), pt.y());
-  return AffinePt(pt.x(), yR, pt.curve(), pt.order());
+  return AffinePt(pt.x(), yR, pt.curve());
 }
 
 AffinePt doub(OpBuilder builder, Location loc, const AffinePt& pt){
@@ -307,8 +286,7 @@ AffinePt doub(OpBuilder builder, Location loc, const AffinePt& pt){
   yR = builder.create<BigInt::AddOp>(loc, yR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
   yR = builder.create<BigInt::ReduceOp>(loc, yR, prime);
 
-  // TODO: This order calculation assumes pt.order() is relatively prime to 2 (i.e. odd)
-  return AffinePt(xR, yR, pt.curve(), pt.order());
+  return AffinePt(xR, yR, pt.curve());
 }
 
 AffinePt sub(OpBuilder builder, Location loc, const AffinePt& lhs, const AffinePt& rhs) {
@@ -317,7 +295,7 @@ AffinePt sub(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   return add(builder, loc, lhs, neg_rhs);
 }
 
-void ECDSA_verify(OpBuilder builder, Location loc, const AffinePt& base_pt, const AffinePt& pub_key, Value hashed_msg, Value r, Value s, const AffinePt& arbitrary) {
+void ECDSA_verify(OpBuilder builder, Location loc, const AffinePt& base_pt, const AffinePt& pub_key, Value hashed_msg, Value r, Value s, const AffinePt& arbitrary, Value order) {
   pub_key.on_same_curve_as(base_pt);
   arbitrary.on_same_curve_as(base_pt);
 
@@ -328,9 +306,8 @@ void ECDSA_verify(OpBuilder builder, Location loc, const AffinePt& base_pt, cons
   // But CSE eliminates most of the dup'd calculations, so maybe this is fine?
   arbitrary.validate_on_curve(builder, loc);
 
-  assert(pub_key.order() == base_pt.order());  // TODO: I... think this isn't right, I think it's comparing _Values_ _outside_ the circuit (TODO Check)
-  // Note: We don't need to validate `base_pt`'s order as it's a publicly pre-committed parameter whose order we can verify ahead of time
-  pub_key.validate_order(builder, loc, arbitrary);
+  // TODO: Need anything to check the order of various points?
+
   // Mathematically, we need to ensure also that `pub_key` is not the identity.
   // But it's not possible to express the identity in affine coords, so this comes for free just by validating the point is on the curve
 
@@ -341,17 +318,17 @@ void ECDSA_verify(OpBuilder builder, Location loc, const AffinePt& base_pt, cons
   auto one = builder.create<BigInt::ConstOp>(loc, oneAttr);
 
   // Compute s_inv
-  Value s_inv = builder.create<BigInt::NondetInvModOp>(loc, s, base_pt.order());  // TODO: Do we need to handle `order` specially?
+  Value s_inv = builder.create<BigInt::NondetInvModOp>(loc, s, order);  // TODO: Do we need to handle `order` specially?
   Value s_inv_check = builder.create<BigInt::MulOp>(loc, s, s_inv);
-  s_inv_check = builder.create<BigInt::ReduceOp>(loc, s_inv_check, base_pt.order());  // TODO: Do we need to handle `order` specially?
+  s_inv_check = builder.create<BigInt::ReduceOp>(loc, s_inv_check, order);  // TODO: Do we need to handle `order` specially?
   s_inv_check = builder.create<BigInt::SubOp>(loc, s_inv_check, one);
   builder.create<BigInt::EqualZeroOp>(loc, s_inv_check);
 
   // Compute u multipliers
   Value u1 = builder.create<BigInt::MulOp>(loc, hashed_msg, s_inv);
-  u1 = builder.create<BigInt::ReduceOp>(loc, u1, base_pt.order());  // TODO: Do we need to handle `order` specially?
+  u1 = builder.create<BigInt::ReduceOp>(loc, u1, order);  // TODO: Do we need to handle `order` specially?
   Value u2 = builder.create<BigInt::MulOp>(loc, r, s_inv);
-  u2 = builder.create<BigInt::ReduceOp>(loc, u2, base_pt.order());  // TODO: Do we need to handle `order` specially?
+  u2 = builder.create<BigInt::ReduceOp>(loc, u2, order);  // TODO: Do we need to handle `order` specially?
 
   // Calculate test point
   AffinePt u1G = mul(builder, loc, u1, base_pt, arbitrary);
@@ -375,7 +352,8 @@ void makeECDSAVerify(
     size_t bits,  // TODO: These `bits` parameters could maybe be inferred from the prime (and definitely from the prime + the order)
     APInt prime,
     APInt curve_a,
-    APInt curve_b
+    APInt curve_b,
+    APInt order
     /* TODO*/
 ) {
   // TODO: What can we move from an input to a parameter?
@@ -383,22 +361,26 @@ void makeECDSAVerify(
   auto order_bits = bits + 1;
   auto base_pt_X = builder.create<BigInt::DefOp>(loc, bits, 0, true);  // TODO: Or get from a parameter to this call?
   auto base_pt_Y = builder.create<BigInt::DefOp>(loc, bits, 1, true);  // TODO: Or get from a parameter to this call?
-  auto base_pt_order = builder.create<BigInt::DefOp>(loc, order_bits, 2, true);  // TODO: Or get from a parameter to this call?
-  auto pub_key_X = builder.create<BigInt::DefOp>(loc, bits, 3, true);
-  auto pub_key_Y = builder.create<BigInt::DefOp>(loc, bits, 4, true);
-  auto msg_hash = builder.create<BigInt::DefOp>(loc, order_bits, 5, true);
-  auto r = builder.create<BigInt::DefOp>(loc, order_bits, 6, true);
-  auto s = builder.create<BigInt::DefOp>(loc, order_bits, 7, true);
-  auto arbitrary_X = builder.create<BigInt::DefOp>(loc, bits, 8, true);
-  auto arbitrary_Y = builder.create<BigInt::DefOp>(loc, bits, 9, true);
+  auto pub_key_X = builder.create<BigInt::DefOp>(loc, bits, 2, true);
+  auto pub_key_Y = builder.create<BigInt::DefOp>(loc, bits, 3, true);
+  auto msg_hash = builder.create<BigInt::DefOp>(loc, order_bits, 4, true);
+  auto r = builder.create<BigInt::DefOp>(loc, order_bits, 5, true);
+  auto s = builder.create<BigInt::DefOp>(loc, order_bits, 6, true);
+  auto arbitrary_X = builder.create<BigInt::DefOp>(loc, bits, 7, true);
+  auto arbitrary_Y = builder.create<BigInt::DefOp>(loc, bits, 8, true);
+
+  // Add order as a constant
+  mlir::Type order_type = builder.getIntegerType(order.getBitWidth());  // TODO: I haven't thought through signedness
+  auto order_attr = builder.getIntegerAttr(order_type, order);
+  auto order_const = builder.create<BigInt::ConstOp>(loc, order_attr);
 
   // TODO: Think through if we need to validate any of this (e.g. the orders, points being on curves)
   auto curve = std::make_shared<WeierstrassCurve>(curve_a, curve_b, prime);
-  AffinePt base_pt(base_pt_X, base_pt_Y, curve, base_pt_order);
-  AffinePt pub_key(pub_key_X, pub_key_Y, curve, base_pt_order);
-  AffinePt arbitrary(arbitrary_X, arbitrary_Y, curve, base_pt_order);
+  AffinePt base_pt(base_pt_X, base_pt_Y, curve);
+  AffinePt pub_key(pub_key_X, pub_key_Y, curve);
+  AffinePt arbitrary(arbitrary_X, arbitrary_Y, curve);
 
-  ECDSA_verify(builder, loc, base_pt, pub_key, msg_hash, r, s, arbitrary);
+  ECDSA_verify(builder, loc, base_pt, pub_key, msg_hash, r, s, arbitrary, order_const);
 }
 
 // Test functions
@@ -411,25 +393,17 @@ void makeECAffineAddTest(
     APInt curve_a,
     APInt curve_b
 ) {
-  // auto order_bits = bits + 1;  // TODO
-  auto order_bits = bits;
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
-  auto order = builder.create<BigInt::DefOp>(loc, order_bits, 2, true);  // TODO: Or get from a parameter to this call?
-  auto xQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
-  auto yQ = builder.create<BigInt::DefOp>(loc, bits, 4, true);
-  auto xR = builder.create<BigInt::DefOp>(loc, bits, 5, true);
-  auto yR = builder.create<BigInt::DefOp>(loc, bits, 6, true);
-
-  // TODO: Empty tests to make the compiler happy
-  auto order_TODO = builder.create<BigInt::SubOp>(loc, order, order);
-  builder.create<BigInt::EqualZeroOp>(loc, order_TODO);
-  // END TODO
+  auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);
+  auto yQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
+  auto xR = builder.create<BigInt::DefOp>(loc, bits, 4, true);
+  auto yR = builder.create<BigInt::DefOp>(loc, bits, 5, true);
 
   auto curve = std::make_shared<WeierstrassCurve>(curve_a, curve_b, prime);
-  AffinePt lhs(xP, yP, curve, order);
-  AffinePt rhs(xQ, yQ, curve, order);
-  AffinePt expected(xR, yR, curve, order);
+  AffinePt lhs(xP, yP, curve);
+  AffinePt rhs(xQ, yQ, curve);
+  AffinePt expected(xR, yR, curve);
   auto result = add(builder, loc, lhs, rhs);
   result.validate_equal(builder, loc, expected);
 }
@@ -442,22 +416,15 @@ void makeECAffineDoubleTest(
     APInt curve_a,
     APInt curve_b
 ) {
-  auto order_bits = bits + 1;
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
-  auto order = builder.create<BigInt::DefOp>(loc, order_bits, 2, true);  // TODO: Or get from a parameter to this call?
-  auto xR = builder.create<BigInt::DefOp>(loc, bits, 3, true);
-  auto yR = builder.create<BigInt::DefOp>(loc, bits, 4, true);
+  auto xR = builder.create<BigInt::DefOp>(loc, bits, 2, true);
+  auto yR = builder.create<BigInt::DefOp>(loc, bits, 3, true);
   auto curve = std::make_shared<WeierstrassCurve>(curve_a, curve_b, prime);
-  AffinePt inp(xP, yP, curve, order);
-  AffinePt expected(xR, yR, curve, order);
+  AffinePt inp(xP, yP, curve);
+  AffinePt expected(xR, yR, curve);
   auto result = doub(builder, loc, inp);
   result.validate_equal(builder, loc, expected);
-
-  // TODO: Empty tests to make the compiler happy
-  auto order_TODO = builder.create<BigInt::SubOp>(loc, order, order);
-  builder.create<BigInt::EqualZeroOp>(loc, order_TODO);
-  // END TODO
 }
 
 void makeECAffineMultiplyTest(
@@ -474,10 +441,8 @@ void makeECAffineMultiplyTest(
   auto scale = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto xArb = builder.create<BigInt::DefOp>(loc, bits, 3, true);
   auto yArb = builder.create<BigInt::DefOp>(loc, bits, 4, true);
-  // auto order = builder.create<BigInt::DefOp>(loc, order_bits, 5, true);  // TODO: Or get from a parameter to this call?  // TODO
-  auto order = builder.create<BigInt::DefOp>(loc, bits, 5, true);  // TODO: Or get from a parameter to this call?
-  auto xR = builder.create<BigInt::DefOp>(loc, bits, 6, true);
-  auto yR = builder.create<BigInt::DefOp>(loc, bits, 7, true);
+  auto xR = builder.create<BigInt::DefOp>(loc, bits, 5, true);
+  auto yR = builder.create<BigInt::DefOp>(loc, bits, 6, true);
 
 
   // TODO: Basic sanity test section (DELETE ME)
@@ -486,7 +451,6 @@ void makeECAffineMultiplyTest(
   auto scale_diff = builder.create<BigInt::SubOp>(loc, scale, scale);
   auto xArb_diff = builder.create<BigInt::SubOp>(loc, xArb, xArb);
   auto yArb_diff = builder.create<BigInt::SubOp>(loc, yArb, yArb);
-  auto order_diff = builder.create<BigInt::SubOp>(loc, order, order);
   auto xR_diff = builder.create<BigInt::SubOp>(loc, xR, xR);
   auto yR_diff = builder.create<BigInt::SubOp>(loc, yR, yR);
   builder.create<BigInt::EqualZeroOp>(loc, xP_diff);
@@ -494,15 +458,14 @@ void makeECAffineMultiplyTest(
   builder.create<BigInt::EqualZeroOp>(loc, scale_diff);
   builder.create<BigInt::EqualZeroOp>(loc, xArb_diff);
   builder.create<BigInt::EqualZeroOp>(loc, yArb_diff);
-  builder.create<BigInt::EqualZeroOp>(loc, order_diff);
   builder.create<BigInt::EqualZeroOp>(loc, xR_diff);
   builder.create<BigInt::EqualZeroOp>(loc, yR_diff);
   // TODO: End of sanity test section
 
   auto curve = std::make_shared<WeierstrassCurve>(curve_a, curve_b, prime);
-  AffinePt inp(xP, yP, curve, order);
-  AffinePt arb(xArb, yArb, curve, order);
-  AffinePt expected(xR, yR, curve, order);
+  AffinePt inp(xP, yP, curve);
+  AffinePt arb(xArb, yArb, curve);
+  AffinePt expected(xR, yR, curve);
   auto result = mul(builder, loc, scale, inp, arb);
   result.validate_equal(builder, loc, expected);
 }
@@ -515,23 +478,16 @@ void makeECAffineNegateTest(
     APInt curve_a,
     APInt curve_b
 ) {
-  // auto order_bits = bits + 1;  // TODO
   auto order_bits = bits;
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
-  auto order = builder.create<BigInt::DefOp>(loc, order_bits, 2, true);  // TODO: Or get from a parameter to this call?
-  auto xR = builder.create<BigInt::DefOp>(loc, bits, 3, true);
-  auto yR = builder.create<BigInt::DefOp>(loc, bits, 4, true);
+  auto xR = builder.create<BigInt::DefOp>(loc, bits, 2, true);
+  auto yR = builder.create<BigInt::DefOp>(loc, bits, 3, true);
   auto curve = std::make_shared<WeierstrassCurve>(curve_a, curve_b, prime);
-  AffinePt inp(xP, yP, curve, order);
-  AffinePt expected(xR, yR, curve, order);
+  AffinePt inp(xP, yP, curve);
+  AffinePt expected(xR, yR, curve);
   auto result = neg(builder, loc, inp);
   result.validate_equal(builder, loc, expected);
-
-  // TODO: Empty tests to make the compiler happy
-  auto order_TODO = builder.create<BigInt::SubOp>(loc, order, order);
-  builder.create<BigInt::EqualZeroOp>(loc, order_TODO);
-  // END TODO
 }
 
 void makeECAffineSubtractTest(
@@ -542,25 +498,18 @@ void makeECAffineSubtractTest(
     APInt curve_a,
     APInt curve_b
 ) {
-  auto order_bits = bits + 1;
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
-  auto order = builder.create<BigInt::DefOp>(loc, order_bits, 2, true);  // TODO: Or get from a parameter to this call?
-  auto xQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
-  auto yQ = builder.create<BigInt::DefOp>(loc, bits, 4, true);
-  auto xR = builder.create<BigInt::DefOp>(loc, bits, 5, true);
-  auto yR = builder.create<BigInt::DefOp>(loc, bits, 6, true);
+  auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);
+  auto yQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
+  auto xR = builder.create<BigInt::DefOp>(loc, bits, 4, true);
+  auto yR = builder.create<BigInt::DefOp>(loc, bits, 5, true);
   auto curve = std::make_shared<WeierstrassCurve>(curve_a, curve_b, prime);
-  AffinePt lhs(xP, yP, curve, order);
-  AffinePt rhs(xQ, yQ, curve, order);
-  AffinePt expected(xR, yR, curve, order);
+  AffinePt lhs(xP, yP, curve);
+  AffinePt rhs(xQ, yQ, curve);
+  AffinePt expected(xR, yR, curve);
   auto result = sub(builder, loc, lhs, rhs);
   result.validate_equal(builder, loc, expected);
-
-  // TODO: Empty tests to make the compiler happy
-  auto order_TODO = builder.create<BigInt::SubOp>(loc, order, order);
-  builder.create<BigInt::EqualZeroOp>(loc, order_TODO);
-  // END TODO
 }
 
 void makeECAffineValidatePointsEqualTest(
@@ -571,22 +520,14 @@ void makeECAffineValidatePointsEqualTest(
     APInt curve_a,
     APInt curve_b
 ) {
-  // auto order_bits = bits + 1;  // Skip for this test, causing [11, 0] instead of [11] and debugging that doesn't seem critical
-  auto order_bits = bits;  // TODO: See above, this is ok for now
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
-  auto order = builder.create<BigInt::DefOp>(loc, order_bits, 2, true);  // TODO: Or get from a parameter to this call?
-  auto xQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
-  auto yQ = builder.create<BigInt::DefOp>(loc, bits, 4, true);
+  auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);
+  auto yQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
   auto curve = std::make_shared<WeierstrassCurve>(curve_a, curve_b, prime);
-  AffinePt lhs(xP, yP, curve, order);
-  AffinePt rhs(xQ, yQ, curve, order);
+  AffinePt lhs(xP, yP, curve);
+  AffinePt rhs(xQ, yQ, curve);
   lhs.validate_equal(builder, loc, rhs);
-
-  // TODO: Empty tests to make the compiler happy
-  auto order_TODO = builder.create<BigInt::SubOp>(loc, order, order);
-  builder.create<BigInt::EqualZeroOp>(loc, order_TODO);
-  // END TODO
 }
 
 // void makeECAffineValidatePointOrderTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
@@ -601,24 +542,17 @@ void makeRepeatedECAffineAddTest(mlir::OpBuilder builder,
                                  APInt curve_a,
                                  APInt curve_b) {
   // auto order_bits = bits + 1;  // TODO
-  auto order_bits = bits;
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
-  auto order = builder.create<BigInt::DefOp>(loc, order_bits, 2, true); // TODO: Or get from a parameter to this call?
-  auto xQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
-  auto yQ = builder.create<BigInt::DefOp>(loc, bits, 4, true);
-  auto xR = builder.create<BigInt::DefOp>(loc, bits, 5, true);
-  auto yR = builder.create<BigInt::DefOp>(loc, bits, 6, true);
-
-  // TODO: Empty tests to make the compiler happy
-  auto order_TODO = builder.create<BigInt::SubOp>(loc, order, order);
-  builder.create<BigInt::EqualZeroOp>(loc, order_TODO);
-  // END TODO
+  auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);
+  auto yQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
+  auto xR = builder.create<BigInt::DefOp>(loc, bits, 4, true);
+  auto yR = builder.create<BigInt::DefOp>(loc, bits, 5, true);
 
   auto curve = std::make_shared<WeierstrassCurve>(curve_a, curve_b, prime);
-  AffinePt lhs(xP, yP, curve, order);
-  AffinePt rhs(xQ, yQ, curve, order);
-  AffinePt expected(xR, yR, curve, order);
+  AffinePt lhs(xP, yP, curve);
+  AffinePt rhs(xQ, yQ, curve);
+  AffinePt expected(xR, yR, curve);
   auto result = add(builder, loc, lhs, rhs);
   // iterate from 1 because the first repition was already done
   for (size_t rp = 1; rp < reps; rp++) {

@@ -42,20 +42,17 @@ private:
   APInt _a_coeff;
   APInt _b_coeff;
   APInt _prime;
-  // Value order;  // TODO
 };
 
 class AffinePt {
   // A point expressed in affine coordinates
 public:
-  AffinePt(Value x_coord, Value y_coord, std::shared_ptr<WeierstrassCurve> curve, Value order) : _x(x_coord), _y(y_coord), _curve(curve), _order(order) {};
+  AffinePt(Value x_coord, Value y_coord, std::shared_ptr<WeierstrassCurve> curve) : _x(x_coord), _y(y_coord), _curve(curve) {};
   const Value& x() const { return _x; };
   const Value& y() const { return _y; };
-  const Value& order() const { return _order; };  // TODO: Might have to have this optional somehow
   const std::shared_ptr<WeierstrassCurve>& curve() const { return _curve; };
   void validate_equal(OpBuilder builder, Location loc, const AffinePt& other) const;
   void validate_on_curve(OpBuilder builder, Location loc) const;
-  void validate_order(OpBuilder builder, Location loc, const AffinePt& arbitrary) const;
   bool on_same_curve_as(const AffinePt& other) const;
 
 private:
@@ -65,8 +62,6 @@ private:
   Value _y;
   // The elliptic curve this point lies on
   std::shared_ptr<WeierstrassCurve> _curve;
-  // The order of the point, i.e. order * point == identity
-  Value _order;
 };
 
 AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffinePt& rhs);
@@ -84,8 +79,8 @@ void makeECDSAVerify(
     size_t bits,
     APInt prime,
     APInt curve_a,
-    APInt curve_b
-    /* TODO */
+    APInt curve_b,
+    APInt order
 );
 
 // Test functions
