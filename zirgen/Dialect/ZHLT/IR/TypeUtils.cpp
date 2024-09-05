@@ -163,30 +163,18 @@ Value coerceStructToSuper(TypedValue<StructLike> value, OpBuilder& builder) {
   }
 }
 
-Value coerceArrayTo(TypedValue<ArrayType> value, ArrayType goalType, OpBuilder& builder) {
+Value coerceArrayTo(TypedValue<ArrayLikeTypeInterface> value, ArrayLikeTypeInterface goalType, OpBuilder& builder) {
   Location loc = value.getLoc();
   assert(value.getType().getSize() == goalType.getSize());
-  std::vector<Value> elements;
-  for (size_t i = 0; i < value.getType().getSize(); i++) {
-    Value index = builder.create<Zll::ConstOp>(loc, i);
-    elements.push_back(coerceTo(
-        builder.create<ZStruct::SubscriptOp>(loc, value, index), goalType.getElement(), builder));
-  }
-  return builder.create<ZStruct::ArrayOp>(loc, goalType, elements);
-}
 
-Value coerceLayoutArrayTo(TypedValue<LayoutArrayType> value,
-                          LayoutArrayType goalType,
-                          OpBuilder& builder) {
-  Location loc = value.getLoc();
-  assert(value.getType().getSize() == goalType.getSize());
-  std::vector<Value> elements;
-  for (size_t i = 0; i < value.getType().getSize(); i++) {
-    Value index = builder.create<Zll::ConstOp>(loc, i);
-    elements.push_back(coerceTo(
-        builder.create<ZStruct::SubscriptOp>(loc, value, index), goalType.getElement(), builder));
-  }
-  return builder.create<ZStruct::LayoutArrayOp>(loc, goalType, elements);
+  auto map = builder.create<ZStruct::MapOp>(loc, goalType, value, Value());
+  Block& block = map.getBody().emplaceBlock();
+  OpBuilder::InsertionGuard insertionGuard(builder);
+  builder.setInsertionPointToEnd(&block);
+  Value originalElement = block.addArgument(value.getType().getElement(), loc);
+  Value castedElement = coerceTo(originalElement, goalType.getElement(), builder);
+  builder.create<ZStruct::YieldOp>(loc, castedElement);
+  return map;
 }
 
 Value coerceTo(Value value, Type type, OpBuilder& builder) {
@@ -227,22 +215,13 @@ Value coerceTo(Value value, Type type, OpBuilder& builder) {
       // it makes no difference which arm we use to access the common super.
       // Without loss of generality, choose the first one.
       casted = builder.create<ZStruct::LookupOp>(value.getLoc(), casted, ut.getFields()[0].name);
-    } else if (isa<ArrayType>(casted.getType()) && type != componentType) {
-      auto castedArray = cast<TypedValue<ArrayType>>(casted);
-      if (auto goalArrayType = dyn_cast<ArrayType>(type)) {
+    } else if (isa<ArrayLikeTypeInterface>(casted.getType()) && type != componentType) {
+      if (auto goalArrayType = dyn_cast<ArrayLikeTypeInterface>(type)) {
+        auto castedArray = dyn_cast<TypedValue<ArrayLikeTypeInterface>>(casted);
         casted = coerceArrayTo(castedArray, goalArrayType, builder);
       } else {
         auto loc = value.getLoc();
         emitError(loc) << "invalid coercion from array to non-array type";
-        return builder.create<Zhlt::MagicOp>(loc, type).getOut();
-      }
-    } else if (isa<LayoutArrayType>(casted.getType())) {
-      auto castedLayoutArray = cast<TypedValue<LayoutArrayType>>(casted);
-      if (auto goalLayoutArrayType = dyn_cast<LayoutArrayType>(type)) {
-        casted = coerceLayoutArrayTo(castedLayoutArray, goalLayoutArrayType, builder);
-      } else {
-        auto loc = value.getLoc();
-        emitError(loc) << "invalid coercion from array layout to non-array layout type";
         return builder.create<Zhlt::MagicOp>(loc, type).getOut();
       }
     } else {

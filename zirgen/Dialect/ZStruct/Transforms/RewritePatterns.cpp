@@ -21,7 +21,7 @@ using namespace mlir;
 
 LogicalResult UnrollMaps::matchAndRewrite(MapOp op, PatternRewriter& rewriter) const {
   Value in = op.getArray();
-  auto inType = mlir::cast<ZStruct::ArrayType>(in.getType());
+  auto inType = mlir::cast<ZStruct::ArrayLikeTypeInterface>(in.getType());
   auto outType = mlir::cast<ZStruct::ArrayLikeTypeInterface>(op.getOut().getType());
 
   llvm::SmallVector<Value, 8> mapped;
@@ -52,7 +52,8 @@ LogicalResult UnrollMaps::matchAndRewrite(MapOp op, PatternRewriter& rewriter) c
     }
     mapped.push_back(mapping.lookup(innerReturnVal));
   }
-  rewriter.replaceOpWithNewOp<ZStruct::ArrayOp>(op, outType, mapped);
+  auto unrolled = outType.materialize(op.getLoc(), mapped, rewriter);
+  rewriter.replaceOp(op, unrolled);
   return success();
 }
 
