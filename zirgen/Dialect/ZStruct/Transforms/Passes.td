@@ -23,7 +23,7 @@ def OptimizeLayout : Pass<"optimize-layout", "mlir::ModuleOp"> {
   let constructor = "zirgen::ZStruct::createOptimizeLayoutPass()";
 }
 
-def Unroll : Pass<"unroll", "mlir::ModuleOp"> {
+def Unroll : Pass<"unroll"> {
   let summary = "Unroll zhlt map and reduce";
   let description = [{
     Removes zhlt.map and zhlt.reduce instructions by unrolling the loops.

@@ -22,7 +22,7 @@ namespace zirgen::ZStruct {
 
 // Pass constructors
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createOptimizeLayoutPass();
-std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createUnrollPass();
+std::unique_ptr<mlir::Pass> createUnrollPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createExpandLayoutPass();
 std::unique_ptr<mlir::Pass> createInlineLayoutPass();
 

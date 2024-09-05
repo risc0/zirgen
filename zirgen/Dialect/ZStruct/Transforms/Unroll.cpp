@@ -36,7 +36,7 @@ struct UnrollPass : public UnrollBase<UnrollPass> {
 
 } // End namespace
 
-std::unique_ptr<OperationPass<ModuleOp>> createUnrollPass() {
+std::unique_ptr<Pass> createUnrollPass() {
   return std::make_unique<UnrollPass>();
 }
 
