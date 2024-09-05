@@ -163,7 +163,9 @@ Value coerceStructToSuper(TypedValue<StructLike> value, OpBuilder& builder) {
   }
 }
 
-Value coerceArrayTo(TypedValue<ArrayLikeTypeInterface> value, ArrayLikeTypeInterface goalType, OpBuilder& builder) {
+Value coerceArrayTo(TypedValue<ArrayLikeTypeInterface> value,
+                    ArrayLikeTypeInterface goalType,
+                    OpBuilder& builder) {
   Location loc = value.getLoc();
   assert(value.getType().getSize() == goalType.getSize());
 
