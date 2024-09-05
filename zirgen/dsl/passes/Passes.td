@@ -18,6 +18,15 @@
 include "mlir/Pass/PassBase.td"
 include "mlir/Rewrite/PassUtil.td"
 
+def EraseUnusedAspects : Pass<"erase-unused-aspects", "mlir::ModuleOp"> {
+  let summary = "Removes aspects that aren't necessary for tests or codegen";
+  let constructor = "zirgen::dsl::createEraseUnusedAspectsPass()";
+  let dependentDialects = ["zirgen::Zhlt::ZhltDialect"];
+  let options = [
+    Option<"forTests", "for-tests", "bool", /*default=*/"false", "leave only aspects for tests (rather than codegen)">
+  ];
+}
+
 def GenerateExec : Pass<"generate-exec", "mlir::ModuleOp"> {
   let summary = "Lowers the ZHLT dialect to produce circuit execution functions";
   let description = [{

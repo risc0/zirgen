@@ -293,6 +293,8 @@ int runTests(mlir::ModuleOp& module) {
     return 1;
   }
   pm.enableVerifier(true);
+  pm.addPass(zirgen::dsl::createEraseUnusedAspectsPass(/*forTests=*/true));
+  pm.addPass(mlir::createSymbolDCEPass());
   pm.addPass(mlir::createInlinerPass());
   mlir::OpPassManager& opm = pm.nest<zirgen::Zhlt::StepFuncOp>();
   opm.addPass(zirgen::ZStruct::createUnrollPass());
