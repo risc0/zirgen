@@ -298,7 +298,9 @@ int runTests(mlir::ModuleOp& module) {
   pm.addPass(mlir::createInlinerPass());
   mlir::OpPassManager& opm = pm.nest<zirgen::Zhlt::StepFuncOp>();
   opm.addPass(zirgen::ZStruct::createUnrollPass());
-  opm.addPass(mlir::createCanonicalizerPass());
+  // Canonicalization at this point seems to be unprofitable when running in the
+  // interpreter
+  // opm.addPass(mlir::createCanonicalizerPass());
   opm.addPass(mlir::createCSEPass());
   if (failed(pm.run(module))) {
     llvm::errs() << "an internal compiler error occurred while inlining the tests:\n";
