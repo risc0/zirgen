@@ -200,44 +200,45 @@ TopStruct exec_Top(ExecContext ctx0, BoundLayout<TopLayout> layout1) {
   NondetRegStruct x8 = exec_NondetReg(ctx0, x7._super, LAYOUT_LOOKUP(layout1, right));
   // Top(zirgen/dsl/examples/calculator.zir:36)
   OneHotStruct x9 = exec_OneHot(ctx0, x4._super, LAYOUT_LOOKUP(layout1, _0));
-  NondetRegStruct2Array x10 = x9._super;
-  BoundLayout<NondetRegLayout> x11 = LAYOUT_LOOKUP(x2, _super);
-  RegStruct x12;
-  if (to_size_t(x10[0]._super)) {
+  Val2Array x10 = map(
+      x9._super, std::function([&](NondetRegStruct2Array::value_type x11) { return x11._super; }));
+  BoundLayout<NondetRegLayout> x12 = LAYOUT_LOOKUP(x2, _super);
+  RegStruct x13;
+  if (to_size_t(x10[0])) {
     // Top(zirgen/dsl/examples/calculator.zir:37)
-    Val x13 = exec_Add(ctx0, x6._super, x8._super);
-    RegStruct x14 = exec_Reg(ctx0, x13, LAYOUT_LOOKUP(x2, arm0));
-    x12 = x14;
-  } else if (to_size_t(x10[1]._super)) {
+    Val x14 = exec_Add(ctx0, x6._super, x8._super);
+    RegStruct x15 = exec_Reg(ctx0, x14, LAYOUT_LOOKUP(x2, arm0));
+    x13 = x15;
+  } else if (to_size_t(x10[1])) {
     // Top(zirgen/dsl/examples/calculator.zir:38)
-    Val x15 = exec_Sub(ctx0, x6._super, x8._super);
-    RegStruct x16 = exec_Reg(ctx0, x15, LAYOUT_LOOKUP(x2, arm1));
-    x12 = x16;
+    Val x16 = exec_Sub(ctx0, x6._super, x8._super);
+    RegStruct x17 = exec_Reg(ctx0, x16, LAYOUT_LOOKUP(x2, arm1));
+    x13 = x17;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
   // Top(zirgen/dsl/examples/calculator.zir:36)
-  RegStruct x17 = back_Reg(ctx0, 0, x11);
+  RegStruct x18 = back_Reg(ctx0, 0, x12);
   // Top(zirgen/dsl/examples/calculator.zir:40)
-  ComponentStruct x18 =
-      exec_Log(ctx0, "result = %u", std::initializer_list<Val>{x17._super._super});
+  ComponentStruct x19 =
+      exec_Log(ctx0, "result = %u", std::initializer_list<Val>{x18._super._super});
   // Top(zirgen/dsl/examples/calculator.zir:36)
-  RegStruct x19 = back_Reg(ctx0, 0, x11);
+  RegStruct x20 = back_Reg(ctx0, 0, x12);
   // Top(zirgen/dsl/examples/calculator.zir:41)
-  ComponentStruct x20 = exec_SetGlobalResult(ctx0, x19._super._super);
+  ComponentStruct x21 = exec_SetGlobalResult(ctx0, x20._super._super);
   // Top(zirgen/dsl/examples/calculator.zir:42)
-  RegStruct x21 = exec_GetGlobalResult(ctx0);
+  RegStruct x22 = exec_GetGlobalResult(ctx0);
   // Top(zirgen/dsl/examples/calculator.zir:36)
-  RegStruct x22 = back_Reg(ctx0, 0, x11);
+  RegStruct x23 = back_Reg(ctx0, 0, x12);
   // Top(zirgen/dsl/examples/calculator.zir:42)
-  EQZ((x21._super._super - x22._super._super), "Top(zirgen/dsl/examples/calculator.zir:42)");
+  EQZ((x22._super._super - x23._super._super), "Top(zirgen/dsl/examples/calculator.zir:42)");
   // Top(zirgen/dsl/examples/calculator.zir:36)
-  RegStruct x23 = back_Reg(ctx0, 0, x11);
+  RegStruct x24 = back_Reg(ctx0, 0, x12);
   // Top(zirgen/dsl/examples/calculator.zir:43)
-  ComponentStruct x24 = exec_OutputToUser(ctx0, x23._super._super);
+  ComponentStruct x25 = exec_OutputToUser(ctx0, x24._super._super);
   // Top(zirgen/dsl/examples/calculator.zir:32)
-  ComponentStruct x25 = exec_Component(ctx0);
-  return TopStruct{._super = x25, .op = x4, .left = x6, .right = x8, .result = x17};
+  ComponentStruct x26 = exec_Component(ctx0);
+  return TopStruct{._super = x26, .op = x4, .left = x6, .right = x8, .result = x18};
 }
 void step_Top(ExecContext ctx0) {
   BoundLayout<TopLayout> x1 = BIND_LAYOUT(kLayout_Top, GET_BUFFER(ctx0, data));

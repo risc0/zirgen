@@ -27,4 +27,17 @@ class ZStructNativeTypeTrait<string name,
 // An context argument type which can supply buffers when passed to lookupNearestImplicitArg.
 def BufferContext : ZStructNativeTypeTrait<"BufferContextTypeTrait">;
 
+def ArrayLikeTypeInterface : TypeInterface<"ArrayLikeTypeInterface"> {
+  let description = "A type that supports array-like operations";
+  let cppNamespace = "::zirgen::ZStruct";
+  let methods = [
+    InterfaceMethod<"Get the type of elements in this array",
+      "mlir::Type", "getElement", (ins), "">,
+    InterfaceMethod<"Get the number of elements in this array",
+      "unsigned", "getSize", (ins), "">,
+    InterfaceMethod<"Materialize the array from a list of elements",
+      "mlir::Value", "materialize", (ins "mlir::Location":$loc, "llvm::ArrayRef<mlir::Value>":$values, "mlir::OpBuilder&":$builder)>
+  ];
+}
+
 #endif /* ZSTRUCT_INTERFACES */

@@ -331,50 +331,52 @@ pub fn exec_top(
     let x8: NondetRegStruct = exec_nondet_reg(ctx0, x7._super, layout_lookup!(layout1, right))?;
     // Top(zirgen/dsl/examples/calculator.zir:36)
     let x9: OneHotStruct = exec_one_hot(ctx0, x4._super, layout_lookup!(layout1, _0))?;
-    let x10: NondetRegStruct2Array = x9._super;
-    let x11: BoundLayout<NondetRegLayout, _> = layout_lookup!(x2, _super);
-    let x12: RegStruct;
-    if is_nonzero(x10[0]._super) {
+    let x10: Val2Array = map(x9._super, |x11| {
+        return Ok(x11._super);
+    })?;
+    let x12: BoundLayout<NondetRegLayout, _> = layout_lookup!(x2, _super);
+    let x13: RegStruct;
+    if is_nonzero(x10[0]) {
         // Top(zirgen/dsl/examples/calculator.zir:37)
-        let x13: Val = exec_add(ctx0, x6._super, x8._super)?;
-        let x14: RegStruct = exec_reg(ctx0, x13, layout_lookup!(x2, arm0))?;
-        x12 = x14;
-    } else if is_nonzero(x10[1]._super) {
+        let x14: Val = exec_add(ctx0, x6._super, x8._super)?;
+        let x15: RegStruct = exec_reg(ctx0, x14, layout_lookup!(x2, arm0))?;
+        x13 = x15;
+    } else if is_nonzero(x10[1]) {
         // Top(zirgen/dsl/examples/calculator.zir:38)
-        let x15: Val = exec_sub(ctx0, x6._super, x8._super)?;
-        let x16: RegStruct = exec_reg(ctx0, x15, layout_lookup!(x2, arm1))?;
-        x12 = x16;
+        let x16: Val = exec_sub(ctx0, x6._super, x8._super)?;
+        let x17: RegStruct = exec_reg(ctx0, x16, layout_lookup!(x2, arm1))?;
+        x13 = x17;
     } else {
         bail!("Reached unreachable mux arm")
     } // Top(zirgen/dsl/examples/calculator.zir:36)
-    let x17: RegStruct = back_reg(ctx0, 0, x11)?;
+    let x18: RegStruct = back_reg(ctx0, 0, x12)?;
     // Top(zirgen/dsl/examples/calculator.zir:40)
-    let x18: ComponentStruct = exec_log(ctx0, "result = %u", &[x17._super._super])?;
+    let x19: ComponentStruct = exec_log(ctx0, "result = %u", &[x18._super._super])?;
     // Top(zirgen/dsl/examples/calculator.zir:36)
-    let x19: RegStruct = back_reg(ctx0, 0, x11)?;
+    let x20: RegStruct = back_reg(ctx0, 0, x12)?;
     // Top(zirgen/dsl/examples/calculator.zir:41)
-    let x20: ComponentStruct = exec_set_global_result(ctx0, x19._super._super)?;
+    let x21: ComponentStruct = exec_set_global_result(ctx0, x20._super._super)?;
     // Top(zirgen/dsl/examples/calculator.zir:42)
-    let x21: RegStruct = exec_get_global_result(ctx0)?;
+    let x22: RegStruct = exec_get_global_result(ctx0)?;
     // Top(zirgen/dsl/examples/calculator.zir:36)
-    let x22: RegStruct = back_reg(ctx0, 0, x11)?;
+    let x23: RegStruct = back_reg(ctx0, 0, x12)?;
     // Top(zirgen/dsl/examples/calculator.zir:42)
     eqz!(
-        (x21._super._super - x22._super._super),
+        (x22._super._super - x23._super._super),
         "Top(zirgen/dsl/examples/calculator.zir:42)"
     );
     // Top(zirgen/dsl/examples/calculator.zir:36)
-    let x23: RegStruct = back_reg(ctx0, 0, x11)?;
+    let x24: RegStruct = back_reg(ctx0, 0, x12)?;
     // Top(zirgen/dsl/examples/calculator.zir:43)
-    let x24: ComponentStruct = exec_output_to_user(ctx0, x23._super._super)?;
+    let x25: ComponentStruct = exec_output_to_user(ctx0, x24._super._super)?;
     // Top(zirgen/dsl/examples/calculator.zir:32)
-    let x25: ComponentStruct = exec_component(ctx0)?;
+    let x26: ComponentStruct = exec_component(ctx0)?;
     return Ok(TopStruct {
-        _super: x25,
+        _super: x26,
         op: x4,
         left: x6,
         right: x8,
-        result: x17,
+        result: x18,
     });
 }
 pub fn step_top(ctx0: &ExecContext) -> Result<()> {

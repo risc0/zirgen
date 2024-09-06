@@ -241,6 +241,26 @@ Block::Ptr Parser::parseBlock() {
         lexer.takeToken();
         body.push_back(make_shared<Void>(location, std::move(lastExpression)));
         lastExpression = nullptr;
+      } else if (lexer.peekToken() == tok_bang) {
+        // directive
+        location = lexer.getLastLocation();
+        std::string name = lexer.getIdentifier();
+        lexer.takeToken();
+        if (!lexer.takeTokenIf(tok_paren_l)) {
+          error("expected '(' after '!' in compiler directive");
+        }
+        Expression::Vec arguments;
+        if (lexer.peekToken() != tok_paren_r) {
+          arguments = parseExpressions();
+        }
+        lexer.takeToken();
+        if (lexer.takeToken() != tok_semicolon) {
+          error("expected semicolon after compiler directive");
+          return nullptr;
+        }
+
+        body.push_back(make_shared<Directive>(location, name, std::move(arguments)));
+        lastExpression = nullptr;
       } else if (lexer.peekToken() == tok_define) {
         // definition
         if (!lastExpression || !Ident::classof(lastExpression.get())) {

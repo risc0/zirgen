@@ -168,40 +168,9 @@ LayoutDAG::Ptr LayoutDAG::clone(Ptr layout) {
 
 // LayoutDAGAnalysis
 
-LogicalResult LayoutDAGAnalysis::initialize(Operation* mod) {
-  // Detecting changes in lattice points is difficult since they form a DAG of
-  // pointers that are copied and repointed during the analysis. There are some
-  // issues here which result in changes not propagating super well. We can get
-  // along without this with a judicious choice of traversal order: traversing
-  // components in DFS pre-order works well because this is basically a sparse
-  // forward analysis so we visit operations' dependencies before themselves,
-  // and visiting components in a topological order means that we visit callees
-  // before their callers.
-
-  const mlir::CallGraph callgraph(mod);
-  for (auto scc = llvm::scc_begin(&callgraph); !scc.isAtEnd(); ++scc) {
-    // We disallow recursion, so the call graph is acyclic. Therefore, each SCC
-    // must contain a single component.
-    assert(scc->size() == 1);
-    CallGraphNode* node = (*scc)[0];
-    if (node->isExternal())
-      continue;
-    ComponentOp component = cast<ComponentOp>(node->getCallableRegion()->getParentOp());
-
-    WalkResult result = component->walk<WalkOrder::PreOrder>([&](Operation* op) {
-      if (failed(visit(op)))
-        return WalkResult::interrupt();
-      return WalkResult::advance();
-    });
-    if (result.wasInterrupted())
-      return failure();
-  }
-  return success();
-}
-
 void LayoutDAGAnalysis::visitOperation(Operation* op) {
   TypeSwitch<Operation*>(op)
-      .Case<AliasLayoutOp, LookupOp, SubscriptOp, LayoutArrayOp, ConstructOp, ComponentOp>(
+      .Case<AliasLayoutOp, LookupOp, SubscriptOp, LayoutArrayOp, CheckLayoutFuncOp>(
           [&](auto op) { visitOp(op); });
 }
 
@@ -212,6 +181,10 @@ void LayoutDAGAnalysis::visitOp(AliasLayoutOp op) {
   const auto& rhs = getOrCreateFor<Element>(op, op.getRhs())->getValue();
   if (lhs.isDefined() && rhs.isDefined()) {
     assert(succeeded(LayoutDAG::unify(lhs.get(), rhs.get())));
+  } else {
+    auto diag = op.emitWarning() << "Failed to make layouts properly alias";
+    diag.attachNote(op.getLhs().getLoc()) << "first aliased layout:";
+    diag.attachNote(op.getRhs().getLoc()) << "second aliased layout:";
   }
 }
 
@@ -234,7 +207,10 @@ void LayoutDAGAnalysis::visitOp(SubscriptOp op) {
     ConstantValue indexValue =
         getOrCreateFor<Lattice<ConstantValue>>(op.getOut(), op.getIndex())->getValue();
     if (baseLayout->getValue().isDefined() && !indexValue.isUninitialized()) {
-      size_t index = extractIntAttr(indexValue.getConstantValue());
+      Attribute indexAttr = indexValue.getConstantValue();
+      if (!indexAttr)
+        return;
+      size_t index = extractIntAttr(indexAttr);
       LayoutDAG::Ptr sublayout = baseLayout->getValue().get()->subscript(index);
       auto* lattice = getOrCreate<Element>(op.getOut());
       propagateIfChanged(lattice, lattice->join(sublayout));
@@ -256,7 +232,7 @@ void LayoutDAGAnalysis::visitOp(LayoutArrayOp op) {
   propagateIfChanged(lattice, lattice->join(updated));
 }
 
-void LayoutDAGAnalysis::visitOp(ComponentOp op) {
+void LayoutDAGAnalysis::visitOp(CheckLayoutFuncOp op) {
   // Generate the DAG for the layout parameter naively from the type. It will be
   // refined by subsequent analysis to include the appropriate aliases.
   if (op.getLayout()) {
@@ -266,22 +242,6 @@ void LayoutDAGAnalysis::visitOp(ComponentOp op) {
       auto naiveLayout = LayoutDAG::generateNaiveAbstractLayout(op.getLayoutType());
       propagateIfChanged(lattice, lattice->join(naiveLayout));
     }
-  }
-}
-
-void LayoutDAGAnalysis::visitOp(ConstructOp op) {
-  // A ConstructOp's layout arg should unify with the constructor's layout param
-  SymbolRefAttr symbol = op.getCalleeAttr();
-  auto component = SymbolTable::lookupNearestSymbolFrom<ComponentOp>(op, symbol);
-  const auto& paramLattice =
-      getOrCreateFor<Element>(op.getOut(), component.getLayout())->getValue();
-
-  if (paramLattice.isDefined()) {
-    // Different constructor invocations can have independent layouts, so clone
-    // the layout parameter's lattice and unify it with the layout argument.
-    auto* lattice = getOrCreate<Element>(op.getLayout());
-    ChangeResult changed = lattice->join(LayoutDAG::clone(paramLattice.get()));
-    propagateIfChanged(lattice, changed);
   }
 }
 

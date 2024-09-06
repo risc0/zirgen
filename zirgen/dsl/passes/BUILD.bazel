@@ -34,7 +34,9 @@ cc_library(
     srcs = [
         "CommonRewrites.cpp",
         "ElideTrivialStructs.cpp",
+        "EraseUnusedAspects.cpp",
         "GenerateAccum.cpp",
+        "GenerateCheckLayout.cpp",
         "GenerateGlobals.cpp",
         "GenerateLayout.cpp",
         "GenerateTaps.cpp",

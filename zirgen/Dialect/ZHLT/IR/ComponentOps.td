@@ -357,6 +357,18 @@ def ConstructOp : ZCallOp<ComponentOp, [AttrSizedOperandSegments]> {
 def SingletonOpTrait : PredOpTrait<"Is a singleton",
     CPred<[{mlir::SymbolTable::getSymbolName(&$_op).strref().ends_with("$")}]>>;
 
+def CheckLayoutFuncOp : ZFuncOp<"check_layout", [CodegenSkip]> {
+  let summary = "An inlined collection of layout constraints from a circuit entry point";
+  let description = [{
+    This aspect contains all instances of AliasLayoutOp and all supporting
+    operations to compute their operands from a particular circuit entry point.
+    This is subsequently used by LayoutDAGAnalysis/GenerateLayoutPass to create
+    the ultimate layout of the circuit.
+  }];
+  let funcInputs = (ins Optional<IsLayoutType>:$layout);
+  let hasRegionVerifier = 1;
+}
+
 def CheckFuncOp : ZFuncOp<"check", [CodegenSkip, SingletonOpTrait]> {
   let summary = "An inlined version of a circuit-wide CheckFuncOp.";
   let description = [{

@@ -101,6 +101,7 @@ public:
     Declaration,
     Constraint,
     Void,
+    Directive,
   };
   Kind getKind() const { return kind; }
 
@@ -422,6 +423,21 @@ public:
 };
 
 bool operator==(const Void& left, const Void& right);
+
+class Directive : public Statement {
+public:
+  Directive(SMLoc loc, std::string name, Expression::Vec params);
+  std::string getName() const { return name; }
+  Expression::ArrayRef getArgs() const { return args; }
+  void print(llvm::raw_ostream&) const override;
+  static bool classof(const Statement* s);
+
+private:
+  std::string name;
+  Expression::Vec args;
+};
+
+bool operator==(const Directive& left, const Directive& right);
 
 } // namespace ast
 } // namespace dsl

@@ -287,15 +287,21 @@ int runTests(mlir::ModuleOp& module) {
   mlir::MLIRContext& context = *module.getContext();
   // Set all the symbols to private
   mlir::PassManager pm(&context);
+  applyDefaultTimingPassManagerCLOptions(pm);
   if (failed(applyPassManagerCLOptions(pm))) {
     llvm::errs() << "Pass manager does not agree with command line options.\n";
     return 1;
   }
   pm.enableVerifier(true);
+  pm.addPass(zirgen::dsl::createEraseUnusedAspectsPass(/*forTests=*/true));
+  pm.addPass(mlir::createSymbolDCEPass());
   pm.addPass(mlir::createInlinerPass());
-  pm.addPass(zirgen::ZStruct::createUnrollPass());
-  pm.addPass(mlir::createCanonicalizerPass());
-  pm.addPass(mlir::createCSEPass());
+  mlir::OpPassManager& opm = pm.nest<zirgen::Zhlt::StepFuncOp>();
+  opm.addPass(zirgen::ZStruct::createUnrollPass());
+  // Canonicalization at this point seems to be unprofitable when running in the
+  // interpreter
+  // opm.addPass(mlir::createCanonicalizerPass());
+  opm.addPass(mlir::createCSEPass());
   if (failed(pm.run(module))) {
     llvm::errs() << "an internal compiler error occurred while inlining the tests:\n";
     module.print(llvm::errs());
@@ -455,7 +461,6 @@ int main(int argc, char* argv[]) {
 
   llvm::SourceMgr sourceManager;
   sourceManager.setIncludeDirs(includeDirs);
-  context.disableMultithreading();
 
   mlir::SourceMgrDiagnosticHandler sourceMgrHandler(sourceManager, &context);
   openMainFile(sourceManager, inputFilename);
@@ -498,6 +503,7 @@ int main(int argc, char* argv[]) {
   }
 
   mlir::PassManager pm(&context);
+  applyDefaultTimingPassManagerCLOptions(pm);
   if (failed(applyPassManagerCLOptions(pm))) {
     llvm::errs() << "Pass manager does not agree with command line options.\n";
     return 1;
@@ -538,9 +544,9 @@ int main(int argc, char* argv[]) {
   pm.clear();
   if (!doTest)
     pm.addPass(zirgen::Zhlt::createStripTestsPass());
+  pm.addPass(zirgen::dsl::createGenerateCheckLayoutPass());
   pm.addPass(zirgen::dsl::createGenerateLayoutPass());
-  if (!doTest)
-    pm.addPass(zirgen::ZStruct::createStripAliasLayoutOpsPass());
+  pm.addPass(zirgen::Zhlt::createStripAliasLayoutOpsPass());
   pm.addPass(zirgen::dsl::createGenerateBackPass());
   pm.addPass(zirgen::dsl::createGenerateExecPass());
   pm.addPass(mlir::createSymbolPrivatizePass({}));

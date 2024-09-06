@@ -229,6 +229,14 @@ def ConstraintOp: ZhlOp<"constrain"> {
   }];
 }
 
+def DirectiveOp: ZhlOp<"directive"> {
+  let summary = "Compiler directive";
+  let arguments = (ins StrAttr:$name, Variadic<Expr>:$args);
+  let assemblyFormat = [{
+    $name `(` $args `)` attr-dict
+  }];
+}
+
 def SuperOp: ZhlOp<"super", [Terminator]> {
   let summary = "Super";
   let arguments = (ins Expr:$value);

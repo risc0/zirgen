@@ -124,7 +124,7 @@ Value coerceTo(Value value, Type type, OpBuilder& builder);
 
 /// If the given type is coercible to an array type, return that array type. If
 /// it is not, return a null type.
-ZStruct::ArrayType getCoercibleArrayType(Type type);
+ZStruct::ArrayLikeTypeInterface getCoercibleArrayType(Type type);
 
 /// Coerces the given value to its closest super that is an array. This is
 /// useful when lowering the source array of a MapOp, for example.

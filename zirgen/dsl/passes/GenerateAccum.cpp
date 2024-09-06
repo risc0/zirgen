@@ -320,8 +320,10 @@ private:
 struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
   void runOnOperation() override {
     getOperation().walk([&](ComponentOp component) {
+      // Generate accum code for entry points like Top and tests, but don't get
+      // stuck in a loop generating more accum code from the new accum code.
       llvm::StringRef baseName = component.getName();
-      if (baseName.ends_with("$accum") || (baseName != "Top" && !baseName.starts_with("test$")))
+      if (baseName.ends_with("$accum") || !Zhlt::isEntryPoint(component))
         return;
 
       buildAccumStep(component);

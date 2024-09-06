@@ -143,8 +143,8 @@ def LayoutArrayOp: ZStructOp<"layout_array", [Pure, SameTypeOperands, InferTypeO
 
 def MapOp : ZStructOp<"map", [DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
   let summary = "Apply function to elements of array";
-  let arguments = (ins ArrayType:$array, Optional<LayoutArrayType>:$layout);
-  let results = (outs ArrayType:$out);
+  let arguments = (ins ArrayLikeTypeInterface:$array, Optional<LayoutArrayType>:$layout);
+  let results = (outs ArrayLikeTypeInterface:$out);
   let regions = (region SizedRegion<1>:$body);
   let assemblyFormat = [{
     $array `:` type($array) ( `,` $layout^  `:` type($layout) )? `->` type($out) $body attr-dict

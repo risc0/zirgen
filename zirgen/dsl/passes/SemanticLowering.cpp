@@ -28,7 +28,7 @@
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
 #include "zirgen/Dialect/ZStruct/Analysis/BufferAnalysis.h"
 #include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
-#include "zirgen/Dialect/ZStruct/Transforms/Passes.h"
+#include "zirgen/Dialect/ZStruct/Transforms/RewritePatterns.h"
 #include "zirgen/Dialect/Zll/IR/Interpreter.h"
 #include "zirgen/dsl/passes/CommonRewrites.h"
 #include "zirgen/dsl/passes/PassDetail.h"
@@ -96,7 +96,7 @@ struct ArrayMapToRangeMap : public OpRewritePattern<MapOp> {
   using OpRewritePattern::OpRewritePattern;
 
   LogicalResult matchAndRewrite(MapOp op, PatternRewriter& rewriter) const final {
-    TypedValue<ArrayType> array = op.getArray();
+    TypedValue<ArrayLikeTypeInterface> array = op.getArray();
 
     if (!isa<Zhlt::MagicOp>(array.getDefiningOp()))
       return rewriter.notifyMatchFailure(op, "array is not an argument");
@@ -119,24 +119,6 @@ struct ArrayMapToRangeMap : public OpRewritePattern<MapOp> {
     rewriter.replaceAllUsesWith(idx, replacementArg);
 
     rewriter.replaceOp(op, mapOp);
-    return success();
-  }
-};
-
-// Convert switch statements to if statements.
-struct SplitSwitchArms : public OpRewritePattern<SwitchOp> {
-  using OpRewritePattern::OpRewritePattern;
-
-  LogicalResult matchAndRewrite(SwitchOp op, PatternRewriter& rewriter) const final {
-    if (!op->use_empty())
-      return failure();
-
-    rewriter.setInsertionPoint(op);
-    for (auto [cond, arm] : llvm::zip(op.getSelector(), op.getArms())) {
-      auto ifOp = rewriter.create<IfOp>(op.getLoc(), cond);
-      ifOp.getInner().takeBody(arm);
-    }
-    rewriter.eraseOp(op);
     return success();
   }
 };
