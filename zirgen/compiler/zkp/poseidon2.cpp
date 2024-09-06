@@ -190,6 +190,24 @@ Digest poseidon2HashPair(Digest x, Digest y) {
   return out;
 }
 
+void poseidonMultiplyByMExt(std::array<uint32_t, 24>& cells) {
+  cells = multiply_by_m_ext(cells);
+}
+
+void poseidonDoExtRound(std::array<uint32_t, 24>& cells, size_t idx) {
+  if (idx >= ROUNDS_HALF_FULL) {
+    idx += ROUNDS_PARTIAL;
+  };
+  cells = full_poseidon2_round(cells, idx);
+}
+
+void poseidonDoIntRounds(std::array<uint32_t, 24>& cells) {
+  size_t idx = ROUNDS_HALF_FULL;
+  for (size_t i = 0; i < ROUNDS_PARTIAL; i++) {
+    cells = partial_poseidon2_round(cells, idx++);
+  }
+}
+
 void poseidonSponge(std::array<uint32_t, 24>& cells) {
   cells = poseidon2_mix(cells);
 }
