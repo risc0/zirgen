@@ -25,7 +25,10 @@ namespace zirgen {
 Digest poseidon2Hash(const uint32_t* data, size_t size);
 Digest poseidon2HashPair(Digest x, Digest y);
 
-// Raw access to inner poseidon sponge function
+// Raw access to inner poseidon sponge function + friends
+void poseidonMultiplyByMExt(std::array<uint32_t, 24>& cells);
+void poseidonDoExtRound(std::array<uint32_t, 24>& cells, size_t idx);
+void poseidonDoIntRounds(std::array<uint32_t, 24>& cells);
 void poseidonSponge(std::array<uint32_t, 24>& cells);
 
 class Poseidon2Rng : public IopRng {
