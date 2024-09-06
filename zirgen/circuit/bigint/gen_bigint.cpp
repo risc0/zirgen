@@ -105,6 +105,17 @@ const RsaSpec kRsaSpecs[] = {
     {"rsa_3072_x15", 3072, 15},
 };
 
+// TODO: Clean up
+// secp256k1 parameters
+const APInt secp_256k1_prime = APInt::getAllOnes(256) - APInt::getOneBitSet(256, 32)
+    - APInt::getOneBitSet(256, 9) - APInt::getOneBitSet(256, 8) - APInt::getOneBitSet(256, 7)
+    - APInt::getOneBitSet(256, 6) - APInt::getOneBitSet(256, 4);
+const APInt secp_256k1_a(8, 0);
+const APInt secp_256k1_b(8, 7);
+const APInt secp_256k1_G_x(256, "79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798", 16);
+const APInt secp_256k1_G_y(256, "483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8", 16);
+const APInt secp_256k1_order(256, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16);
+
 } // namespace
 
 cl::list<std::string> outputFiles{
@@ -198,11 +209,24 @@ int main(int argc, char* argv[]) {
       zirgen::BigInt::makeECDSAVerify(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 31), APInt(numBits, 0), APInt(numBits, 3), APInt(numBits, 43));  // TODO: show values in ZKR name
     });
   }
+  for (size_t numBits : {256}) {  // TODO: Currently separating out full from small for easier test/benchmark
+    module.addFunc<0>("ecdsa_verify_full_" + std::to_string(numBits), {}, [&]() {
+      llvm::outs() << "  Making ecdsa_verify_full_" + std::to_string(numBits) + "\n";
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::makeECDSAVerify(builder, builder.getUnknownLoc(), numBits, secp_256k1_prime, secp_256k1_a, secp_256k1_b, secp_256k1_order);  // TODO: show values in ZKR name
+    });
+  }
   // Elliptic Curve tests
   for (size_t numBits : {8, 256}) {  // TODO: Switch to 5 bits
     module.addFunc<0>("ec_aff_add_test_" + std::to_string(numBits), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
       zirgen::BigInt::makeECAffineAddTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
+    });
+  }
+  for (size_t numBits : {256}) {
+    module.addFunc<0>("ec_aff_add_test_full_" + std::to_string(numBits), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::makeECAffineAddTest(builder, builder.getUnknownLoc(), numBits, secp_256k1_prime, secp_256k1_a, secp_256k1_b);  // TODO: I don't think these values are coordinated with the test
     });
   }
   for (size_t numBits : {8, 256}) {  // TODO: Switch to 5 bits
@@ -216,6 +240,13 @@ int main(int argc, char* argv[]) {
     module.addFunc<0>("ec_aff_mul_test_" + std::to_string(numBits), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
       zirgen::BigInt::makeECAffineMultiplyTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
+    });
+  }
+  for (size_t numBits : {256}) {
+    llvm::outs() << "  Making ec_aff_mul_test_full_" + std::to_string(numBits) + "\n";
+    module.addFunc<0>("ec_aff_mul_test_" + std::to_string(numBits), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::makeECAffineMultiplyTest(builder, builder.getUnknownLoc(), numBits, secp_256k1_prime, secp_256k1_a, secp_256k1_b);  // TODO: I don't think these values are coordinated with the test
     });
   }
   for (size_t numBits : {8}) {  // TODO: Switch to 5 bits
@@ -236,13 +267,13 @@ int main(int argc, char* argv[]) {
       zirgen::BigInt::makeECAffineValidatePointsEqualTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
     });
   }
-  // // Perf tests
+  // Perf tests
   for (size_t numReps : {5, 10, 256}) {
     const size_t numBits = 256;
-    module.addFunc<0>("rep_ec_aff_add_test_" + std::to_string(numBits) + "_r" + std::to_string(numReps), {}, [&]() {
+    module.addFunc<0>("rep_ec_aff_add_test_full_" + std::to_string(numBits) + "_r" + std::to_string(numReps), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
       zirgen::BigInt::makeRepeatedECAffineAddTest(builder, builder.getUnknownLoc(), numBits, numReps,
-          APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
+          secp_256k1_prime, secp_256k1_a, secp_256k1_b);  // TODO: I don't think these values are coordinated with the test
     });
   }
 
