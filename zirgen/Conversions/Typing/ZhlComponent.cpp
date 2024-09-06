@@ -541,16 +541,6 @@ Zhlt::ComponentOp LoweringImpl::gen(ComponentOp component,
             .Case<TypeParamOp>([&](auto op) { gen(op, typeArgs); })
             .Default([&](auto op) { gen(op, cb); });
       }
-
-      constructArgsTypes = llvm::to_vector(bodyBlock->getArgumentTypes());
-      cb.supplyLayout([&](StringAttr memberNameInParent, Type layoutTypeArg) -> Value {
-        assert(!memberNameInParent && "Top-level components should not have a member name");
-        layoutType = layoutTypeArg;
-        return bodyBlock->addArgument(layoutTypeArg, loc);
-      });
-      Value returnValue = cb.getValue(loc);
-      builder.create<Zhlt::ReturnOp>(loc, returnValue);
-      valueType = returnValue.getType();
     } catch (MalformedIRException&) {
       // All semantic errors, even those that are difficult to recover from, are
       // confined to the component definition in which they occur, so we can
@@ -559,6 +549,23 @@ Zhlt::ComponentOp LoweringImpl::gen(ComponentOp component,
       if (!valueType)
         valueType = Zhlt::getComponentType(ctx);
     }
+
+    for (unsigned i = body.getNumArguments() - 1; i != (unsigned)-1; i--) {
+      BlockArgument arg = body.getArgument(i);
+      if (arg.use_empty() && ZStruct::isLayoutType(arg.getType())) {
+        body.eraseArgument(i);
+      }
+    }
+
+    constructArgsTypes = llvm::to_vector(bodyBlock->getArgumentTypes());
+    cb.supplyLayout([&](StringAttr memberNameInParent, Type layoutTypeArg) -> Value {
+      assert(!memberNameInParent && "Top-level components should not have a member name");
+      layoutType = layoutTypeArg;
+      return bodyBlock->addArgument(layoutTypeArg, loc);
+    });
+    Value returnValue = cb.getValue(loc);
+    builder.create<Zhlt::ReturnOp>(loc, returnValue);
+    valueType = returnValue.getType();
   }
 
   auto ctor = builder.create<Zhlt::ComponentOp>(
@@ -760,11 +767,8 @@ Value LoweringImpl::lookup(Value component, StringRef member) {
     component = builder.create<ZStruct::LookupOp>(component.getLoc(), component, "@super");
   }
   // If we haven't returned yet, we searched the whole super chain and didn't
-  // find the member we're looking for. We don't know anything about the type
-  // that the member was supposed to be, so we recover by constructing a
-  // `Component` instead.
-  emitError(component.getLoc()) << "type `" << getTypeId(originalComponent.getType())
-                                << "` has no member named \"" << member << "\"";
+  // find the member we're looking for. Return a null value and handle the error
+  // upstream.
   return nullptr;
 }
 
@@ -790,6 +794,10 @@ void LoweringImpl::gen(LookupOp lookupOp, ComponentBuilder& cb) {
   Value component = asValue(lookupOp.getComponent());
   StringRef member = lookupOp.getMember();
   Value subcomponent = lookup(component, member);
+  if (!subcomponent) {
+    emitError(component.getLoc()) << "type `" << getTypeId(component.getType())
+                                  << "` has no member named \"" << member << "\"";
+  }
   valueMapping[lookupOp.getOut()] = subcomponent;
 }
 
@@ -868,6 +876,10 @@ void LoweringImpl::gen(ConstructOp construct, ComponentBuilder& cb) {
       arguments.push_back(casted);
     }
     if (expectedArgType != argumentTypes.end() && ZStruct::isLayoutType(*expectedArgType)) {
+      ScopedDiagnosticHandler scopedHandler(ctx, [&](Diagnostic& diag) {
+        diag.attachNote(construct.getLoc()) << "which is expected by this constructor call:";
+        return failure();
+      });
       Value layout = asLayout(zhlArg);
       Value castedLayout = coerceTo(layout, *expectedArgType);
       expectedArgType++;
@@ -935,7 +947,14 @@ Value LoweringImpl::asLayout(Value value) {
                .Case<LookupOp>([&](LookupOp op) {
                  Value componentLayout = asLayout(op.getComponent());
                  StringRef member = op.getMember();
-                 return lookup(componentLayout, member);
+                 Value sublayout = lookup(componentLayout, member);
+                 if (!sublayout) {
+                   emitError(op.getLoc())
+                       << "type `" << getTypeId(componentLayout.getType())
+                       << "` does not own the layout of member \"" << member << "\"";
+                   throw MalformedIRException();
+                 }
+                 return sublayout;
                })
                .Case<SubscriptOp>([&](SubscriptOp op) {
                  Value arrayLayout = asLayout(op.getArray());

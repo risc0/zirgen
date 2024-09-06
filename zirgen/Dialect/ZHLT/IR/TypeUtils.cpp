@@ -184,6 +184,7 @@ Value coerceTo(Value value, Type type, OpBuilder& builder) {
   StructType componentType = Zhlt::getComponentType(ctx);
   Value casted = value;
   Location loc = value.getLoc();
+  Type originalType = value.getType();
   if (!type) {
     // Previous errors may have left us with a null target type.
     emitError(value.getLoc()) << "cannot cast to invalid type";
@@ -207,7 +208,8 @@ Value coerceTo(Value value, Type type, OpBuilder& builder) {
       casted = coerceStructToSuper<LayoutType>(castedStruct, builder);
       if (!casted) {
         auto loc = value.getLoc();
-        emitError(loc) << "component struct must inherit from `Component`";
+        emitError(loc) << "type `" << getTypeId(originalType) << "` does not own a super layout of "
+                       << "type `" << getTypeId(type) << "`";
         return builder.create<Zhlt::MagicOp>(loc, type).getOut();
       }
     } else if (UnionType ut = dyn_cast<UnionType>(casted.getType())) {
