@@ -1,0 +1,44 @@
+load("@kroma_network_rules_circom//:build_defs.bzl", "circom_library", "compile_circuit")
+load("@rules_pkg//pkg:zip.bzl", "pkg_zip")
+load("//bazel/rules/zirgen:edsl-defs.bzl", "build_circuit")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+compile_circuit(
+    name = "poseidon2",
+    generate_c = False,
+    generate_sym = True,
+    generate_wasm = True,
+    main = "poseidon2.circom",
+    deps = ["@circomlib"],
+)
+
+ZKRS = ["poseidon2"]
+
+build_circuit(
+    name = "gen_circom",
+    srcs = ["gen_circom.cpp"],
+    outs = [fn for zkr in ZKRS for fn in [
+        zkr + ".zkr",
+        zkr + ".zkr.dbg",
+    ]] + ["circom.rs.inc"],
+    data = [":poseidon2"],
+    deps = [
+        "//zirgen/Dialect/BigInt/IR",
+        "//zirgen/Dialect/BigInt/Transforms",
+        "//zirgen/Dialect/R1CS/Conversion/R1CSToBigInt:passes",
+        "//zirgen/Dialect/R1CS/IR",
+        "//zirgen/circuit/recursion:lib",
+        "//zirgen/circuit/verify:lib",
+        "//zirgen/compiler/r1cs",
+        "@llvm-project//mlir:AllTranslations",
+        "@llvm-project//mlir:MlirOptLib",
+    ],
+)
+
+pkg_zip(
+    name = "circom_zkr",
+    srcs = [x + ".zkr" for x in ZKRS],
+)

@@ -144,7 +144,7 @@ void lower(func::FuncOp inFunc) {
                   extractPoly(cbPublic.getEvaluations(), curPublic, op.getOut().getType());
             } else {
               valMap[op.getOut()] =
-                  extractPoly(cbPublic.getEvaluations(), curPrivate, op.getOut().getType());
+                  extractPoly(cbPrivate.getEvaluations(), curPrivate, op.getOut().getType());
             }
             // builder.create<Zll::ExternOp>(loc, TypeRange{}, ValueRange{valMap[op.getOut()]},
             // "log", "DefOp: %p");

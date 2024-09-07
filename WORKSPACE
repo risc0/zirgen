@@ -119,6 +119,66 @@ load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
 
 rules_pkg_dependencies()
 
+http_archive(
+    name = "kroma_network_rules_circom",
+    strip_prefix = "rules_circom-c9ebf68ae2b6170074023c5c4a8502662ee4e775",
+    urls = ["https://github.com/kroma-network/rules_circom/archive/c9ebf68ae2b6170074023c5c4a8502662ee4e775.tar.gz"],
+)
+
+load("@kroma_network_rules_circom//:rules_circom_deps.bzl", "rules_circom_deps")
+
+rules_circom_deps()
+
+load("@rules_rust//rust:repositories.bzl", "rules_rust_dependencies", "rust_register_toolchains")
+
+rules_rust_dependencies()
+
+rust_register_toolchains(
+    edition = "2021",
+    versions = [
+        "1.77.2",
+    ],
+)
+
+load("@rules_rust//crate_universe:repositories.bzl", "crate_universe_dependencies")
+
+crate_universe_dependencies()
+
+load("@rules_rust//crate_universe:defs.bzl", "crates_repository")
+
+crates_repository(
+    name = "crate_index",
+    cargo_lockfile = "//:Cargo.lock",
+    lockfile = "//:Cargo.Bazel.lock",
+    manifests = ["@kroma_network_rules_circom//:Cargo.toml"],
+)
+
+load("@crate_index//:defs.bzl", "crate_repositories")
+
+crate_repositories()
+
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "new_git_repository")
+
+new_git_repository(
+    name = "circomlib",
+    build_file_content = """
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+load("@kroma_network_rules_circom//:build_defs.bzl", "circom_library", "compile_circuit")
+
+circom_library(
+    name = "circomlib",
+    srcs = glob(["**/*.circom"]),
+    includes = ["."],
+)
+""",
+    commit = "cff5ab6288b55ef23602221694a6a38a0239dcc0",
+    remote = "https://github.com/iden3/circomlib.git",
+    shallow_since = "1655465123 +0200",
+)
+
 # Hedron's Compile Commands Extractor for Bazel
 # https://github.com/hedronvision/bazel-compile-commands-extractor
 # tip: use `bazel run @hedron_compile_commands//:refresh_all`

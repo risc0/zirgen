@@ -31,6 +31,7 @@ namespace {
 
 struct NoR1CSTarget : public ConversionTarget {
   NoR1CSTarget(MLIRContext& ctx) : ConversionTarget(ctx) {
+    addLegalDialect<mlir::func::FuncDialect>();
     addLegalOp<mlir::ModuleOp>();
     addLegalDialect<BigInt::BigIntDialect>();
     addIllegalDialect<R1CS::R1CSDialect>();

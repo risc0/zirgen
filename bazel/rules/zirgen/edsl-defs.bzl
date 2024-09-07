@@ -61,7 +61,7 @@ _build_circuit_rule = rule(
     },
 )
 
-def build_circuit(name, srcs, deps = [], outs = None):
+def build_circuit(name, srcs, deps = [], outs = None, data = []):
     bin = name + "_gen"
 
     if outs == None:
@@ -79,6 +79,6 @@ def build_circuit(name, srcs, deps = [], outs = None):
     _build_circuit_rule(
         name = name,
         binary = bin,
-        data = ["//zirgen/compiler/codegen:data"],
+        data = ["//zirgen/compiler/codegen:data"] + data,
         outs = outs,
     )

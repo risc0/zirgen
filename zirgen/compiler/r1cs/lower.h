@@ -23,6 +23,6 @@
 
 namespace zirgen::R1CS {
 
-std::optional<mlir::ModuleOp> lower(mlir::MLIRContext&, r1csfile::System&);
+void lower(mlir::OpBuilder& builder, r1csfile::System& src);
 
 } // namespace zirgen::R1CS

@@ -88,13 +88,8 @@ void Impl::gen(r1csfile::Constraint& in) {
 
 } // namespace
 
-std::optional<mlir::ModuleOp> lower(MLIRContext& ctx, r1csfile::System& src) {
-
-  mlir::OpBuilder builder(&ctx);
-
+void lower(mlir::OpBuilder& builder, r1csfile::System& src) {
   auto loc = builder.getUnknownLoc();
-  auto out = mlir::ModuleOp::create(loc);
-  builder.setInsertionPointToEnd(&out.getBodyRegion().front());
 
   // Generate wires. If there is a map section, use its labels.
   std::vector<DefOp> wires;
@@ -120,8 +115,6 @@ std::optional<mlir::ModuleOp> lower(MLIRContext& ctx, r1csfile::System& src) {
   for (auto& cons : src.constraints) {
     impl.gen(cons);
   }
-
-  return out;
 }
 
 } // namespace zirgen::R1CS
