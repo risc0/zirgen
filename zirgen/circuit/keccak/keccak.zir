@@ -195,14 +195,16 @@ component xor5words_result<Xidx: Val, Sidx: Val>(rvpst: RetTuple) {
   FromBits<CURRLEN>(xor_abcde)
 }
 
-component xor5words_minor0<Xidx: Val>(rvp01: RetTuple, rvpst: RetTuple) {
-  result := Reg(xor5words_result<Xidx,0>(rvpst));
+component xor5words_minor0<Xidx: Val>(rvprev: RetTuple) {
+  result := Reg(xor5words_result<Xidx,0>(rvprev));
   withr_d := Concatenate<Val,BLEN(),2>(dummyB(), [result, 0]);
   RetTuple(dummyB(), dummyB(), dummyB(), withr_d, dummyB(), dummyB(),
-           1, Xidx, rvpst.rnd, rvpst.blk, rvpst.midx)
+           1, Xidx, rvprev.rnd, rvprev.blk, rvprev.midx)
 }
 
-component xor5words_minor1<Xidx: Val>(rvp01: RetTuple, rvpst: RetTuple) {
+component xor5words_minor1<Xidx: Val>(rvals: RetTuple) {
+  rvp01 := rvals@1;
+  rvpst := rvals@2;
   result := Reg(xor5words_result<Xidx,1>(rvpst));
   withr_a := ConcatElem<Val,SLEN()>(dummyS(), rvp01.arr_d[0+BLEN()]);
   withr_b := ConcatElem<Val,SLEN()>(dummyS(), result);
@@ -210,7 +212,9 @@ component xor5words_minor1<Xidx: Val>(rvp01: RetTuple, rvpst: RetTuple) {
            2, Xidx, rvp01.rnd, rvp01.blk, rvp01.midx)
 }
 
-component xor5words_minor2<Xidx: Val>(rvp01: RetTuple, rvpst: RetTuple) {
+component xor5words_minor2<Xidx: Val>(rvals: RetTuple) {
+  rvp01 := rvals@1;
+  rvpst := rvals@3;
   result := Reg(xor5words_result<Xidx,2>(rvpst));
   withr_a := ConcatElem<Val,SLEN()>(dummyS(), rvp01.arr_a[0+SLEN()]);
   withr_b := ConcatElem<Val,SLEN()>(dummyS(), rvp01.arr_b[0+SLEN()]);
@@ -219,7 +223,9 @@ component xor5words_minor2<Xidx: Val>(rvp01: RetTuple, rvpst: RetTuple) {
            3, Xidx, rvp01.rnd, rvp01.blk, rvp01.midx)
 }
 
-component xor5words_minor3<Xidx: Val>(rvprev01: RetTuple, rvprev04: RetTuple) {
+component xor5words_minor3<Xidx: Val>(rvals: RetTuple) {
+  rvprev01 := rvals@1;
+  rvprev04 := rvals@4;
   inp_a := for i : 0..BLEN() { Reg(rvprev04.arr_a[i]) };
   inp_b := for i : 0..BLEN() { Reg(rvprev04.arr_b[i]) };
   inp_c := for i : 0..BLEN() { Reg(rvprev04.arr_c[i]) };
@@ -232,18 +238,20 @@ component xor5words_minor3<Xidx: Val>(rvprev01: RetTuple, rvprev04: RetTuple) {
            0, Xidx+1, rvprev01.rnd, rvprev01.blk, rvprev01.midx)
 }
 
-component xor5words_major<Xidx: Val>(rvprev01: RetTuple, rvprev02: RetTuple,
-            rvprev03: RetTuple, rvprev04: RetTuple) {
-  minor_onehot := OneHot<4>(rvprev01.minor);
+component xor5words_major<Xidx: Val>(rvals: RetTuple) {
+  minor_onehot := OneHot<4>(rvals@1.minor);
   minor_onehot -> (
-    xor5words_minor0<Xidx>(rvprev01, rvprev01),
-    xor5words_minor1<Xidx>(rvprev01, rvprev02),
-    xor5words_minor2<Xidx>(rvprev01, rvprev03),
-    xor5words_minor3<Xidx>(rvprev01, rvprev04)
+    xor5words_minor0<Xidx>(rvals@1),
+    xor5words_minor1<Xidx>(rvals),
+    xor5words_minor2<Xidx>(rvals),
+    xor5words_minor3<Xidx>(rvals)
   )
 }
 
-component rho_minor0<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
+component rho_minor0<X: Val, Y: Val>(rvals: RetTuple) {
+  rvpstate := rvals@(1+3*(X/2)); //X=0,pstate=1 X=2,pstate=4, X=4,pstate=7
+  rvprev01 := rvals@1;
+
   v_dec1 := rvpstate.arr_d[INPLEN()-3*BLEN()+3*DecMod5(X)+0];
   unpack_m1 := ToBits<BLEN()>(v_dec1);
   FromBits<BLEN()>(unpack_m1) = v_dec1;
@@ -279,7 +287,10 @@ component rho_minor0<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
            3*(X/2)+1, Y+5, rvpstate.rnd, rvpstate.blk, rvpstate.midx)
 }
 
-component rho_minor1<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
+component rho_minor1<X: Val, Y: Val>(rvals: RetTuple) {
+  rvpstate := rvals@(2+3*(X/2)); //X=0,pstate=2 X=2,pstate=5, X=4,pstate=8
+  rvprev01 := rvals@1;
+
   idx1 := (X+5*Y)*3 + 0;
   in_a := InRange(0,idx1,BLEN());
   v_xy1 := [in_a, 1-in_a] -> (rvpstate.arr_a[idx1],
@@ -348,7 +359,10 @@ component rho_minor1<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
     })
 }
 
-component rho_minor2<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
+component rho_minor2<X: Val, Y: Val>(rvals: RetTuple) {
+  rvpstate := rvals@(3+3*(X/2)); //X=0,pstate=3 X=2,pstate=6
+  rvprev01 := rvals@1;
+
   v_inc1 := rvpstate.arr_d[INPLEN()-3*BLEN()+3*IncMod5(X+1)+0];
   unpack_p1 := ToBits<BLEN()>(v_inc1);
   FromBits<BLEN()>(unpack_p1) = v_inc1;
@@ -413,8 +427,14 @@ component rho_minor2<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
            3*(X/2)+3, Y+5, rvprev01.rnd, rvprev01.blk, rvprev01.midx)
 }
 
-component rho_minor3<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: RetTuple,
-  rvprev04: RetTuple, rvprev06: RetTuple, rvprev07: RetTuple) {
+component rho_minor3<Y: Val>(rvals: RetTuple) {
+  rvprev01 := rvals@1;
+  rvprev03 := rvals@3;
+  rvprev04 := rvals@4;
+  rvprev06 := rvals@6;
+  rvprev07 := rvals@7;
+  rvpstate := rvals@9;
+ 
   [Isz(Y), 1-Isz(Y)] -> (
     { rs1 := Concatenate<Val,12,3>(
                Concatenate<Val,9,3>(
@@ -503,20 +523,18 @@ component rho_minor3<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: R
           }))))
 }
 
-component rho_major<Y: Val>(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
-                            rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
-                            rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple) {
-  minor_onehot := OneHot<9>(rvprev01.minor);
+component rho_major<Y: Val>(rvals: RetTuple) {
+  minor_onehot := OneHot<9>(rvals@1.minor);
   minor_onehot -> (
-    rho_minor0<0,Y>(rvprev01, rvprev01),
-    rho_minor1<0,Y>(rvprev02, rvprev01),
-    rho_minor2<0,Y>(rvprev03, rvprev01),
-    rho_minor0<2,Y>(rvprev04, rvprev01),
-    rho_minor1<2,Y>(rvprev05, rvprev01),
-    rho_minor2<2,Y>(rvprev06, rvprev01),
-    rho_minor0<4,Y>(rvprev07, rvprev01),
-    rho_minor1<4,Y>(rvprev08, rvprev01),
-    rho_minor3<Y>(rvprev09, rvprev01, rvprev03, rvprev04, rvprev06, rvprev07)
+    rho_minor0<0,Y>(rvals),
+    rho_minor1<0,Y>(rvals),
+    rho_minor2<0,Y>(rvals),
+    rho_minor0<2,Y>(rvals),
+    rho_minor1<2,Y>(rvals),
+    rho_minor2<2,Y>(rvals),
+    rho_minor0<4,Y>(rvals),
+    rho_minor1<4,Y>(rvals),
+    rho_minor3<Y>(rvals)
   )
 }
 
@@ -612,7 +630,10 @@ component chi_minor0<X: Val, Y: Val>(rvpstate: RetTuple) {
            minor_new, Y+10, rvpstate.rnd, rvpstate.blk, rvpstate.midx)
 }
 
-component chi_minor1<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
+component chi_minor1<X: Val, Y: Val>(rvals: RetTuple) {
+  rvpstate := rvals@(2+3*(X/2)); //X=0,pstate=2 X=2,pstate=5 X=4,pstate=8
+  rvprev01 := rvals@1;
+
   idx2x := (X+5*Y)*3 + 2;
   in_a2x := InRange(0,idx2x,BLEN());
   v_2x := [in_a2x, 1-in_a2x] -> (rvpstate.arr_a[idx2x],
@@ -713,8 +734,14 @@ component chi_minor1<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
     })
 }
 
-component chi_minor2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: RetTuple,
-  rvprev04: RetTuple, rvprev06: RetTuple, rvprev07: RetTuple) {
+component chi_minor2<Y: Val>(rvals: RetTuple) {
+  rvprev01 := rvals@1;
+  rvprev03 := rvals@3;
+  rvprev04 := rvals@4;
+  rvprev06 := rvals@6;
+  rvprev07 := rvals@7;
+  rvpstate := rvals@9;
+
   [Isz(Y), 1-Isz(Y)] -> (
     { a := [rvprev07.arr_a[0+SLEN()],rvprev07.arr_b[0+SLEN()],rvprev07.arr_c[0+SLEN()],
             rvprev06.arr_d[0+BLEN()],rvprev06.arr_d[1+BLEN()],rvprev07.arr_f[0+SLEN()],
@@ -808,22 +835,19 @@ component iota_xor_rc(rvprev01: RetTuple) {
            0, nxt[0], nxt[1], nxt[2], rvprev01.midx)
 }
 
-component chi_major<Y: Val>(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
-                            rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
-                            rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple,
-                            rvprev10: RetTuple, rvprev11: RetTuple) {
-  minor_onehot := OneHot<10>(rvprev01.minor);
+component chi_major<Y: Val>(rvals: RetTuple) {
+  minor_onehot := OneHot<10>(rvals@1.minor);
   minor_onehot -> (
-    chi_minor0<0,Y>(rvprev01),
-    chi_minor1<0,Y>(rvprev02, rvprev01),
-    chi_minor0<1,Y>(rvprev03),
-    chi_minor0<2,Y>(rvprev04),
-    chi_minor1<2,Y>(rvprev05, rvprev01),
-    chi_minor0<3,Y>(rvprev06),
-    chi_minor0<4,Y>(rvprev07),
-    chi_minor1<4,Y>(rvprev08, rvprev01),
-    chi_minor2<Y>(rvprev09, rvprev01, rvprev03, rvprev04, rvprev06, rvprev07),
-    iota_xor_rc(rvprev01)
+    chi_minor0<0,Y>(rvals@1),
+    chi_minor1<0,Y>(rvals),
+    chi_minor0<1,Y>(rvals@3),
+    chi_minor0<2,Y>(rvals@4),
+    chi_minor1<2,Y>(rvals),
+    chi_minor0<3,Y>(rvals@6),
+    chi_minor0<4,Y>(rvals@7),
+    chi_minor1<4,Y>(rvals),
+    chi_minor2<Y>(rvals),
+    iota_xor_rc(rvals@1)
   )
 }
 
@@ -895,10 +919,17 @@ component absorb_word<X: Val, Y: Val>(rvprev: RetTuple) {
            nxt_in, 15+nxt_major, 0, rvprev.blk, rvprev.midx)
 }
 
-component absorb_copy1(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
-                       rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
-                       rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple,
-                       rvprev10: RetTuple) {
+component absorb_copy1(rvals: RetTuple) {
+  rvprev01 := rvals@1;
+  rvprev02 := rvals@2;
+  rvprev03 := rvals@3;
+  rvprev04 := rvals@4;
+  rvprev05 := rvals@5;
+  rvprev06 := rvals@6;
+  rvprev07 := rvals@7;
+  rvprev08 := rvals@8;
+  rvprev09 := rvals@9;
+  rvprev10 := rvals@10;
   arr_a := [rvprev09.arr_d[SLEN()+0], rvprev09.arr_d[SLEN()+1], rvprev09.arr_d[SLEN()+2],
             rvprev08.arr_d[SLEN()+0], rvprev08.arr_d[SLEN()+1], rvprev08.arr_d[SLEN()+2],
             rvprev07.arr_d[SLEN()+0], rvprev07.arr_d[SLEN()+1], rvprev07.arr_d[SLEN()+2],
@@ -919,29 +950,32 @@ component absorb_copy1(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTupl
 }
 
 
-component absorb_major1(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
-                        rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
-                        rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple,
-                        rvprev10: RetTuple) {
-  minor_onehot := OneHot<10>(rvprev01.minor);
+component absorb_major1(rvals: RetTuple) {
+  minor_onehot := OneHot<10>(rvals@1.minor);
   minor_onehot -> (
-    absorb_word<0,0>(rvprev01),
-    absorb_word<1,0>(rvprev02),
-    absorb_word<2,0>(rvprev03),
-    absorb_word<3,0>(rvprev04),
-    absorb_word<4,0>(rvprev05),
-    absorb_word<0,1>(rvprev06),
-    absorb_word<1,1>(rvprev07),
-    absorb_word<2,1>(rvprev08),
-    absorb_word<3,1>(rvprev09),
-    absorb_copy1(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06, 
-                 rvprev07, rvprev08, rvprev09, rvprev10)
+    absorb_word<0,0>(rvals@1),
+    absorb_word<1,0>(rvals@2),
+    absorb_word<2,0>(rvals@3),
+    absorb_word<3,0>(rvals@4),
+    absorb_word<4,0>(rvals@5),
+    absorb_word<0,1>(rvals@6),
+    absorb_word<1,1>(rvals@7),
+    absorb_word<2,1>(rvals@8),
+    absorb_word<3,1>(rvals@9),
+    absorb_copy1(rvals)
   )
 }
 
-component absorb_copy2(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
-                       rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
-                       rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple) {
+component absorb_copy2(rvals: RetTuple) {
+  rvprev01 := rvals@1;
+  rvprev02 := rvals@2;
+  rvprev03 := rvals@3;
+  rvprev04 := rvals@4;
+  rvprev05 := rvals@5;
+  rvprev06 := rvals@6;
+  rvprev07 := rvals@7;
+  rvprev08 := rvals@8;
+  rvprev09 := rvals@9;
   arr_b := [rvprev09.arr_b[0], rvprev09.arr_b[1], rvprev09.arr_b[2],
             rvprev09.arr_b[3], rvprev09.arr_b[4],
             rvprev08.arr_d[SLEN()+0], rvprev08.arr_d[SLEN()+1], rvprev08.arr_d[SLEN()+2],
@@ -961,21 +995,18 @@ component absorb_copy2(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTupl
            0, 0, 0, rvprev01.blk, rvprev01.midx+17)
 }
 
-component absorb_major2(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
-                        rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
-                        rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple) {
-  minor_onehot := OneHot<9>(rvprev01.minor);
+component absorb_major2(rvals: RetTuple) {
+  minor_onehot := OneHot<9>(rvals@1.minor);
   minor_onehot -> (
-    absorb_word<4,1>(rvprev01),
-    absorb_word<0,2>(rvprev02),
-    absorb_word<1,2>(rvprev03),
-    absorb_word<2,2>(rvprev04),
-    absorb_word<3,2>(rvprev05),
-    absorb_word<4,2>(rvprev06),
-    absorb_word<0,3>(rvprev07),
-    absorb_word<1,3>(rvprev08),
-    absorb_copy2(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06, 
-                 rvprev07, rvprev08, rvprev09)
+    absorb_word<4,1>(rvals@1),
+    absorb_word<0,2>(rvals@2),
+    absorb_word<1,2>(rvals@3),
+    absorb_word<2,2>(rvals@4),
+    absorb_word<3,2>(rvals@5),
+    absorb_word<4,2>(rvals@6),
+    absorb_word<0,3>(rvals@7),
+    absorb_word<1,3>(rvals@8),
+    absorb_copy2(rvals)
   )
 }
 
@@ -1085,39 +1116,38 @@ component mem_padding_sha256(rvprev01: RetTuple) {
     })
 }
 
-component setup_major(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
-                      rvprev04: RetTuple, rvprev68: RetTuple) {
-  minor_onehot := OneHot<14>(rvprev01.minor);
+component setup_major(rvals: RetTuple) {
+  minor_onehot := OneHot<14>(rvals@1.minor);
   minor_onehot -> (
-    equal_word<0>(rvprev01),
-    equal_word<1>(rvprev02),
-    equal_word<2>(rvprev03),
-    equal_word<3>(rvprev04),
-    mem_padding_sha256(rvprev01),
-    sha256init<1>(rvprev01),
-    sha256init<2>(rvprev01),
-    sha256init<3>(rvprev01),
-    sha256init<4>(rvprev01),
-    sha256fini<5>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev68),
-    sha256fini<6>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev68),
-    sha256fini<7>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev68),
-    sha256fini<8>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev68),
-    { Log("sha256output: %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x",
-        rvprev01.arr_a[0], rvprev01.arr_a[1], rvprev01.arr_a[2], rvprev01.arr_a[3],
-        rvprev01.arr_a[4], rvprev01.arr_a[5],  rvprev01.arr_a[6],  rvprev01.arr_a[7],
-        rvprev01.arr_a[8], rvprev01.arr_a[9],  rvprev01.arr_a[10], rvprev01.arr_a[11],
-        rvprev01.arr_a[12], rvprev01.arr_a[13], rvprev01.arr_a[14], rvprev01.arr_a[15]);
-      RetTuple(rvprev01.arr_a, dummyB(), dummyB(), dummyE(), dummyB(), dummyB(),
+    equal_word<0>(rvals@1),
+    equal_word<1>(rvals@2),
+    equal_word<2>(rvals@3),
+    equal_word<3>(rvals@4),
+    mem_padding_sha256(rvals@1),
+    sha256init<1>(rvals@1),
+    sha256init<2>(rvals@1),
+    sha256init<3>(rvals@1),
+    sha256init<4>(rvals@1),
+    sha256fini<5>(rvals@0),
+    sha256fini<6>(rvals@0),
+    sha256fini<7>(rvals@0),
+    sha256fini<8>(rvals@0),
+    { rvp01 := rvals@1;
+      Log("sha256output: %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x",
+        rvp01.arr_a[0], rvp01.arr_a[1], rvp01.arr_a[2], rvp01.arr_a[3],
+        rvp01.arr_a[4], rvp01.arr_a[5],  rvp01.arr_a[6],  rvp01.arr_a[7],
+        rvp01.arr_a[8], rvp01.arr_a[9],  rvp01.arr_a[10], rvp01.arr_a[11],
+        rvp01.arr_a[12], rvp01.arr_a[13], rvp01.arr_a[14], rvp01.arr_a[15]);
+      RetTuple(rvals@1.arr_a, dummyB(), dummyB(), dummyE(), dummyB(), dummyB(),
                 S2MINOR_SKIP()+S2MINOR_OUTPUT(), S2MAJOR_SETUP(), 0,0,0)
     }
   )
 }
 
-component fstep(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
-                rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
-                rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple,
-                rvprev10: RetTuple, rvprev11: RetTuple,
-                rvprev15: RetTuple, rvprev16: RetTuple, rvprev68: RetTuple) {
+component Top() {
+  configureInput(2);
+  retvals : RetTuple;
+
   PC := NondetReg(GetCycle());
   invPC := NondetReg(Inv(PC));
   is_first_cycle := 1 - PC*invPC;
@@ -1129,40 +1159,28 @@ component fstep(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
     },
     {
       PC = PC@1 + 1;
-      rvprev01.major
+      retvals@1.major
     });
   major_onehot := OneHot<23>(major_idx);
-  major_onehot ->! (
-    xor5words_major<0>(rvprev01, rvprev02, rvprev03, rvprev04),
-    xor5words_major<1>(rvprev01, rvprev02, rvprev03, rvprev04),
-    xor5words_major<2>(rvprev01, rvprev02, rvprev03, rvprev04),
-    xor5words_major<3>(rvprev01, rvprev02, rvprev03, rvprev04),
-    xor5words_major<4>(rvprev01, rvprev02, rvprev03, rvprev04),
-    rho_major<0>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
-                 rvprev07, rvprev08, rvprev09),
-    rho_major<1>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
-                 rvprev07, rvprev08, rvprev09),
-    rho_major<2>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
-                 rvprev07, rvprev08, rvprev09),
-    rho_major<3>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
-                 rvprev07, rvprev08, rvprev09),
-    rho_major<4>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
-                 rvprev07, rvprev08, rvprev09),
-    chi_major<0>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
-                 rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
-    chi_major<1>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
-                 rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
-    chi_major<2>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
-                 rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
-    chi_major<3>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
-                 rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
-    chi_major<4>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
-                 rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
-    absorb_major1(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
-                  rvprev07, rvprev08, rvprev09, rvprev10),
-    absorb_major2(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
-                  rvprev07, rvprev08, rvprev09),
-    setup_major(rvprev01, rvprev02, rvprev03, rvprev04, rvprev68),
+  retvals := major_onehot ->! (
+    xor5words_major<0>(retvals@0),
+    xor5words_major<1>(retvals@0),
+    xor5words_major<2>(retvals@0),
+    xor5words_major<3>(retvals@0),
+    xor5words_major<4>(retvals@0),
+    rho_major<0>(retvals@0),
+    rho_major<1>(retvals@0),
+    rho_major<2>(retvals@0),
+    rho_major<3>(retvals@0),
+    rho_major<4>(retvals@0),
+    chi_major<0>(retvals@0),
+    chi_major<1>(retvals@0),
+    chi_major<2>(retvals@0),
+    chi_major<3>(retvals@0),
+    chi_major<4>(retvals@0),
+    absorb_major1(retvals@0),
+    absorb_major2(retvals@0),
+    setup_major(retvals@0),
     { blk := NondetReg(readInput());
       //invBlk := NondetReg(Inv(Blk)); Blk*InvBlk = 1; //maybe unneeded
       readInput(); readInput(); readInput();
@@ -1170,20 +1188,11 @@ component fstep(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
       RetTuple(dummyB(), dummyB(), dummyB(), dummyE(), dummyB(), dummyB(),
                0, 15, 0, blk, 0)
     },
-    sha256load_all(rvprev01,rvprev02,rvprev03,rvprev04),
-    sha256mix_all<0>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16),
-    sha256mix_all<1>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16),
-    sha256mix_all<2>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16)
-  )
-}
-
-component Top() {
-  configureInput(2);
-  retvals : RetTuple;
-
-  retvals := fstep(retvals@1, retvals@2, retvals@3, retvals@4, retvals@5, retvals@6, retvals@7,
-                   retvals@8, retvals@9, retvals@10, retvals@11,
-                   retvals@15, retvals@16, retvals@68);
+    sha256load_all(retvals@0),
+    sha256mix_all<0>(retvals@0),
+    sha256mix_all<1>(retvals@0),
+    sha256mix_all<2>(retvals@0)
+  );
 }
 
 test TestKeccak01 { // test_cycles >= 2969
