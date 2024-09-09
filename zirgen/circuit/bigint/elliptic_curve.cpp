@@ -209,6 +209,8 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt, 
     auto yIfNotAdd = builder.create<BigInt::MulOp>(loc, result.y(), one_minus_rem);
     auto xMerged = builder.create<BigInt::AddOp>(loc, xIfAdd, xIfNotAdd);
     auto yMerged = builder.create<BigInt::AddOp>(loc, yIfAdd, yIfNotAdd);
+    // TODO: I think these may not actually be needed ...
+    // TODO: These seem necessary for bitwidth reasons and/or coeff size reasons, but probably shouldn't be needed for correctness; perhaps there's a workaround?
     auto newX = builder.create<BigInt::ReduceOp>(loc, xMerged, result.curve()->prime_as_bigint(builder, loc));
     auto newY = builder.create<BigInt::ReduceOp>(loc, yMerged, result.curve()->prime_as_bigint(builder, loc));
 
