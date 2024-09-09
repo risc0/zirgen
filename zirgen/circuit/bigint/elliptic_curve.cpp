@@ -231,62 +231,90 @@ AffinePt neg(OpBuilder builder, Location loc, const AffinePt& pt){
 
 AffinePt doub(OpBuilder builder, Location loc, const AffinePt& pt){
   // Formulas (all mod `prime`):
-  //   lambda = (3 * xP^2 + a_coeff) / (2 * yP)
-  //       nu = yP - lambda * xP
-  //       xR = lambda^2 - 2 * xP
-  //       yR = -(lambda * xR + nu)
+  //   lambda = (3 * x_in^2 + a_coeff) / (2 * y_in)
+  //       nu = y_in - lambda * x_in
+  //    x_out = lambda^2 - 2 * x_in
+  //    y_out = -(lambda * x_out + nu)
+  //
+  // What we check is that there exist integers k_* such that:
+  //   k_lambda * prime + 2 * y_in * lambda = 2 * prime^2 + 3 * x_in^2 + a
+  //                    k_x * prime + x_out = 2 * prime + lambda^2 - 2 * x_in
+  //                    k_y * prime + y_out = prime^2 + prime - lambda * x_out - y_in + lambda * x_in
+
+  // TODO: This assumes `pt` is actually on the curve and that `pt` is not order 2
+  // If you need to check for the latter case, verify that `y_in` is not 0 (mod `prime`)
 
   auto prime = pt.curve()->prime_as_bigint(builder, loc);
 
-  // TODO: How much to reduce? smaller bitwidth is nice, but so are fewer operations...
   // Construct constants
   mlir::Type oneType = builder.getIntegerType(1);  // a `1` is bitwidth 1
   auto oneAttr = builder.getIntegerAttr(oneType, 1);  // value 1
   auto one = builder.create<BigInt::ConstOp>(loc, oneAttr);
-  mlir::Type threeType = builder.getIntegerType(3);  // a `3` is bitwidth 3 (incl. sign)
-  auto threeAttr = builder.getIntegerAttr(threeType, 3);  // value 3
-  auto three = builder.create<BigInt::ConstOp>(loc, threeAttr);
+  // mlir::Type threeType = builder.getIntegerType(3);  // a `3` is bitwidth 3 (incl. sign)
+  // auto threeAttr = builder.getIntegerAttr(threeType, 3);  // value 3
+  // auto three = builder.create<BigInt::ConstOp>(loc, threeAttr);
 
-  Value lambda_num = builder.create<BigInt::MulOp>(loc, pt.x(), pt.x());
-  lambda_num = builder.create<BigInt::ReduceOp>(loc, lambda_num, prime);
-  lambda_num = builder.create<BigInt::MulOp>(loc, three, lambda_num);  // three is less than prime, so can add again before reduce
+  // Value lambda_num = builder.create<BigInt::MulOp>(loc, pt.x(), pt.x());
+  // lambda_num = builder.create<BigInt::MulOp>(loc, three, lambda_num);
+  // TODO: Or this alternative to 3 *
+  Value x_sqr = builder.create<BigInt::MulOp>(loc, pt.x(), pt.x());
+  Value lambda_num = builder.create<BigInt::AddOp>(loc, x_sqr, x_sqr);
+  lambda_num = builder.create<BigInt::AddOp>(loc, lambda_num, x_sqr);
   lambda_num = builder.create<BigInt::AddOp>(loc, lambda_num, pt.curve()->a_as_bigint(builder, loc));
-  lambda_num = builder.create<BigInt::ReduceOp>(loc, lambda_num, prime);
-  Value two_y = builder.create<BigInt::AddOp>(loc, pt.y(), pt.y());
-  two_y = builder.create<BigInt::ReduceOp>(loc, two_y, prime);
+  Value prime_sqr = builder.create<BigInt::MulOp>(loc, prime, prime);  // Adding a prime^2 to enforce positivity
+  Value lambda_check_rhs = builder.create<BigInt::AddOp>(loc, prime_sqr, prime_sqr);
+  lambda_check_rhs = builder.create<BigInt::AddOp>(loc, lambda_check_rhs, lambda_num);
 
-  // Enforce that two_y_inv is the inverse of lambda_denom
+  Value two_y = builder.create<BigInt::AddOp>(loc, pt.y(), pt.y());
+
   Value two_y_inv = builder.create<BigInt::NondetInvModOp>(loc, two_y, prime);
-  Value two_y_inv_check = builder.create<BigInt::MulOp>(loc, two_y, two_y_inv);
-  two_y_inv_check = builder.create<BigInt::ReduceOp>(loc, two_y_inv_check, prime);
-  two_y_inv_check = builder.create<BigInt::SubOp>(loc, two_y_inv_check, one);
-  builder.create<BigInt::EqualZeroOp>(loc, two_y_inv_check);
 
   Value lambda = builder.create<BigInt::MulOp>(loc, lambda_num, two_y_inv);
-  lambda = builder.create<BigInt::ReduceOp>(loc, lambda, prime);
+  lambda = builder.create<BigInt::NondetRemOp>(loc, lambda, prime);
 
-  Value nu = builder.create<BigInt::MulOp>(loc, lambda, pt.x());
-  nu = builder.create<BigInt::ReduceOp>(loc, nu, prime);
-  nu = builder.create<BigInt::SubOp>(loc, pt.y(), nu);
-  nu = builder.create<BigInt::AddOp>(loc, nu, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
-  nu = builder.create<BigInt::ReduceOp>(loc, nu, prime);
+  Value two_y_lambda = builder.create<BigInt::MulOp>(loc, pt.y(), lambda);
+  two_y_lambda = builder.create<BigInt::AddOp>(loc, two_y_lambda, two_y_lambda);
+  Value lambda_check_diff = builder.create<BigInt::SubOp>(loc, lambda_check_rhs, two_y_lambda);
+  Value k_lambda = builder.create<BigInt::NondetQuotOp>(loc, lambda_check_diff, prime);
 
-  Value xR = builder.create<BigInt::MulOp>(loc, lambda, lambda);
-  xR = builder.create<BigInt::ReduceOp>(loc, xR, prime);
-  xR = builder.create<BigInt::SubOp>(loc, xR, pt.x());
-  xR = builder.create<BigInt::AddOp>(loc, xR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
-  xR = builder.create<BigInt::SubOp>(loc, xR, pt.x());
-  xR = builder.create<BigInt::AddOp>(loc, xR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
-  xR = builder.create<BigInt::ReduceOp>(loc, xR, prime);
+  // Now enforce `k_lambda * prime + 2 * y_in * lambda = 2 * prime^2 + 3 * x_in^2 + a`
+  // (ensuring nondets `k_lambda` and `lambda` are valid)
+  Value lambda_check = builder.create<BigInt::MulOp>(loc, k_lambda, prime);
+  lambda_check = builder.create<BigInt::AddOp>(loc, lambda_check, two_y_lambda);
+  lambda_check = builder.create<BigInt::SubOp>(loc, lambda_check, lambda_check_rhs);
+  builder.create<BigInt::EqualZeroOp>(loc, lambda_check);
 
-  Value yR = builder.create<BigInt::MulOp>(loc, lambda, xR);
-  yR = builder.create<BigInt::ReduceOp>(loc, yR, prime);
-  yR = builder.create<BigInt::AddOp>(loc, yR, nu);
-  yR = builder.create<BigInt::SubOp>(loc, prime, yR);  // i.e., negate (mod prime)
-  yR = builder.create<BigInt::AddOp>(loc, yR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
-  yR = builder.create<BigInt::ReduceOp>(loc, yR, prime);
+  // Compute x_out and enforce `k_x * prime + x_out = 2 * prime + lambda^2 - 2 * x_in`
+  Value x_numerator = builder.create<BigInt::MulOp>(loc, lambda, lambda);
+  x_numerator = builder.create<BigInt::AddOp>(loc, x_numerator, prime);
+  x_numerator = builder.create<BigInt::AddOp>(loc, x_numerator, prime);
+  x_numerator = builder.create<BigInt::SubOp>(loc, x_numerator, pt.x());
+  x_numerator = builder.create<BigInt::SubOp>(loc, x_numerator, pt.x());
+  // TODO: Perhaps there's a prebuilt op for this?
+  Value k_x = builder.create<BigInt::NondetQuotOp>(loc, x_numerator, prime);
+  Value x_out = builder.create<BigInt::NondetRemOp>(loc, x_numerator, prime);
+  Value x_check = builder.create<BigInt::MulOp>(loc, k_x, prime);
+  x_check = builder.create<BigInt::AddOp>(loc, x_check, x_out);
+  x_check = builder.create<BigInt::SubOp>(loc, x_check, x_numerator);
+  builder.create<BigInt::EqualZeroOp>(loc, x_check);
 
-  return AffinePt(xR, yR, pt.curve());
+  // Compute y_out and enforce `k_y * prime + y_out = prime^2 + prime - lambda * x_out - y_in + lambda * x_in`
+  Value y_numerator = builder.create<BigInt::MulOp>(loc, lambda, x_out);
+  y_numerator = builder.create<BigInt::SubOp>(loc, prime_sqr, y_numerator);
+  y_numerator = builder.create<BigInt::AddOp>(loc, y_numerator, prime);
+  y_numerator = builder.create<BigInt::SubOp>(loc, y_numerator, pt.y());
+  Value lambda_x_in = builder.create<BigInt::MulOp>(loc, lambda, pt.x());
+  y_numerator = builder.create<BigInt::AddOp>(loc, y_numerator, lambda_x_in);
+  // TODO: Perhaps there's a prebuilt op for this?
+  Value k_y = builder.create<BigInt::NondetQuotOp>(loc, y_numerator, prime);
+  Value y_out = builder.create<BigInt::NondetRemOp>(loc, y_numerator, prime);
+  Value y_check = builder.create<BigInt::MulOp>(loc, k_y, prime);
+  y_check = builder.create<BigInt::AddOp>(loc, y_check, y_out);
+  y_check = builder.create<BigInt::SubOp>(loc, y_check, y_numerator);
+  builder.create<BigInt::EqualZeroOp>(loc, y_check);
+
+  return AffinePt(x_out, y_out, pt.curve());
+  // return AffinePt(lambda, lambda, pt.curve());  // TODO for testing
 }
 
 AffinePt sub(OpBuilder builder, Location loc, const AffinePt& lhs, const AffinePt& rhs) {
