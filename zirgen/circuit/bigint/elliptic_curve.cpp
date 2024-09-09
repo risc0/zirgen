@@ -570,9 +570,34 @@ void makeRepeatedECAffineAddTest(mlir::OpBuilder builder,
   AffinePt rhs(xQ, yQ, curve);
   AffinePt expected(xR, yR, curve);
   auto result = add(builder, loc, lhs, rhs);
-  // iterate from 1 because the first repition was already done
+  // iterate from 1 because the first repetition was already done
   for (size_t rp = 1; rp < reps; rp++) {
     result = add(builder, loc, result, rhs);
+  }
+  result.validate_equal(builder, loc, expected);
+}
+
+// Perf Test function
+void makeRepeatedECAffineDoubleTest(mlir::OpBuilder builder,
+                                    mlir::Location loc,
+                                    size_t bits,
+                                    size_t reps,
+                                    APInt prime,
+                                    APInt curve_a,
+                                    APInt curve_b) {
+  // auto order_bits = bits + 1;  // TODO
+  auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
+  auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
+  auto xR = builder.create<BigInt::DefOp>(loc, bits, 2, true);
+  auto yR = builder.create<BigInt::DefOp>(loc, bits, 3, true);
+
+  auto curve = std::make_shared<WeierstrassCurve>(curve_a, curve_b, prime);
+  AffinePt inp(xP, yP, curve);
+  AffinePt expected(xR, yR, curve);
+  auto result = doub(builder, loc, inp);
+  // iterate from 1 because the first repetition was already done
+  for (size_t rp = 1; rp < reps; rp++) {
+    result = doub(builder, loc, inp);
   }
   result.validate_equal(builder, loc, expected);
 }

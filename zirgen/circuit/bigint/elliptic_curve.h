@@ -144,5 +144,13 @@ void makeRepeatedECAffineAddTest(mlir::OpBuilder builder,
                                  APInt prime,
                                  APInt curve_a,
                                  APInt curve_b);
+// Perf test function
+void makeRepeatedECAffineDoubleTest(mlir::OpBuilder builder,
+                                    mlir::Location _loc,
+                                    size_t bits,
+                                    size_t reps,
+                                    APInt prime,
+                                    APInt curve_a,
+                                    APInt curve_b);
 
 } // namespace zirgen::BigInt
