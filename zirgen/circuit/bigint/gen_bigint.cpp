@@ -209,13 +209,13 @@ int main(int argc, char* argv[]) {
       zirgen::BigInt::makeECDSAVerify(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 31), APInt(numBits, 0), APInt(numBits, 3), APInt(numBits, 43));  // TODO: show values in ZKR name
     });
   }
-  for (size_t numBits : {256}) {  // TODO: Currently separating out full from small for easier test/benchmark
-    module.addFunc<0>("ecdsa_verify_full_" + std::to_string(numBits), {}, [&]() {
-      llvm::outs() << "  Making ecdsa_verify_full_" + std::to_string(numBits) + "\n";
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECDSAVerify(builder, builder.getUnknownLoc(), numBits, secp_256k1_prime, secp_256k1_a, secp_256k1_b, secp_256k1_order);  // TODO: show values in ZKR name
-    });
-  }
+  // for (size_t numBits : {256}) {  // TODO: Currently separating out full from small for easier test/benchmark
+  //   module.addFunc<0>("ecdsa_verify_full_" + std::to_string(numBits), {}, [&]() {
+  //     llvm::outs() << "  Making ecdsa_verify_full_" + std::to_string(numBits) + "\n";
+  //     auto& builder = Module::getCurModule()->getBuilder();
+  //     zirgen::BigInt::makeECDSAVerify(builder, builder.getUnknownLoc(), numBits, secp_256k1_prime, secp_256k1_a, secp_256k1_b, secp_256k1_order);  // TODO: show values in ZKR name
+  //   });
+  // }
   // Elliptic Curve tests
   for (size_t numBits : {8, 256}) {  // TODO: Switch to 5 bits
     module.addFunc<0>("ec_aff_add_test_" + std::to_string(numBits), {}, [&]() {
