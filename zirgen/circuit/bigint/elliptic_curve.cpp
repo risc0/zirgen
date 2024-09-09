@@ -76,11 +76,13 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
 
 
   Value x_diff_inv = builder.create<BigInt::NondetInvModOp>(loc, x_diff, prime);
-  // // Enforce that xDiffInv is the inverse of x_diff
-  // Value x_diff_inv_check = builder.create<BigInt::MulOp>(loc, x_diff, x_diff_inv);
-  // x_diff_inv_check = builder.create<BigInt::ReduceOp>(loc, x_diff_inv_check, prime);
-  // x_diff_inv_check = builder.create<BigInt::SubOp>(loc, x_diff_inv_check, one);
-  // builder.create<BigInt::EqualZeroOp>(loc, x_diff_inv_check);
+  // Enforce that xDiffInv is the inverse of x_diff
+  Value x_diff_inv_check = builder.create<BigInt::MulOp>(loc, x_diff, x_diff_inv);
+  Value x_diff_inv_check_quot = builder.create<BigInt::NondetQuotOp>(loc, x_diff_inv_check, prime);
+  x_diff_inv_check_quot = builder.create<BigInt::MulOp>(loc, x_diff_inv_check_quot, prime);
+  x_diff_inv_check = builder.create<BigInt::SubOp>(loc, x_diff_inv_check, x_diff_inv_check_quot);
+  x_diff_inv_check = builder.create<BigInt::SubOp>(loc, x_diff_inv_check, one);
+  builder.create<BigInt::EqualZeroOp>(loc, x_diff_inv_check);
 
 
 
