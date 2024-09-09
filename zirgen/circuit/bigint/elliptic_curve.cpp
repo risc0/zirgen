@@ -246,17 +246,6 @@ AffinePt doub(OpBuilder builder, Location loc, const AffinePt& pt){
 
   auto prime = pt.curve()->prime_as_bigint(builder, loc);
 
-  // Construct constants
-  mlir::Type oneType = builder.getIntegerType(1);  // a `1` is bitwidth 1
-  auto oneAttr = builder.getIntegerAttr(oneType, 1);  // value 1
-  auto one = builder.create<BigInt::ConstOp>(loc, oneAttr);
-  // mlir::Type threeType = builder.getIntegerType(3);  // a `3` is bitwidth 3 (incl. sign)
-  // auto threeAttr = builder.getIntegerAttr(threeType, 3);  // value 3
-  // auto three = builder.create<BigInt::ConstOp>(loc, threeAttr);
-
-  // Value lambda_num = builder.create<BigInt::MulOp>(loc, pt.x(), pt.x());
-  // lambda_num = builder.create<BigInt::MulOp>(loc, three, lambda_num);
-  // TODO: Or this alternative to 3 *
   Value x_sqr = builder.create<BigInt::MulOp>(loc, pt.x(), pt.x());
   Value lambda_num = builder.create<BigInt::AddOp>(loc, x_sqr, x_sqr);
   lambda_num = builder.create<BigInt::AddOp>(loc, lambda_num, x_sqr);
@@ -314,7 +303,6 @@ AffinePt doub(OpBuilder builder, Location loc, const AffinePt& pt){
   builder.create<BigInt::EqualZeroOp>(loc, y_check);
 
   return AffinePt(x_out, y_out, pt.curve());
-  // return AffinePt(lambda, lambda, pt.curve());  // TODO for testing
 }
 
 AffinePt sub(OpBuilder builder, Location loc, const AffinePt& lhs, const AffinePt& rhs) {
