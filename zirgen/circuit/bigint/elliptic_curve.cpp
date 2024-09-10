@@ -9,21 +9,18 @@ namespace zirgen::BigInt {
 void WeierstrassCurve::validate_contains(OpBuilder builder, Location loc, const AffinePt& pt) const {
   auto prime = prime_as_bigint(builder, loc);
   Value y_sqr = builder.create<BigInt::MulOp>(loc, pt.y(), pt.y());
-  // y_sqr = builder.create<BigInt::ReduceOp>(loc, y_sqr, prime);  // TODO: Better to skip reduce here and do it on the difference?
 
   Value x_cube = builder.create<BigInt::MulOp>(loc, pt.x(), pt.x());
   x_cube = builder.create<BigInt::ReduceOp>(loc, x_cube, prime);  // TODO: Reduce isn't required for correctness, perf better if skipped?  // TODO: But seems to make an overflow if dropped?
   x_cube = builder.create<BigInt::MulOp>(loc, pt.x(), x_cube);
-  // x_cube = builder.create<BigInt::ReduceOp>(loc, x_cube, prime);  // TODO: Reduce isn't required for correctness, perf better if skipped?
 
   Value ax = builder.create<BigInt::MulOp>(loc, a_as_bigint(builder, loc), pt.x());
-  // ax = builder.create<BigInt::ReduceOp>(loc, ax, prime);  // TODO: Reduce isn't required for correctness, perf better if skipped?
 
   Value weierstrass_rhs = builder.create<BigInt::AddOp>(loc, x_cube, ax);
   weierstrass_rhs = builder.create<BigInt::AddOp>(loc, weierstrass_rhs, b_as_bigint(builder, loc));
-  // weierstrass_rhs = builder.create<BigInt::ReduceOp>(loc, weierstrass_rhs, prime);  // TODO: Better to skip reduce here and do it on the difference?
 
-  Value diff = builder.create<BigInt::SubOp>(loc, y_sqr, weierstrass_rhs);
+  Value diff = builder.create<BigInt::SubOp>(loc, weierstrass_rhs, y_sqr);
+  diff = builder.create<BigInt::AddOp>(loc, diff, builder.create<BigInt::AddOp>(loc, prime, prime));  // Ensure `diff` nonnegative
   diff = builder.create<BigInt::ReduceOp>(loc, diff, prime);  // TODO: Testing doing here instead of on its inputs
   builder.create<BigInt::EqualZeroOp>(loc, diff);
 }
@@ -96,28 +93,27 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   lambda_check = builder.create<BigInt::AddOp>(loc, lambda_check, prime);
   Value k_lambda = builder.create<BigInt::NondetQuotOp>(loc, lambda_check, prime);
   lambda_check = builder.create<BigInt::SubOp>(loc, lambda_check, builder.create<BigInt::MulOp>(loc, k_lambda, prime));
-  builder.create<BigInt::EqualZeroOp>(loc, lambda_check);   // TODO: This is inadequate, x_diff and y_diff aren't trustworthy -- TODO: I should fix above
+  builder.create<BigInt::EqualZeroOp>(loc, lambda_check);
 
   Value nu = builder.create<BigInt::MulOp>(loc, lambda, lhs.x());
   nu = builder.create<BigInt::SubOp>(loc, lhs.y(), nu);
-  nu = builder.create<BigInt::AddOp>(loc, nu, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
+  nu = builder.create<BigInt::AddOp>(loc, nu, prime);  // Quot/Rem needs nonnegative inputs, so enforce positivity
 
   Value lambda_sqr = builder.create<BigInt::MulOp>(loc, lambda, lambda);
-        // Value xR = builder.create<BigInt::NondetRemOp>(loc, lambda_sqr, prime);  // TODO: Not needed for correctness, so can experiment with removing
-        // xR = builder.create<BigInt::SubOp>(loc, xR, lhs.x());  // TODO: pairs with above
   Value xR = builder.create<BigInt::SubOp>(loc, lambda_sqr, lhs.x());
-  xR = builder.create<BigInt::AddOp>(loc, xR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
+  xR = builder.create<BigInt::AddOp>(loc, xR, prime);  // Quot/Rem needs nonnegative inputs, so enforce positivity
   xR = builder.create<BigInt::SubOp>(loc, xR, rhs.x());
-  xR = builder.create<BigInt::AddOp>(loc, xR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity  // TODO: Merge the 2 adds? Not without constant propagation
+  xR = builder.create<BigInt::AddOp>(loc, xR, prime);  // Quot/Rem needs nonnegative inputs, so enforce positivity
   Value k_x = builder.create<BigInt::NondetQuotOp>(loc, xR, prime);
   xR = builder.create<BigInt::NondetRemOp>(loc, xR, prime);
 
   Value yR = builder.create<BigInt::MulOp>(loc, lambda, xR);
-  // yR = builder.create<BigInt::NondetRemOp>(loc, yR, prime);  // TODO: good to skip, right?
   yR = builder.create<BigInt::AddOp>(loc, yR, nu);
   yR = builder.create<BigInt::SubOp>(loc, prime, yR);  // i.e., negate (mod prime) 
-  yR = builder.create<BigInt::AddOp>(loc, yR, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity  // TODO: better with using 2*prime for sub?
-  yR = builder.create<BigInt::AddOp>(loc, yR, prime); // TODO: Just more testing...
+  yR = builder.create<BigInt::AddOp>(loc, yR, prime);  // Quot/Rem needs nonnegative inputs, so enforce positivity  // TODO: better with using 3*prime for sub?
+  yR = builder.create<BigInt::AddOp>(loc, yR, prime);
+  Value prime_sqr = builder.create<BigInt::MulOp>(loc, prime, prime);
+  yR = builder.create<BigInt::AddOp>(loc, yR, prime_sqr);  // The prime^2 term is for the original lambda * xR
   Value k_y = builder.create<BigInt::NondetQuotOp>(loc, yR, prime);
   yR = builder.create<BigInt::NondetRemOp>(loc, yR, prime);
 
@@ -140,6 +136,7 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   y_check_other = builder.create<BigInt::SubOp>(loc, y_check_other, lhs.y());
   y_check_other = builder.create<BigInt::AddOp>(loc, y_check_other, prime);
   y_check_other = builder.create<BigInt::AddOp>(loc, y_check_other, prime);
+  y_check_other = builder.create<BigInt::AddOp>(loc, y_check_other, prime_sqr);
   y_check = builder.create<BigInt::SubOp>(loc, y_check, y_check_other);
   builder.create<BigInt::EqualZeroOp>(loc, y_check);
 

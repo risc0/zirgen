@@ -245,7 +245,7 @@ int main(int argc, char* argv[]) {
     llvm::outs() << "  Making ec_aff_mul_test_" + std::to_string(numBits) + "\n";
     module.addFunc<0>("ec_aff_mul_test_" + std::to_string(numBits), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAffineMultiplyTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
+      zirgen::BigInt::makeECAffineMultiplyTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 179), APInt(numBits, 1), APInt(numBits, 12));  // TODO: I don't think these values are coordinated with the test
     });
   }
   for (size_t numBits : {256}) {
