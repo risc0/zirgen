@@ -20,7 +20,7 @@ void WeierstrassCurve::validate_contains(OpBuilder builder, Location loc, const 
   weierstrass_rhs = builder.create<BigInt::AddOp>(loc, weierstrass_rhs, b_as_bigint(builder, loc));
 
   Value diff = builder.create<BigInt::SubOp>(loc, weierstrass_rhs, y_sqr);
-  diff = builder.create<BigInt::AddOp>(loc, diff, builder.create<BigInt::AddOp>(loc, prime, prime));  // Ensure `diff` nonnegative
+  diff = builder.create<BigInt::AddOp>(loc, diff, builder.create<BigInt::MulOp>(loc, prime, prime));  // Ensure `diff` nonnegative
   diff = builder.create<BigInt::ReduceOp>(loc, diff, prime);  // TODO: Testing doing here instead of on its inputs
   builder.create<BigInt::EqualZeroOp>(loc, diff);
 }
@@ -65,11 +65,9 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   auto one = builder.create<BigInt::ConstOp>(loc, oneAttr);
 
   Value y_diff = builder.create<BigInt::SubOp>(loc, rhs.y(), lhs.y());
-  y_diff = builder.create<BigInt::AddOp>(loc, y_diff, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity  // TODO: Can this be removed?
-  // y_diff = builder.create<BigInt::NondetRemOp>(loc, y_diff, prime);
+  y_diff = builder.create<BigInt::AddOp>(loc, y_diff, prime);  // Quot/Rem needs nonnegative inputs, so enforce positivity
   Value x_diff = builder.create<BigInt::SubOp>(loc, rhs.x(), lhs.x());
-  x_diff = builder.create<BigInt::AddOp>(loc, x_diff, prime);  // TODO: Reduce op doesn't work with negatives, so enforcing positivity
-  // x_diff = builder.create<BigInt::NondetRemOp>(loc, x_diff, prime);
+  x_diff = builder.create<BigInt::AddOp>(loc, x_diff, prime);  // Quot/Rem needs nonnegative inputs, so enforce positivity
 
 
   Value x_diff_inv = builder.create<BigInt::NondetInvModOp>(loc, x_diff, prime);
