@@ -32,14 +32,11 @@ cc_binary(
     name = "zirgen",
     srcs = ["driver.cpp"],
     deps = [
-        ":dsl",
         "//risc0/core",
         "//zirgen/Conversions/Typing",
         "//zirgen/Dialect/ZHLT/IR:Codegen",
-        "//zirgen/Dialect/ZHLT/Transforms:passes",
+        "//zirgen/Main",
         "//zirgen/compiler/codegen",
         "//zirgen/compiler/layout",
-        "//zirgen/dsl/passes",
-        "@llvm-project//mlir:FuncExtensions",
     ],
 )

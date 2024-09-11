@@ -1,0 +1,26 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "Main",
+    srcs = [
+        "Main.cpp",
+        "RunTests.cpp",
+    ],
+    hdrs = [
+        "Main.h",
+        "RunTests.h",
+    ],
+    deps = [
+        "//risc0/core",
+        "//zirgen/Dialect/ZHLT/Transforms:passes",
+        "//zirgen/Dialect/ZStruct/Transforms:passes",
+        "//zirgen/Dialect/Zll/Transforms:passes",
+        "//zirgen/dsl",
+        "//zirgen/dsl/passes",
+        "@llvm-project//mlir:AllTranslations",
+        "@llvm-project//mlir:FuncExtensions",
+        "@llvm-project//mlir:MlirOptLib",
+    ],
+)
