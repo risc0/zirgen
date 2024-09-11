@@ -1,0 +1,25 @@
+load("@rules_pkg//pkg:zip.bzl", "pkg_zip")
+load("//bazel/rules/lit:defs.bzl", "glob_lit_tests")
+load("//bazel/rules/zirgen:edsl-defs.bzl", "build_circuit")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+glob_lit_tests(
+    # TODO: shorten timeout once zirgen is faster
+    timeout = "long",
+    data = [
+        "bits.zir",
+        "keccak.zir",
+        "one_hot.zir",
+        "sha256_for_keccak.zir",
+    ],
+    exclude = [
+        "bits.zir",
+        "keccak.zir",
+        "one_hot.zir",
+        "sha256_for_keccak.zir",
+    ],
+    test_file_exts = ["zir"],
+)

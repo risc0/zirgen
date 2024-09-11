@@ -1,0 +1,1180 @@
+// RUN: zirgen -I %S --test %s --input-data-hex 010000000000000054686520717569636B2062726F776E20666F78206A756D7073206F76657220746865206C617A7920646F672E0100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080578951e24efd62a3d63a86f7cd19aaa53c898fe287d2Q552133220370240b572d0000000000000000
+import sha256_for_keccak;
+import one_hot;
+extern GetCycle() : Val;
+extern configureInput(bytesPerElem: Val);
+extern readInput() : Val;
+
+component SLEN() { 21 }
+component INPLEN() { 75 }
+component EREGLEN() { 15 }
+component RLEN() { INPLEN()+EREGLEN()-3*BLEN() }
+component dummyS() { for i : 0.. SLEN() { 0 } }
+component dummyE() { for i : 0.. RLEN() { 0 } }
+component WORDLEN() { 16 }
+
+component rctable(idx: Val) {
+  arr := [ [[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+           [[0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+           [[0,1,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[1,1,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+           [[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+           [[1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[0,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+           [[0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+           [[1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+           [[0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+           [[1,1,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+           [[1,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+           [[0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]],
+           [[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+           [[0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]] ];
+  arr[idx]
+}
+
+component rot_table<x: Val, y:Val>() {
+  arr := [ [0,0,0], [1,0,0], [21,21,20], [21,7,0], [21,6,0],
+           [21,15,0], [21,21,2], [6,0,0], [21,21,13], [20,0,0],
+           [3,0,0], [10,0,0], [21,21,1], [21,4,0], [21,18,0],
+           [21,20,0], [21,21,3], [15,0,0], [21,0,0], [8,0,0],
+           [18,0,0], [2,0,0], [21,21,19], [21,21,14], [14,0,0]];
+  arr[5*y + x]
+}
+
+component WordTriple(a: Array<Val, BLEN()>, b: Array<Val, SLEN()>, c: Array<Val, SLEN()>) {
+  a := a;
+  b := b;
+  c := c;
+}
+
+component xor3(x: Val, y: Val, z: Val) {
+  ((x*y + (1-x)*(1-y)) * z)  +  ((1-(x*y + (1-x)*(1-y))) * (1-z))
+}
+
+component xor2(x: Val, y: Val) {
+  x + y - 2*x*y
+}
+
+component andnxor(x: Val, y: Val, z: Val) {
+  t := (1-y)*z; // (not y) and z
+  x + t - 2*x*t // x xor t
+}
+
+component IncMod5(v: Val) {
+  d := Isz(4-v);
+  [1-d, d] -> (v+1, 0)
+}
+component DecMod5(v: Val) {
+  d := Isz(v);
+  [1-d, d] -> (v-1, 4)
+}
+
+component RotLeft3impl<T: Type, A: Val, B: Val, C: Val, S: Val>
+    (a: Array<T, A>, b: Array<T, B>, c: Array<T, C>) {
+  ra := for i : 0..A {
+    wraparound := InRange(0,i,S);
+    [wraparound, 1-wraparound] -> (c[C-S+i], a[i-S])
+  };
+  rb := for i : 0..B {
+    wraparound := InRange(0,i,S);
+    [wraparound, 1-wraparound] -> (a[A-S+i], b[i-S])
+  };
+  rc := for i : 0..C {
+    wraparound := InRange(0,i,S);
+    [wraparound, 1-wraparound] -> (b[B-S+i], c[i-S])
+  };
+}
+component RotLeft3<T: Type, A: Val, B: Val, C: Val, S1: Val, S2: Val, S3: Val>
+    (a: Array<T, A>, b: Array<T, B>, c: Array<T, C>) {
+  za := Isz(S1);
+  rot := [za, 1-za] -> ( WordTriple(a,b,c),
+      { arr1 := RotLeft3impl<T, A, B, C, S1+za>(a, b, c);
+        zb := Isz(S2);
+        [zb, 1-zb] -> ( WordTriple(arr1.ra, arr1.rb, arr1.rc),
+          { arr2 := RotLeft3impl<T, A, B, C, S2+zb>(arr1.ra, arr1.rb, arr1.rc);
+            zc := Isz(S3);
+            [zc, 1-zc] -> ( WordTriple(arr2.ra, arr2.rb, arr2.rc),
+              { arr3 := RotLeft3impl<T, A, B, C, S3+zc>(arr2.ra, arr2.rb, arr2.rc);
+                WordTriple(arr3.ra, arr3.rb, arr3.rc)
+              })})});
+}
+
+component xor5words_result<Xidx: Val, Sidx: Val>(rvpst: RetTuple) {
+  CURRLEN := [Isz(Sidx), 1-Isz(Sidx)] -> (BLEN(), SLEN());
+
+  val_a := rvpst.arr_a[Sidx+3*Xidx+15*0];
+  unpack_a := ToBits<CURRLEN>(val_a);
+  FromBits<CURRLEN>(unpack_a) = val_a;
+
+  nxt_b := Isz(Xidx)+Isz(Xidx-1)+Isz(Xidx-2)*Isz(Sidx);
+  val_b := [nxt_b, 1-nxt_b] ->
+         (rvpst.arr_a[Sidx+3*Xidx+15*1], rvpst.arr_b[Sidx+3*Xidx+15*1 - 22*1]);
+  unpack_b := ToBits<CURRLEN>(val_b);
+  FromBits<CURRLEN>(unpack_b) = val_b;
+
+  nxt_c := Isz(4-Xidx)*Isz(2-Sidx);
+  val_c := [1-nxt_c, nxt_c] ->
+         (rvpst.arr_b[Sidx+3*Xidx+15*2 - 22*1], rvpst.arr_c[Sidx+3*Xidx+15*2 - 22*2]);
+  unpack_c := ToBits<CURRLEN>(val_c);
+  FromBits<CURRLEN>(unpack_c) = val_c;
+
+  val_d := rvpst.arr_c[Sidx+3*Xidx+15*3 - 22*2];
+  unpack_d := ToBits<CURRLEN>(val_d);
+  FromBits<CURRLEN>(unpack_d) = val_d;
+
+  nxt_e := Isz(Xidx)+Isz(Xidx-1);
+  val_e := [nxt_e, 1-nxt_e] ->
+         (rvpst.arr_c[Sidx+3*Xidx+15*4 - 22*2], rvpst.arr_d[Sidx+3*Xidx+15*4 - 22*3]);
+  unpack_e := ToBits<CURRLEN>(val_e);
+  FromBits<CURRLEN>(unpack_e) = val_e;
+
+  xor_abc := for i : 0..CURRLEN {
+    Reg(xor3(unpack_a[i], unpack_b[i], unpack_c[i])) };
+
+  xor_abcde := for i : 0..CURRLEN {
+    xor3(xor_abc[i], unpack_d[i], unpack_e[i]) };
+
+  FromBits<CURRLEN>(xor_abcde)
+}
+
+component xor5words_minor0<Xidx: Val>(rvp01: RetTuple, rvpst: RetTuple) {
+  result := Reg(xor5words_result<Xidx,0>(rvpst));
+  withr_d := Concatenate<Val,BLEN(),2>(dummyB(), [result, 0]);
+  RetTuple(dummyB(), dummyB(), dummyB(), withr_d, dummyB(), dummyB(),
+           1, Xidx, rvpst.rnd, rvpst.blk, rvpst.midx)
+}
+
+component xor5words_minor1<Xidx: Val>(rvp01: RetTuple, rvpst: RetTuple) {
+  result := Reg(xor5words_result<Xidx,1>(rvpst));
+  withr_a := ConcatElem<Val,SLEN()>(dummyS(), rvp01.arr_d[0+BLEN()]);
+  withr_b := ConcatElem<Val,SLEN()>(dummyS(), result);
+  RetTuple(withr_a, withr_b, dummyB(), dummyE(), dummyB(), dummyB(),
+           2, Xidx, rvp01.rnd, rvp01.blk, rvp01.midx)
+}
+
+component xor5words_minor2<Xidx: Val>(rvp01: RetTuple, rvpst: RetTuple) {
+  result := Reg(xor5words_result<Xidx,2>(rvpst));
+  withr_a := ConcatElem<Val,SLEN()>(dummyS(), rvp01.arr_a[0+SLEN()]);
+  withr_b := ConcatElem<Val,SLEN()>(dummyS(), rvp01.arr_b[0+SLEN()]);
+  withr_c := ConcatElem<Val,SLEN()>(dummyS(), result);
+  RetTuple(withr_a, withr_b, withr_c, dummyE(), dummyB(), dummyB(),
+           3, Xidx, rvp01.rnd, rvp01.blk, rvp01.midx)
+}
+
+component xor5words_minor3<Xidx: Val>(rvprev01: RetTuple, rvprev04: RetTuple) {
+  inp_a := for i : 0..BLEN() { Reg(rvprev04.arr_a[i]) };
+  inp_b := for i : 0..BLEN() { Reg(rvprev04.arr_b[i]) };
+  inp_c := for i : 0..BLEN() { Reg(rvprev04.arr_c[i]) };
+  tmp_1 := for i : 0..INPLEN()-BLEN()*3+3*Xidx { Reg(rvprev04.arr_d[i]) };
+  tmp_2 := ConcatElem<Val,INPLEN()-BLEN()*3+3*Xidx>(tmp_1, Reg(rvprev01.arr_a[BLEN()-1]));
+  tmp_3 := ConcatElem<Val,INPLEN()-BLEN()*3+3*Xidx+1>(tmp_2, Reg(rvprev01.arr_b[BLEN()-1]));
+  tmp_4 := ConcatElem<Val,INPLEN()-BLEN()*3+3*Xidx+2>(tmp_3, Reg(rvprev01.arr_c[BLEN()-1]));
+  inp_d := ConcatZeros<INPLEN()-BLEN()*3+3*(Xidx+1),EREGLEN()-3*(Xidx+1)>(tmp_4);
+  RetTuple(inp_a, inp_b, inp_c, inp_d, dummyB(), dummyB(),
+           0, Xidx+1, rvprev01.rnd, rvprev01.blk, rvprev01.midx)
+}
+
+component xor5words_major<Xidx: Val>(rvprev01: RetTuple, rvprev02: RetTuple,
+            rvprev03: RetTuple, rvprev04: RetTuple) {
+  minor_onehot := OneHot<4>(rvprev01.minor);
+  minor_onehot -> (
+    xor5words_minor0<Xidx>(rvprev01, rvprev01),
+    xor5words_minor1<Xidx>(rvprev01, rvprev02),
+    xor5words_minor2<Xidx>(rvprev01, rvprev03),
+    xor5words_minor3<Xidx>(rvprev01, rvprev04)
+  )
+}
+
+component rho_minor0<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
+  v_dec1 := rvpstate.arr_d[INPLEN()-3*BLEN()+3*DecMod5(X)+0];
+  unpack_m1 := ToBits<BLEN()>(v_dec1);
+  FromBits<BLEN()>(unpack_m1) = v_dec1;
+
+  v_dec2 := rvpstate.arr_d[INPLEN()-3*BLEN()+3*DecMod5(X)+1];
+  unpack_m2 := ToBits<SLEN()>(v_dec2);
+  FromBits<SLEN()>(unpack_m2) = v_dec2;
+  padded_m2 := ConcatZeros<SLEN(),BLEN()-SLEN()>(unpack_m2);
+
+  v_dec3 := rvpstate.arr_d[INPLEN()-3*BLEN()+3*DecMod5(X)+2];
+  unpack_m3 := ToBits<SLEN()>(v_dec3);
+  FromBits<SLEN()>(unpack_m3) = v_dec3;
+  padded_m3 := ConcatZeros<SLEN(),BLEN()-SLEN()>(unpack_m3);
+
+  v_inc1 := rvpstate.arr_d[INPLEN()-3*BLEN()+3*IncMod5(X)+0];
+  unpack_p1 := ToBits<BLEN()>(v_inc1);
+  FromBits<BLEN()>(unpack_p1) = v_inc1;
+
+  v_inc2 := rvpstate.arr_d[INPLEN()-3*BLEN()+3*IncMod5(X)+1];
+  unpack_p2 := ToBits<SLEN()>(v_inc2);
+  FromBits<SLEN()>(unpack_p2) = v_inc2;
+
+  v_inc3 := rvpstate.arr_d[INPLEN()-3*BLEN()+3*IncMod5(X)+2];
+  unpack_p3 := ToBits<SLEN()>(v_inc3);
+  FromBits<SLEN()>(unpack_p3) = v_inc3;
+
+  rotp := RotLeft3<Val, BLEN(), SLEN(), SLEN(), 1, 0, 0>(unpack_p1, unpack_p2, unpack_p3);
+  pad_rb := ConcatZeros<SLEN(),BLEN()-SLEN()>(rotp.rot.b);
+  pad_rc := ConcatZeros<SLEN(),BLEN()-SLEN()>(rotp.rot.c);
+
+  padded_m1 := ConcatZeros<BLEN(),RLEN()-BLEN()>(unpack_m1);
+  RetTuple(rotp.rot.a, pad_rb, pad_rc, padded_m1, padded_m2, padded_m3,
+           3*(X/2)+1, Y+5, rvpstate.rnd, rvpstate.blk, rvpstate.midx)
+}
+
+component rho_minor1<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
+  idx1 := (X+5*Y)*3 + 0;
+  in_a := InRange(0,idx1,BLEN());
+  v_xy1 := [in_a, 1-in_a] -> (rvpstate.arr_a[idx1],
+    { idx2 := idx1 - BLEN();
+      in_b := InRange(0,idx2,BLEN());
+      [in_b, 1-in_b] -> (rvpstate.arr_b[idx2],
+        { idx3 := idx2 - BLEN();
+          in_c := InRange(0,idx3,BLEN());
+          [in_c, 1-in_c] -> (rvpstate.arr_c[idx3], rvpstate.arr_d[idx3-BLEN()]) })});
+  unpack_xy1 := ToBits<BLEN()>(v_xy1);
+  FromBits<BLEN()>(unpack_xy1) = v_xy1;
+
+  idx12 := idx1 + 1;
+  in_a2 := InRange(0,idx12,BLEN());
+  v_xy2 := [in_a2, 1-in_a2] -> (rvpstate.arr_a[idx12],
+    { idx22 := idx12 - BLEN();
+      in_b2 := InRange(0,idx22,BLEN());
+      [in_b2, 1-in_b2] -> (rvpstate.arr_b[idx22],
+        { idx32 := idx22 - BLEN();
+          in_c2 := InRange(0,idx32,BLEN());
+          [in_c2, 1-in_c2] -> (rvpstate.arr_c[idx32], rvpstate.arr_d[idx32-BLEN()]) })});
+  unpack_xy2 := ToBits<SLEN()>(v_xy2);
+  FromBits<SLEN()>(unpack_xy2) = v_xy2;
+
+  idx13 := idx12 + 1;
+  in_a3 := InRange(0,idx13,BLEN());
+  v_xy3 := [in_a3, 1-in_a3] -> (rvpstate.arr_a[idx13],
+    { idx23 := idx13 - BLEN();
+      in_b3 := InRange(0,idx23,BLEN());
+      [in_b3, 1-in_b3] -> (rvpstate.arr_b[idx23],
+        { idx33 := idx23 - BLEN();
+          in_c3 := InRange(0,idx33,BLEN());
+          [in_c3, 1-in_c3] -> (rvpstate.arr_c[idx33], rvpstate.arr_d[idx33-BLEN()]) })});
+  unpack_xy3 := ToBits<SLEN()>(v_xy3);
+  FromBits<SLEN()>(unpack_xy3) = v_xy3;
+
+  xor_1 := for i : 0..BLEN() { xor3(unpack_xy1[i], rvprev01.arr_a[i], rvprev01.arr_d[i]) };
+  xor_2 := for i : 0..SLEN() { xor3(unpack_xy2[i], rvprev01.arr_b[i], rvprev01.arr_e[i]) };
+  xor_3 := for i : 0..SLEN() { xor3(unpack_xy3[i], rvprev01.arr_c[i], rvprev01.arr_f[i]) };
+  t := rot_table<X,Y>();
+  rotxor := RotLeft3<Val, BLEN(), SLEN(), SLEN(), t[0], t[1], t[2]>(xor_1, xor_2, xor_3);
+  result := [Reg(FromBits<BLEN()>(rotxor.rot.a)),
+             Reg(FromBits<SLEN()>(rotxor.rot.b)),
+             Reg(FromBits<SLEN()>(rotxor.rot.c))];
+  withrs_f := ConcatZeros<3,BLEN()-3>(result);
+
+  [Isz(X-4), 1-Isz(X-4)] -> (
+    RetTuple(dummyB(), dummyB(), dummyB(), dummyE(), dummyB(), withrs_f,
+             3*(4/2)+2, Y+5, rvprev01.rnd, rvprev01.blk, rvprev01.midx),
+    { v_dec1 := rvpstate.arr_d[INPLEN()-3*BLEN()+3*DecMod5(X+1)+0];
+      unpack_m1 := ToBits<BLEN()>(v_dec1);
+      FromBits<BLEN()>(unpack_m1) = v_dec1;
+
+      v_dec2 := rvpstate.arr_d[INPLEN()-3*BLEN()+3*DecMod5(X+1)+1];
+      unpack_m2 := ToBits<SLEN()>(v_dec2);
+      FromBits<SLEN()>(unpack_m2) = v_dec2;
+      padded_m2 := ConcatZeros<SLEN(),BLEN()-SLEN()>(unpack_m2);
+
+      v_dec3 := rvpstate.arr_d[INPLEN()-3*BLEN()+3*DecMod5(X+1)+2];
+      unpack_m3 := ToBits<SLEN()>(v_dec3);
+      FromBits<SLEN()>(unpack_m3) = v_dec3;
+      padded_m3 := ConcatZeros<SLEN(),BLEN()-SLEN()>(unpack_m3);
+
+      RetTuple(unpack_m1, padded_m2, padded_m3, dummyE(), dummyB(), withrs_f,
+               3*(X/2)+2, Y+5, rvprev01.rnd, rvprev01.blk, rvprev01.midx)
+    })
+}
+
+component rho_minor2<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
+  v_inc1 := rvpstate.arr_d[INPLEN()-3*BLEN()+3*IncMod5(X+1)+0];
+  unpack_p1 := ToBits<BLEN()>(v_inc1);
+  FromBits<BLEN()>(unpack_p1) = v_inc1;
+
+  v_inc2 := rvpstate.arr_d[INPLEN()-3*BLEN()+3*IncMod5(X+1)+1];
+  unpack_p2 := ToBits<SLEN()>(v_inc2);
+  FromBits<SLEN()>(unpack_p2) = v_inc2;
+
+  v_inc3 := rvpstate.arr_d[INPLEN()-3*BLEN()+3*IncMod5(X+1)+2];
+  unpack_p3 := ToBits<SLEN()>(v_inc3);
+  FromBits<SLEN()>(unpack_p3) = v_inc3;
+
+  rotp := RotLeft3<Val, BLEN(), SLEN(), SLEN(), 1, 0, 0>(unpack_p1, unpack_p2, unpack_p3);
+
+  idx1 := (X+1+5*Y)*3 + 0;
+  in_a := InRange(0,idx1,BLEN());
+  v_xy1 := [in_a, 1-in_a] -> (rvpstate.arr_a[idx1],
+    { idx2 := idx1 - BLEN();
+      in_b := InRange(0,idx2,BLEN());
+      [in_b, 1-in_b] -> (rvpstate.arr_b[idx2],
+        { idx3 := idx2 - BLEN();
+          in_c := InRange(0,idx3,BLEN());
+          [in_c, 1-in_c] -> (rvpstate.arr_c[idx3], rvpstate.arr_d[idx3-BLEN()]) })});
+  unpack_xy1 := ToBits<BLEN()>(v_xy1);
+  FromBits<BLEN()>(unpack_xy1) = v_xy1;
+
+  idx12 := idx1 + 1;
+  in_a2 := InRange(0,idx12,BLEN());
+  v_xy2 := [in_a2, 1-in_a2] -> (rvpstate.arr_a[idx12],
+    { idx22 := idx12 - BLEN();
+      in_b2 := InRange(0,idx22,BLEN());
+      [in_b2, 1-in_b2] -> (rvpstate.arr_b[idx22],
+        { idx32 := idx22 - BLEN();
+          in_c2 := InRange(0,idx32,BLEN());
+          [in_c2, 1-in_c2] -> (rvpstate.arr_c[idx32], rvpstate.arr_d[idx32-BLEN()]) })});
+  unpack_xy2 := ToBits<SLEN()>(v_xy2);
+  FromBits<SLEN()>(unpack_xy2) = v_xy2;
+
+  idx13 := idx12 + 1;
+  in_a3 := InRange(0,idx13,BLEN());
+  v_xy3 := [in_a3, 1-in_a3] -> (rvpstate.arr_a[idx13],
+    { idx23 := idx13 - BLEN();
+      in_b3 := InRange(0,idx23,BLEN());
+      [in_b3, 1-in_b3] -> (rvpstate.arr_b[idx23],
+        { idx33 := idx23 - BLEN();
+          in_c3 := InRange(0,idx33,BLEN());
+          [in_c3, 1-in_c3] -> (rvpstate.arr_c[idx33], rvpstate.arr_d[idx33-BLEN()]) })});
+  unpack_xy3 := ToBits<SLEN()>(v_xy3);
+  FromBits<SLEN()>(unpack_xy3) = v_xy3;
+
+  xor_1 := for i : 0..BLEN() { xor3(unpack_xy1[i], rvprev01.arr_a[i], rotp.rot.a[i]) };
+  xor_2 := for i : 0..SLEN() { xor3(unpack_xy2[i], rvprev01.arr_b[i], rotp.rot.b[i]) };
+  xor_3 := for i : 0..SLEN() { xor3(unpack_xy3[i], rvprev01.arr_c[i], rotp.rot.c[i]) };
+  t := rot_table<X+1,Y>();
+  rotxor := RotLeft3<Val, BLEN(), SLEN(), SLEN(), t[0], t[1], t[2]>(xor_1, xor_2, xor_3);
+  result := [Reg(FromBits<BLEN()>(rotxor.rot.a)),
+             Reg(FromBits<SLEN()>(rotxor.rot.b)),
+             Reg(FromBits<SLEN()>(rotxor.rot.c))];
+
+  withrs_f := ConcatZeros<3,BLEN()-3>(result);
+  RetTuple(dummyB(), dummyB(), dummyB(), dummyE(), dummyB(), withrs_f,
+           3*(X/2)+3, Y+5, rvprev01.rnd, rvprev01.blk, rvprev01.midx)
+}
+
+component rho_minor3<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: RetTuple,
+  rvprev04: RetTuple, rvprev06: RetTuple, rvprev07: RetTuple) {
+  [Isz(Y), 1-Isz(Y)] -> (
+    { rs1 := Concatenate<Val,12,3>(
+               Concatenate<Val,9,3>(
+                 Concatenate<Val,6,3>(
+                   Concatenate<Val,3,3>(
+                    for i : 0..3 { rvprev07.arr_f[i] },
+                    for i : 0..3 { rvprev06.arr_f[i] }),
+                   for i : 0..3 { rvprev04.arr_f[i] }),
+                 for i : 0..3 { rvprev03.arr_f[i] }),
+               for i : 0..3 { rvprev01.arr_f[i] });
+      a := Concatenate<Val, 15, 7>(rs1, for i : 15..22 { rvpstate.arr_a[i] });
+      RetTuple(a, rvpstate.arr_b, rvpstate.arr_c, rvpstate.arr_d,
+               dummyB(), dummyB(), 0, 6, rvprev01.rnd, rvprev01.blk, rvprev01.midx)
+    },
+    [Isz(Y-1), 1-Isz(Y-1)] -> (
+      { rs1 := [rvprev07.arr_f[0], rvprev07.arr_f[1], rvprev07.arr_f[2],
+                rvprev06.arr_f[0], rvprev06.arr_f[1], rvprev06.arr_f[2],
+                rvprev04.arr_f[0]+0];
+        a := Concatenate<Val, 15, 7>(for i : 0..15 { rvpstate.arr_a[i] }, rs1);
+        rs2 := [rvprev04.arr_f[1], rvprev04.arr_f[2],
+                rvprev03.arr_f[0], rvprev03.arr_f[1], rvprev03.arr_f[2],
+                rvprev01.arr_f[0], rvprev01.arr_f[1], rvprev01.arr_f[2]+0];
+        b := Concatenate<Val, 8, 14>(rs2, for i : 8..22 { rvpstate.arr_b[i] });
+        RetTuple(a, b, rvpstate.arr_c, rvpstate.arr_d, dummyB(), dummyB(),
+                 0, 7, rvprev01.rnd, rvprev01.blk, rvprev01.midx)
+      },
+      [Isz(Y-2), 1-Isz(Y-2)] -> (
+        { rs1 := [rvprev07.arr_f[0], rvprev07.arr_f[1], rvprev07.arr_f[2],
+                  rvprev06.arr_f[0], rvprev06.arr_f[1], rvprev06.arr_f[2],
+                  rvprev04.arr_f[0], rvprev04.arr_f[1], rvprev04.arr_f[2],
+                  rvprev03.arr_f[0], rvprev03.arr_f[1], rvprev03.arr_f[2],
+                  rvprev01.arr_f[0], rvprev01.arr_f[1]+0];
+          b := Concatenate<Val, 8, 14>(for i : 0..8 { rvpstate.arr_b[i] }, rs1);
+          rs2 := for i : 2..3 { rvprev01.arr_f[i] };
+          c := Concatenate<Reg, 1, 21>(rs2, for i : 1..22 { rvpstate.arr_c[i] });
+          RetTuple(rvpstate.arr_a, b, c, rvpstate.arr_d, dummyB(), dummyB(),
+                   0, 8, rvprev01.rnd, rvprev01.blk, rvprev01.midx)
+        },
+        [Isz(Y-3), 1-Isz(Y-3)] -> (
+          { rs1 := [rvprev07.arr_f[0], rvprev07.arr_f[1], rvprev07.arr_f[2],
+                    rvprev06.arr_f[0], rvprev06.arr_f[1], rvprev06.arr_f[2],
+                    rvprev04.arr_f[0], rvprev04.arr_f[1], rvprev04.arr_f[2],
+                    rvprev03.arr_f[0], rvprev03.arr_f[1], rvprev03.arr_f[2],
+                    rvprev01.arr_f[0], rvprev01.arr_f[1], rvprev01.arr_f[2]+0];
+            c1 := Concatenate<Val, 1, 15>([rvpstate.arr_c[0]+0], rs1);
+            c := Concatenate<Val, 16, 6>(c1, for i : 16..22 { rvpstate.arr_c[i] });
+            RetTuple(rvpstate.arr_a, rvpstate.arr_b, c, rvpstate.arr_d, dummyB(),
+                     dummyB(), 0, 9, rvprev01.rnd, rvprev01.blk, rvprev01.midx)
+          },
+          { // Keccak pi permuation:
+            //c': arr_c[0,1,2,3,...,15],p09f[0],p09f[1],p09f[2],p07f[0],p07f[1],p07f[2]
+            //d': p05f[0],p05f[1],p05f[2],p03f[0],p03f[1],p03f[2],p01f[0],p01f[1],p01f[2]
+            a := [rvpstate.arr_a[0], rvpstate.arr_a[1], rvpstate.arr_a[2],     //B(0,0)=A(0,0)
+                  rvpstate.arr_a[18], rvpstate.arr_a[19], rvpstate.arr_a[20],  //B(1,0)=A(1,1)
+                  rvpstate.arr_b[14], rvpstate.arr_b[15], rvpstate.arr_b[16],  //B(2,0)=A(2,2)
+                  rvpstate.arr_c[10], rvpstate.arr_c[11], rvpstate.arr_c[12],  //B(3,0)=A(3,3)
+                  rvprev01.arr_f[0], rvprev01.arr_f[1], rvprev01.arr_f[2],     //B(4,0)=A(4,4)
+                  rvpstate.arr_a[9], rvpstate.arr_a[10], rvpstate.arr_a[11],   //B(0,1)=A(3,0)
+                  rvpstate.arr_b[5], rvpstate.arr_b[6], rvpstate.arr_b[7],     //B(1,1)=A(4,1)
+                  rvpstate.arr_b[8]+0                                          //B(2,1)=A(0,2)
+                 ];
+            b := [rvpstate.arr_b[9], rvpstate.arr_b[10],                       //B(2,1)=A(0,2)
+                  rvpstate.arr_c[4], rvpstate.arr_c[5], rvpstate.arr_c[6],     //B(3,1)=A(1,3)
+                  rvprev04.arr_f[0], rvprev04.arr_f[1], rvprev04.arr_f[2],     //B(4,1)=A(2,4)
+                  rvpstate.arr_a[3], rvpstate.arr_a[4], rvpstate.arr_a[5],     //B(0,2)=A(1,0)
+                  rvpstate.arr_a[21], rvpstate.arr_b[0], rvpstate.arr_b[1],    //B(1,2)=A(2,1)
+                  rvpstate.arr_b[17], rvpstate.arr_b[18], rvpstate.arr_b[19],  //B(2,2)=A(3,2)
+                  rvpstate.arr_c[13], rvpstate.arr_c[14], rvpstate.arr_c[15],  //B(3,2)=A(4,3)
+                  rvprev07.arr_f[0], rvprev07.arr_f[1]+0                       //B(4,2)=A(0,4)
+                 ];
+            c := [rvprev07.arr_f[2],                                           //B(4,2)=A(0,4)
+                  rvpstate.arr_a[12], rvpstate.arr_a[13], rvpstate.arr_a[14],  //B(0,3)=A(4,0)
+                  rvpstate.arr_a[15], rvpstate.arr_a[16], rvpstate.arr_a[17],  //B(1,3)=A(0,1)
+                  rvpstate.arr_b[11], rvpstate.arr_b[12], rvpstate.arr_b[13],  //B(2,3)=A(1,2)
+                  rvpstate.arr_c[7], rvpstate.arr_c[8], rvpstate.arr_c[9],     //B(3,3)=A(2,3)
+                  rvprev03.arr_f[0], rvprev03.arr_f[1], rvprev03.arr_f[2],     //B(4,3)=A(3,4)
+                  rvpstate.arr_a[6], rvpstate.arr_a[7], rvpstate.arr_a[8],     //B(0,4)=A(2,0)
+                  rvpstate.arr_b[2], rvpstate.arr_b[3], rvpstate.arr_b[4]+0    //B(1,4)=A(3,1)
+                 ];
+            d := [rvpstate.arr_b[20], rvpstate.arr_b[21], rvpstate.arr_c[0],   //B(2,4)=A(4,2)
+                  rvpstate.arr_c[1], rvpstate.arr_c[2], rvpstate.arr_c[3],     //B(3,4)=A(0,3)
+                  rvprev06.arr_f[0], rvprev06.arr_f[1], rvprev06.arr_f[2],     //B(4,4)=A(1,4)
+                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+            RetTuple(a, b, c, d, dummyB(), dummyB(),
+                     0, 10, rvprev01.rnd, rvprev01.blk, rvprev01.midx)
+          }))))
+}
+
+component rho_major<Y: Val>(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
+                            rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
+                            rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple) {
+  minor_onehot := OneHot<9>(rvprev01.minor);
+  minor_onehot -> (
+    rho_minor0<0,Y>(rvprev01, rvprev01),
+    rho_minor1<0,Y>(rvprev02, rvprev01),
+    rho_minor2<0,Y>(rvprev03, rvprev01),
+    rho_minor0<2,Y>(rvprev04, rvprev01),
+    rho_minor1<2,Y>(rvprev05, rvprev01),
+    rho_minor2<2,Y>(rvprev06, rvprev01),
+    rho_minor0<4,Y>(rvprev07, rvprev01),
+    rho_minor1<4,Y>(rvprev08, rvprev01),
+    rho_minor3<Y>(rvprev09, rvprev01, rvprev03, rvprev04, rvprev06, rvprev07)
+  )
+}
+
+component chi_minor0<X: Val, Y: Val>(rvpstate: RetTuple) {
+  XP1 := IncMod5(X);
+  idx0xp1 := (XP1+5*Y)*3 + 0;
+  in_a0xp1 := InRange(0,idx0xp1,BLEN());
+  v_0xp1 := [in_a0xp1, 1-in_a0xp1] -> (rvpstate.arr_a[idx0xp1],
+    { idx0xp1b := idx0xp1 - BLEN();
+      in_b0xp1 := InRange(0,idx0xp1b,BLEN());
+      [in_b0xp1, 1-in_b0xp1] -> (rvpstate.arr_b[idx0xp1b],
+        { idx0xp1c := idx0xp1b - BLEN();
+          in_c0xp1 := InRange(0,idx0xp1c,BLEN());
+          [in_c0xp1, 1-in_c0xp1] ->
+            (rvpstate.arr_c[idx0xp1c], rvpstate.arr_d[idx0xp1c-BLEN()]) })});
+  unpack_0xp1 := ToBits<BLEN()>(v_0xp1);
+  FromBits<BLEN()>(unpack_0xp1) = v_0xp1;
+
+  idx1xp1 := idx0xp1 + 1;
+  in_a1xp1 := InRange(0,idx1xp1,BLEN());
+  v_1xp1 := [in_a1xp1, 1-in_a1xp1] -> (rvpstate.arr_a[idx1xp1],
+    { idx1xp1b := idx1xp1 - BLEN();
+      in_b1xp1 := InRange(0,idx1xp1b,BLEN());
+      [in_b1xp1, 1-in_b1xp1] -> (rvpstate.arr_b[idx1xp1b],
+        { idx1xp1c := idx1xp1b - BLEN();
+          in_c1xp1 := InRange(0,idx1xp1c,BLEN());
+          [in_c1xp1, 1-in_c1xp1] ->
+            (rvpstate.arr_c[idx1xp1c], rvpstate.arr_d[idx1xp1c-BLEN()]) })});
+  unpack_1xp1 := ToBits<SLEN()>(v_1xp1);
+  FromBits<SLEN()>(unpack_1xp1) = v_1xp1;
+
+
+  idx0xp2 := (IncMod5(XP1)+5*Y)*3 + 0;
+  in_a0xp2 := InRange(0,idx0xp2,BLEN());
+  v_0xp2 := [in_a0xp2, 1-in_a0xp2] -> (rvpstate.arr_a[idx0xp2],
+    { idx0xp2b := idx0xp2 - BLEN();
+      in_b0xp2 := InRange(0,idx0xp2b,BLEN());
+      [in_b0xp2, 1-in_b0xp2] -> (rvpstate.arr_b[idx0xp2b],
+        { idx0xp2c := idx0xp2b - BLEN();
+          in_c0xp2 := InRange(0,idx0xp2c,BLEN());
+          [in_c0xp2, 1-in_c0xp2] ->
+            (rvpstate.arr_c[idx0xp2c], rvpstate.arr_d[idx0xp2c-BLEN()]) })});
+  unpack_0xp2 := ToBits<BLEN()>(v_0xp2);
+  FromBits<BLEN()>(unpack_0xp2) = v_0xp2;
+
+  idx1xp2 := idx0xp2 + 1;
+  in_a1xp2 := InRange(0,idx1xp2,BLEN());
+  v_1xp2 := [in_a1xp2, 1-in_a1xp2] -> (rvpstate.arr_a[idx1xp2],
+    { idx1xp2b := idx1xp2 - BLEN();
+      in_b1xp2 := InRange(0,idx1xp2b,BLEN());
+      [in_b1xp2, 1-in_b1xp2] -> (rvpstate.arr_b[idx1xp2b],
+        { idx1xp2c := idx1xp2b - BLEN();
+          in_c1xp2 := InRange(0,idx1xp2c,BLEN());
+          [in_c1xp2, 1-in_c1xp2] ->
+            (rvpstate.arr_c[idx1xp2c], rvpstate.arr_d[idx1xp2c-BLEN()]) })});
+  unpack_1xp2 := ToBits<SLEN()>(v_1xp2);
+  FromBits<SLEN()>(unpack_1xp2) = v_1xp2;
+
+  idx0x := (X+5*Y)*3 + 0;
+  in_a0x := InRange(0,idx0x,BLEN());
+  v_0x := [in_a0x, 1-in_a0x] -> (rvpstate.arr_a[idx0x],
+    { idx0xb := idx0x - BLEN();
+      in_b0x := InRange(0,idx0xb,BLEN());
+      [in_b0x, 1-in_b0x] -> (rvpstate.arr_b[idx0xb],
+        { idx0xc := idx0xb - BLEN();
+          in_c0x := InRange(0,idx0xc,BLEN());
+          [in_c0x, 1-in_c0x] ->
+            (rvpstate.arr_c[idx0xc], rvpstate.arr_d[idx0xc-BLEN()]) })});
+  unpack_0x := ToBits<BLEN()>(v_0x);
+  FromBits<BLEN()>(unpack_0x) = v_0x;
+
+  idx1x := idx0x + 1;
+  in_a1x := InRange(0,idx1x,BLEN());
+  v_1x := [in_a1x, 1-in_a1x] -> (rvpstate.arr_a[idx1x],
+    { idx1xb := idx1x - BLEN();
+      in_b1x := InRange(0,idx1xb,BLEN());
+      [in_b1x, 1-in_b1x] -> (rvpstate.arr_b[idx1xb],
+        { idx1xc := idx1xb - BLEN();
+          in_c1x := InRange(0,idx1xc,BLEN());
+          [in_c1x, 1-in_c1x] ->
+            (rvpstate.arr_c[idx1xc], rvpstate.arr_d[idx1xc-BLEN()]) })});
+  unpack_1x := ToBits<SLEN()>(v_1x);
+  FromBits<SLEN()>(unpack_1x) = v_1x;
+
+  anx1 := for i : 0..BLEN() { andnxor(unpack_0x[i], unpack_0xp1[i], unpack_0xp2[i])};
+  anx2 := for i : 0..SLEN() { andnxor(unpack_1x[i], unpack_1xp1[i], unpack_1xp2[i])};
+  result := [Reg(FromBits<BLEN()>(anx1)), Reg(FromBits<SLEN()>(anx2))];
+
+  withrs_d := Concatenate<Val,BLEN(),2>(dummyB(), result);
+  Z := (X-1)*(X-3);
+  minor_new := [Isz(Z), 1-Isz(Z)] -> (3*(1+(X-1)/2), 1+3*(X/2)); 
+  RetTuple(dummyB(), dummyB(), dummyB(), withrs_d, dummyB(), dummyB(),
+           minor_new, Y+10, rvpstate.rnd, rvpstate.blk, rvpstate.midx)
+}
+
+component chi_minor1<X: Val, Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple) {
+  idx2x := (X+5*Y)*3 + 2;
+  in_a2x := InRange(0,idx2x,BLEN());
+  v_2x := [in_a2x, 1-in_a2x] -> (rvpstate.arr_a[idx2x],
+    { idx2xb := idx2x - BLEN();
+      in_b2x := InRange(0,idx2xb,BLEN());
+      [in_b2x, 1-in_b2x] -> (rvpstate.arr_b[idx2xb],
+        { idx2xc := idx2xb - BLEN();
+          in_c2x := InRange(0,idx2xc,BLEN());
+          [in_c2x, 1-in_c2x] ->
+            (rvpstate.arr_c[idx2xc], rvpstate.arr_d[idx2xc-BLEN()]) })});
+  unpack_2x := ToBits<SLEN()>(v_2x);
+  FromBits<SLEN()>(unpack_2x) = v_2x;
+
+  XP1 := IncMod5(X);
+  idx2xp1 := (XP1+5*Y)*3 + 2;
+  in_a2xp1 := InRange(0,idx2xp1,BLEN());
+  v_2xp1 := [in_a2xp1, 1-in_a2xp1] -> (rvpstate.arr_a[idx2xp1],
+    { idx2xp1b := idx2xp1 - BLEN();
+      in_b2xp1 := InRange(0,idx2xp1b,BLEN());
+      [in_b2xp1, 1-in_b2xp1] -> (rvpstate.arr_b[idx2xp1b],
+        { idx2xp1c := idx2xp1b - BLEN();
+          in_c2xp1 := InRange(0,idx2xp1c,BLEN());
+          [in_c2xp1, 1-in_c2xp1] ->
+            (rvpstate.arr_c[idx2xp1c], rvpstate.arr_d[idx2xp1c-BLEN()]) })});
+  unpack_2xp1 := ToBits<SLEN()>(v_2xp1);
+  FromBits<SLEN()>(unpack_2xp1) = v_2xp1;
+
+  idx2xp2 := (IncMod5(XP1)+5*Y)*3 + 2;
+  in_a2xp2 := InRange(0,idx2xp2,BLEN());
+  v_2xp2 := [in_a2xp2, 1-in_a2xp2] -> (rvpstate.arr_a[idx2xp2],
+    { idx2xp2b := idx2xp2 - BLEN();
+      in_b2xp2 := InRange(0,idx2xp2b,BLEN());
+      [in_b2xp2, 1-in_b2xp2] -> (rvpstate.arr_b[idx2xp2b],
+        { idx2xp2c := idx2xp2b - BLEN();
+          in_c2xp2 := InRange(0,idx2xp2c,BLEN());
+          [in_c2xp2, 1-in_c2xp2] ->
+            (rvpstate.arr_c[idx2xp2c], rvpstate.arr_d[idx2xp2c-BLEN()]) })});
+  unpack_2xp2 := ToBits<SLEN()>(v_2xp2);
+  FromBits<SLEN()>(unpack_2xp2) = v_2xp2;
+
+  anx3 := for i : 0..SLEN() { andnxor(unpack_2x[i], unpack_2xp1[i], unpack_2xp2[i])};
+  res3 := Reg(FromBits<SLEN()>(anx3));
+  withr_a := ConcatElem<Val,SLEN()>(dummyS(), rvprev01.arr_d[0+BLEN()]);
+  withr_b := ConcatElem<Val,SLEN()>(dummyS(), rvprev01.arr_d[1+BLEN()]);
+  withr_c := ConcatElem<Val,SLEN()>(dummyS(), res3);
+  minor_new := 2 + 3*(X/2);
+
+  [Isz(X-4), 1-Isz(X-4)] -> (
+    RetTuple(withr_a, withr_b, withr_c, dummyE(), dummyB(), dummyB(),
+             minor_new, Y+10, rvprev01.rnd, rvprev01.blk, rvprev01.midx),
+    { NXTX := IncMod5(X); //TODO
+      idx2nx := (NXTX+5*Y)*3 + 2;
+      in_a2nx := InRange(0,idx2nx,BLEN());
+      v_2nx := [in_a2nx, 1-in_a2nx] -> (rvpstate.arr_a[idx2nx],
+        { idx2nxb := idx2nx - BLEN();
+          in_b2nx := InRange(0,idx2nxb,BLEN());
+          [in_b2nx, 1-in_b2nx] -> (rvpstate.arr_b[idx2nxb],
+            { idx2nxc := idx2nxb - BLEN();
+              in_c2nx := InRange(0,idx2nxc,BLEN());
+              [in_c2nx, 1-in_c2nx] ->
+                (rvpstate.arr_c[idx2nxc], rvpstate.arr_d[idx2nxc-BLEN()]) })});
+      unpack_2nx := ToBits<SLEN()>(v_2nx);
+      FromBits<SLEN()>(unpack_2nx) = v_2nx;
+
+      NXP1 := IncMod5(NXTX);
+      idx2nxp1 := (NXP1+5*Y)*3 + 2;
+      in_a2nxp1 := InRange(0,idx2nxp1,BLEN());
+      v_2nxp1 := [in_a2nxp1, 1-in_a2nxp1] -> (rvpstate.arr_a[idx2nxp1],
+        { idx2nxp1b := idx2nxp1 - BLEN();
+          in_b2nxp1 := InRange(0,idx2nxp1b,BLEN());
+          [in_b2nxp1, 1-in_b2nxp1] -> (rvpstate.arr_b[idx2nxp1b],
+            { idx2nxp1c := idx2nxp1b - BLEN();
+              in_c2nxp1 := InRange(0,idx2nxp1c,BLEN());
+              [in_c2nxp1, 1-in_c2nxp1] ->
+                (rvpstate.arr_c[idx2nxp1c], rvpstate.arr_d[idx2nxp1c-BLEN()]) })});
+      unpack_2nxp1 := ToBits<SLEN()>(v_2nxp1);
+      FromBits<SLEN()>(unpack_2nxp1) = v_2nxp1;
+
+      idx2nxp2 := (IncMod5(NXP1)+5*Y)*3 + 2;
+      in_a2nxp2 := InRange(0,idx2nxp2,BLEN());
+      v_2nxp2 := [in_a2nxp2, 1-in_a2nxp2] -> (rvpstate.arr_a[idx2nxp2],
+        { idx2nxp2b := idx2nxp2 - BLEN();
+          in_b2nxp2 := InRange(0,idx2nxp2b,BLEN());
+          [in_b2nxp2, 1-in_b2nxp2] -> (rvpstate.arr_b[idx2nxp2b],
+            { idx2nxp2c := idx2nxp2b - BLEN();
+              in_c2nxp2 := InRange(0,idx2nxp2c,BLEN());
+              [in_c2nxp2, 1-in_c2nxp2] ->
+                (rvpstate.arr_c[idx2nxp2c], rvpstate.arr_d[idx2nxp2c-BLEN()]) })});
+      unpack_2nxp2 := ToBits<SLEN()>(v_2nxp2);
+      FromBits<SLEN()>(unpack_2nxp2) = v_2nxp2;
+
+      anx3n := for i : 0..SLEN() { andnxor(unpack_2nx[i], unpack_2nxp1[i], unpack_2nxp2[i])};
+      res3n := Reg(FromBits<SLEN()>(anx3n));
+
+      withr_f := ConcatElem<Val,SLEN()>(dummyS(), res3n);
+      RetTuple(withr_a, withr_b, withr_c, dummyE(), dummyB(), withr_f,
+               minor_new, Y+10, rvprev01.rnd, rvprev01.blk, rvprev01.midx)
+    })
+}
+
+component chi_minor2<Y: Val>(rvpstate: RetTuple, rvprev01: RetTuple, rvprev03: RetTuple,
+  rvprev04: RetTuple, rvprev06: RetTuple, rvprev07: RetTuple) {
+  [Isz(Y), 1-Isz(Y)] -> (
+    { a := [rvprev07.arr_a[0+SLEN()],rvprev07.arr_b[0+SLEN()],rvprev07.arr_c[0+SLEN()],
+            rvprev06.arr_d[0+BLEN()],rvprev06.arr_d[1+BLEN()],rvprev07.arr_f[0+SLEN()],
+            rvprev04.arr_a[0+SLEN()],rvprev04.arr_b[0+SLEN()],rvprev04.arr_c[0+SLEN()],
+            rvprev03.arr_d[0+BLEN()],rvprev03.arr_d[1+BLEN()],rvprev04.arr_f[0+SLEN()],
+            rvprev01.arr_a[0+SLEN()],rvprev01.arr_b[0+SLEN()],rvprev01.arr_c[0+SLEN()],
+            rvpstate.arr_a[15],rvpstate.arr_a[16],rvpstate.arr_a[17],
+            rvpstate.arr_a[18],rvpstate.arr_a[19],rvpstate.arr_a[20],
+            rvpstate.arr_a[21]];
+      RetTuple(a, rvpstate.arr_b, rvpstate.arr_c, rvpstate.arr_d, dummyB(), dummyB(),
+               0, 11, rvprev01.rnd, rvprev01.blk, rvprev01.midx)
+    },
+    [Isz(Y-1), 1-Isz(Y-1)] -> (
+      { rs1 := [rvprev07.arr_a[0+SLEN()],rvprev07.arr_b[0+SLEN()],rvprev07.arr_c[0+SLEN()],
+                rvprev06.arr_d[0+BLEN()],rvprev06.arr_d[1+BLEN()],rvprev07.arr_f[0+SLEN()],
+                rvprev04.arr_a[0+SLEN()]+0];
+        a := Concatenate<Val, 15, 7>(for i : 0..15 { rvpstate.arr_a[i] }, rs1);
+        rs2 := [rvprev04.arr_b[0+SLEN()],rvprev04.arr_c[0+SLEN()]+0,
+                rvprev03.arr_d[0+BLEN()],rvprev03.arr_d[1+BLEN()],rvprev04.arr_f[0+SLEN()],
+                rvprev01.arr_a[0+SLEN()],rvprev01.arr_b[0+SLEN()],rvprev01.arr_c[0+SLEN()]];
+        b := Concatenate<Val, 8, 14>(rs2, for i : 8..22 { rvpstate.arr_b[i] });
+        RetTuple(a, b, rvpstate.arr_c, rvpstate.arr_d, dummyB(), dummyB(),
+                 0, 12, rvprev01.rnd, rvprev01.blk, rvprev01.midx)
+      },
+      [Isz(Y-2), 1-Isz(Y-2)] -> (
+        { rs1 := [rvprev07.arr_a[0+SLEN()],rvprev07.arr_b[0+SLEN()],rvprev07.arr_c[0+SLEN()],
+                  rvprev06.arr_d[0+BLEN()],rvprev06.arr_d[1+BLEN()],rvprev07.arr_f[0+SLEN()],
+                  rvprev04.arr_a[0+SLEN()],rvprev04.arr_b[0+SLEN()],rvprev04.arr_c[0+SLEN()],
+                  rvprev03.arr_d[0+BLEN()],rvprev03.arr_d[1+BLEN()],rvprev04.arr_f[0+SLEN()],
+                  rvprev01.arr_a[0+SLEN()],rvprev01.arr_b[0+SLEN()]+0];
+          b := Concatenate<Val, 8, 14>(for i : 0..8 { rvpstate.arr_b[i] }, rs1);
+          rs2 := [rvprev01.arr_c[0+SLEN()]];
+          c := Concatenate<Reg, 1, 21>(rs2, for i : 1..22 { rvpstate.arr_c[i] });
+          RetTuple(rvpstate.arr_a, b, c, rvpstate.arr_d, dummyB(), dummyB(),
+                   0, 13, rvprev01.rnd, rvprev01.blk, rvprev01.midx)
+        },
+        [Isz(Y-3), 1-Isz(Y-3)] -> (
+          { rs1 := [rvprev07.arr_a[0+SLEN()],rvprev07.arr_b[0+SLEN()],rvprev07.arr_c[0+SLEN()]+0,
+                    rvprev06.arr_d[0+BLEN()],rvprev06.arr_d[1+BLEN()],rvprev07.arr_f[0+SLEN()],
+                    rvprev04.arr_a[0+SLEN()],rvprev04.arr_b[0+SLEN()],rvprev04.arr_c[0+SLEN()],
+                    rvprev03.arr_d[0+BLEN()],rvprev03.arr_d[1+BLEN()],rvprev04.arr_f[0+SLEN()],
+                    rvprev01.arr_a[0+SLEN()],rvprev01.arr_b[0+SLEN()],rvprev01.arr_c[0+SLEN()]];
+            c1 := Concatenate<Val, 1, 15>([rvpstate.arr_c[0]+0], rs1);
+            c := Concatenate<Val, 16, 6>(c1, for i : 16..22 { rvpstate.arr_c[i] });
+            RetTuple(rvpstate.arr_a, rvpstate.arr_b, c, rvpstate.arr_d, dummyB(),
+                     dummyB(), 0, 14, rvprev01.rnd, rvprev01.blk, rvprev01.midx)
+          },
+          { rs1 := [rvprev07.arr_a[0+SLEN()],rvprev07.arr_b[0+SLEN()],rvprev07.arr_c[0+SLEN()]+0,
+                    rvprev06.arr_d[0+BLEN()],rvprev06.arr_d[1+BLEN()],rvprev07.arr_f[0+SLEN()]];
+            c := Concatenate<Val, 16, 6>(for i : 0..16 { rvpstate.arr_c[i] }, rs1); 
+            rs2 := [rvprev04.arr_a[0+SLEN()],rvprev04.arr_b[0+SLEN()],rvprev04.arr_c[0+SLEN()]+0,
+                    rvprev03.arr_d[0+BLEN()],rvprev03.arr_d[1+BLEN()],rvprev04.arr_f[0+SLEN()],
+                    rvprev01.arr_a[0+SLEN()],rvprev01.arr_b[0+SLEN()],rvprev01.arr_c[0+SLEN()]];
+            d := ConcatZeros<9, BLEN()-9>(rs2);
+            unpack_rnd := OneHot<24>(rvprev01.rnd);
+            unpack_a002 := ToBits<BLEN()>(rvpstate.arr_a[2]);
+            RetTuple(rvpstate.arr_a, rvpstate.arr_b, c, unpack_rnd, d, unpack_a002,
+                     9, 14, rvprev01.rnd, rvprev01.blk, rvprev01.midx)
+          }))))
+}
+
+component iota_xor_rc(rvprev01: RetTuple) {
+  b := rvprev01.blk;
+  unpack_a000 := ToBits<BLEN()>(rvprev01.arr_a[0]);
+  unpack_a001 := ToBits<SLEN()>(rvprev01.arr_a[1]);
+
+  rc := rvprev01.arr_d -> (rctable(0),rctable(1),rctable(2),rctable(3),rctable(4),
+    rctable(5),rctable(6),rctable(7),rctable(8),rctable(9),rctable(10),rctable(11),
+    rctable(12),rctable(13),rctable(14),rctable(15),rctable(16),rctable(17),
+    rctable(18),rctable(19),rctable(20),rctable(21),rctable(22),rctable(23));
+
+  // TODO: merge rc & nxt muxes
+
+  nxt := rvprev01.arr_d -> (
+    [0,1,b],[0,2,b],[0,3,b],[0,4,b],[0,5,b],[0,6,b],[0,7,b],[0,8,b],[0,9,b],
+    [0,10,b],[0,11,b],[0,12,b],[0,13,b],[0,14,b],[0,15,b],[0,16,b],[0,17,b],
+    [0,18,b],[0,19,b],[0,20,b],[0,21,b],[0,22,b],[0,23,b],
+    { newBlk := b-1;
+      invNewBlk := NondetReg(Inv(newBlk));
+      prod := Reg(newBlk*invNewBlk);
+      newBlk*(1-prod) = 0;
+      [prod, 1-prod] -> ([15,0,newBlk], [17,0,0]) });
+
+  a00 := [FromBits<BLEN()>(for i : 0..BLEN() {xor2(rc[0][i],unpack_a000[i])}),
+          FromBits<SLEN()>(for i : 0..SLEN() {xor2(rc[1][i],unpack_a001[i])}),
+          FromBits<SLEN()>(for i : 0..SLEN() {xor2(rc[2][i],rvprev01.arr_f[i])})];
+  a := Concatenate<Val,3,BLEN()-3>(a00, for i : 3..BLEN() {rvprev01.arr_a[i]});
+  d := ConcatZeros<BLEN(),RLEN()-BLEN()>(rvprev01.arr_e);
+
+  RetTuple(a, rvprev01.arr_b, rvprev01.arr_c, d, dummyB(), dummyB(),
+           0, nxt[0], nxt[1], nxt[2], rvprev01.midx)
+}
+
+component chi_major<Y: Val>(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
+                            rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
+                            rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple,
+                            rvprev10: RetTuple, rvprev11: RetTuple) {
+  minor_onehot := OneHot<10>(rvprev01.minor);
+  minor_onehot -> (
+    chi_minor0<0,Y>(rvprev01),
+    chi_minor1<0,Y>(rvprev02, rvprev01),
+    chi_minor0<1,Y>(rvprev03),
+    chi_minor0<2,Y>(rvprev04),
+    chi_minor1<2,Y>(rvprev05, rvprev01),
+    chi_minor0<3,Y>(rvprev06),
+    chi_minor0<4,Y>(rvprev07),
+    chi_minor1<4,Y>(rvprev08, rvprev01),
+    chi_minor2<Y>(rvprev09, rvprev01, rvprev03, rvprev04, rvprev06, rvprev07),
+    iota_xor_rc(rvprev01)
+  )
+}
+
+component absorb_word<X: Val, Y: Val>(rvprev: RetTuple) {
+  idx1 := 3*X + 15*Y + 0;
+  idx2 := 3*X + 15*Y + 1;
+  idx3 := 3*X + 15*Y + 2;
+  in_a1 := InRange(0,idx1,BLEN());
+  in_a2 := InRange(0,idx2,BLEN());
+  in_a3 := InRange(0,idx3,BLEN());
+  v1 := [in_a1, 1-in_a1] -> (rvprev.arr_a[idx1],
+          { idx1b := idx1 - BLEN();
+            in_b1 := InRange(0,idx1b,BLEN());
+            [in_b1, 1-in_b1] -> (rvprev.arr_b[idx1b], rvprev.arr_c[idx1b-BLEN()])});
+  v2 := [in_a2, 1-in_a2] -> (rvprev.arr_a[idx2],
+          { idx2b := idx2 - BLEN();
+            in_b2 := InRange(0,idx2b,BLEN());
+            [in_b2, 1-in_b2] -> (rvprev.arr_b[idx2b], rvprev.arr_c[idx2b-BLEN()])});
+  v3 := [in_a3, 1-in_a3] -> (rvprev.arr_a[idx3],
+          { idx3b := idx3 - BLEN();
+            in_b3 := InRange(0,idx3b,BLEN());
+            [in_b3, 1-in_b3] -> (rvprev.arr_b[idx3b], rvprev.arr_c[idx3b-BLEN()])});
+  unpack_a := ToBits<BLEN()>(v1);
+  FromBits<BLEN()>(unpack_a) = v1;
+  unpack_e := ToBits<BLEN()>(v2);
+  FromBits<BLEN()>(unpack_e) = v2;
+  unpack_f := ToBits<BLEN()>(v3);
+  FromBits<BLEN()>(unpack_f) = v3;
+
+  inp1 := readInput();
+  unpack_1 := ToBits<WORDLEN()>(inp1);
+  inp2 := readInput();
+  unpack_2 := ToBits<WORDLEN()>(inp2);
+  inp3 := readInput();
+  unpack_3 := ToBits<WORDLEN()>(inp3);
+  inp4 := readInput();
+  unpack_4 := ToBits<WORDLEN()>(inp4);
+  memidx := rvprev.midx + 1 + X+5*Y;
+  invmidx := NondetReg(Inv(memidx));
+  invmidx*memidx = 1;
+  WriteMemory(memidx, MemDigest([FromBits<WORDLEN()>(unpack_1),FromBits<WORDLEN()>(unpack_2),FromBits<WORDLEN()>(unpack_3),FromBits<WORDLEN()>(unpack_4)]));
+
+  arr12 := for i : 0..BLEN() {
+    in_first12 := InRange(0,i,WORDLEN());
+    [in_first12, 1-in_first12] -> (
+      xor2(unpack_a[i], unpack_1[i]),
+      xor2(unpack_a[i], unpack_2[i-WORDLEN()])) };
+  arr23 := for i : 0..SLEN() {
+    in_first23 := InRange(0,i,2*WORDLEN()-BLEN());
+    [in_first23, 1-in_first23] -> (
+      xor2(unpack_e[i], unpack_2[i+BLEN()-WORDLEN()]),
+      xor2(unpack_e[i], unpack_3[i-(2*WORDLEN()-BLEN())])) };
+  arr34 := for i : 0..SLEN() {
+    in_first34 := InRange(0,i,3*WORDLEN()-BLEN()-SLEN());
+    [in_first34, 1-in_first34] -> (
+      xor2(unpack_f[i], unpack_3[i+SLEN()+BLEN()-2*WORDLEN()]),
+      xor2(unpack_f[i], unpack_4[i-(3*WORDLEN()-BLEN()-SLEN())])) }; 
+
+  padded23 := ConcatZeros<SLEN(),BLEN()-SLEN()>(arr23);
+  results := [FromBits<BLEN()>(arr12),FromBits<SLEN()>(arr23),FromBits<SLEN()>(arr34)];
+  padded34 := Concatenate<Val, SLEN(), 3>(arr34, results);
+
+  inc_idx := X+5*Y+1;
+  in_first := InRange(0,inc_idx,10);
+  nxt_major := 1 - in_first;
+  nxt_in := [in_first, nxt_major] -> (inc_idx, inc_idx-9); 
+  
+  RetTuple(unpack_a, arr12, padded23, padded34, unpack_e, unpack_f,
+           nxt_in, 15+nxt_major, 0, rvprev.blk, rvprev.midx)
+}
+
+component absorb_copy1(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
+                       rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
+                       rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple,
+                       rvprev10: RetTuple) {
+  arr_a := [rvprev09.arr_d[SLEN()+0], rvprev09.arr_d[SLEN()+1], rvprev09.arr_d[SLEN()+2],
+            rvprev08.arr_d[SLEN()+0], rvprev08.arr_d[SLEN()+1], rvprev08.arr_d[SLEN()+2],
+            rvprev07.arr_d[SLEN()+0], rvprev07.arr_d[SLEN()+1], rvprev07.arr_d[SLEN()+2],
+            rvprev06.arr_d[SLEN()+0], rvprev06.arr_d[SLEN()+1], rvprev06.arr_d[SLEN()+2],
+            rvprev05.arr_d[SLEN()+0], rvprev05.arr_d[SLEN()+1], rvprev05.arr_d[SLEN()+2],
+            rvprev04.arr_d[SLEN()+0], rvprev04.arr_d[SLEN()+1], rvprev04.arr_d[SLEN()+2],
+            rvprev03.arr_d[SLEN()+0], rvprev03.arr_d[SLEN()+1], rvprev03.arr_d[SLEN()+2],
+            rvprev02.arr_d[SLEN()+0]];
+  arr_b := [rvprev02.arr_d[SLEN()+1], rvprev02.arr_d[SLEN()+2],
+            rvprev01.arr_d[SLEN()+0], rvprev01.arr_d[SLEN()+1], rvprev01.arr_d[SLEN()+2],
+            rvprev10.arr_b[5], rvprev10.arr_b[6], rvprev10.arr_b[7], rvprev10.arr_b[8],
+            rvprev10.arr_b[9], rvprev10.arr_b[10], rvprev10.arr_b[11], rvprev10.arr_b[12],
+            rvprev10.arr_b[13], rvprev10.arr_b[14], rvprev10.arr_b[15], rvprev10.arr_b[16],
+            rvprev10.arr_b[17], rvprev10.arr_b[18], rvprev10.arr_b[19], rvprev10.arr_b[20],
+            rvprev10.arr_b[21]];
+  RetTuple(arr_a, arr_b, rvprev10.arr_c, rvprev10.arr_d, dummyB(), dummyB(),
+           0, 16, 0, rvprev01.blk, rvprev01.midx)
+}
+
+
+component absorb_major1(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
+                        rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
+                        rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple,
+                        rvprev10: RetTuple) {
+  minor_onehot := OneHot<10>(rvprev01.minor);
+  minor_onehot -> (
+    absorb_word<0,0>(rvprev01),
+    absorb_word<1,0>(rvprev02),
+    absorb_word<2,0>(rvprev03),
+    absorb_word<3,0>(rvprev04),
+    absorb_word<4,0>(rvprev05),
+    absorb_word<0,1>(rvprev06),
+    absorb_word<1,1>(rvprev07),
+    absorb_word<2,1>(rvprev08),
+    absorb_word<3,1>(rvprev09),
+    absorb_copy1(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06, 
+                 rvprev07, rvprev08, rvprev09, rvprev10)
+  )
+}
+
+component absorb_copy2(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
+                       rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
+                       rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple) {
+  arr_b := [rvprev09.arr_b[0], rvprev09.arr_b[1], rvprev09.arr_b[2],
+            rvprev09.arr_b[3], rvprev09.arr_b[4],
+            rvprev08.arr_d[SLEN()+0], rvprev08.arr_d[SLEN()+1], rvprev08.arr_d[SLEN()+2],
+            rvprev07.arr_d[SLEN()+0], rvprev07.arr_d[SLEN()+1], rvprev07.arr_d[SLEN()+2],
+            rvprev06.arr_d[SLEN()+0], rvprev06.arr_d[SLEN()+1], rvprev06.arr_d[SLEN()+2],
+            rvprev05.arr_d[SLEN()+0], rvprev05.arr_d[SLEN()+1], rvprev05.arr_d[SLEN()+2],
+            rvprev04.arr_d[SLEN()+0], rvprev04.arr_d[SLEN()+1], rvprev04.arr_d[SLEN()+2],
+            rvprev03.arr_d[SLEN()+0], rvprev03.arr_d[SLEN()+1]];
+  arr_c := [rvprev03.arr_d[SLEN()+2],
+            rvprev02.arr_d[SLEN()+0], rvprev02.arr_d[SLEN()+1], rvprev02.arr_d[SLEN()+2],
+            rvprev01.arr_d[SLEN()+0], rvprev01.arr_d[SLEN()+1], rvprev01.arr_d[SLEN()+2],
+            rvprev09.arr_c[7], rvprev09.arr_c[8], rvprev09.arr_c[9], rvprev09.arr_c[10],
+            rvprev09.arr_c[11], rvprev09.arr_c[12], rvprev09.arr_c[13], rvprev09.arr_c[14],
+            rvprev09.arr_c[15], rvprev09.arr_c[16], rvprev09.arr_c[17], rvprev09.arr_c[18],
+            rvprev09.arr_c[19], rvprev09.arr_c[20], rvprev09.arr_c[21]];
+  RetTuple(rvprev09.arr_a, arr_b, arr_c, rvprev09.arr_d, dummyB(), dummyB(),
+           0, 0, 0, rvprev01.blk, rvprev01.midx+17)
+}
+
+component absorb_major2(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
+                        rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
+                        rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple) {
+  minor_onehot := OneHot<9>(rvprev01.minor);
+  minor_onehot -> (
+    absorb_word<4,1>(rvprev01),
+    absorb_word<0,2>(rvprev02),
+    absorb_word<1,2>(rvprev03),
+    absorb_word<2,2>(rvprev04),
+    absorb_word<3,2>(rvprev05),
+    absorb_word<4,2>(rvprev06),
+    absorb_word<0,3>(rvprev07),
+    absorb_word<1,3>(rvprev08),
+    absorb_copy2(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06, 
+                 rvprev07, rvprev08, rvprev09)
+  )
+}
+
+component equal_word<X: Val>(rvprev: RetTuple) {
+  v1 := rvprev.arr_a[3*X + 0];
+  v2 := rvprev.arr_a[3*X + 1];
+  v3 := rvprev.arr_a[3*X + 2];
+  unpack_a := ToBits<BLEN()>(v1);
+  FromBits<BLEN()>(unpack_a) = v1;
+  unpack_e := ToBits<SLEN()>(v2);
+  FromBits<SLEN()>(unpack_e) = v2;
+  unpack_f := ToBits<SLEN()>(v3);
+  FromBits<SLEN()>(unpack_f) = v3;
+
+  inp1 := readInput();
+  unpack_1 := ToBits<WORDLEN()>(inp1);
+  inp2 := readInput();
+  unpack_2 := ToBits<WORDLEN()>(inp2);
+  inp3 := readInput();
+  unpack_3 := ToBits<WORDLEN()>(inp3);
+  inp4 := readInput();
+  unpack_4 := ToBits<WORDLEN()>(inp4);
+  memidx := rvprev.midx + 1 + X;
+  invmidx := NondetReg(Inv(memidx));
+  invmidx*memidx = 1;
+  WriteMemory(memidx, MemDigest([FromBits<WORDLEN()>(unpack_1),FromBits<WORDLEN()>(unpack_2),FromBits<WORDLEN()>(unpack_3),FromBits<WORDLEN()>(unpack_4)]));
+
+  for i : 0..WORDLEN()
+    { unpack_a[i] = unpack_1[i]; };
+  for i : 0..BLEN()-WORDLEN()
+    { unpack_a[WORDLEN()+i] = unpack_2[i]; };
+  for i : 0..2*WORDLEN()-BLEN()
+    { unpack_e[i] = unpack_2[i+BLEN()-WORDLEN()]; };
+  for i : 0..BLEN()+SLEN()-2*WORDLEN()
+    { unpack_e[i+2*WORDLEN()-BLEN()] = unpack_3[i]; };
+  for i : 0..3*WORDLEN()-BLEN()-SLEN()
+    { unpack_f[i] = unpack_3[i+BLEN()+SLEN()-2*WORDLEN()]; };
+  for i : 0..WORDLEN()
+    { unpack_f[i+3*WORDLEN()-BLEN()-SLEN()] = unpack_4[i]; };
+
+  Z := Isz(X-3);
+  nxt := [1-Z, Z] -> (
+    [X+1, 17, 0, memidx],
+    { blk := NondetReg(readInput());
+      invBlk := NondetReg(Inv(blk));
+      prod := blk*invBlk;
+      blk*(1-prod) = 0;
+
+      readInput(); readInput(); readInput();
+      memidxNxt := memidx + 1;
+      invmidxnxt := NondetReg(Inv(memidxNxt));
+      invmidxnxt*memidxNxt = 1;
+      WriteMemory(memidxNxt, MemDigest([blk,0,0,0]));
+
+      [prod, 1-prod] -> (
+        [0, 15, blk, memidxNxt],
+        [S2MINOR_SKIP(), 17, 0, memidxNxt])
+    });
+  RetTuple(dummyB(), dummyB(), dummyB(), dummyE(), dummyB(), dummyB(),
+           nxt[0], nxt[1], 0, nxt[2], nxt[3])
+}
+
+component setup_major(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
+                      rvprev04: RetTuple, rvprev68: RetTuple) {
+  minor_onehot := OneHot<13>(rvprev01.minor);
+  minor_onehot -> (
+    equal_word<0>(rvprev01),
+    equal_word<1>(rvprev02),
+    equal_word<2>(rvprev03),
+    equal_word<3>(rvprev04),
+    sha256init<1>(rvprev01),
+    sha256init<2>(rvprev01),
+    sha256init<3>(rvprev01),
+    sha256init<4>(rvprev01),
+    sha256fini<5>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev68),
+    sha256fini<6>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev68),
+    sha256fini<7>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev68),
+    sha256fini<8>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev68),
+    { Log("sha256output: %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x",
+        rvprev01.arr_a[0], rvprev01.arr_a[1], rvprev01.arr_a[2], rvprev01.arr_a[3],
+        rvprev01.arr_a[4], rvprev01.arr_a[5],  rvprev01.arr_a[6],  rvprev01.arr_a[7],
+        rvprev01.arr_a[8], rvprev01.arr_a[9],  rvprev01.arr_a[10], rvprev01.arr_a[11],
+        rvprev01.arr_a[12], rvprev01.arr_a[13], rvprev01.arr_a[14], rvprev01.arr_a[15]);
+      RetTuple(rvprev01.arr_a, dummyB(), dummyB(), dummyE(), dummyB(), dummyB(),
+                S2MINOR_SKIP()+S2MINOR_OUTPUT(), S2MAJOR_SETUP(), 0,0,0)
+    }
+  )
+}
+
+component fstep(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
+                rvprev04: RetTuple, rvprev05: RetTuple, rvprev06: RetTuple,
+                rvprev07: RetTuple, rvprev08: RetTuple, rvprev09: RetTuple,
+                rvprev10: RetTuple, rvprev11: RetTuple,
+                rvprev15: RetTuple, rvprev16: RetTuple, rvprev68: RetTuple) {
+  PC := NondetReg(GetCycle());
+  invPC := NondetReg(Inv(PC));
+  is_first_cycle := 1 - PC*invPC;
+  is_first_cycle * PC = 0;
+  major_idx := [is_first_cycle, 1-is_first_cycle] -> (
+    {
+      // PC@1 = total_cycles - 1;
+      18
+    },
+    {
+      PC = PC@1 + 1;
+      rvprev01.major
+    });
+  major_onehot := OneHot<23>(major_idx);
+  major_onehot -> (
+    xor5words_major<0>(rvprev01, rvprev02, rvprev03, rvprev04),
+    xor5words_major<1>(rvprev01, rvprev02, rvprev03, rvprev04),
+    xor5words_major<2>(rvprev01, rvprev02, rvprev03, rvprev04),
+    xor5words_major<3>(rvprev01, rvprev02, rvprev03, rvprev04),
+    xor5words_major<4>(rvprev01, rvprev02, rvprev03, rvprev04),
+    rho_major<0>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+                 rvprev07, rvprev08, rvprev09),
+    rho_major<1>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+                 rvprev07, rvprev08, rvprev09),
+    rho_major<2>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+                 rvprev07, rvprev08, rvprev09),
+    rho_major<3>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+                 rvprev07, rvprev08, rvprev09),
+    rho_major<4>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+                 rvprev07, rvprev08, rvprev09),
+    chi_major<0>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+                 rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
+    chi_major<1>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+                 rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
+    chi_major<2>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+                 rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
+    chi_major<3>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+                 rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
+    chi_major<4>(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+                 rvprev07, rvprev08, rvprev09, rvprev10, rvprev11),
+    absorb_major1(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+                  rvprev07, rvprev08, rvprev09, rvprev10),
+    absorb_major2(rvprev01, rvprev02, rvprev03, rvprev04, rvprev05, rvprev06,
+                  rvprev07, rvprev08, rvprev09),
+    setup_major(rvprev01, rvprev02, rvprev03, rvprev04, rvprev68),
+    { blk := NondetReg(readInput());
+      //invBlk := NondetReg(Inv(Blk)); Blk*InvBlk = 1; //maybe unneeded
+      readInput(); readInput(); readInput();
+      WriteMemory(0, MemDigest([blk,0,0,0]));
+      RetTuple(dummyB(), dummyB(), dummyB(), dummyE(), dummyB(), dummyB(),
+               0, 15, 0, blk, 0)
+    },
+    sha256load_all(rvprev01,rvprev02,rvprev03,rvprev04),
+    sha256mix_all<0>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16),
+    sha256mix_all<1>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16),
+    sha256mix_all<2>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16)
+  )
+}
+
+component Top() {
+  configureInput(2);
+  retvals : RetTuple;
+
+  retvals := fstep(retvals@1, retvals@2, retvals@3, retvals@4, retvals@5, retvals@6, retvals@7,
+                   retvals@8, retvals@9, retvals@10, retvals@11,
+                   retvals@15, retvals@16, retvals@68);
+}
+
+test TestKeccak01 { // test_cycles >= 2897
+  x := Top();
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 0] - 0x5921) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 1] - 0x0c49) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 2] - 0x33fc) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 3] - 0xafd9) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 4] - 0x7ab6) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 5] - 0x5be2) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 6] - 0x169b) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 7] - 0x843c) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 8] - 0x3b7f) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 9] - 0x1b17) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[10] - 0x47bd) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[11] - 0xcef3) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[12] - 0x05f8) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[13] - 0xa3ec) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[14] - 0x34cb) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[15] - 0xcc6e) = 0;
+}
+
+/*
+test TestKeccak02 { // test_cycles >= 22770
+  x := Top();
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 0] - 0x7a29) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 1] - 0x67af) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 2] - 0x4320) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 3] - 0x2ca6) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 4] - 0x1f87) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 5] - 0xc8f3) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 6] - 0x0d35) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 7] - 0xeb33) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 8] - 0x6195) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 9] - 0x1191) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[10] - 0xc2a7) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[11] - 0xbb3b) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[12] - 0x95d8) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[13] - 0x0dc2) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[14] - 0xcfd4) = 0;
+  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[15] - 0xcc1b) = 0;
+}
+*/
