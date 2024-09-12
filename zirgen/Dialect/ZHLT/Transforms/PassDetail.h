@@ -21,6 +21,7 @@
 
 namespace zirgen::Zhlt {
 
+// TODO: Migrate away from deprecated GEN_PASS_CLASSES ("Please use the new per-pass macros." -mlir)
 #define GEN_PASS_CLASSES
 #include "zirgen/Dialect/ZHLT/Transforms/Passes.h.inc"
 

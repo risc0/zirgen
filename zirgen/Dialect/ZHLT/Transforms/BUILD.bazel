@@ -36,6 +36,7 @@ cc_library(
         "HoistAllocs.cpp",
         "PassDetail.h",
         "StripAliasLayoutOps.cpp",
+        "CircuitDef.cpp",
         "StripTests.cpp",
     ],
     hdrs = [

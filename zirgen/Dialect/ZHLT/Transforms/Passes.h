@@ -17,12 +17,17 @@
 #include "mlir/IR/BuiltinOps.h"
 #include "mlir/Pass/Pass.h"
 
+#define GEN_PASS_DECL
+#include "zirgen/Dialect/ZHLT/Transforms/Passes.h.inc"
+
 namespace zirgen::Zhlt {
 
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createHoistAllocsPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createStripTestsPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateStepsPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createStripAliasLayoutOpsPass();
+std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>>
+createCircuitDefPass(const CircuitDefOptions& = {});
 
 #define GEN_PASS_REGISTRATION
 #include "zirgen/Dialect/ZHLT/Transforms/Passes.h.inc"

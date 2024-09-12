@@ -52,7 +52,7 @@ public:
   // System API
   static void init(std::vector<llvm::StringRef> phases);
   static void addBuffer(llvm::StringRef name, Buffer buf);
-  static void fini(Val ret = 0);
+  static void fini(Val ret = 0, std::optional<ProtocolInfo> circuitInfo = std::nullopt);
 
   // Mux API (called during construction)
   static void enterMux();

@@ -313,3 +313,22 @@ def NormalizeOp : ZllOp<"normalize", [Pure, EvalOpAdaptor, IsReduce, InferTypeOp
       DefaultValuedAttr<StrAttr, "\"\"">:$low);
   let results = (outs Val:$out);
 }
+
+def CircuitDefOp : ZllOp<"circuit_def", [IsolatedFromAbove, HasParent<"mlir::ModuleOp">]> {
+  let summary = "Define parameters for a circuit.  There should be a maximum of one of these per module.";
+  let arguments = (ins
+      StrAttr: $circuitInfo,
+      BufferDefs: $buffers,
+      StepDefs: $steps
+  );
+  let assemblyFormat = [{ ` ` `{` `\n`
+       `circuitInfo` $circuitInfo `\n`
+       `buffers` $buffers `\n`
+       `steps` $steps attr-dict `\n`
+       `}`
+  }];
+  let extraClassDeclaration = [{
+     static CircuitDefOp lookupInModule(mlir::ModuleOp op);
+  }];
+}
+      

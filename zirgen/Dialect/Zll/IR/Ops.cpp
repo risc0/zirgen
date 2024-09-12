@@ -1273,4 +1273,13 @@ void AndCondOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
     cg.emitFuncCall(cg.getStringAttr("andCond"), {getIn(), getCond(), getInner()});
 }
 
+CircuitDefOp CircuitDefOp::lookupInModule(mlir::ModuleOp mod) {
+  CircuitDefOp result;
+  mod.walk([&](CircuitDefOp op) {
+    assert(!result && "Duplicate CircuitDefOps present?");
+    result = op;
+  });
+  return result;
+}
+
 } // namespace zirgen::Zll

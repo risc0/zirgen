@@ -345,6 +345,43 @@ void Module::beginFunc(const std::string& name,
   pushIP(func.addEntryBlock());
 }
 
+void Module::addCircuitDef(mlir::func::FuncOp funcOp,
+                           const ProtocolInfo& protocolInfo,
+                           llvm::ArrayRef<std::string> phases) {
+  // Construct the CircuitDefOp with all our info
+
+  llvm::SmallVector<mlir::Attribute> buffers;
+  for (auto [argIdx, buf] : llvm::enumerate(funcOp.getArguments())) {
+    auto argName =
+        llvm::dyn_cast_if_present<mlir::StringAttr>(funcOp.getArgAttr(argIdx, "zirgen.argName"));
+    if (!argName)
+      continue;
+    auto arg = funcOp.getArgument(argIdx);
+    auto ty = llvm::cast<Zll::BufferType>(arg.getType());
+    // EDSL hardcodes the names and tap indicies of buffers
+    auto regGroupId = llvm::StringSwitch<std::optional<size_t>>(argName)
+                          .Case("accum", 0)
+                          .Case("code", 1)
+                          .Case("data", 2)
+                          .Default(std::nullopt);
+    buffers.push_back(builder.getAttr<Zll::BufferDefAttr>(
+        argName, ty.getKind(), ty.getSize(), mlir::TypeAttr::get(ty), regGroupId));
+  }
+
+  llvm::SmallVector<mlir::Attribute> steps;
+  for (auto phase : phases) {
+    steps.push_back(
+        builder.getAttr<Zll::StepDefAttr>(phase, mlir::SymbolRefAttr::get(funcOp.getNameAttr())));
+  }
+  mlir::OpBuilder& builder = getBuilder();
+  mlir::OpBuilder::InsertionGuard guard(builder);
+  builder.setInsertionPointToEnd(getModule().getBody());
+  builder.create<Zll::CircuitDefOp>(builder.getUnknownLoc(),
+                                    builder.getStringAttr(llvm::StringRef(protocolInfo.data())),
+                                    builder.getArrayAttr(buffers),
+                                    builder.getArrayAttr(steps));
+}
+
 void Module::sortForReproducibility() {
   DenseMap<Operation*, std::string> propInfo;
   DenseMap<Operation*, size_t> argPositions;

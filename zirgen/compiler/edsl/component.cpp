@@ -113,7 +113,7 @@ void CompContext::addBuffer(llvm::StringRef name, Buffer buf) {
   funcOp.setArgAttr(argNum, "zirgen.argName", mlir::StringAttr::get(bufVal.getContext(), name));
 }
 
-void CompContext::fini(Val ret) {
+void CompContext::fini(Val ret, std::optional<ProtocolInfo> protocolInfo) {
   assert(gAllocState);
   assert(gCallbackState);
   if (gAllocState->needsFlush) {
@@ -129,10 +129,15 @@ void CompContext::fini(Val ret) {
       }
     });
   }
+
+  llvm::SmallVector<std::string> phases;
+  // `exec` step always happens first, so is not in the list of the "extra" phases
+  phases.push_back("exec");
   for (auto& phase : gCallbackState->phases) {
     if (phase.name[0] != '_') {
       barrier(ret);
       ret = 0;
+      phases.push_back(phase.name);
     }
     phase.emit();
   }
@@ -141,6 +146,12 @@ void CompContext::fini(Val ret) {
   gAllocState = nullptr;
   delete gCallbackState;
   gCallbackState = nullptr;
+
+  if (protocolInfo) {
+    auto funcOp = llvm::cast<mlir::func::FuncOp>(
+        Module::getCurModule()->getBuilder().getBlock()->getParentOp());
+    Module::getCurModule()->addCircuitDef(funcOp, *protocolInfo, phases);
+  }
 }
 
 void CompContext::enterMux() {

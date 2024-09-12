@@ -62,4 +62,16 @@ def StripAliasLayoutOps : Pass<"inline-layout", "mlir::ModuleOp"> {
   let dependentDialects = ["zirgen::Zhlt::ZhltDialect"];
 }
 
+def CircuitDef : Pass<"circuit-def", "mlir::ModuleOp"> {
+  let summary = "Create a global Zll::CircuitDefOp for this module describing the circuit present";
+  let constructor = "zirgen::Zhlt::createCircuitDefPass()";
+  let options = [
+    Option<"circuitInfo", "circuit-info", "std::string",
+           /*default=*/"\"UNKNOWN\"",
+           "Circuit identification string">
+  ];
+
+  let dependentDialects = ["zirgen::Zhlt::ZhltDialect", "zirgen::Zll::ZllDialect"];
+}
+
 #endif // ZHLT_TRANSFORM_PASSES

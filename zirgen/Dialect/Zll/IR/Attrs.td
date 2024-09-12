@@ -76,4 +76,28 @@ def FieldExt : ZllAttr<"FieldExt", "fieldExt"> {
   let assemblyFormat = [{ `ext` }];
 }
 
+def BufferDef : ZllAttr<"BufferDef", "bufferDef"> {
+  let summary = "Information on a buffer that's global to a circuit";
+  let parameters = (ins
+      StringRefParameter<"">: $name,
+      "BufferKind": $kind,
+      "size_t": $size,
+      "mlir::TypeAttr": $type,
+      OptionalParameter<"std::optional<size_t>">: $regGroupId
+      );
+  let assemblyFormat = [{ $name `:` $kind `,` $size `,` $type (`,` `regGroupId` `=` $regGroupId^)? }];
+}
+
+def BufferDefs : TypedArrayAttrBase<BufferDef, "Set of buffers">;
+
+def StepDef : ZllAttr<"StepDef", "stepDef"> {
+  let summary = "Information on a step that's global to a circuit";
+  let parameters = (ins
+      StringRefParameter<"">: $name,
+      "mlir::FlatSymbolRefAttr": $stepFunc);
+  let assemblyFormat = [{ $name `:` $stepFunc }];
+}
+
+def StepDefs : TypedArrayAttrBase<StepDef, "Set of steps">;
+
 #endif // ZIRGEN_IR_ATTRS

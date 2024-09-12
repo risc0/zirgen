@@ -24,3 +24,16 @@ cc_library(
         "@llvm-project//mlir:MlirOptLib",
     ],
 )
+
+cc_binary(
+    name = "gen_zirgen",
+    srcs = ["gen_zirgen.cpp"],
+    deps = [
+        "//risc0/core",
+        "//zirgen/Conversions/Typing",
+        "//zirgen/Dialect/ZHLT/IR:Codegen",
+        "//zirgen/Main",
+        "//zirgen/compiler/codegen",
+        "//zirgen/compiler/layout",
+    ],
+)

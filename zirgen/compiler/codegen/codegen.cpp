@@ -191,24 +191,49 @@ void emitCode(ModuleOp module, const EmitCodeOptions& opts) {
   FileEmitter emitter(getOutputDir());
   optimizeSimple(module);
   emitter.emitAllLayouts(module);
-  for (auto stage : llvm::enumerate(opts.stages)) {
+
+  auto circuitDef = Zll::CircuitDefOp::lookupInModule(module);
+
+  llvm::StringSet<> seenStages;
+
+  for (auto stage : llvm::enumerate(circuitDef.getSteps())) {
+    auto step = llvm::cast<Zll::StepDefAttr>(stage.value());
+    auto stageOpts = opts.stages.lookup(step.getName());
+    seenStages.insert(step.getName());
+
     auto moduleCopy = dyn_cast<ModuleOp>(module->clone());
-    optimizeSplit(moduleCopy, stage.index(), stage.value());
+
+    optimizeSplit(moduleCopy, stage.index(), stageOpts);
     moduleCopy.walk([&](func::FuncOp func) {
-      auto stage_name = stage.value().name;
-      emitter.emitRustStep(stage.value().name, func);
-      if (stage_name == "compute_accum" || stage_name == "verify_accum") {
-        emitter.emitGpuStep(stage.value().name, ".metal", func);
+      std::string outputFile;
+      if (stageOpts.outputFile.empty())
+        outputFile = step.getName();
+      else
+        outputFile = stageOpts.outputFile;
+      emitter.emitRustStep(outputFile, func);
+      if (outputFile == "compute_accum" || outputFile == "verify_accum") {
+        emitter.emitGpuStep(outputFile, ".metal", func);
       }
-      emitter.emitGpuStep(stage.value().name, ".cu", func);
+      emitter.emitGpuStep(outputFile, ".cu", func);
     });
   }
+
+  for (auto k : opts.stages.keys()) {
+    if (!seenStages.contains(k)) {
+      llvm::errs() << "Options specified for stage " << k << " but no stage " << k << " seen\n";
+      exit(1);
+    }
+  }
+
   optimizePoly(module);
+  ProtocolInfo protocolInfo;
+  strncpy(protocolInfo.data(), circuitDef.getCircuitInfo().data(), PROTOCOL_INFO_LEN);
+  protocolInfo[PROTOCOL_INFO_LEN] = '\0';
   module.walk([&](func::FuncOp func) {
     emitter.emitPolyFunc("poly_fp", func);
     emitter.emitPolyExtFunc(func);
     emitter.emitTaps(func);
-    emitter.emitInfo(func, opts.info);
+    emitter.emitInfo(func, protocolInfo);
     emitter.emitEvalCheck(".cu", func);
     emitter.emitEvalCheck(".metal", func);
     emitter.emitPolyEdslFunc(func);

@@ -21,6 +21,7 @@
 #include "zirgen/Dialect/IOP/IR/IR.h"
 #include "zirgen/Dialect/Zll/IR/IR.h"
 #include "zirgen/Dialect/Zll/IR/Interpreter.h"
+#include "zirgen/compiler/codegen/protocol_info_const.h"
 #include "zirgen/compiler/edsl/source_loc.h"
 
 namespace zirgen {
@@ -209,6 +210,10 @@ public:
   mlir::ModuleOp getModule() { return *module; }
 
   static Module* getCurModule();
+
+  void addCircuitDef(mlir::func::FuncOp funcOp,
+                     const ProtocolInfo& protocolInfo,
+                     llvm::ArrayRef<std::string> phases);
 
 private:
   void beginFunc(const std::string& name, const std::vector<ArgumentInfo>& args, SourceLoc loc);
