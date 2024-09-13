@@ -433,72 +433,81 @@ pub fn validity_taps_(
     return Ok(x6);
 }
 pub fn validity_regs_(ctx0: &ValidityRegsContext, poly_mix1: PolyMix) -> Result<MixState> {
+    let x2: BoundLayout<TopLayout, _> = bind_layout!(LAYOUT_TOP, get_buffer!(ctx0, data));
     // Top(zirgen/dsl/examples/calculator.zir:36)
-    let x2: MixState = trivial_constraint()?;
-    let x3: BoundLayout<TopLayout, _> = bind_layout!(LAYOUT_TOP, get_buffer!(ctx0, data));
-    // Top(zirgen/dsl/examples/calculator.zir:36)
-    let x4: BoundLayout<TopResultLayout, _> = layout_lookup!(x3, result);
+    let x3: BoundLayout<TopResultLayout, _> = layout_lookup!(x2, result);
     // OneHot(zirgen/dsl/examples/calculator.zir:13)
-    let x5: BoundLayout<NondetRegLayout2LayoutArray, _> =
-        layout_lookup!(layout_lookup!(x3, _0), _super);
+    let x4: BoundLayout<NondetRegLayout2LayoutArray, _> =
+        layout_lookup!(layout_lookup!(x2, _0), _super);
     // OneHot(zirgen/dsl/examples/calculator.zir:15)
+    let x5: MixState = and_eqz(
+        poly_mix1,
+        trivial_constraint()?,
+        (load!(layout_lookup!(layout_subscript!(x4, 0), _super), 0)
+            * (make_val!(1) - load!(layout_lookup!(layout_subscript!(x4, 0), _super), 0))),
+    )?;
+    // OneHot(zirgen/dsl/examples/calculator.zir:17)
     let x6: MixState = and_eqz(
         poly_mix1,
         and_eqz(
             poly_mix1,
-            x2,
-            (load!(layout_lookup!(layout_subscript!(x5, 0), _super), 0)
-                * (make_val!(1) - load!(layout_lookup!(layout_subscript!(x5, 0), _super), 0))),
+            x5,
+            (load!(layout_lookup!(layout_subscript!(x4, 1), _super), 0)
+                * (make_val!(1) - load!(layout_lookup!(layout_subscript!(x4, 1), _super), 0))),
         )?,
-        (load!(layout_lookup!(layout_subscript!(x5, 1), _super), 0)
-            * (make_val!(1) - load!(layout_lookup!(layout_subscript!(x5, 1), _super), 0))),
+        ((load!(layout_lookup!(layout_subscript!(x4, 0), _super), 0)
+            + load!(layout_lookup!(layout_subscript!(x4, 1), _super), 0))
+            - make_val!(1)),
     )?;
-    let x7: MixState = and_cond(
-        and_eqz(
-            poly_mix1,
-            and_eqz(
-                poly_mix1,
-                x6,
-                ((load!(layout_lookup!(layout_subscript!(x5, 0), _super), 0)
-                    + load!(layout_lookup!(layout_subscript!(x5, 1), _super), 0))
-                    - make_val!(1)),
-            )?,
-            (load!(layout_lookup!(layout_subscript!(x5, 1), _super), 0)
-                - load!(layout_lookup!(layout_lookup!(x3, op), _super), 0)),
-        )?,
-        load!(layout_lookup!(layout_subscript!(x5, 0), _super), 0),
-        and_eqz(
-            poly_mix1,
-            x2,
-            ((load!(layout_lookup!(layout_lookup!(x3, left), _super), 0)
-                + load!(layout_lookup!(layout_lookup!(x3, right), _super), 0))
-                - load!(layout_lookup!(layout_lookup!(x4, arm0), _super), 0)),
-        )?,
+    let x7: BoundLayout<NondetRegLayout, _> = layout_lookup!(x3, _super);
+    // Reg(<preamble>:5)
+    // Top(zirgen/dsl/examples/calculator.zir:37)
+    let x8: MixState = and_eqz(
+        poly_mix1,
+        trivial_constraint()?,
+        ((load!(layout_lookup!(layout_lookup!(x2, left), _super), 0)
+            + load!(layout_lookup!(layout_lookup!(x2, right), _super), 0))
+            - load!(layout_lookup!(layout_lookup!(x3, arm0), _super), 0)),
+    )?;
+    // Top(zirgen/dsl/examples/calculator.zir:38)
+    let x9: MixState = and_eqz(
+        poly_mix1,
+        trivial_constraint()?,
+        ((load!(layout_lookup!(layout_lookup!(x2, left), _super), 0)
+            - load!(layout_lookup!(layout_lookup!(x2, right), _super), 0))
+            - load!(layout_lookup!(layout_lookup!(x3, arm1), _super), 0)),
     )?;
     // SetGlobalResult(zirgen/dsl/examples/calculator.zir:28)
     // Top(zirgen/dsl/examples/calculator.zir:41)
-    let x8: BoundLayout<_globalLayout, _> = bind_layout!(LAYOUT_GLOBAL, get_buffer!(ctx0, global));
-    // Top(zirgen/dsl/examples/calculator.zir:42)
-    let x9: MixState = and_eqz(
+    let x10: BoundLayout<_globalLayout, _> = bind_layout!(LAYOUT_GLOBAL, get_buffer!(ctx0, global));
+    // Reg(<preamble>:5)
+    // SetGlobalResult(zirgen/dsl/examples/calculator.zir:29)
+    let x11: MixState = and_eqz(
         poly_mix1,
-        and_eqz(
-            poly_mix1,
+        and_cond(
             and_cond(
-                x7,
-                load!(layout_lookup!(layout_subscript!(x5, 1), _super), 0),
                 and_eqz(
                     poly_mix1,
-                    x2,
-                    ((load!(layout_lookup!(layout_lookup!(x3, left), _super), 0)
-                        - load!(layout_lookup!(layout_lookup!(x3, right), _super), 0))
-                        - load!(layout_lookup!(layout_lookup!(x4, arm1), _super), 0)),
+                    x6,
+                    (load!(layout_lookup!(layout_subscript!(x4, 1), _super), 0)
+                        - load!(layout_lookup!(layout_lookup!(x2, op), _super), 0)),
                 )?,
+                load!(layout_lookup!(layout_subscript!(x4, 0), _super), 0),
+                x8,
             )?,
-            (load!(layout_lookup!(layout_lookup!(x4, _super), _super), 0)
-                - load!(layout_lookup!(layout_lookup!(x8, result), _super), 0)),
+            load!(layout_lookup!(layout_subscript!(x4, 1), _super), 0),
+            x9,
         )?,
-        (load!(layout_lookup!(layout_lookup!(x8, result), _super), 0)
-            - load!(layout_lookup!(layout_lookup!(x4, _super), _super), 0)),
+        (load!(layout_lookup!(x7, _super), 0)
+            - load!(layout_lookup!(layout_lookup!(x10, result), _super), 0)),
     )?;
-    return Ok(x9);
+    // GetGlobalResult(zirgen/dsl/examples/calculator.zir:23)
+    // Top(zirgen/dsl/examples/calculator.zir:42)
+    let x12: BoundLayout<_globalLayout, _> = bind_layout!(LAYOUT_GLOBAL, get_buffer!(ctx0, global));
+    return Ok(and_eqz(
+        poly_mix1,
+        x11,
+        (load!(layout_lookup!(layout_lookup!(x12, result), _super), 0)
+            - load!(layout_lookup!(x7, _super), 0)),
+    )?);
 }
