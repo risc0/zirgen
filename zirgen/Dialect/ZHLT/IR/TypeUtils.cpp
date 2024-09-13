@@ -288,10 +288,6 @@ bool isGenericBuiltin(StringRef name) {
   }
 }
 
-Value StructBuilder::getValue(Location loc) {
-  return builder.create<PackOp>(loc, getType(), memberValues);
-}
-
 LayoutBuilder::LayoutBuilder(OpBuilder& builder, StringAttr typeName)
     : builder(builder), typeName(typeName) {
   layoutPlaceholder = builder.create<Zhlt::MagicOp>(builder.getUnknownLoc(), builder.getNoneType());
@@ -328,7 +324,7 @@ void LayoutBuilder::removeMember(Value originalMember, StringRef memberName) {
   llvm::erase_if(members, [memberName](auto member) -> bool { return member.name == memberName; });
 }
 
-LayoutType LayoutBuilder::getType() {
+LayoutType LayoutBuilder::getType() const {
   if (empty()) {
     return LayoutType();
   } else {
@@ -352,6 +348,37 @@ void LayoutBuilder::supplyLayout(std::function<Value(Type)> finalizeLayoutFunc) 
 
   layoutPlaceholder.erase();
   layoutPlaceholder = {};
+}
+
+Value StructBuilder::finalize(Location loc, std::function<Value(/*layoutType=*/Type)> finalizeLayoutFunc) {
+  layoutBuilder->supplyLayout(finalizeLayoutFunc);
+  StructType type = getType();
+  layoutBuilder.reset();
+  return builder.create<PackOp>(loc, type, memberValues);
+}
+
+ZStruct::StructType StructBuilder::getType() const {
+  assert(members.size() == memberValues.size());
+  for (auto& field : members) {
+    assert(field.type);
+  }
+  assert(layoutBuilder);
+  LayoutType layoutType = layoutBuilder->getType();
+  return builder.getType<ZStruct::StructType>(name, members, layoutType);
+}
+
+void StructBuilder::addMember(StringAttr memberName, Value value) {
+  assert(value);
+  assert(value.getType());
+
+  if (memberName == "@super") {
+    // TODO: Why do we require @super to be first?  Document this requirement.
+    members.insert(members.begin(), {memberName, value.getType()});
+    memberValues.insert(memberValues.begin(), value);
+  } else {
+    members.push_back({memberName, value.getType()});
+    memberValues.push_back(value);
+  }
 }
 
 std::string getTypeId(Type ty) {

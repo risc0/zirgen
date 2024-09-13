@@ -27,47 +27,6 @@ std::string mangledTypeName(StringRef componentName, llvm::ArrayRef<Attribute> t
 std::string mangledArrayTypeName(Type element, unsigned size);
 std::string mangledTypeName(Type);
 
-class StructBuilder {
-public:
-  StructBuilder(OpBuilder& builder, StringAttr name) : builder(builder), name(name) {}
-
-  ZStruct::StructType getType() const {
-    assert(members.size() == memberValues.size());
-    for (auto& field : members) {
-      assert(field.type);
-    }
-    return builder.getType<ZStruct::StructType>(name, members);
-  }
-
-  void addMember(StringRef memberName, Value value) {
-    addMember(builder.getStringAttr(memberName), value);
-  }
-
-  void addMember(StringAttr memberName, Value value) {
-    assert(value);
-    assert(value.getType());
-
-    if (memberName == "@super") {
-      // TODO: Why do we require @super to be first?  Document this requirement.
-      members.insert(members.begin(), {memberName, value.getType()});
-      memberValues.insert(memberValues.begin(), value);
-    } else {
-      members.push_back({memberName, value.getType()});
-      memberValues.push_back(value);
-    }
-  }
-
-  bool empty() const { return members.empty(); }
-
-  Value getValue(Location loc);
-
-private:
-  OpBuilder& builder;
-  StringAttr name;
-  SmallVector<ZStruct::FieldInfo> members;
-  SmallVector<Value> memberValues;
-};
-
 /// Builds a layout structure.
 class LayoutBuilder {
 public:
@@ -87,9 +46,9 @@ public:
 
   void setKind(ZStruct::LayoutKind kind) { this->kind = kind; }
 
-  bool empty() { return members.empty(); }
+  bool empty() const { return members.empty(); }
 
-  ZStruct::LayoutType getType();
+  ZStruct::LayoutType getType() const;
 
   // Finalizes the layout that's been built.  If the layout is
   // non-empty, finalizeLayoutFunc is called to supply a layout value
@@ -106,6 +65,35 @@ private:
   Zhlt::MagicOp layoutPlaceholder;
 
   ZStruct::LayoutKind kind = ZStruct::LayoutKind::Normal;
+};
+
+class StructBuilder {
+public:
+  StructBuilder(OpBuilder& builder, StringAttr name) : builder(builder), name(name) {
+    layoutBuilder = std::make_unique<LayoutBuilder>(builder, name);
+  }
+
+  ZStruct::StructType getType() const;
+
+  void addMember(StringRef memberName, Value value) {
+    addMember(builder.getStringAttr(memberName), value);
+  }
+
+  void addMember(StringAttr memberName, Value value);
+
+  bool empty() const { return members.empty(); }
+
+  // Finalizes and returns the value of the built component, and also finalize
+  // its layout using the given callback
+  Value finalize(Location loc, std::function<Value(/*layoutType=*/Type)> finalizeLayoutFunc);
+
+  std::unique_ptr<LayoutBuilder> layoutBuilder;
+
+private:
+  OpBuilder& builder;
+  StringAttr name;
+  SmallVector<ZStruct::FieldInfo> members;
+  SmallVector<Value> memberValues;
 };
 
 /// Walks the super chains of the given components until it finds the most

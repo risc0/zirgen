@@ -86,7 +86,7 @@ def StoreOp : ZStructOp<"store", [EvalOpAdaptor, MemoryEffects<[MemWrite]>, Decl
 
 def PackOp : ZStructOp<"pack", [Pure, DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
   let summary = "Packs the operands into the members of a record";
-  let arguments = (ins Variadic<ZirType>:$members);
+  let arguments = (ins Variadic<IsValueType>:$members);
   let results = (outs StructType:$out);
   let assemblyFormat = [{
      `(` ($members^ `:` type($members))? `)` `:` type($out) attr-dict-with-keyword

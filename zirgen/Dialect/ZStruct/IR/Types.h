@@ -74,8 +74,8 @@ void printFields(mlir::AsmPrinter& p, llvm::ArrayRef<FieldInfo> fields);
 /// Returns true if t is a valid witness structure type that only contains references to registers.
 bool isLayoutType(mlir::Type t);
 
-/// Returns true if t is a valid record type that contains only values and no register references.
-bool isRecordType(mlir::Type t);
+/// Returns true if t is a value type that contains only values and no register references.
+bool isValidValueType(mlir::Type t);
 
 /// An implicit argument type which can supply buffers when passed to lookupNearestImplicitArg
 template <typename ConcreteType>

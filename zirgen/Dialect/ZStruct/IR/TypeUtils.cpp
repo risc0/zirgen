@@ -20,15 +20,15 @@ using namespace mlir;
 using namespace Zll;
 
 StructType getTypeType(MLIRContext* ctx) {
-  return StructType::get(ctx, "Type", {});
+  return StructType::get(ctx, "Type", {}, {});
 }
 
 StructType getComponentType(MLIRContext* ctx) {
-  return StructType::get(ctx, "Component", {});
+  return StructType::get(ctx, "Component", {}, {});
 }
 
 LayoutType getEmptyLayoutType(MLIRContext* ctx) {
-  return LayoutType::get(ctx, "Component", {});
+  return LayoutType::get(ctx, "Component", {}, {});
 }
 
 ValType getValType(MLIRContext* ctx) {
@@ -46,7 +46,8 @@ StringType getStringType(MLIRContext* ctx) {
 StructType getNondetRegType(MLIRContext* ctx) {
   SmallVector<ZStruct::FieldInfo> members;
   members.push_back({StringAttr::get(ctx, "@super"), getValType(ctx)});
-  return StructType::get(ctx, "NondetReg", members);
+  auto layout = zirgen::ZStruct::getNondetRegLayoutType(ctx);
+  return StructType::get(ctx, "NondetReg", members, layout);
 }
 
 LayoutType getNondetRegLayoutType(MLIRContext* ctx) {
