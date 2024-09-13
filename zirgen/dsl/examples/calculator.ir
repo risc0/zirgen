@@ -1,15 +1,15 @@
 !zlayout$NondetReg = !zstruct.layout<NondetReg, <"@super": !zstruct.ref>>
 !zstruct$Component = !zstruct.struct<Component, <>>
 !zstruct$GetValFromUser = !zstruct.struct<GetValFromUser, <"@super": !zll.val<BabyBear>>>
-!zstruct$NondetReg = !zstruct.struct<NondetReg, <"@super": !zll.val<BabyBear>>>
 !zstruct$OneHot__0_40super = !zstruct.struct<"OneHot__0_@super", <"@super": !zll.val<BabyBear>>>
 !zlayout$40global = !zstruct.layout<"@global", <result: !zlayout$NondetReg>>
 !zlayout$Top_result = !zstruct.layout<Top_result mux, <"@super": !zlayout$NondetReg, arm0: !zlayout$NondetReg, arm1: !zlayout$NondetReg>>
-!zstruct$Reg = !zstruct.struct<Reg, <"@super": !zstruct$NondetReg, reg: !zstruct$NondetReg>>
+!zstruct$NondetReg = !zstruct.struct<NondetReg, !zlayout$NondetReg, <"@super": !zll.val<BabyBear>>>
 !zlayout$OneHot = !zstruct.layout<OneHot, <"@super": !zstruct.layout_array<!zlayout$NondetReg, 2>>>
-!zstruct$OneHot = !zstruct.struct<OneHot, <"@super": !zstruct.array<!zstruct$NondetReg, 2>, N: !zll.val<BabyBear>, bits: !zstruct.array<!zstruct$NondetReg, 2>>>
-!zstruct$Top = !zstruct.struct<Top, <"@super": !zstruct$Component, op: !zstruct$NondetReg, left: !zstruct$NondetReg, right: !zstruct$NondetReg, result: !zstruct$Reg>>
+!zstruct$Reg = !zstruct.struct<Reg, !zlayout$NondetReg, <"@super": !zstruct$NondetReg, reg: !zstruct$NondetReg>>
 !zlayout$Top = !zstruct.layout<Top, <op: !zlayout$NondetReg, left: !zlayout$NondetReg, right: !zlayout$NondetReg, _0: !zlayout$OneHot, result: !zlayout$Top_result>>
+!zstruct$OneHot = !zstruct.struct<OneHot, !zlayout$OneHot, <"@super": !zstruct.array<!zstruct$NondetReg, 2>, N: !zll.val<BabyBear>, bits: !zstruct.array<!zstruct$NondetReg, 2>>>
+!zstruct$Top = !zstruct.struct<Top, !zlayout$Top, <"@super": !zstruct$Component, op: !zstruct$NondetReg, left: !zstruct$NondetReg, right: !zstruct$NondetReg, result: !zstruct$Reg>>
 module attributes {zll.buffers = #zll<buffers ("accum", <1, mutable>, 0), ("code", <1, mutable>, 1), ("data", <6, mutable>, 2), ("global", <4, global>), ("mix", <4, global>)>} {
   zstruct.global_const @tapList : !zstruct.array<!zstruct.tap, 8> = [#zll.tap<0, 0, 0>, #zll.tap<1, 0, 0>, #zll.tap<2, 0, 0>, #zll.tap<2, 1, 0>, #zll.tap<2, 2, 0>, #zll.tap<2, 3, 0>, #zll.tap<2, 4, 0>, #zll.tap<2, 5, 0>] attributes {sym_visibility = "public"}
   zstruct.global_const @layout$Top : !zlayout$Top = #zstruct<struct {_0 = #zstruct<struct {"@super" = [#zstruct<struct {"@super" = #zstruct<ref 3> : !zstruct.ref}> : !zlayout$NondetReg, #zstruct<struct {"@super" = #zstruct<ref 4> : !zstruct.ref}> : !zlayout$NondetReg]}> : !zlayout$OneHot, left = #zstruct<struct {"@super" = #zstruct<ref 1> : !zstruct.ref}> : !zlayout$NondetReg, op = #zstruct<struct {"@super" = #zstruct<ref 0> : !zstruct.ref}> : !zlayout$NondetReg, result = #zstruct<struct {"@super" = #zstruct<struct {"@super" = #zstruct<ref 5> : !zstruct.ref}> : !zlayout$NondetReg, arm0 = #zstruct<struct {"@super" = #zstruct<ref 5> : !zstruct.ref}> : !zlayout$NondetReg, arm1 = #zstruct<struct {"@super" = #zstruct<ref 5> : !zstruct.ref}> : !zlayout$NondetReg}> : !zlayout$Top_result, right = #zstruct<struct {"@super" = #zstruct<ref 2> : !zstruct.ref}> : !zlayout$NondetReg}> : !zlayout$Top attributes {sym_visibility = "public"}

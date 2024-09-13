@@ -64,7 +64,6 @@ public:
   // Starts building a top-level component with the given type name.
   ComponentBuilder(Location loc, OpBuilder& builder, StringAttr typeName)
       : loc(loc), builder(builder), typeName(typeName) {
-    layoutBuilder = std::make_unique<LayoutBuilder>(builder, typeName);
     valBuilder = std::make_unique<StructBuilder>(builder, typeName);
   }
 
@@ -93,12 +92,13 @@ public:
   // Movable but not copyable.
   ComponentBuilder(ComponentBuilder&&) = default;
 
-  LayoutBuilder* layout() { return layoutBuilder.get(); }
   StructBuilder* val() { return valBuilder.get(); }
 
-  Value getValue(Location loc) {
+  Value finalize(Location loc, std::function<Value(/*name=*/StringAttr, Type)> finalizeLayoutFn) {
     assert(val());
-    Value resultVal = val()->getValue(loc);
+    Value resultVal = val()->finalize(
+        loc,
+        [&](Type layoutType) -> Value { return finalizeLayoutFn(memberNameInParent, layoutType); });
     valBuilder.reset();
     return resultVal;
   }
@@ -107,7 +107,7 @@ public:
     assert(layout());
     layout()->supplyLayout(
         [&](Type layoutType) -> Value { return finalizeLayoutFn(memberNameInParent, layoutType); });
-    layoutBuilder.reset();
+    valBuilder->layoutBuilder.reset();
   }
 
   Value addLayoutMember(Location loc, StringRef name, Type type) {
@@ -185,8 +185,8 @@ public:
       return {};
 
     auto memberName = lookupOp.getMember();
-    layoutBuilder->removeMember(origLayout, memberName);
-    Value newMember = layoutBuilder->addMember(loc, memberName, newType);
+    layout()->removeMember(origLayout, memberName);
+    Value newMember = layout()->addMember(loc, memberName, newType);
 
     OpBuilder::InsertionGuard insertionGuard(builder);
     builder.setInsertionPointAfterValue(newMember);
@@ -205,15 +205,15 @@ private:
     }
 
     typeName = builder.getStringAttr(parent->typeName.strref() + "_" + memberNameInParent.strref());
-    layoutBuilder = std::make_unique<LayoutBuilder>(builder, typeName);
     valBuilder = std::make_unique<StructBuilder>(builder, typeName);
   }
+
+  LayoutBuilder* layout() { return valBuilder->layoutBuilder.get(); }
 
   Location loc;
   OpBuilder& builder;
   StringAttr typeName;
 
-  std::unique_ptr<LayoutBuilder> layoutBuilder;
   std::unique_ptr<StructBuilder> valBuilder;
 
   // Currently index of anonymous subcomponents
@@ -296,7 +296,6 @@ private:
   // Same as addLayoutMember, but handles the case where we add a
   // definition for a previously declared member.
   Value addOrExpandLayoutMember(Location loc, ComponentBuilder& cb, Value result, Type type) {
-    assert(cb.layout());
     // If the new member has no layout, don't make any changes to the layout
     if (!type)
       return Value();
@@ -558,12 +557,11 @@ Zhlt::ComponentOp LoweringImpl::gen(ComponentOp component,
     }
 
     constructArgsTypes = llvm::to_vector(bodyBlock->getArgumentTypes());
-    cb.supplyLayout([&](StringAttr memberNameInParent, Type layoutTypeArg) -> Value {
+    Value returnValue = cb.finalize(loc, [&](StringAttr memberNameInParent, Type layoutTypeArg) -> Value {
       assert(!memberNameInParent && "Top-level components should not have a member name");
       layoutType = layoutTypeArg;
       return bodyBlock->addArgument(layoutTypeArg, loc);
     });
-    Value returnValue = cb.getValue(loc);
     builder.create<Zhlt::ReturnOp>(loc, returnValue);
     valueType = returnValue.getType();
   }
@@ -1025,12 +1023,12 @@ void LoweringImpl::gen(DirectiveOp directive, ComponentBuilder& cb) {
 void LoweringImpl::gen(BlockOp block, ComponentBuilder& cb) {
   ComponentBuilder subBlock(block.getLoc(), &cb, block.getOut());
   gen(block.getInner(), subBlock);
-  subBlock.supplyLayout([&](StringAttr memberName, Type layoutType) -> Value {
+  Value result = subBlock.finalize(block.getLoc(), [&](StringAttr memberName, Type layoutType) -> Value {
     Value layout = cb.addLayoutMember(block.getLoc(), memberName, layoutType);
     layoutMapping[block.getOut()] = layout;
     return layout;
   });
-  valueMapping[block.getOut()] = subBlock.getValue(block.getLoc());
+  valueMapping[block.getOut()] = result;
 }
 
 void LoweringImpl::gen(MapOp map, ComponentBuilder& cb) {
@@ -1054,15 +1052,14 @@ void LoweringImpl::gen(MapOp map, ComponentBuilder& cb) {
     auto mapArg = map.getFunction().getArgument(0);
     valueMapping[mapArg] = mapBodyBlock->addArgument(elemType, mapArg.getLoc());
     gen(map.getFunction(), subBlock);
-    Value outValue = subBlock.getValue(mapArg.getLoc());
-    outValueType = outValue.getType();
-    builder.create<ZStruct::YieldOp>(map.getLoc(), outValue);
-    subBlock.supplyLayout([&](StringAttr name, Type layoutType) -> Value {
+    Value outValue = subBlock.finalize(mapArg.getLoc(), [&](StringAttr name, Type layoutType) -> Value {
       Value bodyLayout = mapBodyBlock->addArgument(layoutType, mapArg.getLoc());
       Type outLayoutType = builder.getType<ZStruct::LayoutArrayType>(layoutType, size);
       outLayout = addOrExpandLayoutMember(map.getLoc(), cb, map.getOut(), outLayoutType);
       return bodyLayout;
     });
+    outValueType = outValue.getType();
+    builder.create<ZStruct::YieldOp>(map.getLoc(), outValue);
   }
 
   auto outArrayType = builder.getType<ArrayType>(outValueType, size);
@@ -1350,7 +1347,7 @@ void LoweringImpl::gen(SwitchOp sw, ComponentBuilder& cb) {
     OpBuilder::InsertionGuard insertionGuard(builder);
     builder.setInsertionPointToEnd(&armRegion->front());
 
-    armContext->supplyLayout([&](StringAttr name, Type layoutType) -> Value {
+    Value armValue = armContext->finalize(armLoc, [&](StringAttr name, Type layoutType) -> Value {
       Value fullArmLayout = muxContext.addLayoutMember(armLoc, name, layoutType);
       // If the common super has layout, the common part must have the same
       // layout on each mux arm
@@ -1366,7 +1363,7 @@ void LoweringImpl::gen(SwitchOp sw, ComponentBuilder& cb) {
       }
       return fullArmLayout;
     });
-    Value armValue = coerceTo(armContext->getValue(armLoc), armResultType);
+    armValue = coerceTo(armValue, armResultType);
     builder.create<ZStruct::YieldOp>(armLoc, armValue);
   }
 
