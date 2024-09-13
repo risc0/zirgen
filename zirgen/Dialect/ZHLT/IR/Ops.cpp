@@ -42,7 +42,7 @@ mlir::LogicalResult BackOp::verify() {
   }
 
   auto outType = getType();
-  if (!ZStruct::isRecordType(outType)) {
+  if (!ZStruct::isValidValueType(outType)) {
     return emitError() << outType << " must be a value type";
   }
   return success();

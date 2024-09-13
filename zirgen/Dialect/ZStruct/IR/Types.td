@@ -23,17 +23,6 @@ class ZStructType<string name, string typeMnemonic, list<Trait> traits = []>
   let mnemonic = typeMnemonic;
 }
 
-def StructType : ZStructType<"Struct", "struct", [
-    DeclareTypeInterfaceMethods<CodegenTypeInterface, ["emitTypeDefinition", "getTypeName", "emitLiteral"]>,
-    CodegenNeedsCloneType]> {
-  let summary = "struct type, representing a component";
-  let parameters = (ins
-      StringRefParameter<>: $id,
-      ArrayRefParameter<"ZStruct::FieldInfo", "struct fields">: $fields
-  );
-  let hasCustomAssemblyFormat = 1;
-}
-
 def LayoutType : ZStructType<"Layout", "layout", [
     DeclareTypeInterfaceMethods<CodegenTypeInterface, ["emitTypeDefinition", "getTypeName", "emitLiteral"]>,
     CodegenOnlyPassByReferenceType,
@@ -60,6 +49,18 @@ def LayoutType : ZStructType<"Layout", "layout", [
   ];
   let hasCustomAssemblyFormat = 1;
   let genVerifyDecl = 1;
+}
+
+def StructType : ZStructType<"Struct", "struct", [
+    DeclareTypeInterfaceMethods<CodegenTypeInterface, ["emitTypeDefinition", "getTypeName", "emitLiteral"]>,
+    CodegenNeedsCloneType]> {
+  let summary = "struct type, representing a component";
+  let parameters = (ins
+      StringRefParameter<>: $id,
+      ArrayRefParameter<"ZStruct::FieldInfo", "struct fields">: $fields,
+      "ZStruct::LayoutType": $layout
+  );
+  let hasCustomAssemblyFormat = 1;
 }
 
 def UnionType : ZStructType<"Union", "union"> {
@@ -127,7 +128,10 @@ def ZTap : ZStructType<"Tap", "tap", [DeclareTypeInterfaceMethods<CodegenTypeInt
 
 def ZirType : AnyTypeOf<[UnionType, StructType, LayoutType, ArrayType, LayoutArrayType,
                          Val, Ref, ZTap, String, VariadicPack],
-                         "A type that can participate in zirgen structures">;
+                         "A value type or layout type">;
+
+def IsValueType : AnyTypeOf<[UnionType, StructType, ArrayType, Val, String, VariadicPack],
+                            "A type specifying the value of a component">;
 
 def IsLayoutType : AnyTypeOf<[LayoutType, Ref, LayoutArrayType],
                              "A type specifying a layout for organizing registers">;

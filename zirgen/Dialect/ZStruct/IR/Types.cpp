@@ -83,6 +83,11 @@ mlir::Type StructType::parse(mlir::AsmParser& p) {
   if (p.parseKeywordOrString(&id) || p.parseComma()) {
     return Type();
   }
+  LayoutType layout;
+  p.parseOptionalType(layout);
+  if (layout && p.parseComma()) {
+    return Type();
+  }
   llvm::SmallVector<FieldInfo, 4> parameters;
   if (parseFields(p, parameters)) {
     return Type();
@@ -90,7 +95,7 @@ mlir::Type StructType::parse(mlir::AsmParser& p) {
   if (p.parseGreater()) {
     return Type();
   }
-  return StructType::get(p.getContext(), id, parameters);
+  return StructType::get(p.getContext(), id, parameters, layout);
 }
 
 mlir::Type LayoutType::parse(mlir::AsmParser& p) {
@@ -121,6 +126,10 @@ mlir::Type LayoutType::parse(mlir::AsmParser& p) {
 void StructType::print(mlir::AsmPrinter& p) const {
   p << "<";
   p.printKeywordOrString(getId());
+  if (getLayout()) {
+    p << ", ";
+    p.printType(getLayout());
+  }
   p << ", ";
   printFields(p, getFields());
   p << ">";
@@ -182,21 +191,17 @@ bool isLayoutType(mlir::Type container) {
   return !walked.wasInterrupted();
 }
 
-bool isRecordType(mlir::Type container) {
-  auto walked = container.walk<mlir::WalkOrder::PreOrder>([&](mlir::Type t) {
-    return llvm::TypeSwitch<mlir::Type, mlir::WalkResult>(t)
-        .Case<Zll::ValType, UnionType, ArrayType>([&](auto) { return mlir::WalkResult::advance(); })
-        .Case<StructType>([&](StructType t) {
-          if (t.getId() == "NondetReg") {
-            // Regs can contain a "@wrapped" referring to a register, which is otherwise disallowed.
-            return mlir::WalkResult::skip();
-          } else {
-            return mlir::WalkResult::advance();
-          }
-        })
-        .Default([&](auto) { return mlir::WalkResult::interrupt(); });
-  });
-  return !walked.wasInterrupted();
+bool isValidValueType(mlir::Type container) {
+  return llvm::TypeSwitch<mlir::Type, bool>(container)
+      .Case<Zll::ValType, ArrayType>([](auto) { return true; })
+      .Case<StructType, UnionType>([](auto t) {
+        for (auto field : t.getFields()) {
+          if (!isValidValueType(field.type))
+            return false;
+        }
+        return true;
+      })
+      .Default([](auto) { return false; });
 }
 
 CodegenIdent<IdentKind::Type> StructType::getTypeName(zirgen::codegen::CodegenEmitter& cg) const {
