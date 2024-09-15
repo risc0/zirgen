@@ -355,7 +355,7 @@ void Module::addCircuitDef(mlir::func::FuncOp funcOp,
     auto argName =
         llvm::dyn_cast_if_present<mlir::StringAttr>(funcOp.getArgAttr(argIdx, "zirgen.argName"));
     if (!argName)
-      continue;
+      argName = builder.getStringAttr("arg" + std::to_string(argIdx));
     auto arg = funcOp.getArgument(argIdx);
     auto ty = llvm::cast<Zll::BufferType>(arg.getType());
     // EDSL hardcodes the names and tap indicies of buffers
@@ -364,8 +364,8 @@ void Module::addCircuitDef(mlir::func::FuncOp funcOp,
                           .Case("code", 1)
                           .Case("data", 2)
                           .Default(std::nullopt);
-    buffers.push_back(builder.getAttr<Zll::BufferDefAttr>(
-        argName, ty.getKind(), ty.getSize(), mlir::TypeAttr::get(ty), regGroupId));
+    buffers.push_back(
+        builder.getAttr<Zll::BufferDefAttr>(argName, ty.getKind(), ty.getSize(), ty, regGroupId));
   }
 
   llvm::SmallVector<mlir::Attribute> steps;

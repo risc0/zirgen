@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
   Module module;
   auto f = module.addFunc<5>( //
       "fib",
-      {cbuf(3), gbuf(1), mbuf(1), gbuf(1), mbuf(1)},
+      {cbuf(3, "code"), gbuf(1, "out"), mbuf(1, "data"), gbuf(1, "mix"), mbuf(1, "accum")},
       [](Buffer control, Buffer out, Buffer data, Buffer mix, Buffer accum) {
         // Normal execution
         Register val = data[0];

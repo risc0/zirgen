@@ -54,8 +54,10 @@ void optimizeSplit(ModuleOp module, unsigned stage, const StageOptions& opts) {
   }
 }
 
-void optimizePoly(ModuleOp module) {
+void optimizePoly(ModuleOp module, const EmitCodeOptions& opts) {
   PassManager pm(module.getContext());
+  if (opts.addExtraPolyPasses)
+    opts.addExtraPolyPasses(pm);
   OpPassManager& opm = pm.nest<func::FuncOp>();
   opm.addPass(Zll::createMakePolynomialPass());
   opm.addPass(createCanonicalizerPass());
@@ -94,7 +96,8 @@ llvm::StringRef getOutputDir() {
 
 class FileEmitter {
 public:
-  FileEmitter(StringRef path) : path(path) {}
+  FileEmitter(StringRef path, const EmitCodeOptions& emitCodeOpts)
+      : path(path), emitCodeOpts(emitCodeOpts) {}
 
   void emitRustStep(const std::string& stage, func::FuncOp func) {
     auto ofs = openOutputFile("rust_step_" + stage + ".cpp");
@@ -160,7 +163,7 @@ public:
   void emitLayout(mlir::ModuleOp op, codegen::LanguageSyntax* lang, StringRef suffix) {
     codegen::CodegenOptions opts;
     opts.lang = lang;
-    opts.zkpLayoutCompat = true;
+    opts.zkpLayoutCompat = emitCodeOpts.zkpLayoutCompat;
     auto ofs = openOutputFile(("layout" + suffix).str());
     codegen::CodegenEmitter emitter(opts, ofs.get(), op->getContext());
     op.walk([&](ZStruct::GlobalConstOp constOp) {
@@ -171,6 +174,7 @@ public:
 
 private:
   std::string path;
+  const EmitCodeOptions& emitCodeOpts;
 
   std::unique_ptr<llvm::raw_ostream> openOutputFile(const std::string& name) {
     std::string filename = path + "/" + name;
@@ -188,7 +192,7 @@ void registerCodegenCLOptions() {
 }
 
 void emitCode(ModuleOp module, const EmitCodeOptions& opts) {
-  FileEmitter emitter(getOutputDir());
+  FileEmitter emitter(getOutputDir(), opts);
   optimizeSimple(module);
   emitter.emitAllLayouts(module);
 
@@ -203,19 +207,23 @@ void emitCode(ModuleOp module, const EmitCodeOptions& opts) {
 
     auto moduleCopy = dyn_cast<ModuleOp>(module->clone());
 
-    optimizeSplit(moduleCopy, stage.index(), stageOpts);
-    moduleCopy.walk([&](func::FuncOp func) {
-      std::string outputFile;
-      if (stageOpts.outputFile.empty())
-        outputFile = step.getName();
-      else
-        outputFile = stageOpts.outputFile;
-      emitter.emitRustStep(outputFile, func);
-      if (outputFile == "compute_accum" || outputFile == "verify_accum") {
-        emitter.emitGpuStep(outputFile, ".metal", func);
-      }
-      emitter.emitGpuStep(outputFile, ".cu", func);
-    });
+    if (opts.splitUsingBarrier)
+      optimizeSplit(moduleCopy, stage.index(), stageOpts);
+    auto func = moduleCopy.lookupSymbol<func::FuncOp>(step.getStepFunc());
+    if (!func) {
+      llvm::errs() << "Unable to find step function " << step.getStepFunc() << "\n";
+      exit(1);
+    }
+    std::string outputFile;
+    if (stageOpts.outputFile.empty())
+      outputFile = step.getName();
+    else
+      outputFile = stageOpts.outputFile;
+    emitter.emitRustStep(outputFile, func);
+    if (outputFile == "compute_accum" || outputFile == "verify_accum") {
+      emitter.emitGpuStep(outputFile, ".metal", func);
+    }
+    emitter.emitGpuStep(outputFile, ".cu", func);
   }
 
   for (auto k : opts.stages.keys()) {
@@ -225,7 +233,7 @@ void emitCode(ModuleOp module, const EmitCodeOptions& opts) {
     }
   }
 
-  optimizePoly(module);
+  optimizePoly(module, opts);
   ProtocolInfo protocolInfo;
   strncpy(protocolInfo.data(), circuitDef.getCircuitInfo().data(), PROTOCOL_INFO_LEN);
   protocolInfo[PROTOCOL_INFO_LEN] = '\0';

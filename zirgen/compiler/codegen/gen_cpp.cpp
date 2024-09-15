@@ -111,8 +111,13 @@ struct CppStreamEmitterImpl : CppStreamEmitter {
     ofs << "    llvm::ArrayRef<Val> u,\n";
     ofs << "    llvm::ArrayRef<Val> out,\n";
     ofs << "    llvm::ArrayRef<Val> mix) const {\n";
-    names[func.getArgument(1)] = "out";
-    names[func.getArgument(3)] = "mix";
+
+    for (auto [argNum, arg] : llvm::enumerate(func.getArguments())) {
+      if (auto name = func.getArgAttrOfType<StringAttr>(argNum, "zirgen.argName")) {
+        names[arg] = name.str();
+      }
+    }
+
     indent++;
     for (Operation& op : func.front().without_terminator()) {
       emitGeneric(prefix, &op);
@@ -192,10 +197,22 @@ struct CppStreamEmitterImpl : CppStreamEmitter {
     ofs << "  MixState poly_edsl(llvm::ArrayRef<Val> u, llvm::ArrayRef<Val> out, "
            "llvm::ArrayRef<Val>  mix) "
            "const override;\n";
-    size_t out_size = func.getArgument(1).getType().dyn_cast<BufferType>().getSize();
-    size_t mix_size = func.getArgument(3).getType().dyn_cast<BufferType>().getSize();
-    ofs << "  size_t out_size() const override { return " << out_size << "; }\n";
-    ofs << "  size_t mix_size() const override { return " << mix_size << "; }\n";
+
+    auto circuitDef = CircuitDefOp::lookupInModule(func->getParentOfType<mlir::ModuleOp>());
+
+    for (auto [idx, buf] : llvm::enumerate(circuitDef.getBuffers().getAsRange<BufferDefAttr>())) {
+      auto bufType = llvm::cast<BufferType>(buf.getType());
+      if (bufType.getKind() == BufferKind::Global) {
+        auto name = buf.getName();
+        ofs << "  size_t " << name << "_size() const";
+        if (name == "mix" || name == "out") {
+          // TODO: genericize interface
+          ofs << " override";
+        }
+        ofs << " { return " << bufType.getSize() << "; }\n";
+      }
+    }
+
     ofs << "};\n\n";
     ofs << "}  // namespace circuit::" << func.getName() << "\n";
   }

@@ -35,6 +35,7 @@ std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateValidityTapsP
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateAccumPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateGlobalsPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createElideTrivialStructsPass();
+std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createExpandToPlainZllPass();
 
 // Generate the code for registering passes.
 #define GEN_PASS_REGISTRATION

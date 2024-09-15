@@ -110,6 +110,10 @@ void CompContext::addBuffer(llvm::StringRef name, Buffer buf) {
   auto arg = mlir::cast<mlir::BlockArgument>(bufVal);
   auto argNum = arg.getArgNumber();
   auto funcOp = mlir::cast<mlir::func::FuncOp>(arg.getOwner()->getParentOp());
+
+  if (auto oldName = funcOp.getArgAttrOfType<mlir::StringAttr>(argNum, "zirgen.argName")) {
+    assert(oldName == name && "Argument already defined as different name");
+  }
   funcOp.setArgAttr(argNum, "zirgen.argName", mlir::StringAttr::get(bufVal.getContext(), name));
 }
 

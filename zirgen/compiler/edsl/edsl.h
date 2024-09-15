@@ -144,23 +144,24 @@ struct ArgumentInfo {
   ArgumentType type;
   Zll::BufferKind kind;
   size_t size;
+  std::string name;
   size_t degree;
 };
 
-inline ArgumentInfo cbuf(size_t size, size_t degree = 1) {
-  return ArgumentInfo{ArgumentType::BUFFER, Zll::BufferKind::Constant, size, degree};
+inline ArgumentInfo cbuf(size_t size, std::string name = {}, size_t degree = 1) {
+  return ArgumentInfo{ArgumentType::BUFFER, Zll::BufferKind::Constant, size, name, degree};
 }
 
-inline ArgumentInfo mbuf(size_t size, size_t degree = 1) {
-  return ArgumentInfo{ArgumentType::BUFFER, Zll::BufferKind::Mutable, size, degree};
+inline ArgumentInfo mbuf(size_t size, std::string name = {}, size_t degree = 1) {
+  return ArgumentInfo{ArgumentType::BUFFER, Zll::BufferKind::Mutable, size, name, degree};
 }
 
-inline ArgumentInfo gbuf(size_t size, size_t degree = 1) {
-  return ArgumentInfo{ArgumentType::BUFFER, Zll::BufferKind::Global, size, degree};
+inline ArgumentInfo gbuf(size_t size, std::string name = {}, size_t degree = 1) {
+  return ArgumentInfo{ArgumentType::BUFFER, Zll::BufferKind::Global, size, name, degree};
 }
 
-inline ArgumentInfo ioparg() {
-  return ArgumentInfo{ArgumentType::IOP, Zll::BufferKind::Mutable, 0, 0};
+inline ArgumentInfo ioparg(std::string name = {}) {
+  return ArgumentInfo{ArgumentType::IOP, Zll::BufferKind::Mutable, 0, name, 0};
 }
 
 class Module {
@@ -180,7 +181,15 @@ public:
       vargs[i] = builder.getBlock()->getArgument(i);
     }
     std::apply(func, vargs);
-    return endFunc(loc);
+    auto f = endFunc(loc);
+
+    for (size_t i = 0; i < N; i++) {
+      std::string argName = args[i].name;
+      if (!argName.empty()) {
+        f.setArgAttr(i, "zirgen.argName", builder.getStringAttr(argName));
+      }
+    }
+    return f;
   }
   // HACK: Evaluation order of arguments is unspecified in c++ and
   // different compilers do it differently. We want our circuit

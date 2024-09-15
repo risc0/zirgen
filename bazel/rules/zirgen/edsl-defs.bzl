@@ -36,7 +36,7 @@ def _impl(ctx):
     ctx.actions.run(
         mnemonic = "CodegenCircuits",
         executable = ctx.executable.binary,
-        arguments = [x.path for x in outs],
+        arguments = ctx.attr.extra_args + [x.path for x in outs],
         inputs = ctx.files.data,
         outputs = outs,
         tools = [ctx.executable.binary],
@@ -58,27 +58,29 @@ _build_circuit_rule = rule(
             allow_files = True,
         ),
         "outs": attr.output_list(mandatory = True),
+        "extra_args": attr.string_list(),
     },
 )
 
-def build_circuit(name, srcs, deps = [], outs = None):
-    bin = name + "_gen"
-
+def build_circuit(name, srcs = [], bin = None, deps = [], outs = None, data = [], extra_args = []):
     if outs == None:
         outs = DEFAULT_OUTS
 
-    native.cc_binary(
-        name = bin,
-        srcs = srcs,
-        deps = deps + [
-            "//zirgen/compiler/edsl",
-            "//zirgen/compiler/codegen",
-        ],
-    )
+    if not bin:
+        bin = name + "_gen"
+        native.cc_binary(
+            name = bin,
+            srcs = srcs,
+            deps = deps + [
+                "//zirgen/compiler/edsl",
+                "//zirgen/compiler/codegen",
+            ],
+        )
 
     _build_circuit_rule(
         name = name,
         binary = bin,
-        data = ["//zirgen/compiler/codegen:data"],
+        data = ["//zirgen/compiler/codegen:data"] + data,
         outs = outs,
+        extra_args = extra_args,
     )

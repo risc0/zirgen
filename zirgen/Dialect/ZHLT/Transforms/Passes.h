@@ -26,6 +26,8 @@ std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createHoistAllocsPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createStripTestsPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateStepsPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createStripAliasLayoutOpsPass();
+std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createExtractConstraintsPass();
+std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createMergeStepsPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>>
 createCircuitDefPass(const CircuitDefOptions& = {});
 

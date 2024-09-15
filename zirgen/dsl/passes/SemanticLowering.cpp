@@ -674,6 +674,57 @@ struct GenerateCheckPass : public GenerateCheckBase<GenerateCheckPass> {
   }
 };
 
+struct EvaluateLogString : public OpRewritePattern<Zll::ExternOp> {
+  using OpRewritePattern::OpRewritePattern;
+  LogicalResult matchAndRewrite(Zll::ExternOp op, PatternRewriter& rewriter) const final {
+    if (op.getName() != "Log") {
+      return failure();
+    }
+
+    auto fmt = op.getIn()[0].getDefiningOp<Zll::StringOp>();
+    if (!fmt)
+      return failure();
+
+    auto pack = op.getIn()[1].getDefiningOp<Zll::VariadicPackOp>();
+    if (!pack)
+      return failure();
+
+    // zirgen uses a special string type to generate the log
+    // format, so translate it into something codegen
+    // understands.  TODO: Lose this kludge
+    rewriter.modifyOpInPlace(op, [&]() {
+      op.setName("log");
+      op.setExtra(fmt.getValue());
+      op.getInMutable().assign(pack.getIn());
+    });
+    return success();
+  }
+};
+
+struct ExpandToPlainZllPass : public ExpandToPlainZllBase<ExpandToPlainZllPass> {
+  void runOnOperation() override {
+    auto* ctx = &getContext();
+
+    RewritePatternSet patterns(ctx);
+    ZStruct::SwitchOp::getCanonicalizationPatterns(patterns, ctx);
+    ZStruct::getUnrollPatterns(patterns, ctx);
+    Zll::EqualZeroOp::getCanonicalizationPatterns(patterns, ctx);
+    patterns.insert<InlineCalls>(ctx);
+    patterns.insert<SplitSwitchArms>(ctx);
+    patterns.insert<ReplaceYieldWithTerminator>(ctx);
+    patterns.insert<UnravelSwitchPackResult>(ctx);
+    patterns.insert<UnravelSwitchArrayResult>(ctx);
+    patterns.insert<UnravelSwitchValResult>(ctx);
+    patterns.insert<EvaluateLogString>(ctx);
+    GreedyRewriteConfig config;
+    config.maxIterations = 1000;
+    if (applyPatternsAndFoldGreedily(getOperation(), std::move(patterns), config).failed()) {
+      getOperation()->emitError("Could not unravel switch ops");
+      signalPassFailure();
+    }
+  }
+};
+
 struct GenerateValidityRegsPass : public GenerateValidityRegsBase<GenerateValidityRegsPass> {
   Value runOnBlock(Location loc,
                    Block& block,
@@ -894,6 +945,10 @@ std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateValidityRegsP
 
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateValidityTapsPass() {
   return std::make_unique<GenerateValidityTapsPass>();
+}
+
+std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createExpandToPlainZllPass() {
+  return std::make_unique<ExpandToPlainZllPass>();
 }
 
 } // namespace dsl

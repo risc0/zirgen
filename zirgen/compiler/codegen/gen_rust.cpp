@@ -83,11 +83,9 @@ public:
     }
 
     FileContext ctx;
-    ctx.vars[func.getArgument(0)] = "args[0]";
-    ctx.vars[func.getArgument(1)] = "args[1]";
-    ctx.vars[func.getArgument(2)] = "args[2]";
-    ctx.vars[func.getArgument(3)] = "args[3]";
-    ctx.vars[func.getArgument(4)] = "args[4]";
+    for (auto [idx, arg] : llvm::enumerate(func.getArguments())) {
+      ctx.vars[arg] = llvm::formatv("args[{0}]", idx).str();
+    }
 
     list lines;
     emitStepBlock(func.front(), ctx, lines, /*depth=*/0, isRecursion);
@@ -109,11 +107,9 @@ public:
     mustache tmpl = openTemplate("zirgen/compiler/codegen/cpp/poly.tmpl.cpp");
 
     FileContext ctx;
-    ctx.vars[func.getArgument(0)] = "args[0]";
-    ctx.vars[func.getArgument(1)] = "args[1]";
-    ctx.vars[func.getArgument(2)] = "args[2]";
-    ctx.vars[func.getArgument(3)] = "args[3]";
-    ctx.vars[func.getArgument(4)] = "args[4]";
+    for (auto [idx, arg] : llvm::enumerate(func.getArguments())) {
+      ctx.vars[arg] = llvm::formatv("args[{0}]", idx).str();
+    }
 
     list lines;
     for (Operation& op : func.front().without_terminator()) {
@@ -394,8 +390,16 @@ private:
 
   std::string emitPolynomialAttr(Operation* op, const char* attrName) {
     auto attr = op->getAttrOfType<PolynomialAttr>(attrName);
-    assert(attr.size() == 1 && "not yet unsupported");
-    return std::to_string(attr[0]);
+    if (attr.size() == 1) {
+      return std::to_string(attr[0]);
+    } else {
+      std::string out;
+      llvm::raw_string_ostream os(out);
+      os << "[";
+      llvm::interleaveComma(attr.asArrayRef(), os);
+      os << "]";
+      return out;
+    }
   }
 
   std::string emitOperand(Operation* op, Vars& vars, size_t idx) {
@@ -460,8 +464,15 @@ public:
     mustache tmpl = openTemplate("zirgen/compiler/codegen/rust/poly_ext_def.tmpl.rs");
 
     PolyContext ctx;
-    ctx.args.vars[func.getArgument(1)] = 0;
-    ctx.args.vars[func.getArgument(3)] = 1;
+
+    size_t globalIdx = 0;
+    for (auto arg : func.getArguments()) {
+      if (auto bufType = llvm::dyn_cast<BufferType>(arg.getType())) {
+        if (bufType.getKind() == BufferKind::Global) {
+          ctx.args.vars[arg] = globalIdx++;
+        }
+      }
+    }
 
     std::string block = emitPolyExtBlock(func.front(), ctx);
     Value ret = func.front().getTerminator()->getOperand(0);
@@ -522,8 +533,21 @@ public:
   void emitInfo(func::FuncOp func, ProtocolInfo info) override {
     mustache tmpl = openTemplate("zirgen/compiler/codegen/rust/info.tmpl.rs");
 
-    size_t out_size = func.getArgument(1).getType().dyn_cast<BufferType>().getSize();
-    size_t mix_size = func.getArgument(3).getType().dyn_cast<BufferType>().getSize();
+    auto circuitDef = CircuitDefOp::lookupInModule(func->getParentOfType<mlir::ModuleOp>());
+    size_t out_size = 0;
+    size_t mix_size = 0;
+
+    for (auto [idx, buf] : llvm::enumerate(circuitDef.getBuffers().getAsRange<BufferDefAttr>())) {
+      auto bufType = llvm::cast<BufferType>(buf.getType());
+      if (bufType.getKind() == BufferKind::Global) {
+        if (idx == 1) {
+          out_size = bufType.getSize();
+        }
+        if (idx == 3) {
+          mix_size = bufType.getSize();
+        }
+      }
+    }
 
     MixPowAnalysis mixPows(func);
     list poly_mix_powers;

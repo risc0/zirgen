@@ -48,6 +48,7 @@ struct GenerateCheckLayoutPass : public GenerateCheckLayoutBase<GenerateCheckLay
 
     RewritePatternSet patterns(ctx);
     patterns.insert<EraseOp<ZStruct::LoadOp>>(ctx);
+    patterns.insert<EraseOp<Zll::NondetOp>>(ctx);
     patterns.insert<EraseOp<ZStruct::StoreOp>>(ctx);
     patterns.insert<EraseOp<Zll::ExternOp>>(ctx);
     patterns.insert<EraseOp<Zll::EqualZeroOp>>(ctx);

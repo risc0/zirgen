@@ -63,7 +63,11 @@ def StripAliasLayoutOps : Pass<"inline-layout", "mlir::ModuleOp"> {
 }
 
 def CircuitDef : Pass<"circuit-def", "mlir::ModuleOp"> {
-  let summary = "Create a global Zll::CircuitDefOp for this module describing the circuit present";
+  let summary = "Create a global Zll::CircuitDefOp for this module";
+  let description = [{
+     This CircuitDefOp describes the circuit present, all its buffers, and all its steps.  All
+     the step operations are convergted to mlir::FuncOps so that Zll can understand them
+  }];
   let constructor = "zirgen::Zhlt::createCircuitDefPass()";
   let options = [
     Option<"circuitInfo", "circuit-info", "std::string",
@@ -71,6 +75,29 @@ def CircuitDef : Pass<"circuit-def", "mlir::ModuleOp"> {
            "Circuit identification string">
   ];
 
+  let dependentDialects = ["zirgen::Zhlt::ZhltDialect", "zirgen::Zll::ZllDialect"];
+}
+
+def ExtractConstraints : Pass<"extract-constraints", "mlir::ModuleOp"> {
+  let summary = "Remove all operations not needed to calculate constraints (Zll::EqualZeroOp)";
+  let constructor = "zirgen::Zhlt::createCircuitDefPass()";
+  let options = [
+    Option<"circuitInfo", "circuit-info", "std::string",
+           /*default=*/"\"UNKNOWN\"",
+           "Circuit identification string">
+  ];
+
+  let dependentDialects = ["zirgen::Zhlt::ZhltDialect", "zirgen::Zll::ZllDialect"];
+}
+
+def MergeSteps : Pass<"merge-steps", "mlir::ModuleOp"> {
+  let summary = "Create a function that executes all steps";
+  let description = [{
+     This new function takes all buffers defined in the CircuitDefOp as input, and creates calls all
+     step functions on them.  This can be used to get a constraint set that includes constraints
+     from all steps.
+  }];
+  let constructor = "zirgen::Zhlt::createMergeStepsPass()";
   let dependentDialects = ["zirgen::Zhlt::ZhltDialect", "zirgen::Zll::ZllDialect"];
 }
 

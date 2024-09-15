@@ -32,11 +32,13 @@ gentbl_cc_library(
 cc_library(
     name = "passes",
     srcs = [
+        "CircuitDef.cpp",
+        "ExtractConstraints.cpp",
         "GenerateSteps.cpp",
         "HoistAllocs.cpp",
+        "MergeSteps.cpp",
         "PassDetail.h",
         "StripAliasLayoutOps.cpp",
-        "CircuitDef.cpp",
         "StripTests.cpp",
     ],
     hdrs = [

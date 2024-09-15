@@ -82,7 +82,7 @@ def BufferDef : ZllAttr<"BufferDef", "bufferDef"> {
       StringRefParameter<"">: $name,
       "BufferKind": $kind,
       "size_t": $size,
-      "mlir::TypeAttr": $type,
+      "mlir::Type": $type,
       OptionalParameter<"std::optional<size_t>">: $regGroupId
       );
   let assemblyFormat = [{ $name `:` $kind `,` $size `,` $type (`,` `regGroupId` `=` $regGroupId^)? }];
@@ -94,7 +94,7 @@ def StepDef : ZllAttr<"StepDef", "stepDef"> {
   let summary = "Information on a step that's global to a circuit";
   let parameters = (ins
       StringRefParameter<"">: $name,
-      "mlir::FlatSymbolRefAttr": $stepFunc);
+      OptionalParameter<"mlir::FlatSymbolRefAttr">: $stepFunc);
   let assemblyFormat = [{ $name `:` $stepFunc }];
 }
 

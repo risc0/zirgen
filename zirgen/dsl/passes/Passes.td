@@ -147,4 +147,10 @@ def ElideTrivialStructs : Pass<"elide-trivial-structs", "mlir::ModuleOp"> {
   let dependentDialects = ["zirgen::ZStruct::ZStructDialect"];
 }
 
+def ExpandToPlainZll : Pass<"unravel-switch", "mlir::ModuleOp"> {
+  let summary = "Unravels and expands ZHLT and ZStruct operations into plain flat Zll";
+  let constructor = "zirgen::dsl::createExpandToPlainZllPass()";
+  let dependentDialects = ["zirgen::ZStruct::ZStructDialect"];
+}
+
 #endif // ZIRGEN_PASSES

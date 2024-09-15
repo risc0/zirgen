@@ -1,0 +1,25 @@
+// Contains all the constructs that have potential problems when translating to EDSL codegen
+
+// RUN: mkdir %s-tmp; gen_zirgen %s %s-tmp/x
+
+extern GetCycle() : Val;
+
+argument ArgReg(c: Val, v: Val) {
+  c := NondetReg(c);
+  v := NondetReg(v);
+}
+
+component Major1(v: Val) {
+  ArgReg(1, v);
+}
+
+component Major2(v: Val) {
+  ArgReg(-1, v);
+}
+
+component Top() {
+  cycle := NondetReg(GetCycle());
+  Log("cycle = %x %x", cycle, cycle);
+  major := NondetReg(cycle & 1);
+  [1 - major, major] -> (Major1(cycle), Major2(cycle - 1));
+}

@@ -66,6 +66,16 @@ struct StageOptions {
 struct EmitCodeOptions {
   // Stages and their extra passes, indexed by stage name
   llvm::StringMap<StageOptions> stages;
+
+  // If true, use BarrierOp to split out functions into phases.
+  // Otherwise, functions are already split.
+  bool splitUsingBarrier = true;
+
+  // If true, emit layout in a ZKP-compatible format
+  bool zkpLayoutCompat = true;
+
+  // Passes added by this function will be run before generating the validity polynomial.
+  std::function<void(mlir::PassManager& pm)> addExtraPolyPasses;
 };
 
 namespace codegen {

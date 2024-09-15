@@ -71,6 +71,7 @@ int main(int argc, char* argv[]) {
 
   zirgen::registerZirgenCommon();
   zirgen::registerRunTestsCLOptions();
+  zirgen::registerCodegenCLOptions();
 
   cl::ParseCommandLineOptions(argc, argv, "zirgen compiler\n");
 
@@ -117,16 +118,28 @@ int main(int argc, char* argv[]) {
   pm.enableVerifier(true);
   zirgen::addAccumAndGlobalPasses(pm);
   pm.addPass(zirgen::ZStruct::createOptimizeLayoutPass());
+
   pm.addPass(mlir::createCanonicalizerPass());
   pm.addPass(mlir::createCSEPass());
-  pm.addPass(zirgen::Zhlt::createStripTestsPass());
   zirgen::addTypingPasses(pm);
 
   pm.addPass(zirgen::dsl::createElideTrivialStructsPass());
-  pm.addPass(zirgen::Zhlt::createCircuitDefPass({.circuitInfo = circuitInfo}));
+
+  // Get rid of everything that edsl codegen doesn't understand
+  pm.addPass(zirgen::Zhlt::createStripTestsPass());
   pm.addPass(mlir::createInlinerPass());
+  pm.addPass(ZStruct::createUnrollPass());
+  pm.addPass(zirgen::dsl::createExpandToPlainZllPass());
+  pm.addPass(mlir::createCSEPass());
+  pm.addPass(mlir::createSymbolDCEPass());
+
+  pm.addPass(ZStruct::createInlineLayoutPass());
+  pm.addPass(zirgen::Zhlt::createCircuitDefPass({.circuitInfo = circuitInfo}));
+
+  pm.addPass(zirgen::ZStruct::createExpandLayoutPass());
   pm.addPass(mlir::createCanonicalizerPass());
   pm.addPass(mlir::createCSEPass());
+  pm.addPass(mlir::createSymbolPrivatizePass(/*excludeSymbols=*/{"exec", "compute_accum"}));
   pm.addPass(mlir::createSymbolDCEPass());
 
   if (failed(pm.run(typedModule.value()))) {
@@ -135,74 +148,27 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
+  if (failed(zirgen::checkDegreeExceeded(*typedModule, maxDegree))) {
+    llvm::errs() << "Degree exceeded; aborting\n";
+    return 1;
+  }
+
   typedModule->print(llvm::outs());
 
-  /*
-    if (failed(zirgen::checkDegreeExceeded(*typedModule, maxDegree))) {
-      llvm::errs() << "Degree exceeded; aborting\n";
-      return 1;
-    }
+  zirgen::EmitCodeOptions opts;
+  opts.splitUsingBarrier = false;
+  opts.zkpLayoutCompat = false;
+  opts.addExtraPolyPasses = [&](mlir::PassManager& pm) {
+    pm.addPass(zirgen::Zhlt::createMergeStepsPass());
+    pm.addPass(mlir::createPrintIRPass());
+    pm.addPass(mlir::createInlinerPass());
+    pm.addPass(zirgen::Zhlt::createExtractConstraintsPass());
+    pm.addPass(mlir::createCanonicalizerPass());
+    pm.addPass(mlir::createSymbolDCEPass());
+    pm.addPass(mlir::createPrintIRPass());
+  };
 
-  */
+  zirgen::emitCode(*typedModule, opts);
 
-  /*
-    pm.addPass(zirgen::ZStruct::createExpandLayoutPass());
-
-    if (inlineLayout) {
-    }
-
-
-    if (failed(pm.run(typedModule.value()))) {
-      llvm::errs() << "an internal compiler error occurred while lowering this module:\n";
-      typedModule->print(llvm::errs());
-      return 1;
-    }
-
-    if (emitAction == Action::PrintLayoutType) {
-      if (auto topFunc = typedModule->lookupSymbol<zirgen::Zhlt::ExecFuncOp>("exec$Top")) {
-        std::stringstream ss;
-        mlir::Type lt = topFunc.getLayoutType();
-        zirgen::layout::viz::layoutSizes(lt, ss);
-        llvm::outs() << ss.str();
-        return 0;
-      } else {
-        llvm::errs() << "error: circuit contains no component named `Top`\n";
-        return 1;
-      }
-    } else if (emitAction == Action::PrintLayoutAttr) {
-      std::stringstream ss;
-      zirgen::layout::viz::layoutAttrs(*typedModule, ss);
-      llvm::outs() << ss.str();
-      return 0;
-    } else if (emitAction == Action::PrintZStruct) {
-      typedModule->print(llvm::outs());
-      return 0;
-    }
-
-    if (emitAction == Action::PrintStats) {
-      zirgen::dsl::printStats(*typedModule);
-      return 0;
-    }
-
-    if (doTest) {
-      return zirgen::runTests(*typedModule);
-    }
-
-    if (emitAction == Action::PrintRust || emitAction == Action::PrintCpp) {
-      codegen::CodegenOptions codegenOpts;
-      static codegen::RustLanguageSyntax kRust;
-      static codegen::CppLanguageSyntax kCpp;
-
-      codegenOpts.lang = (emitAction == Action::PrintRust)
-                             ? static_cast<codegen::LanguageSyntax*>(&kRust)
-                             : static_cast<codegen::LanguageSyntax*>(&kCpp);
-
-      zirgen::codegen::CodegenEmitter emitter(codegenOpts, &llvm::outs(), &context);
-      if (zirgen::Zhlt::emitModule(*typedModule, emitter).failed()) {
-        llvm::errs() << "Failed to emit circuit\n";
-        return 1;
-      }
-    }
-
-    return 0; */
+  return 0;
 }

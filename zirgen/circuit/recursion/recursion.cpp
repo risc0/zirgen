@@ -77,5 +77,8 @@ int main(int argc, char* argv[]) {
     opm.addPass(Zll::createDropConstraintsPass());
   };
 
+  // TODO: remove this when we're sure it's ok to run additional optimization passes.
+  opts.skipAdditionalPolyOptimization = true;
+
   emitCode(module.getModule(), opts);
 }
