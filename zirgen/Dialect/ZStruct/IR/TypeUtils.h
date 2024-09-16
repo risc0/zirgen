@@ -31,4 +31,7 @@ ZStruct::RefType getExtRefType(MLIRContext* ctx);
 
 Zll::ValType getFieldTypeOfValType(Type valType);
 
+// Returns the layout type corresponding to the given value type
+Type getLayoutType(Type valueType);
+
 } // namespace zirgen::ZStruct

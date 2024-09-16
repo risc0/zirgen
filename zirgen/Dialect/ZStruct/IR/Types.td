@@ -83,6 +83,9 @@ def ArrayType : ZStructType<"Array", "array", [
   );
   let assemblyFormat = "`<`$element `,` $size `>`";
   let extraClassDeclaration = [{
+    mlir::Type getElementLayout();
+    ZStruct::LayoutArrayType getLayoutArray();
+
     mlir::Value materialize(mlir::Location loc, llvm::ArrayRef<mlir::Value> elements, mlir::OpBuilder& builder);
   }];
 }
