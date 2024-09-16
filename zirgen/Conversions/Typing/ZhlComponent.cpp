@@ -1173,7 +1173,7 @@ void LoweringImpl::gen(SwitchOp sw, ComponentBuilder& cb) {
     Value saveArray = muxContext.addLayoutMember(sw.getLoc(), "@selector", selectorSaveType);
     // Alias them to the actual selectors
     Value selectorArray = asLayout(sw.getSelector());
-    while(!selectorArray.getType().isa<LayoutArrayType>()) {
+    while (!selectorArray.getType().isa<LayoutArrayType>()) {
       selectorArray = builder.create<ZStruct::LookupOp>(sw.getLoc(), selectorArray, "@super");
     }
     for (size_t i = 0; i < size; i++) {
