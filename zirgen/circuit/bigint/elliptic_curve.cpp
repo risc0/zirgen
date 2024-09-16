@@ -89,6 +89,7 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   Value lambda_check = builder.create<BigInt::MulOp>(loc, lambda, x_diff);
   lambda_check = builder.create<BigInt::SubOp>(loc, lambda_check, y_diff);
   lambda_check = builder.create<BigInt::AddOp>(loc, lambda_check, prime);
+  lambda_check = builder.create<BigInt::AddOp>(loc, lambda_check, prime);
   Value k_lambda = builder.create<BigInt::NondetQuotOp>(loc, lambda_check, prime);
   lambda_check = builder.create<BigInt::SubOp>(loc, lambda_check, builder.create<BigInt::MulOp>(loc, k_lambda, prime));
   builder.create<BigInt::EqualZeroOp>(loc, lambda_check);
@@ -390,7 +391,7 @@ void makeECDSAVerify(
   auto order_const = builder.create<BigInt::ConstOp>(loc, order_attr);
 
   // TODO: Think through if we need to validate any of this (e.g. the orders, points being on curves)
-  auto curve = std::make_shared<WeierstrassCurve>(curve_a, curve_b, prime);
+  auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt base_pt(base_pt_X, base_pt_Y, curve);
   AffinePt pub_key(pub_key_X, pub_key_Y, curve);
   AffinePt arbitrary(arbitrary_X, arbitrary_Y, curve);
@@ -415,7 +416,7 @@ void makeECAffineAddTest(
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 4, true);
   auto yR = builder.create<BigInt::DefOp>(loc, bits, 5, true);
 
-  auto curve = std::make_shared<WeierstrassCurve>(curve_a, curve_b, prime);
+  auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt lhs(xP, yP, curve);
   AffinePt rhs(xQ, yQ, curve);
   AffinePt expected(xR, yR, curve);
@@ -435,7 +436,7 @@ void makeECAffineDoubleTest(
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto yR = builder.create<BigInt::DefOp>(loc, bits, 3, true);
-  auto curve = std::make_shared<WeierstrassCurve>(curve_a, curve_b, prime);
+  auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt inp(xP, yP, curve);
   AffinePt expected(xR, yR, curve);
   auto result = doub(builder, loc, inp);
@@ -477,7 +478,7 @@ void makeECAffineMultiplyTest(
   builder.create<BigInt::EqualZeroOp>(loc, yR_diff);
   // TODO: End of sanity test section
 
-  auto curve = std::make_shared<WeierstrassCurve>(curve_a, curve_b, prime);
+  auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt inp(xP, yP, curve);
   AffinePt arb(xArb, yArb, curve);
   AffinePt expected(xR, yR, curve);
@@ -498,7 +499,7 @@ void makeECAffineNegateTest(
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto yR = builder.create<BigInt::DefOp>(loc, bits, 3, true);
-  auto curve = std::make_shared<WeierstrassCurve>(curve_a, curve_b, prime);
+  auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt inp(xP, yP, curve);
   AffinePt expected(xR, yR, curve);
   auto result = neg(builder, loc, inp);
@@ -519,7 +520,7 @@ void makeECAffineSubtractTest(
   auto yQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 4, true);
   auto yR = builder.create<BigInt::DefOp>(loc, bits, 5, true);
-  auto curve = std::make_shared<WeierstrassCurve>(curve_a, curve_b, prime);
+  auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt lhs(xP, yP, curve);
   AffinePt rhs(xQ, yQ, curve);
   AffinePt expected(xR, yR, curve);
@@ -539,7 +540,7 @@ void makeECAffineValidatePointsEqualTest(
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto yQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
-  auto curve = std::make_shared<WeierstrassCurve>(curve_a, curve_b, prime);
+  auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt lhs(xP, yP, curve);
   AffinePt rhs(xQ, yQ, curve);
   lhs.validate_equal(builder, loc, rhs);
@@ -564,7 +565,7 @@ void makeRepeatedECAffineAddTest(mlir::OpBuilder builder,
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 4, true);
   auto yR = builder.create<BigInt::DefOp>(loc, bits, 5, true);
 
-  auto curve = std::make_shared<WeierstrassCurve>(curve_a, curve_b, prime);
+  auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt lhs(xP, yP, curve);
   AffinePt rhs(xQ, yQ, curve);
   AffinePt expected(xR, yR, curve);
@@ -590,7 +591,7 @@ void makeRepeatedECAffineDoubleTest(mlir::OpBuilder builder,
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto yR = builder.create<BigInt::DefOp>(loc, bits, 3, true);
 
-  auto curve = std::make_shared<WeierstrassCurve>(curve_a, curve_b, prime);
+  auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt inp(xP, yP, curve);
   AffinePt expected(xR, yR, curve);
   auto result = doub(builder, loc, inp);

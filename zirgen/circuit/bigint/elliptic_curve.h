@@ -17,7 +17,7 @@ class WeierstrassCurve {
   // Formula:
   //  y^2 = x^3 + a*x + b  (mod p)
 public:
-  WeierstrassCurve(APInt a_coeff, APInt b_coeff, APInt prime) : _a_coeff(a_coeff), _b_coeff(b_coeff), _prime(prime) {};
+  WeierstrassCurve(APInt prime, APInt a_coeff, APInt b_coeff) : _prime(prime), _a_coeff(a_coeff), _b_coeff(b_coeff) {};
   const APInt& a() const { return _a_coeff; };
   const APInt& b() const { return _b_coeff; };
   const APInt& prime() const { return _prime; };
@@ -39,9 +39,9 @@ public:
   void validate_contains(OpBuilder builder, Location loc, const AffinePt& pt) const;
 
 private:
+  APInt _prime;
   APInt _a_coeff;
   APInt _b_coeff;
-  APInt _prime;
 };
 
 class AffinePt {

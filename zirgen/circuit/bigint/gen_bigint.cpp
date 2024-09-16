@@ -95,6 +95,13 @@ struct RsaSpec {
   size_t iters;
 };
 
+// Specification of elliptic curve (EC) parameters used to generate EC ZKRs
+struct ECSpec {
+  llvm::StringLiteral name;
+  size_t numBits;
+  zirgen::BigInt::WeierstrassCurve curve;
+};
+
 const RsaSpec kRsaSpecs[] = {
     // 256-bit RSA; primarily used for testing.
     {"rsa_256_x1", 256, 1},
@@ -106,15 +113,24 @@ const RsaSpec kRsaSpecs[] = {
 };
 
 // TODO: Clean up
-// secp256k1 parameters
+// secp256k1 parameters  // TODO: rename to clear underscores
 const APInt secp_256k1_prime = APInt::getAllOnes(256) - APInt::getOneBitSet(256, 32)
     - APInt::getOneBitSet(256, 9) - APInt::getOneBitSet(256, 8) - APInt::getOneBitSet(256, 7)
     - APInt::getOneBitSet(256, 6) - APInt::getOneBitSet(256, 4);
 const APInt secp_256k1_a(8, 0);
 const APInt secp_256k1_b(8, 7);
+// Base point
 const APInt secp_256k1_G_x(256, "79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798", 16);
 const APInt secp_256k1_G_y(256, "483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8", 16);
 const APInt secp_256k1_order(256, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16);
+
+const ECSpec kECSpecs[] = {
+    // rz8test1 -- an in-house 8-bit testing curve; nowhere near big enough to be secure
+    {"rz8test1", 8, {APInt(8, 179), APInt(8, 1), APInt(8, 12)}},
+
+    // secp256k1
+    {"secp256k1", 256, {secp_256k1_prime, secp_256k1_a, secp_256k1_b}},
+};
 
 } // namespace
 
@@ -223,54 +239,90 @@ int main(int argc, char* argv[]) {
       zirgen::BigInt::makeECAffineAddTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
     });
   }
-  for (size_t numBits : {256}) {
-    module.addFunc<0>("ec_aff_add_test_full_" + std::to_string(numBits), {}, [&]() {
+  for (auto ec : kECSpecs) {
+    module.addFunc<0>(std::string("ec_add_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAffineAddTest(builder, builder.getUnknownLoc(), numBits, secp_256k1_prime, secp_256k1_a, secp_256k1_b);  // TODO: I don't think these values are coordinated with the test
+      zirgen::BigInt::makeECAffineAddTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
+  // for (size_t numBits : {256}) {
+  //   module.addFunc<0>("ec_aff_add_test_full_" + std::to_string(numBits), {}, [&]() {
+  //     auto& builder = Module::getCurModule()->getBuilder();
+  //     zirgen::BigInt::makeECAffineAddTest(builder, builder.getUnknownLoc(), numBits, secp_256k1_prime, secp_256k1_a, secp_256k1_b);  // TODO: I don't think these values are coordinated with the test
+  //   });
+  // }
   for (size_t numBits : {8, 256}) {  // TODO: Switch to 5 bits
     module.addFunc<0>("ec_aff_doub_test_" + std::to_string(numBits), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
       zirgen::BigInt::makeECAffineDoubleTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
     });
   }
-  for (size_t numBits : {256}) {
-    module.addFunc<0>("ec_aff_doub_test_full_" + std::to_string(numBits), {}, [&]() {
+  for (auto ec : kECSpecs) {
+    module.addFunc<0>(std::string("ec_doub_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAffineDoubleTest(builder, builder.getUnknownLoc(), numBits, secp_256k1_prime, secp_256k1_a, secp_256k1_b);  // TODO: I don't think these values are coordinated with the test
+      zirgen::BigInt::makeECAffineDoubleTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
+  // for (size_t numBits : {256}) {
+  //   module.addFunc<0>("ec_aff_doub_test_full_" + std::to_string(numBits), {}, [&]() {
+  //     auto& builder = Module::getCurModule()->getBuilder();
+  //     zirgen::BigInt::makeECAffineDoubleTest(builder, builder.getUnknownLoc(), numBits, secp_256k1_prime, secp_256k1_a, secp_256k1_b);  // TODO: I don't think these values are coordinated with the test
+  //   });
+  // }
   for (size_t numBits : {8, 32 /*, 256*/}) {  // TODO: Switch to 5 bits
     llvm::outs() << "  Making ec_aff_mul_test_" + std::to_string(numBits) + "\n";
     module.addFunc<0>("ec_aff_mul_test_" + std::to_string(numBits), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAffineMultiplyTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 179), APInt(numBits, 1), APInt(numBits, 12));  // TODO: I don't think these values are coordinated with the test
+      zirgen::BigInt::makeECAffineMultiplyTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 179), APInt(numBits, 1), APInt(numBits, 12));
     });
   }
-  for (size_t numBits : {256}) {
-    llvm::outs() << "  Making ec_aff_mul_test_" + std::to_string(numBits) + "\n";
-    module.addFunc<0>("ec_aff_mul_test_full_" + std::to_string(numBits), {}, [&]() {
+  for (auto ec : kECSpecs) {
+    module.addFunc<0>(std::string("ec_mul_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAffineMultiplyTest(builder, builder.getUnknownLoc(), numBits, secp_256k1_prime, secp_256k1_a, secp_256k1_b);  // TODO: I don't think these values are coordinated with the test
+      zirgen::BigInt::makeECAffineMultiplyTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
+  // for (size_t numBits : {256}) {
+  //   llvm::outs() << "  Making ec_aff_mul_test_" + std::to_string(numBits) + "\n";
+  //   module.addFunc<0>("ec_aff_mul_test_full_" + std::to_string(numBits), {}, [&]() {
+  //     auto& builder = Module::getCurModule()->getBuilder();
+  //     zirgen::BigInt::makeECAffineMultiplyTest(builder, builder.getUnknownLoc(), numBits, secp_256k1_prime, secp_256k1_a, secp_256k1_b);
+  //   });
+  // }
   for (size_t numBits : {8}) {  // TODO: Switch to 5 bits
     module.addFunc<0>("ec_aff_neg_test_" + std::to_string(numBits), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAffineNegateTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
+      zirgen::BigInt::makeECAffineNegateTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));
+    });
+  }
+  for (auto ec : kECSpecs) {
+    module.addFunc<0>(std::string("ec_neg_").append(ec.name), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::makeECAffineNegateTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (size_t numBits : {8}) {  // TODO: Switch to 5 bits
     module.addFunc<0>("ec_aff_sub_test_" + std::to_string(numBits), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAffineSubtractTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
+      zirgen::BigInt::makeECAffineSubtractTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));
+    });
+  }
+  for (auto ec : kECSpecs) {
+    module.addFunc<0>(std::string("ec_sub_").append(ec.name), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::makeECAffineSubtractTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (size_t numBits : {8}) {
     module.addFunc<0>("ec_pts_eq_test_" + std::to_string(numBits), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAffineValidatePointsEqualTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));  // TODO: I don't think these values are coordinated with the test
+      zirgen::BigInt::makeECAffineValidatePointsEqualTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 11), APInt(numBits, 5), APInt(numBits, 1));
+    });
+  }
+  for (auto ec : kECSpecs) {
+    module.addFunc<0>(std::string("ec_pts_eq_").append(ec.name), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::makeECAffineValidatePointsEqualTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   // Perf tests
@@ -279,7 +331,7 @@ int main(int argc, char* argv[]) {
     module.addFunc<0>("rep_ec_aff_add_test_full_" + std::to_string(numBits) + "_r" + std::to_string(numReps), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
       zirgen::BigInt::makeRepeatedECAffineAddTest(builder, builder.getUnknownLoc(), numBits, numReps,
-          secp_256k1_prime, secp_256k1_a, secp_256k1_b);  // TODO: I don't think these values are coordinated with the test
+          secp_256k1_prime, secp_256k1_a, secp_256k1_b);
     });
   }
   for (size_t numReps : {5, 10, 256}) {
@@ -287,7 +339,7 @@ int main(int argc, char* argv[]) {
     module.addFunc<0>("rep_ec_aff_doub_test_full_" + std::to_string(numBits) + "_r" + std::to_string(numReps), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
       zirgen::BigInt::makeRepeatedECAffineDoubleTest(builder, builder.getUnknownLoc(), numBits, numReps,
-          secp_256k1_prime, secp_256k1_a, secp_256k1_b);  // TODO: I don't think these values are coordinated with the test
+          secp_256k1_prime, secp_256k1_a, secp_256k1_b);
     });
   }
 
