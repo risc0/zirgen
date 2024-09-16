@@ -15,6 +15,7 @@
 #include "llvm/ADT/TypeSwitch.h"
 
 #include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
+#include "zirgen/Dialect/ZStruct/IR/TypeUtils.h"
 #include "zirgen/Dialect/Zll/IR/Codegen.h"
 
 #include "zirgen/Dialect/ZStruct/IR/Enums.cpp.inc"
@@ -238,6 +239,19 @@ void StructType::emitTypeDefinition(zirgen::codegen::CodegenEmitter& cg) const {
 CodegenIdent<IdentKind::Type> ArrayType::getTypeName(zirgen::codegen::CodegenEmitter& cg) const {
   auto elemName = cg.getTypeName(getElement());
   return cg.getStringAttr((elemName.strref() + std::to_string(getSize()) + "Array").str());
+}
+
+mlir::Type ArrayType::getElementLayout() {
+  return getLayoutType(getElement());
+}
+
+LayoutArrayType ArrayType::getLayoutArray() {
+  mlir::Type elementLayout = getElementLayout();
+  if (elementLayout) {
+    return LayoutArrayType::get(getContext(), elementLayout, getSize());
+  } else {
+    return {};
+  }
 }
 
 Value ArrayType::materialize(Location loc, ArrayRef<Value> elements, OpBuilder& builder) {

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "zirgen/Dialect/ZStruct/IR/TypeUtils.h"
+#include "llvm/ADT/TypeSwitch.h"
 
 namespace zirgen::ZStruct {
 
@@ -62,6 +63,13 @@ RefType getRefType(MLIRContext* ctx) {
 
 RefType getExtRefType(MLIRContext* ctx) {
   return RefType::get(ctx, getValExtType(ctx));
+}
+
+Type getLayoutType(Type valueType) {
+  return llvm::TypeSwitch<Type, Type>(valueType)
+      .Case<StructType>([](auto t) { return t.getLayout(); })
+      .Case<ArrayType>([](auto t) { return t.getLayoutArray(); })
+      .Default([](auto t) { return Type(); });
 }
 
 } // namespace zirgen::ZStruct

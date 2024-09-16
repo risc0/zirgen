@@ -130,6 +130,7 @@ using ZStruct::getStringType;
 using ZStruct::getTypeType;
 using ZStruct::getValExtType;
 using ZStruct::getValType;
+using ZStruct::getLayoutType;
 
 Zll::ValType getFieldTypeOfValType(Type valType);
 
