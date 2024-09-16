@@ -198,7 +198,7 @@ private:
       attr = ArrayAttr::get(arr->type.getContext(), elements);
     } else if (const auto* str = std::get_if<AbstractStructure>(abstract.get())) {
       SmallVector<NamedAttribute> fields;
-      if (str->type.getKind() == LayoutKind::Mux) {
+      if (str->type.getKind() == LayoutKind::Mux || str->type.getKind() == LayoutKind::MajorMux) {
         size_t finalAllocator = allocator;
         for (auto field : str->fields) {
           size_t armAllocator = allocator;

@@ -24,7 +24,8 @@ component IMinus(x: Val) {
 component Top() {
   x := GetCycle();
   major := NondetReg(reduce [x] init 0 with Add);
-  inst_result := [major, 1-major] -> (
+  notMajor := Reg(1 - major);
+  inst_result := [major, notMajor] ->! (
     IPlus(x),
     IMinus(x)
   );

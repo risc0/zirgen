@@ -47,7 +47,8 @@ component Major(cycle: NondetReg) {
 component Top() {
   cycle := NondetReg(GetCycle());
   major := NondetReg(InRange(0, cycle, 2));
-  [major, 1 - major] -> (
+  notMajor := Reg(1 - major);
+  [major, notMajor] ->! (
     Major(cycle),
     Component()
   )

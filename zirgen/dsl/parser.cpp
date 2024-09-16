@@ -733,7 +733,7 @@ Switch::Ptr Parser::parseConditional() {
         make_shared<Construct>(location, make_shared<Ident>(location, "Sub"), subArgs));
   }
   Expression::Ptr selector = make_shared<ArrayLiteral>(location, std::move(selectors));
-  return make_shared<Switch>(location, std::move(selector), std::move(cases));
+  return make_shared<Switch>(location, std::move(selector), std::move(cases), false);
 }
 
 Expression::Ptr Parser::parseParenthesizedExpression() {
@@ -880,6 +880,9 @@ Switch::Ptr Parser::parseSwitch(Expression::Ptr&& selector) {
   }
   SMLoc location = lexer.getLastLocation();
 
+  // If there is a bang, it's the major mux
+  bool isMajor = lexer.takeTokenIf(tok_bang);
+
   if (!lexer.takeTokenIf(tok_paren_l)) {
     error("A mux's arms should be enclosed in parentheses, missing '('");
     return nullptr;
@@ -897,7 +900,7 @@ Switch::Ptr Parser::parseSwitch(Expression::Ptr&& selector) {
     return nullptr;
   }
 
-  return make_shared<Switch>(location, std::move(selector), std::move(cases));
+  return make_shared<Switch>(location, std::move(selector), std::move(cases), isMajor);
 }
 
 Expression::Ptr Parser::parseBinaryOp(Expression::Ptr lhs, BinaryOpPrecedence precedence) {

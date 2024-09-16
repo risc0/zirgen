@@ -393,10 +393,11 @@ bool operator==(const Reduce& left, const Reduce& right) {
          *left.getType() == *right.getType();
 }
 
-Switch::Switch(SMLoc loc, Expression::Ptr selector, Expression::Vec cases)
+Switch::Switch(SMLoc loc, Expression::Ptr selector, Expression::Vec cases, bool isMajor)
     : Expression(Kind::Switch, std::move(loc))
     , selector(std::move(selector))
-    , cases(std::move(cases)) {}
+    , cases(std::move(cases))
+    , isMajor(isMajor) {}
 
 void Switch::print(ostream& os) const {
   JSON::Dict dict(os);

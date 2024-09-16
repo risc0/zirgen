@@ -432,6 +432,7 @@ void extractArguments(llvm::MapVector<Type, size_t>& out, Type in) {
       for (auto& field : layout.getFields())
         extractArguments(out, field.type);
       break;
+    case LayoutKind::MajorMux:
     case LayoutKind::Mux:
       // This is already handled by the @arguments$name member added to the
       // parent during lowering to ZHLT

@@ -84,8 +84,8 @@ Expr Reduce(Expr&& array, Expr&& init, Expr&& type) {
   return make_unique<ast::Reduce>(loc, std::move(array), std::move(init), std::move(type));
 }
 
-Expr Switch(Expr&& selector, ExprVec&& cases) {
-  return make_unique<ast::Switch>(loc, std::move(selector), std::move(cases));
+Expr Switch(Expr&& selector, ExprVec&& cases, bool isMajor) {
+  return make_unique<ast::Switch>(loc, std::move(selector), std::move(cases), isMajor);
 }
 
 Expr Range(Expr&& start, Expr&& end) {
