@@ -743,7 +743,6 @@ void LoweringImpl::gen(GlobalOp global, ComponentBuilder& cb) {
 }
 
 Value LoweringImpl::lookup(Value component, StringRef member) {
-  Value originalComponent = component;
   auto componentType = Zhlt::getComponentType(ctx);
   while (component.getType() && component.getType() != componentType) {
     ArrayRef<ZStruct::FieldInfo> fields;
