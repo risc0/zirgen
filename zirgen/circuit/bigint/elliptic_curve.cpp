@@ -258,7 +258,15 @@ AffinePt doub(OpBuilder builder, Location loc, const AffinePt& pt){
 
   Value two_y_inv = builder.create<BigInt::NondetInvModOp>(loc, two_y, prime);
 
-  Value lambda = builder.create<BigInt::MulOp>(loc, lambda_num, two_y_inv);
+  // Normalize to not overflow coefficient size
+  // TODO: Is there a better way?
+  mlir::Type oneType = builder.getIntegerType(1);  // a `1` is bitwidth 1
+  auto oneAttr = builder.getIntegerAttr(oneType, 1);  // value 1
+  auto one = builder.create<BigInt::ConstOp>(loc, oneAttr);
+  Value lambda_num_normal = builder.create<BigInt::NondetQuotOp>(loc, lambda_num, one);
+  builder.create<BigInt::EqualZeroOp>(loc, builder.create<BigInt::SubOp>(loc, lambda_num_normal, lambda_num));
+
+  Value lambda = builder.create<BigInt::MulOp>(loc, lambda_num_normal, two_y_inv);
   lambda = builder.create<BigInt::NondetRemOp>(loc, lambda, prime);
 
   Value two_y_lambda = builder.create<BigInt::MulOp>(loc, pt.y(), lambda);
