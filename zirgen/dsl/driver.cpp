@@ -538,7 +538,7 @@ int main(int argc, char* argv[]) {
   pm.clear();
   // TODO: HoistAllocs is failing
   // pm.addPass(zirgen::Zhlt::createHoistAllocsPass());
-  pm.addPass(zirgen::ZStruct::createOptimizeLayoutPass());
+  // pm.addPass(zirgen::ZStruct::createOptimizeLayoutPass());
   pm.addPass(mlir::createCanonicalizerPass());
   pm.addPass(mlir::createCSEPass());
   if (failed(pm.run(typedModule.value()))) {
