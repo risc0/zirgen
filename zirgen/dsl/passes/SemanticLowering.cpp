@@ -67,30 +67,6 @@ struct ConstructToCall : public OpRewritePattern<Zhlt::ConstructOp> {
   }
 };
 
-// Inline zhlt.constructs for use in "check" functions.
-struct InlineCheckConstruct : public OpRewritePattern<Zhlt::ConstructOp> {
-  using OpRewritePattern::OpRewritePattern;
-
-  LogicalResult matchAndRewrite(Zhlt::ConstructOp op, PatternRewriter& rewriter) const final {
-    Zhlt::ComponentOp callable =
-        op->getParentOfType<ModuleOp>().lookupSymbol<Zhlt::ComponentOp>(op.getCallee());
-    if (!callable)
-      return rewriter.notifyMatchFailure(op, "failed to resolve symbol " + op.getCallee());
-
-    IRMapping mapping;
-    Region clonedBody;
-    callable.getBody().cloneInto(&clonedBody, mapping);
-    remapInlinedLocations(clonedBody.getBlocks(), op.getLoc());
-    Block* block = &clonedBody.front();
-    auto returnOp = cast<Zhlt::ReturnOp>(block->getTerminator());
-
-    rewriter.inlineBlockBefore(block, op, op.getOperands());
-    rewriter.replaceOp(op, returnOp->getOperands());
-    rewriter.eraseOp(returnOp);
-    return success();
-  }
-};
-
 // Convert maps over argument arrays to maps over a range
 struct ArrayMapToRangeMap : public OpRewritePattern<MapOp> {
   using OpRewritePattern::OpRewritePattern;
@@ -195,7 +171,9 @@ struct UnravelSwitchPackResult : public OpRewritePattern<SwitchOp> {
       splitFields.push_back(fieldSplitOp);
     }
 
-    auto packOp = rewriter.create<PackOp>(op.getLoc(), op.getType(), splitFields);
+    // TODO: this currently discards the layout of the member, which should be
+    // the common super layout of the mux.
+    auto packOp = rewriter.create<PackOp>(op.getLoc(), op.getType(), Value(), splitFields);
     rewriter.replaceAllUsesWith(op, packOp);
     return success();
   }
@@ -624,13 +602,11 @@ struct GenerateCheckPass : public GenerateCheckBase<GenerateCheckPass> {
     auto* ctx = &getContext();
 
     RewritePatternSet patterns(ctx);
-    patterns.insert<InlineCheckConstruct>(ctx);
     patterns.insert<BackToCall>(ctx);
     patterns.insert<EraseOp<StoreOp>>(ctx);
     patterns.insert<EraseOp<VariadicPackOp>>(ctx);
     patterns.insert<EraseOp<ExternOp>>(ctx);
     patterns.insert<EraseOp<AliasLayoutOp>>(ctx);
-    patterns.insert<EraseOp<Zhlt::MagicOp>>(ctx);
     patterns.insert<InlineCalls>(ctx);
     patterns.insert<SplitSwitchArms>(ctx);
     patterns.insert<ReplaceYieldWithTerminator>(ctx);
