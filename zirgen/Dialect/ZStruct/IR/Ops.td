@@ -84,13 +84,35 @@ def StoreOp : ZStructOp<"store", [EvalOpAdaptor, MemoryEffects<[MemWrite]>, Decl
   let hasVerifier = 1;
 }
 
-def PackOp : ZStructOp<"pack", [Pure, DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
+def PackOp : ZStructOp<"pack", [Pure, AttrSizedOperandSegments, DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
   let summary = "Packs the operands into the members of a record";
-  let arguments = (ins Variadic<IsValueType>:$members);
+  let arguments = (ins Optional<LayoutType>:$layout, Variadic<IsValueType>:$members);
   let results = (outs StructType:$out);
   let assemblyFormat = [{
-     `(` ($members^ `:` type($members))? `)` `:` type($out) attr-dict-with-keyword
+      ($layout^ `:` type($layout))? ` ` `(` ($members^ `:` type($members))? `)` `:` type($out) attr-dict-with-keyword
   }];
+  let builders = [
+    OpBuilder<
+      (ins "StructType":$out, "mlir::Value":$layout, "mlir::ValueRange":$members), [{
+        if (layout) {
+          $_state.addOperands(layout);
+        }
+        $_state.addOperands(members);
+        $_state.addTypes(out);
+
+        auto layoutSegmentSize = layout ? 1 : 0;
+        auto memberCount = static_cast<int32_t>(members.size());
+        auto segmentSizes = $_builder.getDenseI32ArrayAttr({layoutSegmentSize, memberCount});
+        $_state.addAttribute("operandSegmentSizes", segmentSizes);
+      }]
+    >,
+    OpBuilder<
+     (ins "StructType":$out, "mlir::ValueRange":$members), [{
+        mlir::Value layout;
+        build($_builder, $_state, out, layout, members);
+     }]
+    >
+  ];
   let hasVerifier = 1;
   let hasFolder = 1;
 }
