@@ -332,15 +332,16 @@ LayoutType LayoutBuilder::getType() const {
   }
 }
 
-void LayoutBuilder::supplyLayout(std::function<Value(Type)> finalizeLayoutFunc) {
+Value LayoutBuilder::supplyLayout(std::function<Value(Type)> finalizeLayoutFunc) {
   assert(layoutPlaceholder);
 
   auto layoutType = getType();
 
+  Value layout;
   if (layoutType) {
     OpBuilder::InsertionGuard guard(builder);
     builder.setInsertionPoint(layoutPlaceholder);
-    Value layout = finalizeLayoutFunc(layoutType);
+    layout = finalizeLayoutFunc(layoutType);
     layoutPlaceholder.getOut().replaceAllUsesWith(layout);
   } else {
     assert(layoutPlaceholder.use_empty());
@@ -348,13 +349,14 @@ void LayoutBuilder::supplyLayout(std::function<Value(Type)> finalizeLayoutFunc) 
 
   layoutPlaceholder.erase();
   layoutPlaceholder = {};
+  return layout;
 }
 
 Value StructBuilder::finalize(Location loc, std::function<Value(/*layoutType=*/Type)> finalizeLayoutFunc) {
-  layoutBuilder->supplyLayout(finalizeLayoutFunc);
+  Value layout = layoutBuilder->supplyLayout(finalizeLayoutFunc);
   StructType type = getType();
   layoutBuilder.reset();
-  return builder.create<PackOp>(loc, type, memberValues);
+  return builder.create<PackOp>(loc, type, layout, memberValues);
 }
 
 ZStruct::StructType StructBuilder::getType() const {

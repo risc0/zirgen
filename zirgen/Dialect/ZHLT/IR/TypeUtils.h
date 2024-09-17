@@ -53,7 +53,7 @@ public:
   // Finalizes the layout that's been built.  If the layout is
   // non-empty, finalizeLayoutFunc is called to supply a layout value
   // that should be broken out for this layout's members.
-  void supplyLayout(std::function<Value(/*layoutType=*/Type)> finalizeLayoutFunc);
+  Value supplyLayout(std::function<Value(/*layoutType=*/Type)> finalizeLayoutFunc);
 
 private:
   OpBuilder& builder;

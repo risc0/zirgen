@@ -94,21 +94,22 @@ template <typename OpT> void Builtins::makeUnaryValOp(StringRef name) {
 
 void Builtins::genNondetReg() {
   auto returnType = Zhlt::getNondetRegType(builder.getContext());
-  auto refType = Zhlt::getNondetRegLayoutType(builder.getContext());
+  auto layoutType = Zhlt::getNondetRegLayoutType(builder.getContext());
   makeBuiltin("NondetReg",
               /*valueType=*/returnType,
               /*constructParams=*/{valType},
-              /*layout=*/refType,
+              /*layout=*/layoutType,
               [&](ValueRange args) {
                 Value val = args[0];
-                Value ref = builder.create<ZStruct::LookupOp>(loc, args[1], "@super");
+                Value layout = args[1];
+                Value ref = builder.create<ZStruct::LookupOp>(loc, layout, "@super");
                 builder.create<ZStruct::StoreOp>(loc, ref, val);
                 Value zero = builder.create<arith::ConstantOp>(
                     loc, builder.getIndexType(), builder.getIndexAttr(0));
                 mlir::Value loaded =
                     builder.create<ZStruct::LoadOp>(loc, valType, ref, /*distance=*/zero);
                 mlir::Value packed = builder.create<ZStruct::PackOp>(
-                    loc, Zhlt::getNondetRegType(ctx), /*members=*/ValueRange{loaded});
+                    loc, Zhlt::getNondetRegType(ctx), layout, /*members=*/ValueRange{loaded});
                 builder.create<Zhlt::ReturnOp>(loc, packed);
               });
 }

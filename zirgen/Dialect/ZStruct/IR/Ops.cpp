@@ -285,8 +285,16 @@ void StoreOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
 }
 
 LogicalResult PackOp::verify() {
+  if (auto layoutType = getOut().getType().getLayout()) {
+    if (!getLayout()) {
+      return emitError() << "PackOp is missing a layout";
+    } else if (getLayout().getType() != layoutType) {
+      return emitError() << "mismatched layout type in PackOp";
+    }
+  }
+
   auto fields = getOut().getType().getFields();
-  if (fields.size() != getNumOperands()) {
+  if (fields.size() != getMembers().size()) {
     return emitError() << "Expected " << fields.size() << " arguments to generate a "
                        << getOut().getType();
   }
@@ -347,11 +355,11 @@ OpFoldResult LookupOp::fold(FoldAdaptor adaptor) {
   TypeSwitch<mlir::Type>(getBase().getType()).Case<StructType, LayoutType>([&](auto ty) {
     auto fields = ty.getFields();
 
-    if (auto newOp = getBase().getDefiningOp<PackOp>()) {
-      if (fields.size() == newOp->getNumOperands()) {
-        for (size_t i = 0; i != newOp->getNumOperands(); ++i) {
+    if (auto basePack = getBase().getDefiningOp<PackOp>()) {
+      if (fields.size() == basePack.getMembers().size()) {
+        for (size_t i = 0; i != basePack.getMembers().size(); ++i) {
           if (fields[i].name == getMember()) {
-            foldedValue = newOp->getOperand(i);
+            foldedValue = basePack.getMembers()[i];
           }
         }
       }
