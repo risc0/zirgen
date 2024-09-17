@@ -36,34 +36,26 @@ ZKRS = [
     "ecdsa_verify_8",  # TODO
     "ecdsa_verify_32",  # TODO
 #    "ecdsa_verify_256",  # TODO
-    "ec_aff_add_test_8",
-    "ec_aff_add_test_256",
-    "ec_add_rz8test1",  # TODO
-    "ec_add_secp256k1",  # TODO
-    "rep_ec_aff_add_test_full_256_r5",
-    "rep_ec_aff_add_test_full_256_r10",
-    "rep_ec_aff_add_test_full_256_r256",
-    "ec_aff_sub_test_8",
-    "ec_sub_rz8test1",  # TODO
-    "ec_sub_secp256k1",  # TODO
-    "ec_aff_doub_test_8",
-    "ec_aff_doub_test_256",
-    "ec_doub_rz8test1",  # TODO
-    "ec_doub_secp256k1",  # TODO
-#    "ec_aff_doub_test_full_256",
-    "rep_ec_aff_doub_test_full_256_r5",
-    "rep_ec_aff_doub_test_full_256_r10",
-    "rep_ec_aff_doub_test_full_256_r256",
+    "ec_add_rz8test1",
+    "ec_add_secp256k1",
+    "rep_ec_add_secp256k1_r5",
+    "rep_ec_add_secp256k1_r10",
+    "rep_ec_add_secp256k1_r256",
+    "ec_sub_rz8test1",
+    "ec_sub_secp256k1",
+    "ec_doub_rz8test1",
+    "ec_doub_secp256k1",
+    "rep_ec_doub_secp256k1_r5",
+    "rep_ec_doub_secp256k1_r10",
+    "rep_ec_doub_secp256k1_r256",
     "ec_aff_mul_test_8",  # TODO
     "ec_aff_mul_test_32",  # TODO
     "ec_mul_rz8test1",  # TODO
     "ec_mul_secp256k1",  # TODO
 #    "ec_aff_mul_test_full_256",  # TODO
 #    "ec_aff_mul_test_256",  # TODO
-    "ec_aff_neg_test_8",
     "ec_neg_rz8test1",  # TODO
     "ec_neg_secp256k1",  # TODO
-    "ec_pts_eq_test_8",
     "ec_pts_eq_rz8test1",  # TODO
     "ec_pts_eq_secp256k1",  # TODO
     "const_add_test_8",
