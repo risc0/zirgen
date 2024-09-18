@@ -239,29 +239,10 @@ int main(int argc, char* argv[]) {
       zirgen::BigInt::makeECAffineAddTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
-  // for (size_t numBits : {256}) {
-  //   module.addFunc<0>("ec_aff_add_test_full_" + std::to_string(numBits), {}, [&]() {
-  //     auto& builder = Module::getCurModule()->getBuilder();
-  //     zirgen::BigInt::makeECAffineAddTest(builder, builder.getUnknownLoc(), numBits, secp_256k1_prime, secp_256k1_a, secp_256k1_b);  // TODO: I don't think these values are coordinated with the test
-  //   });
-  // }
   for (auto ec : kECSpecs) {
     module.addFunc<0>(std::string("ec_doub_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
       zirgen::BigInt::makeECAffineDoubleTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
-    });
-  }
-  // for (size_t numBits : {256}) {
-  //   module.addFunc<0>("ec_aff_doub_test_full_" + std::to_string(numBits), {}, [&]() {
-  //     auto& builder = Module::getCurModule()->getBuilder();
-  //     zirgen::BigInt::makeECAffineDoubleTest(builder, builder.getUnknownLoc(), numBits, secp_256k1_prime, secp_256k1_a, secp_256k1_b);  // TODO: I don't think these values are coordinated with the test
-  //   });
-  // }
-  for (size_t numBits : {8, 32 /*, 256*/}) {  // TODO: Switch to 5 bits
-    llvm::outs() << "  Making ec_aff_mul_test_" + std::to_string(numBits) + "\n";
-    module.addFunc<0>("ec_aff_mul_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAffineMultiplyTest(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 179), APInt(numBits, 1), APInt(numBits, 12));
     });
   }
   for (auto ec : kECSpecs) {
@@ -270,13 +251,6 @@ int main(int argc, char* argv[]) {
       zirgen::BigInt::makeECAffineMultiplyTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
-  // for (size_t numBits : {256}) {
-  //   llvm::outs() << "  Making ec_aff_mul_test_" + std::to_string(numBits) + "\n";
-  //   module.addFunc<0>("ec_aff_mul_test_full_" + std::to_string(numBits), {}, [&]() {
-  //     auto& builder = Module::getCurModule()->getBuilder();
-  //     zirgen::BigInt::makeECAffineMultiplyTest(builder, builder.getUnknownLoc(), numBits, secp_256k1_prime, secp_256k1_a, secp_256k1_b);
-  //   });
-  // }
   for (auto ec : kECSpecs) {
     module.addFunc<0>(std::string("ec_neg_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();

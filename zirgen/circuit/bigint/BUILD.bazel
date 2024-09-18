@@ -48,16 +48,12 @@ ZKRS = [
     "rep_ec_doub_secp256k1_r5",
     "rep_ec_doub_secp256k1_r10",
     "rep_ec_doub_secp256k1_r256",
-    "ec_aff_mul_test_8",  # TODO
-    "ec_aff_mul_test_32",  # TODO
-    "ec_mul_rz8test1",  # TODO
-    "ec_mul_secp256k1",  # TODO
-#    "ec_aff_mul_test_full_256",  # TODO
-#    "ec_aff_mul_test_256",  # TODO
-    "ec_neg_rz8test1",  # TODO
-    "ec_neg_secp256k1",  # TODO
-    "ec_pts_eq_rz8test1",  # TODO
-    "ec_pts_eq_secp256k1",  # TODO
+    "ec_mul_rz8test1",
+    "ec_mul_secp256k1",
+    "ec_neg_rz8test1",
+    "ec_neg_secp256k1",
+    "ec_pts_eq_rz8test1",
+    "ec_pts_eq_secp256k1",
     "const_add_test_8",
     "const_add_alt_test_16",
     "const_mul_test_8",
