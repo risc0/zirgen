@@ -538,6 +538,9 @@ int main(int argc, char* argv[]) {
   pm.clear();
   // TODO: HoistAllocs is failing
   // pm.addPass(zirgen::Zhlt::createHoistAllocsPass());
+  // TODO: Optimize layout is currently disabled to make layout of components
+  // contigious for preflight, consider re-adding once preflight correctly uses
+  // layout output.
   // pm.addPass(zirgen::ZStruct::createOptimizeLayoutPass());
   pm.addPass(mlir::createCanonicalizerPass());
   pm.addPass(mlir::createCSEPass());

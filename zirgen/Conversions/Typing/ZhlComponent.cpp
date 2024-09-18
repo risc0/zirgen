@@ -1563,21 +1563,21 @@ void LoweringImpl::buildZeroInitialize(Value toInit) {
   auto layout = mlir::cast<ZStruct::LayoutType>(toInit.getType());
   auto loc = toInit.getDefiningOp()->getLoc();
   auto zero = builder.create<Zll::ConstOp>(loc, 0);
-  for (const auto& field : layout.getFields()) {
-    auto layoutType = llvm::dyn_cast<ZStruct::LayoutType>(field.type);
-    if (!layoutType || layoutType.getId() != "NondetReg") {
-      toInit.getDefiningOp()->emitError() << "Argument types must be composed solely of NondetRegs";
-      return;
-    }
-    auto valType = Zhlt::getValType(ctx);
-    auto elem = builder.create<ZStruct::LookupOp>(loc, toInit, field.name);
-    auto unwrap = builder.create<ZStruct::LookupOp>(loc, elem, "@super");
-    builder.create<ZStruct::StoreOp>(loc, unwrap, zero);
-    Value zeroDistance = builder.create<arith::ConstantOp>(loc, builder.getIndexAttr(0));
-    auto reload = builder.create<ZStruct::LoadOp>(loc, valType, unwrap, zeroDistance);
-    builder.create<Zll::EqualZeroOp>(loc, reload);
-    break;
+  // We only zero initalize the first field, which is the 'count' field
+  // This allows aliasing of other 'dont-care' fields.
+  const auto& field = layout.getFields().front();
+  auto layoutType = llvm::dyn_cast<ZStruct::LayoutType>(field.type);
+  if (!layoutType || layoutType.getId() != "NondetReg") {
+    toInit.getDefiningOp()->emitError() << "Argument types must be composed solely of NondetRegs";
+    return;
   }
+  auto valType = Zhlt::getValType(ctx);
+  auto elem = builder.create<ZStruct::LookupOp>(loc, toInit, field.name);
+  auto unwrap = builder.create<ZStruct::LookupOp>(loc, elem, "@super");
+  builder.create<ZStruct::StoreOp>(loc, unwrap, zero);
+  Value zeroDistance = builder.create<arith::ConstantOp>(loc, builder.getIndexAttr(0));
+  auto reload = builder.create<ZStruct::LoadOp>(loc, valType, unwrap, zeroDistance);
+  builder.create<Zll::EqualZeroOp>(loc, reload);
 }
 
 Zhlt::ComponentOp LoweringImpl::genArrayCtor(Operation* op, Type elementType, size_t size) {

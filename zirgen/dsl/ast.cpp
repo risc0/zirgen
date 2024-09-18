@@ -404,6 +404,7 @@ void Switch::print(ostream& os) const {
   dict.attr_string("class", "Switch");
   dict.attr_dict("selector", selector);
   dict.attr_array("cases", cases);
+  dict.attr_bool("isMajor", isMajor);
 }
 
 bool Switch::classof(const Expression* e) {
