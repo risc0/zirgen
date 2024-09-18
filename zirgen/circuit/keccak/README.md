@@ -1,6 +1,6 @@
 # The Keccak Accelerator
 
-This directory contains the implementation of the keccac accelerator.
+This directory contains the implementation of the keccak accelerator.
 
 ## Input transcript format
 
@@ -38,15 +38,8 @@ let result = hasher.finalize();
 ```
 
 In this code snippet, `hasher` carries an internal state which is modified the input using the `update(input)` function. `finalize` will generate a resulting hash. In order to use the accelerator we need to generate an input transcript. To keep the proof under 2 million cycles the maximum amount of data we can hash in the accelerator is approximately 95 kilobytes.
-#### WIP: Non-concurrent implementation for crates such as tiny-keccak and sha3
 
 The following assumes a situation where a single call to finalize is compressing less than 95 KB of input data and only one instance of hasher is present.
 
 * Every time update is called, the input is split up to fit inside the 136 byte block. Once the block fills up, it is compressed using keccak. In our design, we send each of the blocks to the host in order to record the raw data of the input transcript.
 * Once the hasher's `finalize` function is called we can communicate with the termination so that the block count can be computed and for the keccak hash to be generated.
-
-#### WIP: Non-concurrent implementation for crates such as sha3
-
-#### WIP: concurrent implementation
-
-TODO
