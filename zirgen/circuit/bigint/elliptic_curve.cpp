@@ -259,7 +259,7 @@ AffinePt doub(OpBuilder builder, Location loc, const AffinePt& pt){
   Value two_y_inv = builder.create<BigInt::NondetInvModOp>(loc, two_y, prime);
 
   // Normalize to not overflow coefficient size
-  // TODO: Is there a better way?
+  // TODO: Is there a better way? This version adds like 25k cycles to secp256k1 EC Mul
   mlir::Type oneType = builder.getIntegerType(1);  // a `1` is bitwidth 1
   auto oneAttr = builder.getIntegerAttr(oneType, 1);  // value 1
   auto one = builder.create<BigInt::ConstOp>(loc, oneAttr);
