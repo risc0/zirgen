@@ -142,8 +142,7 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   return AffinePt(xR, yR, lhs.curve());
 }
 
-AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt, const AffinePt& arbitrary) {
-  assert(arbitrary.on_same_curve_as(pt));
+AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt) {
   // Construct constants
   mlir::Type oneType = builder.getIntegerType(1);  // a `1` is bitwidth 1
   auto oneAttr = builder.getIntegerAttr(oneType, 1);  // value 1
@@ -154,26 +153,19 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt, 
   auto two = builder.create<BigInt::ConstOp>(loc, twoAttr);
 
   // This algorithm doesn't work if `scalar` is a multiple of `pt`'s order
-  // No separate testing is needed, as this will compute the `result` value (inclusive of `arbitrary`) to
-  // be equal to `arbitrary` in this case, and then compute `sub` of `arbitrary` with itself, which fails
-  // (via attempted division by zero) in `sub`.
+  // This doesn't need a special check, as it always computes a P + -P, causing a failure
 
   // We can't represent the identity in affine coordinates.
-  // Therefore, instead of computing scale * P, compute Arb + scale * P - Arb
-  // where Arb is some arbitrary point
-  // This can fail if choosing an unlucky point Arb, but no soundness issues and can adjust Arb to get completeness
-  auto result = arbitrary;
+  // Therefore, instead of computing scale * P, compute P + scale * P - P
+  // This can fail (notably at scale = 1 or -1) but is cryptographically unlikely and is only a completeness (not soundness) limitation
+  auto result = pt;
 
   // The repeatedly doubled point
   auto doubled_pt = pt;
-  // TODO: If we call this multiple times with the same `arbitrary`, then `validate_on_curve` will be called multiple times for it
-  // I think this is OK as CSE removes everything except the final eqz, and this doesn't get called _that_ often
-  // TODO: Perhaps have CSE remove duplicate eqz's too?
-  // TODO: Removing this slightly reduces the cycle count, so the CSE isn't perfect here. Possible location for minor perf gains
-  // NOTE: We assume `pt` is already validated as on the curve (either manually already, or by construction) [TODO: Document better?]
-  // `arbitrary` has not need to be constructed in any particular way, so we pretty much always need to validate it's on the curve
-  // Hence, we do so here
-  arbitrary.validate_on_curve(builder, loc);
+
+  // TODO: logic for subtracting off initial term at the end
+  Value subtract_pt;
+  Value dont_subtract_pt;
 
   // TODO: Temporarily hacking to the an exponent large enough to cover the prime
   // (i.e., since we have a test on order 43, to 6)
@@ -196,32 +188,51 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt, 
     auto check_bit = builder.create<BigInt::MulOp>(loc, rem, one_minus_rem);
     builder.create<BigInt::EqualZeroOp>(loc, check_bit);
 
-    // When the bit is one, add the current doubling point; otherwise retain the current point
-    // Compute "If P then =A, else =B" via the formula
-    //   result = P * A + (1 - P) * B
-    // TODO: I'm concerned about the uncomputability of the untaken branch when scale = order - 2^(bitwidth_order - 1)
-    auto sum = add(builder, loc, result, doubled_pt);
-    auto xIfAdd = builder.create<BigInt::MulOp>(loc, sum.x(), rem);
-    auto yIfAdd = builder.create<BigInt::MulOp>(loc, sum.y(), rem);
-    auto xIfNotAdd = builder.create<BigInt::MulOp>(loc, result.x(), one_minus_rem);
-    auto yIfNotAdd = builder.create<BigInt::MulOp>(loc, result.y(), one_minus_rem);
-    auto xMerged = builder.create<BigInt::AddOp>(loc, xIfAdd, xIfNotAdd);
-    auto yMerged = builder.create<BigInt::AddOp>(loc, yIfAdd, yIfNotAdd);
-    // TODO: I think these may not actually be needed ...
-    // TODO: These seem necessary for bitwidth reasons and/or coeff size reasons, but probably shouldn't be needed for correctness; perhaps there's a workaround?
-    auto newX = builder.create<BigInt::ReduceOp>(loc, xMerged, result.curve()->prime_as_bigint(builder, loc));
-    auto newY = builder.create<BigInt::ReduceOp>(loc, yMerged, result.curve()->prime_as_bigint(builder, loc));
+    // A special case for the first iteration so we don't have to start from 0:
+    // What we will do is start at 1 * pt, and on the first iteration, instead of adding pt if
+    // scalar is odd, we store that we (eventually) need to subtract off pt if scalar is even
+    // Then after the main multiply algorithm is done, we do that subtraction (if needed)
+    if (it == 0) {
+      subtract_pt = one_minus_rem;
+      dont_subtract_pt = rem;
+    } else {
+      // When the bit is one, add the current doubling point; otherwise retain the current point
+      // Compute "If P then =A, else =B" via the formula
+      //   result = P * A + (1 - P) * B
+      // TODO: I'm concerned about the uncomputability of the untaken branch when scale = order - 2^(bitwidth_order - 1)
+      auto sum = add(builder, loc, result, doubled_pt);
+      auto xIfAdd = builder.create<BigInt::MulOp>(loc, sum.x(), rem);
+      auto yIfAdd = builder.create<BigInt::MulOp>(loc, sum.y(), rem);
+      auto xIfNotAdd = builder.create<BigInt::MulOp>(loc, result.x(), one_minus_rem);
+      auto yIfNotAdd = builder.create<BigInt::MulOp>(loc, result.y(), one_minus_rem);
+      auto xMerged = builder.create<BigInt::AddOp>(loc, xIfAdd, xIfNotAdd);
+      auto yMerged = builder.create<BigInt::AddOp>(loc, yIfAdd, yIfNotAdd);
+      // TODO: I think these may not actually be needed ...
+      // TODO: These seem necessary for bitwidth reasons and/or coeff size reasons, but probably shouldn't be needed for correctness; perhaps there's a workaround?
+      auto newX = builder.create<BigInt::ReduceOp>(loc, xMerged, result.curve()->prime_as_bigint(builder, loc));
+      auto newY = builder.create<BigInt::ReduceOp>(loc, yMerged, result.curve()->prime_as_bigint(builder, loc));
 
-    result = AffinePt(newX, newY, result.curve());
+      result = AffinePt(newX, newY, result.curve());
+    }
+
     // Double the doubling point
     doubled_pt = doub(builder, loc, doubled_pt);
     // The lowest order bit has been used, so halve the scale factor and iterate
     scalar = quot;
   }
+  // Now subtract off the original point if needed
+  auto subtracted = sub(builder, loc, result, pt);
+  auto xIfSub = builder.create<BigInt::MulOp>(loc, subtracted.x(), subtract_pt);
+  auto yIfSub = builder.create<BigInt::MulOp>(loc, subtracted.y(), subtract_pt);
+  auto xIfNotSub = builder.create<BigInt::MulOp>(loc, result.x(), dont_subtract_pt);
+  auto yIfNotSub = builder.create<BigInt::MulOp>(loc, result.y(), dont_subtract_pt);
+  Value xFinal = builder.create<BigInt::AddOp>(loc, xIfSub, xIfNotSub);
+  xFinal = builder.create<BigInt::ReduceOp>(loc, xFinal, result.curve()->prime_as_bigint(builder, loc));
+  Value yFinal = builder.create<BigInt::AddOp>(loc, yIfSub, yIfNotSub);
+  yFinal = builder.create<BigInt::ReduceOp>(loc, yFinal, result.curve()->prime_as_bigint(builder, loc));
+  // TODO: Do I actually need to reduce xFinal/yFinal?
 
-  // Subtract off (xArb, yArb) before returning
-  // TODO: Reduce negYArb? Shouldn't be needed if provided a point in 1 < * < prime, and I *think* it's not _dangerous_ even if not
-  return sub(builder, loc, result, arbitrary);
+  return AffinePt(xFinal, yFinal, result.curve());
 }
 
 AffinePt neg(OpBuilder builder, Location loc, const AffinePt& pt){
@@ -319,16 +330,12 @@ AffinePt sub(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   return add(builder, loc, lhs, neg_rhs);
 }
 
-void ECDSA_verify(OpBuilder builder, Location loc, const AffinePt& base_pt, const AffinePt& pub_key, Value hashed_msg, Value r, Value s, const AffinePt& arbitrary, Value order) {
+void ECDSA_verify(OpBuilder builder, Location loc, const AffinePt& base_pt, const AffinePt& pub_key, Value hashed_msg, Value r, Value s, Value order) {
   pub_key.on_same_curve_as(base_pt);
-  arbitrary.on_same_curve_as(base_pt);
 
   // Note: we don't need to validate `base_pt` on the curve as it's a publicly pre-committed parameter whose presence on the curve we can verify ahead of time
   // (much like we can verify the order of the curve ahead of time)
   pub_key.validate_on_curve(builder, loc);
-  // TODO: We will verify `arbitrary` on the curve elsewhere, so this is redundant
-  // But CSE eliminates most of the dup'd calculations, so maybe this is fine?
-  arbitrary.validate_on_curve(builder, loc);
 
   // TODO: Need anything to check the order of various points?
 
@@ -355,8 +362,8 @@ void ECDSA_verify(OpBuilder builder, Location loc, const AffinePt& base_pt, cons
   u2 = builder.create<BigInt::ReduceOp>(loc, u2, order);  // TODO: Do we need to handle `order` specially?
 
   // Calculate test point
-  AffinePt u1G = mul(builder, loc, u1, base_pt, arbitrary);
-  AffinePt u2Q = mul(builder, loc, u2, pub_key, arbitrary);
+  AffinePt u1G = mul(builder, loc, u1, base_pt);
+  AffinePt u2Q = mul(builder, loc, u2, pub_key);
   AffinePt test_pt = add(builder, loc, u1G, u2Q);
   // n.b. no need to test for == identity, as `add` fails when adding a point to its negative
 
@@ -390,8 +397,6 @@ void makeECDSAVerify(
   auto msg_hash = builder.create<BigInt::DefOp>(loc, order_bits, 4, true);
   auto r = builder.create<BigInt::DefOp>(loc, order_bits, 5, true);
   auto s = builder.create<BigInt::DefOp>(loc, order_bits, 6, true);
-  auto arbitrary_X = builder.create<BigInt::DefOp>(loc, bits, 7, true);
-  auto arbitrary_Y = builder.create<BigInt::DefOp>(loc, bits, 8, true);
 
   // Add order as a constant
   mlir::Type order_type = builder.getIntegerType(order.getBitWidth());  // TODO: I haven't thought through signedness
@@ -402,9 +407,8 @@ void makeECDSAVerify(
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt base_pt(base_pt_X, base_pt_Y, curve);
   AffinePt pub_key(pub_key_X, pub_key_Y, curve);
-  AffinePt arbitrary(arbitrary_X, arbitrary_Y, curve);
 
-  ECDSA_verify(builder, loc, base_pt, pub_key, msg_hash, r, s, arbitrary, order_const);
+  ECDSA_verify(builder, loc, base_pt, pub_key, msg_hash, r, s, order_const);
 }
 
 // Test functions
@@ -463,34 +467,27 @@ void makeECAffineMultiplyTest(
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto scale = builder.create<BigInt::DefOp>(loc, bits, 2, true);
-  auto xArb = builder.create<BigInt::DefOp>(loc, bits, 3, true);
-  auto yArb = builder.create<BigInt::DefOp>(loc, bits, 4, true);
-  auto xR = builder.create<BigInt::DefOp>(loc, bits, 5, true);
-  auto yR = builder.create<BigInt::DefOp>(loc, bits, 6, true);
+  auto xR = builder.create<BigInt::DefOp>(loc, bits, 3, true);
+  auto yR = builder.create<BigInt::DefOp>(loc, bits, 4, true);
 
 
   // TODO: Basic sanity test section (DELETE ME)
   auto xP_diff = builder.create<BigInt::SubOp>(loc, xP, xP);
   auto yP_diff = builder.create<BigInt::SubOp>(loc, yP, yP);
   auto scale_diff = builder.create<BigInt::SubOp>(loc, scale, scale);
-  auto xArb_diff = builder.create<BigInt::SubOp>(loc, xArb, xArb);
-  auto yArb_diff = builder.create<BigInt::SubOp>(loc, yArb, yArb);
   auto xR_diff = builder.create<BigInt::SubOp>(loc, xR, xR);
   auto yR_diff = builder.create<BigInt::SubOp>(loc, yR, yR);
   builder.create<BigInt::EqualZeroOp>(loc, xP_diff);
   builder.create<BigInt::EqualZeroOp>(loc, yP_diff);
   builder.create<BigInt::EqualZeroOp>(loc, scale_diff);
-  builder.create<BigInt::EqualZeroOp>(loc, xArb_diff);
-  builder.create<BigInt::EqualZeroOp>(loc, yArb_diff);
   builder.create<BigInt::EqualZeroOp>(loc, xR_diff);
   builder.create<BigInt::EqualZeroOp>(loc, yR_diff);
   // TODO: End of sanity test section
 
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt inp(xP, yP, curve);
-  AffinePt arb(xArb, yArb, curve);
   AffinePt expected(xR, yR, curve);
-  auto result = mul(builder, loc, scale, inp, arb);
+  auto result = mul(builder, loc, scale, inp);
   result.validate_equal(builder, loc, expected);
 }
 

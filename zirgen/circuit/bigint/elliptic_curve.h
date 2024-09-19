@@ -66,11 +66,11 @@ private:
 
 AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffinePt& rhs);
 AffinePt doub(OpBuilder builder, Location loc, const AffinePt& pt);
-AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt, const AffinePt& arbitrary);
+AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt);
 AffinePt neg(OpBuilder builder, Location loc, const AffinePt& pt);
 AffinePt sub(OpBuilder builder, Location loc, const AffinePt& lhs, const AffinePt& rhs);
 
-void ECDSA_verify(OpBuilder builder, Location loc, const AffinePt& base_pt, const AffinePt& pub_key, Value hashed_msg, Value r, Value s, const AffinePt& arbitrary);
+void ECDSA_verify(OpBuilder builder, Location loc, const AffinePt& base_pt, const AffinePt& pub_key, Value hashed_msg, Value r, Value s);
 
 // TODO: Compare to RSA version
 void makeECDSAVerify(
