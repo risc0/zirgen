@@ -112,32 +112,32 @@ const RsaSpec kRsaSpecs[] = {
     {"rsa_3072_x15", 3072, 15},
 };
 
-// rz8test1 parameters  // TODO: rename to clear superfluous 1
-const APInt rz8test1_prime(8, 179);
-const APInt rz8test1_a(8, 1);
-const APInt rz8test1_b(8, 12);
+// rz8test parameters
+const APInt rz8test_prime(8, 179);
+const APInt rz8test_a(8, 1);
+const APInt rz8test_b(8, 12);
 // Base point
-const APInt rz8test1_G_x(8, 157);
-const APInt rz8test1_G_y(8, 34);
-const APInt rz8test1_order(8, 199);
+const APInt rz8test_G_x(8, 157);
+const APInt rz8test_G_y(8, 34);
+const APInt rz8test_order(8, 199);
 
-// secp256k1 parameters  // TODO: rename to clear underscores
-const APInt secp_256k1_prime = APInt::getAllOnes(256) - APInt::getOneBitSet(256, 32)
+// secp256k1 parameters
+const APInt secp256k1_prime = APInt::getAllOnes(256) - APInt::getOneBitSet(256, 32)
     - APInt::getOneBitSet(256, 9) - APInt::getOneBitSet(256, 8) - APInt::getOneBitSet(256, 7)
     - APInt::getOneBitSet(256, 6) - APInt::getOneBitSet(256, 4);
-const APInt secp_256k1_a(8, 0);
-const APInt secp_256k1_b(8, 7);
+const APInt secp256k1_a(8, 0);
+const APInt secp256k1_b(8, 7);
 // Base point
-const APInt secp_256k1_G_x(256, "79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798", 16);
-const APInt secp_256k1_G_y(256, "483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8", 16);
-const APInt secp_256k1_order(256, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16);
+const APInt secp256k1_G_x(256, "79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798", 16);
+const APInt secp256k1_G_y(256, "483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8", 16);
+const APInt secp256k1_order(256, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16);
 
 const ECSpec kECSpecs[] = {
-    // rz8test1 -- an in-house 8-bit testing curve; nowhere near big enough to be secure
-    {"rz8test1", 8, {rz8test1_prime, rz8test1_a, rz8test1_b}},
+    // rz8test -- an in-house 8-bit testing curve; nowhere near big enough to be secure
+    {"rz8test", 8, {rz8test_prime, rz8test_a, rz8test_b}},
 
     // secp256k1
-    {"secp256k1", 256, {secp_256k1_prime, secp_256k1_a, secp_256k1_b}},
+    {"secp256k1", 256, {secp256k1_prime, secp256k1_a, secp256k1_b}},
 };
 
 } // namespace
@@ -229,14 +229,14 @@ int main(int argc, char* argv[]) {
     module.addFunc<0>("ecdsa_verify_" + std::to_string(numBits), {}, [&]() {
       llvm::outs() << "  Making ecdsa_verify_" + std::to_string(numBits) + "\n";
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECDSAVerify(builder, builder.getUnknownLoc(), numBits, rz8test1_prime, rz8test1_a, rz8test1_b, rz8test1_order);
+      zirgen::BigInt::makeECDSAVerify(builder, builder.getUnknownLoc(), numBits, rz8test_prime, rz8test_a, rz8test_b, rz8test_order);
     });
   }
   // for (size_t numBits : {256}) {  // TODO: Currently separating out full from small for easier test/benchmark
   //   module.addFunc<0>("ecdsa_verify_full_" + std::to_string(numBits), {}, [&]() {
   //     llvm::outs() << "  Making ecdsa_verify_full_" + std::to_string(numBits) + "\n";
   //     auto& builder = Module::getCurModule()->getBuilder();
-  //     zirgen::BigInt::makeECDSAVerify(builder, builder.getUnknownLoc(), numBits, secp_256k1_prime, secp_256k1_a, secp_256k1_b, secp_256k1_order);
+  //     zirgen::BigInt::makeECDSAVerify(builder, builder.getUnknownLoc(), numBits, secp256k1_prime, secp256k1_a, secp256k1_b, secp256k1_order);
   //   });
   // }
   // Elliptic Curve tests
@@ -282,7 +282,7 @@ int main(int argc, char* argv[]) {
     module.addFunc<0>("rep_ec_add_secp256k1_r" + std::to_string(numReps), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
       zirgen::BigInt::makeRepeatedECAffineAddTest(builder, builder.getUnknownLoc(), numBits, numReps,
-          secp_256k1_prime, secp_256k1_a, secp_256k1_b);
+          secp256k1_prime, secp256k1_a, secp256k1_b);
     });
   }
   for (size_t numReps : {5, 10, 256}) {
@@ -290,7 +290,7 @@ int main(int argc, char* argv[]) {
     module.addFunc<0>("rep_ec_doub_secp256k1_r" + std::to_string(numReps), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
       zirgen::BigInt::makeRepeatedECAffineDoubleTest(builder, builder.getUnknownLoc(), numBits, numReps,
-          secp_256k1_prime, secp_256k1_a, secp_256k1_b);
+          secp256k1_prime, secp256k1_a, secp256k1_b);
     });
   }
 
@@ -299,8 +299,6 @@ int main(int argc, char* argv[]) {
     throw std::runtime_error("Failed to apply command line options");
   }
 
-  // llvm::outs() << module.getModule();  // TODO: remove?
-
   pm.addPass(createCanonicalizerPass());
   pm.addPass(createCSEPass());
   pm.addPass(BigInt::createLowerReducePass());
@@ -308,8 +306,6 @@ int main(int argc, char* argv[]) {
   if (failed(pm.run(module.getModule()))) {
     throw std::runtime_error("Failed to apply basic optimization passes");
   }
-
-  // llvm::outs() << module.getModule();  // TODO: remove?
 
   static codegen::RustLanguageSyntax rustLang;
   rustLang.addContextArgument("ctx: &mut BigIntContext");
