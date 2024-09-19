@@ -58,9 +58,8 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   assert(lhs.on_same_curve_as(rhs));
   auto prime = lhs.curve()->prime_as_bigint(builder, loc);
 
-  // TODO: How much to reduce? smaller bitwidth is nice, but so are fewer operations...
   // Construct the constant 1
-  mlir::Type oneType = builder.getIntegerType(8);  // a `1` is bitwidth 1  // TODO
+  mlir::Type oneType = builder.getIntegerType(8);
   auto oneAttr = builder.getIntegerAttr(oneType, 1);  // value 1
   auto one = builder.create<BigInt::ConstOp>(loc, oneAttr);
 
@@ -78,10 +77,6 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   x_diff_inv_check = builder.create<BigInt::SubOp>(loc, x_diff_inv_check, x_diff_inv_check_quot);
   x_diff_inv_check = builder.create<BigInt::SubOp>(loc, x_diff_inv_check, one);
   builder.create<BigInt::EqualZeroOp>(loc, x_diff_inv_check);
-
-
-
-  // TODO: Doubling the prime seems to not work well
 
   Value lambda = builder.create<BigInt::MulOp>(loc, y_diff, x_diff_inv);
   lambda = builder.create<BigInt::NondetRemOp>(loc, lambda, prime);
@@ -109,7 +104,7 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   Value yR = builder.create<BigInt::MulOp>(loc, lambda, xR);
   yR = builder.create<BigInt::AddOp>(loc, yR, nu);
   yR = builder.create<BigInt::SubOp>(loc, prime, yR);  // i.e., negate (mod prime) 
-  yR = builder.create<BigInt::AddOp>(loc, yR, prime);  // Quot/Rem needs nonnegative inputs, so enforce positivity  // TODO: better with using 3*prime for sub?
+  yR = builder.create<BigInt::AddOp>(loc, yR, prime);  // Quot/Rem needs nonnegative inputs, so enforce positivity
   yR = builder.create<BigInt::AddOp>(loc, yR, prime);
   Value prime_sqr = builder.create<BigInt::MulOp>(loc, prime, prime);
   yR = builder.create<BigInt::AddOp>(loc, yR, prime_sqr);  // The prime^2 term is for the original lambda * xR
@@ -163,16 +158,10 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt) 
   // The repeatedly doubled point
   auto doubled_pt = pt;
 
-  // TODO: logic for subtracting off initial term at the end
   Value subtract_pt;
   Value dont_subtract_pt;
 
-  // TODO: Temporarily hacking to the an exponent large enough to cover the prime
-  // (i.e., since we have a test on order 43, to 6)
-  // What we should actually do is read this value off the prime
-  // Note that until we do this, the small tests will fail due to the extra collision opportunities with Arbitrary
-  llvm::outs() << "    EC mul with " + std::to_string(llvm::cast<BigIntType>(scalar.getType()).getMaxBits()) + " iterations\n";  // TODO: Temporary log
-  for (size_t it = 0; it < llvm::cast<BigIntType>(scalar.getType()).getMaxBits(); it++) {  // TODO: Why is this slightly larger than the bitwidth?
+  for (size_t it = 0; it < llvm::cast<BigIntType>(scalar.getType()).getMaxBits(); it++) {
     // Compute the remainder of scale mod 2
     // We need exactly 0 or 1, not something congruent to them mod 2
     // Therefore, directly use the nondets, and check not just that the q * d + r = n but also that r * (r - 1) == 0
@@ -270,7 +259,7 @@ AffinePt doub(OpBuilder builder, Location loc, const AffinePt& pt){
   Value two_y_inv = builder.create<BigInt::NondetInvModOp>(loc, two_y, prime);
 
   // Normalize to not overflow coefficient size
-  // TODO: Is there a better way? This version adds like 25k cycles to secp256k1 EC Mul
+  // TODO: Is there a better way? This version adds ~25k cycles to secp256k1 EC Mul
   mlir::Type oneType = builder.getIntegerType(1);  // a `1` is bitwidth 1
   auto oneAttr = builder.getIntegerAttr(oneType, 1);  // value 1
   auto one = builder.create<BigInt::ConstOp>(loc, oneAttr);
@@ -385,7 +374,6 @@ void makeECDSAVerify(
     APInt curve_a,
     APInt curve_b,
     APInt order
-    /* TODO*/
 ) {
   // TODO: What can we move from an input to a parameter?
   // Since curve order differs from prime by at most 2 * sqrt(prime), we only need 1 more bit than `prime`
@@ -463,26 +451,12 @@ void makeECAffineMultiplyTest(
     APInt curve_a,
     APInt curve_b
 ) {
-  // auto order_bits = bits + 1;  // TODO:
+  // This test is only valid for curves whose order is of bitwidth no more than the prime's bitwidth
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto scale = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 3, true);
   auto yR = builder.create<BigInt::DefOp>(loc, bits, 4, true);
-
-
-  // TODO: Basic sanity test section (DELETE ME)
-  auto xP_diff = builder.create<BigInt::SubOp>(loc, xP, xP);
-  auto yP_diff = builder.create<BigInt::SubOp>(loc, yP, yP);
-  auto scale_diff = builder.create<BigInt::SubOp>(loc, scale, scale);
-  auto xR_diff = builder.create<BigInt::SubOp>(loc, xR, xR);
-  auto yR_diff = builder.create<BigInt::SubOp>(loc, yR, yR);
-  builder.create<BigInt::EqualZeroOp>(loc, xP_diff);
-  builder.create<BigInt::EqualZeroOp>(loc, yP_diff);
-  builder.create<BigInt::EqualZeroOp>(loc, scale_diff);
-  builder.create<BigInt::EqualZeroOp>(loc, xR_diff);
-  builder.create<BigInt::EqualZeroOp>(loc, yR_diff);
-  // TODO: End of sanity test section
 
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt inp(xP, yP, curve);
@@ -551,6 +525,7 @@ void makeECAffineValidatePointsEqualTest(
   lhs.validate_equal(builder, loc, rhs);
 }
 
+// TODO
 // void makeECAffineValidatePointOrderTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
 // void makeECAffineValidatePointOnCurveTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
 
@@ -562,7 +537,6 @@ void makeRepeatedECAffineAddTest(mlir::OpBuilder builder,
                                  APInt prime,
                                  APInt curve_a,
                                  APInt curve_b) {
-  // auto order_bits = bits + 1;  // TODO
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);
@@ -590,7 +564,6 @@ void makeRepeatedECAffineDoubleTest(mlir::OpBuilder builder,
                                     APInt prime,
                                     APInt curve_a,
                                     APInt curve_b) {
-  // auto order_bits = bits + 1;  // TODO
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 2, true);

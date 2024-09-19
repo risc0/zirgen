@@ -72,7 +72,6 @@ AffinePt sub(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
 
 void ECDSA_verify(OpBuilder builder, Location loc, const AffinePt& base_pt, const AffinePt& pub_key, Value hashed_msg, Value r, Value s);
 
-// TODO: Compare to RSA version
 void makeECDSAVerify(
     mlir::OpBuilder builder,
     mlir::Location loc,
