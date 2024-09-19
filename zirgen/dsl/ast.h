@@ -314,11 +314,13 @@ bool operator==(const Reduce& left, const Reduce& right);
 class Switch : public Expression {
   Expression::Ptr selector;
   Expression::Vec cases;
+  bool isMajor;
 
 public:
-  Switch(SMLoc loc, Expression::Ptr selector, Expression::Vec cases);
+  Switch(SMLoc loc, Expression::Ptr selector, Expression::Vec cases, bool isMajor);
   Expression* getSelector() const { return selector.get(); }
   Expression::ArrayRef getCases() const { return cases; }
+  bool getIsMajor() { return isMajor; }
   void print(llvm::raw_ostream&) const override;
   static bool classof(const Expression* e);
 };

@@ -74,6 +74,7 @@ mlir::Type Builder::build(LayoutType& t) {
   case LayoutKind::Argument:
     return buildStruct(t);
   case LayoutKind::Mux:
+  case LayoutKind::MajorMux:
     return buildUnion(t);
   }
   assert(false && "unknown LayoutKind");
@@ -99,7 +100,7 @@ mlir::Type Builder::buildUnion(LayoutType& ut) {
   }
   Layout& ul = found->second;
   buildFields(ul.fields);
-  auto kind = LayoutKind::Mux;
+  auto kind = ul.original.getKind();
   auto out = LayoutType::get(ut.getContext(), ul.id, ul.fields, kind);
   return out;
 }

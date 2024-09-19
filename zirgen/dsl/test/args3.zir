@@ -41,7 +41,8 @@ component Major(v: Val) {
 component Top() {
   cycle := NondetReg(GetCycle());
   major := NondetReg(cycle & 1);
-  [1 - major, major] -> (Major(cycle), {});
+  notMajor := Reg(1 - major);
+  [notMajor, major] ->! (Major(cycle), {});
 }
 
 test foo {

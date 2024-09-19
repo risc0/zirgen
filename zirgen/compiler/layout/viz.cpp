@@ -278,8 +278,10 @@ std::string SN::Emit(RefType t) {
 std::string SN::Emit(LayoutType t) {
   switch (t.getKind()) {
   case LayoutKind::Normal:
+  case LayoutKind::Argument:
     return LayoutStruct(t);
   case LayoutKind::Mux:
+  case LayoutKind::MajorMux:
     return LayoutUnion(t);
   default:
     assert(false && "unsupported LayoutKind");
@@ -374,12 +376,14 @@ void SN::LayoutElement(mlir::Type ft, std::map<std::string, LayoutType>& unions)
       .Case<RefType>([&](RefType rt) { LayoutElement(rt.getElement(), unions); })
       .Case<LayoutType>([&](LayoutType lt) {
         switch (lt.getKind()) {
-        case LayoutKind::Mux: {
+        case LayoutKind::Mux:
+        case LayoutKind::MajorMux: {
           std::string port("p" + std::to_string(unions.size()));
           unions.insert({port, lt});
           dest << "<" << port << ">" << lt.getId().str();
         } break;
-        case LayoutKind::Normal: {
+        case LayoutKind::Normal:
+        case LayoutKind::Argument: {
           LayoutBody(lt, unions);
         } break;
         default:
@@ -489,6 +493,7 @@ size_t LS::measure(mlir::Type t) {
                       case LayoutKind::Argument:
                         return measureStruct(lt);
                       case LayoutKind::Mux:
+                      case LayoutKind::MajorMux:
                         return measureUnion(lt);
                       default:
                         assert(false && "unsupported LayoutKind");
@@ -549,7 +554,8 @@ void LS::Emit(mlir::Type t) {
         case LayoutKind::Argument: {
           EmitStruct(lt);
         } break;
-        case LayoutKind::Mux: {
+        case LayoutKind::Mux:
+        case LayoutKind::MajorMux: {
           EmitUnion(lt);
         } break;
         default:

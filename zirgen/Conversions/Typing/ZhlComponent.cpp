@@ -1145,6 +1145,8 @@ void LoweringImpl::gen(ReduceOp reduce, ComponentBuilder& cb) {
 }
 
 void LoweringImpl::gen(SwitchOp sw, ComponentBuilder& cb) {
+  bool isMajor = sw->hasAttr("isMajor");
+
   Value origSelector = asValue(sw.getSelector());
   unsigned size = sw.getCases().size();
   ArrayType selectorType = ArrayType::get(ctx, Zhlt::getValType(ctx), size);
@@ -1156,7 +1158,32 @@ void LoweringImpl::gen(SwitchOp sw, ComponentBuilder& cb) {
   auto selector = coerceTo(origSelector, selectorType);
 
   ComponentBuilder muxContext(sw.getLoc(), &cb, sw.getOut());
-  muxContext.setLayoutKind(ZStruct::LayoutKind::Mux);
+  muxContext.setLayoutKind(isMajor ? ZStruct::LayoutKind::MajorMux : ZStruct::LayoutKind::Mux);
+
+  if (isMajor) {
+    // Require major mux selectors to be register like
+    if (!Zhlt::isCoercibleTo(origSelector.getType(),
+                             ArrayType::get(ctx, Zhlt::getNondetRegType(ctx), size))) {
+      sw.emitError() << "Major mux selectors must be registers";
+      return;
+    }
+    // Make an array of selector regs in the mux layout
+    LayoutArrayType selectorSaveType =
+        LayoutArrayType::get(ctx, Zhlt::getNondetRegLayoutType(ctx), size);
+    Value saveArray = muxContext.addLayoutMember(sw.getLoc(), "@selector", selectorSaveType);
+    // Alias them to the actual selectors
+    Value selectorArray = asLayout(sw.getSelector());
+    while (!selectorArray.getType().isa<LayoutArrayType>()) {
+      selectorArray = builder.create<ZStruct::LookupOp>(sw.getLoc(), selectorArray, "@super");
+    }
+    for (size_t i = 0; i < size; i++) {
+      Value index = builder.create<arith::ConstantOp>(sw->getLoc(), builder.getIndexAttr(i));
+      Value saveElem = builder.create<ZStruct::SubscriptOp>(sw->getLoc(), saveArray, index);
+      Value selectorElem = builder.create<ZStruct::SubscriptOp>(sw->getLoc(), selectorArray, index);
+      Value selectorReg = coerceTo(selectorElem, Zhlt::getNondetRegLayoutType(ctx));
+      builder.create<ZStruct::AliasLayoutOp>(sw.getLoc(), selectorReg, saveElem);
+    }
+  }
 
   // Create components for each arm
   std::vector<std::unique_ptr<ComponentBuilder>> armContexts;
@@ -1182,6 +1209,11 @@ void LoweringImpl::gen(SwitchOp sw, ComponentBuilder& cb) {
 
   // Figure out the greatest number of each argument type used by any mux arm
   llvm::MapVector<Type, size_t> worstCase = Zhlt::muxArgumentCounts(armLayouts);
+
+  // Don't propagate things if we are the major mux
+  if (isMajor) {
+    worstCase.clear();
+  }
 
   // Hoist arguments out of the mux. Since the hoisted argument layouts will be
   // aliased on each arm of the mux, build a table of lookups for each argument
@@ -1243,9 +1275,13 @@ void LoweringImpl::gen(SwitchOp sw, ComponentBuilder& cb) {
         addArgumentAliases(sublayout, counter);
       }
       break;
-    case LayoutKind::Mux: {
+    case LayoutKind::MajorMux:
+      // A major mux inside another mux is invalid
+      sw.emitError() << "Major mux inside non-major mux";
+      return;
+    case LayoutKind::Mux:
       // This is already handled by the @arguments$name member on the parent
-    } break;
+      break;
     }
   };
 
@@ -1527,20 +1563,21 @@ void LoweringImpl::buildZeroInitialize(Value toInit) {
   auto layout = mlir::cast<ZStruct::LayoutType>(toInit.getType());
   auto loc = toInit.getDefiningOp()->getLoc();
   auto zero = builder.create<Zll::ConstOp>(loc, 0);
-  for (const auto& field : layout.getFields()) {
-    auto layoutType = llvm::dyn_cast<ZStruct::LayoutType>(field.type);
-    if (!layoutType || layoutType.getId() != "NondetReg") {
-      toInit.getDefiningOp()->emitError() << "Argument types must be composed solely of NondetRegs";
-      return;
-    }
-    auto valType = Zhlt::getValType(ctx);
-    auto elem = builder.create<ZStruct::LookupOp>(loc, toInit, field.name);
-    auto unwrap = builder.create<ZStruct::LookupOp>(loc, elem, "@super");
-    builder.create<ZStruct::StoreOp>(loc, unwrap, zero);
-    Value zeroDistance = builder.create<arith::ConstantOp>(loc, builder.getIndexAttr(0));
-    auto reload = builder.create<ZStruct::LoadOp>(loc, valType, unwrap, zeroDistance);
-    builder.create<Zll::EqualZeroOp>(loc, reload);
+  // We only zero initalize the first field, which is the 'count' field
+  // This allows aliasing of other 'dont-care' fields.
+  const auto& field = layout.getFields().front();
+  auto layoutType = llvm::dyn_cast<ZStruct::LayoutType>(field.type);
+  if (!layoutType || layoutType.getId() != "NondetReg") {
+    toInit.getDefiningOp()->emitError() << "Argument types must be composed solely of NondetRegs";
+    return;
   }
+  auto valType = Zhlt::getValType(ctx);
+  auto elem = builder.create<ZStruct::LookupOp>(loc, toInit, field.name);
+  auto unwrap = builder.create<ZStruct::LookupOp>(loc, elem, "@super");
+  builder.create<ZStruct::StoreOp>(loc, unwrap, zero);
+  Value zeroDistance = builder.create<arith::ConstantOp>(loc, builder.getIndexAttr(0));
+  auto reload = builder.create<ZStruct::LoadOp>(loc, valType, unwrap, zeroDistance);
+  builder.create<Zll::EqualZeroOp>(loc, reload);
 }
 
 Zhlt::ComponentOp LoweringImpl::genArrayCtor(Operation* op, Type elementType, size_t size) {

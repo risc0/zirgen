@@ -401,6 +401,17 @@ int runTests(mlir::ModuleOp& module) {
     std::string name = (stepFuncOp.getName() + "$accum").str();
     auto accum = module.lookupSymbol<zirgen::Zhlt::StepFuncOp>(name);
     if (!failed && accum) {
+      // First, 'zero' any unset values in data
+      for (auto [buf, bufDesc] : llvm::zip(bufs, allBufs)) {
+        if (bufDesc.name == "test") {
+          for (size_t i = 0; i < buf->size(); i++) {
+            if ((*buf)[i][0] == zirgen::Zll::kFieldInvalid) {
+              (*buf)[i][0] = 0;
+            }
+          }
+        }
+      }
+
       llvm::outs() << "run accum: " << name << "\n";
       cycle = 0;
       for (; cycle != testCycles; ++cycle) {
@@ -527,7 +538,10 @@ int main(int argc, char* argv[]) {
   pm.clear();
   // TODO: HoistAllocs is failing
   // pm.addPass(zirgen::Zhlt::createHoistAllocsPass());
-  pm.addPass(zirgen::ZStruct::createOptimizeLayoutPass());
+  // TODO: Optimize layout is currently disabled to make layout of components
+  // contigious for preflight, consider re-adding once preflight correctly uses
+  // layout output.
+  // pm.addPass(zirgen::ZStruct::createOptimizeLayoutPass());
   pm.addPass(mlir::createCanonicalizerPass());
   pm.addPass(mlir::createCSEPass());
   if (failed(pm.run(typedModule.value()))) {

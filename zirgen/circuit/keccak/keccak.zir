@@ -1083,7 +1083,7 @@ component fstep(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
       rvprev01.major
     });
   major_onehot := OneHot<23>(major_idx);
-  major_onehot -> (
+  major_onehot ->! (
     xor5words_major<0>(rvprev01, rvprev02, rvprev03, rvprev04),
     xor5words_major<1>(rvprev01, rvprev02, rvprev03, rvprev04),
     xor5words_major<2>(rvprev01, rvprev02, rvprev03, rvprev04),
