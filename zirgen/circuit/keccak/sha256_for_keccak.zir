@@ -39,7 +39,7 @@ component WriteMemory(i: Val, d: MemDigest) {
 }
 // EOF use_once_mem_arg.zir
 
-// po2.zir unpacking up to 24 bits
+// po2.zir unpacking up to 31 bits
 component Po2(n: Val) {
   arr := [
     0x1,
@@ -65,7 +65,14 @@ component Po2(n: Val) {
     0x100000,
     0x200000,
     0x400000,
-    0x800000
+    0x800000,
+    0x1000000,
+    0x2000000,
+    0x4000000,
+    0x8000000,
+    0x10000000,
+    0x20000000,
+    0x40000000
   ];
   arr[n]
 }
@@ -102,7 +109,7 @@ component S2MAJOR_SETUP() { 17 }
 component S2MAJOR_LOAD()  { 19 }
 component S2MAJOR_MIX()   { 20 }
 
-component S2MINOR_SKIP()   { 4 }
+component S2MINOR_SKIP()   { 5 }
 component S2MINOR_INIT()   { 0 }
 component S2MINOR_FINI()   { 4 }
 component S2MINOR_OUTPUT() { 8 }
@@ -284,18 +291,15 @@ component unpack_with_carry(low: Val, high: Val) {
 component sha256load<I: Val>(rvprev01: RetTuple, rvprev02: RetTuple,
                              rvprev03: RetTuple, rvprev04: RetTuple) {
   idx := rvprev01.blk;
-  end := rvprev01.midx + 1 - idx;
-  invEnd := NondetReg(Inv(end));
-  prod := Reg(end*invEnd);
-  end*(1-prod) = 0;
-  vals := [1-prod, prod] -> (
-    [0,0,0,0,0,idx],
-    { flag := rvprev01.rnd;
-      [1-flag, flag] -> (
-        { mem := ReadMemory(idx);
-          [mem[0],mem[1],mem[2],mem[3],1,idx]
-        },
-        [rvprev01.arr_d[0],rvprev01.arr_d[1],0,0,0,idx+1])});
+  within := rvprev01.midx + 1 - idx;
+  invWithin := NondetReg(Inv(within));
+  within*invWithin = 1;
+  flag := rvprev01.rnd;
+  vals := [1-flag, flag] -> (
+    { mem := ReadMemory(idx);
+      [mem[0],mem[1],mem[2],mem[3],1,idx]
+    },
+    [rvprev01.arr_d[0],rvprev01.arr_d[1],0,0,0,idx+1]);
   inp1 := vals[0];
   high_w := ToBits<16>(inp1); //big endian
   inp2 := vals[1];

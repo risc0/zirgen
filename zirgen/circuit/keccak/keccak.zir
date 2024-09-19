@@ -1,4 +1,5 @@
 // RUN: zirgen -I %S --test %s --input-data-hex 010000000000000054686520717569636B2062726F776E20666F78206A756D7073206F76657220746865206C617A7920646F672E0100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080578951e24efd62a3d63a86f7cd19aaa53c898fe287d2Q552133220370240b572d0000000000000000
+
 import sha256_for_keccak;
 import one_hot;
 extern GetCycle() : Val;
@@ -1017,10 +1018,10 @@ component equal_word<X: Val>(rvprev: RetTuple) {
 
   Z := Isz(X-3);
   nxt := [1-Z, Z] -> (
-    [X+1, 17, 0, memidx],
+    [X+1, 17, 0, 0, memidx],
     { blk := NondetReg(readInput());
       invBlk := NondetReg(Inv(blk));
-      prod := blk*invBlk;
+      prod := Reg(blk*invBlk);
       blk*(1-prod) = 0;
 
       readInput(); readInput(); readInput();
@@ -1030,21 +1031,69 @@ component equal_word<X: Val>(rvprev: RetTuple) {
       WriteMemory(memidxNxt, MemDigest([blk,0,0,0]));
 
       [prod, 1-prod] -> (
-        [0, 15, blk, memidxNxt],
-        [S2MINOR_SKIP(), 17, 0, memidxNxt])
+        [0, 15, 0, blk, memidxNxt],
+        { midxNN := memidxNxt + 1;
+          invmidxNN := NondetReg(Inv(midxNN));
+          invmidxNN*midxNN = 1;
+          WriteMemory(midxNN, MemDigest([0x8000,0,0,0]));
+          nskip := NondetReg(7 -
+            (midxNN+1 - ((midxNN+1) & 0xfffffff8))); // 7 - num_of_writes%8
+          unpack_nskip := ToBits<3>(nskip);
+          FromBits<3>(unpack_nskip) = nskip; // 0 <= nskip <= 7
+          bitlen := 64*midxNN; // TODO: overflow
+          [S2MINOR_SKIP()-1, 17, bitlen, nskip, midxNN]
+        })
     });
   RetTuple(dummyB(), dummyB(), dummyB(), dummyE(), dummyB(), dummyB(),
-           nxt[0], nxt[1], 0, nxt[2], nxt[3])
+           nxt[0], nxt[1], nxt[2], nxt[3], nxt[4])
+}
+
+component mem_padding_sha256(rvprev01: RetTuple) {
+  bitlen := rvprev01.rnd;
+  unpack_bitlen := ToBits<30>(bitlen);
+  FromBits<30>(unpack_bitlen) = bitlen;
+  b12 := FromBits<16>(for i : 0..16 {unpack_bitlen[i]});
+  b34 := FromBits<14>(for i : 16..30 {unpack_bitlen[i]});
+
+  memidx := rvprev01.midx + 1;
+  n := rvprev01.blk;
+  invn := NondetReg(Inv(n));
+  prod := Reg(n*invn);
+  n*(1-prod) = 0;
+
+  memidxNxt := memidx + 1;
+  nNxt := n - 1;
+  invnNxt := NondetReg(Inv(nNxt));
+  prodNxt := Reg(nNxt*invnNxt);
+  nNxt*(1-prodNxt) = 0;
+
+  [1-prod, prod] -> (
+    { WriteMemory(memidx, MemDigest([0,0,b34,b12]));
+      RetTuple(dummyB(), dummyB(), dummyB(), dummyE(), dummyB(), dummyB(),
+               S2MINOR_SKIP(), 17, 0, 0, memidx)
+    },
+    { WriteMemory(memidx, MemDigest([0,0,0,0]));
+      [1-prodNxt, prodNxt] -> (
+        { WriteMemory(memidxNxt, MemDigest([0,0,b34,b12]));
+          RetTuple(dummyB(), dummyB(), dummyB(), dummyE(), dummyB(), dummyB(),
+                   S2MINOR_SKIP(), 17, 0, 0, memidxNxt)
+        },
+        { WriteMemory(memidxNxt, MemDigest([0,0,0,0]));
+          RetTuple(dummyB(), dummyB(), dummyB(), dummyE(), dummyB(), dummyB(),
+                   S2MINOR_SKIP()-1, 17, rvprev01.rnd, nNxt-1, memidxNxt)
+        })
+    })
 }
 
 component setup_major(rvprev01: RetTuple, rvprev02: RetTuple, rvprev03: RetTuple,
                       rvprev04: RetTuple, rvprev68: RetTuple) {
-  minor_onehot := OneHot<13>(rvprev01.minor);
+  minor_onehot := OneHot<14>(rvprev01.minor);
   minor_onehot -> (
     equal_word<0>(rvprev01),
     equal_word<1>(rvprev02),
     equal_word<2>(rvprev03),
     equal_word<3>(rvprev04),
+    mem_padding_sha256(rvprev01),
     sha256init<1>(rvprev01),
     sha256init<2>(rvprev01),
     sha256init<3>(rvprev01),
@@ -1137,44 +1186,44 @@ component Top() {
                    retvals@15, retvals@16, retvals@68);
 }
 
-test TestKeccak01 { // test_cycles >= 2897
+test TestKeccak01 { // test_cycles >= 2969
   x := Top();
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 0] - 0x5921) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 1] - 0x0c49) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 2] - 0x33fc) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 3] - 0xafd9) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 4] - 0x7ab6) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 5] - 0x5be2) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 6] - 0x169b) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 7] - 0x843c) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 8] - 0x3b7f) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 9] - 0x1b17) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[10] - 0x47bd) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[11] - 0xcef3) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[12] - 0x05f8) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[13] - 0xa3ec) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[14] - 0x34cb) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[15] - 0xcc6e) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 0] - 0x2cc2) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 1] - 0xe85c) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 2] - 0xa11e) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 3] - 0x487c) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 4] - 0x538c) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 5] - 0xd9a7) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 6] - 0x0845) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 7] - 0xbe0c) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 8] - 0x7448) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 9] - 0x12b1) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[10] - 0x5546) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[11] - 0x11c1) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[12] - 0xb9e4) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[13] - 0x7646) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[14] - 0xa6cc) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[15] - 0x84ed) = 0;
 }
 
 /*
-test TestKeccak02 { // test_cycles >= 22770
+test TestKeccak02 { // test_cycles >= 22772
   x := Top();
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 0] - 0x7a29) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 1] - 0x67af) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 2] - 0x4320) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 3] - 0x2ca6) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 4] - 0x1f87) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 5] - 0xc8f3) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 6] - 0x0d35) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 7] - 0xeb33) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 8] - 0x6195) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[ 9] - 0x1191) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[10] - 0xc2a7) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[11] - 0xbb3b) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[12] - 0x95d8) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[13] - 0x0dc2) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[14] - 0xcfd4) = 0;
-  Isz(17-x.retvals.major)*Isz(12-x.retvals.minor)*(x.retvals.arr_a[15] - 0xcc1b) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 0] - 0x73d8) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 1] - 0xb982) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 2] - 0x6431) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 3] - 0xb5dc) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 4] - 0x83ec) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 5] - 0x1225) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 6] - 0x0053) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 7] - 0x94b9) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 8] - 0x569e) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 9] - 0xa4dd) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[10] - 0xb4ea) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[11] - 0x4871) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[12] - 0x2905) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[13] - 0xcef1) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[14] - 0x9da5) = 0;
+  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[15] - 0xc04e) = 0;
 }
 */
