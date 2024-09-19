@@ -143,6 +143,9 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
 }
 
 AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt) {
+  // This algorithm doesn't work if `scalar` is a multiple of `pt`'s order
+  // This doesn't need a special check, as it always computes a P + -P, causing a failure
+
   // Construct constants
   mlir::Type oneType = builder.getIntegerType(1);  // a `1` is bitwidth 1
   auto oneAttr = builder.getIntegerAttr(oneType, 1);  // value 1
@@ -152,11 +155,8 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt) 
   auto twoAttr = builder.getIntegerAttr(twoType, 2);  // value 2
   auto two = builder.create<BigInt::ConstOp>(loc, twoAttr);
 
-  // This algorithm doesn't work if `scalar` is a multiple of `pt`'s order
-  // This doesn't need a special check, as it always computes a P + -P, causing a failure
-
   // We can't represent the identity in affine coordinates.
-  // Therefore, instead of computing scale * P, compute P + scale * P - P
+  // Therefore, instead of computing scale * P, compute P + rounded_down_to_even(scale) * P - if_scale_even_else_0(P)
   // This can fail (notably at scale = 1 or -1) but is cryptographically unlikely and is only a completeness (not soundness) limitation
   auto result = pt;
 
