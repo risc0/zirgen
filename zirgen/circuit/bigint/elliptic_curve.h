@@ -133,7 +133,14 @@ void makeECAffineValidatePointsEqualTest(
     APInt curve_a,
     APInt curve_b
 );
-// void makeECAffineValidatePointOnCurveTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
+void makeECAffineValidatePointOnCurveTest(
+    mlir::OpBuilder builder,
+    mlir::Location loc,
+    size_t bits,
+    APInt prime,
+    APInt curve_a,
+    APInt curve_b
+);
 
 // Perf test function
 void makeRepeatedECAffineAddTest(mlir::OpBuilder builder,

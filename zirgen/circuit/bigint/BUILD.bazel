@@ -54,6 +54,8 @@ ZKRS = [
     "ec_neg_secp256k1",
     "ec_pts_eq_rz8test",
     "ec_pts_eq_secp256k1",
+    "ec_on_curve_rz8test",
+    "ec_on_curve_secp256k1",
     "const_add_test_8",
     "const_add_alt_test_16",
     "const_mul_test_8",

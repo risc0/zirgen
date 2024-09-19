@@ -276,6 +276,12 @@ int main(int argc, char* argv[]) {
       zirgen::BigInt::makeECAffineValidatePointsEqualTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
+  for (auto ec : kECSpecs) {
+    module.addFunc<0>(std::string("ec_on_curve_").append(ec.name), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::makeECAffineValidatePointOnCurveTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
+    });
+  }
   // Perf tests
   for (size_t numReps : {5, 10, 256}) {
     const size_t numBits = 256;

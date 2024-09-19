@@ -26,14 +26,14 @@ void WeierstrassCurve::validate_contains(OpBuilder builder, Location loc, const 
 }
 
 void AffinePt::validate_equal(OpBuilder builder, Location loc, const AffinePt& other) const {
-  // Curve information is only for constructing appropriate EC operations and doesn't appear on-circuit except as operation parameters
-  // (and so doesn't need to be verified on circuit here), but you're doing something wrong if you expect two points on different curves to be equal.
-  assert(on_same_curve_as(other));
-
   Value x_diff = builder.create<BigInt::SubOp>(loc, x(), other.x());
   builder.create<BigInt::EqualZeroOp>(loc, x_diff);
   Value y_diff = builder.create<BigInt::SubOp>(loc, y(), other.y());
   builder.create<BigInt::EqualZeroOp>(loc, y_diff);
+
+  // Curve information is only for constructing appropriate EC operations and doesn't appear on-circuit except as operation parameters
+  // (and so doesn't need to be verified on circuit here), but you're doing something wrong if you expect two points on different curves to be equal.
+  assert(on_same_curve_as(other));
 }
 
 void AffinePt::validate_on_curve(OpBuilder builder, Location loc) const {
@@ -42,7 +42,7 @@ void AffinePt::validate_on_curve(OpBuilder builder, Location loc) const {
 
 bool AffinePt::on_same_curve_as(const AffinePt& other) const {
   // Curves are only treated as equal if they are equal as pointers
-  // Probably fine b/c we don't really want multiple copies of curves floating around
+  // This is reasonable because don't really want multiple copies of curves floating around
   // (and if we do have multiple copies of the same curve, maybe that represents a semantic difference and they shouldn't be treated as the same thing anyway)
   return _curve == other._curve;
 }
@@ -525,9 +525,23 @@ void makeECAffineValidatePointsEqualTest(
   lhs.validate_equal(builder, loc, rhs);
 }
 
+void makeECAffineValidatePointOnCurveTest(
+    mlir::OpBuilder builder,
+    mlir::Location loc,
+    size_t bits,
+    APInt prime,
+    APInt curve_a,
+    APInt curve_b
+) {
+  auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
+  auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
+  auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
+  AffinePt pt(xP, yP, curve);
+  pt.validate_on_curve(builder, loc);
+}
+
 // TODO
 // void makeECAffineValidatePointOrderTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
-// void makeECAffineValidatePointOnCurveTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
 
 // Perf Test function
 void makeRepeatedECAffineAddTest(mlir::OpBuilder builder,
