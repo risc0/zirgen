@@ -562,6 +562,7 @@ int main(int argc, char* argv[]) {
   pm.addPass(zirgen::dsl::createGenerateLayoutPass());
   pm.addPass(zirgen::Zhlt::createStripAliasLayoutOpsPass());
   pm.addPass(zirgen::dsl::createGenerateBackPass());
+  pm.addPass(mlir::createCSEPass());
   pm.addPass(zirgen::dsl::createGenerateExecPass());
   pm.addPass(mlir::createSymbolPrivatizePass({}));
   pm.addPass(zirgen::Zhlt::createGenerateStepsPass());
@@ -585,7 +586,6 @@ int main(int argc, char* argv[]) {
   }
 
   pm.addPass(mlir::createCanonicalizerPass());
-  pm.addPass(mlir::createCSEPass());
   pm.addPass(mlir::createSymbolDCEPass());
 
   if (failed(pm.run(typedModule.value()))) {

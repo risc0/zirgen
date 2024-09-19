@@ -275,53 +275,62 @@ MixState validityTaps_(ValidityTapsContext ctx0, PolyMix polyMix1, ExtVal8Array 
   return x6;
 }
 MixState validityRegs_(ValidityRegsContext ctx0, PolyMix polyMix1) {
+  BoundLayout<TopLayout> x2 = BIND_LAYOUT(kLayout_Top, GET_BUFFER(ctx0, data));
   // Top(zirgen/dsl/examples/calculator.zir:36)
-  MixState x2 = trivialConstraint();
-  BoundLayout<TopLayout> x3 = BIND_LAYOUT(kLayout_Top, GET_BUFFER(ctx0, data));
-  // Top(zirgen/dsl/examples/calculator.zir:36)
-  BoundLayout<TopResultLayout> x4 = LAYOUT_LOOKUP(x3, result);
+  BoundLayout<TopResultLayout> x3 = LAYOUT_LOOKUP(x2, result);
   // OneHot(zirgen/dsl/examples/calculator.zir:13)
-  BoundLayout<NondetRegLayout2LayoutArray> x5 = LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, _0), _super);
+  BoundLayout<NondetRegLayout2LayoutArray> x4 = LAYOUT_LOOKUP(LAYOUT_LOOKUP(x2, _0), _super);
   // OneHot(zirgen/dsl/examples/calculator.zir:15)
+  MixState x5 = andEqz(polyMix1,
+                       trivialConstraint(),
+                       (LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x4, 0), _super), 0) *
+                        (MAKE_VAL(1) - LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x4, 0), _super), 0))));
+  // OneHot(zirgen/dsl/examples/calculator.zir:17)
   MixState x6 =
       andEqz(polyMix1,
              andEqz(polyMix1,
-                    x2,
-                    (LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x5, 0), _super), 0) *
-                     (MAKE_VAL(1) - LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x5, 0), _super), 0)))),
-             (LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x5, 1), _super), 0) *
-              (MAKE_VAL(1) - LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x5, 1), _super), 0))));
-  MixState x7 = andCond(andEqz(polyMix1,
-                               andEqz(polyMix1,
-                                      x6,
-                                      ((LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x5, 0), _super), 0) +
-                                        LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x5, 1), _super), 0)) -
-                                       MAKE_VAL(1))),
-                               (LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x5, 1), _super), 0) -
-                                LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, op), _super), 0))),
-                        LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x5, 0), _super), 0),
-                        andEqz(polyMix1,
-                               x2,
-                               ((LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, left), _super), 0) +
-                                 LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, right), _super), 0)) -
-                                LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x4, arm0), _super), 0))));
+                    x5,
+                    (LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x4, 1), _super), 0) *
+                     (MAKE_VAL(1) - LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x4, 1), _super), 0)))),
+             ((LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x4, 0), _super), 0) +
+               LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x4, 1), _super), 0)) -
+              MAKE_VAL(1)));
+  BoundLayout<NondetRegLayout> x7 = LAYOUT_LOOKUP(x3, _super);
+  // Reg(<preamble>:5)
+  // Top(zirgen/dsl/examples/calculator.zir:37)
+  MixState x8 = andEqz(polyMix1,
+                       trivialConstraint(),
+                       ((LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x2, left), _super), 0) +
+                         LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x2, right), _super), 0)) -
+                        LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm0), _super), 0)));
+  // Top(zirgen/dsl/examples/calculator.zir:38)
+  MixState x9 = andEqz(polyMix1,
+                       trivialConstraint(),
+                       ((LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x2, left), _super), 0) -
+                         LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x2, right), _super), 0)) -
+                        LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm1), _super), 0)));
   // SetGlobalResult(zirgen/dsl/examples/calculator.zir:28)
   // Top(zirgen/dsl/examples/calculator.zir:41)
-  BoundLayout<_globalLayout> x8 = BIND_LAYOUT(kLayoutGlobal, GET_BUFFER(ctx0, global));
-  // Top(zirgen/dsl/examples/calculator.zir:42)
-  MixState x9 =
+  BoundLayout<_globalLayout> x10 = BIND_LAYOUT(kLayoutGlobal, GET_BUFFER(ctx0, global));
+  // Reg(<preamble>:5)
+  // SetGlobalResult(zirgen/dsl/examples/calculator.zir:29)
+  MixState x11 =
       andEqz(polyMix1,
-             andEqz(polyMix1,
-                    andCond(x7,
-                            LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x5, 1), _super), 0),
-                            andEqz(polyMix1,
-                                   x2,
-                                   ((LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, left), _super), 0) -
-                                     LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, right), _super), 0)) -
-                                    LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x4, arm1), _super), 0)))),
-                    (LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x4, _super), _super), 0) -
-                     LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x8, result), _super), 0))),
-             (LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x8, result), _super), 0) -
-              LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x4, _super), _super), 0)));
-  return x9;
+             andCond(andCond(andEqz(polyMix1,
+                                    x6,
+                                    (LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x4, 1), _super), 0) -
+                                     LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x2, op), _super), 0))),
+                             LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x4, 0), _super), 0),
+                             x8),
+                     LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x4, 1), _super), 0),
+                     x9),
+             (LOAD(LAYOUT_LOOKUP(x7, _super), 0) -
+              LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x10, result), _super), 0)));
+  // GetGlobalResult(zirgen/dsl/examples/calculator.zir:23)
+  // Top(zirgen/dsl/examples/calculator.zir:42)
+  BoundLayout<_globalLayout> x12 = BIND_LAYOUT(kLayoutGlobal, GET_BUFFER(ctx0, global));
+  return andEqz(polyMix1,
+                x11,
+                (LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x12, result), _super), 0) -
+                 LOAD(LAYOUT_LOOKUP(x7, _super), 0)));
 }
