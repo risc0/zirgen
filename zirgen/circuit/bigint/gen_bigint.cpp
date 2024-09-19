@@ -112,7 +112,15 @@ const RsaSpec kRsaSpecs[] = {
     {"rsa_3072_x15", 3072, 15},
 };
 
-// TODO: Clean up
+// rz8test1 parameters  // TODO: rename to clear superfluous 1
+const APInt rz8test1_prime(8, 179);
+const APInt rz8test1_a(8, 1);
+const APInt rz8test1_b(8, 12);
+// Base point
+const APInt rz8test1_G_x(8, 157);
+const APInt rz8test1_G_y(8, 34);
+const APInt rz8test1_order(8, 199);
+
 // secp256k1 parameters  // TODO: rename to clear underscores
 const APInt secp_256k1_prime = APInt::getAllOnes(256) - APInt::getOneBitSet(256, 32)
     - APInt::getOneBitSet(256, 9) - APInt::getOneBitSet(256, 8) - APInt::getOneBitSet(256, 7)
@@ -126,7 +134,7 @@ const APInt secp_256k1_order(256, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A
 
 const ECSpec kECSpecs[] = {
     // rz8test1 -- an in-house 8-bit testing curve; nowhere near big enough to be secure
-    {"rz8test1", 8, {APInt(8, 179), APInt(8, 1), APInt(8, 12)}},
+    {"rz8test1", 8, {rz8test1_prime, rz8test1_a, rz8test1_b}},
 
     // secp256k1
     {"secp256k1", 256, {secp_256k1_prime, secp_256k1_a, secp_256k1_b}},
@@ -156,7 +164,6 @@ int main(int argc, char* argv[]) {
     });
     BigInt::setIterationCount(funcOp, rsa.iters);
   }
-  // TODO: More bitwidth coverage?
   for (size_t numBits : {8}) {
     module.addFunc<0>("nondet_inv_test_" + std::to_string(numBits), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
@@ -222,14 +229,14 @@ int main(int argc, char* argv[]) {
     module.addFunc<0>("ecdsa_verify_" + std::to_string(numBits), {}, [&]() {
       llvm::outs() << "  Making ecdsa_verify_" + std::to_string(numBits) + "\n";
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECDSAVerify(builder, builder.getUnknownLoc(), numBits, APInt(numBits, 31), APInt(numBits, 0), APInt(numBits, 3), APInt(numBits, 43));  // TODO: show values in ZKR name
+      zirgen::BigInt::makeECDSAVerify(builder, builder.getUnknownLoc(), numBits, rz8test1_prime, rz8test1_a, rz8test1_b, rz8test1_order);
     });
   }
   // for (size_t numBits : {256}) {  // TODO: Currently separating out full from small for easier test/benchmark
   //   module.addFunc<0>("ecdsa_verify_full_" + std::to_string(numBits), {}, [&]() {
   //     llvm::outs() << "  Making ecdsa_verify_full_" + std::to_string(numBits) + "\n";
   //     auto& builder = Module::getCurModule()->getBuilder();
-  //     zirgen::BigInt::makeECDSAVerify(builder, builder.getUnknownLoc(), numBits, secp_256k1_prime, secp_256k1_a, secp_256k1_b, secp_256k1_order);  // TODO: show values in ZKR name
+  //     zirgen::BigInt::makeECDSAVerify(builder, builder.getUnknownLoc(), numBits, secp_256k1_prime, secp_256k1_a, secp_256k1_b, secp_256k1_order);
   //   });
   // }
   // Elliptic Curve tests
