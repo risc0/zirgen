@@ -326,18 +326,65 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
       if (baseName.ends_with("$accum") || !Zhlt::isEntryPoint(component))
         return;
 
-      buildAccumStep(component);
+      auto layoutType = component.getLayoutType();
+      if (!layoutType)
+        return;
+
+      KeyPath keyPath, cur;
+      LayoutType majorType;
+      int count = findMajorMux(majorType, keyPath, layoutType, cur);
+      if (count == 0) {
+        return;
+      }
+      if (count != 1) {
+        llvm::errs() << "Unable to find unique major mux for " << baseName << "\n";
+        return signalPassFailure();
+      }
+      buildAccumStep(component, keyPath, majorType);
     });
   }
 
-  void buildAccumStep(ComponentOp component) {
-    auto layoutType = component.getLayoutType();
-    if (!layoutType)
-      return;
+  int findMajorMux(LayoutType& outType, KeyPath& outPath, Type in, KeyPath& cur) {
+    int tot = 0;
+    if (auto array = dyn_cast<LayoutArrayType>(in)) {
+      cur.push_back(size_t(0));
+      tot = findMajorMux(outType, outPath, array.getElement(), cur);
+      cur.pop_back();
+      tot *= array.getSize();
+      return std::min(tot, 2);
+    }
+    if (auto layout = dyn_cast<LayoutType>(in)) {
+      switch (layout.getKind()) {
+      case LayoutKind::Argument:
+        return 2;
+      case LayoutKind::Mux:
+        return 0;
+      case LayoutKind::MajorMux:
+        outType = layout;
+        outPath = cur;
+        return 1;
+      case LayoutKind::Normal:
+        for (auto& field : layout.getFields()) {
+          cur.push_back(field.name);
+          tot += findMajorMux(outType, outPath, field.type, cur);
+          cur.pop_back();
+        }
+        return tot;
+      }
+    }
+    return 0;
+  }
 
-    llvm::MapVector<Type, size_t> argumentCounts = Zhlt::muxArgumentCounts(layoutType);
-    if (argumentCounts.empty())
-      return;
+  void buildAccumStep(ComponentOp component, KeyPath keyPath, LayoutType& majorType) {
+    // Get the worst case column count
+    size_t columns = 0;
+    for (auto& field : majorType.getFields()) {
+      if (field.name.getValue().starts_with("arm")) {
+        llvm::MapVector<Type, size_t> argCounts;
+        extractArguments(argCounts, field.type);
+        columns = std::max(columns, getAccumColumnCount(argCounts));
+      }
+    }
 
     auto ctx = component->getContext();
     auto loc = component->getLoc();
@@ -347,8 +394,7 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
     // Create Accum component, which takes the Top layout as a parameter and the
     // accum buffer as its layout.
     SmallVector<Type> accumParams = {component.getLayoutType()};
-    size_t accumColumns = getAccumColumnCount(argumentCounts);
-    auto accumLayoutType = LayoutArrayType::get(ctx, Zhlt::getExtRefType(ctx), accumColumns);
+    auto accumLayoutType = LayoutArrayType::get(ctx, Zhlt::getExtRefType(ctx), columns);
     std::string accumName = (component.getName() + "$accum").str();
     auto accum = builder.create<Zhlt::ComponentOp>(
         loc, accumName, Zhlt::getComponentType(ctx), accumParams, accumLayoutType);
@@ -360,13 +406,70 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
     auto randomnessLayout =
         builder.create<Zhlt::GetGlobalLayoutOp>(loc, mixLayoutType, "mix", "randomness");
 
-    // Generate IR to compute the grand sum
-    AccumBuilder accumBuilder(builder, accum.getLayout(), randomnessLayout);
-    accumBuilder.build(accum.getConstructParam()[0]);
-    accumBuilder.finalize();
+    // Walk down the key path to the major mux layout component
+    Value cur = accum.getConstructParam()[0];
+    for (const Key& key : keyPath) {
+      if (auto* strKey = std::get_if<mlir::StringRef>(&key)) {
+        cur = builder.create<LookupOp>(loc, cur, *strKey);
+      } else {
+        Value index =
+            builder.create<arith::ConstantOp>(loc, builder.getIndexAttr(std::get<size_t>(key)));
+        cur = builder.create<SubscriptOp>(loc, cur, index);
+      }
+    }
 
-    Value super = builder.create<ZStruct::PackOp>(loc, Zhlt::getComponentType(ctx), ValueRange{});
-    builder.create<Zhlt::ReturnOp>(loc, super);
+    // Load from the list of saved selectors
+    Value selectorLayoutArray = builder.create<LookupOp>(loc, cur, "@selector");
+    size_t armCount = selectorLayoutArray.getType().dyn_cast<LayoutArrayType>().getSize();
+    SmallVector<Value> selectors;
+    Value zeroDistance = builder.create<arith::ConstantOp>(loc, builder.getIndexAttr(0));
+    ValType valType = Zhlt::getValType(builder.getContext());
+    for (size_t i = 0; i < armCount; i++) {
+      Value index = builder.create<arith::ConstantOp>(loc, builder.getIndexAttr(i));
+      Value nondetReg = builder.create<SubscriptOp>(loc, selectorLayoutArray, index);
+      Value ref = builder.create<LookupOp>(loc, nondetReg, "@super");
+      Value val = builder.create<LoadOp>(loc, valType, ref, zeroDistance);
+      selectors.push_back(val);
+    }
+
+    // Build a switch op over the (saved) selectors
+    Type componentType = Zhlt::getComponentType(builder.getContext());
+    auto switchOp =
+        builder.create<ZStruct::SwitchOp>(loc, componentType, selectors, /*numArms=*/armCount);
+
+    // Now, generate each arm
+    for (size_t i = 0; i < armCount; i++) {
+      OpBuilder::InsertionGuard insertionGuard(builder);
+      Block* block = builder.createBlock(&switchOp.getArms()[i]);
+      builder.setInsertionPointToEnd(block);
+      std::string armName = "arm" + std::to_string(i);
+      bool hasArm = std::any_of(majorType.getFields().begin(),
+                                majorType.getFields().end(),
+                                [&](auto field) { return field.name == armName; });
+      if (hasArm) {
+        Value armLayout = builder.create<LookupOp>(loc, cur, armName);
+        AccumBuilder accumBuilder(builder, accum.getLayout(), randomnessLayout);
+        accumBuilder.build(armLayout);
+        accumBuilder.finalize();
+      } else {
+        // Read accumulator + forward
+        ValType extValType = Zhlt::getValExtType(builder.getContext());
+        Value distance =
+            builder.create<arith::ConstantOp>(loc, builder.getIndexType(), builder.getIndexAttr(1));
+        Value indexValue = builder.create<arith::ConstantOp>(
+            loc, builder.getIndexType(), builder.getIndexAttr(accumLayoutType.getSize() - 1));
+        Value lastLayout = builder.create<SubscriptOp>(loc, accum.getLayout(), indexValue);
+        Value prevVal = builder.create<LoadOp>(loc, extValType, lastLayout, distance);
+        builder.create<StoreOp>(loc, lastLayout, prevVal);
+      }
+
+      Value empty = builder.create<ZStruct::PackOp>(loc, Zhlt::getComponentType(ctx), ValueRange{});
+      builder.create<ZStruct::YieldOp>(loc, empty);
+    }
+
+    // Make a null return
+    Value empty = builder.create<ZStruct::PackOp>(loc, Zhlt::getComponentType(ctx), ValueRange{});
+    builder.create<Zhlt::ReturnOp>(loc, empty);
   }
 
 private:

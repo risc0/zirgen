@@ -71,7 +71,8 @@ component ReadStep() {
 
 test {
   isFirst := NondetReg(IsFirstCycle());
-  [isFirst, 1 - isFirst] -> (
+  notFirst := Reg(1 - isFirst);
+  [isFirst, notFirst] ->! (
      WriteStep(),
      ReadStep()
   )

@@ -103,7 +103,7 @@ mlir::Type LayoutType::parse(mlir::AsmParser& p) {
   }
   LayoutKind kind = LayoutKind::Normal;
   StringRef strKind;
-  if (succeeded(p.parseOptionalKeyword(&strKind, {"mux", "argument", "major"}))) {
+  if (succeeded(p.parseOptionalKeyword(&strKind, {"mux", "majormux", "argument", "major"}))) {
     kind = symbolizeEnum<LayoutKind>(strKind).value_or(LayoutKind::Normal);
   }
   if (p.parseComma())

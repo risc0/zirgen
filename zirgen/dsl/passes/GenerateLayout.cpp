@@ -79,8 +79,7 @@ class FindPreallocs {
 public:
   Result run(const std::shared_ptr<LayoutDAG>& abstract) {
     Vec prefix;
-    computeSharedPrefixes(abstract, prefix);
-    Result ret;
+    computeSharedPrefixes(abstract, prefix, Ptr());
     for (const auto& kvp : prefixes) {
       // Check if final value matches key, in which case there is a unique parent
       if (kvp.first == kvp.second.back()) {
@@ -98,6 +97,7 @@ private:
   std::map<Ptr, uint32_t> ptrToId;
   // For an entry, what is the longest unique prefix
   MapToVec prefixes;
+  Result ret;
 
   static Vec sharedPrefix(const Vec& lhs, const Vec& rhs) {
     if (lhs.size() == 0) { // Handle initialization case
@@ -115,7 +115,7 @@ private:
     return Vec(lhs.begin(), lhs.begin() + i);
   }
 
-  void computeSharedPrefixes(const std::shared_ptr<LayoutDAG>& abstract, Vec& prefix) {
+  void computeSharedPrefixes(Ptr abstract, Vec& prefix, Ptr arm) {
     // Compute ID for element
     uint32_t id;
     if (ptrToId.count(abstract)) {
@@ -131,14 +131,23 @@ private:
     // Descend for recursive types
     if (const auto* arr = std::get_if<AbstractArray>(abstract.get())) {
       for (auto element : arr->elements) {
-        computeSharedPrefixes(element, prefix);
+        computeSharedPrefixes(element, prefix, arm);
       }
     } else if (const auto* str = std::get_if<AbstractStructure>(abstract.get())) {
+      auto kind = str->type.getKind();
+      bool isMux = (kind == LayoutKind::Mux || kind == LayoutKind::MajorMux);
       for (auto field : str->fields) {
-        computeSharedPrefixes(field.second, prefix);
+        if (isMux && field.first == "@super" && arm) {
+          ret[arm].push_back(field.second);
+        }
+        if (isMux && StringRef(field.first.str()).starts_with("arm")) {
+          computeSharedPrefixes(field.second, prefix, field.second);
+        } else {
+          computeSharedPrefixes(field.second, prefix, arm);
+        }
       }
     } else if (const auto* ref = std::get_if<std::shared_ptr<LayoutDAG>>(abstract.get())) {
-      computeSharedPrefixes(*ref, prefix);
+      computeSharedPrefixes(*ref, prefix, arm);
     }
     // Pop from path
     prefix.pop_back();
@@ -198,7 +207,7 @@ private:
       attr = ArrayAttr::get(arr->type.getContext(), elements);
     } else if (const auto* str = std::get_if<AbstractStructure>(abstract.get())) {
       SmallVector<NamedAttribute> fields;
-      if (str->type.getKind() == LayoutKind::Mux) {
+      if (str->type.getKind() == LayoutKind::Mux || str->type.getKind() == LayoutKind::MajorMux) {
         size_t finalAllocator = allocator;
         for (auto field : str->fields) {
           size_t armAllocator = allocator;

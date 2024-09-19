@@ -103,7 +103,7 @@ Expr Construct(Expr&& type, ExprVec&& args);
 Expr Construct(string ident, ExprVec&& args);
 Expr Map(Expr&& array, string element, Expr&& function);
 Expr Reduce(Expr&& array, Expr&& init, Expr&& type);
-Expr Switch(Expr&& selector, ExprVec&& cases);
+Expr Switch(Expr&& selector, ExprVec&& cases, bool isMajor = false);
 Expr Range(Expr&& start, Expr&& end);
 Expr ArrayLiteral(ExprVec&& elements);
 Comp Component(string name, ParamVec&& tp, ParamVec&& p, Expr&& body);

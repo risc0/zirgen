@@ -546,7 +546,7 @@ void improve(Circuit& circuit) {
     for (auto& fi : ul.fields) {
       if (auto st = fi.type.dyn_cast<LayoutType>()) {
         // Ignore non-struct members.
-        if (st.getKind() == LayoutKind::Mux) {
+        if (st.getKind() == LayoutKind::Mux || st.getKind() == LayoutKind::MajorMux) {
           continue;
         }
         // Ignore structs which have no fields.
