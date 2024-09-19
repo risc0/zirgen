@@ -222,6 +222,7 @@ public:
       : opts(opts), outStream(os), ctx(ctx) {}
 
   void emitModule(mlir::ModuleOp op);
+  void emitTopLevel(mlir::Operation* op);
   void emitFunc(mlir::FunctionOpInterface op);
   void emitRegion(mlir::Region& region);
   void emitBlock(mlir::Block& block);

@@ -106,15 +106,13 @@ const RsaSpec kRsaSpecs[] = {
 
 } // namespace
 
-cl::list<std::string> outputFiles{
-    cl::Positional, cl::OneOrMore, cl::desc("files in output directory")};
+cl::opt<std::string> outputDir{
+    "output-dir", cl::desc("Output directory"), cl::value_desc("dir"), cl::Required};
 
 int main(int argc, char* argv[]) {
   llvm::InitLLVM y(argc, argv);
   registerEdslCLOptions();
   llvm::cl::ParseCommandLineOptions(argc, argv, "gen_bigint");
-
-  std::string dir = llvm::StringRef(outputFiles[0]).rsplit('/').first.str();
 
   Module module;
   auto* ctx = module.getCtx();
@@ -207,11 +205,11 @@ int main(int argc, char* argv[]) {
   rustLang.addContextArgument("ctx: &mut BigIntContext");
   rustLang.addItemsMacro("bigint_program_info");
   rustLang.addItemsMacro("bigint_program_list");
-  emitLang("rs", &rustLang, dir, module.getModule());
+  emitLang("rs", &rustLang, outputDir, module.getModule());
 
   static codegen::CppLanguageSyntax cppLang;
   cppLang.addContextArgument("BigIntContext& ctx");
-  emitLang("cpp", &cppLang, dir, module.getModule());
+  emitLang("cpp", &cppLang, outputDir, module.getModule());
 
   PassManager pm2(module.getCtx());
   if (failed(applyPassManagerCLOptions(pm2))) {
@@ -229,7 +227,7 @@ int main(int argc, char* argv[]) {
   bool exceeded = false;
   module.getModule().walk([&](mlir::func::FuncOp func) {
     recursion::EncodeStats stats;
-    zirgen::emitRecursion(dir, func, &stats);
+    zirgen::emitRecursion(outputDir, func, &stats);
     size_t iters = BigInt::getIterationCount(func);
     if (stats.totCycles > (1 << recursion::kRecursionPo2)) {
       exceeded = true;

@@ -14,6 +14,8 @@
 
 // Analyses what buffers are used by a module.
 
+#pragma once
+
 #include "mlir/Pass/AnalysisManager.h"
 #include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
 #include "zirgen/Dialect/Zll/IR/IR.h"

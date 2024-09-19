@@ -44,15 +44,19 @@ void CodegenEmitter::emitModule(mlir::ModuleOp moduleOp) {
   emitTypeDefs(moduleOp);
 
   for (auto& op : *moduleOp.getBody()) {
-    if (op.hasTrait<CodegenSkipTrait>())
-      continue;
-
-    TypeSwitch<Operation*>(&op)
-        .Case<ModuleOp>([&](ModuleOp op) { emitModule(op); })
-        .Case<FunctionOpInterface>([&](FunctionOpInterface op) { emitFunc(op); })
-        .Case<CodegenGlobalOpInterface>([&](CodegenGlobalOpInterface op) { op.emitGlobal(*this); })
-        .Default([&](auto op) { emitStatement(op); });
+    emitTopLevel(&op);
   }
+}
+
+void CodegenEmitter::emitTopLevel(Operation* op) {
+  if (op->hasTrait<CodegenSkipTrait>())
+    return;
+
+  TypeSwitch<Operation*>(op)
+      .Case<ModuleOp>([&](ModuleOp op) { emitModule(op); })
+      .Case<FunctionOpInterface>([&](FunctionOpInterface op) { emitFunc(op); })
+      .Case<CodegenGlobalOpInterface>([&](CodegenGlobalOpInterface op) { op.emitGlobal(*this); })
+      .Default([&](auto op) { emitStatement(op); });
 }
 
 std::string CodegenEmitter::canonIdent(llvm::StringRef ident, IdentKind idt) {
@@ -543,20 +547,5 @@ LogicalResult translateCodegen(Operation* op, CodegenOptions opts, llvm::raw_ost
       });
   return success();
 }
-
-namespace {
-
-template <typename OpType, char infixOp>
-struct InfixInterface
-    : public CodegenExprOpInterface::ExternalModel<InfixInterface<OpType, infixOp>, OpType> {
-  void emitExpr(Operation* op, zirgen::codegen::CodegenEmitter& cg) const {
-    static const char infixStr[] = {infixOp, '\0'};
-    assert(op->getNumOperands() == 2);
-    assert(op->getNumResults() == 1);
-    cg.emitInfix(infixStr, op->getOperand(0), op->getOperand(1));
-  }
-};
-
-} // namespace
 
 } // namespace zirgen::codegen

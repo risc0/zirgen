@@ -67,27 +67,18 @@ void optimizePoly(ModuleOp module) {
 }
 
 struct CodegenCLOptions {
-  cl::list<std::string> outputFiles{
-      cl::Positional, cl::OneOrMore, cl::desc("files in output directory")};
+  cl::opt<std::string> outputDir{
+      "output-dir", cl::desc("Output directory"), cl::value_desc("dir"), cl::Required};
 };
 
 static llvm::ManagedStatic<CodegenCLOptions> clOptions;
 
 llvm::StringRef getOutputDir() {
-  std::string path;
   if (!clOptions.isConstructed()) {
     throw(std::runtime_error("codegen command line options must be registered"));
   }
 
-  if (clOptions->outputFiles.empty()) {
-    llvm::errs() << "At least one file in the output directory must be specified\n";
-    exit(1);
-  }
-
-  llvm::StringRef outputDir = llvm::StringRef(clOptions->outputFiles[0]).rsplit('/').first;
-  if (outputDir.empty())
-    return ".";
-  return outputDir;
+  return clOptions->outputDir;
 }
 
 } // namespace
