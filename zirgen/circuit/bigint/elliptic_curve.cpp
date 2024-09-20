@@ -525,6 +525,7 @@ void makeECAffineValidatePointsEqualTest(
   lhs.validate_equal(builder, loc, rhs);
 }
 
+// TODO: Drop Affine from all these names
 void makeECAffineValidatePointOnCurveTest(
     mlir::OpBuilder builder,
     mlir::Location loc,
@@ -542,6 +543,103 @@ void makeECAffineValidatePointOnCurveTest(
 
 // TODO
 // void makeECAffineValidatePointOrderTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
+
+// The "Freely" test functions run the op without checking the output
+void makeECAddFreelyTest(
+    mlir::OpBuilder builder,
+    mlir::Location loc,
+    size_t bits,
+    APInt prime,
+    APInt curve_a,
+    APInt curve_b
+) {
+  auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
+  auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
+  auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);
+  auto yQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
+
+  auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
+  AffinePt lhs(xP, yP, curve);
+  AffinePt rhs(xQ, yQ, curve);
+  auto result = add(builder, loc, lhs, rhs);
+  // We check result == result so it doesn't get DCE'd
+  result.validate_equal(builder, loc, result);
+}
+
+void makeECDoubleFreelyTest(
+    mlir::OpBuilder builder,
+    mlir::Location loc,
+    size_t bits,
+    APInt prime,
+    APInt curve_a,
+    APInt curve_b
+) {
+  auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
+  auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
+  auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
+  AffinePt inp(xP, yP, curve);
+  auto result = doub(builder, loc, inp);
+  // We check result == result so it doesn't get DCE'd
+  result.validate_equal(builder, loc, result);
+}
+
+void makeECMultiplyFreelyTest(
+    mlir::OpBuilder builder,
+    mlir::Location loc,
+    size_t bits,
+    APInt prime,
+    APInt curve_a,
+    APInt curve_b
+) {
+  // This test is only valid for curves whose order is of bitwidth no more than the prime's bitwidth
+  auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
+  auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
+  auto scale = builder.create<BigInt::DefOp>(loc, bits, 2, true);
+
+  auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
+  AffinePt inp(xP, yP, curve);
+  auto result = mul(builder, loc, scale, inp);
+  // We check result == result so it doesn't get DCE'd
+  result.validate_equal(builder, loc, result);
+}
+
+void makeECNegateFreelyTest(
+    mlir::OpBuilder builder,
+    mlir::Location loc,
+    size_t bits,
+    APInt prime,
+    APInt curve_a,
+    APInt curve_b
+) {
+  auto order_bits = bits;
+  auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
+  auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
+  auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
+  AffinePt inp(xP, yP, curve);
+  auto result = neg(builder, loc, inp);
+  // We check result == result so it doesn't get DCE'd
+  result.validate_equal(builder, loc, result);
+}
+
+void makeECSubtractFreelyTest(
+    mlir::OpBuilder builder,
+    mlir::Location loc,
+    size_t bits,
+    APInt prime,
+    APInt curve_a,
+    APInt curve_b
+) {
+  auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
+  auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
+  auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);
+  auto yQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
+  auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
+  AffinePt lhs(xP, yP, curve);
+  AffinePt rhs(xQ, yQ, curve);
+  auto result = sub(builder, loc, lhs, rhs);
+  // We check result == result so it doesn't get DCE'd
+  result.validate_equal(builder, loc, result);
+}
 
 // Perf Test function
 void makeRepeatedECAffineAddTest(mlir::OpBuilder builder,

@@ -142,7 +142,55 @@ void makeECAffineValidatePointOnCurveTest(
     APInt curve_b
 );
 
-// Perf test function
+// The "Freely" test functions run the op without checking the output
+// These are mostly useful for testing expected failures e.g. P + -P should always fail
+// TODO: Might not need this for Doub or Neg
+void makeECAddFreelyTest(
+    mlir::OpBuilder builder,
+    mlir::Location loc,
+    size_t bits,
+    APInt prime,
+    APInt curve_a,
+    APInt curve_b
+);
+
+void makeECDoubleFreelyTest(
+    mlir::OpBuilder builder,
+    mlir::Location loc,
+    size_t bits,
+    APInt prime,
+    APInt curve_a,
+    APInt curve_b
+);
+
+void makeECMultiplyFreelyTest(
+    mlir::OpBuilder builder,
+    mlir::Location loc,
+    size_t bits,
+    APInt prime,
+    APInt curve_a,
+    APInt curve_b
+);
+
+void makeECNegateFreelyTest(
+    mlir::OpBuilder builder,
+    mlir::Location loc,
+    size_t bits,
+    APInt prime,
+    APInt curve_a,
+    APInt curve_b
+);
+
+void makeECSubtractFreelyTest(
+    mlir::OpBuilder builder,
+    mlir::Location loc,
+    size_t bits,
+    APInt prime,
+    APInt curve_a,
+    APInt curve_b
+);
+
+// Perf test functions
 void makeRepeatedECAffineAddTest(mlir::OpBuilder builder,
                                  mlir::Location _loc,
                                  size_t bits,
@@ -150,7 +198,6 @@ void makeRepeatedECAffineAddTest(mlir::OpBuilder builder,
                                  APInt prime,
                                  APInt curve_a,
                                  APInt curve_b);
-// Perf test function
 void makeRepeatedECAffineDoubleTest(mlir::OpBuilder builder,
                                     mlir::Location _loc,
                                     size_t bits,
