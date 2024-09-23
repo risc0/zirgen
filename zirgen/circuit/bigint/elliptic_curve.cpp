@@ -11,7 +11,7 @@ void WeierstrassCurve::validate_contains(OpBuilder builder, Location loc, const 
   Value y_sqr = builder.create<BigInt::MulOp>(loc, pt.y(), pt.y());
 
   Value x_cube = builder.create<BigInt::MulOp>(loc, pt.x(), pt.x());
-  x_cube = builder.create<BigInt::ReduceOp>(loc, x_cube, prime);  // TODO: Reduce isn't required for correctness, perf better if skipped?  // TODO: But seems to make an overflow if dropped?
+  x_cube = builder.create<BigInt::ReduceOp>(loc, x_cube, prime);
   x_cube = builder.create<BigInt::MulOp>(loc, pt.x(), x_cube);
 
   Value ax = builder.create<BigInt::MulOp>(loc, a_as_bigint(builder, loc), pt.x());
@@ -21,7 +21,7 @@ void WeierstrassCurve::validate_contains(OpBuilder builder, Location loc, const 
 
   Value diff = builder.create<BigInt::SubOp>(loc, weierstrass_rhs, y_sqr);
   diff = builder.create<BigInt::AddOp>(loc, diff, builder.create<BigInt::MulOp>(loc, prime, prime));  // Ensure `diff` nonnegative
-  diff = builder.create<BigInt::ReduceOp>(loc, diff, prime);  // TODO: Testing doing here instead of on its inputs
+  diff = builder.create<BigInt::ReduceOp>(loc, diff, prime);
   builder.create<BigInt::EqualZeroOp>(loc, diff);
 }
 
@@ -48,7 +48,10 @@ bool AffinePt::on_same_curve_as(const AffinePt& other) const {
 }
 
 AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffinePt& rhs) {
-  // Note: `add` can fail in two ways: A + A (doesn't use doubling algorithm) or A + (-A) (can't write 0)  [TODO: Document?]
+  // This assumes `pt` is actually on the curve
+  // This assumption isn't checked here, so other code must ensure it's met
+  // Also, this can fail for: A + A (doesn't use doubling algorithm) and A + (-A) (can't write 0)
+  // Trying to calculate either of those cases will result in an EQZ failure
   // Formulas (all mod `prime`):
   //   lambda = (yQ - yP) / (xQ - xP)
   //       nu = yP - lambda * xP
@@ -95,9 +98,10 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
 
   Value lambda_sqr = builder.create<BigInt::MulOp>(loc, lambda, lambda);
   Value xR = builder.create<BigInt::SubOp>(loc, lambda_sqr, lhs.x());
-  xR = builder.create<BigInt::AddOp>(loc, xR, prime);  // Quot/Rem needs nonnegative inputs, so enforce positivity
   xR = builder.create<BigInt::SubOp>(loc, xR, rhs.x());
   xR = builder.create<BigInt::AddOp>(loc, xR, prime);  // Quot/Rem needs nonnegative inputs, so enforce positivity
+  xR = builder.create<BigInt::AddOp>(loc, xR, prime);  // Quot/Rem needs nonnegative inputs, so enforce positivity
+  Value xR_unreduced = xR;
   Value k_x = builder.create<BigInt::NondetQuotOp>(loc, xR, prime);
   xR = builder.create<BigInt::NondetRemOp>(loc, xR, prime);
 
@@ -112,13 +116,12 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   yR = builder.create<BigInt::NondetRemOp>(loc, yR, prime);
 
   // Verify xR
-  // TODO: Can skip recomputing the things calculated pre-nondet above
-  Value x_check = builder.create<BigInt::MulOp>(loc, k_x, prime);
-  x_check = builder.create<BigInt::SubOp>(loc, lambda_sqr, x_check);
-  x_check = builder.create<BigInt::SubOp>(loc, x_check, lhs.x());
+  Value x_check = builder.create<BigInt::SubOp>(loc, lambda_sqr, lhs.x());
   x_check = builder.create<BigInt::SubOp>(loc, x_check, rhs.x());
   x_check = builder.create<BigInt::AddOp>(loc, x_check, prime);
   x_check = builder.create<BigInt::AddOp>(loc, x_check, prime);
+  Value kx_prime = builder.create<BigInt::MulOp>(loc, k_x, prime);
+  x_check = builder.create<BigInt::SubOp>(loc, x_check, kx_prime);
   x_check = builder.create<BigInt::SubOp>(loc, x_check, xR);
   builder.create<BigInt::EqualZeroOp>(loc, x_check);
 
@@ -138,8 +141,10 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
 }
 
 AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt) {
+  // This assumes `pt` is actually on the curve
+  // This assumption isn't checked here, so other code must ensure it's met
   // This algorithm doesn't work if `scalar` is a multiple of `pt`'s order
-  // This doesn't need a special check, as it always computes a P + -P, causing a failure
+  // This doesn't need a special check, as it always computes a P + -P, causing an EQZ failure
 
   // Construct constants
   mlir::Type oneType = builder.getIntegerType(1);  // a `1` is bitwidth 1
@@ -196,8 +201,7 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt) 
       auto yIfNotAdd = builder.create<BigInt::MulOp>(loc, result.y(), one_minus_rem);
       auto xMerged = builder.create<BigInt::AddOp>(loc, xIfAdd, xIfNotAdd);
       auto yMerged = builder.create<BigInt::AddOp>(loc, yIfAdd, yIfNotAdd);
-      // TODO: I think these may not actually be needed ...
-      // TODO: These seem necessary for bitwidth reasons and/or coeff size reasons, but probably shouldn't be needed for correctness; perhaps there's a workaround?
+      // TODO: The reduces keep the coeff size small enough, but aren't otherwise needed for correctness; could maybe eek out a bit of perf with lower-level nondets
       auto newX = builder.create<BigInt::ReduceOp>(loc, xMerged, result.curve()->prime_as_bigint(builder, loc));
       auto newY = builder.create<BigInt::ReduceOp>(loc, yMerged, result.curve()->prime_as_bigint(builder, loc));
 
@@ -219,7 +223,6 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt) 
   xFinal = builder.create<BigInt::ReduceOp>(loc, xFinal, result.curve()->prime_as_bigint(builder, loc));
   Value yFinal = builder.create<BigInt::AddOp>(loc, yIfSub, yIfNotSub);
   yFinal = builder.create<BigInt::ReduceOp>(loc, yFinal, result.curve()->prime_as_bigint(builder, loc));
-  // TODO: Do I actually need to reduce xFinal/yFinal?
 
   return AffinePt(xFinal, yFinal, result.curve());
 }
@@ -230,6 +233,10 @@ AffinePt neg(OpBuilder builder, Location loc, const AffinePt& pt){
 }
 
 AffinePt doub(OpBuilder builder, Location loc, const AffinePt& pt){
+  // This assumes `pt` is actually on the curve and that `pt` is not order 2
+  // These assumptions aren't checked here, so other code must ensure they're met
+  // If you need to check for the latter case, verify that `y_in` is not 0 (mod `prime`)
+
   // Formulas (all mod `prime`):
   //   lambda = (3 * x_in^2 + a_coeff) / (2 * y_in)
   //       nu = y_in - lambda * x_in
@@ -240,9 +247,6 @@ AffinePt doub(OpBuilder builder, Location loc, const AffinePt& pt){
   //   k_lambda * prime + 2 * y_in * lambda = 2 * prime^2 + 3 * x_in^2 + a
   //                    k_x * prime + x_out = 2 * prime + lambda^2 - 2 * x_in
   //                    k_y * prime + y_out = prime^2 + prime - lambda * x_out - y_in + lambda * x_in
-
-  // TODO: This assumes `pt` is actually on the curve and that `pt` is not order 2
-  // If you need to check for the latter case, verify that `y_in` is not 0 (mod `prime`)
 
   auto prime = pt.curve()->prime_as_bigint(builder, loc);
 
@@ -314,7 +318,10 @@ AffinePt doub(OpBuilder builder, Location loc, const AffinePt& pt){
 }
 
 AffinePt sub(OpBuilder builder, Location loc, const AffinePt& lhs, const AffinePt& rhs) {
-  // Note: `sub` can fail in two ways: A - A (can't write 0) or A - (-A) (doesn't use doubling algorithm) [TODO: Document?]
+  // This assumes `pt` is actually on the curve
+  // This assumption isn't checked here, so other code must ensure it's met
+  // Also, this can fail for: A - A (can't write 0) and A - (-A) (doesn't use doubling algorithm)
+  // Trying to calculate either of those cases will result in an EQZ failure
   auto neg_rhs = neg(builder, loc, rhs);
   return add(builder, loc, lhs, neg_rhs);
 }
