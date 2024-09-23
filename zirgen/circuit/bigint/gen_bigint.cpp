@@ -283,30 +283,50 @@ int main(int argc, char* argv[]) {
     });
   }
   for (auto ec : kECSpecs) {
+    if (ec.name != "rz8test") {
+      continue;
+      // only need the test curve for the `freely` ZKRs
+    }
     module.addFunc<0>(std::string("ec_add_freely_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
       zirgen::BigInt::makeECAddFreelyTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (auto ec : kECSpecs) {
+    if (ec.name != "rz8test") {
+      continue;
+      // only need the test curve for the `freely` ZKRs
+    }
     module.addFunc<0>(std::string("ec_doub_freely_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
       zirgen::BigInt::makeECDoubleFreelyTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (auto ec : kECSpecs) {
+    if (ec.name != "rz8test") {
+      continue;
+      // only need the test curve for the `freely` ZKRs
+    }
     module.addFunc<0>(std::string("ec_mul_freely_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
       zirgen::BigInt::makeECMultiplyFreelyTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (auto ec : kECSpecs) {
+    if (ec.name != "rz8test") {
+      continue;
+      // only need the test curve for the `freely` ZKRs
+    }
     module.addFunc<0>(std::string("ec_neg_freely_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
       zirgen::BigInt::makeECNegateFreelyTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (auto ec : kECSpecs) {
+    if (ec.name != "rz8test") {
+      continue;
+      // only need the test curve for the `freely` ZKRs
+    }
     module.addFunc<0>(std::string("ec_sub_freely_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
       zirgen::BigInt::makeECSubtractFreelyTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());

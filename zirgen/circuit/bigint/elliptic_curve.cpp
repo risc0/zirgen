@@ -548,9 +548,6 @@ void makeECAffineValidatePointOnCurveTest(
   pt.validate_on_curve(builder, loc);
 }
 
-// TODO
-// void makeECAffineValidatePointOrderTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
-
 // The "Freely" test functions run the op without checking the output
 void makeECAddFreelyTest(
     mlir::OpBuilder builder,

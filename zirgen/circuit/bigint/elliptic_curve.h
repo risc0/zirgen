@@ -12,6 +12,12 @@ namespace zirgen::BigInt {
 
 class AffinePt;
 
+// TODO (tzerrell): Go through our bigint models carefully, then ensure this code is aligned on:
+//  - Signedness
+//  - Bitwidths
+//  - Max Positive / Negative coefficient values
+//  - Anything else I turn up
+
 class WeierstrassCurve {
   // An elliptic curve in short Weierstrass form
   // Formula:
@@ -22,17 +28,17 @@ public:
   const APInt& b() const { return _b_coeff; };
   const APInt& prime() const { return _prime; };
   Value a_as_bigint(OpBuilder builder, Location loc) const {
-    mlir::Type type = builder.getIntegerType(_a_coeff.getBitWidth());  // TODO: I haven't thought through signedness
+    mlir::Type type = builder.getIntegerType(_a_coeff.getBitWidth());
     auto attr = builder.getIntegerAttr(type, _a_coeff);
     return builder.create<BigInt::ConstOp>(loc, attr);
   };
   Value b_as_bigint(OpBuilder builder, Location loc) const {
-    mlir::Type type = builder.getIntegerType(_b_coeff.getBitWidth());  // TODO: I haven't thought through signedness
+    mlir::Type type = builder.getIntegerType(_b_coeff.getBitWidth());
     auto attr = builder.getIntegerAttr(type, _b_coeff);
     return builder.create<BigInt::ConstOp>(loc, attr);
   };;
   Value prime_as_bigint(OpBuilder builder, Location loc) const {
-    mlir::Type type = builder.getIntegerType(_prime.getBitWidth());  // TODO: I haven't thought through signedness
+    mlir::Type type = builder.getIntegerType(_prime.getBitWidth());
     auto attr = builder.getIntegerAttr(type, _prime);
     return builder.create<BigInt::ConstOp>(loc, attr);
   };;
@@ -56,8 +62,7 @@ public:
   bool on_same_curve_as(const AffinePt& other) const;
 
 private:
-  // TODO: Can we constrain the type better than just "Value"?
-  // (i.e. to BigInts)
+  // TODO: Can we constrain the type better than just "Value"? (i.e. to BigInts)
   Value _x;
   Value _y;
   // The elliptic curve this point lies on
@@ -83,7 +88,6 @@ void makeECDSAVerify(
 );
 
 // Test functions
-// TODO: Choose a good suite of test functions
 void makeECAffineAddTest(
     mlir::OpBuilder builder,
     mlir::Location loc,
@@ -124,7 +128,6 @@ void makeECAffineSubtractTest(
     APInt curve_a,
     APInt curve_b
 );
-// void makeECAffineValidatePointOrderTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
 void makeECAffineValidatePointsEqualTest(
     mlir::OpBuilder builder,
     mlir::Location loc,
@@ -153,7 +156,6 @@ void makeECAddFreelyTest(
     APInt curve_a,
     APInt curve_b
 );
-
 void makeECDoubleFreelyTest(
     mlir::OpBuilder builder,
     mlir::Location loc,
@@ -162,7 +164,6 @@ void makeECDoubleFreelyTest(
     APInt curve_a,
     APInt curve_b
 );
-
 void makeECMultiplyFreelyTest(
     mlir::OpBuilder builder,
     mlir::Location loc,
@@ -171,7 +172,6 @@ void makeECMultiplyFreelyTest(
     APInt curve_a,
     APInt curve_b
 );
-
 void makeECNegateFreelyTest(
     mlir::OpBuilder builder,
     mlir::Location loc,
@@ -180,7 +180,6 @@ void makeECNegateFreelyTest(
     APInt curve_a,
     APInt curve_b
 );
-
 void makeECSubtractFreelyTest(
     mlir::OpBuilder builder,
     mlir::Location loc,
