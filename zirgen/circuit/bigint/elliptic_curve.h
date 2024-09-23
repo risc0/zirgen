@@ -51,7 +51,7 @@ private:
 };
 
 class AffinePt {
-  // A point expressed in affine coordinates
+  // A point on a Weierstrass curve expressed in affine coordinates
 public:
   AffinePt(Value x_coord, Value y_coord, std::shared_ptr<WeierstrassCurve> curve) : _x(x_coord), _y(y_coord), _curve(curve) {};
   const Value& x() const { return _x; };
@@ -62,7 +62,6 @@ public:
   bool on_same_curve_as(const AffinePt& other) const;
 
 private:
-  // TODO: Can we constrain the type better than just "Value"? (i.e. to BigInts)
   Value _x;
   Value _y;
   // The elliptic curve this point lies on
