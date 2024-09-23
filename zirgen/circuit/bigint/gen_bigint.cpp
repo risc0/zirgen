@@ -224,21 +224,6 @@ int main(int argc, char* argv[]) {
       zirgen::BigInt::makeReduceTest(builder, builder.getUnknownLoc(), numBits);
     });
   }
-  // ECDSA  // TODO: Running at 8 and 32 because 256 doesn't fit in po2 18 so can't use kECSpecs
-  for (size_t numBits : {8, 32 /*, 256*/}) {
-    module.addFunc<0>("ecdsa_verify_" + std::to_string(numBits), {}, [&]() {
-      llvm::outs() << "  Making ecdsa_verify_" + std::to_string(numBits) + "\n";
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECDSAVerify(builder, builder.getUnknownLoc(), numBits, rz8test_prime, rz8test_a, rz8test_b, rz8test_order);
-    });
-  }
-  // for (size_t numBits : {256}) {  // TODO: Doesn't fit in po2 18, so commented out
-  //   module.addFunc<0>("ecdsa_verify_full_" + std::to_string(numBits), {}, [&]() {
-  //     llvm::outs() << "  Making ecdsa_verify_full_" + std::to_string(numBits) + "\n";
-  //     auto& builder = Module::getCurModule()->getBuilder();
-  //     zirgen::BigInt::makeECDSAVerify(builder, builder.getUnknownLoc(), numBits, secp256k1_prime, secp256k1_a, secp256k1_b, secp256k1_order);
-  //   });
-  // }
   // Elliptic Curve tests
   for (auto ec : kECSpecs) {
     module.addFunc<0>(std::string("ec_add_").append(ec.name), {}, [&]() {

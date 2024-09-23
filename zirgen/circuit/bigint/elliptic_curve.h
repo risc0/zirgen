@@ -75,18 +75,6 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt);
 AffinePt neg(OpBuilder builder, Location loc, const AffinePt& pt);
 AffinePt sub(OpBuilder builder, Location loc, const AffinePt& lhs, const AffinePt& rhs);
 
-void ECDSA_verify(OpBuilder builder, Location loc, const AffinePt& base_pt, const AffinePt& pub_key, Value hashed_msg, Value r, Value s);
-
-void makeECDSAVerify(
-    mlir::OpBuilder builder,
-    mlir::Location loc,
-    size_t bits,
-    APInt prime,
-    APInt curve_a,
-    APInt curve_b,
-    APInt order
-);
-
 // Test functions
 void makeECAffineAddTest(
     mlir::OpBuilder builder,
