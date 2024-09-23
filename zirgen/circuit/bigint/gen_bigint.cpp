@@ -113,6 +113,7 @@ const RsaSpec kRsaSpecs[] = {
 };
 
 // rz8test parameters
+// rz8test is an 8-bit testing curve that is far too small to be secure but good for short tests
 const APInt rz8test_prime(8, 179);
 const APInt rz8test_a(8, 1);
 const APInt rz8test_b(8, 12);
@@ -228,43 +229,43 @@ int main(int argc, char* argv[]) {
   for (auto ec : kECSpecs) {
     module.addFunc<0>(std::string("ec_add_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAffineAddTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
+      zirgen::BigInt::makeECAddTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (auto ec : kECSpecs) {
     module.addFunc<0>(std::string("ec_doub_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAffineDoubleTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
+      zirgen::BigInt::makeECDoubleTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (auto ec : kECSpecs) {
     module.addFunc<0>(std::string("ec_mul_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAffineMultiplyTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
+      zirgen::BigInt::makeECMultiplyTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (auto ec : kECSpecs) {
     module.addFunc<0>(std::string("ec_neg_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAffineNegateTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
+      zirgen::BigInt::makeECNegateTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (auto ec : kECSpecs) {
     module.addFunc<0>(std::string("ec_sub_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAffineSubtractTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
+      zirgen::BigInt::makeECSubtractTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (auto ec : kECSpecs) {
     module.addFunc<0>(std::string("ec_pts_eq_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAffineValidatePointsEqualTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
+      zirgen::BigInt::makeECValidatePointsEqualTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (auto ec : kECSpecs) {
     module.addFunc<0>(std::string("ec_on_curve_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAffineValidatePointOnCurveTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
+      zirgen::BigInt::makeECValidatePointOnCurveTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (auto ec : kECSpecs) {
@@ -323,7 +324,7 @@ int main(int argc, char* argv[]) {
   //   const size_t numBits = 256;
   //   module.addFunc<0>("rep_ec_add_secp256k1_r" + std::to_string(numReps), {}, [&]() {
   //     auto& builder = Module::getCurModule()->getBuilder();
-  //     zirgen::BigInt::makeRepeatedECAffineAddTest(builder, builder.getUnknownLoc(), numBits, numReps,
+  //     zirgen::BigInt::makeRepeatedECAddTest(builder, builder.getUnknownLoc(), numBits, numReps,
   //         secp256k1_prime, secp256k1_a, secp256k1_b);
   //   });
   // }
@@ -331,7 +332,7 @@ int main(int argc, char* argv[]) {
   //   const size_t numBits = 256;
   //   module.addFunc<0>("rep_ec_doub_secp256k1_r" + std::to_string(numReps), {}, [&]() {
   //     auto& builder = Module::getCurModule()->getBuilder();
-  //     zirgen::BigInt::makeRepeatedECAffineDoubleTest(builder, builder.getUnknownLoc(), numBits, numReps,
+  //     zirgen::BigInt::makeRepeatedECDoubleTest(builder, builder.getUnknownLoc(), numBits, numReps,
   //         secp256k1_prime, secp256k1_a, secp256k1_b);
   //   });
   // }

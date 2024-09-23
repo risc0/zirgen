@@ -9,6 +9,7 @@
 using namespace mlir;
 
 namespace zirgen::BigInt {
+// TODO: Add EC namespace?
 
 class AffinePt;
 
@@ -76,7 +77,7 @@ AffinePt neg(OpBuilder builder, Location loc, const AffinePt& pt);
 AffinePt sub(OpBuilder builder, Location loc, const AffinePt& lhs, const AffinePt& rhs);
 
 // Test functions
-void makeECAffineAddTest(
+void makeECAddTest(
     mlir::OpBuilder builder,
     mlir::Location loc,
     size_t bits,
@@ -84,7 +85,7 @@ void makeECAffineAddTest(
     APInt curve_a,
     APInt curve_b
 );
-void makeECAffineDoubleTest(
+void makeECDoubleTest(
     mlir::OpBuilder builder,
     mlir::Location loc,
     size_t bits,
@@ -92,7 +93,7 @@ void makeECAffineDoubleTest(
     APInt curve_a,
     APInt curve_b
 );
-void makeECAffineMultiplyTest(
+void makeECMultiplyTest(
     mlir::OpBuilder builder,
     mlir::Location loc,
     size_t bits,
@@ -100,7 +101,7 @@ void makeECAffineMultiplyTest(
     APInt curve_a,
     APInt curve_b
 );
-void makeECAffineNegateTest(
+void makeECNegateTest(
     mlir::OpBuilder builder,
     mlir::Location loc,
     size_t bits,
@@ -108,7 +109,7 @@ void makeECAffineNegateTest(
     APInt curve_a,
     APInt curve_b
 );
-void makeECAffineSubtractTest(
+void makeECSubtractTest(
     mlir::OpBuilder builder,
     mlir::Location loc,
     size_t bits,
@@ -116,7 +117,7 @@ void makeECAffineSubtractTest(
     APInt curve_a,
     APInt curve_b
 );
-void makeECAffineValidatePointsEqualTest(
+void makeECValidatePointsEqualTest(
     mlir::OpBuilder builder,
     mlir::Location loc,
     size_t bits,
@@ -124,7 +125,7 @@ void makeECAffineValidatePointsEqualTest(
     APInt curve_a,
     APInt curve_b
 );
-void makeECAffineValidatePointOnCurveTest(
+void makeECValidatePointOnCurveTest(
     mlir::OpBuilder builder,
     mlir::Location loc,
     size_t bits,
@@ -178,14 +179,14 @@ void makeECSubtractFreelyTest(
 );
 
 // Perf test functions
-void makeRepeatedECAffineAddTest(mlir::OpBuilder builder,
+void makeRepeatedECAddTest(mlir::OpBuilder builder,
                                  mlir::Location _loc,
                                  size_t bits,
                                  size_t reps,
                                  APInt prime,
                                  APInt curve_a,
                                  APInt curve_b);
-void makeRepeatedECAffineDoubleTest(mlir::OpBuilder builder,
+void makeRepeatedECDoubleTest(mlir::OpBuilder builder,
                                     mlir::Location _loc,
                                     size_t bits,
                                     size_t reps,

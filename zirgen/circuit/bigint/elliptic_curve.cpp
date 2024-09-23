@@ -328,7 +328,7 @@ AffinePt sub(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
 
 // Test functions
 
-void makeECAffineAddTest(
+void makeECAddTest(
     mlir::OpBuilder builder,
     mlir::Location loc,
     size_t bits,
@@ -351,7 +351,7 @@ void makeECAffineAddTest(
   result.validate_equal(builder, loc, expected);
 }
 
-void makeECAffineDoubleTest(
+void makeECDoubleTest(
     mlir::OpBuilder builder,
     mlir::Location loc,
     size_t bits,
@@ -370,7 +370,7 @@ void makeECAffineDoubleTest(
   result.validate_equal(builder, loc, expected);
 }
 
-void makeECAffineMultiplyTest(
+void makeECMultiplyTest(
     mlir::OpBuilder builder,
     mlir::Location loc,
     size_t bits,
@@ -392,7 +392,7 @@ void makeECAffineMultiplyTest(
   result.validate_equal(builder, loc, expected);
 }
 
-void makeECAffineNegateTest(
+void makeECNegateTest(
     mlir::OpBuilder builder,
     mlir::Location loc,
     size_t bits,
@@ -412,7 +412,7 @@ void makeECAffineNegateTest(
   result.validate_equal(builder, loc, expected);
 }
 
-void makeECAffineSubtractTest(
+void makeECSubtractTest(
     mlir::OpBuilder builder,
     mlir::Location loc,
     size_t bits,
@@ -434,7 +434,7 @@ void makeECAffineSubtractTest(
   result.validate_equal(builder, loc, expected);
 }
 
-void makeECAffineValidatePointsEqualTest(
+void makeECValidatePointsEqualTest(
     mlir::OpBuilder builder,
     mlir::Location loc,
     size_t bits,
@@ -452,8 +452,7 @@ void makeECAffineValidatePointsEqualTest(
   lhs.validate_equal(builder, loc, rhs);
 }
 
-// TODO: Drop Affine from all these names
-void makeECAffineValidatePointOnCurveTest(
+void makeECValidatePointOnCurveTest(
     mlir::OpBuilder builder,
     mlir::Location loc,
     size_t bits,
@@ -566,7 +565,7 @@ void makeECSubtractFreelyTest(
 }
 
 // Perf Test function
-void makeRepeatedECAffineAddTest(mlir::OpBuilder builder,
+void makeRepeatedECAddTest(mlir::OpBuilder builder,
                                  mlir::Location loc,
                                  size_t bits,
                                  size_t reps,
@@ -593,7 +592,7 @@ void makeRepeatedECAffineAddTest(mlir::OpBuilder builder,
 }
 
 // Perf Test function
-void makeRepeatedECAffineDoubleTest(mlir::OpBuilder builder,
+void makeRepeatedECDoubleTest(mlir::OpBuilder builder,
                                     mlir::Location loc,
                                     size_t bits,
                                     size_t reps,
