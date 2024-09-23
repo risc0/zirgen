@@ -201,7 +201,7 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt) 
       auto yIfNotAdd = builder.create<BigInt::MulOp>(loc, result.y(), one_minus_rem);
       auto xMerged = builder.create<BigInt::AddOp>(loc, xIfAdd, xIfNotAdd);
       auto yMerged = builder.create<BigInt::AddOp>(loc, yIfAdd, yIfNotAdd);
-      // TODO: The reduces keep the coeff size small enough, but aren't otherwise needed for correctness; could maybe eek out a bit of perf with lower-level nondets
+      // The reduces keep the coeff size small enough, but aren't otherwise needed for correctness; could maybe eek out a bit of perf with lower-level nondets
       auto newX = builder.create<BigInt::ReduceOp>(loc, xMerged, result.curve()->prime_as_bigint(builder, loc));
       auto newY = builder.create<BigInt::ReduceOp>(loc, yMerged, result.curve()->prime_as_bigint(builder, loc));
 
@@ -263,7 +263,8 @@ AffinePt doub(OpBuilder builder, Location loc, const AffinePt& pt){
   Value two_y_inv = builder.create<BigInt::NondetInvModOp>(loc, two_y, prime);
 
   // Normalize to not overflow coefficient size
-  // TODO: Is there a better way? This version adds ~25k cycles to secp256k1 EC Mul
+  // This method is expensive, adding ~25k cycles to secp256k1 EC Mul
+  // I don't see a better way, but this seems like a good place to look for perf improvements
   mlir::Type oneType = builder.getIntegerType(1);  // a `1` is bitwidth 1
   auto oneAttr = builder.getIntegerAttr(oneType, 1);  // value 1
   auto one = builder.create<BigInt::ConstOp>(loc, oneAttr);
@@ -291,13 +292,7 @@ AffinePt doub(OpBuilder builder, Location loc, const AffinePt& pt){
   x_numerator = builder.create<BigInt::AddOp>(loc, x_numerator, prime);
   x_numerator = builder.create<BigInt::SubOp>(loc, x_numerator, pt.x());
   x_numerator = builder.create<BigInt::SubOp>(loc, x_numerator, pt.x());
-  // TODO: Perhaps there's a prebuilt op for this?
-  Value k_x = builder.create<BigInt::NondetQuotOp>(loc, x_numerator, prime);
-  Value x_out = builder.create<BigInt::NondetRemOp>(loc, x_numerator, prime);
-  Value x_check = builder.create<BigInt::MulOp>(loc, k_x, prime);
-  x_check = builder.create<BigInt::AddOp>(loc, x_check, x_out);
-  x_check = builder.create<BigInt::SubOp>(loc, x_check, x_numerator);
-  builder.create<BigInt::EqualZeroOp>(loc, x_check);
+  auto x_out = builder.create<BigInt::ReduceOp>(loc, x_numerator, prime);
 
   // Compute y_out and enforce `k_y * prime + y_out = prime^2 + prime - lambda * x_out - y_in + lambda * x_in`
   Value y_numerator = builder.create<BigInt::MulOp>(loc, lambda, x_out);
@@ -306,13 +301,7 @@ AffinePt doub(OpBuilder builder, Location loc, const AffinePt& pt){
   y_numerator = builder.create<BigInt::SubOp>(loc, y_numerator, pt.y());
   Value lambda_x_in = builder.create<BigInt::MulOp>(loc, lambda, pt.x());
   y_numerator = builder.create<BigInt::AddOp>(loc, y_numerator, lambda_x_in);
-  // TODO: Perhaps there's a prebuilt op for this?
-  Value k_y = builder.create<BigInt::NondetQuotOp>(loc, y_numerator, prime);
-  Value y_out = builder.create<BigInt::NondetRemOp>(loc, y_numerator, prime);
-  Value y_check = builder.create<BigInt::MulOp>(loc, k_y, prime);
-  y_check = builder.create<BigInt::AddOp>(loc, y_check, y_out);
-  y_check = builder.create<BigInt::SubOp>(loc, y_check, y_numerator);
-  builder.create<BigInt::EqualZeroOp>(loc, y_check);
+  auto y_out = builder.create<BigInt::ReduceOp>(loc, y_numerator, prime);
 
   return AffinePt(x_out, y_out, pt.curve());
 }

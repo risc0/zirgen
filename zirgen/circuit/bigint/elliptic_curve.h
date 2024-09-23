@@ -136,7 +136,6 @@ void makeECValidatePointOnCurveTest(
 
 // The "Freely" test functions run the op without checking the output
 // These are mostly useful for testing expected failures e.g. P + -P should always fail
-// TODO: Might not need this for Doub or Neg
 void makeECAddFreelyTest(
     mlir::OpBuilder builder,
     mlir::Location loc,
