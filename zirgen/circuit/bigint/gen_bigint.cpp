@@ -318,22 +318,23 @@ int main(int argc, char* argv[]) {
     });
   }
   // Perf tests
-  for (size_t numReps : {5, 10, 256}) {
-    const size_t numBits = 256;
-    module.addFunc<0>("rep_ec_add_secp256k1_r" + std::to_string(numReps), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeRepeatedECAffineAddTest(builder, builder.getUnknownLoc(), numBits, numReps,
-          secp256k1_prime, secp256k1_a, secp256k1_b);
-    });
-  }
-  for (size_t numReps : {5, 10, 256}) {
-    const size_t numBits = 256;
-    module.addFunc<0>("rep_ec_doub_secp256k1_r" + std::to_string(numReps), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeRepeatedECAffineDoubleTest(builder, builder.getUnknownLoc(), numBits, numReps,
-          secp256k1_prime, secp256k1_a, secp256k1_b);
-    });
-  }
+  // If enabled, these repeatedly perform the same operation, giving a better sense of the core costs of the operation without setup/teardown overhead
+  // for (size_t numReps : {5, 10, 256}) {
+  //   const size_t numBits = 256;
+  //   module.addFunc<0>("rep_ec_add_secp256k1_r" + std::to_string(numReps), {}, [&]() {
+  //     auto& builder = Module::getCurModule()->getBuilder();
+  //     zirgen::BigInt::makeRepeatedECAffineAddTest(builder, builder.getUnknownLoc(), numBits, numReps,
+  //         secp256k1_prime, secp256k1_a, secp256k1_b);
+  //   });
+  // }
+  // for (size_t numReps : {5, 10, 256}) {
+  //   const size_t numBits = 256;
+  //   module.addFunc<0>("rep_ec_doub_secp256k1_r" + std::to_string(numReps), {}, [&]() {
+  //     auto& builder = Module::getCurModule()->getBuilder();
+  //     zirgen::BigInt::makeRepeatedECAffineDoubleTest(builder, builder.getUnknownLoc(), numBits, numReps,
+  //         secp256k1_prime, secp256k1_a, secp256k1_b);
+  //   });
+  // }
 
   PassManager pm(ctx);
   if (failed(applyPassManagerCLOptions(pm))) {

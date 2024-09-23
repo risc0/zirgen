@@ -35,16 +35,10 @@ ZKRS = [
     "rsa_3072_x15",
     "ec_add_rz8test",
     "ec_add_secp256k1",
-    "rep_ec_add_secp256k1_r5",
-    "rep_ec_add_secp256k1_r10",
-    "rep_ec_add_secp256k1_r256",
     "ec_sub_rz8test",
     "ec_sub_secp256k1",
     "ec_doub_rz8test",
     "ec_doub_secp256k1",
-    "rep_ec_doub_secp256k1_r5",
-    "rep_ec_doub_secp256k1_r10",
-    "rep_ec_doub_secp256k1_r256",
     "ec_mul_rz8test",
     "ec_mul_secp256k1",
     "ec_neg_rz8test",
@@ -73,6 +67,13 @@ ZKRS = [
     "reduce_test_8",
     "reduce_test_128",
     "nondet_inv_test_8",
+    # Perf tests, re-enable if needed
+    # "rep_ec_add_secp256k1_r5",
+    # "rep_ec_add_secp256k1_r10",
+    # "rep_ec_add_secp256k1_r256",
+    # "rep_ec_doub_secp256k1_r5",
+    # "rep_ec_doub_secp256k1_r10",
+    # "rep_ec_doub_secp256k1_r256",
 ]
 
 build_circuit(
