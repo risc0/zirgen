@@ -8,8 +8,7 @@
 
 using namespace mlir;
 
-namespace zirgen::BigInt {
-// TODO: Add EC namespace?
+namespace zirgen::BigInt::EC {
 
 class AffinePt;
 
@@ -193,4 +192,4 @@ void makeRepeatedECDoubleTest(mlir::OpBuilder builder,
                                     APInt curve_a,
                                     APInt curve_b);
 
-} // namespace zirgen::BigInt
+} // namespace zirgen::BigInt::EC

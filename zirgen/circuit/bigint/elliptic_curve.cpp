@@ -4,7 +4,7 @@
 
 #include "zirgen/circuit/bigint/elliptic_curve.h"
 
-namespace zirgen::BigInt {
+namespace zirgen::BigInt::EC {
 
 void WeierstrassCurve::validate_contains(OpBuilder builder, Location loc, const AffinePt& pt) const {
   auto prime = prime_as_bigint(builder, loc);
@@ -604,4 +604,4 @@ void makeRepeatedECDoubleTest(mlir::OpBuilder builder,
   result.validate_equal(builder, loc, expected);
 }
 
-} // namespace zirgen::BigInt
+} // namespace zirgen::BigInt::EC

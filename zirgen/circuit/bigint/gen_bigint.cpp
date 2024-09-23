@@ -99,7 +99,7 @@ struct RsaSpec {
 struct ECSpec {
   llvm::StringLiteral name;
   size_t numBits;
-  zirgen::BigInt::WeierstrassCurve curve;
+  zirgen::BigInt::EC::WeierstrassCurve curve;
 };
 
 const RsaSpec kRsaSpecs[] = {
@@ -229,43 +229,43 @@ int main(int argc, char* argv[]) {
   for (auto ec : kECSpecs) {
     module.addFunc<0>(std::string("ec_add_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAddTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
+      zirgen::BigInt::EC::makeECAddTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (auto ec : kECSpecs) {
     module.addFunc<0>(std::string("ec_doub_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECDoubleTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
+      zirgen::BigInt::EC::makeECDoubleTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (auto ec : kECSpecs) {
     module.addFunc<0>(std::string("ec_mul_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECMultiplyTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
+      zirgen::BigInt::EC::makeECMultiplyTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (auto ec : kECSpecs) {
     module.addFunc<0>(std::string("ec_neg_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECNegateTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
+      zirgen::BigInt::EC::makeECNegateTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (auto ec : kECSpecs) {
     module.addFunc<0>(std::string("ec_sub_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECSubtractTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
+      zirgen::BigInt::EC::makeECSubtractTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (auto ec : kECSpecs) {
     module.addFunc<0>(std::string("ec_pts_eq_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECValidatePointsEqualTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
+      zirgen::BigInt::EC::makeECValidatePointsEqualTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (auto ec : kECSpecs) {
     module.addFunc<0>(std::string("ec_on_curve_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECValidatePointOnCurveTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
+      zirgen::BigInt::EC::makeECValidatePointOnCurveTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (auto ec : kECSpecs) {
@@ -275,7 +275,7 @@ int main(int argc, char* argv[]) {
     }
     module.addFunc<0>(std::string("ec_add_freely_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECAddFreelyTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
+      zirgen::BigInt::EC::makeECAddFreelyTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (auto ec : kECSpecs) {
@@ -285,7 +285,7 @@ int main(int argc, char* argv[]) {
     }
     module.addFunc<0>(std::string("ec_doub_freely_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECDoubleFreelyTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
+      zirgen::BigInt::EC::makeECDoubleFreelyTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (auto ec : kECSpecs) {
@@ -295,7 +295,7 @@ int main(int argc, char* argv[]) {
     }
     module.addFunc<0>(std::string("ec_mul_freely_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECMultiplyFreelyTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
+      zirgen::BigInt::EC::makeECMultiplyFreelyTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (auto ec : kECSpecs) {
@@ -305,7 +305,7 @@ int main(int argc, char* argv[]) {
     }
     module.addFunc<0>(std::string("ec_neg_freely_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECNegateFreelyTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
+      zirgen::BigInt::EC::makeECNegateFreelyTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   for (auto ec : kECSpecs) {
@@ -315,7 +315,7 @@ int main(int argc, char* argv[]) {
     }
     module.addFunc<0>(std::string("ec_sub_freely_").append(ec.name), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeECSubtractFreelyTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
+      zirgen::BigInt::EC::makeECSubtractFreelyTest(builder, builder.getUnknownLoc(), ec.numBits, ec.curve.prime(), ec.curve.a(), ec.curve.b());
     });
   }
   // Perf tests
@@ -324,7 +324,7 @@ int main(int argc, char* argv[]) {
   //   const size_t numBits = 256;
   //   module.addFunc<0>("rep_ec_add_secp256k1_r" + std::to_string(numReps), {}, [&]() {
   //     auto& builder = Module::getCurModule()->getBuilder();
-  //     zirgen::BigInt::makeRepeatedECAddTest(builder, builder.getUnknownLoc(), numBits, numReps,
+  //     zirgen::BigInt::EC::makeRepeatedECAddTest(builder, builder.getUnknownLoc(), numBits, numReps,
   //         secp256k1_prime, secp256k1_a, secp256k1_b);
   //   });
   // }
@@ -332,7 +332,7 @@ int main(int argc, char* argv[]) {
   //   const size_t numBits = 256;
   //   module.addFunc<0>("rep_ec_doub_secp256k1_r" + std::to_string(numReps), {}, [&]() {
   //     auto& builder = Module::getCurModule()->getBuilder();
-  //     zirgen::BigInt::makeRepeatedECDoubleTest(builder, builder.getUnknownLoc(), numBits, numReps,
+  //     zirgen::BigInt::EC::makeRepeatedECDoubleTest(builder, builder.getUnknownLoc(), numBits, numReps,
   //         secp256k1_prime, secp256k1_a, secp256k1_b);
   //   });
   // }
