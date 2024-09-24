@@ -78,8 +78,7 @@ struct GenerateStepsPass : public GenerateStepsBase<GenerateStepsPass> {
     SmallVector<CheckFuncOp> checkFuncs;
 
     getOperation().walk([&](ComponentOp component) {
-      llvm::StringRef baseName = component.getName();
-      if (baseName.starts_with("test$") || baseName.ends_with("$accum") || baseName == "Top") {
+      if (Zhlt::isEntryPoint(component)) {
         addStep(component);
       }
     });

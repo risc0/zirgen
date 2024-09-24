@@ -1,10 +1,10 @@
 # Getting Started
 
-We don't currently release Zirgen in any form, so it's only available through
-this repository. Assuming you've cloned and built things from this repo before,
-building Zirgen with Bazel is simple with the following command. Note, though,
-that this isn't strictly necessary, and that Bazel will automatically (re)build
-Zirgen if you use it to invoke the tests as well.
+We don't currently release Zirgen in any packaged form, so it's only available
+through this repository. Assuming you've cloned and built things from this repo
+before, building Zirgen with Bazel is simple with the following command. Note,
+though, that this isn't strictly necessary, and that Bazel will automatically
+(re)build Zirgen if you use it to invoke the tests as well.
 
 ```
 bazel build //zirgen/dsl:zirgen

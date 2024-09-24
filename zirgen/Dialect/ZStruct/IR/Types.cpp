@@ -103,7 +103,7 @@ mlir::Type LayoutType::parse(mlir::AsmParser& p) {
   }
   LayoutKind kind = LayoutKind::Normal;
   StringRef strKind;
-  if (succeeded(p.parseOptionalKeyword(&strKind, {"mux", "argument", "major"}))) {
+  if (succeeded(p.parseOptionalKeyword(&strKind, {"mux", "majormux", "argument", "major"}))) {
     kind = symbolizeEnum<LayoutKind>(strKind).value_or(LayoutKind::Normal);
   }
   if (p.parseComma())
@@ -235,10 +235,18 @@ CodegenIdent<IdentKind::Type> ArrayType::getTypeName(zirgen::codegen::CodegenEmi
   return cg.getStringAttr((elemName.strref() + std::to_string(getSize()) + "Array").str());
 }
 
+Value ArrayType::materialize(Location loc, ArrayRef<Value> elements, OpBuilder& builder) {
+  return builder.create<ArrayOp>(loc, elements);
+}
+
 CodegenIdent<IdentKind::Type>
 LayoutArrayType::getTypeName(zirgen::codegen::CodegenEmitter& cg) const {
   auto elemName = cg.getTypeName(getElement());
   return cg.getStringAttr((elemName.strref() + std::to_string(getSize()) + "LayoutArray").str());
+}
+
+Value LayoutArrayType::materialize(Location loc, ArrayRef<Value> elements, OpBuilder& builder) {
+  return builder.create<LayoutArrayOp>(loc, elements);
 }
 
 CodegenIdent<IdentKind::Type> LayoutType::getTypeName(zirgen::codegen::CodegenEmitter& cg) const {

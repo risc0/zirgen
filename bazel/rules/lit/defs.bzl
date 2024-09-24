@@ -26,7 +26,7 @@ _ALWAYS_EXCLUDE = [
     "**/* */**",
 ]
 
-def _run_lit_test(name, test_name, data, size, tags, driver, features, exec_properties):
+def _run_lit_test(name, test_name, data, size, tags, driver, features, exec_properties, **kwargs):
     """Runs lit on all tests it can find in `data`
 
     Note that, due to Bazel's hermetic builds, lit only sees the tests that
@@ -65,6 +65,7 @@ def _run_lit_test(name, test_name, data, size, tags, driver, features, exec_prop
         size = size,
         main = "lit.py",
         exec_properties = exec_properties,
+        **kwargs
     )
 
 def glob_lit_tests(
@@ -78,7 +79,8 @@ def glob_lit_tests(
         tags_override = {},
         driver = _default_driver,
         features = [],
-        exec_properties = {}):
+        exec_properties = {},
+        **kwargs):
     """Creates all plausible Lit tests (and their inputs) under this directory.
 
     Args:
@@ -118,4 +120,5 @@ def glob_lit_tests(
             driver = driver,
             features = features,
             exec_properties = exec_properties,
+            **kwargs
         )

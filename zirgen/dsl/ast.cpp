@@ -122,6 +122,8 @@ bool operator==(const Statement& left, const Statement& right) {
     return subtype_compare<Constraint>(left, right);
   case Statement::Kind::Void:
     return subtype_compare<Void>(left, right);
+  case Statement::Kind::Directive:
+    return subtype_compare<Directive>(left, right);
   }
   throw std::runtime_error("unreachable: missing case");
 }
@@ -391,16 +393,18 @@ bool operator==(const Reduce& left, const Reduce& right) {
          *left.getType() == *right.getType();
 }
 
-Switch::Switch(SMLoc loc, Expression::Ptr selector, Expression::Vec cases)
+Switch::Switch(SMLoc loc, Expression::Ptr selector, Expression::Vec cases, bool isMajor)
     : Expression(Kind::Switch, std::move(loc))
     , selector(std::move(selector))
-    , cases(std::move(cases)) {}
+    , cases(std::move(cases))
+    , isMajor(isMajor) {}
 
 void Switch::print(ostream& os) const {
   JSON::Dict dict(os);
   dict.attr_string("class", "Switch");
   dict.attr_dict("selector", selector);
   dict.attr_array("cases", cases);
+  dict.attr_bool("isMajor", isMajor);
 }
 
 bool Switch::classof(const Expression* e) {
@@ -547,6 +551,24 @@ bool Void::classof(const Statement* s) {
 
 bool operator==(const Void& left, const Void& right) {
   return *left.getValue() == *right.getValue();
+}
+
+Directive::Directive(SMLoc loc, std::string name, Expression::Vec args)
+    : Statement(Kind::Directive, std::move(loc)), name(std::move(name)), args(std::move(args)) {}
+
+void Directive::print(ostream& os) const {
+  JSON::Dict dict(os);
+  dict.attr_string("class", "Directive");
+  dict.attr_string("name", name);
+  dict.attr_array("args", args);
+}
+
+bool Directive::classof(const Statement* s) {
+  return Kind::Directive == s->getKind();
+}
+
+bool operator==(const Directive& left, const Directive& right) {
+  return left.getName() == right.getName() && vec_compare(left.getArgs(), right.getArgs());
 }
 
 namespace JSON {

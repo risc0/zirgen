@@ -241,7 +241,7 @@ static void log_impl(std::string& format, const Val* x) {
         if (isU32) {
           printf("%*x", len, u32val);
         } else {
-          printf("[%llu, %llu, %llu, %llu]", vals[0], vals[1], vals[2], vals[3]);
+          printf("[%zu, %zu, %zu, %zu]", vals[0], vals[1], vals[2], vals[3]);
         }
         p++;
       }

@@ -187,7 +187,7 @@ public:
   OperationDataflowAnalysis(DataFlowSolver& solver) : DataFlowAnalysis(solver) {}
 
   virtual LogicalResult initialize(Operation* top) override {
-    WalkResult result = top->walk([&](Operation* op) {
+    WalkResult result = top->walk<WalkOrder::PreOrder>([&](Operation* op) {
       if (failed(visit(op)))
         return WalkResult::interrupt();
       return WalkResult::advance();

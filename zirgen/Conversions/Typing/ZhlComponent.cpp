@@ -250,6 +250,7 @@ private:
   void gen(SubscriptOp, ComponentBuilder&);
   void gen(SpecializeOp, ComponentBuilder&);
   void gen(ConstructOp, ComponentBuilder&);
+  void gen(DirectiveOp, ComponentBuilder&);
   void gen(BlockOp, ComponentBuilder&);
   void gen(MapOp, ComponentBuilder&);
   void gen(ReduceOp, ComponentBuilder&);
@@ -264,6 +265,14 @@ private:
   void gen(ExternOp, ComponentBuilder&);
   void gen(ConstructGlobalOp, ComponentBuilder&);
   void gen(GetGlobalOp, ComponentBuilder&);
+
+  // Creates a sequence of lookup ops from the given ZHLT value to the indicated
+  // member, inserting @super lookups as necessary.
+  Value lookup(Value component, StringRef member);
+
+  // Coerces the given component to its first array-like super, and then looks
+  // up the given index.
+  Value subscript(Value component, Value index);
 
   void buildZeroInitialize(Value toInit);
 
@@ -280,6 +289,9 @@ private:
   PolynomialAttr asFieldElement(Value v);
 
   Value asValue(Value zhlVal);
+
+  // Returns the ZHLT layout corresponding to the given ZHL value.
+  Value asLayout(Value zhlVal);
 
   // Same as addLayoutMember, but handles the case where we add a
   // definition for a previously declared member.
@@ -417,6 +429,7 @@ void LoweringImpl::gen(Operation* op, ComponentBuilder& cb) {
             SubscriptOp,
             SpecializeOp,
             ConstructOp,
+            DirectiveOp,
             BlockOp,
             MapOp,
             ReduceOp,
@@ -441,18 +454,24 @@ void LoweringImpl::gen(ConstructorParamOp ctorParam, Block* topBlock) {
     throw MalformedIRException();
   }
   auto ctor = componentManager->lookupComponent(paramType);
-  Type type;
+  Type valueType;
+  Type layoutType;
   if (ctor) {
-    type = ctor.getOutType();
+    valueType = ctor.getOutType();
+    layoutType = ctor.getLayoutType();
   } else {
     ctorParam.emitError("expected a valid parameter type");
-    type = Zhlt::getComponentType(ctorParam.getContext());
+    valueType = Zhlt::getComponentType(ctorParam.getContext());
   }
   if (ctorParam.getVariadic()) {
-    type = VariadicType::get(ctx, type);
+    valueType = VariadicType::get(ctx, valueType);
   }
-  auto argument = topBlock->addArgument(type, ctorParam.getLoc());
-  valueMapping[ctorParam.getOut()] = argument;
+  auto value = topBlock->addArgument(valueType, ctorParam.getLoc());
+  valueMapping[ctorParam.getOut()] = value;
+  if (layoutType) {
+    auto layout = topBlock->addArgument(layoutType, ctorParam.getLoc());
+    layoutMapping[ctorParam.getOut()] = layout;
+  }
 }
 
 void LoweringImpl::gen(TypeParamOp typeParam, ArrayRef<Attribute> typeArgs) {
@@ -522,16 +541,6 @@ Zhlt::ComponentOp LoweringImpl::gen(ComponentOp component,
             .Case<TypeParamOp>([&](auto op) { gen(op, typeArgs); })
             .Default([&](auto op) { gen(op, cb); });
       }
-
-      constructArgsTypes = llvm::to_vector(bodyBlock->getArgumentTypes());
-      cb.supplyLayout([&](StringAttr memberNameInParent, Type layoutTypeArg) -> Value {
-        assert(!memberNameInParent && "Top-level components should not have a member name");
-        layoutType = layoutTypeArg;
-        return bodyBlock->addArgument(layoutTypeArg, loc);
-      });
-      Value returnValue = cb.getValue(loc);
-      builder.create<Zhlt::ReturnOp>(loc, returnValue);
-      valueType = returnValue.getType();
     } catch (MalformedIRException&) {
       // All semantic errors, even those that are difficult to recover from, are
       // confined to the component definition in which they occur, so we can
@@ -540,6 +549,23 @@ Zhlt::ComponentOp LoweringImpl::gen(ComponentOp component,
       if (!valueType)
         valueType = Zhlt::getComponentType(ctx);
     }
+
+    for (unsigned i = body.getNumArguments() - 1; i != (unsigned)-1; i--) {
+      BlockArgument arg = body.getArgument(i);
+      if (arg.use_empty() && ZStruct::isLayoutType(arg.getType())) {
+        body.eraseArgument(i);
+      }
+    }
+
+    constructArgsTypes = llvm::to_vector(bodyBlock->getArgumentTypes());
+    cb.supplyLayout([&](StringAttr memberNameInParent, Type layoutTypeArg) -> Value {
+      assert(!memberNameInParent && "Top-level components should not have a member name");
+      layoutType = layoutTypeArg;
+      return bodyBlock->addArgument(layoutTypeArg, loc);
+    });
+    Value returnValue = cb.getValue(loc);
+    builder.create<Zhlt::ReturnOp>(loc, returnValue);
+    valueType = returnValue.getType();
   }
 
   auto ctor = builder.create<Zhlt::ComponentOp>(
@@ -716,56 +742,69 @@ void LoweringImpl::gen(GlobalOp global, ComponentBuilder& cb) {
   }
 }
 
-void LoweringImpl::gen(LookupOp lookup, ComponentBuilder& cb) {
-  Value originalComponent = asValue(lookup.getComponent());
-  Value component = originalComponent;
+Value LoweringImpl::lookup(Value component, StringRef member) {
   auto componentType = Zhlt::getComponentType(ctx);
-  while (component.getType() != componentType) {
-    auto structType = dyn_cast<StructType>(component.getType());
-    if (!structType)
+  while (component.getType() && component.getType() != componentType) {
+    ArrayRef<ZStruct::FieldInfo> fields;
+    if (auto structType = dyn_cast<StructType>(component.getType()))
+      fields = structType.getFields();
+    else if (auto layoutType = dyn_cast<LayoutType>(component.getType()))
+      fields = layoutType.getFields();
+    else
       break;
+
     bool foundSuper = false;
-    for (ZStruct::FieldInfo field : structType.getFields()) {
-      if (field.name == lookup.getMember()) {
-        auto lookupOp =
-            builder.create<ZStruct::LookupOp>(lookup.getLoc(), component, lookup.getMember());
-        valueMapping[lookup.getOut()] = lookupOp;
-        return;
+    for (ZStruct::FieldInfo field : fields) {
+      if (field.name == member) {
+        return builder.create<ZStruct::LookupOp>(component.getLoc(), component, member);
       }
       foundSuper |= (field.name == "@super");
     }
     // An error upstream may have produced a malformed component struct.
     if (!foundSuper)
       break;
-    component = builder.create<ZStruct::LookupOp>(lookup.getLoc(), component, "@super");
+    component = builder.create<ZStruct::LookupOp>(component.getLoc(), component, "@super");
   }
   // If we haven't returned yet, we searched the whole super chain and didn't
-  // find the member we're looking for. We don't know anything about the type
-  // that the member was supposed to be, so we recover by constructing a
-  // `Component` instead.
-  lookup.emitError() << "type `" << getTypeId(originalComponent.getType())
-                     << "` has no member named \"" << lookup.getMember() << "\"";
+  // find the member we're looking for. Return a null value and handle the error
+  // upstream.
+  return nullptr;
 }
 
-void LoweringImpl::gen(SubscriptOp subscript, ComponentBuilder& cb) {
-  Value array = asValue(subscript.getArray());
+Value LoweringImpl::subscript(Value array, Value index) {
   auto derivedType = array.getType();
-  ArrayType arrayType = Zhlt::getCoercibleArrayType(derivedType);
+  ZStruct::ArrayLikeTypeInterface arrayType = Zhlt::getCoercibleArrayType(derivedType);
   if (!arrayType) {
     if (derivedType) {
-      subscript.emitError() << "subscripted component of type `" << getTypeId(derivedType)
-                            << "` is not convertible to an array type.";
+      emitError(array.getLoc()) << "subscripted component of type `" << getTypeId(derivedType)
+                                << "` is not convertible to an array type.";
     } else {
-      subscript.emitError() << "subscript requires an instance of an array type";
+      emitError(array.getLoc()) << "subscript requires an instance of an array type";
     }
     // Since we don't know what the element type is supposed to be, there isn't
     // a good way to recover from this error.
     throw MalformedIRException();
   }
   Value casted = coerceTo(array, arrayType);
-  auto subscriptOp = builder.create<ZStruct::SubscriptOp>(
-      subscript.getLoc(), casted, asValue(subscript.getElement()));
-  valueMapping[subscript.getOut()] = subscriptOp;
+  return builder.create<ZStruct::SubscriptOp>(array.getLoc(), casted, index);
+}
+
+void LoweringImpl::gen(LookupOp lookupOp, ComponentBuilder& cb) {
+  Value component = asValue(lookupOp.getComponent());
+  StringRef member = lookupOp.getMember();
+  Value subcomponent = lookup(component, member);
+  if (!subcomponent) {
+    emitError(component.getLoc()) << "type `" << getTypeId(component.getType())
+                                  << "` has no member named \"" << member << "\"";
+  }
+  valueMapping[lookupOp.getOut()] = subcomponent;
+}
+
+void LoweringImpl::gen(SubscriptOp subscriptOp, ComponentBuilder& cb) {
+  Value array = asValue(subscriptOp.getArray());
+  Value index = asValue(subscriptOp.getElement());
+  Value newSubscriptOp = subscript(array, index);
+  valueMapping[subscriptOp.getOut()] = newSubscriptOp;
 }
 
 void LoweringImpl::gen(SpecializeOp specialize, ComponentBuilder& cb) {
@@ -835,6 +874,16 @@ void LoweringImpl::gen(ConstructOp construct, ComponentBuilder& cb) {
       expectedArgType++;
       arguments.push_back(casted);
     }
+    if (expectedArgType != argumentTypes.end() && ZStruct::isLayoutType(*expectedArgType)) {
+      ScopedDiagnosticHandler scopedHandler(ctx, [&](Diagnostic& diag) {
+        diag.attachNote(construct.getLoc()) << "which is expected by this constructor call:";
+        return failure();
+      });
+      Value layout = asLayout(zhlArg);
+      Value castedLayout = coerceTo(layout, *expectedArgType);
+      expectedArgType++;
+      arguments.push_back(castedLayout);
+    }
   }
   // If there is a variadic parameter, add its pack to the argument list
   if (expectedArgType != argumentTypes.end() && expectedArgType->isa<VariadicType>()) {
@@ -857,9 +906,27 @@ void LoweringImpl::gen(ConstructOp construct, ComponentBuilder& cb) {
     return;
   }
 
-  Value layout =
-      addOrExpandLayoutMember(construct.getLoc(), cb, construct.getOut(), ctor.getLayoutType());
-  auto call = builder.create<Zhlt::ConstructOp>(construct.getLoc(), ctor, arguments, layout);
+  // Don't expand the member layout until the actual definition -- even in the
+  // arguments to the ConstructOp. This ensures that we don't leave any dangling
+  // uses of the "old" layout after we expand it, since the declaration should
+  // not be referenced after the definition.
+  Zhlt::ConstructOp call;
+  Value tmpLayout;
+  if (ctor.getLayoutType()) {
+    tmpLayout = builder.create<Zhlt::MagicOp>(construct.getLoc(), ctor.getLayoutType());
+  }
+  call = builder.create<Zhlt::ConstructOp>(construct.getLoc(), ctor, arguments, tmpLayout);
+
+  // Now that we've built the constructor call, expand the layout and clean up
+  // the temporary one if necessary.
+  Value layout;
+  if (tmpLayout) {
+    layout =
+        addOrExpandLayoutMember(construct.getLoc(), cb, construct.getOut(), ctor.getLayoutType());
+    tmpLayout.replaceAllUsesWith(layout);
+    tmpLayout.getDefiningOp()->erase();
+  }
+
   if (layout && ctor->getAttr("alwaysinline")) {
     construct.emitError() << "Cannot construct non-trivial layouts inside of a function";
     throw MalformedIRException();
@@ -867,6 +934,92 @@ void LoweringImpl::gen(ConstructOp construct, ComponentBuilder& cb) {
 
   valueMapping[construct.getOut()] = call.getOut();
   layoutMapping[construct.getOut()] = layout;
+}
+
+// Gets the value of the layout corresponding to a ZHL value
+Value LoweringImpl::asLayout(Value value) {
+  Value layout = layoutMapping[value];
+  if (layout)
+    return layout;
+
+  layout = TypeSwitch<Operation*, Value>(value.getDefiningOp())
+               .Case<LookupOp>([&](LookupOp op) {
+                 Value componentLayout = asLayout(op.getComponent());
+                 StringRef member = op.getMember();
+                 Value sublayout = lookup(componentLayout, member);
+                 if (!sublayout) {
+                   emitError(op.getLoc())
+                       << "type `" << getTypeId(componentLayout.getType())
+                       << "` does not own the layout of member \"" << member << "\"";
+                   throw MalformedIRException();
+                 }
+                 return sublayout;
+               })
+               .Case<SubscriptOp>([&](SubscriptOp op) {
+                 Value arrayLayout = asLayout(op.getArray());
+                 Value index = asValue(op.getElement());
+                 return subscript(arrayLayout, index);
+               })
+               .Case<BackOp>([&](BackOp op) { return asLayout(op.getTarget()); })
+               .Case<ArrayOp>([&](ArrayOp op) {
+                 SmallVector<Value> layouts;
+                 for (Value element : op.getElements())
+                   layouts.push_back(asLayout(element));
+                 return builder.create<ZStruct::LayoutArrayOp>(op.getLoc(), layouts);
+               })
+               .Case<MapOp>([&](MapOp op) {
+                 Value array = asValue(op.getArray());
+                 Type elemType = cast<ArrayType>(array.getType()).getElement();
+                 Region mapBody(regionAnchor);
+                 Type layoutType;
+                 {
+                   OpBuilder::InsertionGuard insertionGuard(builder);
+                   Block* mapBodyBlock = builder.createBlock(&mapBody);
+                   auto mapArg = op.getFunction().getArgument(0);
+                   valueMapping[mapArg] = mapBodyBlock->addArgument(elemType, mapArg.getLoc());
+                   auto super = cast<SuperOp>(op.getFunction().back().getTerminator());
+                   auto layout = asLayout(super.getValue());
+                   layoutType = layout.getType();
+                   builder.create<ZStruct::YieldOp>(super->getLoc(), layout);
+                 }
+                 size_t size = cast<ArrayType>(array.getType()).getSize();
+                 Type layoutArrayType = LayoutArrayType::get(ctx, layoutType, size);
+                 auto map =
+                     builder.create<ZStruct::MapOp>(op->getLoc(), layoutArrayType, array, Value());
+                 map.getBody().takeBody(mapBody);
+                 return map;
+               })
+               .Case<BlockOp>([&](BlockOp op) {
+                 // If a block has layout for its members, it will be associated in the
+                 // layoutMapping during lowering. At this point that must not be the
+                 // case so look for the super's layout coming from outside the block.
+                 auto super = cast<SuperOp>(op.getInner().back().getTerminator());
+                 return asLayout(super.getValue());
+               })
+               .Default([&](Operation* op) {
+                 llvm::outs() << "unhandled op: " << *op << "\n";
+                 return nullptr;
+               });
+  layoutMapping[value] = layout;
+  return layout;
+}
+
+void LoweringImpl::gen(DirectiveOp directive, ComponentBuilder& cb) {
+  if (directive.getName() == "AliasLayout") {
+    if (directive.getArgs().size() != 2) {
+      size_t args = directive.getArgs().size();
+      directive.emitError() << "'AliasLayout' directive expects two arguments, got " << args;
+    }
+    Value left = asLayout(directive.getArgs()[0]);
+    Value right = asLayout(directive.getArgs()[1]);
+    assert(left && right);
+    Type type = Zhlt::getLeastCommonSuper({left.getType(), right.getType()}, /*isLayout=*/1);
+    left = coerceTo(left, type);
+    right = coerceTo(right, type);
+    builder.create<ZStruct::AliasLayoutOp>(directive.getLoc(), left, right);
+  } else {
+    directive.emitError() << "Unknown compiler directive '" << directive.getName() << "'";
+  }
 }
 
 void LoweringImpl::gen(BlockOp block, ComponentBuilder& cb) {
@@ -992,6 +1145,8 @@ void LoweringImpl::gen(ReduceOp reduce, ComponentBuilder& cb) {
 }
 
 void LoweringImpl::gen(SwitchOp sw, ComponentBuilder& cb) {
+  bool isMajor = sw->hasAttr("isMajor");
+
   Value origSelector = asValue(sw.getSelector());
   unsigned size = sw.getCases().size();
   ArrayType selectorType = ArrayType::get(ctx, Zhlt::getValType(ctx), size);
@@ -1003,7 +1158,32 @@ void LoweringImpl::gen(SwitchOp sw, ComponentBuilder& cb) {
   auto selector = coerceTo(origSelector, selectorType);
 
   ComponentBuilder muxContext(sw.getLoc(), &cb, sw.getOut());
-  muxContext.setLayoutKind(ZStruct::LayoutKind::Mux);
+  muxContext.setLayoutKind(isMajor ? ZStruct::LayoutKind::MajorMux : ZStruct::LayoutKind::Mux);
+
+  if (isMajor) {
+    // Require major mux selectors to be register like
+    if (!Zhlt::isCoercibleTo(origSelector.getType(),
+                             ArrayType::get(ctx, Zhlt::getNondetRegType(ctx), size))) {
+      sw.emitError() << "Major mux selectors must be registers";
+      return;
+    }
+    // Make an array of selector regs in the mux layout
+    LayoutArrayType selectorSaveType =
+        LayoutArrayType::get(ctx, Zhlt::getNondetRegLayoutType(ctx), size);
+    Value saveArray = muxContext.addLayoutMember(sw.getLoc(), "@selector", selectorSaveType);
+    // Alias them to the actual selectors
+    Value selectorArray = asLayout(sw.getSelector());
+    while (!selectorArray.getType().isa<LayoutArrayType>()) {
+      selectorArray = builder.create<ZStruct::LookupOp>(sw.getLoc(), selectorArray, "@super");
+    }
+    for (size_t i = 0; i < size; i++) {
+      Value index = builder.create<arith::ConstantOp>(sw->getLoc(), builder.getIndexAttr(i));
+      Value saveElem = builder.create<ZStruct::SubscriptOp>(sw->getLoc(), saveArray, index);
+      Value selectorElem = builder.create<ZStruct::SubscriptOp>(sw->getLoc(), selectorArray, index);
+      Value selectorReg = coerceTo(selectorElem, Zhlt::getNondetRegLayoutType(ctx));
+      builder.create<ZStruct::AliasLayoutOp>(sw.getLoc(), selectorReg, saveElem);
+    }
+  }
 
   // Create components for each arm
   std::vector<std::unique_ptr<ComponentBuilder>> armContexts;
@@ -1029,6 +1209,11 @@ void LoweringImpl::gen(SwitchOp sw, ComponentBuilder& cb) {
 
   // Figure out the greatest number of each argument type used by any mux arm
   llvm::MapVector<Type, size_t> worstCase = Zhlt::muxArgumentCounts(armLayouts);
+
+  // Don't propagate things if we are the major mux
+  if (isMajor) {
+    worstCase.clear();
+  }
 
   // Hoist arguments out of the mux. Since the hoisted argument layouts will be
   // aliased on each arm of the mux, build a table of lookups for each argument
@@ -1090,9 +1275,13 @@ void LoweringImpl::gen(SwitchOp sw, ComponentBuilder& cb) {
         addArgumentAliases(sublayout, counter);
       }
       break;
-    case LayoutKind::Mux: {
+    case LayoutKind::MajorMux:
+      // A major mux inside another mux is invalid
+      sw.emitError() << "Major mux inside non-major mux";
+      return;
+    case LayoutKind::Mux:
       // This is already handled by the @arguments$name member on the parent
-    } break;
+      break;
     }
   };
 
@@ -1374,20 +1563,21 @@ void LoweringImpl::buildZeroInitialize(Value toInit) {
   auto layout = mlir::cast<ZStruct::LayoutType>(toInit.getType());
   auto loc = toInit.getDefiningOp()->getLoc();
   auto zero = builder.create<Zll::ConstOp>(loc, 0);
-  for (const auto& field : layout.getFields()) {
-    auto layoutType = llvm::dyn_cast<ZStruct::LayoutType>(field.type);
-    if (!layoutType || layoutType.getId() != "NondetReg") {
-      toInit.getDefiningOp()->emitError() << "Argument types must be composed solely of NondetRegs";
-      return;
-    }
-    auto valType = Zhlt::getValType(ctx);
-    auto elem = builder.create<ZStruct::LookupOp>(loc, toInit, field.name);
-    auto unwrap = builder.create<ZStruct::LookupOp>(loc, elem, "@super");
-    builder.create<ZStruct::StoreOp>(loc, unwrap, zero);
-    Value zeroDistance = builder.create<arith::ConstantOp>(loc, builder.getIndexAttr(0));
-    auto reload = builder.create<ZStruct::LoadOp>(loc, valType, unwrap, zeroDistance);
-    builder.create<Zll::EqualZeroOp>(loc, reload);
+  // We only zero initalize the first field, which is the 'count' field
+  // This allows aliasing of other 'dont-care' fields.
+  const auto& field = layout.getFields().front();
+  auto layoutType = llvm::dyn_cast<ZStruct::LayoutType>(field.type);
+  if (!layoutType || layoutType.getId() != "NondetReg") {
+    toInit.getDefiningOp()->emitError() << "Argument types must be composed solely of NondetRegs";
+    return;
   }
+  auto valType = Zhlt::getValType(ctx);
+  auto elem = builder.create<ZStruct::LookupOp>(loc, toInit, field.name);
+  auto unwrap = builder.create<ZStruct::LookupOp>(loc, elem, "@super");
+  builder.create<ZStruct::StoreOp>(loc, unwrap, zero);
+  Value zeroDistance = builder.create<arith::ConstantOp>(loc, builder.getIndexAttr(0));
+  auto reload = builder.create<ZStruct::LoadOp>(loc, valType, unwrap, zeroDistance);
+  builder.create<Zll::EqualZeroOp>(loc, reload);
 }
 
 Zhlt::ComponentOp LoweringImpl::genArrayCtor(Operation* op, Type elementType, size_t size) {

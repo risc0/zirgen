@@ -89,7 +89,8 @@ component Top() {
   major : Reg;
   // Run normal step for 100 cycles, then make the table of bytes
   major := Reg(isFirst * 0 + (1 - isFirst) * is100 * 1 + (1 - isFirst) * (1 - is100) * major@1);
-  [1 - major, major] -> (
+  notMajor := Reg(1 - major);
+  [notMajor, major] ->! (
     NormalStep(cycle),
     TableStep((cycle - 100) * 16)
   );

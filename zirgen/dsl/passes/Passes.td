@@ -18,6 +18,15 @@
 include "mlir/Pass/PassBase.td"
 include "mlir/Rewrite/PassUtil.td"
 
+def EraseUnusedAspects : Pass<"erase-unused-aspects", "mlir::ModuleOp"> {
+  let summary = "Removes aspects that aren't necessary for tests or codegen";
+  let constructor = "zirgen::dsl::createEraseUnusedAspectsPass()";
+  let dependentDialects = ["zirgen::Zhlt::ZhltDialect"];
+  let options = [
+    Option<"forTests", "for-tests", "bool", /*default=*/"false", "leave only aspects for tests (rather than codegen)">
+  ];
+}
+
 def GenerateExec : Pass<"generate-exec", "mlir::ModuleOp"> {
   let summary = "Lowers the ZHLT dialect to produce circuit execution functions";
   let description = [{
@@ -42,6 +51,19 @@ def GenerateBack : Pass<"generate-back", "mlir::ModuleOp"> {
     It populates any registers in the layout, and returns the value of the component.
   }];
   let constructor = "zirgen::dsl::createGenerateBackPass()";
+  let dependentDialects = ["zirgen::ZStruct::ZStructDialect"];
+}
+
+def GenerateCheckLayout : Pass<"generate-check-layout", "mlir::ModuleOp"> {
+  let summary = "Lowers the ZHLT dialect to produce functions to check layout constraints";
+  let description = [{
+    Generates layout constraint checks (zstruct.alias_layout) for all circuit entry points and adds
+    them to the module. Each generated function takes the same layout type as the entry point and
+    returns nothing.
+
+    The generated function has all of its callees inlined.
+  }];
+  let constructor = "zirgen::dsl::createGenerateCheckLayoutPass()";
   let dependentDialects = ["zirgen::ZStruct::ZStructDialect"];
 }
 

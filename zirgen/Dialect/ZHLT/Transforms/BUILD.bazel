@@ -35,6 +35,7 @@ cc_library(
         "GenerateSteps.cpp",
         "HoistAllocs.cpp",
         "PassDetail.h",
+        "StripAliasLayoutOps.cpp",
         "StripTests.cpp",
     ],
     hdrs = [

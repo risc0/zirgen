@@ -241,6 +241,26 @@ Block::Ptr Parser::parseBlock() {
         lexer.takeToken();
         body.push_back(make_shared<Void>(location, std::move(lastExpression)));
         lastExpression = nullptr;
+      } else if (lexer.peekToken() == tok_bang) {
+        // directive
+        location = lexer.getLastLocation();
+        std::string name = lexer.getIdentifier();
+        lexer.takeToken();
+        if (!lexer.takeTokenIf(tok_paren_l)) {
+          error("expected '(' after '!' in compiler directive");
+        }
+        Expression::Vec arguments;
+        if (lexer.peekToken() != tok_paren_r) {
+          arguments = parseExpressions();
+        }
+        lexer.takeToken();
+        if (lexer.takeToken() != tok_semicolon) {
+          error("expected semicolon after compiler directive");
+          return nullptr;
+        }
+
+        body.push_back(make_shared<Directive>(location, name, std::move(arguments)));
+        lastExpression = nullptr;
       } else if (lexer.peekToken() == tok_define) {
         // definition
         if (!lastExpression || !Ident::classof(lastExpression.get())) {
@@ -713,7 +733,7 @@ Switch::Ptr Parser::parseConditional() {
         make_shared<Construct>(location, make_shared<Ident>(location, "Sub"), subArgs));
   }
   Expression::Ptr selector = make_shared<ArrayLiteral>(location, std::move(selectors));
-  return make_shared<Switch>(location, std::move(selector), std::move(cases));
+  return make_shared<Switch>(location, std::move(selector), std::move(cases), false);
 }
 
 Expression::Ptr Parser::parseParenthesizedExpression() {
@@ -860,6 +880,9 @@ Switch::Ptr Parser::parseSwitch(Expression::Ptr&& selector) {
   }
   SMLoc location = lexer.getLastLocation();
 
+  // If there is a bang, it's the major mux
+  bool isMajor = lexer.takeTokenIf(tok_bang);
+
   if (!lexer.takeTokenIf(tok_paren_l)) {
     error("A mux's arms should be enclosed in parentheses, missing '('");
     return nullptr;
@@ -877,7 +900,7 @@ Switch::Ptr Parser::parseSwitch(Expression::Ptr&& selector) {
     return nullptr;
   }
 
-  return make_shared<Switch>(location, std::move(selector), std::move(cases));
+  return make_shared<Switch>(location, std::move(selector), std::move(cases), isMajor);
 }
 
 Expression::Ptr Parser::parseBinaryOp(Expression::Ptr lhs, BinaryOpPrecedence precedence) {
