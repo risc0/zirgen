@@ -157,6 +157,13 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt) 
   // This assumption isn't checked here, so other code must ensure it's met
   // This algorithm doesn't work if `scalar` is a multiple of `pt`'s order
   // This doesn't need a special check, as it always computes a P + -P, causing an EQZ failure
+  // Because of how this function initializes based on `pt` in the double-and-add algorithm, and
+  // because of the lack of branching in the recursion circuit, there will be certain scalars that
+  // cannot be used with this mul (i.e., they'll give an EQZ error even though they are well-defined
+  // multiplies). This is cryptographically rare and only a completeness (not soundess) problem, but
+  // it does happen with a regular pattern. If this causes problems for your use case, you can make
+  // an alternative multiply that also takes an arbitrary initial point to offset where these
+  // "misses" are.
 
   // Construct constants
   mlir::Type oneType = builder.getIntegerType(1);    // a `1` is bitwidth 1
@@ -207,8 +214,6 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt) 
       // When the bit is one, add the current doubling point; otherwise retain the current point
       // Compute "If P then =A, else =B" via the formula
       //   result = P * A + (1 - P) * B
-      // TODO: I'm concerned about the uncomputability of the untaken branch when scale = order -
-      // 2^(bitwidth_order - 1)
       auto sum = add(builder, loc, result, doubled_pt);
       auto xIfAdd = builder.create<BigInt::MulOp>(loc, sum.x(), rem);
       auto yIfAdd = builder.create<BigInt::MulOp>(loc, sum.y(), rem);
