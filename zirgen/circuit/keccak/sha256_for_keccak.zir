@@ -288,8 +288,12 @@ component unpack_with_carry(low: Val, high: Val) {
   Concatenate<NondetReg,16,16>(low16, high16)
 }
 
-component sha256load<I: Val>(rvprev01: RetTuple, rvprev02: RetTuple,
-                             rvprev03: RetTuple, rvprev04: RetTuple) {
+component sha256load<I: Val>(rvals: RetTuple) {
+  rvprev01 := rvals@1;
+  rvprev02 := rvals@2;
+  rvprev03 := rvals@3;
+  rvprev04 := rvals@4;
+
   idx := rvprev01.blk;
   within := rvprev01.midx + 1 - idx;
   invWithin := NondetReg(Inv(within));
@@ -320,33 +324,37 @@ component sha256load<I: Val>(rvprev01: RetTuple, rvprev02: RetTuple,
              0, S2MAJOR_MIX(), vals[4], vals[5], rvprev01.midx))
 }
 
-component sha256load_all(rvprev01: RetTuple, rvprev02: RetTuple,
-                         rvprev03: RetTuple, rvprev04: RetTuple) {
-  minor_onehot := OneHot<16>(rvprev01.minor);
+component sha256load_all(rvals: RetTuple) {
+  minor_onehot := OneHot<16>(rvals@1.minor);
   minor_onehot -> (
-    sha256load<0>(rvprev01, rvprev02, rvprev03, rvprev04),
-    sha256load<1>(rvprev01, rvprev02, rvprev03, rvprev04),
-    sha256load<2>(rvprev01, rvprev02, rvprev03, rvprev04),
-    sha256load<3>(rvprev01, rvprev02, rvprev03, rvprev04),
-    sha256load<4>(rvprev01, rvprev02, rvprev03, rvprev04),
-    sha256load<5>(rvprev01, rvprev02, rvprev03, rvprev04),
-    sha256load<6>(rvprev01, rvprev02, rvprev03, rvprev04),
-    sha256load<7>(rvprev01, rvprev02, rvprev03, rvprev04),
-    sha256load<8>(rvprev01, rvprev02, rvprev03, rvprev04),
-    sha256load<9>(rvprev01, rvprev02, rvprev03, rvprev04),
-    sha256load<10>(rvprev01, rvprev02, rvprev03, rvprev04),
-    sha256load<11>(rvprev01, rvprev02, rvprev03, rvprev04),
-    sha256load<12>(rvprev01, rvprev02, rvprev03, rvprev04),
-    sha256load<13>(rvprev01, rvprev02, rvprev03, rvprev04),
-    sha256load<14>(rvprev01, rvprev02, rvprev03, rvprev04),
-    sha256load<15>(rvprev01, rvprev02, rvprev03, rvprev04)
+    sha256load<0>(rvals),
+    sha256load<1>(rvals),
+    sha256load<2>(rvals),
+    sha256load<3>(rvals),
+    sha256load<4>(rvals),
+    sha256load<5>(rvals),
+    sha256load<6>(rvals),
+    sha256load<7>(rvals),
+    sha256load<8>(rvals),
+    sha256load<9>(rvals),
+    sha256load<10>(rvals),
+    sha256load<11>(rvals),
+    sha256load<12>(rvals),
+    sha256load<13>(rvals),
+    sha256load<14>(rvals),
+    sha256load<15>(rvals)
   )
 }
 
-component sha256mix<S: Val, I: Val>(rvprev01: RetTuple, rvprev02: RetTuple,
-                                    rvprev03: RetTuple, rvprev04: RetTuple,
-                                    rvprev07: RetTuple, rvprev15: RetTuple,
-                                    rvprev16: RetTuple) {
+component sha256mix<S: Val, I: Val>(rvals: RetTuple) {
+  rvprev01 := rvals@1;
+  rvprev02 := rvals@2;
+  rvprev03 := rvals@3;
+  rvprev04 := rvals@4;
+  rvprev07 := rvals@7;
+  rvprev15 := rvals@15;
+  rvprev16 := rvals@16;
+
   packed_w := computeW(s2w(rvprev02), s2w(rvprev07), s2w(rvprev15), s2w(rvprev16));
   new_w := unpack_with_carry(packed_w.low, packed_w.high);
   ae := computeAE(s2a(rvprev01), s2a(rvprev02), s2a(rvprev03), s2a(rvprev04),
@@ -370,28 +378,25 @@ component sha256mix<S: Val, I: Val>(rvprev01: RetTuple, rvprev02: RetTuple,
     })
 }
 
-component sha256mix_all<S: Val>(rvprev01: RetTuple, rvprev02: RetTuple,
-                                rvprev03: RetTuple, rvprev04: RetTuple,
-                                rvprev07: RetTuple, rvprev15: RetTuple,
-                                rvprev16: RetTuple) {
-  minor_onehot := OneHot<16>(rvprev01.minor);
+component sha256mix_all<S: Val>(rvals: RetTuple) {
+  minor_onehot := OneHot<16>(rvals@1.minor);
   minor_onehot -> (
-    sha256mix<S,0>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16),
-    sha256mix<S,1>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16),
-    sha256mix<S,2>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16),
-    sha256mix<S,3>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16),
-    sha256mix<S,4>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16),
-    sha256mix<S,5>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16),
-    sha256mix<S,6>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16),
-    sha256mix<S,7>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16),
-    sha256mix<S,8>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16),
-    sha256mix<S,9>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16),
-    sha256mix<S,10>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16),
-    sha256mix<S,11>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16),
-    sha256mix<S,12>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16),
-    sha256mix<S,13>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16),
-    sha256mix<S,14>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16),
-    sha256mix<S,15>(rvprev01,rvprev02,rvprev03,rvprev04,rvprev07,rvprev15,rvprev16)
+    sha256mix<S,0>(rvals),
+    sha256mix<S,1>(rvals),
+    sha256mix<S,2>(rvals),
+    sha256mix<S,3>(rvals),
+    sha256mix<S,4>(rvals),
+    sha256mix<S,5>(rvals),
+    sha256mix<S,6>(rvals),
+    sha256mix<S,7>(rvals),
+    sha256mix<S,8>(rvals),
+    sha256mix<S,9>(rvals),
+    sha256mix<S,10>(rvals),
+    sha256mix<S,11>(rvals),
+    sha256mix<S,12>(rvals),
+    sha256mix<S,13>(rvals),
+    sha256mix<S,14>(rvals),
+    sha256mix<S,15>(rvals)
   )
 }
 
@@ -413,9 +418,13 @@ component sha256init<I: Val>(rvprev01: RetTuple) {
              0, S2MAJOR_LOAD(), 0, 0, rvprev01.midx))
 }
 
-component sha256fini<I: Val>(rvprev01: RetTuple, rvprev02: RetTuple,
-                             rvprev03: RetTuple, rvprev04: RetTuple,
-                             rvprev68: RetTuple) {
+component sha256fini<I: Val>(rvals: RetTuple) {
+  rvprev01 := rvals@1;
+  rvprev02 := rvals@2;
+  rvprev03 := rvals@3;
+  rvprev04 := rvals@4;
+  rvprev68 := rvals@68;
+
   packed_a := add(pack2(s2a(rvprev04)), pack2(s2a(rvprev68)));
   new_a := unpack_with_carry(packed_a.low, packed_a.high);
   packed_e := add(pack2(s2e(rvprev04)), pack2(s2e(rvprev68)));
