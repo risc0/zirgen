@@ -304,11 +304,19 @@ component sha256load<I: Val>(rvals: RetTuple) {
       [mem[0],mem[1],mem[2],mem[3],1,idx]
     },
     [rvprev01.arr_d[0],rvprev01.arr_d[1],0,0,0,idx+1]);
+
   inp1 := vals[0];
   high_w := ToBits<16>(inp1); //big endian
+  FromBits<16>(high_w) = inp1;
   inp2 := vals[1];
   low_w := ToBits<16>(inp2);
-  unpacked_w := Concatenate<NondetReg,16,16>(low_w, high_w);
+  FromBits<16>(low_w) = inp2;
+  unpacked_w := [
+    low_w[8],low_w[9],low_w[10],low_w[11],low_w[12],low_w[13],low_w[14],low_w[15],
+    low_w[0],low_w[1],low_w[2],low_w[3],low_w[4],low_w[5],low_w[6],low_w[7],
+    high_w[8],high_w[9],high_w[10],high_w[11],high_w[12],high_w[13],high_w[14],high_w[15],
+    high_w[0],high_w[1],high_w[2],high_w[3],high_w[4],high_w[5],high_w[6],high_w[7]];
+
   ae := computeAE(s2a(rvprev01), s2a(rvprev02), s2a(rvprev03), s2a(rvprev04),
                   s2e(rvprev01), s2e(rvprev02), s2e(rvprev03), s2e(rvprev04),
                   unpacked_w, sha256rc_table<I>());
