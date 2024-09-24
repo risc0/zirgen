@@ -77,7 +77,6 @@ std::unique_ptr<llvm::raw_ostream> openOutput(StringRef filename) {
 
 void emitDefs(ModuleOp mod, codegen::LanguageSyntax* lang, StringRef filename) {
   codegen::CodegenOptions opts;
-  opts.zkpLayoutCompat = false;
   opts.lang = lang;
 
   auto os = openOutput(filename);
@@ -91,7 +90,6 @@ void emitDefs(ModuleOp mod, codegen::LanguageSyntax* lang, StringRef filename) {
 
 void emitTypes(ModuleOp mod, codegen::LanguageSyntax* lang, StringRef filename) {
   codegen::CodegenOptions opts;
-  opts.zkpLayoutCompat = false;
   opts.lang = lang;
 
   auto os = openOutput(filename);
@@ -102,7 +100,6 @@ void emitTypes(ModuleOp mod, codegen::LanguageSyntax* lang, StringRef filename) 
 template <typename... OpT>
 void emitOps(ModuleOp mod, codegen::LanguageSyntax* lang, StringRef filename) {
   codegen::CodegenOptions opts;
-  opts.zkpLayoutCompat = false;
   opts.lang = lang;
 
   auto os = openOutput(filename);

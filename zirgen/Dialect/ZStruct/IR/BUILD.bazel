@@ -142,6 +142,7 @@ cc_library(
     name = "IR",
     srcs = [
         "Attrs.cpp",
+        "Codegen.cpp",
         "Dialect.cpp",
         "Ops.cpp",
         "TypeUtils.cpp",

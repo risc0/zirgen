@@ -208,11 +208,28 @@ public:
 };
 
 struct CodegenOptions {
+  CodegenOptions() = default;
+  CodegenOptions(LanguageSyntax* lang) : lang(lang) {}
+
+  // Add a handler to emit specific syntax to construct a literal value.
+  template <typename AttrT> void addLiteralHandler(std::function<void(CodegenEmitter&, AttrT)> f) {
+    addLiteralHandler(AttrT::name, [f](CodegenEmitter& cg, mlir::Attribute attr) {
+      f(cg, llvm::cast<AttrT>(attr));
+    });
+  }
+  void addLiteralHandler(llvm::StringRef name,
+                         std::function<void(CodegenEmitter&, mlir::Attribute)> f) {
+    if (literalHandlers.contains(name)) {
+      llvm::errs() << "Duplicate literal handler for " << name << "\n";
+      abort();
+    }
+
+    literalHandlers[name] = f;
+  }
+
   LanguageSyntax* lang = nullptr;
 
-  // If true, generate compatible layout code for zkp layout library.
-  // TODO: Migrate to macro use so we don't have to have special cases.
-  bool zkpLayoutCompat = false;
+  llvm::StringMap<std::function<void(CodegenEmitter&, mlir::Attribute)>> literalHandlers;
 };
 
 // Manages emitting generated code.

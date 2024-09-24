@@ -28,6 +28,31 @@ namespace cl = llvm::cl;
 
 namespace zirgen {
 
+namespace codegen {
+
+CodegenOptions getRustCodegenOpts() {
+  static codegen::RustLanguageSyntax kRust;
+  codegen::CodegenOptions opts(&kRust);
+  ZStruct::addRustSyntax(opts);
+  return opts;
+}
+
+CodegenOptions getCppCodegenOpts() {
+  static codegen::CppLanguageSyntax kCpp;
+  codegen::CodegenOptions opts(&kCpp);
+  ZStruct::addCppSyntax(opts);
+  return opts;
+}
+
+CodegenOptions getCudaCodegenOpts() {
+  static codegen::CudaLanguageSyntax kCuda;
+  codegen::CodegenOptions opts(&kCuda);
+  ZStruct::addCppSyntax(opts);
+  return opts;
+}
+
+} // namespace codegen
+
 namespace {
 
 void optimizeSimple(ModuleOp module) {
@@ -138,20 +163,12 @@ public:
   }
 
   void emitAllLayouts(mlir::ModuleOp op) {
-    static codegen::RustLanguageSyntax kRust;
-    emitLayout(op, &kRust, ".rs.inc");
-
-    static codegen::CppLanguageSyntax kCpp;
-    emitLayout(op, &kCpp, ".cpp.inc");
-
-    static codegen::CudaLanguageSyntax kCuda;
-    emitLayout(op, &kCuda, ".cu.inc");
+    emitLayout(op, codegen::getRustCodegenOpts(), ".rs.inc");
+    emitLayout(op, codegen::getCppCodegenOpts(), ".cpp.inc");
+    emitLayout(op, codegen::getCudaCodegenOpts(), ".cu.inc");
   }
 
-  void emitLayout(mlir::ModuleOp op, codegen::LanguageSyntax* lang, StringRef suffix) {
-    codegen::CodegenOptions opts;
-    opts.lang = lang;
-    opts.zkpLayoutCompat = true;
+  void emitLayout(mlir::ModuleOp op, const codegen::CodegenOptions& opts, StringRef suffix) {
     auto ofs = openOutputFile(("layout" + suffix).str());
     codegen::CodegenEmitter emitter(opts, ofs.get(), op->getContext());
     op.walk([&](ZStruct::GlobalConstOp constOp) {

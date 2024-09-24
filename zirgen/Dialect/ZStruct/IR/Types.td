@@ -109,16 +109,12 @@ def Ref : ZStructType<"Ref", "ref", [
   ]> {
   let summary = "reference to a register";
   let parameters = (ins
-     DefaultValuedParameter<"Zll::ValType", "Zll::ValType::get($_ctxt, Zll::kFieldPrimeDefault, 1)">: $element,
-     OptionalParameter<"mlir::StringAttr">: $buffer
+     DefaultValuedParameter<"Zll::ValType", "Zll::ValType::get($_ctxt, Zll::kFieldPrimeDefault, 1)">: $element
   );
-  let assemblyFormat = "(`<` $element^ (`,` $buffer^ `>`)?)?";
+  let assemblyFormat = "(`<` $element^ `>`)?";
   let builders = [
-    TypeBuilder<(ins "Zll::ValType":$element), [{
-      return $_get($_ctxt, element, mlir::StringAttr());
-    }]>,
     TypeBuilderWithInferredContext<(ins "Zll::ValType":$element), [{
-      return $_get(element.getContext(), element, mlir::StringAttr());
+      return $_get(element.getContext(), element);
     }]>
   ];
 }

@@ -240,6 +240,12 @@ struct CudaLanguageSyntax : public CppLanguageSyntax {
                           llvm::ArrayRef<CodegenValue> values) override;
 };
 
+// Returns codegen options for emitting specific language variants,
+// including dialect-specific handlers for the dialects we use.
+CodegenOptions getRustCodegenOpts();
+CodegenOptions getCppCodegenOpts();
+CodegenOptions getCudaCodegenOpts();
+
 } // namespace codegen
 
 std::unique_ptr<RustStreamEmitter> createRustStreamEmitter(llvm::raw_ostream& ofs);

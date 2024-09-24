@@ -359,6 +359,10 @@ void CodegenEmitter::emitExpr(Operation* op) {
 }
 
 void CodegenEmitter::emitLiteral(mlir::Type ty, mlir::Attribute value) {
+  if (auto f = opts.literalHandlers.lookup(value.getAbstractAttribute().getName())) {
+    f(*this, value);
+    return;
+  }
   if (auto codegenType = dyn_cast<CodegenTypeInterface>(ty)) {
     if (succeeded(codegenType.emitLiteral(*this, value)))
       return;
