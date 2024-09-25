@@ -75,10 +75,7 @@ std::unique_ptr<llvm::raw_ostream> openOutput(StringRef filename) {
   return ofs;
 }
 
-void emitDefs(ModuleOp mod, codegen::LanguageSyntax* lang, StringRef filename) {
-  codegen::CodegenOptions opts;
-  opts.lang = lang;
-
+void emitDefs(ModuleOp mod, const codegen::CodegenOptions& opts, StringRef filename) {
   auto os = openOutput(filename);
   zirgen::codegen::CodegenEmitter emitter(opts, os.get(), mod.getContext());
   auto emitZhlt = Zhlt::getEmitter(mod, emitter);
@@ -88,20 +85,14 @@ void emitDefs(ModuleOp mod, codegen::LanguageSyntax* lang, StringRef filename) {
   }
 }
 
-void emitTypes(ModuleOp mod, codegen::LanguageSyntax* lang, StringRef filename) {
-  codegen::CodegenOptions opts;
-  opts.lang = lang;
-
+void emitTypes(ModuleOp mod, const codegen::CodegenOptions& opts, StringRef filename) {
   auto os = openOutput(filename);
   zirgen::codegen::CodegenEmitter emitter(opts, os.get(), mod.getContext());
   emitter.emitTypeDefs(mod);
 }
 
 template <typename... OpT>
-void emitOps(ModuleOp mod, codegen::LanguageSyntax* lang, StringRef filename) {
-  codegen::CodegenOptions opts;
-  opts.lang = lang;
-
+void emitOps(ModuleOp mod, const codegen::CodegenOptions& opts, StringRef filename) {
   auto os = openOutput(filename);
   zirgen::codegen::CodegenEmitter emitter(opts, os.get(), mod.getContext());
 
@@ -194,22 +185,21 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-  static codegen::RustLanguageSyntax kRust;
-  static codegen::CppLanguageSyntax kCpp;
+  auto rustOpts = codegen::getRustCodegenOpts();
+  emitDefs(*typedModule, rustOpts, "defs.rs.inc");
+  emitTypes(*typedModule, rustOpts, "types.rs.inc");
+  emitOps<Zhlt::ValidityRegsFuncOp>(*typedModule, rustOpts, "validity_regs.rs.inc");
+  emitOps<Zhlt::ValidityTapsFuncOp>(*typedModule, rustOpts, "validity_taps.rs.inc");
+  emitOps<ZStruct::GlobalConstOp>(*typedModule, rustOpts, "layout.rs.inc");
+  emitOps<Zhlt::StepFuncOp, Zhlt::ExecFuncOp>(*typedModule, rustOpts, "steps.rs.inc");
 
-  emitDefs(*typedModule, &kRust, "defs.rs.inc");
-  emitTypes(*typedModule, &kRust, "types.rs.inc");
-  emitOps<Zhlt::ValidityRegsFuncOp>(*typedModule, &kRust, "validity_regs.rs.inc");
-  emitOps<Zhlt::ValidityTapsFuncOp>(*typedModule, &kRust, "validity_taps.rs.inc");
-  emitOps<ZStruct::GlobalConstOp>(*typedModule, &kRust, "layout.rs.inc");
-  emitOps<Zhlt::StepFuncOp, Zhlt::ExecFuncOp>(*typedModule, &kRust, "steps.rs.inc");
-
-  emitDefs(*typedModule, &kCpp, "defs.cpp.inc");
-  emitTypes(*typedModule, &kCpp, "types.h.inc");
-  emitOps<Zhlt::ValidityTapsFuncOp>(*typedModule, &kCpp, "validity_regs.cpp.inc");
-  emitOps<Zhlt::ValidityRegsFuncOp>(*typedModule, &kCpp, "validity_taps.cpp.inc");
-  emitOps<ZStruct::GlobalConstOp>(*typedModule, &kCpp, "layout.cpp.inc");
-  emitOps<Zhlt::StepFuncOp, Zhlt::ExecFuncOp>(*typedModule, &kCpp, "steps.cpp.inc");
+  auto cppOpts = codegen::getCppCodegenOpts();
+  emitDefs(*typedModule, cppOpts, "defs.cpp.inc");
+  emitTypes(*typedModule, cppOpts, "types.h.inc");
+  emitOps<Zhlt::ValidityTapsFuncOp>(*typedModule, cppOpts, "validity_regs.cpp.inc");
+  emitOps<Zhlt::ValidityRegsFuncOp>(*typedModule, cppOpts, "validity_taps.cpp.inc");
+  emitOps<ZStruct::GlobalConstOp>(*typedModule, cppOpts, "layout.cpp.inc");
+  emitOps<Zhlt::StepFuncOp, Zhlt::ExecFuncOp>(*typedModule, cppOpts, "steps.cpp.inc");
 
   typedModule->print(*openOutput("circuit.ir"));
 

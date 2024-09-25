@@ -115,7 +115,6 @@ public:
   virtual void emitClone(CodegenEmitter& cg, CodegenIdent<IdentKind::Var> value);
   virtual void emitTakeReference(CodegenEmitter& cg, EmitPart emitTarget);
 
-  virtual void fallbackEmitLiteral(CodegenEmitter& cg, mlir::Type ty, mlir::Attribute value) = 0;
   virtual void emitFuncDefinition(CodegenEmitter& cg,
                                   CodegenIdent<IdentKind::Func> funcName,
                                   llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,

@@ -27,12 +27,50 @@ using namespace mlir;
 namespace cl = llvm::cl;
 
 namespace zirgen {
-
 namespace codegen {
+
+namespace {
+
+void addCommonSyntax(CodegenOptions& opts) {
+  opts.addLiteralHandler<IntegerAttr>(
+      [](CodegenEmitter& cg, auto intAttr) { cg << intAttr.getValue().getZExtValue(); });
+  opts.addLiteralHandler<StringAttr>(
+      [](CodegenEmitter& cg, auto strAttr) { cg.emitEscapedString(strAttr); });
+}
+
+void addCppSyntax(CodegenOptions& opts) {
+  opts.addLiteralHandler<PolynomialAttr>([&](CodegenEmitter& cg, auto polyAttr) {
+    auto elems = polyAttr.asArrayRef();
+    if (elems.size() == 1) {
+      cg << "Val(" << elems[0] << ")";
+    } else {
+      cg << "Val" << elems.size() << "{";
+      cg.interleaveComma(elems);
+      cg << "}";
+    }
+  });
+}
+
+void addRustSyntax(CodegenOptions& opts) {
+  opts.addLiteralHandler<PolynomialAttr>([&](CodegenEmitter& cg, auto polyAttr) {
+    auto elems = polyAttr.asArrayRef();
+    if (elems.size() == 1) {
+      cg << "Val::new(" << elems[0] << ")";
+    } else {
+      cg << "ExtVal::new(";
+      cg.interleaveComma(elems, [&](auto elem) { cg << "Val::new(" << elem << ")"; });
+      cg << ")";
+    }
+  });
+}
+
+} // namespace
 
 CodegenOptions getRustCodegenOpts() {
   static codegen::RustLanguageSyntax kRust;
   codegen::CodegenOptions opts(&kRust);
+  addCommonSyntax(opts);
+  addRustSyntax(opts);
   ZStruct::addRustSyntax(opts);
   return opts;
 }
@@ -40,6 +78,8 @@ CodegenOptions getRustCodegenOpts() {
 CodegenOptions getCppCodegenOpts() {
   static codegen::CppLanguageSyntax kCpp;
   codegen::CodegenOptions opts(&kCpp);
+  addCommonSyntax(opts);
+  addCppSyntax(opts);
   ZStruct::addCppSyntax(opts);
   return opts;
 }
@@ -47,6 +87,8 @@ CodegenOptions getCppCodegenOpts() {
 CodegenOptions getCudaCodegenOpts() {
   static codegen::CudaLanguageSyntax kCuda;
   codegen::CodegenOptions opts(&kCuda);
+  addCommonSyntax(opts);
+  addCppSyntax(opts);
   ZStruct::addCppSyntax(opts);
   return opts;
 }

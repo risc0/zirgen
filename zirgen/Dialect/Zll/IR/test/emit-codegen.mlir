@@ -7,15 +7,15 @@ func.func @add_with_0(%arg : !zll.val<BabyBear>) -> !zll.val<BabyBear> {
   %0 = zll.const 0
   %1 = zll.add %0:<BabyBear>, %arg:<BabyBear>
   %2 = zll.isz %1:<BabyBear>
-  // CPP-CHECK: Val {{.*}} = isz((MAKE_VAL(0) + arg0))
-  // RUST-CHECK: let x1 : Val = isz((make_val!(0) + arg0))
+  // CPP-CHECK: Val {{.*}} = isz((Val(0) + arg0))
+  // RUST-CHECK: let x1 : Val = isz((Val::new(0) + arg0))
   zll.if %2 : <BabyBear> {
     // CPP-CHECK: if (to_size_t(x1)) {
     // RUST-CHECK: if is_nonzero(x1) {
     %three = zll.const 3
     zll.eqz %three : <BabyBear>
-    // CPP-CHECK: EQZ(MAKE_VAL(3), "Dialect/Zll/IR/test/emit-codegen.mlir:16")
-    // RUST-CHECK: eqz!(make_val!(3), "Dialect/Zll/IR/test/emit-codegen.mlir:16")
+    // CPP-CHECK: EQZ(Val(3), "Dialect/Zll/IR/test/emit-codegen.mlir:16")
+    // RUST-CHECK: eqz!(Val::new(3), "Dialect/Zll/IR/test/emit-codegen.mlir:16")
   }
   // CHECK: }
   return %2: !zll.val<BabyBear>

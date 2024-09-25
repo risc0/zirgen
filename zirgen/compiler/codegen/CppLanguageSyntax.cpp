@@ -25,24 +25,6 @@ using namespace zirgen::Zll;
 
 namespace zirgen::codegen {
 
-void CppLanguageSyntax::fallbackEmitLiteral(CodegenEmitter& cg,
-                                            mlir::Type ty,
-                                            mlir::Attribute value) {
-  TypeSwitch<Attribute>(value)
-      .Case<IntegerAttr>([&](auto intAttr) { cg << intAttr.getValue().getZExtValue(); })
-      .Case<StringAttr>([&](auto strAttr) { cg.emitEscapedString(strAttr); })
-      .Case<PolynomialAttr>([&](auto polyAttr) {
-        cg << "(" << ty.cast<ValType>().getTypeName(cg) << " {";
-        cg.interleaveComma(polyAttr.asArrayRef());
-        cg << "})";
-      })
-      .Default([&](auto) {
-        llvm::errs() << "Don't know how to emit type " << ty << " into C++ with value " << value
-                     << "\n";
-        abort();
-      });
-}
-
 void CppLanguageSyntax::emitConditional(CodegenEmitter& cg,
                                         CodegenValue condition,
                                         EmitPart emitThen) {

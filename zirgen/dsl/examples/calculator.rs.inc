@@ -138,39 +138,39 @@ pub const TAP_LIST: Tap8Array = [
 ];
 pub const LAYOUT_TOP: &TopLayout = &TopLayout {
     op: &NondetRegLayout {
-        _super: make_ref!(0),
+        _super: &Reg { offset: 0 },
     },
     left: &NondetRegLayout {
-        _super: make_ref!(1),
+        _super: &Reg { offset: 1 },
     },
     right: &NondetRegLayout {
-        _super: make_ref!(2),
+        _super: &Reg { offset: 2 },
     },
     _0: &OneHotLayout {
         _super: &[
             &NondetRegLayout {
-                _super: make_ref!(3),
+                _super: &Reg { offset: 3 },
             },
             &NondetRegLayout {
-                _super: make_ref!(4),
+                _super: &Reg { offset: 4 },
             },
         ],
     },
     result: &TopResultLayout {
         _super: &NondetRegLayout {
-            _super: make_ref!(5),
+            _super: &Reg { offset: 5 },
         },
         arm0: &NondetRegLayout {
-            _super: make_ref!(5),
+            _super: &Reg { offset: 5 },
         },
         arm1: &NondetRegLayout {
-            _super: make_ref!(5),
+            _super: &Reg { offset: 5 },
         },
     },
 };
 pub const LAYOUT_GLOBAL: &_globalLayout = &_globalLayout {
     result: &NondetRegLayout {
-        _super: make_ref!(0),
+        _super: &Reg { offset: 0 },
     },
 };
 pub fn exec_isz(ctx0: &ExecContext, arg1: Val) -> Result<Val> {
@@ -254,7 +254,7 @@ pub fn exec_one_hot(
     layout2: BoundLayout<OneHotLayout, impl BufferRow<ValType = Val>>,
 ) -> Result<OneHotStruct> {
     // OneHot(zirgen/dsl/examples/calculator.zir:13)
-    let x3: Val2Array = [make_val!(0), make_val!(1)];
+    let x3: Val2Array = [Val::new(0), Val::new(1)];
     let x4: NondetRegStruct2Array = map_layout(x3, layout_lookup!(layout2, _super), |x5, x6| {
         let x7: Val = exec_sub(ctx0, x5, arg1)?;
         let x8: Val = exec_isz(ctx0, x7)?;
@@ -264,19 +264,19 @@ pub fn exec_one_hot(
     // OneHot(zirgen/dsl/examples/calculator.zir:15)
     let x10: ComponentStruct2Array = map(x4, |x11| {
         let x12: Val = x11._super;
-        let x13: Val = exec_sub(ctx0, make_val!(1), x12)?;
+        let x13: Val = exec_sub(ctx0, Val::new(1), x12)?;
         let x14: Val = exec_mul(ctx0, x12, x13)?;
         eqz!(x14, "OneHot(zirgen/dsl/examples/calculator.zir:15)");
         let x15: ComponentStruct = exec_component(ctx0)?;
         return Ok(x15);
     })?;
     // OneHot(zirgen/dsl/examples/calculator.zir:17)
-    let x16: Val = reduce(x4, make_val!(0), |x17, x18| {
+    let x16: Val = reduce(x4, Val::new(0), |x17, x18| {
         let x19: Val = exec_add(ctx0, x17, x18._super)?;
         return Ok(x19);
     })?;
     eqz!(
-        (x16 - make_val!(1)),
+        (x16 - Val::new(1)),
         "OneHot(zirgen/dsl/examples/calculator.zir:17)"
     );
     // OneHot(zirgen/dsl/examples/calculator.zir:19)
@@ -284,7 +284,7 @@ pub fn exec_one_hot(
         let x22: Val = exec_mul(ctx0, x4[u64::from(x21) as usize]._super, x21)?;
         return Ok(OneHot__0_SuperStruct { _super: x22 });
     })?;
-    let x23: Val = reduce(x20, make_val!(0), |x24, x25| {
+    let x23: Val = reduce(x20, Val::new(0), |x24, x25| {
         let x26: Val = exec_add(ctx0, x24, x25._super)?;
         return Ok(x26);
     })?;
@@ -294,7 +294,7 @@ pub fn exec_one_hot(
     );
     return Ok(OneHotStruct {
         _super: x4.clone(),
-        n: make_val!(2),
+        n: Val::new(2),
         bits: x4,
     });
 }
@@ -401,11 +401,15 @@ pub fn validity_taps_(
                 and_eqz_ext(
                     poly_mix1,
                     x3,
-                    (taps2[5] * (make_val_ext!(1, 0, 0, 0) - taps2[5])),
+                    (taps2[5]
+                        * (ExtVal::new(Val::new(1), Val::new(0), Val::new(0), Val::new(0))
+                            - taps2[5])),
                 )?,
-                (taps2[6] * (make_val_ext!(1, 0, 0, 0) - taps2[6])),
+                (taps2[6]
+                    * (ExtVal::new(Val::new(1), Val::new(0), Val::new(0), Val::new(0)) - taps2[6])),
             )?,
-            ((taps2[5] + taps2[6]) - make_val_ext!(1, 0, 0, 0)),
+            ((taps2[5] + taps2[6])
+                - ExtVal::new(Val::new(1), Val::new(0), Val::new(0), Val::new(0))),
         )?,
         (taps2[6] - taps2[2]),
     )?;
@@ -444,7 +448,7 @@ pub fn validity_regs_(ctx0: &ValidityRegsContext, poly_mix1: PolyMix) -> Result<
         poly_mix1,
         trivial_constraint()?,
         (load!(layout_lookup!(layout_subscript!(x4, 0), _super), 0)
-            * (make_val!(1) - load!(layout_lookup!(layout_subscript!(x4, 0), _super), 0))),
+            * (Val::new(1) - load!(layout_lookup!(layout_subscript!(x4, 0), _super), 0))),
     )?;
     // OneHot(zirgen/dsl/examples/calculator.zir:17)
     let x6: MixState = and_eqz(
@@ -453,11 +457,11 @@ pub fn validity_regs_(ctx0: &ValidityRegsContext, poly_mix1: PolyMix) -> Result<
             poly_mix1,
             x5,
             (load!(layout_lookup!(layout_subscript!(x4, 1), _super), 0)
-                * (make_val!(1) - load!(layout_lookup!(layout_subscript!(x4, 1), _super), 0))),
+                * (Val::new(1) - load!(layout_lookup!(layout_subscript!(x4, 1), _super), 0))),
         )?,
         ((load!(layout_lookup!(layout_subscript!(x4, 0), _super), 0)
             + load!(layout_lookup!(layout_subscript!(x4, 1), _super), 0))
-            - make_val!(1)),
+            - Val::new(1)),
     )?;
     let x7: BoundLayout<NondetRegLayout, _> = layout_lookup!(x3, _super);
     // Reg(<preamble>:5)

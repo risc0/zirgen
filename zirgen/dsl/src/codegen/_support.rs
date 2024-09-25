@@ -208,7 +208,7 @@ macro_rules! import_macros {
 }
 
 import_macros! {
-    make_ref, make_tap, invoke_extern, make_val, make_val_ext,
+    make_tap, invoke_extern,
     set_field, load, load_as_ext, load_ext, store, store_ext, define_tap_buffer,
     define_global_buffer, define_buffer, define_buffer_list, bind_layout,
     layout_subscript, layout_lookup, eqz, get_buffer

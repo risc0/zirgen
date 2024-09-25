@@ -262,14 +262,9 @@ int main(int argc, char* argv[]) {
   }
 
   if (emitAction == Action::PrintRust || emitAction == Action::PrintCpp) {
-    codegen::CodegenOptions codegenOpts;
-    static codegen::RustLanguageSyntax kRust;
-    static codegen::CppLanguageSyntax kCpp;
-
-    codegenOpts.lang = (emitAction == Action::PrintRust)
-                           ? static_cast<codegen::LanguageSyntax*>(&kRust)
-                           : static_cast<codegen::LanguageSyntax*>(&kCpp);
-
+    codegen::CodegenOptions codegenOpts = (emitAction == Action::PrintRust)
+                                              ? codegen::getRustCodegenOpts()
+                                              : codegen::getCppCodegenOpts();
     zirgen::codegen::CodegenEmitter emitter(codegenOpts, &llvm::outs(), &context);
     if (zirgen::Zhlt::emitModule(*typedModule, emitter).failed()) {
       llvm::errs() << "Failed to emit circuit\n";

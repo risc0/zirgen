@@ -67,17 +67,17 @@ constexpr Tap8Array kTapList = Tap8Array{MAKE_TAP(0, 0, 0),
                                          MAKE_TAP(2, 4, 0),
                                          MAKE_TAP(2, 5, 0)};
 constexpr TopLayout kLayout_Top = TopLayout{
-    .op = NondetRegLayout{._super = MAKE_REF(0)},
-    .left = NondetRegLayout{._super = MAKE_REF(1)},
-    .right = NondetRegLayout{._super = MAKE_REF(2)},
-    ._0 =
-        OneHotLayout{._super = NondetRegLayout2LayoutArray{NondetRegLayout{._super = MAKE_REF(3)},
-                                                           NondetRegLayout{._super = MAKE_REF(4)}}},
-    .result = TopResultLayout{._super = NondetRegLayout{._super = MAKE_REF(5)},
-                              .arm0 = NondetRegLayout{._super = MAKE_REF(5)},
-                              .arm1 = NondetRegLayout{._super = MAKE_REF(5)}}};
+    .op = NondetRegLayout{._super = /*offset=*/0},
+    .left = NondetRegLayout{._super = /*offset=*/1},
+    .right = NondetRegLayout{._super = /*offset=*/2},
+    ._0 = OneHotLayout{._super =
+                           NondetRegLayout2LayoutArray{NondetRegLayout{._super = /*offset=*/3},
+                                                       NondetRegLayout{._super = /*offset=*/4}}},
+    .result = TopResultLayout{._super = NondetRegLayout{._super = /*offset=*/5},
+                              .arm0 = NondetRegLayout{._super = /*offset=*/5},
+                              .arm1 = NondetRegLayout{._super = /*offset=*/5}}};
 constexpr _globalLayout kLayoutGlobal =
-    _globalLayout{.result = NondetRegLayout{._super = MAKE_REF(0)}};
+    _globalLayout{.result = NondetRegLayout{._super = /*offset=*/0}};
 Val exec_Isz(ExecContext ctx0, Val arg1) {
   return isz(arg1);
 }
@@ -130,7 +130,7 @@ ComponentStruct exec_OutputToUser(ExecContext ctx0, Val arg1) {
 }
 OneHotStruct exec_OneHot(ExecContext ctx0, Val arg1, BoundLayout<OneHotLayout> layout2) {
   // OneHot(zirgen/dsl/examples/calculator.zir:13)
-  Val2Array x3 = Val2Array{MAKE_VAL(0), MAKE_VAL(1)};
+  Val2Array x3 = Val2Array{Val(0), Val(1)};
   NondetRegStruct2Array x4 =
       map(x3,
           LAYOUT_LOOKUP(layout2, _super),
@@ -144,31 +144,30 @@ OneHotStruct exec_OneHot(ExecContext ctx0, Val arg1, BoundLayout<OneHotLayout> l
   // OneHot(zirgen/dsl/examples/calculator.zir:15)
   ComponentStruct2Array x10 = map(x4, std::function([&](NondetRegStruct2Array::value_type x11) {
                                     Val x12 = x11._super;
-                                    Val x13 = exec_Sub(ctx0, MAKE_VAL(1), x12);
+                                    Val x13 = exec_Sub(ctx0, Val(1), x12);
                                     Val x14 = exec_Mul(ctx0, x12, x13);
                                     EQZ(x14, "OneHot(zirgen/dsl/examples/calculator.zir:15)");
                                     ComponentStruct x15 = exec_Component(ctx0);
                                     return x15;
                                   }));
   // OneHot(zirgen/dsl/examples/calculator.zir:17)
-  Val x16 =
-      reduce(x4, MAKE_VAL(0), std::function([&](Val x17, NondetRegStruct2Array::value_type x18) {
-               Val x19 = exec_Add(ctx0, x17, x18._super);
-               return x19;
-             }));
-  EQZ((x16 - MAKE_VAL(1)), "OneHot(zirgen/dsl/examples/calculator.zir:17)");
+  Val x16 = reduce(x4, Val(0), std::function([&](Val x17, NondetRegStruct2Array::value_type x18) {
+                     Val x19 = exec_Add(ctx0, x17, x18._super);
+                     return x19;
+                   }));
+  EQZ((x16 - Val(1)), "OneHot(zirgen/dsl/examples/calculator.zir:17)");
   // OneHot(zirgen/dsl/examples/calculator.zir:19)
   OneHot__0_SuperStruct2Array x20 = map(x3, std::function([&](Val2Array::value_type x21) {
                                           Val x22 = exec_Mul(ctx0, x4[to_size_t(x21)]._super, x21);
                                           return OneHot__0_SuperStruct{._super = x22};
                                         }));
-  Val x23 = reduce(
-      x20, MAKE_VAL(0), std::function([&](Val x24, OneHot__0_SuperStruct2Array::value_type x25) {
-        Val x26 = exec_Add(ctx0, x24, x25._super);
-        return x26;
-      }));
+  Val x23 =
+      reduce(x20, Val(0), std::function([&](Val x24, OneHot__0_SuperStruct2Array::value_type x25) {
+               Val x26 = exec_Add(ctx0, x24, x25._super);
+               return x26;
+             }));
   EQZ((x23 - arg1), "OneHot(zirgen/dsl/examples/calculator.zir:19)");
-  return OneHotStruct{._super = x4, .n = MAKE_VAL(2), .bits = x4};
+  return OneHotStruct{._super = x4, .n = Val(2), .bits = x4};
 }
 RegStruct exec_GetGlobalResult(ExecContext ctx0) {
   // GetGlobalResult(zirgen/dsl/examples/calculator.zir:23)
@@ -251,12 +250,11 @@ MixState validityTaps_(ValidityTapsContext ctx0, PolyMix polyMix1, ExtVal8Array 
   // OneHot(zirgen/dsl/examples/calculator.zir:19)
   MixState x4 = andEqzExt(
       polyMix1,
-      andEqzExt(
-          polyMix1,
-          andEqzExt(polyMix1,
-                    andEqzExt(polyMix1, x3, (taps2[5] * (MAKE_VAL_EXT(1, 0, 0, 0) - taps2[5]))),
-                    (taps2[6] * (MAKE_VAL_EXT(1, 0, 0, 0) - taps2[6]))),
-          ((taps2[5] + taps2[6]) - MAKE_VAL_EXT(1, 0, 0, 0))),
+      andEqzExt(polyMix1,
+                andEqzExt(polyMix1,
+                          andEqzExt(polyMix1, x3, (taps2[5] * (Val4{1, 0, 0, 0} - taps2[5]))),
+                          (taps2[6] * (Val4{1, 0, 0, 0} - taps2[6]))),
+                ((taps2[5] + taps2[6]) - Val4{1, 0, 0, 0})),
       (taps2[6] - taps2[2]));
   // SetGlobalResult(zirgen/dsl/examples/calculator.zir:28)
   // Top(zirgen/dsl/examples/calculator.zir:41)
@@ -284,17 +282,16 @@ MixState validityRegs_(ValidityRegsContext ctx0, PolyMix polyMix1) {
   MixState x5 = andEqz(polyMix1,
                        trivialConstraint(),
                        (LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x4, 0), _super), 0) *
-                        (MAKE_VAL(1) - LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x4, 0), _super), 0))));
+                        (Val(1) - LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x4, 0), _super), 0))));
   // OneHot(zirgen/dsl/examples/calculator.zir:17)
-  MixState x6 =
-      andEqz(polyMix1,
-             andEqz(polyMix1,
-                    x5,
-                    (LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x4, 1), _super), 0) *
-                     (MAKE_VAL(1) - LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x4, 1), _super), 0)))),
-             ((LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x4, 0), _super), 0) +
-               LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x4, 1), _super), 0)) -
-              MAKE_VAL(1)));
+  MixState x6 = andEqz(polyMix1,
+                       andEqz(polyMix1,
+                              x5,
+                              (LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x4, 1), _super), 0) *
+                               (Val(1) - LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x4, 1), _super), 0)))),
+                       ((LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x4, 0), _super), 0) +
+                         LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x4, 1), _super), 0)) -
+                        Val(1)));
   BoundLayout<NondetRegLayout> x7 = LAYOUT_LOOKUP(x3, _super);
   // Reg(<preamble>:5)
   // Top(zirgen/dsl/examples/calculator.zir:37)

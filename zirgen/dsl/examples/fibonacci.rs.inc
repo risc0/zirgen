@@ -135,14 +135,14 @@ pub struct TopStruct {
 pub type ExtVal13Array = [ExtVal; 13];
 pub const LAYOUT__0: &CycleCounterLayout = &CycleCounterLayout {
     _super: &NondetRegLayout {
-        _super: make_ref!(0),
+        _super: &Reg { offset: 0 },
     },
     is_first_cycle: &IsZeroLayout {
         _super: &NondetRegLayout {
-            _super: make_ref!(1),
+            _super: &Reg { offset: 1 },
         },
         inv: &NondetRegLayout {
-            _super: make_ref!(2),
+            _super: &Reg { offset: 2 },
         },
     },
 };
@@ -164,38 +164,38 @@ pub const TAP_LIST: Tap13Array = [
 pub const LAYOUT_TOP: &TopLayout = &TopLayout {
     cycle: LAYOUT__0,
     d2: &NondetRegLayout {
-        _super: make_ref!(3),
+        _super: &Reg { offset: 3 },
     },
     d3: &NondetRegLayout {
-        _super: make_ref!(4),
+        _super: &Reg { offset: 4 },
     },
     d1: &NondetRegLayout {
-        _super: make_ref!(5),
+        _super: &Reg { offset: 5 },
     },
     terminate: &IsZeroLayout {
         _super: &NondetRegLayout {
-            _super: make_ref!(6),
+            _super: &Reg { offset: 6 },
         },
         inv: &NondetRegLayout {
-            _super: make_ref!(7),
+            _super: &Reg { offset: 7 },
         },
     },
 };
 pub const LAYOUT_GLOBAL: &_globalLayout = &_globalLayout {
     f0: &NondetRegLayout {
-        _super: make_ref!(0),
+        _super: &Reg { offset: 0 },
     },
     f1: &NondetRegLayout {
-        _super: make_ref!(1),
+        _super: &Reg { offset: 1 },
     },
     f_last: &NondetRegLayout {
-        _super: make_ref!(2),
+        _super: &Reg { offset: 2 },
     },
     steps: &NondetRegLayout {
-        _super: make_ref!(3),
+        _super: &Reg { offset: 3 },
     },
     total_cycles: &NondetRegLayout {
-        _super: make_ref!(4),
+        _super: &Reg { offset: 4 },
     },
 };
 pub fn exec_inv(ctx0: &ExecContext, arg1: Val) -> Result<Val> {
@@ -285,14 +285,14 @@ pub fn exec_is_zero(
     // IsZero(zirgen/dsl/examples/fibonacci.zir:6)
     let x7: Val = x4._super;
     // IsZero(zirgen/dsl/examples/fibonacci.zir:12)
-    let x8: Val = exec_sub(ctx0, make_val!(1), x7)?;
+    let x8: Val = exec_sub(ctx0, Val::new(1), x7)?;
     let x9: Val = exec_mul(ctx0, x7, x8)?;
     eqz!(x9, "IsZero(zirgen/dsl/examples/fibonacci.zir:12)");
     // IsZero(zirgen/dsl/examples/fibonacci.zir:9)
     let x10: Val = x6._super;
     // IsZero(zirgen/dsl/examples/fibonacci.zir:14)
     let x11: Val = exec_mul(ctx0, arg1, x10)?;
-    let x12: Val = exec_sub(ctx0, make_val!(1), x7)?;
+    let x12: Val = exec_sub(ctx0, Val::new(1), x7)?;
     eqz!((x11 - x12), "IsZero(zirgen/dsl/examples/fibonacci.zir:14)");
     // IsZero(zirgen/dsl/examples/fibonacci.zir:16)
     let x13: Val = exec_mul(ctx0, x7, arg1)?;
@@ -315,8 +315,7 @@ pub fn exec_cycle_counter(
     // CycleCounter(zirgen/dsl/examples/fibonacci.zir:31)
     let x3: BoundLayout<NondetRegLayout, _> = layout_lookup!(layout1, _super);
     // CycleCounter(zirgen/dsl/examples/fibonacci.zir:29)
-    let x4: NondetRegStruct =
-        exec_nondet_reg(ctx0, make_val!(6), layout_lookup!(x2, total_cycles))?;
+    let x4: NondetRegStruct = exec_nondet_reg(ctx0, Val::new(6), layout_lookup!(x2, total_cycles))?;
     // CycleCounter(zirgen/dsl/examples/fibonacci.zir:31)
     let x5: GetCycleStruct = exec_get_cycle(ctx0)?;
     let x6: NondetRegStruct = exec_nondet_reg(ctx0, x5._super, x3)?;
@@ -325,7 +324,7 @@ pub fn exec_cycle_counter(
     let x8: IsZeroStruct = exec_is_zero(ctx0, x7, layout_lookup!(layout1, is_first_cycle))?;
     let x9: Val = x8._super._super;
     // CycleCounter(zirgen/dsl/examples/fibonacci.zir:34)
-    let x10: Val = exec_sub(ctx0, make_val!(1), x9)?;
+    let x10: Val = exec_sub(ctx0, Val::new(1), x9)?;
     let x11: ComponentStruct;
     if is_nonzero(x9) {
         let x12: ComponentStruct = exec_component(ctx0)?;
@@ -333,7 +332,7 @@ pub fn exec_cycle_counter(
     } else if is_nonzero(x10) {
         // CycleCounter(zirgen/dsl/examples/fibonacci.zir:39)
         let x13: NondetRegStruct = back_nondet_reg(ctx0, 1, x3)?;
-        let x14: Val = exec_add(ctx0, x13._super, make_val!(1))?;
+        let x14: Val = exec_add(ctx0, x13._super, Val::new(1))?;
         eqz!(
             (x7 - x14),
             "CycleCounter(zirgen/dsl/examples/fibonacci.zir:39)"
@@ -365,7 +364,7 @@ pub fn exec_top(
     let x6: IsZeroStruct = x5.is_first_cycle;
     let x7: Val = x6._super._super;
     // Top(zirgen/dsl/examples/fibonacci.zir:55)
-    let x8: Val = exec_sub(ctx0, make_val!(1), x7)?;
+    let x8: Val = exec_sub(ctx0, Val::new(1), x7)?;
     let x9: RegStruct;
     if is_nonzero(x7) {
         // Top(zirgen/dsl/examples/fibonacci.zir:45)
@@ -380,7 +379,7 @@ pub fn exec_top(
     }
     let x12: RegStruct = exec_reg(ctx0, x9._super._super, layout_lookup!(layout1, d1))?;
     // Top(zirgen/dsl/examples/fibonacci.zir:56)
-    let x13: Val = exec_sub(ctx0, make_val!(1), x7)?;
+    let x13: Val = exec_sub(ctx0, Val::new(1), x7)?;
     let x14: RegStruct;
     if is_nonzero(x7) {
         // Top(zirgen/dsl/examples/fibonacci.zir:46)
@@ -401,11 +400,11 @@ pub fn exec_top(
     let x20: RegStruct = back_reg(ctx0, 0, layout_lookup!(x2, steps))?;
     // Top(zirgen/dsl/examples/fibonacci.zir:62)
     let x21: Val = exec_sub(ctx0, x5._super._super, x20._super._super)?;
-    let x22: Val = exec_add(ctx0, x21, make_val!(1))?;
+    let x22: Val = exec_add(ctx0, x21, Val::new(1))?;
     let x23: IsZeroStruct = exec_is_zero(ctx0, x22, layout_lookup!(layout1, terminate))?;
     let x24: Val = x23._super._super;
     // Top(zirgen/dsl/examples/fibonacci.zir:63)
-    let x25: Val = exec_sub(ctx0, make_val!(1), x24)?;
+    let x25: Val = exec_sub(ctx0, Val::new(1), x24)?;
     let x26: ComponentStruct;
     if is_nonzero(x24) {
         // Top(zirgen/dsl/examples/fibonacci.zir:64)
@@ -452,7 +451,7 @@ pub fn validity_taps_(
     // IsZero(zirgen/dsl/examples/fibonacci.zir:12)
     // CycleCounter(zirgen/dsl/examples/fibonacci.zir:32)
     // Top(zirgen/dsl/examples/fibonacci.zir:49)
-    let x5: ExtVal = (make_val_ext!(1, 0, 0, 0) - taps2[4]);
+    let x5: ExtVal = (ExtVal::new(Val::new(1), Val::new(0), Val::new(0), Val::new(0)) - taps2[4]);
     // IsZero(zirgen/dsl/examples/fibonacci.zir:18)
     let x6: MixState = and_eqz_ext(
         poly_mix1,
@@ -481,9 +480,9 @@ pub fn validity_taps_(
     // Top(zirgen/dsl/examples/fibonacci.zir:62)
     let x9: ExtVal = ((taps2[2]
         - load_as_ext!(layout_lookup!(layout_lookup!(x4, steps), _super), 0))
-        + make_val_ext!(1, 0, 0, 0));
+        + ExtVal::new(Val::new(1), Val::new(0), Val::new(0), Val::new(0)));
     // IsZero(zirgen/dsl/examples/fibonacci.zir:12)
-    let x10: ExtVal = (make_val_ext!(1, 0, 0, 0) - taps2[11]);
+    let x10: ExtVal = (ExtVal::new(Val::new(1), Val::new(0), Val::new(0), Val::new(0)) - taps2[11]);
     // IsZero(zirgen/dsl/examples/fibonacci.zir:14)
     let x11: MixState = and_eqz_ext(
         poly_mix1,
@@ -501,7 +500,14 @@ pub fn validity_taps_(
                             and_eqz_ext(
                                 poly_mix1,
                                 x3,
-                                (taps2[2] - (taps2[3] + make_val_ext!(1, 0, 0, 0))),
+                                (taps2[2]
+                                    - (taps2[3]
+                                        + ExtVal::new(
+                                            Val::new(1),
+                                            Val::new(0),
+                                            Val::new(0),
+                                            Val::new(0),
+                                        ))),
                             )?,
                         )?,
                         x7,
@@ -549,7 +555,7 @@ pub fn validity_regs_(ctx0: &ValidityRegsContext, poly_mix1: PolyMix) -> Result<
         poly_mix1,
         trivial_constraint()?,
         (load!(layout_lookup!(layout_lookup!(x9, _super), _super), 0)
-            * (make_val!(1) - load!(layout_lookup!(layout_lookup!(x9, _super), _super), 0))),
+            * (Val::new(1) - load!(layout_lookup!(layout_lookup!(x9, _super), _super), 0))),
     )?;
     // IsZero(zirgen/dsl/examples/fibonacci.zir:18)
     let x11: MixState = and_eqz(
@@ -561,8 +567,7 @@ pub fn validity_regs_(ctx0: &ValidityRegsContext, poly_mix1: PolyMix) -> Result<
                 x10,
                 ((load!(layout_lookup!(x8, _super), 0)
                     * load!(layout_lookup!(layout_lookup!(x9, inv), _super), 0))
-                    - (make_val!(1)
-                        - load!(layout_lookup!(layout_lookup!(x9, _super), _super), 0))),
+                    - (Val::new(1) - load!(layout_lookup!(layout_lookup!(x9, _super), _super), 0))),
             )?,
             (load!(layout_lookup!(layout_lookup!(x9, _super), _super), 0)
                 * load!(layout_lookup!(x8, _super), 0)),
@@ -574,12 +579,12 @@ pub fn validity_regs_(ctx0: &ValidityRegsContext, poly_mix1: PolyMix) -> Result<
     let x12: Val = ((load!(layout_lookup!(layout_lookup!(x3, f0), _super), 0)
         * load!(layout_lookup!(layout_lookup!(x9, _super), _super), 0))
         + (load!(layout_lookup!(x5, _super), 1)
-            * (make_val!(1) - load!(layout_lookup!(layout_lookup!(x9, _super), _super), 0))));
+            * (Val::new(1) - load!(layout_lookup!(layout_lookup!(x9, _super), _super), 0))));
     // Top(zirgen/dsl/examples/fibonacci.zir:56)
     let x13: Val = ((load!(layout_lookup!(layout_lookup!(x3, f1), _super), 0)
         * load!(layout_lookup!(layout_lookup!(x9, _super), _super), 0))
         + (load!(layout_lookup!(x6, _super), 1)
-            * (make_val!(1) - load!(layout_lookup!(layout_lookup!(x9, _super), _super), 0))));
+            * (Val::new(1) - load!(layout_lookup!(layout_lookup!(x9, _super), _super), 0))));
     // Reg(<preamble>:5)
     // Top(zirgen/dsl/examples/fibonacci.zir:59)
     let x14: MixState = and_eqz(
@@ -590,12 +595,12 @@ pub fn validity_regs_(ctx0: &ValidityRegsContext, poly_mix1: PolyMix) -> Result<
                 poly_mix1,
                 and_cond(
                     x11,
-                    (make_val!(1) - load!(layout_lookup!(layout_lookup!(x9, _super), _super), 0)),
+                    (Val::new(1) - load!(layout_lookup!(layout_lookup!(x9, _super), _super), 0)),
                     and_eqz(
                         poly_mix1,
                         trivial_constraint()?,
                         (load!(layout_lookup!(x8, _super), 0)
-                            - (load!(layout_lookup!(x8, _super), 1) + make_val!(1))),
+                            - (load!(layout_lookup!(x8, _super), 1) + Val::new(1))),
                     )?,
                 )?,
                 (x12 - load!(layout_lookup!(layout_lookup!(x2, d1), _super), 0)),
@@ -609,7 +614,7 @@ pub fn validity_regs_(ctx0: &ValidityRegsContext, poly_mix1: PolyMix) -> Result<
     // Top(zirgen/dsl/examples/fibonacci.zir:62)
     let x15: Val = ((load!(layout_lookup!(x8, _super), 0)
         - load!(layout_lookup!(layout_lookup!(x3, steps), _super), 0))
-        + make_val!(1));
+        + Val::new(1));
     // IsZero(zirgen/dsl/examples/fibonacci.zir:14)
     let x16: MixState = and_eqz(
         poly_mix1,
@@ -617,10 +622,10 @@ pub fn validity_regs_(ctx0: &ValidityRegsContext, poly_mix1: PolyMix) -> Result<
             poly_mix1,
             x14,
             (load!(layout_lookup!(layout_lookup!(x7, _super), _super), 0)
-                * (make_val!(1) - load!(layout_lookup!(layout_lookup!(x7, _super), _super), 0))),
+                * (Val::new(1) - load!(layout_lookup!(layout_lookup!(x7, _super), _super), 0))),
         )?,
         ((x15 * load!(layout_lookup!(layout_lookup!(x7, inv), _super), 0))
-            - (make_val!(1) - load!(layout_lookup!(layout_lookup!(x7, _super), _super), 0))),
+            - (Val::new(1) - load!(layout_lookup!(layout_lookup!(x7, _super), _super), 0))),
     )?;
     // Top(zirgen/dsl/examples/fibonacci.zir:63)
     let x17: MixState = and_cond(

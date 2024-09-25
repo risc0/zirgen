@@ -62,27 +62,17 @@ Val4 operator*(const Val4& lhs, const Val4& rhs) {
 // In a real zero-knowledge proof, "Reg" would be a reference of some
 // sort into an execution trace.  However, for testing code generation
 // we don't have to supply a full implementation.
-struct Reg {
-  size_t index;
-};
+using Reg = size_t;
 
-bool operator==(const Reg& lhs, const Reg& rhs) {
-  return lhs.index == rhs.index;
-}
-
-#define MAKE_REF(INDEX)                                                                            \
-  Reg { .index = INDEX }
-#define MAKE_VAL(VAL) Val(VAL)
-#define MAKE_VAL_EXT(...) Val4({__VA_ARGS__})
-#define LOAD(REF, BACK) Val(REF.buffer.at(REF.layout->index))
+#define LOAD(REF, BACK) Val(REF.buffer.at(*REF.layout))
 #define LOAD_AS_EXT(REF, BACK)                                                                     \
   Val4 { LOAD(REF, BACK), 0, 0, 0 }
 #define LOAD_EXT(REF, BACK)                                                                        \
   Val4 {                                                                                           \
-    REF.buffer.at(REF.layout->index + 0), REF.buffer.at(REF.layout->index + 1),                    \
-        REF.buffer.at(REF.layout->index + 2), REF.buffer.at(REF.layout->index + 3),                \
+    REF.buffer.at(*REF.layout + 0), REF.buffer.at(*REF.layout + 1),                                \
+        REF.buffer.at(*REF.layout + 2), REF.buffer.at(*REF.layout + 3),                            \
   }
-#define STORE(REF, VAL) REF.buffer.at(REF.layout->index) = VAL
+#define STORE(REF, VAL) REF.buffer.at(*REF.layout) = VAL
 #define DEFINE_LAYOUT_BUFFER(CONST, BUFFER) /* */
 #define LAYOUT_LOOKUP(LAYOUT, FIELD) LAYOUT.map([](auto layout) { return &layout->FIELD; })
 #define LAYOUT_SUBSCRIPT(LAYOUT, INDEX) LAYOUT.map([](auto layout) { return &layout->at(INDEX); })
@@ -107,7 +97,7 @@ template <typename Layout> struct BoundLayout {
 template <typename T> auto load(T& buf, Reg ref, size_t distance = 0) {
   // TODO: Implement backs
   assert(distance == 0);
-  return buf.data.at(ref.index);
+  return buf.data.at(ref);
 }
 
 #define EQZ(VAL, LOC) eqz(VAL, LOC)

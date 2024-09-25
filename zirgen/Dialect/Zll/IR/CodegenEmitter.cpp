@@ -367,7 +367,9 @@ void CodegenEmitter::emitLiteral(mlir::Type ty, mlir::Attribute value) {
     if (succeeded(codegenType.emitLiteral(*this, value)))
       return;
   }
-  opts.lang->fallbackEmitLiteral(*this, ty, value);
+  llvm::errs() << "Don't know how to emit type " << ty << " with value " << value
+               << " (name = " << value.getAbstractAttribute().getName() << ")\n";
+  abort();
 }
 
 void CodegenEmitter::emitConstDef(CodegenIdent<IdentKind::Const> name, CodegenValue value) {

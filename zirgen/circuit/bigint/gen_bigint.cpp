@@ -41,14 +41,12 @@ std::unique_ptr<llvm::raw_fd_ostream> openOutputFile(StringRef path, StringRef n
   return ofs;
 }
 
-void emitLang(StringRef langName,
-              zirgen::codegen::LanguageSyntax* lang,
-              StringRef path,
-              ModuleOp module) {
+void emit(StringRef langName,
+          const zirgen::codegen::CodegenOptions& codegenOpts,
+          StringRef path,
+          ModuleOp module) {
   auto ofs = openOutputFile(path, ("bigint." + langName + ".inc").str());
 
-  codegen::CodegenOptions codegenOpts;
-  codegenOpts.lang = lang;
   zirgen::codegen::CodegenEmitter cg(codegenOpts, ofs.get(), module.getContext());
   cg.emitModule(module);
 
@@ -201,15 +199,17 @@ int main(int argc, char* argv[]) {
     throw std::runtime_error("Failed to apply basic optimization passes");
   }
 
-  static codegen::RustLanguageSyntax rustLang;
-  rustLang.addContextArgument("ctx: &mut BigIntContext");
-  rustLang.addItemsMacro("bigint_program_info");
-  rustLang.addItemsMacro("bigint_program_list");
-  emitLang("rs", &rustLang, outputDir, module.getModule());
+  auto rustOpts = codegen::getRustCodegenOpts();
+  auto rustLang = dynamic_cast<codegen::RustLanguageSyntax*>(rustOpts.lang);
+  assert(rustLang && "expecting getRsutCodegenOpts to use RustLanguage");
+  rustLang->addContextArgument("ctx: &mut BigIntContext");
+  rustLang->addItemsMacro("bigint_program_info");
+  rustLang->addItemsMacro("bigint_program_list");
+  emit("rs", rustOpts, outputDir, module.getModule());
 
-  static codegen::CppLanguageSyntax cppLang;
-  cppLang.addContextArgument("BigIntContext& ctx");
-  emitLang("cpp", &cppLang, outputDir, module.getModule());
+  auto cppOpts = codegen::getRustCodegenOpts();
+  cppOpts.lang->addContextArgument("BigIntContext& ctx");
+  emit("cpp", cppOpts, outputDir, module.getModule());
 
   PassManager pm2(module.getCtx());
   if (failed(applyPassManagerCLOptions(pm2))) {

@@ -62,19 +62,6 @@ void RustLanguageSyntax::emitSwitchStatement(CodegenEmitter& cg,
   cg << "}";
 }
 
-void RustLanguageSyntax::fallbackEmitLiteral(CodegenEmitter& cg,
-                                             mlir::Type ty,
-                                             mlir::Attribute value) {
-  TypeSwitch<Attribute>(value)
-      .Case<IntegerAttr>([&](auto intAttr) { cg << intAttr.getValue().getZExtValue(); })
-      .Case<StringAttr>([&](auto strAttr) { cg.emitEscapedString(strAttr); })
-      .Default([&](auto) {
-        llvm::errs() << "Don't know how to emit type " << ty << " into rust++ with value " << value
-                     << "\n";
-        abort();
-      });
-}
-
 void RustLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
                                             CodegenIdent<IdentKind::Func> funcName,
                                             llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,

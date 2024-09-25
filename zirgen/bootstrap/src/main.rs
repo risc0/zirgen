@@ -257,7 +257,7 @@ impl Args {
             "src",
             "",
         );
-        copy_group(circuit, &src_path, &sys_path, ZIRGEN_SYS_OUTPUTS, "src", "");
+        copy_group(circuit, &src_path, &sys_path, ZIRGEN_SYS_OUTPUTS, "cxx", "");
         // TODO: Improve formatting performance
         // cargo_fmt_circuit(circuit, &rust_path, &None);
     }

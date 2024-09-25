@@ -85,7 +85,6 @@ private:
   std::string canonIdent(llvm::StringRef ident, IdentKind idt) override;
   void emitClone(CodegenEmitter& cg, CodegenIdent<IdentKind::Var> value) override;
   void emitTakeReference(CodegenEmitter& cg, EmitPart emitTarget) override;
-  void fallbackEmitLiteral(CodegenEmitter& cg, mlir::Type ty, mlir::Attribute value) override;
 
   void emitConditional(CodegenEmitter& cg, CodegenValue condition, EmitPart emitThen) override;
   void emitSwitchStatement(CodegenEmitter& cg,
@@ -161,7 +160,6 @@ struct CppLanguageSyntax : public LanguageSyntax {
   LanguageKind getLanguageKind() override { return LanguageKind::Cpp; }
 
   std::string canonIdent(llvm::StringRef ident, IdentKind idt) override;
-  void fallbackEmitLiteral(CodegenEmitter& cg, mlir::Type ty, mlir::Attribute value) override;
 
   void emitConditional(CodegenEmitter& cg, CodegenValue condition, EmitPart emitThen) override;
   void emitSwitchStatement(CodegenEmitter& cg,

@@ -96,10 +96,10 @@ TEST(calculator, adder) {
   TopStruct top = exec_Top(ctx, BoundLayout(&layout, dataBuffer));
 
   // Make sure our output registers were filled in correctly.
-  EXPECT_EQ(ctx.data.at(layout.left._super.index), 123);
-  EXPECT_EQ(ctx.data.at(layout.right._super.index), 456);
+  EXPECT_EQ(ctx.data.at(layout.left._super), 123);
+  EXPECT_EQ(ctx.data.at(layout.right._super), 456);
   // TODO: hide this _construct7 name.
-  Val result = ctx.data.at(layout.result._super._super.index);
+  Val result = ctx.data.at(layout.result._super._super);
   EXPECT_EQ(result, 123 + 456);
 
   // Make sure the values returned from the "Top" component were filled in correctly.
@@ -140,9 +140,9 @@ TEST(calculator, subtractor) {
   TopStruct top = exec_Top(ctx, BoundLayout(&layout, ctx.data));
 
   // Make sure our output registers were filled in correctly.
-  EXPECT_EQ(ctx.data.at(layout.left._super.index), 456);
-  EXPECT_EQ(ctx.data.at(layout.right._super.index), 123);
-  Val result = ctx.data.at(layout.result._super._super.index);
+  EXPECT_EQ(ctx.data.at(layout.left._super), 456);
+  EXPECT_EQ(ctx.data.at(layout.right._super), 123);
+  Val result = ctx.data.at(layout.result._super._super);
   EXPECT_EQ(result, 456 - 123);
 
   // Make sure the values returned from the "Top" component were filled in correctly.
