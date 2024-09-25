@@ -130,15 +130,11 @@ using ZStruct::getStringType;
 using ZStruct::getTypeType;
 using ZStruct::getValExtType;
 using ZStruct::getValType;
+using ZStruct::getTypeId;
+using ZStruct::getSuperType;
 using ZStruct::getLayoutType;
 
 Zll::ValType getFieldTypeOfValType(Type valType);
-
-// Returns the type of this structure's "@super", if any.
-Type getSuperType(Type subType, bool isLayout = false);
-
-// Returns the component ID of this component.
-std::string getTypeId(Type type);
 
 /// A total order of ZHLT types so they can be used as keys in a std::map and
 /// std::set
