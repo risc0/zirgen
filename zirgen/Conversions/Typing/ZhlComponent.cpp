@@ -940,64 +940,23 @@ Value LoweringImpl::asLayout(Value value) {
   if (layout)
     return layout;
 
-  layout = TypeSwitch<Operation*, Value>(value.getDefiningOp())
-               .Case<LookupOp>([&](LookupOp op) {
-                 Value componentLayout = asLayout(op.getComponent());
-                 StringRef member = op.getMember();
-                 Value sublayout = lookup(componentLayout, member);
-                 if (!sublayout) {
-                   emitError(op.getLoc())
-                       << "type `" << getTypeId(componentLayout.getType())
-                       << "` does not own the layout of member \"" << member << "\"";
-                   throw MalformedIRException();
-                 }
-                 return sublayout;
-               })
-               .Case<SubscriptOp>([&](SubscriptOp op) {
-                 Value arrayLayout = asLayout(op.getArray());
-                 Value index = asValue(op.getElement());
-                 return subscript(arrayLayout, index);
-               })
-               .Case<BackOp>([&](BackOp op) { return asLayout(op.getTarget()); })
-               .Case<ArrayOp>([&](ArrayOp op) {
-                 SmallVector<Value> layouts;
-                 for (Value element : op.getElements())
-                   layouts.push_back(asLayout(element));
-                 return builder.create<ZStruct::LayoutArrayOp>(op.getLoc(), layouts);
-               })
-               .Case<MapOp>([&](MapOp op) {
-                 Value array = asValue(op.getArray());
-                 Type elemType = cast<ArrayType>(array.getType()).getElement();
-                 Region mapBody(regionAnchor);
-                 Type layoutType;
-                 {
-                   OpBuilder::InsertionGuard insertionGuard(builder);
-                   Block* mapBodyBlock = builder.createBlock(&mapBody);
-                   auto mapArg = op.getFunction().getArgument(0);
-                   valueMapping[mapArg] = mapBodyBlock->addArgument(elemType, mapArg.getLoc());
-                   auto super = cast<SuperOp>(op.getFunction().back().getTerminator());
-                   auto layout = asLayout(super.getValue());
-                   layoutType = layout.getType();
-                   builder.create<ZStruct::YieldOp>(super->getLoc(), layout);
-                 }
-                 size_t size = cast<ArrayType>(array.getType()).getSize();
-                 Type layoutArrayType = LayoutArrayType::get(ctx, layoutType, size);
-                 auto map =
-                     builder.create<ZStruct::MapOp>(op->getLoc(), layoutArrayType, array, Value());
-                 map.getBody().takeBody(mapBody);
-                 return map;
-               })
-               .Case<BlockOp>([&](BlockOp op) {
-                 // If a block has layout for its members, it will be associated in the
-                 // layoutMapping during lowering. At this point that must not be the
-                 // case so look for the super's layout coming from outside the block.
-                 auto super = cast<SuperOp>(op.getInner().back().getTerminator());
-                 return asLayout(super.getValue());
-               })
-               .Default([&](Operation* op) {
-                 llvm::outs() << "unhandled op: " << *op << "\n";
-                 return nullptr;
-               });
+  Value component = valueMapping[value];
+  layout = TypeSwitch<Type, Value>(component.getType())
+      .Case<ZStruct::StructType>([&](auto t) {
+        return builder.create<ZStruct::GetLayoutOp>(component.getLoc(), component);
+      })
+      .Case<ZStruct::ArrayType>([&](auto t) {
+        auto layoutType = Zhlt::getLayoutType(t);
+        auto map = builder.create<ZStruct::MapOp>(value.getLoc(), layoutType, component, Value());
+        {
+          OpBuilder::InsertionGuard insertionGuard(builder);
+          Block* block = builder.createBlock(&map.getBody());
+          Value element = block->addArgument(t.getElement(), value.getLoc());
+          Value layout = builder.create<ZStruct::GetLayoutOp>(value.getLoc(), element);
+          builder.create<ZStruct::YieldOp>(layout.getLoc(), layout);
+        }
+        return map;
+      });
   layoutMapping[value] = layout;
   return layout;
 }
