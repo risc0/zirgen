@@ -467,10 +467,6 @@ void LoweringImpl::gen(ConstructorParamOp ctorParam, Block* topBlock) {
   }
   auto value = topBlock->addArgument(valueType, ctorParam.getLoc());
   valueMapping[ctorParam.getOut()] = value;
-  if (layoutType) {
-    auto layout = topBlock->addArgument(layoutType, ctorParam.getLoc());
-    layoutMapping[ctorParam.getOut()] = layout;
-  }
 }
 
 void LoweringImpl::gen(TypeParamOp typeParam, ArrayRef<Attribute> typeArgs) {
@@ -547,13 +543,6 @@ Zhlt::ComponentOp LoweringImpl::gen(ComponentOp component,
 
       if (!valueType)
         valueType = Zhlt::getComponentType(ctx);
-    }
-
-    for (unsigned i = body.getNumArguments() - 1; i != (unsigned)-1; i--) {
-      BlockArgument arg = body.getArgument(i);
-      if (arg.use_empty() && ZStruct::isLayoutType(arg.getType())) {
-        body.eraseArgument(i);
-      }
     }
 
     constructArgsTypes = llvm::to_vector(bodyBlock->getArgumentTypes());
@@ -956,8 +945,12 @@ Value LoweringImpl::asLayout(Value value) {
           builder.create<ZStruct::YieldOp>(layout.getLoc(), layout);
         }
         return map;
-      });
-  layoutMapping[value] = layout;
+      })
+      .Default([&](auto t) { return Value(); });
+
+  if (value) {
+    layoutMapping[value] = layout;
+  }
   return layout;
 }
 
@@ -1389,7 +1382,7 @@ void LoweringImpl::gen(BackOp back, ComponentBuilder& cb) {
     return;
   }
 
-  Value layout = layoutMapping.lookup(back.getTarget());
+  Value layout = asLayout(back.getTarget());
   if (layout) {
     Value reconstructed = reconstructFromLayout(back.getLoc(), layout, distance[0]);
     if (!reconstructed) {
@@ -1401,7 +1394,8 @@ void LoweringImpl::gen(BackOp back, ComponentBuilder& cb) {
     return;
   }
 
-  back.emitError() << "back operation must apply to a subcomponent with a layout";
+  Value value = valueMapping[back.getTarget()];
+  back.emitError() << "back operation must apply to a component with a layout, but `" << getTypeId(value.getType()) << "` does not have a layout";
   throw MalformedIRException();
 }
 
