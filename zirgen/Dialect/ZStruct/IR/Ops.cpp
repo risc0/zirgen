@@ -14,8 +14,8 @@
 
 #include "mlir/IR/Matchers.h"
 #include "mlir/Interfaces/LoopLikeInterface.h"
-#include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
 #include "zirgen/Dialect/ZStruct/IR/TypeUtils.h"
+#include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
 #include "zirgen/Dialect/Zll/IR/Interpreter.h"
 #include "llvm/ADT/StringExtras.h"
 #include "llvm/ADT/TypeSwitch.h"

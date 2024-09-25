@@ -14,8 +14,8 @@
 
 #include "llvm/ADT/TypeSwitch.h"
 
-#include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
 #include "zirgen/Dialect/ZStruct/IR/TypeUtils.h"
+#include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
 #include "zirgen/Dialect/Zll/IR/Codegen.h"
 
 #include "zirgen/Dialect/ZStruct/IR/Enums.cpp.inc"
