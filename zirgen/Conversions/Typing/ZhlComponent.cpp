@@ -96,9 +96,9 @@ public:
 
   Value finalize(Location loc, std::function<Value(/*name=*/StringAttr, Type)> finalizeLayoutFn) {
     assert(val());
-    Value resultVal = val()->finalize(
-        loc,
-        [&](Type layoutType) -> Value { return finalizeLayoutFn(memberNameInParent, layoutType); });
+    Value resultVal = val()->finalize(loc, [&](Type layoutType) -> Value {
+      return finalizeLayoutFn(memberNameInParent, layoutType);
+    });
     valBuilder.reset();
     return resultVal;
   }
@@ -546,11 +546,12 @@ Zhlt::ComponentOp LoweringImpl::gen(ComponentOp component,
     }
 
     constructArgsTypes = llvm::to_vector(bodyBlock->getArgumentTypes());
-    Value returnValue = cb.finalize(loc, [&](StringAttr memberNameInParent, Type layoutTypeArg) -> Value {
-      assert(!memberNameInParent && "Top-level components should not have a member name");
-      layoutType = layoutTypeArg;
-      return bodyBlock->addArgument(layoutTypeArg, loc);
-    });
+    Value returnValue =
+        cb.finalize(loc, [&](StringAttr memberNameInParent, Type layoutTypeArg) -> Value {
+          assert(!memberNameInParent && "Top-level components should not have a member name");
+          layoutType = layoutTypeArg;
+          return bodyBlock->addArgument(layoutTypeArg, loc);
+        });
     builder.create<Zhlt::ReturnOp>(loc, returnValue);
     valueType = returnValue.getType();
   }
@@ -931,22 +932,23 @@ Value LoweringImpl::asLayout(Value value) {
 
   Value component = valueMapping[value];
   layout = TypeSwitch<Type, Value>(component.getType())
-      .Case<ZStruct::StructType>([&](auto t) {
-        return builder.create<ZStruct::GetLayoutOp>(component.getLoc(), component);
-      })
-      .Case<ZStruct::ArrayType>([&](auto t) {
-        auto layoutType = Zhlt::getLayoutType(t);
-        auto map = builder.create<ZStruct::MapOp>(value.getLoc(), layoutType, component, Value());
-        {
-          OpBuilder::InsertionGuard insertionGuard(builder);
-          Block* block = builder.createBlock(&map.getBody());
-          Value element = block->addArgument(t.getElement(), value.getLoc());
-          Value layout = builder.create<ZStruct::GetLayoutOp>(value.getLoc(), element);
-          builder.create<ZStruct::YieldOp>(layout.getLoc(), layout);
-        }
-        return map;
-      })
-      .Default([&](auto t) { return Value(); });
+               .Case<ZStruct::StructType>([&](auto t) {
+                 return builder.create<ZStruct::GetLayoutOp>(component.getLoc(), component);
+               })
+               .Case<ZStruct::ArrayType>([&](auto t) {
+                 auto layoutType = Zhlt::getLayoutType(t);
+                 auto map =
+                     builder.create<ZStruct::MapOp>(value.getLoc(), layoutType, component, Value());
+                 {
+                   OpBuilder::InsertionGuard insertionGuard(builder);
+                   Block* block = builder.createBlock(&map.getBody());
+                   Value element = block->addArgument(t.getElement(), value.getLoc());
+                   Value layout = builder.create<ZStruct::GetLayoutOp>(value.getLoc(), element);
+                   builder.create<ZStruct::YieldOp>(layout.getLoc(), layout);
+                 }
+                 return map;
+               })
+               .Default([&](auto t) { return Value(); });
 
   if (value) {
     layoutMapping[value] = layout;
@@ -975,11 +977,12 @@ void LoweringImpl::gen(DirectiveOp directive, ComponentBuilder& cb) {
 void LoweringImpl::gen(BlockOp block, ComponentBuilder& cb) {
   ComponentBuilder subBlock(block.getLoc(), &cb, block.getOut());
   gen(block.getInner(), subBlock);
-  Value result = subBlock.finalize(block.getLoc(), [&](StringAttr memberName, Type layoutType) -> Value {
-    Value layout = cb.addLayoutMember(block.getLoc(), memberName, layoutType);
-    layoutMapping[block.getOut()] = layout;
-    return layout;
-  });
+  Value result =
+      subBlock.finalize(block.getLoc(), [&](StringAttr memberName, Type layoutType) -> Value {
+        Value layout = cb.addLayoutMember(block.getLoc(), memberName, layoutType);
+        layoutMapping[block.getOut()] = layout;
+        return layout;
+      });
   valueMapping[block.getOut()] = result;
 }
 
@@ -1004,12 +1007,13 @@ void LoweringImpl::gen(MapOp map, ComponentBuilder& cb) {
     auto mapArg = map.getFunction().getArgument(0);
     valueMapping[mapArg] = mapBodyBlock->addArgument(elemType, mapArg.getLoc());
     gen(map.getFunction(), subBlock);
-    Value outValue = subBlock.finalize(mapArg.getLoc(), [&](StringAttr name, Type layoutType) -> Value {
-      Value bodyLayout = mapBodyBlock->addArgument(layoutType, mapArg.getLoc());
-      Type outLayoutType = builder.getType<ZStruct::LayoutArrayType>(layoutType, size);
-      outLayout = addOrExpandLayoutMember(map.getLoc(), cb, map.getOut(), outLayoutType);
-      return bodyLayout;
-    });
+    Value outValue =
+        subBlock.finalize(mapArg.getLoc(), [&](StringAttr name, Type layoutType) -> Value {
+          Value bodyLayout = mapBodyBlock->addArgument(layoutType, mapArg.getLoc());
+          Type outLayoutType = builder.getType<ZStruct::LayoutArrayType>(layoutType, size);
+          outLayout = addOrExpandLayoutMember(map.getLoc(), cb, map.getOut(), outLayoutType);
+          return bodyLayout;
+        });
     outValueType = outValue.getType();
     builder.create<ZStruct::YieldOp>(map.getLoc(), outValue);
   }
@@ -1395,7 +1399,8 @@ void LoweringImpl::gen(BackOp back, ComponentBuilder& cb) {
   }
 
   Value value = valueMapping[back.getTarget()];
-  back.emitError() << "back operation must apply to a component with a layout, but `" << getTypeId(value.getType()) << "` does not have a layout";
+  back.emitError() << "back operation must apply to a component with a layout, but `"
+                   << getTypeId(value.getType()) << "` does not have a layout";
   throw MalformedIRException();
 }
 

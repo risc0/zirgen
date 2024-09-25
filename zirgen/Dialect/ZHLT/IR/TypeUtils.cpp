@@ -352,7 +352,8 @@ Value LayoutBuilder::supplyLayout(std::function<Value(Type)> finalizeLayoutFunc)
   return layout;
 }
 
-Value StructBuilder::finalize(Location loc, std::function<Value(/*layoutType=*/Type)> finalizeLayoutFunc) {
+Value StructBuilder::finalize(Location loc,
+                              std::function<Value(/*layoutType=*/Type)> finalizeLayoutFunc) {
   Value layout = layoutBuilder->supplyLayout(finalizeLayoutFunc);
   StructType type = getType();
   layoutBuilder.reset();
