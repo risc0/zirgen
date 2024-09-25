@@ -15,6 +15,7 @@
 #include "mlir/IR/Matchers.h"
 #include "mlir/Interfaces/LoopLikeInterface.h"
 #include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
+#include "zirgen/Dialect/ZStruct/IR/TypeUtils.h"
 #include "zirgen/Dialect/Zll/IR/Interpreter.h"
 #include "llvm/ADT/StringExtras.h"
 #include "llvm/ADT/TypeSwitch.h"
@@ -27,6 +28,49 @@ using namespace zirgen::codegen;
 using namespace zirgen::Zll;
 
 namespace zirgen::ZStruct {
+
+LogicalResult GetLayoutOp::inferReturnTypes(MLIRContext* ctx,
+                                            std::optional<Location> loc,
+                                            Adaptor adaptor,
+                                            SmallVectorImpl<Type>& out) {
+  Type valueType = adaptor.getIn().getType();
+  Type layoutType = ZStruct::getLayoutType(valueType);
+  if (!layoutType)
+    return mlir::emitError(*loc) << getTypeId(valueType) << " has no layout";
+  out.push_back(layoutType);
+  return success();
+}
+
+OpFoldResult GetLayoutOp::fold(FoldAdaptor adaptor) {
+  Value foldedValue;
+
+  Value value = getIn();
+  while (auto pack = value.getDefiningOp<PackOp>()) {
+    if (pack.getLayout()) {
+      foldedValue = pack.getLayout();
+      break;
+    } else {
+      // If a pack has no layout, look to its super
+      ArrayRef<FieldInfo> fields = pack.getType().getFields();
+      if (fields.size() == pack.getMembers().size()) {
+        for (size_t i = 0; i < fields.size(); i++) {
+          if (fields[i].name == "@super") {
+            value = pack.getMembers()[i];
+          }
+        }
+      }
+    }
+  }
+
+  if (foldedValue)
+    return foldedValue;
+
+  if (auto structAttr = dyn_cast_if_present<StructAttr>(adaptor.getIn())) {
+    return structAttr.getFields().get("@layout");
+  }
+
+  return {};
+}
 
 LogicalResult LookupOp::verify() {
   // Output val type must match named member type
@@ -321,6 +365,11 @@ OpFoldResult PackOp::fold(FoldAdaptor adaptor) {
       return {};
 
     fieldVals.emplace_back(field.name, arg);
+  }
+
+  if (auto layout = adaptor.getLayout()) {
+    auto layoutField = StringAttr::get(getContext(), "@layout");
+    fieldVals.emplace_back(layoutField, layout);
   }
 
   return StructAttr::get(getContext(), DictionaryAttr::get(getContext(), fieldVals), getType());

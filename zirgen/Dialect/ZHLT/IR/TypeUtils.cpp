@@ -383,67 +383,6 @@ void StructBuilder::addMember(StringAttr memberName, Value value) {
   }
 }
 
-std::string getTypeId(Type ty) {
-  return TypeSwitch<Type, std::string>(ty)
-      .Case<StringType>([](auto) { return "String"; })
-      .Case<ValType>([](auto) { return "Val"; })
-      .Case<RefType>([](auto) { return "Ref"; })
-      .Case<StructType>([](auto structType) { return structType.getId(); })
-      .Case<LayoutType>([](auto layoutType) { return layoutType.getId(); })
-      .Case<ArrayLikeTypeInterface>([](auto arrayType) {
-        return "Array<" + getTypeId(arrayType.getElement()) + ", " +
-               std::to_string(arrayType.getSize()) + ">";
-      })
-      .Case<VariadicType>(
-          [](auto packType) { return "Variadic<" + getTypeId(packType.getElement()) + ">"; })
-      .Default([&](auto) -> std::string {
-        llvm::errs() << "Type: " << ty << "\n";
-        assert(0 && "Unexpected type for getTypeId");
-      });
-}
-
-Type getSuperType(Type ty, bool isLayout) {
-  Type componentType = isLayout ? Type() : getComponentType(ty.getContext());
-  // Structs have a super of their @super element
-  ArrayRef<FieldInfo> fields;
-  if (auto zType = llvm::dyn_cast<LayoutType>(ty)) {
-    fields = zType.getFields();
-  } else if (auto zType = llvm::dyn_cast<StructType>(ty)) {
-    fields = zType.getFields();
-  }
-  for (auto field : fields) {
-    if (field.name == "@super") {
-      return field.type;
-    }
-  }
-
-  // Arrays are 'covariate'
-  if (auto aType = llvm::dyn_cast<ArrayType>(ty)) {
-    Type innerSuper = getSuperType(aType.getElement());
-    if (!innerSuper) {
-      return componentType;
-    }
-    return ArrayType::get(ty.getContext(), innerSuper, aType.getSize());
-  }
-  if (auto aType = llvm::dyn_cast<LayoutArrayType>(ty)) {
-    Type innerSuper = getSuperType(aType.getElement());
-    if (!innerSuper) {
-      return componentType;
-    }
-    return LayoutArrayType::get(ty.getContext(), innerSuper, aType.getSize());
-  }
-  // All other type have componentType as a supertype
-  if (ty != componentType) {
-    if (isLayout) {
-      // Layout use empty for componentType
-      return {};
-    }
-    return componentType;
-  }
-  // Component has no super
-  return {};
-}
-
 void extractArguments(llvm::MapVector<Type, size_t>& out, Type in) {
   if (auto array = dyn_cast<LayoutArrayType>(in)) {
     llvm::MapVector<Type, size_t> inner;

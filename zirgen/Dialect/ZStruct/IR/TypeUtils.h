@@ -31,6 +31,12 @@ ZStruct::RefType getExtRefType(MLIRContext* ctx);
 
 Zll::ValType getFieldTypeOfValType(Type valType);
 
+// Returns the component ID of this component.
+std::string getTypeId(Type type);
+
+// Returns the type of this structure's "@super", if any.
+Type getSuperType(Type subType, bool isLayout = false);
+
 // Returns the layout type corresponding to the given value type
 Type getLayoutType(Type valueType);
 
