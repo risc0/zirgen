@@ -94,6 +94,11 @@ void CodegenEmitter::emitFunc(FunctionOpInterface op) {
 
   emitTypeDefs(op);
 
+  llvm::ArrayRef<std::string> contextArgs;
+  if (opts.funcContextArgs.contains(op->getName().getStringRef())) {
+    contextArgs = opts.funcContextArgs.at(op->getName().getStringRef());
+  }
+
   // Pick up any special names of arguments.
   DenseMap<Value, StringRef> argValueNames;
   if (auto opAsm = dyn_cast<OpAsmOpInterface>(op.getOperation())) {
@@ -109,8 +114,12 @@ void CodegenEmitter::emitFunc(FunctionOpInterface op) {
     argNames.push_back(getNewValueName(arg, baseName, /*owned=*/false));
   }
 
-  opts.lang->emitFuncDefinition(
-      *this, op.getNameAttr(), argNames, llvm::cast<FunctionType>(op.getFunctionType()), body);
+  opts.lang->emitFuncDefinition(*this,
+                                op.getNameAttr(),
+                                contextArgs,
+                                argNames,
+                                llvm::cast<FunctionType>(op.getFunctionType()),
+                                body);
 
   if (op->hasTrait<OpTrait::IsIsolatedFromAbove>()) {
     resetValueNumbering();
@@ -324,14 +333,20 @@ void CodegenEmitter::emitExpr(Operation* op) {
     codegenOp.emitExpr(*this);
     return;
   }
+  llvm::ArrayRef<std::string> contextArgs;
+  if (opts.callContextArgs.contains(op->getName().getStringRef())) {
+    contextArgs = opts.callContextArgs.at(op->getName().getStringRef());
+  }
 
   // Check if it's a function call to a callable, and if we have the target for it.
   if (auto callOp = dyn_cast<CallOpInterface>(op)) {
     if (auto callee = callOp.getCallableForCallee()) {
       if (auto calleeName =
               dyn_cast_if_present<FlatSymbolRefAttr>(dyn_cast<SymbolRefAttr>(callee))) {
-        emitFuncCall(getStringAttr(calleeName.getValue()),
-                     llvm::to_vector_of<CodegenValue>(op->getOperands()));
+        opts.lang->emitCall(*this,
+                            calleeName.getAttr(),
+                            contextArgs,
+                            llvm::to_vector_of<CodegenValue>(op->getOperands()));
         return;
       }
     }
@@ -349,8 +364,10 @@ void CodegenEmitter::emitExpr(Operation* op) {
 
   // If all else fails and we have no internal reigons, emit as a function call.
   if (op->getRegions().empty()) {
-    emitFuncCall(getStringAttr(op->getName().stripDialect()),
-                 llvm::to_vector_of<CodegenValue>(op->getOperands()));
+    opts.lang->emitCall(*this,
+                        getStringAttr(op->getName().stripDialect()),
+                        contextArgs,
+                        llvm::to_vector_of<CodegenValue>(op->getOperands()));
     return;
   }
 
@@ -386,7 +403,7 @@ void CodegenEmitter::emitFuncCall(CodegenIdent<IdentKind::Func> callee,
 }
 
 void CodegenEmitter::emitFuncCall(CodegenIdent<IdentKind::Func> callee,
-                                  llvm::ArrayRef<llvm::StringRef> contextArgs,
+                                  llvm::ArrayRef<std::string> contextArgs,
                                   llvm::ArrayRef<CodegenValue> args) {
   opts.lang->emitCall(*this, callee, contextArgs, args);
 }

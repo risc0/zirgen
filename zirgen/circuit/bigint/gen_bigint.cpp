@@ -200,15 +200,17 @@ int main(int argc, char* argv[]) {
   }
 
   auto rustOpts = codegen::getRustCodegenOpts();
+  rustOpts.addFuncContextArgument<mlir::func::FuncOp>("ctx: &mut BigIntContext");
+  rustOpts.addCallContextArgument<mlir::func::CallOp>("ctx");
   auto rustLang = dynamic_cast<codegen::RustLanguageSyntax*>(rustOpts.lang);
-  assert(rustLang && "expecting getRsutCodegenOpts to use RustLanguage");
-  rustLang->addContextArgument("ctx: &mut BigIntContext");
+  assert(rustLang && "expecting getRustCodegenOpts to use RustLanguage");
   rustLang->addItemsMacro("bigint_program_info");
   rustLang->addItemsMacro("bigint_program_list");
   emit("rs", rustOpts, outputDir, module.getModule());
 
-  auto cppOpts = codegen::getRustCodegenOpts();
-  cppOpts.lang->addContextArgument("BigIntContext& ctx");
+  auto cppOpts = codegen::getCppCodegenOpts();
+  cppOpts.addFuncContextArgument<mlir::func::FuncOp>("BigIntContext& ctx");
+  cppOpts.addCallContextArgument<mlir::func::CallOp>("ctx");
   emit("cpp", cppOpts, outputDir, module.getModule());
 
   PassManager pm2(module.getCtx());
@@ -243,7 +245,7 @@ int main(int argc, char* argv[]) {
   });
 
   if (exceeded) {
-    llvm::errs() << "One or more bigint probgrams exceeded the total number of allowed cycles.  "
+    llvm::errs() << "One or more bigint programs exceeded the total number of allowed cycles.  "
                     "Perhaps decrease iterations?\n";
     return 1;
   }

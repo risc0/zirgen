@@ -149,4 +149,20 @@ LogicalResult emitModule(mlir::ModuleOp module, zirgen::codegen::CodegenEmitter&
   return success();
 }
 
+void addCppSyntax(codegen::CodegenOptions& opts) {
+  opts.addFuncContextArgument<CheckFuncOp, ExecFuncOp, BackFuncOp, StepFuncOp>("ExecContext& ctx");
+  opts.addFuncContextArgument<ValidityTapsFuncOp>("ValidityTapsContext& ctx");
+  opts.addFuncContextArgument<ValidityRegsFuncOp>("ValidityRegsContext& ctx");
+
+  opts.addCallContextArgument<ExecCallOp, BackCallOp, StepCallOp>("ctx");
+}
+
+void addRustSyntax(codegen::CodegenOptions& opts) {
+  opts.addFuncContextArgument<CheckFuncOp, ExecFuncOp, BackFuncOp, StepFuncOp>("ctx: &ExecContext");
+  opts.addFuncContextArgument<ValidityTapsFuncOp>("ctx: &ValidityTapsContext");
+  opts.addFuncContextArgument<ValidityRegsFuncOp>("ctx: &ValidityRegsContext");
+
+  opts.addCallContextArgument<ExecCallOp, BackCallOp, StepCallOp>("ctx");
+}
+
 } // namespace zirgen::Zhlt

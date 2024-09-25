@@ -103,7 +103,7 @@ def LayoutArrayType : ZStructType<"LayoutArray", "layout_array", [
 }
 
 def Ref : ZStructType<"Ref", "ref", [
-    DeclareTypeInterfaceMethods<CodegenTypeInterface, ["emitLiteral", "getTypeName"]>,
+    DeclareTypeInterfaceMethods<CodegenTypeInterface, ["getTypeName"]>,
     CodegenOnlyPassByReferenceType,
     CodegenLayoutType
   ]> {

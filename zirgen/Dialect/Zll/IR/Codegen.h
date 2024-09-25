@@ -104,10 +104,6 @@ protected:
   llvm::SmallVector<std::string> contextArgDecls;
 
 public:
-  // Adds the given argument as a context arg to any functions generated, with the provided
-  // definition.
-  void addContextArgument(llvm::StringRef argDecl) { contextArgDecls.push_back(argDecl.str()); }
-
   virtual LanguageKind getLanguageKind() = 0;
 
   virtual std::string canonIdent(llvm::StringRef ident, IdentKind idt) = 0;
@@ -117,6 +113,7 @@ public:
 
   virtual void emitFuncDefinition(CodegenEmitter& cg,
                                   CodegenIdent<IdentKind::Func> funcName,
+                                  llvm::ArrayRef<std::string> contextArgs,
                                   llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                                   mlir::FunctionType funcType,
                                   mlir::Region* body) = 0;
@@ -141,7 +138,7 @@ public:
 
   virtual void emitCall(CodegenEmitter& cg,
                         CodegenIdent<IdentKind::Func> callee,
-                        llvm::ArrayRef<llvm::StringRef> contextArgs,
+                        llvm::ArrayRef<std::string> contextArgs,
                         llvm::ArrayRef<CodegenValue> args) = 0;
 
   virtual void emitInvokeMacro(CodegenEmitter& cg,
@@ -219,16 +216,39 @@ struct CodegenOptions {
   void addLiteralHandler(llvm::StringRef name,
                          std::function<void(CodegenEmitter&, mlir::Attribute)> f) {
     if (literalHandlers.contains(name)) {
-      llvm::errs() << "Duplicate literal handler for " << name << "\n";
+      llvm::errs() << "Duplicate literal handler defined for attribute " << name << "\b";
       abort();
     }
 
     literalHandlers[name] = f;
   }
 
+  // Add a context argument to be included when defining functions of the given operation type(s)
+  template <typename OpT> void addFuncContextArgument(llvm::StringRef decl) {
+    funcContextArgs[OpT::getOperationName()].push_back(decl.str());
+  }
+  template <typename OpTFirst, typename OpTSecond, typename... OpTs>
+  void addFuncContextArgument(llvm::StringRef decl) {
+    addFuncContextArgument<OpTFirst>(decl);
+    addFuncContextArgument<OpTSecond, OpTs...>(decl);
+  }
+
+  // Add a context argument to be included when invoking call operations of the given operation
+  // type(s)
+  template <typename OpT> void addCallContextArgument(llvm::StringRef decl) {
+    callContextArgs[OpT::getOperationName()].push_back(decl.str());
+  }
+  template <typename OpTFirst, typename OpTSecond, typename... OpTs>
+  void addCallContextArgument(llvm::StringRef decl) {
+    addCallContextArgument<OpTFirst>(decl);
+    addCallContextArgument<OpTSecond, OpTs...>(decl);
+  }
+
   LanguageSyntax* lang = nullptr;
 
   llvm::StringMap<std::function<void(CodegenEmitter&, mlir::Attribute)>> literalHandlers;
+  llvm::StringMap<llvm::SmallVector<std::string>> funcContextArgs;
+  llvm::StringMap<llvm::SmallVector<std::string>> callContextArgs;
 };
 
 // Manages emitting generated code.
@@ -249,7 +269,7 @@ public:
   // Emit a function call invocation.
   void emitFuncCall(CodegenIdent<IdentKind::Func> callee, llvm::ArrayRef<CodegenValue> args);
   void emitFuncCall(CodegenIdent<IdentKind::Func> callee,
-                    llvm::ArrayRef<llvm::StringRef> contextArgs,
+                    llvm::ArrayRef<std::string> contextArgs,
                     llvm::ArrayRef<CodegenValue> args);
 
   // Emits an expression executing an infix operation .

@@ -24,9 +24,6 @@ class ZStructNativeTypeTrait<string name,
   let cppNamespace = "::zirgen::ZStruct";
 }
 
-// An context argument type which can supply buffers when passed to lookupNearestImplicitArg.
-def BufferContext : ZStructNativeTypeTrait<"BufferContextTypeTrait">;
-
 def ArrayLikeTypeInterface : TypeInterface<"ArrayLikeTypeInterface"> {
   let description = "A type that supports array-like operations";
   let cppNamespace = "::zirgen::ZStruct";

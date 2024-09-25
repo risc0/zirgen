@@ -723,10 +723,9 @@ LogicalResult BindLayoutOp::verifySymbolUses(SymbolTableCollection& symbolTable)
 }
 
 void GetBufferOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
-  auto contextArg = Zll::lookupNearestImplicitArg<ZStruct::BufferContextTypeTrait>(getOperation());
   cg.emitInvokeMacro(cg.getStringAttr("get_buffer"),
-                     {contextArg ? codegen::EmitPart(contextArg) : codegen::EmitPart("ctx"),
-                      codegen::CodegenIdent<codegen::IdentKind::Var>(getNameAttr())});
+                     /*ContextArgs=*/{"ctx"},
+                     {codegen::CodegenIdent<codegen::IdentKind::Var>(getNameAttr())});
 }
 
 LogicalResult GetBufferOp::evaluate(Zll::Interpreter& interp,

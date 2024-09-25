@@ -19,6 +19,7 @@
 #include "mlir/Transforms/Passes.h"
 #include "llvm/Support/CommandLine.h"
 
+#include "zirgen/Dialect/ZHLT/IR/Codegen.h"
 #include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
 #include "zirgen/Dialect/Zll/IR/Codegen.h"
 #include "zirgen/Dialect/Zll/Transforms/Passes.h"
@@ -72,6 +73,7 @@ CodegenOptions getRustCodegenOpts() {
   addCommonSyntax(opts);
   addRustSyntax(opts);
   ZStruct::addRustSyntax(opts);
+  Zhlt::addRustSyntax(opts);
   return opts;
 }
 
@@ -81,6 +83,7 @@ CodegenOptions getCppCodegenOpts() {
   addCommonSyntax(opts);
   addCppSyntax(opts);
   ZStruct::addCppSyntax(opts);
+  Zhlt::addCppSyntax(opts);
   return opts;
 }
 

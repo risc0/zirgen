@@ -355,13 +355,6 @@ CodegenIdent<IdentKind::Type> RefType::getTypeName(zirgen::codegen::CodegenEmitt
   return cg.getStringAttr("Reg");
 }
 
-mlir::LogicalResult RefType::emitLiteral(zirgen::codegen::CodegenEmitter& cg,
-                                         mlir::Attribute value) const {
-  auto refVal = llvm::cast<RefAttr>(value);
-  cg.emitInvokeMacroV(cg.getStringAttr("makeRef"), refVal.getIndex());
-  return mlir::success();
-}
-
 mlir::LogicalResult TapType::emitLiteral(zirgen::codegen::CodegenEmitter& cg,
                                          mlir::Attribute value) const {
   auto tapValue = llvm::cast<Zll::TapAttr>(value);

@@ -95,6 +95,7 @@ private:
 
   void emitFuncDefinition(CodegenEmitter& cg,
                           CodegenIdent<IdentKind::Func> funcName,
+                          llvm::ArrayRef<std::string> contextArgs,
                           llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                           mlir::FunctionType funcType,
                           mlir::Region* body) override;
@@ -112,7 +113,7 @@ private:
 
   void emitCall(CodegenEmitter& cg,
                 CodegenIdent<IdentKind::Func> callee,
-                llvm::ArrayRef<llvm::StringRef> contextArgs,
+                llvm::ArrayRef<std::string> contextArgs,
                 llvm::ArrayRef<CodegenValue> args) override;
 
   void emitInvokeMacro(CodegenEmitter& cg,
@@ -170,6 +171,7 @@ struct CppLanguageSyntax : public LanguageSyntax {
 
   void emitFuncDefinition(CodegenEmitter& cg,
                           CodegenIdent<IdentKind::Func> funcName,
+                          llvm::ArrayRef<std::string> contextArgs,
                           llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                           mlir::FunctionType funcType,
                           mlir::Region* body) override;
@@ -187,7 +189,7 @@ struct CppLanguageSyntax : public LanguageSyntax {
 
   void emitCall(CodegenEmitter& cg,
                 CodegenIdent<IdentKind::Func> callee,
-                llvm::ArrayRef<llvm::StringRef> contextArgs,
+                llvm::ArrayRef<std::string> contextArgs,
                 llvm::ArrayRef<CodegenValue> args) override;
 
   void emitInvokeMacro(CodegenEmitter& cg,

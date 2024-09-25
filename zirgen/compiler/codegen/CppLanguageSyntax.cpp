@@ -52,6 +52,7 @@ void CppLanguageSyntax::emitSwitchStatement(CodegenEmitter& cg,
 
 void CppLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
                                            CodegenIdent<IdentKind::Func> funcName,
+                                           llvm::ArrayRef<std::string> contextArgDecls,
                                            llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                                            mlir::FunctionType funcType,
                                            mlir::Region* body) {
@@ -129,11 +130,11 @@ void CppLanguageSyntax::emitSaveConst(CodegenEmitter& cg,
 
 void CppLanguageSyntax::emitCall(CodegenEmitter& cg,
                                  CodegenIdent<IdentKind::Func> callee,
-                                 llvm::ArrayRef<StringRef> contextArgs,
+                                 llvm::ArrayRef<std::string> contextArgs,
                                  llvm::ArrayRef<CodegenValue> args) {
   cg << callee << "(";
   if (!contextArgs.empty()) {
-    cg.interleaveComma(contextArgs, [&](auto contextArg) { cg << EmitPart(contextArg) << ","; });
+    cg.interleaveComma(contextArgs, [&](auto contextArg) { cg << EmitPart(contextArg); });
     if (!args.empty())
       cg << ",";
   }
@@ -151,7 +152,7 @@ void CppLanguageSyntax::emitInvokeMacro(CodegenEmitter& cg,
 
   cg << "(";
   if (!contextArgs.empty()) {
-    cg.interleaveComma(contextArgs, [&](auto contextArg) { cg << EmitPart(contextArg) << ","; });
+    cg.interleaveComma(contextArgs, [&](auto contextArg) { cg << EmitPart(contextArg); });
     if (!emitArgs.empty())
       cg << ",";
   }

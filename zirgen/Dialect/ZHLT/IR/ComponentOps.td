@@ -145,6 +145,7 @@ class ZFuncOp<string aspectArg, list<Trait> childTraits = [], string mnemonic = 
          if (!name.starts_with("constructParam"))
             realSetNameFn(value, name);
        };
+       (void)setNameFn;
        }] # inputSubstSnippets.setValueNames # [{
     }
   }]
@@ -377,8 +378,6 @@ def CheckFuncOp : ZFuncOp<"check", [CodegenSkip, SingletonOpTrait]> {
 
      This is a circuit-wide singleton, and there should only be one instance of this operation.
   }];
-  let funcInputs = (ins
-    ExecContext:$ctx);
   let hasRegionVerifier = 1;
   let extraClassDeclaration = extraZFuncClassDeclaration # [{
      // Ensures all constraints are less than or equal to the provided degree
@@ -390,7 +389,6 @@ def CheckFuncOp : ZFuncOp<"check", [CodegenSkip, SingletonOpTrait]> {
 def ValidityRegsFuncOp : ZFuncOp<"validity_regs", [SingletonOpTrait]> {
   let summary = "Evaluates the validity polynomial from a layout";
   let funcInputs = (ins
-     ValidityRegsContext:$ctx,
      PolyMix:$polyMix);
   let funcResults = (outs Constraint:$out);
   let hasRegionVerifier = 1;
@@ -403,7 +401,6 @@ def ValidityTapsFuncOp : ZFuncOp<"validity_taps", [SingletonOpTrait]> {
      This is a circuit-wide singleton, and there should only be one instance of this operation.
   }];
   let funcInputs = (ins
-      ValidityTapsContext:$ctx,
       PolyMix:$polyMix,
       ArrayType:$taps);
   let funcResults = (outs Constraint:$out);
@@ -417,7 +414,6 @@ def ExecFuncOp : ZFuncOp<"exec"> {
      Also checks constraints unless the --circuit-ndebug option is specified,
   }];
   let funcInputs = (ins
-      ExecContext:$ctx,
       Variadic<ZirType>:$constructParam,
       Optional<IsLayoutType>:$layout);
   let funcResults = (outs ZirType:$out);
@@ -428,7 +424,6 @@ def ExecCallOp : ZCallOp<ExecFuncOp, [AttrSizedOperandSegments]>;
 def BackFuncOp : ZFuncOp<"back"> {
   let summary = "Retrieves the value of a component based on its layout";
   let funcInputs = (ins
-      ExecContext:$ctx,
       Index:$distance,
       Optional<IsLayoutType>:$layout);
   let funcResults = (outs ZirType:$out);
@@ -438,7 +433,6 @@ def BackCallOp : ZCallOp<BackFuncOp>;
 
 def StepFuncOp : ZFuncOp<"step"> {
   let summary = "Defines an operation to be exposed as a public symbol.";
-  let funcInputs = (ins ExecContext:$ctx);
 }
 
 def StepCallOp : ZCallOp<StepFuncOp>;

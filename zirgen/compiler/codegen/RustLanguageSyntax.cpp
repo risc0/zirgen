@@ -64,6 +64,7 @@ void RustLanguageSyntax::emitSwitchStatement(CodegenEmitter& cg,
 
 void RustLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
                                             CodegenIdent<IdentKind::Func> funcName,
+                                            llvm::ArrayRef<std::string> contextArgDecls,
                                             llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                                             mlir::FunctionType funcType,
                                             mlir::Region* body) {
@@ -162,7 +163,7 @@ static bool isReferenceType(CodegenValue value) {
 
 void RustLanguageSyntax::emitCall(CodegenEmitter& cg,
                                   CodegenIdent<IdentKind::Func> callee,
-                                  llvm::ArrayRef<StringRef> contextArgs,
+                                  llvm::ArrayRef<std::string> contextArgs,
                                   llvm::ArrayRef<CodegenValue> args) {
   cg << callee << "(";
   if (!contextArgs.empty()) {

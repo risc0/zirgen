@@ -53,13 +53,9 @@ struct ConstructToCall : public OpRewritePattern<Zhlt::ConstructOp> {
   using OpRewritePattern::OpRewritePattern;
 
   LogicalResult matchAndRewrite(Zhlt::ConstructOp op, PatternRewriter& rewriter) const final {
-    Value execContext = lookupNearestImplicitArg<Zhlt::ExecContextType>(op);
-    if (!execContext)
-      return failure();
     auto callOp = rewriter.create<Zhlt::ExecCallOp>(op->getLoc(),
                                                     op.getCallee(),
                                                     op.getType(),
-                                                    execContext,
                                                     op.getConstructParam(),
                                                     /*layout=*/op.getLayout());
     rewriter.replaceOp(op, callOp.getResult());
@@ -370,18 +366,10 @@ struct ConstructToBack : public OpRewritePattern<Zhlt::ConstructOp> {
       return success();
     }
 
-    Value execContext = lookupNearestImplicitArg<Zhlt::ExecContextType>(op);
-    if (!execContext)
-      return failure();
-
     auto distance = parent.getDistance();
     auto callee = SymbolTable::lookupNearestSymbolFrom<Zhlt::ComponentOp>(op, op.getCalleeAttr());
-    auto callOp = rewriter.create<Zhlt::BackCallOp>(op->getLoc(),
-                                                    callee.getSymName(),
-                                                    callee.getOutType(),
-                                                    execContext,
-                                                    distance,
-                                                    op.getLayout());
+    auto callOp = rewriter.create<Zhlt::BackCallOp>(
+        op->getLoc(), callee.getSymName(), callee.getOutType(), distance, op.getLayout());
     rewriter.replaceOp(op, callOp);
     return success();
   }
@@ -393,19 +381,12 @@ struct BackToCall : public OpRewritePattern<Zhlt::BackOp> {
   using OpRewritePattern::OpRewritePattern;
 
   LogicalResult matchAndRewrite(Zhlt::BackOp op, PatternRewriter& rewriter) const final {
-    Value execContext = lookupNearestImplicitArg<Zhlt::ExecContextType>(op);
-    if (!execContext)
-      return failure();
     // TODO: unify distance types and just call op.getDistanceAttr().
     auto distance = rewriter.create<arith::ConstantOp>(
         op->getLoc(), rewriter.getIndexAttr(op.getDistance().getZExtValue()));
     auto callee = SymbolTable::lookupNearestSymbolFrom<Zhlt::ComponentOp>(op, op.getCalleeAttr());
-    auto callOp = rewriter.create<Zhlt::BackCallOp>(op->getLoc(),
-                                                    callee.getSymName(),
-                                                    callee.getOutType(),
-                                                    execContext,
-                                                    distance,
-                                                    op.getLayout());
+    auto callOp = rewriter.create<Zhlt::BackCallOp>(
+        op->getLoc(), callee.getSymName(), callee.getOutType(), distance, op.getLayout());
     rewriter.replaceOp(op, callOp);
     return success();
   }
@@ -417,9 +398,6 @@ struct BackBackToCall : public OpRewritePattern<Zhlt::BackOp> {
   using OpRewritePattern::OpRewritePattern;
 
   LogicalResult matchAndRewrite(Zhlt::BackOp op, PatternRewriter& rewriter) const final {
-    Value execContext = lookupNearestImplicitArg<Zhlt::ExecContextType>(op);
-    if (!execContext)
-      return failure();
     auto parent = op->getParentOfType<Zhlt::BackFuncOp>();
     if (!parent) {
       return failure();
@@ -431,12 +409,8 @@ struct BackBackToCall : public OpRewritePattern<Zhlt::BackOp> {
         op->getLoc(), rewriter.getIndexAttr(op.getDistance().getZExtValue()));
     auto callee = SymbolTable::lookupNearestSymbolFrom<Zhlt::ComponentOp>(op, op.getCalleeAttr());
     auto distance = rewriter.create<arith::AddIOp>(op->getLoc(), oldDistance, backOpDistance);
-    auto callOp = rewriter.create<Zhlt::BackCallOp>(op->getLoc(),
-                                                    callee.getSymName(),
-                                                    callee.getOutType(),
-                                                    execContext,
-                                                    distance,
-                                                    op.getLayout());
+    auto callOp = rewriter.create<Zhlt::BackCallOp>(
+        op->getLoc(), callee.getSymName(), callee.getOutType(), distance, op.getLayout());
     rewriter.replaceOp(op, callOp);
     return success();
   }
@@ -566,11 +540,10 @@ struct GenerateBackPass : public GenerateBackBase<GenerateBackPass> {
         auto magic = builder.create<Zhlt::MagicOp>(op.getLoc(), valArg.getType());
         valArg.replaceAllUsesWith(magic);
       }
-      block->insertArgument(0u, func.getCtxType(), op->getLoc());
-      block->eraseArguments(1u, numValArgs);
-      block->insertArgument(1u, distanceType, op->getLoc());
-      // arg0 = exec context, arg1 = back distance, arg2 = optional layout
-      assert(block->getNumArguments() == 2 || block->getNumArguments() == 3);
+      block->eraseArguments(0u, numValArgs);
+      block->insertArgument(0u, distanceType, op->getLoc());
+      // arg1 = back distance, arg2 = optional layout
+      assert(block->getNumArguments() == 1 || block->getNumArguments() == 2);
 
       if (applyPatternsAndFoldGreedily(func, frozenPatterns).failed()) {
         auto diag = func->emitError()
@@ -608,7 +581,6 @@ struct GenerateExecPass : public GenerateExecBase<GenerateExecPass> {
                                                    op.getLayoutType());
       IRMapping mapping;
       op.getBody().cloneInto(&func.getBody(), mapping);
-      func.getBody().front().insertArgument(0u, func.getCtxType(), op->getLoc());
 
       if (applyPatternsAndFoldGreedily(func, frozenPatterns).failed()) {
         func->emitError("Could not generate back function");
@@ -652,15 +624,13 @@ struct GenerateCheckPass : public GenerateCheckBase<GenerateCheckPass> {
     auto checkFuncOp = builder.create<Zhlt::CheckFuncOp>(mod.getLoc());
     builder.setInsertionPointToStart(checkFuncOp.addEntryBlock());
 
-    auto contextArg = checkFuncOp.getCtx();
-
     mod.walk([&](Zhlt::StepFuncOp op) {
       // Skip tests when generating circuit constraints.
       if (op.getName().starts_with("step$test$"))
         return;
 
       // Call this step to gather constraints.
-      builder.create<Zhlt::StepCallOp>(op.getLoc(), op, contextArg);
+      builder.create<Zhlt::StepCallOp>(op.getLoc(), op);
     });
 
     // Now, inline everything and get rid of everything that's not a constraint.
@@ -680,7 +650,6 @@ struct GenerateValidityRegsPass : public GenerateValidityRegsBase<GenerateValidi
                    OpBuilder& builder,
                    IRMapping& mapper,
                    Value state,
-                   Value execContextArg,
                    Value polyMixArg) {
     for (Operation& origOp : block.without_terminator()) {
       Location opLoc = CallSiteLoc::get(loc, origOp.getLoc());
@@ -698,13 +667,8 @@ struct GenerateValidityRegsPass : public GenerateValidityRegsBase<GenerateValidi
           })
           .Case<IfOp>([&](IfOp op) {
             Value innerState = builder.create<TrueOp>(opLoc);
-            innerState = runOnBlock(opLoc,
-                                    op.getInner().front(),
-                                    builder,
-                                    mapper,
-                                    innerState,
-                                    execContextArg,
-                                    polyMixArg);
+            innerState =
+                runOnBlock(opLoc, op.getInner().front(), builder, mapper, innerState, polyMixArg);
             state = builder.create<AndCondOp>(opLoc, state, mapper.lookup(op.getCond()), innerState)
                         .getResult();
           })
@@ -738,7 +702,6 @@ struct GenerateValidityRegsPass : public GenerateValidityRegsBase<GenerateValidi
       auto func = builder.create<Zhlt::ValidityRegsFuncOp>(checkFunc.getLoc());
       Block* block = func.addEntryBlock();
       IRMapping mapper;
-      mapper.map(checkFunc.getCtx(), func.getCtx());
       builder.setInsertionPointToStart(block);
       Value mixState = builder.create<TrueOp>(func.getLoc());
       mixState = runOnBlock(checkFunc.getLoc(),
@@ -746,7 +709,6 @@ struct GenerateValidityRegsPass : public GenerateValidityRegsBase<GenerateValidi
                             builder,
                             mapper,
                             mixState,
-                            func.getCtx(),
                             func.getPolyMix());
       builder.create<Zhlt::ReturnOp>(func.getLoc(), mixState);
     });
@@ -846,7 +808,6 @@ struct GenerateValidityTapsPass : public GenerateValidityTapsBase<GenerateValidi
       assert(ntaps == taps.size());
 
       IRMapping mapper;
-      mapper.map(regsFunc.getCtx(), func.getCtx());
       mapper.map(regsFunc.getPolyMix(), func.getPolyMix());
       for (auto& op : regsFunc.getBody().front())
         builder.clone(op, mapper);

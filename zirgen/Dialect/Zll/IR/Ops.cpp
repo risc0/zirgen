@@ -1243,13 +1243,10 @@ void VariadicPackOp::emitExpr(codegen::CodegenEmitter& cg) {
 }
 
 void ExternOp::emitExpr(codegen::CodegenEmitter& cg) {
-  // TODO: Consider adding "ZStruct::Context" argument to ExternOp or figuring out some other way
-  // we don't have to hardcode the name of the "ctx0" context here.
   llvm::SmallVector<codegen::EmitPart> macroParts = {
-      /*execContext=*/codegen::CodegenIdent<codegen::IdentKind::Var>(cg.getStringAttr("ctx0")),
       /*extern name=*/codegen::CodegenIdent<codegen::IdentKind::Func>(getNameAttr())};
   llvm::append_range(macroParts, getOperands());
-  cg.emitInvokeMacro(cg.getStringAttr("invokeExtern"), macroParts);
+  cg.emitInvokeMacro(cg.getStringAttr("invokeExtern"), /*contextArgs=*/{"ctx"}, macroParts);
 }
 
 void EqualZeroOp::emitExpr(codegen::CodegenEmitter& cg) {

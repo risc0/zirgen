@@ -58,4 +58,7 @@ std::unique_ptr<EmitZhlt> getEmitter(mlir::ModuleOp module, zirgen::codegen::Cod
 // Generates code for a ZHLT module, including extern traits, type definitions, etc.
 mlir::LogicalResult emitModule(mlir::ModuleOp module, zirgen::codegen::CodegenEmitter& cg);
 
+void addCppSyntax(codegen::CodegenOptions& opts);
+void addRustSyntax(codegen::CodegenOptions& opts);
+
 } // namespace zirgen::Zhlt
