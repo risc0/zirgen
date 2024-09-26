@@ -143,7 +143,7 @@ def SwitchOp: ZStructOp<"switch", [RecursiveMemoryEffects, EvalOpAdaptor,
   let hasCanonicalizer = 1;
 }
 
-def YieldOp : ZStructOp<"yield", [Terminator, ReturnLike, EvalOpAdaptor]> {
+def YieldOp : ZStructOp<"yield", [Pure, Terminator, ReturnLike, EvalOpAdaptor]> {
   let summary = "A terminator which returns a result from a block";
   let arguments = (ins ZirType:$value);
   let assemblyFormat = [{
@@ -171,7 +171,7 @@ def LayoutArrayOp: ZStructOp<"layout_array", [Pure, SameTypeOperands, InferTypeO
   let hasFolder = 1;
 }
 
-def MapOp : ZStructOp<"map", [DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
+def MapOp : ZStructOp<"map", [RecursiveMemoryEffects, DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
   let summary = "Apply function to elements of array";
   let arguments = (ins ArrayLikeTypeInterface:$array, Optional<LayoutArrayType>:$layout);
   let results = (outs ArrayLikeTypeInterface:$out);
