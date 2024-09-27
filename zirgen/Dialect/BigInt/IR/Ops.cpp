@@ -69,7 +69,7 @@ LogicalResult AddOp::inferReturnTypes(MLIRContext* ctx,
   size_t maxPos = lhsType.getMaxPos() + rhsType.getMaxPos();
   size_t maxNeg = lhsType.getMaxNeg() + rhsType.getMaxNeg();
   // TODO: We could be more clever on minBits, but probably doesn't matter
-  size_t minBits = std::max(lhsType.getMinBits(), rhsType.getMinBits());
+  size_t minBits = maxNeg > 0 ? 0 : std::max(lhsType.getMinBits(), rhsType.getMinBits());
   out.push_back(BigIntType::get(ctx, maxCoeffs, maxPos, maxNeg, minBits));
   return success();
 }
