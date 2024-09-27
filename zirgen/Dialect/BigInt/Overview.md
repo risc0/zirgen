@@ -48,6 +48,7 @@ we perform subtraction, each element will be in the range
 $(-256, 256)$. If we multiply them, each element will be in the range
 $[0, 65536)$ .
 
+TODO: Give a clearer explanation of signedness
 (Note: Be aware that when subtraction happens, the resuling field
 elements may be less than zero.  During internal calculations, we
 represent negative values by a 32-bit signed integer (`int32_t`), but
