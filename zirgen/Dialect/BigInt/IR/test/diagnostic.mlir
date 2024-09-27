@@ -54,7 +54,7 @@
 // For `reduce`:
 //  - Same as `nondet_rem`
 
-func.func @good_add_8() {
+func.func @good_add_basic() {
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
   %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
   %2 = bigint.add %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 510, 0, 0>
@@ -63,7 +63,26 @@ func.func @good_add_8() {
 
 // -----
 
-func.func @bad_add_8() {
+func.func @good_add_with_min_bits() {
+  // Primary rules tested:
+  //  - [%3] If both `add` inputs are nonnegative, `min_bits` is max of input `min_bits`s
+  //  - [%5, %6] If either input to `add` may be negative, `min_bits` is 0
+  // This is calculating 7 + 8 [in %3] and 8 + (0 - 7) [in %5 and %6]
+  %0 = bigint.const 0 : i8 -> <1, 255, 0, 0>
+  %1 = bigint.const 7 : i8 -> <1, 255, 0, 3>
+  %2 = bigint.const 8 : i8 -> <1, 255, 0, 4>
+  %3 = bigint.add %1 : <1, 255, 0, 3>, %2 : <1, 255, 0, 4> -> <1, 510, 0, 4>
+  %4 = bigint.sub %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 3> -> <1, 255, 255, 0>
+  %5 = bigint.add %2 : <1, 255, 0, 4>, %4 : <1, 255, 255, 0> -> <1, 510, 255, 0>
+  %6 = bigint.add %4 : <1, 255, 255, 0>, %2 : <1, 255, 0, 4> -> <1, 510, 255, 0>
+  return
+}
+
+// -----
+
+func.func @bad_add_max_pos() {
+  // Primary rules tested:
+  //  - [%2] `add`'s `max_pos` is the sum of the input `max_pos`s
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
   %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
   // expected-error@+2 {{op inferred type(s)}}
@@ -74,19 +93,10 @@ func.func @bad_add_8() {
 
 // -----
 
-func.func @good_add_and_check_8() {
-  %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
-  %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
-  %2 = bigint.def 9, 2, true -> <2, 255, 0, 0>
-  %3 = bigint.add %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 510, 0, 0>
-  %4 = bigint.sub %3 : <1, 510, 0, 0>, %2 : <2, 255, 0, 0> -> <2, 510, 255, 0>
-  bigint.eqz %4 : <2, 510, 255, 0>
-  return
-}
-
-// -----
-
-func.func @good_sub_8() {
+func.func @good_sub_max_pos_max_neg() {
+  // Primary rules tested:
+  //  - [%3] For A - B: `max_pos` is A's `max_pos` plus B's `max_neg`
+  //  - [%4] For A - B: `max_neg` is A's `max_neg` plus B's `max_pos`
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
   %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
   %2 = bigint.sub %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 255, 255, 0>
@@ -97,7 +107,9 @@ func.func @good_sub_8() {
 
 // -----
 
-func.func @bad_sub_8() {
+func.func @bad_sub_max_pos() {
+  // Primary rules tested:
+  //  - [%3] For A - B: `max_pos` is A's `max_pos` plus B's `max_neg`
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
   %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
   %2 = bigint.sub %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 255, 255, 0>
@@ -109,7 +121,25 @@ func.func @bad_sub_8() {
 
 // -----
 
-func.func @good_sub_unique_nonzero_bounds() {
+func.func @bad_sub_max_neg() {
+  // Primary rules tested:
+  //  - [%4] For A - B: `max_neg` is A's `max_neg` plus B's `max_pos`
+  %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
+  %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
+  %2 = bigint.sub %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 255, 255, 0>
+  %3 = bigint.sub %0 : <1, 255, 0, 0>, %2 : <1, 255, 255, 0> -> <1, 510, 255, 0>
+  // expected-error@+2 {{op inferred type(s)}}
+  // expected-error@+1 {{failed to infer returned types}}
+  %4 = bigint.sub %2 : <1, 255, 255, 0>, %3 : <1, 510, 255, 0> -> <1, 510, 510, 0>
+  return
+}
+
+// -----
+
+func.func @good_sub_unique_nonzero_maxs() {
+  // Primary rules tested:
+  //  - [%9] For A - B: `max_pos` is A's `max_pos` plus B's `max_neg`
+  //  - [%9] For A - B: `max_neg` is A's `max_neg` plus B's `max_pos`
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
   %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
   %2 = bigint.def 8, 2, true -> <1, 255, 0, 0>
@@ -120,22 +150,5 @@ func.func @good_sub_unique_nonzero_bounds() {
   %7 = bigint.sub %6 : <1, 65025, 510, 0>, %0 : <1, 255, 0, 0> -> <1, 65025, 765, 0>
   %8 = bigint.add %5 : <1, 510, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 510, 255, 0>
   %9 = bigint.sub %7 : <1, 65025, 765, 0>, %8 : <1, 510, 255, 0> -> <1, 65280, 1275, 0>
-  return
-}
-
-// -----
-
-func.func @good_add_with_min_bits_8() {
-  // Rules tested:
-  //  - [%3] If both `add` inputs are nonnegative, `min_bits` is max of input `min_bits`s
-  //  - [%5, %6] If either input to `add` may be negative, `min_bits` is 0
-  // This is calculating 7 + 8 [in %3] and 8 + (0 - 7) [in %5 and %6]
-  %0 = bigint.const 0 : i8 -> <1, 255, 0, 0>
-  %1 = bigint.const 7 : i8 -> <1, 255, 0, 3>
-  %2 = bigint.const 8 : i8 -> <1, 255, 0, 4>
-  %3 = bigint.add %1 : <1, 255, 0, 3>, %2 : <1, 255, 0, 4> -> <1, 510, 0, 4>
-  %4 = bigint.sub %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 3> -> <1, 255, 255, 0>
-  %5 = bigint.add %2 : <1, 255, 0, 4>, %4 : <1, 255, 255, 0> -> <1, 510, 255, 0>
-  %6 = bigint.add %4 : <1, 255, 255, 0>, %2 : <1, 255, 0, 4> -> <1, 510, 255, 0>
   return
 }
