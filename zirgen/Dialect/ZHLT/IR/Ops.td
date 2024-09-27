@@ -25,6 +25,14 @@ class ZhltOp<string mnemonic, list<Trait> traits = []>
     : Op<ZhltDialect, mnemonic, traits> {
 }
 
+def GetLayoutOp: ZhltOp<"get_layout", [Pure, InferTypeOpAdaptor]> {
+  let summary = "Get the layout of a component";
+  let arguments = (ins StructType:$in);
+  let results = (outs LayoutType:$out);
+  let assemblyFormat = [{ `(` $in `)` `:` functional-type($in, $out) attr-dict }];
+  let hasFolder = 1;
+}
+
 def ReturnOp : ZhltOp<"return", [Terminator, ReturnLike]> {
   let summary = "A terminator which marks the result of a component constructor";
   let arguments = (ins Optional<AnyTypeOf<[ZirType, Constraint]>>:$value);

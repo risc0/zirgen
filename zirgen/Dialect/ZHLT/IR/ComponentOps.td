@@ -367,7 +367,9 @@ def CheckLayoutFuncOp : ZFuncOp<"check_layout", [CodegenSkip]> {
     This is subsequently used by LayoutDAGAnalysis/GenerateLayoutPass to create
     the ultimate layout of the circuit.
   }];
-  let funcInputs = (ins Optional<IsLayoutType>:$layout);
+  let funcInputs = (ins
+    ExecContext:$ctx,
+    Optional<IsLayoutType>:$layout);
   let hasRegionVerifier = 1;
 }
 
