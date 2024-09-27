@@ -4,7 +4,7 @@ extern Print(x: Val);
 
 component Foo(a: Val) { b := Reg(a); b }
 
-// CHECK-LABEL: zhlt.validity_taps_func @validity_taps$
+// CHECK-LABEL: zhlt.validity_taps_func @validity_taps
 component HeyMux(a: Val, b: Val, c: Val) {
   z := [a, 1-a] -> (Foo(b), Foo(c));
   Print(z.b);

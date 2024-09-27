@@ -112,7 +112,6 @@ BufferType::getTypeName(codegen::CodegenEmitter& cg) const {
   std::string name = stringifyBufferKind(getKind()).str();
   if (getElement().getFieldK() > 1)
     name += "Ext";
-  name += std::to_string(getSize());
   name += "Buf";
 
   return cg.getStringAttr(name);

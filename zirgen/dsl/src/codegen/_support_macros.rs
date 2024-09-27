@@ -219,15 +219,6 @@ macro_rules! codegen_define_buffer_list {
 }
 
 #[macro_export]
-macro_rules! codegen_get_buffer {
-    ($ctx:expr, $buffer:ident) => {
-        paste::paste! {
-            [< get_ $buffer _buffer >] ($ctx)
-        }
-    };
-}
-
-#[macro_export]
 macro_rules! codegen_bind_layout {
     ($layout:expr, $buffer:expr) => {
         BoundLayout::new($layout, $buffer)

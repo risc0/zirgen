@@ -256,6 +256,10 @@ class CodegenEmitter {
 public:
   CodegenEmitter(CodegenOptions opts, llvm::raw_ostream* os, mlir::MLIRContext* ctx)
       : opts(opts), outStream(os), ctx(ctx) {}
+  // Start without an output stream.  In this case, use
+  // StreamOutputGuard to control the output whenever emitting.
+  CodegenEmitter(CodegenOptions opts, mlir::MLIRContext* ctx)
+      : CodegenEmitter(opts, /*os=*/nullptr, ctx) {}
 
   void emitModule(mlir::ModuleOp op);
   void emitTopLevel(mlir::Operation* op);
@@ -380,6 +384,20 @@ public:
   void interleaveComma(const Container& c, UnaryFunctor each_fn);
   template <typename Container, typename T = llvm::detail::ValueOfRange<Container>>
   void interleaveComma(const Container& c);
+
+  // Redirect the codegen output to a particular stream while this guard is present.
+  class StreamOutputGuard {
+  public:
+    StreamOutputGuard(CodegenEmitter& cg, llvm::raw_ostream* newStream)
+        : cg(cg), origStream(cg.outStream) {
+      cg.outStream = newStream;
+    }
+    ~StreamOutputGuard() { cg.outStream = origStream; }
+
+  private:
+    CodegenEmitter& cg;
+    llvm::raw_ostream* origStream = nullptr;
+  };
 
 private:
   friend struct EmitPart;

@@ -197,6 +197,10 @@ pub fn in_range<E: Elem + Into<u32>>(low: E, mid: E, high: E) -> Result<E> {
     }
 }
 
+pub fn get<E: Elem>(buf: &impl BufferRow<ValType = E>, offset: usize, _: usize) -> Result<E> {
+    Ok(buf.load(offset, 0))
+}
+
 // Locally import all the codegen_* macros without the codegen_ prefix.
 // TODO: When macros 2.0 arrives we should be able to simplify this.
 macro_rules! import_macros {
@@ -211,5 +215,5 @@ import_macros! {
     make_tap, invoke_extern,
     set_field, load, load_as_ext, load_ext, store, store_ext, define_tap_buffer,
     define_global_buffer, define_buffer, define_buffer_list, bind_layout,
-    layout_subscript, layout_lookup, eqz, get_buffer
+    layout_subscript, layout_lookup, eqz
 }

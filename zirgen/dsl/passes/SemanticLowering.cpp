@@ -630,7 +630,7 @@ struct GenerateCheckPass : public GenerateCheckBase<GenerateCheckPass> {
         return;
 
       // Call this step to gather constraints.
-      builder.create<Zhlt::StepCallOp>(op.getLoc(), op);
+      builder.create<func::CallOp>(op.getLoc(), op.getSymName(), /*results=*/TypeRange{});
     });
 
     // Now, inline everything and get rid of everything that's not a constraint.
@@ -699,17 +699,19 @@ struct GenerateValidityRegsPass : public GenerateValidityRegsBase<GenerateValidi
 
     module.walk([&](Zhlt::CheckFuncOp checkFunc) {
       OpBuilder builder(checkFunc);
-      auto func = builder.create<Zhlt::ValidityRegsFuncOp>(checkFunc.getLoc());
+      auto func = builder.create<Zhlt::ValidityRegsFuncOp>(
+          checkFunc.getLoc(),
+          "validity_regs",
+          builder.getFunctionType({builder.getType<PolyMixType>()},
+                                  {builder.getType<ConstraintType>()}),
+          /*argNames=*/ArrayRef<StringRef>({"polyMix"}));
       Block* block = func.addEntryBlock();
+      Value polyMix = block->getArgument(0);
       IRMapping mapper;
       builder.setInsertionPointToStart(block);
       Value mixState = builder.create<TrueOp>(func.getLoc());
-      mixState = runOnBlock(checkFunc.getLoc(),
-                            checkFunc.getBody().front(),
-                            builder,
-                            mapper,
-                            mixState,
-                            func.getPolyMix());
+      mixState = runOnBlock(
+          checkFunc.getLoc(), checkFunc.getBody().front(), builder, mapper, mixState, polyMix);
       builder.create<Zhlt::ReturnOp>(func.getLoc(), mixState);
     });
   }
@@ -767,8 +769,17 @@ struct GenerateValidityTapsPass : public GenerateValidityTapsBase<GenerateValidi
     module.walk([&](Zhlt::ValidityRegsFuncOp regsFunc) {
       builder.setInsertionPoint(regsFunc);
       auto func = builder.create<Zhlt::ValidityTapsFuncOp>(
-          regsFunc.getLoc(), builder.getType<ArrayType>(Zhlt::getValExtType(ctx), taps.size()));
+          regsFunc.getLoc(),
+          "validity_taps",
+          builder.getFunctionType({/*taps=*/builder.getType<BufferType>(Zhlt::getValExtType(ctx),
+                                                                        taps.size(),
+                                                                        Zll::BufferKind::Constant),
+                                   builder.getType<PolyMixType>()},
+                                  {builder.getType<ConstraintType>()}),
+          ArrayRef<StringRef>({"taps", "polyMix"}));
       builder.setInsertionPointToStart(func.addEntryBlock());
+      auto tapsArg = func.getArgument(0);
+      auto polyMixArg = func.getArgument(1);
 
       // This AttrTypeReplacer extends all field elements to extension
       // field elements, whether they be in types or attributes.
@@ -797,18 +808,16 @@ struct GenerateValidityTapsPass : public GenerateValidityTapsBase<GenerateValidi
         auto namedTap =
             NamedTap{groupNames[tapRef.getRegGroupId()], tapRef.getOffset(), tapRef.getBack()};
         assert(!tapIndex.contains(namedTap));
-        Attribute attr = builder.getUI32IntegerAttr(ntaps++);
-        Operation* op = ctx->getLoadedDialect<Zhlt::ZhltDialect>()->materializeConstant(
-            builder, attr, IndexType::get(ctx), regsFunc.getLoc());
-
-        tapIndex[namedTap] = builder.create<SubscriptOp>(regsFunc.getLoc(),
-                                                         func.getTaps(),
-                                                         /*offset=*/op->getResult(0));
+        tapIndex[namedTap] = builder.create<Zll::GetOp>(regsFunc.getLoc(),
+                                                        tapsArg,
+                                                        /*offset=*/ntaps++,
+                                                        /*back=*/0,
+                                                        /*tap=*/mlir::IntegerAttr{});
       }
       assert(ntaps == taps.size());
 
       IRMapping mapper;
-      mapper.map(regsFunc.getPolyMix(), func.getPolyMix());
+      mapper.map(/*polyMix=*/regsFunc.getArgument(0), polyMixArg);
       for (auto& op : regsFunc.getBody().front())
         builder.clone(op, mapper);
 

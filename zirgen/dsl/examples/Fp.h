@@ -73,12 +73,13 @@ using Reg = size_t;
         REF.buffer.at(*REF.layout + 2), REF.buffer.at(*REF.layout + 3),                            \
   }
 #define STORE(REF, VAL) REF.buffer.at(*REF.layout) = VAL
-#define DEFINE_LAYOUT_BUFFER(CONST, BUFFER) /* */
 #define LAYOUT_LOOKUP(LAYOUT, FIELD) LAYOUT.map([](auto layout) { return &layout->FIELD; })
 #define LAYOUT_SUBSCRIPT(LAYOUT, INDEX) LAYOUT.map([](auto layout) { return &layout->at(INDEX); })
-
-#define GET_BUFFER(CTX, BUFFER) CTX.BUFFER
 #define BIND_LAYOUT(LAYOUT, BUFFER) BoundLayout(&LAYOUT, BUFFER)
+
+Val4 get(std::vector<Val4>& buf, size_t offset, size_t /*unused */) {
+  return buf.at(offset);
+}
 
 template <typename Layout> struct BoundLayout {
   const Layout* layout;

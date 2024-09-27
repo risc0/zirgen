@@ -121,7 +121,8 @@ struct GenerateStepsPass : public GenerateStepsBase<GenerateStepsPass> {
 
     OpBuilder builder(component);
 
-    auto stepOp = builder.create<StepFuncOp>(loc, component.getName());
+    auto stepOp = builder.create<StepFuncOp>(
+        loc, ("step$" + component.getName()).str(), builder.getFunctionType({}, {}));
 
     builder.setInsertionPointToStart(stepOp.addEntryBlock());
 

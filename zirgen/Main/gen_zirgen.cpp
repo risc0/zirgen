@@ -44,6 +44,8 @@
 
 namespace cl = llvm::cl;
 using namespace zirgen;
+using namespace zirgen::codegen;
+;
 using namespace mlir;
 
 static cl::opt<std::string>
@@ -75,32 +77,28 @@ std::unique_ptr<llvm::raw_ostream> openOutput(StringRef filename) {
   return ofs;
 }
 
-void emitDefs(ModuleOp mod, const codegen::CodegenOptions& opts, StringRef filename) {
+void emitDefs(CodegenEmitter& cg, ModuleOp mod, StringRef filename) {
   auto os = openOutput(filename);
-  zirgen::codegen::CodegenEmitter emitter(opts, os.get(), mod.getContext());
-  auto emitZhlt = Zhlt::getEmitter(mod, emitter);
+  CodegenEmitter::StreamOutputGuard guard(cg, os.get());
+  auto emitZhlt = Zhlt::getEmitter(mod, cg);
   if (emitZhlt->emitDefs().failed()) {
     llvm::errs() << "Failed to emit circuit definitions to " << filename << "\n";
     exit(1);
   }
 }
 
-void emitTypes(ModuleOp mod, const codegen::CodegenOptions& opts, StringRef filename) {
+void emitTypes(CodegenEmitter& cg, ModuleOp mod, StringRef filename) {
   auto os = openOutput(filename);
-  zirgen::codegen::CodegenEmitter emitter(opts, os.get(), mod.getContext());
-  emitter.emitTypeDefs(mod);
+  CodegenEmitter::StreamOutputGuard guard(cg, os.get());
+  cg.emitTypeDefs(mod);
 }
 
-template <typename... OpT>
-void emitOps(ModuleOp mod, const codegen::CodegenOptions& opts, StringRef filename) {
+template <typename... OpT> void emitOps(CodegenEmitter& cg, ModuleOp mod, StringRef filename) {
   auto os = openOutput(filename);
-  zirgen::codegen::CodegenEmitter emitter(opts, os.get(), mod.getContext());
-
-  OpBuilder builder(mod.getContext());
-  OwningOpRef<ModuleOp> modCopy = builder.create<ModuleOp>(builder.getUnknownLoc());
+  CodegenEmitter::StreamOutputGuard guard(cg, os.get());
   for (auto& op : *mod.getBody()) {
     if (llvm::isa<OpT...>(&op)) {
-      emitter.emitTopLevel(&op);
+      cg.emitTopLevel(&op);
     }
   }
 }
@@ -170,9 +168,7 @@ int main(int argc, char* argv[]) {
 
   pm.addPass(zirgen::dsl::createElideTrivialStructsPass());
   pm.addPass(zirgen::ZStruct::createExpandLayoutPass());
-
-  //  pm.addPass(mlir::createSymbolPrivatizePass(/*excludeSymbols=*/{"exec", "compute_accum"}));
-  //  pm.addPass(mlir::createSymbolDCEPass());
+  pm.addPass(mlir::createSymbolDCEPass());
 
   if (failed(pm.run(typedModule.value()))) {
     llvm::errs() << "an internal compiler error occurred while lowering this module:\n";
@@ -185,23 +181,42 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
+  // Create step functions
+  mlir::ModuleOp stepFuncs = typedModule->clone();
+  // Privatize everything that we don't need, and generate step functions.
+  pm.clear();
+  pm.addPass(zirgen::Zhlt::createLowerStepFuncsPass());
+  pm.addPass(zirgen::ZStruct::createBuffersToArgsPass());
+  pm.addPass(mlir::createCanonicalizerPass());
+  pm.addPass(mlir::createSymbolPrivatizePass(/*excludeSymbols=*/{"step$Top", "step$Top$accum"}));
+  pm.addPass(mlir::createSymbolDCEPass());
+
+  if (failed(pm.run(stepFuncs))) {
+    llvm::errs() << "an internal compiler error occurred while lowering this module:\n";
+    stepFuncs.print(llvm::errs());
+    return 1;
+  }
+
   auto rustOpts = codegen::getRustCodegenOpts();
-  emitDefs(*typedModule, rustOpts, "defs.rs.inc");
-  emitTypes(*typedModule, rustOpts, "types.rs.inc");
-  emitOps<Zhlt::ValidityRegsFuncOp>(*typedModule, rustOpts, "validity_regs.rs.inc");
-  emitOps<Zhlt::ValidityTapsFuncOp>(*typedModule, rustOpts, "validity_taps.rs.inc");
-  emitOps<ZStruct::GlobalConstOp>(*typedModule, rustOpts, "layout.rs.inc");
-  emitOps<Zhlt::StepFuncOp, Zhlt::ExecFuncOp>(*typedModule, rustOpts, "steps.rs.inc");
+  CodegenEmitter rustCg(rustOpts, &context);
+  emitDefs(rustCg, *typedModule, "defs.rs.inc");
+  emitTypes(rustCg, *typedModule, "types.rs.inc");
+  emitOps<Zhlt::ValidityRegsFuncOp>(rustCg, *typedModule, "validity_regs.rs.inc");
+  emitOps<Zhlt::ValidityTapsFuncOp>(rustCg, *typedModule, "validity_taps.rs.inc");
+  emitOps<ZStruct::GlobalConstOp>(rustCg, *typedModule, "layout.rs.inc");
+  emitOps<Zhlt::StepFuncOp>(rustCg, stepFuncs, "steps.rs.inc");
 
   auto cppOpts = codegen::getCppCodegenOpts();
-  emitDefs(*typedModule, cppOpts, "defs.cpp.inc");
-  emitTypes(*typedModule, cppOpts, "types.h.inc");
-  emitOps<Zhlt::ValidityTapsFuncOp>(*typedModule, cppOpts, "validity_regs.cpp.inc");
-  emitOps<Zhlt::ValidityRegsFuncOp>(*typedModule, cppOpts, "validity_taps.cpp.inc");
-  emitOps<ZStruct::GlobalConstOp>(*typedModule, cppOpts, "layout.cpp.inc");
-  emitOps<Zhlt::StepFuncOp, Zhlt::ExecFuncOp>(*typedModule, cppOpts, "steps.cpp.inc");
+  CodegenEmitter cppCg(cppOpts, &context);
+  emitDefs(cppCg, *typedModule, "defs.cpp.inc");
+  emitTypes(cppCg, *typedModule, "types.h.inc");
+  emitOps<Zhlt::ValidityTapsFuncOp>(cppCg, *typedModule, "validity_regs.cpp.inc");
+  emitOps<Zhlt::ValidityRegsFuncOp>(cppCg, *typedModule, "validity_taps.cpp.inc");
+  emitOps<ZStruct::GlobalConstOp>(cppCg, *typedModule, "layout.cpp.inc");
+  emitOps<Zhlt::StepFuncOp, Zhlt::ExecFuncOp>(cppCg, stepFuncs, "steps.cpp.inc");
 
   typedModule->print(*openOutput("circuit.ir"));
+  stepFuncs.print(*openOutput("steps.ir"));
 
   return 0;
 }

@@ -107,8 +107,12 @@ void CodegenEmitter::emitFunc(FunctionOpInterface op) {
   }
 
   llvm::SmallVector<CodegenIdent<IdentKind::Var>> argNames;
-  for (auto arg : op.getArguments()) {
-    StringRef baseName = argValueNames.lookup(arg);
+  for (auto [argNum, arg] : llvm::enumerate(op.getArguments())) {
+    StringRef baseName;
+    if (auto argNameAttr = op.getArgAttrOfType<StringAttr>(argNum, "zirgen.argName"))
+      baseName = argNameAttr;
+    if (baseName.empty())
+      baseName = argValueNames.lookup(arg);
     if (baseName.empty())
       baseName = "arg";
     argNames.push_back(getNewValueName(arg, baseName, /*owned=*/false));
@@ -521,9 +525,19 @@ CodegenIdent<IdentKind::Type> CodegenEmitter::getTypeName(Type ty) {
 }
 
 void CodegenEmitter::emitEscapedString(llvm::StringRef str) {
-  *this << "\"";
-  printEscapedString(str, *outStream);
-  *this << "\"";
+  // Unfortunately we can't use llvm's emitEscapedString directly since it
+  // doesn't put a `x` before using hexadecimal escape sequences.
+  auto& os = *outStream;
+  os << '"';
+  for (unsigned char c : str) {
+    if (c == '\\')
+      *outStream << '\\' << c;
+    else if (llvm::isPrint(c) && c != '"')
+      os << c;
+    else
+      os << "\\x" << llvm::hexdigit(c >> 4) << llvm::hexdigit(c & 0x0F);
+  }
+  os << '"';
 }
 
 void CodegenEmitter::emitTakeReference(EmitPart emitTarget) {

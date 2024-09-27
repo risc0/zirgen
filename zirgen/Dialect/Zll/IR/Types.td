@@ -74,6 +74,11 @@ def Buffer : ZllType<"Buffer", "buffer", [DeclareTypeInterfaceMethods<CodegenTyp
       "BufferKind": $kind
   );
   let assemblyFormat = "`<`$size `,` $kind  (`,` $element^)? `>`";
+  let extraClassDeclaration = [{
+    bool allowDuplicateTypeNames() const {
+      return true;
+    }
+  }];
 }
 
 def Digest : ZllType<"Digest", "digest", [CodegenTypeInterface]> {

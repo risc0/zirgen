@@ -62,4 +62,10 @@ def StripAliasLayoutOps : Pass<"inline-layout", "mlir::ModuleOp"> {
   let dependentDialects = ["zirgen::Zhlt::ZhltDialect"];
 }
 
+def LowerStepFuncs : Pass<"lower-step-funcs", "mlir::ModuleOp"> {
+  let summary = "Convert all functions to StepFuncs";
+  let constructor = "zirgen::Zhlt::createLowerStepFuncsPass()";
+  let dependentDialects = ["zirgen::Zhlt::ZhltDialect"];
+}
+
 #endif // ZHLT_TRANSFORM_PASSES

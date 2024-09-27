@@ -59,6 +59,7 @@ enum Action {
   PrintZHLT,
   OptimizeZHLT,
   PrintZStruct,
+  PrintStepFuncs,
   PrintLayoutType,
   PrintLayoutAttr,
   PrintRust,
@@ -76,6 +77,7 @@ static cl::opt<enum Action> emitAction(
         clEnumValN(PrintZHLT, "zhlt", "output typed high level Zirgen IR"),
         clEnumValN(OptimizeZHLT, "zhltopt", "output optimized high level IR"),
         clEnumValN(PrintZStruct, "zstruct", "output Zirgen IR after semantic lowering"),
+        clEnumValN(PrintStepFuncs, "stepfuncs", "output IR after lowering to StepFuncOps"),
         clEnumValN(PrintLayoutType, "layouttype", "structure of circuit layout types as HTML"),
         clEnumValN(PrintLayoutAttr, "layoutattr", "content of generated layout attributes as text"),
         clEnumValN(PrintRust, "rust", "Output generated rust code"),
@@ -198,6 +200,7 @@ int main(int argc, char* argv[]) {
   if (!doTest)
     pm.addPass(zirgen::Zhlt::createStripTestsPass());
   zirgen::addTypingPasses(pm);
+
   pm.addPass(zirgen::dsl::createGenerateCheckPass());
   if (genValidity) {
     pm.addPass(zirgen::dsl::createGenerateTapsPass());
@@ -220,6 +223,11 @@ int main(int argc, char* argv[]) {
   pm.addPass(mlir::createCanonicalizerPass());
   pm.addPass(mlir::createSymbolDCEPass());
 
+  if (genValidity && !doTest) {
+    // TODO: Convert test framework to pass buffers as arguments
+    pm.nest<zirgen::Zhlt::ValidityRegsFuncOp>().addPass(zirgen::ZStruct::createBuffersToArgsPass());
+    pm.nest<zirgen::Zhlt::ValidityTapsFuncOp>().addPass(zirgen::ZStruct::createBuffersToArgsPass());
+  }
   if (failed(pm.run(typedModule.value()))) {
     llvm::errs() << "an internal compiler error occurred while lowering this module:\n";
     typedModule->print(llvm::errs());
@@ -261,14 +269,41 @@ int main(int argc, char* argv[]) {
     return zirgen::runTests(*typedModule);
   }
 
+  // To generate code for step functions, we copy our module, flatten step functions and move the
+  // buffers to arguments.
+  pm.clear();
+  mlir::ModuleOp stepFuncs = typedModule->clone();
+  // Privatize everything that we don't need, and make everything into step functions.
+  pm.addPass(zirgen::Zhlt::createLowerStepFuncsPass());
+  pm.addPass(zirgen::ZStruct::createBuffersToArgsPass());
+  pm.addPass(mlir::createCanonicalizerPass());
+  pm.addPass(mlir::createSymbolPrivatizePass(/*excludeSymbols=*/{"step$Top", "step$Top$accum"}));
+  pm.addPass(mlir::createSymbolDCEPass());
+
+  if (failed(pm.run(stepFuncs))) {
+    llvm::errs() << "an internal compiler error occurred while lowering this module:\n";
+    stepFuncs.print(llvm::errs());
+    return 1;
+  }
+
+  if (emitAction == Action::PrintStepFuncs) {
+    stepFuncs.print(llvm::outs());
+    return 0;
+  }
+
   if (emitAction == Action::PrintRust || emitAction == Action::PrintCpp) {
     codegen::CodegenOptions codegenOpts = (emitAction == Action::PrintRust)
                                               ? codegen::getRustCodegenOpts()
                                               : codegen::getCppCodegenOpts();
     zirgen::codegen::CodegenEmitter emitter(codegenOpts, &llvm::outs(), &context);
-    if (zirgen::Zhlt::emitModule(*typedModule, emitter).failed()) {
-      llvm::errs() << "Failed to emit circuit\n";
+    if (zirgen::Zhlt::emitModule(stepFuncs, emitter).failed()) {
+      llvm::errs() << "Failed to emit step functions\n";
       return 1;
+    }
+
+    for (auto& op : *typedModule) {
+      if (llvm::isa<zirgen::Zhlt::ValidityRegsFuncOp, zirgen::Zhlt::ValidityTapsFuncOp>(op))
+        emitter.emitTopLevel(&op);
     }
   }
 

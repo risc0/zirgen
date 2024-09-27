@@ -68,7 +68,7 @@ private:
 void CircuitInterfaceZirgen::initialize() {
   add_taps();
 
-  validityTaps = mod().lookupSymbol<Zhlt::ValidityTapsFuncOp>(ValidityTapsFuncOp::getSymPrefix());
+  validityTaps = mod().lookupSymbol<Zhlt::ValidityTapsFuncOp>("validity_taps");
   assert(validityTaps);
 }
 
@@ -170,7 +170,7 @@ Val CircuitInterfaceZirgen::compute_poly(llvm::ArrayRef<Val> u,
   // evaluator into the target EDSL function.
   IRMapping mapping;
   ZStruct::ArrayOp tapsArray = createArray(builder, u);
-  mapping.map(tapsWork.getTaps(), tapsArray);
+  mapping.map(/*taps=*/tapsWork.getArgument(0), tapsArray);
 
   // We want to separate out constraint ops (and_eqz, and_cond) into
   // multiplies.  So we need to separate the "Constraint" type into a

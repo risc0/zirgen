@@ -82,7 +82,12 @@ void RustLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
     cg << name << ": ";
     if (ty.hasTrait<CodegenLayoutTypeTrait>())
       cg << "BoundLayout<" << cg.getTypeName(ty) << ", impl BufferRow<ValType = Val>>";
-    else {
+    else if (auto bufTy = llvm::dyn_cast<BufferType>(ty)) {
+      if (bufTy.getElement().getExtended())
+        cg << "&impl BufferRow<ValType = ExtVal>";
+      else
+        cg << "&impl BufferRow<ValType = Val>";
+    } else {
       if (ty.hasTrait<CodegenNeedsCloneTypeTrait>() ||
           ty.hasTrait<CodegenOnlyPassByReferenceTypeTrait>())
         cg << "&";

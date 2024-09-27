@@ -57,7 +57,6 @@ struct TopStruct {
   NondetRegStruct right;
   RegStruct result;
 };
-using ExtVal8Array = std::array<ExtVal, 8>;
 constexpr Tap8Array kTapList = Tap8Array{MAKE_TAP(0, 0, 0),
                                          MAKE_TAP(1, 0, 0),
                                          MAKE_TAP(2, 0, 0),
@@ -169,164 +168,168 @@ OneHotStruct exec_OneHot(ExecContext& ctx, Val arg0, BoundLayout<OneHotLayout> l
   EQZ((x22 - arg0), "OneHot(zirgen/dsl/examples/calculator.zir:19)");
   return OneHotStruct{._super = x3, .n = Val(2), .bits = x3};
 }
-RegStruct exec_GetGlobalResult(ExecContext& ctx) {
+RegStruct exec_GetGlobalResult(ExecContext& ctx, GlobalBuf global0) {
   // GetGlobalResult(zirgen/dsl/examples/calculator.zir:23)
-  BoundLayout<_globalLayout> x0 = BIND_LAYOUT(kLayoutGlobal, GET_BUFFER(ctx, global));
+  BoundLayout<_globalLayout> x1 = BIND_LAYOUT(kLayoutGlobal, global0);
   // GetGlobalResult(zirgen/dsl/examples/calculator.zir:24)
-  RegStruct x1 = back_Reg(ctx, 0, LAYOUT_LOOKUP(x0, result));
-  return x1;
+  RegStruct x2 = back_Reg(ctx, 0, LAYOUT_LOOKUP(x1, result));
+  return x2;
 }
-ComponentStruct exec_SetGlobalResult(ExecContext& ctx, Val arg0) {
+ComponentStruct exec_SetGlobalResult(ExecContext& ctx, Val arg0, GlobalBuf global1) {
   // SetGlobalResult(zirgen/dsl/examples/calculator.zir:28)
-  BoundLayout<_globalLayout> x1 = BIND_LAYOUT(kLayoutGlobal, GET_BUFFER(ctx, global));
+  BoundLayout<_globalLayout> x2 = BIND_LAYOUT(kLayoutGlobal, global1);
   // SetGlobalResult(zirgen/dsl/examples/calculator.zir:29)
-  RegStruct x2 = exec_Reg(ctx, arg0, LAYOUT_LOOKUP(x1, result));
+  RegStruct x3 = exec_Reg(ctx, arg0, LAYOUT_LOOKUP(x2, result));
   // SetGlobalResult(zirgen/dsl/examples/calculator.zir:28)
-  ComponentStruct x3 = exec_Component(ctx);
-  return x3;
+  ComponentStruct x4 = exec_Component(ctx);
+  return x4;
 }
-TopStruct exec_Top(ExecContext& ctx, BoundLayout<TopLayout> layout0) {
+TopStruct exec_Top(ExecContext& ctx, BoundLayout<TopLayout> layout0, GlobalBuf global1) {
   // Top(zirgen/dsl/examples/calculator.zir:36)
-  BoundLayout<TopResultLayout> x1 = LAYOUT_LOOKUP(layout0, result);
+  BoundLayout<TopResultLayout> x2 = LAYOUT_LOOKUP(layout0, result);
   // Top(zirgen/dsl/examples/calculator.zir:33)
-  GetValFromUserStruct x2 = exec_GetValFromUser(ctx);
-  NondetRegStruct x3 = exec_NondetReg(ctx, x2._super, LAYOUT_LOOKUP(layout0, op));
+  GetValFromUserStruct x3 = exec_GetValFromUser(ctx);
+  NondetRegStruct x4 = exec_NondetReg(ctx, x3._super, LAYOUT_LOOKUP(layout0, op));
   // Top(zirgen/dsl/examples/calculator.zir:34)
-  GetValFromUserStruct x4 = exec_GetValFromUser(ctx);
-  NondetRegStruct x5 = exec_NondetReg(ctx, x4._super, LAYOUT_LOOKUP(layout0, left));
+  GetValFromUserStruct x5 = exec_GetValFromUser(ctx);
+  NondetRegStruct x6 = exec_NondetReg(ctx, x5._super, LAYOUT_LOOKUP(layout0, left));
   // Top(zirgen/dsl/examples/calculator.zir:35)
-  GetValFromUserStruct x6 = exec_GetValFromUser(ctx);
-  NondetRegStruct x7 = exec_NondetReg(ctx, x6._super, LAYOUT_LOOKUP(layout0, right));
+  GetValFromUserStruct x7 = exec_GetValFromUser(ctx);
+  NondetRegStruct x8 = exec_NondetReg(ctx, x7._super, LAYOUT_LOOKUP(layout0, right));
   // Top(zirgen/dsl/examples/calculator.zir:36)
-  OneHotStruct x8 = exec_OneHot(ctx, x3._super, LAYOUT_LOOKUP(layout0, _0));
-  Val2Array x9 = map(
-      x8._super, std::function([&](NondetRegStruct2Array::value_type x10) { return x10._super; }));
-  BoundLayout<NondetRegLayout> x11 = LAYOUT_LOOKUP(x1, _super);
-  RegStruct x12;
-  if (to_size_t(x9[0])) {
+  OneHotStruct x9 = exec_OneHot(ctx, x4._super, LAYOUT_LOOKUP(layout0, _0));
+  Val2Array x10 = map(
+      x9._super, std::function([&](NondetRegStruct2Array::value_type x11) { return x11._super; }));
+  BoundLayout<NondetRegLayout> x12 = LAYOUT_LOOKUP(x2, _super);
+  RegStruct x13;
+  if (to_size_t(x10[0])) {
     // Top(zirgen/dsl/examples/calculator.zir:37)
-    Val x13 = exec_Add(ctx, x5._super, x7._super);
-    RegStruct x14 = exec_Reg(ctx, x13, LAYOUT_LOOKUP(x1, arm0));
-    x12 = x14;
-  } else if (to_size_t(x9[1])) {
+    Val x14 = exec_Add(ctx, x6._super, x8._super);
+    RegStruct x15 = exec_Reg(ctx, x14, LAYOUT_LOOKUP(x2, arm0));
+    x13 = x15;
+  } else if (to_size_t(x10[1])) {
     // Top(zirgen/dsl/examples/calculator.zir:38)
-    Val x15 = exec_Sub(ctx, x5._super, x7._super);
-    RegStruct x16 = exec_Reg(ctx, x15, LAYOUT_LOOKUP(x1, arm1));
-    x12 = x16;
+    Val x16 = exec_Sub(ctx, x6._super, x8._super);
+    RegStruct x17 = exec_Reg(ctx, x16, LAYOUT_LOOKUP(x2, arm1));
+    x13 = x17;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
   // Top(zirgen/dsl/examples/calculator.zir:36)
-  RegStruct x17 = back_Reg(ctx, 0, x11);
+  RegStruct x18 = back_Reg(ctx, 0, x12);
   // Top(zirgen/dsl/examples/calculator.zir:40)
-  ComponentStruct x18 = exec_Log(ctx, "result = %u", std::initializer_list<Val>{x17._super._super});
+  ComponentStruct x19 = exec_Log(ctx, "result = %u", std::initializer_list<Val>{x18._super._super});
   // Top(zirgen/dsl/examples/calculator.zir:36)
-  RegStruct x19 = back_Reg(ctx, 0, x11);
+  RegStruct x20 = back_Reg(ctx, 0, x12);
   // Top(zirgen/dsl/examples/calculator.zir:41)
-  ComponentStruct x20 = exec_SetGlobalResult(ctx, x19._super._super);
+  ComponentStruct x21 = exec_SetGlobalResult(ctx, x20._super._super, global1);
   // Top(zirgen/dsl/examples/calculator.zir:42)
-  RegStruct x21 = exec_GetGlobalResult(ctx);
+  RegStruct x22 = exec_GetGlobalResult(ctx, global1);
   // Top(zirgen/dsl/examples/calculator.zir:36)
-  RegStruct x22 = back_Reg(ctx, 0, x11);
+  RegStruct x23 = back_Reg(ctx, 0, x12);
   // Top(zirgen/dsl/examples/calculator.zir:42)
-  EQZ((x21._super._super - x22._super._super), "Top(zirgen/dsl/examples/calculator.zir:42)");
+  EQZ((x22._super._super - x23._super._super), "Top(zirgen/dsl/examples/calculator.zir:42)");
   // Top(zirgen/dsl/examples/calculator.zir:36)
-  RegStruct x23 = back_Reg(ctx, 0, x11);
+  RegStruct x24 = back_Reg(ctx, 0, x12);
   // Top(zirgen/dsl/examples/calculator.zir:43)
-  ComponentStruct x24 = exec_OutputToUser(ctx, x23._super._super);
+  ComponentStruct x25 = exec_OutputToUser(ctx, x24._super._super);
   // Top(zirgen/dsl/examples/calculator.zir:32)
-  ComponentStruct x25 = exec_Component(ctx);
-  return TopStruct{._super = x25, .op = x3, .left = x5, .right = x7, .result = x17};
+  ComponentStruct x26 = exec_Component(ctx);
+  return TopStruct{._super = x26, .op = x4, .left = x6, .right = x8, .result = x18};
 }
-void step_Top(ExecContext& ctx) {
-  BoundLayout<TopLayout> x0 = BIND_LAYOUT(kLayout_Top, GET_BUFFER(ctx, data));
-  TopStruct x1 = exec_Top(ctx, x0);
+void step_Top(ExecContext& ctx, MutableBuf data0, GlobalBuf global1) {
+  BoundLayout<TopLayout> x2 = BIND_LAYOUT(kLayout_Top, data0);
+  TopStruct x3 = exec_Top(ctx, x2, global1);
   return;
 }
-MixState validityTaps_(ValidityTapsContext& ctx, PolyMix polyMix0, ExtVal8Array taps1) {
+MixState
+validityTaps(ValidityTapsContext& ctx, ConstantExtBuf taps0, PolyMix polyMix1, GlobalBuf global2) {
+  ExtVal x3 = get(taps0, 3, 0);
+  ExtVal x4 = get(taps0, 4, 0);
+  ExtVal x5 = get(taps0, 5, 0);
+  ExtVal x6 = get(taps0, 6, 0);
+  ExtVal x7 = get(taps0, 7, 0);
   // Top(zirgen/dsl/examples/calculator.zir:36)
-  MixState x2 = trivialConstraint();
-  // OneHot(zirgen/dsl/examples/calculator.zir:19)
-  MixState x3 = andEqzExt(
-      polyMix0,
-      andEqzExt(polyMix0,
-                andEqzExt(polyMix0,
-                          andEqzExt(polyMix0, x2, (taps1[5] * (Val4{1, 0, 0, 0} - taps1[5]))),
-                          (taps1[6] * (Val4{1, 0, 0, 0} - taps1[6]))),
-                ((taps1[5] + taps1[6]) - Val4{1, 0, 0, 0})),
-      (taps1[6] - taps1[2]));
+  MixState x8 = trivialConstraint();
+  MixState x9 = andCondExt(
+      andCondExt(
+          andEqzExt(polyMix1,
+                    andEqzExt(polyMix1,
+                              andEqzExt(polyMix1,
+                                        andEqzExt(polyMix1, x8, (x5 * (Val4{1, 0, 0, 0} - x5))),
+                                        (x6 * (Val4{1, 0, 0, 0} - x6))),
+                              ((x5 + x6) - Val4{1, 0, 0, 0})),
+                    (x6 - get(taps0, 2, 0))),
+          x5,
+          andEqzExt(polyMix1, x8, ((x3 + x4) - x7))),
+      x6,
+      andEqzExt(polyMix1, x8, ((x3 - x4) - x7)));
   // SetGlobalResult(zirgen/dsl/examples/calculator.zir:28)
   // Top(zirgen/dsl/examples/calculator.zir:41)
-  BoundLayout<_globalLayout> x4 = BIND_LAYOUT(kLayoutGlobal, GET_BUFFER(ctx, global));
-  // Top(zirgen/dsl/examples/calculator.zir:42)
-  MixState x5 = andEqzExt(
-      polyMix0,
+  BoundLayout<_globalLayout> x10 = BIND_LAYOUT(kLayoutGlobal, global2);
+  return andEqzExt(
+      polyMix1,
       andEqzExt(
-          polyMix0,
-          andCondExt(
-              andCondExt(x3, taps1[5], andEqzExt(polyMix0, x2, ((taps1[3] + taps1[4]) - taps1[7]))),
-              taps1[6],
-              andEqzExt(polyMix0, x2, ((taps1[3] - taps1[4]) - taps1[7]))),
-          (taps1[7] - LOAD_AS_EXT(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x4, result), _super), 0))),
-      (LOAD_AS_EXT(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x4, result), _super), 0) - taps1[7]));
-  return x5;
+          polyMix1, x9, (x7 - LOAD_AS_EXT(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x10, result), _super), 0))),
+      (LOAD_AS_EXT(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x10, result), _super), 0) - x7));
 }
-MixState validityRegs_(ValidityRegsContext& ctx, PolyMix polyMix0) {
-  BoundLayout<TopLayout> x1 = BIND_LAYOUT(kLayout_Top, GET_BUFFER(ctx, data));
+MixState
+validityRegs(ValidityRegsContext& ctx, PolyMix polyMix0, MutableBuf data1, GlobalBuf global2) {
+  BoundLayout<TopLayout> x3 = BIND_LAYOUT(kLayout_Top, data1);
   // Top(zirgen/dsl/examples/calculator.zir:36)
-  BoundLayout<TopResultLayout> x2 = LAYOUT_LOOKUP(x1, result);
+  BoundLayout<TopResultLayout> x4 = LAYOUT_LOOKUP(x3, result);
   // OneHot(zirgen/dsl/examples/calculator.zir:13)
-  BoundLayout<NondetRegLayout2LayoutArray> x3 = LAYOUT_LOOKUP(LAYOUT_LOOKUP(x1, _0), _super);
+  BoundLayout<NondetRegLayout2LayoutArray> x5 = LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, _0), _super);
   // OneHot(zirgen/dsl/examples/calculator.zir:15)
-  MixState x4 = andEqz(polyMix0,
+  MixState x6 = andEqz(polyMix0,
                        trivialConstraint(),
-                       (LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x3, 0), _super), 0) *
-                        (Val(1) - LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x3, 0), _super), 0))));
+                       (LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x5, 0), _super), 0) *
+                        (Val(1) - LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x5, 0), _super), 0))));
   // OneHot(zirgen/dsl/examples/calculator.zir:17)
-  MixState x5 = andEqz(polyMix0,
+  MixState x7 = andEqz(polyMix0,
                        andEqz(polyMix0,
-                              x4,
-                              (LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x3, 1), _super), 0) *
-                               (Val(1) - LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x3, 1), _super), 0)))),
-                       ((LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x3, 0), _super), 0) +
-                         LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x3, 1), _super), 0)) -
+                              x6,
+                              (LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x5, 1), _super), 0) *
+                               (Val(1) - LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x5, 1), _super), 0)))),
+                       ((LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x5, 0), _super), 0) +
+                         LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x5, 1), _super), 0)) -
                         Val(1)));
-  BoundLayout<NondetRegLayout> x6 = LAYOUT_LOOKUP(x2, _super);
+  BoundLayout<NondetRegLayout> x8 = LAYOUT_LOOKUP(x4, _super);
   // Reg(<preamble>:5)
   // Top(zirgen/dsl/examples/calculator.zir:37)
-  MixState x7 = andEqz(polyMix0,
+  MixState x9 = andEqz(polyMix0,
                        trivialConstraint(),
-                       ((LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x1, left), _super), 0) +
-                         LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x1, right), _super), 0)) -
-                        LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x2, arm0), _super), 0)));
+                       ((LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, left), _super), 0) +
+                         LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, right), _super), 0)) -
+                        LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x4, arm0), _super), 0)));
   // Top(zirgen/dsl/examples/calculator.zir:38)
-  MixState x8 = andEqz(polyMix0,
-                       trivialConstraint(),
-                       ((LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x1, left), _super), 0) -
-                         LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x1, right), _super), 0)) -
-                        LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x2, arm1), _super), 0)));
+  MixState x10 = andEqz(polyMix0,
+                        trivialConstraint(),
+                        ((LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, left), _super), 0) -
+                          LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, right), _super), 0)) -
+                         LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x4, arm1), _super), 0)));
   // SetGlobalResult(zirgen/dsl/examples/calculator.zir:28)
   // Top(zirgen/dsl/examples/calculator.zir:41)
-  BoundLayout<_globalLayout> x9 = BIND_LAYOUT(kLayoutGlobal, GET_BUFFER(ctx, global));
+  BoundLayout<_globalLayout> x11 = BIND_LAYOUT(kLayoutGlobal, global2);
   // Reg(<preamble>:5)
   // SetGlobalResult(zirgen/dsl/examples/calculator.zir:29)
-  MixState x10 =
+  MixState x12 =
       andEqz(polyMix0,
              andCond(andCond(andEqz(polyMix0,
-                                    x5,
-                                    (LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x3, 1), _super), 0) -
-                                     LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x1, op), _super), 0))),
-                             LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x3, 0), _super), 0),
-                             x7),
-                     LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x3, 1), _super), 0),
-                     x8),
-             (LOAD(LAYOUT_LOOKUP(x6, _super), 0) -
-              LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x9, result), _super), 0)));
+                                    x7,
+                                    (LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x5, 1), _super), 0) -
+                                     LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, op), _super), 0))),
+                             LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x5, 0), _super), 0),
+                             x9),
+                     LOAD(LAYOUT_LOOKUP(LAYOUT_SUBSCRIPT(x5, 1), _super), 0),
+                     x10),
+             (LOAD(LAYOUT_LOOKUP(x8, _super), 0) -
+              LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x11, result), _super), 0)));
   // GetGlobalResult(zirgen/dsl/examples/calculator.zir:23)
   // Top(zirgen/dsl/examples/calculator.zir:42)
-  BoundLayout<_globalLayout> x11 = BIND_LAYOUT(kLayoutGlobal, GET_BUFFER(ctx, global));
+  BoundLayout<_globalLayout> x13 = BIND_LAYOUT(kLayoutGlobal, global2);
   return andEqz(polyMix0,
-                x10,
-                (LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x11, result), _super), 0) -
-                 LOAD(LAYOUT_LOOKUP(x6, _super), 0)));
+                x12,
+                (LOAD(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x13, result), _super), 0) -
+                 LOAD(LAYOUT_LOOKUP(x8, _super), 0)));
 }
