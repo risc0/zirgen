@@ -95,7 +95,7 @@ LogicalResult MulOp::inferReturnTypes(MLIRContext* ctx,
   auto lhsType = adaptor.getLhs().getType().cast<BigIntType>();
   auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
   size_t maxCoeffs = std::max(lhsType.getCoeffs(), rhsType.getCoeffs());
-  size_t totCoeffs = lhsType.getCoeffs() + rhsType.getCoeffs();
+  size_t totCoeffs = lhsType.getCoeffs() + rhsType.getCoeffs() - 1;
   size_t maxPos = std::max(lhsType.getMaxPos() * rhsType.getMaxPos(),
                            lhsType.getMaxNeg() * rhsType.getMaxNeg()) *
                   maxCoeffs;
