@@ -162,7 +162,7 @@ component RotLeft3<A: Val, B: Val, C: Val, S1: Val, S2: Val, S3: Val>
           [zc, 1-zc] -> ( WordTriple(arr2.ra, arr2.rb, arr2.rc),
             { arr3 := RotLeft3impl<A, B, C, S3+zc>(arr2.ra, arr2.rb, arr2.rc);
               WordTriple(arr3.ra, arr3.rb, arr3.rc)
-            })})});
+            })})})
 }
 
 component xor5words_result<Xidx: Val, Sidx: Val>(rvpst: RetTuple) {
@@ -266,7 +266,6 @@ component xor5words_major<Xidx: Val>(rvals: RetTuple) {
   )
 }
 
-/*
 component rho_minor0<X: Val, Y: Val>(rvals: RetTuple) {
   rvpstate := rvals@(1+3*(X/2)); //X=0,pstate=1 X=2,pstate=4, X=4,pstate=7
   rvprev01 := rvals@1;
@@ -297,6 +296,7 @@ component rho_minor0<X: Val, Y: Val>(rvals: RetTuple) {
   unpack_p3 := ToBits<SLEN()>(v_inc3);
   FromBits<SLEN()>(unpack_p3) = v_inc3;
 
+  //rotp := WordTriple(unpack_p1, unpack_p2, unpack_p3);
   rotp := RotLeft3<BLEN(), SLEN(), SLEN(), 1, 0, 0>(unpack_p1, unpack_p2, unpack_p3);
   pad_rb := ConcatZeros<SLEN(),BLEN()-SLEN()>(rotp.b);
   pad_rc := ConcatZeros<SLEN(),BLEN()-SLEN()>(rotp.c);
@@ -305,7 +305,6 @@ component rho_minor0<X: Val, Y: Val>(rvals: RetTuple) {
   RetTuple(rotp.a, pad_rb, pad_rc, padded_m1, padded_m2, padded_m3,
            3*(X/2)+1, Y+5, rvpstate.rnd, rvpstate.blk, rvpstate.midx)
 }
-*/
 
 component rho_minor3<Y: Val>(rvals: RetTuple) {
   rvp01 := rvals@1;
@@ -414,7 +413,7 @@ component rho_minor3<Y: Val>(rvals: RetTuple) {
 component rho_major<Y: Val>(rvals: RetTuple) {
   minor_onehot := OneHot<9>(rvals@1.minor);
   minor_onehot -> (
-    //rho_minor0<0,Y>(rvals),
+    rho_minor0<0,Y>(rvals),
     //rho_minor1<0,Y>(rvals),
     //rho_minor2<0,Y>(rvals),
     //rho_minor0<2,Y>(rvals),
@@ -422,9 +421,9 @@ component rho_major<Y: Val>(rvals: RetTuple) {
     //rho_minor2<2,Y>(rvals),
     //rho_minor0<4,Y>(rvals),
     //rho_minor1<4,Y>(rvals),
-    //rho_minor3<Y>(rvals),
-    RetTuple(dummyB(),dummyB(),dummyB(),dummyE(),dummyB(),dummyB(),0,19,0,0,0),
-    RetTuple(dummyB(),dummyB(),dummyB(),dummyE(),dummyB(),dummyB(),0,19,0,0,0),
+    rho_minor3<Y>(rvals),
+    //RetTuple(dummyB(),dummyB(),dummyB(),dummyE(),dummyB(),dummyB(),0,19,0,0,0),
+    //RetTuple(dummyB(),dummyB(),dummyB(),dummyE(),dummyB(),dummyB(),0,19,0,0,0),
     RetTuple(dummyB(),dummyB(),dummyB(),dummyE(),dummyB(),dummyB(),0,19,0,0,0),
     RetTuple(dummyB(),dummyB(),dummyB(),dummyE(),dummyB(),dummyB(),0,19,0,0,0),
     RetTuple(dummyB(),dummyB(),dummyB(),dummyE(),dummyB(),dummyB(),0,19,0,0,0),
