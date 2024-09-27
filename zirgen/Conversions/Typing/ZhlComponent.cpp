@@ -933,7 +933,7 @@ Value LoweringImpl::asLayout(Value value) {
   Value component = valueMapping[value];
   layout = TypeSwitch<Type, Value>(component.getType())
                .Case<ZStruct::StructType>([&](auto t) {
-                 return builder.create<ZStruct::GetLayoutOp>(component.getLoc(), component);
+                 return builder.create<Zhlt::GetLayoutOp>(component.getLoc(), component);
                })
                .Case<ZStruct::ArrayType>([&](auto t) {
                  auto layoutType = Zhlt::getLayoutType(t);
@@ -943,7 +943,7 @@ Value LoweringImpl::asLayout(Value value) {
                    OpBuilder::InsertionGuard insertionGuard(builder);
                    Block* block = builder.createBlock(&map.getBody());
                    Value element = block->addArgument(t.getElement(), value.getLoc());
-                   Value layout = builder.create<ZStruct::GetLayoutOp>(value.getLoc(), element);
+                   Value layout = builder.create<Zhlt::GetLayoutOp>(value.getLoc(), element);
                    builder.create<ZStruct::YieldOp>(layout.getLoc(), layout);
                  }
                  return map;

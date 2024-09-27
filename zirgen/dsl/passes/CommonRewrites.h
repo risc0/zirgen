@@ -54,6 +54,15 @@ struct InlineCalls : public OpInterfaceRewritePattern<CallOpInterface> {
   LogicalResult matchAndRewrite(CallOpInterface callOp, PatternRewriter& rewriter) const final;
 };
 
+// Replace a "Back" inside an execution function to call the back function.
+// Assumes it's within a function with an exec context argument, such as exec,
+// check, or check_layout.
+struct BackToCall : public OpRewritePattern<Zhlt::BackOp> {
+  using OpRewritePattern::OpRewritePattern;
+
+  LogicalResult matchAndRewrite(Zhlt::BackOp op, PatternRewriter& rewriter) const final;
+};
+
 template <typename WrappedPattern> struct RewritePatternSuper {
   using OpType = typename WrappedPattern::OpType;
 

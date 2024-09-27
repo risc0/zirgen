@@ -26,14 +26,6 @@ class ZStructOp<string mnemonic, list<Trait> traits = []>
     : Op<ZStructDialect, mnemonic, traits> {
 }
 
-def GetLayoutOp: ZStructOp<"get_layout", [Pure, InferTypeOpAdaptor]> {
-  let summary = "Get the layout of a component";
-  let arguments = (ins StructType:$in);
-  let results = (outs LayoutType:$out);
-  let assemblyFormat = [{ `(` $in `)` `:` functional-type($in, $out) attr-dict }];
-  let hasFolder = 1;
-}
-
 def LookupOp : ZStructOp<"lookup", [Pure,
                                     InferTypeOpAdaptor,
                                     DeclareOpInterfaceMethods<CodegenExprOpInterface>,

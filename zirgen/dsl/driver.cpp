@@ -558,10 +558,10 @@ int main(int argc, char* argv[]) {
   pm.clear();
   if (!doTest)
     pm.addPass(zirgen::Zhlt::createStripTestsPass());
+  pm.addPass(zirgen::dsl::createGenerateBackPass());
   pm.addPass(zirgen::dsl::createGenerateCheckLayoutPass());
   pm.addPass(zirgen::dsl::createGenerateLayoutPass());
   pm.addPass(zirgen::Zhlt::createStripAliasLayoutOpsPass());
-  pm.addPass(zirgen::dsl::createGenerateBackPass());
   pm.addPass(mlir::createCSEPass());
   pm.addPass(zirgen::dsl::createGenerateExecPass());
   pm.addPass(mlir::createSymbolPrivatizePass({}));
