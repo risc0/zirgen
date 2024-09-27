@@ -66,8 +66,9 @@ LogicalResult AddOp::inferReturnTypes(MLIRContext* ctx,
   auto lhsType = adaptor.getLhs().getType().cast<BigIntType>();
   auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
   size_t maxCoeffs = std::max(lhsType.getCoeffs(), rhsType.getCoeffs());
-  size_t maxPos = std::max(lhsType.getMaxPos(), rhsType.getMaxPos());
-  size_t maxNeg = std::max(lhsType.getMaxNeg(), rhsType.getMaxNeg());
+  size_t maxPos = lhsType.getMaxPos() + rhsType.getMaxPos();
+  size_t maxNeg = lhsType.getMaxNeg() + rhsType.getMaxNeg();
+  // TODO: We could be more clever on minBits, but probably doesn't matter
   size_t minBits = std::max(lhsType.getMinBits(), rhsType.getMinBits());
   out.push_back(BigIntType::get(ctx, maxCoeffs, maxPos, maxNeg, minBits));
   return success();
@@ -80,8 +81,8 @@ LogicalResult SubOp::inferReturnTypes(MLIRContext* ctx,
   auto lhsType = adaptor.getLhs().getType().cast<BigIntType>();
   auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
   size_t maxCoeffs = std::max(lhsType.getCoeffs(), rhsType.getCoeffs());
-  size_t maxPos = std::max(lhsType.getMaxPos(), rhsType.getMaxNeg());
-  size_t maxNeg = std::max(lhsType.getMaxNeg(), rhsType.getMaxPos());
+  size_t maxPos = lhsType.getMaxPos() + rhsType.getMaxNeg();
+  size_t maxNeg = lhsType.getMaxNeg() + rhsType.getMaxPos();
   // TODO: We could be more clever on minBits, but probably doesn't matter
   out.push_back(BigIntType::get(ctx, maxCoeffs, maxPos, maxNeg, 0));
   return success();
