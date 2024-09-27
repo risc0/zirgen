@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "zirgen/dsl/passes/CommonRewrites.h"
+#include "mlir/Dialect/Arith/IR/Arith.h"
 
 namespace zirgen {
 
@@ -61,6 +62,20 @@ LogicalResult InlineCalls::matchAndRewrite(CallOpInterface callOp,
   rewriter.replaceOp(callOp, returnOp->getOperands());
   rewriter.eraseOp(returnOp);
 
+  return success();
+}
+
+LogicalResult BackToCall::matchAndRewrite(Zhlt::BackOp op, PatternRewriter& rewriter) const {
+  // TODO: unify distance types and just call op.getDistanceAttr().
+  auto distance = rewriter.create<arith::ConstantOp>(
+      op->getLoc(), rewriter.getIndexAttr(op.getDistance().getZExtValue()));
+  auto callee = SymbolTable::lookupNearestSymbolFrom<Zhlt::ComponentOp>(op, op.getCalleeAttr());
+  auto callOp = rewriter.create<Zhlt::BackCallOp>(op->getLoc(),
+                                                  callee.getSymName(),
+                                                  callee.getOutType(),
+                                                  distance,
+                                                  op.getLayout());
+  rewriter.replaceOp(op, callOp);
   return success();
 }
 

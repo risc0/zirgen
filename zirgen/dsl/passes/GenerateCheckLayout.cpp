@@ -47,6 +47,7 @@ struct GenerateCheckLayoutPass : public GenerateCheckLayoutBase<GenerateCheckLay
     auto* ctx = &getContext();
 
     RewritePatternSet patterns(ctx);
+    patterns.insert<BackToCall>(ctx);
     patterns.insert<EraseOp<ZStruct::LoadOp>>(ctx);
     patterns.insert<EraseOp<ZStruct::StoreOp>>(ctx);
     patterns.insert<EraseOp<Zll::ExternOp>>(ctx);
@@ -81,7 +82,7 @@ struct GenerateCheckLayoutPass : public GenerateCheckLayoutBase<GenerateCheckLay
           Value param = builder.create<Zhlt::MagicOp>(loc, paramType);
           constructArgs.push_back(param);
         }
-        Value layout = block->getArgument(0);
+        Value layout = block->getArgument(1);
         builder.create<Zhlt::ConstructOp>(loc, component, constructArgs, layout);
       }
       builder.create<Zhlt::ReturnOp>(loc);
