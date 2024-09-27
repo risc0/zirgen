@@ -123,6 +123,18 @@ func.func @bad_add_max_pos() {
 
 // -----
 
+func.func @good_sub_coeff_count() {
+  // Primary rules tested:
+  //  - [%2, %3] `coeffs` is max of the input coeffs
+  %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
+  %1 = bigint.def 64, 1, true -> <8, 255, 0, 0>
+  %2 = bigint.sub %0 : <3, 255, 0, 0>, %1 : <8, 255, 0, 0> -> <8, 255, 255, 0>
+  %3 = bigint.sub %1 : <8, 255, 0, 0>, %0 : <3, 255, 0, 0> -> <8, 255, 255, 0>
+  return
+}
+
+// -----
+
 func.func @good_sub_max_pos_max_neg() {
   // Primary rules tested:
   //  - [%3] For A - B: `max_pos` is A's `max_pos` plus B's `max_neg`
@@ -180,5 +192,20 @@ func.func @good_sub_multisize() {
   %7 = bigint.sub %6 : <1, 65025, 510, 0>, %0 : <1, 255, 0, 0> -> <1, 65025, 765, 0>
   %8 = bigint.sub %5 : <1, 510, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 510, 255, 0>
   %9 = bigint.sub %7 : <1, 65025, 765, 0>, %8 : <1, 510, 255, 0> -> <1, 65280, 1275, 0>
+  return
+}
+
+// -----
+
+func.func @good_sub_with_min_bits() {
+  // Primary rules tested:
+  //  - just set `min_bits` to 0 [This could be more complicated, but we don't bother]
+  %0 = bigint.const 0 : i8 -> <1, 255, 0, 0>
+  %1 = bigint.const 7 : i8 -> <1, 255, 0, 3>
+  %2 = bigint.const 8 : i8 -> <1, 255, 0, 4>
+  %3 = bigint.sub %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 3> -> <1, 255, 255, 0>
+  %4 = bigint.sub %1 : <1, 255, 0, 3>, %0 : <1, 255, 0, 0> -> <1, 255, 255, 0>
+  %5 = bigint.sub %2 : <1, 255, 0, 4>, %1 : <1, 255, 0, 3> -> <1, 255, 255, 0>
+  %6 = bigint.sub %1 : <1, 255, 0, 3>, %2 : <1, 255, 0, 4> -> <1, 255, 255, 0>
   return
 }
