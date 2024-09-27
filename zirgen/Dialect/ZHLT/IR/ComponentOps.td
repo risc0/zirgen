@@ -412,7 +412,7 @@ def BackCallOp : ZCallOp<BackFuncOp>;
 
 
 // A FuncOp-like operation that has names associated with
-// arguments.  It also allows creating multiploe function ops to allow
+// arguments.  It also allows creating multiple function ops to allow
 // them to be handled differently in patterns.  Unlike ZFuncOp, this
 // doesn't allow convenient access to argument or result groups by
 // name, nor does it verify the types of arguments.
