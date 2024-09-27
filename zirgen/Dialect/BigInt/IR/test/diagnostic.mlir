@@ -17,7 +17,7 @@
 //  - Probably: just set `min_bits` to 0 (TODO but could be more precise)
 // For `mul`:
 //  - `coeffs` is the sum of the input coeffs minus 1 [TODO: Confirm no carries]
-//  - `max_pos` is the max of the product of the `max_pos` and the product of the `max_neg`
+//  - `max_pos` is the smaller `coeffs` value from the two inputs times the max of the product of the `max_pos` and the product of the `max_neg`
 //  - `max_neg` is the max of the two mixed products (of one `max_pos` and one `max_neg`)
 //  - If both inputs are nonnegative, `min_bits` is the sum of input `min_bits`s
 //  - If either input may be negative, `min_bits` is zero
@@ -58,6 +58,36 @@ func.func @good_add_basic() {
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
   %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
   %2 = bigint.add %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 510, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_add_coeff_count() {
+  // Primary rules tested:
+  //  - [%2, %3] `coeffs` is max of the input coeffs
+  %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
+  %1 = bigint.def 64, 1, true -> <8, 255, 0, 0>
+  %2 = bigint.add %0 : <3, 255, 0, 0>, %1 : <8, 255, 0, 0> -> <8, 510, 0, 0>
+  %3 = bigint.add %1 : <8, 255, 0, 0>, %0 : <3, 255, 0, 0> -> <8, 510, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_add_multisize() {
+  // Primary rules tested:
+  //  - [%7, %8] `max_pos` is the sum of the input `max_pos`s
+  //  - [%7, %8] `max_neg` is the sum of the input `max_neg`s
+  %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
+  %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
+  %2 = bigint.add %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 510, 0, 0>
+  %3 = bigint.add %0 : <1, 255, 0, 0>, %2 : <1, 510, 0, 0> -> <1, 765, 0, 0>
+  %4 = bigint.sub %3 : <1, 765, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 765, 255, 0>
+  %5 = bigint.mul %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 65025, 0, 0>
+  %6 = bigint.sub %5 : <1, 65025, 0, 0>, %2 : <1, 510, 0, 0> -> <1, 65025, 510, 0>
+  %7 = bigint.add %4 : <1, 765, 255, 0>, %6 : <1, 65025, 510, 0> -> <1, 65790, 765, 0>
+  %8 = bigint.add %6 : <1, 65025, 510, 0>, %4 : <1, 765, 255, 0> -> <1, 65790, 765, 0>
   return
 }
 
@@ -136,7 +166,7 @@ func.func @bad_sub_max_neg() {
 
 // -----
 
-func.func @good_sub_unique_nonzero_maxs() {
+func.func @good_sub_multisize() {
   // Primary rules tested:
   //  - [%9] For A - B: `max_pos` is A's `max_pos` plus B's `max_neg`
   //  - [%9] For A - B: `max_neg` is A's `max_neg` plus B's `max_pos`
