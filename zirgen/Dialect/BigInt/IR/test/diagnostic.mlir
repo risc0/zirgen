@@ -17,9 +17,11 @@
 //  - Probably: just set `min_bits` to 0 (TODO but could be more precise)
 // For `mul`:
 //  - `coeffs` is the sum of the input coeffs minus 1 [TODO: Confirm no carries]
-//  - `max_pos` is the smaller `coeffs` value from the two inputs times the max of the product of the `max_pos` and the product of the `max_neg`
-//  - `max_neg` is the max of the two mixed products (of one `max_pos` and one `max_neg`)
-//  - If both inputs are nonnegative, `min_bits` is the sum of input `min_bits`s
+//  - `max_pos` is the smaller `coeffs` value from the two inputs times
+//     the max of the product of the `max_pos` and the product of the `max_neg`
+//  - `max_neg` is the smaller `coeffs` value from the two inputs times
+//     the max of the two mixed products (of one `max_pos` and one `max_neg`)
+//  - If both inputs are nonnegative, `min_bits` is the sum of input `min_bits`s minus 1
 //  - If either input may be negative, `min_bits` is zero
 // For [nondets]:
 //  - In general, nondets will only return nonnegative answers
@@ -93,7 +95,7 @@ func.func @good_add_multisize() {
 
 // -----
 
-func.func @good_add_with_min_bits() {
+func.func @good_add_min_bits() {
   // Primary rules tested:
   //  - [%3] If both `add` inputs are nonnegative, `min_bits` is max of input `min_bits`s
   //  - [%5, %6] If either input to `add` may be negative, `min_bits` is 0
@@ -197,7 +199,7 @@ func.func @good_sub_multisize() {
 
 // -----
 
-func.func @good_sub_with_min_bits() {
+func.func @good_sub_min_bits() {
   // Primary rules tested:
   //  - just set `min_bits` to 0 [This could be more complicated, but we don't bother]
   %0 = bigint.const 0 : i8 -> <1, 255, 0, 0>
@@ -207,5 +209,66 @@ func.func @good_sub_with_min_bits() {
   %4 = bigint.sub %1 : <1, 255, 0, 3>, %0 : <1, 255, 0, 0> -> <1, 255, 255, 0>
   %5 = bigint.sub %2 : <1, 255, 0, 4>, %1 : <1, 255, 0, 3> -> <1, 255, 255, 0>
   %6 = bigint.sub %1 : <1, 255, 0, 3>, %2 : <1, 255, 0, 4> -> <1, 255, 255, 0>
+  return
+}
+
+// -----
+
+func.func @good_mul_basic() {
+  %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
+  %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
+  %2 = bigint.mul %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 65025, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_mul_coeff_count() {
+  // Primary rules tested:
+  //  - [%2, %3] `coeffs` is the sum of the input coeffs minus 1
+  %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
+  %1 = bigint.def 64, 1, true -> <8, 255, 0, 0>
+  %2 = bigint.mul %0 : <3, 255, 0, 0>, %1 : <8, 255, 0, 0> -> <10, 195075, 0, 0>
+  %3 = bigint.mul %1 : <8, 255, 0, 0>, %0 : <3, 255, 0, 0> -> <10, 195075, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_mul_multisize() {
+  // Primary rules tested:
+  //  - [%8 - %11] `max_pos` is the smaller `coeffs` value from the two inputs times
+  //    the max of the product of the `max_pos` and the product of the `max_neg`
+  //  - [%8 - %11] `max_neg` is the smaller `coeffs` value from the two inputs times
+  //    the max of the two mixed products (of one `max_pos` and one `max_neg`)
+  %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
+  %1 = bigint.def 64, 1, true -> <8, 255, 0, 0>
+  %2 = bigint.add %0 : <1, 255, 0, 0>, %1 : <8, 255, 0, 0> -> <8, 510, 0, 0>
+  %3 = bigint.add %0 : <1, 255, 0, 0>, %2 : <8, 510, 0, 0> -> <8, 765, 0, 0>
+  %4 = bigint.sub %3 : <8, 765, 0, 0>, %1 : <8, 255, 0, 0> -> <8, 765, 255, 0>
+  %5 = bigint.mul %0 : <1, 255, 0, 0>, %1 : <8, 255, 0, 0> -> <8, 65025, 0, 0>
+  %6 = bigint.sub %5 : <8, 65025, 0, 0>, %2 : <8, 510, 0, 0> -> <8, 65025, 510, 0>
+  %7 = bigint.sub %2 : <8, 510, 0, 0>, %5 : <8, 65025, 0, 0> -> <8, 510, 65025, 0>
+  %8 = bigint.mul %4 : <8, 765, 255, 0>, %6 : <8, 65025, 510, 0> -> <15, 397953000, 132651000, 0>
+  %9 = bigint.mul %6 : <8, 65025, 510, 0>, %4 : <8, 765, 255, 0> -> <15, 397953000, 132651000, 0>
+  %10 = bigint.mul %4 : <8, 765, 255, 0>, %7 : <8, 510, 65025, 0> -> <15, 132651000, 397953000, 0>
+  %11 = bigint.mul %7 : <8, 510, 65025, 0>, %4 : <8, 765, 255, 0> -> <15, 132651000, 397953000, 0>
+  return
+}
+
+// -----
+
+func.func @good_mul_min_bits() {
+  // Primary rules tested:
+  //  - [%3] If both inputs are nonnegative, `min_bits` is the sum of input `min_bits`s minus 1
+  //  - [%5, %6] If either input may be negative, `min_bits` is zero
+  // This is calculating 7 + 8 [in %3] and 8 + (0 - 7) [in %5 and %6]
+  %0 = bigint.const 0 : i8 -> <1, 255, 0, 0>
+  %1 = bigint.const 7 : i8 -> <1, 255, 0, 3>
+  %2 = bigint.const 8 : i8 -> <1, 255, 0, 4>
+  %3 = bigint.mul %1 : <1, 255, 0, 3>, %2 : <1, 255, 0, 4> -> <1, 65025, 0, 6>
+  %4 = bigint.sub %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 3> -> <1, 255, 255, 0>
+  %5 = bigint.mul %2 : <1, 255, 0, 4>, %4 : <1, 255, 255, 0> -> <1, 65025, 65025, 0>
+  %6 = bigint.mul %4 : <1, 255, 255, 0>, %2 : <1, 255, 0, 4> -> <1, 65025, 65025, 0>
   return
 }
