@@ -19,6 +19,7 @@
 #include "mlir/Transforms/Passes.h"
 #include "llvm/Support/CommandLine.h"
 
+#include "zirgen/Dialect/ZHLT/IR/Codegen.h"
 #include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
 #include "zirgen/Dialect/Zll/IR/Codegen.h"
 #include "zirgen/Dialect/Zll/Transforms/Passes.h"
@@ -27,6 +28,75 @@ using namespace mlir;
 namespace cl = llvm::cl;
 
 namespace zirgen {
+namespace codegen {
+
+namespace {
+
+void addCommonSyntax(CodegenOptions& opts) {
+  opts.addLiteralHandler<IntegerAttr>(
+      [](CodegenEmitter& cg, auto intAttr) { cg << intAttr.getValue().getZExtValue(); });
+  opts.addLiteralHandler<StringAttr>(
+      [](CodegenEmitter& cg, auto strAttr) { cg.emitEscapedString(strAttr); });
+}
+
+void addCppSyntax(CodegenOptions& opts) {
+  opts.addLiteralHandler<PolynomialAttr>([&](CodegenEmitter& cg, auto polyAttr) {
+    auto elems = polyAttr.asArrayRef();
+    if (elems.size() == 1) {
+      cg << "Val(" << elems[0] << ")";
+    } else {
+      cg << "Val" << elems.size() << "{";
+      cg.interleaveComma(elems);
+      cg << "}";
+    }
+  });
+}
+
+void addRustSyntax(CodegenOptions& opts) {
+  opts.addLiteralHandler<PolynomialAttr>([&](CodegenEmitter& cg, auto polyAttr) {
+    auto elems = polyAttr.asArrayRef();
+    if (elems.size() == 1) {
+      cg << "Val::new(" << elems[0] << ")";
+    } else {
+      cg << "ExtVal::new(";
+      cg.interleaveComma(elems, [&](auto elem) { cg << "Val::new(" << elem << ")"; });
+      cg << ")";
+    }
+  });
+}
+
+} // namespace
+
+CodegenOptions getRustCodegenOpts() {
+  static codegen::RustLanguageSyntax kRust;
+  codegen::CodegenOptions opts(&kRust);
+  addCommonSyntax(opts);
+  addRustSyntax(opts);
+  ZStruct::addRustSyntax(opts);
+  Zhlt::addRustSyntax(opts);
+  return opts;
+}
+
+CodegenOptions getCppCodegenOpts() {
+  static codegen::CppLanguageSyntax kCpp;
+  codegen::CodegenOptions opts(&kCpp);
+  addCommonSyntax(opts);
+  addCppSyntax(opts);
+  ZStruct::addCppSyntax(opts);
+  Zhlt::addCppSyntax(opts);
+  return opts;
+}
+
+CodegenOptions getCudaCodegenOpts() {
+  static codegen::CudaLanguageSyntax kCuda;
+  codegen::CodegenOptions opts(&kCuda);
+  addCommonSyntax(opts);
+  addCppSyntax(opts);
+  ZStruct::addCppSyntax(opts);
+  return opts;
+}
+
+} // namespace codegen
 
 namespace {
 
@@ -67,27 +137,18 @@ void optimizePoly(ModuleOp module) {
 }
 
 struct CodegenCLOptions {
-  cl::list<std::string> outputFiles{
-      cl::Positional, cl::OneOrMore, cl::desc("files in output directory")};
+  cl::opt<std::string> outputDir{
+      "output-dir", cl::desc("Output directory"), cl::value_desc("dir"), cl::Required};
 };
 
 static llvm::ManagedStatic<CodegenCLOptions> clOptions;
 
 llvm::StringRef getOutputDir() {
-  std::string path;
   if (!clOptions.isConstructed()) {
     throw(std::runtime_error("codegen command line options must be registered"));
   }
 
-  if (clOptions->outputFiles.empty()) {
-    llvm::errs() << "At least one file in the output directory must be specified\n";
-    exit(1);
-  }
-
-  llvm::StringRef outputDir = llvm::StringRef(clOptions->outputFiles[0]).rsplit('/').first;
-  if (outputDir.empty())
-    return ".";
-  return outputDir;
+  return clOptions->outputDir;
 }
 
 } // namespace
@@ -147,20 +208,12 @@ public:
   }
 
   void emitAllLayouts(mlir::ModuleOp op) {
-    static codegen::RustLanguageSyntax kRust;
-    emitLayout(op, &kRust, ".rs.inc");
-
-    static codegen::CppLanguageSyntax kCpp;
-    emitLayout(op, &kCpp, ".cpp.inc");
-
-    static codegen::CudaLanguageSyntax kCuda;
-    emitLayout(op, &kCuda, ".cu.inc");
+    emitLayout(op, codegen::getRustCodegenOpts(), ".rs.inc");
+    emitLayout(op, codegen::getCppCodegenOpts(), ".cpp.inc");
+    emitLayout(op, codegen::getCudaCodegenOpts(), ".cu.inc");
   }
 
-  void emitLayout(mlir::ModuleOp op, codegen::LanguageSyntax* lang, StringRef suffix) {
-    codegen::CodegenOptions opts;
-    opts.lang = lang;
-    opts.zkpLayoutCompat = true;
+  void emitLayout(mlir::ModuleOp op, const codegen::CodegenOptions& opts, StringRef suffix) {
     auto ofs = openOutputFile(("layout" + suffix).str());
     codegen::CodegenEmitter emitter(opts, ofs.get(), op->getContext());
     op.walk([&](ZStruct::GlobalConstOp constOp) {

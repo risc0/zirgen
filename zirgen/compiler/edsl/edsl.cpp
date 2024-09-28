@@ -646,15 +646,22 @@ std::vector<Val> doExtern(const std::string& name,
 
 void emitLayoutInternal(std::shared_ptr<ConstructInfo> info) {
   auto& builder = getBuilder();
-  mlir::Type layoutType;
-  mlir::Attribute layoutAttr;
-  transformLayout(getCtx(), info, layoutType, layoutAttr);
+  DenseMap<StringAttr, mlir::Type> layoutTypes;
+  DenseMap<StringAttr, mlir::Attribute> layoutAttrs;
+  transformLayout(getCtx(), info, layoutTypes, layoutAttrs);
 
-  if (layoutAttr) {
+  SmallVector<StringAttr> bufNames =
+      llvm::map_to_vector(layoutAttrs, [](auto kv) { return kv.first; });
+  // Make sure the order of buffer names is deterministic
+  llvm::sort(bufNames, [&](auto a, auto b) { return a.strref() < b.strref(); });
+
+  for (auto bufName : bufNames) {
     OpBuilder::InsertionGuard guard(builder);
     builder.setInsertionPointToEnd(curModule->getModule().getBody());
-    builder.create<ZStruct::GlobalConstOp>(
-        builder.getUnknownLoc(), "layout", layoutType, layoutAttr);
+    builder.create<ZStruct::GlobalConstOp>(builder.getUnknownLoc(),
+                                           bufName.str() + "_layout",
+                                           layoutTypes.at(bufName),
+                                           layoutAttrs.at(bufName));
   }
 }
 

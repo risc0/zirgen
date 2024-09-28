@@ -15,20 +15,18 @@
 #pragma once
 
 #include "mlir/IR/BuiltinOps.h"
-#include "mlir/IR/PatternMatch.h"
-#include "mlir/Pass/Pass.h"
+#include "mlir/Pass/PassManager.h"
 
-namespace zirgen::ZStruct {
+namespace zirgen {
 
-// Pass constructors
-std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createOptimizeLayoutPass();
-std::unique_ptr<mlir::Pass> createUnrollPass();
-std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createExpandLayoutPass();
-std::unique_ptr<mlir::Pass> createInlineLayoutPass();
-std::unique_ptr<mlir::Pass> createBuffersToArgsPass();
+void registerZirgenCommon();
 
-// Generate the code for registering passes.
-#define GEN_PASS_REGISTRATION
-#include "zirgen/Dialect/ZStruct/Transforms/Passes.h.inc"
+void registerZirgenDialects(mlir::DialectRegistry& registry);
 
-} // namespace zirgen::ZStruct
+void addAccumAndGlobalPasses(mlir::PassManager& pm);
+
+void addTypingPasses(mlir::PassManager& pm);
+
+mlir::LogicalResult checkDegreeExceeded(mlir::ModuleOp module, size_t maxDegree);
+
+} // namespace zirgen

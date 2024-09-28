@@ -12,11 +12,53 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#pragma once
+
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
+#include "zirgen/Dialect/ZStruct/Analysis/BufferAnalysis.h"
 
 namespace zirgen::Zhlt {
 
+class EmitZhlt {
+public:
+  EmitZhlt(mlir::ModuleOp module, codegen::CodegenEmitter& cg)
+      : module(module), cg(cg), ctx(module.getContext()), bufferAnalysis(module) {}
+  virtual ~EmitZhlt() = default;
+
+  mlir::LogicalResult emitDefs() {
+    if (failed(doValType()))
+      return mlir::failure();
+
+    if (failed(doBuffers()))
+      return mlir::failure();
+
+    return mlir::success();
+  }
+
+protected:
+  virtual mlir::LogicalResult emitBufferList(llvm::ArrayRef<ZStruct::BufferDesc> bufs) {
+    return mlir::success();
+  }
+
+  mlir::ModuleOp module;
+  codegen::CodegenEmitter& cg;
+  mlir::MLIRContext* ctx;
+  ZStruct::BufferAnalysis bufferAnalysis;
+
+private:
+  // Declares "Val" to be a type alias to the appropriete field element.
+  mlir::LogicalResult doValType();
+
+  // Provide buffers and sizes
+  mlir::LogicalResult doBuffers();
+};
+
+std::unique_ptr<EmitZhlt> getEmitter(mlir::ModuleOp module, zirgen::codegen::CodegenEmitter& cg);
+
 // Generates code for a ZHLT module, including extern traits, type definitions, etc.
 mlir::LogicalResult emitModule(mlir::ModuleOp module, zirgen::codegen::CodegenEmitter& cg);
+
+void addCppSyntax(codegen::CodegenOptions& opts);
+void addRustSyntax(codegen::CodegenOptions& opts);
 
 } // namespace zirgen::Zhlt

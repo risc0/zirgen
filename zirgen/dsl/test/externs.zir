@@ -6,11 +6,11 @@ component PairVal(aArg: Val, bArg: Val) {
 }
 
 extern TakesArg(x: Val);
-// CHECK-LABEL: zhlt.exec_func private @exec$TakesArg(%ctx: !zhlt.exec_context, %arg0: !zll.val<BabyBear>) ->
+// CHECK-LABEL: zhlt.exec_func private @exec$TakesArg(%arg0: !zll.val<BabyBear>) ->
 // CHECK: zll.extern "TakesArg" "", (%arg0) : (!zll.val<BabyBear>) -> ()
 
 extern ReturnsVal() : Val;
-// CHECK-LABEL: zhlt.exec_func private @exec$ReturnsVal(%ctx: !zhlt.exec_context) -> !zstruct$ReturnsVal
+// CHECK-LABEL: zhlt.exec_func private @exec$ReturnsVal() -> !zstruct$ReturnsVal
 // CHECK: %{{[0-9]+}} = zll.extern "ReturnsVal" "", () : () -> !zll.val<BabyBear>
 
 extern TakesPair(v: PairVal);

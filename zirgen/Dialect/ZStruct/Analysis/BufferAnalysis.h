@@ -14,11 +14,14 @@
 
 // Analyses what buffers are used by a module.
 
+#pragma once
+
 #include "mlir/Pass/AnalysisManager.h"
 #include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
 #include "zirgen/Dialect/Zll/IR/IR.h"
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/ADT/STLExtras.h"
+#include "llvm/ADT/StringMap.h"
 
 namespace zirgen::ZStruct {
 
@@ -54,12 +57,8 @@ public:
 
   llvm::ArrayRef<BufferDesc> getTapBuffers() const { return tapBuffers; };
 
-  llvm::SmallVector<BufferDesc> getAllBuffers() const {
-    auto bufs = llvm::to_vector(llvm::make_second_range(buffers));
-    // Make sure we return buffers in a determinstic order.
-    llvm::sort(bufs, [&](auto a, auto b) { return a.name.strref() < b.name.strref(); });
-    return bufs;
-  }
+  // Returns all buffers, tap buffers first. in a fixed order.
+  llvm::SmallVector<BufferDesc> getAllBuffers() const;
 
   const BufferDesc& getBuffer(llvm::StringRef bufferName) const { return buffers.at(bufferName); }
 
@@ -69,8 +68,11 @@ public:
   getLayoutAndBufferForArgument(mlir::BlockArgument layoutArg);
 
 private:
-  llvm::DenseMap<llvm::StringRef, BufferDesc> buffers;
+  llvm::StringMap<BufferDesc> buffers;
   llvm::SmallVector<BufferDesc> tapBuffers;
+
+  llvm::SmallVector<mlir::StringAttr> tapBufferNames;
+  llvm::SmallVector<mlir::StringAttr> globalBufferNames;
 };
 
 } // namespace zirgen::ZStruct

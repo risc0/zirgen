@@ -44,15 +44,19 @@ void CodegenEmitter::emitModule(mlir::ModuleOp moduleOp) {
   emitTypeDefs(moduleOp);
 
   for (auto& op : *moduleOp.getBody()) {
-    if (op.hasTrait<CodegenSkipTrait>())
-      continue;
-
-    TypeSwitch<Operation*>(&op)
-        .Case<ModuleOp>([&](ModuleOp op) { emitModule(op); })
-        .Case<FunctionOpInterface>([&](FunctionOpInterface op) { emitFunc(op); })
-        .Case<CodegenGlobalOpInterface>([&](CodegenGlobalOpInterface op) { op.emitGlobal(*this); })
-        .Default([&](auto op) { emitStatement(op); });
+    emitTopLevel(&op);
   }
+}
+
+void CodegenEmitter::emitTopLevel(Operation* op) {
+  if (op->hasTrait<CodegenSkipTrait>())
+    return;
+
+  TypeSwitch<Operation*>(op)
+      .Case<ModuleOp>([&](ModuleOp op) { emitModule(op); })
+      .Case<FunctionOpInterface>([&](FunctionOpInterface op) { emitFunc(op); })
+      .Case<CodegenGlobalOpInterface>([&](CodegenGlobalOpInterface op) { op.emitGlobal(*this); })
+      .Default([&](auto op) { emitStatement(op); });
 }
 
 std::string CodegenEmitter::canonIdent(llvm::StringRef ident, IdentKind idt) {
@@ -90,6 +94,11 @@ void CodegenEmitter::emitFunc(FunctionOpInterface op) {
 
   emitTypeDefs(op);
 
+  llvm::ArrayRef<std::string> contextArgs;
+  if (opts.funcContextArgs.contains(op->getName().getStringRef())) {
+    contextArgs = opts.funcContextArgs.at(op->getName().getStringRef());
+  }
+
   // Pick up any special names of arguments.
   DenseMap<Value, StringRef> argValueNames;
   if (auto opAsm = dyn_cast<OpAsmOpInterface>(op.getOperation())) {
@@ -98,15 +107,23 @@ void CodegenEmitter::emitFunc(FunctionOpInterface op) {
   }
 
   llvm::SmallVector<CodegenIdent<IdentKind::Var>> argNames;
-  for (auto arg : op.getArguments()) {
-    StringRef baseName = argValueNames.lookup(arg);
+  for (auto [argNum, arg] : llvm::enumerate(op.getArguments())) {
+    StringRef baseName;
+    if (auto argNameAttr = op.getArgAttrOfType<StringAttr>(argNum, "zirgen.argName"))
+      baseName = argNameAttr;
+    if (baseName.empty())
+      baseName = argValueNames.lookup(arg);
     if (baseName.empty())
       baseName = "arg";
     argNames.push_back(getNewValueName(arg, baseName, /*owned=*/false));
   }
 
-  opts.lang->emitFuncDefinition(
-      *this, op.getNameAttr(), argNames, llvm::cast<FunctionType>(op.getFunctionType()), body);
+  opts.lang->emitFuncDefinition(*this,
+                                op.getNameAttr(),
+                                contextArgs,
+                                argNames,
+                                llvm::cast<FunctionType>(op.getFunctionType()),
+                                body);
 
   if (op->hasTrait<OpTrait::IsIsolatedFromAbove>()) {
     resetValueNumbering();
@@ -320,14 +337,20 @@ void CodegenEmitter::emitExpr(Operation* op) {
     codegenOp.emitExpr(*this);
     return;
   }
+  llvm::ArrayRef<std::string> contextArgs;
+  if (opts.callContextArgs.contains(op->getName().getStringRef())) {
+    contextArgs = opts.callContextArgs.at(op->getName().getStringRef());
+  }
 
   // Check if it's a function call to a callable, and if we have the target for it.
   if (auto callOp = dyn_cast<CallOpInterface>(op)) {
     if (auto callee = callOp.getCallableForCallee()) {
       if (auto calleeName =
               dyn_cast_if_present<FlatSymbolRefAttr>(dyn_cast<SymbolRefAttr>(callee))) {
-        emitFuncCall(getStringAttr(calleeName.getValue()),
-                     llvm::to_vector_of<CodegenValue>(op->getOperands()));
+        opts.lang->emitCall(*this,
+                            calleeName.getAttr(),
+                            contextArgs,
+                            llvm::to_vector_of<CodegenValue>(op->getOperands()));
         return;
       }
     }
@@ -345,8 +368,10 @@ void CodegenEmitter::emitExpr(Operation* op) {
 
   // If all else fails and we have no internal reigons, emit as a function call.
   if (op->getRegions().empty()) {
-    emitFuncCall(getStringAttr(op->getName().stripDialect()),
-                 llvm::to_vector_of<CodegenValue>(op->getOperands()));
+    opts.lang->emitCall(*this,
+                        getStringAttr(op->getName().stripDialect()),
+                        contextArgs,
+                        llvm::to_vector_of<CodegenValue>(op->getOperands()));
     return;
   }
 
@@ -355,11 +380,17 @@ void CodegenEmitter::emitExpr(Operation* op) {
 }
 
 void CodegenEmitter::emitLiteral(mlir::Type ty, mlir::Attribute value) {
+  if (auto f = opts.literalHandlers.lookup(value.getAbstractAttribute().getName())) {
+    f(*this, value);
+    return;
+  }
   if (auto codegenType = dyn_cast<CodegenTypeInterface>(ty)) {
     if (succeeded(codegenType.emitLiteral(*this, value)))
       return;
   }
-  opts.lang->fallbackEmitLiteral(*this, ty, value);
+  llvm::errs() << "Don't know how to emit type " << ty << " with value " << value
+               << " (name = " << value.getAbstractAttribute().getName() << ")\n";
+  abort();
 }
 
 void CodegenEmitter::emitConstDef(CodegenIdent<IdentKind::Const> name, CodegenValue value) {
@@ -376,7 +407,7 @@ void CodegenEmitter::emitFuncCall(CodegenIdent<IdentKind::Func> callee,
 }
 
 void CodegenEmitter::emitFuncCall(CodegenIdent<IdentKind::Func> callee,
-                                  llvm::ArrayRef<llvm::StringRef> contextArgs,
+                                  llvm::ArrayRef<std::string> contextArgs,
                                   llvm::ArrayRef<CodegenValue> args) {
   opts.lang->emitCall(*this, callee, contextArgs, args);
 }
@@ -494,9 +525,19 @@ CodegenIdent<IdentKind::Type> CodegenEmitter::getTypeName(Type ty) {
 }
 
 void CodegenEmitter::emitEscapedString(llvm::StringRef str) {
-  *this << "\"";
-  printEscapedString(str, *outStream);
-  *this << "\"";
+  // Unfortunately we can't use llvm's emitEscapedString directly since it
+  // doesn't put a `x` before using hexadecimal escape sequences.
+  auto& os = *outStream;
+  os << '"';
+  for (unsigned char c : str) {
+    if (c == '\\')
+      *outStream << '\\' << c;
+    else if (llvm::isPrint(c) && c != '"')
+      os << c;
+    else
+      os << "\\x" << llvm::hexdigit(c >> 4) << llvm::hexdigit(c & 0x0F);
+  }
+  os << '"';
 }
 
 void CodegenEmitter::emitTakeReference(EmitPart emitTarget) {
@@ -543,20 +584,5 @@ LogicalResult translateCodegen(Operation* op, CodegenOptions opts, llvm::raw_ost
       });
   return success();
 }
-
-namespace {
-
-template <typename OpType, char infixOp>
-struct InfixInterface
-    : public CodegenExprOpInterface::ExternalModel<InfixInterface<OpType, infixOp>, OpType> {
-  void emitExpr(Operation* op, zirgen::codegen::CodegenEmitter& cg) const {
-    static const char infixStr[] = {infixOp, '\0'};
-    assert(op->getNumOperands() == 2);
-    assert(op->getNumResults() == 1);
-    cg.emitInfix(infixStr, op->getOperand(0), op->getOperand(1));
-  }
-};
-
-} // namespace
 
 } // namespace zirgen::codegen

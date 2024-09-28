@@ -85,9 +85,7 @@ int main(int argc, char** argv) {
       "rust-codegen",
       "",
       [](mlir::ModuleOp module, llvm::raw_ostream& output) {
-        static codegen::RustLanguageSyntax rust;
-        codegen::CodegenOptions opts;
-        opts.lang = &rust;
+        codegen::CodegenOptions opts = codegen::getRustCodegenOpts();
         if (!funcName.empty()) {
           auto func = module.lookupSymbol<mlir::func::FuncOp>(funcName);
           if (!func) {
@@ -107,9 +105,7 @@ int main(int argc, char** argv) {
       "cpp-codegen",
       "",
       [](mlir::ModuleOp module, llvm::raw_ostream& output) {
-        static codegen::CppLanguageSyntax cpp;
-        codegen::CodegenOptions opts;
-        opts.lang = &cpp;
+        codegen::CodegenOptions opts = codegen::getCppCodegenOpts();
         if (!funcName.empty()) {
           auto func = module.lookupSymbol<mlir::func::FuncOp>(funcName);
           if (!func) {

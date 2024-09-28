@@ -18,7 +18,6 @@ use calc_circuit::{CircuitField, ExtVal, MixState, Val};
 use core::cell::RefCell;
 use risc0_zkp::hal::cpu::{CpuBuffer, CpuHal};
 use std::collections::VecDeque;
-use zirgen_dsl::BoundLayout;
 
 pub struct CpuCircuitHal {
     from_user: VecDeque<Val>,
@@ -80,8 +79,11 @@ impl<'a> calc_circuit::CircuitHal<'a, CpuHal<CircuitField>> for CpuCircuitHal {
                 };
                 let ctx = ctx.wrap(&exec_context);
 
-                let data = calc_circuit::get_data_buffer(&ctx);
-                calc_circuit::exec_top(&ctx, BoundLayout::new(calc_circuit::LAYOUT_TOP, data))?;
+                calc_circuit::step_top(
+                    &ctx,
+                    calc_circuit::get_data_buffer(&ctx),
+                    calc_circuit::get_global_buffer(&ctx),
+                )?;
 
                 Ok(())
             },
@@ -131,7 +133,14 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
             poly_mix,
             po2,
             cycles,
-            |ctx, poly_mix| -> Result<MixState> { calc_circuit::validity_regs_(&ctx, poly_mix) },
+            |ctx, poly_mix| -> Result<MixState> {
+                calc_circuit::validity_regs(
+                    &ctx,
+                    poly_mix,
+                    calc_circuit::get_data_buffer(&ctx),
+                    calc_circuit::get_global_buffer(&ctx),
+                )
+            },
         )
         .expect("Expected eval check to succeed");
     }

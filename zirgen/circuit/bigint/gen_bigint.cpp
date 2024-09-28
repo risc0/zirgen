@@ -41,14 +41,12 @@ std::unique_ptr<llvm::raw_fd_ostream> openOutputFile(StringRef path, StringRef n
   return ofs;
 }
 
-void emitLang(StringRef langName,
-              zirgen::codegen::LanguageSyntax* lang,
-              StringRef path,
-              ModuleOp module) {
+void emit(StringRef langName,
+          const zirgen::codegen::CodegenOptions& codegenOpts,
+          StringRef path,
+          ModuleOp module) {
   auto ofs = openOutputFile(path, ("bigint." + langName + ".inc").str());
 
-  codegen::CodegenOptions codegenOpts;
-  codegenOpts.lang = lang;
   zirgen::codegen::CodegenEmitter cg(codegenOpts, ofs.get(), module.getContext());
   cg.emitModule(module);
 
@@ -106,15 +104,13 @@ const RsaSpec kRsaSpecs[] = {
 
 } // namespace
 
-cl::list<std::string> outputFiles{
-    cl::Positional, cl::OneOrMore, cl::desc("files in output directory")};
+cl::opt<std::string> outputDir{
+    "output-dir", cl::desc("Output directory"), cl::value_desc("dir"), cl::Required};
 
 int main(int argc, char* argv[]) {
   llvm::InitLLVM y(argc, argv);
   registerEdslCLOptions();
   llvm::cl::ParseCommandLineOptions(argc, argv, "gen_bigint");
-
-  std::string dir = llvm::StringRef(outputFiles[0]).rsplit('/').first.str();
 
   Module module;
   auto* ctx = module.getCtx();
@@ -203,15 +199,19 @@ int main(int argc, char* argv[]) {
     throw std::runtime_error("Failed to apply basic optimization passes");
   }
 
-  static codegen::RustLanguageSyntax rustLang;
-  rustLang.addContextArgument("ctx: &mut BigIntContext");
-  rustLang.addItemsMacro("bigint_program_info");
-  rustLang.addItemsMacro("bigint_program_list");
-  emitLang("rs", &rustLang, dir, module.getModule());
+  auto rustOpts = codegen::getRustCodegenOpts();
+  rustOpts.addFuncContextArgument<mlir::func::FuncOp>("ctx: &mut BigIntContext");
+  rustOpts.addCallContextArgument<mlir::func::CallOp>("ctx");
+  auto rustLang = dynamic_cast<codegen::RustLanguageSyntax*>(rustOpts.lang);
+  assert(rustLang && "expecting getRustCodegenOpts to use RustLanguage");
+  rustLang->addItemsMacro("bigint_program_info");
+  rustLang->addItemsMacro("bigint_program_list");
+  emit("rs", rustOpts, outputDir, module.getModule());
 
-  static codegen::CppLanguageSyntax cppLang;
-  cppLang.addContextArgument("BigIntContext& ctx");
-  emitLang("cpp", &cppLang, dir, module.getModule());
+  auto cppOpts = codegen::getCppCodegenOpts();
+  cppOpts.addFuncContextArgument<mlir::func::FuncOp>("BigIntContext& ctx");
+  cppOpts.addCallContextArgument<mlir::func::CallOp>("ctx");
+  emit("cpp", cppOpts, outputDir, module.getModule());
 
   PassManager pm2(module.getCtx());
   if (failed(applyPassManagerCLOptions(pm2))) {
@@ -229,7 +229,7 @@ int main(int argc, char* argv[]) {
   bool exceeded = false;
   module.getModule().walk([&](mlir::func::FuncOp func) {
     recursion::EncodeStats stats;
-    zirgen::emitRecursion(dir, func, &stats);
+    zirgen::emitRecursion(outputDir, func, &stats);
     size_t iters = BigInt::getIterationCount(func);
     if (stats.totCycles > (1 << recursion::kRecursionPo2)) {
       exceeded = true;
@@ -245,7 +245,7 @@ int main(int argc, char* argv[]) {
   });
 
   if (exceeded) {
-    llvm::errs() << "One or more bigint probgrams exceeded the total number of allowed cycles.  "
+    llvm::errs() << "One or more bigint programs exceeded the total number of allowed cycles.  "
                     "Perhaps decrease iterations?\n";
     return 1;
   }

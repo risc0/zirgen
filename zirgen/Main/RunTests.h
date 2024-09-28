@@ -12,23 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#pragma once
-
 #include "mlir/IR/BuiltinOps.h"
-#include "mlir/IR/PatternMatch.h"
-#include "mlir/Pass/Pass.h"
 
-namespace zirgen::ZStruct {
+namespace zirgen {
 
-// Pass constructors
-std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createOptimizeLayoutPass();
-std::unique_ptr<mlir::Pass> createUnrollPass();
-std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createExpandLayoutPass();
-std::unique_ptr<mlir::Pass> createInlineLayoutPass();
-std::unique_ptr<mlir::Pass> createBuffersToArgsPass();
+void registerRunTestsCLOptions();
+int runTests(mlir::ModuleOp module);
 
-// Generate the code for registering passes.
-#define GEN_PASS_REGISTRATION
-#include "zirgen/Dialect/ZStruct/Transforms/Passes.h.inc"
-
-} // namespace zirgen::ZStruct
+} // namespace zirgen

@@ -121,29 +121,25 @@ struct GenerateStepsPass : public GenerateStepsBase<GenerateStepsPass> {
 
     OpBuilder builder(component);
 
-    auto stepOp = builder.create<StepFuncOp>(loc, component.getName());
+    auto stepOp = builder.create<StepFuncOp>(
+        loc, ("step$" + component.getName()).str(), builder.getFunctionType({}, {}));
 
     builder.setInsertionPointToStart(stepOp.addEntryBlock());
 
     llvm::SmallVector<Value> args;
     auto bufferAnalysis = getAnalysis<ZStruct::BufferAnalysis>();
-    auto contextArg = builder.getBlock()->getArgument(0);
 
     for (auto execArg : funcOp.getBody().front().getArguments()) {
-      if (execArg.getType() == contextArg.getType()) {
-        args.push_back(contextArg);
-      } else {
-        auto [constOp, bufferDesc] = bufferAnalysis.getLayoutAndBufferForArgument(execArg);
-        if (!constOp) {
-          funcOp.emitError() << "Unable to find a value for argument " << execArg
-                             << " to top-level step for component " << component.getName();
-          return signalPassFailure();
-        }
-        auto getBufferOp = builder.create<ZStruct::GetBufferOp>(
-            funcOp.getLoc(), bufferDesc.getType(&getContext()), bufferDesc.name);
-        args.push_back(builder.create<ZStruct::BindLayoutOp>(
-            funcOp.getLoc(), constOp.getType(), constOp.getSymName(), getBufferOp));
+      auto [constOp, bufferDesc] = bufferAnalysis.getLayoutAndBufferForArgument(execArg);
+      if (!constOp) {
+        funcOp.emitError() << "Unable to find a value for argument " << execArg
+                           << " to top-level step for component " << component.getName();
+        return signalPassFailure();
       }
+      auto getBufferOp = builder.create<ZStruct::GetBufferOp>(
+          funcOp.getLoc(), bufferDesc.getType(&getContext()), bufferDesc.name);
+      args.push_back(builder.create<ZStruct::BindLayoutOp>(
+          funcOp.getLoc(), constOp.getType(), constOp.getSymName(), getBufferOp));
     }
 
     mlir::FunctionType funcType = funcOp.getFunctionType();
