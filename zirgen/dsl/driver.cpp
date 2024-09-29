@@ -373,7 +373,6 @@ int runTests(mlir::ModuleOp& module) {
     }
     interp.setExternHandler(&testExterns);
     interp.setSilenceErrors(expectFailure);
-    // interp.setDebug(true);
     bool failed = false;
     size_t cycle = 0;
     std::string exceptionName;
@@ -429,8 +428,10 @@ int runTests(mlir::ModuleOp& module) {
       // print out the final accumulator sum so that we can assert on it in tests
       for (auto [buf, bufDesc] : llvm::zip(bufs, allBufs)) {
         if (bufDesc.name == "accum") {
+          // TODO: the 'last' element is really 4 back due to the very
+          // wack-a-doodle way we handle extension element
           llvm::outs() << "final accum: [";
-          llvm::interleaveComma(buf->back(), llvm::outs());
+          llvm::interleaveComma((*buf)[buf->size() - 4], llvm::outs());
           llvm::outs() << "]\n";
         }
       }

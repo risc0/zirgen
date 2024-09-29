@@ -29,7 +29,8 @@ namespace {
 
 void getRegCount(ModuleOp mod, Attribute layoutAttr, size_t& regCount) {
   layoutAttr.walk([&](ZStruct::RefAttr refAttr) {
-    regCount = std::max<size_t>(regCount, refAttr.getIndex() + 1);
+    regCount =
+        std::max<size_t>(regCount, refAttr.getIndex() + refAttr.getType().getElement().getFieldK());
   });
   layoutAttr.walk([&](SymbolRefAttr symRef) {
     // Symbolic reference to another layout; follow the reference.

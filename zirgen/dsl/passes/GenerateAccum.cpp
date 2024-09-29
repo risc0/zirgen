@@ -13,11 +13,14 @@
 // limitations under the License.
 
 #include "mlir/Dialect/Arith/IR/Arith.h"
+#include "mlir/Transforms/GreedyPatternRewriteDriver.h"
 #include "llvm/ADT/TypeSwitch.h"
 
 #include "zirgen/Dialect/ZHLT/IR/TypeUtils.h"
+#include "zirgen/Dialect/ZStruct/Transforms/RewritePatterns.h"
 #include "zirgen/Dialect/Zll/IR/IR.h"
 #include "zirgen/Utilities/KeyPath.h"
+#include "zirgen/dsl/passes/CommonRewrites.h"
 #include "zirgen/dsl/passes/PassDetail.h"
 
 using namespace mlir;
@@ -31,7 +34,7 @@ namespace dsl {
 struct RandomnessMap {
   RandomnessMap() = default;
   RandomnessMap(OpBuilder& builder, Value pivot, Value zeroDistance) : pivot(pivot) {
-    ValType extValType = Zhlt::getValExtType(builder.getContext());
+    ValType extValType = Zhlt::getExtValType(builder.getContext());
 
     if (pivot.getType() == Zhlt::getExtRefType(pivot.getContext())) {
       this->pivot = builder.create<LoadOp>(pivot.getLoc(), extValType, pivot, zeroDistance);
@@ -67,7 +70,7 @@ public:
     // dictionary. Unneeded values will be pruned later by folding.
     zeroDistance =
         builder.create<arith::ConstantOp>(randomnessLayout.getLoc(), builder.getIndexAttr(0));
-    ValType extValType = Zhlt::getValExtType(builder.getContext());
+    ValType extValType = Zhlt::getExtValType(builder.getContext());
 
     verifierRandomness = RandomnessMap(builder, randomnessLayout, zeroDistance);
 
@@ -95,7 +98,7 @@ public:
   void finalize() {
     Location loc = accumLayout.getLoc();
     auto accumLayoutType = accumLayout.getType().cast<LayoutArrayType>();
-    ValType extValType = Zhlt::getValExtType(builder.getContext());
+    ValType extValType = Zhlt::getExtValType(builder.getContext());
 
     // If we have a non-multiple of 3 number of arguments, be sure to write
     // the last accumulator value into a register
@@ -126,7 +129,7 @@ private:
   // an expression like the one above.
   Value condenseArgument(Value layout, const RandomnessMap& randomness) {
     MLIRContext* ctx = builder.getContext();
-    ValType extValType = Zhlt::getValExtType(ctx);
+    ValType extValType = Zhlt::getExtValType(ctx);
 
     if (layout.getType() == Zhlt::getNondetRegLayoutType(ctx)) {
       // For a single register, compute r_a * a[i]
@@ -179,7 +182,7 @@ private:
   // Writes t to the next accum column, and returns a value loaded from it.
   Value storeTemporarySum(Value t) {
     assert(accCount != 0 && "writing accum column without accumulating any new arguments");
-    ValType extValType = Zhlt::getValExtType(builder.getContext());
+    ValType extValType = Zhlt::getExtValType(builder.getContext());
     Value tLayout = getAccumColumnLayout(accCol);
     builder.create<StoreOp>(t.getLoc(), tLayout, t);
     Value newT = builder.create<ZStruct::LoadOp>(t.getLoc(), extValType, tLayout, zeroDistance);
@@ -225,7 +228,7 @@ private:
   // t' = t + c[i] / (v[i] + x)
   Value accumulateArgument(Value t, LayoutType type, Value layout) {
     MLIRContext* ctx = builder.getContext();
-    ValType extValType = Zhlt::getValExtType(builder.getContext());
+    ValType extValType = Zhlt::getExtValType(builder.getContext());
     StringAttr countName = type.getFields()[0].name;
     Value cLayout = builder.create<LookupOp>(layout.getLoc(), layout, countName);
     cLayout = Zhlt::coerceTo(cLayout, Zhlt::getRefType(ctx), builder);
@@ -318,7 +321,94 @@ private:
 };
 
 struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
+  ComponentOp getUserAccum(ModuleOp module) {
+    auto* ctx = &getContext();
+    auto loc = module.getLoc();
+    OpBuilder builder(ctx);
+    builder.setInsertionPointToEnd(module.getBody());
+
+    // Get the top + accum function or return nothing
+    auto topFunc = module.lookupSymbol<ComponentOp>("Top");
+    auto accumFunc = module.lookupSymbol<ComponentOp>("Accum");
+    if (!topFunc || !accumFunc) {
+      return ComponentOp();
+    }
+
+    // Do some type checking on Accum
+    Type topComponentType = topFunc.getResultType();
+    auto retType = zirgen::Zhlt::getSuperType(topComponentType);
+    auto accumArgTypes = accumFunc.getArgumentTypes();
+    if (accumArgTypes.size() != 3) {
+      return ComponentOp();
+    }
+    if (accumArgTypes[0] != retType) {
+      return ComponentOp();
+    }
+    auto mixArrayType = accumArgTypes[1].dyn_cast<ArrayType>();
+    if (!mixArrayType || mixArrayType.getElement() != Zhlt::getExtValType(ctx)) {
+      return ComponentOp();
+    }
+
+    // Build a new function which takes in top layout and returns super
+    SmallVector<Type> topExtractParams = {topFunc.getLayoutType()};
+    auto topExtract = builder.create<Zhlt::ComponentOp>(
+        loc, "Top$extract", retType, topExtractParams, LayoutType());
+    Block* block = topExtract.addEntryBlock();
+    builder.setInsertionPointToStart(block);
+
+    // Body of function is: Call top, extract super, return
+    auto callTop = builder.create<Zhlt::ConstructOp>(
+        loc, topFunc, SmallVector<Value>(), block->getArgument(0));
+    auto topRet = builder.create<ZStruct::LookupOp>(loc, callTop, "@super");
+    builder.create<Zhlt::ReturnOp>(loc, topRet);
+
+    // Now: kill all side effects, inline, and boil everything away...
+    RewritePatternSet patterns(ctx);
+    patterns.insert<EraseOp<ZStruct::StoreOp>>(ctx);
+    patterns.insert<EraseOp<ZStruct::AliasLayoutOp>>(ctx);
+    patterns.insert<EraseOp<Zll::ExternOp>>(ctx);
+    patterns.insert<EraseOp<Zll::EqualZeroOp>>(ctx);
+    patterns.insert<InlineCalls>(ctx);
+    FrozenRewritePatternSet frozenPatterns(std::move(patterns));
+
+    GreedyRewriteConfig config;
+    config.maxIterations = 100;
+    if (applyPatternsAndFoldGreedily(topExtract, frozenPatterns, config).failed()) {
+      topExtract->emitError("Could not generate check function");
+      return ComponentOp();
+    }
+
+    // Now construct user accum function that:
+    // 1) Calls top$extract
+    // 2) Passes the results to user accum, forwarding mix data
+    SmallVector<Type> userAccumParams = {
+        topFunc.getLayoutType(),
+        mixArrayType,
+    };
+    builder.setInsertionPointToEnd(module.getBody());
+    auto userAccum = builder.create<Zhlt::ComponentOp>(
+        loc, "user$Accum", accumFunc.getResultType(), userAccumParams, accumFunc.getLayoutType());
+    block = userAccum.addEntryBlock();
+    builder.setInsertionPointToStart(block);
+
+    // Body of function is: Call Top$extract, Build Accum, return
+    SmallVector<Value> topExtractCallParams = {block->getArgument(0)};
+    auto callTopExtract =
+        builder.create<Zhlt::ConstructOp>(loc, topExtract, topExtractCallParams, Value());
+    SmallVector<Value> userAccumArgs = {
+        callTopExtract,
+        block->getArgument(1),
+    };
+    auto callAccum =
+        builder.create<Zhlt::ConstructOp>(loc, accumFunc, userAccumArgs, userAccum.getLayout());
+    builder.create<Zhlt::ReturnOp>(loc, callAccum);
+
+    return userAccum;
+  }
+
   void runOnOperation() override {
+    auto userAccum = getUserAccum(getOperation());
+
     getOperation().walk([&](ComponentOp component) {
       // Generate accum code for entry points like Top and tests, but don't get
       // stuck in a loop generating more accum code from the new accum code.
@@ -340,7 +430,7 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
         llvm::errs() << "Unable to find unique major mux for " << baseName << "\n";
         return signalPassFailure();
       }
-      buildAccumStep(component, keyPath, majorType);
+      buildAccumStep(component, keyPath, majorType, userAccum);
     });
   }
 
@@ -375,7 +465,10 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
     return 0;
   }
 
-  void buildAccumStep(ComponentOp component, KeyPath keyPath, LayoutType& majorType) {
+  void buildAccumStep(ComponentOp component,
+                      KeyPath keyPath,
+                      LayoutType& majorType,
+                      ComponentOp userAccum) {
     // Get the worst case column count
     size_t columns = 0;
     for (auto& field : majorType.getFields()) {
@@ -394,7 +487,16 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
     // Create Accum component, which takes the Top layout as a parameter and the
     // accum buffer as its layout.
     SmallVector<Type> accumParams = {component.getLayoutType()};
-    auto accumLayoutType = LayoutArrayType::get(ctx, Zhlt::getExtRefType(ctx), columns);
+    auto accumColumnsType = LayoutArrayType::get(ctx, Zhlt::getExtRefType(ctx), columns);
+    SmallVector<ZStruct::FieldInfo> members;
+    size_t userRandomnessSize = 0;
+    if (userAccum) {
+      members.insert(members.end(), {StringAttr::get(ctx, "user"), userAccum.getLayoutType()});
+      userRandomnessSize = userAccum.getArgumentTypes()[1].dyn_cast<ArrayType>().getSize();
+    }
+    members.insert(members.end(), {StringAttr::get(ctx, "columns"), accumColumnsType});
+    LayoutType accumLayoutType =
+        builder.getType<LayoutType>("layout$accum", members, LayoutKind::Normal);
     std::string accumName = (component.getName() + "$accum").str();
     auto accum = builder.create<Zhlt::ComponentOp>(
         loc, accumName, Zhlt::getComponentType(ctx), accumParams, accumLayoutType);
@@ -402,13 +504,19 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
     builder.setInsertionPointToStart(accum.addEntryBlock());
 
     // Create globals for verifier randomness
-    LayoutType mixLayoutType = getRandomnessLayoutType();
+    LayoutType mixLayoutType = getRandomnessLayoutType(userRandomnessSize);
     auto randomnessLayout =
         builder.create<Zhlt::GetGlobalLayoutOp>(loc, mixLayoutType, "mix", "randomness");
 
-    // Walk down the key path to the major mux layout component
+    // Walk down the key path to the major mux layout component, capture top we go...
     Value cur = accum.getConstructParam()[0];
+    Value topLayout;
     for (const Key& key : keyPath) {
+      if (auto ltype = cur.getType().dyn_cast<LayoutType>()) {
+        if (ltype.getId() == "Top") {
+          topLayout = cur;
+        }
+      }
       if (auto* strKey = std::get_if<mlir::StringRef>(&key)) {
         cur = builder.create<LookupOp>(loc, cur, *strKey);
       } else {
@@ -416,6 +524,25 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
             builder.create<arith::ConstantOp>(loc, builder.getIndexAttr(std::get<size_t>(key)));
         cur = builder.create<SubscriptOp>(loc, cur, index);
       }
+    }
+
+    // Do 'user' accum work
+    if (userAccum) {
+      Value userLayout = builder.create<LookupOp>(loc, accum.getLayout(), "user");
+      Value userRandomness = builder.create<LookupOp>(loc, randomnessLayout, "$user");
+      // Load randomness and put into an array
+      Value zero = builder.create<arith::ConstantOp>(loc, builder.getIndexAttr(0));
+      Type extValType = Zhlt::getExtValType(builder.getContext());
+      SmallVector<Value> vals;
+      for (size_t i = 0; i < userRandomnessSize; i++) {
+        Value index = builder.create<arith::ConstantOp>(loc, builder.getIndexAttr(i));
+        Value ref = builder.create<SubscriptOp>(loc, userRandomness, index);
+        Value val = builder.create<ZStruct::LoadOp>(loc, extValType, ref, zero);
+        vals.push_back(val);
+      }
+      Value rngArray = builder.create<ZStruct::ArrayOp>(loc, ValueRange(vals));
+      SmallVector<Value> args = {topLayout, rngArray};
+      builder.create<ConstructOp>(loc, userAccum, args, userLayout);
     }
 
     // Load from the list of saved selectors
@@ -448,17 +575,19 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
                                 [&](auto field) { return field.name == armName; });
       if (hasArm) {
         Value armLayout = builder.create<LookupOp>(loc, cur, armName);
-        AccumBuilder accumBuilder(builder, accum.getLayout(), randomnessLayout);
+        Value columnsLayout = builder.create<LookupOp>(loc, accum.getLayout(), "columns");
+        AccumBuilder accumBuilder(builder, columnsLayout, randomnessLayout);
         accumBuilder.build(armLayout);
         accumBuilder.finalize();
       } else {
         // Read accumulator + forward
-        ValType extValType = Zhlt::getValExtType(builder.getContext());
+        ValType extValType = Zhlt::getExtValType(builder.getContext());
         Value distance =
             builder.create<arith::ConstantOp>(loc, builder.getIndexType(), builder.getIndexAttr(1));
         Value indexValue = builder.create<arith::ConstantOp>(
-            loc, builder.getIndexType(), builder.getIndexAttr(accumLayoutType.getSize() - 1));
-        Value lastLayout = builder.create<SubscriptOp>(loc, accum.getLayout(), indexValue);
+            loc, builder.getIndexType(), builder.getIndexAttr(columns - 1));
+        Value columnsLayout = builder.create<LookupOp>(loc, accum.getLayout(), "columns");
+        Value lastLayout = builder.create<SubscriptOp>(loc, columnsLayout, indexValue);
         Value prevVal = builder.create<LoadOp>(loc, extValType, lastLayout, distance);
         builder.create<StoreOp>(loc, lastLayout, prevVal);
       }
@@ -501,7 +630,7 @@ private:
     return LayoutType::get(ctx, fieldTypeName, members);
   }
 
-  LayoutType getRandomnessLayoutType() {
+  LayoutType getRandomnessLayoutType(size_t userRngCount) {
     // Allocate verifier randomness in the mix buffer. We need one column for
     // each non-count column of each argument type, and one more for the offset
     // used by the LogUp grand sum.
@@ -521,7 +650,11 @@ private:
 
     // Include one extra global column for the LogUp offset
     members.push_back({StringAttr::get(ctx, "$offset"), extType});
-
+    // Add user randomness (if any)
+    if (userRngCount > 0) {
+      members.push_back({StringAttr::get(ctx, "$user"),
+                         ZStruct::LayoutArrayType::get(ctx, extType, userRngCount)});
+    }
     return LayoutType::get(ctx, "$accum", members);
   }
 
