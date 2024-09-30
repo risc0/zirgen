@@ -4,25 +4,6 @@
 // TODO: Add verifier that at least one of `max_neg` and `min_bits` must be zero
 
 // TODO: Test the following:
-// For `add`:
-//  - `coeffs` is max of the input coeffs
-//  - `max_pos` is the sum of the input `max_pos`s
-//  - `max_neg` is the sum of the input `max_neg`s
-//  - If both inputs are nonnegative, `min_bits` is max of input `min_bits`s
-//  - If either input may be negative, `min_bits` is 0
-// For `sub` (A - B):
-//  - `coeffs` is max of the input coeffs
-//  - `max_pos` is A's `max_pos` plus B's `max_neg`
-//  - `max_neg` is A's `max_neg` plus B's `max_pos`
-//  - Probably: just set `min_bits` to 0 (TODO but could be more precise)
-// For `mul`:
-//  - `coeffs` is the sum of the input coeffs minus 1 [TODO: Confirm no carries]
-//  - `max_pos` is the smaller `coeffs` value from the two inputs times
-//     the max of the product of the `max_pos` and the product of the `max_neg`
-//  - `max_neg` is the smaller `coeffs` value from the two inputs times
-//     the max of the two mixed products (of one `max_pos` and one `max_neg`)
-//  - If both inputs are nonnegative, `min_bits` is the sum of input `min_bits`s minus 1
-//  - If either input may be negative, `min_bits` is zero
 // For [nondets]:
 //  - In general, nondets will only return nonnegative answers
 //  - In general, nondets will return values with normalized coeffs (and therefore potentially more coeffs than if unnormalized)
@@ -55,6 +36,13 @@
 //  - Same as `nondet_inv_mod`
 // For `reduce`:
 //  - Same as `nondet_rem`
+
+// Type inference for `add`:
+//  - `coeffs` is max of the input coeffs
+//  - `max_pos` is the sum of the input `max_pos`s
+//  - `max_neg` is the sum of the input `max_neg`s
+//  - If both inputs are nonnegative, `min_bits` is max of input `min_bits`s
+//  - If either input may be negative, `min_bits` is 0
 
 func.func @good_add_basic() {
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
@@ -124,6 +112,12 @@ func.func @bad_add_max_pos() {
 }
 
 // -----
+
+// Type inference for `sub` (A - B):
+//  - `coeffs` is max of the input coeffs
+//  - `max_pos` is A's `max_pos` plus B's `max_neg`
+//  - `max_neg` is A's `max_neg` plus B's `max_pos`
+//  - just set `min_bits` to 0
 
 func.func @good_sub_coeff_count() {
   // Primary rules tested:
@@ -213,6 +207,15 @@ func.func @good_sub_min_bits() {
 }
 
 // -----
+
+// Type inference for `mul`:
+//  - `coeffs` is the sum of the input coeffs minus 1 [TODO: Confirm no carries]
+//  - `max_pos` is the smaller `coeffs` value from the two inputs times
+//     the max of the product of the `max_pos` and the product of the `max_neg`
+//  - `max_neg` is the smaller `coeffs` value from the two inputs times
+//     the max of the two mixed products (of one `max_pos` and one `max_neg`)
+//  - If both inputs are nonnegative, `min_bits` is the sum of input `min_bits`s minus 1
+//  - If either input may be negative, `min_bits` is zero
 
 func.func @good_mul_basic() {
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
