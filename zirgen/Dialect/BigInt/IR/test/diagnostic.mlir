@@ -275,3 +275,144 @@ func.func @good_mul_min_bits() {
   %6 = bigint.mul %4 : <1, 255, 255, 0>, %2 : <1, 255, 0, 4> -> <1, 65025, 65025, 0>
   return
 }
+
+// -----
+
+// TODO: This has no testing for negatives -- handle appropriately elsewhere (or here?)
+// TODO: Add a pass that gets mad if you try to nondet from a negative?
+
+// For nondets generally:
+//  - In general, nondets will only return nonnegative answers
+//  - In general, nondets will return values with normalized coeffs (and therefore potentially more coeffs than if unnormalized)
+//    - The max possible overall value can be computed as `max_pos` (of the unnormalized form) times the sum from i=0..coeffs of 256^i
+//      - Then 1 + the floor of log_256 of this value is the number of coeffs
+//  - So in normalized form `max_pos = 255` and `max_neg = 0`
+
+// Type inference for `nondet_quot`:
+//  - For `coeffs`:
+//    - Compute the max overall value from the numerator by the algorithm from the general nondets section
+//    - Divide this by `2^(min_bits - 1)` of the denominator
+//    - Compute the coeffs from this number by the algorithm from the general nondets section
+//  - `max_pos` is 255
+//  - `max_neg` is 0
+//  - `min_bits` is 0
+
+func.func @good_nondet_quot_basic() {
+  %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
+  %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
+  %2 = bigint.nondet_quot %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 255, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_nondet_quot_oversized_num() {
+  // Primary rules tested:
+  //  - [%3] Compute the max overall value from the numerator
+  //  - [%3] Return values with normalized coeffs (potentially more coeffs than if unnormalized)
+  %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
+  %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
+  %2 = bigint.add %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 510, 0, 0>
+  %3 = bigint.nondet_quot %2 : <1, 510, 0, 0>, %1 : <1, 255, 0, 0> -> <2, 255, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_nondet_quot_multibyte_num() {
+  // Primary rules tested:
+  //  - [%3] Compute the max overall value from the numerator
+  //  - [%3] Return values with normalized coeffs (potentially more coeffs than if unnormalized)
+  %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
+  %1 = bigint.def 64, 1, true -> <8, 255, 0, 0>
+  %2 = bigint.add %0 : <3, 255, 0, 0>, %1 : <8, 255, 0, 0> -> <8, 510, 0, 0>
+  %3 = bigint.nondet_quot %2 : <8, 510, 0, 0>, %0 : <3, 255, 0, 0> -> <9, 255, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_nondet_quot_multibyte_num2() {
+  // Primary rules tested:
+  //  - [%3] Compute the max overall value from the numerator
+  //  - [%3] Return values with normalized coeffs (potentially more coeffs than if unnormalized)
+  %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
+  %1 = bigint.def 64, 1, true -> <8, 255, 0, 0>
+  %2 = bigint.mul %0 : <3, 255, 0, 0>, %1 : <8, 255, 0, 0> -> <10, 195075, 0, 0>
+  %3 = bigint.nondet_quot %2 : <10, 195075, 0, 0>, %0 : <3, 255, 0, 0> -> <12, 255, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_nondet_quot_multibyte_denom() {
+  // Primary rules tested:
+  //  - [%3] Compute the max overall value from the numerator
+  %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
+  %1 = bigint.def 64, 1, true -> <8, 255, 0, 0>
+  %2 = bigint.add %0 : <1, 255, 0, 0>, %1 : <8, 255, 0, 0> -> <8, 510, 0, 0>
+  %3 = bigint.nondet_quot %0 : <1, 255, 0, 0>, %2 : <8, 510, 0, 0> -> <1, 255, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_nondet_quot_1bit_denom() {
+  // Primary rules tested:
+  //  - [%2] Compute the max overall value from the numerator
+  //  - [%2] As part of computing Coeffs, divide this by `2^(min_bits - 1)` of the denominator
+  %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
+  %1 = bigint.const 1 : i8 -> <1, 255, 0, 1>
+  %2 = bigint.nondet_quot %0 : <3, 255, 0, 0>, %1 : <1, 255, 0, 1> -> <3, 255, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_nondet_quot_8bit_denom() {
+  // Primary rules tested:
+  //  - [%2] Compute the max overall value from the numerator
+  //  - [%2] As part of computing Coeffs, divide this by `2^(min_bits - 1)` of the denominator
+  %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
+  %1 = bigint.const 200 : i8 -> <1, 255, 0, 8>
+  %2 = bigint.nondet_quot %0 : <3, 255, 0, 0>, %1 : <1, 255, 0, 8> -> <3, 255, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_nondet_quot_9bit_denom() {
+  // Primary rules tested:
+  //  - [%2] Compute the max overall value from the numerator
+  //  - [%2] As part of computing Coeffs, divide this by `2^(min_bits - 1)` of the denominator
+  %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
+  %1 = bigint.const 300 : i16 -> <2, 255, 0, 9>
+  %2 = bigint.nondet_quot %0 : <3, 255, 0, 0>, %1 : <2, 255, 0, 9> -> <2, 255, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_nondet_quot_9bit_1coeff_denom() {
+  // Primary rules tested:
+  //  - [%4] Compute the max overall value from the numerator
+  //  - [%4] As part of computing Coeffs, divide this by `2^(min_bits - 1)` of the denominator
+  //  - [%4] Return values with normalized coeffs (potentially more coeffs than if unnormalized)
+  %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
+  %1 = bigint.const 200 : i8 -> <1, 255, 0, 8>
+  %2 = bigint.const 2 : i8 -> <1, 255, 0, 2>
+  %3 = bigint.mul %1 : <1, 255, 0, 8>, %2 : <1, 255, 0, 2> -> <1, 65025, 0, 9>
+  %4 = bigint.nondet_quot %0 : <3, 255, 0, 0>, %3 : <1, 65025, 0, 9> -> <2, 255, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_nondet_quot_num_minbits() {
+  // Primary rules tested:
+  //  - [%2] `min_bits` of `nondet_quot` result is always 0
+  %0 = bigint.const 300 : i16 -> <2, 255, 0, 9>
+  %1 = bigint.def 8, 0, true -> <1, 255, 0, 0>
+  %2 = bigint.nondet_quot %0 : <2, 255, 0, 9>, %1 : <1, 255, 0, 0> -> <2, 255, 0, 0>
+  return
+}
