@@ -1,0 +1,594 @@
+import one_hot;
+extern GetCycle() : Val;
+extern configureInput(bytesPerElem: Val);
+extern readInput() : Val;
+
+// use_once_mem_arg.zir
+extern SimpleMemoryPoke(index: Val, data: Val);
+extern SimpleMemoryPeek(index: Val) : Val;
+component MEM_DIGEST_LEN() { 4 }
+component MemDigest(elems: Array<Val, MEM_DIGEST_LEN()>) {
+  elems
+}
+argument UseOnceMemoryElement(c: Val, i: Val, d: MemDigest) {
+  count := NondetReg(c);
+  index := NondetReg(i);
+  //digest := NondetDigestReg(d);
+  digest := [NondetReg(d[0]), NondetReg(d[1]), NondetReg(d[2]), NondetReg(d[3])];
+}
+component ReadMemory(i: Val) {
+  digest := MemDigest(for elemIdx : 0..MEM_DIGEST_LEN() {
+    SimpleMemoryPeek(i * MEM_DIGEST_LEN() + elemIdx)
+  });
+  elem := UseOnceMemoryElement(-1, i, digest);
+  elem.digest
+}
+component WriteMemory(i: Val, d: MemDigest) {
+  for elemIdx : 0..MEM_DIGEST_LEN() {
+     SimpleMemoryPoke(i * MEM_DIGEST_LEN() + elemIdx, d[elemIdx]);
+  };
+  elem := UseOnceMemoryElement(1, i, d);
+  elem.count = 1;
+  elem.index = i;
+  for elemIdx : 0..MEM_DIGEST_LEN() {
+    elem.digest[elemIdx] = d[elemIdx];
+  }
+}
+// EOF use_once_mem_arg.zir
+
+// po2.zir unpacking up to 31 bits
+component Po2(n: Val) {
+  arr := [
+    0x1,
+    0x2,
+    0x4,
+    0x8,
+    0x10,
+    0x20,
+    0x40,
+    0x80,
+    0x100,
+    0x200,
+    0x400,
+    0x800,
+    0x1000,
+    0x2000,
+    0x4000,
+    0x8000,
+    0x10000,
+    0x20000,
+    0x40000,
+    0x80000,
+    0x100000,
+    0x200000,
+    0x400000,
+    0x800000,
+    0x1000000,
+    0x2000000,
+    0x4000000,
+    0x8000000,
+    0x10000000,
+    0x20000000,
+    0x40000000
+  ];
+  arr[n]
+}
+component ToBits<n: Val>(x: Val) {
+  for i : 0..n { NondetBitReg((x & Po2(i)) / Po2(i)) }
+}
+component FromBits<n: Val>(bits: Array<Val, n>) {
+  reduce for i : 0..n { Po2(i) * bits[i] } init 0 with Add
+}
+// EOF po2.zir
+
+component RGZ<N: Val>(arr: Array<Val, N>) {
+  for i : 0..N { Reg(arr[i]) }
+}
+
+// concatenate.zir
+component Concatenate<N: Val, M: Val>(a: Array<NondetReg, N>, b: Array<NondetReg, M>) {
+  result := for i : 0..(N + M) {
+    low := InRange(0, i, N);
+    NondetReg(low*a[i] + (1-low)*b[i-N])
+  };
+  for i : 0..N { AliasLayout!(a[i], result[i]); };
+  for i : 0..M { AliasLayout!(b[i], result[i + N]); };
+  result
+}
+component ConcatZeros<N: Val, M: Val>(a: Array<NondetReg, N>) {
+  result := for i : 0..(N + M) {
+    low := InRange(0, i, N);
+    NondetReg(low*a[i] /* + (1-low)*0 */ )
+  };
+  for i : 0..N { AliasLayout!(a[i], result[i]); };
+  result
+}
+component ConcatElem<N: Val>(a: Array<NondetReg, N>, b: NondetReg) {
+  result := for i : 0..(N + 1) {
+    low := InRange(0, i, N);
+    NondetReg(low*a[i] + (1-low)*b)
+  };
+  for i : 0..N { AliasLayout!(a[i], result[i]); };
+  AliasLayout!(b, result[N]);
+  result
+}
+// EOF concatenate.zir
+
+component S5MAJOR_SETUP() { 1 }
+component S5MAJOR_LOAD()  { 2 }
+component S5MAJOR_MIX()   { 3 }
+
+component S5MINOR_INIT()   { 0 }
+component S5MINOR_FINI()   { 4 }
+component S5MINOR_OUTPUT() { 8 }
+
+component HLEN() { 16 }
+component WLEN() { 32 }
+component DLEN() { 64 }
+component dummyDW() { for i : 0..DLEN() { NondetReg(0) } }
+
+component RetTuple(a: Array<Val, DLEN()>,
+                   e: Array<Val, DLEN()>,
+                   w: Array<Val, DLEN()>,
+                   minor_count: Val,
+                   major_count: Val,
+                   block: Val,
+                   memIdx: Val) {
+  arr_a := for elem : a { NondetReg(elem) }; //AliasLayout!(a, arr_a);
+  arr_e := for elem : e { NondetReg(elem) }; //AliasLayout!(e, arr_e);
+  arr_w := for elem : w { NondetReg(elem) }; //AliasLayout!(w, arr_w);
+  minor := Reg(minor_count); //AliasLayout!(minor, minor_count);
+  major := Reg(major_count); //AliasLayout!(major, major_count);
+  blk := Reg(block); //AliasLayout!(blk, block);
+  midx := Reg(memIdx); //AliasLayout!(midx, memIdx);
+}
+
+component IVvals(i: Val) {
+  arr := [[0x6a09, 0xe667, 0xF3BC, 0xC908],
+          [0xbb67, 0xae85, 0x84CA, 0xA73B],
+          [0x3c6e, 0xf372, 0xFE94, 0xF82B],
+          [0xa54f, 0xf53a, 0x5F1D, 0x36F1],
+          [0x510e, 0x527f, 0xADE6, 0x82D1],
+          [0x9b05, 0x688c, 0x2B3E, 0x6C1F],
+          [0x1f83, 0xd9ab, 0xFB41, 0xBD6B],
+          [0x5be0, 0xcd19, 0x137E, 0x2179]];
+  FourShorts(arr[i][3],arr[i][2],arr[i][1],arr[i][0])
+}
+
+component sha512rc_table<i: Val>() {
+  arr := [[0x428A,0x2F98,0xD728,0xAE22], [0x7137,0x4491,0x23EF,0x65CD],
+          [0xB5C0,0xFBCF,0xEC4D,0x3B2F], [0xE9B5,0xDBA5,0x8189,0xDBBC],
+          [0x3956,0xC25B,0xF348,0xB538], [0x59F1,0x11F1,0xB605,0xD019],
+          [0x923F,0x82A4,0xAF19,0x4F9B], [0xAB1C,0x5ED5,0xDA6D,0x8118],
+          [0xD807,0xAA98,0xA303,0x0242], [0x1283,0x5B01,0x4570,0x6FBE],
+          [0x2431,0x85BE,0x4EE4,0xB28C], [0x550C,0x7DC3,0xD5FF,0xB4E2],
+          [0x72BE,0x5D74,0xF27B,0x896F], [0x80DE,0xB1FE,0x3B16,0x96B1],
+          [0x9BDC,0x06A7,0x25C7,0x1235], [0xC19B,0xF174,0xCF69,0x2694],
+          [0xE49B,0x69C1,0x9EF1,0x4AD2], [0xEFBE,0x4786,0x384F,0x25E3],
+          [0x0FC1,0x9DC6,0x8B8C,0xD5B5], [0x240C,0xA1CC,0x77AC,0x9C65],
+          [0x2DE9,0x2C6F,0x592B,0x0275], [0x4A74,0x84AA,0x6EA6,0xE483],
+          [0x5CB0,0xA9DC,0xBD41,0xFBD4], [0x76F9,0x88DA,0x8311,0x53B5],
+          [0x983E,0x5152,0xEE66,0xDFAB], [0xA831,0xC66D,0x2DB4,0x3210],
+          [0xB003,0x27C8,0x98FB,0x213F], [0xBF59,0x7FC7,0xBEEF,0x0EE4],
+          [0xC6E0,0x0BF3,0x3DA8,0x8FC2], [0xD5A7,0x9147,0x930A,0xA725],
+          [0x06CA,0x6351,0xE003,0x826F], [0x1429,0x2967,0x0A0E,0x6E70],
+          [0x27B7,0x0A85,0x46D2,0x2FFC], [0x2E1B,0x2138,0x5C26,0xC926],
+          [0x4D2C,0x6DFC,0x5AC4,0x2AED], [0x5338,0x0D13,0x9D95,0xB3DF],
+          [0x650A,0x7354,0x8BAF,0x63DE], [0x766A,0x0ABB,0x3C77,0xB2A8],
+          [0x81C2,0xC92E,0x47ED,0xAEE6], [0x9272,0x2C85,0x1482,0x353B],
+          [0xA2BF,0xE8A1,0x4CF1,0x0364], [0xA81A,0x664B,0xBC42,0x3001],
+          [0xC24B,0x8B70,0xD0F8,0x9791], [0xC76C,0x51A3,0x0654,0xBE30],
+          [0xD192,0xE819,0xD6EF,0x5218], [0xD699,0x0624,0x5565,0xA910],
+          [0xF40E,0x3585,0x5771,0x202A], [0x106A,0xA070,0x32BB,0xD1B8],
+          [0x19A4,0xC116,0xB8D2,0xD0C8], [0x1E37,0x6C08,0x5141,0xAB53],
+          [0x2748,0x774C,0xDF8E,0xEB99], [0x34B0,0xBCB5,0xE19B,0x48A8],
+          [0x391C,0x0CB3,0xC5C9,0x5A63], [0x4ED8,0xAA4A,0xE341,0x8ACB],
+          [0x5B9C,0xCA4F,0x7763,0xE373], [0x682E,0x6FF3,0xD6B2,0xB8A3],
+          [0x748F,0x82EE,0x5DEF,0xB2FC], [0x78A5,0x636F,0x4317,0x2F60],
+          [0x84C8,0x7814,0xA1F0,0xAB72], [0x8CC7,0x0208,0x1A64,0x39EC],
+          [0x90BE,0xFFFA,0x2363,0x1E28], [0xA450,0x6CEB,0xDE82,0xBDE9],
+          [0xBEF9,0xA3F7,0xB2C6,0x7915], [0xC671,0x78F2,0xE372,0x532B],
+          [0xCA27,0x3ECE,0xEA26,0x619C], [0xD186,0xB8C7,0x21C0,0xC207],
+          [0xEADA,0x7DD6,0xCDE0,0xEB1E], [0xF57D,0x4F7F,0xEE6E,0xD178],
+          [0x06F0,0x67AA,0x7217,0x6FBA], [0x0A63,0x7DC5,0xA2C8,0x98A6],
+          [0x113F,0x9804,0xBEF9,0x0DAE], [0x1B71,0x0B35,0x131C,0x471B],
+          [0x28DB,0x77F5,0x2304,0x7D84], [0x32CA,0xAB7B,0x40C7,0x2493],
+          [0x3C9E,0xBE0A,0x15C9,0xBEBC], [0x431D,0x67C4,0x9C10,0x0D4C],
+          [0x4CC5,0xD4BE,0xCB3E,0x42B6], [0x597F,0x299C,0xFC65,0x7E2A],
+          [0x5FCB,0x6FAB,0x3AD6,0xFAEC], [0x6C44,0x198C,0x4A47,0x5817]];
+  FourShorts(arr[i][3],arr[i][2],arr[i][1],arr[i][0])
+}
+
+component FourShorts(v1: Val, v2: Val, v3: Val, v4: Val) {
+  lowest := v1;
+  low := v2;
+  high := v3;
+  highest := v4;
+}
+
+component rightRotate<A: Val, N: Val>(a: Array<NondetReg, A>) {
+  for i : 0..A {
+    wraparound := InRange(0,i,A-N);
+    NondetReg(wraparound*a[i+N] + (1-wraparound)*a[i+N-A])
+  }
+}
+
+component rightShift<A: Val, N: Val>(a: Array<NondetReg, A>) {
+  for i : 0..A {
+    wraparound := InRange(0,i,A-N);
+    NondetReg(wraparound*a[i+N] + 0)
+  }
+}
+
+component xor3a<N: Val>(x: Array<NondetReg, N>,
+                        y: Array<NondetReg, N>,
+                        z: Array<NondetReg, N>) {
+  for i : 0..N { NondetReg(
+    ( (x[i]*y[i] + (1-x[i])*(1-y[i])) * z[i] ) +
+    ( (1-(x[i]*y[i] + (1-x[i])*(1-y[i]))) * (1-z[i]) )) }
+}
+
+component maj3<N: Val>(x: Array<NondetReg, N>,
+                       y: Array<NondetReg, N>,
+                       z: Array<NondetReg, N>) {
+  for i : 0..N { NondetReg(
+      x[i]*y[i]*(1-z[i]) +
+      x[i]*(1-y[i])*z[i] +
+      (1-x[i])*y[i]*z[i] + x[i]*y[i]*z[i]) }
+}
+
+component ch<N: Val>(x: Array<NondetReg, N>,
+                     y: Array<NondetReg, N>,
+                     z: Array<NondetReg, N>) {
+  for i : 0..N { NondetReg(x[i]*y[i] + (1-x[i])*z[i]) }
+}
+
+component pack4(arr: Array<NondetReg, DLEN()>) {
+  lowest := Reg(FromBits<HLEN()>(
+    for i : 0..HLEN() { arr[i] }));
+  low := Reg(FromBits<HLEN()>(
+    for i : HLEN()..WLEN() { arr[i] }));
+  high := Reg(FromBits<HLEN()>(
+    for i : WLEN()..WLEN()+HLEN() { arr[i] }));
+  highest := Reg(FromBits<HLEN()>(
+    for i : WLEN()+HLEN()..DLEN() { arr[i] }));
+  FourShorts(lowest, low, high, highest)
+}
+
+component add(a: FourShorts, b: FourShorts) {
+  FourShorts(a.lowest + b.lowest, a.low + b.low,
+            a.high + b.high, a.highest + b.highest)
+}
+
+component computeW(w_2: Array<NondetReg, DLEN()>,
+                   w_7: Array<NondetReg, DLEN()>,
+                   w_15: Array<NondetReg, DLEN()>,
+                   w_16: Array<NondetReg, DLEN()>) {
+  s0 := xor3a<DLEN()>(rightRotate<DLEN(),1>(w_15),
+                       rightRotate<DLEN(),8>(w_15),
+                       rightShift<DLEN(),7>(w_15));
+  s1 := xor3a<DLEN()>(rightRotate<DLEN(),19>(w_2),
+                       rightRotate<DLEN(),61>(w_2),
+                       rightShift<DLEN(),6>(w_2));
+  pack_s0 := pack4(s0);
+  pack_s1 := pack4(s1);
+  add(pack4(w_16), add(pack_s0, add(pack4(w_7), pack_s1)))
+}
+
+component computeAE(a_: Array<NondetReg, DLEN()>,
+                    b_: Array<NondetReg, DLEN()>,
+                    c_: Array<NondetReg, DLEN()>,
+                    d_: Array<NondetReg, DLEN()>,
+                    e_: Array<NondetReg, DLEN()>,
+                    f_: Array<NondetReg, DLEN()>,
+                    g_: Array<NondetReg, DLEN()>,
+                    h_: Array<NondetReg, DLEN()>,
+                    w_: Array<NondetReg, DLEN()>,
+                    k_rc: FourShorts) {
+  s0 := xor3a<DLEN()>(rightRotate<DLEN(),28>(a_),
+                       rightRotate<DLEN(),34>(a_),
+                       rightRotate<DLEN(),39>(a_));
+  s1 := xor3a<DLEN()>(rightRotate<DLEN(),14>(e_),
+                       rightRotate<DLEN(),18>(e_),
+                       rightRotate<DLEN(),41>(e_));
+  pack_ch := pack4(ch<DLEN()>(e_, f_, g_));
+  stage1 :=
+    add(pack4(w_), add(k_rc, add(pack4(h_), add(pack_ch, pack4(s1)))));
+  pack_maj := pack4(maj3<DLEN()>(a_, b_, c_));
+  aOut := add(stage1, add(pack_maj, pack4(s0)));
+  eOut := add(stage1, pack4(d_));
+}
+
+component unpack_with_carry(lowest: Val, low: Val,
+                            high: Val, highest: Val) {
+  lowest_bits := ToBits<19>(lowest);
+  FromBits<19>(lowest_bits) = lowest;
+  carry1 := lowest_bits[16] + 2*lowest_bits[17] + 4*lowest_bits[18];
+  low_plus_carry := low + carry1;
+  low_bits := ToBits<20>(low_plus_carry);
+  FromBits<20>(low_bits) = low_plus_carry;
+  carry2 := low_bits[16] + 2*low_bits[17] + 4*low_bits[18] +
+            8*low_bits[19];
+  high_plus_carry := high + carry2;
+  high_bits := ToBits<21>(high_plus_carry);
+  FromBits<21>(high_bits) = high_plus_carry;
+  carry3 := high_bits[16] + 2*high_bits[17] + 4*high_bits[18] +
+            8*high_bits[19] + 16*high_bits[20];
+  highest_plus_carry := highest + carry3;
+  highest_bits := ToBits<22>(highest_plus_carry); 
+  FromBits<22>(highest_bits) = highest_plus_carry;
+
+  lowest16 := for i : 0..16 { lowest_bits[i] };
+  low16 := for i : 0..16 { low_bits[i] };
+  high16 := for i : 0..16 { high_bits[i] };
+  highest16 := for i : 0..16 { highest_bits[i] };
+  low32 := Concatenate<16,16>(lowest16, low16);
+  high32 := Concatenate<16,16>(high16, highest16);
+  Concatenate<32,32>(low32,high32)
+}
+
+component sha512load<I: Val>(rvals: RetTuple) {
+  rvprev01 := rvals@1;
+  rvprev02 := rvals@2;
+  rvprev03 := rvals@3;
+  rvprev04 := rvals@4;
+
+  //idx := rvprev01.blk;
+  //within := rvprev01.midx + 1 - idx;
+  //invWithin := NondetReg(Inv(within));
+  //within*invWithin = 1;
+
+  inp1 := readInput();
+  high_w := ToBits<16>(inp1); //big endian
+  inp2 := readInput();
+  midh_w := ToBits<16>(inp2);
+  inp3 := readInput();
+  midl_w := ToBits<16>(inp3);
+  inp4 := readInput();
+  low_w := ToBits<16>(inp4);
+  u1 := for i : 8..16 { low_w[i] };
+  u2 := for i : 0..8 { low_w[i] };
+  u3 := for i : 8..16 { midl_w[i] };
+  u4 := for i : 0..8 { midl_w[i] };
+  u5 := for i : 8..16 { midh_w[i] };
+  u6 := for i : 0..8 { midh_w[i] };
+  u7 := for i : 8..16 { high_w[i] };
+  u8 := for i : 0..8 { high_w[i] };
+  u12 := Concatenate<8,8>(u1,u2);
+  u34 := Concatenate<8,8>(u3,u4);
+  u56 := Concatenate<8,8>(u5,u6);
+  u78 := Concatenate<8,8>(u7,u8);
+  u1234 := Concatenate<16,16>(u12,u34);
+  u5678 := Concatenate<16,16>(u56,u78);
+  unpacked_w := Concatenate<32,32>(u1234,u5678);
+  ae := computeAE(
+    rvprev01.arr_a, rvprev02.arr_a, rvprev03.arr_a, rvprev04.arr_a,
+    rvprev01.arr_e, rvprev02.arr_e, rvprev03.arr_e, rvprev04.arr_e,
+    unpacked_w, sha512rc_table<I>());
+  new_a := unpack_with_carry(
+    ae.aOut.lowest, ae.aOut.low, ae.aOut.high, ae.aOut.highest);
+  new_e := unpack_with_carry(
+    ae.eOut.lowest, ae.eOut.low, ae.eOut.high, ae.eOut.highest);
+  Z := Isz(I-15);
+  [1-Z, Z] -> (
+    RetTuple(new_a, new_e, unpacked_w, I+1, S5MAJOR_LOAD(),
+             rvprev01.blk+1, rvprev01.midx),
+    RetTuple(new_a, new_e, unpacked_w, 0, S5MAJOR_MIX(),
+             rvprev01.blk+1, rvprev01.midx))
+}
+
+component sha512load_all(rvals: RetTuple) {
+  minor_onehot := OneHot<16>(rvals@1.minor);
+  minor_onehot -> (
+    sha512load<0>(rvals),
+    sha512load<1>(rvals),
+    sha512load<2>(rvals),
+    sha512load<3>(rvals),
+    sha512load<4>(rvals),
+    sha512load<5>(rvals),
+    sha512load<6>(rvals),
+    sha512load<7>(rvals),
+    sha512load<8>(rvals),
+    sha512load<9>(rvals),
+    sha512load<10>(rvals),
+    sha512load<11>(rvals),
+    sha512load<12>(rvals),
+    sha512load<13>(rvals),
+    sha512load<14>(rvals),
+    sha512load<15>(rvals)
+  )
+}
+
+component sha512mix<S: Val, I: Val>(rvals: RetTuple) {
+  rvprev01 := rvals@1;
+  rvprev02 := rvals@2;
+  rvprev03 := rvals@3;
+  rvprev04 := rvals@4;
+  rvprev07 := rvals@7;
+  rvprev15 := rvals@15;
+  rvprev16 := rvals@16;
+
+  packed_w := computeW(
+    rvprev02.arr_w, rvprev07.arr_w, rvprev15.arr_w, rvprev16.arr_w);
+  new_w := unpack_with_carry(
+    packed_w.lowest, packed_w.low, packed_w.high, packed_w.highest);
+  ae := computeAE(
+    rvprev01.arr_a, rvprev02.arr_a, rvprev03.arr_a, rvprev04.arr_a,
+    rvprev01.arr_e, rvprev02.arr_e, rvprev03.arr_e, rvprev04.arr_e,
+    new_w, sha512rc_table<(S+1)*16+I>());
+  new_a := unpack_with_carry(
+    ae.aOut.lowest, ae.aOut.low, ae.aOut.high, ae.aOut.highest);
+  new_e := unpack_with_carry(
+    ae.eOut.lowest, ae.eOut.low, ae.eOut.high, ae.eOut.highest);
+  Z := Isz(I-15);
+  [1-Z, Z] -> (
+    RetTuple(new_a, new_e, new_w, I+1, S5MAJOR_MIX()+S,
+             rvprev01.blk, rvprev01.midx),
+    { F := Isz(S-3);
+      [1-F, F] -> (
+        RetTuple(new_a, new_e, new_w, 0, S5MAJOR_MIX()+S+1,
+                 rvprev01.blk, rvprev01.midx),
+        RetTuple(new_a, new_e, new_w, S5MINOR_FINI(), S5MAJOR_SETUP(),
+                 rvprev01.blk, rvprev01.midx))
+    })
+}
+
+component sha512mix_all<S: Val>(rvals: RetTuple) {
+  minor_onehot := OneHot<16>(rvals@1.minor);
+  minor_onehot -> (
+    sha512mix<S,0>(rvals),
+    sha512mix<S,1>(rvals),
+    sha512mix<S,2>(rvals),
+    sha512mix<S,3>(rvals),
+    sha512mix<S,4>(rvals),
+    sha512mix<S,5>(rvals),
+    sha512mix<S,6>(rvals),
+    sha512mix<S,7>(rvals),
+    sha512mix<S,8>(rvals),
+    sha512mix<S,9>(rvals),
+    sha512mix<S,10>(rvals),
+    sha512mix<S,11>(rvals),
+    sha512mix<S,12>(rvals),
+    sha512mix<S,13>(rvals),
+    sha512mix<S,14>(rvals),
+    sha512mix<S,15>(rvals)
+  )
+}
+
+component sha512init<I: Val>(rvprev01: RetTuple) {
+  packed_a := IVvals(4-I);
+  lowest_a := ToBits<16>(packed_a.lowest);
+  FromBits<16>(lowest_a) = packed_a.lowest; //soundness keccak
+  low_a := ToBits<16>(packed_a.low);
+  FromBits<16>(low_a) = packed_a.low;
+  high_a := ToBits<16>(packed_a.high);
+  FromBits<16>(high_a) = packed_a.high;
+  highest_a := ToBits<16>(packed_a.highest);
+  FromBits<16>(highest_a) = packed_a.highest;
+  low32_a := Concatenate<16,16>(lowest_a, low_a);
+  high32_a := Concatenate<16,16>(high_a, highest_a);
+  unpacked_a := Concatenate<32,32>(low32_a, high32_a);
+  packed_e := IVvals(8-I);
+  lowest_e := ToBits<16>(packed_e.lowest);
+  FromBits<16>(lowest_e) = packed_e.lowest;
+  low_e := ToBits<16>(packed_e.low);
+  FromBits<16>(low_e) = packed_e.low;
+  high_e := ToBits<16>(packed_e.high);
+  FromBits<16>(high_e) = packed_e.high;
+  highest_e := ToBits<16>(packed_e.highest);
+  FromBits<16>(highest_e) = packed_e.highest;
+  low32_e := Concatenate<16,16>(lowest_e, low_e);
+  high32_e := Concatenate<16,16>(high_e, highest_e);
+  unpacked_e := Concatenate<32,32>(low32_e, high32_e);
+  Z := Isz(4-I);
+  [1-Z, Z] -> (
+    RetTuple(unpacked_a, unpacked_e, dummyDW(),
+             I, S5MAJOR_SETUP(), 0, rvprev01.midx),
+    RetTuple(unpacked_a, unpacked_e, dummyDW(),
+             0, S5MAJOR_LOAD(), 0, rvprev01.midx))
+}
+
+component sha512fini<I: Val>(rvals: RetTuple) {
+  rvprev01 := rvals@1;
+  rvprev02 := rvals@2;
+  rvprev03 := rvals@3;
+  rvprev04 := rvals@4;
+  rvprev84 := rvals@84;
+
+  packed_a := add(pack4(rvprev04.arr_a), pack4(rvprev84.arr_a));
+  new_a := unpack_with_carry(
+    packed_a.lowest, packed_a.low, packed_a.high, packed_a.highest);
+  packed_e := add(pack4(rvprev04.arr_e), pack4(rvprev84.arr_e));
+  new_e := unpack_with_carry(
+    packed_e.lowest, packed_e.low, packed_e.high, packed_e.highest);
+
+
+  Z := Isz(8-I);
+  [1-Z, Z] -> (
+    RetTuple(new_a, new_e, dummyDW(), I, S5MAJOR_SETUP(),
+             rvprev01.blk, rvprev01.midx),
+    { moreInput := 0;//rvprev01.midx + 1 - rvprev01.blk;
+      invMoreInput := NondetReg(Inv(moreInput));
+      prod := moreInput*invMoreInput;
+      moreInput*(1-prod) = 0;
+      [prod, 1-prod] -> (
+        RetTuple(new_a, new_e, dummyDW(), 0, S5MAJOR_LOAD(),
+                 rvprev01.blk, rvprev01.midx),
+        { fa := pack4(new_a);
+          fb := pack4(rvprev01.arr_a);
+          fc := pack4(rvprev02.arr_a);
+          fd := pack4(rvprev03.arr_a);
+          fe := pack4(new_e);
+          ff := pack4(rvprev01.arr_e);
+          fg := pack4(rvprev02.arr_e);
+          fh := pack4(rvprev03.arr_e);
+          result := [
+            fa.highest, fa.high, fa.low, fa.lowest,
+            fb.highest, fb.high, fb.low, fb.lowest,
+            fc.highest, fc.high, fc.low, fc.lowest,
+            fd.highest, fd.high, fd.low, fd.lowest,
+            fe.highest, fe.high, fe.low, fe.lowest,
+            ff.highest, ff.high, ff.low, ff.lowest,
+            fg.highest, fg.high, fg.low, fg.lowest,
+            fh.highest, fh.high, fh.low, fh.lowest];
+          padded_res := ConcatZeros<WLEN(),WLEN()>(result);
+          RetTuple(padded_res, dummyDW(), dummyDW(), 
+                   S5MINOR_OUTPUT(), S5MAJOR_SETUP(), 0, rvprev01.midx)
+        })})
+}
+
+component setup_major(rvals: RetTuple) {
+  minor_onehot := OneHot<9>(rvals@1.minor);
+  minor_onehot -> (
+    sha512init<1>(rvals@1),
+    sha512init<2>(rvals@1),
+    sha512init<3>(rvals@1),
+    sha512init<4>(rvals@1),
+    sha512fini<5>(rvals@0),
+    sha512fini<6>(rvals@0),
+    sha512fini<7>(rvals@0),
+    sha512fini<8>(rvals@0),
+    { rvp01 := rvals@1;
+      Log("sha512output: %x,%x,%x,%x %x,%x,%x,%x %x,%x,%x,%x %x,%x,%x,%x %x,%x,%x,%x %x,%x,%x,%x %x,%x,%x,%x %x,%x,%x,%x", rvp01.arr_a[0], rvp01.arr_a[1], rvp01.arr_a[2], rvp01.arr_a[3], rvp01.arr_a[4], rvp01.arr_a[5],  rvp01.arr_a[6],  rvp01.arr_a[7], rvp01.arr_a[8], rvp01.arr_a[9],  rvp01.arr_a[10], rvp01.arr_a[11], rvp01.arr_a[12], rvp01.arr_a[13], rvp01.arr_a[14], rvp01.arr_a[15], rvp01.arr_a[16], rvp01.arr_a[17], rvp01.arr_a[18], rvp01.arr_a[19], rvp01.arr_a[20], rvp01.arr_a[21],  rvp01.arr_a[22],  rvp01.arr_a[23], rvp01.arr_a[24], rvp01.arr_a[25],  rvp01.arr_a[26], rvp01.arr_a[27], rvp01.arr_a[28], rvp01.arr_a[29], rvp01.arr_a[30], rvp01.arr_a[31]);
+      RetTuple(rvals@1.arr_a, dummyDW(), dummyDW(),
+               S5MINOR_OUTPUT(), S5MAJOR_SETUP(), 0, 0)
+    }
+  )
+}
+
+component Top() {
+  configureInput(2);
+  retvals : RetTuple;
+
+  PC := NondetReg(GetCycle());
+  invPC := NondetReg(Inv(PC));
+  is_first_cycle := 1 - PC*invPC;
+  is_first_cycle * PC = 0;
+  major_idx := [is_first_cycle, 1-is_first_cycle] -> (
+    {
+      // PC@1 = total_cycles - 1;
+      0
+    },
+    {
+      PC = PC@1 + 1;
+      retvals@1.major
+    });
+  major_onehot := OneHot<7>(major_idx);
+  retvals := major_onehot ->! (
+    { midx := 16;
+      WriteMemory(0, MemDigest([0,0,0,0]));
+      RetTuple(dummyDW(), dummyDW(), dummyDW(),
+               S5MINOR_INIT(), S5MAJOR_SETUP(), 0, midx)
+    },
+    setup_major(retvals@0),
+    sha512load_all(retvals@0),
+    sha512mix_all<0>(retvals@0),
+    sha512mix_all<1>(retvals@0),
+    sha512mix_all<2>(retvals@0),
+    sha512mix_all<3>(retvals@0)
+  );
+}
+
+test TestSHA51201 { // test_cycles >= 2969
+  x := Top();
+}
