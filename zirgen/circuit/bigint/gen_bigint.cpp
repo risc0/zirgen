@@ -15,6 +15,8 @@
 #include "mlir/Transforms/Passes.h"
 #include "zirgen/Dialect/BigInt/IR/BigInt.h"
 #include "zirgen/Dialect/BigInt/Transforms/Passes.h"
+#include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
+#include "zirgen/Dialect/ZStruct/Transforms/Passes.h"
 #include "zirgen/circuit/bigint/elliptic_curve.h"
 #include "zirgen/circuit/bigint/op_tests.h"
 #include "zirgen/circuit/bigint/rsa.h"
@@ -162,226 +164,44 @@ int main(int argc, char* argv[]) {
   ctx->getOrLoadDialect<BigInt::BigIntDialect>();
   ctx->getOrLoadDialect<Iop::IopDialect>();
 
-  for (auto rsa : kRsaSpecs) {
-    auto funcOp = module.addFunc<0>(std::string(rsa.name), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeRSA(builder, builder.getUnknownLoc(), rsa.numBits);
-    });
-    BigInt::setIterationCount(funcOp, rsa.iters);
-  }
-  for (size_t numBits : {8}) {
-    module.addFunc<0>("nondet_inv_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeNondetInvTest(builder, builder.getUnknownLoc(), numBits);
-    });
-  }
-  for (size_t numBits : {8}) {
-    module.addFunc<0>("const_add_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeConstAddTest(builder, builder.getUnknownLoc(), numBits);
-    });
-  }
-  for (size_t numBits : {16}) {
-    module.addFunc<0>("const_add_alt_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeConstAddAltTest(builder, builder.getUnknownLoc(), numBits);
-    });
-  }
-  for (size_t numBits : {8}) {
-    module.addFunc<0>("const_mul_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeConstMulTest(builder, builder.getUnknownLoc(), numBits);
-    });
-  }
-  for (size_t numBits : {8, 16, 128}) {
-    module.addFunc<0>("add_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeAddTest(builder, builder.getUnknownLoc(), numBits);
-    });
-  }
-  for (size_t numBits : {8}) {
-    module.addFunc<0>("const_one_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeConstOneTest(builder, builder.getUnknownLoc(), numBits);
-    });
-  }
-  for (size_t numBits : {16}) {
-    module.addFunc<0>("const_twobyte_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeConstTwoByteTest(builder, builder.getUnknownLoc(), numBits);
-    });
-  }
-  for (size_t numBits : {8, 128}) {
-    module.addFunc<0>("sub_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeSubTest(builder, builder.getUnknownLoc(), numBits);
-    });
-  }
-  for (size_t numBits : {8, 128}) {
-    module.addFunc<0>("mul_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeMulTest(builder, builder.getUnknownLoc(), numBits);
-    });
-  }
-  for (size_t numBits : {8, 128}) {
-    module.addFunc<0>("reduce_test_" + std::to_string(numBits), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::makeReduceTest(builder, builder.getUnknownLoc(), numBits);
-    });
-  }
-  // Elliptic Curve tests
-  for (auto ec : kECSpecs) {
-    module.addFunc<0>(std::string("ec_add_").append(ec.name), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::EC::makeECAddTest(builder,
-                                        builder.getUnknownLoc(),
-                                        ec.numBits,
-                                        ec.curve.prime(),
-                                        ec.curve.a(),
-                                        ec.curve.b());
-    });
-  }
-  for (auto ec : kECSpecs) {
-    module.addFunc<0>(std::string("ec_doub_").append(ec.name), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::EC::makeECDoubleTest(builder,
-                                           builder.getUnknownLoc(),
-                                           ec.numBits,
-                                           ec.curve.prime(),
-                                           ec.curve.a(),
-                                           ec.curve.b());
-    });
-  }
-  for (auto ec : kECSpecs) {
-    module.addFunc<0>(std::string("ec_mul_").append(ec.name), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::EC::makeECMultiplyTest(builder,
-                                             builder.getUnknownLoc(),
-                                             ec.numBits,
-                                             ec.curve.prime(),
-                                             ec.curve.a(),
-                                             ec.curve.b());
-    });
-  }
-  for (auto ec : kECSpecs) {
-    module.addFunc<0>(std::string("ec_neg_").append(ec.name), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::EC::makeECNegateTest(builder,
-                                           builder.getUnknownLoc(),
-                                           ec.numBits,
-                                           ec.curve.prime(),
-                                           ec.curve.a(),
-                                           ec.curve.b());
-    });
-  }
-  for (auto ec : kECSpecs) {
-    module.addFunc<0>(std::string("ec_sub_").append(ec.name), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::EC::makeECSubtractTest(builder,
-                                             builder.getUnknownLoc(),
-                                             ec.numBits,
-                                             ec.curve.prime(),
-                                             ec.curve.a(),
-                                             ec.curve.b());
-    });
-  }
-  for (auto ec : kECSpecs) {
-    module.addFunc<0>(std::string("ec_pts_eq_").append(ec.name), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::EC::makeECValidatePointsEqualTest(builder,
-                                                        builder.getUnknownLoc(),
-                                                        ec.numBits,
-                                                        ec.curve.prime(),
-                                                        ec.curve.a(),
-                                                        ec.curve.b());
-    });
-  }
-  for (auto ec : kECSpecs) {
-    module.addFunc<0>(std::string("ec_on_curve_").append(ec.name), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::EC::makeECValidatePointOnCurveTest(builder,
-                                                         builder.getUnknownLoc(),
-                                                         ec.numBits,
-                                                         ec.curve.prime(),
-                                                         ec.curve.a(),
-                                                         ec.curve.b());
-    });
-  }
-  for (auto ec : kECSpecs) {
-    if (ec.name != "rz8test") {
-      continue;
-      // only need the test curve for the `freely` ZKRs
+  module.addFunc<0>("sum_test", {}, [&]() {
+    auto& builder = Module::getCurModule()->getBuilder();
+    auto loc = builder.getUnknownLoc();
+
+    mlir::Type inType = builder.getIntegerType(8);
+
+    mlir::Type reduceType = builder.getType<BigInt::BigIntType>(/*coeffs=*/1,
+                                                                /*maxPos=*/255,
+                                                                /*maxNeg=*/0,
+                                                                /*minBits=*/0);
+
+    auto three =
+        builder.create<BigInt::ConstOp>(loc, reduceType, builder.getIntegerAttr(inType, 3));
+
+    auto reduceTo =
+        builder.create<BigInt::ConstOp>(loc, reduceType, builder.getIntegerAttr(inType, 255));
+
+    SmallVector<Value> inputVals(5, three);
+    auto arrayOp = builder.create<ZStruct::ArrayOp>(
+        loc, builder.getType<ZStruct::ArrayType>(reduceType, 5), inputVals);
+    auto reduceOp =
+        builder.create<ZStruct::ReduceOp>(loc, reduceType, arrayOp, three, /*layout=*/Value{});
+    {
+      OpBuilder::InsertionGuard guard(builder);
+      Block* bl = builder.createBlock(&reduceOp.getBody());
+      Value lhs = bl->addArgument(reduceType, loc);
+      Value rhs = bl->addArgument(reduceType, loc);
+      auto mulOp = builder.create<BigInt::MulOp>(loc, lhs, rhs);
+      auto reduceBigIntOp = builder.create<BigInt::ReduceOp>(loc, mulOp, reduceTo);
+      builder.create<ZStruct::YieldOp>(loc, reduceBigIntOp);
     }
-    module.addFunc<0>(std::string("ec_add_freely_").append(ec.name), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::EC::makeECAddFreelyTest(builder,
-                                              builder.getUnknownLoc(),
-                                              ec.numBits,
-                                              ec.curve.prime(),
-                                              ec.curve.a(),
-                                              ec.curve.b());
-    });
-  }
-  for (auto ec : kECSpecs) {
-    if (ec.name != "rz8test") {
-      continue;
-      // only need the test curve for the `freely` ZKRs
-    }
-    module.addFunc<0>(std::string("ec_doub_freely_").append(ec.name), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::EC::makeECDoubleFreelyTest(builder,
-                                                 builder.getUnknownLoc(),
-                                                 ec.numBits,
-                                                 ec.curve.prime(),
-                                                 ec.curve.a(),
-                                                 ec.curve.b());
-    });
-  }
-  for (auto ec : kECSpecs) {
-    if (ec.name != "rz8test") {
-      continue;
-      // only need the test curve for the `freely` ZKRs
-    }
-    module.addFunc<0>(std::string("ec_mul_freely_").append(ec.name), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::EC::makeECMultiplyFreelyTest(builder,
-                                                   builder.getUnknownLoc(),
-                                                   ec.numBits,
-                                                   ec.curve.prime(),
-                                                   ec.curve.a(),
-                                                   ec.curve.b());
-    });
-  }
-  for (auto ec : kECSpecs) {
-    if (ec.name != "rz8test") {
-      continue;
-      // only need the test curve for the `freely` ZKRs
-    }
-    module.addFunc<0>(std::string("ec_neg_freely_").append(ec.name), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::EC::makeECNegateFreelyTest(builder,
-                                                 builder.getUnknownLoc(),
-                                                 ec.numBits,
-                                                 ec.curve.prime(),
-                                                 ec.curve.a(),
-                                                 ec.curve.b());
-    });
-  }
-  for (auto ec : kECSpecs) {
-    if (ec.name != "rz8test") {
-      continue;
-      // only need the test curve for the `freely` ZKRs
-    }
-    module.addFunc<0>(std::string("ec_sub_freely_").append(ec.name), {}, [&]() {
-      auto& builder = Module::getCurModule()->getBuilder();
-      zirgen::BigInt::EC::makeECSubtractFreelyTest(builder,
-                                                   builder.getUnknownLoc(),
-                                                   ec.numBits,
-                                                   ec.curve.prime(),
-                                                   ec.curve.a(),
-                                                   ec.curve.b());
-    });
-  }
+
+    auto expected = builder.create<BigInt::ConstOp>(
+        loc, builder.getIntegerAttr(inType, (3 * 3 * 3 * 3 * 3) % 255));
+    auto diff = builder.create<BigInt::SubOp>(loc, expected, reduceOp);
+    builder.create<BigInt::EqualZeroOp>(loc, diff);
+  });
+
   // Perf tests
   // If enabled, these repeatedly perform the same operation, giving a better sense of the core
   // costs of the operation without setup/teardown overhead
@@ -416,6 +236,7 @@ int main(int argc, char* argv[]) {
   if (failed(pm.run(module.getModule()))) {
     throw std::runtime_error("Failed to apply basic optimization passes");
   }
+  module.dump();
 
   static codegen::RustLanguageSyntax rustLang;
   rustLang.addContextArgument("ctx: &mut BigIntContext");
@@ -433,12 +254,15 @@ int main(int argc, char* argv[]) {
   }
   pm2.addPass(createCanonicalizerPass());
   pm2.addPass(createCSEPass());
+  pm2.addPass(ZStruct::createUnrollPass());
   pm2.addPass(BigInt::createLowerZllPass());
   pm2.addPass(createCanonicalizerPass());
   pm2.addPass(createCSEPass());
   if (failed(pm2.run(module.getModule()))) {
     throw std::runtime_error("Failed to apply basic optimization passes (2)");
   }
+
+  module.dump();
 
   bool exceeded = false;
   module.getModule().walk([&](mlir::func::FuncOp func) {

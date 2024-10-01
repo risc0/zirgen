@@ -33,7 +33,7 @@ def LookupOp : ZStructOp<"lookup", [Pure,
   let summary = "Look up reference to struct or union member";
   let assemblyFormat = [{ $base `[` $member `]` `:` functional-type($base, $out) attr-dict }];
   let arguments = (ins AnyTypeOf<[StructType,LayoutType,UnionType]>:$base, StrAttr:$member);
-  let results = (outs ZirType:$out);
+  let results = (outs AnyType:$out);
   let hasVerifier = 1;
   let hasFolder = 1;
 }
@@ -48,7 +48,7 @@ def SubscriptOp : ZStructOp<"subscript", [Pure,
   // TODO: Pick between argument types for the index and make everything
   // that uses it consistent.
   let arguments = (ins AnyTypeOf<[ArrayType,LayoutArrayType]>:$base, AnyTypeOf<[Index,Val]>:$index);
-  let results = (outs ZirType:$out);
+  let results = (outs AnyType:$out);
   let hasVerifier = 1;
   let extraClassDeclaration = [{
     mlir::IntegerAttr getIndexAsAttr();
@@ -86,7 +86,7 @@ def StoreOp : ZStructOp<"store", [EvalOpAdaptor, MemoryEffects<[MemWrite]>, Decl
 
 def PackOp : ZStructOp<"pack", [Pure, DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
   let summary = "Packs the operands into the members of a record";
-  let arguments = (ins Variadic<ZirType>:$members);
+  let arguments = (ins Variadic<AnyType>:$members);
   let results = (outs StructType:$out);
   let assemblyFormat = [{
      `(` ($members^ `:` type($members))? `)` `:` type($out) attr-dict-with-keyword
@@ -105,7 +105,7 @@ def SwitchOp: ZStructOp<"switch", [RecursiveMemoryEffects, EvalOpAdaptor,
   }];
   let arguments = (ins Variadic<Val>:$selector);
   let regions = (region VariadicRegion<SizedRegion<1>>:$arms);
-  let results = (outs ZirType:$out);
+  let results = (outs AnyType:$out);
   let assemblyFormat = [{
     $selector `:` type($selector) `:` type($out) `->` $arms attr-dict
   }];
@@ -115,7 +115,7 @@ def SwitchOp: ZStructOp<"switch", [RecursiveMemoryEffects, EvalOpAdaptor,
 
 def YieldOp : ZStructOp<"yield", [Terminator, ReturnLike, EvalOpAdaptor]> {
   let summary = "A terminator which returns a result from a block";
-  let arguments = (ins ZirType:$value);
+  let arguments = (ins AnyType:$value);
   let assemblyFormat = [{
     $value `:` type($value) attr-dict
   }];
@@ -123,7 +123,7 @@ def YieldOp : ZStructOp<"yield", [Terminator, ReturnLike, EvalOpAdaptor]> {
 
 def ArrayOp: ZStructOp<"array", [Pure, SameTypeOperands, InferTypeOpAdaptor, DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
   let summary = "Create an array from a list of values";
-  let arguments = (ins Variadic<ZirType>:$elements);
+  let arguments = (ins Variadic<AnyType>:$elements);
   let results = (outs ArrayType:$out);
   let assemblyFormat = [{
     `[` $elements `:` type($elements) `]` attr-dict
@@ -154,8 +154,8 @@ def MapOp : ZStructOp<"map", [DeclareOpInterfaceMethods<CodegenExprOpInterface>]
 
 def ReduceOp: ZStructOp<"reduce", [DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
   let summary = "Reduce array elements";
-  let arguments = (ins ArrayType:$array, ZirType:$init, Optional<LayoutArrayType>:$layout);
-  let results = (outs ZirType:$out);
+  let arguments = (ins ArrayType:$array, AnyType:$init, Optional<LayoutArrayType>:$layout);
+  let results = (outs AnyType:$out);
   let regions = (region SizedRegion<1>:$body);
   let assemblyFormat = [{
     $array `:` type($array) `,` $init `:` type($init) (`,` $layout^ `:` type($layout))? `->` type($out) $body attr-dict

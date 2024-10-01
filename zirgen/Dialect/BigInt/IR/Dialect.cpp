@@ -74,4 +74,31 @@ void setIterationCount(func::FuncOp func, size_t iters) {
                 IntegerAttr::get(func.getContext(), APSInt::getUnsigned(iters)));
 }
 
+bool isCompatibleReturnTypes(mlir::TypeRange inferred, mlir::TypeRange returned) {
+  if (inferred == returned)
+    return true;
+
+  if (inferred.size() != returned.size())
+    return false;
+
+  for (auto [i, r] : llvm::zip_equal(inferred, returned)) {
+    auto inferredTy = llvm::dyn_cast<BigIntType>(i);
+    auto returnedTy = llvm::dyn_cast<BigIntType>(r);
+
+    if (!inferredTy || !returnedTy)
+      return false;
+
+    if (inferredTy.getCoeffs() > returnedTy.getCoeffs())
+      return false;
+    if (inferredTy.getMaxPos() > returnedTy.getMaxPos())
+      return false;
+    if (inferredTy.getMaxNeg() > returnedTy.getMaxNeg())
+      return false;
+    if (inferredTy.getMinBits() < returnedTy.getMinBits())
+      return false;
+  }
+
+  return true;
+}
+
 } // namespace zirgen::BigInt

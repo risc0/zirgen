@@ -23,14 +23,23 @@ class BigIntOp<string mnemonic, list<Trait> traits = []>
     : Op<BigIntDialect, mnemonic, traits> {
 }
 
-def DefOp : BigIntOp<"def", [InferTypeOpAdaptor, DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
+def BigIntInferTypeOpAdaptor : InferTypeOpAdaptorBase<
+  [{
+    static bool isCompatibleReturnTypes(::mlir::TypeRange l, ::mlir::TypeRange r) {
+       return zirgen::BigInt::isCompatibleReturnTypes(l, r);
+    }
+  }]
+>;
+
+
+def DefOp : BigIntOp<"def", [BigIntInferTypeOpAdaptor, DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
   let summary = "Define a input/witness value and its label ID";
   let arguments = (ins UI32Attr:$bitWidth, UI64Attr:$label, BoolAttr:$isPublic, DefaultValuedAttr<UI32Attr, "0">:$minBits);
   let results = (outs BigInt:$out);
   let assemblyFormat = [{ $bitWidth `,` $label `,` $isPublic `->` type($out) attr-dict }];
 }
 
-def ConstOp : BigIntOp<"const", [Pure, ConstantLike, InferTypeOpAdaptor, CodegenNeverInlineOp, DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
+def ConstOp : BigIntOp<"const", [Pure, ConstantLike, BigIntInferTypeOpAdaptor, CodegenNeverInlineOp, DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
   let summary = "Introduce a numeric constant";
   let arguments = (ins APIntAttr:$value);
   let results = (outs BigInt:$out);
@@ -39,7 +48,7 @@ def ConstOp : BigIntOp<"const", [Pure, ConstantLike, InferTypeOpAdaptor, Codegen
 }
 
 class BinaryOp<string mnemonic, list<Trait> traits = []>
-    : BigIntOp<mnemonic, !listconcat([InferTypeOpAdaptor], traits)> {
+    : BigIntOp<mnemonic, !listconcat([BigIntInferTypeOpAdaptor], traits)> {
   let arguments = (ins BigInt:$lhs, BigInt:$rhs);
   let results = (outs BigInt:$out);
   let assemblyFormat = [{ $lhs `:` type($lhs) `,` $rhs `:` type($rhs) `->` type($out) attr-dict }];

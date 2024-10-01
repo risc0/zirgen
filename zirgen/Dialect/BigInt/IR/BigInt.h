@@ -33,6 +33,8 @@ constexpr size_t kCoeffsPerPoly = 16;
 size_t getIterationCount(mlir::func::FuncOp func);
 void setIterationCount(mlir::func::FuncOp func, size_t iters);
 
+bool isCompatibleReturnTypes(mlir::TypeRange l, mlir::TypeRange r);
+
 } // namespace zirgen::BigInt
 
 #include "zirgen/Dialect/Zll/IR/IR.h"
