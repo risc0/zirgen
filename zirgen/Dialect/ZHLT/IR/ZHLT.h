@@ -57,6 +57,12 @@ isValidSegmentSizes(llvm::ArrayRef<int32_t> segmentSizes, ssize_t numRaw, size_t
 // Constant names for generated constants.
 std::string getTapsConstName();
 
+/// Populates value names based on the `zirgen.argName` attribute.  Intended
+/// to be used with getAsmBlockArgumentNames.
+void getZirgenBlockArgumentNames(mlir::FunctionOpInterface funcOp,
+                                 mlir::Region& r,
+                                 mlir::OpAsmSetValueNameFn setNameFn);
+
 } // namespace zirgen::Zhlt
 
 #define GET_TYPEDEF_CLASSES
@@ -67,3 +73,15 @@ std::string getTapsConstName();
 
 #define GET_OP_CLASSES
 #include "zirgen/Dialect/ZHLT/IR/Ops.h.inc"
+
+namespace zirgen::Zhlt {
+
+/// True iff component represents a "starting point" of execution like Top,
+/// Accum, or a test.
+bool isEntryPoint(ComponentOp component);
+
+/// True iff component is backed by a buffer, including all entry points and
+/// @mix and @global
+bool isBufferComponent(ComponentOp component);
+
+} // namespace zirgen::Zhlt

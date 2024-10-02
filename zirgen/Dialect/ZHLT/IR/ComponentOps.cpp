@@ -54,6 +54,20 @@ LogicalResult verifyRegion(Operation* origOp,
 
 } // namespace
 
+mlir::LogicalResult CheckLayoutFuncOp::verifyRegions() {
+  return verifyRegion(*this, getBody(), [&](auto op) -> LogicalResult {
+    if (llvm::isa<Zll::ConstOp,
+                  Zhlt::ReturnOp,
+                  ZStruct::LookupOp,
+                  ZStruct::SubscriptOp,
+                  ZStruct::LayoutArrayOp,
+                  ZStruct::AliasLayoutOp,
+                  arith::ConstantOp>(op))
+      return success();
+    return failure();
+  });
+}
+
 mlir::LogicalResult CheckFuncOp::verifyRegions() {
   return verifyRegion(*this, getBody(), [&](auto op) -> LogicalResult {
     if (llvm::isa<Zll::PolyOp,

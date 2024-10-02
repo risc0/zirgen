@@ -77,9 +77,4 @@ bool isLayoutType(mlir::Type t);
 /// Returns true if t is a valid record type that contains only values and no register references.
 bool isRecordType(mlir::Type t);
 
-/// An implicit argument type which can supply buffers when passed to lookupNearestImplicitArg
-template <typename ConcreteType>
-struct BufferContextTypeTrait
-    : public mlir::TypeTrait::TraitBase<ConcreteType, BufferContextTypeTrait> {};
-
 } // namespace zirgen::ZStruct

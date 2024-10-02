@@ -48,15 +48,18 @@ class TransformLayout {
 public:
   TransformLayout(MLIRContext* ctx) : builder(ctx) {}
 
-  // Transforms the given ConstructInfo into a layout.
-  std::pair<mlir::Attribute, mlir::Type> transform(std::shared_ptr<ConstructInfo> info);
+  // Transforms the given ConstructInfo into a layout for the given buffer.
+  std::pair<mlir::Attribute, mlir::Type> transform(std::shared_ptr<ConstructInfo> info,
+                                                   StringAttr bufName);
+
+  DenseSet<StringAttr>& analyzeBuffers(std::shared_ptr<ConstructInfo> info);
 
 private:
   // Generates a new unique type name based on origName.
   StringAttr generateTypeName(StringRef origName);
 
-  // Generates a RefAttr describing the given slice value.
-  ZStruct::RefAttr getRefAttr(mlir::Value buf);
+  // Returns the name of the buffer and a RefAttr describing the given slice value
+  std::pair</*bufName=*/StringAttr, ZStruct::RefAttr> getRefAttr(mlir::Value buf);
 
   // Roll up arrays by parsing subcomponent names of the format ...[...]
   SmallVector<std::pair<Type, NamedAttribute>>
@@ -68,11 +71,14 @@ private:
   // Type names we've already assigned, to avoid duplication.
   DenseSet<StringAttr> typeNamesUsed;
 
+  // Which buffers are used by which levels of constructed structure
+  DenseMap<ConstructInfo*, DenseSet<StringAttr>> usedBufs;
+
   Builder builder;
   size_t nextId = 0;
 };
 
-ZStruct::RefAttr TransformLayout::getRefAttr(mlir::Value buf) {
+std::pair<StringAttr, ZStruct::RefAttr> TransformLayout::getRefAttr(mlir::Value buf) {
   size_t offset = 0;
 
   for (;;) {
@@ -85,11 +91,12 @@ ZStruct::RefAttr TransformLayout::getRefAttr(mlir::Value buf) {
       if (!argName)
         argName = builder.getStringAttr("arg" + std::to_string(argNum));
 
-      return builder.getAttr<ZStruct::RefAttr>(
-          offset,
-          builder.getType<ZStruct::RefType>(/*element=*/
-                                            llvm::cast<Zll::BufferType>(buf.getType()).getElement(),
-                                            /*buffer=*/argName));
+      return {argName,
+              builder.getAttr<ZStruct::RefAttr>(
+                  offset,
+                  builder.getType<ZStruct::RefType>(/*element=*/
+                                                    llvm::cast<Zll::BufferType>(buf.getType())
+                                                        .getElement()))};
     }
 
     auto sliceOp = buf.getDefiningOp<Zll::SliceOp>();
@@ -209,19 +216,37 @@ TransformLayout::rollUpArrays(SmallVector<std::pair<Type, NamedAttribute>> subAt
   return newSubAttrs;
 }
 
+DenseSet<StringAttr>& TransformLayout::analyzeBuffers(std::shared_ptr<ConstructInfo> info) {
+  DenseSet<StringAttr> localUsedBufs;
+  for (auto& [subident, buf] : info->labels) {
+    auto [labelBufName, _] = getRefAttr(buf.getBuf());
+    localUsedBufs.insert(labelBufName);
+  }
+
+  for (auto& [_, subcomponent] : info->subcomponents) {
+    auto& subUsed = analyzeBuffers(subcomponent);
+    localUsedBufs.insert(subUsed.begin(), subUsed.end());
+  }
+
+  return usedBufs[info.get()] = localUsedBufs;
+}
+
 std::pair<mlir::Attribute, mlir::Type>
-TransformLayout::transform(std::shared_ptr<ConstructInfo> info) {
+TransformLayout::transform(std::shared_ptr<ConstructInfo> info, StringAttr bufName) {
   SmallVector<std::pair<Type, NamedAttribute>> subAttrs;
 
+  if (!usedBufs.at(info.get()).contains(bufName))
+    return {};
+
   for (auto& [subident, buf] : info->labels) {
-    auto refAttr = getRefAttr(buf.getBuf());
-    if (!refAttr)
+    auto [labelBufName, refAttr] = getRefAttr(buf.getBuf());
+    if (labelBufName != bufName)
       continue;
     subAttrs.emplace_back(std::make_pair(refAttr.getType(),
                                          NamedAttribute(builder.getStringAttr(subident), refAttr)));
   }
   for (auto& [subident, subcomponent] : info->subcomponents) {
-    auto [subAttr, subType] = transform(subcomponent);
+    auto [subAttr, subType] = transform(subcomponent, bufName);
     if (!subAttr)
       continue;
     subAttrs.emplace_back(
@@ -264,10 +289,15 @@ TransformLayout::transform(std::shared_ptr<ConstructInfo> info) {
 
 void transformLayout(mlir::MLIRContext* ctx,
                      std::shared_ptr<ConstructInfo> info,
-                     Type& layoutType,
-                     Attribute& layoutAttr) {
+                     DenseMap<StringAttr, Type>& layoutTypes,
+                     DenseMap<StringAttr, Attribute>& layoutAttrs) {
   TransformLayout transform(ctx);
-  std::tie(layoutAttr, layoutType) = transform.transform(info);
+  auto allBuffers = llvm::to_vector(transform.analyzeBuffers(info));
+  // Make sure the buffer order is fixed and doesn't depend on pointer comparisons
+  llvm::sort(allBuffers, [](auto a, auto b) { return a.strref() < b.strref(); });
+  for (StringAttr bufName : allBuffers) {
+    std::tie(layoutAttrs[bufName], layoutTypes[bufName]) = transform.transform(info, bufName);
+  }
 }
 
 } // namespace zirgen

@@ -52,7 +52,7 @@ func.func @union_syntax_2(%arg : !zstruct.union<"v c r", <foo:f32, bar:f32>>) ->
 !union_B = !zstruct.union<"B", <bar:!struct_A, baz:!union_A>>
 
 // load ref -> val
-func.func @load_ref(%arg : !ref_to_val, %ctx : !zhlt.exec_context) -> !val {
+func.func @load_ref(%arg : !ref_to_val) -> !val {
   // CHECK-LABEL: @load_ref
   // CHECK: %0 = zstruct.load %arg0 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
   // CHECK-NEXT: return %0 : !zll.val<BabyBear>
@@ -62,7 +62,7 @@ func.func @load_ref(%arg : !ref_to_val, %ctx : !zhlt.exec_context) -> !val {
 }
 
 // store val -> ref
-func.func @store_ref(%val : !val, %ref : !ref_to_val, %ctx : !zhlt.exec_context) {
+func.func @store_ref(%val : !val, %ref : !ref_to_val) {
   // CHECK-LABEL: @store_ref
   // CHECK-NEXT: zstruct.store %arg1, %arg0 : (!zll.val<BabyBear>) -> !zstruct.ref
   zstruct.store %ref, %val : (!val) -> !ref_to_val
@@ -70,7 +70,7 @@ func.func @store_ref(%val : !val, %ref : !ref_to_val, %ctx : !zhlt.exec_context)
 }
 
 // load ref -> val, load ref -> val, add vals, return val
-func.func @load_and_sum(%l_ref : !ref_to_val, %r_ref : !ref_to_val, %ctx : !zhlt.exec_context) -> !val {
+func.func @load_and_sum(%l_ref : !ref_to_val, %r_ref : !ref_to_val) -> !val {
   // CHECK-LABEL: @load_and_sum
   // CHECK: %0 = zstruct.load %arg0 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
   // CHECK-NEXT: %1 = zstruct.load %arg1 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
@@ -84,7 +84,7 @@ func.func @load_and_sum(%l_ref : !ref_to_val, %r_ref : !ref_to_val, %ctx : !zhlt
 }
 
 // load & store (copy)
-func.func @load_and_store(%src : !ref_to_val, %dst : !ref_to_val, %ctx : !zhlt.exec_context) {
+func.func @load_and_store(%src : !ref_to_val, %dst : !ref_to_val) {
   // CHECK-LABEL: @load_and_store
   // CHECK: %0 = zstruct.load %arg0 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
   // CHECK-NEXT: zstruct.store %arg1, %0 : (!zll.val<BabyBear>) -> !zstruct.ref
@@ -104,7 +104,7 @@ func.func @lookup_struct_ref(%arg : !struct_A) -> !ref_to_val {
 }
 
 // lookup struct -> val
-func.func @lookup_struct_val(%arg : !struct_A, %ctx : !zhlt.exec_context) -> !val {
+func.func @lookup_struct_val(%arg : !struct_A) -> !val {
   // CHECK-LABEL: @lookup_struct_val
   // CHECK: %0 = zstruct.lookup %arg0["foo"] : (!zstruct$A) -> !zstruct.ref
   // CHECK-NEXT: %1 = zstruct.load %0 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
@@ -125,7 +125,7 @@ func.func @lookup_union_ref(%arg : !union_A) -> !ref_to_val {
 }
 
 // lookup union -> val
-func.func @lookup_union_val(%arg : !union_A, %ctx : !zhlt.exec_context) -> !val {
+func.func @lookup_union_val(%arg : !union_A) -> !val {
   // CHECK-LABEL: @lookup_union_val
   // CHECK: %0 = zstruct.lookup %arg0["foo"] : (!zunion$A) -> !zstruct.ref
   // CHECK-NEXT: %1 = zstruct.load %0 back %c0 : (!zstruct.ref) -> !zll.val<BabyBear>
@@ -197,7 +197,7 @@ func.func @sum_array_head_tail(%arg : !val_16) -> !val {
   return %sum : !val
 }
 
-func.func @lookup_array_struct_val(%arg : !struct_A_8, %ctx : !zhlt.exec_context) -> !val {
+func.func @lookup_array_struct_val(%arg : !struct_A_8) -> !val {
   // CHECK-LABEL: @lookup_array_struct_val
   // CHECK: %c2 = arith.constant 2 : index
   // CHECK-NEXT: %0 = zstruct.subscript %arg0[index %c2] : (!zstruct.array<!zstruct$A, 8>) -> !zstruct$A

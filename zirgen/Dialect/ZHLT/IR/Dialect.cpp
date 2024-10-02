@@ -118,4 +118,27 @@ std::string getTapsConstName() {
   return "tapList";
 }
 
+bool isEntryPoint(ComponentOp component) {
+  StringRef name = component.getName();
+  return (name.starts_with("test$") || name.ends_with("$accum") || name == "Top");
+}
+
+bool isBufferComponent(ComponentOp component) {
+  StringRef name = component.getName();
+  return isEntryPoint(component) || name == "@mix" || name == "@global";
+}
+
+void getZirgenBlockArgumentNames(mlir::FunctionOpInterface funcOp,
+                                 mlir::Region& r,
+                                 mlir::OpAsmSetValueNameFn setNameFn) {
+  if (r != funcOp.getFunctionBody())
+    return;
+
+  for (auto [argNum, arg] : llvm::enumerate(funcOp.getArguments())) {
+    auto argName = funcOp.getArgAttrOfType<StringAttr>(argNum, "zirgen.argName");
+    if (argName)
+      setNameFn(arg, argName);
+  }
+}
+
 } // namespace zirgen::Zhlt

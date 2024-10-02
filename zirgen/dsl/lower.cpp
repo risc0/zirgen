@@ -215,6 +215,9 @@ mlir::Value Impl::gen(ast::Expression* e, SymbolTable& symbols) {
         mlir::Value selector = gen(e->getSelector(), symbols);
         size_t numCases = e->getCases().size();
         auto switchOp = builder.create<SwitchOp>(loc(e), selector, numCases);
+        if (e->getIsMajor()) {
+          switchOp->setAttr("isMajor", builder.getUnitAttr());
+        }
         mlir::OpBuilder::InsertionGuard insertionGuard(builder);
         for (size_t i = 0; i < numCases; i++) {
           mlir::Block& block = switchOp.getCases()[i].emplaceBlock();
@@ -328,6 +331,11 @@ void Impl::gen(ast::Statement* s, SymbolTable& symbols) {
         builder.create<ConstraintOp>(loc(s), left, right);
       })
       .Case<ast::Void>([&](ast::Void* s) { gen(s->getValue(), symbols); })
+      .Case<ast::Directive>([&](ast::Directive* s) {
+        mlir::StringAttr name = builder.getStringAttr(s->getName());
+        ValueVector args = gen(s->getArgs(), symbols);
+        builder.create<DirectiveOp>(loc(s), name, args);
+      })
       .Default([&](auto) { mlir::emitError(loc(s), "Unknown statement type"); });
 }
 

@@ -23,7 +23,6 @@ def ZhltDialect : Dialect {
   let summary = "Zirgen high-level dialect (typed)";
   let dependentDialects = ["mlir::func::FuncDialect", "zirgen::Zll::ZllDialect"];
   let hasConstantMaterializer = 1;
-  let useDefaultTypePrinterParser = 1;
 }
 
 #endif // ZHLT_DIALECT

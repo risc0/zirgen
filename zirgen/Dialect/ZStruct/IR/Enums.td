@@ -17,7 +17,8 @@ include "mlir/IR/EnumAttr.td"
 def LayoutKind : I32EnumAttr<"LayoutKind", "Layout Kind", [
      I32EnumAttrCase<"Normal", 0, "normal">,
      I32EnumAttrCase<"Mux", 1, "mux">,
-     I32EnumAttrCase<"Argument", 2, "argument">,
+     I32EnumAttrCase<"MajorMux", 2, "majormux">,
+     I32EnumAttrCase<"Argument", 3, "argument">,
 ]> {
   let cppNamespace = "::zirgen::ZStruct";
 }

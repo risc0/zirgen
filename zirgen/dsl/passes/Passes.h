@@ -22,9 +22,12 @@ namespace zirgen {
 namespace dsl {
 
 // Pass constructors
+std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>>
+createEraseUnusedAspectsPass(bool forTests = false);
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateBackPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateExecPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateLayoutPass();
+std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateCheckLayoutPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateCheckPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateTapsPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateValidityRegsPass();

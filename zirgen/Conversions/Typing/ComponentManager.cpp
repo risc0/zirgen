@@ -263,8 +263,10 @@ std::optional<ModuleOp> typeCheck(MLIRContext& ctx, ModuleOp mod) {
   // possible, and doing it this way is simpler than detecting the errors where
   // they are emitted.
   bool containsErrors = false;
-  ScopedDiagnosticHandler scopedHandler(&ctx, [&](Diagnostic&) {
-    containsErrors = true;
+  ScopedDiagnosticHandler scopedHandler(&ctx, [&](Diagnostic& diagnostic) {
+    if (diagnostic.getSeverity() == DiagnosticSeverity::Error) {
+      containsErrors = true;
+    }
     return failure();
   });
 

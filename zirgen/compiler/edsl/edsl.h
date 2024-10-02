@@ -247,8 +247,8 @@ void barrier(CaptureVal a);
 void emitLayoutInternal(std::shared_ptr<ConstructInfo> info);
 void transformLayout(mlir::MLIRContext* ctx,
                      std::shared_ptr<ConstructInfo> info,
-                     mlir::Type& layoutType,
-                     mlir::Attribute& layoutAttr);
+                     llvm::DenseMap</*bufName=*/mlir::StringAttr, mlir::Type>& layoutType,
+                     llvm::DenseMap</*bufName=*/mlir::StringAttr, mlir::Attribute>& layoutAttr);
 
 std::vector<Val> doExtern(const std::string& name,
                           const std::string& extra,

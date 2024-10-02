@@ -34,7 +34,9 @@ cc_library(
     srcs = [
         "GenerateSteps.cpp",
         "HoistAllocs.cpp",
+        "LowerFuncs.cpp",
         "PassDetail.h",
+        "StripAliasLayoutOps.cpp",
         "StripTests.cpp",
     ],
     hdrs = [

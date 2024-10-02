@@ -30,22 +30,6 @@ ValType::getTypeName(codegen::CodegenEmitter& cg) const {
   }
 }
 
-mlir::LogicalResult ValType::emitLiteral(zirgen::codegen::CodegenEmitter& cg,
-                                         mlir::Attribute attr) const {
-  // Only emit a literal if it's a field element.
-  auto arrayAttr = llvm::dyn_cast<PolynomialAttr>(attr);
-  if (!arrayAttr)
-    return failure();
-
-  llvm::SmallVector<codegen::EmitPart> macroParts;
-  llvm::append_range(macroParts, arrayAttr.asArrayRef());
-  if (macroParts.size() == 1)
-    cg.emitInvokeMacro(cg.getStringAttr("makeVal"), macroParts);
-  else
-    cg.emitInvokeMacro(cg.getStringAttr("makeValExt"), macroParts);
-  return success();
-}
-
 ExtensionField ValType::getExtensionField() const {
   if (getExtended())
     return getField().getExtExtensionField();
@@ -128,7 +112,6 @@ BufferType::getTypeName(codegen::CodegenEmitter& cg) const {
   std::string name = stringifyBufferKind(getKind()).str();
   if (getElement().getFieldK() > 1)
     name += "Ext";
-  name += std::to_string(getSize());
   name += "Buf";
 
   return cg.getStringAttr(name);

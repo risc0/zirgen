@@ -52,4 +52,8 @@ std::string getLayoutConstName(llvm::StringRef origName);
 
 int extractIntAttr(mlir::Attribute attr);
 
+// Add ZStruct-specific generated code syntax
+void addCppSyntax(codegen::CodegenOptions& opts);
+void addRustSyntax(codegen::CodegenOptions& opts);
+
 } // namespace zirgen::ZStruct

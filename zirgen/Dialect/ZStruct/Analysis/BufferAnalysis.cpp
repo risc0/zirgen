@@ -62,7 +62,7 @@ StringRef getLayoutBuffer(GlobalConstOp globalConstOp) {
 
 BufferAnalysis::BufferAnalysis(mlir::ModuleOp mod) {
   // Buffers that make it into taps
-  auto tapBufferNames = llvm::map_to_vector(
+  tapBufferNames = llvm::map_to_vector(
       tapBufferNameStrs, [&](auto name) { return StringAttr::get(mod.getContext(), name); });
   for (auto [regGroupId, name] : llvm::enumerate(tapBufferNames)) {
     buffers[name] = BufferDesc{
@@ -70,9 +70,9 @@ BufferAnalysis::BufferAnalysis(mlir::ModuleOp mod) {
   }
 
   // Global buffers that are required to exist.
-  for (auto name : llvm::map_range(globalBufferNameStrs, [&](auto name) {
-         return StringAttr::get(mod.getContext(), name);
-       })) {
+  globalBufferNames = llvm::map_to_vector(
+      globalBufferNameStrs, [&](auto name) { return StringAttr::get(mod.getContext(), name); });
+  for (auto name : globalBufferNames) {
     buffers[name] =
         BufferDesc{.name = name, .kind = Zll::BufferKind::Global, .global = true, .regCount = 4};
   }
@@ -140,6 +140,20 @@ BufferAnalysis::getLayoutAndBufferForArgument(mlir::BlockArgument layoutArg) {
   if (layoutName.empty() || !buffers.contains(layoutName))
     return {};
   return {globalConstOp, getBuffer(layoutName)};
+}
+
+llvm::SmallVector<BufferDesc> BufferAnalysis::getAllBuffers() const {
+  llvm::SmallVector<BufferDesc> allBuffers;
+
+  llvm::append_range(
+      allBuffers,
+      llvm::map_range(llvm::concat<const StringAttr>(tapBufferNames, globalBufferNames),
+                      [&](auto name) { return buffers.at(name); }));
+
+  if (buffers.contains("test")) {
+    allBuffers.push_back(buffers.at("test"));
+  }
+  return allBuffers;
 }
 
 } // namespace zirgen::ZStruct

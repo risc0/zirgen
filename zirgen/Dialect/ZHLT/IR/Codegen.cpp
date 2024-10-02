@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "zirgen/Dialect/ZHLT/IR/Codegen.h"
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
 #include "zirgen/Dialect/ZStruct/Analysis/BufferAnalysis.h"
 
@@ -23,42 +24,8 @@ using namespace zirgen::codegen;
 using namespace zirgen::ZStruct;
 using namespace zirgen::Zll;
 
-class EmitZhltBase {
-public:
-  EmitZhltBase(ModuleOp module, CodegenEmitter& cg)
-      : module(module), cg(cg), ctx(module.getContext()), bufferAnalysis(module) {}
-  virtual ~EmitZhltBase() = default;
-
-  LogicalResult emit() {
-    if (failed(doValType()))
-      return failure();
-
-    if (failed(doBuffers()))
-      return failure();
-
-    cg.emitModule(module);
-
-    return success();
-  }
-
-protected:
-  virtual LogicalResult emitBufferList(ArrayRef<BufferDesc> bufs) { return success(); }
-
-  ModuleOp module;
-  CodegenEmitter& cg;
-  MLIRContext* ctx;
-  BufferAnalysis bufferAnalysis;
-
-private:
-  // Declares "Val" to be a type alias to the appropriete field element.
-  LogicalResult doValType();
-
-  // Provide buffers and sizes
-  LogicalResult doBuffers();
-};
-
-struct RustEmitZhlt : public EmitZhltBase {
-  using EmitZhltBase::EmitZhltBase;
+struct RustEmitZhlt : public EmitZhlt {
+  using EmitZhlt::EmitZhlt;
 
   LogicalResult emitBufferList(ArrayRef<BufferDesc> bufs) override {
     cg << CodegenIdent<IdentKind::Macro>(cg.getStringAttr("defineBufferList")) << "!{\n";
@@ -103,8 +70,8 @@ struct RustEmitZhlt : public EmitZhltBase {
   }
 };
 
-struct CppEmitZhlt : public EmitZhltBase {
-  using EmitZhltBase::EmitZhltBase;
+struct CppEmitZhlt : public EmitZhlt {
+  using EmitZhlt::EmitZhlt;
 
   LogicalResult emitBufferList(ArrayRef<BufferDesc> bufs) override {
     for (auto desc : bufs) {
@@ -116,7 +83,9 @@ struct CppEmitZhlt : public EmitZhltBase {
   }
 };
 
-LogicalResult EmitZhltBase::doValType() {
+} // namespace
+
+LogicalResult EmitZhlt::doValType() {
   DenseSet<Zll::FieldAttr> fields;
 
   AttrTypeWalker typeWalker;
@@ -148,17 +117,15 @@ LogicalResult EmitZhltBase::doValType() {
   return success();
 }
 
-LogicalResult EmitZhltBase::doBuffers() {
+LogicalResult EmitZhlt::doBuffers() {
   if (failed(emitBufferList(bufferAnalysis.getAllBuffers())))
     return failure();
 
   return success();
 }
 
-} // namespace
-
-LogicalResult emitModule(mlir::ModuleOp module, zirgen::codegen::CodegenEmitter& cg) {
-  std::unique_ptr<EmitZhltBase> impl;
+std::unique_ptr<EmitZhlt> getEmitter(mlir::ModuleOp module, zirgen::codegen::CodegenEmitter& cg) {
+  std::unique_ptr<EmitZhlt> impl;
 
   switch (cg.getLanguageKind()) {
   case LanguageKind::Cpp:
@@ -171,7 +138,31 @@ LogicalResult emitModule(mlir::ModuleOp module, zirgen::codegen::CodegenEmitter&
 
   assert(impl && "Unknown language kind");
 
-  return impl->emit();
+  return impl;
+}
+
+LogicalResult emitModule(mlir::ModuleOp module, zirgen::codegen::CodegenEmitter& cg) {
+  auto emitter = getEmitter(module, cg);
+  if (failed(emitter->emitDefs()))
+    return failure();
+  cg.emitModule(module);
+  return success();
+}
+
+void addCppSyntax(codegen::CodegenOptions& opts) {
+  opts.addFuncContextArgument<CheckFuncOp, ExecFuncOp, BackFuncOp, StepFuncOp>("ExecContext& ctx");
+  opts.addFuncContextArgument<ValidityTapsFuncOp>("ValidityTapsContext& ctx");
+  opts.addFuncContextArgument<ValidityRegsFuncOp>("ValidityRegsContext& ctx");
+
+  opts.addCallContextArgument<ExecCallOp, BackCallOp, StepCallOp>("ctx");
+}
+
+void addRustSyntax(codegen::CodegenOptions& opts) {
+  opts.addFuncContextArgument<CheckFuncOp, ExecFuncOp, BackFuncOp, StepFuncOp>("ctx: &ExecContext");
+  opts.addFuncContextArgument<ValidityTapsFuncOp>("ctx: &ValidityTapsContext");
+  opts.addFuncContextArgument<ValidityRegsFuncOp>("ctx: &ValidityRegsContext");
+
+  opts.addCallContextArgument<ExecCallOp, BackCallOp, StepCallOp>("ctx");
 }
 
 } // namespace zirgen::Zhlt

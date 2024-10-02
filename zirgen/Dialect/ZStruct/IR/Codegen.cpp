@@ -12,27 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "mlir/IR/BuiltinDialect.h"
-#include "mlir/IR/BuiltinOps.h"
-
-#include "zirgen/Dialect/ZStruct/Transforms/PassDetail.h"
-
-using namespace mlir;
+#include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
 
 namespace zirgen::ZStruct {
 
-namespace {
+void addCppSyntax(codegen::CodegenOptions& opts) {
+  opts.addLiteralHandler<RefAttr>([](codegen::CodegenEmitter& cg, RefAttr refAttr) {
+    cg << "/*offset=*/" << refAttr.getIndex();
+  });
+}
 
-struct StripAliasLayoutOpsPass : public StripAliasLayoutOpsBase<StripAliasLayoutOpsPass> {
-  void runOnOperation() override {
-    getOperation().walk([](AliasLayoutOp alias) { alias.erase(); });
-  }
-};
-
-} // namespace
-
-std::unique_ptr<OperationPass<ModuleOp>> createStripAliasLayoutOpsPass() {
-  return std::make_unique<StripAliasLayoutOpsPass>();
+void addRustSyntax(codegen::CodegenOptions& opts) {
+  opts.addLiteralHandler<RefAttr>([](codegen::CodegenEmitter& cg, RefAttr refAttr) {
+    cg << "&Reg{offset: " << refAttr.getIndex() << "}";
+  });
 }
 
 } // namespace zirgen::ZStruct

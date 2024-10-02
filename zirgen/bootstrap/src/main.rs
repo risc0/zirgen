@@ -55,12 +55,30 @@ const RECURSION_ZKR_ZIP: &str = "recursion_zkr.zip";
 const BIGINT_OUTPUTS: &[&str] = &["bigint.rs.inc"];
 const BIGINT_ZKR_ZIP: &str = "bigint_zkr.zip";
 
+const ZIRGEN_RUST_OUTPUTS: &[&str] = &[
+    "defs.rs.inc",
+    "types.rs.inc",
+    "layout.rs.inc",
+    "steps.rs.inc",
+    "validity_regs.rs.inc",
+    "validity_taps.rs.inc",
+];
+const ZIRGEN_SYS_OUTPUTS: &[&str] = &[
+    "defs.cpp.inc",
+    "types.h.inc",
+    "layout.cpp.inc",
+    "steps.cpp.inc",
+    "validity_regs.cpp.inc",
+    "validity_taps.cpp.inc",
+];
+
 #[derive(Clone, Debug, ValueEnum)]
 enum Circuit {
     Fib,
     Predicates,
     Recursion,
     Rv32im,
+    Keccak,
     Verify,
     #[clap(name("bigint"))]
     BigInt,
@@ -186,6 +204,7 @@ impl Args {
             Circuit::Predicates => self.predicates(),
             Circuit::Recursion => self.recursion(),
             Circuit::Rv32im => self.rv32im(),
+            Circuit::Keccak => self.keccak(),
             Circuit::Verify => self.stark_verify(),
             Circuit::BigInt => self.bigint(),
         }
@@ -213,54 +232,45 @@ impl Args {
     }
 
     fn recursion(&self) {
-        let circuit = "recursion";
-        let risc0_root = self.output.as_ref().expect("--output is required");
-        let risc0_root = risc0_root.join("risc0");
-        let src_path = Path::new("zirgen/circuit/recursion");
-        let rust_path = risc0_root.join("circuit/recursion");
-        let rust_path = Some(rust_path);
-        let sys_path = risc0_root.join("circuit/recursion-sys");
-        let hal_root = Some(sys_path.join("kernels"));
-        let sys_path = Some(sys_path);
-
-        copy_group(
-            circuit,
-            &src_path,
-            &sys_path,
-            MAIN_CPP_OUTPUTS,
-            "cxx",
-            "rust_",
-        );
-        copy_group(circuit, &src_path, &rust_path, MAIN_RUST_OUTPUTS, "src", "");
-        copy_group(circuit, &src_path, &hal_root, CUDA_OUTPUTS, "cuda", "");
-        copy_group(circuit, &src_path, &hal_root, METAL_OUTPUTS, "metal", "");
-        // copy_group(circuit, &src_path, &rust_path, LAYOUT_OUTPUTS, "src", "");
-        copy_group(
-            circuit,
-            &src_path,
-            &sys_path,
-            &["layout.cpp.inc"],
-            "cxx",
-            "",
-        );
-        copy_group(
-            circuit,
-            &src_path,
-            &hal_root,
-            &["layout.cu.inc"],
-            "cuda",
-            "",
-        );
-        cargo_fmt_circuit(circuit, &rust_path, &None);
+        self.copy_edsl_style("recursion", "zirgen/circuit/recursion")
     }
 
     fn rv32im(&self) {
-        let circuit = "rv32im";
+        self.copy_edsl_style("rv32im", "zirgen/circuit/rv32im/v1/edsl")
+    }
+
+    fn keccak(&self) {
+        let circuit = "keccak";
+        let src_path = Path::new("zirgen/circuit/keccak");
         let risc0_root = self.output.as_ref().expect("--output is required");
         let risc0_root = risc0_root.join("risc0");
-        let src_path = Path::new("zirgen/circuit/rv32im/v1/edsl");
-        let rust_path = Some(risc0_root.join("circuit/rv32im"));
-        let sys_path = risc0_root.join("circuit/rv32im-sys");
+        let rust_path = risc0_root.join("circuit/keccak");
+        let rust_path = Some(rust_path);
+        let sys_path = risc0_root.join("circuit/keccak-sys");
+        let sys_path = Some(sys_path);
+
+        copy_group(
+            circuit,
+            &src_path,
+            &rust_path,
+            ZIRGEN_RUST_OUTPUTS,
+            "src",
+            "",
+        );
+        copy_group(circuit, &src_path, &sys_path, ZIRGEN_SYS_OUTPUTS, "cxx", "");
+        // TODO: Improve formatting performance
+        // cargo_fmt_circuit(circuit, &rust_path, &None);
+    }
+
+    fn copy_edsl_style(&self, circuit: &str, src_dir: &str) {
+        let risc0_root = self.output.as_ref().expect("--output is required");
+        let risc0_root = risc0_root.join("risc0");
+        let src_path = Path::new(src_dir);
+        let rust_path = risc0_root.join("circuit").join(circuit);
+        let rust_path = Some(rust_path);
+        let sys_path = risc0_root
+            .join("circuit")
+            .join(String::from(circuit) + "-sys");
         let hal_root = Some(sys_path.join("kernels"));
         let sys_path = Some(sys_path);
 
@@ -275,6 +285,7 @@ impl Args {
         copy_group(circuit, &src_path, &rust_path, MAIN_RUST_OUTPUTS, "src", "");
         copy_group(circuit, &src_path, &hal_root, CUDA_OUTPUTS, "cuda", "");
         copy_group(circuit, &src_path, &hal_root, METAL_OUTPUTS, "metal", "");
+
         copy_group(
             circuit,
             &src_path,
@@ -376,7 +387,7 @@ fn main() {
     } else {
         "bootstrap_linux_amd64"
     };
-    let bazel_args = ["build", "--config", config, "//zirgen/circuit/..."];
+    let bazel_args = ["build", "--config", config, "//zirgen/circuit"];
 
     // Build the circuits using bazel(isk).
     let status = Command::new("bazelisk").args(bazel_args).status();

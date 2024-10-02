@@ -27,6 +27,7 @@ namespace dsl {
 enum Token : int {
   tok_angle_l = '<',
   tok_angle_r = '>',
+  tok_bang = '!',
   tok_bit_and = '&',
   tok_colon = ':',
   tok_comma = ',',

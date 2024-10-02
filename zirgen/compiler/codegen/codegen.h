@@ -85,7 +85,6 @@ private:
   std::string canonIdent(llvm::StringRef ident, IdentKind idt) override;
   void emitClone(CodegenEmitter& cg, CodegenIdent<IdentKind::Var> value) override;
   void emitTakeReference(CodegenEmitter& cg, EmitPart emitTarget) override;
-  void fallbackEmitLiteral(CodegenEmitter& cg, mlir::Type ty, mlir::Attribute value) override;
 
   void emitConditional(CodegenEmitter& cg, CodegenValue condition, EmitPart emitThen) override;
   void emitSwitchStatement(CodegenEmitter& cg,
@@ -96,6 +95,7 @@ private:
 
   void emitFuncDefinition(CodegenEmitter& cg,
                           CodegenIdent<IdentKind::Func> funcName,
+                          llvm::ArrayRef<std::string> contextArgs,
                           llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                           mlir::FunctionType funcType,
                           mlir::Region* body) override;
@@ -113,7 +113,7 @@ private:
 
   void emitCall(CodegenEmitter& cg,
                 CodegenIdent<IdentKind::Func> callee,
-                llvm::ArrayRef<llvm::StringRef> contextArgs,
+                llvm::ArrayRef<std::string> contextArgs,
                 llvm::ArrayRef<CodegenValue> args) override;
 
   void emitInvokeMacro(CodegenEmitter& cg,
@@ -161,7 +161,6 @@ struct CppLanguageSyntax : public LanguageSyntax {
   LanguageKind getLanguageKind() override { return LanguageKind::Cpp; }
 
   std::string canonIdent(llvm::StringRef ident, IdentKind idt) override;
-  void fallbackEmitLiteral(CodegenEmitter& cg, mlir::Type ty, mlir::Attribute value) override;
 
   void emitConditional(CodegenEmitter& cg, CodegenValue condition, EmitPart emitThen) override;
   void emitSwitchStatement(CodegenEmitter& cg,
@@ -172,6 +171,7 @@ struct CppLanguageSyntax : public LanguageSyntax {
 
   void emitFuncDefinition(CodegenEmitter& cg,
                           CodegenIdent<IdentKind::Func> funcName,
+                          llvm::ArrayRef<std::string> contextArgs,
                           llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                           mlir::FunctionType funcType,
                           mlir::Region* body) override;
@@ -189,7 +189,7 @@ struct CppLanguageSyntax : public LanguageSyntax {
 
   void emitCall(CodegenEmitter& cg,
                 CodegenIdent<IdentKind::Func> callee,
-                llvm::ArrayRef<llvm::StringRef> contextArgs,
+                llvm::ArrayRef<std::string> contextArgs,
                 llvm::ArrayRef<CodegenValue> args) override;
 
   void emitInvokeMacro(CodegenEmitter& cg,
@@ -239,6 +239,12 @@ struct CudaLanguageSyntax : public CppLanguageSyntax {
                           mlir::Type elemType,
                           llvm::ArrayRef<CodegenValue> values) override;
 };
+
+// Returns codegen options for emitting specific language variants,
+// including dialect-specific handlers for the dialects we use.
+CodegenOptions getRustCodegenOpts();
+CodegenOptions getCppCodegenOpts();
+CodegenOptions getCudaCodegenOpts();
 
 } // namespace codegen
 

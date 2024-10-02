@@ -101,6 +101,7 @@ public:
     Declaration,
     Constraint,
     Void,
+    Directive,
   };
   Kind getKind() const { return kind; }
 
@@ -313,11 +314,13 @@ bool operator==(const Reduce& left, const Reduce& right);
 class Switch : public Expression {
   Expression::Ptr selector;
   Expression::Vec cases;
+  bool isMajor;
 
 public:
-  Switch(SMLoc loc, Expression::Ptr selector, Expression::Vec cases);
+  Switch(SMLoc loc, Expression::Ptr selector, Expression::Vec cases, bool isMajor);
   Expression* getSelector() const { return selector.get(); }
   Expression::ArrayRef getCases() const { return cases; }
+  bool getIsMajor() { return isMajor; }
   void print(llvm::raw_ostream&) const override;
   static bool classof(const Expression* e);
 };
@@ -422,6 +425,21 @@ public:
 };
 
 bool operator==(const Void& left, const Void& right);
+
+class Directive : public Statement {
+public:
+  Directive(SMLoc loc, std::string name, Expression::Vec params);
+  std::string getName() const { return name; }
+  Expression::ArrayRef getArgs() const { return args; }
+  void print(llvm::raw_ostream&) const override;
+  static bool classof(const Statement* s);
+
+private:
+  std::string name;
+  Expression::Vec args;
+};
+
+bool operator==(const Directive& left, const Directive& right);
 
 } // namespace ast
 } // namespace dsl

@@ -62,21 +62,9 @@ void RustLanguageSyntax::emitSwitchStatement(CodegenEmitter& cg,
   cg << "}";
 }
 
-void RustLanguageSyntax::fallbackEmitLiteral(CodegenEmitter& cg,
-                                             mlir::Type ty,
-                                             mlir::Attribute value) {
-  TypeSwitch<Attribute>(value)
-      .Case<IntegerAttr>([&](auto intAttr) { cg << intAttr.getValue().getZExtValue(); })
-      .Case<StringAttr>([&](auto strAttr) { cg.emitEscapedString(strAttr); })
-      .Default([&](auto) {
-        llvm::errs() << "Don't know how to emit type " << ty << " into rust++ with value " << value
-                     << "\n";
-        abort();
-      });
-}
-
 void RustLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
                                             CodegenIdent<IdentKind::Func> funcName,
+                                            llvm::ArrayRef<std::string> contextArgDecls,
                                             llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                                             mlir::FunctionType funcType,
                                             mlir::Region* body) {
@@ -94,7 +82,12 @@ void RustLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
     cg << name << ": ";
     if (ty.hasTrait<CodegenLayoutTypeTrait>())
       cg << "BoundLayout<" << cg.getTypeName(ty) << ", impl BufferRow<ValType = Val>>";
-    else {
+    else if (auto bufTy = llvm::dyn_cast<BufferType>(ty)) {
+      if (bufTy.getElement().getExtended())
+        cg << "&impl BufferRow<ValType = ExtVal>";
+      else
+        cg << "&impl BufferRow<ValType = Val>";
+    } else {
       if (ty.hasTrait<CodegenNeedsCloneTypeTrait>() ||
           ty.hasTrait<CodegenOnlyPassByReferenceTypeTrait>())
         cg << "&";
@@ -175,7 +168,7 @@ static bool isReferenceType(CodegenValue value) {
 
 void RustLanguageSyntax::emitCall(CodegenEmitter& cg,
                                   CodegenIdent<IdentKind::Func> callee,
-                                  llvm::ArrayRef<StringRef> contextArgs,
+                                  llvm::ArrayRef<std::string> contextArgs,
                                   llvm::ArrayRef<CodegenValue> args) {
   cg << callee << "(";
   if (!contextArgs.empty()) {

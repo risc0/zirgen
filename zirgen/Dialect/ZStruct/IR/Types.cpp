@@ -103,7 +103,7 @@ mlir::Type LayoutType::parse(mlir::AsmParser& p) {
   }
   LayoutKind kind = LayoutKind::Normal;
   StringRef strKind;
-  if (succeeded(p.parseOptionalKeyword(&strKind, {"mux", "argument", "major"}))) {
+  if (succeeded(p.parseOptionalKeyword(&strKind, {"mux", "majormux", "argument", "major"}))) {
     kind = symbolizeEnum<LayoutKind>(strKind).value_or(LayoutKind::Normal);
   }
   if (p.parseComma())
@@ -235,16 +235,21 @@ CodegenIdent<IdentKind::Type> ArrayType::getTypeName(zirgen::codegen::CodegenEmi
   return cg.getStringAttr((elemName.strref() + std::to_string(getSize()) + "Array").str());
 }
 
+Value ArrayType::materialize(Location loc, ArrayRef<Value> elements, OpBuilder& builder) {
+  return builder.create<ArrayOp>(loc, elements);
+}
+
 CodegenIdent<IdentKind::Type>
 LayoutArrayType::getTypeName(zirgen::codegen::CodegenEmitter& cg) const {
   auto elemName = cg.getTypeName(getElement());
   return cg.getStringAttr((elemName.strref() + std::to_string(getSize()) + "LayoutArray").str());
 }
 
+Value LayoutArrayType::materialize(Location loc, ArrayRef<Value> elements, OpBuilder& builder) {
+  return builder.create<LayoutArrayOp>(loc, elements);
+}
+
 CodegenIdent<IdentKind::Type> LayoutType::getTypeName(zirgen::codegen::CodegenEmitter& cg) const {
-  if (cg.getOpts().zkpLayoutCompat) {
-    return cg.getStringAttr(getId());
-  }
   return cg.getStringAttr((getId() + "Layout").str());
 }
 
@@ -347,40 +352,7 @@ llvm::ArrayRef<mlir::Type> getRecordArgumentTypes(mlir::FunctionType funcType) {
 }
 
 CodegenIdent<IdentKind::Type> RefType::getTypeName(zirgen::codegen::CodegenEmitter& cg) const {
-  if (cg.getOpts().zkpLayoutCompat) {
-    size_t k = getElement().getFieldK();
-    if (k == 1) {
-      return cg.getStringAttr(getBuffer().str() + "Reg");
-    } else {
-      return cg.getStringAttr(getBuffer().str() + std::to_string(k) + "Reg");
-    }
-  } else {
-    return cg.getStringAttr("Reg");
-  }
-}
-
-mlir::LogicalResult RefType::emitLiteral(zirgen::codegen::CodegenEmitter& cg,
-                                         mlir::Attribute value) const {
-  auto refVal = llvm::cast<RefAttr>(value);
-  // TODO: Add make_ref macro to risc0-zkp::layout library and remove this special case.
-  if (cg.getOpts().zkpLayoutCompat) {
-    if (cg.getLanguageKind() == LanguageKind::Rust) {
-      auto refVal = llvm::cast<RefAttr>(value);
-      cg << "&" << cg.getTypeName(*this) << "{offset:" << refVal.getIndex() << "}";
-      return mlir::success();
-    } else {
-      auto refVal = llvm::cast<RefAttr>(value);
-      cg << refVal.getIndex();
-      return mlir::success();
-    }
-  }
-  if (!cg.getOpts().zkpLayoutCompat) {
-    assert(!getBuffer() && "Buffer-specfic reference types should not be used outside of edsl "
-                           "layout compatibility mode");
-  }
-
-  cg.emitInvokeMacroV(cg.getStringAttr("makeRef"), refVal.getIndex());
-  return mlir::success();
+  return cg.getStringAttr("Reg");
 }
 
 mlir::LogicalResult TapType::emitLiteral(zirgen::codegen::CodegenEmitter& cg,

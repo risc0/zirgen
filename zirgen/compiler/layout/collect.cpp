@@ -61,6 +61,7 @@ unsigned Circuit::visit(LayoutType t) {
   case LayoutKind::Argument:
     return visitStruct(t);
   case LayoutKind::Mux:
+  case LayoutKind::MajorMux:
     return visitUnion(t);
   }
   assert(false && "unknown LayoutKind");

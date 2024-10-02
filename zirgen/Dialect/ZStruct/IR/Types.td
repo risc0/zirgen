@@ -16,6 +16,7 @@ include "mlir/IR/AttrTypeBase.td"
 include "zirgen/Dialect/Zll/IR/Types.td"
 include "zirgen/Dialect/ZStruct/IR/Dialect.td"
 include "zirgen/Dialect/ZStruct/IR/Enums.td"
+include "zirgen/Dialect/ZStruct/IR/Interfaces.td"
 
 class ZStructType<string name, string typeMnemonic, list<Trait> traits = []>
     : TypeDef<ZStructDialect, name, traits> {
@@ -71,6 +72,7 @@ def UnionType : ZStructType<"Union", "union"> {
 }
 
 def ArrayType : ZStructType<"Array", "array", [
+    ArrayLikeTypeInterface,
     DeclareTypeInterfaceMethods<CodegenTypeInterface, ["emitTypeDefinition", "getTypeName", "emitLiteral"]>,
     CodegenNeedsCloneType]> {
   let summary = "array type, a series of same-typed values";
@@ -79,9 +81,13 @@ def ArrayType : ZStructType<"Array", "array", [
       "unsigned": $size
   );
   let assemblyFormat = "`<`$element `,` $size `>`";
+  let extraClassDeclaration = [{
+    mlir::Value materialize(mlir::Location loc, llvm::ArrayRef<mlir::Value> elements, mlir::OpBuilder& builder);
+  }];
 }
 
 def LayoutArrayType : ZStructType<"LayoutArray", "layout_array", [
+    ArrayLikeTypeInterface,
     DeclareTypeInterfaceMethods<CodegenTypeInterface, ["emitTypeDefinition", "getTypeName", "emitLiteral"]>,
     CodegenOnlyPassByReferenceType,
     CodegenLayoutType]> {
@@ -91,25 +97,24 @@ def LayoutArrayType : ZStructType<"LayoutArray", "layout_array", [
       "unsigned": $size
   );
   let assemblyFormat = "`<`$element `,` $size `>`";
+  let extraClassDeclaration = [{
+    mlir::Value materialize(mlir::Location loc, llvm::ArrayRef<mlir::Value> elements, mlir::OpBuilder& builder);
+  }];
 }
 
 def Ref : ZStructType<"Ref", "ref", [
-    DeclareTypeInterfaceMethods<CodegenTypeInterface, ["emitLiteral", "getTypeName"]>,
+    DeclareTypeInterfaceMethods<CodegenTypeInterface, ["getTypeName"]>,
     CodegenOnlyPassByReferenceType,
     CodegenLayoutType
   ]> {
   let summary = "reference to a register";
   let parameters = (ins
-     DefaultValuedParameter<"Zll::ValType", "Zll::ValType::get($_ctxt, Zll::kFieldPrimeDefault, 1)">: $element,
-     OptionalParameter<"mlir::StringAttr">: $buffer
+     DefaultValuedParameter<"Zll::ValType", "Zll::ValType::get($_ctxt, Zll::kFieldPrimeDefault, 1)">: $element
   );
-  let assemblyFormat = "(`<` $element^ (`,` $buffer^ `>`)?)?";
+  let assemblyFormat = "(`<` $element^ `>`)?";
   let builders = [
-    TypeBuilder<(ins "Zll::ValType":$element), [{
-      return $_get($_ctxt, element, mlir::StringAttr());
-    }]>,
     TypeBuilderWithInferredContext<(ins "Zll::ValType":$element), [{
-      return $_get(element.getContext(), element, mlir::StringAttr());
+      return $_get(element.getContext(), element);
     }]>
   ];
 }
