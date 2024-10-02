@@ -1,0 +1,82 @@
+// RUN: zirgen %s --test
+
+function Matrix<M: Val, N: Val>(coef: Array<Array<Val, N>, M>) {
+  coef
+}
+
+component MatAdd<M: Val, N: Val>(a: Matrix<M, N>, b: Matrix<M, N>) {
+  Matrix<M, N>(
+    for m : 0..M {
+      for n : 0..N {
+        a[m][n] + b[m][n]
+      }
+    }
+  )
+}
+
+test GeneralAddition {
+  a := Matrix<2, 3>([[1, 2, 3],
+                     [4, 5, 6]]);
+  b := Matrix<2, 3>([[ 7,  8,  9],
+                     [10, 11, 12]]);
+  c := MatAdd<2, 3>(a, b);
+  Log("c = [[%u, %u, %u], [%u, %u, %u]]", c[0][0], c[0][1], c[0][2], c[1][0], c[1][1], c[1][2]);
+  c[0][0] = 8;
+  c[0][1] = 10;
+  c[0][2] = 12;
+  c[1][0] = 14;
+  c[1][1] = 16;
+  c[1][2] = 18;
+}
+
+component MatMul<M: Val, N: Val, P: Val>(
+  a: Matrix<M, N>,
+  b: Matrix<N, P>
+) {
+  Matrix<M, P>(
+    for m : 0..M {
+      for p : 0..P {
+        product := for n : 0..N { a[m][n] * b[n][p] };
+        reduce product init 0 with Add
+      }
+    }
+  )
+}
+
+test IdentitySquared {
+  // [1 0][1 0]   [1 0]
+  // [0 1][0 1] = [0 1]
+  a := Matrix<2, 2>([[1, 0],
+                     [0, 1]]);
+  c := MatMul<2, 2, 2>(a, a);
+  Log("c = [[%u, %u], [%u, %u]]", c[0][0], c[0][1], c[1][0], c[1][1]);
+  c[0][0] = 1;
+  c[0][1] = 0;
+  c[1][0] = 0;
+  c[1][1] = 1;
+}
+
+test GeneralMultiplication {
+  // [0 1]   [0 1 2]   [ 3  4  5]
+  // [2 3] * [3 4 5] = [ 9 14 19]
+  // [4 5]             [15 24 33]
+  a := Matrix<3, 2>([[0, 1],
+                     [2, 3],
+                     [4, 5]]);
+  b := Matrix<2, 3>([[0, 1, 2],
+                     [3, 4, 5]]);
+  c := MatMul<3, 2, 3>(a, b);
+  Log("[[%u, %u, %u], [%u, %u, %u], [%u, %u, %u]]",
+      c[0][0], c[0][1], c[0][2],
+      c[1][0], c[1][1], c[1][2],
+      c[2][0], c[2][1], c[2][2]);
+  c[0][0] = 3;
+  c[0][1] = 4;
+  c[0][2] = 5;
+  c[1][0] = 9;
+  c[1][1] = 14;
+  c[1][2] = 19;
+  c[2][0] = 15;
+  c[2][1] = 24;
+  c[2][2] = 33;
+}
