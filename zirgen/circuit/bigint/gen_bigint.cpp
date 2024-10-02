@@ -15,6 +15,7 @@
 #include "mlir/Transforms/Passes.h"
 #include "zirgen/Dialect/BigInt/IR/BigInt.h"
 #include "zirgen/Dialect/BigInt/Transforms/Passes.h"
+#include "zirgen/circuit/bigint/elliptic_curve.h"
 #include "zirgen/circuit/bigint/op_tests.h"
 #include "zirgen/circuit/bigint/rsa.h"
 #include "zirgen/circuit/recursion/code.h"
@@ -92,6 +93,13 @@ struct RsaSpec {
   size_t iters;
 };
 
+// Specification of elliptic curve (EC) parameters used to generate EC ZKRs
+struct ECSpec {
+  llvm::StringLiteral name;
+  size_t numBits;
+  zirgen::BigInt::EC::WeierstrassCurve curve;
+};
+
 const RsaSpec kRsaSpecs[] = {
     // 256-bit RSA; primarily used for testing.
     {"rsa_256_x1", 256, 1},
@@ -100,6 +108,39 @@ const RsaSpec kRsaSpecs[] = {
     // 3072-bit RSA.  As of this writing, verifying more than 15
     // claims makes the ZKR too big to run in BIGINT_PO2.
     {"rsa_3072_x15", 3072, 15},
+};
+
+// rz8test parameters
+// rz8test is an 8-bit testing curve that is far too small to be secure but good for short tests
+const APInt rz8test_prime(8, 179);
+const APInt rz8test_a(8, 1);
+const APInt rz8test_b(8, 12);
+// Base point
+const APInt rz8test_G_x(8, 157);
+const APInt rz8test_G_y(8, 34);
+const APInt rz8test_order(8, 199);
+
+// secp256k1 parameters
+const APInt secp256k1_prime = APInt::getAllOnes(256) - APInt::getOneBitSet(256, 32) -
+                              APInt::getOneBitSet(256, 9) - APInt::getOneBitSet(256, 8) -
+                              APInt::getOneBitSet(256, 7) - APInt::getOneBitSet(256, 6) -
+                              APInt::getOneBitSet(256, 4);
+const APInt secp256k1_a(8, 0);
+const APInt secp256k1_b(8, 7);
+// Base point
+const APInt
+    secp256k1_G_x(256, "79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798", 16);
+const APInt
+    secp256k1_G_y(256, "483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8", 16);
+const APInt
+    secp256k1_order(256, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16);
+
+const ECSpec kECSpecs[] = {
+    // rz8test -- an in-house 8-bit testing curve; nowhere near big enough to be secure
+    {"rz8test", 8, {rz8test_prime, rz8test_a, rz8test_b}},
+
+    // secp256k1
+    {"secp256k1", 256, {secp256k1_prime, secp256k1_a, secp256k1_b}},
 };
 
 } // namespace
@@ -124,7 +165,6 @@ int main(int argc, char* argv[]) {
     });
     BigInt::setIterationCount(funcOp, rsa.iters);
   }
-  // TODO: More bitwidth coverage?
   for (size_t numBits : {8}) {
     module.addFunc<0>("nondet_inv_test_" + std::to_string(numBits), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
@@ -185,6 +225,180 @@ int main(int argc, char* argv[]) {
       zirgen::BigInt::makeReduceTest(builder, builder.getUnknownLoc(), numBits);
     });
   }
+  // Elliptic Curve tests
+  for (auto ec : kECSpecs) {
+    module.addFunc<0>(std::string("ec_add_").append(ec.name), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::EC::makeECAddTest(builder,
+                                        builder.getUnknownLoc(),
+                                        ec.numBits,
+                                        ec.curve.prime(),
+                                        ec.curve.a(),
+                                        ec.curve.b());
+    });
+  }
+  for (auto ec : kECSpecs) {
+    module.addFunc<0>(std::string("ec_doub_").append(ec.name), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::EC::makeECDoubleTest(builder,
+                                           builder.getUnknownLoc(),
+                                           ec.numBits,
+                                           ec.curve.prime(),
+                                           ec.curve.a(),
+                                           ec.curve.b());
+    });
+  }
+  for (auto ec : kECSpecs) {
+    module.addFunc<0>(std::string("ec_mul_").append(ec.name), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::EC::makeECMultiplyTest(builder,
+                                             builder.getUnknownLoc(),
+                                             ec.numBits,
+                                             ec.curve.prime(),
+                                             ec.curve.a(),
+                                             ec.curve.b());
+    });
+  }
+  for (auto ec : kECSpecs) {
+    module.addFunc<0>(std::string("ec_neg_").append(ec.name), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::EC::makeECNegateTest(builder,
+                                           builder.getUnknownLoc(),
+                                           ec.numBits,
+                                           ec.curve.prime(),
+                                           ec.curve.a(),
+                                           ec.curve.b());
+    });
+  }
+  for (auto ec : kECSpecs) {
+    module.addFunc<0>(std::string("ec_sub_").append(ec.name), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::EC::makeECSubtractTest(builder,
+                                             builder.getUnknownLoc(),
+                                             ec.numBits,
+                                             ec.curve.prime(),
+                                             ec.curve.a(),
+                                             ec.curve.b());
+    });
+  }
+  for (auto ec : kECSpecs) {
+    module.addFunc<0>(std::string("ec_pts_eq_").append(ec.name), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::EC::makeECValidatePointsEqualTest(builder,
+                                                        builder.getUnknownLoc(),
+                                                        ec.numBits,
+                                                        ec.curve.prime(),
+                                                        ec.curve.a(),
+                                                        ec.curve.b());
+    });
+  }
+  for (auto ec : kECSpecs) {
+    module.addFunc<0>(std::string("ec_on_curve_").append(ec.name), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::EC::makeECValidatePointOnCurveTest(builder,
+                                                         builder.getUnknownLoc(),
+                                                         ec.numBits,
+                                                         ec.curve.prime(),
+                                                         ec.curve.a(),
+                                                         ec.curve.b());
+    });
+  }
+  for (auto ec : kECSpecs) {
+    if (ec.name != "rz8test") {
+      continue;
+      // only need the test curve for the `freely` ZKRs
+    }
+    module.addFunc<0>(std::string("ec_add_freely_").append(ec.name), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::EC::makeECAddFreelyTest(builder,
+                                              builder.getUnknownLoc(),
+                                              ec.numBits,
+                                              ec.curve.prime(),
+                                              ec.curve.a(),
+                                              ec.curve.b());
+    });
+  }
+  for (auto ec : kECSpecs) {
+    if (ec.name != "rz8test") {
+      continue;
+      // only need the test curve for the `freely` ZKRs
+    }
+    module.addFunc<0>(std::string("ec_doub_freely_").append(ec.name), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::EC::makeECDoubleFreelyTest(builder,
+                                                 builder.getUnknownLoc(),
+                                                 ec.numBits,
+                                                 ec.curve.prime(),
+                                                 ec.curve.a(),
+                                                 ec.curve.b());
+    });
+  }
+  for (auto ec : kECSpecs) {
+    if (ec.name != "rz8test") {
+      continue;
+      // only need the test curve for the `freely` ZKRs
+    }
+    module.addFunc<0>(std::string("ec_mul_freely_").append(ec.name), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::EC::makeECMultiplyFreelyTest(builder,
+                                                   builder.getUnknownLoc(),
+                                                   ec.numBits,
+                                                   ec.curve.prime(),
+                                                   ec.curve.a(),
+                                                   ec.curve.b());
+    });
+  }
+  for (auto ec : kECSpecs) {
+    if (ec.name != "rz8test") {
+      continue;
+      // only need the test curve for the `freely` ZKRs
+    }
+    module.addFunc<0>(std::string("ec_neg_freely_").append(ec.name), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::EC::makeECNegateFreelyTest(builder,
+                                                 builder.getUnknownLoc(),
+                                                 ec.numBits,
+                                                 ec.curve.prime(),
+                                                 ec.curve.a(),
+                                                 ec.curve.b());
+    });
+  }
+  for (auto ec : kECSpecs) {
+    if (ec.name != "rz8test") {
+      continue;
+      // only need the test curve for the `freely` ZKRs
+    }
+    module.addFunc<0>(std::string("ec_sub_freely_").append(ec.name), {}, [&]() {
+      auto& builder = Module::getCurModule()->getBuilder();
+      zirgen::BigInt::EC::makeECSubtractFreelyTest(builder,
+                                                   builder.getUnknownLoc(),
+                                                   ec.numBits,
+                                                   ec.curve.prime(),
+                                                   ec.curve.a(),
+                                                   ec.curve.b());
+    });
+  }
+  // Perf tests
+  // If enabled, these repeatedly perform the same operation, giving a better sense of the core
+  // costs of the operation without setup/teardown overhead
+  // for (size_t numReps : {5, 10, 256}) {
+  //   const size_t numBits = 256;
+  //   module.addFunc<0>("rep_ec_add_secp256k1_r" + std::to_string(numReps), {}, [&]() {
+  //     auto& builder = Module::getCurModule()->getBuilder();
+  //     zirgen::BigInt::EC::makeRepeatedECAddTest(builder, builder.getUnknownLoc(), numBits,
+  //     numReps,
+  //         secp256k1_prime, secp256k1_a, secp256k1_b);
+  //   });
+  // }
+  // for (size_t numReps : {5, 10, 256}) {
+  //   const size_t numBits = 256;
+  //   module.addFunc<0>("rep_ec_doub_secp256k1_r" + std::to_string(numReps), {}, [&]() {
+  //     auto& builder = Module::getCurModule()->getBuilder();
+  //     zirgen::BigInt::EC::makeRepeatedECDoubleTest(builder, builder.getUnknownLoc(), numBits,
+  //     numReps,
+  //         secp256k1_prime, secp256k1_a, secp256k1_b);
+  //   });
+  // }
 
   PassManager pm(ctx);
   if (failed(applyPassManagerCLOptions(pm))) {

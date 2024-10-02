@@ -502,9 +502,8 @@ void CodegenEmitter::emitTypeDefs(TypeRange tys) {
         }
       } else {
         typeNames[name.getAttr()] = ty;
+        ty.emitTypeDefinition(*this);
       }
-
-      ty.emitTypeDefinition(*this);
       types.insert(ty);
     });
   }
