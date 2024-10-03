@@ -27,8 +27,8 @@ class ZhltOp<string mnemonic, list<Trait> traits = []>
 
 def GetLayoutOp: ZhltOp<"get_layout", [Pure, InferTypeOpAdaptor]> {
   let summary = "Get the layout of a component";
-  let arguments = (ins StructType:$in);
-  let results = (outs LayoutType:$out);
+  let arguments = (ins IsValueType:$in);
+  let results = (outs IsLayoutType:$out);
   let assemblyFormat = [{ `(` $in `)` `:` functional-type($in, $out) attr-dict }];
   let hasFolder = 1;
 }
