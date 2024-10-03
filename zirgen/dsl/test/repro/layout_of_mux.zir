@@ -1,0 +1,17 @@
+// RUN: zirgen %s --emit=stats | FileCheck %s
+
+// CHECK:    - "data"
+// CHECK-NEXT: - size: 4
+
+extern IsFirstCycle() : Val;
+
+component Top() {
+  arr := [Reg(0), Reg(1), Reg(2)];
+
+  first := NondetReg(IsFirstCycle());
+  mux := [first, 1 - first] -> (
+    [Reg(1 - first), Reg(first), Reg(2)],
+    [Reg(first), Reg(1 + first), Reg(2)]
+  );
+  AliasLayout!(arr, mux);
+}

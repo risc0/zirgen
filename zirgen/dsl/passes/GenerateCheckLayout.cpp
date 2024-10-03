@@ -21,6 +21,8 @@
 namespace zirgen {
 namespace dsl {
 
+using namespace Zhlt;
+
 namespace {
 
 // Wherever an AliasLayoutOp occurs, the implied layout constraint must be
@@ -35,6 +37,73 @@ struct DeconditionalizeIfOp : public OpRewritePattern<Zll::IfOp> {
     rewriter.eraseOp(op.getInner().front().getTerminator());
     rewriter.inlineBlockBefore(&op.getInner().front(), op);
     rewriter.eraseOp(op);
+    return success();
+  }
+};
+
+struct GetMuxLayout : public OpRewritePattern<GetLayoutOp> {
+  using OpRewritePattern::OpRewritePattern;
+
+  LogicalResult matchAndRewrite(GetLayoutOp op, PatternRewriter& rewriter) const override {
+    auto mux = op.getIn().getDefiningOp<SwitchOp>();
+    if (!mux)
+      return rewriter.notifyMatchFailure(op, "input does not come from a SwitchOp");
+
+    // The layout of the common super is the same in every mux arm. Without loss
+    // of generality, use the first arm to compute it.
+    // TODO: probably some cleanup here
+    IRMapping mapping;
+    Block* block = &mux.getArms()[0].front();
+    for (Operation& op : block->getOperations()) {
+      rewriter.clone(op, mapping);
+    }
+    auto yield = cast<YieldOp>(mapping.lookup(block->getTerminator()));
+    Value super = Zhlt::coerceTo(yield.getValue(), op.getIn().getType(), rewriter);
+    rewriter.eraseOp(yield);
+    rewriter.replaceOpWithNewOp<GetLayoutOp>(op, super);
+
+    // This doesn't work in general, since the layout may be repacked by the mux
+    // arm to construct the actual layout of the super.
+    // Value layout = Zhlt::coerceTo(mux.getLayout(), op.getOut().getType(), rewriter);
+    // rewriter.replaceOp(op, layout);
+    return success();
+  }
+};
+
+struct GetArrayLayout : OpRewritePattern<GetLayoutOp> {
+  using OpRewritePattern::OpRewritePattern;
+
+  LogicalResult matchAndRewrite(GetLayoutOp op, PatternRewriter& rewriter) const override {
+    auto array = op.getIn().getDefiningOp<ArrayOp>();
+    if (!array)
+      return rewriter.notifyMatchFailure(op, "input does not come from a SwitchOp");
+
+    SmallVector<Value> elementLayouts;
+    for (Value element : array.getElements()) {
+      Value elementLayout = rewriter.create<GetLayoutOp>(element.getLoc(), element);
+      elementLayouts.push_back(elementLayout);
+    }
+    rewriter.replaceOpWithNewOp<LayoutArrayOp>(op, elementLayouts);
+    return success();
+  }
+};
+
+// Reoders GetLayoutOps before SubscriptOps where possible to maximize folding of layouts
+struct ReorderSubscriptAndGetLayout : public OpRewritePattern<GetLayoutOp> {
+  using OpRewritePattern::OpRewritePattern;
+
+  LogicalResult matchAndRewrite(GetLayoutOp op, PatternRewriter& rewriter) const override {
+    auto subscript = op.getIn().getDefiningOp<ZStruct::SubscriptOp>();
+    if (!subscript)
+      return rewriter.notifyMatchFailure(op, "input does not come from a SubscriptOp");
+
+    if (!subscript->hasOneUse())
+      return rewriter.notifyMatchFailure(op, "subscript has multiple uses");
+
+    Value baseLayout = rewriter.create<GetLayoutOp>(subscript.getLoc(), subscript.getBase());
+    auto newSubscript = rewriter.create<ZStruct::SubscriptOp>(op.getLoc(), baseLayout, subscript.getIndex());
+    rewriter.replaceOp(op, newSubscript);
+    rewriter.eraseOp(subscript);
     return success();
   }
 };
@@ -55,6 +124,9 @@ struct GenerateCheckLayoutPass : public GenerateCheckLayoutBase<GenerateCheckLay
     patterns.insert<InlineCalls>(ctx);
     patterns.insert<ZStruct::SplitSwitchArms>(ctx);
     patterns.insert<DeconditionalizeIfOp>(ctx);
+    patterns.insert<ReorderSubscriptAndGetLayout>(ctx);
+    patterns.insert<GetMuxLayout>(ctx);
+    patterns.insert<GetArrayLayout>(ctx);
     ZStruct::getUnrollPatterns(patterns, ctx);
 
     FrozenRewritePatternSet frozenPatterns(std::move(patterns));
