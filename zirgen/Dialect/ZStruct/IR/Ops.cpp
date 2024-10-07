@@ -848,7 +848,7 @@ LogicalResult StoreOp::evaluate(Interpreter& interp,
 LogicalResult BindLayoutOp::evaluate(Interpreter& interp,
                                      llvm::ArrayRef<zirgen::Zll::InterpVal*> outs,
                                      EvalAdaptor& adaptor) {
-  Attribute layoutAttr;
+  Attribute layoutAttr = getLayoutAttr();
   if (auto symAttr = llvm::dyn_cast<SymbolRefAttr>(layoutAttr)) {
     // Look up by symbol
     auto glob = SymbolTable::lookupNearestSymbolFrom<GlobalConstOp>(*this, symAttr);

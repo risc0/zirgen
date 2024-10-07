@@ -56,20 +56,25 @@ const BIGINT_OUTPUTS: &[&str] = &["bigint.rs.inc"];
 const BIGINT_ZKR_ZIP: &str = "bigint_zkr.zip";
 
 const ZIRGEN_RUST_OUTPUTS: &[&str] = &[
+    "poly_ext.rs",
     "defs.rs.inc",
     "types.rs.inc",
     "layout.rs.inc",
     "steps.rs.inc",
-    "validity_regs.rs.inc",
-    "validity_taps.rs.inc",
 ];
+
 const ZIRGEN_SYS_OUTPUTS: &[&str] = &[
     "defs.cpp.inc",
     "types.h.inc",
     "layout.cpp.inc",
     "steps.cpp.inc",
-    "validity_regs.cpp.inc",
-    "validity_taps.cpp.inc",
+    "rust_poly_fp.cpp",
+];
+const ZIRGEN_METAL_OUTPUTS: &[&str] = &[
+    "eval_check.metal",
+];
+const ZIRGEN_CUDA_OUTPUTS: &[&str] = &[
+    "eval_check.cu",
 ];
 
 #[derive(Clone, Debug, ValueEnum)]
@@ -240,19 +245,23 @@ impl Args {
     }
 
     fn keccak(&self) {
+        let out = &self.output;
         let circuit = "keccak";
         let src_path = Path::new("zirgen/circuit/keccak");
-        let out = &self.output;
+        let sys_root = Path::new("zirgen/circuit/keccak-sys").to_path_buf();
+        let hal_root = Some(sys_root.join("kernels"));
 
         copy_group(
             circuit,
             &src_path,
-        out,
+            out,
             ZIRGEN_RUST_OUTPUTS,
             "src",
             "",
         );
-        copy_group(circuit, &src_path, out, ZIRGEN_SYS_OUTPUTS, "cxx", "");
+        copy_group(circuit, &src_path, &Some(sys_root), ZIRGEN_SYS_OUTPUTS, "cxx", "");
+        copy_group(circuit, &src_path, &hal_root, ZIRGEN_CUDA_OUTPUTS, "cuda", "");
+        copy_group(circuit, &src_path, &hal_root, ZIRGEN_METAL_OUTPUTS, "metal", "");
         cargo_fmt_circuit(circuit, &self.output, &None);
     }
 

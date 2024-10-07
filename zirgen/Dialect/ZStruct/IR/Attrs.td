@@ -59,4 +59,3 @@ def BoundLayoutAttr : ZStructAttr<"BoundLayout", "bound_layout"> {
   ];
   let assemblyFormat = [{ $buffer `as` $layout }];
 }
-

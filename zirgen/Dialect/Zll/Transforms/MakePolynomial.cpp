@@ -85,15 +85,16 @@ struct MakePolynomialPass : public MakePolynomialBase<MakePolynomialPass> {
   void runOnOperation() override {
     // Get the function to run on + make a builder
     auto func = getOperation();
-    auto loc = func.getLoc();
-    Block* funcBlock = &func.front();
+    auto loc = func->getLoc();
+    Block* funcBlock = &func.getFunctionBody().front();
     Block* newBlock = new Block;
-    func.getBody().push_back(newBlock);
+    func.getFunctionBody().push_back(newBlock);
     auto builder = OpBuilder::atBlockBegin(newBlock);
 
     // Change the function to output the final constraint
-    func.setType(
-        builder.getFunctionType(func.getArgumentTypes(), {builder.getType<ConstraintType>()}));
+    func.setFunctionTypeAttr(
+      TypeAttr::get(
+        builder.getFunctionType(func.getArgumentTypes(), {builder.getType<ConstraintType>()})));
 
     // Make the rewriter + run on the entry block
     PolyRewriter rewriter(builder);
@@ -119,7 +120,7 @@ struct MakePolynomialPass : public MakePolynomialBase<MakePolynomialPass> {
 
 } // End namespace
 
-std::unique_ptr<OperationPass<func::FuncOp>> createMakePolynomialPass() {
+std::unique_ptr<Pass> createMakePolynomialPass() {
   return std::make_unique<MakePolynomialPass>();
 }
 

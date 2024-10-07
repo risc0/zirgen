@@ -22,8 +22,11 @@
 #include "zirgen/Dialect/Zll/Analysis/MixPowerAnalysis.h"
 #include "zirgen/Dialect/Zll/IR/IR.h"
 #include "llvm/ADT/TypeSwitch.h"
+#include "llvm/Support/Debug.h"
 #include "llvm/Support/FormatVariadic.h"
 #include "llvm/include/llvm/ADT/StringExtras.h"
+
+#define DEBUG_TYPE "codegen"
 
 using namespace mlir;
 using namespace kainjow::mustache;
@@ -47,6 +50,7 @@ struct Vars {
   size_t use(Value value) const {
     auto it = vars.find(value);
     if (it == vars.end()) {
+      llvm::errs() << "Missing use: " << value << "\n";
       throw std::runtime_error("Missing use");
     }
     return it->second;
@@ -113,6 +117,7 @@ public:
 
     list lines;
     for (Operation& op : func.front().without_terminator()) {
+      LLVM_DEBUG(llvm::dbgs() << "emitPolyFunc: " << op << "\n");
       emitOperation(&op, ctx, lines, /*depth=*/0, "Fp", FuncKind::PolyFp, &mixPows);
     }
     Value retVal = func.front().getTerminator()->getOperand(0);
@@ -131,6 +136,7 @@ private:
   void emitStepBlock(Block& block, FileContext& ctx, list& lines, size_t depth, bool isRecursion) {
     std::string indent(depth * 2, ' ');
     for (Operation& op : block.without_terminator()) {
+      LLVM_DEBUG(llvm::dbgs() << "emitStepBlock: " << op << "\n");
       mlir::TypeSwitch<Operation*>(&op)
           .Case<NondetOp>([&](NondetOp op) {
             lines.push_back(indent + "{");
@@ -390,8 +396,11 @@ private:
 
   std::string emitPolynomialAttr(Operation* op, const char* attrName) {
     auto attr = op->getAttrOfType<PolynomialAttr>(attrName);
-    assert(attr.size() == 1 && "not yet unsupported");
-    return std::to_string(attr[0]);
+    std::string result = std::to_string(attr[0]);
+    for (size_t i = 1; i < attr.size(); i++) {
+      result += "," + std::to_string(attr[i]);
+    }
+    return result;
   }
 
   std::string emitOperand(Operation* op, Vars& vars, size_t idx) {
@@ -402,12 +411,25 @@ private:
     std::stringstream ss;
     ss << "&[";
     for (Operation& origOp : block.without_terminator()) {
+      LLVM_DEBUG(llvm::dbgs() << "emitPolyExtBlock: " << origOp << "\n");
       mlir::TypeSwitch<Operation*>(&origOp)
           .Case<ConstOp>([&](ConstOp op) {
-            ss << "PolyExtStep::Const(" << emitPolynomialAttr(op, "coefficients") << ")";
+            auto attr = op->getAttrOfType<PolynomialAttr>("coefficients");
+            if (attr.size() != 1) {
+              SmallVector<uint64_t> expected = {{0, 1, 0, 0}};
+              if (!attr.asArrayRef().equals(expected)) {
+                llvm::errs() << "Unsupported field extension constant: "
+                             << emitPolynomialAttr(op, "coefficients") << "\n";
+                throw(std::runtime_error("unsupported field extension constant"));
+              }
+              ss << "PolyExtStep::Shift";
+            } else {
+              ss << "PolyExtStep::Const(" << emitPolynomialAttr(op, "coefficients") << ")";
+            }
             ctx.fp.var(op.getOut());
           })
           .Case<GetOp>([&](GetOp op) {
+            llvm::errs() << op << "\n";
             ss << "PolyExtStep::Get(" << emitIntAttr(op, "tap") << ")";
             ctx.fp.var(op.getOut());
           })
@@ -444,7 +466,12 @@ private:
             ss << "PolyExtStep::AndCond(" << emitOperand(op, ctx.mix, 0) << ", "
                << emitOperand(op, ctx.fp, 1) << ", " << emitOperand(op, ctx.mix, 2) << ")";
             ctx.mix.var(op.getOut());
+          })
+          .Default([&](Operation* op) {
+            llvm::errs() << "Don't know how to codegen PolyExtStep for " << *op << "\n";
+            assert(op->use_empty());
           });
+
       ss << ", // " << getLocString(origOp.getLoc()) << "\n";
     }
     ss << "]";

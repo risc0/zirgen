@@ -36,6 +36,8 @@ cc_library(
         "ComputeTaps.cpp",
         "DropConstraints.cpp",
         "InlineFpExt.cpp",
+        "IfToMultiply.cpp",
+        "MultiplyToIf.cpp",
         "MakePolynomial.cpp",
         "MakeVerifyTaps.cpp",
         "PassDetail.h",

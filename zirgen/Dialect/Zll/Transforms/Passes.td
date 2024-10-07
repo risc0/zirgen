@@ -18,12 +18,12 @@
 include "mlir/Pass/PassBase.td"
 include "mlir/Rewrite/PassUtil.td"
 
-def ComputeTaps : Pass<"compute-taps", "mlir::func::FuncOp"> {
+def ComputeTaps : Pass<"compute-taps"> {
   let summary = "Compute tap ID for each tap and save the tap table";
   let constructor = "zirgen::Zll::createComputeTapsPass()";
 }
 
-def MakePolynomial : Pass<"make-polynomial", "mlir::func::FuncOp"> {
+def MakePolynomial : InterfacePass<"make-polynomial", "mlir::FunctionOpInterface"> {
   let summary = "Compute a polynomial mix of constraints";
   let constructor = "zirgen::Zll::createMakePolynomialPass()";
 }
@@ -58,6 +58,16 @@ def AddReductions : Pass<"add-reductions", "mlir::func::FuncOp"> {
   let options = [
     Option<"maxBits", "max-bits", "unsigned", /*default=*/"255", "Number of bits where outer field is still unambigous">,
   ];
+}
+
+def IfToMultiply : Pass<"if-to-multiply"> {
+  let summary = "Remove EqualZeroOp constraints from if blocks by multiplying with the condition";
+  let constructor = "zirgen::Zll::createIfToMultiplyPass()";
+}
+
+def MultiplyToIf : Pass<"multiply-to-if"> {
+  let summary = "Remove factors from EqualZeroOp constraints by moving them into `if` blocks.";
+  let constructor = "zirgen::Zll::createMultiplyToIfPass()";
 }
 
 #endif // ZLL_TRANSFORM_PASSES

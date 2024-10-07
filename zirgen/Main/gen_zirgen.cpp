@@ -18,6 +18,7 @@
 #include "risc0/core/elf.h"
 #include "risc0/core/util.h"
 
+#include "mlir/IR/IRMapping.h"
 #include "mlir/Pass/PassManager.h"
 #include "mlir/Transforms/Passes.h"
 #include "zirgen/Conversions/Typing/BuiltinComponents.h"
@@ -28,6 +29,7 @@
 #include "zirgen/Dialect/ZStruct/Transforms/Passes.h"
 #include "zirgen/Dialect/Zll/IR/IR.h"
 #include "zirgen/Dialect/Zll/IR/Interpreter.h"
+#include "zirgen/Dialect/Zll/Transforms/Passes.h"
 #include "zirgen/Main/Main.h"
 #include "zirgen/Main/RunTests.h"
 #include "zirgen/compiler/codegen/codegen.h"
@@ -45,7 +47,6 @@
 namespace cl = llvm::cl;
 using namespace zirgen;
 using namespace zirgen::codegen;
-;
 using namespace mlir;
 
 static cl::opt<std::string>
@@ -55,6 +56,7 @@ static cl::opt<std::string>
 static cl::list<std::string> includeDirs("I", cl::desc("Add include path"), cl::value_desc("path"));
 static cl::opt<size_t>
     maxDegree("max-degree", cl::desc("Maximum degree of validity polynomial"), cl::init(5));
+static cl::opt<std::string> protocolInfo("protocol-info", cl::desc("Protocol information string"), cl::init("ZIRGEN_TEST_____"));
 
 namespace {
 
@@ -101,6 +103,52 @@ template <typename... OpT> void emitOps(CodegenEmitter& cg, ModuleOp mod, String
       cg.emitTopLevel(&op);
     }
   }
+}
+
+void emitPoly(ModuleOp mod) {
+  ModuleOp funcMod = mod.cloneWithoutRegions();
+  OpBuilder builder(funcMod.getContext());
+  builder.createBlock(&funcMod->getRegion(0));
+
+  // Convert functions to func::FuncOp, since that's what the edsl
+  // codegen knows how to deal with
+  mod.walk([&](zirgen::Zhlt::CheckFuncOp funcOp) {
+    auto newFuncOp = builder.create<func::FuncOp>(funcOp.getLoc(),
+                                                  funcOp.getSymNameAttr(),
+                                                  TypeAttr::get(funcOp.getFunctionType()),
+                                                  funcOp.getSymVisibilityAttr(),
+                                                  funcOp.getArgAttrsAttr(),
+                                                  funcOp.getResAttrsAttr());
+    IRMapping mapping;
+    newFuncOp.getBody().getBlocks().clear();
+    funcOp.getBody().cloneInto(&newFuncOp.getBody(), mapping);
+  });
+  
+  zirgen::Zll::setModuleAttr(funcMod, builder.getAttr<zirgen::Zll::ProtocolInfoAttr>(protocolInfo));
+
+  llvm::errs() << "funcmod: " << funcMod << "\n";
+
+  mlir::PassManager pm(mod.getContext());
+  applyDefaultTimingPassManagerCLOptions(pm);
+  if (failed(applyPassManagerCLOptions(pm))) {
+    llvm::errs() << "Pass manager does not agree with command line options.\n";
+    exit(1);
+  }
+  auto& opm = pm.nest<mlir::func::FuncOp>();
+  opm.addPass(zirgen::ZStruct::createInlineLayoutPass());
+  opm.addPass(zirgen::ZStruct::createBuffersToArgsPass());
+  opm.addPass(Zll::createMakePolynomialPass());
+  opm.addPass(createCanonicalizerPass());
+  opm.addPass(createCSEPass());
+  opm.addPass(Zll::createComputeTapsPass());
+
+  if (failed(pm.run(funcMod))) {
+    llvm::errs() << "an internal compiler error occurred while lowering this module:\n";
+    funcMod.print(llvm::errs());
+    exit(1);
+  }
+
+  emitCodeZirgenPoly(funcMod, outputDir);
 }
 
 } // namespace
@@ -164,11 +212,27 @@ int main(int argc, char* argv[]) {
   pm.addPass(zirgen::dsl::createGenerateCheckPass());
   pm.addPass(zirgen::dsl::createInlinePurePass());
   pm.addPass(zirgen::dsl::createHoistInvariantsPass());
-  pm.addPass(mlir::createCSEPass());
-  pm.addPass(mlir::createSymbolDCEPass());
+  //  pm.addPass(zirgen::dsl::createGenerateTapsPass());
   auto& checkPasses = pm.nest<zirgen::Zhlt::CheckFuncOp>();
   checkPasses.addPass(zirgen::ZStruct::createInlineLayoutPass());
-  pm.addPass(zirgen::dsl::createGenerateTapsPass());
+  checkPasses.addPass(zirgen::Zll::createIfToMultiplyPass());
+  checkPasses.addPass(mlir::createCanonicalizerPass());
+  checkPasses.addPass(mlir::createCSEPass());
+  checkPasses.addPass(zirgen::Zll::createMultiplyToIfPass());
+  checkPasses.addPass(mlir::createCanonicalizerPass());
+  //  pm.addPass(zirgen::dsl::createGenerateValidityRegsPass());
+
+  if (failed(pm.run(typedModule.value()))) {
+    llvm::errs() << "an internal compiler error occurred while lowering this module:\n";
+    typedModule->print(llvm::errs());
+    return 1;
+  }
+
+  emitPoly(*typedModule);
+
+  pm.clear();
+  //  regsPasses.addPass(zirgen::ZStruct::createBuffersToArgsPass());
+  //  pm.addPass(zirgen::dsl::createGenerateValidityTapsPass());
   pm.addPass(zirgen::dsl::createElideTrivialStructsPass());
   pm.addPass(zirgen::ZStruct::createExpandLayoutPass());
   pm.addPass(zirgen::dsl::createFieldDCEPass());
@@ -207,8 +271,8 @@ int main(int argc, char* argv[]) {
   CodegenEmitter rustCg(rustOpts, &context);
   emitDefs(rustCg, *typedModule, "defs.rs.inc");
   emitTypes(rustCg, *typedModule, "types.rs.inc");
-  //  emitOps<Zhlt::ValidityRegsFuncOp>(rustCg, *typedModule, "validity_regs.rs.inc");
-  //  emitOps<Zhlt::ValidityTapsFuncOp>(rustCg, *typedModule, "validity_taps.rs.inc");
+  //    emitOps<Zhlt::ValidityRegsFuncOp>(rustCg, *typedModule, "validity_regs.rs.inc");
+  //    emitOps<Zhlt::ValidityTapsFuncOp>(rustCg, *typedModule, "validity_taps.rs.inc");
   emitOps<ZStruct::GlobalConstOp>(rustCg, *typedModule, "layout.rs.inc");
   emitOps<Zhlt::StepFuncOp>(rustCg, stepFuncs, "steps.rs.inc");
 
@@ -220,6 +284,8 @@ int main(int argc, char* argv[]) {
   //  emitOps<Zhlt::ValidityRegsFuncOp>(cppCg, *typedModule, "validity_taps.cpp.inc");
   emitOps<ZStruct::GlobalConstOp>(cppCg, *typedModule, "layout.cpp.inc");
   emitOps<Zhlt::StepFuncOp, Zhlt::ExecFuncOp>(cppCg, stepFuncs, "steps.cpp.inc");
+
+  emitPoly(*typedModule);
 
   return 0;
 }

@@ -1,0 +1,28 @@
+[package]
+name = "risc0-circuit-keccak"
+description = "RISC Zero circuit for keccak"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+homepage = "https://risczero.com/"
+
+[dependencies]
+anyhow = "1.0"
+clap = "4.5"
+lazy_static = "1.5.0"
+paste = "1.0"
+risc0-zirgen-dsl = { workspace = true }
+
+[dependencies.risc0-zkp]
+git = "https://github.com/risc0/risc0.git"
+rev = "bc1f4ac5bcb07731641b6fc6dc13fecb121d1276"
+
+[dependencies.risc0-core]
+git = "https://github.com/risc0/risc0.git"
+rev = "bc1f4ac5bcb07731641b6fc6dc13fecb121d1276"
+
+[dev-dependencies]
+test-log = { version = "0.2", default-features = false, features = ["trace"] }
+tracing-forest = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+

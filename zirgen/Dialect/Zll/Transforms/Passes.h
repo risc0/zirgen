@@ -21,14 +21,16 @@
 namespace zirgen::Zll {
 
 // Pass constructors
-std::unique_ptr<mlir::OperationPass<mlir::func::FuncOp>> createComputeTapsPass();
-std::unique_ptr<mlir::OperationPass<mlir::func::FuncOp>> createMakePolynomialPass();
+std::unique_ptr<mlir::Pass> createComputeTapsPass();
+std::unique_ptr<mlir::Pass> createMakePolynomialPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createMakeVerifyTapsPass();
 std::unique_ptr<mlir::OperationPass<mlir::func::FuncOp>> createSplitStagePass();
 std::unique_ptr<mlir::OperationPass<mlir::func::FuncOp>> createDropConstraintsPass();
 std::unique_ptr<mlir::OperationPass<mlir::func::FuncOp>> createSplitStagePass(unsigned stage);
 std::unique_ptr<mlir::OperationPass<mlir::func::FuncOp>> createInlineFpExtPass();
 std::unique_ptr<mlir::OperationPass<mlir::func::FuncOp>> createAddReductionsPass();
+std::unique_ptr<mlir::Pass> createIfToMultiplyPass();
+std::unique_ptr<mlir::Pass> createMultiplyToIfPass();
 
 // Generate the code for registering passes.
 #define GEN_PASS_REGISTRATION

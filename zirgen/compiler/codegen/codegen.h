@@ -251,6 +251,7 @@ std::unique_ptr<CppStreamEmitter> createCppStreamEmitter(llvm::raw_ostream& ofs)
 
 void registerCodegenCLOptions();
 void emitCode(mlir::ModuleOp module, const EmitCodeOptions& opts = {});
+void emitCodeZirgenPoly(mlir::ModuleOp module, llvm::StringRef outputDir);
 void emitRecursion(const std::string& path,
                    mlir::func::FuncOp func,
                    recursion::EncodeStats* stats = nullptr);

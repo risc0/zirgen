@@ -29,19 +29,18 @@ DEFAULT_OUTS = [
 ]
 
 ZIRGEN_OUTS = [
-    "circuit.ir",
-    "types.h.inc",
-    "types.rs.inc",
     "defs.cpp.inc",
     "defs.rs.inc",
+    "eval_check.cu",
+    "eval_check.metal",
     "layout.cpp.inc",
     "layout.rs.inc",
+    "poly_ext.rs",
+    "rust_poly_fp.cpp",
     "steps.cpp.inc",
     "steps.rs.inc",
-    "validity_regs.cpp.inc",
-    "validity_regs.rs.inc",
-    "validity_taps.cpp.inc",
-    "validity_taps.rs.inc",
+    "types.h.inc",
+    "types.rs.inc"
 ]
 
 def _impl(ctx):

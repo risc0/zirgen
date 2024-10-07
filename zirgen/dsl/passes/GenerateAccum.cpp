@@ -126,6 +126,7 @@ private:
   // an expression like the one above.
   Value condenseArgument(Value layout, const RandomnessMap& randomness) {
     MLIRContext* ctx = builder.getContext();
+    ValType valType = Zhlt::getValType(ctx);
     ValType extValType = Zhlt::getValExtType(ctx);
 
     if (layout.getType() == Zhlt::getNondetRegLayoutType(ctx)) {
@@ -142,8 +143,7 @@ private:
       if (layoutType.getKind() == LayoutKind::Argument)
         fields = fields.drop_front();
 
-      SmallVector<uint64_t> zero(extValType.getFieldK(), 0);
-      Value v = builder.create<ConstOp>(layout.getLoc(), extValType, zero);
+      Value v = builder.create<ConstOp>(layout.getLoc(), valType, 0);
       for (auto field : fields) {
         Value sublayout = builder.create<LookupOp>(layout.getLoc(), layout, field.name);
         Value sumTerm = condenseArgument(sublayout, randomness.map.at(field.name.getValue()));
@@ -152,8 +152,7 @@ private:
       return v;
     } else if (auto layoutType = dyn_cast<LayoutArrayType>(layout.getType())) {
       // For a LayoutArrayType, sum condensations at all subscripts
-      SmallVector<uint64_t> zero(extValType.getFieldK(), 0);
-      Value v = builder.create<ConstOp>(layout.getLoc(), extValType, zero);
+      Value v = builder.create<ConstOp>(layout.getLoc(), valType, 0);
       for (size_t i = 0; i < layoutType.getSize(); i++) {
         Value index = builder.create<arith::ConstantOp>(layout.getLoc(), builder.getIndexAttr(i));
         Value sublayout = builder.create<SubscriptOp>(layout.getLoc(), layout, index);

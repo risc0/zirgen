@@ -292,6 +292,20 @@ void emitCode(ModuleOp module, const EmitCodeOptions& opts) {
   });
 }
 
+void emitCodeZirgenPoly(ModuleOp module, StringRef outputDir) {
+  FileEmitter emitter(outputDir);
+
+  module.walk([&](func::FuncOp func) {
+    emitter.emitPolyFunc("poly_fp", func);
+    emitter.emitPolyExtFunc(func);
+    emitter.emitTaps(func);
+    emitter.emitInfo(func);
+    emitter.emitEvalCheck(".cu", func);
+    emitter.emitEvalCheck(".metal", func);
+    emitter.emitTapsCpp(func);
+  });
+}
+
 std::string escapeString(llvm::StringRef str) {
   std::string out = "\"";
   for (size_t i = 0; i < str.size(); i++) {
