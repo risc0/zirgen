@@ -585,7 +585,7 @@ func.func @good_nondet_invmod_basic() {
 
 func.func @good_nondet_invmod_oversized_num() {
   // Primary rules tested:
-  //  - [%3] Compute the max overall value from the denominator max value minus 1
+  //  - Compute the max overall value from the denominator max value minus 1
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
   %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
   %2 = bigint.add %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 510, 0, 0>
@@ -598,7 +598,7 @@ func.func @good_nondet_invmod_oversized_num() {
 
 func.func @good_nondet_invmod_oversized_denom() {
   // Primary rules tested:
-  //  - [%3] Compute the max overall value from the denominator max value minus 1
+  //  - Compute the max overall value from the denominator max value minus 1
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
   %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
   %2 = bigint.add %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 510, 0, 0>
@@ -611,7 +611,7 @@ func.func @good_nondet_invmod_oversized_denom() {
 
 func.func @good_nondet_invmod_multibyte_denom() {
   // Primary rules tested:
-  //  - [%3] Compute the max overall value from the denominator max value minus 1
+  //  - Compute the max overall value from the denominator max value minus 1
   %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
   %1 = bigint.def 64, 1, true -> <8, 255, 0, 0>
   %2 = bigint.add %0 : <3, 255, 0, 0>, %1 : <8, 255, 0, 0> -> <8, 510, 0, 0>
@@ -624,7 +624,7 @@ func.func @good_nondet_invmod_multibyte_denom() {
 
 func.func @good_nondet_invmod_multibyte_denom2() {
   // Primary rules tested:
-  //  - [%3] Compute the max overall value from the denominator max value minus 1
+  //  - Compute the max overall value from the denominator max value minus 1
   %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
   %1 = bigint.def 64, 1, true -> <8, 255, 0, 0>
   %2 = bigint.mul %0 : <3, 255, 0, 0>, %1 : <8, 255, 0, 0> -> <10, 195075, 0, 0>
@@ -637,7 +637,7 @@ func.func @good_nondet_invmod_multibyte_denom2() {
 
 func.func @good_nondet_invmod_multibyte_denom3() {
   // Primary rules tested:
-  //  - [%3] Compute the max overall value from the denominator max value minus 1
+  //  - Compute the max overall value from the denominator max value minus 1
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
   %1 = bigint.def 64, 1, true -> <8, 255, 0, 0>
   %2 = bigint.add %0 : <1, 255, 0, 0>, %1 : <8, 255, 0, 0> -> <8, 510, 0, 0>
@@ -650,7 +650,7 @@ func.func @good_nondet_invmod_multibyte_denom3() {
 
 func.func @good_nondet_invmod_multibyte_denom4() {
   // Primary rules tested:
-  //  - [%3] Compute the max overall value from the denominator max value minus 1
+  //  - Compute the max overall value from the denominator max value minus 1
   %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
   %1 = bigint.def 64, 1, true -> <8, 255, 0, 0>
   %2 = bigint.mul %0 : <3, 255, 0, 0>, %1 : <8, 255, 0, 0> -> <10, 195075, 0, 0>
@@ -663,7 +663,7 @@ func.func @good_nondet_invmod_multibyte_denom4() {
 
 func.func @good_nondet_invmod_1bit_denom() {
   // Primary rules tested:
-  //  - [%3] Compute the max overall value from the denominator max value minus 1
+  //  - Compute the max overall value from the denominator max value minus 1
   //  - `min_bits` is 0
   %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
   %1 = bigint.const 1 : i8 -> <1, 255, 0, 1>
@@ -676,7 +676,7 @@ func.func @good_nondet_invmod_1bit_denom() {
 
 func.func @good_nondet_invmod_8bit_denom() {
   // Primary rules tested:
-  //  - [%3] Compute the max overall value from the denominator max value minus 1
+  //  - Compute the max overall value from the denominator max value minus 1
   //  - `min_bits` is 0
   %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
   %1 = bigint.const 200 : i8 -> <1, 255, 0, 8>
@@ -689,7 +689,7 @@ func.func @good_nondet_invmod_8bit_denom() {
 
 func.func @good_nondet_invmod_9bit_denom() {
   // Primary rules tested:
-  //  - [%3] Compute the max overall value from the denominator max value minus 1
+  //  - Compute the max overall value from the denominator max value minus 1
   //  - `min_bits` is 0
   %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
   %1 = bigint.const 300 : i16 -> <2, 255, 0, 9>
@@ -702,7 +702,7 @@ func.func @good_nondet_invmod_9bit_denom() {
 
 func.func @good_nondet_invmod_9bit_1coeff_denom() {
   // Primary rules tested:
-  //  - [%3] Compute the max overall value from the denominator max value minus 1
+  //  - Compute the max overall value from the denominator max value minus 1
   //  - `min_bits` is 0
   %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
   %1 = bigint.const 200 : i8 -> <1, 255, 0, 8>
