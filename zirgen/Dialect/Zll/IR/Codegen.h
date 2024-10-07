@@ -32,7 +32,7 @@ enum class IdentKind {
   Macro,
 };
 
-} //
+} // namespace zirgen::codegen
 
 namespace llvm {
 using zirgen::codegen::IdentKind;
@@ -44,7 +44,7 @@ template <> struct DenseMapInfo<zirgen::codegen::IdentKind> {
   static bool isEqual(const IdentKind& LHS, const IdentKind& RHS) { return LHS == RHS; }
 };
 
-} //
+} // namespace llvm
 
 namespace zirgen ::codegen {
 
@@ -531,7 +531,8 @@ inline CodegenEmitter& CodegenEmitter::operator<<(EmitPart emitPart) {
 
 template <typename Container, typename UnaryFunctor, typename T>
 void CodegenEmitter::interleaveComma(const Container& c, UnaryFunctor each_fn) {
-  llvm::interleave(c, *getOutputStream(), [&](const T& elem) { each_fn(elem); }, ", ");
+  llvm::interleave(
+      c, *getOutputStream(), [&](const T& elem) { each_fn(elem); }, ", ");
 }
 template <typename Container, typename T> void CodegenEmitter::interleaveComma(const Container& c) {
   llvm::interleave(
@@ -547,4 +548,4 @@ template <typename Container, typename T> void CodegenEmitter::interleaveComma(c
 mlir::LogicalResult
 translateCodegen(mlir::Operation* op, CodegenOptions opts, llvm::raw_ostream& os);
 
-} // namespace zirgen
+} // namespace zirgen::codegen

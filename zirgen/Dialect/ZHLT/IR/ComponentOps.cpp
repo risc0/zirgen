@@ -167,7 +167,7 @@ mlir::LogicalResult CheckFuncOp::verifyMaxDegree(size_t maxDegree) {
   });
 
   for (auto [degree, numConstraints] : degrees) {
-    llvm::errs() << numConstraints << " constraints of degree "<< degree<< "\n";
+    llvm::errs() << numConstraints << " constraints of degree " << degree << "\n";
   }
   return res;
 }

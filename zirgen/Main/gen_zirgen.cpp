@@ -207,8 +207,8 @@ int main(int argc, char* argv[]) {
   CodegenEmitter rustCg(rustOpts, &context);
   emitDefs(rustCg, *typedModule, "defs.rs.inc");
   emitTypes(rustCg, *typedModule, "types.rs.inc");
-//  emitOps<Zhlt::ValidityRegsFuncOp>(rustCg, *typedModule, "validity_regs.rs.inc");
-//  emitOps<Zhlt::ValidityTapsFuncOp>(rustCg, *typedModule, "validity_taps.rs.inc");
+  //  emitOps<Zhlt::ValidityRegsFuncOp>(rustCg, *typedModule, "validity_regs.rs.inc");
+  //  emitOps<Zhlt::ValidityTapsFuncOp>(rustCg, *typedModule, "validity_taps.rs.inc");
   emitOps<ZStruct::GlobalConstOp>(rustCg, *typedModule, "layout.rs.inc");
   emitOps<Zhlt::StepFuncOp>(rustCg, stepFuncs, "steps.rs.inc");
 
@@ -216,8 +216,8 @@ int main(int argc, char* argv[]) {
   CodegenEmitter cppCg(cppOpts, &context);
   emitDefs(cppCg, *typedModule, "defs.cpp.inc");
   emitTypes(cppCg, *typedModule, "types.h.inc");
-//  emitOps<Zhlt::ValidityTapsFuncOp>(cppCg, *typedModule, "validity_regs.cpp.inc");
-//  emitOps<Zhlt::ValidityRegsFuncOp>(cppCg, *typedModule, "validity_taps.cpp.inc");
+  //  emitOps<Zhlt::ValidityTapsFuncOp>(cppCg, *typedModule, "validity_regs.cpp.inc");
+  //  emitOps<Zhlt::ValidityRegsFuncOp>(cppCg, *typedModule, "validity_taps.cpp.inc");
   emitOps<ZStruct::GlobalConstOp>(cppCg, *typedModule, "layout.cpp.inc");
   emitOps<Zhlt::StepFuncOp, Zhlt::ExecFuncOp>(cppCg, stepFuncs, "steps.cpp.inc");
 

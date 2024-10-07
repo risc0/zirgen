@@ -69,7 +69,7 @@ StringAttr CodegenEmitter::canonIdent(StringAttr identAttr, IdentKind idt) {
   if (existing) {
     return existing;
   }
-  
+
   StringRef ident = identAttr.strref();
   assert(!ident.empty());
 

@@ -22,8 +22,8 @@
 #include "mlir/Pass/PassManager.h"
 #include "mlir/Transforms/CSE.h"
 #include "mlir/Transforms/GreedyPatternRewriteDriver.h"
-#include "llvm/ADT/TypeSwitch.h"
 #include "mlir/Transforms/TopologicalSortUtils.h"
+#include "llvm/ADT/TypeSwitch.h"
 
 #include "zirgen/Dialect/ZHLT/IR/TypeUtils.h"
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
@@ -685,18 +685,18 @@ struct GenerateValidityRegsPass : public GenerateValidityRegsBase<GenerateValidi
                 BindLayoutOp,
                 arith::ConstantOp,
                 arith::AddIOp>([&](auto op) {
-                  OpBuilder::InsertionGuard guard(builder);
-                  if (llvm::isa<LoadOp,LookupOp,SubscriptOp>(op.getOperation()))
-                    builder.setInsertionPointToStart(builder.getBlock());
-                  builder.clone(origOp, mapper);
-                })
+            OpBuilder::InsertionGuard guard(builder);
+            if (llvm::isa<LoadOp, LookupOp, SubscriptOp>(op.getOperation()))
+              builder.setInsertionPointToStart(builder.getBlock());
+            builder.clone(origOp, mapper);
+          })
           .Default([&](Operation* op) {
             llvm::errs() << *op;
             op->emitError("Invalid op for MakePolynomial");
             signalPassFailure();
           });
     }
-//    block.print(llvm::errs());
+    //    block.print(llvm::errs());
     llvm::errs() << "validity regs done on block size " << block.getOperations().size()
                  << " with parent " << block.getParentOp()->getName() << "; resultant block now "
                  << builder.getBlock()->getOperations().size() << "\n";

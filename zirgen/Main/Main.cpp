@@ -92,10 +92,10 @@ mlir::LogicalResult checkDegreeExceeded(mlir::ModuleOp module, size_t maxDegree)
       tmpMod->print(llvm::outs());
     }
   });
-  
+
   if (degreeExceeded)
     return mlir::failure();
-  
+
   if (!foundCheckFunction) {
     module.emitError("Unable to find check function to compute degree");
     return mlir::failure();
