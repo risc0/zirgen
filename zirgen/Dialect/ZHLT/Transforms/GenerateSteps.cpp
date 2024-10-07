@@ -104,10 +104,9 @@ struct GenerateStepsPass : public GenerateStepsBase<GenerateStepsPass> {
     auto layoutSymName = ZStruct::getLayoutConstName(name);
     auto layoutOp = getOperation().lookupSymbol<ZStruct::GlobalConstOp>(layoutSymName);
     if (layoutOp) {
-      auto& bufferAnalysis = getAnalysis<ZStruct::BufferAnalysis>();
-      auto bufferType = bufferAnalysis.getBuffer(name).getType(&getContext());
+      auto bufs = Zll::lookupModuleAttr<Zll::BuffersAttr>(layoutOp);
       patterns.add<AttachGlobalLayoutPattern>(
-          &getContext(), /*benefit=*/1, layoutOp, name, bufferType);
+          &getContext(), /*benefit=*/1, layoutOp, name, bufs.getBuffer(name).getType());
     }
   }
 
@@ -137,7 +136,7 @@ struct GenerateStepsPass : public GenerateStepsBase<GenerateStepsPass> {
         return signalPassFailure();
       }
       auto getBufferOp = builder.create<ZStruct::GetBufferOp>(
-          funcOp.getLoc(), bufferDesc.getType(&getContext()), bufferDesc.name);
+          funcOp.getLoc(), bufferDesc.getType(), bufferDesc.getName());
       args.push_back(builder.create<ZStruct::BindLayoutOp>(
           funcOp.getLoc(), constOp.getType(), constOp.getSymName(), getBufferOp));
     }

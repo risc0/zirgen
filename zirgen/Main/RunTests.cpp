@@ -273,33 +273,33 @@ int runTests(mlir::ModuleOp module) {
     // Allocate buffers
     using Polynomial = llvm::SmallVector<uint64_t, 4>;
     llvm::SmallVector<std::unique_ptr<std::vector<Polynomial>>> bufs;
-    auto allBufs = bufferAnalysis.getAllBuffers();
+    auto allBufs = Zll::lookupModuleAttr<Zll::BuffersAttr>(module).getBuffers();
     bufs.reserve(allBufs.size());
     for (auto bufDesc : allBufs) {
       auto& newBuf = bufs.emplace_back(std::make_unique<std::vector<Polynomial>>());
-      if (bufDesc.kind == zirgen::Zll::BufferKind::Global) {
-        newBuf->resize(bufDesc.regCount, Polynomial(1, zirgen::Zll::kFieldInvalid));
-        interp.setNamedBuf(bufDesc.name, *newBuf, 0 /* no per-cycle offset */);
-        if (bufDesc.name.str() == "global") {
+      if (bufDesc.getKind() == zirgen::Zll::BufferKind::Global) {
+        newBuf->resize(bufDesc.getRegCount(), Polynomial(1, zirgen::Zll::kFieldInvalid));
+        interp.setNamedBuf(bufDesc.getName(), *newBuf, 0 /* no per-cycle offset */);
+        if (bufDesc.getName() == "global") {
           auto globals = parseIntList(clOpts->testGlobals);
           for (size_t i = 0; i < globals.size(); i++) {
             (*newBuf)[i][0] = globals[i];
           }
-        } else if (bufDesc.name.str() == "mix") {
+        } else if (bufDesc.getName() == "mix") {
           std::default_random_engine generator;
           std::uniform_int_distribution<int> distribution(1, zirgen::Zll::kFieldPrimeDefault - 1);
           newBuf->clear();
-          newBuf->resize(bufDesc.regCount, Polynomial(4, zirgen::Zll::kFieldInvalid));
-          for (size_t i = 0; i < bufDesc.regCount; i++) {
+          newBuf->resize(bufDesc.getRegCount(), Polynomial(4, zirgen::Zll::kFieldInvalid));
+          for (size_t i = 0; i < bufDesc.getRegCount(); i++) {
             for (size_t j = 0; j < 4; j++) {
               (*newBuf)[i][j] = static_cast<uint64_t>(distribution(generator));
             }
           }
         }
       } else {
-        newBuf->resize(bufDesc.regCount * clOpts->testCycles,
+        newBuf->resize(bufDesc.getRegCount() * clOpts->testCycles,
                        Polynomial(1, zirgen::Zll::kFieldInvalid));
-        interp.setNamedBuf(bufDesc.name, *newBuf, bufDesc.regCount);
+        interp.setNamedBuf(bufDesc.getName(), *newBuf, bufDesc.getRegCount());
       }
     }
     TestExternHandler testExterns;
@@ -348,7 +348,7 @@ int runTests(mlir::ModuleOp module) {
     if (!failed && accum) {
       // First, 'zero' any unset values in data
       for (auto [buf, bufDesc] : llvm::zip(bufs, allBufs)) {
-        if (bufDesc.name == "test") {
+        if (bufDesc.getName() == "test") {
           for (size_t i = 0; i < buf->size(); i++) {
             if ((*buf)[i][0] == zirgen::Zll::kFieldInvalid) {
               (*buf)[i][0] = 0;
@@ -373,7 +373,7 @@ int runTests(mlir::ModuleOp module) {
       // major mux arms for initialization and finalization. In the meantime,
       // print out the final accumulator sum so that we can assert on it in tests
       for (auto [buf, bufDesc] : llvm::zip(bufs, allBufs)) {
-        if (bufDesc.name == "accum") {
+        if (bufDesc.getName() == "accum") {
           llvm::outs() << "final accum: [";
           llvm::interleaveComma(buf->back(), llvm::outs());
           llvm::outs() << "]\n";

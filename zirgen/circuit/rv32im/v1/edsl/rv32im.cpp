@@ -56,19 +56,21 @@ int main(int argc, char* argv[]) {
         CompContext::fini(isHalt);
         CompContext::emitLayout(top);
       });
+  module.setProtocolInfo(RV32IM_CIRCUIT_INFO);
   // module.optimize();
   // module.optimize(3);
   // module.dump(/*debug=*/true);
   // exit(1);
   module.optimize();
 
-  EmitCodeOptions opts = {
-      .info = RV32IM_CIRCUIT_INFO,
-      .stages = {{"exec", "verify_mem", "verify_bytes", "compute_accum", "verify_accum"}}};
+  EmitCodeOptions opts;
+  // bazel expects output files to be named differently than the stages
+  opts.stages["ram_verify"].outputFile = "verify_mem";
+  opts.stages["bytes_verify"].outputFile = "verify_bytes";
 
   // Accum is processed in parallel, so we don't have access to
   // BACKs to be able to check constraints when executing.
-  opts.stages[4 /* compute_accum*/].addExtraPasses = [&](mlir::OpPassManager& opm) {
+  opts.stages["verify_accum"].addExtraPasses = [&](mlir::OpPassManager& opm) {
     opm.addPass(Zll::createDropConstraintsPass());
   };
 

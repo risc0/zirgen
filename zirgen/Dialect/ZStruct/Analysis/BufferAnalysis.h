@@ -25,54 +25,16 @@
 
 namespace zirgen::ZStruct {
 
-// A description of a buffer used by ZStruct
-struct BufferDesc {
-  mlir::StringAttr name;
-  Zll::BufferKind kind;
-
-  // Tap register group id, if present.
-  std::optional<size_t> regGroupId = std::nullopt;
-
-  // True if this buffer is a global buffer, false if it is per-cycle.
-  bool global = false;
-
-  // Size of this buffer, in "Val"s.
-  size_t regCount = 0;
-
-  // Constructs the Zll::BufferType of this buffer.
-  mlir::Type getType(mlir::MLIRContext* ctx) const;
-
-  // The set of layouts in the circuit that apply to this buffer, i.e.
-  // the "layout" field of all BoundBufferAttrs.
-  llvm::SetVector<mlir::Attribute> layouts;
-};
-
-// This class provides access to the list of buffers used by a ZHLT
-// module.  Currently the implementation is hardcoded, but we hope to
-// have a more flexible buffer scheme in the future.  In preparation for that, we
-// want to centralize everything that depends on types of buffers.
+// This class provides utilities to get buffer and layout information
+// for zirgen ZHLT modules.
 class BufferAnalysis {
 public:
   BufferAnalysis(mlir::ModuleOp op);
 
-  llvm::ArrayRef<BufferDesc> getTapBuffers() const { return tapBuffers; };
-
-  // Returns all buffers, tap buffers first. in a fixed order.
-  llvm::SmallVector<BufferDesc> getAllBuffers() const;
-
-  const BufferDesc& getBuffer(llvm::StringRef bufferName) const { return buffers.at(bufferName); }
-
   // Returns the operation defining the layout that we would provide to
   // the given top-level block argument.
-  std::pair<ZStruct::GlobalConstOp, BufferDesc>
+  std::pair<ZStruct::GlobalConstOp, Zll::BufferDescAttr>
   getLayoutAndBufferForArgument(mlir::BlockArgument layoutArg);
-
-private:
-  llvm::StringMap<BufferDesc> buffers;
-  llvm::SmallVector<BufferDesc> tapBuffers;
-
-  llvm::SmallVector<mlir::StringAttr> tapBufferNames;
-  llvm::SmallVector<mlir::StringAttr> globalBufferNames;
 };
 
 } // namespace zirgen::ZStruct

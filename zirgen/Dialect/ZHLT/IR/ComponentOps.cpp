@@ -14,7 +14,6 @@
 
 #include "zirgen/Dialect/ZHLT/IR/TypeUtils.h"
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
-#include "zirgen/Dialect/ZStruct/Analysis/BufferAnalysis.h"
 #include "zirgen/Dialect/ZStruct/Analysis/DegreeAnalysis.h"
 #include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
 

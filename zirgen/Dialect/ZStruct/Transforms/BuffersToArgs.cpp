@@ -15,7 +15,6 @@
 #include "mlir/IR/BuiltinDialect.h"
 #include "mlir/IR/BuiltinOps.h"
 #include "mlir/Transforms/GreedyPatternRewriteDriver.h"
-#include "zirgen/Dialect/ZStruct/Analysis/BufferAnalysis.h"
 #include "zirgen/Dialect/ZStruct/Transforms/PassDetail.h"
 
 using namespace mlir;
@@ -80,18 +79,11 @@ struct GetBufferPattern : public OpRewritePattern<ZStruct::GetBufferOp> {
 
 struct BuffersToArgsPass : public BuffersToArgsBase<BuffersToArgsPass> {
   void runOnOperation() override {
-    // TODO: Is there a way to get the buffer analysis via the analysis manager if
-    // we're not running on the module operation?
-    ModuleOp modOp = llvm::dyn_cast<ModuleOp>(getOperation());
-    if (!modOp)
-      modOp = getOperation()->getParentOfType<ModuleOp>();
-    assert(modOp);
-    BufferAnalysis bufAnalysis(modOp);
+    auto bufs = Zll::lookupModuleAttr<Zll::BuffersAttr>(getOperation());
 
-    // Process each buffer in the order they occur in the buffer analysis.
-    for (auto bufDesc : bufAnalysis.getAllBuffers()) {
+    for (auto bufDesc : bufs.getBuffers()) {
       RewritePatternSet patterns(&getContext());
-      patterns.add<GetBufferPattern>(&getContext(), bufDesc.name);
+      patterns.add<GetBufferPattern>(&getContext(), bufDesc.getName());
       if (applyPatternsAndFoldGreedily(getOperation(), std::move(patterns)).failed()) {
         getOperation()->emitError("Unable to apply buffers to args patterns");
         signalPassFailure();

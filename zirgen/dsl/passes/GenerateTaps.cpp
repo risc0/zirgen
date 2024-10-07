@@ -17,7 +17,6 @@
 
 #include "zirgen/Dialect/ZHLT/IR/TypeUtils.h"
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
-#include "zirgen/Dialect/ZStruct/Analysis/BufferAnalysis.h"
 #include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
 #include "zirgen/Dialect/Zll/IR/Interpreter.h"
 #include "zirgen/dsl/passes/PassDetail.h"
@@ -39,7 +38,7 @@ struct GenerateTapsPass : public GenerateTapsBase<GenerateTapsPass> {
     auto ctx = module.getContext();
     OpBuilder builder(ctx);
     Location loc = builder.getUnknownLoc();
-    auto bufferAnalysis = getAnalysis<ZStruct::BufferAnalysis>();
+    auto bufs = Zll::lookupModuleAttr<Zll::BuffersAttr>(module);
 
     DenseMap<std::pair</*buffer=*/StringAttr, /*offset=*/size_t>, /*backs=*/DenseSet<size_t>>
         namedTaps;
@@ -73,10 +72,10 @@ struct GenerateTapsPass : public GenerateTapsBase<GenerateTapsPass> {
     }
 
     SmallVector<Attribute> taps;
-    for (auto [regGroupId, tapBuf] : llvm::enumerate(bufferAnalysis.getTapBuffers())) {
-      for (size_t offset = 0; offset != tapBuf.regCount; ++offset) {
+    for (auto tapBuf : bufs.getTapBuffers()) {
+      for (size_t offset = 0; offset != tapBuf.getRegCount(); ++offset) {
         SmallVector<size_t> backs =
-            llvm::to_vector(namedTaps.lookup(std::make_pair(tapBuf.name, offset)));
+            llvm::to_vector(namedTaps.lookup(std::make_pair(tapBuf.getName(), offset)));
         if (backs.empty()) {
           // Fill in any holes so that the register list is contiguous
           // TODO: We shouldn't have to do this, either by verifying there aren't any holes,
@@ -85,7 +84,7 @@ struct GenerateTapsPass : public GenerateTapsBase<GenerateTapsPass> {
         }
         llvm::sort(backs);
         for (size_t back : backs) {
-          taps.push_back(builder.getAttr<Zll::TapAttr>(regGroupId, offset, back));
+          taps.push_back(builder.getAttr<Zll::TapAttr>(*tapBuf.getRegGroupId(), offset, back));
         }
       }
     }

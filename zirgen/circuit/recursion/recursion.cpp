@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
       [&](Buffer code, Buffer out, Buffer data, Buffer mix, Buffer accum) {
         CompContext::init({"_wom_finalize",
                            "wom_verify",
-                           "do_nothing",
+                           "verify_bytes",
                            "compute_accum",
                            "verify_accum",
                            "_green_wire"});
@@ -54,22 +54,24 @@ int main(int argc, char* argv[]) {
         CompContext::fini(isHalt);
         CompContext::emitLayout(top);
       });
+  module.setProtocolInfo(RECURSION_CIRCUIT_INFO);
   module.optimize();
   // module.optimize();
   // module.optimize(3);
   // module.dump(/*debug=*/true);
   // exit(1);
 
-  EmitCodeOptions opts = {
-      .info = RECURSION_CIRCUIT_INFO,
-      .stages = {{"exec", "verify_mem", "verify_bytes", "compute_accum", "verify_accum"}}};
+  EmitCodeOptions opts;
 
-  opts.stages[0 /* exec */].addExtraPasses = [&](mlir::OpPassManager& opm) {
+  opts.stages["exec"].addExtraPasses = [&](mlir::OpPassManager& opm) {
     // For speed, don't check constraints during exec phase.
     opm.addPass(Zll::createDropConstraintsPass());
   };
 
-  opts.stages[4 /* compute_accum */].addExtraPasses = [&](mlir::OpPassManager& opm) {
+  // bazel expects the wom_verify step to be in a file called "verify_mem"
+  opts.stages["wom_verify"].outputFile = "verify_mem";
+
+  opts.stages["verify_accum"].addExtraPasses = [&](mlir::OpPassManager& opm) {
     // Accum operates in parallel, so don't check constraints during it.
     opm.addPass(Zll::createDropConstraintsPass());
   };

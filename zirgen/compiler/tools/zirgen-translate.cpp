@@ -166,8 +166,8 @@ int main(int argc, char** argv) {
       [](mlir::ModuleOp module, llvm::raw_ostream& output) {
         auto func = module.lookupSymbol<mlir::func::FuncOp>(funcName);
         auto rust = zirgen::createRustStreamEmitter(output);
-        ProtocolInfo info = {"zirgen-translate"};
-        rust->emitInfo(func, info);
+        setModuleAttr(func, Zll::ProtocolInfoAttr::get(module.getContext(), "zirgen-translate"));
+        rust->emitInfo(func);
         return mlir::success();
       },
       [](mlir::DialectRegistry& registry) {

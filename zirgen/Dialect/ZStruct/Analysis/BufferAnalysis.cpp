@@ -12,32 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Analyses what buffers are used by a module.
+// Utilities for analyzing layout buffer associations
 
 #include "zirgen/Dialect/ZStruct/Analysis/BufferAnalysis.h"
 #include "zirgen/Dialect/ZStruct/IR/TypeUtils.h"
 #include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
+#include "zirgen/Dialect/Zll/IR/IR.h"
 
 namespace zirgen::ZStruct {
 
 using namespace mlir;
 
-static const char* tapBufferNameStrs[] = {"accum", "code", "data"};
-static const char* globalBufferNameStrs[] = {"global", "mix"};
-
 namespace {
-
-void getRegCount(ModuleOp mod, Attribute layoutAttr, size_t& regCount) {
-  layoutAttr.walk([&](ZStruct::RefAttr refAttr) {
-    regCount = std::max<size_t>(regCount, refAttr.getIndex() + 1);
-  });
-  layoutAttr.walk([&](SymbolRefAttr symRef) {
-    // Symbolic reference to another layout; follow the reference.
-    if (auto target = mod.lookupSymbol<ZStruct::GlobalConstOp>(symRef)) {
-      getRegCount(mod, target.getConstant(), regCount);
-    }
-  });
-}
 
 // If this is a top-level layout, return the buffer associated with it.
 StringRef getLayoutBuffer(GlobalConstOp globalConstOp) {
@@ -60,53 +46,9 @@ StringRef getLayoutBuffer(GlobalConstOp globalConstOp) {
 
 } // namespace
 
-BufferAnalysis::BufferAnalysis(mlir::ModuleOp mod) {
-  // Buffers that make it into taps
-  tapBufferNames = llvm::map_to_vector(
-      tapBufferNameStrs, [&](auto name) { return StringAttr::get(mod.getContext(), name); });
-  for (auto [regGroupId, name] : llvm::enumerate(tapBufferNames)) {
-    buffers[name] = BufferDesc{
-        .name = name, .kind = Zll::BufferKind::Mutable, .regGroupId = regGroupId, .regCount = 1};
-  }
+BufferAnalysis::BufferAnalysis(mlir::ModuleOp mod) {}
 
-  // Global buffers that are required to exist.
-  globalBufferNames = llvm::map_to_vector(
-      globalBufferNameStrs, [&](auto name) { return StringAttr::get(mod.getContext(), name); });
-  for (auto name : globalBufferNames) {
-    buffers[name] =
-        BufferDesc{.name = name, .kind = Zll::BufferKind::Global, .global = true, .regCount = 4};
-  }
-
-  // Compute how big these buffers need to be.  If we find any other buffers (like "test")
-  // we default them to kind BufferKind::Mutable.
-  mod.walk([&](ZStruct::GlobalConstOp globalConstOp) {
-    StringRef name = getLayoutBuffer(globalConstOp);
-    if (name.empty())
-      // Not a layout
-      return;
-    auto layoutAttr = globalConstOp.getConstant();
-
-    BufferDesc& desc = buffers
-                           .try_emplace(name,
-                                        BufferDesc{.name = StringAttr::get(mod.getContext(), name),
-                                                   .kind = Zll::BufferKind::Mutable,
-                                                   .regCount = 0})
-                           .first->second;
-
-    if (desc.layouts.insert(layoutAttr)) {
-      // We haven't seen this layout before; count all the offsets in it to determine size.
-      getRegCount(mod, layoutAttr, desc.regCount);
-    }
-  });
-
-  tapBuffers = llvm::map_to_vector(tapBufferNames, [&](auto name) { return buffers.at(name); });
-}
-
-Type BufferDesc::getType(MLIRContext* ctx) const {
-  return Zll::BufferType::get(ctx, getValType(ctx), regCount, kind);
-}
-
-std::pair<ZStruct::GlobalConstOp, BufferDesc>
+std::pair<ZStruct::GlobalConstOp, Zll::BufferDescAttr>
 BufferAnalysis::getLayoutAndBufferForArgument(mlir::BlockArgument layoutArg) {
   if (!ZStruct::isLayoutType(layoutArg.getType()))
     return {};
@@ -136,24 +78,20 @@ BufferAnalysis::getLayoutAndBufferForArgument(mlir::BlockArgument layoutArg) {
 
   if (!globalConstOp)
     return {};
-  StringRef layoutName = getLayoutBuffer(globalConstOp);
-  if (layoutName.empty() || !buffers.contains(layoutName))
+
+  auto bufs = Zll::lookupModuleAttr<Zll::BuffersAttr>(mod);
+  if (!bufs)
     return {};
-  return {globalConstOp, getBuffer(layoutName)};
-}
 
-llvm::SmallVector<BufferDesc> BufferAnalysis::getAllBuffers() const {
-  llvm::SmallVector<BufferDesc> allBuffers;
+  StringRef layoutName = getLayoutBuffer(globalConstOp);
+  if (layoutName.empty())
+    return {};
 
-  llvm::append_range(
-      allBuffers,
-      llvm::map_range(llvm::concat<const StringAttr>(tapBufferNames, globalBufferNames),
-                      [&](auto name) { return buffers.at(name); }));
+  auto bufDesc = bufs.getBuffer(layoutName);
+  if (!bufDesc)
+    return {};
 
-  if (buffers.contains("test")) {
-    allBuffers.push_back(buffers.at("test"));
-  }
-  return allBuffers;
+  return {globalConstOp, bufDesc};
 }
 
 } // namespace zirgen::ZStruct

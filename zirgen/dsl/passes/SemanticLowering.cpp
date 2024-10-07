@@ -26,7 +26,6 @@
 
 #include "zirgen/Dialect/ZHLT/IR/TypeUtils.h"
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
-#include "zirgen/Dialect/ZStruct/Analysis/BufferAnalysis.h"
 #include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
 #include "zirgen/Dialect/ZStruct/Transforms/RewritePatterns.h"
 #include "zirgen/Dialect/Zll/IR/Interpreter.h"
@@ -757,14 +756,14 @@ struct GenerateValidityTapsPass : public GenerateValidityTapsBase<GenerateValidi
     auto module = getOperation();
     auto ctx = module.getContext();
     OpBuilder builder(ctx);
-    auto bufferAnalysis = getAnalysis<ZStruct::BufferAnalysis>();
+    auto bufs = Zll::lookupModuleAttr<Zll::BuffersAttr>(module);
     auto tapsOp = module.lookupSymbol<GlobalConstOp>(Zhlt::getTapsConstName());
     if (!tapsOp) {
       return;
     }
     ArrayAttr taps = cast<ArrayAttr>(tapsOp.getConstant());
-    auto groupNames = llvm::map_to_vector(bufferAnalysis.getTapBuffers(),
-                                          [&](auto bufDesc) { return bufDesc.name; });
+    auto groupNames =
+        llvm::map_to_vector(bufs.getTapBuffers(), [&](auto bufDesc) { return bufDesc.getName(); });
 
     module.walk([&](Zhlt::ValidityRegsFuncOp regsFunc) {
       builder.setInsertionPoint(regsFunc);

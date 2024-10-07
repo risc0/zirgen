@@ -17,6 +17,7 @@ cc_library(
     deps = [
         "//zirgen/Dialect/ZStruct/IR",
         "//zirgen/Dialect/Zll/Transforms:passes",
+        "//zirgen/compiler/codegen:protocol_info_const",
     ],
 )
 

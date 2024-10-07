@@ -14,7 +14,6 @@
 
 #include "zirgen/Dialect/ZHLT/IR/Codegen.h"
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
-#include "zirgen/Dialect/ZStruct/Analysis/BufferAnalysis.h"
 
 namespace zirgen::Zhlt {
 namespace {
@@ -27,43 +26,44 @@ using namespace zirgen::Zll;
 struct RustEmitZhlt : public EmitZhlt {
   using EmitZhlt::EmitZhlt;
 
-  LogicalResult emitBufferList(ArrayRef<BufferDesc> bufs) override {
+  LogicalResult emitBufferList(ArrayRef<BufferDescAttr> bufs) override {
     cg << CodegenIdent<IdentKind::Macro>(cg.getStringAttr("defineBufferList")) << "!{\n";
 
     cg << "all: [";
     for (auto desc : bufs)
-      cg << CodegenIdent<IdentKind::Var>(desc.name) << ",";
+      cg << CodegenIdent<IdentKind::Var>(desc.getName()) << ",";
     cg << "],\n";
 
     cg << "rows: [";
     for (auto desc : bufs)
-      if (!desc.global)
-        cg << CodegenIdent<IdentKind::Var>(desc.name) << ",";
+      if (desc.getType().getKind() != BufferKind::Global)
+        cg << CodegenIdent<IdentKind::Var>(desc.getName()) << ",";
     cg << "],\n";
 
     cg << "taps: [";
     for (auto desc : bufs)
-      if (desc.regGroupId)
-        cg << CodegenIdent<IdentKind::Var>(desc.name) << ",";
+      if (desc.getRegGroupId())
+        cg << CodegenIdent<IdentKind::Var>(desc.getName()) << ",";
     cg << "],\n";
 
     cg << "globals: [";
     for (auto desc : bufs)
-      if (desc.global)
-        cg << CodegenIdent<IdentKind::Var>(desc.name) << ",";
+      if (desc.isGlobal())
+        cg << CodegenIdent<IdentKind::Var>(desc.getName()) << ",";
     cg << "],}\n";
 
     for (auto desc : bufs) {
-      auto name = CodegenIdent<IdentKind::Var>(desc.name);
-      if (desc.regGroupId) {
+      auto name = CodegenIdent<IdentKind::Var>(desc.getName());
+      if (desc.getRegGroupId()) {
         cg << CodegenIdent<IdentKind::Macro>(cg.getStringAttr("defineTapBuffer")) << "!{" << name
-           << ", /*count=*/" << desc.regCount << ", /*groupId=*/" << *desc.regGroupId << "}\n";
-      } else if (desc.kind == BufferKind::Global) {
+           << ", /*count=*/" << desc.getRegCount() << ", /*groupId=*/" << *desc.getRegGroupId()
+           << "}\n";
+      } else if (desc.getKind() == BufferKind::Global) {
         cg << CodegenIdent<IdentKind::Macro>(cg.getStringAttr("defineGlobalBuffer")) << "!{" << name
-           << ", /*count=*/" << desc.regCount << "}\n";
+           << ", /*count=*/" << desc.getRegCount() << "}\n";
       } else {
         cg << CodegenIdent<IdentKind::Macro>(cg.getStringAttr("defineBuffer")) << "!{" << name
-           << ", /*count=*/" << desc.regCount << "}\n";
+           << ", /*count=*/" << desc.getRegCount() << "}\n";
       }
     }
     return success();
@@ -73,11 +73,11 @@ struct RustEmitZhlt : public EmitZhlt {
 struct CppEmitZhlt : public EmitZhlt {
   using EmitZhlt::EmitZhlt;
 
-  LogicalResult emitBufferList(ArrayRef<BufferDesc> bufs) override {
+  LogicalResult emitBufferList(ArrayRef<BufferDescAttr> bufs) override {
     for (auto desc : bufs) {
-      auto name = cg.getStringAttr("regCount_" + desc.name.str());
-      cg << "constexpr size_t " << CodegenIdent<IdentKind::Const>(name) << " = " << desc.regCount
-         << ";\n";
+      auto name = cg.getStringAttr("regCount_" + desc.getName().str());
+      cg << "constexpr size_t " << CodegenIdent<IdentKind::Const>(name) << " = "
+         << desc.getRegCount() << ";\n";
     }
     return success();
   }
@@ -118,7 +118,8 @@ LogicalResult EmitZhlt::doValType() {
 }
 
 LogicalResult EmitZhlt::doBuffers() {
-  if (failed(emitBufferList(bufferAnalysis.getAllBuffers())))
+  auto bufs = Zll::lookupModuleAttr<BuffersAttr>(module);
+  if (failed(emitBufferList(bufs.getBuffers())))
     return failure();
 
   return success();
