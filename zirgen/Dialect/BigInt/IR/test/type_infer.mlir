@@ -10,20 +10,6 @@
 //    - The max possible overall value can be computed as `max_pos` (of the unnormalized form) times the sum from i=0..coeffs of 256^i
 //      - Then 1 + the floor of log_256 of this value is the number of coeffs
 //  - So in normalized form `max_pos = 255` and `max_neg = 0`
-// For `nondet_rem`:
-//  - For `coeffs`:
-//    - Compute the max overall value from the denominator - 1 by the algorithm from the general nondets section
-//    - Compute the coeffs from this number by the algorithm from the general nondets section
-//  - `max_pos` is 255
-//  - `max_neg` is 0
-//  - `min_bits` is 0 (might be clever tricks in restrictive circumstances, but IMO shouldn't bother)
-// For `nondet_inv_mod`:
-//  - For `coeffs`:
-//    - Compute the max overall value from the modulus - 1 by the algorithm from the general nondets section
-//    - Compute the coeffs from this number by the algorithm from the general nondets section
-//  - `max_pos` is 255
-//  - `max_neg` is 0
-//  - `min_bits` is 0 (might be clever tricks in restrictive circumstances, but IMO shouldn't bother)
 // For `modular_inv`:
 //  - Same as `nondet_inv_mod`
 // For `reduce`:
