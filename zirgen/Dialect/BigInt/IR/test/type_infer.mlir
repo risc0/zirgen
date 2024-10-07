@@ -10,14 +10,6 @@
 //    - The max possible overall value can be computed as `max_pos` (of the unnormalized form) times the sum from i=0..coeffs of 256^i
 //      - Then 1 + the floor of log_256 of this value is the number of coeffs
 //  - So in normalized form `max_pos = 255` and `max_neg = 0`
-// For `nondet_quot`:
-//  - For `coeffs`:
-//    - Compute the max overall value from the numerator by the algorithm from the general nondets section
-//    - Divide this by `2^min_bits` of the denominator
-//    - Compute the coeffs from this number by the algorithm from the general nondets section
-//  - `max_pos` is 255
-//  - `max_neg` is 0
-//  - `min_bits` is 0 (might be clever tricks in restrictive circumstances, but IMO shouldn't bother)
 // For `nondet_rem`:
 //  - For `coeffs`:
 //    - Compute the max overall value from the denominator - 1 by the algorithm from the general nondets section
@@ -414,5 +406,159 @@ func.func @good_nondet_quot_num_minbits() {
   %0 = bigint.const 300 : i16 -> <2, 255, 0, 9>
   %1 = bigint.def 8, 0, true -> <1, 255, 0, 0>
   %2 = bigint.nondet_quot %0 : <2, 255, 0, 9>, %1 : <1, 255, 0, 0> -> <2, 255, 0, 0>
+  return
+}
+
+// -----
+
+// TODO: This has no testing for negatives -- handle appropriately elsewhere (or here?)
+
+// Type inference for `nondet_rem`:
+//  - For `coeffs`:
+//    - Compute the max overall value from the denominator - 1 by the algorithm from the general nondets section
+//    - Compute the max overall value from the numerator by the algorithm from the general nondets section
+//    - Choose the smaller of these two numbers
+//    - Compute the coeffs from this number by the algorithm from the general nondets section
+//  - `max_pos` is 255
+//  - `max_neg` is 0
+//  - `min_bits` is 0 (might be clever tricks in restrictive circumstances, but IMO shouldn't bother)
+
+func.func @good_nondet_rem_basic() {
+  %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
+  %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
+  %2 = bigint.nondet_rem %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 255, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_nondet_rem_oversized_num() {
+  // Primary rules tested:
+  //  - [%3] Compute the max overall value from the denominator max value minus 1
+  %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
+  %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
+  %2 = bigint.add %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 510, 0, 0>
+  %3 = bigint.nondet_rem %2 : <1, 510, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 255, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_nondet_rem_oversized_denom() {
+  // Primary rules tested:
+  //  - [%3] Compute the max overall value from the numerator
+  %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
+  %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
+  %2 = bigint.add %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 510, 0, 0>
+  %3 = bigint.nondet_rem %1 : <1, 255, 0, 0>, %2 : <1, 510, 0, 0> -> <1, 255, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_nondet_rem_multibyte_denom() {
+  // Primary rules tested:
+  //  - [%3] Compute the max overall value from the denominator max value minus 1
+  %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
+  %1 = bigint.def 64, 1, true -> <8, 255, 0, 0>
+  %2 = bigint.add %0 : <3, 255, 0, 0>, %1 : <8, 255, 0, 0> -> <8, 510, 0, 0>
+  %3 = bigint.nondet_rem %2 : <8, 510, 0, 0>, %0 : <3, 255, 0, 0> -> <3, 255, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_nondet_rem_multibyte_denom2() {
+  // Primary rules tested:
+  //  - [%3] Compute the max overall value from the denominator max value minus 1
+  %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
+  %1 = bigint.def 64, 1, true -> <8, 255, 0, 0>
+  %2 = bigint.mul %0 : <3, 255, 0, 0>, %1 : <8, 255, 0, 0> -> <10, 195075, 0, 0>
+  %3 = bigint.nondet_rem %2 : <10, 195075, 0, 0>, %0 : <3, 255, 0, 0> -> <3, 255, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_nondet_rem_multibyte_denom3() {
+  // Primary rules tested:
+  //  - [%3] Compute the max overall value from the numerator
+  %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
+  %1 = bigint.def 64, 1, true -> <8, 255, 0, 0>
+  %2 = bigint.add %0 : <1, 255, 0, 0>, %1 : <8, 255, 0, 0> -> <8, 510, 0, 0>
+  %3 = bigint.nondet_rem %0 : <1, 255, 0, 0>, %2 : <8, 510, 0, 0> -> <1, 255, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_nondet_rem_multibyte_denom4() {
+  // Primary rules tested:
+  //  - [%3] Compute the max overall value from the numerator
+  %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
+  %1 = bigint.def 64, 1, true -> <8, 255, 0, 0>
+  %2 = bigint.mul %0 : <3, 255, 0, 0>, %1 : <8, 255, 0, 0> -> <10, 195075, 0, 0>
+  %3 = bigint.nondet_rem %0 : <3, 255, 0, 0>, %2 : <10, 195075, 0, 0> -> <3, 255, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_nondet_rem_1bit_denom() {
+  // Primary rules tested:
+  //  - [%3] Compute the max overall value from the denominator max value minus 1
+  //  - `min_bits` is 0
+  %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
+  %1 = bigint.const 1 : i8 -> <1, 255, 0, 1>
+  %2 = bigint.nondet_rem %0 : <3, 255, 0, 0>, %1 : <1, 255, 0, 1> -> <1, 255, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_nondet_rem_8bit_denom() {
+  // Primary rules tested:
+  //  - [%3] Compute the max overall value from the denominator max value minus 1
+  //  - `min_bits` is 0
+  %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
+  %1 = bigint.const 200 : i8 -> <1, 255, 0, 8>
+  %2 = bigint.nondet_rem %0 : <3, 255, 0, 0>, %1 : <1, 255, 0, 8> -> <1, 255, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_nondet_rem_9bit_denom() {
+  // Primary rules tested:
+  //  - [%3] Compute the max overall value from the denominator max value minus 1
+  //  - `min_bits` is 0
+  %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
+  %1 = bigint.const 300 : i16 -> <2, 255, 0, 9>
+  %2 = bigint.nondet_rem %0 : <3, 255, 0, 0>, %1 : <2, 255, 0, 9> -> <2, 255, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_nondet_rem_9bit_1coeff_denom() {
+  // Primary rules tested:
+  //  - [%3] Compute the max overall value from the denominator max value minus 1
+  //  - `min_bits` is 0
+  %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
+  %1 = bigint.const 200 : i8 -> <1, 255, 0, 8>
+  %2 = bigint.const 2 : i8 -> <1, 255, 0, 2>
+  %3 = bigint.mul %1 : <1, 255, 0, 8>, %2 : <1, 255, 0, 2> -> <1, 65025, 0, 9>
+  %4 = bigint.nondet_rem %0 : <3, 255, 0, 0>, %3 : <1, 65025, 0, 9> -> <2, 255, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_nondet_rem_num_minbits() {
+  // Primary rules tested:
+  //  - `min_bits` is 0
+  %0 = bigint.const 300 : i16 -> <2, 255, 0, 9>
+  %1 = bigint.def 24, 0, true -> <3, 255, 0, 0>
+  %2 = bigint.nondet_rem %0 : <2, 255, 0, 9>, %1 : <3, 255, 0, 0> -> <2, 255, 0, 0>
   return
 }
