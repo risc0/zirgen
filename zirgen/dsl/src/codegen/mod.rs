@@ -133,7 +133,8 @@ macro_rules! zirgen_preamble {
                     raw_buffers.map_rows(|x| -> () { panic!("Unexpected tap in poly_ext") });
                 assert_eq!(u.len(), TAP_LIST.len());
 
-                let res = validity_taps(&buffers, &u, *mix, get_global_buffer(&buffers)).unwrap();
+                let res = validity_taps(&buffers, &u, *mix, get_global_buffer(&buffers),
+                get_mix_buffer(&buffers)).unwrap();
 
                 res
             }

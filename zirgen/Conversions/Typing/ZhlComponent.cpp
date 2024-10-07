@@ -683,7 +683,13 @@ void LoweringImpl::gen(ConstructGlobalOp construct, ComponentBuilder& cb) {
   SmallVector<Value> args;
   for (auto argAndType : llvm::zip_equal(construct.getArgs(), ctor.getConstructParamTypes())) {
     auto [arg, argType] = argAndType;
-    args.push_back(coerceTo(asValue(arg), argType));
+    auto argVal = asValue(arg);
+    if (!Zhlt::isCoercibleTo(argVal.getType(), argType)) {
+      construct.emitError() << "argument of type `" << getTypeId(argVal.getType())
+                            << "` is not convertible to `" << getTypeId(argType) << "`";
+      return;
+    }
+    args.push_back(coerceTo(argVal, argType));
   }
 
   auto layout =

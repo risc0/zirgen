@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["zirgen/circuit/fib", "zirgen/dsl"]
+members = ["zirgen/circuit/fib", "zirgen/circuit/keccak", "zirgen/dsl"]
 
 [workspace.dependencies.risc0-binfmt]
 git = "https://github.com/risc0/risc0.git"
@@ -34,7 +34,7 @@ default-features = false
 git = "https://github.com/risc0/risc0.git"
 rev = "bc1f4ac5bcb07731641b6fc6dc13fecb121d1276"
 
-[workspace.dependencies.zirgen-dsl]
+[workspace.dependencies.risc0-zirgen-dsl]
 path = "zirgen/dsl"
 
 [profile.bench]
@@ -54,3 +54,14 @@ lto = true
 [profile.release.build-override]
 opt-level = 3
 
+
+
+[patch."http://github.com/risc0/risc0.git"]
+risc0-binfmt = { path = "../risc0/risc0/binfmt" }
+risc0-build = { path = "../risc0/risc0/build" }
+risc0-circuit-rv32im = { path = "../risc0/risc0/circuit/rv32im" }
+risc0-core = { path = "../risc0/risc0/core" }
+risc0-zkp = { path = "../risc0/risc0/zkp" }
+risc0-zkvm = { path = "../risc0/risc0/zkvm" }
+risc0-zkvm-platform = { path = "../risc0/risc0/zkvm/platform" }
+risc0-circuit-recursion = { path = "../risc0/risc0/circuit/recursion" }

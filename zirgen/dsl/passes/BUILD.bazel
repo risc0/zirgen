@@ -34,6 +34,7 @@ cc_library(
     srcs = [
         "CommonRewrites.cpp",
         "ElideTrivialStructs.cpp",
+        "HoistInvariants.cpp",
         "EraseUnusedAspects.cpp",
         "GenerateAccum.cpp",
         "GenerateCheckLayout.cpp",
@@ -42,6 +43,8 @@ cc_library(
         "GenerateTaps.cpp",
         "PassDetail.h",
         "SemanticLowering.cpp",
+        "InlinePure.cpp",
+        "FieldDCE.cpp",
     ],
     hdrs = [
         "CommonRewrites.h",

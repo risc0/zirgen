@@ -156,19 +156,25 @@ int main(int argc, char* argv[]) {
   pm.enableVerifier(true);
   zirgen::addAccumAndGlobalPasses(pm);
   pm.addPass(zirgen::ZStruct::createOptimizeLayoutPass());
-
+  pm.addPass(zirgen::dsl::createFieldDCEPass());
   pm.addPass(mlir::createCanonicalizerPass());
   pm.addPass(mlir::createCSEPass());
   zirgen::addTypingPasses(pm);
 
   pm.addPass(zirgen::dsl::createGenerateCheckPass());
+  pm.addPass(zirgen::dsl::createInlinePurePass());
+  pm.addPass(zirgen::dsl::createHoistInvariantsPass());
+  pm.addPass(mlir::createCSEPass());
+  pm.addPass(mlir::createSymbolDCEPass());
+  auto& checkPasses = pm.nest<zirgen::Zhlt::CheckFuncOp>();
+  checkPasses.addPass(zirgen::ZStruct::createInlineLayoutPass());
   pm.addPass(zirgen::dsl::createGenerateTapsPass());
-  pm.addPass(zirgen::dsl::createGenerateValidityRegsPass());
-  pm.addPass(zirgen::dsl::createGenerateValidityTapsPass());
-
   pm.addPass(zirgen::dsl::createElideTrivialStructsPass());
   pm.addPass(zirgen::ZStruct::createExpandLayoutPass());
+  pm.addPass(zirgen::dsl::createFieldDCEPass());
   pm.addPass(mlir::createSymbolDCEPass());
+  pm.addPass(zirgen::dsl::createFieldDCEPass());
+  pm.addPass(mlir::createCSEPass());
 
   if (failed(pm.run(typedModule.value()))) {
     llvm::errs() << "an internal compiler error occurred while lowering this module:\n";
@@ -201,8 +207,8 @@ int main(int argc, char* argv[]) {
   CodegenEmitter rustCg(rustOpts, &context);
   emitDefs(rustCg, *typedModule, "defs.rs.inc");
   emitTypes(rustCg, *typedModule, "types.rs.inc");
-  emitOps<Zhlt::ValidityRegsFuncOp>(rustCg, *typedModule, "validity_regs.rs.inc");
-  emitOps<Zhlt::ValidityTapsFuncOp>(rustCg, *typedModule, "validity_taps.rs.inc");
+//  emitOps<Zhlt::ValidityRegsFuncOp>(rustCg, *typedModule, "validity_regs.rs.inc");
+//  emitOps<Zhlt::ValidityTapsFuncOp>(rustCg, *typedModule, "validity_taps.rs.inc");
   emitOps<ZStruct::GlobalConstOp>(rustCg, *typedModule, "layout.rs.inc");
   emitOps<Zhlt::StepFuncOp>(rustCg, stepFuncs, "steps.rs.inc");
 
@@ -210,13 +216,10 @@ int main(int argc, char* argv[]) {
   CodegenEmitter cppCg(cppOpts, &context);
   emitDefs(cppCg, *typedModule, "defs.cpp.inc");
   emitTypes(cppCg, *typedModule, "types.h.inc");
-  emitOps<Zhlt::ValidityTapsFuncOp>(cppCg, *typedModule, "validity_regs.cpp.inc");
-  emitOps<Zhlt::ValidityRegsFuncOp>(cppCg, *typedModule, "validity_taps.cpp.inc");
+//  emitOps<Zhlt::ValidityTapsFuncOp>(cppCg, *typedModule, "validity_regs.cpp.inc");
+//  emitOps<Zhlt::ValidityRegsFuncOp>(cppCg, *typedModule, "validity_taps.cpp.inc");
   emitOps<ZStruct::GlobalConstOp>(cppCg, *typedModule, "layout.cpp.inc");
   emitOps<Zhlt::StepFuncOp, Zhlt::ExecFuncOp>(cppCg, stepFuncs, "steps.cpp.inc");
-
-  typedModule->print(*openOutput("circuit.ir"));
-  stepFuncs.print(*openOutput("steps.ir"));
 
   return 0;
 }

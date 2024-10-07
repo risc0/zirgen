@@ -59,7 +59,18 @@ void CodegenEmitter::emitTopLevel(Operation* op) {
       .Default([&](auto op) { emitStatement(op); });
 }
 
-std::string CodegenEmitter::canonIdent(llvm::StringRef ident, IdentKind idt) {
+StringAttr CodegenEmitter::canonIdent(llvm::StringRef ident, IdentKind idt) {
+  return canonIdent(StringAttr::get(ctx, ident), idt);
+}
+
+StringAttr CodegenEmitter::canonIdent(StringAttr identAttr, IdentKind idt) {
+
+  auto& existing = canonIdents[std::make_pair(identAttr, idt)];
+  if (existing) {
+    return existing;
+  }
+  
+  StringRef ident = identAttr.strref();
   assert(!ident.empty());
 
   std::string id;
@@ -79,7 +90,17 @@ std::string CodegenEmitter::canonIdent(llvm::StringRef ident, IdentKind idt) {
     }
   }
   // Apply language-specific canonicalization.
-  return opts.lang->canonIdent(id, idt);
+  std::string canonStr = opts.lang->canonIdent(id, idt);
+  auto canon = StringAttr::get(ctx, opts.lang->canonIdent(id, idt));
+
+  size_t unique_index = 0;
+  while (identsUsed.contains(canon)) {
+    canon = StringAttr::get(ctx, canonStr + "_" + std::to_string(unique_index++));
+  }
+
+  existing = canon;
+  identsUsed.insert(canon);
+  return canon;
 }
 
 void CodegenEmitter::resetValueNumbering() {

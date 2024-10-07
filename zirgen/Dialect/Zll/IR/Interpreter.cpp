@@ -23,6 +23,8 @@
 
 using namespace mlir;
 
+constexpr bool skipErrors = true;
+
 namespace zirgen::Zll {
 
 std::vector<uint64_t> ExternHandler::doExtern(llvm::StringRef name,
@@ -220,7 +222,9 @@ void Interpreter::setNamedBuf(llvm::StringRef name, Interpreter::BufferRef val, 
 
 mlir::Attribute Interpreter::evaluateConstant(mlir::Value value) {
   ScopedDiagnosticHandler handler(ctx, [&](Diagnostic& diag) {
-    diag.attachNote(value.getLoc()) << "While attempting to evaluate " << value << " as a constant";
+    if (!skipErrors)
+      diag.attachNote(value.getLoc())
+          << "While attempting to evaluate " << value << " as a constant";
     return failure();
   });
 
@@ -241,8 +245,11 @@ mlir::Attribute Interpreter::evaluateConstant(mlir::Value value) {
     assert(work);
     auto op = work.getDefiningOp();
     if (!op) {
-      emitError(value.getLoc()) << "Unable to find defining op for value " << work << " needed for "
-                                << value << "\n";
+      if (skipErrors)
+        emitError(value.getLoc()) << "Unable to find defining op";
+      else
+        emitError(value.getLoc()) << "Unable to find defining op for value " << work
+                                  << " needed for " << value << "\n";
       return {};
     }
     for (mlir::Value operand : op->getOperands()) {
@@ -262,12 +269,14 @@ mlir::Attribute Interpreter::evaluateConstant(mlir::Value value) {
 
     // All values it depends on have been evaluted; we can now try to evaluate this operation.
     ScopedDiagnosticHandler handler(ctx, [&](Diagnostic& diag) {
-      if (getContext()->shouldPrintOpOnDiagnostic()) {
-        diag.attachNote(op->getLoc())
-            .append("see current operation: ")
-            .appendOp(*op, OpPrintingFlags().printGenericOpForm());
-      } else {
-        diag.attachNote(op->getLoc()) << "while evaluating this";
+      if (!skipErrors) {
+        if (getContext()->shouldPrintOpOnDiagnostic()) {
+          diag.attachNote(op->getLoc())
+              .append("see current operation: ")
+              .appendOp(*op, OpPrintingFlags().printGenericOpForm());
+        } else {
+          diag.attachNote(op->getLoc()) << "while evaluating this";
+        }
       }
 
       return failure();
@@ -412,8 +421,10 @@ LogicalResult Interpreter::evalCallConstant(CallOpInterface callOp,
   bool gotErrorMsg = false;
   ScopedDiagnosticHandler handler(ctx, [&](Diagnostic& diag) {
     gotErrorMsg = true;
-    auto& note = diag.attachNote(callOp.getLoc()) << "While calling " << calleeName << " from ";
-    note.appendOp(*callOp, OpPrintingFlags().printGenericOpForm());
+    if (!skipErrors) {
+      auto& note = diag.attachNote(callOp.getLoc()) << "While calling " << calleeName << " from ";
+      note.appendOp(*callOp, OpPrintingFlags().printGenericOpForm());
+    }
     return failure();
   });
 
@@ -451,8 +462,10 @@ FailureOr<SmallVector<Attribute>> Interpreter::runBlock(mlir::Block& block) {
   ScopedDiagnosticHandler handler(
       ctx, DiagnosticEngine::HandlerTy([&](Diagnostic& diag) {
         gotErrorMsg = true;
-        auto& note = diag.attachNote(evaluator->op->getLoc()) << "While attempting to evaluate ";
-        note.appendOp(*evaluator->op, OpPrintingFlags().printGenericOpForm());
+        if (!skipErrors) {
+          auto& note = diag.attachNote(evaluator->op->getLoc()) << "While attempting to evaluate ";
+          note.appendOp(*evaluator->op, OpPrintingFlags().printGenericOpForm());
+        }
         return failure();
       }));
 

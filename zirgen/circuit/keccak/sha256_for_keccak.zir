@@ -94,7 +94,7 @@ component Concatenate<T: Type, N: Val, M: Val>(a: Array<T, N>, b: Array<T, M>) {
 component ConcatZeros<N: Val, M: Val>(a: Array<Val, N>) {
   for i : 0..(N + M) {
     low := InRange(0, i, N);
-    low*a[i] + (1-low)*NondetReg(0)
+    low*a[i] // + (1-low)*NondetReg(0)
   }
 }
 component ConcatElem<T: Type, N: Val>(a: Array<T, N>, b: T) {

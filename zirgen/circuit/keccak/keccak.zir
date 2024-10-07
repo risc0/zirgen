@@ -1125,6 +1125,10 @@ component mem_padding_sha256(rvprev01: RetTuple) {
     })
 }
 
+component ShaOutput(vals: Array<Val, 16>) {
+  vals := for v : vals { Reg(v) };
+}
+
 component setup_major(rvals: RetTuple) {
   minor_onehot := OneHot<14>(rvals@1.minor);
   minor_onehot -> (
@@ -1142,6 +1146,7 @@ component setup_major(rvals: RetTuple) {
     sha256fini<7>(rvals@0),
     sha256fini<8>(rvals@0),
     { rvp01 := rvals@1;
+      global output := ShaOutput(for i : 0..16 { rvp01.arr_a[i] } );
       Log("sha256output: %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x",
         rvp01.arr_a[0], rvp01.arr_a[1], rvp01.arr_a[2], rvp01.arr_a[3],
         rvp01.arr_a[4], rvp01.arr_a[5],  rvp01.arr_a[6],  rvp01.arr_a[7],

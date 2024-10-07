@@ -139,10 +139,14 @@ mlir::LogicalResult CheckFuncOp::verifyMaxDegree(size_t maxDegree) {
   if (failed(solver.initializeAndRun(*this)))
     return failure();
 
+  DenseMap</*degree=*/size_t, /*constraints=*/size_t> degrees;
+
   LogicalResult res = success();
   this->walk([&](Zll::EqualZeroOp op) {
     auto degree = solver.lookupState<ZStruct::DegreeAnalysis::Element>(op)->getValue();
     assert(degree.isDefined());
+
+    degrees[degree.get()]++;
     if (degree.get() <= maxDegree)
       return;
 
@@ -161,6 +165,10 @@ mlir::LogicalResult CheckFuncOp::verifyMaxDegree(size_t maxDegree) {
     addDegreeContext(diag, solver, op.getIn(), seenLocs);
     res = failure();
   });
+
+  for (auto [degree, numConstraints] : degrees) {
+    llvm::errs() << numConstraints << " constraints of degree "<< degree<< "\n";
+  }
   return res;
 }
 

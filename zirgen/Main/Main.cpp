@@ -75,7 +75,9 @@ void addTypingPasses(mlir::PassManager& pm) {
 
 mlir::LogicalResult checkDegreeExceeded(mlir::ModuleOp module, size_t maxDegree) {
   bool degreeExceeded = false;
+  bool foundCheckFunction = false;
   module.walk([&](zirgen::Zhlt::CheckFuncOp op) {
+    foundCheckFunction = true;
     if (failed(op.verifyMaxDegree(maxDegree))) {
       degreeExceeded = true;
       // Ugh, apparently we don't get type aliases unless we print an
@@ -90,8 +92,14 @@ mlir::LogicalResult checkDegreeExceeded(mlir::ModuleOp module, size_t maxDegree)
       tmpMod->print(llvm::outs());
     }
   });
+  
   if (degreeExceeded)
     return mlir::failure();
+  
+  if (!foundCheckFunction) {
+    module.emitError("Unable to find check function to compute degree");
+    return mlir::failure();
+  }
 
   return mlir::success();
 }

@@ -23,6 +23,7 @@
 #include "mlir/Transforms/CSE.h"
 #include "mlir/Transforms/GreedyPatternRewriteDriver.h"
 #include "llvm/ADT/TypeSwitch.h"
+#include "mlir/Transforms/TopologicalSortUtils.h"
 
 #include "zirgen/Dialect/ZHLT/IR/TypeUtils.h"
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
@@ -683,13 +684,22 @@ struct GenerateValidityRegsPass : public GenerateValidityRegsBase<GenerateValidi
                 ArrayOp,
                 BindLayoutOp,
                 arith::ConstantOp,
-                arith::AddIOp>([&](auto op) { builder.clone(origOp, mapper); })
+                arith::AddIOp>([&](auto op) {
+                  OpBuilder::InsertionGuard guard(builder);
+                  if (llvm::isa<LoadOp,LookupOp,SubscriptOp>(op.getOperation()))
+                    builder.setInsertionPointToStart(builder.getBlock());
+                  builder.clone(origOp, mapper);
+                })
           .Default([&](Operation* op) {
             llvm::errs() << *op;
             op->emitError("Invalid op for MakePolynomial");
             signalPassFailure();
           });
     }
+//    block.print(llvm::errs());
+    llvm::errs() << "validity regs done on block size " << block.getOperations().size()
+                 << " with parent " << block.getParentOp()->getName() << "; resultant block now "
+                 << builder.getBlock()->getOperations().size() << "\n";
     return state;
   }
 
@@ -712,6 +722,7 @@ struct GenerateValidityRegsPass : public GenerateValidityRegsBase<GenerateValidi
       mixState = runOnBlock(
           checkFunc.getLoc(), checkFunc.getBody().front(), builder, mapper, mixState, polyMix);
       builder.create<Zhlt::ReturnOp>(func.getLoc(), mixState);
+      sortTopologically(builder.getBlock());
     });
   }
 };

@@ -21,9 +21,7 @@
 #include "mlir/Transforms/DialectConversion.h"
 #include "llvm/ADT/StringSet.h"
 
-namespace zirgen {
-
-namespace codegen {
+namespace zirgen ::codegen {
 
 enum class IdentKind {
   Var,
@@ -33,6 +31,22 @@ enum class IdentKind {
   Func,
   Macro,
 };
+
+} //
+
+namespace llvm {
+using zirgen::codegen::IdentKind;
+template <> struct DenseMapInfo<zirgen::codegen::IdentKind> {
+  static inline IdentKind getEmptyKey() { return (IdentKind)~0; }
+  static inline IdentKind getTombstoneKey() { return (IdentKind)(~0 - 1); }
+  static unsigned getHashValue(const IdentKind& Val) { return size_t(Val) * 37U; }
+
+  static bool isEqual(const IdentKind& LHS, const IdentKind& RHS) { return LHS == RHS; }
+};
+
+} //
+
+namespace zirgen ::codegen {
 
 enum class LanguageKind { Rust, Cpp };
 
@@ -408,7 +422,8 @@ private:
   getNewValueName(mlir::Value val, llvm::StringRef namePrefix = "x", bool owned = true);
   void resetValueNumbering();
 
-  std::string canonIdent(llvm::StringRef ident, IdentKind idt);
+  mlir::StringAttr canonIdent(mlir::StringAttr ident, IdentKind idt);
+  mlir::StringAttr canonIdent(llvm::StringRef ident, IdentKind idt);
 
   void emitTypeDefs(mlir::TypeRange vals);
 
@@ -432,6 +447,11 @@ private:
   mlir::MLIRContext* ctx = nullptr;
 
   llvm::DenseSet<mlir::Location> currentLocations;
+
+  // Identifiers and what they've been canonicalized to
+  llvm::DenseMap<std::pair<mlir::StringAttr, IdentKind>, mlir::StringAttr> canonIdents;
+  // Identifiers that have already been allocated, to avoid duplication.
+  llvm::DenseSet<mlir::StringAttr> identsUsed;
 };
 
 // A piece of generated code that can be emitted through
@@ -466,9 +486,9 @@ public:
   template <IdentKind kind>
   EmitPart(CodegenIdent<kind> ident)
       : emitFunc([ident](CodegenEmitter& cg) {
-        std::string identStr =
-            ident.isCanonicalized() ? ident.str() : cg.canonIdent(ident.strref(), kind);
-        *cg.getOutputStream() << identStr;
+        mlir::StringAttr identStr =
+            ident.isCanonicalized() ? ident.getAttr() : cg.canonIdent(ident.getAttr(), kind);
+        *cg.getOutputStream() << identStr.strref();
       }) {}
 
   // Any integer type.
@@ -511,8 +531,7 @@ inline CodegenEmitter& CodegenEmitter::operator<<(EmitPart emitPart) {
 
 template <typename Container, typename UnaryFunctor, typename T>
 void CodegenEmitter::interleaveComma(const Container& c, UnaryFunctor each_fn) {
-  llvm::interleave(
-      c, *getOutputStream(), [&](const T& elem) { each_fn(elem); }, ", ");
+  llvm::interleave(c, *getOutputStream(), [&](const T& elem) { each_fn(elem); }, ", ");
 }
 template <typename Container, typename T> void CodegenEmitter::interleaveComma(const Container& c) {
   llvm::interleave(
@@ -528,5 +547,4 @@ template <typename Container, typename T> void CodegenEmitter::interleaveComma(c
 mlir::LogicalResult
 translateCodegen(mlir::Operation* op, CodegenOptions opts, llvm::raw_ostream& os);
 
-} // namespace codegen
 } // namespace zirgen

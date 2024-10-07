@@ -242,24 +242,18 @@ impl Args {
     fn keccak(&self) {
         let circuit = "keccak";
         let src_path = Path::new("zirgen/circuit/keccak");
-        let risc0_root = self.output.as_ref().expect("--output is required");
-        let risc0_root = risc0_root.join("risc0");
-        let rust_path = risc0_root.join("circuit/keccak");
-        let rust_path = Some(rust_path);
-        let sys_path = risc0_root.join("circuit/keccak-sys");
-        let sys_path = Some(sys_path);
+        let out = &self.output;
 
         copy_group(
             circuit,
             &src_path,
-            &rust_path,
+        out,
             ZIRGEN_RUST_OUTPUTS,
             "src",
             "",
         );
-        copy_group(circuit, &src_path, &sys_path, ZIRGEN_SYS_OUTPUTS, "cxx", "");
-        // TODO: Improve formatting performance
-        // cargo_fmt_circuit(circuit, &rust_path, &None);
+        copy_group(circuit, &src_path, out, ZIRGEN_SYS_OUTPUTS, "cxx", "");
+        cargo_fmt_circuit(circuit, &self.output, &None);
     }
 
     fn copy_edsl_style(&self, circuit: &str, src_dir: &str) {

@@ -36,6 +36,7 @@ def LookupOp : ZStructOp<"lookup", [Pure,
   let results = (outs ZirType:$out);
   let hasVerifier = 1;
   let hasFolder = 1;
+  let hasCanonicalizer = 1;
 }
 
 def SubscriptOp : ZStructOp<"subscript", [Pure,
@@ -55,6 +56,7 @@ def SubscriptOp : ZStructOp<"subscript", [Pure,
     size_t getIndexUpperBound();
   }];
   let hasFolder = 1;
+  let hasCanonicalizer = 1;
 }
 
 def LoadOp : ZStructOp<"load", [EvalOpAdaptor,
@@ -73,6 +75,7 @@ def LoadOp : ZStructOp<"load", [EvalOpAdaptor,
   let arguments = (ins Ref:$ref, Index:$distance);
   let results = (outs Val:$out);
   let hasVerifier = 1;
+  let hasCanonicalizer = 1;
 }
 
 def StoreOp : ZStructOp<"store", [EvalOpAdaptor, MemoryEffects<[MemWrite]>, DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
@@ -82,6 +85,7 @@ def StoreOp : ZStructOp<"store", [EvalOpAdaptor, MemoryEffects<[MemWrite]>, Decl
   }];
   let arguments = (ins Ref:$ref, Val:$val);
   let hasVerifier = 1;
+  let hasCanonicalizer = 1;
 }
 
 def PackOp : ZStructOp<"pack", [Pure, DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
@@ -198,9 +202,9 @@ def BindLayoutOp : ZStructOp<"bind_layout", [
     to the registers contained therein.
   }];
   let arguments = (ins
-      FlatSymbolRefAttr:$layout,
+      AnyAttrOf<[FlatSymbolRefAttr,StructAttr,RefAttr,ArrayAttr]>:$layout,
       Buffer:$buffer);
-  let assemblyFormat = [{ $layout `:` type($out) `=` $buffer `:` type($buffer) attr-dict }];
+  let assemblyFormat = [{ $layout `->` type($out) `=` $buffer `:` type($buffer) attr-dict }];
   let results = (outs IsLayoutType:$out);
   let builders = [
       OpBuilder<
