@@ -563,6 +563,20 @@ func.func @good_nondet_rem_num_minbits() {
 
 // -----
 
+func.func @good_nondet_rem_coeff_carry() {
+  // Primary rules tested:
+  //  - `min_bits` is 0
+  %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
+  %1 = bigint.def 16, 0, true -> <2, 255, 0, 0>
+  %2 = bigint.def 64, 1, true -> <8, 255, 0, 0>
+  %3 = bigint.mul %0 : <1, 255, 0, 0>, %1 : <2, 255, 0, 0> -> <2, 65025, 0, 0>
+  %4 = bigint.nondet_rem %2 : <8, 255, 0, 0>, %3 : <2, 65025, 0, 0> -> <4, 255, 0, 0>
+  %5 = bigint.reduce %2 : <8, 255, 0, 0>, %3 : <2, 65025, 0, 0> -> <4, 255, 0, 0>
+  return
+}
+
+// -----
+
 // TODO: This has no testing for negatives -- handle appropriately elsewhere (or here?)
 
 // Type inference for `nondet_invmod`:
@@ -722,5 +736,19 @@ func.func @good_nondet_invmod_num_minbits() {
   %1 = bigint.def 24, 0, true -> <3, 255, 0, 0>
   %2 = bigint.nondet_invmod %0 : <2, 255, 0, 9>, %1 : <3, 255, 0, 0> -> <3, 255, 0, 0>
   %3 = bigint.inv %0 : <2, 255, 0, 9>, %1 : <3, 255, 0, 0> -> <3, 255, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_nondet_invmod_coeff_carry() {
+  // Primary rules tested:
+  //  - `min_bits` is 0
+  %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
+  %1 = bigint.def 16, 0, true -> <2, 255, 0, 0>
+  %2 = bigint.def 64, 1, true -> <8, 255, 0, 0>
+  %3 = bigint.mul %0 : <1, 255, 0, 0>, %1 : <2, 255, 0, 0> -> <2, 65025, 0, 0>
+  %4 = bigint.nondet_invmod %2 : <8, 255, 0, 0>, %3 : <2, 65025, 0, 0> -> <4, 255, 0, 0>
+  %5 = bigint.inv %2 : <8, 255, 0, 0>, %3 : <2, 65025, 0, 0> -> <4, 255, 0, 0>
   return
 }
