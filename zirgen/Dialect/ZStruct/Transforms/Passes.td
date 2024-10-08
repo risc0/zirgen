@@ -45,4 +45,15 @@ def InlineLayout : Pass<"inline-layout"> {
   let constructor = "zirgen::ZStruct::createExpandLayoutPass()";
 }
 
+def BuffersToArgs : Pass<"buffers-to-args"> {
+  let summary = "Convert any calls to zstruct.get_buffer to function arguments";
+  let description = [{
+     All new arguments are added to the end of any existing function arguments, and
+     are added in the order they appear in the BufferAnalysis.
+
+     These new arguments are propagated from any callers.
+  }];
+  let constructor = "zirgen::ZStruct::createBuffersToArgsPass()";
+}
+
 #endif // ZSTRUCT_TRANSFORM_PASSES

@@ -26,7 +26,7 @@ class ZllType<string name, string typeMnemonic, list<Trait> traits = []>
   let mnemonic = typeMnemonic;
 }
 
-def Val : ZllType<"Val", "val", [DeclareTypeInterfaceMethods<CodegenTypeInterface, ["getTypeName", "emitLiteral"]>]> {
+def Val : ZllType<"Val", "val", [DeclareTypeInterfaceMethods<CodegenTypeInterface, ["getTypeName"]>]> {
   let summary = "An expression which results in a single field element";
   let parameters = (ins
     "::zirgen::Zll::FieldAttr": $field,
@@ -74,6 +74,11 @@ def Buffer : ZllType<"Buffer", "buffer", [DeclareTypeInterfaceMethods<CodegenTyp
       "BufferKind": $kind
   );
   let assemblyFormat = "`<`$size `,` $kind  (`,` $element^)? `>`";
+  let extraClassDeclaration = [{
+    bool allowDuplicateTypeNames() const {
+      return true;
+    }
+  }];
 }
 
 def Digest : ZllType<"Digest", "digest", [CodegenTypeInterface]> {

@@ -19,6 +19,7 @@
 #include "mlir/Transforms/Passes.h"
 #include "llvm/Support/CommandLine.h"
 
+#include "zirgen/Dialect/ZHLT/IR/Codegen.h"
 #include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
 #include "zirgen/Dialect/Zll/IR/Codegen.h"
 #include "zirgen/Dialect/Zll/Transforms/Passes.h"
@@ -27,6 +28,75 @@ using namespace mlir;
 namespace cl = llvm::cl;
 
 namespace zirgen {
+namespace codegen {
+
+namespace {
+
+void addCommonSyntax(CodegenOptions& opts) {
+  opts.addLiteralHandler<IntegerAttr>(
+      [](CodegenEmitter& cg, auto intAttr) { cg << intAttr.getValue().getZExtValue(); });
+  opts.addLiteralHandler<StringAttr>(
+      [](CodegenEmitter& cg, auto strAttr) { cg.emitEscapedString(strAttr); });
+}
+
+void addCppSyntax(CodegenOptions& opts) {
+  opts.addLiteralHandler<PolynomialAttr>([&](CodegenEmitter& cg, auto polyAttr) {
+    auto elems = polyAttr.asArrayRef();
+    if (elems.size() == 1) {
+      cg << "Val(" << elems[0] << ")";
+    } else {
+      cg << "Val" << elems.size() << "{";
+      cg.interleaveComma(elems);
+      cg << "}";
+    }
+  });
+}
+
+void addRustSyntax(CodegenOptions& opts) {
+  opts.addLiteralHandler<PolynomialAttr>([&](CodegenEmitter& cg, auto polyAttr) {
+    auto elems = polyAttr.asArrayRef();
+    if (elems.size() == 1) {
+      cg << "Val::new(" << elems[0] << ")";
+    } else {
+      cg << "ExtVal::new(";
+      cg.interleaveComma(elems, [&](auto elem) { cg << "Val::new(" << elem << ")"; });
+      cg << ")";
+    }
+  });
+}
+
+} // namespace
+
+CodegenOptions getRustCodegenOpts() {
+  static codegen::RustLanguageSyntax kRust;
+  codegen::CodegenOptions opts(&kRust);
+  addCommonSyntax(opts);
+  addRustSyntax(opts);
+  ZStruct::addRustSyntax(opts);
+  Zhlt::addRustSyntax(opts);
+  return opts;
+}
+
+CodegenOptions getCppCodegenOpts() {
+  static codegen::CppLanguageSyntax kCpp;
+  codegen::CodegenOptions opts(&kCpp);
+  addCommonSyntax(opts);
+  addCppSyntax(opts);
+  ZStruct::addCppSyntax(opts);
+  Zhlt::addCppSyntax(opts);
+  return opts;
+}
+
+CodegenOptions getCudaCodegenOpts() {
+  static codegen::CudaLanguageSyntax kCuda;
+  codegen::CodegenOptions opts(&kCuda);
+  addCommonSyntax(opts);
+  addCppSyntax(opts);
+  ZStruct::addCppSyntax(opts);
+  return opts;
+}
+
+} // namespace codegen
 
 namespace {
 
@@ -54,7 +124,7 @@ void optimizeSplit(ModuleOp module, unsigned stage, const StageOptions& opts) {
   }
 }
 
-void optimizePoly(ModuleOp module) {
+void optimizePoly(ModuleOp module, const EmitCodeOptions& opts) {
   PassManager pm(module.getContext());
   OpPassManager& opm = pm.nest<func::FuncOp>();
   opm.addPass(Zll::createMakePolynomialPass());
@@ -67,27 +137,18 @@ void optimizePoly(ModuleOp module) {
 }
 
 struct CodegenCLOptions {
-  cl::list<std::string> outputFiles{
-      cl::Positional, cl::OneOrMore, cl::desc("files in output directory")};
+  cl::opt<std::string> outputDir{
+      "output-dir", cl::desc("Output directory"), cl::value_desc("dir"), cl::Required};
 };
 
 static llvm::ManagedStatic<CodegenCLOptions> clOptions;
 
 llvm::StringRef getOutputDir() {
-  std::string path;
   if (!clOptions.isConstructed()) {
     throw(std::runtime_error("codegen command line options must be registered"));
   }
 
-  if (clOptions->outputFiles.empty()) {
-    llvm::errs() << "At least one file in the output directory must be specified\n";
-    exit(1);
-  }
-
-  llvm::StringRef outputDir = llvm::StringRef(clOptions->outputFiles[0]).rsplit('/').first;
-  if (outputDir.empty())
-    return ".";
-  return outputDir;
+  return clOptions->outputDir;
 }
 
 } // namespace
@@ -131,9 +192,9 @@ public:
     createRustStreamEmitter(*ofs)->emitTaps(func);
   }
 
-  void emitInfo(func::FuncOp func, ProtocolInfo info) {
+  void emitInfo(func::FuncOp func) {
     auto ofs = openOutputFile("info.rs");
-    createRustStreamEmitter(*ofs)->emitInfo(func, info);
+    createRustStreamEmitter(*ofs)->emitInfo(func);
   }
 
   void emitHeader(func::FuncOp func) {
@@ -147,20 +208,12 @@ public:
   }
 
   void emitAllLayouts(mlir::ModuleOp op) {
-    static codegen::RustLanguageSyntax kRust;
-    emitLayout(op, &kRust, ".rs.inc");
-
-    static codegen::CppLanguageSyntax kCpp;
-    emitLayout(op, &kCpp, ".cpp.inc");
-
-    static codegen::CudaLanguageSyntax kCuda;
-    emitLayout(op, &kCuda, ".cu.inc");
+    emitLayout(op, codegen::getRustCodegenOpts(), ".rs.inc");
+    emitLayout(op, codegen::getCppCodegenOpts(), ".cpp.inc");
+    emitLayout(op, codegen::getCudaCodegenOpts(), ".cu.inc");
   }
 
-  void emitLayout(mlir::ModuleOp op, codegen::LanguageSyntax* lang, StringRef suffix) {
-    codegen::CodegenOptions opts;
-    opts.lang = lang;
-    opts.zkpLayoutCompat = true;
+  void emitLayout(mlir::ModuleOp op, const codegen::CodegenOptions& opts, StringRef suffix) {
     auto ofs = openOutputFile(("layout" + suffix).str());
     codegen::CodegenEmitter emitter(opts, ofs.get(), op->getContext());
     op.walk([&](ZStruct::GlobalConstOp constOp) {
@@ -191,24 +244,46 @@ void emitCode(ModuleOp module, const EmitCodeOptions& opts) {
   FileEmitter emitter(getOutputDir());
   optimizeSimple(module);
   emitter.emitAllLayouts(module);
-  for (auto stage : llvm::enumerate(opts.stages)) {
+
+  auto stepsAttr = Zll::lookupModuleAttr<Zll::StepsAttr>(module);
+
+  llvm::StringSet seenStages;
+
+  for (auto [stageIndex, stage] : llvm::enumerate(stepsAttr.getSteps())) {
+    auto stageOpts = opts.stages.lookup(stage);
+    seenStages.insert(stage.strref());
+    auto stageName = stage.str();
+
     auto moduleCopy = dyn_cast<ModuleOp>(module->clone());
-    optimizeSplit(moduleCopy, stage.index(), stage.value());
+    optimizeSplit(moduleCopy, stageIndex, stageOpts);
     moduleCopy.walk([&](func::FuncOp func) {
-      auto stage_name = stage.value().name;
-      emitter.emitRustStep(stage.value().name, func);
-      if (stage_name == "compute_accum" || stage_name == "verify_accum") {
-        emitter.emitGpuStep(stage.value().name, ".metal", func);
+      std::string outputFile;
+      if (stageOpts.outputFile.empty())
+        outputFile = stageName;
+      else
+        outputFile = stageOpts.outputFile;
+
+      emitter.emitRustStep(outputFile, func);
+      if (stageName == "compute_accum" || stageName == "verify_accum") {
+        emitter.emitGpuStep(outputFile, ".metal", func);
       }
-      emitter.emitGpuStep(stage.value().name, ".cu", func);
+      emitter.emitGpuStep(outputFile, ".cu", func);
     });
   }
-  optimizePoly(module);
+
+  for (auto k : opts.stages.keys()) {
+    if (!seenStages.contains(k)) {
+      llvm::errs() << "Options specified for stage " << k << " but no stage " << k << " seen\n";
+      exit(1);
+    }
+  }
+
+  optimizePoly(module, opts);
   module.walk([&](func::FuncOp func) {
     emitter.emitPolyFunc("poly_fp", func);
     emitter.emitPolyExtFunc(func);
     emitter.emitTaps(func);
-    emitter.emitInfo(func, opts.info);
+    emitter.emitInfo(func);
     emitter.emitEvalCheck(".cu", func);
     emitter.emitEvalCheck(".metal", func);
     emitter.emitPolyEdslFunc(func);

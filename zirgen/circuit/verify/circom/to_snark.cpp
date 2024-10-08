@@ -25,12 +25,20 @@
 using namespace zirgen;
 using namespace zirgen::snark;
 using namespace zirgen::Zll;
+namespace cl = llvm::cl;
+
+static cl::opt<std::string>
+    outputDir("output-dir", cl::desc("Output directory"), cl::value_desc("dir"), cl::Required);
 
 int main(int argc, char* argv[]) {
   using zirgen::recursion::kOutSize;
-  if (argc != 3) {
-    throw std::runtime_error("Missing command line arguments");
-  }
+
+  llvm::InitLLVM y(argc, argv);
+  mlir::registerAsmPrinterCLOptions();
+  mlir::registerMLIRContextCLOptions();
+  mlir::registerPassManagerCLOptions();
+  mlir::registerDefaultTimingManagerCLOptions();
+  cl::ParseCommandLineOptions(argc, argv, "zirgen compiler\n");
 
   // Make MLIR for the function
   Module module;
@@ -61,7 +69,7 @@ int main(int argc, char* argv[]) {
   // Generate `witgen.circom`
   std::ofstream circom_writer;
   circom_writer.exceptions(std::ofstream::failbit | std::ofstream::badbit);
-  circom_writer.open(argv[1]);
+  circom_writer.open(outputDir + "/stark_verify.circom");
   CircomGenerator gen(circom_writer);
   gen.emit(func, true);
   circom_writer.close();
@@ -88,7 +96,7 @@ int main(int argc, char* argv[]) {
   // Generate `seal_format.rs`
   std::ofstream header_writer;
   header_writer.exceptions(std::ofstream::failbit | std::ofstream::badbit);
-  header_writer.open(argv[2]);
+  header_writer.open(outputDir + "/seal_format.rs");
 
   header_writer << "// Copyright 2024 RISC Zero, Inc.\n";
   header_writer << "//\n";

@@ -42,6 +42,13 @@ enum class FuncKind {
   PolyExt,
 };
 
+// Apply fixups; apparently gpus use `ctrl` to reference the `code` buffer
+std::string gpuMapName(std::string name) {
+  if (name == "code")
+    return "ctrl";
+  return name;
+}
+
 class GpuStreamEmitterImpl : public GpuStreamEmitter {
   llvm::raw_ostream& ofs;
   std::string suffix;
@@ -96,12 +103,11 @@ public:
         openTemplate("zirgen/compiler/codegen/gpu/recursion/step_" + name + ".tmpl" + suffix);
 
     FileContext ctx;
-    ctx.vars[func.getArgument(0)] = "ctrl";
-    ctx.vars[func.getArgument(1)] = "out";
-    ctx.vars[func.getArgument(2)] = "data";
-    ctx.vars[func.getArgument(3)] = "mix";
-    ctx.vars[func.getArgument(4)] = "accum";
-
+    for (auto [argNum, arg] : llvm::enumerate(func.getArguments())) {
+      if (auto name = func.getArgAttrOfType<StringAttr>(argNum, "zirgen.argName")) {
+        ctx.vars[arg] = gpuMapName(name.str());
+      }
+    }
     list lines;
     PoolsSet pools;
     emitStepBlock(func.front(), ctx, lines, /*depth=*/0, true, pools);
@@ -135,11 +141,11 @@ public:
     }
 
     FileContext ctx;
-    ctx.vars[func.getArgument(0)] = "ctrl";
-    ctx.vars[func.getArgument(1)] = "out";
-    ctx.vars[func.getArgument(2)] = "data";
-    ctx.vars[func.getArgument(3)] = "mix";
-    ctx.vars[func.getArgument(4)] = "accum";
+    for (auto [argNum, arg] : llvm::enumerate(func.getArguments())) {
+      if (auto name = func.getArgAttrOfType<StringAttr>(argNum, "zirgen.argName")) {
+        ctx.vars[arg] = gpuMapName(name.str());
+      }
+    }
 
     MixPowAnalysis mixPows(func);
 
@@ -558,8 +564,16 @@ private:
 
   std::string emitPolynomialAttr(Operation* op, const char* attrName) {
     auto attr = op->getAttrOfType<PolynomialAttr>(attrName);
-    assert(attr.size() == 1 && "not yet unsupported");
-    return std::to_string(attr[0]);
+    if (attr.size() == 1) {
+      return std::to_string(attr[0]);
+    } else {
+      std::string out;
+      llvm::raw_string_ostream os(out);
+      os << "{";
+      llvm::interleaveComma(attr.asArrayRef(), os);
+      os << "}";
+      return out;
+    }
   }
 
   mustache openTemplate(const std::string& path) {

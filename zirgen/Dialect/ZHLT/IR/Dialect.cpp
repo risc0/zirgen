@@ -128,4 +128,17 @@ bool isBufferComponent(ComponentOp component) {
   return isEntryPoint(component) || name == "@mix" || name == "@global";
 }
 
+void getZirgenBlockArgumentNames(mlir::FunctionOpInterface funcOp,
+                                 mlir::Region& r,
+                                 mlir::OpAsmSetValueNameFn setNameFn) {
+  if (r != funcOp.getFunctionBody())
+    return;
+
+  for (auto [argNum, arg] : llvm::enumerate(funcOp.getArguments())) {
+    auto argName = funcOp.getArgAttrOfType<StringAttr>(argNum, "zirgen.argName");
+    if (argName)
+      setNameFn(arg, argName);
+  }
+}
+
 } // namespace zirgen::Zhlt

@@ -76,4 +76,73 @@ def FieldExt : ZllAttr<"FieldExt", "fieldExt"> {
   let assemblyFormat = [{ `ext` }];
 }
 
+def ProtocolInfoAttr : ZllAttr<"ProtocolInfo", "protocol_info"> {
+  let summary = "Define the protocol info string for this circuit.  Normally associated with the module operation; use Zll::lookupModuleAttr to access.";
+  let parameters = (ins
+      StringRefParameter<"Protocol information string"> : $protocolInfo);
+  let builders = [
+      AttrBuilder<(ins CArg<"zirgen::ProtocolInfo">: $protocolInfo)>
+  ];
+
+  let extraClassDeclaration = [{
+    static constexpr llvm::StringLiteral lookupModuleAttrName() { return "zll.protocolInfo"; }
+
+    zirgen::ProtocolInfo getValue();
+
+    std::string str() const { return getProtocolInfo().str(); }
+  }];
+  let genVerifyDecl = 1;
+  let assemblyFormat = [{ $protocolInfo }];
+}
+
+def BufferDescAttr : ZllAttr<"BufferDesc", "buffer_desc"> {
+  let summary = "Information on a circuit buffer that's global to a circuit";
+  let parameters = (ins
+      "mlir::StringAttr": $name,
+      "zirgen::Zll::BufferType": $type,
+      OptionalParameter<"std::optional<size_t>", "Tap group">: $regGroupId
+      );
+  let assemblyFormat = [{ `(` $name `,` $type ( `,` $regGroupId^ )? `)` }];
+  let extraClassDeclaration = [{
+      BufferKind getKind() const;
+      bool isGlobal() const { return getKind() == BufferKind::Global; }
+      size_t getRegCount() const;
+  }];
+  let extraClassDefinition = [{
+    BufferKind $cppClass::getKind() const { return getType().getKind(); }
+    size_t $cppClass::getRegCount() const { return getType().getSize(); }
+  }];
+}
+
+def BuffersAttr : ZllAttr<"Buffers", "buffers"> {
+  let summary = "Set of buffers associated with a circuit.  Normally associated with the module operation; use Zll::lookupModuleAttr to access.";
+  let parameters = (ins
+      ArrayRefParameter<"BufferDescAttr", "">:$buffers
+  );
+  code extraClassDeclaration = [{
+    static constexpr llvm::StringLiteral lookupModuleAttrName() { return "zll.buffers"; }
+
+    // Returns the tap buffer definitions in order
+    llvm::SmallVector<BufferDescAttr> getTapBuffers() const;
+
+    // Returns the given named buffer, if present.
+    BufferDescAttr getBuffer(llvm::StringRef bufferName) const;
+  }];
+  let genVerifyDecl = 1;
+  let assemblyFormat = [{  $buffers }];
+}
+
+def StepsAttr : ZllAttr<"Steps", "steps"> {
+  let summary = "List of steps associated with a circuit.  Normally associated with the module operation; use Zll::lookupModuleAttr to access.";
+  let parameters = (ins
+      ArrayRefParameter<"mlir::StringAttr", "">:$steps
+  );
+
+  code extraClassDeclaration = [{
+    static constexpr llvm::StringLiteral lookupModuleAttrName() { return "zll.steps"; }
+  }];
+
+  let assemblyFormat = [{ $steps }];
+}
+
 #endif // ZIRGEN_IR_ATTRS

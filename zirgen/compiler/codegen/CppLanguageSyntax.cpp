@@ -25,24 +25,6 @@ using namespace zirgen::Zll;
 
 namespace zirgen::codegen {
 
-void CppLanguageSyntax::fallbackEmitLiteral(CodegenEmitter& cg,
-                                            mlir::Type ty,
-                                            mlir::Attribute value) {
-  TypeSwitch<Attribute>(value)
-      .Case<IntegerAttr>([&](auto intAttr) { cg << intAttr.getValue().getZExtValue(); })
-      .Case<StringAttr>([&](auto strAttr) { cg.emitEscapedString(strAttr); })
-      .Case<PolynomialAttr>([&](auto polyAttr) {
-        cg << "(" << ty.cast<ValType>().getTypeName(cg) << " {";
-        cg.interleaveComma(polyAttr.asArrayRef());
-        cg << "})";
-      })
-      .Default([&](auto) {
-        llvm::errs() << "Don't know how to emit type " << ty << " into C++ with value " << value
-                     << "\n";
-        abort();
-      });
-}
-
 void CppLanguageSyntax::emitConditional(CodegenEmitter& cg,
                                         CodegenValue condition,
                                         EmitPart emitThen) {
@@ -70,6 +52,7 @@ void CppLanguageSyntax::emitSwitchStatement(CodegenEmitter& cg,
 
 void CppLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
                                            CodegenIdent<IdentKind::Func> funcName,
+                                           llvm::ArrayRef<std::string> contextArgDecls,
                                            llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                                            mlir::FunctionType funcType,
                                            mlir::Region* body) {
@@ -147,11 +130,11 @@ void CppLanguageSyntax::emitSaveConst(CodegenEmitter& cg,
 
 void CppLanguageSyntax::emitCall(CodegenEmitter& cg,
                                  CodegenIdent<IdentKind::Func> callee,
-                                 llvm::ArrayRef<StringRef> contextArgs,
+                                 llvm::ArrayRef<std::string> contextArgs,
                                  llvm::ArrayRef<CodegenValue> args) {
   cg << callee << "(";
   if (!contextArgs.empty()) {
-    cg.interleaveComma(contextArgs, [&](auto contextArg) { cg << EmitPart(contextArg) << ","; });
+    cg.interleaveComma(contextArgs, [&](auto contextArg) { cg << EmitPart(contextArg); });
     if (!args.empty())
       cg << ",";
   }
@@ -169,7 +152,7 @@ void CppLanguageSyntax::emitInvokeMacro(CodegenEmitter& cg,
 
   cg << "(";
   if (!contextArgs.empty()) {
-    cg.interleaveComma(contextArgs, [&](auto contextArg) { cg << EmitPart(contextArg) << ","; });
+    cg.interleaveComma(contextArgs, [&](auto contextArg) { cg << EmitPart(contextArg); });
     if (!emitArgs.empty())
       cg << ",";
   }

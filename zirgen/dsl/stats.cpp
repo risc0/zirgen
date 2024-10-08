@@ -15,7 +15,6 @@
 #include "zirgen/dsl/stats.h"
 #include "mlir/Interfaces/FunctionInterfaces.h"
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
-#include "zirgen/Dialect/ZStruct/Analysis/BufferAnalysis.h"
 #include "zirgen/Dialect/ZStruct/Analysis/DegreeAnalysis.h"
 #include "zirgen/Dialect/Zll/Analysis/TapsAnalysis.h"
 #include "zirgen/Dialect/Zll/IR/IR.h"
@@ -32,13 +31,15 @@ struct StatsPrinter {
 
   // Print the sizes of all buffers.
   void printBufferStats() {
-    auto analysis = ZStruct::BufferAnalysis(moduleOp);
+    auto bufs = Zll::lookupModuleAttr<Zll::BuffersAttr>(moduleOp);
     llvm::outs() << "buffers:\n";
-    for (auto buffer : analysis.getAllBuffers()) {
-      llvm::outs() << "  - " << buffer.name << "\n";
-      llvm::outs() << "    - size: " << buffer.regCount << "\n"
-                   << "    - kind: " << buffer.kind << "\n"
-                   << "    - per cycle: " << (buffer.global ? "false" : "true") << "\n";
+    for (auto buffer : bufs.getBuffers()) {
+      llvm::outs() << "  - " << buffer.getName() << "\n";
+      llvm::outs() << "    - size: " << buffer.getRegCount() << "\n"
+                   << "    - kind: " << buffer.getType().getKind() << "\n"
+                   << "    - per cycle: "
+                   << ((buffer.getType().getKind() == Zll::BufferKind::Global) ? "false" : "true")
+                   << "\n";
     }
     llvm::outs() << "\n";
   }

@@ -25,12 +25,12 @@ namespace {
 
 #include "Fp.h"
 
-struct ExecContext {
-  std::vector<uint32_t>& data;
-  std::vector<uint32_t>& global;
-};
+struct ExecContext {};
 using ValidityRegsContext = ExecContext;
 using ValidityTapsContext = ExecContext;
+using GlobalBuf = std::vector<uint32_t>&;
+using MutableBuf = std::vector<uint32_t>&;
+using ConstantExtBuf = std::vector<Val4>&;
 
 std::deque<int> fromUser;
 std::deque<int> toUser;
@@ -78,7 +78,7 @@ TEST(calculator, adder) {
   dataBuffer.resize(kRegCountData, 0);
   std::vector<uint32_t> globalBuffer;
   globalBuffer.resize(kRegCountGlobal, 0);
-  ExecContext ctx = {.data = dataBuffer, .global = globalBuffer};
+  ExecContext ctx;
 
   // Suppy "123" and "456" to the adder sub-circuit, which retrieves them via externGetValFromUser.
   fromUser.clear();
@@ -93,19 +93,13 @@ TEST(calculator, adder) {
   const auto& layout = kLayout_Top;
 
   // Run the top of the circuit using our layout as output registers.
-  TopStruct top = exec_Top(ctx, BoundLayout(&layout, dataBuffer));
+  step_Top(ctx, dataBuffer, globalBuffer);
 
   // Make sure our output registers were filled in correctly.
-  EXPECT_EQ(ctx.data.at(layout.left._super.index), 123);
-  EXPECT_EQ(ctx.data.at(layout.right._super.index), 456);
+  EXPECT_EQ(dataBuffer.at(layout.left._super), 123);
+  EXPECT_EQ(dataBuffer.at(layout.right._super), 456);
   // TODO: hide this _construct7 name.
-  Val result = ctx.data.at(layout.result._super._super.index);
-  EXPECT_EQ(result, 123 + 456);
-
-  // Make sure the values returned from the "Top" component were filled in correctly.
-  EXPECT_EQ(top.left._super, 123);
-  EXPECT_EQ(top.right._super, 456);
-  result = top.result._super._super;
+  Val result = dataBuffer.at(layout.result._super._super);
   EXPECT_EQ(result, 123 + 456);
 
   // Make sure the circuit consumed the two values that we supplied it via externGetValFromUser.
@@ -121,7 +115,7 @@ TEST(calculator, subtractor) {
   dataBuffer.resize(kRegCountData, 0);
   std::vector<uint32_t> globalBuffer;
   globalBuffer.resize(kRegCountGlobal, 0);
-  ExecContext ctx = {.data = dataBuffer, .global = globalBuffer};
+  ExecContext ctx;
 
   // Suppy "123" and "456" to the subtractor sub-circuit, which retrieves them via
   // externGetValFromUser.
@@ -137,18 +131,12 @@ TEST(calculator, subtractor) {
   const TopLayout& layout = kLayout_Top;
 
   // Run the top of the circuit using our layout as output registers.
-  TopStruct top = exec_Top(ctx, BoundLayout(&layout, ctx.data));
+  step_Top(ctx, dataBuffer, globalBuffer);
 
   // Make sure our output registers were filled in correctly.
-  EXPECT_EQ(ctx.data.at(layout.left._super.index), 456);
-  EXPECT_EQ(ctx.data.at(layout.right._super.index), 123);
-  Val result = ctx.data.at(layout.result._super._super.index);
-  EXPECT_EQ(result, 456 - 123);
-
-  // Make sure the values returned from the "Top" component were filled in correctly.
-  EXPECT_EQ(top.left._super, 456);
-  EXPECT_EQ(top.right._super, 123);
-  result = top.result._super._super;
+  EXPECT_EQ(dataBuffer.at(layout.left._super), 456);
+  EXPECT_EQ(dataBuffer.at(layout.right._super), 123);
+  Val result = dataBuffer.at(layout.result._super._super);
   EXPECT_EQ(result, 456 - 123);
 
   // Make sure the circuit consumed the two values that we supplied it via externGetValFromUser.

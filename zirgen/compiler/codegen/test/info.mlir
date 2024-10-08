@@ -1,5 +1,7 @@
 // RUN: zirgen-translate -zirgen-to-rust-info --function=fib %s | FileCheck %s
 
+module attributes {zll.buffers = #zll<buffers ("code", <3, constant>, 1), ("out", <1, global>), ("data", <1, mutable>, 2), ("mix", <1, global>), ("accum", <1, mutable>, 0)>, zll.protocolInfo = #zll<protocol_info "TEST____________">, zll.steps = #zll<steps "exec", "ram_verify", "verify_bytes", "compute_accum", "verify_accum">} {
+
 func.func @fib(
   // CHECK-DAG: const CIRCUIT_INFO: ProtocolInfo = ProtocolInfo(*b"zirgen-translate");
   %arg0: !zll.buffer<3, constant>,
@@ -59,4 +61,6 @@ func.func @fib(
   %23 = zll.and_eqz %1, %22 : <BabyBear> {deg = 1 : ui32}
   %24 = zll.and_cond %18, %20 : <BabyBear>, %23 {deg = 2 : ui32}
   return {deg = 2 : ui32} %24 : !zll.constraint
+}
+
 }

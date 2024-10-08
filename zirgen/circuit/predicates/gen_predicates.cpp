@@ -158,15 +158,13 @@ template <typename Func> void addSingleton(Module& module, const std::string nam
                     });
 }
 
-cl::list<std::string> outputFiles{
-    cl::Positional, cl::OneOrMore, cl::desc("files in output directory")};
+static cl::opt<std::string>
+    outputDir("output-dir", cl::desc("Output directory"), cl::value_desc("dir"), cl::Required);
 
 int main(int argc, char* argv[]) {
   llvm::InitLLVM y(argc, argv);
   registerEdslCLOptions();
   llvm::cl::ParseCommandLineOptions(argc, argv, "gen_predicates edsl");
-
-  std::string dir = llvm::StringRef(outputFiles[0]).rsplit('/').first.str();
 
   Module module;
   module.addFunc<2>("test_recursion_circuit",
@@ -194,5 +192,5 @@ int main(int argc, char* argv[]) {
   addSingleton(module, "identity", [&](ReceiptClaim a) { return identity(a); });
 
   module.optimize();
-  module.getModule().walk([&](mlir::func::FuncOp func) { zirgen::emitRecursion(dir, func); });
+  module.getModule().walk([&](mlir::func::FuncOp func) { zirgen::emitRecursion(outputDir, func); });
 }

@@ -23,7 +23,7 @@ use risc0_zkp::INV_RATE;
 pub type CpuBuffers<'a, Val, Context> = Buffers<RowSlice<'a, Val>, GlobalsRow<'a, Val>, Context>;
 
 #[derive(Clone)]
-pub struct RowSlice<'a, ValType: Default + Clone> {
+pub struct RowSlice<'a, ValType: Default + Clone + Copy> {
     buf: &'a SyncSlice<'a, ValType>,
     cycle: usize,
     tot_cycles: usize,
@@ -33,7 +33,7 @@ pub struct RowSlice<'a, ValType: Default + Clone> {
     back_factor: usize,
 }
 
-impl<'a, ValType: Default + Clone> RowSlice<'a, ValType> {
+impl<'a, ValType: Default + Clone + Copy> RowSlice<'a, ValType> {
     pub fn new(
         buf: &'a SyncSlice<'a, ValType>,
         cycle: usize,

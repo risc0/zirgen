@@ -18,6 +18,7 @@
 #include "mlir/IR/OpImplementation.h"
 #include "mlir/IR/Types.h"
 #include "mlir/Interfaces/SideEffectInterfaces.h"
+#include "zirgen/compiler/codegen/protocol_info_const.h"
 
 #include "zirgen/Dialect/Zll/IR/BigInt.h"
 #include "zirgen/Dialect/Zll/IR/Codegen.h"
@@ -30,6 +31,7 @@ class Interpreter;
 class InterpVal;
 class OpEvaluator;
 class FieldAttr;
+class BufferType;
 
 inline mlir::IntegerAttr getUI64Attr(mlir::MLIRContext* ctx, uint64_t val) {
   return mlir::IntegerAttr::get(mlir::IntegerType::get(ctx, 64, mlir::IntegerType::Unsigned), val);
@@ -116,6 +118,23 @@ template <template <typename T> class Trait>
     op = op->getParentOp();
   }
   return {};
+}
+
+// Looks up an attribute in the module that is or encloses the given
+// operation.  The attribute must define the `lookupModuleAttrName`
+// method to provide the name of the attribute.
+template <typename AttrT> AttrT lookupModuleAttr(mlir::Operation* op) {
+  while (!llvm::isa<mlir::ModuleOp>(op))
+    op = op->getParentOp();
+  AttrT result = op->getAttrOfType<AttrT>(AttrT::lookupModuleAttrName());
+  assert(result && "Missing expected module attribute");
+  return result;
+}
+
+template <typename AttrT> void setModuleAttr(mlir::Operation* op, AttrT newValue) {
+  while (!llvm::isa<mlir::ModuleOp>(op))
+    op = op->getParentOp();
+  op->setAttr(AttrT::lookupModuleAttrName(), newValue);
 }
 
 } // namespace zirgen::Zll
