@@ -35,7 +35,12 @@ def BigInt : BigIntType<"BigInt", "bigint", [
   let assemblyFormat = "`<` $coeffs `,` $maxPos `,` $maxNeg `,` $minBits `>`";
   let extraClassDeclaration = [{
     size_t getMaxBits() {
-      size_t extraBits = risc0::log2Ceil(getMaxPos() / (1 << kBitsPerCoeff));
+      size_t extraBits = risc0::log2Ceil(getMaxPos());
+      if (extraBits < kBitsPerCoeff) {
+        extraBits = 0;
+      } else {
+        extraBits -= kBitsPerCoeff;
+      }
       return kBitsPerCoeff * getCoeffs() + extraBits;
     }
     size_t getCarryOffset() {
