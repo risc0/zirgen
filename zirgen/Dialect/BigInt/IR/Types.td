@@ -36,10 +36,14 @@ def BigInt : BigIntType<"BigInt", "bigint", [
   let extraClassDeclaration = [{
     size_t getMaxBits() {
       size_t extraBits = risc0::log2Ceil(getMaxPos());
-      if (extraBits < kBitsPerCoeff) {
+      if (extraBits <= kBitsPerCoeff) {
         extraBits = 0;
       } else {
         extraBits -= kBitsPerCoeff;
+        // Carries can sometimes lead to 1 extra bit
+        if (getCoeffs() > 1) {
+          extraBits += 1;
+        }
       }
       return kBitsPerCoeff * getCoeffs() + extraBits;
     }
