@@ -110,6 +110,10 @@ void CompContext::addBuffer(llvm::StringRef name, Buffer buf) {
   auto arg = mlir::cast<mlir::BlockArgument>(bufVal);
   auto argNum = arg.getArgNumber();
   auto funcOp = mlir::cast<mlir::func::FuncOp>(arg.getOwner()->getParentOp());
+
+  if (auto oldName = funcOp.getArgAttrOfType<mlir::StringAttr>(argNum, "zirgen.argName")) {
+    assert(oldName == name && "Argument already defined as different name");
+  }
   funcOp.setArgAttr(argNum, "zirgen.argName", mlir::StringAttr::get(bufVal.getContext(), name));
 }
 
@@ -129,10 +133,15 @@ void CompContext::fini(Val ret) {
       }
     });
   }
+
+  llvm::SmallVector<std::string> phases;
+  // `exec` step always happens first, so is not in the list of the "extra" phases
+  phases.push_back("exec");
   for (auto& phase : gCallbackState->phases) {
     if (phase.name[0] != '_') {
       barrier(ret);
       ret = 0;
+      phases.push_back(phase.name);
     }
     phase.emit();
   }
@@ -141,6 +150,10 @@ void CompContext::fini(Val ret) {
   gAllocState = nullptr;
   delete gCallbackState;
   gCallbackState = nullptr;
+
+  auto funcOp = llvm::cast<mlir::func::FuncOp>(
+      Module::getCurModule()->getBuilder().getBlock()->getParentOp());
+  Module::getCurModule()->setPhases(funcOp, phases);
 }
 
 void CompContext::enterMux() {

@@ -29,17 +29,40 @@ namespace zirgen::Zll {
 
 namespace {
 
-// TODO: OMG, this is so terrible
-// Basically, the taps must be in order of 'accum', 'code', 'data'
-// So we remap the key to be the right order
-uint32_t getRegGroupId(BlockArgument ba) {
-  constexpr uint32_t kInvalidRemap = std::numeric_limits<uint32_t>::max();
-  static uint32_t remap[] = {1, kInvalidRemap, 2, kInvalidRemap, 0};
-  assert(ba.getArgNumber() < std::size(remap));
-  auto remapped = remap[ba.getArgNumber()];
-  assert(remapped != kInvalidRemap);
-  return remapped;
-}
+struct TapMap {
+  TapMap(BuffersAttr bufs) : bufs(bufs) {}
+
+  uint32_t getRegGroupId(BlockArgument ba) {
+    if (regGroupIds.contains(ba))
+      return regGroupIds.at(ba);
+
+    auto func = llvm::cast<mlir::func::FuncOp>(ba.getOwner()->getParentOp());
+    auto name = func.getArgAttrOfType<StringAttr>(ba.getArgNumber(), "zirgen.argName");
+    if (!name) {
+      llvm::errs() << "Cannot find argument name for arg " << ba << "\n";
+      throw(std::runtime_error("taps computation failed"));
+    }
+
+    for (auto buf : bufs.getBuffers()) {
+      if (buf.getName() == name) {
+        if (!buf.getRegGroupId()) {
+          llvm::errs() << "Referenced arg arg " << ba << " refers to a non-tap buffer\n";
+        } else {
+          size_t regGroupId = *buf.getRegGroupId();
+          regGroupIds[ba] = regGroupId;
+          return regGroupId;
+        }
+      }
+    }
+    llvm::errs() << "Cannot find reg group id for arg " << ba << "\n";
+    throw(std::runtime_error("taps computation failed"));
+  }
+
+  // Map from block argument to register group id
+  llvm::DenseMap<mlir::Value, size_t> regGroupIds;
+
+  BuffersAttr bufs;
+};
 
 struct ComputeTapsPass : public ComputeTapsBase<ComputeTapsPass> {
   void runOnOperation() override {
@@ -48,24 +71,31 @@ struct ComputeTapsPass : public ComputeTapsBase<ComputeTapsPass> {
     Builder builder(&getContext());
     Type valType;
 
+    auto mod = func->getParentOfType<mlir::ModuleOp>();
+
+    TapMap tapMap(lookupModuleAttr<BuffersAttr>(mod));
+
     // Find taps used in circuit.
     llvm::SmallVector<TapAttr> tapAttrs;
-    func.walk([&](GetOp op) {
+    mod.walk([&](GetOp op) {
       if (op.getBufferKind() != BufferKind::Global) {
-        tapAttrs.push_back(TapAttr::get(&getContext(),
-                                        getRegGroupId(llvm::cast<BlockArgument>(op.getBuf())),
-                                        op.getOffset(),
-                                        op.getBack()));
+        tapAttrs.push_back(
+            TapAttr::get(&getContext(),
+                         tapMap.getRegGroupId(llvm::cast<BlockArgument>(op.getBuf())),
+                         op.getOffset(),
+                         op.getBack()));
       }
     });
 
     TapsAnalysis tapsAnalysis(&getContext(), std::move(tapAttrs));
 
     // Assign back to "tap" attributes on each operation
-    func.walk([&](GetOp op) {
+    mod.walk([&](GetOp op) {
       if (op.getBufferKind() != BufferKind::Global) {
-        uint32_t tapId = tapsAnalysis.getTapIndex(
-            getRegGroupId(llvm::cast<BlockArgument>(op.getBuf())), op.getOffset(), op.getBack());
+        uint32_t tapId =
+            tapsAnalysis.getTapIndex(tapMap.getRegGroupId(llvm::cast<BlockArgument>(op.getBuf())),
+                                     op.getOffset(),
+                                     op.getBack());
 
         op->setAttr("tap", builder.getUI32IntegerAttr(tapId));
 

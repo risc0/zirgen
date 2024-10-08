@@ -15,14 +15,13 @@
 #pragma once
 
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
-#include "zirgen/Dialect/ZStruct/Analysis/BufferAnalysis.h"
 
 namespace zirgen::Zhlt {
 
 class EmitZhlt {
 public:
   EmitZhlt(mlir::ModuleOp module, codegen::CodegenEmitter& cg)
-      : module(module), cg(cg), ctx(module.getContext()), bufferAnalysis(module) {}
+      : module(module), cg(cg), ctx(module.getContext()) {}
   virtual ~EmitZhlt() = default;
 
   mlir::LogicalResult emitDefs() {
@@ -36,14 +35,13 @@ public:
   }
 
 protected:
-  virtual mlir::LogicalResult emitBufferList(llvm::ArrayRef<ZStruct::BufferDesc> bufs) {
+  virtual mlir::LogicalResult emitBufferList(llvm::ArrayRef<Zll::BufferDescAttr> bufs) {
     return mlir::success();
   }
 
   mlir::ModuleOp module;
   codegen::CodegenEmitter& cg;
   mlir::MLIRContext* ctx;
-  ZStruct::BufferAnalysis bufferAnalysis;
 
 private:
   // Declares "Val" to be a type alias to the appropriete field element.

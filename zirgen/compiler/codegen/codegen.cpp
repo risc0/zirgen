@@ -124,7 +124,7 @@ void optimizeSplit(ModuleOp module, unsigned stage, const StageOptions& opts) {
   }
 }
 
-void optimizePoly(ModuleOp module) {
+void optimizePoly(ModuleOp module, const EmitCodeOptions& opts) {
   PassManager pm(module.getContext());
   OpPassManager& opm = pm.nest<func::FuncOp>();
   opm.addPass(Zll::createMakePolynomialPass());
@@ -192,9 +192,9 @@ public:
     createRustStreamEmitter(*ofs)->emitTaps(func);
   }
 
-  void emitInfo(func::FuncOp func, ProtocolInfo info) {
+  void emitInfo(func::FuncOp func) {
     auto ofs = openOutputFile("info.rs");
-    createRustStreamEmitter(*ofs)->emitInfo(func, info);
+    createRustStreamEmitter(*ofs)->emitInfo(func);
   }
 
   void emitHeader(func::FuncOp func) {
@@ -244,24 +244,46 @@ void emitCode(ModuleOp module, const EmitCodeOptions& opts) {
   FileEmitter emitter(getOutputDir());
   optimizeSimple(module);
   emitter.emitAllLayouts(module);
-  for (auto stage : llvm::enumerate(opts.stages)) {
+
+  auto stepsAttr = Zll::lookupModuleAttr<Zll::StepsAttr>(module);
+
+  llvm::StringSet seenStages;
+
+  for (auto [stageIndex, stage] : llvm::enumerate(stepsAttr.getSteps())) {
+    auto stageOpts = opts.stages.lookup(stage);
+    seenStages.insert(stage.strref());
+    auto stageName = stage.str();
+
     auto moduleCopy = dyn_cast<ModuleOp>(module->clone());
-    optimizeSplit(moduleCopy, stage.index(), stage.value());
+    optimizeSplit(moduleCopy, stageIndex, stageOpts);
     moduleCopy.walk([&](func::FuncOp func) {
-      auto stage_name = stage.value().name;
-      emitter.emitRustStep(stage.value().name, func);
-      if (stage_name == "compute_accum" || stage_name == "verify_accum") {
-        emitter.emitGpuStep(stage.value().name, ".metal", func);
+      std::string outputFile;
+      if (stageOpts.outputFile.empty())
+        outputFile = stageName;
+      else
+        outputFile = stageOpts.outputFile;
+
+      emitter.emitRustStep(outputFile, func);
+      if (stageName == "compute_accum" || stageName == "verify_accum") {
+        emitter.emitGpuStep(outputFile, ".metal", func);
       }
-      emitter.emitGpuStep(stage.value().name, ".cu", func);
+      emitter.emitGpuStep(outputFile, ".cu", func);
     });
   }
-  optimizePoly(module);
+
+  for (auto k : opts.stages.keys()) {
+    if (!seenStages.contains(k)) {
+      llvm::errs() << "Options specified for stage " << k << " but no stage " << k << " seen\n";
+      exit(1);
+    }
+  }
+
+  optimizePoly(module, opts);
   module.walk([&](func::FuncOp func) {
     emitter.emitPolyFunc("poly_fp", func);
     emitter.emitPolyExtFunc(func);
     emitter.emitTaps(func);
-    emitter.emitInfo(func, opts.info);
+    emitter.emitInfo(func);
     emitter.emitEvalCheck(".cu", func);
     emitter.emitEvalCheck(".metal", func);
     emitter.emitPolyEdslFunc(func);

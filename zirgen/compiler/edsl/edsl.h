@@ -21,6 +21,7 @@
 #include "zirgen/Dialect/IOP/IR/IR.h"
 #include "zirgen/Dialect/Zll/IR/IR.h"
 #include "zirgen/Dialect/Zll/IR/Interpreter.h"
+#include "zirgen/compiler/codegen/protocol_info_const.h"
 #include "zirgen/compiler/edsl/source_loc.h"
 
 namespace zirgen {
@@ -143,23 +144,33 @@ struct ArgumentInfo {
   ArgumentType type;
   Zll::BufferKind kind;
   size_t size;
+  std::string name;
   size_t degree;
 };
 
-inline ArgumentInfo cbuf(size_t size, size_t degree = 1) {
-  return ArgumentInfo{ArgumentType::BUFFER, Zll::BufferKind::Constant, size, degree};
+inline ArgumentInfo cbuf(size_t size, std::string name = {}, size_t degree = 1) {
+  return ArgumentInfo{ArgumentType::BUFFER, Zll::BufferKind::Constant, size, name, degree};
+}
+inline ArgumentInfo cbuf(size_t size, size_t degree) {
+  return cbuf(size, {}, degree);
 }
 
-inline ArgumentInfo mbuf(size_t size, size_t degree = 1) {
-  return ArgumentInfo{ArgumentType::BUFFER, Zll::BufferKind::Mutable, size, degree};
+inline ArgumentInfo mbuf(size_t size, std::string name = {}, size_t degree = 1) {
+  return ArgumentInfo{ArgumentType::BUFFER, Zll::BufferKind::Mutable, size, name, degree};
+}
+inline ArgumentInfo mbuf(size_t size, size_t degree) {
+  return mbuf(size, {}, degree);
 }
 
-inline ArgumentInfo gbuf(size_t size, size_t degree = 1) {
-  return ArgumentInfo{ArgumentType::BUFFER, Zll::BufferKind::Global, size, degree};
+inline ArgumentInfo gbuf(size_t size, std::string name = {}, size_t degree = 1) {
+  return ArgumentInfo{ArgumentType::BUFFER, Zll::BufferKind::Global, size, name, degree};
+}
+inline ArgumentInfo gbuf(size_t size, size_t degree) {
+  return gbuf(size, {}, degree);
 }
 
-inline ArgumentInfo ioparg() {
-  return ArgumentInfo{ArgumentType::IOP, Zll::BufferKind::Mutable, 0, 0};
+inline ArgumentInfo ioparg(std::string name = {}) {
+  return ArgumentInfo{ArgumentType::IOP, Zll::BufferKind::Mutable, 0, name, 0};
 }
 
 class Module {
@@ -179,7 +190,15 @@ public:
       vargs[i] = builder.getBlock()->getArgument(i);
     }
     std::apply(func, vargs);
-    return endFunc(loc);
+    auto f = endFunc(loc);
+
+    for (size_t i = 0; i < N; i++) {
+      std::string argName = args[i].name;
+      if (!argName.empty()) {
+        f.setArgAttr(i, "zirgen.argName", builder.getStringAttr(argName));
+      }
+    }
+    return f;
   }
   // HACK: Evaluation order of arguments is unspecified in c++ and
   // different compilers do it differently. We want our circuit
@@ -209,6 +228,9 @@ public:
   mlir::ModuleOp getModule() { return *module; }
 
   static Module* getCurModule();
+
+  void setPhases(mlir::func::FuncOp funcOp, llvm::ArrayRef<std::string> phases);
+  void setProtocolInfo(ProtocolInfo info);
 
 private:
   void beginFunc(const std::string& name, const std::vector<ArgumentInfo>& args, SourceLoc loc);

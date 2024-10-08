@@ -19,7 +19,6 @@
 #include "llvm/ADT/TypeSwitch.h"
 
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
-#include "zirgen/Dialect/ZStruct/Analysis/BufferAnalysis.h"
 #include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
 #include "zirgen/circuit/verify/wrap.h"
 
@@ -36,7 +35,9 @@ using namespace mlir;
 class CircuitInterfaceZirgen : public CircuitInterface {
 public:
   CircuitInterfaceZirgen(OwningOpRef<mlir::ModuleOp> modArg, ProtocolInfo protocolInfo)
-      : ownedMod(std::move(modArg)), bufferAnalysis(mod()), protocolInfo(protocolInfo) {
+      : ownedMod(std::move(modArg))
+      , bufs(Zll::lookupModuleAttr<BuffersAttr>(mod()))
+      , protocolInfo(protocolInfo) {
     initialize();
   }
   const Zll::TapSet& get_taps() const override { return tapSet; }
@@ -44,8 +45,8 @@ public:
                    llvm::ArrayRef<Val> out,
                    llvm::ArrayRef<Val> accumMix,
                    Val polyMix) const override;
-  size_t out_size() const override { return bufferAnalysis.getBuffer("global").regCount; }
-  size_t mix_size() const override { return bufferAnalysis.getBuffer("mix").regCount; }
+  size_t out_size() const override { return bufs.getBuffer("global").getRegCount(); }
+  size_t mix_size() const override { return bufs.getBuffer("mix").getRegCount(); }
   ProtocolInfo get_circuit_info() const override { return protocolInfo; }
 
 private:
@@ -60,7 +61,7 @@ private:
   Zll::TapSet tapSet;
 
   OwningOpRef<mlir::ModuleOp> ownedMod;
-  ZStruct::BufferAnalysis bufferAnalysis;
+  BuffersAttr bufs;
   Zhlt::ValidityTapsFuncOp validityTaps;
   ProtocolInfo protocolInfo;
 };

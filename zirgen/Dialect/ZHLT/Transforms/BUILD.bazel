@@ -32,6 +32,7 @@ gentbl_cc_library(
 cc_library(
     name = "passes",
     srcs = [
+        "AnalyzeBuffers.cpp",
         "GenerateSteps.cpp",
         "HoistAllocs.cpp",
         "LowerFuncs.cpp",

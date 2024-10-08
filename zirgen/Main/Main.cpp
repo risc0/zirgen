@@ -22,7 +22,6 @@
 #include "zirgen/Dialect/ZHL/IR/ZHL.h"
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
 #include "zirgen/Dialect/ZHLT/Transforms/Passes.h"
-#include "zirgen/Dialect/ZStruct/Analysis/BufferAnalysis.h"
 #include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
 #include "zirgen/Dialect/ZStruct/Transforms/Passes.h"
 #include "zirgen/Dialect/Zll/IR/IR.h"
@@ -70,6 +69,7 @@ void addTypingPasses(mlir::PassManager& pm) {
   pm.addPass(mlir::createCSEPass());
   pm.addPass(zirgen::dsl::createGenerateExecPass());
   pm.addPass(mlir::createSymbolPrivatizePass({}));
+  pm.addPass(zirgen::Zhlt::createAnalyzeBuffersPass());
   pm.addPass(zirgen::Zhlt::createGenerateStepsPass());
 }
 

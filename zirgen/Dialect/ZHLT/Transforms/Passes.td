@@ -68,4 +68,13 @@ def LowerStepFuncs : Pass<"lower-step-funcs", "mlir::ModuleOp"> {
   let dependentDialects = ["zirgen::Zhlt::ZhltDialect"];
 }
 
+def AnalyzeBuffers : Pass<"analyze-buffers", "mlir::ModuleOp"> {
+  let summary = "Analyze the buffers needed for this ZHLT circuit";
+  let description = [{
+     This analyzes the ZHLT buffers needed for a circuit, and saves the buffer descriptions in a BuffersAttr
+     on the module.
+  }];
+  let constructor = "zirgen::Zhlt::createAnalyzeBuffersPass()";
+}
+
 #endif // ZHLT_TRANSFORM_PASSES

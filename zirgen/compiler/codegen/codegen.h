@@ -36,7 +36,7 @@ public:
   virtual void emitPolyFunc(const std::string& fn, mlir::func::FuncOp func) = 0;
   virtual void emitPolyExtFunc(mlir::func::FuncOp func) = 0;
   virtual void emitTaps(mlir::func::FuncOp func) = 0;
-  virtual void emitInfo(mlir::func::FuncOp func, ProtocolInfo version) = 0;
+  virtual void emitInfo(mlir::func::FuncOp func) = 0;
 };
 
 class GpuStreamEmitter {
@@ -56,20 +56,16 @@ public:
 
 // Options relating to a specific stage.
 struct StageOptions {
-  /* implicit */ StageOptions(const char name[]) : name(name) {}
-
-  // Name of this stage
-  std::string name;
-
   // Add any extra passes for this stage
   std::function<void(mlir::OpPassManager& opm)> addExtraPasses;
+
+  // If present, use this name for the output file instead of the name of the stage
+  std::string outputFile;
 };
 
 struct EmitCodeOptions {
-  // An identifier string indicating which version of what circuit is being omitted
-  ProtocolInfo info;
-  // Stages to generate step functions for, indexed by stage ID.
-  std::vector<StageOptions> stages;
+  // Stages and their extra passes, indexed by stage name
+  llvm::StringMap<StageOptions> stages;
 };
 
 namespace codegen {
@@ -254,7 +250,7 @@ std::unique_ptr<GpuStreamEmitter> createGpuStreamEmitter(llvm::raw_ostream& ofs,
 std::unique_ptr<CppStreamEmitter> createCppStreamEmitter(llvm::raw_ostream& ofs);
 
 void registerCodegenCLOptions();
-void emitCode(mlir::ModuleOp module, const EmitCodeOptions& opts);
+void emitCode(mlir::ModuleOp module, const EmitCodeOptions& opts = {});
 void emitRecursion(const std::string& path,
                    mlir::func::FuncOp func,
                    recursion::EncodeStats* stats = nullptr);
