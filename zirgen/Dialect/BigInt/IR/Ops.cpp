@@ -117,8 +117,13 @@ LogicalResult NondetRemOp::inferReturnTypes(MLIRContext* ctx,
                                             std::optional<Location> loc,
                                             Adaptor adaptor,
                                             SmallVectorImpl<Type>& out) {
+  auto lhsType = adaptor.getLhs().getType().cast<BigIntType>();
   auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
-  size_t coeffsWidth = ceilDiv(rhsType.getMaxBits(), kBitsPerCoeff);
+  auto maxBits = lhsType.getMaxBits();
+  if (rhsType.getMaxBits() < maxBits) {
+    maxBits = rhsType.getMaxBits();
+  }
+  size_t coeffsWidth = ceilDiv(maxBits, kBitsPerCoeff);
   out.push_back(BigIntType::get(ctx,
                                 /*coeffs=*/coeffsWidth,
                                 /*maxPos=*/(1 << kBitsPerCoeff) - 1,
@@ -179,8 +184,13 @@ LogicalResult ReduceOp::inferReturnTypes(MLIRContext* ctx,
                                          std::optional<Location> loc,
                                          Adaptor adaptor,
                                          SmallVectorImpl<Type>& out) {
+  auto lhsType = adaptor.getLhs().getType().cast<BigIntType>();
   auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
-  size_t coeffsWidth = ceilDiv(rhsType.getMaxBits(), kBitsPerCoeff);
+  auto maxBits = lhsType.getMaxBits();
+  if (rhsType.getMaxBits() < maxBits) {
+    maxBits = rhsType.getMaxBits();
+  }
+  size_t coeffsWidth = ceilDiv(maxBits, kBitsPerCoeff);
   out.push_back(BigIntType::get(ctx,
                                 /*coeffs=*/coeffsWidth,
                                 /*maxPos=*/(1 << kBitsPerCoeff) - 1,
