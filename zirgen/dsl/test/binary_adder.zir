@@ -1,0 +1,63 @@
+// RUN: zirgen --test %s 2>&1 | FileCheck %s
+
+component BitReg(x: Val) {
+  r := Reg(x);
+  r * (r - 1) = 0;
+  r
+}
+
+component Not(x: BitReg) {
+  BitReg(1 - x)
+}
+
+component And(x: BitReg, y: BitReg) {
+  BitReg(x * y)
+}
+
+component Or(x: BitReg, y: BitReg) {
+  BitReg(x + y - x * y)
+}
+
+component Xor(x: BitReg, y: BitReg) {
+  BitReg(x + y - 2 * x * y)
+}
+
+component Xor3(x: BitReg, y: BitReg, z: BitReg) {
+  Xor(Xor(x, y), z)
+}
+
+component HalfAdder(x: BitReg, y: BitReg) {
+  sum := Xor(x, y);
+  carry := And(x, y);
+}
+
+component FullAdder(x: BitReg, y: BitReg, c: BitReg) {
+  sum := Xor(Xor(x, y), c);
+  carry := [c, 1 - c] -> (
+    Or(x, y),
+    And(x, y)
+  );
+}
+
+component Adder(x: Array<BitReg, 3>, y: Array<BitReg, 3>) {
+  a0 := HalfAdder(x[0], y[0]);
+  a1 := FullAdder(x[1], y[1], a0.carry);
+  a2 := FullAdder(x[2], y[2], a1.carry);
+  a0.sum + 2 * a1.sum + 4 * a2.sum
+}
+
+test {
+  // CHECK-DAG: 5 + 5 = 2 (mod 8)
+  one := BitReg(1);
+  zero := BitReg(0);
+  adder := Adder([one, zero, one], [one, zero, one]);
+  Log("5 + 5 = %u (mod 8)", adder);
+}
+
+test {
+  // CHECK-DAG: 3 + 1 = 4 (mod 8)
+  one := BitReg(1);
+  zero := BitReg(0);
+  adder := Adder([one, one, zero], [one, zero, zero]);
+  Log("3 + 1 = %u (mod 8)", adder);
+}
