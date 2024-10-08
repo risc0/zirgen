@@ -34,8 +34,7 @@ def BigInt : BigIntType<"BigInt", "bigint", [
   );
   let assemblyFormat = "`<` $coeffs `,` $maxPos `,` $maxNeg `,` $minBits `>`";
   let extraClassDeclaration = [{
-    size_t getMaxBits() {
-      // TODO: Wait ... what about MaxNeg? That requires more bits (since it takes a full width), but often isn't relevant...
+    size_t getMaxPosBits() {
       // Because 2^k requires k+1 bits to represent, we add 1 to getMaxPos before log2Ceil
       size_t extraBits = risc0::log2Ceil(getMaxPos() + 1);
       if (extraBits <= kBitsPerCoeff) {

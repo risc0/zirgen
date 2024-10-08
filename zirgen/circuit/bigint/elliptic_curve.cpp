@@ -165,8 +165,10 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
 AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt) {
   // This assumes `pt` is actually on the curve
   // This assumption isn't checked here, so other code must ensure it's met
-  // This algorithm doesn't work if `scalar` is a multiple of `pt`'s order
-  // This doesn't need a special check, as it always computes a P + -P, causing an EQZ failure
+  // This algorithm doesn't work if `scalar` is a multiple of `pt`'s order or negative
+  // These don't need a special check:
+  // Negatives always fail because this checks that scalar = 2q + r for q, r non-negative.
+  // Multiples of `pt`s order always fail as they always computes a P + -P, causing an EQZ failure
   // Because of how this function initializes based on `pt` in the double-and-add algorithm, and
   // because of the lack of branching in the recursion circuit, there will be certain scalars that
   // cannot be used with this mul (i.e., they'll give an EQZ error even though they are well-defined
@@ -196,7 +198,7 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt) 
   Value subtract_pt;
   Value dont_subtract_pt;
 
-  for (size_t it = 0; it < llvm::cast<BigIntType>(scalar.getType()).getMaxBits(); it++) {
+  for (size_t it = 0; it < llvm::cast<BigIntType>(scalar.getType()).getMaxPosBits(); it++) {
     // Compute the remainder of scale mod 2
     // We need exactly 0 or 1, not something congruent to them mod 2
     // Therefore, directly use the nondets, and check not just that the q * d + r = n but also that

@@ -119,11 +119,11 @@ LogicalResult NondetRemOp::inferReturnTypes(MLIRContext* ctx,
                                             SmallVectorImpl<Type>& out) {
   auto lhsType = adaptor.getLhs().getType().cast<BigIntType>();
   auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
-  auto maxBits = lhsType.getMaxBits();
-  if (rhsType.getMaxBits() < maxBits) {
-    maxBits = rhsType.getMaxBits();
+  auto outBits = lhsType.getMaxPosBits();
+  if (rhsType.getMaxPosBits() < outBits) {
+    outBits = rhsType.getMaxPosBits();
   }
-  size_t coeffsWidth = ceilDiv(maxBits, kBitsPerCoeff);
+  size_t coeffsWidth = ceilDiv(outBits, kBitsPerCoeff);
   out.push_back(BigIntType::get(ctx,
                                 /*coeffs=*/coeffsWidth,
                                 /*maxPos=*/(1 << kBitsPerCoeff) - 1,
@@ -138,7 +138,7 @@ LogicalResult NondetQuotOp::inferReturnTypes(MLIRContext* ctx,
                                              SmallVectorImpl<Type>& out) {
   auto lhsType = adaptor.getLhs().getType().cast<BigIntType>();
   auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
-  size_t outBits = lhsType.getMaxBits();
+  size_t outBits = lhsType.getMaxPosBits();
   if (rhsType.getMinBits() > 0) {
     outBits -= rhsType.getMinBits() - 1;
   }
@@ -157,7 +157,7 @@ LogicalResult NondetInvModOp::inferReturnTypes(MLIRContext* ctx,
                                                Adaptor adaptor,
                                                SmallVectorImpl<Type>& out) {
   auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
-  size_t coeffsWidth = ceilDiv(rhsType.getMaxBits(), kBitsPerCoeff);
+  size_t coeffsWidth = ceilDiv(rhsType.getMaxPosBits(), kBitsPerCoeff);
   out.push_back(BigIntType::get(ctx,
                                 /*coeffs=*/coeffsWidth,
                                 /*maxPos=*/(1 << kBitsPerCoeff) - 1,
@@ -171,7 +171,7 @@ LogicalResult ModularInvOp::inferReturnTypes(MLIRContext* ctx,
                                              Adaptor adaptor,
                                              SmallVectorImpl<Type>& out) {
   auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
-  size_t coeffsWidth = ceilDiv(rhsType.getMaxBits(), kBitsPerCoeff);
+  size_t coeffsWidth = ceilDiv(rhsType.getMaxPosBits(), kBitsPerCoeff);
   out.push_back(BigIntType::get(ctx,
                                 /*coeffs=*/coeffsWidth,
                                 /*maxPos=*/(1 << kBitsPerCoeff) - 1,
@@ -186,11 +186,11 @@ LogicalResult ReduceOp::inferReturnTypes(MLIRContext* ctx,
                                          SmallVectorImpl<Type>& out) {
   auto lhsType = adaptor.getLhs().getType().cast<BigIntType>();
   auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
-  auto maxBits = lhsType.getMaxBits();
-  if (rhsType.getMaxBits() < maxBits) {
-    maxBits = rhsType.getMaxBits();
+  auto outBits = lhsType.getMaxPosBits();
+  if (rhsType.getMaxPosBits() < outBits) {
+    outBits = rhsType.getMaxPosBits();
   }
-  size_t coeffsWidth = ceilDiv(maxBits, kBitsPerCoeff);
+  size_t coeffsWidth = ceilDiv(outBits, kBitsPerCoeff);
   out.push_back(BigIntType::get(ctx,
                                 /*coeffs=*/coeffsWidth,
                                 /*maxPos=*/(1 << kBitsPerCoeff) - 1,
