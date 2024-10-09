@@ -26,31 +26,6 @@ namespace zirgen::Zll {
 
 namespace {
 
-struct RemoveIf : public OpRewritePattern<IfOp> {
-  using OpRewritePattern::OpRewritePattern;
-  LogicalResult matchAndRewrite(IfOp op, PatternRewriter& rewriter) const override {
-    OpBuilder::InsertionGuard guard(rewriter);
-
-    for (auto& bodyOp : llvm::make_early_inc_range(op.getInner().front().without_terminator())) {
-      TypeSwitch<Operation&>(bodyOp)
-          .Case<IfOp>([&](auto ifOp) {
-            rewriter.setInsertionPoint(op);
-            auto mulOp = rewriter.create<MulOp>(bodyOp.getLoc(), ifOp.getCond(), op.getCond());
-            rewriter.modifyOpInPlace(ifOp, [&]() { ifOp.getCondMutable().set(mulOp); });
-            rewriter.moveOpBefore(ifOp, op);
-          })
-          .Case<EqualZeroOp>([&](auto equalZeroOp) {
-            rewriter.setInsertionPoint(op);
-            auto mulOp = rewriter.create<MulOp>(bodyOp.getLoc(), equalZeroOp.getIn(), op.getCond());
-            rewriter.modifyOpInPlace(equalZeroOp, [&]() { equalZeroOp.getInMutable().set(mulOp); });
-          });
-      rewriter.moveOpBefore(&bodyOp, op);
-    }
-    rewriter.eraseOp(op);
-    return success();
-  }
-};
-
 struct MultiplyToIfPass : public MultiplyToIfBase<MultiplyToIfPass> {
   DenseMap</*factor=*/Value, /*count=*/SmallVector<EqualZeroOp>> factorConstraints;
   SmallVector</*factor=*/Value> factors;
@@ -70,12 +45,21 @@ struct MultiplyToIfPass : public MultiplyToIfBase<MultiplyToIfPass> {
     }
   }
 
-  void sinkConstraint(EqualZeroOp op, Value factor) {
+  void sinkConstraint(EqualZeroOp op, Value factor, size_t numShared) {
     if (needsReconstruction.contains(op)) {
       op.getInMutable().set(factor);
       needsReconstruction.erase(op);
       return;
     }
+
+    if (numShared == 1) {
+      // This factor is only used by this operation. Instead of creating an if statement, multiply it out.
+      OpBuilder builder(op);
+      auto mulOp = builder.create<Zll::MulOp>(op.getLoc(), factor, op.getIn());
+      op.getInMutable().set(mulOp);
+      return;
+    }
+      
 
     Block* b = op->getBlock();
 
@@ -106,8 +90,9 @@ struct MultiplyToIfPass : public MultiplyToIfBase<MultiplyToIfPass> {
       //      llvm::errs() << "factor " << factor << " count " <<
       //      factorConstraints.at(factor).size()
       //                   << "\n";
-      for (EqualZeroOp eqzOp : factorConstraints.at(factor))
-        sinkConstraint(eqzOp, factor);
+      auto ops = factorConstraints.at(factor);
+      for (EqualZeroOp eqzOp : ops)
+        sinkConstraint(eqzOp, factor, ops.size());
     }
 
     assert(needsReconstruction.empty());
