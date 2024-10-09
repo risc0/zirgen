@@ -33,6 +33,7 @@ def BigInt : BigIntType<"BigInt", "bigint", [
     "size_t": $minBits  // If minBits == 0, no constraint, otherwise N >= 2^(minBits - 1)
   );
   let assemblyFormat = "`<` $coeffs `,` $maxPos `,` $maxNeg `,` $minBits `>`";
+  let genVerifyDecl = 1;
   let extraClassDeclaration = [{
     size_t getMaxPosBits() {
       // Because 2^k requires k+1 bits to represent, we add 1 to getMaxPos before log2Ceil
