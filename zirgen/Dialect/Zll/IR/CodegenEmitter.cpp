@@ -354,6 +354,10 @@ CodegenEmitter::getNewValueName(mlir::Value val, llvm::StringRef namePrefix, boo
 }
 
 void CodegenEmitter::emitExpr(Operation* op) {
+  if (auto f = opts.opSyntax.lookup(op->getName().getStringRef())) {
+    f(*this, op);
+    return;
+  }
   if (auto codegenOp = dyn_cast<CodegenExprOpInterface>(op)) {
     codegenOp.emitExpr(*this);
     return;
@@ -401,7 +405,7 @@ void CodegenEmitter::emitExpr(Operation* op) {
 }
 
 void CodegenEmitter::emitLiteral(mlir::Type ty, mlir::Attribute value) {
-  if (auto f = opts.literalHandlers.lookup(value.getAbstractAttribute().getName())) {
+  if (auto f = opts.literalSyntax.lookup(value.getAbstractAttribute().getName())) {
     f(*this, value);
     return;
   }

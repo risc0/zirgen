@@ -429,7 +429,6 @@ private:
             ctx.fp.var(op.getOut());
           })
           .Case<GetOp>([&](GetOp op) {
-            llvm::errs() << op << "\n";
             ss << "PolyExtStep::Get(" << emitIntAttr(op, "tap") << ")";
             ctx.fp.var(op.getOut());
           })

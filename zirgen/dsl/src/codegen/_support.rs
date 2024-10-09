@@ -108,12 +108,12 @@ where
 
 pub fn map_layout<T, Layout, U, F, RowType, const N: usize>(
     arr: [T; N],
-    layouts: BoundLayout<[&'static Layout; N], RowType>,
+    layouts: &BoundLayout<[&'static Layout; N], RowType>,
     mut f: F,
 ) -> Result<[U; N]>
 where
     T: Copy,
-    F: FnMut(T, BoundLayout<Layout, RowType>) -> Result<U>,
+    F: FnMut(T, &BoundLayout<Layout, RowType>) -> Result<U>,
     RowType: BufferRow,
 {
     // Unfortunately, we have to convert from an Array to an Iterator to collect
@@ -122,7 +122,7 @@ where
     // to unwrap with an unreachable error handler.
     // Once it is stable, this function's implementation can be replaced with:
     // try_from_fn(|i| f(&arr[i], &layouts[i]))
-    let mapped: [Result<U>; N] = from_fn(|i| f(arr[i], layouts.map(|layout| layout[i])));
+    let mapped: [Result<U>; N] = from_fn(|i| f(arr[i], &layouts.map(|layout| layout[i])));
     mapped
         .into_iter()
         .collect::<Result<Vec<U>>>()
@@ -148,7 +148,7 @@ where
 pub fn reduce_layout<T, Layout, U, F, RowType, const N: usize>(
     arr: [T; N],
     init: U,
-    layouts: BoundLayout<[&'static Layout; N], RowType>,
+    layouts: &BoundLayout<[&'static Layout; N], RowType>,
     mut f: F,
 ) -> Result<U>
 where
@@ -197,8 +197,27 @@ pub fn in_range<E: Elem + Into<u32>>(low: E, mid: E, high: E) -> Result<E> {
     }
 }
 
-pub fn get<E: Elem>(buf: &impl BufferRow<ValType = E>, offset: usize, _: usize) -> Result<E> {
-    Ok(buf.load(offset, 0))
+pub trait Usizable {
+    fn as_usize(&self) -> usize;
+}
+
+impl Usizable for
+risc0_core::field::baby_bear::BabyBearElem {
+    fn as_usize(&self) -> usize {
+        u32::from(*self) as usize
+    }
+}
+
+impl Usizable for usize {
+    fn as_usize(&self) -> usize { *self }
+}
+
+impl Usizable for i32 {
+    fn as_usize(&self) -> usize { *self as usize }
+}
+
+pub fn to_usize<E: Usizable>(elem: E) -> usize {
+    elem.as_usize()
 }
 
 // Locally import all the codegen_* macros without the codegen_ prefix.

@@ -25,9 +25,10 @@ build_circuit(
     name = "keccak",
     outs = ZIRGEN_OUTS,
     bin = "//zirgen/Main:gen_zirgen",
-    data = KECCAK_ZIR_FILES,
+    data = KECCAK_ZIR_FILES + ["//zirgen/dsl/examples:calculator.zir"],
     extra_args = [
         "zirgen/circuit/keccak/keccak.zir",
+#        "zirgen/dsl/examples/calculator.zir",
         "-I",
         "zirgen/circuit/keccak",
     ],

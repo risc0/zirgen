@@ -221,20 +221,38 @@ struct CodegenOptions {
   CodegenOptions() = default;
   CodegenOptions(LanguageSyntax* lang) : lang(lang) {}
 
-  // Add a handler to emit specific syntax to construct a literal value.
-  template <typename AttrT> void addLiteralHandler(std::function<void(CodegenEmitter&, AttrT)> f) {
-    addLiteralHandler(AttrT::name, [f](CodegenEmitter& cg, mlir::Attribute attr) {
+  // Add a syntax to to construct a literal value.
+  template <typename AttrT>
+void
+  addLiteralSyntax(std::function<void(CodegenEmitter&, AttrT)> f) {
+    addLiteralSyntax(AttrT::name, [f](CodegenEmitter& cg, mlir::Attribute attr) {
       f(cg, llvm::cast<AttrT>(attr));
     });
   }
-  void addLiteralHandler(llvm::StringRef name,
+  void addLiteralSyntax(llvm::StringRef name,
                          std::function<void(CodegenEmitter&, mlir::Attribute)> f) {
-    if (literalHandlers.contains(name)) {
-      llvm::errs() << "Duplicate literal handler defined for attribute " << name << "\b";
+    if (literalSyntax.contains(name)) {
+      llvm::errs() << "Duplicate literal syntax defined for attribute " << name << "\b";
       abort();
     }
 
-    literalHandlers[name] = f;
+    literalSyntax[name] = f;
+  }
+  
+  template <typename OpT>
+  void addOpSyntax(std::function<void(CodegenEmitter&, OpT)> f) {
+    addOpSyntax(OpT::getOperationName(), [f](CodegenEmitter& cg, mlir::Operation* op) {
+      f(cg, llvm::cast<OpT>(op));
+    });
+  }
+  void addOpSyntax(llvm::StringRef name,
+                         std::function<void(CodegenEmitter&, mlir::Operation*)> f) {
+    if (opSyntax.contains(name)) {
+      llvm::errs() << "Duplicate operation syntax defined for operation " << name << "\b";
+      abort();
+    }
+
+    opSyntax[name] = f;
   }
 
   // Add a context argument to be included when defining functions of the given operation type(s)
@@ -260,9 +278,11 @@ struct CodegenOptions {
 
   LanguageSyntax* lang = nullptr;
 
-  llvm::StringMap<std::function<void(CodegenEmitter&, mlir::Attribute)>> literalHandlers;
   llvm::StringMap<llvm::SmallVector<std::string>> funcContextArgs;
   llvm::StringMap<llvm::SmallVector<std::string>> callContextArgs;
+
+  llvm::StringMap<std::function<void(CodegenEmitter&, mlir::Attribute)>> literalSyntax;
+  llvm::StringMap<std::function<void(CodegenEmitter&, mlir::Operation*)>> opSyntax;
 };
 
 // Manages emitting generated code.

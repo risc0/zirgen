@@ -56,6 +56,8 @@ const BIGINT_OUTPUTS: &[&str] = &["bigint.rs.inc"];
 const BIGINT_ZKR_ZIP: &str = "bigint_zkr.zip";
 
 const ZIRGEN_RUST_OUTPUTS: &[&str] = &[
+    "taps.rs",
+    "info.rs",
     "poly_ext.rs",
     "defs.rs.inc",
     "types.rs.inc",
@@ -64,6 +66,7 @@ const ZIRGEN_RUST_OUTPUTS: &[&str] = &[
 ];
 
 const ZIRGEN_SYS_OUTPUTS: &[&str] = &[
+    "taps.cpp",
     "defs.cpp.inc",
     "types.h.inc",
     "layout.cpp.inc",

@@ -16,6 +16,7 @@ use crate::keccak_circuit;
 use anyhow::{anyhow, Result};
 use core::cell::RefCell;
 use keccak_circuit::{CircuitField, ExtVal, MixState, Val};
+use risc0_zirgen_dsl::{CycleContext, CycleRow, GlobalRow};
 use risc0_zkp::{
     field::Elem,
     hal::cpu::{CpuBuffer, CpuHal},
@@ -42,11 +43,21 @@ impl CpuCircuitHal {
 
 pub struct CpuExecContext<'a> {
     cycle: usize,
+    tot_cycles: usize,
     mem: &'a RefCell<Vec<Val>>,
 
     elems_per_word: &'a RefCell<usize>,
     input: &'a RefCell<VecDeque<u32>>,
     input_elems: &'a RefCell<VecDeque<Val>>,
+}
+
+impl<'a> CycleContext for CpuExecContext<'a> {
+    fn cycle(&self) -> usize {
+        self.cycle
+    }
+    fn tot_cycles(&self) -> usize {
+        self.tot_cycles
+    }
 }
 
 impl<'a> CpuExecContext<'a> {
@@ -96,6 +107,14 @@ impl<'a> CpuExecContext<'a> {
     pub fn log(&self, message: &str, x: impl AsRef<[Val]>) -> Result<()> {
         risc0_zirgen_dsl::codegen::default_log(message, x.as_ref())
     }
+
+    // Stubs so we can compile with calculator circuit for rapid iteration
+    pub fn get_val_from_user(&self) -> Result<Val> {
+        unimplemented!()
+    }
+    pub fn output_to_user(&self, _ov: Val) -> Result<()> {
+        unimplemented!()
+    }
 }
 
 impl<'a> keccak_circuit::CircuitHal<'a, CpuHal<CircuitField>> for CpuCircuitHal {
@@ -108,30 +127,23 @@ impl<'a> keccak_circuit::CircuitHal<'a, CpuHal<CircuitField>> for CpuCircuitHal 
         let elems_per_word = &RefCell::new(0);
         let input_elems: &RefCell<VecDeque<Val>> = &RefCell::new(Default::default());
 
-        risc0_zirgen_dsl::cpu::run_serial(
-            keccak_circuit::get_named_buffers([("data", data), ("global", global)]),
-            tot_cycles,
-            |ctx, cycle| -> Result<()> {
-                // Clone it so we run with identical inputs and outputs for each cycle.
-                let exec_context = CpuExecContext {
-                    mem: &self.mem,
-                    cycle,
-                    elems_per_word,
-                    input: &self.input,
-                    input_elems,
-                };
-                let ctx = ctx.wrap(&exec_context);
+        let data = &data.as_slice_sync();
+        let data = CycleRow { buf: data };
+        let global = global.as_slice_sync();
+        let global = GlobalRow { buf: &global };
 
-                keccak_circuit::step_top(
-                    &ctx,
-                    keccak_circuit::get_data_buffer(&ctx),
-                    keccak_circuit::get_global_buffer(&ctx),
-                )?;
+        for cycle in 0..tot_cycles {
+            let exec_context = CpuExecContext {
+                mem: &self.mem,
+                cycle,
+                tot_cycles,
+                elems_per_word,
+                input: &self.input,
+                input_elems,
+            };
 
-                Ok(())
-            },
-        )?;
-
+            keccak_circuit::step_top(&exec_context, &data, &global)?;
+        }
         Ok(())
     }
 
@@ -169,7 +181,7 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
         po2: usize,
         cycles: usize,
     ) {
-        let buffers = keccak_circuit::get_named_buffers(
+        /*        let buffers = keccak_circuit::get_named_buffers(
             risc0_zirgen_dsl::eval_check_named_buffers(groups, globals),
         );
 
@@ -190,6 +202,7 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
                 )
             },
         )
-        .expect("Expected eval check to succeed");
+        .expect("Expected eval check to succeed");*/
+        unimplemented!()
     }
 }

@@ -65,11 +65,13 @@ macro_rules! zirgen_preamble {
         use $crate::codegen::_support::*;
         use $crate::codegen::taps::{make_taps, Tap};
         use $crate::{BoundLayout, BufferRow, BufferSpec, Buffers};
+        use $crate::{CycleRow,CycleContext,GlobalRow};
+        use risc0_zkp::layout::Reg;
 
-        lazy_static::lazy_static! {
+/*        lazy_static::lazy_static! {
             pub static ref TAPS : risc0_zkp::taps::TapSet<'static> = make_taps(TAP_LIST.as_slice(),
                                                                                TAP_GROUP_NAMES);
-        }
+      }*/
 
         // Explicitly instantiate calls that cause rustc to be very slow
         // when processing large generated code.
@@ -85,25 +87,14 @@ macro_rules! zirgen_preamble {
         fn and_eqz_ext(poly_mix: ExtVal, x: MixState, val: ExtVal) -> Result<MixState> {
             and_eqz_generic::<CircuitField, ExtVal>(poly_mix, x, val)
         }
-        fn load(buf: BoundLayout<Reg, impl BufferRow<ValType = Val>>, back: usize) -> Val {
-            buf.buf().load(buf.layout().offset, back)
+/*        fn store(ctx: impl CycleContext, buf: BoundLayout<Reg, impl BufferRow<ValType = Val>>, val: Val) {
+            buf.buf().store(ctx, buf.layout().offset, val)
         }
-        fn load_ext(buf: BoundLayout<Reg, impl BufferRow<ValType = Val>>, back: usize) -> ExtVal {
-            ExtVal::new(
-                buf.buf().load(buf.layout().offset + 0, back),
-                buf.buf().load(buf.layout().offset + 1, back),
-                buf.buf().load(buf.layout().offset + 2, back),
-                buf.buf().load(buf.layout().offset + 3, back),
-            )
-        }
-        fn store(buf: BoundLayout<Reg, impl BufferRow<ValType = Val>>, val: Val) {
-            buf.buf().store(buf.layout().offset, val)
-        }
-        fn store_ext(buf: BoundLayout<Reg, impl BufferRow<ValType = Val>>, val: ExtVal) {
+        fn store_ext(ctx: impl CycleContext, buf: BoundLayout<Reg, impl BufferRow<ValType = Val>>, val: ExtVal) {
             for (i, coef) in val.elems().iter().enumerate() {
-                buf.buf().store(buf.layout().offset + i, *coef);
+                buf.buf().store(ctx, buf.layout().offset + i, *coef);
             }
-        }
+        }*/
         fn alias_layout<Layout: PartialEq, B: BufferRow>(
             x: BoundLayout<Layout, B>,
             y: BoundLayout<Layout, B>,
@@ -116,7 +107,7 @@ macro_rules! zirgen_preamble {
         }
 
         // risc0_zkp-compatible CircuitDef
-        pub struct CircuitDef;
+/*        pub struct CircuitDef;
         type ValidityRegsContext<'a> = $crate::cpu::CpuBuffers<'a, Val, ()>;
         type ValidityTapsContext<'a> = $crate::Buffers<(), &'a [Val], ()>;
         impl risc0_zkp::adapter::CircuitInfo for CircuitDef {
@@ -161,7 +152,7 @@ macro_rules! zirgen_preamble {
                 "reg"
             }
         }
-
+*/
         // Eventually we want to generate this trait based on what functions are available,
         // but for now we can hardcode it.
         pub trait CircuitHal<'a, H: risc0_zkp::hal::Hal<Elem = Val>> {

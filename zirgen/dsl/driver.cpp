@@ -183,7 +183,6 @@ int main(int argc, char* argv[]) {
   // contigious for preflight, consider re-adding once preflight correctly uses
   // layout output.
   // pm.addPass(zirgen::ZStruct::createOptimizeLayoutPass());
-  pm.addPass(zirgen::dsl::createFieldDCEPass());
   pm.addPass(mlir::createCanonicalizerPass());
   pm.addPass(mlir::createCSEPass());
   if (failed(pm.run(typedModule.value()))) {
@@ -203,8 +202,6 @@ int main(int argc, char* argv[]) {
   zirgen::addTypingPasses(pm);
 
   pm.addPass(zirgen::dsl::createGenerateCheckPass());
-  pm.addPass(zirgen::dsl::createOptimizePass());
-  pm.addPass(zirgen::dsl::createHoistInvariantsPass());
   if (genValidity) {
     pm.addPass(zirgen::dsl::createGenerateTapsPass());
     pm.addPass(zirgen::dsl::createGenerateValidityRegsPass());

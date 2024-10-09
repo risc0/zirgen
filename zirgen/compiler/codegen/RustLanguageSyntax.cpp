@@ -81,7 +81,7 @@ void RustLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
     Type ty = std::get<1>(nt);
     cg << name << ": ";
     if (ty.hasTrait<CodegenLayoutTypeTrait>())
-      cg << "BoundLayout<" << cg.getTypeName(ty) << ", impl BufferRow<ValType = Val>>";
+      cg << "&BoundLayout<" << cg.getTypeName(ty) << ", impl BufferRow<ValType = Val>>";
     else if (auto bufTy = llvm::dyn_cast<BufferType>(ty)) {
       if (bufTy.getElement().getExtended())
         cg << "&impl BufferRow<ValType = ExtVal>";
@@ -132,7 +132,7 @@ void RustLanguageSyntax::emitSaveResults(CodegenEmitter& cg,
     cg << "let " << names[0];
     Type ty = types[0];
     if (ty.hasTrait<CodegenLayoutTypeTrait>()) {
-      cg << " : BoundLayout<" << cg.getTypeName(types[0]) << ", _>";
+      cg << " : &BoundLayout<" << cg.getTypeName(types[0]) << ", _>";
     } else {
       cg << " : ";
       if (Type(types[0]).hasTrait<CodegenOnlyPassByReferenceTypeTrait>())

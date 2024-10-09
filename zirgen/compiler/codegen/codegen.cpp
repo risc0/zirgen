@@ -33,14 +33,14 @@ namespace codegen {
 namespace {
 
 void addCommonSyntax(CodegenOptions& opts) {
-  opts.addLiteralHandler<IntegerAttr>(
-      [](CodegenEmitter& cg, auto intAttr) { cg << intAttr.getValue().getZExtValue(); });
-  opts.addLiteralHandler<StringAttr>(
+  opts.addLiteralSyntax<StringAttr>(
       [](CodegenEmitter& cg, auto strAttr) { cg.emitEscapedString(strAttr); });
+  opts.addLiteralSyntax<IntegerAttr>(
+    [](CodegenEmitter& cg, auto intAttr) { cg << intAttr.getValue().getZExtValue(); });
 }
 
 void addCppSyntax(CodegenOptions& opts) {
-  opts.addLiteralHandler<PolynomialAttr>([&](CodegenEmitter& cg, auto polyAttr) {
+  opts.addLiteralSyntax<PolynomialAttr>([&](CodegenEmitter& cg, auto polyAttr) {
     auto elems = polyAttr.asArrayRef();
     if (elems.size() == 1) {
       cg << "Val(" << elems[0] << ")";
@@ -53,7 +53,7 @@ void addCppSyntax(CodegenOptions& opts) {
 }
 
 void addRustSyntax(CodegenOptions& opts) {
-  opts.addLiteralHandler<PolynomialAttr>([&](CodegenEmitter& cg, auto polyAttr) {
+  opts.addLiteralSyntax<PolynomialAttr>([&](CodegenEmitter& cg, auto polyAttr) {
     auto elems = polyAttr.asArrayRef();
     if (elems.size() == 1) {
       cg << "Val::new(" << elems[0] << ")";

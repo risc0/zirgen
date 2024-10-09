@@ -126,8 +126,6 @@ void emitPoly(ModuleOp mod) {
   
   zirgen::Zll::setModuleAttr(funcMod, builder.getAttr<zirgen::Zll::ProtocolInfoAttr>(protocolInfo));
 
-  llvm::errs() << "funcmod: " << funcMod << "\n";
-
   mlir::PassManager pm(mod.getContext());
   applyDefaultTimingPassManagerCLOptions(pm);
   if (failed(applyPassManagerCLOptions(pm))) {
