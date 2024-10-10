@@ -1,7 +1,5 @@
 // RUN: zirgen-opt %s -split-input-file -verify-diagnostics
 
-// TODO: Add verifier that at least one of `max_neg` and `min_bits` must be zero
-
 // Type inference for `add`:
 //
 //  - `coeffs` is max of the input coeffs

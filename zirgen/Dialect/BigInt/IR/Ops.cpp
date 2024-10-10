@@ -143,12 +143,12 @@ LogicalResult NondetQuotOp::inferReturnTypes(MLIRContext* ctx,
     outBits -= rhsType.getMinBits() - 1;
   }
   size_t coeffsWidth = ceilDiv(outBits, kBitsPerCoeff);
+  // TODO: We could be more clever on minBits, but probably doesn't matter
   out.push_back(BigIntType::get(ctx,
                                 /*coeffs=*/coeffsWidth,
                                 /*maxPos=*/(1 << kBitsPerCoeff) - 1,
                                 /*maxNeg=*/0,
-                                /*minBits=*/0 /*TODO: maybe better bound? */
-                                ));
+                                /*minBits=*/0));
   return success();
 }
 
