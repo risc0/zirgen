@@ -23,7 +23,10 @@ void remapInlinedLocations(iterator_range<Region::iterator> inlinedBlocks, Locat
   auto remapOpLoc = [&](Operation* op) {
     auto it = mappedLocations.find(op->getLoc());
     if (it == mappedLocations.end()) {
-      auto newLoc = CallSiteLoc::get(op->getLoc(), callerLoc);
+      Location newLoc = op->getLoc();
+      if (newLoc != callerLoc) {
+        newLoc = CallSiteLoc::get(op->getLoc(), callerLoc);
+      }
       it = mappedLocations.try_emplace(op->getLoc(), newLoc).first;
     }
     op->setLoc(it->second);

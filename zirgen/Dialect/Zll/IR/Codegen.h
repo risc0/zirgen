@@ -222,15 +222,13 @@ struct CodegenOptions {
   CodegenOptions(LanguageSyntax* lang) : lang(lang) {}
 
   // Add a syntax to to construct a literal value.
-  template <typename AttrT>
-void
-  addLiteralSyntax(std::function<void(CodegenEmitter&, AttrT)> f) {
+  template <typename AttrT> void addLiteralSyntax(std::function<void(CodegenEmitter&, AttrT)> f) {
     addLiteralSyntax(AttrT::name, [f](CodegenEmitter& cg, mlir::Attribute attr) {
       f(cg, llvm::cast<AttrT>(attr));
     });
   }
   void addLiteralSyntax(llvm::StringRef name,
-                         std::function<void(CodegenEmitter&, mlir::Attribute)> f) {
+                        std::function<void(CodegenEmitter&, mlir::Attribute)> f) {
     if (literalSyntax.contains(name)) {
       llvm::errs() << "Duplicate literal syntax defined for attribute " << name << "\b";
       abort();
@@ -238,15 +236,12 @@ void
 
     literalSyntax[name] = f;
   }
-  
-  template <typename OpT>
-  void addOpSyntax(std::function<void(CodegenEmitter&, OpT)> f) {
-    addOpSyntax(OpT::getOperationName(), [f](CodegenEmitter& cg, mlir::Operation* op) {
-      f(cg, llvm::cast<OpT>(op));
-    });
+
+  template <typename OpT> void addOpSyntax(std::function<void(CodegenEmitter&, OpT)> f) {
+    addOpSyntax(OpT::getOperationName(),
+                [f](CodegenEmitter& cg, mlir::Operation* op) { f(cg, llvm::cast<OpT>(op)); });
   }
-  void addOpSyntax(llvm::StringRef name,
-                         std::function<void(CodegenEmitter&, mlir::Operation*)> f) {
+  void addOpSyntax(llvm::StringRef name, std::function<void(CodegenEmitter&, mlir::Operation*)> f) {
     if (opSyntax.contains(name)) {
       llvm::errs() << "Duplicate operation syntax defined for operation " << name << "\b";
       abort();

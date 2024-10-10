@@ -34,6 +34,7 @@ cc_library(
     srcs = [
         "CommonRewrites.cpp",
         "ElideTrivialStructs.cpp",
+        "TopologicalShuffle.cpp",
         "HoistInvariants.cpp",
         "EraseUnusedAspects.cpp",
         "GenerateAccum.cpp",

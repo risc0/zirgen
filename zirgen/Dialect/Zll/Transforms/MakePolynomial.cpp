@@ -92,8 +92,7 @@ struct MakePolynomialPass : public MakePolynomialBase<MakePolynomialPass> {
     auto builder = OpBuilder::atBlockBegin(newBlock);
 
     // Change the function to output the final constraint
-    func.setFunctionTypeAttr(
-      TypeAttr::get(
+    func.setFunctionTypeAttr(TypeAttr::get(
         builder.getFunctionType(func.getArgumentTypes(), {builder.getType<ConstraintType>()})));
 
     // Make the rewriter + run on the entry block

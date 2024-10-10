@@ -36,7 +36,7 @@ void addCommonSyntax(CodegenOptions& opts) {
   opts.addLiteralSyntax<StringAttr>(
       [](CodegenEmitter& cg, auto strAttr) { cg.emitEscapedString(strAttr); });
   opts.addLiteralSyntax<IntegerAttr>(
-    [](CodegenEmitter& cg, auto intAttr) { cg << intAttr.getValue().getZExtValue(); });
+      [](CodegenEmitter& cg, auto intAttr) { cg << intAttr.getValue().getZExtValue(); });
 }
 
 void addCppSyntax(CodegenOptions& opts) {

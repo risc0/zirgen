@@ -1270,4 +1270,21 @@ void AndCondOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
     cg.emitFuncCall(cg.getStringAttr("andCond"), {getIn(), getCond(), getInner()});
 }
 
+void IfOp::getRegionInvocationBounds(
+    ::llvm::ArrayRef<::mlir::Attribute> operands,
+    ::llvm::SmallVectorImpl<::mlir::InvocationBounds>& invocationBounds) {
+  invocationBounds.append(getOperation()->getNumRegions(), InvocationBounds(0, 1));
+}
+
+void IfOp::getSuccessorRegions(::mlir::RegionBranchPoint point,
+                               ::llvm::SmallVectorImpl<::mlir::RegionSuccessor>& regions) {
+  // The `then` and the `else` region branch back to the parent operation.
+  if (!point.isParent()) {
+    regions.push_back(RegionSuccessor(getOperation()->getResults()));
+    return;
+  }
+
+  regions.push_back(RegionSuccessor(&getInner()));
+}
+
 } // namespace zirgen::Zll

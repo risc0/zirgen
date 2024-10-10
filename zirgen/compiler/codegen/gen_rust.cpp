@@ -265,10 +265,11 @@ private:
                                           emitIntAttr(op, "back"))
                                 .str());
             if (op->hasAttr("unchecked")) {
-              lines.push_back(indent +
-                              llvm::formatv("if ({0} == {1}::invalid()) {0} = 0;", out, type).str());
+              lines.push_back(
+                  indent + llvm::formatv("if ({0} == {1}::invalid()) {0} = 0;", out, type).str());
             } else {
-              lines.push_back(indent + llvm::formatv("assert({0} != {1}::invalid());", out, type).str());
+              lines.push_back(indent +
+                              llvm::formatv("assert({0} != {1}::invalid());", out, type).str());
             }
           } else {
             lines.push_back(
@@ -289,7 +290,8 @@ private:
                                                 emitIntAttr(op, "offset"))
                                       .str());
           lines.push_back(inner + llvm::formatv("assert(reg == {1}::invalid() || reg == {0});",
-                                                ctx.use(op->getOperand(1)), type)
+                                                ctx.use(op->getOperand(1)),
+                                                type)
                                       .str());
           lines.push_back(inner + llvm::formatv("reg = {0};", ctx.use(op->getOperand(1))).str());
           lines.push_back(indent + "}");
@@ -319,7 +321,8 @@ private:
         .Case<IsZeroOp>([&](IsZeroOp op) {
           lines.push_back(indent + llvm::formatv("auto {0} = ({1} == 0) ? {2}(1) : {2}(0);",
                                                  ctx.def(op.getOut()),
-                                                 ctx.use(op->getOperand(0)), type)
+                                                 ctx.use(op->getOperand(0)),
+                                                 type)
                                        .str());
         })
         .Case<InvOp>([&](InvOp op) {
@@ -359,7 +362,8 @@ private:
           lines.push_back(indent + llvm::formatv("auto {0} ={3}p({1}.asUInt32() & {2}.asUInt32());",
                                                  ctx.def(op.getOut()),
                                                  ctx.use(op->getOperand(0)),
-                                                 ctx.use(op->getOperand(1)), type)
+                                                 ctx.use(op->getOperand(1)),
+                                                 type)
                                        .str());
         })
         .Case<TrueOp>([&](TrueOp op) {

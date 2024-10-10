@@ -56,7 +56,9 @@ static cl::opt<std::string>
 static cl::list<std::string> includeDirs("I", cl::desc("Add include path"), cl::value_desc("path"));
 static cl::opt<size_t>
     maxDegree("max-degree", cl::desc("Maximum degree of validity polynomial"), cl::init(5));
-static cl::opt<std::string> protocolInfo("protocol-info", cl::desc("Protocol information string"), cl::init("ZIRGEN_TEST_____"));
+static cl::opt<std::string> protocolInfo("protocol-info",
+                                         cl::desc("Protocol information string"),
+                                         cl::init("ZIRGEN_TEST_____"));
 
 namespace {
 
@@ -123,7 +125,7 @@ void emitPoly(ModuleOp mod, StringRef circuitName) {
     newFuncOp.getBody().getBlocks().clear();
     funcOp.getBody().cloneInto(&newFuncOp.getBody(), mapping);
   });
-  
+
   zirgen::Zll::setModuleAttr(funcMod, builder.getAttr<zirgen::Zll::ProtocolInfoAttr>(protocolInfo));
 
   mlir::PassManager pm(mod.getContext());
@@ -218,6 +220,8 @@ int main(int argc, char* argv[]) {
   checkPasses.addPass(mlir::createCSEPass());
   checkPasses.addPass(zirgen::Zll::createMultiplyToIfPass());
   checkPasses.addPass(mlir::createCanonicalizerPass());
+  checkPasses.addPass(createControlFlowSinkPass());
+  checkPasses.addPass(zirgen::dsl::createTopologicalShufflePass());
   checkPasses.addPass(mlir::createPrintIRPass());
   //  pm.addPass(zirgen::dsl::createGenerateValidityRegsPass());
 

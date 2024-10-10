@@ -38,6 +38,7 @@ std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createElideTrivialStructsPa
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createInlinePurePass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createFieldDCEPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createHoistInvariantsPass();
+std::unique_ptr<mlir::Pass> createTopologicalShufflePass();
 
 // Generate the code for registering passes.
 #define GEN_PASS_REGISTRATION

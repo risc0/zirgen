@@ -162,4 +162,9 @@ def HoistInvariants : Pass<"hoist-invariants", "mlir::ModuleOp"> {
   let constructor = "zirgen::dsl::createHoistInvariantsPass()";
 }
 
+def TopologicalShuffle : Pass<"topological-shuffle"> {
+  let summary = "Reverse blocks, then topologically sort";
+  let constructor = "zirgen::dsl::createTopologicalShufflePass()";
+}
+
 #endif // ZIRGEN_PASSES

@@ -47,7 +47,6 @@ static void bridgeCallback(void* ctx,
   }
 }
 
-
 #if defined(__clang__)
 #pragma clang diagnostic ignored "-Wreturn-type-c-linkage"
 #endif

@@ -69,6 +69,7 @@ def NondetOp : ZllOp<"nondet", [
 def IfOp : ZllOp<"if", [
     RecursiveMemoryEffects,
     SingleBlockImplicitTerminator<"TerminateOp">, EvalOpAdaptor,
+    DeclareOpInterfaceMethods<RegionBranchOpInterface, ["getRegionInvocationBounds"]>,
     DeclareOpInterfaceMethods<CodegenStatementOpInterface>]> {
   let summary = "Execute this region if input is nonzero";
   let arguments = (ins Val:$cond);

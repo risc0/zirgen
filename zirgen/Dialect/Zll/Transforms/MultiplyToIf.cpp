@@ -42,7 +42,11 @@ struct Sinker {
       countFactors(eqzOp, mulOp.getLhs());
       countFactors(eqzOp, mulOp.getRhs());
     } else {
-      eqzOpOrder[eqzOp] = factorOrder[factor] = idx++;
+      ++idx;
+      auto& eqzOrder = eqzOpOrder[eqzOp];
+      eqzOrder = idx;
+      auto& facOrder = factorOrder[factor];
+      facOrder = idx;
       factorConstraints[factor].insert(eqzOp);
       constraintFactors[eqzOp].insert(factor);
     }
@@ -57,9 +61,10 @@ struct Sinker {
       Value bestFactor;
       size_t numBestFactor = 0;
       for (auto [k, v] : factorConstraints) {
-        if (v.size() <= 1) continue;
+        if (v.size() <= 1)
+          continue;
         if (v.size() > numBestFactor ||
-            (v.size() == numBestFactor && factorOrder.at(k) > factorOrder.at(bestFactor))) {
+            (v.size() == numBestFactor && factorOrder.at(k) < factorOrder.at(bestFactor))) {
           numBestFactor = v.size();
           bestFactor = k;
         }
@@ -116,11 +121,11 @@ struct Sinker {
 struct MultiplyToIfPass : public MultiplyToIfBase<MultiplyToIfPass> {
   void runOnOperation() override {
     getOperation()->walk<WalkOrder::PreOrder>([&](Block* block) {
-            llvm::errs() << "Sinking block of size " << block->getOperations().size() << "\n";
+      llvm::errs() << "Sinking block of size " << block->getOperations().size() << "\n";
       //      block->print(llvm::errs());
       Sinker sinker;
       sinker.sinkConstraints(block);
-            llvm::errs() << "Block now size " << block->getOperations().size() << "\n";
+      llvm::errs() << "Block now size " << block->getOperations().size() << "\n";
       //      block->print(llvm::errs());
     });
   }

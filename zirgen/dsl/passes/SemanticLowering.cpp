@@ -652,7 +652,10 @@ struct GenerateValidityRegsPass : public GenerateValidityRegsBase<GenerateValidi
                    Value state,
                    Value polyMixArg) {
     for (Operation& origOp : block.without_terminator()) {
-      Location opLoc = CallSiteLoc::get(loc, origOp.getLoc());
+      Location opLoc = origOp.getLoc();
+      if (opLoc != loc)
+        opLoc = CallSiteLoc::get(loc, origOp.getLoc());
+
       TypeSwitch<Operation*>(&origOp)
           .Case<EqualZeroOp>([&](EqualZeroOp op) {
             auto oldIn = op.getIn();
@@ -696,10 +699,6 @@ struct GenerateValidityRegsPass : public GenerateValidityRegsBase<GenerateValidi
             signalPassFailure();
           });
     }
-    //    block.print(llvm::errs());
-    llvm::errs() << "validity regs done on block size " << block.getOperations().size()
-                 << " with parent " << block.getParentOp()->getName() << "; resultant block now "
-                 << builder.getBlock()->getOperations().size() << "\n";
     return state;
   }
 
