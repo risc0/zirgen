@@ -20,13 +20,20 @@ using namespace mlir;
 
 namespace zirgen::BigInt {
 
-LogicalResult BigIntType::verify(function_ref<InFlightDiagnostic()> emitError, size_t coeffs, size_t maxPos, size_t maxNeg, size_t minBits) {
+LogicalResult BigIntType::verify(function_ref<InFlightDiagnostic()> emitError,
+                                 size_t coeffs,
+                                 size_t maxPos,
+                                 size_t maxNeg,
+                                 size_t minBits) {
   if (maxNeg > 0 && minBits > 0) {
-    return emitError() << "BigInts with positive minBits must be positive: maxNeg: " << maxNeg << ", minBits: " << minBits;
+    return emitError() << "BigInts with positive minBits must be positive: maxNeg: " << maxNeg
+                       << ", minBits: " << minBits;
   }
-  // TODO: Think through whether maxPos / maxNeg can ever overflow their attribute type, which would cause problems here
+  // TODO: Think through whether maxPos / maxNeg can ever overflow their attribute type, which would
+  // cause problems here
   if (maxPos + maxNeg >= risc0::Fp::P) {
-    return emitError() << "Cannot create BigInt with coefficients overflowing BabyBear: maxPos: " << maxPos << " + maxNeg: " << maxNeg;
+    return emitError() << "Cannot create BigInt with coefficients overflowing BabyBear: maxPos: "
+                       << maxPos << " + maxNeg: " << maxNeg;
   }
   return success();
 }

@@ -100,8 +100,8 @@ LogicalResult MulOp::inferReturnTypes(MLIRContext* ctx,
   // This calculation could overflow if size_t is 32 bits, so cast to 64 bits
   uint64_t maxPos = std::max((uint64_t)lhsType.getMaxPos() * rhsType.getMaxPos(),
                              (uint64_t)lhsType.getMaxNeg() * rhsType.getMaxNeg());
-  // The next step can potentially overflow even 64 bits; but if we're already above 32 bits we'll fail validation anyway.
-  // Therefore, skip this if we're above 32 bits
+  // The next step can potentially overflow even 64 bits; but if we're already above 32 bits we'll
+  // fail validation anyway. Therefore, skip this if we're above 32 bits
   if (maxPos < (uint64_t)1 << 32) {
     maxPos *= maxCoeffs;
   }
@@ -112,8 +112,8 @@ LogicalResult MulOp::inferReturnTypes(MLIRContext* ctx,
   // As with maxPos, this could overflow if size_t is 32 bits, so cast to 64 bits
   uint64_t maxNeg = std::max((uint64_t)lhsType.getMaxPos() * rhsType.getMaxNeg(),
                              (uint64_t)lhsType.getMaxNeg() * rhsType.getMaxPos());
-  // The next step can potentially overflow even 64 bits; but if we're already above 32 bits we'll fail validation anyway.
-  // Therefore, skip this if we're above 32 bits
+  // The next step can potentially overflow even 64 bits; but if we're already above 32 bits we'll
+  // fail validation anyway. Therefore, skip this if we're above 32 bits
   if (maxNeg < (uint64_t)1 << 32) {
     maxNeg *= maxCoeffs;
   }
@@ -171,9 +171,9 @@ LogicalResult NondetQuotOp::inferReturnTypes(MLIRContext* ctx,
 }
 
 LogicalResult NondetInvOp::inferReturnTypes(MLIRContext* ctx,
-                                               std::optional<Location> loc,
-                                               Adaptor adaptor,
-                                               SmallVectorImpl<Type>& out) {
+                                            std::optional<Location> loc,
+                                            Adaptor adaptor,
+                                            SmallVectorImpl<Type>& out) {
   auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
   size_t coeffsWidth = ceilDiv(rhsType.getMaxPosBits(), kBitsPerCoeff);
   out.push_back(BigIntType::get(ctx,
@@ -185,9 +185,9 @@ LogicalResult NondetInvOp::inferReturnTypes(MLIRContext* ctx,
 }
 
 LogicalResult InvOp::inferReturnTypes(MLIRContext* ctx,
-                                             std::optional<Location> loc,
-                                             Adaptor adaptor,
-                                             SmallVectorImpl<Type>& out) {
+                                      std::optional<Location> loc,
+                                      Adaptor adaptor,
+                                      SmallVectorImpl<Type>& out) {
   auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
   size_t coeffsWidth = ceilDiv(rhsType.getMaxPosBits(), kBitsPerCoeff);
   out.push_back(BigIntType::get(ctx,
