@@ -25,7 +25,7 @@ def BigInt : BigIntType<"BigInt", "bigint", [
    DeclareTypeInterfaceMethods<CodegenTypeInterface, ["getTypeName", "allowDuplicateTypeNames", "emitTypeDefinition"]>,
    CodegenNeedsCloneType
 ]> {
-  let summary = "A big interger value represented as a polynomial";
+  let summary = "A big integer value represented as a polynomial";
   let parameters = (ins
     "size_t": $coeffs,  // Number of polynomial coefficents
     "size_t": $maxPos,  // Maximum positive coefficient value

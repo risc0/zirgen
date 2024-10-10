@@ -97,12 +97,30 @@ LogicalResult MulOp::inferReturnTypes(MLIRContext* ctx,
   // The maximum number of coefficient pairs from the inputs used to calculate an output coefficient
   size_t maxCoeffs = std::min(lhsType.getCoeffs(), rhsType.getCoeffs());
   size_t totCoeffs = lhsType.getCoeffs() + rhsType.getCoeffs() - 1;
-  size_t maxPos = std::max(lhsType.getMaxPos() * rhsType.getMaxPos(),
-                           lhsType.getMaxNeg() * rhsType.getMaxNeg()) *
-                  maxCoeffs;
-  size_t maxNeg = std::max(lhsType.getMaxPos() * rhsType.getMaxNeg(),
-                           lhsType.getMaxNeg() * rhsType.getMaxPos()) *
-                  maxCoeffs;
+  // This calculation could overflow if size_t is 32 bits, so cast to 64 bits
+  uint64_t maxPos = std::max((uint64_t)lhsType.getMaxPos() * rhsType.getMaxPos(),
+                             (uint64_t)lhsType.getMaxNeg() * rhsType.getMaxNeg());
+  // The next step can potentially overflow even 64 bits; but if we're already above 32 bits we'll fail validation anyway.
+  // Therefore, skip this if we're above 32 bits
+  if (maxPos < (uint64_t)1 << 32) {
+    maxPos *= maxCoeffs;
+  }
+  // Clamp to size_t
+  if (maxPos > std::numeric_limits<size_t>::max()) {
+    maxPos = std::numeric_limits<size_t>::max();
+  }
+  // As with maxPos, this could overflow if size_t is 32 bits, so cast to 64 bits
+  uint64_t maxNeg = std::max((uint64_t)lhsType.getMaxPos() * rhsType.getMaxNeg(),
+                             (uint64_t)lhsType.getMaxNeg() * rhsType.getMaxPos());
+  // The next step can potentially overflow even 64 bits; but if we're already above 32 bits we'll fail validation anyway.
+  // Therefore, skip this if we're above 32 bits
+  if (maxNeg < (uint64_t)1 << 32) {
+    maxNeg *= maxCoeffs;
+  }
+  // Clamp to size_t
+  if (maxNeg > std::numeric_limits<size_t>::max()) {
+    maxNeg = std::numeric_limits<size_t>::max();
+  }
   size_t minBits;
   if (lhsType.getMinBits() == 0 || rhsType.getMinBits() == 0) {
     minBits = 0;
