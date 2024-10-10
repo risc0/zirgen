@@ -8,7 +8,7 @@
 //  - If both inputs are nonnegative, `min_bits` is max of input `min_bits`s
 //  - If either input may be negative, `min_bits` is 0
 
-func.func @good_add_basic() {
+func.func @add_basic() {
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
   %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
   %2 = bigint.add %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 510, 0, 0>
@@ -17,7 +17,7 @@ func.func @good_add_basic() {
 
 // -----
 
-func.func @good_add_coeff_count() {
+func.func @add_coeff_count() {
   // Primary rules tested:
   //  - [%2, %3] `coeffs` is max of the input coeffs
   %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
@@ -29,7 +29,7 @@ func.func @good_add_coeff_count() {
 
 // -----
 
-func.func @good_add_multisize() {
+func.func @add_multisize() {
   // Primary rules tested:
   //  - [%7, %8] `max_pos` is the sum of the input `max_pos`s
   //  - [%7, %8] `max_neg` is the sum of the input `max_neg`s
@@ -47,7 +47,7 @@ func.func @good_add_multisize() {
 
 // -----
 
-func.func @good_add_min_bits() {
+func.func @add_min_bits() {
   // Primary rules tested:
   //  - [%3] If both `add` inputs are nonnegative, `min_bits` is max of input `min_bits`s
   //  - [%5, %6] If either input to `add` may be negative, `min_bits` is 0
@@ -84,7 +84,7 @@ func.func @bad_add_max_pos() {
 //  - `max_neg` is A's `max_neg` plus B's `max_pos`
 //  - just set `min_bits` to 0
 
-func.func @good_sub_coeff_count() {
+func.func @sub_coeff_count() {
   // Primary rules tested:
   //  - [%2, %3] `coeffs` is max of the input coeffs
   %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
@@ -96,7 +96,7 @@ func.func @good_sub_coeff_count() {
 
 // -----
 
-func.func @good_sub_max_pos_max_neg() {
+func.func @sub_max_pos_max_neg() {
   // Primary rules tested:
   //  - [%3] For A - B: `max_pos` is A's `max_pos` plus B's `max_neg`
   //  - [%4] For A - B: `max_neg` is A's `max_neg` plus B's `max_pos`
@@ -139,7 +139,7 @@ func.func @bad_sub_max_neg() {
 
 // -----
 
-func.func @good_sub_multisize() {
+func.func @sub_multisize() {
   // Primary rules tested:
   //  - [%9] For A - B: `max_pos` is A's `max_pos` plus B's `max_neg`
   //  - [%9] For A - B: `max_neg` is A's `max_neg` plus B's `max_pos`
@@ -158,7 +158,7 @@ func.func @good_sub_multisize() {
 
 // -----
 
-func.func @good_sub_min_bits() {
+func.func @sub_min_bits() {
   // Primary rules tested:
   //  - just set `min_bits` to 0 [This could be more complicated, but we don't bother]
   %0 = bigint.const 0 : i8 -> <1, 255, 0, 0>
@@ -183,7 +183,7 @@ func.func @good_sub_min_bits() {
 //  - If both inputs are nonnegative, `min_bits` is the sum of input `min_bits`s minus 1
 //  - If either input may be negative, `min_bits` is zero
 
-func.func @good_mul_basic() {
+func.func @mul_basic() {
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
   %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
   %2 = bigint.mul %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 65025, 0, 0>
@@ -192,7 +192,7 @@ func.func @good_mul_basic() {
 
 // -----
 
-func.func @good_mul_coeff_count() {
+func.func @mul_coeff_count() {
   // Primary rules tested:
   //  - [%2, %3] `coeffs` is the sum of the input coeffs minus 1
   %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
@@ -204,7 +204,7 @@ func.func @good_mul_coeff_count() {
 
 // -----
 
-func.func @good_mul_multisize() {
+func.func @mul_multisize() {
   // Primary rules tested:
   //  - [%8 - %11] `max_pos` is the smaller `coeffs` value from the two inputs times
   //    the max of the product of the `max_pos` and the product of the `max_neg`
@@ -227,7 +227,7 @@ func.func @good_mul_multisize() {
 
 // -----
 
-func.func @good_mul_min_bits() {
+func.func @mul_min_bits() {
   // Primary rules tested:
   //  - [%3] If both inputs are nonnegative, `min_bits` is the sum of input `min_bits`s minus 1
   //  - [%5, %6] If either input may be negative, `min_bits` is zero
@@ -265,7 +265,7 @@ func.func @good_mul_min_bits() {
 //  - `max_neg` is 0
 //  - `min_bits` is 0
 
-func.func @good_nondet_quot_basic() {
+func.func @nondet_quot_basic() {
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
   %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
   %2 = bigint.nondet_quot %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 255, 0, 0>
@@ -274,7 +274,7 @@ func.func @good_nondet_quot_basic() {
 
 // -----
 
-func.func @good_nondet_quot_oversized_num() {
+func.func @nondet_quot_oversized_num() {
   // Primary rules tested:
   //  - [%3] Compute the max overall value from the numerator
   //  - [%3] Return values with normalized coeffs (potentially more coeffs than if unnormalized)
@@ -287,7 +287,7 @@ func.func @good_nondet_quot_oversized_num() {
 
 // -----
 
-func.func @good_nondet_quot_multibyte_num() {
+func.func @nondet_quot_multibyte_num() {
   // Primary rules tested:
   //  - [%3] Compute the max overall value from the numerator
   //  - [%3] Return values with normalized coeffs (potentially more coeffs than if unnormalized)
@@ -300,7 +300,7 @@ func.func @good_nondet_quot_multibyte_num() {
 
 // -----
 
-func.func @good_nondet_quot_multibyte_num2() {
+func.func @nondet_quot_multibyte_num2() {
   // Primary rules tested:
   //  - [%3] Compute the max overall value from the numerator
   //  - [%3] Return values with normalized coeffs (potentially more coeffs than if unnormalized)
@@ -313,7 +313,7 @@ func.func @good_nondet_quot_multibyte_num2() {
 
 // -----
 
-func.func @good_nondet_quot_multibyte_denom() {
+func.func @nondet_quot_multibyte_denom() {
   // Primary rules tested:
   //  - [%3] Compute the max overall value from the numerator
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
@@ -325,7 +325,7 @@ func.func @good_nondet_quot_multibyte_denom() {
 
 // -----
 
-func.func @good_nondet_quot_1bit_denom() {
+func.func @nondet_quot_1bit_denom() {
   // Primary rules tested:
   //  - [%2] Compute the max overall value from the numerator
   //  - [%2] As part of computing Coeffs, divide this by `2^(min_bits - 1)` of the denominator
@@ -337,7 +337,7 @@ func.func @good_nondet_quot_1bit_denom() {
 
 // -----
 
-func.func @good_nondet_quot_8bit_denom() {
+func.func @nondet_quot_8bit_denom() {
   // Primary rules tested:
   //  - [%2] Compute the max overall value from the numerator
   //  - [%2] As part of computing Coeffs, divide this by `2^(min_bits - 1)` of the denominator
@@ -349,7 +349,7 @@ func.func @good_nondet_quot_8bit_denom() {
 
 // -----
 
-func.func @good_nondet_quot_9bit_denom() {
+func.func @nondet_quot_9bit_denom() {
   // Primary rules tested:
   //  - [%2] Compute the max overall value from the numerator
   //  - [%2] As part of computing Coeffs, divide this by `2^(min_bits - 1)` of the denominator
@@ -361,7 +361,7 @@ func.func @good_nondet_quot_9bit_denom() {
 
 // -----
 
-func.func @good_nondet_quot_9bit_1coeff_denom() {
+func.func @nondet_quot_9bit_1coeff_denom() {
   // Primary rules tested:
   //  - [%4] Compute the max overall value from the numerator
   //  - [%4] As part of computing Coeffs, divide this by `2^(min_bits - 1)` of the denominator
@@ -376,7 +376,7 @@ func.func @good_nondet_quot_9bit_1coeff_denom() {
 
 // -----
 
-func.func @good_nondet_quot_num_minbits() {
+func.func @nondet_quot_num_minbits() {
   // Primary rules tested:
   //  - [%2] `min_bits` of `nondet_quot` result is always 0
   %0 = bigint.const 300 : i16 -> <2, 255, 0, 9>
@@ -387,7 +387,7 @@ func.func @good_nondet_quot_num_minbits() {
 
 // -----
 
-func.func @good_nondet_quot_ignore_negatives() {
+func.func @nondet_quot_ignore_negatives() {
   %0 = bigint.def 16, 0, true -> <2, 255, 0, 0>
   %1 = bigint.def 32, 0, true -> <4, 255, 0, 0>
   %2 = bigint.sub %0 : <2, 255, 0, 0>, %1 : <4, 255, 0, 0> -> <4, 255, 255, 0>
@@ -413,7 +413,7 @@ func.func @good_nondet_quot_ignore_negatives() {
 //
 // We also test the `reduce` op here as it should produce the exact same type
 
-func.func @good_nondet_rem_basic() {
+func.func @nondet_rem_basic() {
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
   %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
   %2 = bigint.nondet_rem %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 255, 0, 0>
@@ -423,7 +423,7 @@ func.func @good_nondet_rem_basic() {
 
 // -----
 
-func.func @good_nondet_rem_oversized_num() {
+func.func @nondet_rem_oversized_num() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
@@ -436,7 +436,7 @@ func.func @good_nondet_rem_oversized_num() {
 
 // -----
 
-func.func @good_nondet_rem_oversized_denom() {
+func.func @nondet_rem_oversized_denom() {
   // Primary rules tested:
   //  - Compute the max overall value from the numerator
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
@@ -449,7 +449,7 @@ func.func @good_nondet_rem_oversized_denom() {
 
 // -----
 
-func.func @good_nondet_rem_multibyte_denom() {
+func.func @nondet_rem_multibyte_denom() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
@@ -462,7 +462,7 @@ func.func @good_nondet_rem_multibyte_denom() {
 
 // -----
 
-func.func @good_nondet_rem_multibyte_denom2() {
+func.func @nondet_rem_multibyte_denom2() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
@@ -475,7 +475,7 @@ func.func @good_nondet_rem_multibyte_denom2() {
 
 // -----
 
-func.func @good_nondet_rem_multibyte_denom3() {
+func.func @nondet_rem_multibyte_denom3() {
   // Primary rules tested:
   //  - Compute the max overall value from the numerator
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
@@ -488,7 +488,7 @@ func.func @good_nondet_rem_multibyte_denom3() {
 
 // -----
 
-func.func @good_nondet_rem_multibyte_denom4() {
+func.func @nondet_rem_multibyte_denom4() {
   // Primary rules tested:
   //  - Compute the max overall value from the numerator
   %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
@@ -501,7 +501,7 @@ func.func @good_nondet_rem_multibyte_denom4() {
 
 // -----
 
-func.func @good_nondet_rem_1bit_denom() {
+func.func @nondet_rem_1bit_denom() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   //  - `min_bits` is 0
@@ -514,7 +514,7 @@ func.func @good_nondet_rem_1bit_denom() {
 
 // -----
 
-func.func @good_nondet_rem_8bit_denom() {
+func.func @nondet_rem_8bit_denom() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   //  - `min_bits` is 0
@@ -527,7 +527,7 @@ func.func @good_nondet_rem_8bit_denom() {
 
 // -----
 
-func.func @good_nondet_rem_9bit_denom() {
+func.func @nondet_rem_9bit_denom() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   //  - `min_bits` is 0
@@ -540,7 +540,7 @@ func.func @good_nondet_rem_9bit_denom() {
 
 // -----
 
-func.func @good_nondet_rem_9bit_1coeff_denom() {
+func.func @nondet_rem_9bit_1coeff_denom() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   //  - `min_bits` is 0
@@ -555,7 +555,7 @@ func.func @good_nondet_rem_9bit_1coeff_denom() {
 
 // -----
 
-func.func @good_nondet_rem_num_minbits() {
+func.func @nondet_rem_num_minbits() {
   // Primary rules tested:
   //  - `min_bits` is 0
   %0 = bigint.const 300 : i16 -> <2, 255, 0, 9>
@@ -567,7 +567,7 @@ func.func @good_nondet_rem_num_minbits() {
 
 // -----
 
-func.func @good_nondet_rem_coeff_carry() {
+func.func @nondet_rem_coeff_carry() {
   // Primary rules tested:
   //  - `min_bits` is 0
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
@@ -581,7 +581,7 @@ func.func @good_nondet_rem_coeff_carry() {
 
 // -----
 
-func.func @good_nondet_quot_ignore_negatives() {
+func.func @nondet_quot_ignore_negatives() {
   %0 = bigint.def 16, 0, true -> <2, 255, 0, 0>
   %1 = bigint.def 32, 0, true -> <4, 255, 0, 0>
   %2 = bigint.sub %0 : <2, 255, 0, 0>, %1 : <4, 255, 0, 0> -> <4, 255, 255, 0>
@@ -608,7 +608,7 @@ func.func @good_nondet_quot_ignore_negatives() {
 //
 // We also test the `inv` op here as it should produce the exact same type
 
-func.func @good_nondet_inv_basic() {
+func.func @nondet_inv_basic() {
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
   %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
   %2 = bigint.nondet_inv %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 255, 0, 0>
@@ -618,7 +618,7 @@ func.func @good_nondet_inv_basic() {
 
 // -----
 
-func.func @good_nondet_inv_oversized_num() {
+func.func @nondet_inv_oversized_num() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
@@ -631,7 +631,7 @@ func.func @good_nondet_inv_oversized_num() {
 
 // -----
 
-func.func @good_nondet_inv_oversized_denom() {
+func.func @nondet_inv_oversized_denom() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
@@ -644,7 +644,7 @@ func.func @good_nondet_inv_oversized_denom() {
 
 // -----
 
-func.func @good_nondet_inv_multibyte_denom() {
+func.func @nondet_inv_multibyte_denom() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
@@ -657,7 +657,7 @@ func.func @good_nondet_inv_multibyte_denom() {
 
 // -----
 
-func.func @good_nondet_inv_multibyte_denom2() {
+func.func @nondet_inv_multibyte_denom2() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
@@ -670,7 +670,7 @@ func.func @good_nondet_inv_multibyte_denom2() {
 
 // -----
 
-func.func @good_nondet_inv_multibyte_denom3() {
+func.func @nondet_inv_multibyte_denom3() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
@@ -683,7 +683,7 @@ func.func @good_nondet_inv_multibyte_denom3() {
 
 // -----
 
-func.func @good_nondet_inv_multibyte_denom4() {
+func.func @nondet_inv_multibyte_denom4() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
@@ -696,7 +696,7 @@ func.func @good_nondet_inv_multibyte_denom4() {
 
 // -----
 
-func.func @good_nondet_inv_1bit_denom() {
+func.func @nondet_inv_1bit_denom() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   //  - `min_bits` is 0
@@ -709,7 +709,7 @@ func.func @good_nondet_inv_1bit_denom() {
 
 // -----
 
-func.func @good_nondet_inv_8bit_denom() {
+func.func @nondet_inv_8bit_denom() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   //  - `min_bits` is 0
@@ -722,7 +722,7 @@ func.func @good_nondet_inv_8bit_denom() {
 
 // -----
 
-func.func @good_nondet_inv_9bit_denom() {
+func.func @nondet_inv_9bit_denom() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   //  - `min_bits` is 0
@@ -735,7 +735,7 @@ func.func @good_nondet_inv_9bit_denom() {
 
 // -----
 
-func.func @good_nondet_inv_9bit_1coeff_denom() {
+func.func @nondet_inv_9bit_1coeff_denom() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   //  - `min_bits` is 0
@@ -750,7 +750,7 @@ func.func @good_nondet_inv_9bit_1coeff_denom() {
 
 // -----
 
-func.func @good_nondet_inv_num_minbits() {
+func.func @nondet_inv_num_minbits() {
   // Primary rules tested:
   //  - `min_bits` is 0
   %0 = bigint.const 300 : i16 -> <2, 255, 0, 9>
@@ -762,7 +762,7 @@ func.func @good_nondet_inv_num_minbits() {
 
 // -----
 
-func.func @good_nondet_inv_coeff_carry() {
+func.func @nondet_inv_coeff_carry() {
   // Primary rules tested:
   //  - `min_bits` is 0
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
@@ -776,7 +776,7 @@ func.func @good_nondet_inv_coeff_carry() {
 
 // -----
 
-func.func @good_nondet_inv_ignore_negatives() {
+func.func @nondet_inv_ignore_negatives() {
   %0 = bigint.def 16, 0, true -> <2, 255, 0, 0>
   %1 = bigint.def 32, 0, true -> <4, 255, 0, 0>
   %2 = bigint.sub %0 : <2, 255, 0, 0>, %1 : <4, 255, 0, 0> -> <4, 255, 255, 0>
