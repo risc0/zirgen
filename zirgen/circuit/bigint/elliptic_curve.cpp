@@ -121,7 +121,6 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
       loc, xR, prime); // Quot/Rem needs nonnegative inputs, so enforce positivity
   xR = builder.create<BigInt::AddOp>(
       loc, xR, prime); // Quot/Rem needs nonnegative inputs, so enforce positivity
-  Value xR_unreduced = xR;
   Value k_x = builder.create<BigInt::NondetQuotOp>(loc, xR, prime);
   xR = builder.create<BigInt::NondetRemOp>(loc, xR, prime);
 
@@ -423,7 +422,6 @@ void makeECNegateTest(mlir::OpBuilder builder,
                       APInt prime,
                       APInt curve_a,
                       APInt curve_b) {
-  auto order_bits = bits;
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 2, true);
@@ -543,7 +541,6 @@ void makeECNegateFreelyTest(mlir::OpBuilder builder,
                             APInt prime,
                             APInt curve_a,
                             APInt curve_b) {
-  auto order_bits = bits;
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
