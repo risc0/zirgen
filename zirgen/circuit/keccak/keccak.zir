@@ -470,7 +470,7 @@ component rho_minor3<Y: Val>(rvals: RetTuple) {
                   rvprev01.arr_f[0], rvprev01.arr_f[1]+0];
           b := Concatenate<Val, 8, 14>(for i : 0..8 { rvpstate.arr_b[i] }, rs1);
           rs2 := for i : 2..3 { rvprev01.arr_f[i] };
-          c := Concatenate<Reg, 1, 21>(rs2, for i : 1..22 { rvpstate.arr_c[i] });
+          c := Concatenate<Val, 1, 21>(rs2, for i : 1..22 { rvpstate.arr_c[i] });
           RetTuple(rvpstate.arr_a, b, c, rvpstate.arr_d, dummyB(), dummyB(),
                    0, 8, rvprev01.rnd, rvprev01.blk, rvprev01.midx)
         },

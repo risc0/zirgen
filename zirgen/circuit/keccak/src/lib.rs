@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+mod cpp;
 mod cpu;
 mod info;
 mod poly_ext;
@@ -19,18 +20,13 @@ mod taps;
 
 use anyhow::Result;
 use clap::Parser;
-use risc0_zirgen_dsl::{CycleContext, CycleRow, GlobalRow};
-use risc0_zkp::hal::{cpu::CpuHal, Buffer, Hal};
+use risc0_zkp::hal::{Buffer, Hal};
 use risc0_zkp::{
     adapter::{CircuitCoreDef, TapsProvider},
-    core::{
-        digest::Digest,
-        hash::{poseidon2::Poseidon2HashSuite, HashSuite},
-    },
+    core::{digest::Digest, hash::HashSuite},
     field::baby_bear::BabyBear,
     taps::TapSet,
 };
-use std::collections::VecDeque;
 use std::path::PathBuf;
 
 risc0_zirgen_dsl::zirgen_inhibit_warnings! {
@@ -66,7 +62,7 @@ pub fn validity_taps(
 
 use keccak_circuit::{CircuitField, CircuitHal, ExtVal, Val};
 
-struct CircuitImpl;
+pub struct CircuitImpl;
 
 pub const CIRCUIT: CircuitImpl = CircuitImpl;
 
@@ -76,7 +72,7 @@ impl TapsProvider for CircuitImpl {
     }
 }
 
-fn prove<
+pub fn prove<
     'a,
     H: Hal<Field = CircuitField, Elem = Val, ExtElem = ExtVal>,
     CH: CircuitHal<'a, H> + risc0_zkp::hal::CircuitHal<H>,
@@ -104,7 +100,7 @@ fn prove<
     // specific order.
     //
     // TODO: Remove this restriction and make buffer orders and such per-circuit.
-    circuit_hal.step_accum(TOT_CYCLES, &accum, &data, &global)?;
+    //circuit_hal.step_accum(TOT_CYCLES, &accum, &data, &global)?;
 
     let mut prover = risc0_zkp::prove::Prover::new(hal, &*crate::taps::TAPSET);
     prover.set_po2(PO2);
@@ -162,9 +158,10 @@ pub fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use risc0_zkp::core::hash::poseidon2::Poseidon2HashSuite;
     use risc0_zkp::field::Elem;
+    use risc0_zkp::hal::cpu::CpuHal;
     use test_log::test;
-
     fn run_test(input: Vec<u32>) {
         let hash_suite = Poseidon2HashSuite::new_suite();
         let hal = CpuHal::new(hash_suite.clone());
@@ -179,7 +176,7 @@ mod tests {
         //            _ => panic!("Unexpected op"),
         //        };
 
-        let seal_vals = Val::from_u32_slice(&seal[..keccak_circuit::REGCOUNT_GLOBAL]);
+        let _seal_vals = Val::from_u32_slice(&seal[..keccak_circuit::REGCOUNT_GLOBAL]);
         //        assert_eq!(
         //            seal_vals[keccak_circuit::LAYOUT_GLOBAL.result._super.offset],
         //            expected_result

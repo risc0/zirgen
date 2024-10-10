@@ -26,11 +26,15 @@ namespace zirgen::Zll {
 
 namespace {
 
-struct MultiplyToIfPass : public MultiplyToIfBase<MultiplyToIfPass> {
-  DenseMap</*factor=*/Value, /*count=*/SmallVector<EqualZeroOp>> factorConstraints;
-  SmallVector</*factor=*/Value> factors;
-  DenseMap<std::pair</*factor=*/Value, /* containing block */ Block*>, IfOp> ifOps;
-  DenseSet<EqualZeroOp> needsReconstruction;
+struct Sinker {
+  DenseMap</*factor=*/Value, /*constraints=*/DenseSet<EqualZeroOp>> factorConstraints;
+  DenseMap</*constraint=*/EqualZeroOp, /*factors=*/DenseSet<Value>> constraintFactors;
+
+  size_t idx = 0;
+
+  // Keep a sorting key so we can make the order deterministic even after we go through a densemap.
+  DenseMap<Value, size_t> factorOrder;
+  DenseMap<EqualZeroOp, size_t> eqzOpOrder;
 
   void countFactors(EqualZeroOp eqzOp, Value factor) {
     auto mulOp = factor.getDefiningOp<MulOp>();
@@ -38,64 +42,87 @@ struct MultiplyToIfPass : public MultiplyToIfBase<MultiplyToIfPass> {
       countFactors(eqzOp, mulOp.getLhs());
       countFactors(eqzOp, mulOp.getRhs());
     } else {
-      if (!factorConstraints.contains(factor))
-        // Make sure we get a deterministic order that doesn't depend on comparing pointer addresses
-        factors.push_back(factor);
-      factorConstraints[factor].push_back(eqzOp);
+      eqzOpOrder[eqzOp] = factorOrder[factor] = idx++;
+      factorConstraints[factor].insert(eqzOp);
+      constraintFactors[eqzOp].insert(factor);
     }
   }
 
-  void sinkConstraint(EqualZeroOp op, Value factor, size_t numShared) {
-    if (needsReconstruction.contains(op)) {
-      op.getInMutable().set(factor);
-      needsReconstruction.erase(op);
-      return;
-    }
-
-    if (numShared == 1) {
-      // This factor is only used by this operation. Instead of creating an if statement, multiply it out.
-      OpBuilder builder(op);
-      auto mulOp = builder.create<Zll::MulOp>(op.getLoc(), factor, op.getIn());
-      op.getInMutable().set(mulOp);
-      return;
-    }
-      
-
-    Block* b = op->getBlock();
-
-    auto& ifOp = ifOps[std::make_pair(factor, b)];
-    if (!ifOp) {
-      OpBuilder builder = OpBuilder::atBlockTerminator(b);
-      ifOp = builder.create<IfOp>(factor.getLoc(), factor);
-      builder.createBlock(&ifOp.getInner());
-      builder.create<Zll::TerminateOp>(op.getLoc());
-    }
-
-    Block* targetBlock = &ifOp.getInner().front();
-    op->moveBefore(targetBlock, targetBlock->without_terminator().end());
-  }
-
-  void runOnOperation() override {
-    getOperation()->walk([&](EqualZeroOp eqzOp) {
-      needsReconstruction.insert(eqzOp);
+  void sinkConstraints(Block* block) {
+    for (EqualZeroOp eqzOp : block->getOps<EqualZeroOp>()) {
       countFactors(eqzOp, eqzOp.getIn());
-    });
+    };
 
-    // Highest priority is to make if statements for factors which are the most used, so put those
-    // first.
-    llvm::stable_sort(factors, [&](auto a, auto b) {
-      return factorConstraints.at(a).size() > factorConstraints.at(b).size();
-    });
-    for (Value factor : factors) {
-      //      llvm::errs() << "factor " << factor << " count " <<
-      //      factorConstraints.at(factor).size()
-      //                   << "\n";
-      auto ops = factorConstraints.at(factor);
-      for (EqualZeroOp eqzOp : ops)
-        sinkConstraint(eqzOp, factor, ops.size());
+    for (;;) {
+      Value bestFactor;
+      size_t numBestFactor = 0;
+      for (auto [k, v] : factorConstraints) {
+        if (v.size() <= 1) continue;
+        if (v.size() > numBestFactor ||
+            (v.size() == numBestFactor && factorOrder.at(k) > factorOrder.at(bestFactor))) {
+          numBestFactor = v.size();
+          bestFactor = k;
+        }
+      }
+
+      if (numBestFactor <= 1)
+        break;
+      assert(bestFactor);
+
+      //      llvm::errs() << "Best factor is " << bestFactor << " with " << numBestFactor << "\n";
+
+      SmallVector<EqualZeroOp> ops = llvm::to_vector(factorConstraints.at(bestFactor));
+      assert(ops.size() > 1);
+      llvm::sort(ops, [&](auto a, auto b) -> bool { return eqzOpOrder.at(a) < eqzOpOrder.at(b); });
+
+      OpBuilder builder = OpBuilder::atBlockTerminator(block);
+      auto ifOp = builder.create<IfOp>(bestFactor.getLoc(), bestFactor);
+      builder.createBlock(&ifOp.getInner());
+      auto termOp = builder.create<Zll::TerminateOp>(bestFactor.getLoc());
+
+      for (EqualZeroOp eqzOp : ops) {
+        assert(eqzOp->getBlock() == block);
+        eqzOp->moveBefore(termOp);
+        builder.setInsertionPoint(eqzOp);
+
+        //        llvm::errs() << "sinking " << eqzOp << "\n";
+
+        Value newCond;
+        SmallVector<Value> otherFactors = llvm::to_vector(constraintFactors.at(eqzOp));
+        llvm::sort(otherFactors,
+                   [&](auto a, auto b) -> bool { return factorOrder.at(a) < factorOrder.at(b); });
+        for (Value otherFactor : otherFactors) {
+          bool didErase = factorConstraints[otherFactor].erase(eqzOp);
+          assert(didErase);
+          if (otherFactor != bestFactor) {
+            if (newCond) {
+              newCond = builder.create<Zll::MulOp>(eqzOp.getLoc(), otherFactor, newCond);
+            } else {
+              newCond = otherFactor;
+            }
+          }
+          if (!newCond) {
+            // TODO: Why does this happen?
+            newCond = builder.create<Zll::ConstOp>(eqzOp.getLoc(), 1);
+          }
+          eqzOp.getInMutable().set(newCond);
+        }
+        constraintFactors.erase(eqzOp);
+      }
     }
+  }
+};
 
-    assert(needsReconstruction.empty());
+struct MultiplyToIfPass : public MultiplyToIfBase<MultiplyToIfPass> {
+  void runOnOperation() override {
+    getOperation()->walk<WalkOrder::PreOrder>([&](Block* block) {
+            llvm::errs() << "Sinking block of size " << block->getOperations().size() << "\n";
+      //      block->print(llvm::errs());
+      Sinker sinker;
+      sinker.sinkConstraints(block);
+            llvm::errs() << "Block now size " << block->getOperations().size() << "\n";
+      //      block->print(llvm::errs());
+    });
   }
 };
 

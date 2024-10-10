@@ -105,7 +105,7 @@ template <typename... OpT> void emitOps(CodegenEmitter& cg, ModuleOp mod, String
   }
 }
 
-void emitPoly(ModuleOp mod) {
+void emitPoly(ModuleOp mod, StringRef circuitName) {
   ModuleOp funcMod = mod.cloneWithoutRegions();
   OpBuilder builder(funcMod.getContext());
   builder.createBlock(&funcMod->getRegion(0));
@@ -114,7 +114,7 @@ void emitPoly(ModuleOp mod) {
   // codegen knows how to deal with
   mod.walk([&](zirgen::Zhlt::CheckFuncOp funcOp) {
     auto newFuncOp = builder.create<func::FuncOp>(funcOp.getLoc(),
-                                                  funcOp.getSymNameAttr(),
+                                                  builder.getStringAttr(circuitName),
                                                   TypeAttr::get(funcOp.getFunctionType()),
                                                   funcOp.getSymVisibilityAttr(),
                                                   funcOp.getArgAttrsAttr(),
@@ -218,6 +218,7 @@ int main(int argc, char* argv[]) {
   checkPasses.addPass(mlir::createCSEPass());
   checkPasses.addPass(zirgen::Zll::createMultiplyToIfPass());
   checkPasses.addPass(mlir::createCanonicalizerPass());
+  checkPasses.addPass(mlir::createPrintIRPass());
   //  pm.addPass(zirgen::dsl::createGenerateValidityRegsPass());
 
   if (failed(pm.run(typedModule.value()))) {
@@ -226,7 +227,12 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-  emitPoly(*typedModule);
+  StringRef circuitName = StringRef(inputFilename).rsplit('/').second;
+  if (circuitName.empty())
+    circuitName = inputFilename;
+  circuitName.consume_back(".zir");
+
+  emitPoly(*typedModule, circuitName);
 
   pm.clear();
   //  regsPasses.addPass(zirgen::ZStruct::createBuffersToArgsPass());
@@ -282,8 +288,6 @@ int main(int argc, char* argv[]) {
   //  emitOps<Zhlt::ValidityRegsFuncOp>(cppCg, *typedModule, "validity_taps.cpp.inc");
   emitOps<ZStruct::GlobalConstOp>(cppCg, *typedModule, "layout.cpp.inc");
   emitOps<Zhlt::StepFuncOp, Zhlt::ExecFuncOp>(cppCg, stepFuncs, "steps.cpp.inc");
-
-  emitPoly(*typedModule);
 
   return 0;
 }

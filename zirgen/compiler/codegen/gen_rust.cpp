@@ -230,9 +230,17 @@ private:
                      FileContext& ctx,
                      list& lines,
                      size_t depth,
-                     const char* type,
+                     const char* baseType,
                      FuncKind kind,
                      MixPowAnalysis* mixPows = nullptr) {
+
+    const char* type = baseType;
+    if (op->getNumResults() == 1) {
+      auto valType = llvm::dyn_cast<ValType>(op->getResults()[0].getType());
+      if (valType && valType.getFieldK() > 1) {
+        type = "FpExt";
+      }
+    }
     std::string indent(depth * 2, ' ');
     std::string locStr;
     llvm::raw_string_ostream locStrStream(locStr);
@@ -258,9 +266,9 @@ private:
                                 .str());
             if (op->hasAttr("unchecked")) {
               lines.push_back(indent +
-                              llvm::formatv("if ({0} == Fp::invalid()) {0} = 0;", out).str());
+                              llvm::formatv("if ({0} == {1}::invalid()) {0} = 0;", out, type).str());
             } else {
-              lines.push_back(indent + llvm::formatv("assert({0} != Fp::invalid());", out).str());
+              lines.push_back(indent + llvm::formatv("assert({0} != {1}::invalid());", out, type).str());
             }
           } else {
             lines.push_back(
@@ -280,8 +288,8 @@ private:
                                                 ctx.use(op->getOperand(0)),
                                                 emitIntAttr(op, "offset"))
                                       .str());
-          lines.push_back(inner + llvm::formatv("assert(reg == Fp::invalid() || reg == {0});",
-                                                ctx.use(op->getOperand(1)))
+          lines.push_back(inner + llvm::formatv("assert(reg == {1}::invalid() || reg == {0});",
+                                                ctx.use(op->getOperand(1)), type)
                                       .str());
           lines.push_back(inner + llvm::formatv("reg = {0};", ctx.use(op->getOperand(1))).str());
           lines.push_back(indent + "}");
@@ -309,9 +317,9 @@ private:
                   .str());
         })
         .Case<IsZeroOp>([&](IsZeroOp op) {
-          lines.push_back(indent + llvm::formatv("auto {0} = ({1} == 0) ? Fp(1) : Fp(0);",
+          lines.push_back(indent + llvm::formatv("auto {0} = ({1} == 0) ? {2}(1) : {2}(0);",
                                                  ctx.def(op.getOut()),
-                                                 ctx.use(op->getOperand(0)))
+                                                 ctx.use(op->getOperand(0)), type)
                                        .str());
         })
         .Case<InvOp>([&](InvOp op) {
@@ -348,10 +356,10 @@ private:
                                        .str());
         })
         .Case<BitAndOp>([&](BitAndOp op) {
-          lines.push_back(indent + llvm::formatv("auto {0} = Fp({1}.asUInt32() & {2}.asUInt32());",
+          lines.push_back(indent + llvm::formatv("auto {0} ={3}p({1}.asUInt32() & {2}.asUInt32());",
                                                  ctx.def(op.getOut()),
                                                  ctx.use(op->getOperand(0)),
-                                                 ctx.use(op->getOperand(1)))
+                                                 ctx.use(op->getOperand(1)), type)
                                        .str());
         })
         .Case<TrueOp>([&](TrueOp op) {
