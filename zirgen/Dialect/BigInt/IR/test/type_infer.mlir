@@ -1,21 +1,9 @@
 // RUN: zirgen-opt %s -split-input-file -verify-diagnostics
 
-// TODO: are the intended semantics for `min_bits` that the value must be positive? Or is it a bound on absolute value? Status quo is "must be positive"
 // TODO: Add verifier that at least one of `max_neg` and `min_bits` must be zero
 
-// TODO: Test the following:
-// For [nondets]:
-//  - In general, nondets will only return nonnegative answers
-//  - In general, nondets will return values with normalized coeffs (and therefore potentially more coeffs than if unnormalized)
-//    - The max possible overall value can be computed as `max_pos` (of the unnormalized form) times the sum from i=0..coeffs of 256^i
-//      - Then 1 + the floor of log_256 of this value is the number of coeffs
-//  - So in normalized form `max_pos = 255` and `max_neg = 0`
-// For `modular_inv`:
-//  - Same as `nondet_inv_mod`
-// For `reduce`:
-//  - Same as `nondet_rem`
-
 // Type inference for `add`:
+//
 //  - `coeffs` is max of the input coeffs
 //  - `max_pos` is the sum of the input `max_pos`s
 //  - `max_neg` is the sum of the input `max_neg`s
@@ -92,6 +80,7 @@ func.func @bad_add_max_pos() {
 // -----
 
 // Type inference for `sub` (A - B):
+//
 //  - `coeffs` is max of the input coeffs
 //  - `max_pos` is A's `max_pos` plus B's `max_neg`
 //  - `max_neg` is A's `max_neg` plus B's `max_pos`
@@ -187,7 +176,8 @@ func.func @good_sub_min_bits() {
 // -----
 
 // Type inference for `mul`:
-//  - `coeffs` is the sum of the input coeffs minus 1 [TODO: Confirm no carries]
+//
+//  - `coeffs` is the sum of the input coeffs minus 1
 //  - `max_pos` is the smaller `coeffs` value from the two inputs times
 //     the max of the product of the `max_pos` and the product of the `max_neg`
 //  - `max_neg` is the smaller `coeffs` value from the two inputs times
@@ -256,17 +246,19 @@ func.func @good_mul_min_bits() {
 
 // -----
 
-// TODO: This has no testing for negatives -- handle appropriately elsewhere (or here?)
-// TODO: Add a pass that gets mad if you try to nondet from a negative?
-
 // For nondets generally:
-//  - In general, nondets will only return nonnegative answers
-//  - In general, nondets will return values with normalized coeffs (and therefore potentially more coeffs than if unnormalized)
+//  - Nondets will only return nonnegative answers
+//    - In many cases, they cannot give correct answers when negative inputs are provided
+//    - Negative inputs are still allowed (for cases such as when a developer knows more than the type system)
+//    - Nondets should always be appropriately constrained, including failing if necessary on negative inputs
+//      - ReduceOp and ModularInvOp come with constraints built in
+//  - Nondets will return values with normalized coeffs (and therefore potentially more coeffs than if unnormalized)
 //    - The max possible overall value can be computed as `max_pos` (of the unnormalized form) times the sum from i=0..coeffs of 256^i
 //      - Then 1 + the floor of log_256 of this value is the number of coeffs
 //  - So in normalized form `max_pos = 255` and `max_neg = 0`
 
 // Type inference for `nondet_quot`:
+//
 //  - For `coeffs`:
 //    - Compute the max overall value from the numerator by the algorithm from the general nondets section
 //    - Divide this by `2^(min_bits - 1)` of the denominator
@@ -397,9 +389,21 @@ func.func @good_nondet_quot_num_minbits() {
 
 // -----
 
-// TODO: This has no testing for negatives -- handle appropriately elsewhere (or here?)
+func.func @good_nondet_quot_ignore_negatives() {
+  %0 = bigint.def 16, 0, true -> <2, 255, 0, 0>
+  %1 = bigint.def 32, 0, true -> <4, 255, 0, 0>
+  %2 = bigint.sub %0 : <2, 255, 0, 0>, %1 : <4, 255, 0, 0> -> <4, 255, 255, 0>
+  %3 = bigint.sub %2 : <4, 255, 255, 0>, %1 : <4, 255, 0, 0> -> <4, 255, 510, 0>
+  %4 = bigint.nondet_quot %3 : <4, 255, 510, 0>, %0 : <2, 255, 0, 0> -> <4, 255, 0, 0>
+  %5 = bigint.nondet_quot %0 : <2, 255, 0, 0>, %3 : <4, 255, 510, 0> -> <2, 255, 0, 0>
+  %6 = bigint.nondet_quot %2 : <4, 255, 255, 0>, %3 : <4, 255, 510, 0> -> <4, 255, 0, 0>
+  return
+}
+
+// -----
 
 // Type inference for `nondet_rem`:
+//
 //  - For `coeffs`:
 //    - Compute the max overall value from the denominator - 1 by the algorithm from the general nondets section
 //    - Compute the max overall value from the numerator by the algorithm from the general nondets section
@@ -408,6 +412,8 @@ func.func @good_nondet_quot_num_minbits() {
 //  - `max_pos` is 255
 //  - `max_neg` is 0
 //  - `min_bits` is 0 (might be clever tricks in restrictive circumstances, but IMO shouldn't bother)
+//
+// We also test the `reduce` op here as it should produce the exact same type
 
 func.func @good_nondet_rem_basic() {
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
@@ -577,15 +583,32 @@ func.func @good_nondet_rem_coeff_carry() {
 
 // -----
 
-// TODO: This has no testing for negatives -- handle appropriately elsewhere (or here?)
+func.func @good_nondet_quot_ignore_negatives() {
+  %0 = bigint.def 16, 0, true -> <2, 255, 0, 0>
+  %1 = bigint.def 32, 0, true -> <4, 255, 0, 0>
+  %2 = bigint.sub %0 : <2, 255, 0, 0>, %1 : <4, 255, 0, 0> -> <4, 255, 255, 0>
+  %3 = bigint.sub %2 : <4, 255, 255, 0>, %1 : <4, 255, 0, 0> -> <4, 255, 510, 0>
+  %4 = bigint.nondet_rem %3 : <4, 255, 510, 0>, %0 : <2, 255, 0, 0> -> <2, 255, 0, 0>
+  %5 = bigint.nondet_rem %0 : <2, 255, 0, 0>, %3 : <4, 255, 510, 0> -> <2, 255, 0, 0>
+  %6 = bigint.nondet_rem %2 : <4, 255, 255, 0>, %3 : <4, 255, 510, 0> -> <4, 255, 0, 0>
+  %7 = bigint.reduce %3 : <4, 255, 510, 0>, %0 : <2, 255, 0, 0> -> <2, 255, 0, 0>
+  %8 = bigint.reduce %0 : <2, 255, 0, 0>, %3 : <4, 255, 510, 0> -> <2, 255, 0, 0>
+  %9 = bigint.reduce %2 : <4, 255, 255, 0>, %3 : <4, 255, 510, 0> -> <4, 255, 0, 0>
+  return
+}
+
+// -----
 
 // Type inference for `nondet_invmod`:
+//
 //  - For `coeffs`:
 //    - Compute the max overall value from the denominator - 1 by the algorithm from the general nondets section
 //    - Compute the coeffs from this number by the algorithm from the general nondets section
 //  - `max_pos` is 255
 //  - `max_neg` is 0
 //  - `min_bits` is 0
+//
+// We also test the `inv` op here as it should produce the exact same type
 
 func.func @good_nondet_invmod_basic() {
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
@@ -750,5 +773,21 @@ func.func @good_nondet_invmod_coeff_carry() {
   %3 = bigint.mul %0 : <1, 255, 0, 0>, %1 : <2, 255, 0, 0> -> <2, 65025, 0, 0>
   %4 = bigint.nondet_invmod %2 : <8, 255, 0, 0>, %3 : <2, 65025, 0, 0> -> <4, 255, 0, 0>
   %5 = bigint.inv %2 : <8, 255, 0, 0>, %3 : <2, 65025, 0, 0> -> <4, 255, 0, 0>
+  return
+}
+
+// -----
+
+func.func @good_nondet_invmod_ignore_negatives() {
+  %0 = bigint.def 16, 0, true -> <2, 255, 0, 0>
+  %1 = bigint.def 32, 0, true -> <4, 255, 0, 0>
+  %2 = bigint.sub %0 : <2, 255, 0, 0>, %1 : <4, 255, 0, 0> -> <4, 255, 255, 0>
+  %3 = bigint.sub %2 : <4, 255, 255, 0>, %1 : <4, 255, 0, 0> -> <4, 255, 510, 0>
+  %4 = bigint.nondet_invmod %3 : <4, 255, 510, 0>, %0 : <2, 255, 0, 0> -> <2, 255, 0, 0>
+  %5 = bigint.nondet_invmod %0 : <2, 255, 0, 0>, %3 : <4, 255, 510, 0> -> <4, 255, 0, 0>
+  %6 = bigint.nondet_invmod %2 : <4, 255, 255, 0>, %3 : <4, 255, 510, 0> -> <4, 255, 0, 0>
+  %7 = bigint.inv %3 : <4, 255, 510, 0>, %0 : <2, 255, 0, 0> -> <2, 255, 0, 0>
+  %8 = bigint.inv %0 : <2, 255, 0, 0>, %3 : <4, 255, 510, 0> -> <4, 255, 0, 0>
+  %9 = bigint.inv %2 : <4, 255, 255, 0>, %3 : <4, 255, 510, 0> -> <4, 255, 0, 0>
   return
 }
