@@ -67,7 +67,7 @@ void lower(func::FuncOp inFunc) {
           }
         })
         .Case<ConstOp>([&](auto op) { countConst += op.getOut().getType().getNormalWitnessSize(); })
-        .Case<NondetRemOp, NondetQuotOp, NondetInvModOp>(
+        .Case<NondetRemOp, NondetQuotOp, NondetInvOp>(
             [&](auto op) { countPrivate += op.getOut().getType().getNormalWitnessSize(); })
         .Case<EqualZeroOp>(
             [&](auto op) { countPrivate += op.getIn().getType().getCarryWitnessSize(); });
@@ -168,7 +168,7 @@ void lower(func::FuncOp inFunc) {
             valMap[op.getOut()] =
                 builder.create<Zll::MulOp>(loc, valMap[op.getLhs()], valMap[op.getRhs()]);
           })
-          .Case<NondetRemOp, NondetQuotOp, NondetInvModOp>([&](auto op) {
+          .Case<NondetRemOp, NondetQuotOp, NondetInvOp>([&](auto op) {
             valMap[op.getOut()] =
                 extractPoly(cbPrivate.getEvaluations(), curPrivate, op.getOut().getType());
           })

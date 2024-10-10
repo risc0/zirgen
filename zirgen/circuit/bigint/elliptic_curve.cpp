@@ -88,7 +88,7 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   x_diff = builder.create<BigInt::AddOp>(
       loc, x_diff, prime); // Quot/Rem needs nonnegative inputs, so enforce positivity
 
-  Value x_diff_inv = builder.create<BigInt::NondetInvModOp>(loc, x_diff, prime);
+  Value x_diff_inv = builder.create<BigInt::NondetInvOp>(loc, x_diff, prime);
   // Enforce that xDiffInv is the inverse of x_diff
   Value x_diff_inv_check = builder.create<BigInt::MulOp>(loc, x_diff, x_diff_inv);
   Value x_diff_inv_check_quot = builder.create<BigInt::NondetQuotOp>(loc, x_diff_inv_check, prime);
@@ -300,7 +300,7 @@ AffinePt doub(OpBuilder builder, Location loc, const AffinePt& pt) {
 
   Value two_y = builder.create<BigInt::AddOp>(loc, pt.y(), pt.y());
 
-  Value two_y_inv = builder.create<BigInt::NondetInvModOp>(loc, two_y, prime);
+  Value two_y_inv = builder.create<BigInt::NondetInvOp>(loc, two_y, prime);
 
   // Normalize to not overflow coefficient size
   // This method is expensive, adding ~25k cycles to secp256k1 EC Mul

@@ -251,7 +251,7 @@ func.func @good_mul_min_bits() {
 //    - In many cases, they cannot give correct answers when negative inputs are provided
 //    - Negative inputs are still allowed (for cases such as when a developer knows more than the type system)
 //    - Nondets should always be appropriately constrained, including failing if necessary on negative inputs
-//      - ReduceOp and ModularInvOp come with constraints built in
+//      - ReduceOp and InvOp come with constraints built in
 //  - Nondets will return values with normalized coeffs (and therefore potentially more coeffs than if unnormalized)
 //    - The max possible overall value can be computed as `max_pos` (of the unnormalized form) times the sum from i=0..coeffs of 256^i
 //      - Then 1 + the floor of log_256 of this value is the number of coeffs
@@ -599,7 +599,7 @@ func.func @good_nondet_quot_ignore_negatives() {
 
 // -----
 
-// Type inference for `nondet_invmod`:
+// Type inference for `nondet_inv`:
 //
 //  - For `coeffs`:
 //    - Compute the max overall value from the denominator - 1 by the algorithm from the general nondets section
@@ -610,134 +610,134 @@ func.func @good_nondet_quot_ignore_negatives() {
 //
 // We also test the `inv` op here as it should produce the exact same type
 
-func.func @good_nondet_invmod_basic() {
+func.func @good_nondet_inv_basic() {
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
   %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
-  %2 = bigint.nondet_invmod %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 255, 0, 0>
+  %2 = bigint.nondet_inv %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 255, 0, 0>
   %3 = bigint.inv %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 255, 0, 0>
   return
 }
 
 // -----
 
-func.func @good_nondet_invmod_oversized_num() {
+func.func @good_nondet_inv_oversized_num() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
   %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
   %2 = bigint.add %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 510, 0, 0>
-  %3 = bigint.nondet_invmod %2 : <1, 510, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 255, 0, 0>
+  %3 = bigint.nondet_inv %2 : <1, 510, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 255, 0, 0>
   %4 = bigint.inv %2 : <1, 510, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 255, 0, 0>
   return
 }
 
 // -----
 
-func.func @good_nondet_invmod_oversized_denom() {
+func.func @good_nondet_inv_oversized_denom() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
   %1 = bigint.def 8, 1, true -> <1, 255, 0, 0>
   %2 = bigint.add %0 : <1, 255, 0, 0>, %1 : <1, 255, 0, 0> -> <1, 510, 0, 0>
-  %3 = bigint.nondet_invmod %1 : <1, 255, 0, 0>, %2 : <1, 510, 0, 0> -> <2, 255, 0, 0>
+  %3 = bigint.nondet_inv %1 : <1, 255, 0, 0>, %2 : <1, 510, 0, 0> -> <2, 255, 0, 0>
   %4 = bigint.inv %1 : <1, 255, 0, 0>, %2 : <1, 510, 0, 0> -> <2, 255, 0, 0>
   return
 }
 
 // -----
 
-func.func @good_nondet_invmod_multibyte_denom() {
+func.func @good_nondet_inv_multibyte_denom() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
   %1 = bigint.def 64, 1, true -> <8, 255, 0, 0>
   %2 = bigint.add %0 : <3, 255, 0, 0>, %1 : <8, 255, 0, 0> -> <8, 510, 0, 0>
-  %3 = bigint.nondet_invmod %2 : <8, 510, 0, 0>, %0 : <3, 255, 0, 0> -> <3, 255, 0, 0>
+  %3 = bigint.nondet_inv %2 : <8, 510, 0, 0>, %0 : <3, 255, 0, 0> -> <3, 255, 0, 0>
   %4 = bigint.inv %2 : <8, 510, 0, 0>, %0 : <3, 255, 0, 0> -> <3, 255, 0, 0>
   return
 }
 
 // -----
 
-func.func @good_nondet_invmod_multibyte_denom2() {
+func.func @good_nondet_inv_multibyte_denom2() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
   %1 = bigint.def 64, 1, true -> <8, 255, 0, 0>
   %2 = bigint.mul %0 : <3, 255, 0, 0>, %1 : <8, 255, 0, 0> -> <10, 195075, 0, 0>
-  %3 = bigint.nondet_invmod %2 : <10, 195075, 0, 0>, %0 : <3, 255, 0, 0> -> <3, 255, 0, 0>
+  %3 = bigint.nondet_inv %2 : <10, 195075, 0, 0>, %0 : <3, 255, 0, 0> -> <3, 255, 0, 0>
   %4 = bigint.inv %2 : <10, 195075, 0, 0>, %0 : <3, 255, 0, 0> -> <3, 255, 0, 0>
   return
 }
 
 // -----
 
-func.func @good_nondet_invmod_multibyte_denom3() {
+func.func @good_nondet_inv_multibyte_denom3() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
   %1 = bigint.def 64, 1, true -> <8, 255, 0, 0>
   %2 = bigint.add %0 : <1, 255, 0, 0>, %1 : <8, 255, 0, 0> -> <8, 510, 0, 0>
-  %3 = bigint.nondet_invmod %0 : <1, 255, 0, 0>, %2 : <8, 510, 0, 0> -> <9, 255, 0, 0>
+  %3 = bigint.nondet_inv %0 : <1, 255, 0, 0>, %2 : <8, 510, 0, 0> -> <9, 255, 0, 0>
   %4 = bigint.inv %0 : <1, 255, 0, 0>, %2 : <8, 510, 0, 0> -> <9, 255, 0, 0>
   return
 }
 
 // -----
 
-func.func @good_nondet_invmod_multibyte_denom4() {
+func.func @good_nondet_inv_multibyte_denom4() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
   %1 = bigint.def 64, 1, true -> <8, 255, 0, 0>
   %2 = bigint.mul %0 : <3, 255, 0, 0>, %1 : <8, 255, 0, 0> -> <10, 195075, 0, 0>
-  %3 = bigint.nondet_invmod %0 : <3, 255, 0, 0>, %2 : <10, 195075, 0, 0> -> <12, 255, 0, 0>
+  %3 = bigint.nondet_inv %0 : <3, 255, 0, 0>, %2 : <10, 195075, 0, 0> -> <12, 255, 0, 0>
   %4 = bigint.inv %0 : <3, 255, 0, 0>, %2 : <10, 195075, 0, 0> -> <12, 255, 0, 0>
   return
 }
 
 // -----
 
-func.func @good_nondet_invmod_1bit_denom() {
+func.func @good_nondet_inv_1bit_denom() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   //  - `min_bits` is 0
   %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
   %1 = bigint.const 1 : i8 -> <1, 255, 0, 1>
-  %2 = bigint.nondet_invmod %0 : <3, 255, 0, 0>, %1 : <1, 255, 0, 1> -> <1, 255, 0, 0>
+  %2 = bigint.nondet_inv %0 : <3, 255, 0, 0>, %1 : <1, 255, 0, 1> -> <1, 255, 0, 0>
   %3 = bigint.inv %0 : <3, 255, 0, 0>, %1 : <1, 255, 0, 1> -> <1, 255, 0, 0>
   return
 }
 
 // -----
 
-func.func @good_nondet_invmod_8bit_denom() {
+func.func @good_nondet_inv_8bit_denom() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   //  - `min_bits` is 0
   %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
   %1 = bigint.const 200 : i8 -> <1, 255, 0, 8>
-  %2 = bigint.nondet_invmod %0 : <3, 255, 0, 0>, %1 : <1, 255, 0, 8> -> <1, 255, 0, 0>
+  %2 = bigint.nondet_inv %0 : <3, 255, 0, 0>, %1 : <1, 255, 0, 8> -> <1, 255, 0, 0>
   %3 = bigint.inv %0 : <3, 255, 0, 0>, %1 : <1, 255, 0, 8> -> <1, 255, 0, 0>
   return
 }
 
 // -----
 
-func.func @good_nondet_invmod_9bit_denom() {
+func.func @good_nondet_inv_9bit_denom() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   //  - `min_bits` is 0
   %0 = bigint.def 24, 0, true -> <3, 255, 0, 0>
   %1 = bigint.const 300 : i16 -> <2, 255, 0, 9>
-  %2 = bigint.nondet_invmod %0 : <3, 255, 0, 0>, %1 : <2, 255, 0, 9> -> <2, 255, 0, 0>
+  %2 = bigint.nondet_inv %0 : <3, 255, 0, 0>, %1 : <2, 255, 0, 9> -> <2, 255, 0, 0>
   %3 = bigint.inv %0 : <3, 255, 0, 0>, %1 : <2, 255, 0, 9> -> <2, 255, 0, 0>
   return
 }
 
 // -----
 
-func.func @good_nondet_invmod_9bit_1coeff_denom() {
+func.func @good_nondet_inv_9bit_1coeff_denom() {
   // Primary rules tested:
   //  - Compute the max overall value from the denominator max value minus 1
   //  - `min_bits` is 0
@@ -745,47 +745,47 @@ func.func @good_nondet_invmod_9bit_1coeff_denom() {
   %1 = bigint.const 200 : i8 -> <1, 255, 0, 8>
   %2 = bigint.const 2 : i8 -> <1, 255, 0, 2>
   %3 = bigint.mul %1 : <1, 255, 0, 8>, %2 : <1, 255, 0, 2> -> <1, 65025, 0, 9>
-  %4 = bigint.nondet_invmod %0 : <3, 255, 0, 0>, %3 : <1, 65025, 0, 9> -> <2, 255, 0, 0>
+  %4 = bigint.nondet_inv %0 : <3, 255, 0, 0>, %3 : <1, 65025, 0, 9> -> <2, 255, 0, 0>
   %5 = bigint.inv %0 : <3, 255, 0, 0>, %3 : <1, 65025, 0, 9> -> <2, 255, 0, 0>
   return
 }
 
 // -----
 
-func.func @good_nondet_invmod_num_minbits() {
+func.func @good_nondet_inv_num_minbits() {
   // Primary rules tested:
   //  - `min_bits` is 0
   %0 = bigint.const 300 : i16 -> <2, 255, 0, 9>
   %1 = bigint.def 24, 0, true -> <3, 255, 0, 0>
-  %2 = bigint.nondet_invmod %0 : <2, 255, 0, 9>, %1 : <3, 255, 0, 0> -> <3, 255, 0, 0>
+  %2 = bigint.nondet_inv %0 : <2, 255, 0, 9>, %1 : <3, 255, 0, 0> -> <3, 255, 0, 0>
   %3 = bigint.inv %0 : <2, 255, 0, 9>, %1 : <3, 255, 0, 0> -> <3, 255, 0, 0>
   return
 }
 
 // -----
 
-func.func @good_nondet_invmod_coeff_carry() {
+func.func @good_nondet_inv_coeff_carry() {
   // Primary rules tested:
   //  - `min_bits` is 0
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
   %1 = bigint.def 16, 0, true -> <2, 255, 0, 0>
   %2 = bigint.def 64, 1, true -> <8, 255, 0, 0>
   %3 = bigint.mul %0 : <1, 255, 0, 0>, %1 : <2, 255, 0, 0> -> <2, 65025, 0, 0>
-  %4 = bigint.nondet_invmod %2 : <8, 255, 0, 0>, %3 : <2, 65025, 0, 0> -> <4, 255, 0, 0>
+  %4 = bigint.nondet_inv %2 : <8, 255, 0, 0>, %3 : <2, 65025, 0, 0> -> <4, 255, 0, 0>
   %5 = bigint.inv %2 : <8, 255, 0, 0>, %3 : <2, 65025, 0, 0> -> <4, 255, 0, 0>
   return
 }
 
 // -----
 
-func.func @good_nondet_invmod_ignore_negatives() {
+func.func @good_nondet_inv_ignore_negatives() {
   %0 = bigint.def 16, 0, true -> <2, 255, 0, 0>
   %1 = bigint.def 32, 0, true -> <4, 255, 0, 0>
   %2 = bigint.sub %0 : <2, 255, 0, 0>, %1 : <4, 255, 0, 0> -> <4, 255, 255, 0>
   %3 = bigint.sub %2 : <4, 255, 255, 0>, %1 : <4, 255, 0, 0> -> <4, 255, 510, 0>
-  %4 = bigint.nondet_invmod %3 : <4, 255, 510, 0>, %0 : <2, 255, 0, 0> -> <2, 255, 0, 0>
-  %5 = bigint.nondet_invmod %0 : <2, 255, 0, 0>, %3 : <4, 255, 510, 0> -> <4, 255, 0, 0>
-  %6 = bigint.nondet_invmod %2 : <4, 255, 255, 0>, %3 : <4, 255, 510, 0> -> <4, 255, 0, 0>
+  %4 = bigint.nondet_inv %3 : <4, 255, 510, 0>, %0 : <2, 255, 0, 0> -> <2, 255, 0, 0>
+  %5 = bigint.nondet_inv %0 : <2, 255, 0, 0>, %3 : <4, 255, 510, 0> -> <4, 255, 0, 0>
+  %6 = bigint.nondet_inv %2 : <4, 255, 255, 0>, %3 : <4, 255, 510, 0> -> <4, 255, 0, 0>
   %7 = bigint.inv %3 : <4, 255, 510, 0>, %0 : <2, 255, 0, 0> -> <2, 255, 0, 0>
   %8 = bigint.inv %0 : <2, 255, 0, 0>, %3 : <4, 255, 510, 0> -> <4, 255, 0, 0>
   %9 = bigint.inv %2 : <4, 255, 255, 0>, %3 : <4, 255, 510, 0> -> <4, 255, 0, 0>

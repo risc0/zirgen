@@ -22,7 +22,7 @@
 namespace zirgen::BigInt {
 
 // Pass constructors
-std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createLowerModularInvPass();
+std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createLowerInvPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createLowerReducePass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createLowerZllPass();
 

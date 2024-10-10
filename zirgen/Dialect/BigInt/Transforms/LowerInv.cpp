@@ -27,15 +27,15 @@ namespace zirgen::BigInt {
 
 namespace {
 
-struct ReplaceModularInv : public OpRewritePattern<ModularInvOp> {
+struct ReplaceInv : public OpRewritePattern<InvOp> {
   using OpRewritePattern::OpRewritePattern;
-  LogicalResult matchAndRewrite(ModularInvOp op, PatternRewriter& rewriter) const override {
+  LogicalResult matchAndRewrite(InvOp op, PatternRewriter& rewriter) const override {
     // Construct the constant 1
     mlir::Type oneType = rewriter.getIntegerType(1);    // a `1` is bitwidth 1
     auto oneAttr = rewriter.getIntegerAttr(oneType, 1); // value 1
     auto one = rewriter.create<ConstOp>(op.getLoc(), oneAttr);
 
-    auto inv = rewriter.create<NondetInvModOp>(op.getLoc(), op.getLhs(), op.getRhs());
+    auto inv = rewriter.create<NondetInvOp>(op.getLoc(), op.getLhs(), op.getRhs());
     auto remult = rewriter.create<MulOp>(op.getLoc(), op.getLhs(), inv);
     auto reduced = rewriter.create<ReduceOp>(op.getLoc(), remult, op.getRhs());
     auto diff = rewriter.create<SubOp>(op.getLoc(), reduced, one);
@@ -45,11 +45,11 @@ struct ReplaceModularInv : public OpRewritePattern<ModularInvOp> {
   }
 };
 
-struct LowerModularInvPass : public LowerModularInvBase<LowerModularInvPass> {
+struct LowerInvPass : public LowerInvBase<LowerInvPass> {
   void runOnOperation() override {
     auto ctx = &getContext();
     RewritePatternSet patterns(ctx);
-    patterns.insert<ReplaceModularInv>(ctx);
+    patterns.insert<ReplaceInv>(ctx);
     if (applyPatternsAndFoldGreedily(getOperation(), std::move(patterns)).failed()) {
       return signalPassFailure();
     }
@@ -58,8 +58,8 @@ struct LowerModularInvPass : public LowerModularInvBase<LowerModularInvPass> {
 
 } // End namespace
 
-std::unique_ptr<OperationPass<mlir::ModuleOp>> createLowerModularInvPass() {
-  return std::make_unique<LowerModularInvPass>();
+std::unique_ptr<OperationPass<mlir::ModuleOp>> createLowerInvPass() {
+  return std::make_unique<LowerInvPass>();
 }
 
 } // namespace zirgen::BigInt

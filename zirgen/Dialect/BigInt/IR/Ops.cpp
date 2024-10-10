@@ -152,7 +152,7 @@ LogicalResult NondetQuotOp::inferReturnTypes(MLIRContext* ctx,
   return success();
 }
 
-LogicalResult NondetInvModOp::inferReturnTypes(MLIRContext* ctx,
+LogicalResult NondetInvOp::inferReturnTypes(MLIRContext* ctx,
                                                std::optional<Location> loc,
                                                Adaptor adaptor,
                                                SmallVectorImpl<Type>& out) {
@@ -166,7 +166,7 @@ LogicalResult NondetInvModOp::inferReturnTypes(MLIRContext* ctx,
   return success();
 }
 
-LogicalResult ModularInvOp::inferReturnTypes(MLIRContext* ctx,
+LogicalResult InvOp::inferReturnTypes(MLIRContext* ctx,
                                              std::optional<Location> loc,
                                              Adaptor adaptor,
                                              SmallVectorImpl<Type>& out) {
@@ -266,7 +266,7 @@ void NondetQuotOp::emitExpr(codegen::CodegenEmitter& cg) {
       {getLhs(), getRhs(), toConstantValue(cg, getContext(), getType().getCoeffs())});
 }
 
-void NondetInvModOp::emitExpr(codegen::CodegenEmitter& cg) {
+void NondetInvOp::emitExpr(codegen::CodegenEmitter& cg) {
   cg.emitInvokeMacro(
       cg.getStringAttr("bigint_nondet_inv"),
       /*contextArgs=*/{"ctx"},
