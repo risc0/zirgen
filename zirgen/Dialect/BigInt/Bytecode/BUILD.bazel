@@ -1,0 +1,21 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "lib",
+    srcs = [
+        "bibc.cpp",
+        "file.cpp",
+        "mlir.cpp",
+    ],
+    hdrs = [
+        "bibc.h",
+        "file.h",
+        "mlir.h",
+    ],
+    deps = [
+        "//zirgen/Dialect/BigInt/IR",
+        "@llvm-project//mlir:FuncDialect",
+    ],
+)
