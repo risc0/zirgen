@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <cstddef>
 #include <cstdint>
 #include <vector>
 
@@ -63,7 +64,6 @@ struct Program {
   std::vector<uint64_t> constants;
   std::vector<Op> ops;
   void clear();
-  void dumpstats();
 };
 
 bool operator<(const Type&, const Type&);
