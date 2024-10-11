@@ -25,6 +25,9 @@
 using namespace mlir;
 using risc0::ceilDiv;
 
+// Additional comments on how type inference works for the BigInt dialect can be found in
+// `test/type_infer.mlir`, including descriptions at the beginning of each op's suite of tests.
+
 namespace zirgen::BigInt {
 
 // Type inference
@@ -94,9 +97,9 @@ LogicalResult MulOp::inferReturnTypes(MLIRContext* ctx,
                                       SmallVectorImpl<Type>& out) {
   auto lhsType = adaptor.getLhs().getType().cast<BigIntType>();
   auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
+  size_t coeffs = lhsType.getCoeffs() + rhsType.getCoeffs() - 1;
   // The maximum number of coefficient pairs from the inputs used to calculate an output coefficient
   size_t maxCoeffs = std::min(lhsType.getCoeffs(), rhsType.getCoeffs());
-  size_t totCoeffs = lhsType.getCoeffs() + rhsType.getCoeffs() - 1;
   // This calculation could overflow if size_t is 32 bits, so cast to 64 bits
   uint64_t maxPos = std::max((uint64_t)lhsType.getMaxPos() * rhsType.getMaxPos(),
                              (uint64_t)lhsType.getMaxNeg() * rhsType.getMaxNeg());
@@ -123,11 +126,13 @@ LogicalResult MulOp::inferReturnTypes(MLIRContext* ctx,
   }
   size_t minBits;
   if (lhsType.getMinBits() == 0 || rhsType.getMinBits() == 0) {
+    // Note that this catches _both_ cases where the input might be zero _and_ cases where the input
+    // might be negative, as type verification enforces that when minBits is zero, so is maxNeg.
     minBits = 0;
   } else {
     minBits = lhsType.getMinBits() + rhsType.getMinBits() - 1;
   }
-  out.push_back(BigIntType::get(ctx, totCoeffs, maxPos, maxNeg, minBits));
+  out.push_back(BigIntType::get(ctx, coeffs, maxPos, maxNeg, minBits));
   return success();
 }
 

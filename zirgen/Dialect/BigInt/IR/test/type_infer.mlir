@@ -181,7 +181,7 @@ func.func @sub_min_bits() {
 //  - `max_neg` is the smaller `coeffs` value from the two inputs times
 //     the max of the two mixed products (of one `max_pos` and one `max_neg`)
 //  - If both inputs are nonnegative, `min_bits` is the sum of input `min_bits`s minus 1
-//  - If either input may be negative, `min_bits` is zero
+//  - If either input may be negative or zero, `min_bits` is zero
 
 func.func @mul_basic() {
   %0 = bigint.def 8, 0, true -> <1, 255, 0, 0>
@@ -254,6 +254,7 @@ func.func @mul_min_bits() {
 //    - The max possible overall value can be computed as `max_pos` (of the unnormalized form) times the sum from i=0..coeffs of 256^i
 //      - Then 1 + the floor of log_256 of this value is the number of coeffs
 //  - So in normalized form `max_pos = 255` and `max_neg = 0`
+//  - `min_bits` is zero to avoid a semi-hidden responsibility for checking that the input is in bounds
 
 // Type inference for `nondet_quot`:
 //
@@ -395,6 +396,7 @@ func.func @nondet_quot_ignore_negatives() {
   %4 = bigint.nondet_quot %3 : <4, 255, 510, 0>, %0 : <2, 255, 0, 0> -> <4, 255, 0, 0>
   %5 = bigint.nondet_quot %0 : <2, 255, 0, 0>, %3 : <4, 255, 510, 0> -> <2, 255, 0, 0>
   %6 = bigint.nondet_quot %2 : <4, 255, 255, 0>, %3 : <4, 255, 510, 0> -> <4, 255, 0, 0>
+  %7 = bigint.nondet_quot %3 : <4, 255, 510, 0>, %2 : <4, 255, 255, 0> -> <4, 255, 0, 0>
   return
 }
 
@@ -574,6 +576,10 @@ func.func @nondet_rem_coeff_carry() {
   %1 = bigint.def 16, 0, true -> <2, 255, 0, 0>
   %2 = bigint.def 64, 1, true -> <8, 255, 0, 0>
   %3 = bigint.mul %0 : <1, 255, 0, 0>, %1 : <2, 255, 0, 0> -> <2, 65025, 0, 0>
+  // Note: although the maximum value of BigInt<2, 65025, 0, 0> would fit into a BigInt<3, 255, 0, 0>,
+  // the type inference system approximates to the next highest power of 2 (minus 1, so 65535 in this case).
+  // a BigInt<2, 65535, 0, 0> would not fit into a BigInt<3, 255, 0, 0>, so we use BigInt<4, 255, 0, 0>
+  // here instead, even though that results in an unused (always 0) coefficient for BigInt<2, 65025, 0, 0>.
   %4 = bigint.nondet_rem %2 : <8, 255, 0, 0>, %3 : <2, 65025, 0, 0> -> <4, 255, 0, 0>
   %5 = bigint.reduce %2 : <8, 255, 0, 0>, %3 : <2, 65025, 0, 0> -> <4, 255, 0, 0>
   return
@@ -589,9 +595,11 @@ func.func @nondet_quot_ignore_negatives() {
   %4 = bigint.nondet_rem %3 : <4, 255, 510, 0>, %0 : <2, 255, 0, 0> -> <2, 255, 0, 0>
   %5 = bigint.nondet_rem %0 : <2, 255, 0, 0>, %3 : <4, 255, 510, 0> -> <2, 255, 0, 0>
   %6 = bigint.nondet_rem %2 : <4, 255, 255, 0>, %3 : <4, 255, 510, 0> -> <4, 255, 0, 0>
-  %7 = bigint.reduce %3 : <4, 255, 510, 0>, %0 : <2, 255, 0, 0> -> <2, 255, 0, 0>
-  %8 = bigint.reduce %0 : <2, 255, 0, 0>, %3 : <4, 255, 510, 0> -> <2, 255, 0, 0>
-  %9 = bigint.reduce %2 : <4, 255, 255, 0>, %3 : <4, 255, 510, 0> -> <4, 255, 0, 0>
+  %7 = bigint.nondet_rem %3 : <4, 255, 510, 0>, %3 : <4, 255, 510, 0> -> <4, 255, 0, 0>
+  %8 = bigint.reduce %3 : <4, 255, 510, 0>, %0 : <2, 255, 0, 0> -> <2, 255, 0, 0>
+  %9 = bigint.reduce %0 : <2, 255, 0, 0>, %3 : <4, 255, 510, 0> -> <2, 255, 0, 0>
+  %10 = bigint.reduce %2 : <4, 255, 255, 0>, %3 : <4, 255, 510, 0> -> <4, 255, 0, 0>
+  %11 = bigint.reduce %3 : <4, 255, 510, 0>, %3 : <4, 255, 510, 0> -> <4, 255, 0, 0>
   return
 }
 
@@ -769,6 +777,10 @@ func.func @nondet_inv_coeff_carry() {
   %1 = bigint.def 16, 0, true -> <2, 255, 0, 0>
   %2 = bigint.def 64, 1, true -> <8, 255, 0, 0>
   %3 = bigint.mul %0 : <1, 255, 0, 0>, %1 : <2, 255, 0, 0> -> <2, 65025, 0, 0>
+  // Note: although the maximum value of BigInt<2, 65025, 0, 0> would fit into a BigInt<3, 255, 0, 0>,
+  // the type inference system approximates to the next highest power of 2 (minus 1, so 65535 in this case).
+  // a BigInt<2, 65535, 0, 0> would not fit into a BigInt<3, 255, 0, 0>, so we use BigInt<4, 255, 0, 0>
+  // here instead, even though that results in an unused (always 0) coefficient for BigInt<2, 65025, 0, 0>.
   %4 = bigint.nondet_inv %2 : <8, 255, 0, 0>, %3 : <2, 65025, 0, 0> -> <4, 255, 0, 0>
   %5 = bigint.inv %2 : <8, 255, 0, 0>, %3 : <2, 65025, 0, 0> -> <4, 255, 0, 0>
   return
