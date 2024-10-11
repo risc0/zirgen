@@ -72,6 +72,8 @@ IOException::IOException(const char* file, const char* func, int line, const cha
   if (cond)                                                                                        \
   throw IOException(__FILE__, __FUNCTION__, __LINE__, #cond)
 
+#define MAGIC 0x63626962
+
 namespace {
 
 void writeU32(uint32_t value, FILE *stream) {
@@ -99,7 +101,7 @@ void writeU64(uint64_t value, FILE *stream) {
 }
 
 void writeHeader(const Program &p, FILE *stream) {
-  writeU32(0x63626962, stream);
+  writeU32(MAGIC, stream);
   writeU32(1, stream);
   writeU32(p.inputs.size(), stream);
   writeU32(p.types.size(), stream);
@@ -160,9 +162,76 @@ void write(const Program &p, FILE *stream) {
   }
 }
 
+namespace {
+
+uint32_t readU32(FILE *stream) {
+  check(feof(stream));
+  std::array<uint8_t, 4> buf;
+  size_t got = fread(buf.data(), buf.size(), 1, stream);
+  check(ferror(stream) || !got);
+  return (static_cast<uint32_t>(buf[0]) << 0x00) | (static_cast<uint32_t>(buf[1]) << 0x08) |
+         (static_cast<uint32_t>(buf[2]) << 0x10) | (static_cast<uint32_t>(buf[3]) << 0x18);
+
+}
+
+uint64_t readU64(FILE *stream) {
+  check(feof(stream));
+  std::array<uint8_t, 8> buf;
+  size_t got = fread(buf.data(), buf.size(), 1, stream);
+  check(ferror(stream) || !got);
+  return (static_cast<uint64_t>(buf[0]) << 0x00) | (static_cast<uint64_t>(buf[1]) << 0x08) |
+         (static_cast<uint64_t>(buf[2]) << 0x10) | (static_cast<uint64_t>(buf[3]) << 0x18) |
+         (static_cast<uint64_t>(buf[4]) << 0x20) | (static_cast<uint64_t>(buf[5]) << 0x28) |
+         (static_cast<uint64_t>(buf[6]) << 0x30) | (static_cast<uint64_t>(buf[7]) << 0x38);
+}
+
+void readHeader(Program &p, FILE *stream) {
+  check(MAGIC != readU32(stream));
+  check(1 != readU32(stream));
+  p.types.resize(readU32(stream));
+  p.inputs.resize(readU32(stream));
+  p.constants.resize(readU32(stream));
+  p.ops.resize(readU32(stream));
+}
+
+void readType(Type &t, FILE *stream) {
+  t.coeffs = readU64(stream);
+  t.maxPos = readU64(stream);
+  t.maxNeg = readU64(stream);
+  t.minBits = readU64(stream);
+}
+
+void readInput(Input &wire, FILE *stream) {
+  wire.label = readU64(stream);
+  wire.bitWidth = readU32(stream);
+  wire.minBits = readU32(stream);
+}
+
+void readOp(Op &o, FILE *stream) {
+  uint64_t bits = readU64(stream);
+  o.code = (bits >> 60) & 0x0F;
+  o.type = (bits >> 38) & 0x0FFF;
+  o.operandA = (bits >> 24) & 0x00FFFFFF;
+  o.operandB = (bits >> 0) & 0x00FFFFFF;
+}
+
+} // namespace
+
 void read(Program &p, FILE *stream) {
   p.clear();
-  throw std::runtime_error("not yet implemented");
+  readHeader(p, stream);
+  for (size_t i = 0; i < p.types.size(); ++i) {
+    readType(p.types[i], stream);
+  }
+  for (size_t i = 0; i < p.inputs.size(); ++i) {
+    readInput(p.inputs[i], stream);
+  }
+  for (size_t i = 0; i < p.constants.size(); ++i) {
+    p.constants[i] = readU64(stream);
+  }
+  for (size_t i = 0; i < p.ops.size(); ++i) {
+    readOp(p.ops[i], stream);
+  }
 }
 
 } // namespace zirgen::BigInt::Bytecode
