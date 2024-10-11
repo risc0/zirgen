@@ -23,17 +23,22 @@
 namespace zirgen::BigInt::Bytecode {
 
 class BQInt {
-  std::vector<uint64_t> val;
+  union {
+    uint64_t word;
+    uint64_t *ptr;
+  } U;
   unsigned BitWidth = 1;
 public:
   BQInt(unsigned numBits, uint64_t val, bool isSigned = false);
   BQInt(unsigned numBits, unsigned numWords, const uint64_t val[]);
+  ~BQInt();
+  bool isSingleWord() const;
   uint64_t getLimitedValue(uint64_t Limit = UINT64_MAX) const;
   BQInt &operator-=(uint64_t RHS);
   BQInt &operator+=(const BQInt &RHS);
   BQInt &operator*=(uint64_t RHS);
   BQInt &operator<<=(unsigned ShiftAmt);
-  BQInt &operator*(const BQInt &RHS);
+  BQInt operator*(const BQInt &RHS);
   bool operator!=(uint64_t Val) const;
   BQInt udiv(const BQInt &RHS) const;
   BQInt urem(const BQInt &RHS) const;
@@ -43,6 +48,20 @@ public:
   BQInt zext(unsigned width) const;
   BQInt extractBits(unsigned numBits, unsigned bitPosition) const;
   unsigned getBitWidth() const { return BitWidth; }
+protected:
+  // used internally but never by the eval function
+  unsigned getNumWords() const;
+  static unsigned getNumWords(unsigned);
+  BQInt &clearUnusedBits();
+  void initSlowCase(uint64_t val, bool isSigned);
+  bool ugt(uint64_t RHS) const;
+  bool ult(const BQInt &RHS) const;
+  uint64_t getZExtValue() const;
+  unsigned getActiveBits() const { return BitWidth - countl_zero(); }
+  unsigned countl_zero() const;
+  unsigned countLeadingZerosSlowCase() const;
+  bool operator==(uint64_t Val) const;
+  bool operator==(const BQInt &RHS) const;
 };
 
 inline BQInt operator-(BQInt a, uint64_t RHS) {
