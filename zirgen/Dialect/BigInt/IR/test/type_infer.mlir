@@ -580,6 +580,7 @@ func.func @nondet_rem_coeff_carry() {
   // the type inference system approximates to the next highest power of 2 (minus 1, so 65535 in this case).
   // a BigInt<2, 65535, 0, 0> would not fit into a BigInt<3, 255, 0, 0>, so we use BigInt<4, 255, 0, 0>
   // here instead, even though that results in an unused (always 0) coefficient for BigInt<2, 65025, 0, 0>.
+  // See `getMaxPosBits` and its comments for more details.
   %4 = bigint.nondet_rem %2 : <8, 255, 0, 0>, %3 : <2, 65025, 0, 0> -> <4, 255, 0, 0>
   %5 = bigint.reduce %2 : <8, 255, 0, 0>, %3 : <2, 65025, 0, 0> -> <4, 255, 0, 0>
   return
@@ -781,6 +782,7 @@ func.func @nondet_inv_coeff_carry() {
   // the type inference system approximates to the next highest power of 2 (minus 1, so 65535 in this case).
   // a BigInt<2, 65535, 0, 0> would not fit into a BigInt<3, 255, 0, 0>, so we use BigInt<4, 255, 0, 0>
   // here instead, even though that results in an unused (always 0) coefficient for BigInt<2, 65025, 0, 0>.
+  // See `getMaxPosBits` and its comments for more details.
   %4 = bigint.nondet_inv %2 : <8, 255, 0, 0>, %3 : <2, 65025, 0, 0> -> <4, 255, 0, 0>
   %5 = bigint.inv %2 : <8, 255, 0, 0>, %3 : <2, 65025, 0, 0> -> <4, 255, 0, 0>
   return
