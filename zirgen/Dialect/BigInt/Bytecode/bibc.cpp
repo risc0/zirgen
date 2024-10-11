@@ -13,8 +13,6 @@
 // limitations under the License.
 
 #include <map>
-#include "llvm/include/llvm/Support/raw_ostream.h"
-
 #include "zirgen/Dialect/BigInt/Bytecode/bibc.h"
 
 namespace zirgen::BigInt::Bytecode {
@@ -24,13 +22,6 @@ void Program::clear() {
   inputs.clear();
   constants.clear();
   ops.clear();
-}
-
-void Program::dumpstats() {
-  llvm::errs() << "  types.size() == " << types.size() << "\n";
-  llvm::errs() << "  inputs.size() == " << inputs.size() << "\n";
-  llvm::errs() << "  constants.size() == " << constants.size() << "\n";
-  llvm::errs() << "  ops.size() == " << ops.size() << "\n";
 }
 
 bool operator<(const Type& l, const Type& r) {
