@@ -37,6 +37,8 @@ std::string mangledTypeName(StringRef componentName, llvm::ArrayRef<Attribute> t
     llvm::interleaveComma(typeArgs, stream, [&](Attribute typeArg) {
       if (auto strAttr = typeArg.dyn_cast<StringAttr>()) {
         stream << strAttr.getValue();
+      } else if (auto intAttr = typeArg.dyn_cast<IntegerAttr>()) {
+        stream << intAttr;
       } else if (auto intAttr = typeArg.dyn_cast<PolynomialAttr>()) {
         stream << intAttr[0];
       } else {
