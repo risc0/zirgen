@@ -24,7 +24,7 @@ digraph zirgen {
             subgraph cluster_accel {
                 label="Accelerators"
                 accel_rsa [label="RSA"]
-                accel_ecdsa [color="red", label="ECDSA"]
+                accel_ecdsa [color="red", label="EC mul"]
                 accel_circom [label="Circom-based"]
             }
         }
