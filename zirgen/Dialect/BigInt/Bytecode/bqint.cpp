@@ -35,6 +35,21 @@ uint64_t *getMemory(unsigned numWords) {
   return new uint64_t[numWords];
 }
 
+uint64_t lowBitMask(unsigned bits) {
+  if (bits == 0 || bits > BITS_PER_WORD) {
+    throw std::runtime_error("malformed bit mask");
+  }
+  return ~(uint64_t) 0 >> (BITS_PER_WORD - bits);
+}
+
+uint64_t lowHalf(uint64_t part) {
+  return part & lowBitMask(BITS_PER_WORD / 2);
+}
+
+uint64_t highHalf(uint64_t part) {
+  return part >> (BITS_PER_WORD / 2);
+}
+
 unsigned count_zeros(uint64_t val) {
   if (!val) {
     return BITS_PER_WORD;
@@ -76,6 +91,143 @@ uint64_t tcSubtractPart(uint64_t *dst, uint64_t src, unsigned parts) {
     src = 1;
   }
   return 1;
+}
+
+/// DST += SRC * MULTIPLIER + CARRY   if add is true
+/// DST  = SRC * MULTIPLIER + CARRY   if add is false
+/// Requires 0 <= DSTPARTS <= SRCPARTS + 1.  If DST overlaps SRC
+/// they must start at the same point, i.e. DST == SRC.
+/// If DSTPARTS == SRCPARTS + 1 no overflow occurs and zero is
+/// returned.  Otherwise DST is filled with the least significant
+/// DSTPARTS parts of the result, and if all of the omitted higher
+/// parts were zero return zero, otherwise overflow occurred and
+/// return one.
+int tcMultiplyPart(uint64_t *dst, const uint64_t *src,
+                          uint64_t multiplier, uint64_t carry,
+                          unsigned srcParts, unsigned dstParts,
+                          bool add) {
+  // Otherwise our writes of DST kill our later reads of SRC.
+  if (dst > src && dst < src + srcParts) {
+    throw std::runtime_error("overlapping source and dest buffers");
+  }
+  if (dstParts > srcParts + 1) {
+    throw std::runtime_error("dstParts within srcParts buffer");
+  }
+
+  // N loops; minimum of dstParts and srcParts.
+  unsigned n = std::min(dstParts, srcParts);
+
+  for (unsigned i = 0; i < n; i++) {
+    // [LOW, HIGH] = MULTIPLIER * SRC[i] + DST[i] + CARRY.
+    // This cannot overflow, because:
+    //   (n - 1) * (n - 1) + 2 (n - 1) = (n - 1) * (n + 1)
+    // which is less than n^2.
+    uint64_t srcPart = src[i];
+    uint64_t low, mid, high;
+    if (multiplier == 0 || srcPart == 0) {
+      low = carry;
+      high = 0;
+    } else {
+      low = lowHalf(srcPart) * lowHalf(multiplier);
+      high = highHalf(srcPart) * highHalf(multiplier);
+
+      mid = lowHalf(srcPart) * highHalf(multiplier);
+      high += highHalf(mid);
+      mid <<= BITS_PER_WORD / 2;
+      if (low + mid < low)
+        high++;
+      low += mid;
+
+      mid = highHalf(srcPart) * lowHalf(multiplier);
+      high += highHalf(mid);
+      mid <<= BITS_PER_WORD / 2;
+      if (low + mid < low)
+        high++;
+      low += mid;
+
+      // Now add carry.
+      if (low + carry < low)
+        high++;
+      low += carry;
+    }
+
+    if (add) {
+      // And now DST[i], and store the new low part there.
+      if (low + dst[i] < low)
+        high++;
+      dst[i] += low;
+    } else
+      dst[i] = low;
+
+    carry = high;
+  }
+
+  if (srcParts < dstParts) {
+    // Full multiplication, there is no overflow.
+    if (srcParts + 1 != dstParts) {
+      throw std::runtime_error("overflow");
+    }
+    dst[srcParts] = carry;
+    return 0;
+  }
+
+  // We overflowed if there is carry.
+  if (carry)
+    return 1;
+
+  // We would overflow if any significant unwritten parts would be
+  // non-zero.  This is true if any remaining src parts are non-zero
+  // and the multiplier is non-zero.
+  if (multiplier)
+    for (unsigned i = dstParts; i < srcParts; i++)
+      if (src[i])
+        return 1;
+
+  // We fitted in the narrow destination.
+  return 0;
+}
+
+int tcMultiply(uint64_t *dst, const uint64_t *lhs,
+                      const uint64_t *rhs, unsigned parts) {
+  if (dst == lhs || dst == rhs) {
+    throw std::runtime_error("source & dest in same buffer");
+  }
+
+  int overflow = 0;
+
+  for (unsigned i = 0; i < parts; i++) {
+    // Don't accumulate on the first iteration so we don't need to initalize
+    // dst to 0.
+    overflow |=
+        tcMultiplyPart(&dst[i], lhs, rhs[i], 0, parts, parts - i, i != 0);
+  }
+
+  return overflow;
+}
+
+void tcShiftLeft(uint64_t *Dst, unsigned Words, unsigned Count) {
+  // Don't bother performing a no-op shift.
+  if (!Count)
+    return;
+
+  // WordShift is the inter-part shift; BitShift is the intra-part shift.
+  unsigned WordShift = std::min(Count / BITS_PER_WORD, Words);
+  unsigned BitShift = Count % BITS_PER_WORD;
+
+  // Fastpath for moving by whole words.
+  if (BitShift == 0) {
+    std::memmove(Dst + WordShift, Dst, (Words - WordShift) * WORD_SIZE);
+  } else {
+    while (Words-- > WordShift) {
+      Dst[Words] = Dst[Words - WordShift] << BitShift;
+      if (Words > WordShift)
+        Dst[Words] |=
+          Dst[Words - WordShift - 1] >> (BITS_PER_WORD - BitShift);
+    }
+  }
+
+  // Fill in the remainder with 0s.
+  std::memset(Dst, 0, WordShift * WORD_SIZE);
 }
 
 } // namespace
@@ -270,7 +422,7 @@ BQInt BQInt::smul_sat(const BQInt &RHS) const {
   bool overflow = false;
   BQInt res = smul_ov(RHS, overflow);
   if (!overflow) {
-    return Res;
+    return res;
   }
   // The result is negative if one and only one of inputs is negative.
   if (isNegative() ^ RHS.isNegative()) {
