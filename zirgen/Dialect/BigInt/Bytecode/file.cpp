@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "file.h"
 #include <array>
 #include <stdexcept>
-#include "file.h"
 
 namespace zirgen::BigInt::Bytecode {
 
@@ -76,7 +76,7 @@ IOException::IOException(const char* file, const char* func, int line, const cha
 
 namespace {
 
-void writeU32(uint32_t value, FILE *stream) {
+void writeU32(uint32_t value, FILE* stream) {
   std::array<uint8_t, 4> buf;
   buf[0] = (value >> 0x00) & 0xFFU;
   buf[1] = (value >> 0x08) & 0xFFU;
@@ -86,7 +86,7 @@ void writeU32(uint32_t value, FILE *stream) {
   check(ferror(stream) || !writ);
 }
 
-void writeU64(uint64_t value, FILE *stream) {
+void writeU64(uint64_t value, FILE* stream) {
   std::array<uint8_t, 8> buf;
   buf[0] = (value >> 0x00) & 0xFFU;
   buf[1] = (value >> 0x08) & 0xFFU;
@@ -100,7 +100,7 @@ void writeU64(uint64_t value, FILE *stream) {
   check(ferror(stream) || !writ);
 }
 
-void writeHeader(const Program &p, FILE *stream) {
+void writeHeader(const Program& p, FILE* stream) {
   writeU32(MAGIC, stream);
   writeU32(1, stream);
   writeU32(p.inputs.size(), stream);
@@ -109,20 +109,20 @@ void writeHeader(const Program &p, FILE *stream) {
   writeU32(p.ops.size(), stream);
 }
 
-void writeType(const Type &t, FILE *stream) {
+void writeType(const Type& t, FILE* stream) {
   writeU64(t.coeffs, stream);
   writeU64(t.maxPos, stream);
   writeU64(t.maxNeg, stream);
   writeU64(t.minBits, stream);
 }
 
-void writeInput(const Input &i, FILE *stream) {
+void writeInput(const Input& i, FILE* stream) {
   writeU64(i.label, stream);
   writeU32(i.bitWidth, stream);
   writeU32(i.minBits, stream);
 }
 
-void writeOp(const Op &o, FILE *stream) {
+void writeOp(const Op& o, FILE* stream) {
   // Pack operation struct fields into a single 64-bit word
   uint64_t w = 0;
   check(static_cast<uint8_t>(o.code) >= 0x10);
@@ -138,43 +138,42 @@ void writeOp(const Op &o, FILE *stream) {
 
 } // namespace
 
-void write(const Program &p, FILE *stream) {
+void write(const Program& p, FILE* stream) {
   writeHeader(p, stream);
   // inputs referenced through 24-bit operand
   check(p.inputs.size() > 0x00FFFFFF);
-  for (auto &i: p.inputs) {
+  for (auto& i : p.inputs) {
     writeInput(i, stream);
   }
   // types referenced through 12-bit operand
   check(p.types.size() > 0x00000FFF);
-  for (auto &t: p.types) {
+  for (auto& t : p.types) {
     writeType(t, stream);
   }
   // constants referenced through 24-bit operand
   check(p.constants.size() > 0x00FFFFFF);
-  for (uint64_t c: p.constants) {
+  for (uint64_t c : p.constants) {
     writeU64(c, stream);
   }
   // op results referenced through 24-bit operand
   check(p.ops.size() > 0x00FFFFFF);
-  for (auto &o: p.ops) {
+  for (auto& o : p.ops) {
     writeOp(o, stream);
   }
 }
 
 namespace {
 
-uint32_t readU32(FILE *stream) {
+uint32_t readU32(FILE* stream) {
   check(feof(stream));
   std::array<uint8_t, 4> buf;
   size_t got = fread(buf.data(), buf.size(), 1, stream);
   check(ferror(stream) || !got);
   return (static_cast<uint32_t>(buf[0]) << 0x00) | (static_cast<uint32_t>(buf[1]) << 0x08) |
          (static_cast<uint32_t>(buf[2]) << 0x10) | (static_cast<uint32_t>(buf[3]) << 0x18);
-
 }
 
-uint64_t readU64(FILE *stream) {
+uint64_t readU64(FILE* stream) {
   check(feof(stream));
   std::array<uint8_t, 8> buf;
   size_t got = fread(buf.data(), buf.size(), 1, stream);
@@ -185,7 +184,7 @@ uint64_t readU64(FILE *stream) {
          (static_cast<uint64_t>(buf[6]) << 0x30) | (static_cast<uint64_t>(buf[7]) << 0x38);
 }
 
-void readHeader(Program &p, FILE *stream) {
+void readHeader(Program& p, FILE* stream) {
   check(MAGIC != readU32(stream));
   check(1 != readU32(stream));
   p.types.resize(readU32(stream));
@@ -194,20 +193,20 @@ void readHeader(Program &p, FILE *stream) {
   p.ops.resize(readU32(stream));
 }
 
-void readType(Type &t, FILE *stream) {
+void readType(Type& t, FILE* stream) {
   t.coeffs = readU64(stream);
   t.maxPos = readU64(stream);
   t.maxNeg = readU64(stream);
   t.minBits = readU64(stream);
 }
 
-void readInput(Input &wire, FILE *stream) {
+void readInput(Input& wire, FILE* stream) {
   wire.label = readU64(stream);
   wire.bitWidth = readU32(stream);
   wire.minBits = readU32(stream);
 }
 
-void readOp(Op &o, FILE *stream) {
+void readOp(Op& o, FILE* stream) {
   uint64_t bits = readU64(stream);
   o.code = (bits >> 60) & 0x0F;
   o.type = (bits >> 38) & 0x0FFF;
@@ -217,7 +216,7 @@ void readOp(Op &o, FILE *stream) {
 
 } // namespace
 
-void read(Program &p, FILE *stream) {
+void read(Program& p, FILE* stream) {
   p.clear();
   readHeader(p, stream);
   for (size_t i = 0; i < p.types.size(); ++i) {

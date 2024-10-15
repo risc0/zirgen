@@ -19,12 +19,12 @@
 // eval function implemented in zirgen/Dialect/BigInt/IR/Eval.h, without
 // depending on MLIR, so it can be ported to rust and run in the host.
 
+#include "zirgen/Dialect/BigInt/Bytecode/bibc.h"
+#include "zirgen/Dialect/BigInt/Bytecode/bqint.h"
+#include "zirgen/compiler/zkp/digest.h"
 #include <array>
 #include <cstdint>
 #include <vector>
-#include "zirgen/compiler/zkp/digest.h"
-#include "zirgen/Dialect/BigInt/Bytecode/bibc.h"
-#include "zirgen/Dialect/BigInt/Bytecode/bqint.h"
 
 namespace zirgen::BigInt::Bytecode {
 
@@ -40,6 +40,6 @@ struct EvalOutput {
 BytePoly fromBQInt(BQInt value, size_t coeffs);
 Digest computeDigest(std::vector<BytePoly> witness, size_t groupSize = 3);
 
-EvalOutput eval(const Program &func, std::vector<BQInt> &witnessValues);
+EvalOutput eval(const Program& func, std::vector<BQInt>& witnessValues);
 
 } // namespace zirgen::BigInt::Bytecode

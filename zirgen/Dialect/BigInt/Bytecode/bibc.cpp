@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <map>
 #include "zirgen/Dialect/BigInt/Bytecode/bibc.h"
+#include <map>
 
 namespace zirgen::BigInt::Bytecode {
 
@@ -25,10 +25,18 @@ void Program::clear() {
 }
 
 bool operator<(const Type& l, const Type& r) {
-  if (l.coeffs >= r.coeffs) return false;
-  if (l.maxPos >= r.maxPos) return false;
-  if (l.maxNeg >= r.maxNeg) return false;
-  if (l.minBits >= r.minBits) return false;
+  if (l.coeffs >= r.coeffs) {
+    return false;
+  }
+  if (l.maxPos >= r.maxPos) {
+    return false;
+  }
+  if (l.maxNeg >= r.maxNeg) {
+    return false;
+  }
+  if (l.minBits >= r.minBits) {
+    return false;
+  }
   return true;
 }
 
