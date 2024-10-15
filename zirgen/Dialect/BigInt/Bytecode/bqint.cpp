@@ -18,9 +18,9 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 
+#include "zirgen/Dialect/BigInt/Bytecode/bqint.h"
 #include <cstring>
 #include <stdexcept>
-#include "zirgen/Dialect/BigInt/Bytecode/bqint.h"
 
 // Do not include any LLVM or MLIR headers!
 // The BQInt mimics LLVM's APInt type, for use in the bytecode evaluator,
@@ -33,11 +33,11 @@ namespace {
 constexpr unsigned WORD_SIZE = sizeof(uint64_t);
 constexpr unsigned BITS_PER_WORD = 64;
 
-uint64_t *getClearedMemory(unsigned numWords) {
+uint64_t* getClearedMemory(unsigned numWords) {
   return new uint64_t[numWords]();
 }
 
-uint64_t *getMemory(unsigned numWords) {
+uint64_t* getMemory(unsigned numWords) {
   return new uint64_t[numWords];
 }
 
@@ -45,7 +45,7 @@ uint64_t lowBitMask(unsigned bits) {
   if (bits == 0 || bits > BITS_PER_WORD) {
     throw std::runtime_error("malformed bit mask");
   }
-  return ~(uint64_t) 0 >> (BITS_PER_WORD - bits);
+  return ~(uint64_t)0 >> (BITS_PER_WORD - bits);
 }
 
 uint64_t lowHalf(uint64_t part) {
@@ -95,7 +95,7 @@ unsigned count_right_zeros(uint64_t val) {
   return zeroBits;
 }
 
-uint64_t tcAdd(uint64_t *dst, const uint64_t *rhs, unsigned parts) {
+uint64_t tcAdd(uint64_t* dst, const uint64_t* rhs, unsigned parts) {
   uint64_t carry = 0;
   for (unsigned i = 0; i < parts; i++) {
     uint64_t l = dst[i];
@@ -110,7 +110,7 @@ uint64_t tcAdd(uint64_t *dst, const uint64_t *rhs, unsigned parts) {
   return carry;
 }
 
-uint64_t tcAddPart(uint64_t *dst, uint64_t src, unsigned parts) {
+uint64_t tcAddPart(uint64_t* dst, uint64_t src, unsigned parts) {
   for (unsigned i = 0; i < parts; ++i) {
     dst[i] += src;
     if (dst[i] >= src) {
@@ -122,7 +122,7 @@ uint64_t tcAddPart(uint64_t *dst, uint64_t src, unsigned parts) {
   return 1;
 }
 
-uint64_t tcSubtractPart(uint64_t *dst, uint64_t src, unsigned parts) {
+uint64_t tcSubtractPart(uint64_t* dst, uint64_t src, unsigned parts) {
   for (unsigned i = 0; i < parts; ++i) {
     uint64_t Dst = dst[i];
     dst[i] -= src;
@@ -143,10 +143,13 @@ uint64_t tcSubtractPart(uint64_t *dst, uint64_t src, unsigned parts) {
 /// DSTPARTS parts of the result, and if all of the omitted higher
 /// parts were zero return zero, otherwise overflow occurred and
 /// return one.
-int tcMultiplyPart(uint64_t *dst, const uint64_t *src,
-                          uint64_t multiplier, uint64_t carry,
-                          unsigned srcParts, unsigned dstParts,
-                          bool add) {
+int tcMultiplyPart(uint64_t* dst,
+                   const uint64_t* src,
+                   uint64_t multiplier,
+                   uint64_t carry,
+                   unsigned srcParts,
+                   unsigned dstParts,
+                   bool add) {
   // Otherwise our writes of DST kill our later reads of SRC.
   if (dst > src && dst < src + srcParts) {
     throw std::runtime_error("overlapping source and dest buffers");
@@ -228,8 +231,7 @@ int tcMultiplyPart(uint64_t *dst, const uint64_t *src,
   return 0;
 }
 
-int tcMultiply(uint64_t *dst, const uint64_t *lhs,
-                      const uint64_t *rhs, unsigned parts) {
+int tcMultiply(uint64_t* dst, const uint64_t* lhs, const uint64_t* rhs, unsigned parts) {
   if (dst == lhs || dst == rhs) {
     throw std::runtime_error("source & dest in same buffer");
   }
@@ -239,14 +241,13 @@ int tcMultiply(uint64_t *dst, const uint64_t *lhs,
   for (unsigned i = 0; i < parts; i++) {
     // Don't accumulate on the first iteration so we don't need to initalize
     // dst to 0.
-    overflow |=
-        tcMultiplyPart(&dst[i], lhs, rhs[i], 0, parts, parts - i, i != 0);
+    overflow |= tcMultiplyPart(&dst[i], lhs, rhs[i], 0, parts, parts - i, i != 0);
   }
 
   return overflow;
 }
 
-void tcShiftLeft(uint64_t *dst, unsigned words, unsigned count) {
+void tcShiftLeft(uint64_t* dst, unsigned words, unsigned count) {
   // Don't bother performing a no-op shift.
   if (!count) {
     return;
@@ -272,8 +273,7 @@ void tcShiftLeft(uint64_t *dst, unsigned words, unsigned count) {
   std::memset(dst, 0, wordShift * WORD_SIZE);
 }
 
-int tcCompare(const uint64_t *lhs, const uint64_t *rhs,
-                     unsigned parts) {
+int tcCompare(const uint64_t* lhs, const uint64_t* rhs, unsigned parts) {
   while (parts) {
     parts--;
     if (lhs[parts] != rhs[parts])
@@ -282,7 +282,6 @@ int tcCompare(const uint64_t *lhs, const uint64_t *rhs,
 
   return 0;
 }
-
 
 /// Return the high 32 bits of a 64 bit value.
 constexpr uint32_t Hi_32(uint64_t value) {
@@ -303,8 +302,7 @@ constexpr uint64_t Make_64(uint32_t high, uint32_t low) {
 /// from "Art of Computer Programming, Volume 2", section 4.3.1, p. 272. The
 /// variables here have the same names as in the algorithm. Comments explain
 /// the algorithm and any deviation from it.
-static void KnuthDiv(uint32_t *u, uint32_t *v, uint32_t *q, uint32_t* r,
-                     unsigned m, unsigned n) {
+static void KnuthDiv(uint32_t* u, uint32_t* v, uint32_t* q, uint32_t* r, unsigned m, unsigned n) {
   if (!u) {
     throw std::runtime_error("Must provide dividend");
   }
@@ -336,7 +334,7 @@ static void KnuthDiv(uint32_t *u, uint32_t *v, uint32_t *q, uint32_t* r,
   uint32_t v_carry = 0;
   uint32_t u_carry = 0;
   if (shift) {
-    for (unsigned i = 0; i < m+n; ++i) {
+    for (unsigned i = 0; i < m + n; ++i) {
       uint32_t u_tmp = u[i] >> (32 - shift);
       u[i] = (u[i] << shift) | u_carry;
       u_carry = u_tmp;
@@ -347,7 +345,7 @@ static void KnuthDiv(uint32_t *u, uint32_t *v, uint32_t *q, uint32_t* r,
       v_carry = v_tmp;
     }
   }
-  u[m+n] = u_carry;
+  u[m + n] = u_carry;
 
   // D2. [Initialize j.]  Set j to m. This is the loop counter over the places.
   int j = m;
@@ -360,13 +358,13 @@ static void KnuthDiv(uint32_t *u, uint32_t *v, uint32_t *q, uint32_t* r,
     // on v[n-2] determines at high speed most of the cases in which the trial
     // value qp is one too large, and it eliminates all cases where qp is two
     // too large.
-    uint64_t dividend = Make_64(u[j+n], u[j+n-1]);
-    uint64_t qp = dividend / v[n-1];
-    uint64_t rp = dividend % v[n-1];
-    if (qp == b || qp*v[n-2] > b*rp + u[j+n-2]) {
+    uint64_t dividend = Make_64(u[j + n], u[j + n - 1]);
+    uint64_t qp = dividend / v[n - 1];
+    uint64_t rp = dividend % v[n - 1];
+    if (qp == b || qp * v[n - 2] > b * rp + u[j + n - 2]) {
       qp--;
-      rp += v[n-1];
-      if (rp < b && (qp == b || qp*v[n-2] > b*rp + u[j+n-2]))
+      rp += v[n - 1];
+      if (rp < b && (qp == b || qp * v[n - 2] > b * rp + u[j + n - 2]))
         qp--;
     }
 
@@ -381,12 +379,12 @@ static void KnuthDiv(uint32_t *u, uint32_t *v, uint32_t *q, uint32_t* r,
     int64_t borrow = 0;
     for (unsigned i = 0; i < n; ++i) {
       uint64_t p = uint64_t(qp) * uint64_t(v[i]);
-      int64_t subres = int64_t(u[j+i]) - borrow - Lo_32(p);
-      u[j+i] = Lo_32(subres);
+      int64_t subres = int64_t(u[j + i]) - borrow - Lo_32(p);
+      u[j + i] = Lo_32(subres);
       borrow = Hi_32(p) - Hi_32(subres);
     }
-    bool isNeg = u[j+n] < borrow;
-    u[j+n] -= Lo_32(borrow);
+    bool isNeg = u[j + n] < borrow;
+    u[j + n] -= Lo_32(borrow);
 
     // D5. [Test remainder.] Set q[j] = qp. If the result of step D4 was
     // negative, go to step D6; otherwise go on to step D7.
@@ -401,11 +399,11 @@ static void KnuthDiv(uint32_t *u, uint32_t *v, uint32_t *q, uint32_t* r,
       // since it cancels with the borrow that occurred in D4.
       bool carry = false;
       for (unsigned i = 0; i < n; i++) {
-        uint32_t limit = std::min(u[j+i],v[i]);
-        u[j+i] += v[i] + carry;
-        carry = u[j+i] < limit || (carry && u[j+i] == limit);
+        uint32_t limit = std::min(u[j + i], v[i]);
+        u[j + i] += v[i] + carry;
+        carry = u[j + i] < limit || (carry && u[j + i] == limit);
       }
-      u[j+n] += carry;
+      u[j + n] += carry;
     }
     // D7. [Loop on j.]  Decrease j by one. Now if j >= 0, go back to D3.
   } while (--j >= 0);
@@ -419,20 +417,24 @@ static void KnuthDiv(uint32_t *u, uint32_t *v, uint32_t *q, uint32_t* r,
     // shift right here.
     if (shift) {
       uint32_t carry = 0;
-      for (int i = n-1; i >= 0; i--) {
+      for (int i = n - 1; i >= 0; i--) {
         r[i] = (u[i] >> shift) | carry;
         carry = u[i] << (32 - shift);
       }
     } else {
-      for (int i = n-1; i >= 0; i--) {
+      for (int i = n - 1; i >= 0; i--) {
         r[i] = u[i];
       }
     }
   }
 }
 
-void divide(const uint64_t *LHS, unsigned lhsWords, const uint64_t *RHS,
-                   unsigned rhsWords, uint64_t *Quotient, uint64_t *Remainder) {
+void divide(const uint64_t* LHS,
+            unsigned lhsWords,
+            const uint64_t* RHS,
+            unsigned rhsWords,
+            uint64_t* Quotient,
+            uint64_t* Remainder) {
   if (lhsWords < rhsWords) {
     throw std::runtime_error("Fractional result in divide");
   }
@@ -450,35 +452,35 @@ void divide(const uint64_t *LHS, unsigned lhsWords, const uint64_t *RHS,
   // Allocate space for the temporary values we need either on the stack, if
   // it will fit, or on the heap if it won't.
   uint32_t SPACE[128];
-  uint32_t *U = nullptr;
-  uint32_t *V = nullptr;
-  uint32_t *Q = nullptr;
-  uint32_t *R = nullptr;
-  if ((Remainder?4:3)*n+2*m+1 <= 128) {
+  uint32_t* U = nullptr;
+  uint32_t* V = nullptr;
+  uint32_t* Q = nullptr;
+  uint32_t* R = nullptr;
+  if ((Remainder ? 4 : 3) * n + 2 * m + 1 <= 128) {
     U = &SPACE[0];
-    V = &SPACE[m+n+1];
-    Q = &SPACE[(m+n+1) + n];
+    V = &SPACE[m + n + 1];
+    Q = &SPACE[(m + n + 1) + n];
     if (Remainder)
-      R = &SPACE[(m+n+1) + n + (m+n)];
+      R = &SPACE[(m + n + 1) + n + (m + n)];
   } else {
     U = new uint32_t[m + n + 1];
     V = new uint32_t[n];
-    Q = new uint32_t[m+n];
+    Q = new uint32_t[m + n];
     if (Remainder)
       R = new uint32_t[n];
   }
 
   // Initialize the dividend
-  std::memset(U, 0, (m+n+1)*sizeof(uint32_t));
+  std::memset(U, 0, (m + n + 1) * sizeof(uint32_t));
   for (unsigned i = 0; i < lhsWords; ++i) {
     uint64_t tmp = LHS[i];
     U[i * 2] = Lo_32(tmp);
     U[i * 2 + 1] = Hi_32(tmp);
   }
-  U[m+n] = 0; // this extra word is for "spill" in the Knuth algorithm.
+  U[m + n] = 0; // this extra word is for "spill" in the Knuth algorithm.
 
   // Initialize the divisor
-  std::memset(V, 0, (n)*sizeof(uint32_t));
+  std::memset(V, 0, (n) * sizeof(uint32_t));
   for (unsigned i = 0; i < rhsWords; ++i) {
     uint64_t tmp = RHS[i];
     V[i * 2] = Lo_32(tmp);
@@ -486,7 +488,7 @@ void divide(const uint64_t *LHS, unsigned lhsWords, const uint64_t *RHS,
   }
 
   // initialize the quotient and remainder
-  std::memset(Q, 0, (m+n) * sizeof(uint32_t));
+  std::memset(Q, 0, (m + n) * sizeof(uint32_t));
   if (Remainder) {
     std::memset(R, 0, n * sizeof(uint32_t));
   }
@@ -495,11 +497,11 @@ void divide(const uint64_t *LHS, unsigned lhsWords, const uint64_t *RHS,
   // the divisor. m is the number of words by which the dividend exceeds the
   // divisor (i.e. m+n is the length of the dividend). These sizes must not
   // contain any zero words or the Knuth algorithm fails.
-  for (unsigned i = n; i > 0 && V[i-1] == 0; i--) {
+  for (unsigned i = n; i > 0 && V[i - 1] == 0; i--) {
     n--;
     m++;
   }
-  for (unsigned i = m+n; i > 0 && U[i-1] == 0; i--) {
+  for (unsigned i = m + n; i > 0 && U[i - 1] == 0; i--) {
     m--;
   }
 
@@ -542,28 +544,27 @@ void divide(const uint64_t *LHS, unsigned lhsWords, const uint64_t *RHS,
   // If the caller wants the quotient
   if (Quotient) {
     for (unsigned i = 0; i < lhsWords; ++i)
-      Quotient[i] = Make_64(Q[i*2+1], Q[i*2]);
+      Quotient[i] = Make_64(Q[i * 2 + 1], Q[i * 2]);
   }
 
   // If the caller wants the remainder
   if (Remainder) {
     for (unsigned i = 0; i < rhsWords; ++i)
-      Remainder[i] = Make_64(R[i*2+1], R[i*2]);
+      Remainder[i] = Make_64(R[i * 2 + 1], R[i * 2]);
   }
 
   // Clean up the memory we allocated.
   if (U != &SPACE[0]) {
-    delete [] U;
-    delete [] V;
-    delete [] Q;
-    delete [] R;
+    delete[] U;
+    delete[] V;
+    delete[] Q;
+    delete[] R;
   }
 }
 
 } // namespace
 
-BQInt::BQInt(unsigned numBits, uint64_t val, bool isSigned):
-  BitWidth(numBits) {
+BQInt::BQInt(unsigned numBits, uint64_t val, bool isSigned) : BitWidth(numBits) {
   if (isSingleWord()) {
     U.word = val;
     clearUnusedBits();
@@ -603,8 +604,7 @@ BQInt& BQInt::operator++() {
   return clearUnusedBits();
 }
 
-
-BQInt &BQInt::operator-=(uint64_t RHS) {
+BQInt& BQInt::operator-=(uint64_t RHS) {
   if (isSingleWord()) {
     U.word -= RHS;
   } else {
@@ -613,7 +613,7 @@ BQInt &BQInt::operator-=(uint64_t RHS) {
   return clearUnusedBits();
 }
 
-BQInt &BQInt::operator+=(const BQInt &RHS) {
+BQInt& BQInt::operator+=(const BQInt& RHS) {
   if (BitWidth != RHS.BitWidth) {
     throw std::runtime_error("Bit widths must be the same");
   }
@@ -625,7 +625,7 @@ BQInt &BQInt::operator+=(const BQInt &RHS) {
   return clearUnusedBits();
 }
 
-BQInt &BQInt::operator*=(uint64_t RHS) {
+BQInt& BQInt::operator*=(uint64_t RHS) {
   if (isSingleWord()) {
     U.word *= RHS;
   } else {
@@ -635,7 +635,7 @@ BQInt &BQInt::operator*=(uint64_t RHS) {
   return clearUnusedBits();
 }
 
-BQInt &BQInt::operator<<=(unsigned ShiftAmt) {
+BQInt& BQInt::operator<<=(unsigned ShiftAmt) {
   if (ShiftAmt > BitWidth) {
     throw std::runtime_error("Invalid shift amount");
   }
@@ -651,7 +651,7 @@ BQInt &BQInt::operator<<=(unsigned ShiftAmt) {
   return clearUnusedBits();
 }
 
-BQInt BQInt::operator*(const BQInt &RHS) const {
+BQInt BQInt::operator*(const BQInt& RHS) const {
   if (BitWidth != RHS.BitWidth) {
     throw std::runtime_error("Bit widths must be the same");
   }
@@ -668,7 +668,7 @@ bool BQInt::operator!=(uint64_t Val) const {
   return !((*this) == Val);
 }
 
-BQInt BQInt::udiv(const BQInt &RHS) const {
+BQInt BQInt::udiv(const BQInt& RHS) const {
   if (BitWidth != RHS.BitWidth) {
     throw std::runtime_error("Bit widths must be the same");
   }
@@ -681,7 +681,7 @@ BQInt BQInt::udiv(const BQInt &RHS) const {
   }
   // Get some facts about the LHS and RHS number of bits and words
   unsigned lhsWords = getNumWords(getActiveBits());
-  unsigned rhsBits  = RHS.getActiveBits();
+  unsigned rhsBits = RHS.getActiveBits();
   unsigned rhsWords = getNumWords(rhsBits);
   if (!rhsWords) {
     throw std::runtime_error("Divided by zero???");
@@ -713,7 +713,7 @@ BQInt BQInt::udiv(const BQInt &RHS) const {
   return Quotient;
 }
 
-BQInt BQInt::urem(const BQInt &RHS) const {
+BQInt BQInt::urem(const BQInt& RHS) const {
   if (BitWidth != RHS.BitWidth) {
     throw std::runtime_error("Bit widths must be the same");
   }
@@ -758,7 +758,7 @@ BQInt BQInt::urem(const BQInt &RHS) const {
   return Remainder;
 }
 
-BQInt BQInt::smul_sat(const BQInt &RHS) const {
+BQInt BQInt::smul_sat(const BQInt& RHS) const {
   bool overflow = false;
   BQInt res = smul_ov(RHS, overflow);
   if (!overflow) {
@@ -788,7 +788,7 @@ BQInt BQInt::smul_sat(const BQInt &RHS) const {
   }
 }
 
-bool BQInt::intersects(const BQInt &RHS) const {
+bool BQInt::intersects(const BQInt& RHS) const {
   if (BitWidth != RHS.BitWidth) {
     throw std::runtime_error("Bit widths must be the same");
   }
@@ -808,7 +808,7 @@ BQInt BQInt::trunc(unsigned width) const {
     throw std::runtime_error("cannot truncate to longer bit width");
   }
   if (width <= BITS_PER_WORD) {
-    return BQInt(width, isSingleWord()? U.word: U.ptr[0]);
+    return BQInt(width, isSingleWord() ? U.word : U.ptr[0]);
   }
   if (width == BitWidth) {
     return *this;
@@ -873,10 +873,10 @@ BQInt BQInt::extractBits(unsigned numBits, unsigned bitPosition) const {
   BQInt result(numBits, 0);
   unsigned NumSrcWords = getNumWords();
   unsigned NumDstWords = result.getNumWords();
-  uint64_t *DestPtr = result.isSingleWord() ? &result.U.word : result.U.ptr;
+  uint64_t* DestPtr = result.isSingleWord() ? &result.U.word : result.U.ptr;
   for (unsigned word = 0; word < NumDstWords; ++word) {
     uint64_t w0 = U.ptr[loWord + word];
-    uint64_t comp = NumSrcWords ? U.ptr[loWord + word + 1] :0;
+    uint64_t comp = NumSrcWords ? U.ptr[loWord + word + 1] : 0;
     uint64_t w1 = (loWord + word + 1) < comp;
     DestPtr[word] = (w0 >> loBit) | (w1 << (BITS_PER_WORD - loBit));
   }
@@ -891,8 +891,7 @@ unsigned BQInt::getNumWords(unsigned BitWidth) {
   return ((uint64_t)BitWidth + BITS_PER_WORD - 1) / BITS_PER_WORD;
 }
 
-
-BQInt &BQInt::clearUnusedBits() {
+BQInt& BQInt::clearUnusedBits() {
   unsigned WordBits = ((BitWidth - 1) % BITS_PER_WORD) + 1;
   uint64_t mask = UINT64_MAX >> (BITS_PER_WORD - WordBits);
   if (BitWidth == 0) {
@@ -930,7 +929,7 @@ void BQInt::initSlowCase(uint64_t val, bool isSigned) {
   }
 }
 
-BQInt BQInt::sdiv(const BQInt &RHS) const {
+BQInt BQInt::sdiv(const BQInt& RHS) const {
   if (isNegative()) {
     if (RHS.isNegative())
       return (-(*this)).udiv(-RHS);
@@ -941,20 +940,18 @@ BQInt BQInt::sdiv(const BQInt &RHS) const {
   return this->udiv(RHS);
 }
 
-BQInt BQInt::smul_ov(const BQInt &RHS, bool &overflow) const {
+BQInt BQInt::smul_ov(const BQInt& RHS, bool& overflow) const {
   BQInt res = *this * RHS;
 
   if (RHS != 0) {
-    overflow = res.sdiv(RHS) != *this ||
-               (isMinSignedValue() && RHS.isAllOnes());
+    overflow = res.sdiv(RHS) != *this || (isMinSignedValue() && RHS.isAllOnes());
   } else {
     overflow = false;
   }
   return res;
 }
 
-
-int BQInt::compare(const BQInt &RHS) const {
+int BQInt::compare(const BQInt& RHS) const {
   if (BitWidth != RHS.BitWidth) {
     throw std::runtime_error("Bit widths must be same for comparison");
   }
@@ -968,7 +965,7 @@ bool BQInt::ugt(uint64_t RHS) const {
   return (!isSingleWord() && getActiveBits() > 64) || getZExtValue() > RHS;
 }
 
-bool BQInt::ult(const BQInt &RHS) const {
+bool BQInt::ult(const BQInt& RHS) const {
   return compare(RHS) < 0;
 }
 
@@ -1021,7 +1018,7 @@ unsigned BQInt::countl_zero() const {
 
 unsigned BQInt::countLeadingZerosSlowCase() const {
   unsigned count = 0;
-  for (int i = getNumWords()-1; i >= 0; --i) {
+  for (int i = getNumWords() - 1; i >= 0; --i) {
     uint64_t V = U.ptr[i];
     if (V == 0) {
       count += BITS_PER_WORD;
@@ -1066,7 +1063,7 @@ bool BQInt::operator==(uint64_t Val) const {
   return (isSingleWord() || getActiveBits() <= 64) && getZExtValue() == Val;
 }
 
-bool BQInt::operator==(const BQInt &RHS) const {
+bool BQInt::operator==(const BQInt& RHS) const {
   if (BitWidth != RHS.BitWidth) {
     throw std::runtime_error("Comparison requires equal bit widths");
   }
