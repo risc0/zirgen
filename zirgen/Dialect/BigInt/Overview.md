@@ -41,18 +41,18 @@ following information about each BigInt we manpulate:
 
 
 When we initially import a big integer as a BytePoly format, all of
-the elements will be in the range $[0, 256)$  However, that range can
+the elements will be in the range $[0, 255]$  However, that range can
 expand during calculations; for instance, if we add two initially
-imported BytePolys, each element will be in the range $[0, 512)$ .  If
+imported BytePolys, each element will be in the range $[0, 510]$ .  If
 we perform subtraction, each element will be in the range
-$(-256, 256)$. If we multiply them, each element will be in the range
-$[0, 65536)$ .
+$[-255, 255]$. If we multiply them, each element will be in the range
+$[0, 65025]$.
 
-(Note: Be aware that when subtraction happens, the resuling field
-elements may be less than zero.  During internal calculations, we
-represent negative values by a 32-bit signed integer (`int32_t`), but
-care must be taken when converting these to a field element so that
-$-x$ becomes $P-x$ as opposed to $2^{32}-x$).
+Under the hood, all coefficients are BabyBear field elements. Negative
+numbers are represented as subtracted from the BabyBear prime (that is,
+the number `-n` is represented as `P - n`). The type system checks that
+the range of possible values never overflows, i.e., that every negative
+value has a representation that is larger than every positive value.
 
 ### ZKR
 

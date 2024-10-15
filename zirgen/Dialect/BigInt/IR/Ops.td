@@ -50,8 +50,8 @@ def SubOp : BinaryOp<"sub", [Pure, DeclareOpInterfaceMethods<CodegenExprOpInterf
 def MulOp : BinaryOp<"mul", [Pure, Commutative, DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {}
 def NondetRemOp : BinaryOp<"nondet_rem", [DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {}
 def NondetQuotOp : BinaryOp<"nondet_quot", [DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {}
-def NondetInvModOp : BinaryOp<"nondet_invmod", [DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {}
-def ModularInvOp : BinaryOp<"inv", []> {}
+def NondetInvOp : BinaryOp<"nondet_inv", [DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {}
+def InvOp : BinaryOp<"inv", []> {}
 def ReduceOp : BinaryOp<"reduce", []> {}
 
 def EqualZeroOp : BigIntOp<"eqz", [DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {

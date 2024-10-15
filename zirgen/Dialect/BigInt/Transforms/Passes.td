@@ -18,9 +18,9 @@
 include "mlir/Pass/PassBase.td"
 include "mlir/Rewrite/PassUtil.td"
 
-def LowerModularInv : Pass<"lower-modular-inv", "mlir::ModuleOp"> {
-  let summary = "Remove BigInt::ModularInvOp by lowering it to other ops";
-  let constructor = "zirgen::BigInt::createLowerModularInvPass()";
+def LowerInv : Pass<"lower-inv", "mlir::ModuleOp"> {
+  let summary = "Remove BigInt::InvOp by lowering it to other ops";
+  let constructor = "zirgen::BigInt::createLowerInvPass()";
 }
 
 def LowerReduce : Pass<"lower-reduce", "mlir::ModuleOp"> {

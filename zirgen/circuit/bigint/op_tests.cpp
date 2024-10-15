@@ -137,7 +137,7 @@ void makeNondetInvTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits)
   auto oneAttr = builder.getIntegerAttr(oneType, 1); // value 1
   auto one = builder.create<BigInt::ConstOp>(loc, oneAttr);
 
-  auto inv = builder.create<BigInt::NondetInvModOp>(loc, inp, prime);
+  auto inv = builder.create<BigInt::NondetInvOp>(loc, inp, prime);
   auto prod = builder.create<BigInt::MulOp>(loc, inp, inv);
   auto reduced = builder.create<BigInt::ReduceOp>(loc, prod, prime);
   auto expect_zero = builder.create<BigInt::SubOp>(loc, reduced, one);

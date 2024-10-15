@@ -22,12 +22,6 @@ namespace zirgen::BigInt::EC {
 
 class AffinePt;
 
-// TODO (tzerrell): Go through our bigint models carefully, then ensure this code is aligned on:
-//  - Signedness
-//  - Bitwidths
-//  - Max Positive / Negative coefficient values
-//  - Anything else I turn up
-
 class WeierstrassCurve {
   // An elliptic curve in short Weierstrass form
   // Formula:
