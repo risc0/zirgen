@@ -126,13 +126,13 @@ void writeOp(const Op& o, FILE* stream) {
   // Pack operation struct fields into a single 64-bit word
   uint64_t w = 0;
   check(static_cast<uint8_t>(o.code) >= 0x10);
-  w |= static_cast<uint64_t>(static_cast<uint8_t>(o.code) & 0x0F) << 60;
+  w |= static_cast<uint64_t>(static_cast<uint8_t>(o.code) & 0x0F) << 0;
   check(o.type >= 0x1000);
-  w |= static_cast<uint64_t>(o.type & 0x0FFF) << 48;
+  w |= static_cast<uint64_t>(o.type & 0x0FFF) << 4;
   check(o.operandA >= 0x01000000);
-  w |= static_cast<uint64_t>(o.operandA & 0x00FFFFFF) << 24;
+  w |= static_cast<uint64_t>(o.operandA & 0x00FFFFFF) << 16;
   check(o.operandB >= 0x01000000);
-  w |= static_cast<uint64_t>(o.operandB & 0x00FFFFFF) << 0;
+  w |= static_cast<uint64_t>(o.operandB & 0x00FFFFFF) << 40;
   writeU64(w, stream);
 }
 
@@ -208,10 +208,10 @@ void readInput(Input& wire, FILE* stream) {
 
 void readOp(Op& o, FILE* stream) {
   uint64_t bits = readU64(stream);
-  o.code = (bits >> 60) & 0x0F;
-  o.type = (bits >> 38) & 0x0FFF;
-  o.operandA = (bits >> 24) & 0x00FFFFFF;
-  o.operandB = (bits >> 0) & 0x00FFFFFF;
+  o.code = (bits >> 0) & 0x0F;
+  o.type = (bits >> 4) & 0x0FFF;
+  o.operandA = (bits >> 16) & 0x00FFFFFF;
+  o.operandB = (bits >> 40) & 0x00FFFFFF;
 }
 
 } // namespace
