@@ -246,29 +246,30 @@ int tcMultiply(uint64_t *dst, const uint64_t *lhs,
   return overflow;
 }
 
-void tcShiftLeft(uint64_t *Dst, unsigned Words, unsigned Count) {
+void tcShiftLeft(uint64_t *dst, unsigned words, unsigned count) {
   // Don't bother performing a no-op shift.
-  if (!Count)
+  if (!count) {
     return;
+  }
 
   // WordShift is the inter-part shift; BitShift is the intra-part shift.
-  unsigned WordShift = std::min(Count / BITS_PER_WORD, Words);
-  unsigned BitShift = Count % BITS_PER_WORD;
+  unsigned wordShift = std::min(count / BITS_PER_WORD, words);
+  unsigned bitShift = count % BITS_PER_WORD;
 
   // Fastpath for moving by whole words.
-  if (BitShift == 0) {
-    std::memmove(Dst + WordShift, Dst, (Words - WordShift) * WORD_SIZE);
+  if (bitShift == 0) {
+    std::memmove(dst + wordShift, dst, (words - wordShift) * WORD_SIZE);
   } else {
-    while (Words-- > WordShift) {
-      Dst[Words] = Dst[Words - WordShift] << BitShift;
-      if (Words > WordShift)
-        Dst[Words] |=
-          Dst[Words - WordShift - 1] >> (BITS_PER_WORD - BitShift);
+    while (words-- > wordShift) {
+      dst[words] = dst[words - wordShift] << bitShift;
+      if (words > wordShift) {
+        dst[words] |= dst[words - wordShift - 1] >> (BITS_PER_WORD - bitShift);
+      }
     }
   }
 
   // Fill in the remainder with 0s.
-  std::memset(Dst, 0, WordShift * WORD_SIZE);
+  std::memset(dst, 0, wordShift * WORD_SIZE);
 }
 
 int tcCompare(const uint64_t *lhs, const uint64_t *rhs,
@@ -284,18 +285,18 @@ int tcCompare(const uint64_t *lhs, const uint64_t *rhs,
 
 
 /// Return the high 32 bits of a 64 bit value.
-constexpr uint32_t Hi_32(uint64_t Value) {
-  return static_cast<uint32_t>(Value >> 32);
+constexpr uint32_t Hi_32(uint64_t value) {
+  return static_cast<uint32_t>(value >> 32);
 }
 
 /// Return the low 32 bits of a 64 bit value.
-constexpr uint32_t Lo_32(uint64_t Value) {
-  return static_cast<uint32_t>(Value);
+constexpr uint32_t Lo_32(uint64_t value) {
+  return static_cast<uint32_t>(value);
 }
 
 /// Make a 64-bit integer from a high / low pair of 32-bit integers.
-constexpr uint64_t Make_64(uint32_t High, uint32_t Low) {
-  return ((uint64_t)High << 32) | (uint64_t)Low;
+constexpr uint64_t Make_64(uint32_t high, uint32_t low) {
+  return ((uint64_t)high << 32) | (uint64_t)low;
 }
 
 /// Implementation of Knuth's Algorithm D (Division of nonnegative integers)

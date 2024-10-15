@@ -69,4 +69,3 @@ struct Program {
 bool operator<(const Type&, const Type&);
 
 } // namespace zirgen::BigInt::Bytecode
-

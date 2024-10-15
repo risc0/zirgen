@@ -14,8 +14,9 @@
 
 #pragma once
 
-#include <stdio.h>
 #include "bibc.h"
+#include <stdexcept>
+#include <stdio.h>
 
 namespace zirgen::BigInt::Bytecode {
 
