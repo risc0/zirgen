@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // Do not include any LLVM or MLIR headers!
 // This is meant to be a standalone reimplementation of the canonical eval
 // function which is implemented in zirgen/Dialect/BigInt/IR/Eval.cpp, but
 // this one does NOT depend on LLVM or MLIR: only the C standard library.
-#include <stdexcept>
-#include "zirgen/compiler/zkp/poseidon2.h"
 #include "zirgen/Dialect/BigInt/Bytecode/eval.h"
+#include "zirgen/compiler/zkp/poseidon2.h"
+#include <stdexcept>
 
 namespace zirgen::BigInt::Bytecode {
 
@@ -126,21 +125,24 @@ BytePoly nondetInvMod(const BytePoly& lhs, const BytePoly& rhs, size_t coeffs) {
 
 size_t getCarryOffset(const Type& type) {
   size_t coeffMagnitude = std::max(type.maxPos, type.maxNeg);
-  return (coeffMagnitude + 3*kBitsPerCoeff) / kBitsPerCoeff;
+  return (coeffMagnitude + 3 * kBitsPerCoeff) / kBitsPerCoeff;
 }
 
 size_t getCarryBytes(const Type& type) {
   size_t maxCarry = getCarryOffset(type) * 2;
-  if (maxCarry < 256) { return 1; }
+  if (maxCarry < 256) {
+    return 1;
+  }
   maxCarry /= 256;
-  if (maxCarry < 256) { return 2; }
+  if (maxCarry < 256) {
+    return 2;
+  }
   return 4;
 }
 
 } // namespace
 
-
-EvalOutput eval(const Program &inFunc, std::vector<BQInt> &witnessValues) {
+EvalOutput eval(const Program& inFunc, std::vector<BQInt>& witnessValues) {
   EvalOutput ret;
 
   // Store the output of each op, as we compute it
@@ -148,130 +150,130 @@ EvalOutput eval(const Program &inFunc, std::vector<BQInt> &witnessValues) {
   polys.resize(inFunc.ops.size());
 
   for (size_t opIndex = 0; opIndex < inFunc.ops.size(); ++opIndex) {
-    const Op &op = inFunc.ops[opIndex];
+    const Op& op = inFunc.ops[opIndex];
     switch (op.code) {
-      case Op::Def: {
-        const Type &type = inFunc.types[op.type];
-        const Input &wire = inFunc.inputs[op.operandA];
-        BQInt val = witnessValues[wire.label];
-        uint32_t coeffs = type.coeffs;
-        auto poly = fromBQInt(val, coeffs);
-        polys[opIndex] = poly;
-        // TODO
-        // if (wire.isPublic) {
-        //   ret.publicWitness.push_back(poly);
-        // } else {
-        //   ret.privateWitness.push_back(poly);
-        // }
-      } break;
-      case Op::Con: {
-        const Type &type = inFunc.types[op.type];
-        uint32_t coeffs = type.coeffs;
-        size_t offset = op.operandA;
-        size_t words = op.operandB;
-        BQInt value(64*words, words, inFunc.constants[offset]);
-        auto poly = fromBQInt(value, coeffs);
-        polys[opIndex] = poly;
-        ret.constantWitness.push_back(poly);
-      } break;
-      case Op::Add: {
-        auto lhs = polys[op.operandA];
-        auto rhs = polys[op.operandB];
-        polys[opIndex] = add(lhs, rhs);
-      } break;
-      case Op::Sub: {
-        auto lhs = polys[op.operandA];
-        auto rhs = polys[op.operandB];
-        polys[opIndex] = sub(lhs, rhs);
-      } break;
-      case Op::Mul: {
-        auto lhs = polys[op.operandA];
-        auto rhs = polys[op.operandB];
-        polys[opIndex] = mul(lhs, rhs);
-      } break;
-      case Op::Rem: {
-        const Type &type = inFunc.types[op.type];
-        uint32_t coeffs = type.coeffs;
-        auto lhs = polys[op.operandA];
-        auto rhs = polys[op.operandB];
-        auto poly = nondetRem(lhs, rhs, coeffs);
-        polys[opIndex] = poly;
-        ret.privateWitness.push_back(poly);
-      } break;
-      case Op::Quo: {
-        const Type &type = inFunc.types[op.type];
-        uint32_t coeffs = type.coeffs;
-        auto lhs = polys[op.operandA];
-        auto rhs = polys[op.operandB];
-        auto poly = nondetQuot(lhs, rhs, coeffs);
-        polys[opIndex] = poly;
-        ret.privateWitness.push_back(poly);
-      } break;
-      case Op::Inv: {
-        const Type &type = inFunc.types[op.type];
-        uint32_t coeffs = type.coeffs;
-        auto lhs = polys[op.operandA];
-        auto rhs = polys[op.operandB];
-        auto poly = nondetInvMod(lhs, rhs, coeffs);
-        polys[opIndex] = poly;
-        ret.privateWitness.push_back(poly);
-      } break;
-      case Op::Eqz: {
-        auto poly = polys[op.operandA];
-        if (toBQInt(poly) != 0) {
-          throw std::runtime_error("NONZERO");
-        }
-        const Type &type = inFunc.types[op.type];
-        uint32_t coeffs = type.coeffs;
-        int32_t carryOffset = getCarryOffset(type);
-        size_t carryBytes = getCarryBytes(type);
-        std::vector<BytePoly> carryPolys;
-        for (size_t i = 0; i < carryBytes; i++) {
-          carryPolys.emplace_back(coeffs);
-        };
-        int32_t carry = 0;
-        for (size_t i = 0; i < coeffs; i++) {
-          carry = (poly[i] + carry) / 256;
-          uint32_t carryU = carry + carryOffset;
-          carryPolys[0][i] = carryU & 0xff;
-          if (carryBytes > 1) {
-            carryPolys[1][i] = ((carryU >> 8) & 0xff);
-          }
-          if (carryBytes > 2) {
-            carryPolys[2][i] = ((carryU >> 16) & 0xff);
-            carryPolys[3][i] = ((carryU >> 16) & 0xff) * 4;
-          }
-        }
-        // Verify carry computation
-        BytePoly bigCarry(coeffs);
-        for (size_t i = 0; i < coeffs; i++) {
-          bigCarry[i] = carryPolys[0][i];
-          if (carryBytes > 1) {
-            bigCarry[i] += 256 * carryPolys[1][i];
-          }
-          if (carryBytes > 2) {
-            bigCarry[i] += 65536 * carryPolys[2][i];
-          }
-          bigCarry[i] -= carryOffset;
-        }
-        for (size_t i = 0; i < coeffs; i++) {
-          int32_t shouldBeZero = poly[i];
-          shouldBeZero -= 256 * bigCarry[i];
-          if (i != 0) {
-            shouldBeZero += bigCarry[i - 1];
-          }
-          if (shouldBeZero != 0) {
-            throw std::runtime_error("INVALID CARRY");
-          }
-        }
-        // Store the results
-        for (size_t i = 0; i < carryPolys.size(); i++) {
-          ret.privateWitness.push_back(carryPolys[i]);
-        }
-      } break;
-      default: {
-        throw std::runtime_error("Unknown op in eval");
+    case Op::Def: {
+      const Type& type = inFunc.types[op.type];
+      const Input& wire = inFunc.inputs[op.operandA];
+      BQInt val = witnessValues[wire.label];
+      uint32_t coeffs = type.coeffs;
+      auto poly = fromBQInt(val, coeffs);
+      polys[opIndex] = poly;
+      // TODO
+      // if (wire.isPublic) {
+      //   ret.publicWitness.push_back(poly);
+      // } else {
+      //   ret.privateWitness.push_back(poly);
+      // }
+    } break;
+    case Op::Con: {
+      const Type& type = inFunc.types[op.type];
+      uint32_t coeffs = type.coeffs;
+      size_t offset = op.operandA;
+      size_t words = op.operandB;
+      BQInt value(64 * words, words, inFunc.constants[offset]);
+      auto poly = fromBQInt(value, coeffs);
+      polys[opIndex] = poly;
+      ret.constantWitness.push_back(poly);
+    } break;
+    case Op::Add: {
+      auto lhs = polys[op.operandA];
+      auto rhs = polys[op.operandB];
+      polys[opIndex] = add(lhs, rhs);
+    } break;
+    case Op::Sub: {
+      auto lhs = polys[op.operandA];
+      auto rhs = polys[op.operandB];
+      polys[opIndex] = sub(lhs, rhs);
+    } break;
+    case Op::Mul: {
+      auto lhs = polys[op.operandA];
+      auto rhs = polys[op.operandB];
+      polys[opIndex] = mul(lhs, rhs);
+    } break;
+    case Op::Rem: {
+      const Type& type = inFunc.types[op.type];
+      uint32_t coeffs = type.coeffs;
+      auto lhs = polys[op.operandA];
+      auto rhs = polys[op.operandB];
+      auto poly = nondetRem(lhs, rhs, coeffs);
+      polys[opIndex] = poly;
+      ret.privateWitness.push_back(poly);
+    } break;
+    case Op::Quo: {
+      const Type& type = inFunc.types[op.type];
+      uint32_t coeffs = type.coeffs;
+      auto lhs = polys[op.operandA];
+      auto rhs = polys[op.operandB];
+      auto poly = nondetQuot(lhs, rhs, coeffs);
+      polys[opIndex] = poly;
+      ret.privateWitness.push_back(poly);
+    } break;
+    case Op::Inv: {
+      const Type& type = inFunc.types[op.type];
+      uint32_t coeffs = type.coeffs;
+      auto lhs = polys[op.operandA];
+      auto rhs = polys[op.operandB];
+      auto poly = nondetInvMod(lhs, rhs, coeffs);
+      polys[opIndex] = poly;
+      ret.privateWitness.push_back(poly);
+    } break;
+    case Op::Eqz: {
+      auto poly = polys[op.operandA];
+      if (toBQInt(poly) != 0) {
+        throw std::runtime_error("NONZERO");
       }
+      const Type& type = inFunc.types[op.type];
+      uint32_t coeffs = type.coeffs;
+      int32_t carryOffset = getCarryOffset(type);
+      size_t carryBytes = getCarryBytes(type);
+      std::vector<BytePoly> carryPolys;
+      for (size_t i = 0; i < carryBytes; i++) {
+        carryPolys.emplace_back(coeffs);
+      };
+      int32_t carry = 0;
+      for (size_t i = 0; i < coeffs; i++) {
+        carry = (poly[i] + carry) / 256;
+        uint32_t carryU = carry + carryOffset;
+        carryPolys[0][i] = carryU & 0xff;
+        if (carryBytes > 1) {
+          carryPolys[1][i] = ((carryU >> 8) & 0xff);
+        }
+        if (carryBytes > 2) {
+          carryPolys[2][i] = ((carryU >> 16) & 0xff);
+          carryPolys[3][i] = ((carryU >> 16) & 0xff) * 4;
+        }
+      }
+      // Verify carry computation
+      BytePoly bigCarry(coeffs);
+      for (size_t i = 0; i < coeffs; i++) {
+        bigCarry[i] = carryPolys[0][i];
+        if (carryBytes > 1) {
+          bigCarry[i] += 256 * carryPolys[1][i];
+        }
+        if (carryBytes > 2) {
+          bigCarry[i] += 65536 * carryPolys[2][i];
+        }
+        bigCarry[i] -= carryOffset;
+      }
+      for (size_t i = 0; i < coeffs; i++) {
+        int32_t shouldBeZero = poly[i];
+        shouldBeZero -= 256 * bigCarry[i];
+        if (i != 0) {
+          shouldBeZero += bigCarry[i - 1];
+        }
+        if (shouldBeZero != 0) {
+          throw std::runtime_error("INVALID CARRY");
+        }
+      }
+      // Store the results
+      for (size_t i = 0; i < carryPolys.size(); i++) {
+        ret.privateWitness.push_back(carryPolys[i]);
+      }
+    } break;
+    default: {
+      throw std::runtime_error("Unknown op in eval");
+    }
     }
   }
 

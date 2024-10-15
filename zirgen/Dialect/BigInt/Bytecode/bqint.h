@@ -25,43 +25,45 @@ namespace zirgen::BigInt::Bytecode {
 class BQInt {
   union {
     uint64_t word;
-    uint64_t *ptr;
+    uint64_t* ptr;
   } U;
   unsigned BitWidth = 1;
+
 public:
   BQInt(unsigned numBits, uint64_t val, bool isSigned = false);
   BQInt(unsigned numBits, unsigned numWords, const uint64_t val[]);
   ~BQInt();
   bool isSingleWord() const;
   uint64_t getLimitedValue(uint64_t Limit = UINT64_MAX) const;
-  BQInt &operator++();
-  BQInt &operator-=(uint64_t RHS);
-  BQInt &operator+=(const BQInt &RHS);
-  BQInt &operator*=(uint64_t RHS);
-  BQInt &operator<<=(unsigned ShiftAmt);
-  BQInt operator*(const BQInt &RHS) const;
-  bool operator!=(const BQInt &RHS) const { return !((*this) == RHS); }
+  BQInt& operator++();
+  BQInt& operator-=(uint64_t RHS);
+  BQInt& operator+=(const BQInt& RHS);
+  BQInt& operator*=(uint64_t RHS);
+  BQInt& operator<<=(unsigned ShiftAmt);
+  BQInt operator*(const BQInt& RHS) const;
+  bool operator!=(const BQInt& RHS) const { return !((*this) == RHS); }
   bool operator!=(uint64_t Val) const;
-  BQInt udiv(const BQInt &RHS) const;
-  BQInt urem(const BQInt &RHS) const;
-  BQInt smul_sat(const BQInt &RHS) const;
-  bool intersects(const BQInt &RHS) const;
+  BQInt udiv(const BQInt& RHS) const;
+  BQInt urem(const BQInt& RHS) const;
+  BQInt smul_sat(const BQInt& RHS) const;
+  bool intersects(const BQInt& RHS) const;
   BQInt trunc(unsigned width) const;
   BQInt zext(unsigned width) const;
   BQInt extractBits(unsigned numBits, unsigned bitPosition) const;
   void negate();
   unsigned getBitWidth() const { return BitWidth; }
+
 protected:
   // used internally but never by the eval function
   unsigned getNumWords() const;
   static unsigned getNumWords(unsigned);
-  BQInt &clearUnusedBits();
+  BQInt& clearUnusedBits();
   void initSlowCase(uint64_t val, bool isSigned);
-  BQInt sdiv(const BQInt &RHS) const;
-  BQInt smul_ov(const BQInt &RHS, bool &overflow) const;
-  int compare(const BQInt &RHS) const;
+  BQInt sdiv(const BQInt& RHS) const;
+  BQInt smul_ov(const BQInt& RHS, bool& overflow) const;
+  int compare(const BQInt& RHS) const;
   bool ugt(uint64_t RHS) const;
-  bool ult(const BQInt &RHS) const;
+  bool ult(const BQInt& RHS) const;
   uint64_t getZExtValue() const;
   unsigned getActiveBits() const { return BitWidth - countl_zero(); }
   bool isNegative() const;
@@ -72,7 +74,7 @@ protected:
   unsigned countTrailingZerosSlowCase() const;
   unsigned countTrailingOnesSlowCase() const;
   bool operator==(uint64_t Val) const;
-  bool operator==(const BQInt &RHS) const;
+  bool operator==(const BQInt& RHS) const;
 };
 
 inline BQInt operator-(BQInt v) {
