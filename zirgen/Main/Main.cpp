@@ -55,6 +55,7 @@ void registerZirgenDialects(mlir::DialectRegistry& registry) {
 }
 
 void addAccumAndGlobalPasses(mlir::PassManager& pm) {
+  pm.addPass(mlir::createPrintIRPass());
   pm.addPass(zirgen::dsl::createGenerateAccumPass());
   pm.addPass(zirgen::dsl::createGenerateGlobalsPass());
   pm.addPass(mlir::createSymbolDCEPass());

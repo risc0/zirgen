@@ -28,18 +28,17 @@ namespace zirgen::dsl {
 namespace {
 
 struct TopologicalShufflePass : public TopologicalShuffleBase<TopologicalShufflePass> {
-  void moveDepsBefore(Operation* op, Operation* beforeOp, Block* origBlock) {
-    if (op->getBlock() != origBlock)
-      return;
+  void moveUsesBefore(Operation* op, Operation* beforeOp, Block* origBlock) {
+    while (op->getBlock() != origBlock) {
+      op = op->getParentOp();
+      if (!op)
+        return;
+    }
     op->moveBefore(beforeOp);
 
     op->walk([&](Operation* subOp) {
-      for (auto arg : subOp->getOperands()) {
-        auto resultArg = llvm::dyn_cast<OpResult>(arg);
-        if (!resultArg)
-          continue;
-
-        moveDepsBefore(resultArg.getOwner(), op, origBlock);
+      for (Operation* userOp : subOp->getUsers()) {
+        moveUsesBefore(userOp, beforeOp, origBlock);
       }
     });
   }
@@ -49,9 +48,9 @@ struct TopologicalShufflePass : public TopologicalShuffleBase<TopologicalShuffle
       auto termOp = block->getTerminator();
       termOp->moveBefore(newBlock, newBlock->end());
       while (!block->empty()) {
-        Operation* op = &block->back();
+        Operation* op = &block->front();
 
-        moveDepsBefore(op, termOp, block);
+        moveUsesBefore(op, termOp, block);
       }
       newBlock->insertBefore(block);
       block->erase();

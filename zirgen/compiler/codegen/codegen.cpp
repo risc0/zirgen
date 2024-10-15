@@ -296,7 +296,22 @@ void emitCodeZirgenPoly(ModuleOp module, StringRef outputDir) {
   FileEmitter emitter(outputDir);
 
   module.walk([&](func::FuncOp func) {
+    if (SymbolTable::getSymbolVisibility(func) == SymbolTable::Visibility::Private)
+      return;
+
     emitter.emitPolyFunc("poly_fp", func);
+  });
+
+  // Inline everything, since everything else expects there to be a single function left.
+  PassManager pm(module.getContext());
+  pm.addPass(mlir::createInlinerPass());
+  pm.addPass(createCanonicalizerPass());
+  pm.addPass(createCSEPass());
+  if (failed(pm.run(module))) {
+    throw std::runtime_error("Failed to apply stage1 passes");
+  }
+
+  module.walk([&](func::FuncOp func) {
     emitter.emitPolyExtFunc(func);
     emitter.emitTaps(func);
     emitter.emitInfo(func);

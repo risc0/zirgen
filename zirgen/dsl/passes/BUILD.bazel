@@ -60,5 +60,6 @@ cc_library(
         "//zirgen/Dialect/ZStruct/Transforms:passes",
         "//zirgen/Dialect/Zll/IR",
         "//zirgen/dsl/Analysis",
+        "//zirgen/compiler/edsl",
     ],
 )

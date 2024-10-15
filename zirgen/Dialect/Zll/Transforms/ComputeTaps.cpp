@@ -87,6 +87,11 @@ struct ComputeTapsPass : public ComputeTapsBase<ComputeTapsPass> {
       }
     });
 
+    // Make sure none of our three hardcoded buffers are edmpty.
+    for (auto i : llvm::seq(3)) {
+      tapAttrs.push_back(TapAttr::get(&getContext(), i, 0, 0));
+    }
+
     TapsAnalysis tapsAnalysis(&getContext(), std::move(tapAttrs));
 
     // Assign back to "tap" attributes on each operation

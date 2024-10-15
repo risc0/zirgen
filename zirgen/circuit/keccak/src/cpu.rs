@@ -39,9 +39,9 @@ pub struct CpuCircuitHal {
     input: RefCell<VecDeque<u32>>,
 }
 
-fn val_array<const SIZE: usize>(vals: [usize; SIZE]) -> [Val; SIZE] {
-    vals.map(|val| Val::new(val as u32))
-}
+//fn val_array<const SIZE: usize>(vals: [usize; SIZE]) -> [Val; SIZE] {
+//    vals.map(|val| Val::new(val as u32))
+//}
 
 impl CpuCircuitHal {
     pub fn new(input: VecDeque<u32>) -> Self {
@@ -122,11 +122,11 @@ impl<'a> CpuExecContext<'a> {
     // Stubs so we can compile with calculator circuit for rapid iteration
     #[allow(dead_code)]
     pub fn get_val_from_user(&self) -> Result<Val> {
-        unimplemented!()
+        Ok(1u32.into())
     }
     #[allow(dead_code)]
     pub fn output_to_user(&self, _ov: Val) -> Result<()> {
-        unimplemented!()
+        Ok(())
     }
 }
 

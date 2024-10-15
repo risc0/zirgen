@@ -110,6 +110,48 @@ public:
 
     mustache tmpl = openTemplate("zirgen/compiler/codegen/cpp/poly.tmpl.cpp");
 
+    list calledFuncs;
+
+    for (mlir::func::FuncOp calledFunc : mixPows.getCalledFuncs()) {
+      FileContext ctx;
+      std::string args;
+      for (auto [idx, arg] : llvm::enumerate(calledFunc.getArguments())) {
+        std::string argName = llvm::formatv("arg{0}", idx).str();
+        ctx.vars[arg] = argName;
+
+        args += ", ";
+
+        TypeSwitch<Type>(arg.getType())
+            .Case<ValType>([&](auto valType) {
+              if (valType.getFieldK() > 1)
+                args += "FpExt ";
+              else
+                args += "Fp ";
+            })
+            .Case<BufferType>([&](auto) { args += "Fp*"; })
+            .Case<ConstraintType>([&](auto) { args += "FpExt"; })
+            .Default([&](Type ty) {
+              llvm::errs() << "Unknown type to pass to call: " << ty << "\n";
+              assert(false);
+            });
+        args += " " + argName;
+      }
+
+      list lines;
+      for (Operation& op : calledFunc.front().without_terminator()) {
+        LLVM_DEBUG(llvm::dbgs() << "emitPolyFunc: " << op << "\n");
+        emitOperation(&op, ctx, lines, /*depth=*/0, "Fp", FuncKind::PolyFp, &mixPows);
+      }
+      Value retVal = calledFunc.front().getTerminator()->getOperand(0);
+      lines.push_back(llvm::formatv("return {0};", ctx.use(retVal)).str());
+
+      calledFuncs.push_back(object{
+          {"args", args},
+          {"fn", calledFunc.getName().str()},
+          {"body", lines},
+      });
+    }
+
     FileContext ctx;
     for (auto [idx, arg] : llvm::enumerate(func.getArguments())) {
       ctx.vars[arg] = llvm::formatv("args[{0}]", idx).str();
@@ -125,6 +167,8 @@ public:
 
     tmpl.render(
         object{
+            {"funcs", calledFuncs},
+            {"args", std::string("Fp** args")},
             {"name", func.getName().str()},
             {"fn", fn},
             {"body", lines},
@@ -248,11 +292,23 @@ private:
     lines.push_back(indent + "// " + locStrStream.str());
     mlir::TypeSwitch<Operation*>(op)
         .Case<ConstOp>([&](ConstOp op) {
-          lines.push_back(indent + llvm::formatv("{0} {1}({2});",
+          lines.push_back(indent + llvm::formatv("constexpr {0} {1}({2});",
                                                  type,
                                                  ctx.def(op.getOut()),
                                                  emitPolynomialAttr(op, "coefficients"))
                                        .str());
+        })
+        .Case<func::CallOp>([&](func::CallOp op) {
+          auto out = ctx.def(op.getResult(0));
+          std::string line =
+              indent +
+              llvm::formatv("auto {0} = {1}(cycle, steps, poly_mix", out, op.getCallee()).str();
+
+          for (mlir::Value arg : op.getOperands()) {
+            line += ", " + ctx.use(arg);
+          }
+          line += ");";
+          lines.push_back(line);
         })
         .Case<GetOp>([&](GetOp op) {
           auto out = ctx.def(op.getOut());

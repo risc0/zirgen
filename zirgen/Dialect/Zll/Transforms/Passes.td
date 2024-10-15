@@ -70,4 +70,12 @@ def MultiplyToIf : Pass<"multiply-to-if"> {
   let constructor = "zirgen::Zll::createMultiplyToIfPass()";
 }
 
+def BalancedSplit : Pass<"balanced-split"> {
+  let summary = "Attempt to split up large blocks";
+  let constructor = "zirgen::Zll::createBalancedSplitPass()";
+  let options = [
+    Option<"maxOps", "max-ops", "unsigned", /*default=*/"5000", "Maximum number of operations in a block before splitting it">
+    ];
+}
+
 #endif // ZLL_TRANSFORM_PASSES

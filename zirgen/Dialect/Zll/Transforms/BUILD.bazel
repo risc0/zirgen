@@ -42,9 +42,11 @@ cc_library(
         "MakeVerifyTaps.cpp",
         "PassDetail.h",
         "SplitStage.cpp",
+        "BalancedSplit.cpp",
     ],
     hdrs = [
         "Passes.h",
+        "BalancedSplit.h",
     ],
     deps = [
         ":PassesIncGen",

@@ -134,13 +134,20 @@ void emitPoly(ModuleOp mod, StringRef circuitName) {
     llvm::errs() << "Pass manager does not agree with command line options.\n";
     exit(1);
   }
-  auto& opm = pm.nest<mlir::func::FuncOp>();
-  opm.addPass(zirgen::ZStruct::createInlineLayoutPass());
-  opm.addPass(zirgen::ZStruct::createBuffersToArgsPass());
-  opm.addPass(Zll::createMakePolynomialPass());
-  opm.addPass(createCanonicalizerPass());
-  opm.addPass(createCSEPass());
-  opm.addPass(Zll::createComputeTapsPass());
+  {
+    auto& opm = pm.nest<mlir::func::FuncOp>();
+    opm.addPass(zirgen::ZStruct::createInlineLayoutPass());
+    pm.addPass(mlir::createPrintIRPass());
+    opm.addPass(zirgen::ZStruct::createBuffersToArgsPass());
+    opm.addPass(Zll::createMakePolynomialPass());
+    opm.addPass(createCanonicalizerPass());
+    opm.addPass(createCSEPass());
+    opm.addPass(Zll::createComputeTapsPass());
+  }
+  pm.addPass(Zll::createBalancedSplitPass(/*maxOps=*/1000));
+  pm.addPass(createCSEPass());
+
+  //  pm.addPass(createPrintIRPass());
 
   if (failed(pm.run(funcMod))) {
     llvm::errs() << "an internal compiler error occurred while lowering this module:\n";
@@ -215,14 +222,18 @@ int main(int argc, char* argv[]) {
   //  pm.addPass(zirgen::dsl::createGenerateTapsPass());
   auto& checkPasses = pm.nest<zirgen::Zhlt::CheckFuncOp>();
   checkPasses.addPass(zirgen::ZStruct::createInlineLayoutPass());
-  checkPasses.addPass(zirgen::Zll::createIfToMultiplyPass());
+  constexpr bool kMultiplyIf = false;
+  if (kMultiplyIf)
+    checkPasses.addPass(zirgen::Zll::createIfToMultiplyPass());
   checkPasses.addPass(mlir::createCanonicalizerPass());
   checkPasses.addPass(mlir::createCSEPass());
-  checkPasses.addPass(zirgen::Zll::createMultiplyToIfPass());
-  checkPasses.addPass(mlir::createCanonicalizerPass());
-  checkPasses.addPass(createControlFlowSinkPass());
-  checkPasses.addPass(zirgen::dsl::createTopologicalShufflePass());
-  checkPasses.addPass(mlir::createPrintIRPass());
+  if (kMultiplyIf) {
+    checkPasses.addPass(zirgen::Zll::createMultiplyToIfPass());
+    checkPasses.addPass(mlir::createCanonicalizerPass());
+    checkPasses.addPass(createControlFlowSinkPass());
+    checkPasses.addPass(zirgen::dsl::createTopologicalShufflePass());
+  }
+  //  checkPasses.addPass(mlir::createPrintIRPass());
   //  pm.addPass(zirgen::dsl::createGenerateValidityRegsPass());
 
   if (failed(pm.run(typedModule.value()))) {
@@ -235,6 +246,7 @@ int main(int argc, char* argv[]) {
   if (circuitName.empty())
     circuitName = inputFilename;
   circuitName.consume_back(".zir");
+  circuitName = "keccak";
 
   emitPoly(*typedModule, circuitName);
 

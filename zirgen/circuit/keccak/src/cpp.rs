@@ -16,15 +16,15 @@
 
 //use anyhow::{anyhow, Result};
 use risc0_circuit_keccak_sys::ffi::{
-    get_trampoline,
+    // get_trampoline,
     risc0_circuit_keccak_poly_fp,
     //risc0_circuit_keccak_step_compute_accum,
     //risc0_circuit_keccak_step_exec, risc0_circuit_keccak_step_verify_accum,
     //    risc0_circuit_keccak_step_verify_bytes, risc0_circuit_keccak_step_verify_mem,
-    risc0_circuit_keccak_string_free,
-    risc0_circuit_keccak_string_ptr,
-    Callback,
-    RawError,
+    // risc0_circuit_keccak_string_free,
+    //     risc0_circuit_keccak_string_ptr,
+    //    Callback,
+    //    RawError,
 };
 use risc0_zkp::{
     adapter::{
