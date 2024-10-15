@@ -11,6 +11,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
+// Derived from APInt.cpp, which is....
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
 
 #include <cstring>
 #include <stdexcept>
@@ -50,7 +56,7 @@ uint64_t highHalf(uint64_t part) {
   return part >> (BITS_PER_WORD / 2);
 }
 
-unsigned count_zeros(uint64_t val) {
+unsigned count_left_zeros(uint64_t val) {
   if (!val) {
     return BITS_PER_WORD;
   }
@@ -62,6 +68,29 @@ unsigned count_zeros(uint64_t val) {
     } else {
       zeroBits |= shift;
     }
+  }
+  return zeroBits;
+}
+
+unsigned count_right_zeros(uint64_t val) {
+  if (!val) {
+    return BITS_PER_WORD;
+  }
+  if (val & 0x1) {
+    return 0;
+  }
+
+  // Bisection method.
+  unsigned zeroBits = 0;
+  uint64_t shift = BITS_PER_WORD >> 1;
+  uint64_t mask = UINT64_MAX >> shift;
+  while (shift) {
+    if ((val & mask) == 0) {
+      val >>= shift;
+      zeroBits |= shift;
+    }
+    shift >>= 1;
+    mask >>= shift;
   }
   return zeroBits;
 }
@@ -79,6 +108,18 @@ uint64_t tcAdd(uint64_t *dst, const uint64_t *rhs, unsigned parts) {
     }
   }
   return carry;
+}
+
+uint64_t tcAddPart(uint64_t *dst, uint64_t src, unsigned parts) {
+  for (unsigned i = 0; i < parts; ++i) {
+    dst[i] += src;
+    if (dst[i] >= src) {
+      return 0; // No need to carry so exit early.
+    }
+    src = 1; // Carry one to next digit.
+  }
+
+  return 1;
 }
 
 uint64_t tcSubtractPart(uint64_t *dst, uint64_t src, unsigned parts) {
@@ -290,7 +331,7 @@ static void KnuthDiv(uint32_t *u, uint32_t *v, uint32_t *q, uint32_t* r,
   // and v so that its high bits are shifted to the top of v's range without
   // overflow. Note that this can require an extra word in u so that u must
   // be of length m+n+1.
-  unsigned shift = count_zeros(v[n - 1]);
+  unsigned shift = count_left_zeros(v[n - 1]);
   uint32_t v_carry = 0;
   uint32_t u_carry = 0;
   if (shift) {
@@ -552,6 +593,16 @@ uint64_t BQInt::getLimitedValue(uint64_t Limit) const {
   return ugt(Limit) ? Limit : getZExtValue();
 }
 
+BQInt& BQInt::operator++() {
+  if (isSingleWord()) {
+    ++U.word;
+  } else {
+    tcAddPart(U.ptr, 1, getNumWords());
+  }
+  return clearUnusedBits();
+}
+
+
 BQInt &BQInt::operator-=(uint64_t RHS) {
   if (isSingleWord()) {
     U.word -= RHS;
@@ -599,7 +650,7 @@ BQInt &BQInt::operator<<=(unsigned ShiftAmt) {
   return clearUnusedBits();
 }
 
-BQInt BQInt::operator*(const BQInt &RHS) {
+BQInt BQInt::operator*(const BQInt &RHS) const {
   if (BitWidth != RHS.BitWidth) {
     throw std::runtime_error("Bit widths must be the same");
   }
@@ -854,6 +905,18 @@ BQInt &BQInt::clearUnusedBits() {
   return *this;
 }
 
+void BQInt::negate() {
+  if (isSingleWord()) {
+    U.word ^= UINT64_MAX;
+  } else {
+    for (unsigned i = 0; i < getNumWords(); i++) {
+      U.ptr[i] = ~U.ptr[i];
+    }
+  }
+  clearUnusedBits();
+  ++(*this);
+}
+
 void BQInt::initSlowCase(uint64_t val, bool isSigned) {
   if (isSigned && int64_t(val) < 0) {
     U.ptr = getMemory(getNumWords());
@@ -865,6 +928,30 @@ void BQInt::initSlowCase(uint64_t val, bool isSigned) {
     U.ptr[0] = val;
   }
 }
+
+BQInt BQInt::sdiv(const BQInt &RHS) const {
+  if (isNegative()) {
+    if (RHS.isNegative())
+      return (-(*this)).udiv(-RHS);
+    return -((-(*this)).udiv(RHS));
+  }
+  if (RHS.isNegative())
+    return -(this->udiv(-RHS));
+  return this->udiv(RHS);
+}
+
+BQInt BQInt::smul_ov(const BQInt &RHS, bool &overflow) const {
+  BQInt res = *this * RHS;
+
+  if (RHS != 0) {
+    overflow = res.sdiv(RHS) != *this ||
+               (isMinSignedValue() && RHS.isAllOnes());
+  } else {
+    overflow = false;
+  }
+  return res;
+}
+
 
 int BQInt::compare(const BQInt &RHS) const {
   if (BitWidth != RHS.BitWidth) {
@@ -903,10 +990,30 @@ bool BQInt::isNegative() const {
   return (maskBit & getWord) != 0;
 }
 
+bool BQInt::isMinSignedValue() const {
+  if (isSingleWord()) {
+    if (!BitWidth) {
+      throw std::runtime_error("zero width values not allowed");
+    }
+    return U.word == (uint64_t(1) << (BitWidth - 1));
+  }
+  return isNegative() && countTrailingZerosSlowCase() == BitWidth - 1;
+}
+
+bool BQInt::isAllOnes() const {
+  if (BitWidth == 0) {
+    return true;
+  }
+  if (isSingleWord()) {
+    return U.word == UINT64_MAX >> (BITS_PER_WORD - BitWidth);
+  }
+  return countTrailingOnesSlowCase() == BitWidth;
+}
+
 unsigned BQInt::countl_zero() const {
   if (isSingleWord()) {
     unsigned unusedBits = BITS_PER_WORD - BitWidth;
-    return count_zeros(U.word) - unusedBits;
+    return count_left_zeros(U.word) - unusedBits;
   }
   return countLeadingZerosSlowCase();
 }
@@ -918,12 +1025,39 @@ unsigned BQInt::countLeadingZerosSlowCase() const {
     if (V == 0) {
       count += BITS_PER_WORD;
     } else {
-      count += count_zeros(V);
+      count += count_left_zeros(V);
       break;
     }
   }
   unsigned mod = BitWidth % BITS_PER_WORD;
   count -= mod > 0 ? BITS_PER_WORD - mod : 0;
+  return count;
+}
+
+unsigned BQInt::countTrailingZerosSlowCase() const {
+  unsigned count = 0;
+  unsigned i = 0;
+  for (; i < getNumWords() && U.ptr[i] == 0; ++i) {
+    count += BITS_PER_WORD;
+  }
+  if (i < getNumWords()) {
+    count += count_right_zeros(U.ptr[i]);
+  }
+  return std::min(count, BitWidth);
+}
+
+unsigned BQInt::countTrailingOnesSlowCase() const {
+  unsigned count = 0;
+  unsigned i = 0;
+  for (; i < getNumWords() && U.ptr[i] == UINT64_MAX; ++i) {
+    count += BITS_PER_WORD;
+  }
+  if (i < getNumWords()) {
+    count += count_right_zeros(~U.ptr[i]);
+  }
+  if (count > BitWidth) {
+    throw std::runtime_error("count is out of range for bit width");
+  }
   return count;
 }
 
