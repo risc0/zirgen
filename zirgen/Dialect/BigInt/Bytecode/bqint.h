@@ -58,6 +58,7 @@ protected:
   bool ult(const BQInt &RHS) const;
   uint64_t getZExtValue() const;
   unsigned getActiveBits() const { return BitWidth - countl_zero(); }
+  bool isNegative() const;
   unsigned countl_zero() const;
   unsigned countLeadingZerosSlowCase() const;
   bool operator==(uint64_t Val) const;
