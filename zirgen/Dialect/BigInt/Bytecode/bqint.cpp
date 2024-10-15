@@ -230,6 +230,282 @@ void tcShiftLeft(uint64_t *Dst, unsigned Words, unsigned Count) {
   std::memset(Dst, 0, WordShift * WORD_SIZE);
 }
 
+/// Return the high 32 bits of a 64 bit value.
+constexpr uint32_t Hi_32(uint64_t Value) {
+  return static_cast<uint32_t>(Value >> 32);
+}
+
+/// Return the low 32 bits of a 64 bit value.
+constexpr uint32_t Lo_32(uint64_t Value) {
+  return static_cast<uint32_t>(Value);
+}
+
+/// Make a 64-bit integer from a high / low pair of 32-bit integers.
+constexpr uint64_t Make_64(uint32_t High, uint32_t Low) {
+  return ((uint64_t)High << 32) | (uint64_t)Low;
+}
+
+/// Implementation of Knuth's Algorithm D (Division of nonnegative integers)
+/// from "Art of Computer Programming, Volume 2", section 4.3.1, p. 272. The
+/// variables here have the same names as in the algorithm. Comments explain
+/// the algorithm and any deviation from it.
+static void KnuthDiv(uint32_t *u, uint32_t *v, uint32_t *q, uint32_t* r,
+                     unsigned m, unsigned n) {
+  if (!u) {
+    throw std::runtime_error("Must provide dividend");
+  }
+  if (!v) {
+    throw std::runtime_error("Must provide divisor");
+  }
+  if (!q) {
+    throw std::runtime_error("Must provide quotient");
+  }
+  if (u == v || u == q || v == q) {
+    throw std::runtime_error("Must use different memory");
+  }
+  if (n <= 1) {
+    throw std::runtime_error("n must be > 1");
+  }
+
+  // b denotes the base of the number system. In our case b is 2^32.
+  const uint64_t b = uint64_t(1) << 32;
+
+  // D1. [Normalize.] Set d = b / (v[n-1] + 1) and multiply all the digits of
+  // u and v by d. Note that we have taken Knuth's advice here to use a power
+  // of 2 value for d such that d * v[n-1] >= b/2 (b is the base). A power of
+  // 2 allows us to shift instead of multiply and it is easy to determine the
+  // shift amount from the leading zeros.  We are basically normalizing the u
+  // and v so that its high bits are shifted to the top of v's range without
+  // overflow. Note that this can require an extra word in u so that u must
+  // be of length m+n+1.
+  unsigned shift = count_zeros(v[n - 1]);
+  uint32_t v_carry = 0;
+  uint32_t u_carry = 0;
+  if (shift) {
+    for (unsigned i = 0; i < m+n; ++i) {
+      uint32_t u_tmp = u[i] >> (32 - shift);
+      u[i] = (u[i] << shift) | u_carry;
+      u_carry = u_tmp;
+    }
+    for (unsigned i = 0; i < n; ++i) {
+      uint32_t v_tmp = v[i] >> (32 - shift);
+      v[i] = (v[i] << shift) | v_carry;
+      v_carry = v_tmp;
+    }
+  }
+  u[m+n] = u_carry;
+
+  // D2. [Initialize j.]  Set j to m. This is the loop counter over the places.
+  int j = m;
+  do {
+    // D3. [Calculate q'.].
+    //     Set qp = (u[j+n]*b + u[j+n-1]) / v[n-1]. (qp=qprime=q')
+    //     Set rp = (u[j+n]*b + u[j+n-1]) % v[n-1]. (rp=rprime=r')
+    // Now test if qp == b or qp*v[n-2] > b*rp + u[j+n-2]; if so, decrease
+    // qp by 1, increase rp by v[n-1], and repeat this test if rp < b. The test
+    // on v[n-2] determines at high speed most of the cases in which the trial
+    // value qp is one too large, and it eliminates all cases where qp is two
+    // too large.
+    uint64_t dividend = Make_64(u[j+n], u[j+n-1]);
+    uint64_t qp = dividend / v[n-1];
+    uint64_t rp = dividend % v[n-1];
+    if (qp == b || qp*v[n-2] > b*rp + u[j+n-2]) {
+      qp--;
+      rp += v[n-1];
+      if (rp < b && (qp == b || qp*v[n-2] > b*rp + u[j+n-2]))
+        qp--;
+    }
+
+    // D4. [Multiply and subtract.] Replace (u[j+n]u[j+n-1]...u[j]) with
+    // (u[j+n]u[j+n-1]..u[j]) - qp * (v[n-1]...v[1]v[0]). This computation
+    // consists of a simple multiplication by a one-place number, combined with
+    // a subtraction.
+    // The digits (u[j+n]...u[j]) should be kept positive; if the result of
+    // this step is actually negative, (u[j+n]...u[j]) should be left as the
+    // true value plus b**(n+1), namely as the b's complement of
+    // the true value, and a "borrow" to the left should be remembered.
+    int64_t borrow = 0;
+    for (unsigned i = 0; i < n; ++i) {
+      uint64_t p = uint64_t(qp) * uint64_t(v[i]);
+      int64_t subres = int64_t(u[j+i]) - borrow - Lo_32(p);
+      u[j+i] = Lo_32(subres);
+      borrow = Hi_32(p) - Hi_32(subres);
+    }
+    bool isNeg = u[j+n] < borrow;
+    u[j+n] -= Lo_32(borrow);
+
+    // D5. [Test remainder.] Set q[j] = qp. If the result of step D4 was
+    // negative, go to step D6; otherwise go on to step D7.
+    q[j] = Lo_32(qp);
+    if (isNeg) {
+      // D6. [Add back]. The probability that this step is necessary is very
+      // small, on the order of only 2/b. Make sure that test data accounts for
+      // this possibility. Decrease q[j] by 1
+      q[j]--;
+      // and add (0v[n-1]...v[1]v[0]) to (u[j+n]u[j+n-1]...u[j+1]u[j]).
+      // A carry will occur to the left of u[j+n], and it should be ignored
+      // since it cancels with the borrow that occurred in D4.
+      bool carry = false;
+      for (unsigned i = 0; i < n; i++) {
+        uint32_t limit = std::min(u[j+i],v[i]);
+        u[j+i] += v[i] + carry;
+        carry = u[j+i] < limit || (carry && u[j+i] == limit);
+      }
+      u[j+n] += carry;
+    }
+    // D7. [Loop on j.]  Decrease j by one. Now if j >= 0, go back to D3.
+  } while (--j >= 0);
+
+  // D8. [Unnormalize]. Now q[...] is the desired quotient, and the desired
+  // remainder may be obtained by dividing u[...] by d. If r is non-null we
+  // compute the remainder (urem uses this).
+  if (r) {
+    // The value d is expressed by the "shift" value above since we avoided
+    // multiplication by d by using a shift left. So, all we have to do is
+    // shift right here.
+    if (shift) {
+      uint32_t carry = 0;
+      for (int i = n-1; i >= 0; i--) {
+        r[i] = (u[i] >> shift) | carry;
+        carry = u[i] << (32 - shift);
+      }
+    } else {
+      for (int i = n-1; i >= 0; i--) {
+        r[i] = u[i];
+      }
+    }
+  }
+}
+
+void divide(const uint64_t *LHS, unsigned lhsWords, const uint64_t *RHS,
+                   unsigned rhsWords, uint64_t *Quotient, uint64_t *Remainder) {
+  if (lhsWords < rhsWords) {
+    throw std::runtime_error("Fractional result in divide");
+  }
+
+  // First, compose the values into an array of 32-bit words instead of
+  // 64-bit words. This is a necessity of both the "short division" algorithm
+  // and the Knuth "classical algorithm" which requires there to be native
+  // operations for +, -, and * on an m bit value with an m*2 bit result. We
+  // can't use 64-bit operands here because we don't have native results of
+  // 128-bits. Furthermore, casting the 64-bit values to 32-bit values won't
+  // work on large-endian machines.
+  unsigned n = rhsWords * 2;
+  unsigned m = (lhsWords * 2) - n;
+
+  // Allocate space for the temporary values we need either on the stack, if
+  // it will fit, or on the heap if it won't.
+  uint32_t SPACE[128];
+  uint32_t *U = nullptr;
+  uint32_t *V = nullptr;
+  uint32_t *Q = nullptr;
+  uint32_t *R = nullptr;
+  if ((Remainder?4:3)*n+2*m+1 <= 128) {
+    U = &SPACE[0];
+    V = &SPACE[m+n+1];
+    Q = &SPACE[(m+n+1) + n];
+    if (Remainder)
+      R = &SPACE[(m+n+1) + n + (m+n)];
+  } else {
+    U = new uint32_t[m + n + 1];
+    V = new uint32_t[n];
+    Q = new uint32_t[m+n];
+    if (Remainder)
+      R = new uint32_t[n];
+  }
+
+  // Initialize the dividend
+  std::memset(U, 0, (m+n+1)*sizeof(uint32_t));
+  for (unsigned i = 0; i < lhsWords; ++i) {
+    uint64_t tmp = LHS[i];
+    U[i * 2] = Lo_32(tmp);
+    U[i * 2 + 1] = Hi_32(tmp);
+  }
+  U[m+n] = 0; // this extra word is for "spill" in the Knuth algorithm.
+
+  // Initialize the divisor
+  std::memset(V, 0, (n)*sizeof(uint32_t));
+  for (unsigned i = 0; i < rhsWords; ++i) {
+    uint64_t tmp = RHS[i];
+    V[i * 2] = Lo_32(tmp);
+    V[i * 2 + 1] = Hi_32(tmp);
+  }
+
+  // initialize the quotient and remainder
+  std::memset(Q, 0, (m+n) * sizeof(uint32_t));
+  if (Remainder) {
+    std::memset(R, 0, n * sizeof(uint32_t));
+  }
+
+  // Now, adjust m and n for the Knuth division. n is the number of words in
+  // the divisor. m is the number of words by which the dividend exceeds the
+  // divisor (i.e. m+n is the length of the dividend). These sizes must not
+  // contain any zero words or the Knuth algorithm fails.
+  for (unsigned i = n; i > 0 && V[i-1] == 0; i--) {
+    n--;
+    m++;
+  }
+  for (unsigned i = m+n; i > 0 && U[i-1] == 0; i--) {
+    m--;
+  }
+
+  // If we're left with only a single word for the divisor, Knuth doesn't work
+  // so we implement the short division algorithm here. This is much simpler
+  // and faster because we are certain that we can divide a 64-bit quantity
+  // by a 32-bit quantity at hardware speed and short division is simply a
+  // series of such operations. This is just like doing short division but we
+  // are using base 2^32 instead of base 10.
+  if (n == 0) {
+    throw std::runtime_error("Divide by zero?");
+  }
+  if (n == 1) {
+    uint32_t divisor = V[0];
+    uint32_t remainder = 0;
+    for (int i = m; i >= 0; i--) {
+      uint64_t partial_dividend = Make_64(remainder, U[i]);
+      if (partial_dividend == 0) {
+        Q[i] = 0;
+        remainder = 0;
+      } else if (partial_dividend < divisor) {
+        Q[i] = 0;
+        remainder = Lo_32(partial_dividend);
+      } else if (partial_dividend == divisor) {
+        Q[i] = 1;
+        remainder = 0;
+      } else {
+        Q[i] = Lo_32(partial_dividend / divisor);
+        remainder = Lo_32(partial_dividend - (Q[i] * divisor));
+      }
+    }
+    if (R)
+      R[0] = remainder;
+  } else {
+    // Now we're ready to invoke the Knuth classical divide algorithm. In this
+    // case n > 1.
+    KnuthDiv(U, V, Q, R, m, n);
+  }
+
+  // If the caller wants the quotient
+  if (Quotient) {
+    for (unsigned i = 0; i < lhsWords; ++i)
+      Quotient[i] = Make_64(Q[i*2+1], Q[i*2]);
+  }
+
+  // If the caller wants the remainder
+  if (Remainder) {
+    for (unsigned i = 0; i < rhsWords; ++i)
+      Remainder[i] = Make_64(R[i*2+1], R[i*2]);
+  }
+
+  // Clean up the memory we allocated.
+  if (U != &SPACE[0]) {
+    delete [] U;
+    delete [] V;
+    delete [] Q;
+    delete [] R;
+  }
+}
+
 } // namespace
 
 BQInt::BQInt(unsigned numBits, uint64_t val, bool isSigned):
@@ -426,9 +702,25 @@ BQInt BQInt::smul_sat(const BQInt &RHS) const {
   }
   // The result is negative if one and only one of inputs is negative.
   if (isNegative() ^ RHS.isNegative()) {
-    return BQInt::getSignedMinValue(BitWidth);
+    // Return signed minimum value
+    BQInt ret(BitWidth, 0);
+    uint64_t mask = 1ULL << (BitWidth % BITS_PER_WORD);
+    if (isSingleWord()) {
+      ret.U.word |= mask;
+    } else {
+      ret.U.ptr[BitWidth / BITS_PER_WORD] |= mask;
+    }
+    return ret;
   } else {
-    return BQInt::getSignedMaxValue(BitWidth);
+    BQInt ret(BitWidth, UINT64_MAX, true);
+    unsigned clearWidth = BitWidth - 1;
+    uint64_t mask = ~(1ULL << (clearWidth % BITS_PER_WORD));
+    if (isSingleWord()) {
+      ret.U.word &= mask;
+    } else {
+      ret.U.ptr[BitWidth / BITS_PER_WORD] &= mask;
+    }
+    return ret;
   }
 }
 
@@ -580,6 +872,15 @@ uint64_t BQInt::getZExtValue() const {
   return U.ptr[0];
 }
 
+bool BQInt::isNegative() const {
+  unsigned bitPosition = BitWidth - 1;
+  unsigned whichBit = bitPosition % BITS_PER_WORD;
+  uint64_t maskBit = 1ULL << whichBit;
+  unsigned whichWord = bitPosition / BITS_PER_WORD;
+  uint64_t getWord = isSingleWord() ? U.word : U.ptr[whichWord];
+  return (maskBit & getWord) != 0;
+}
+
 unsigned BQInt::countl_zero() const {
   if (isSingleWord()) {
     unsigned unusedBits = BITS_PER_WORD - BitWidth;
@@ -612,7 +913,10 @@ bool BQInt::operator==(const BQInt &RHS) const {
   if (BitWidth != RHS.BitWidth) {
     throw std::runtime_error("Comparison requires equal bit widths");
   }
-  return isSingleWord()? U.word == RHS.U.word: equalSlowCase(RHS);
+  if (isSingleWord()) {
+    return U.word == RHS.U.word;
+  }
+  return std::equal(U.ptr, U.ptr + getNumWords(), RHS.U.ptr);
 }
 
 } // namespace zirgen::BigInt::Bytecode
