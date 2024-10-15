@@ -34,11 +34,13 @@ public:
   ~BQInt();
   bool isSingleWord() const;
   uint64_t getLimitedValue(uint64_t Limit = UINT64_MAX) const;
+  BQInt &operator++();
   BQInt &operator-=(uint64_t RHS);
   BQInt &operator+=(const BQInt &RHS);
   BQInt &operator*=(uint64_t RHS);
   BQInt &operator<<=(unsigned ShiftAmt);
-  BQInt operator*(const BQInt &RHS);
+  BQInt operator*(const BQInt &RHS) const;
+  bool operator!=(const BQInt &RHS) const { return !((*this) == RHS); }
   bool operator!=(uint64_t Val) const;
   BQInt udiv(const BQInt &RHS) const;
   BQInt urem(const BQInt &RHS) const;
@@ -47,6 +49,7 @@ public:
   BQInt trunc(unsigned width) const;
   BQInt zext(unsigned width) const;
   BQInt extractBits(unsigned numBits, unsigned bitPosition) const;
+  void negate();
   unsigned getBitWidth() const { return BitWidth; }
 protected:
   // used internally but never by the eval function
@@ -54,17 +57,28 @@ protected:
   static unsigned getNumWords(unsigned);
   BQInt &clearUnusedBits();
   void initSlowCase(uint64_t val, bool isSigned);
+  BQInt sdiv(const BQInt &RHS) const;
+  BQInt smul_ov(const BQInt &RHS, bool &overflow) const;
   int compare(const BQInt &RHS) const;
   bool ugt(uint64_t RHS) const;
   bool ult(const BQInt &RHS) const;
   uint64_t getZExtValue() const;
   unsigned getActiveBits() const { return BitWidth - countl_zero(); }
   bool isNegative() const;
+  bool isMinSignedValue() const;
+  bool isAllOnes() const;
   unsigned countl_zero() const;
   unsigned countLeadingZerosSlowCase() const;
+  unsigned countTrailingZerosSlowCase() const;
+  unsigned countTrailingOnesSlowCase() const;
   bool operator==(uint64_t Val) const;
   bool operator==(const BQInt &RHS) const;
 };
+
+inline BQInt operator-(BQInt v) {
+  v.negate();
+  return v;
+}
 
 inline BQInt operator-(BQInt a, uint64_t RHS) {
   a -= RHS;
