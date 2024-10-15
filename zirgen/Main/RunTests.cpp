@@ -289,11 +289,9 @@ int runTests(mlir::ModuleOp module) {
           std::default_random_engine generator;
           std::uniform_int_distribution<int> distribution(1, zirgen::Zll::kFieldPrimeDefault - 1);
           newBuf->clear();
-          newBuf->resize(bufDesc.getRegCount(), Polynomial(4, zirgen::Zll::kFieldInvalid));
+          newBuf->resize(bufDesc.getRegCount(), Polynomial(1, zirgen::Zll::kFieldInvalid));
           for (size_t i = 0; i < bufDesc.getRegCount(); i++) {
-            for (size_t j = 0; j < 4; j++) {
-              (*newBuf)[i][j] = static_cast<uint64_t>(distribution(generator));
-            }
+            (*newBuf)[i][0] = static_cast<uint64_t>(distribution(generator));
           }
         }
       } else {

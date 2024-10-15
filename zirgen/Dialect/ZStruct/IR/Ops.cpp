@@ -645,7 +645,8 @@ LogicalResult LoadOp::evaluate(Interpreter& interp,
     return emitError() << "Attempting to get out of bounds index " << totOffset
                        << " from buffer of size " << buf.size();
   }
-  auto val = interp.bufferLoad(buf,
+  auto val = interp.bufferLoad(getOperation(),
+                               buf,
                                totOffset,
                                getOut().getType().getFieldK(),
                                /*buf field k=*/1);

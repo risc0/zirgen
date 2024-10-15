@@ -248,8 +248,11 @@ LogicalResult GetOp::evaluate(Interpreter& interp,
                        << " from buffer of size " << buf.size();
   }
 
-  auto val = interp.bufferLoad(
-      buf, totOffset, getOut().getType().getFieldK(), getBuf().getType().getElement().getFieldK());
+  auto val = interp.bufferLoad(getOperation(),
+                               buf,
+                               totOffset,
+                               getOut().getType().getFieldK(),
+                               getBuf().getType().getElement().getFieldK());
 
   if (isInvalid(val)) {
     if (!getOperation()->hasAttr("unchecked")) {
@@ -290,7 +293,8 @@ LogicalResult SetOp::evaluate(Interpreter& interp,
 LogicalResult GetGlobalOp::evaluate(Interpreter& interp,
                                     llvm::ArrayRef<zirgen::Zll::InterpVal*> outs,
                                     EvalAdaptor& adaptor) {
-  auto val = interp.bufferLoad(adaptor.getBuf()->getBuf(),
+  auto val = interp.bufferLoad(getOperation(),
+                               adaptor.getBuf()->getBuf(),
                                getOffset(),
                                getOut().getType().getFieldK(),
                                getBuf().getType().getElement().getFieldK());

@@ -209,6 +209,11 @@ LogicalResult Interpreter::bufferStore(Operation* op,
                                        size_t offset,
                                        Interpreter::PolynomialRef val,
                                        size_t bufferExt) {
+  size_t numBufElems = ceilDiv(val.size(), bufferExt);
+  if (offset + numBufElems > buf.size()) {
+    return op->emitError() << "Offset " << offset << " elems " << numBufElems
+                           << " exceeds buffer size " << buf.size() << "\n";
+  }
   LogicalResult result = mlir::success();
   for (size_t i = 0; i * bufferExt < val.size(); i++) {
     auto newElem = ArrayRef{val.slice(i * bufferExt, bufferExt)};
@@ -223,10 +228,13 @@ LogicalResult Interpreter::bufferStore(Operation* op,
   return result;
 }
 
-Interpreter::Polynomial Interpreter::bufferLoad(Interpreter::BufferRef buf,
-                                                size_t offset,
-                                                size_t valExt,
-                                                size_t bufferExt) {
+Interpreter::Polynomial Interpreter::bufferLoad(
+    Operation* op, Interpreter::BufferRef buf, size_t offset, size_t valExt, size_t bufferExt) {
+  size_t numBufElems = ceilDiv(valExt, bufferExt);
+  if (offset + numBufElems > buf.size()) {
+    op->emitError() << "Offset " << offset << " elems " << numBufElems << " exceeds buffer size "
+                    << buf.size() << "\n";
+  }
   Polynomial result;
   for (size_t i = 0; i * bufferExt < valExt; i++) {
     llvm::append_range(result, buf[offset + i]);
