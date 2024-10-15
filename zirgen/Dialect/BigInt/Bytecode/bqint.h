@@ -54,6 +54,7 @@ protected:
   static unsigned getNumWords(unsigned);
   BQInt &clearUnusedBits();
   void initSlowCase(uint64_t val, bool isSigned);
+  int compare(const BQInt &RHS) const;
   bool ugt(uint64_t RHS) const;
   bool ult(const BQInt &RHS) const;
   uint64_t getZExtValue() const;

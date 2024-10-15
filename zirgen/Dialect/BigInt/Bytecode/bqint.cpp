@@ -230,6 +230,18 @@ void tcShiftLeft(uint64_t *Dst, unsigned Words, unsigned Count) {
   std::memset(Dst, 0, WordShift * WORD_SIZE);
 }
 
+int tcCompare(const uint64_t *lhs, const uint64_t *rhs,
+                     unsigned parts) {
+  while (parts) {
+    parts--;
+    if (lhs[parts] != rhs[parts])
+      return (lhs[parts] > rhs[parts]) ? 1 : -1;
+  }
+
+  return 0;
+}
+
+
 /// Return the high 32 bits of a 64 bit value.
 constexpr uint32_t Hi_32(uint64_t Value) {
   return static_cast<uint32_t>(Value >> 32);
@@ -852,6 +864,16 @@ void BQInt::initSlowCase(uint64_t val, bool isSigned) {
     U.ptr = getClearedMemory(getNumWords());
     U.ptr[0] = val;
   }
+}
+
+int BQInt::compare(const BQInt &RHS) const {
+  if (BitWidth != RHS.BitWidth) {
+    throw std::runtime_error("Bit widths must be same for comparison");
+  }
+  if (isSingleWord()) {
+    return U.word < RHS.U.word ? -1 : U.word > RHS.U.word;
+  }
+  return tcCompare(U.ptr, RHS.U.ptr, getNumWords());
 }
 
 bool BQInt::ugt(uint64_t RHS) const {
