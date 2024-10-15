@@ -204,6 +204,36 @@ Interpreter::BufferRef Interpreter::makeBuf(mlir::Value buffer, size_t size, Buf
   return ref;
 }
 
+LogicalResult Interpreter::bufferStore(Operation* op,
+                                       Interpreter::BufferRef buf,
+                                       size_t offset,
+                                       Interpreter::PolynomialRef val,
+                                       size_t bufferExt) {
+  LogicalResult result = mlir::success();
+  for (size_t i = 0; i * bufferExt < val.size(); i++) {
+    auto newElem = ArrayRef{val.slice(i * bufferExt, bufferExt)};
+    auto& elem = buf[offset + i];
+    if (!isInvalid(elem) && elem != newElem && op) {
+      op->emitError() << "Invalid set at offset " << offset << ", cur=" << elem
+                      << ", new = " << newElem;
+      result = mlir::failure();
+    }
+    elem.assign(newElem.begin(), newElem.end());
+  }
+  return result;
+}
+
+Interpreter::Polynomial Interpreter::bufferLoad(Interpreter::BufferRef buf,
+                                                size_t offset,
+                                                size_t valExt,
+                                                size_t bufferExt) {
+  Polynomial result;
+  for (size_t i = 0; i * bufferExt < valExt; i++) {
+    llvm::append_range(result, buf[offset + i]);
+  }
+  return result;
+}
+
 Interpreter::BufferRef Interpreter::getNamedBuf(llvm::StringRef name) {
   assert(namedBufs.count(name));
   return namedBufs[name].first;

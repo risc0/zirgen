@@ -645,7 +645,11 @@ LogicalResult LoadOp::evaluate(Interpreter& interp,
     return emitError() << "Attempting to get out of bounds index " << totOffset
                        << " from buffer of size " << buf.size();
   }
-  Interpreter::Polynomial val = buf[totOffset];
+  auto val = interp.bufferLoad(buf,
+                               totOffset,
+                               getOut().getType().getFieldK(),
+                               /*buf field k=*/1);
+
   if (isInvalid(val)) {
     if (!getOperation()->hasAttr("unchecked")) {
 
@@ -678,14 +682,8 @@ LogicalResult StoreOp::evaluate(Interpreter& interp,
     return emitError() << "Attempting to set out of bounds index " << totOffset
                        << " in buffer of size " << buf.size();
   }
-  Interpreter::Polynomial& val = buf[totOffset];
-  Interpreter::PolynomialRef newVal = adaptor.getVal()->getVal();
-  if (!isInvalid(val) && val != newVal) {
-    return emitError() << "StoreOp: Invalid set of " << bufName << "[" << offset << "], cur=" << val
-                       << ", new = " << newVal;
-  }
-  val = Interpreter::Polynomial(newVal.begin(), newVal.end());
-  return success();
+  return interp.bufferStore(
+      getOperation(), buf, totOffset, adaptor.getVal()->getVal(), /*buf field k=*/1);
 }
 
 LogicalResult BindLayoutOp::evaluate(Interpreter& interp,

@@ -144,6 +144,10 @@ public:
   ExternHandler* getExternHandler();
   BufferRef makeBuf(mlir::Value buffer, size_t size, BufferKind kind);
 
+  mlir::LogicalResult bufferStore(
+      mlir::Operation* op, BufferRef buf, size_t offset, PolynomialRef val, size_t bufferExt);
+  Polynomial bufferLoad(BufferRef buf, size_t offset, size_t valExt, size_t bufferExt);
+
   // A size of 0 means a global buffer that doesn't have separate values per cycle.
   void setNamedBuf(llvm::StringRef name, BufferRef val, size_t size = 0);
   BufferRef getNamedBuf(mlir::StringRef name);

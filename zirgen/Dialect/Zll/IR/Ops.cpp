@@ -247,7 +247,10 @@ LogicalResult GetOp::evaluate(Interpreter& interp,
     return emitError() << "Attempting to get out of bounds index " << totOffset
                        << " from buffer of size " << buf.size();
   }
-  Interpreter::PolynomialRef val = buf[totOffset];
+
+  auto val = interp.bufferLoad(
+      buf, totOffset, getOut().getType().getFieldK(), getBuf().getType().getElement().getFieldK());
+
   if (isInvalid(val)) {
     if (!getOperation()->hasAttr("unchecked")) {
       auto diag = emitError() << "GetOp: Read before write";
@@ -276,19 +279,21 @@ LogicalResult SetOp::evaluate(Interpreter& interp,
     return emitError() << "Attempting to set out of bounds index " << totOffset
                        << " in buffer of size " << vec.size();
   }
-  Interpreter::Polynomial& val = vec[totOffset];
-  Interpreter::PolynomialRef newVal = adaptor.getIn()->getVal();
-  if (!isInvalid(val) && val != newVal) {
-    return emitError() << "SetOp: Invalid set, cur=" << val << ", new = " << newVal;
-  }
-  val = Interpreter::Polynomial(newVal.begin(), newVal.end());
-  return success();
+
+  return interp.bufferStore(getOperation(),
+                            vec,
+                            totOffset,
+                            adaptor.getIn()->getVal(),
+                            getBuf().getType().getElement().getFieldK());
 }
 
 LogicalResult GetGlobalOp::evaluate(Interpreter& interp,
                                     llvm::ArrayRef<zirgen::Zll::InterpVal*> outs,
                                     EvalAdaptor& adaptor) {
-  Interpreter::PolynomialRef val = adaptor.getBuf()->getBuf()[getOffset()];
+  auto val = interp.bufferLoad(adaptor.getBuf()->getBuf(),
+                               getOffset(),
+                               getOut().getType().getFieldK(),
+                               getBuf().getType().getElement().getFieldK());
   if (isInvalid(val)) {
     return emitError() << "GetGlobalOp: Read before write";
   }
@@ -299,13 +304,11 @@ LogicalResult GetGlobalOp::evaluate(Interpreter& interp,
 LogicalResult SetGlobalOp::evaluate(Interpreter& interp,
                                     llvm::ArrayRef<zirgen::Zll::InterpVal*> outs,
                                     EvalAdaptor& adaptor) {
-  Interpreter::Polynomial& val = adaptor.getBuf()->getBuf()[getOffset()];
-  Interpreter::PolynomialRef newVal = adaptor.getIn()->getVal();
-  if (!isInvalid(val) && val != newVal) {
-    return emitError() << "SetGlobalOp: Invalid set, cur=" << val << ", new = " << newVal;
-  }
-  val = Interpreter::Polynomial(newVal.begin(), newVal.end());
-  return success();
+  return interp.bufferStore(getOperation(),
+                            adaptor.getBuf()->getBuf(),
+                            getOffset(),
+                            adaptor.getIn()->getVal(),
+                            getBuf().getType().getElement().getFieldK());
 }
 
 LogicalResult SetGlobalDigestOp::evaluate(Interpreter& interp,
