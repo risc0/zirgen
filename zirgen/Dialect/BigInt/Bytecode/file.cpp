@@ -15,6 +15,7 @@
 #include "file.h"
 #include <array>
 #include <stdexcept>
+#include <string>
 
 namespace zirgen::BigInt::Bytecode {
 
