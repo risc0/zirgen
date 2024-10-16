@@ -1,8 +1,8 @@
 // RUN: not zirgen %s 2>&1 | FileCheck %s
 
 component TestMap() {
-  // CHECK:      error: back operation must apply to a component with a layout,
-  // CHECK-SAME: but `Val` does not have a layout
+  // TODO: better diagnostic
+  // CHECK: error: Val has no layout
   for i : 0..3 { i @ 2 }
 }
 

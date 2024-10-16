@@ -36,8 +36,7 @@ LogicalResult GetLayoutOp::inferReturnTypes(MLIRContext* ctx,
                                             SmallVectorImpl<Type>& out) {
   Type valueType = adaptor.getIn().getType();
   Type layoutType = ZStruct::getLayoutType(valueType);
-  if (!layoutType)
-    return mlir::emitError(*loc) << getTypeId(valueType) << " has no layout";
+  assert(layoutType);
   out.push_back(layoutType);
   return success();
 }

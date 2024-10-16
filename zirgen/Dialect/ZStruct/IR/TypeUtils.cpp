@@ -127,6 +127,9 @@ Type getSuperType(Type ty, bool isLayout) {
 }
 
 Type getLayoutType(Type valueType) {
+  if (!valueType)
+    return Type();
+
   return llvm::TypeSwitch<Type, Type>(valueType)
       .Case<StructType>([](auto t) -> Type {
         if (t.getLayout())
