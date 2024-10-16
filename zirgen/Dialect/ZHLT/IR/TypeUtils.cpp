@@ -299,9 +299,7 @@ mlir::Value LayoutBuilder::addMember(Location loc, StringRef memberName, mlir::T
   if (!type)
     return Value();
 
-  for (auto member : members) {
-    assert(member.name != memberName && "adding layout member with duplicate name");
-  }
+  assert(!hasMember(memberName) && "adding layout member with duplicate name");
   StringAttr memberNameAttr = builder.getStringAttr(memberName);
 
   if (memberName == "@super") {
@@ -322,6 +320,15 @@ void LayoutBuilder::removeMember(Value originalMember, StringRef memberName) {
   assert(originalLookup && originalLookup.getBase() == layoutPlaceholder &&
          "expandLayoutMember attempting to expand layoutMember on different LoweringContext");
   llvm::erase_if(members, [memberName](auto member) -> bool { return member.name == memberName; });
+}
+
+bool LayoutBuilder::hasMember(StringRef memberName) const {
+  for (auto member : members) {
+    if (member.name == memberName) {
+      return true;
+    }
+  }
+  return false;
 }
 
 LayoutType LayoutBuilder::getType() const {

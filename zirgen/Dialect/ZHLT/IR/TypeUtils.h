@@ -44,6 +44,9 @@ public:
   /// will need to remove any operations associated with it.
   void removeMember(Value originalMember, StringRef memberName);
 
+  /// True iff this layout already has a member with the given name.
+  bool hasMember(StringRef memberName) const;
+
   void setKind(ZStruct::LayoutKind kind) { this->kind = kind; }
 
   bool empty() const { return members.empty(); }

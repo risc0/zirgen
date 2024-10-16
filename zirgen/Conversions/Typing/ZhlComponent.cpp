@@ -931,11 +931,14 @@ Value LoweringImpl::asLayout(Value value) {
     return layout;
 
   Value component = valueMapping[value];
-  layout = builder.create<Zhlt::GetLayoutOp>(component.getLoc(), component);
-
-  if (value) {
-    layoutMapping[value] = layout;
+  Type layoutType = ZStruct::getLayoutType(component.getType());
+  if (!layoutType) {
+    emitError(component.getLoc()) << getTypeId(component.getType()) << " has no layout";
+    throw MalformedIRException();
   }
+
+  layout = builder.create<Zhlt::GetLayoutOp>(component.getLoc(), component);
+  layoutMapping[value] = layout;
   return layout;
 }
 
@@ -1484,6 +1487,15 @@ void LoweringImpl::gen(ConstraintOp constraint, ComponentBuilder& cb) {
 void LoweringImpl::gen(SuperOp superOp, ComponentBuilder& cb) {
   auto superVal = asValue(superOp.getValue());
   cb.val()->addMember("@super", superVal);
+
+  auto layoutType = ZStruct::getLayoutType(superVal.getType());
+  if (layoutType) {
+    Value constructedLayout = asLayout(superOp.getValue());
+    if (!cb.val()->layoutBuilder->hasMember("@super")) {
+      Value ownedLayout = cb.addLayoutMember(superOp.getLoc(), "@super", layoutType);
+      builder.create<ZStruct::AliasLayoutOp>(superOp.getLoc(), constructedLayout, ownedLayout);
+    }
+  }
 }
 
 void LoweringImpl::gen(Region& region, ComponentBuilder& cb) {
