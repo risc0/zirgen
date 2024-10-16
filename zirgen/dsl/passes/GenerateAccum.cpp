@@ -34,7 +34,7 @@ struct RandomnessMap {
     ValType extValType = Zhlt::getValExtType(builder.getContext());
 
     if (pivot.getType() == Zhlt::getExtRefType(pivot.getContext())) {
-      this->pivot = builder.create<LoadOp>(pivot.getLoc(), extValType, pivot, zeroDistance);
+      this->pivot = builder.create<LoadOp>(pivot.getLoc(), pivot, zeroDistance);
     } else if (auto pivotType = dyn_cast<LayoutType>(pivot.getType())) {
       for (auto field : pivotType.getFields()) {
         if (field.name == "$offset")
@@ -72,7 +72,7 @@ public:
     verifierRandomness = RandomnessMap(builder, randomnessLayout, zeroDistance);
 
     offset = builder.create<LookupOp>(randomnessLayout.getLoc(), randomnessLayout, "$offset");
-    offset = builder.create<ZStruct::LoadOp>(offset.getLoc(), extValType, offset, zeroDistance);
+    offset = builder.create<ZStruct::LoadOp>(offset.getLoc(), offset, zeroDistance);
 
     Location loc = accumLayout.getLoc();
     auto accumLayoutType = accumLayout.getType().cast<LayoutArrayType>();
@@ -81,7 +81,7 @@ public:
     IntegerAttr distanceAttr = builder.getIndexAttr(1);
     Value distance = builder.create<arith::ConstantOp>(loc, builder.getIndexType(), distanceAttr);
     Value lastLayout = getAccumColumnLayout(accumLayoutType.getSize() - 1);
-    this->oldT = builder.create<ZStruct::LoadOp>(loc, extValType, lastLayout, distance);
+    this->oldT = builder.create<ZStruct::LoadOp>(loc, lastLayout, distance);
     this->t = oldT;
 
     this->accCount = 0;
@@ -111,8 +111,7 @@ public:
     if (accCol == 0 || accCol != accumLayoutType.getSize()) {
       Value lastLayout = getAccumColumnLayout(accumLayoutType.getSize() - 1);
       builder.create<StoreOp>(loc, lastLayout, t);
-      Value newT =
-          builder.create<LoadOp>(lastLayout.getLoc(), extValType, lastLayout, zeroDistance);
+      Value newT = builder.create<LoadOp>(lastLayout.getLoc(), lastLayout, zeroDistance);
       Value diff = builder.create<SubOp>(newT.getLoc(), newT, oldT);
       builder.create<EqualZeroOp>(diff.getLoc(), diff);
     }
@@ -133,8 +132,7 @@ private:
       assert(randomness.pivot.getType() == extValType);
       Value r = randomness.pivot;
       Value colLayout = builder.create<LookupOp>(layout.getLoc(), layout, "@super");
-      Value colValue =
-          builder.create<ZStruct::LoadOp>(colLayout.getLoc(), extValType, colLayout, zeroDistance);
+      Value colValue = builder.create<ZStruct::LoadOp>(colLayout.getLoc(), colLayout, zeroDistance);
       return builder.create<MulOp>(colValue.getLoc(), r, colValue);
     } else if (auto layoutType = dyn_cast<LayoutType>(layout.getType())) {
       // for a LayoutType, sum condensations of non-count fields
@@ -182,7 +180,7 @@ private:
     ValType extValType = Zhlt::getValExtType(builder.getContext());
     Value tLayout = getAccumColumnLayout(accCol);
     builder.create<StoreOp>(t.getLoc(), tLayout, t);
-    Value newT = builder.create<ZStruct::LoadOp>(t.getLoc(), extValType, tLayout, zeroDistance);
+    Value newT = builder.create<ZStruct::LoadOp>(t.getLoc(), tLayout, zeroDistance);
     addConstraint(newT);
 
     oldT = newT;
@@ -229,7 +227,7 @@ private:
     StringAttr countName = type.getFields()[0].name;
     Value cLayout = builder.create<LookupOp>(layout.getLoc(), layout, countName);
     cLayout = Zhlt::coerceTo(cLayout, Zhlt::getRefType(ctx), builder);
-    Value c = builder.create<ZStruct::LoadOp>(cLayout.getLoc(), extValType, cLayout, zeroDistance);
+    Value c = builder.create<ZStruct::LoadOp>(cLayout.getLoc(), cLayout, zeroDistance);
     Value v = condenseArgument(layout, verifierRandomness.map.at(type.getId()));
     Value vPlusOffset = builder.create<AddOp>(v.getLoc(), v, offset);
     Value denominator = builder.create<InvOp>(v.getLoc(), vPlusOffset);
@@ -428,7 +426,7 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
       Value index = builder.create<arith::ConstantOp>(loc, builder.getIndexAttr(i));
       Value nondetReg = builder.create<SubscriptOp>(loc, selectorLayoutArray, index);
       Value ref = builder.create<LookupOp>(loc, nondetReg, "@super");
-      Value val = builder.create<LoadOp>(loc, valType, ref, zeroDistance);
+      Value val = builder.create<LoadOp>(loc, ref, zeroDistance);
       selectors.push_back(val);
     }
 
@@ -459,7 +457,7 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
         Value indexValue = builder.create<arith::ConstantOp>(
             loc, builder.getIndexType(), builder.getIndexAttr(accumLayoutType.getSize() - 1));
         Value lastLayout = builder.create<SubscriptOp>(loc, accum.getLayout(), indexValue);
-        Value prevVal = builder.create<LoadOp>(loc, extValType, lastLayout, distance);
+        Value prevVal = builder.create<LoadOp>(loc, lastLayout, distance);
         builder.create<StoreOp>(loc, lastLayout, prevVal);
       }
 
