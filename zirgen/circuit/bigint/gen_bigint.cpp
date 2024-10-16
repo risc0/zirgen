@@ -107,6 +107,7 @@ const RsaSpec kRsaSpecs[] = {
 
     // 3072-bit RSA.  As of this writing, verifying more than 15
     // claims makes the ZKR too big to run in BIGINT_PO2.
+    {"rsa_3072_x1", 3072, 1},
     {"rsa_3072_x15", 3072, 15},
 };
 

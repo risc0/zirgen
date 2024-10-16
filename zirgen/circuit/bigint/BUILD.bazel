@@ -32,6 +32,7 @@ cc_library(
 ZKRS = [
     "rsa_256_x1",
     "rsa_256_x2",
+    "rsa_3072_x1",
     "rsa_3072_x15",
     "ec_add_rz8test",
     "ec_add_secp256k1",
