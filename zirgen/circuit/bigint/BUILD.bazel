@@ -67,3 +67,8 @@ pkg_zip(
     name = "bigint_zkr",
     srcs = [x + ".zkr" for x in ZKRS],
 )
+
+pkg_zip(
+    name = "bigint_bibc",
+    srcs = [x + ".bibc" for x in ZKRS],
+)
