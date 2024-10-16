@@ -228,16 +228,27 @@ LogicalResult Interpreter::bufferStore(Operation* op,
   return result;
 }
 
-Interpreter::Polynomial Interpreter::bufferLoad(
-    Operation* op, Interpreter::BufferRef buf, size_t offset, size_t valExt, size_t bufferExt) {
-  size_t numBufElems = ceilDiv(valExt, bufferExt);
+Interpreter::Polynomial Interpreter::bufferLoad(Operation* op,
+                                                Interpreter::BufferRef buf,
+                                                size_t offset,
+                                                size_t refExt,
+                                                size_t valExt,
+                                                size_t bufferExt) {
+  size_t numBufElems = ceilDiv(refExt, bufferExt);
   if (offset + numBufElems > buf.size()) {
     op->emitError() << "Offset " << offset << " elems " << numBufElems << " exceeds buffer size "
-                    << buf.size() << "\n";
+                    << buf.size();
+  }
+  if (refExt > valExt) {
+    op->emitError() << "Cannot load a degree " << valExt << " field element from a degree "
+                    << refExt << " reference";
   }
   Polynomial result;
-  for (size_t i = 0; i * bufferExt < valExt; i++) {
+  for (size_t i = 0; i * bufferExt < refExt; i++) {
     llvm::append_range(result, buf[offset + i]);
+  }
+  if (refExt < valExt) {
+    result.append(valExt - refExt, 0);
   }
   return result;
 }

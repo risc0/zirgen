@@ -660,6 +660,7 @@ LogicalResult LoadOp::evaluate(Interpreter& interp,
   auto val = interp.bufferLoad(getOperation(),
                                buf,
                                totOffset,
+                               getRef().getType().getElement().getFieldK(),
                                getOut().getType().getFieldK(),
                                /*buf field k=*/1);
 

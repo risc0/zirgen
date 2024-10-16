@@ -373,7 +373,13 @@ int runTests(mlir::ModuleOp module) {
       for (auto [buf, bufDesc] : llvm::zip(bufs, allBufs)) {
         if (bufDesc.getName() == "accum") {
           llvm::outs() << "final accum: [";
-          llvm::interleaveComma(buf->back(), llvm::outs());
+          for (size_t i = 4; i > 0; i--) {
+            Polynomial& elem = buf->at(buf->size() - i);
+            assert(elem.size() == 1);
+            llvm::outs() << elem[0];
+            if (i != 1)
+              llvm::outs() << ", ";
+          }
           llvm::outs() << "]\n";
         }
       }

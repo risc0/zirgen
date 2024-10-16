@@ -252,6 +252,7 @@ LogicalResult GetOp::evaluate(Interpreter& interp,
                                buf,
                                totOffset,
                                getOut().getType().getFieldK(),
+                               getOut().getType().getFieldK(),
                                getBuf().getType().getElement().getFieldK());
 
   if (isInvalid(val)) {
@@ -296,6 +297,7 @@ LogicalResult GetGlobalOp::evaluate(Interpreter& interp,
   auto val = interp.bufferLoad(getOperation(),
                                adaptor.getBuf()->getBuf(),
                                getOffset(),
+                               getOut().getType().getFieldK(),
                                getOut().getType().getFieldK(),
                                getBuf().getType().getElement().getFieldK());
   if (isInvalid(val)) {
