@@ -16,6 +16,7 @@
 
 include "mlir/IR/OpBase.td"
 include "mlir/Interfaces/FunctionInterfaces.td"
+include "mlir/Interfaces/SideEffectInterfaces.td"
 include "mlir/IR/OpAsmInterface.td"
 include "mlir/Interfaces/CallInterfaces.td"
 include "zirgen/Dialect/ZHLT/IR/Dialect.td"
@@ -367,9 +368,7 @@ def CheckLayoutFuncOp : ZFuncOp<"check_layout", [CodegenSkip]> {
     This is subsequently used by LayoutDAGAnalysis/GenerateLayoutPass to create
     the ultimate layout of the circuit.
   }];
-  let funcInputs = (ins
-    ExecContext:$ctx,
-    Optional<IsLayoutType>:$layout);
+  let funcInputs = (ins Optional<IsLayoutType>:$layout);
   let hasRegionVerifier = 1;
 }
 
@@ -410,7 +409,7 @@ def BackFuncOp : ZFuncOp<"back"> {
   let funcResults = (outs ZirType:$out);
 }
 
-def BackCallOp : ZCallOp<BackFuncOp>;
+def BackCallOp : ZCallOp<BackFuncOp, [MemoryEffects<[MemRead]>]>;
 
 
 // A FuncOp-like operation that has names associated with
