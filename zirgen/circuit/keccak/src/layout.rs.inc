@@ -1,4 +1,12 @@
 pub const LAYOUT__0: &Top__0Layout = &Top__0Layout {
+    _super: &MyArgumentLayout {
+        a: &NondetRegLayout {
+            _super: &Reg { offset: 2 },
+        },
+        b: &NondetRegLayout {
+            _super: &Reg { offset: 3 },
+        },
+    },
     _selector: &[
         &NondetRegLayout {
             _super: &Reg { offset: 0 },
@@ -9,58 +17,43 @@ pub const LAYOUT__0: &Top__0Layout = &Top__0Layout {
     ],
     arm0: &MyArgumentLayout {
         a: &NondetRegLayout {
-            _super: &Reg { offset: 8 },
+            _super: &Reg { offset: 2 },
         },
         b: &NondetRegLayout {
-            _super: &Reg { offset: 9 },
+            _super: &Reg { offset: 3 },
         },
     },
-    arm1: &NondetRegLayout {
-        _super: &Reg { offset: 8 },
+    arm1: &MyArgumentLayout {
+        a: &NondetRegLayout {
+            _super: &Reg { offset: 2 },
+        },
+        b: &NondetRegLayout {
+            _super: &Reg { offset: 3 },
+        },
     },
 };
+pub const LAYOUT_TEST_SUCC_0_ACCUM: &Reg1LayoutArray = &[&Reg { offset: 0 }];
 pub const LAYOUT_TOP_ACCUM: &Reg1LayoutArray = &[&Reg { offset: 0 }];
-pub const LAYOUT_TOP: &TopLayout = &TopLayout {
-    op: &NondetRegLayout {
-        _super: &Reg { offset: 2 },
-    },
-    left: &NondetRegLayout {
-        _super: &Reg { offset: 3 },
-    },
-    right: &NondetRegLayout {
-        _super: &Reg { offset: 4 },
-    },
-    _0: &OneHotLayout {
-        _super: &[
-            &NondetRegLayout {
-                _super: &Reg { offset: 5 },
-            },
-            &NondetRegLayout {
-                _super: &Reg { offset: 6 },
-            },
-        ],
-    },
-    result: &TopResultLayout {
-        _super: &NondetRegLayout {
-            _super: &Reg { offset: 7 },
-        },
-        arm0: &NondetRegLayout {
-            _super: &Reg { offset: 7 },
-        },
-        arm1: &NondetRegLayout {
-            _super: &Reg { offset: 7 },
-        },
-    },
-    _1: &NondetRegLayout {
+pub const LAYOUT_TEST_SUCC_0: &TopLayout = &TopLayout {
+    odd: &NondetRegLayout {
         _super: &Reg { offset: 0 },
     },
-    _2: &NondetRegLayout {
+    _0: &NondetRegLayout {
         _super: &Reg { offset: 1 },
     },
-    _3: LAYOUT__0,
+    _1: LAYOUT__0,
+};
+pub const LAYOUT_TOP: &TopLayout = &TopLayout {
+    odd: &NondetRegLayout {
+        _super: &Reg { offset: 0 },
+    },
+    _0: &NondetRegLayout {
+        _super: &Reg { offset: 1 },
+    },
+    _1: LAYOUT__0,
 };
 pub const LAYOUT_GLOBAL: &_globalLayout = &_globalLayout {
-    result: &NondetRegLayout {
+    globzero: &NondetRegLayout {
         _super: &Reg { offset: 0 },
     },
 };

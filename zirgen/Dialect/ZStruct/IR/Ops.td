@@ -63,6 +63,7 @@ def LoadOp : ZStructOp<"load", [EvalOpAdaptor,
                                 MemoryEffects<[MemRead]>,
                                 DeclareOpInterfaceMethods<CodegenExprOpInterface>,
                                 CodegenAlwaysInlineOp,
+                                InferTypeOpAdaptor,
                                 DeclareOpInterfaceMethods<PolyOp>]> {
   let summary = "Load value from a Ref";
   let description = [{

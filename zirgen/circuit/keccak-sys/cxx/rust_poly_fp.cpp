@@ -31,224 +31,130 @@ namespace risc0::circuit::keccak {
 FpExt poly_fp(size_t cycle, size_t steps, FpExt* poly_mix, Fp** args) {
   size_t mask = steps - 1;
   // loc(unknown)
-  constexpr Fp x0(1);
+  constexpr Fp x0(0);
   // loc(unknown)
-  constexpr Fp x1(0);
+  constexpr Fp x1(1);
   // loc(unknown)
   constexpr FpExt x2(0,1,0,0);
   // loc(unknown)
   FpExt x3 = FpExt(0);
-  // loc(callsite(unknown at callsite("Top"("zirgen/dsl/examples/calculator.zir":39:19) at "Top"("zirgen/dsl/examples/calculator.zir":38:2))))
-  auto x4 = args[1][2 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite(unknown at callsite("Top"("zirgen/dsl/examples/calculator.zir":40:21) at "Top"("zirgen/dsl/examples/calculator.zir":38:2))))
-  auto x5 = args[1][3 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite(unknown at callsite("Top"("zirgen/dsl/examples/calculator.zir":41:22) at "Top"("zirgen/dsl/examples/calculator.zir":38:2))))
-  auto x6 = args[1][4 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite(unknown at callsite("OneHot"("zirgen/dsl/examples/calculator.zir":14:36) at callsite("Top"("zirgen/dsl/examples/calculator.zir":42:20) at "Top"("zirgen/dsl/examples/calculator.zir":38:2)))))
-  auto x7 = args[1][5 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite(unknown at callsite("OneHot"("zirgen/dsl/examples/calculator.zir":14:36) at callsite("Top"("zirgen/dsl/examples/calculator.zir":42:20) at "Top"("zirgen/dsl/examples/calculator.zir":38:2)))))
-  auto x8 = args[1][6 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite(unknown at callsite("OneHot"("zirgen/dsl/examples/calculator.zir":16:28) at callsite("Top"("zirgen/dsl/examples/calculator.zir":42:20) at "Top"("zirgen/dsl/examples/calculator.zir":38:2)))))
-  auto x9 = x0 - x7;
-  // loc(callsite(unknown at callsite("OneHot"("zirgen/dsl/examples/calculator.zir":16:21) at callsite("Top"("zirgen/dsl/examples/calculator.zir":42:20) at "Top"("zirgen/dsl/examples/calculator.zir":38:2)))))
-  auto x10 = x7 * x9;
-  // loc(callsite("OneHot"("zirgen/dsl/examples/calculator.zir":16:37) at callsite("Top"("zirgen/dsl/examples/calculator.zir":42:20) at "Top"("zirgen/dsl/examples/calculator.zir":38:2))))
-  FpExt x11 = x3 + x10 * poly_mix[0];
-  // loc(callsite(unknown at callsite("OneHot"("zirgen/dsl/examples/calculator.zir":16:28) at callsite("Top"("zirgen/dsl/examples/calculator.zir":42:20) at "Top"("zirgen/dsl/examples/calculator.zir":38:2)))))
-  auto x12 = x0 - x8;
-  // loc(callsite(unknown at callsite("OneHot"("zirgen/dsl/examples/calculator.zir":16:21) at callsite("Top"("zirgen/dsl/examples/calculator.zir":42:20) at "Top"("zirgen/dsl/examples/calculator.zir":38:2)))))
-  auto x13 = x8 * x12;
-  // loc(callsite("OneHot"("zirgen/dsl/examples/calculator.zir":16:37) at callsite("Top"("zirgen/dsl/examples/calculator.zir":42:20) at "Top"("zirgen/dsl/examples/calculator.zir":38:2))))
-  FpExt x14 = x11 + x13 * poly_mix[1];
-  // loc(callsite(unknown at callsite("OneHot"("zirgen/dsl/examples/calculator.zir":18:4) at callsite("Top"("zirgen/dsl/examples/calculator.zir":42:20) at "Top"("zirgen/dsl/examples/calculator.zir":38:2)))))
-  auto x15 = x7 + x8;
-  // loc(callsite("OneHot"("zirgen/dsl/examples/calculator.zir":18:32) at callsite("Top"("zirgen/dsl/examples/calculator.zir":42:20) at "Top"("zirgen/dsl/examples/calculator.zir":38:2))))
-  auto x16 = x15 - x0;
-  // loc(callsite("OneHot"("zirgen/dsl/examples/calculator.zir":18:32) at callsite("Top"("zirgen/dsl/examples/calculator.zir":42:20) at "Top"("zirgen/dsl/examples/calculator.zir":38:2))))
-  FpExt x17 = x14 + x16 * poly_mix[2];
-  // loc(callsite("OneHot"("zirgen/dsl/examples/calculator.zir":20:56) at callsite("Top"("zirgen/dsl/examples/calculator.zir":42:20) at "Top"("zirgen/dsl/examples/calculator.zir":38:2))))
-  auto x18 = x8 - x4;
-  // loc(callsite("OneHot"("zirgen/dsl/examples/calculator.zir":20:56) at callsite("Top"("zirgen/dsl/examples/calculator.zir":42:20) at "Top"("zirgen/dsl/examples/calculator.zir":38:2))))
-  FpExt x19 = x17 + x18 * poly_mix[3];
-  // loc(callsite(unknown at callsite("Top"("zirgen/dsl/examples/calculator.zir":43:10) at "Top"("zirgen/dsl/examples/calculator.zir":38:2))))
-  auto x20 = x5 + x6;
-  // loc(callsite(unknown at callsite("Reg"("<preamble>":4:21) at callsite("Top"("zirgen/dsl/examples/calculator.zir":43:9) at "Top"("zirgen/dsl/examples/calculator.zir":38:2)))))
-  auto x21 = args[1][7 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite("Reg"("<preamble>":5:7) at callsite("Top"("zirgen/dsl/examples/calculator.zir":43:9) at "Top"("zirgen/dsl/examples/calculator.zir":38:2))))
-  auto x22 = x20 - x21;
-  // loc(callsite("Reg"("<preamble>":5:7) at callsite("Top"("zirgen/dsl/examples/calculator.zir":43:9) at "Top"("zirgen/dsl/examples/calculator.zir":38:2))))
-  FpExt x23 = x3 + x22 * poly_mix[0];
-  // loc(callsite("Top"("zirgen/dsl/examples/calculator.zir":42:25) at "Top"("zirgen/dsl/examples/calculator.zir":38:2)))
-  FpExt x24 = x19 + x7 * x23 * poly_mix[4];
-  // loc(callsite(unknown at callsite("Top"("zirgen/dsl/examples/calculator.zir":44:10) at "Top"("zirgen/dsl/examples/calculator.zir":38:2))))
-  auto x25 = x5 - x6;
-  // loc(callsite("Reg"("<preamble>":5:7) at callsite("Top"("zirgen/dsl/examples/calculator.zir":44:9) at "Top"("zirgen/dsl/examples/calculator.zir":38:2))))
-  auto x26 = x25 - x21;
-  // loc(callsite("Reg"("<preamble>":5:7) at callsite("Top"("zirgen/dsl/examples/calculator.zir":44:9) at "Top"("zirgen/dsl/examples/calculator.zir":38:2))))
-  FpExt x27 = x3 + x26 * poly_mix[0];
-  // loc(callsite("Top"("zirgen/dsl/examples/calculator.zir":42:25) at "Top"("zirgen/dsl/examples/calculator.zir":38:2)))
-  FpExt x28 = x24 + x8 * x27 * poly_mix[5];
-  // loc(callsite(unknown at callsite("Reg"("<preamble>":4:21) at callsite("SetGlobalResult"("zirgen/dsl/examples/calculator.zir":30:18) at callsite("Top"("zirgen/dsl/examples/calculator.zir":47:19) at "Top"("zirgen/dsl/examples/calculator.zir":38:2))))))
-  auto x29 = args[2][0];
-  // loc(callsite("Reg"("<preamble>":5:7) at callsite("SetGlobalResult"("zirgen/dsl/examples/calculator.zir":30:18) at callsite("Top"("zirgen/dsl/examples/calculator.zir":47:19) at "Top"("zirgen/dsl/examples/calculator.zir":38:2)))))
-  auto x30 = x21 - x29;
-  // loc(callsite("Reg"("<preamble>":5:7) at callsite("SetGlobalResult"("zirgen/dsl/examples/calculator.zir":30:18) at callsite("Top"("zirgen/dsl/examples/calculator.zir":47:19) at "Top"("zirgen/dsl/examples/calculator.zir":38:2)))))
-  FpExt x31 = x28 + x30 * poly_mix[6];
-  // loc(callsite("Top"("zirgen/dsl/examples/calculator.zir":48:22) at "Top"("zirgen/dsl/examples/calculator.zir":38:2)))
-  auto x32 = x29 - x21;
-  // loc(callsite("Top"("zirgen/dsl/examples/calculator.zir":48:22) at "Top"("zirgen/dsl/examples/calculator.zir":38:2)))
-  FpExt x33 = x31 + x32 * poly_mix[7];
-  // loc(callsite(unknown at callsite("Reg"("<preamble>":4:21) at callsite("Top"("zirgen/dsl/examples/calculator.zir":53:8) at "Top"("zirgen/dsl/examples/calculator.zir":38:2)))))
-  auto x34 = args[1][0 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite("Reg"("<preamble>":5:7) at callsite("Top"("zirgen/dsl/examples/calculator.zir":53:8) at "Top"("zirgen/dsl/examples/calculator.zir":38:2))))
-  auto x35 = x0 - x34;
-  // loc(callsite("Reg"("<preamble>":5:7) at callsite("Top"("zirgen/dsl/examples/calculator.zir":53:8) at "Top"("zirgen/dsl/examples/calculator.zir":38:2))))
-  FpExt x36 = x33 + x35 * poly_mix[8];
-  // loc(callsite(unknown at callsite("Reg"("<preamble>":4:21) at callsite("Top"("zirgen/dsl/examples/calculator.zir":53:16) at "Top"("zirgen/dsl/examples/calculator.zir":38:2)))))
-  auto x37 = args[1][1 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite("Reg"("<preamble>":5:7) at callsite("Top"("zirgen/dsl/examples/calculator.zir":53:16) at "Top"("zirgen/dsl/examples/calculator.zir":38:2))))
-  auto x38 = x1 - x37;
-  // loc(callsite("Reg"("<preamble>":5:7) at callsite("Top"("zirgen/dsl/examples/calculator.zir":53:16) at "Top"("zirgen/dsl/examples/calculator.zir":38:2))))
-  FpExt x39 = x36 + x38 * poly_mix[9];
-  // loc(callsite(unknown at callsite("Reg"("<preamble>":4:21) at callsite("Top"("zirgen/dsl/examples/calculator.zir":55:7) at "Top"("zirgen/dsl/examples/calculator.zir":38:2)))))
-  auto x40 = args[1][8 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite("Reg"("<preamble>":5:7) at callsite("Top"("zirgen/dsl/examples/calculator.zir":55:7) at "Top"("zirgen/dsl/examples/calculator.zir":38:2))))
-  auto x41 = x1 - x40;
-  // loc(callsite("Reg"("<preamble>":5:7) at callsite("Top"("zirgen/dsl/examples/calculator.zir":55:7) at "Top"("zirgen/dsl/examples/calculator.zir":38:2))))
-  FpExt x42 = x3 + x41 * poly_mix[0];
-  // loc(callsite("Top"("zirgen/dsl/examples/calculator.zir":53:21) at "Top"("zirgen/dsl/examples/calculator.zir":38:2)))
-  FpExt x43 = x39 + x37 * x42 * poly_mix[10];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x44 = args[3][3];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x45 = args[3][2];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x46 = x44 * x2;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x47 = x45 + x46;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x48 = args[3][1];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x49 = x47 * x2;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x50 = x48 + x49;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x51 = args[3][0];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x52 = x50 * x2;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x53 = x51 + x52;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x54 = args[3][7];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x55 = args[3][6];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x56 = x54 * x2;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x57 = x55 + x56;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x58 = args[3][5];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x59 = x57 * x2;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x60 = x58 + x59;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x61 = args[3][4];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x62 = x60 * x2;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x63 = x61 + x62;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x64 = args[0][3 * steps + ((cycle - kInvRate * 1) & mask)];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x65 = args[0][2 * steps + ((cycle - kInvRate * 1) & mask)];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x66 = x64 * x2;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x67 = x65 + x66;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x68 = args[0][1 * steps + ((cycle - kInvRate * 1) & mask)];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x69 = x67 * x2;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x70 = x68 + x69;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x71 = args[0][0 * steps + ((cycle - kInvRate * 1) & mask)];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x72 = x70 * x2;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x73 = x71 + x72;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x74 = args[1][11 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x75 = args[1][10 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x76 = x74 * x2;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x77 = x75 + x76;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x78 = args[1][9 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x79 = x77 * x2;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x80 = x78 + x79;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x81 = x80 * x2;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x82 = x40 + x81;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x83 = args[1][12 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x84 = x83 * x2;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x85 = x74 + x84;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x86 = x85 * x2;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x87 = x75 + x86;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x88 = x87 * x2;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x89 = x78 + x88;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x90 = x53 * x89;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x91 = x90 + x63;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x92 = args[0][3 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x93 = args[0][2 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x94 = x92 * x2;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x95 = x93 + x94;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x96 = args[0][1 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x97 = x95 * x2;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x98 = x96 + x97;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x99 = args[0][0 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x100 = x98 * x2;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x101 = x99 + x100;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x102 = x101 - x73;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x103 = x102 * x91;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  auto x104 = x103 - x82;
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  FpExt x105 = x3 + x104 * poly_mix[0];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  FpExt x106 = x43 + x34 * x105 * poly_mix[11];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  FpExt x107 = x3 + x102 * poly_mix[0];
-  // loc("Top"("zirgen/dsl/examples/calculator.zir":38:2))
-  FpExt x108 = x106 + x37 * x107 * poly_mix[12];
-  return x108;
+  // loc(callsite(unknown at callsite("Reg"("<preamble>":4:21) at callsite("Top"("zirgen/dsl/test/simple-accum.zir":9:20) at "Top"("zirgen/dsl/test/simple-accum.zir":8:2)))))
+  auto x4 = args[2][0];
+  // loc(callsite("Reg"("<preamble>":5:7) at callsite("Top"("zirgen/dsl/test/simple-accum.zir":9:20) at "Top"("zirgen/dsl/test/simple-accum.zir":8:2))))
+  auto x5 = x0 - x4;
+  // loc(callsite("Reg"("<preamble>":5:7) at callsite("Top"("zirgen/dsl/test/simple-accum.zir":9:20) at "Top"("zirgen/dsl/test/simple-accum.zir":8:2))))
+  FpExt x6 = x3 + x5 * poly_mix[0];
+  // loc(callsite(unknown at callsite("Top"("zirgen/dsl/test/simple-accum.zir":10:20) at "Top"("zirgen/dsl/test/simple-accum.zir":8:2))))
+  auto x7 = args[1][0 * steps + ((cycle - kInvRate * 0) & mask)];
+  // loc(callsite(unknown at callsite("Top"("zirgen/dsl/test/simple-accum.zir":11:14) at "Top"("zirgen/dsl/test/simple-accum.zir":8:2))))
+  auto x8 = x1 - x7;
+  // loc(callsite(unknown at callsite("Reg"("<preamble>":4:21) at callsite("Top"("zirgen/dsl/test/simple-accum.zir":11:13) at "Top"("zirgen/dsl/test/simple-accum.zir":8:2)))))
+  auto x9 = args[1][1 * steps + ((cycle - kInvRate * 0) & mask)];
+  // loc(callsite("Reg"("<preamble>":5:7) at callsite("Top"("zirgen/dsl/test/simple-accum.zir":11:13) at "Top"("zirgen/dsl/test/simple-accum.zir":8:2))))
+  auto x10 = x8 - x9;
+  // loc(callsite("Reg"("<preamble>":5:7) at callsite("Top"("zirgen/dsl/test/simple-accum.zir":11:13) at "Top"("zirgen/dsl/test/simple-accum.zir":8:2))))
+  FpExt x11 = x6 + x10 * poly_mix[1];
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":44:44 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x12 = args[3][3];
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":44:44 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x13 = args[3][2];
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":44:44 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x14 = x12 * x2;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":44:44 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x15 = x13 + x14;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":44:44 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x16 = args[3][1];
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":44:44 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x17 = x15 * x2;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":44:44 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x18 = x16 + x17;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":44:44 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x19 = args[3][0];
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":44:44 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x20 = x18 * x2;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":44:44 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x21 = x19 + x20;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":82:46 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x22 = args[3][7];
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":82:46 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x23 = args[3][6];
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":82:46 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x24 = x22 * x2;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":82:46 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x25 = x23 + x24;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":82:46 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x26 = args[3][5];
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":82:46 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x27 = x25 * x2;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":82:46 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x28 = x26 + x27;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":82:46 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x29 = args[3][4];
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":82:46 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x30 = x28 * x2;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":82:46 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x31 = x29 + x30;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":91:50 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x32 = args[0][3 * steps + ((cycle - kInvRate * 1) & mask)];
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":91:50 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x33 = args[0][2 * steps + ((cycle - kInvRate * 1) & mask)];
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":91:50 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x34 = x32 * x2;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":91:50 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x35 = x33 + x34;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":91:50 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x36 = args[0][1 * steps + ((cycle - kInvRate * 1) & mask)];
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":91:50 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x37 = x35 * x2;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":91:50 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x38 = x36 + x37;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":91:50 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x39 = args[0][0 * steps + ((cycle - kInvRate * 1) & mask)];
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":91:50 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x40 = x38 * x2;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":91:50 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x41 = x39 + x40;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":232:47 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x42 = args[1][2 * steps + ((cycle - kInvRate * 0) & mask)];
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":141:56 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x43 = args[1][3 * steps + ((cycle - kInvRate * 0) & mask)];
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":142:36 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x44 = x21 * x43;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":234:47 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x45 = x44 + x31;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":186:50 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x46 = args[0][3 * steps + ((cycle - kInvRate * 0) & mask)];
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":186:50 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x47 = args[0][2 * steps + ((cycle - kInvRate * 0) & mask)];
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":186:50 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x48 = x46 * x2;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":186:50 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x49 = x47 + x48;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":186:50 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x50 = args[0][1 * steps + ((cycle - kInvRate * 0) & mask)];
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":186:50 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x51 = x49 * x2;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":186:50 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x52 = x50 + x51;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":186:50 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x53 = args[0][0 * steps + ((cycle - kInvRate * 0) & mask)];
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":186:50 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x54 = x52 * x2;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":186:50 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x55 = x53 + x54;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":173:42 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x56 = x55 - x41;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":174:46 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x57 = x56 * x45;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":176:42 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  auto x58 = x57 - x42;
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":178:33 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  FpExt x59 = x3 + x58 * poly_mix[0];
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":439:9 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  FpExt x60 = x11 + x7 * x59 * poly_mix[2];
+  // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":439:9 at "zirgen/dsl/passes/GenerateAccum.cpp":401:9))
+  FpExt x61 = x60 + x9 * x59 * poly_mix[3];
+  return x61;
 }
 
 } // namespace risc0::circuit::keccak

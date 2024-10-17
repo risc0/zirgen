@@ -911,4 +911,16 @@ LogicalResult AliasLayoutOp::evaluate(Zll::Interpreter& interp,
   return success();
 }
 
+LogicalResult LoadOp::inferReturnTypes(MLIRContext* ctx,
+                                       std::optional<Location>,
+                                       Adaptor adaptor,
+                                       llvm::SmallVectorImpl<Type>& out) {
+  auto refType = llvm::dyn_cast<RefType>(adaptor.getRef().getType());
+  if (!refType)
+    return failure();
+
+  out.push_back(refType.getElement());
+  return success();
+}
+
 } // namespace zirgen::ZStruct

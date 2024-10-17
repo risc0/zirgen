@@ -761,6 +761,33 @@ private:
   DenseMap<NamedTap, Value>& tapIndex;
 };
 
+namespace {
+
+void reinferReturnType(InferTypeOpInterface op) {
+  SmallVector<Type> newTypes;
+  if (failed(op.inferReturnTypes(op.getContext(),
+                                 op->getLoc(),
+                                 op->getOperands(),
+                                 op->getAttrDictionary(),
+                                 op->getPropertiesStorage(),
+                                 op->getRegions(),
+                                 newTypes)))
+    return;
+
+  if (TypeRange(newTypes) != op->getResultTypes()) {
+    for (auto [newType, result] : llvm::zip_equal(newTypes, op->getResults())) {
+      llvm::errs() << "Updating " << result << " to " << newType << "\n";
+      result.setType(newType);
+    }
+    for (Operation* user : op->getUsers()) {
+      if (auto inferUser = dyn_cast<InferTypeOpInterface>(user)) {
+        reinferReturnType(inferUser);
+      }
+    }
+  }
+}
+} // namespace
+
 struct GenerateValidityTapsPass : public GenerateValidityTapsBase<GenerateValidityTapsPass> {
   void runOnOperation() override {
     auto module = getOperation();
@@ -843,6 +870,9 @@ struct GenerateValidityTapsPass : public GenerateValidityTapsBase<GenerateValidi
       // Convert field elements and NondetRegs to extension field elements in all types.
       extendFieldTypes.recursivelyReplaceElementsIn(
           func, /*replaceAttrs=*/true, /*replaceLocs=*/false, /*replaceTypes=*/true);
+
+      // Re-infer types on any load-ops, since we may have changed their return types
+      func.walk([&](ZStruct::LoadOp loadOp) { reinferReturnType(loadOp); });
 
       // Elminate dead code referring to old layout.
       IRRewriter rewriter(builder);
