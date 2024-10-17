@@ -22,6 +22,7 @@ cc_library(
     deps = [
         "//zirgen/Dialect/BigInt/IR",
         "//zirgen/Dialect/BigInt/Transforms",
+        "//zirgen/Dialect/BigInt/Bytecode:lib",
         "//zirgen/circuit/recursion:lib",
         "//zirgen/circuit/verify:lib",
         "//zirgen/compiler/edsl",
@@ -82,6 +83,7 @@ build_circuit(
     outs = [fn for zkr in ZKRS for fn in [
         zkr + ".zkr",
         zkr + ".zkr.dbg",
+        zkr + ".bibc",
     ]] + ["bigint.rs.inc"],
     deps = [":lib"],
 )
@@ -89,4 +91,9 @@ build_circuit(
 pkg_zip(
     name = "bigint_zkr",
     srcs = [x + ".zkr" for x in ZKRS],
+)
+
+pkg_zip(
+    name = "bigint_bibc",
+    srcs = [x + ".bibc" for x in ZKRS],
 )
