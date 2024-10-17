@@ -242,6 +242,11 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
+  typedModule->walk([&](mlir::FunctionOpInterface op) {
+    if (op.getName().contains("test$"))
+      op.erase();
+  });
+
   StringRef circuitName = StringRef(inputFilename).rsplit('/').second;
   if (circuitName.empty())
     circuitName = inputFilename;
@@ -286,6 +291,8 @@ int main(int argc, char* argv[]) {
     stepFuncs.print(llvm::errs());
     return 1;
   }
+
+  typedModule->print(llvm::errs());
 
   auto rustOpts = codegen::getRustCodegenOpts();
   CodegenEmitter rustCg(rustOpts, &context);

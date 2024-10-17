@@ -20,16 +20,26 @@ pub fn exec_reg(
     eqz!((arg0 - x2._super), "Reg(<preamble>:5)");
     return Ok(x2);
 }
+pub fn exec_nondet_my_argument(
+    ctx: &ExecContext,
+    arg0: Val,
+    arg1: Val,
+    layout2: &BoundLayout<NondetMyArgumentLayout, impl BufferRow<ValType = Val>>,
+) -> Result<NondetMyArgumentStruct> {
+    // NondetMyArgument(zirgen/dsl/test/simple-accum.zir:5)
+    let x3: NondetRegStruct = exec_nondet_reg(ctx, arg0, (&layout2.map(|c| c.a)))?;
+    // NondetMyArgument(zirgen/dsl/test/simple-accum.zir:6)
+    let x4: NondetRegStruct = exec_nondet_reg(ctx, arg1, (&layout2.map(|c| c.b)))?;
+    return Ok(NondetMyArgumentStruct {});
+}
 pub fn exec_my_argument(
     ctx: &ExecContext,
     arg0: Val,
     arg1: Val,
-    layout2: &BoundLayout<MyArgumentLayout, impl BufferRow<ValType = Val>>,
+    layout2: &BoundLayout<NondetMyArgumentLayout, impl BufferRow<ValType = Val>>,
 ) -> Result<MyArgumentStruct> {
-    // MyArgument(zirgen/dsl/test/simple-accum.zir:4)
-    let x3: NondetRegStruct = exec_nondet_reg(ctx, arg0, (&layout2.map(|c| c.a)))?;
-    // MyArgument(zirgen/dsl/test/simple-accum.zir:5)
-    let x4: NondetRegStruct = exec_nondet_reg(ctx, arg1, (&layout2.map(|c| c.b)))?;
+    // MyArgument(zirgen/dsl/test/simple-accum.zir:9)
+    let x3: NondetMyArgumentStruct = exec_nondet_my_argument(ctx, arg0, arg1, layout2)?;
     return Ok(MyArgumentStruct {});
 }
 pub fn exec_top(
@@ -37,29 +47,29 @@ pub fn exec_top(
     layout0: &BoundLayout<TopLayout, impl BufferRow<ValType = Val>>,
     global1: &impl BufferRow<ValType = Val>,
 ) -> Result<TopStruct> {
-    // Top(zirgen/dsl/test/simple-accum.zir:8)
+    // Top(zirgen/dsl/test/simple-accum.zir:19)
     let x2: &BoundLayout<_globalLayout, _> = bind_layout!(LAYOUT_GLOBAL, global1);
-    // Top(zirgen/dsl/test/simple-accum.zir:11)
+    // Top(zirgen/dsl/test/simple-accum.zir:22)
     let x3: &BoundLayout<Top__0Layout, _> = (&layout0.map(|c| c._1));
-    // Top(zirgen/dsl/test/simple-accum.zir:9)
+    // Top(zirgen/dsl/test/simple-accum.zir:20)
     let x4: NondetRegStruct = exec_reg(ctx, Val::new(0), (&x2.map(|c| c.globzero)))?;
-    // GetCycle(zirgen/dsl/test/simple-accum.zir:1)
-    // Top(zirgen/dsl/test/simple-accum.zir:10)
+    // GetCycle(zirgen/dsl/test/simple-accum.zir:2)
+    // Top(zirgen/dsl/test/simple-accum.zir:21)
     let x5: Val = invoke_extern!(ctx, get_cycle);
     let x6: NondetRegStruct =
         exec_nondet_reg(ctx, bit_and(x5, Val::new(1))?, (&layout0.map(|c| c.odd)))?;
     let x7: Val = x6._super;
-    // Top(zirgen/dsl/test/simple-accum.zir:11)
+    // Top(zirgen/dsl/test/simple-accum.zir:22)
     let x8: NondetRegStruct = exec_reg(ctx, (Val::new(1) - x7), (&layout0.map(|c| c._0)))?;
     if is_nonzero(x7) {
         let x9: MyArgumentStruct =
-            exec_my_argument(ctx, Val::new(1), Val::new(1), (&x3.map(|c| c.arm0)))?;
+            exec_my_argument(ctx, Val::new(2), Val::new(3), (&x3.map(|c| c.arm0)))?;
     }
     if is_nonzero(x8._super) {
         let x10: MyArgumentStruct = exec_my_argument(
             ctx,
-            Val::new(2013265920),
-            Val::new(1),
+            Val::new(2013265919),
+            Val::new(3),
             (&x3.map(|c| c.arm1)),
         )?;
     }
@@ -70,7 +80,7 @@ pub fn step_top(
     data0: &impl BufferRow<ValType = Val>,
     global1: &impl BufferRow<ValType = Val>,
 ) -> Result<()> {
-    // Top(zirgen/dsl/test/simple-accum.zir:8)
+    // Top(zirgen/dsl/test/simple-accum.zir:19)
     let x2: &BoundLayout<TopLayout, _> = bind_layout!(LAYOUT_TOP, data0);
     let x3: TopStruct = exec_top(ctx, x2, global1)?;
     return Ok(());
@@ -90,9 +100,9 @@ pub fn exec_top_accum(
     // zirgen/dsl/passes/GenerateAccum.cpp:423
     let x6: &BoundLayout<NondetRegLayout2LayoutArray, _> = (&x5.map(|c| c._selector));
     // zirgen/dsl/passes/GenerateAccum.cpp:451
-    let x7: &BoundLayout<MyArgumentLayout, _> = (&x5.map(|c| c.arm0));
+    let x7: &BoundLayout<NondetMyArgumentLayout, _> = (&x5.map(|c| c.arm0));
     // zirgen/dsl/passes/GenerateAccum.cpp:50
-    let x8: &BoundLayout<Reg, _> = (&(&x4.map(|c| c.my_argument)).map(|c| c.b));
+    let x8: &BoundLayout<Reg, _> = (&(&x4.map(|c| c.nondet_my_argument)).map(|c| c.b));
     // zirgen/dsl/passes/GenerateAccum.cpp:81
     let x9: &BoundLayout<Reg, _> = (&x4.map(|c| c._offset));
     if is_nonzero((&(&x6.map(|c| c[to_usize(0)])).map(|c| c._super)).load(ctx, 0)) {
@@ -116,7 +126,7 @@ pub fn exec_top_accum(
         );
     }
     // zirgen/dsl/passes/GenerateAccum.cpp:451
-    let x11: &BoundLayout<MyArgumentLayout, _> = (&x5.map(|c| c.arm1));
+    let x11: &BoundLayout<NondetMyArgumentLayout, _> = (&x5.map(|c| c.arm1));
     if is_nonzero((&(&x6.map(|c| c[to_usize(1)])).map(|c| c._super)).load(ctx, 0)) {
         // zirgen/dsl/passes/GenerateAccum.cpp:234
         let x12: ExtVal = ((x8.load_ext::<ExtVal>(ctx, 0)

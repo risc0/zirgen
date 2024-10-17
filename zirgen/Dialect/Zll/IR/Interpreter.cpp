@@ -180,11 +180,36 @@ Interpreter::Interpreter(MLIRContext* ctx, std::unique_ptr<IHashSuite> hashSuite
 Interpreter::~Interpreter() {}
 
 void Interpreter::setCycle(size_t cycle) {
+  LLVM_DEBUG({ llvm::dbgs() << "Starting cycle " << cycle << "\n"; });
   this->cycle = cycle;
 }
 
 size_t Interpreter::getCycle() {
   return cycle;
+}
+
+void Interpreter::setTotCycles(size_t totCycles) {
+  this->totCycles = totCycles;
+}
+
+size_t Interpreter::getTotCycles() {
+  return totCycles;
+}
+
+size_t Interpreter::getBackCycle(size_t backDistance) {
+  if (totCycles) {
+    ssize_t cycle = getCycle();
+    cycle -= backDistance;
+    while (cycle < 0)
+      cycle += totCycles;
+    return cycle;
+  } else {
+    if (backDistance > getCycle()) {
+      llvm::errs() << "Back distance " << backDistance << " too far, with no totCycles specified\n";
+      abort();
+    }
+    return getCycle() - backDistance;
+  }
 }
 
 const IHashSuite& Interpreter::getHashSuite() {

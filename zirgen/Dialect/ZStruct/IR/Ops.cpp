@@ -789,7 +789,7 @@ LogicalResult LoadOp::evaluate(Interpreter& interp,
     return emitError() << "Cannot take back from global";
   }
 
-  if (distance > interp.getCycle()) {
+  if (distance > interp.getCycle() && !interp.getTotCycles()) {
     // TODO: Change this back to a throw once the DSL works enough that we can
     // avoid reading back too far.
     // throw std::runtime_error("Attempt to read back too far");
@@ -797,12 +797,16 @@ LogicalResult LoadOp::evaluate(Interpreter& interp,
     outs[0]->setVal(0);
     return success();
   }
-  size_t totOffset = size * (interp.getCycle() - distance) + offset;
+  size_t totOffset = size * interp.getBackCycle(distance) + offset;
   if (totOffset >= buf.size()) {
     return emitError() << "Attempting to get out of bounds index " << totOffset
                        << " from buffer of size " << buf.size();
   }
-  Interpreter::Polynomial val = buf[totOffset];
+
+  size_t refK = getRef().getType().getElement().getFieldK();
+  Interpreter::Polynomial val;
+  llvm::append_range(
+      val, llvm::map_range(buf.slice(totOffset, refK), [&](auto elem) { return elem[0]; }));
   if (isInvalid(val)) {
     if (!getOperation()->hasAttr("unchecked")) {
 
@@ -835,13 +839,22 @@ LogicalResult StoreOp::evaluate(Interpreter& interp,
     return emitError() << "Attempting to set out of bounds index " << totOffset
                        << " in buffer of size " << buf.size();
   }
-  Interpreter::Polynomial& val = buf[totOffset];
+  size_t refK = getRef().getType().getElement().getFieldK();
   Interpreter::PolynomialRef newVal = adaptor.getVal()->getVal();
-  if (!isInvalid(val) && val != newVal) {
-    return emitError() << "StoreOp: Invalid set of " << bufName << "[" << offset << "], cur=" << val
-                       << ", new = " << newVal;
+  for (size_t i = 0; i < refK; i++) {
+    Interpreter::Polynomial newElem(1);
+    if (i >= newVal.size())
+      newElem[0] = 0;
+    else
+      newElem[0] = newVal[i];
+
+    Interpreter::Polynomial& oldElem = buf[totOffset + i];
+    if (!isInvalid(oldElem) && oldElem != newElem) {
+      return emitError() << "StoreOp: Invalid set of " << bufName << "[" << offset << " + " << i
+                         << "], cur=" << oldElem << ", new = " << newVal;
+    }
+    oldElem = newElem;
   }
-  val = Interpreter::Polynomial(newVal.begin(), newVal.end());
   return success();
 }
 

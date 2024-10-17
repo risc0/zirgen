@@ -1,16 +1,16 @@
 struct NondetRegLayout {
   Reg _super;
 };
-struct MyArgumentLayout {
+struct NondetMyArgumentLayout {
   NondetRegLayout a;
   NondetRegLayout b;
 };
 using NondetRegLayout2LayoutArray = std::array<NondetRegLayout, 2>;
 struct Top__0Layout {
-  MyArgumentLayout _super;
+  NondetMyArgumentLayout _super;
   NondetRegLayout2LayoutArray _selector;
-  MyArgumentLayout arm0;
-  MyArgumentLayout arm1;
+  NondetMyArgumentLayout arm0;
+  NondetMyArgumentLayout arm1;
 };
 using Reg1LayoutArray = std::array<Reg, 1>;
 struct TopLayout {
@@ -21,11 +21,11 @@ struct TopLayout {
 struct _globalLayout {
   NondetRegLayout globzero;
 };
-struct Arg_MyArgumentLayout {
+struct Arg_NondetMyArgumentLayout {
   Reg b;
 };
 struct _accumLayout {
-  Arg_MyArgumentLayout myArgument;
+  Arg_NondetMyArgumentLayout nondetMyArgument;
   Reg _offset;
 };
 struct _mixLayout {
@@ -34,11 +34,11 @@ struct _mixLayout {
 struct NondetRegStruct {
   Val _super;
 };
+struct NondetMyArgumentStruct {
+};
 struct MyArgumentStruct {
 };
 struct TopStruct {
-};
-struct TestSucc_0Struct {
 };
 struct ComponentStruct {
 };

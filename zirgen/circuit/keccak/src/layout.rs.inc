@@ -1,5 +1,5 @@
 pub const LAYOUT__0: &Top__0Layout = &Top__0Layout {
-    _super: &MyArgumentLayout {
+    _super: &NondetMyArgumentLayout {
         a: &NondetRegLayout {
             _super: &Reg { offset: 2 },
         },
@@ -15,7 +15,7 @@ pub const LAYOUT__0: &Top__0Layout = &Top__0Layout {
             _super: &Reg { offset: 1 },
         },
     ],
-    arm0: &MyArgumentLayout {
+    arm0: &NondetMyArgumentLayout {
         a: &NondetRegLayout {
             _super: &Reg { offset: 2 },
         },
@@ -23,7 +23,7 @@ pub const LAYOUT__0: &Top__0Layout = &Top__0Layout {
             _super: &Reg { offset: 3 },
         },
     },
-    arm1: &MyArgumentLayout {
+    arm1: &NondetMyArgumentLayout {
         a: &NondetRegLayout {
             _super: &Reg { offset: 2 },
         },
@@ -59,7 +59,7 @@ pub const LAYOUT_GLOBAL: &_globalLayout = &_globalLayout {
 };
 pub const LAYOUT_MIX: &_mixLayout = &_mixLayout {
     randomness: &_accumLayout {
-        my_argument: &Arg_MyArgumentLayout {
+        nondet_my_argument: &Arg_NondetMyArgumentLayout {
             b: &Reg { offset: 0 },
         },
         _offset: &Reg { offset: 4 },

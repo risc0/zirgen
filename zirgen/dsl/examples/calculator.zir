@@ -4,7 +4,6 @@
 
 extern GetValFromUser() : Val;
 extern OutputToUser(val: Val);
-extern GetCycle() : Val;
 
 component OneHot(v: Val) {
   // Type parameters are causing name issues in codegen, so we use a fixed
@@ -30,11 +29,6 @@ component SetGlobalResult(val: Val) {
   global result := Reg(val);
 }
 
-argument MyArgument(a: Val, b: Val) {
-  a := NondetReg(a);
-  b := NondetReg(b);
-}
-
 component Top() {
   op := NondetReg(GetValFromUser());
   left := NondetReg(GetValFromUser());
@@ -47,11 +41,4 @@ component Top() {
   SetGlobalResult(result);
   GetGlobalResult() = result;
   OutputToUser(result);
-
-  cycle := GetCycle();
-  odd := GetCycle() & 1;
-  [Reg(1), Reg(0)] ->! (
-MyArgument(cycle - odd, odd * 2 - 1),
-  Reg(0)
-  );
 }

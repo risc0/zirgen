@@ -31,8 +31,8 @@ use risc0_zkp::{
 };
 use std::collections::VecDeque;
 
-pub const GLOBAL_MIX: usize = 0;
-pub const GLOBAL_OUT: usize = 1;
+pub const GLOBAL_OUT: usize = 0;
+pub const GLOBAL_MIX: usize = 1;
 
 pub struct CpuCircuitHal {
     mem: RefCell<Vec<Val>>,
@@ -162,12 +162,36 @@ impl<'a> keccak_circuit::CircuitHal<'a, CpuHal<CircuitField>> for CpuCircuitHal 
 
     fn step_accum(
         &self,
-        _tot_cycles: usize,
-        _accum: &CpuBuffer<Val>,
-        _data: &CpuBuffer<Val>,
-        _global: &CpuBuffer<Val>,
+        tot_cycles: usize,
+        accum: &CpuBuffer<Val>,
+        data: &CpuBuffer<Val>,
+        mix: &CpuBuffer<Val>,
     ) -> Result<()> {
-        // The calculator circuit has no arguments, so there's no work to do here
+        let mem = &RefCell::default();
+        let elems_per_word = &RefCell::default();
+        let input = &RefCell::default();
+        let input_elems = &RefCell::default();
+
+        let orig_accum = accum;
+
+        let data = &data.as_slice_sync();
+        let data = CycleRow { buf: data };
+        let mix = mix.as_slice_sync();
+        let mix = GlobalRow { buf: &mix };
+
+        for cycle in 0..tot_cycles {
+            let accum = &orig_accum.as_slice_sync();
+            let accum = CycleRow { buf: accum };
+            let exec_context = CpuExecContext {
+                mem,
+                cycle,
+                tot_cycles,
+                elems_per_word,
+                input,
+                input_elems,
+            };
+            keccak_circuit::step_top_accum(&exec_context, &accum, &data, &mix)?;
+        }
         Ok(())
     }
 }
@@ -196,12 +220,30 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
         const EXP_PO2: usize = log2_ceil(INV_RATE);
         let domain = steps * INV_RATE;
 
-        let poly_mix_pows = map_pow(poly_mix, crate::info::POLY_MIX_POWERS);
+        let poly_mix_pows = dbg!(map_pow(dbg!(poly_mix), crate::info::POLY_MIX_POWERS));
 
         // SAFETY: Convert a borrow of a cell into a raw const slice so that we can pass
         // it over the thread boundary. This should be safe because the scope of the
         // usage is within this function and each thread access will not overlap with
         // each other.
+
+        for (idx, grp) in groups.iter().enumerate() {
+            use risc0_zkp::hal::Buffer;
+            eprintln!(
+                "group[{idx}] is {} len {}",
+                grp.name(),
+                grp.as_slice().len()
+            );
+        }
+        for (idx, grp) in globals.iter().enumerate() {
+            use risc0_zkp::hal::Buffer;
+            eprintln!(
+                "globals[{idx}] is {} len {}: {:?}",
+                grp.name(),
+                grp.as_slice().len(),
+                grp.as_slice()
+            );
+        }
 
         let code = groups[REGISTER_GROUP_CODE].as_slice();
         let code = unsafe { std::slice::from_raw_parts(code.as_ptr(), code.len()) };
@@ -217,9 +259,9 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
         let check = unsafe { std::slice::from_raw_parts(check.as_ptr(), check.len()) };
         let poly_mix_pows = poly_mix_pows.as_slice();
 
-        let args: &[&[BabyBearElem]] = &[&code, &out, &data, &mix, &accum];
+        let args: &[&[BabyBearElem]] = &[&accum, &data, &mix, &out];
 
-        (0..domain).into_par_iter().for_each(|cycle| {
+        (0..domain).into_iter().for_each(|cycle| {
             let tot = CircuitImpl.poly_fp(cycle, domain, poly_mix_pows, args);
             let x = BabyBearElem::ROU_FWD[po2 + EXP_PO2].pow(cycle);
             // TODO: what is this magic number 3?

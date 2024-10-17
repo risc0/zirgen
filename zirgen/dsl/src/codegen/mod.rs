@@ -62,16 +62,16 @@ macro_rules! zirgen_preamble {
     ($protocol_info:expr) => {
         use anyhow::{bail, Context, Result};
         use risc0_zkp::adapter::ProtocolInfo;
+        use risc0_zkp::layout::Reg;
         use $crate::codegen::_support::*;
         use $crate::codegen::taps::{make_taps, Tap};
         use $crate::{BoundLayout, BufferRow, BufferSpec, Buffers};
-        use $crate::{CycleRow,CycleContext,GlobalRow};
-        use risc0_zkp::layout::Reg;
+        use $crate::{CycleContext, CycleRow, GlobalRow};
 
-/*        lazy_static::lazy_static! {
-            pub static ref TAPS : risc0_zkp::taps::TapSet<'static> = make_taps(TAP_LIST.as_slice(),
-                                                                               TAP_GROUP_NAMES);
-      }*/
+        /*        lazy_static::lazy_static! {
+              pub static ref TAPS : risc0_zkp::taps::TapSet<'static> = make_taps(TAP_LIST.as_slice(),
+                                                                                 TAP_GROUP_NAMES);
+        }*/
 
         // Explicitly instantiate calls that cause rustc to be very slow
         // when processing large generated code.
@@ -87,7 +87,7 @@ macro_rules! zirgen_preamble {
         fn and_eqz_ext(poly_mix: ExtVal, x: MixState, val: ExtVal) -> Result<MixState> {
             and_eqz_generic::<CircuitField, ExtVal>(poly_mix, x, val)
         }
-/*        fn store(ctx: impl CycleContext, buf: BoundLayout<Reg, impl BufferRow<ValType = Val>>, val: Val) {
+        /*        fn store(ctx: impl CycleContext, buf: BoundLayout<Reg, impl BufferRow<ValType = Val>>, val: Val) {
             buf.buf().store(ctx, buf.layout().offset, val)
         }
         fn store_ext(ctx: impl CycleContext, buf: BoundLayout<Reg, impl BufferRow<ValType = Val>>, val: ExtVal) {
@@ -107,52 +107,52 @@ macro_rules! zirgen_preamble {
         }
 
         // risc0_zkp-compatible CircuitDef
-/*        pub struct CircuitDef;
-        type ValidityRegsContext<'a> = $crate::cpu::CpuBuffers<'a, Val, ()>;
-        type ValidityTapsContext<'a> = $crate::Buffers<(), &'a [Val], ()>;
-        impl risc0_zkp::adapter::CircuitInfo for CircuitDef {
-            const CIRCUIT_INFO: ProtocolInfo = ProtocolInfo($protocol_info);
-            const OUTPUT_SIZE: usize = REGCOUNT_GLOBAL;
-            const MIX_SIZE: usize = REGCOUNT_MIX;
-        }
-        impl risc0_zkp::adapter::PolyExt<CircuitField> for CircuitDef {
-            fn poly_ext(&self, mix: &ExtVal, u: &[ExtVal], args: &[&[Val]]) -> MixState {
-                use risc0_zkp::field::Elem;
+        /*        pub struct CircuitDef;
+                type ValidityRegsContext<'a> = $crate::cpu::CpuBuffers<'a, Val, ()>;
+                type ValidityTapsContext<'a> = $crate::Buffers<(), &'a [Val], ()>;
+                impl risc0_zkp::adapter::CircuitInfo for CircuitDef {
+                    const CIRCUIT_INFO: ProtocolInfo = ProtocolInfo($protocol_info);
+                    const OUTPUT_SIZE: usize = REGCOUNT_GLOBAL;
+                    const MIX_SIZE: usize = REGCOUNT_MIX;
+                }
+                impl risc0_zkp::adapter::PolyExt<CircuitField> for CircuitDef {
+                    fn poly_ext(&self, mix: &ExtVal, u: &[ExtVal], args: &[&[Val]]) -> MixState {
+                        use risc0_zkp::field::Elem;
 
-                let raw_buffers = get_named_buffers($crate::poly_ext_named_buffers(args));
-                let buffers =
-                    raw_buffers.map_rows(|x| -> () { panic!("Unexpected tap in poly_ext") });
-                assert_eq!(u.len(), TAP_LIST.len());
+                        let raw_buffers = get_named_buffers($crate::poly_ext_named_buffers(args));
+                        let buffers =
+                            raw_buffers.map_rows(|x| -> () { panic!("Unexpected tap in poly_ext") });
+                        assert_eq!(u.len(), TAP_LIST.len());
 
-                let res = validity_taps(&buffers, &u, *mix, get_global_buffer(&buffers),
-                get_mix_buffer(&buffers)).unwrap();
+                        let res = validity_taps(&buffers, &u, *mix, get_global_buffer(&buffers),
+                        get_mix_buffer(&buffers)).unwrap();
 
-                res
-            }
-        }
+                        res
+                    }
+                }
 
-        impl risc0_zkp::adapter::TapsProvider for CircuitDef {
-            fn get_taps(&self) -> &'static risc0_zkp::taps::TapSet<'static> {
-                &*TAPS
-            }
-        }
+                impl risc0_zkp::adapter::TapsProvider for CircuitDef {
+                    fn get_taps(&self) -> &'static risc0_zkp::taps::TapSet<'static> {
+                        &*TAPS
+                    }
+                }
 
-        impl risc0_zkp::adapter::CircuitCoreDef<CircuitField> for CircuitDef {}
+                impl risc0_zkp::adapter::CircuitCoreDef<CircuitField> for CircuitDef {}
 
-        #[derive(Debug, Copy, Clone, PartialEq)]
-        pub struct Reg {
-            pub offset: usize,
-        }
+                #[derive(Debug, Copy, Clone, PartialEq)]
+                pub struct Reg {
+                    pub offset: usize,
+                }
 
-        impl risc0_zkp::layout::Component for Reg {
-            fn walk<V: risc0_zkp::layout::Visitor>(&self, v: &mut V) -> core::fmt::Result {
-                v.visit_reg(self.offset)
-            }
-            fn ty_name(&self) -> &'static str {
-                "reg"
-            }
-        }
-*/
+                impl risc0_zkp::layout::Component for Reg {
+                    fn walk<V: risc0_zkp::layout::Visitor>(&self, v: &mut V) -> core::fmt::Result {
+                        v.visit_reg(self.offset)
+                    }
+                    fn ty_name(&self) -> &'static str {
+                        "reg"
+                    }
+                }
+        */
         // Eventually we want to generate this trait based on what functions are available,
         // but for now we can hardcode it.
         pub trait CircuitHal<'a, H: risc0_zkp::hal::Hal<Elem = Val>> {

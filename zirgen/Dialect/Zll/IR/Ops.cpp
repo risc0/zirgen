@@ -232,7 +232,7 @@ LogicalResult IfOp::evaluate(Interpreter& interp,
 LogicalResult GetOp::evaluate(Interpreter& interp,
                               llvm::ArrayRef<zirgen::Zll::InterpVal*> outs,
                               EvalAdaptor& adaptor) {
-  if (getBack() > interp.getCycle()) {
+  if (getBack() > interp.getCycle() && !interp.getTotCycles()) {
     // TODO: Change this back to a throw once the DSL works enough that we can
     // avoid reading back too far.
     // throw std::runtime_error("Attempt to read back too far");
@@ -242,7 +242,7 @@ LogicalResult GetOp::evaluate(Interpreter& interp,
   }
   auto buf = adaptor.getBuf()->getBuf();
   size_t size = getBuf().getType().cast<BufferType>().getSize();
-  size_t totOffset = size * (interp.getCycle() - getBack()) + getOffset();
+  size_t totOffset = size * interp.getBackCycle(getBack()) + getOffset();
   if (totOffset >= buf.size()) {
     return emitError() << "Attempting to get out of bounds index " << totOffset
                        << " from buffer of size " << buf.size();

@@ -47,8 +47,6 @@ impl PolyFp<BabyBear> for CircuitImpl {
         args: &[&[BabyBearElem]],
     ) -> BabyBearExtElem {
         let args: Vec<*const BabyBearElem> = args.iter().map(|x| (*x).as_ptr()).collect();
-        unsafe {
-            risc0_circuit_keccak_poly_fp(cycle, steps, mix.as_ptr(), args.as_ptr(), args.len())
-        }
+        unsafe { risc0_circuit_keccak_poly_fp(cycle, steps, mix.as_ptr(), args.as_ptr()) }
     }
 }

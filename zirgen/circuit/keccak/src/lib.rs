@@ -114,7 +114,7 @@ pub fn prove<
     let mix: [Val; keccak_circuit::REGCOUNT_MIX] =
         std::array::from_fn(|_| prover.iop().random_elem());
     let mix = hal.copy_from_elem("mix", mix.as_slice());
-    circuit_hal.step_accum(TOT_CYCLES, &accum, &data, &global)?;
+    circuit_hal.step_accum(TOT_CYCLES, &accum, &data, &mix)?;
     prover.commit_group(keccak_circuit::REGISTER_GROUP_ACCUM, &accum);
     let seal = prover.finalize(&[&mix, &global], circuit_hal);
 

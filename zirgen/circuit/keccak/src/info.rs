@@ -23,10 +23,10 @@ impl CircuitInfo for CircuitImpl {
     const CIRCUIT_INFO: ProtocolInfo = ProtocolInfo(*b"ZIRGEN_TEST_____");
 
     #[rustfmt::skip]
-    const OUTPUT_SIZE: usize = 0;
+    const OUTPUT_SIZE: usize = 4;
 
     #[rustfmt::skip]
-    const MIX_SIZE: usize = 4;
+    const MIX_SIZE: usize = 8;
 }
 
 #[allow(dead_code)]

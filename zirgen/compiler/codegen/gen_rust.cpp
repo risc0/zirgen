@@ -38,6 +38,9 @@ namespace zirgen {
 
 namespace {
 
+// If true, print the values of all variables evaluated in generated code.
+constexpr bool kPrintDebug = false;
+
 enum class FuncKind {
   Step,
   PolyFp,
@@ -154,7 +157,11 @@ public:
 
     FileContext ctx;
     for (auto [idx, arg] : llvm::enumerate(func.getArguments())) {
-      ctx.vars[arg] = llvm::formatv("args[{0}]", idx).str();
+      std::string argsDesc;
+      if (auto argName = func.getArgAttrOfType<StringAttr>(idx, "zirgen.argName")) {
+        argsDesc = ("/*" + argName.strref() + "=*/").str();
+      }
+      ctx.vars[arg] = llvm::formatv("{0}args[{1}]", argsDesc, idx).str();
     }
 
     list lines;
@@ -448,6 +455,12 @@ private:
           llvm::errs() << *op << "\n";
           throw std::runtime_error("invalid op");
         });
+    if (kPrintDebug && ctx.next > 1) {
+      lines.push_back(llvm::formatv("std::cerr << \"x{0} = \" << x{0} << \" ({1})\\n\";",
+                                    ctx.next - 1,
+                                    op->getName().getStringRef())
+                          .str());
+    }
   }
 
   std::string emitLoc(Operation* op) {
@@ -626,12 +639,17 @@ public:
     for (auto [idx, buf] : llvm::enumerate(bufs.getBuffers())) {
       auto bufType = llvm::cast<BufferType>(buf.getType());
       if (bufType.getKind() == BufferKind::Global) {
-        if (idx == 1) {
-          out_size = bufType.getSize();
+        size_t* size_var = StringSwitch<size_t*>(buf.getName())
+                               .Case("global", &out_size)
+                               .Case("out", &out_size)
+                               .Case("mix", &mix_size)
+                               .Default(nullptr);
+        if (!size_var) {
+          llvm::errs() << "Unable to determine what to do with global buffer " << buf.getName()
+                       << "\n";
+          abort();
         }
-        if (idx == 3) {
-          mix_size = bufType.getSize();
-        }
+        *size_var = bufType.getSize();
       }
     }
 

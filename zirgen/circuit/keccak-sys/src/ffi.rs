@@ -55,7 +55,6 @@ extern "C" {
         steps: usize,
         poly_mixs: *const BabyBearExtElem,
         args_ptr: *const *const BabyBearElem,
-        args_len: usize,
     ) -> BabyBearExtElem;
 }
 

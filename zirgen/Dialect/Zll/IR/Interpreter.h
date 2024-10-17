@@ -139,6 +139,12 @@ public:
 
   void setCycle(size_t cycle);
   size_t getCycle();
+  void setTotCycles(size_t totCycles);
+  size_t getTotCycles();
+
+  // Calculates a wrapping (current cycle - back) modulo totCycles
+  size_t getBackCycle(size_t backDistance);
+
   const IHashSuite& getHashSuite();
   void setExternHandler(ExternHandler* handler);
   ExternHandler* getExternHandler();
@@ -267,7 +273,8 @@ private:
 
   mlir::LogicalResult evaluate(OpEvaluator* eval);
 
-  size_t cycle;
+  size_t cycle = 0;
+  size_t totCycles = 0;
   std::unique_ptr<IHashSuite> hashSuite;
   ExternHandler* handler;
   llvm::SmallVector<llvm::SmallVector<Polynomial>> allocBufs;

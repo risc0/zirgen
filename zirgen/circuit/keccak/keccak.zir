@@ -1209,44 +1209,49 @@ component Top() {
   );
 }
 
+// Constraints must be applied to registers, so make registers to house the calculated values in tests.
+component TestEqz(v: Val) {
+  NondetReg(v) = 0;
+}
+
 test TestKeccak01 { // test_cycles >= 2969
   x := Top();
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 0] - 0xb395) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 1] - 0x7463) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 2] - 0x8e98) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 3] - 0x0a6e) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 4] - 0x7cec) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 5] - 0x17b3) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 6] - 0xfd54) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 7] - 0x4748) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 8] - 0x09b0) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 9] - 0x9293) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[10] - 0xfcda) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[11] - 0x5947) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[12] - 0x573f) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[13] - 0x6678) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[14] - 0x268a) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[15] - 0x23c7) = 0;
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[ 0] - 0xb395));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[ 1] - 0x7463));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[ 2] - 0x8e98));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[ 3] - 0x0a6e));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[ 4] - 0x7cec));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[ 5] - 0x17b3));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[ 6] - 0xfd54));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[ 7] - 0x4748));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[ 8] - 0x09b0));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[ 9] - 0x9293));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[10] - 0xfcda));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[11] - 0x5947));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[12] - 0x573f));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[13] - 0x6678));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[14] - 0x268a));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[15] - 0x23c7));
 }
 
 /*
 test TestKeccak02 { // test_cycles >= 22772
   x := Top();
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 0] - 0x420e) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 1] - 0x6b2c) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 2] - 0xc4cd) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 3] - 0x396e) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 4] - 0xcf6b) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 5] - 0x7e4c) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 6] - 0x8b4c) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 7] - 0x1c1e) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 8] - 0x88c3) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 9] - 0x5895) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[10] - 0x34b5) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[11] - 0x81fd) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[12] - 0x1337) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[13] - 0x93a6) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[14] - 0xe530) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[15] - 0x06f1) = 0;
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[ 0] - 0x420e));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[ 1] - 0x6b2c));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[ 2] - 0xc4cd));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[ 3] - 0x396e));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[ 4] - 0xcf6b));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[ 5] - 0x7e4c));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[ 6] - 0x8b4c));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[ 7] - 0x1c1e));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[ 8] - 0x88c3));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[ 9] - 0x5895));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[10] - 0x34b5));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[11] - 0x81fd));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[12] - 0x1337));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[13] - 0x93a6));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[14] - 0xe530));
+  TestEqz(IsZ(17-x.retvals.major)*IsZ(13-x.retvals.minor)*(x.retvals.arr_a[15] - 0x06f1));
 }
 */

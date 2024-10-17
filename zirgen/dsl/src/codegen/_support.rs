@@ -201,19 +201,22 @@ pub trait Usizable {
     fn as_usize(&self) -> usize;
 }
 
-impl Usizable for
-risc0_core::field::baby_bear::BabyBearElem {
+impl Usizable for risc0_core::field::baby_bear::BabyBearElem {
     fn as_usize(&self) -> usize {
         u32::from(*self) as usize
     }
 }
 
 impl Usizable for usize {
-    fn as_usize(&self) -> usize { *self }
+    fn as_usize(&self) -> usize {
+        *self
+    }
 }
 
 impl Usizable for i32 {
-    fn as_usize(&self) -> usize { *self as usize }
+    fn as_usize(&self) -> usize {
+        *self as usize
+    }
 }
 
 pub fn to_usize<E: Usizable>(elem: E) -> usize {

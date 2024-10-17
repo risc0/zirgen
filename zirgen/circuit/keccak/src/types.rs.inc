@@ -11,13 +11,13 @@ impl risc0_zkp::layout::Component for NondetRegLayout {
         Ok(())
     }
 }
-pub struct MyArgumentLayout {
+pub struct NondetMyArgumentLayout {
     pub a: &'static NondetRegLayout,
     pub b: &'static NondetRegLayout,
 }
-impl risc0_zkp::layout::Component for MyArgumentLayout {
+impl risc0_zkp::layout::Component for NondetMyArgumentLayout {
     fn ty_name(&self) -> &'static str {
-        "MyArgumentLayout"
+        "NondetMyArgumentLayout"
     }
     #[allow(unused_variables)]
     fn walk<V: risc0_zkp::layout::Visitor>(&self, v: &mut V) -> core::fmt::Result {
@@ -28,10 +28,10 @@ impl risc0_zkp::layout::Component for MyArgumentLayout {
 }
 pub type NondetRegLayout2LayoutArray = [&'static NondetRegLayout; 2];
 pub struct Top__0Layout {
-    pub _super: &'static MyArgumentLayout,
+    pub _super: &'static NondetMyArgumentLayout,
     pub _selector: &'static NondetRegLayout2LayoutArray,
-    pub arm0: &'static MyArgumentLayout,
-    pub arm1: &'static MyArgumentLayout,
+    pub arm0: &'static NondetMyArgumentLayout,
+    pub arm1: &'static NondetMyArgumentLayout,
 }
 impl risc0_zkp::layout::Component for Top__0Layout {
     fn ty_name(&self) -> &'static str {
@@ -77,12 +77,12 @@ impl risc0_zkp::layout::Component for _globalLayout {
         Ok(())
     }
 }
-pub struct Arg_MyArgumentLayout {
+pub struct Arg_NondetMyArgumentLayout {
     pub b: &'static Reg,
 }
-impl risc0_zkp::layout::Component for Arg_MyArgumentLayout {
+impl risc0_zkp::layout::Component for Arg_NondetMyArgumentLayout {
     fn ty_name(&self) -> &'static str {
-        "Arg_MyArgumentLayout"
+        "Arg_NondetMyArgumentLayout"
     }
     #[allow(unused_variables)]
     fn walk<V: risc0_zkp::layout::Visitor>(&self, v: &mut V) -> core::fmt::Result {
@@ -91,7 +91,7 @@ impl risc0_zkp::layout::Component for Arg_MyArgumentLayout {
     }
 }
 pub struct _accumLayout {
-    pub my_argument: &'static Arg_MyArgumentLayout,
+    pub nondet_my_argument: &'static Arg_NondetMyArgumentLayout,
     pub _offset: &'static Reg,
 }
 impl risc0_zkp::layout::Component for _accumLayout {
@@ -100,7 +100,7 @@ impl risc0_zkp::layout::Component for _accumLayout {
     }
     #[allow(unused_variables)]
     fn walk<V: risc0_zkp::layout::Visitor>(&self, v: &mut V) -> core::fmt::Result {
-        v.visit_component("my_argument", self.my_argument)?;
+        v.visit_component("nondet_my_argument", self.nondet_my_argument)?;
         v.visit_component("_offset", self._offset)?;
         Ok(())
     }
@@ -123,10 +123,10 @@ pub struct NondetRegStruct {
     pub _super: Val,
 }
 #[derive(Copy, Clone, Debug)]
+pub struct NondetMyArgumentStruct {}
+#[derive(Copy, Clone, Debug)]
 pub struct MyArgumentStruct {}
 #[derive(Copy, Clone, Debug)]
 pub struct TopStruct {}
-#[derive(Copy, Clone, Debug)]
-pub struct TestSucc_0Struct {}
 #[derive(Copy, Clone, Debug)]
 pub struct ComponentStruct {}
