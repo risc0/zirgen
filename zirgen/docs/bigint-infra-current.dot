@@ -24,7 +24,7 @@ digraph zirgen {
             subgraph cluster_accel {
                 label="Accelerators"
                 accel_rsa [label="RSA"]
-                accel_ecdsa [color="red", label="EC mul"]
+                accel_ecdsa [color="darkgreen", label="EC mul"]
                 accel_circom [label="Circom-based"]
             }
         }
@@ -57,7 +57,7 @@ digraph zirgen {
 
         accel_rsa->edsl_bigint [style="dashed"]
         accel_circom->bigint_ir [color="red"]
-        {accel_ecdsa}->edsl_bigint [color="red", style="dashed"]
+        {accel_ecdsa}->edsl_bigint [color="darkgreen", style="dashed"]
     }
 
     circom_witness [label="Circom witness generator", color="red"]
