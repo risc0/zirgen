@@ -25,6 +25,27 @@ using namespace Zhlt;
 
 namespace {
 
+// Prune the entire use-def chain of any other buffers after gathering
+// constraints.
+struct PruneAltBuffers : public RewritePattern {
+  PruneAltBuffers(MLIRContext* ctx) : RewritePattern(MatchAnyOpTypeTag(), 1, ctx) {}
+
+  LogicalResult matchAndRewrite(Operation* op, PatternRewriter& rewriter) const final {
+    if (!(isa<ZStruct::GetBufferOp>(op) || isa<Zhlt::GetGlobalLayoutOp>(op)))
+      return failure();
+
+    prune(op, rewriter);
+    return success();
+  }
+
+  void prune(Operation* op, PatternRewriter& rewriter) const {
+    while (op->user_begin() != op->user_end()) {
+      prune(*op->user_begin(), rewriter);
+    }
+    rewriter.eraseOp(op);
+  }
+};
+
 // Wherever an AliasLayoutOp occurs, the implied layout constraint must be
 // unconditionally satisfied. Therefore, we should replace any IfOp with its
 // contents when collecting our layout constraints.
@@ -88,7 +109,46 @@ struct GetArrayLayout : OpRewritePattern<GetLayoutOp> {
   }
 };
 
-// Reoders GetLayoutOps before SubscriptOps where possible to maximize folding of layouts
+// Reorders GetLayoutOps before LookupOps where possible to maximize folding of layouts
+struct ReorderLookupAndGetLayout : public OpRewritePattern<GetLayoutOp> {
+  using OpRewritePattern::OpRewritePattern;
+
+  LogicalResult matchAndRewrite(GetLayoutOp op, PatternRewriter& rewriter) const override {
+    auto lookup = op.getIn().getDefiningOp<ZStruct::LookupOp>();
+    if (!lookup)
+      return rewriter.notifyMatchFailure(op, "input does not come from a LookupOp");
+
+    for (Operation* user : lookup->getUsers()) {
+      if (!isa<GetLayoutOp>(user)) {
+        return rewriter.notifyMatchFailure(op, "lookup has user that isn't a GetLayoutOp");
+      }
+    }
+
+    rewriter.setInsertionPoint(lookup);
+    Value baseLayout = rewriter.create<GetLayoutOp>(lookup.getLoc(), lookup.getBase());
+    // size_t user = 0;
+    while (lookup->user_begin() != lookup->user_end()) {
+      // ++user;
+      auto memberLayout = cast<GetLayoutOp>(*lookup->user_begin());
+      // if (user != 1) {
+      //   llvm::outs() << "rewriter: " << &rewriter << "\n";
+      //   llvm::outs() << "loc: " << memberLayout->getLoc() << "\n";
+      //   llvm::outs() << "base layout: " << baseLayout.getType().cast<ZStruct::LayoutType>().getId() << "\n";
+      //   llvm::outs() << "member: " << lookup.getMember() << "\n";
+      // }
+      auto newMemberLayout = rewriter.create<ZStruct::LookupOp>(memberLayout->getLoc(), baseLayout, lookup.getMember());
+      // if (user != 1) {
+      //   llvm::outs() << "mark newMemberLayout!\n";
+      // }
+      rewriter.replaceOp(memberLayout, newMemberLayout);
+    }
+    assert(lookup.use_empty());
+    rewriter.eraseOp(lookup);
+    return success();
+  }
+};
+
+// Reorders GetLayoutOps before SubscriptOps where possible to maximize folding of layouts
 struct ReorderSubscriptAndGetLayout : public OpRewritePattern<GetLayoutOp> {
   using OpRewritePattern::OpRewritePattern;
 
@@ -116,6 +176,7 @@ struct GenerateCheckLayoutPass : public GenerateCheckLayoutBase<GenerateCheckLay
     auto* ctx = &getContext();
 
     RewritePatternSet patterns(ctx);
+    patterns.insert<PruneAltBuffers>(ctx);
     patterns.insert<BackToCall>(ctx);
     patterns.insert<EraseOp<ZStruct::LoadOp>>(ctx);
     patterns.insert<EraseOp<ZStruct::StoreOp>>(ctx);
@@ -124,10 +185,16 @@ struct GenerateCheckLayoutPass : public GenerateCheckLayoutBase<GenerateCheckLay
     patterns.insert<InlineCalls>(ctx);
     patterns.insert<ZStruct::SplitSwitchArms>(ctx);
     patterns.insert<DeconditionalizeIfOp>(ctx);
+    patterns.insert<ReorderLookupAndGetLayout>(ctx);
     patterns.insert<ReorderSubscriptAndGetLayout>(ctx);
     patterns.insert<GetMuxLayout>(ctx);
     patterns.insert<GetArrayLayout>(ctx);
     ZStruct::getUnrollPatterns(patterns, ctx);
+
+    // Only try these if nothing else work, since they cause a lot of duplication.
+    patterns.insert<UnravelSwitchPackResult>(ctx, /*benefit=*/0);
+    patterns.insert<UnravelSwitchArrayResult>(ctx, /*benefit=*/0);
+    patterns.insert<UnravelSwitchValResult>(ctx, /*benefit=*/0);
 
     FrozenRewritePatternSet frozenPatterns(std::move(patterns));
 

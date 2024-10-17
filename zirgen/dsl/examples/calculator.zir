@@ -22,7 +22,7 @@ component OneHot(v: Val) {
 
 component GetGlobalResult() {
   global result : Reg;
-  result
+  result + 0
 }
 
 component SetGlobalResult(val: Val) {

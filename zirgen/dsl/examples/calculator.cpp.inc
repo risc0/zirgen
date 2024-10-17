@@ -50,6 +50,9 @@ struct OneHotStruct {
   Val n;
   NondetRegStruct2Array bits;
 };
+struct GetGlobalResultStruct {
+  Val _super;
+};
 struct TopStruct {
   ComponentStruct _super;
   NondetRegStruct op;
@@ -168,12 +171,14 @@ OneHotStruct exec_OneHot(ExecContext& ctx, Val arg0, BoundLayout<OneHotLayout> l
   EQZ((x22 - arg0), "OneHot(zirgen/dsl/examples/calculator.zir:19)");
   return OneHotStruct{._super = x3, .n = Val(2), .bits = x3};
 }
-RegStruct exec_GetGlobalResult(ExecContext& ctx, GlobalBuf global0) {
+GetGlobalResultStruct exec_GetGlobalResult(ExecContext& ctx, GlobalBuf global0) {
   // GetGlobalResult(zirgen/dsl/examples/calculator.zir:23)
   BoundLayout<_globalLayout> x1 = BIND_LAYOUT(kLayoutGlobal, global0);
   // GetGlobalResult(zirgen/dsl/examples/calculator.zir:24)
   RegStruct x2 = back_Reg(ctx, 0, LAYOUT_LOOKUP(x1, result));
-  return x2;
+  // GetGlobalResult(zirgen/dsl/examples/calculator.zir:25)
+  Val x3 = exec_Add(ctx, x2._super._super, Val(0));
+  return GetGlobalResultStruct{._super = x3};
 }
 ComponentStruct exec_SetGlobalResult(ExecContext& ctx, Val arg0, GlobalBuf global1) {
   // SetGlobalResult(zirgen/dsl/examples/calculator.zir:28)
@@ -224,11 +229,11 @@ TopStruct exec_Top(ExecContext& ctx, BoundLayout<TopLayout> layout0, GlobalBuf g
   // Top(zirgen/dsl/examples/calculator.zir:41)
   ComponentStruct x21 = exec_SetGlobalResult(ctx, x20._super._super, global1);
   // Top(zirgen/dsl/examples/calculator.zir:42)
-  RegStruct x22 = exec_GetGlobalResult(ctx, global1);
+  GetGlobalResultStruct x22 = exec_GetGlobalResult(ctx, global1);
   // Top(zirgen/dsl/examples/calculator.zir:36)
   RegStruct x23 = back_Reg(ctx, 0, x12);
   // Top(zirgen/dsl/examples/calculator.zir:42)
-  EQZ((x22._super._super - x23._super._super), "Top(zirgen/dsl/examples/calculator.zir:42)");
+  EQZ((x22._super - x23._super._super), "Top(zirgen/dsl/examples/calculator.zir:42)");
   // Top(zirgen/dsl/examples/calculator.zir:36)
   RegStruct x24 = back_Reg(ctx, 0, x12);
   // Top(zirgen/dsl/examples/calculator.zir:43)

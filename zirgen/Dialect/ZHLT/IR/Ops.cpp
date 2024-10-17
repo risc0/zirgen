@@ -64,7 +64,7 @@ Value resolveLayout(Value value) {
         }
         return Value();
       })
-      .Case<Zhlt::BackOp>([](auto back) { return back.getLayout(); })
+      .Case<Zhlt::BackCallOp, Zhlt::BackOp>([](auto back) { return back.getLayout(); })
       .Default([](auto op) { return Value(); });
 }
 

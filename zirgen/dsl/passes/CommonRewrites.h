@@ -19,6 +19,7 @@
 
 using namespace mlir;
 using namespace zirgen::ZStruct;
+using namespace zirgen::Zll;
 
 namespace zirgen {
 
@@ -61,6 +62,57 @@ struct BackToCall : public OpRewritePattern<Zhlt::BackOp> {
   using OpRewritePattern::OpRewritePattern;
 
   LogicalResult matchAndRewrite(Zhlt::BackOp op, PatternRewriter& rewriter) const final;
+};
+
+// Attempts to to unravel the use of the result of a switch operation
+// returning a StructType.  We generate an additional switch operation
+// with the same condition for each member of the structure, having
+// the switch operation only return that member.  Then, we add a pack
+// operation to reconstruct the structure from the individual switch
+// operations.
+//
+// Constraints are left in the original switch operation for
+// processing by SplitSwitchArms, but all uses of the result value are
+// changed to use the repacked value.
+//
+// This requires all operations inside are at the least idempotent if
+// not completely pure, since they may be duplicated between struct
+// members.  As such, we verify that all the operations are ones are
+// allow before we attempt unravelling.
+struct UnravelSwitchPackResult : public OpRewritePattern<SwitchOp> {
+  using OpRewritePattern::OpRewritePattern;
+
+  LogicalResult matchAndRewrite(SwitchOp op, PatternRewriter& rewriter) const final;
+};
+
+// Attempts to to unravel the use of the result of a switch operation returning
+// an ArrayType. We generate an additional switch operation with the same
+// condition for each element of the array, having the switch operation only
+// return that member. Then, we add an array operation to reconstruct the array
+// from the individual switch operations.
+//
+// Constraints are left in the original switch operation for processing by
+// SplitSwitchArms, but all uses of the result value are changed to use the
+// repacked value.
+//
+// This requires all operations inside are idempotent, since they may be
+// duplicated between array elements.  As such, we verify that all the
+// operations are ones are allow before we attempt unravelling.
+struct UnravelSwitchArrayResult : public OpRewritePattern<SwitchOp> {
+  using OpRewritePattern::OpRewritePattern;
+
+  LogicalResult matchAndRewrite(SwitchOp op, PatternRewriter& rewriter) const final;
+};
+
+// Attempts to unravel a use of the result of a switch operations returning a val
+// by multiplying by each of the selectors and summing the result.
+//
+// This assumes there's exactly one selector that has a value of 1 and the
+// rest are zero.
+struct UnravelSwitchValResult : public OpRewritePattern<SwitchOp> {
+  using OpRewritePattern::OpRewritePattern;
+
+  LogicalResult matchAndRewrite(SwitchOp op, PatternRewriter& rewriter) const final;
 };
 
 template <typename WrappedPattern> struct RewritePatternSuper {
