@@ -68,7 +68,11 @@ LayoutDAG::Ptr LayoutDAG::lookup(StringAttr member) {
 LayoutDAG::Ptr LayoutDAG::subscript(size_t index) {
   const LayoutDAG& layout = resolve();
   const auto& base = std::get<AbstractArray>(layout);
-  return base.elements[index];
+  if (index < base.elements.size()) {
+    return base.elements[index];
+  } else {
+    return nullptr;
+  }
 }
 
 LayoutDAG::Ptr LayoutDAG::generateNaiveAbstractLayout(Type type) {
@@ -212,8 +216,10 @@ void LayoutDAGAnalysis::visitOp(SubscriptOp op) {
         return;
       size_t index = extractIntAttr(indexAttr);
       LayoutDAG::Ptr sublayout = baseLayout->getValue().get()->subscript(index);
-      auto* lattice = getOrCreate<Element>(op.getOut());
-      propagateIfChanged(lattice, lattice->join(sublayout));
+      if (sublayout) {
+        auto* lattice = getOrCreate<Element>(op.getOut());
+        propagateIfChanged(lattice, lattice->join(sublayout));
+      }
     }
   }
 }
