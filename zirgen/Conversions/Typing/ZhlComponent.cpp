@@ -701,8 +701,10 @@ void LoweringImpl::gen(GetGlobalOp getGlobal, ComponentBuilder& cb) {
   }
   layoutType = llvm::cast<ZStruct::LayoutType>(ctor.getLayoutType());
 
-  layoutMapping[getGlobal.getOut()] =
+  auto globalLayout =
       builder.create<Zhlt::GetGlobalLayoutOp>(getGlobal.getLoc(), layoutType, getGlobal.getName());
+  auto globalVal = reconstructFromLayout(globalLayout.getLoc(), globalLayout);
+  valueMapping[getGlobal.getOut()] = globalVal;
 }
 
 void LoweringImpl::gen(LiteralOp literal, ComponentBuilder& cb) {

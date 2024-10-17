@@ -118,6 +118,10 @@ pub struct OneHotStruct {
     pub bits: NondetRegStruct2Array,
 }
 #[derive(Copy, Clone, Debug)]
+pub struct GetGlobalResultStruct {
+    pub _super: Val,
+}
+#[derive(Copy, Clone, Debug)]
 pub struct TopStruct {
     pub _super: ComponentStruct,
     pub op: NondetRegStruct,
@@ -300,12 +304,14 @@ pub fn exec_one_hot(
 pub fn exec_get_global_result(
     ctx: &ExecContext,
     global0: &impl BufferRow<ValType = Val>,
-) -> Result<RegStruct> {
+) -> Result<GetGlobalResultStruct> {
     // GetGlobalResult(zirgen/dsl/examples/calculator.zir:23)
     let x1: BoundLayout<_globalLayout, _> = bind_layout!(LAYOUT_GLOBAL, global0);
     // GetGlobalResult(zirgen/dsl/examples/calculator.zir:24)
     let x2: RegStruct = back_reg(ctx, 0, layout_lookup!(x1, result))?;
-    return Ok(x2);
+    // GetGlobalResult(zirgen/dsl/examples/calculator.zir:25)
+    let x3: Val = exec_add(ctx, x2._super._super, Val::new(0))?;
+    return Ok(GetGlobalResultStruct { _super: x3 });
 }
 pub fn exec_set_global_result(
     ctx: &ExecContext,
@@ -364,12 +370,12 @@ pub fn exec_top(
     // Top(zirgen/dsl/examples/calculator.zir:41)
     let x21: ComponentStruct = exec_set_global_result(ctx, x20._super._super, global1)?;
     // Top(zirgen/dsl/examples/calculator.zir:42)
-    let x22: RegStruct = exec_get_global_result(ctx, global1)?;
+    let x22: GetGlobalResultStruct = exec_get_global_result(ctx, global1)?;
     // Top(zirgen/dsl/examples/calculator.zir:36)
     let x23: RegStruct = back_reg(ctx, 0, x12)?;
     // Top(zirgen/dsl/examples/calculator.zir:42)
     eqz!(
-        (x22._super._super - x23._super._super),
+        (x22._super - x23._super._super),
         "Top(zirgen/dsl/examples/calculator.zir:42)"
     );
     // Top(zirgen/dsl/examples/calculator.zir:36)
