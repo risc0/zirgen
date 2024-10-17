@@ -189,6 +189,7 @@ struct GenerateCheckLayoutPass : public GenerateCheckLayoutBase<GenerateCheckLay
     patterns.insert<ReorderSubscriptAndGetLayout>(ctx);
     patterns.insert<GetMuxLayout>(ctx);
     patterns.insert<GetArrayLayout>(ctx);
+    ZStruct::SwitchOp::getCanonicalizationPatterns(patterns, ctx);
     ZStruct::getUnrollPatterns(patterns, ctx);
 
     // Only try these if nothing else work, since they cause a lot of duplication.

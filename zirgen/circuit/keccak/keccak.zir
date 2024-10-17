@@ -792,7 +792,7 @@ component chi_minor2<Y: Val>(rvals: RetTuple) {
           },
           { rs1 := [rvprev07.arr_a[0+SLEN()],rvprev07.arr_b[0+SLEN()],rvprev07.arr_c[0+SLEN()]+0,
                     rvprev06.arr_d[0+BLEN()],rvprev06.arr_d[1+BLEN()],rvprev07.arr_f[0+SLEN()]];
-            c := Concatenate<Val, 16, 6>(for i : 0..16 { rvpstate.arr_c[i] }, rs1); 
+            c := Concatenate<Val, 16, 6>(for i : 0..16 { rvpstate.arr_c[i] }, rs1);
             rs2 := [rvprev04.arr_a[0+SLEN()],rvprev04.arr_b[0+SLEN()],rvprev04.arr_c[0+SLEN()]+0,
                     rvprev03.arr_d[0+BLEN()],rvprev03.arr_d[1+BLEN()],rvprev04.arr_f[0+SLEN()],
                     rvprev01.arr_a[0+SLEN()],rvprev01.arr_b[0+SLEN()],rvprev01.arr_c[0+SLEN()]];
@@ -905,7 +905,7 @@ component absorb_word<X: Val, Y: Val>(rvprev: RetTuple) {
     in_first34 := InRange(0,i,3*WORDLEN()-BLEN()-SLEN());
     [in_first34, 1-in_first34] -> (
       xor2(unpack_f[i], unpack_3[i+SLEN()+BLEN()-2*WORDLEN()]),
-      xor2(unpack_f[i], unpack_4[i-(3*WORDLEN()-BLEN()-SLEN())])) }; 
+      xor2(unpack_f[i], unpack_4[i-(3*WORDLEN()-BLEN()-SLEN())])) };
 
   padded23 := ConcatZeros<SLEN(),BLEN()-SLEN()>(arr23);
   results := [FromBits<BLEN()>(arr12),FromBits<SLEN()>(arr23),FromBits<SLEN()>(arr34)];
@@ -914,8 +914,8 @@ component absorb_word<X: Val, Y: Val>(rvprev: RetTuple) {
   inc_idx := X+5*Y+1;
   in_first := InRange(0,inc_idx,10);
   nxt_major := 1 - in_first;
-  nxt_in := [in_first, nxt_major] -> (inc_idx, inc_idx-9); 
-  
+  nxt_in := [in_first, nxt_major] -> (inc_idx, inc_idx-9);
+
   RetTuple(unpack_a, arr12, padded23, padded34, unpack_e, unpack_f,
            nxt_in, 15+nxt_major, 0, rvprev.blk, rvprev.midx)
 }
