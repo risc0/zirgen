@@ -4,7 +4,6 @@
 // Key:
 //   green: exists,
 //   red: doesn't exist, but we might want it to
-//   dashed line:
 
 digraph zirgen {
     rankdir="LR"
@@ -30,7 +29,7 @@ digraph zirgen {
         }
         subgraph cluster_edsl {
 	    label="EDSL (v1) embedded in C++"
-            edsl_bigint [label="BigInt program", style="dashed"]
+            edsl_bigint [label="BigInt program"]
         }
 
     }
@@ -49,15 +48,15 @@ digraph zirgen {
             transform_bigint_zkr [label="Verify bigint wiitness"]
         }
 
-        edsl_bigint -> bigint_ir [style="dashed"]
+        edsl_bigint -> bigint_ir
         bigint_ir -> transform_bigint_zkr
 
         bigint_ir ->  transform_bigint_witness
 
 
-        accel_rsa->edsl_bigint [style="dashed"]
+        accel_rsa->edsl_bigint
         accel_circom->bigint_ir [color="red"]
-        {accel_ecdsa}->edsl_bigint [color="darkgreen", style="dashed"]
+        {accel_ecdsa}->edsl_bigint [color="darkgreen"]
     }
 
     circom_witness [label="Circom witness generator", color="red"]
