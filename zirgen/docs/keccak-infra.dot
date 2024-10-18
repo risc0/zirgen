@@ -2,7 +2,7 @@
 // Key:
 //   green: exists,
 //   red: doesn't exist, but we might want it to
-//   dashed line: 
+//   dashed line:
 
 digraph zirgen {
     rankdir="LR"
@@ -19,23 +19,21 @@ digraph zirgen {
         subgraph {
             label="Programs and circuits"
             cluster=true
-                        
+
             subgraph {
                 label="Accelerators"
                 accel_keccak [color="red", label="Keccak"]
             }
         }
-        
+
         subgraph dsl {
             cluster=true
 	    label="Zirgen DSL (.zir)"
             dsl_circuit [label="cycle-based circuit"]
-            dsl_recursion [label="Recursion program\n(e.g. predicate)", color="red"]
         }
         accel_keccak->dsl_circuit
-        accel_keccak->dsl_recursion [color="red"]
     }
-    
+
     subgraph ir  {
         label="IR"
         cluster=true
@@ -54,20 +52,19 @@ digraph zirgen {
         subgraph transformations {
             cluster=true
             label="Transforms"
-            transform_verify [label="Verify a seal\n(i.e. for a cyle-based circuit)"]
+            transform_verify [label="Generate verifier for this circuit \n (to be used in a lift predicate)"]
             transform_zirgen_opt [label="Zirgen cycle-based circuit optimization pipeline"]
         }
-        
+
         dsl_circuit -> dsl_circuit_ir
-        
-        dsl_recursion -> recursion_ir [color="red"]
+
         dsl_circuit_ir -> transform_zirgen_opt
-        
+
         dsl_circuit_ir -> transform_verify
         transform_verify -> recursion_ir [constraint=false]
-        
+
         }
-    
+
     subgraph codegen {
         cluster=true
         label="Generated code"
