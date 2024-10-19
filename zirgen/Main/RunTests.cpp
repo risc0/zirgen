@@ -235,21 +235,21 @@ LogicalResult verifyConstraints(Zll::Interpreter& interp, StringRef baseName, Mo
     exit(1);
   }
 
-  /*  auto allBufs = Zll::lookupModuleAttr<Zll::BuffersAttr>(mod).getBuffers();
-    for (auto buf : allBufs) {
-      auto contents = interp.getNamedBuf(buf.getName());
-      llvm::errs() << "Buffer contents " << buf.getName() << " size " << contents.size() << "\n";
-      interleaveComma(contents, llvm::errs(), [&](auto elem) {
-        llvm::errs() << "[";
-        interleaveComma(elem, llvm::errs());
-        llvm::errs() << "]";
-      });
-      llvm::errs() << "\n\n";
-      }*/
+  auto allBufs = Zll::lookupModuleAttr<Zll::BuffersAttr>(mod).getBuffers();
+  for (auto buf : allBufs) {
+    auto contents = interp.getNamedBuf(buf.getName());
+    llvm::errs() << "Buffer contents " << buf.getName() << " size " << contents.size() << "\n";
+    interleaveComma(contents, llvm::errs(), [&](auto elem) {
+      llvm::errs() << "[";
+      interleaveComma(elem, llvm::errs());
+      llvm::errs() << "]";
+    });
+    llvm::errs() << "\n\n";
+  }
   bool failed = false;
   interp.setTotCycles(clOpts->testCycles);
   for (size_t cycle = 0; cycle != clOpts->testCycles; ++cycle) {
-    //    llvm::errs() << "Starting check cycle " << cycle << "\n";
+    llvm::errs() << "Starting check cycle " << cycle << "\n";
     interp.setCycle(cycle);
     if (mlir::failed(interp.runBlock(checkFunc.getBody().front()))) {
       failed = true;
@@ -408,6 +408,8 @@ int runTests(mlir::ModuleOp module) {
         }
       }
     }
+
+    module->print(llvm::errs());
     llvm::errs() << "Verifying constraints for " << testName << "\n";
     if (verifyConstraints(interp, baseName, module).failed()) {
       llvm::errs() << "Checking constraints failed\n";

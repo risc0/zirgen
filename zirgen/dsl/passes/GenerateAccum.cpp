@@ -74,7 +74,6 @@ public:
     // Preemptively lookup all verifier randomness values and store them in a
     // dictionary. Unneeded values will be pruned later by folding.
     zeroDistance = builder.create<arith::ConstantOp>(currentLoc(ctx), builder.getIndexAttr(0));
-    ValType extValType = Zhlt::getValExtType(builder.getContext());
 
     verifierRandomness = RandomnessMap(builder, randomnessLayout, zeroDistance);
 

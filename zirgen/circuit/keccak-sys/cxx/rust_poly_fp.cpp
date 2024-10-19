@@ -61,19 +61,19 @@ FpExt poly_fp(size_t cycle, size_t steps, FpExt* poly_mix, Fp** args) {
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":44:44 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x14 = x12 * x2;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":44:44 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
-  auto x15 = x13 + x14;
+  auto x15 = x14 + x13;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":44:44 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x16 = /*mix=*/args[3][1];
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":44:44 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x17 = x15 * x2;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":44:44 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
-  auto x18 = x16 + x17;
+  auto x18 = x17 + x16;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":44:44 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x19 = /*mix=*/args[3][0];
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":44:44 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x20 = x18 * x2;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":44:44 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
-  auto x21 = x19 + x20;
+  auto x21 = x20 + x19;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":82:46 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x22 = /*mix=*/args[3][7];
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":82:46 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
@@ -81,19 +81,19 @@ FpExt poly_fp(size_t cycle, size_t steps, FpExt* poly_mix, Fp** args) {
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":82:46 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x24 = x22 * x2;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":82:46 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
-  auto x25 = x23 + x24;
+  auto x25 = x24 + x23;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":82:46 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x26 = /*mix=*/args[3][5];
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":82:46 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x27 = x25 * x2;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":82:46 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
-  auto x28 = x26 + x27;
+  auto x28 = x27 + x26;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":82:46 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x29 = /*mix=*/args[3][4];
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":82:46 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x30 = x28 * x2;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":82:46 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
-  auto x31 = x29 + x30;
+  auto x31 = x30 + x29;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":91:50 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x32 = /*accum=*/args[0][3 * steps + ((cycle - kInvRate * 1) & mask)];
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":91:50 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
@@ -101,19 +101,19 @@ FpExt poly_fp(size_t cycle, size_t steps, FpExt* poly_mix, Fp** args) {
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":91:50 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x34 = x32 * x2;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":91:50 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
-  auto x35 = x33 + x34;
+  auto x35 = x34 + x33;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":91:50 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x36 = /*accum=*/args[0][1 * steps + ((cycle - kInvRate * 1) & mask)];
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":91:50 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x37 = x35 * x2;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":91:50 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
-  auto x38 = x36 + x37;
+  auto x38 = x37 + x36;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":91:50 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x39 = /*accum=*/args[0][0 * steps + ((cycle - kInvRate * 1) & mask)];
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":91:50 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x40 = x38 * x2;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":91:50 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
-  auto x41 = x39 + x40;
+  auto x41 = x40 + x39;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":232:47 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x42 = /*data=*/args[1][2 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":141:56 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
@@ -129,19 +129,19 @@ FpExt poly_fp(size_t cycle, size_t steps, FpExt* poly_mix, Fp** args) {
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":186:50 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x48 = x46 * x2;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":186:50 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
-  auto x49 = x47 + x48;
+  auto x49 = x48 + x47;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":186:50 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x50 = /*accum=*/args[0][1 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":186:50 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x51 = x49 * x2;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":186:50 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
-  auto x52 = x50 + x51;
+  auto x52 = x51 + x50;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":186:50 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x53 = /*accum=*/args[0][0 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":186:50 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x54 = x52 * x2;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":186:50 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
-  auto x55 = x53 + x54;
+  auto x55 = x54 + x53;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":173:42 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))
   auto x56 = x55 - x41;
   // loc(callsite("zirgen/dsl/passes/GenerateAccum.cpp":174:46 at callsite("zirgen/dsl/passes/GenerateAccum.cpp":401:9 at unknown)))

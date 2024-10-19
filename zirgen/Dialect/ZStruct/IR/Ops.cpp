@@ -404,12 +404,15 @@ struct LoadLayoutPattern : public OpRewritePattern<LoadOp> {
           val = rewriter.create<Zll::GetGlobalOp>(
               op.getLoc(), bufType.getElement(), bindLayout.getBuffer(), offset + idx);
       } else {
-        val = rewriter.create<Zll::GetOp>(op.getLoc(),
-                                          bufType.getElement(),
-                                          bindLayout.getBuffer(),
-                                          offset + idx,
-                                          distance,
-                                          /*optional tap=*/IntegerAttr{});
+        auto getOp = rewriter.create<Zll::GetOp>(op.getLoc(),
+                                                 bufType.getElement(),
+                                                 bindLayout.getBuffer(),
+                                                 offset + idx,
+                                                 distance,
+                                                 /*optional tap=*/IntegerAttr{});
+        val = getOp;
+        if (op->getAttr("unchecked"))
+          getOp->setAttr("unchecked", rewriter.getUnitAttr());
       }
       if (result) {
         if (!shiftOnce) {
@@ -855,24 +858,27 @@ LogicalResult StoreOp::evaluate(Interpreter& interp,
     }
     oldElem = newElem;
   }
-
   return success();
 }
 
 LogicalResult BindLayoutOp::evaluate(Interpreter& interp,
                                      llvm::ArrayRef<zirgen::Zll::InterpVal*> outs,
                                      EvalAdaptor& adaptor) {
-  auto glob = SymbolTable::lookupNearestSymbolFrom<GlobalConstOp>(*this, getLayoutAttr());
-  if (!glob) {
-    return emitError() << "Unable to find symbol " << getLayout() << "\n";
-   }
-
   auto getBufferOp = getBuffer().getDefiningOp<GetBufferOp>();
-  if (!getBufferOp) {
-     return emitError() << "Missing buffer";
+  if (!getBufferOp)
+    return emitError() << "Missing buffer";
+
+  Attribute layoutAttr = getLayoutAttr();
+  if (auto symAttr = llvm::dyn_cast<SymbolRefAttr>(layoutAttr)) {
+    // Look up by symbol
+    auto glob = SymbolTable::lookupNearestSymbolFrom<GlobalConstOp>(*this, symAttr);
+    if (!glob) {
+      return emitError() << "Unable to find symbol " << getLayout() << "\n";
+    }
+    layoutAttr = glob.getConstant();
   }
 
-  outs[0]->setAttr(BoundLayoutAttr::get(getBufferOp.getNameAttr(), glob.getConstant()));
+  outs[0]->setAttr(BoundLayoutAttr::get(getBufferOp.getNameAttr(), layoutAttr));
 
   return success();
 }
