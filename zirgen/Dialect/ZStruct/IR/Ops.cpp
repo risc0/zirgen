@@ -855,41 +855,56 @@ LogicalResult StoreOp::evaluate(Interpreter& interp,
     }
     oldElem = newElem;
   }
+
+  llvm::errs() << "New buf state: ";
+  interleaveComma(buf, llvm::errs(), [&](auto elem) {
+    llvm::errs() << "[";
+    interleaveComma(elem, llvm::errs());
+    llvm::errs() << "]";
+  });
+  llvm::errs() << "\n";
   return success();
 }
 
 LogicalResult BindLayoutOp::evaluate(Interpreter& interp,
                                      llvm::ArrayRef<zirgen::Zll::InterpVal*> outs,
                                      EvalAdaptor& adaptor) {
-  auto glob = SymbolTable::lookupNearestSymbolFrom<GlobalConstOp>(*this, getLayoutAttr());
-  if (!glob) {
-    return emitError() << "Unable to find symbol " << getLayout() << "\n";
+  Attribute layoutAttr = getLayoutAttr();
+  if (auto symAttr = llvm::dyn_cast<SymbolRefAttr>(layoutAttr)) {
+    // Look up by symbol
+    auto glob = SymbolTable::lookupNearestSymbolFrom<GlobalConstOp>(*this, symAttr);
+    if (!glob) {
+      return emitError() << "Unable to find symbol " << getLayout() << "\n";
+    }
+    layoutAttr = glob.getConstant();
   }
 
-  auto getBufferOp = getBuffer().getDefiningOp<GetBufferOp>();
-  if (!getBufferOp) {
+  auto bufferName = adaptor.getBuffer()->getAttr<StringAttr>();
+  if (!bufferName)
     return emitError() << "Missing buffer";
-  }
 
-  outs[0]->setAttr(BoundLayoutAttr::get(getBufferOp.getNameAttr(), glob.getConstant()));
+  outs[0]->setAttr(BoundLayoutAttr::get(bufferName, layoutAttr));
+
   return success();
 }
 
 void BindLayoutOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
-  auto globOp =
-      SymbolTable::lookupNearestSymbolFrom<GlobalConstOp>(*this, getLayoutAttr().getAttr());
+  auto symAttr = llvm::cast<FlatSymbolRefAttr>(getLayoutAttr());
+  auto globOp = SymbolTable::lookupNearestSymbolFrom<GlobalConstOp>(*this, symAttr);
   assert(globOp);
   cg.emitInvokeMacro(cg.getStringAttr("bind_layout"),
-                     {CodegenIdent<IdentKind::Const>(getLayoutAttr().getAttr()), getBuffer()});
+                     {CodegenIdent<IdentKind::Const>(symAttr.getAttr()), getBuffer()});
 }
 
 LogicalResult BindLayoutOp::verifySymbolUses(SymbolTableCollection& symbolTable) {
-  auto globalConstOp = symbolTable.lookupNearestSymbolFrom<GlobalConstOp>(*this, getLayoutAttr());
-  if (!globalConstOp)
-    return emitOpError() << "Cannot find global constant " << getLayoutAttr();
-  if (globalConstOp.getType() != getType())
-    return emitOpError() << "Global symbol " << getLayoutAttr() << " type "
-                         << globalConstOp.getType() << " does not match expected " << getType();
+  if (auto symAttr = llvm::dyn_cast<FlatSymbolRefAttr>(getLayoutAttr())) {
+    auto globalConstOp = symbolTable.lookupNearestSymbolFrom<GlobalConstOp>(*this, symAttr);
+    if (!globalConstOp)
+      return emitOpError() << "Cannot find global constant " << getLayoutAttr();
+    if (globalConstOp.getType() != getType())
+      return emitOpError() << "Global symbol " << getLayoutAttr() << " type "
+                           << globalConstOp.getType() << " does not match expected " << getType();
+  }
   return success();
 }
 

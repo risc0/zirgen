@@ -1132,6 +1132,11 @@ LogicalResult SetOp::verify() {
   if (getBuf().getType().cast<BufferType>().getKind() == BufferKind::Global) {
     return failure();
   }
+  // Make sure the element we're storing is the same type
+  auto bufType = getBuf().getType().getElement();
+  auto valType = getIn().getType();
+  if (bufType.getFieldK() < valType.getFieldK() || bufType.getFieldP() != valType.getFieldP())
+    return failure();
   return success();
 }
 
