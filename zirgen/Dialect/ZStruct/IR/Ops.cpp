@@ -861,42 +861,35 @@ LogicalResult StoreOp::evaluate(Interpreter& interp,
 LogicalResult BindLayoutOp::evaluate(Interpreter& interp,
                                      llvm::ArrayRef<zirgen::Zll::InterpVal*> outs,
                                      EvalAdaptor& adaptor) {
-  Attribute layoutAttr = getLayoutAttr();
-  if (auto symAttr = llvm::dyn_cast<SymbolRefAttr>(layoutAttr)) {
-    // Look up by symbol
-    auto glob = SymbolTable::lookupNearestSymbolFrom<GlobalConstOp>(*this, symAttr);
-    if (!glob) {
-      return emitError() << "Unable to find symbol " << getLayout() << "\n";
-    }
-    layoutAttr = glob.getConstant();
+  auto glob = SymbolTable::lookupNearestSymbolFrom<GlobalConstOp>(*this, getLayoutAttr());
+  if (!glob) {
+    return emitError() << "Unable to find symbol " << getLayout() << "\n";
   }
 
-  auto bufferName = adaptor.getBuffer()->getAttr<StringAttr>();
-  if (!bufferName)
+  auto getBufferOp = getBuffer().getDefiningOp<GetBufferOp>();
+  if (!getBufferOp) {
     return emitError() << "Missing buffer";
+  }
 
-  outs[0]->setAttr(BoundLayoutAttr::get(bufferName, layoutAttr));
-
+  outs[0]->setAttr(BoundLayoutAttr::get(getBufferOp.getNameAttr(), glob.getConstant()));
   return success();
 }
 
 void BindLayoutOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
-  auto symAttr = llvm::cast<FlatSymbolRefAttr>(getLayoutAttr());
-  auto globOp = SymbolTable::lookupNearestSymbolFrom<GlobalConstOp>(*this, symAttr);
+  auto globOp =
+      SymbolTable::lookupNearestSymbolFrom<GlobalConstOp>(*this, getLayoutAttr().getAttr());
   assert(globOp);
   cg.emitInvokeMacro(cg.getStringAttr("bind_layout"),
-                     {CodegenIdent<IdentKind::Const>(symAttr.getAttr()), getBuffer()});
+                     {CodegenIdent<IdentKind::Const>(getLayoutAttr().getAttr()), getBuffer()});
 }
 
 LogicalResult BindLayoutOp::verifySymbolUses(SymbolTableCollection& symbolTable) {
-  if (auto symAttr = llvm::dyn_cast<FlatSymbolRefAttr>(getLayoutAttr())) {
-    auto globalConstOp = symbolTable.lookupNearestSymbolFrom<GlobalConstOp>(*this, symAttr);
-    if (!globalConstOp)
-      return emitOpError() << "Cannot find global constant " << getLayoutAttr();
-    if (globalConstOp.getType() != getType())
-      return emitOpError() << "Global symbol " << getLayoutAttr() << " type "
-                           << globalConstOp.getType() << " does not match expected " << getType();
-  }
+  auto globalConstOp = symbolTable.lookupNearestSymbolFrom<GlobalConstOp>(*this, getLayoutAttr());
+  if (!globalConstOp)
+    return emitOpError() << "Cannot find global constant " << getLayoutAttr();
+  if (globalConstOp.getType() != getType())
+    return emitOpError() << "Global symbol " << getLayoutAttr() << " type "
+                         << globalConstOp.getType() << " does not match expected " << getType();
   return success();
 }
 
@@ -909,7 +902,11 @@ void GetBufferOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
 LogicalResult GetBufferOp::evaluate(Zll::Interpreter& interp,
                                     llvm::ArrayRef<zirgen::Zll::InterpVal*> outs,
                                     EvalAdaptor& adaptor) {
-  outs[0]->setAttr(adaptor.getNameAttr());
+  // TODO: Make the semantics be the same no matter what mode we're evaluating in.
+  if (interp.hasNamedBuf(adaptor.getName()))
+    outs[0]->setBuf(interp.getNamedBuf(adaptor.getName()));
+  else
+    outs[0]->setAttr(adaptor.getNameAttr());
   return success();
 }
 
