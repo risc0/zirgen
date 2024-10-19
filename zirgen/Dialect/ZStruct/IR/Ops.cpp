@@ -856,34 +856,23 @@ LogicalResult StoreOp::evaluate(Interpreter& interp,
     oldElem = newElem;
   }
 
-  llvm::errs() << "New buf state: ";
-  interleaveComma(buf, llvm::errs(), [&](auto elem) {
-    llvm::errs() << "[";
-    interleaveComma(elem, llvm::errs());
-    llvm::errs() << "]";
-  });
-  llvm::errs() << "\n";
   return success();
 }
 
 LogicalResult BindLayoutOp::evaluate(Interpreter& interp,
                                      llvm::ArrayRef<zirgen::Zll::InterpVal*> outs,
                                      EvalAdaptor& adaptor) {
-  Attribute layoutAttr = getLayoutAttr();
-  if (auto symAttr = llvm::dyn_cast<SymbolRefAttr>(layoutAttr)) {
-    // Look up by symbol
-    auto glob = SymbolTable::lookupNearestSymbolFrom<GlobalConstOp>(*this, symAttr);
-    if (!glob) {
-      return emitError() << "Unable to find symbol " << getLayout() << "\n";
-    }
-    layoutAttr = glob.getConstant();
+  auto glob = SymbolTable::lookupNearestSymbolFrom<GlobalConstOp>(*this, getLayoutAttr());
+  if (!glob) {
+    return emitError() << "Unable to find symbol " << getLayout() << "\n";
+   }
+
+  auto getBufferOp = getBuffer().getDefiningOp<GetBufferOp>();
+  if (!getBufferOp) {
+     return emitError() << "Missing buffer";
   }
 
-  auto bufferName = adaptor.getBuffer()->getAttr<StringAttr>();
-  if (!bufferName)
-    return emitError() << "Missing buffer";
-
-  outs[0]->setAttr(BoundLayoutAttr::get(bufferName, layoutAttr));
+  outs[0]->setAttr(BoundLayoutAttr::get(getBufferOp.getNameAttr(), glob.getConstant()));
 
   return success();
 }

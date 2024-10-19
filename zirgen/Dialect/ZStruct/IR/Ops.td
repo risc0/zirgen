@@ -203,9 +203,9 @@ def BindLayoutOp : ZStructOp<"bind_layout", [
     to the registers contained therein.
   }];
   let arguments = (ins
-      AnyAttrOf<[FlatSymbolRefAttr,StructAttr,RefAttr,ArrayAttr]>:$layout,
+      FlatSymbolRefAttr:$layout,
       Buffer:$buffer);
-  let assemblyFormat = [{ $layout `->` type($out) `=` $buffer `:` type($buffer) attr-dict }];
+  let assemblyFormat = [{ $layout `:` type($out) `=` $buffer `:` type($buffer) attr-dict }];
   let results = (outs IsLayoutType:$out);
   let builders = [
       OpBuilder<

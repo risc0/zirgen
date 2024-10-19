@@ -153,6 +153,7 @@ public:
   // A size of 0 means a global buffer that doesn't have separate values per cycle.
   void setNamedBuf(llvm::StringRef name, BufferRef val, size_t size = 0);
   BufferRef getNamedBuf(mlir::StringRef name);
+  bool hasNamedBuf(mlir::StringRef name);
   size_t getNamedBufSize(mlir::StringRef name);
 
   void setSilenceErrors(bool silence) { silenceErrors = silence; }
