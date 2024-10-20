@@ -38,6 +38,7 @@ static __attribute__((noinline)) FpExt {{fn}}(size_t cycle, size_t steps, FpExt*
 {{/funcs}}
 
 FpExt {{fn}}(size_t cycle, size_t steps, FpExt* poly_mix, Fp** args) {
+  //  std::cerr << "poly_fp cycle " << cycle << "/" << steps << "\n";
   size_t mask = steps - 1;
 {{#body}}
   {{.}}

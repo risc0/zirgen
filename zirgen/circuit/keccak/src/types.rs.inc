@@ -123,7 +123,10 @@ pub struct NondetRegStruct {
     pub _super: Val,
 }
 #[derive(Copy, Clone, Debug)]
-pub struct NondetMyArgumentStruct {}
+pub struct NondetMyArgumentStruct {
+    pub a: NondetRegStruct,
+    pub b: NondetRegStruct,
+}
 #[derive(Copy, Clone, Debug)]
 pub struct MyArgumentStruct {}
 #[derive(Copy, Clone, Debug)]

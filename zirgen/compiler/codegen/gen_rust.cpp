@@ -455,7 +455,7 @@ private:
           llvm::errs() << *op << "\n";
           throw std::runtime_error("invalid op");
         });
-    if (kPrintDebug && ctx.next > 1) {
+    if (kPrintDebug && ctx.next > 0) {
       lines.push_back(llvm::formatv("std::cerr << \"x{0} = \" << x{0} << \" ({1})\\n\";",
                                     ctx.next - 1,
                                     op->getName().getStringRef())

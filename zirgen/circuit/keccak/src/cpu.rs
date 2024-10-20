@@ -22,7 +22,7 @@ use rayon::iter::IntoParallelIterator;
 use rayon::prelude::*;
 use risc0_zirgen_dsl::{CycleContext, CycleRow, GlobalRow};
 use risc0_zkp::{
-    adapter::PolyFp,
+    adapter::{CircuitInfo, PolyFp},
     core::log2_ceil,
     field::baby_bear::{BabyBearElem, BabyBearExtElem},
     field::{map_pow, Elem, ExtElem, RootsOfUnity},
@@ -31,8 +31,8 @@ use risc0_zkp::{
 };
 use std::collections::VecDeque;
 
-pub const GLOBAL_OUT: usize = 0;
-pub const GLOBAL_MIX: usize = 1;
+pub const GLOBAL_MIX: usize = 0;
+pub const GLOBAL_OUT: usize = 1;
 
 pub struct CpuCircuitHal {
     mem: RefCell<Vec<Val>>,
@@ -210,7 +210,7 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
 
     fn eval_check(
         &self,
-        check: &CpuBuffer<Val>,
+        orig_check: &CpuBuffer<Val>,
         groups: &[&CpuBuffer<Val>],
         globals: &[&CpuBuffer<Val>],
         poly_mix: ExtVal,
@@ -219,6 +219,11 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
     ) {
         const EXP_PO2: usize = log2_ceil(INV_RATE);
         let domain = steps * INV_RATE;
+        use risc0_zkp::hal::Buffer;
+/*        eprintln!(
+            "steps: {steps:?} po2: {po2:?} check len: {:?}",
+            orig_check.size()
+        );*/
 
         let poly_mix_pows = dbg!(map_pow(dbg!(poly_mix), crate::info::POLY_MIX_POWERS));
 
@@ -227,7 +232,7 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
         // usage is within this function and each thread access will not overlap with
         // each other.
 
-        for (idx, grp) in groups.iter().enumerate() {
+/*        for (idx, grp) in groups.iter().enumerate() {
             use risc0_zkp::hal::Buffer;
             eprintln!(
                 "group[{idx}] is {} len {}",
@@ -243,23 +248,23 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
                 grp.as_slice().len(),
                 grp.as_slice()
             );
-        }
+        }*/
 
-        let code = groups[REGISTER_GROUP_CODE].as_slice();
+        let code = groups[dbg!(REGISTER_GROUP_CODE)].as_slice();
         let code = unsafe { std::slice::from_raw_parts(code.as_ptr(), code.len()) };
-        let data = groups[REGISTER_GROUP_DATA].as_slice();
+        let data = groups[dbg!(REGISTER_GROUP_DATA)].as_slice();
         let data = unsafe { std::slice::from_raw_parts(data.as_ptr(), data.len()) };
-        let accum = groups[REGISTER_GROUP_ACCUM].as_slice();
+        let accum = groups[dbg!(REGISTER_GROUP_ACCUM)].as_slice();
         let accum = unsafe { std::slice::from_raw_parts(accum.as_ptr(), accum.len()) };
         let mix = globals[GLOBAL_MIX].as_slice();
         let mix = unsafe { std::slice::from_raw_parts(mix.as_ptr(), mix.len()) };
         let out = globals[GLOBAL_OUT].as_slice();
         let out = unsafe { std::slice::from_raw_parts(out.as_ptr(), out.len()) };
-        let check = check.as_slice();
+        let check = orig_check.as_slice();
         let check = unsafe { std::slice::from_raw_parts(check.as_ptr(), check.len()) };
         let poly_mix_pows = poly_mix_pows.as_slice();
 
-        let args: &[&[BabyBearElem]] = &[&accum, &data, &mix, &out];
+        let args: &[&[BabyBearElem]] = &[&accum, &data, &out, &mix];
 
         (0..domain).into_iter().for_each(|cycle| {
             let tot = CircuitImpl.poly_fp(cycle, domain, poly_mix_pows, args);

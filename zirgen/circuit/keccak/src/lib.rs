@@ -20,14 +20,15 @@ mod taps;
 
 use anyhow::Result;
 use clap::Parser;
+use risc0_core::field::Elem;
 use risc0_zkp::hal::{Buffer, Hal};
 use risc0_zkp::{
-    adapter::{CircuitCoreDef, TapsProvider},
+    adapter::{CircuitCoreDef, CircuitInfo, TapsProvider, PROOF_SYSTEM_INFO},
     core::{digest::Digest, hash::HashSuite},
     field::baby_bear::BabyBear,
     taps::TapSet,
 };
-use std::path::PathBuf;
+use std::{path::PathBuf, rc::Rc};
 
 risc0_zirgen_dsl::zirgen_inhibit_warnings! {
 
@@ -103,10 +104,30 @@ pub fn prove<
     //circuit_hal.step_accum(TOT_CYCLES, &accum, &data, &global)?;
 
     let mut prover = risc0_zkp::prove::Prover::new(hal, &*crate::taps::TAPSET);
+    // At the start of the protocol, seed the Fiat-Shamir transcript with context information
+    // about the proof system and circuit.
+    let hashfn = Rc::clone(&hal.get_hash_suite().hashfn);
+    prover
+        .iop()
+        .commit(&hashfn.hash_elem_slice(&PROOF_SYSTEM_INFO.encode()));
+    prover
+        .iop()
+        .commit(&hashfn.hash_elem_slice(&CircuitImpl::CIRCUIT_INFO.encode()));
     prover.set_po2(PO2);
 
-    global.view(|out_slice| prover.iop().write_field_elem_slice(out_slice));
-    prover.iop().write_u32_slice(&[/*PO2=*/ PO2 as u32]);
+    // Concat io (i.e. globals) and po2 into a vector.
+    global.view(|out_slice| {
+        let vec: Vec<_> = out_slice
+            .iter()
+            .chain(Elem::from_u32_slice(&[PO2 as u32]))
+            .copied()
+            .collect();
+
+        prover
+            .iop()
+            .commit(&hal.get_hash_suite().hashfn.hash_elem_slice(&vec));
+        prover.iop().write_field_elem_slice(vec.as_slice());
+    });
 
     prover.commit_group(keccak_circuit::REGISTER_GROUP_CODE, &code);
     prover.commit_group(keccak_circuit::REGISTER_GROUP_DATA, &data);

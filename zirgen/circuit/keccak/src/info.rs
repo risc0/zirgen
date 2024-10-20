@@ -30,7 +30,7 @@ impl CircuitInfo for CircuitImpl {
 }
 
 #[allow(dead_code)]
-pub const NUM_POLY_MIX_POWERS: usize = 4;
+pub const NUM_POLY_MIX_POWERS: usize = 6;
 
 #[allow(dead_code)]
-pub const POLY_MIX_POWERS: &[usize] = &[0, 1, 2, 3];
+pub const POLY_MIX_POWERS: &[usize] = &[0, 1, 2, 4, 6, 7];

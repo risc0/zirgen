@@ -35,6 +35,8 @@ struct NondetRegStruct {
   Val _super;
 };
 struct NondetMyArgumentStruct {
+  NondetRegStruct a;
+  NondetRegStruct b;
 };
 struct MyArgumentStruct {
 };
