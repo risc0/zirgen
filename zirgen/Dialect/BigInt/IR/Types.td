@@ -25,7 +25,7 @@ def BigInt : BigIntType<"BigInt", "bigint", [
    DeclareTypeInterfaceMethods<CodegenTypeInterface, ["getTypeName", "allowDuplicateTypeNames", "emitTypeDefinition"]>,
    CodegenNeedsCloneType
 ]> {
-  let summary = "A big interger value represented as a polynomial";
+  let summary = "A big integer value represented as a polynomial";
   let parameters = (ins
     "size_t": $coeffs,  // Number of polynomial coefficents
     "size_t": $maxPos,  // Maximum positive coefficient value
@@ -33,9 +33,29 @@ def BigInt : BigIntType<"BigInt", "bigint", [
     "size_t": $minBits  // If minBits == 0, no constraint, otherwise N >= 2^(minBits - 1)
   );
   let assemblyFormat = "`<` $coeffs `,` $maxPos `,` $maxNeg `,` $minBits `>`";
+  let genVerifyDecl = 1;
   let extraClassDeclaration = [{
-    size_t getMaxBits() {
-      size_t extraBits = risc0::log2Ceil(getMaxPos() / (1 << kBitsPerCoeff));
+    size_t getMaxPosBits() {
+      // Because 2^k requires k+1 bits to represent, we add 1 to getMaxPos before log2Ceil
+      size_t extraBits = risc0::log2Ceil(getMaxPos() + 1);
+      if (extraBits <= kBitsPerCoeff) {
+        // When maxPos fits in a coeff, no extra bits are needed
+        extraBits = 0;
+      } else {
+        extraBits -= kBitsPerCoeff;
+        // Carries can sometimes lead to 1 extra bit so add 1
+        // Specifically, we know that the max value is
+        //   getMaxPos() * sum over i in [0, getCoeffs()) of (2^kBitsPerCoeff)^i
+        // which is bounded above by
+        //   getMaxPos() * 2^((kBitsPerCoeff * (getCoeffs() - 1)) + 1)
+        // which has bitwidth maxPosBitwidth + kBitsPerCoeff * (getCoeffs() - 1) + 1 which is
+        //   kBitsPerCoeff * getCoeffs + extraBits
+        // where
+        //   extraBits = maxPosBitwidth - kBitsPerCoeff + 1
+        if (getCoeffs() > 1) {
+          extraBits += 1;
+        }
+      }
       return kBitsPerCoeff * getCoeffs() + extraBits;
     }
     size_t getCarryOffset() {

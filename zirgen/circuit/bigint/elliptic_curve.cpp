@@ -88,7 +88,7 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   x_diff = builder.create<BigInt::AddOp>(
       loc, x_diff, prime); // Quot/Rem needs nonnegative inputs, so enforce positivity
 
-  Value x_diff_inv = builder.create<BigInt::NondetInvModOp>(loc, x_diff, prime);
+  Value x_diff_inv = builder.create<BigInt::NondetInvOp>(loc, x_diff, prime);
   // Enforce that xDiffInv is the inverse of x_diff
   Value x_diff_inv_check = builder.create<BigInt::MulOp>(loc, x_diff, x_diff_inv);
   Value x_diff_inv_check_quot = builder.create<BigInt::NondetQuotOp>(loc, x_diff_inv_check, prime);
@@ -121,7 +121,6 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
       loc, xR, prime); // Quot/Rem needs nonnegative inputs, so enforce positivity
   xR = builder.create<BigInt::AddOp>(
       loc, xR, prime); // Quot/Rem needs nonnegative inputs, so enforce positivity
-  Value xR_unreduced = xR;
   Value k_x = builder.create<BigInt::NondetQuotOp>(loc, xR, prime);
   xR = builder.create<BigInt::NondetRemOp>(loc, xR, prime);
 
@@ -165,8 +164,10 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
 AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt) {
   // This assumes `pt` is actually on the curve
   // This assumption isn't checked here, so other code must ensure it's met
-  // This algorithm doesn't work if `scalar` is a multiple of `pt`'s order
-  // This doesn't need a special check, as it always computes a P + -P, causing an EQZ failure
+  // This algorithm doesn't work if `scalar` is a multiple of `pt`'s order or negative
+  // These don't need a special check:
+  // Negatives always fail because this checks that scalar = 2q + r for q, r non-negative.
+  // Multiples of `pt`s order always fail as they always computes a P + -P, causing an EQZ failure
   // Because of how this function initializes based on `pt` in the double-and-add algorithm, and
   // because of the lack of branching in the recursion circuit, there will be certain scalars that
   // cannot be used with this mul (i.e., they'll give an EQZ error even though they are well-defined
@@ -196,7 +197,7 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt) 
   Value subtract_pt;
   Value dont_subtract_pt;
 
-  for (size_t it = 0; it < llvm::cast<BigIntType>(scalar.getType()).getMaxBits(); it++) {
+  for (size_t it = 0; it < llvm::cast<BigIntType>(scalar.getType()).getMaxPosBits(); it++) {
     // Compute the remainder of scale mod 2
     // We need exactly 0 or 1, not something congruent to them mod 2
     // Therefore, directly use the nondets, and check not just that the q * d + r = n but also that
@@ -298,7 +299,7 @@ AffinePt doub(OpBuilder builder, Location loc, const AffinePt& pt) {
 
   Value two_y = builder.create<BigInt::AddOp>(loc, pt.y(), pt.y());
 
-  Value two_y_inv = builder.create<BigInt::NondetInvModOp>(loc, two_y, prime);
+  Value two_y_inv = builder.create<BigInt::NondetInvOp>(loc, two_y, prime);
 
   // Normalize to not overflow coefficient size
   // This method is expensive, adding ~25k cycles to secp256k1 EC Mul
@@ -421,7 +422,6 @@ void makeECNegateTest(mlir::OpBuilder builder,
                       APInt prime,
                       APInt curve_a,
                       APInt curve_b) {
-  auto order_bits = bits;
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 2, true);
@@ -541,7 +541,6 @@ void makeECNegateFreelyTest(mlir::OpBuilder builder,
                             APInt prime,
                             APInt curve_a,
                             APInt curve_b) {
-  auto order_bits = bits;
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);

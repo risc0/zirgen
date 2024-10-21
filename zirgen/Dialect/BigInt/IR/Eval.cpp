@@ -110,7 +110,7 @@ BytePoly nondetRem(const BytePoly& lhs, const BytePoly& rhs, size_t coeffs) {
   return fromAPInt(rem, coeffs);
 }
 
-BytePoly nondetInvMod(const BytePoly& lhs, const BytePoly& rhs, size_t coeffs) {
+BytePoly nondetInv(const BytePoly& lhs, const BytePoly& rhs, size_t coeffs) {
   // Uses the formula n^(p-2) * n = 1  (mod p) to invert `lhs` (mod `rhs`)
   // (via the square and multiply technique)
   auto lhsInt = toAPInt(lhs);
@@ -226,9 +226,9 @@ EvalOutput eval(func::FuncOp inFunc, ArrayRef<APInt> witnessValues) {
           polys[op.getOut()] = poly;
           ret.privateWitness.push_back(poly);
         })
-        .Case<NondetInvModOp>([&](auto op) {
+        .Case<NondetInvOp>([&](auto op) {
           uint32_t coeffs = op.getOut().getType().getCoeffs();
-          auto poly = nondetInvMod(polys[op.getLhs()], polys[op.getRhs()], coeffs);
+          auto poly = nondetInv(polys[op.getLhs()], polys[op.getRhs()], coeffs);
           polys[op.getOut()] = poly;
           ret.privateWitness.push_back(poly);
         })

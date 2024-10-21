@@ -82,6 +82,7 @@ cc_library(
         "Dialect.cpp",
         "Eval.cpp",
         "Ops.cpp",
+        "Types.cpp",
     ],
     hdrs = [
         "BigInt.h",
