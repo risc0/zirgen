@@ -247,6 +247,6 @@
 // CHECK: %59403 = bigint.def 64, 408464, false -> <8, 255, 0, 0>
 
 // Ensure the final constraint matches expectations.
-// CHECK: %2617387 = bigint.mul %2617380 : <32, 255, 0, 0>, %2617383 : <32, 255, 0, 0> -> <64, 2080800, 0, 0>
-// CHECK: bigint.eqz %2617387 : <64, 2080800, 0, 0>
+// CHECK: %2617387 = bigint.mul %2617380 : <32, 510, 0, 0>, %2617383 : <32, 255, 0, 0> -> <63, 4161600, 0, 0>
+// CHECK: bigint.eqz %2617387 : <63, 4161600, 0, 0>
 

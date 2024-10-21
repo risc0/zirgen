@@ -72,5 +72,5 @@
 // CHECK: %67 = bigint.def 64, 50, false -> <8, 255, 0, 0>
 // CHECK: %68 = bigint.def 64, 51, false -> <8, 255, 0, 0>
 // CHECK: %69 = bigint.def 64, 52, false -> <8, 255, 0, 0>
-// CHECK: bigint.eqz %1707 : <64, 2080800, 0, 0>
+// CHECK: bigint.eqz %1707 : <63, 24969600, 0, 0>
 

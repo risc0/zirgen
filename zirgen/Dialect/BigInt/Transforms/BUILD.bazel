@@ -32,7 +32,7 @@ gentbl_cc_library(
 cc_library(
     name = "Transforms",
     srcs = [
-        "LowerModularInv.cpp",
+        "LowerInv.cpp",
         "LowerReduce.cpp",
         "LowerZll.cpp",
         "PassDetail.h",
