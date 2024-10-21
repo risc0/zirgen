@@ -167,8 +167,14 @@ where
     Ok(output)
 }
 
-pub fn is_nonzero(val: impl Elem) -> bool {
-    val.to_u32_words().into_iter().any(|v| v != 0)
+pub fn is_nonzero(val: impl Elem + From<u32>) -> bool {
+    if val == 0u32.into() {
+        false
+    } else if val == 1u32.into() {
+        true
+    } else {
+        panic!("Expected one or zero, got {val:?}");
+    }
 }
 
 pub fn inv<E: Elem>(v: E) -> Result<E> {
@@ -182,7 +188,10 @@ pub fn neg<E: Elem>(v: E) -> Result<E> {
 pub fn bit_and<E: Elem + Into<u32> + From<u32>>(lhs: E, rhs: E) -> Result<E> {
     let lhs = lhs.into();
     let rhs = rhs.into();
-    Ok(E::from(lhs & rhs))
+    let val = lhs & rhs;
+
+    tracing::trace!("bit and {lhs:#x} & {rhs:#x} = {val:#x}");
+    Ok(E::from(val))
 }
 
 pub fn in_range<E: Elem + Into<u32>>(low: E, mid: E, high: E) -> Result<E> {

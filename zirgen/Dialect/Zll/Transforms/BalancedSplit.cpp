@@ -131,8 +131,8 @@ bool Splitter::balance() {
 
   size_t opFromPart = *getPartIndex(bestToMove);
   size_t opToPart = 1 - opFromPart;
-  llvm::errs() << "moving " << *bestToMove << " from " << opFromPart << " to " << opToPart
-               << " for  great " << bestChange << "\n";
+  //  llvm::errs() << "moving " << *bestToMove << " from " << opFromPart << " to " << opToPart
+  //               << " for  great " << bestChange << "\n";
 
   assert(parts[opFromPart].erase(bestToMove));
   assert(parts[opToPart].insert(bestToMove).second);

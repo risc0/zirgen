@@ -16,6 +16,7 @@
 
 #include "mlir/Debug/CLOptionsSetup.h"
 #include "mlir/Dialect/Func/Extensions/InlinerExtension.h"
+#include "mlir/Transforms/LocationSnapshot.h"
 #include "mlir/Transforms/Passes.h"
 #include "risc0/core/elf.h"
 #include "risc0/core/util.h"
@@ -57,6 +58,8 @@ void registerZirgenDialects(mlir::DialectRegistry& registry) {
 void addAccumAndGlobalPasses(mlir::PassManager& pm) {
   //  pm.addPass(mlir::createPrintIRPass());
   pm.addPass(zirgen::dsl::createGenerateAccumPass());
+  pm.addPass(mlir::createLocationSnapshotPass({}, "/tmp/v2/gen_accum_1.ir", "accum"));
+  //  pm.addPass(mlir::createPrintIRPass());
   pm.addPass(zirgen::dsl::createGenerateGlobalsPass());
   pm.addPass(mlir::createSymbolDCEPass());
   pm.addPass(mlir::createCanonicalizerPass());

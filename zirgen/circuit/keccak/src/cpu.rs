@@ -78,12 +78,15 @@ impl<'a> CpuExecContext<'a> {
 
     pub fn simple_memory_peek(&self, addr: Val) -> Result<Val> {
         let addr = u32::from(addr) as usize;
-        self.mem
+        let val = self
+            .mem
             .borrow()
             .get(addr)
             .as_deref()
             .ok_or(anyhow!("invalid address {addr}"))
-            .copied()
+            .copied();
+        tracing::trace!("Peeking {addr:?} -> {val:?}");
+        val
     }
 
     pub fn simple_memory_poke(&self, addr: Val, val: Val) -> Result<()> {
@@ -92,13 +95,19 @@ impl<'a> CpuExecContext<'a> {
         if mem.len() <= addr {
             mem.resize(addr + 1, Val::ZERO);
         }
+        tracing::trace!("Poking {addr:?} from {:?} to {val:?}", mem[addr]);
         mem[addr] = val;
         Ok(())
     }
 
     pub fn configure_input(&self, elems_per_word: Val) -> Result<()> {
+        let elems_per_word = u32::from(elems_per_word) as usize;
+        let mut stored = self.elems_per_word.borrow_mut();
+        if *stored != elems_per_word {
+            tracing::trace!("Configuring {elems_per_word:?} elements per word");
+        }
         assert!(self.input_elems.borrow().is_empty());
-        (*self.elems_per_word.borrow_mut()) = u32::from(elems_per_word) as usize;
+        *stored = elems_per_word;
         Ok(())
     }
     pub fn read_input(&self) -> Result<Val> {
@@ -107,13 +116,16 @@ impl<'a> CpuExecContext<'a> {
             let word = self.input.borrow_mut().pop_front().expect("Input underrun");
             match *self.elems_per_word.borrow() {
                 1 => elems.push_back(Val::from(word)),
-                2 => elems.extend([word & 0xFF, word >> 16].map(Val::new)),
+                2 => elems.extend([word & 0xFFFF, word >> 16].map(Val::new)),
                 4 => elems.extend(word.to_le_bytes().map(u32::from).map(Val::new)),
                 elems_per_word @ _ => panic!("Unknown input configuration {}", elems_per_word),
             }
+            tracing::trace!("Refilling input buffer from 0x{word:x} -> {elems:?}");
         }
 
-        Ok(elems.pop_front().expect("Input underrun"))
+        let val = elems.pop_front().expect("Input underrun");
+        tracing::trace!("Read returns {val:?}");
+        Ok(val)
     }
     pub fn log(&self, message: &str, x: impl AsRef<[Val]>) -> Result<()> {
         risc0_zirgen_dsl::codegen::default_log(message, x.as_ref())
@@ -146,6 +158,7 @@ impl<'a> keccak_circuit::CircuitHal<'a, CpuHal<CircuitField>> for CpuCircuitHal 
         let global = GlobalRow { buf: &global };
 
         for cycle in 0..tot_cycles {
+            tracing::trace!("exec {cycle}/{tot_cycles}");
             let exec_context = CpuExecContext {
                 mem: &self.mem,
                 cycle,
@@ -157,6 +170,8 @@ impl<'a> keccak_circuit::CircuitHal<'a, CpuHal<CircuitField>> for CpuCircuitHal 
 
             keccak_circuit::step_top(&exec_context, &data, &global)?;
         }
+        tracing::trace!("exec complete");
+
         Ok(())
     }
 
@@ -180,6 +195,7 @@ impl<'a> keccak_circuit::CircuitHal<'a, CpuHal<CircuitField>> for CpuCircuitHal 
         let mix = GlobalRow { buf: &mix };
 
         for cycle in 0..tot_cycles {
+            tracing::trace!("accum {cycle}/{tot_cycles}");
             let accum = &orig_accum.as_slice_sync();
             let accum = CycleRow { buf: accum };
             let exec_context = CpuExecContext {
@@ -220,26 +236,18 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
         const EXP_PO2: usize = log2_ceil(INV_RATE);
         let domain = steps * INV_RATE;
         use risc0_zkp::hal::Buffer;
-/*        eprintln!(
+        /*        eprintln!(
             "steps: {steps:?} po2: {po2:?} check len: {:?}",
             orig_check.size()
         );*/
 
-        let poly_mix_pows = dbg!(map_pow(dbg!(poly_mix), crate::info::POLY_MIX_POWERS));
+        let poly_mix_pows = map_pow(dbg!(poly_mix), crate::info::POLY_MIX_POWERS);
 
         // SAFETY: Convert a borrow of a cell into a raw const slice so that we can pass
         // it over the thread boundary. This should be safe because the scope of the
         // usage is within this function and each thread access will not overlap with
         // each other.
 
-/*        for (idx, grp) in groups.iter().enumerate() {
-            use risc0_zkp::hal::Buffer;
-            eprintln!(
-                "group[{idx}] is {} len {}",
-                grp.name(),
-                grp.as_slice().len()
-            );
-        }
         for (idx, grp) in globals.iter().enumerate() {
             use risc0_zkp::hal::Buffer;
             eprintln!(
@@ -248,7 +256,7 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
                 grp.as_slice().len(),
                 grp.as_slice()
             );
-        }*/
+        }
 
         let code = groups[dbg!(REGISTER_GROUP_CODE)].as_slice();
         let code = unsafe { std::slice::from_raw_parts(code.as_ptr(), code.len()) };

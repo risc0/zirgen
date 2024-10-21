@@ -811,7 +811,7 @@ LogicalResult LoadOp::evaluate(Interpreter& interp,
   llvm::append_range(
       val, llvm::map_range(buf.slice(totOffset, refK), [&](auto elem) { return elem[0]; }));
   if (isInvalid(val)) {
-    if (!getOperation()->hasAttr("unchecked")) {
+    if (interp.getTotCycles() || !getOperation()->hasAttr("unchecked")) {
 
       auto diag = emitError() << "LoadOp: Read before write " << bufName << "[" << offset << "]@"
                               << distance;

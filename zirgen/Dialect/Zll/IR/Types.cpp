@@ -96,7 +96,7 @@ VariadicType::getTypeName(codegen::CodegenEmitter& cg) const {
   std::string name;
   switch (cg.getLanguageKind()) {
   case codegen::LanguageKind::Rust:
-    name = "[" + cg.getTypeName(getElement()).str() + "]";
+    name = "&[" + cg.getTypeName(getElement()).str() + "]";
     return cg.getStringAttr(name);
   case codegen::LanguageKind::Cpp:
     name = "std::initializer_list<" + cg.getTypeName(getElement()).str() + ">";

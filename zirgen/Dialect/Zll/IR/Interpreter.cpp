@@ -195,19 +195,15 @@ size_t Interpreter::getTotCycles() {
 }
 
 size_t Interpreter::getBackCycle(size_t backDistance) {
-  if (totCycles) {
-    ssize_t cycle = getCycle();
-    cycle -= backDistance;
-    while (cycle < 0)
-      cycle += totCycles;
-    return cycle;
-  } else {
-    if (backDistance > getCycle()) {
-      llvm::errs() << "Back distance " << backDistance << " too far, with no totCycles specified\n";
-      abort();
-    }
-    return getCycle() - backDistance;
+  size_t cycle = getCycle();
+  if (totCycles && cycle < backDistance) {
+    cycle += totCycles;
   }
+  if (backDistance > cycle) {
+    llvm::errs() << "Back distance " << backDistance << " too far, with no totCycles specified\n";
+    abort();
+  }
+  return cycle - backDistance;
 }
 
 const IHashSuite& Interpreter::getHashSuite() {

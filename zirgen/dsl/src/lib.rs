@@ -49,14 +49,22 @@ pub struct GlobalRow<'a, E: Default + Clone + Copy> {
     pub buf: &'a SyncSlice<'a, E>
 }
 
-impl<'a, E: Copy + Clone + Default> BufferRow for GlobalRow<'a, E> {
+impl<'a, E: Copy + Clone + Default + Elem> BufferRow for GlobalRow<'a, E> {
     type ValType = E;
 
     fn load(&self, _ctx: &impl CycleContext, offset: usize, back: usize) -> E {
         assert_eq!(back, 0);
-        self.buf.get(offset)
+        let val = self.buf.get(offset);
+        tracing::trace!("Load {val:?} from global offset {offset}");
+        debug_assert!(val.is_valid(), "Global offset {offset}");
+        val
     }
     fn store(&self, _ctx: &impl CycleContext, offset: usize, val: E) {
+        if cfg!(debug_assertions) {
+            let old_val = self.buf.get(offset);
+            assert!(!old_val.is_valid() || old_val == val, "Global offset {offset}, Old value: {old_val:?}, New value: {val:?}");
+        }
+        tracing::trace!("Store {val:?} to global offset {offset}");
         self.buf.set(offset, val)
     }
 }
@@ -66,14 +74,23 @@ pub struct CycleRow<'a, E: Default + Clone + Copy> {
     pub buf: &'a SyncSlice<'a, E>,
 }
 
-impl<'a, E: Copy + Clone + Default> BufferRow for CycleRow<'a, E> {
+impl<'a, E: Copy + Clone + Default + Elem> BufferRow for CycleRow<'a, E> {
     type ValType = E;
 
     fn load(&self, ctx: &impl CycleContext, offset: usize, back: usize) -> E {
-        self.buf.get(ctx.offset_this_cycle(offset, back))
+        let adj_offset = ctx.offset_this_cycle(offset, back);
+        let val = self.buf.get(adj_offset);
+//        debug_assert!(val.is_valid(), "Offset {offset} back {back}, adjusted offset in buffer: {adj_offset}");
+        tracing::trace!("Load {val:?} from offset {offset} back {back}");
+        val
     }
     fn store(&self, ctx: &impl CycleContext, offset: usize, val: E) {
-        self.buf.set(ctx.offset_this_cycle(offset, 0) , val)
+        if cfg!(debug_assertions) {
+            let old_val = self.buf.get(ctx.offset_this_cycle(offset, 0));
+            assert!(!old_val.is_valid() || old_val == val , "Old value: {old_val:?}, New value: {val:?}, offset: {offset}");
+        }
+        tracing::trace!("Store {val:?} to offset {offset}");
+        self.buf.set(ctx.offset_this_cycle(offset, 0), val)
     }
 
 }
@@ -126,15 +143,25 @@ impl<'a, L, B: BufferRow> BoundLayout<'a, L, B> {
 }
 
 
-impl<'a, B: BufferRow> BoundLayout<'a, Reg, B> {
+impl<'a, B: BufferRow> BoundLayout<'a, Reg, B>
+where B::ValType: Elem{
     pub fn load_ext<E: ExtElem<SubElem = B::ValType>>(&self,
         ctx: &impl CycleContext,
         back: usize
     ) -> E {
-        E::from_subelems(
-            (0..E::EXT_SIZE)
-                .map(|idx| self.buf.load(ctx, self.layout.offset + idx, back)),
-        )
+        let subelems = (0..E::EXT_SIZE).map(|idx| self.buf.load(ctx, self.layout.offset + idx, back));
+
+        if subelems.clone().any(|elem: E::SubElem| !elem.is_valid()) {
+            E::INVALID
+        } else {
+            E::from_subelems(subelems)
+        }
+    }
+    pub fn load_unchecked_ext<E: ExtElem<SubElem = B::ValType>>(&self,
+        ctx: &impl CycleContext,
+        back: usize
+    ) -> E {
+        self.load_ext::<E>(ctx, back).valid_or_zero()
     }
     pub fn store_ext<E: ExtElem<SubElem = B::ValType>>(&self,ctx: &impl CycleContext, val: E) {
         for (idx, elem) in val.subelems().into_iter().enumerate() {
@@ -146,6 +173,9 @@ impl<'a, B: BufferRow> BoundLayout<'a, Reg, B> {
 impl<'a, E: Elem,  B: BufferRow<ValType=E> >BoundLayout<'a, Reg,  B> {
     pub fn load(&self, ctx: &impl CycleContext, back: usize) -> E {
         self.buf.load(ctx, self.layout.offset, back)
+    }
+    pub fn load_unchecked(&self, ctx: &impl CycleContext, back: usize) -> E {
+        self.load(ctx, back).valid_or_zero()
     }
     pub fn store(&self, ctx: &impl CycleContext, val: E) {
         self.buf.store(ctx, self.layout.offset, val);

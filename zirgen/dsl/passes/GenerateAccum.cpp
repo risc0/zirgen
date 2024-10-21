@@ -87,7 +87,9 @@ public:
     Value distance =
         builder.create<arith::ConstantOp>(currentLoc(ctx), builder.getIndexType(), distanceAttr);
     Value lastLayout = getAccumColumnLayout(accumLayoutType.getSize() - 1);
-    this->oldT = builder.create<ZStruct::LoadOp>(currentLoc(ctx), lastLayout, distance);
+    auto loadPrevOp = builder.create<ZStruct::LoadOp>(currentLoc(ctx), lastLayout, distance);
+    loadPrevOp->setAttr("unchecked", builder.getUnitAttr());
+    this->oldT = loadPrevOp;
     this->t = oldT;
 
     this->accCount = 0;
@@ -461,7 +463,9 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
                                               builder.getIndexAttr(accumLayoutType.getSize() - 1));
         Value lastLayout =
             builder.create<SubscriptOp>(currentLoc(ctx), accum.getLayout(), indexValue);
-        Value prevVal = builder.create<LoadOp>(currentLoc(ctx), lastLayout, distance);
+        auto prevLoadOp = builder.create<LoadOp>(currentLoc(ctx), lastLayout, distance);
+        prevLoadOp->setAttr("unchecked", builder.getUnitAttr());
+        Value prevVal = prevLoadOp;
         builder.create<StoreOp>(currentLoc(ctx), lastLayout, prevVal);
       }
 

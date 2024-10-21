@@ -170,6 +170,11 @@ public:
       emitOperation(&op, ctx, lines, /*depth=*/0, "Fp", FuncKind::PolyFp, &mixPows);
     }
     Value retVal = func.front().getTerminator()->getOperand(0);
+    if (kPrintDebug)
+      lines.push_back(
+          llvm::formatv("if (!(cycle&3)) std::cerr << \"Returning {0} \" << {0} << \"\\n\";",
+                        ctx.use(retVal))
+              .str());
     lines.push_back(llvm::formatv("return {0};", ctx.use(retVal)).str());
 
     tmpl.render(
@@ -293,10 +298,7 @@ private:
       }
     }
     std::string indent(depth * 2, ' ');
-    std::string locStr;
-    llvm::raw_string_ostream locStrStream(locStr);
-    op->getLoc()->print(locStrStream);
-    lines.push_back(indent + "// " + locStrStream.str());
+    lines.push_back(indent + "// " + getLocString(op->getLoc()));
     mlir::TypeSwitch<Operation*>(op)
         .Case<ConstOp>([&](ConstOp op) {
           lines.push_back(indent + llvm::formatv("constexpr {0} {1}({2});",
@@ -434,6 +436,12 @@ private:
                           llvm::formatv("FpExt {0} = FpExt(0);", ctx.def(op.getOut())).str());
         })
         .Case<AndEqzOp>([&](AndEqzOp op) {
+          if (kPrintDebug)
+            lines.push_back(
+                llvm::formatv("if (!(cycle&3) && ({0} != Fp(0))) std::cerr << (cycle/4) << \": eqz "
+                              "{0}: \" << {0} << \"\\n\";",
+                              ctx.use(op.getVal()))
+                    .str());
           lines.push_back(indent + llvm::formatv("FpExt {0} = {1} + {2} * poly_mix[{3}];",
                                                  ctx.def(op.getOut()),
                                                  ctx.use(op->getOperand(0)),
@@ -442,6 +450,14 @@ private:
                                        .str());
         })
         .Case<AndCondOp>([&](AndCondOp op) {
+          if (kPrintDebug)
+            lines.push_back(
+                llvm::formatv(
+                    "if (!(cycle&3) && ({0} != 0) && ({1} != FpExt(0))) std::cerr << (cycle/4) << "
+                    "\": cond {0}: \" << {0} << \" inner {1}: \" << {1} << \"\\n\";",
+                    ctx.use(op.getCond()),
+                    ctx.use(op.getInner()))
+                    .str());
           lines.push_back(indent + llvm::formatv("FpExt {0} = {1} + {2} * {3} * poly_mix[{4}];",
                                                  ctx.def(op.getOut()),
                                                  ctx.use(op->getOperand(0)),
@@ -456,10 +472,11 @@ private:
           throw std::runtime_error("invalid op");
         });
     if (kPrintDebug && ctx.next > 0) {
-      lines.push_back(llvm::formatv("std::cerr << \"x{0} = \" << x{0} << \" ({1})\\n\";",
-                                    ctx.next - 1,
-                                    op->getName().getStringRef())
-                          .str());
+      lines.push_back(
+          llvm::formatv("if (cycle == 0) std::cerr << \"x{0} = \" << x{0} << \" ({1})\\n\";",
+                        ctx.next - 1,
+                        op->getName().getStringRef())
+              .str());
     }
   }
 

@@ -137,7 +137,7 @@ void emitPoly(ModuleOp mod, StringRef circuitName) {
   {
     auto& opm = pm.nest<mlir::func::FuncOp>();
     opm.addPass(zirgen::ZStruct::createInlineLayoutPass());
-    pm.addPass(mlir::createPrintIRPass());
+    //    pm.addPass(mlir::createPrintIRPass());
     opm.addPass(zirgen::ZStruct::createBuffersToArgsPass());
     opm.addPass(Zll::createMakePolynomialPass());
     opm.addPass(createCanonicalizerPass());
@@ -214,12 +214,16 @@ int main(int argc, char* argv[]) {
   pm.addPass(zirgen::dsl::createFieldDCEPass());
   pm.addPass(mlir::createCanonicalizerPass());
   pm.addPass(mlir::createCSEPass());
+  //  pm.addPass(mlir::createLocationSnapshotPass({}, "/tmp/v2/gen_accum_2.ir"));
   zirgen::addTypingPasses(pm);
+  //  pm.addPass(mlir::createLocationSnapshotPass({}, "/tmp/v2/gen_accum_3.ir"));
 
   pm.addPass(zirgen::dsl::createGenerateCheckPass());
   pm.addPass(zirgen::dsl::createInlinePurePass());
   pm.addPass(zirgen::dsl::createHoistInvariantsPass());
-  //  pm.addPass(zirgen::dsl::createGenerateTapsPass());
+
+  //  pm.addPass(mlir::createLocationSnapshotPass({}, "/tmp/v2/gen_accum_4.ir"));
+  // pm.addPass(zirgen::dsl::createGenerateTapsPass());
   auto& checkPasses = pm.nest<zirgen::Zhlt::CheckFuncOp>();
   checkPasses.addPass(zirgen::ZStruct::createInlineLayoutPass());
   constexpr bool kMultiplyIf = false;
@@ -291,8 +295,6 @@ int main(int argc, char* argv[]) {
     stepFuncs.print(llvm::errs());
     return 1;
   }
-
-  typedModule->print(llvm::errs());
 
   auto rustOpts = codegen::getRustCodegenOpts();
   CodegenEmitter rustCg(rustOpts, &context);

@@ -52,9 +52,10 @@ void addRustSyntax(codegen::CodegenOptions& opts) {
     auto elemType = op.getRef().getType().getElement();
 
     cg << op.getRef() << ".load";
-    if (elemType.getExtended()) {
+    if (op->getAttr("unchecked"))
+      cg << "_unchecked";
+    if (elemType.getExtended())
       cg << "_ext::<ExtVal>";
-    }
     cg << "(ctx, " << op.getDistance() << ")";
   });
 

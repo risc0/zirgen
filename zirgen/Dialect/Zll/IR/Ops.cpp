@@ -422,7 +422,11 @@ LogicalResult BitAndOp::evaluate(Interpreter& interp,
                                  llvm::ArrayRef<zirgen::Zll::InterpVal*> outs,
                                  EvalAdaptor& adaptor,
                                  ExtensionField& field) {
-  outs[0]->setVal(field.BitAnd(adaptor.getLhs()->getVal(), adaptor.getRhs()->getVal()));
+  auto lhs = adaptor.getLhs()->getVal();
+  auto rhs = adaptor.getRhs()->getVal();
+  auto val = field.BitAnd(lhs, rhs);
+  outs[0]->setVal(val);
+  llvm::errs() << "bit and " << lhs[0] << " & " << rhs[0] << " = " << val[0] << "\n";
   return success();
 }
 

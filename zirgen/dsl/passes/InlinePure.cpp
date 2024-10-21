@@ -46,7 +46,7 @@ struct InlinePurePass : public InlinePureBase<InlinePurePass> {
     patterns.insert<NonLayout<ZStruct::MapOp, ZStruct::UnrollMaps>>(ctx);
     patterns.insert<NonLayout<ZStruct::ReduceOp, ZStruct::UnrollReduces>>(ctx);
     patterns.insert<NonLayout<CallOpInterface, InlineCalls>>(ctx);
-    patterns.insert<NonLayout<ZStruct::SwitchOp, ZStruct::SplitSwitchArms>>(ctx);
+    //    patterns.insert<NonLayout<ZStruct::SwitchOp, ZStruct::SplitSwitchArms>>(ctx);
 
     for (auto* dialect : ctx->getLoadedDialects())
       dialect->getCanonicalizationPatterns(patterns);

@@ -239,11 +239,12 @@ LogicalResult verifyConstraints(Zll::Interpreter& interp, StringRef baseName, Mo
   for (auto buf : allBufs) {
     auto contents = interp.getNamedBuf(buf.getName());
     llvm::errs() << "Buffer contents " << buf.getName() << " size " << contents.size() << "\n";
-    interleaveComma(contents, llvm::errs(), [&](auto elem) {
-      llvm::errs() << "[";
-      interleaveComma(elem, llvm::errs());
-      llvm::errs() << "]";
-    });
+    interleaveComma(
+        contents.slice(0, std::min<size_t>(contents.size(), 500)), llvm::errs(), [&](auto elem) {
+          llvm::errs() << "[";
+          interleaveComma(elem, llvm::errs());
+          llvm::errs() << "]";
+        });
     llvm::errs() << "\n\n";
   }
   bool failed = false;
@@ -334,7 +335,8 @@ int runTests(mlir::ModuleOp module) {
           newBuf->clear();
           newBuf->resize(bufDesc.getRegCount(), Polynomial(1, zirgen::Zll::kFieldInvalid));
           for (size_t i = 0; i < bufDesc.getRegCount(); i++) {
-            (*newBuf)[i][0] = static_cast<uint64_t>(distribution(generator));
+            //            (*newBuf)[i][0] = static_cast<uint64_t>(distribution(generator));
+            (*newBuf)[i][0] = i + 1;
           }
         }
       } else {
@@ -409,7 +411,24 @@ int runTests(mlir::ModuleOp module) {
       }
     }
 
-    module->print(llvm::errs());
+    //    module->print(llvm::errs());
+    for (auto bufDesc : allBufs) {
+      llvm::outs() << "group[" << bufDesc.getName().strref() << "] is [";
+      size_t cycles = 1;
+      if (bufDesc.getKind() != zirgen::Zll::BufferKind::Global)
+        cycles = clOpts->testCycles;
+
+      auto buf = interp.getNamedBuf(bufDesc.getName());
+
+      // Transpose cycles and columns
+      for (size_t idx = 0; idx < bufDesc.getRegCount(); ++idx) {
+        for (size_t cycle = 0; cycle < cycles; cycle++) {
+          interleaveComma(buf[cycle * bufDesc.getRegCount() + idx], llvm::outs());
+          llvm::outs() << ", ";
+        }
+      }
+      llvm::outs() << "]\n";
+    }
     llvm::errs() << "Verifying constraints for " << testName << "\n";
     if (verifyConstraints(interp, baseName, module).failed()) {
       llvm::errs() << "Checking constraints failed\n";

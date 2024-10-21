@@ -39,7 +39,7 @@ def LookupOp : ZStructOp<"lookup", [Pure,
   let hasCanonicalizer = 1;
 }
 
-def SubscriptOp : ZStructOp<"subscript", [Pure,
+def SubscriptOp : ZStructOp<"subscript", [NoMemoryEffect, // but not speculatable, sicne the index might not be in range.
                                           InferTypeOpAdaptor,
                                           DeclareOpInterfaceMethods<CodegenExprOpInterface>,
                                           CodegenAlwaysInlineOp,

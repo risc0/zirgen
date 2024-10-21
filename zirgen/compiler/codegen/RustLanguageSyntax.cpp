@@ -60,6 +60,11 @@ void RustLanguageSyntax::emitSwitchStatement(CodegenEmitter& cg,
   cg << "{\n";
   cg << "  bail!(\"Reached unreachable mux arm\")\n";
   cg << "}";
+  cg << "assert_eq!(Val::new(1), Val::new(0)";
+  for (const auto& cond : conditions) {
+    cg << "+" << cond;
+  }
+  cg << ");\n";
 }
 
 void RustLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,

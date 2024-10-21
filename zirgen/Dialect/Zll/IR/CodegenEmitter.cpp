@@ -36,7 +36,7 @@ namespace cl = llvm::cl;
 static cl::opt<size_t> inlineDepth("codegen-inline-depth",
                                    cl::desc("Maximum depth of generated calls to inline instead of "
                                             "assigning to a variable for readability"),
-                                   cl::init(5));
+                                   cl::init(2));
 
 namespace zirgen::codegen {
 
@@ -354,6 +354,9 @@ CodegenEmitter::getNewValueName(mlir::Value val, llvm::StringRef namePrefix, boo
 }
 
 void CodegenEmitter::emitExpr(Operation* op) {
+  //  *this << "\n";
+  //  emitLoc(op->getLoc());
+
   if (auto f = opts.opSyntax.lookup(op->getName().getStringRef())) {
     f(*this, op);
     return;
