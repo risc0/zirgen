@@ -126,7 +126,14 @@ std::unique_ptr<Program> encode(mlir::func::FuncOp func) {
           Input input;
           input.label = op.getLabel();
           input.bitWidth = op.getBitWidth();
+          if (op.getBitWidth() >= 0xFFFFFFFFU) {
+            throw std::runtime_error("unexpectedly large bitWidth");
+          }
           input.minBits = op.getMinBits();
+          if (op.getMinBits() >= 0xFFFFU) {
+            throw std::runtime_error("unexpectedly large minBits");
+          }
+          input.isPublic = op.getIsPublic();
           newOp.operandA = builder.def(input);
           builder.emit(newOp);
         })

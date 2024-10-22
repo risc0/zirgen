@@ -35,7 +35,8 @@ HEADER: 24 bytes
 INPUT TABLE: 16 bytes each
 8 | label
 4 | bitWidth
-4 | minBits
+2 | minBits
+2 | isPublic
 
 TYPE TABLE: 32 bytes each
 8 | coeffs
@@ -77,6 +78,14 @@ IOException::IOException(const char* file, const char* func, int line, const cha
 
 namespace {
 
+void writeU16(uint16_t value, FILE* stream) {
+  std::array<uint8_t, 2> buf;
+  buf[0] = (value >> 0x00) & 0xFFU;
+  buf[1] = (value >> 0x08) & 0xFFU;
+  size_t writ = fwrite(buf.data(), buf.size(), 1, stream);
+  check(ferror(stream) || !writ);
+}
+
 void writeU32(uint32_t value, FILE* stream) {
   std::array<uint8_t, 4> buf;
   buf[0] = (value >> 0x00) & 0xFFU;
@@ -113,7 +122,8 @@ void writeHeader(const Program& p, FILE* stream) {
 void writeInput(const Input& i, FILE* stream) {
   writeU64(i.label, stream);
   writeU32(i.bitWidth, stream);
-  writeU32(i.minBits, stream);
+  writeU16(i.minBits, stream);
+  writeU16(i.isPublic ? 1 : 0, stream);
 }
 
 void writeType(const Type& t, FILE* stream) {
@@ -165,6 +175,14 @@ void write(const Program& p, FILE* stream) {
 
 namespace {
 
+uint32_t readU16(FILE* stream) {
+  check(feof(stream));
+  std::array<uint8_t, 2> buf;
+  size_t got = fread(buf.data(), buf.size(), 1, stream);
+  check(ferror(stream) || !got);
+  return (static_cast<uint16_t>(buf[0]) << 0x00) | (static_cast<uint16_t>(buf[1]) << 0x08);
+}
+
 uint32_t readU32(FILE* stream) {
   check(feof(stream));
   std::array<uint8_t, 4> buf;
@@ -197,7 +215,8 @@ void readHeader(Program& p, FILE* stream) {
 void readInput(Input& wire, FILE* stream) {
   wire.label = readU64(stream);
   wire.bitWidth = readU32(stream);
-  wire.minBits = readU32(stream);
+  wire.minBits = readU16(stream);
+  wire.isPublic = readU16(stream) != 0;
 }
 
 void readType(Type& t, FILE* stream) {

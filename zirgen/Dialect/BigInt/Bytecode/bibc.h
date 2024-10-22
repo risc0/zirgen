@@ -31,9 +31,9 @@ struct Type {
 // Input wire
 struct Input {
   uint64_t label;
-  // TODO: add isPublic flag
   uint32_t bitWidth;
-  uint32_t minBits;
+  uint16_t minBits;
+  bool isPublic;
 };
 
 // Code section is a sequence of ops
