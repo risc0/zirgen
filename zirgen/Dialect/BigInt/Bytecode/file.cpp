@@ -27,21 +27,21 @@ Table elements are all 64-bit aligned and therefore so are sections.
 HEADER: 24 bytes
 4 | 62 69 62 63   Magic "bibc"
 4 | 01 00 00 00   Version 1
-4 | number of types
 4 | number of inputs
+4 | number of types
 4 | number of constants
 4 | number of operations
+
+INPUT TABLE: 16 bytes each
+8 | label
+4 | bitWidth
+4 | minBits
 
 TYPE TABLE: 32 bytes each
 8 | coeffs
 8 | maxPos
 8 | maxNeg
 8 | minBits
-
-INPUT TABLE: 16 bytes each
-8 | label
-4 | bitWidth
-4 | minBits
 
 CONSTANT TABLE: 8 bytes each
 8 | word
@@ -110,17 +110,17 @@ void writeHeader(const Program& p, FILE* stream) {
   writeU32(p.ops.size(), stream);
 }
 
+void writeInput(const Input& i, FILE* stream) {
+  writeU64(i.label, stream);
+  writeU32(i.bitWidth, stream);
+  writeU32(i.minBits, stream);
+}
+
 void writeType(const Type& t, FILE* stream) {
   writeU64(t.coeffs, stream);
   writeU64(t.maxPos, stream);
   writeU64(t.maxNeg, stream);
   writeU64(t.minBits, stream);
-}
-
-void writeInput(const Input& i, FILE* stream) {
-  writeU64(i.label, stream);
-  writeU32(i.bitWidth, stream);
-  writeU32(i.minBits, stream);
 }
 
 void writeOp(const Op& o, FILE* stream) {
@@ -188,10 +188,16 @@ uint64_t readU64(FILE* stream) {
 void readHeader(Program& p, FILE* stream) {
   check(MAGIC != readU32(stream));
   check(1 != readU32(stream));
-  p.types.resize(readU32(stream));
   p.inputs.resize(readU32(stream));
+  p.types.resize(readU32(stream));
   p.constants.resize(readU32(stream));
   p.ops.resize(readU32(stream));
+}
+
+void readInput(Input& wire, FILE* stream) {
+  wire.label = readU64(stream);
+  wire.bitWidth = readU32(stream);
+  wire.minBits = readU32(stream);
 }
 
 void readType(Type& t, FILE* stream) {
@@ -199,12 +205,6 @@ void readType(Type& t, FILE* stream) {
   t.maxPos = readU64(stream);
   t.maxNeg = readU64(stream);
   t.minBits = readU64(stream);
-}
-
-void readInput(Input& wire, FILE* stream) {
-  wire.label = readU64(stream);
-  wire.bitWidth = readU32(stream);
-  wire.minBits = readU32(stream);
 }
 
 void readOp(Op& o, FILE* stream) {
@@ -220,11 +220,11 @@ void readOp(Op& o, FILE* stream) {
 void read(Program& p, FILE* stream) {
   p.clear();
   readHeader(p, stream);
-  for (size_t i = 0; i < p.types.size(); ++i) {
-    readType(p.types[i], stream);
-  }
   for (size_t i = 0; i < p.inputs.size(); ++i) {
     readInput(p.inputs[i], stream);
+  }
+  for (size_t i = 0; i < p.types.size(); ++i) {
+    readType(p.types[i], stream);
   }
   for (size_t i = 0; i < p.constants.size(); ++i) {
     p.constants[i] = readU64(stream);
