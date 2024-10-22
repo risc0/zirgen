@@ -59,8 +59,8 @@ struct Op {
 
 // In-memory container
 struct Program {
-  std::vector<Type> types;
   std::vector<Input> inputs;
+  std::vector<Type> types;
   std::vector<uint64_t> constants;
   std::vector<Op> ops;
   void clear();
