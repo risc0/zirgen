@@ -25,7 +25,6 @@ namespace zirgen::BigInt::Bytecode {
 // We must unfortunately redefine these constants whose original definitions
 // live in zirgen/Dialect/BigInt/IR/BigInt.h
 constexpr size_t kBitsPerCoeff = 8;
-constexpr size_t kCoeffsPerPoly = 16;
 
 BytePoly fromBQInt(BQInt value, size_t coeffs) {
   BytePoly out(coeffs);
@@ -140,6 +139,68 @@ size_t getCarryBytes(const Type& type) {
   return 4;
 }
 
+std::vector<BytePoly> eqz(const BytePoly &poly, const Type &type) {
+  if (toBQInt(poly) != 0) {
+    throw std::runtime_error("NONZERO");
+  }
+  uint32_t coeffs = type.coeffs;
+  int32_t carryOffset = getCarryOffset(type);
+  size_t carryBytes = getCarryBytes(type);
+  std::vector<BytePoly> carryPolys;
+  for (size_t i = 0; i < carryBytes; i++) {
+    carryPolys.emplace_back(coeffs);
+  };
+  int32_t carry = 0;
+  for (size_t i = 0; i < coeffs; i++) {
+    carry = (poly[i] + carry) / 256;
+    uint32_t carryU = carry + carryOffset;
+    carryPolys[0][i] = carryU & 0xff;
+    if (carryBytes > 1) {
+      carryPolys[1][i] = ((carryU >> 8) & 0xff);
+    }
+    if (carryBytes > 2) {
+      carryPolys[2][i] = ((carryU >> 16) & 0xff);
+      carryPolys[3][i] = ((carryU >> 16) & 0xff) * 4;
+    }
+  }
+  // Verify carry computation
+  BytePoly bigCarry(coeffs);
+  for (size_t i = 0; i < coeffs; i++) {
+    bigCarry[i] = carryPolys[0][i];
+    if (carryBytes > 1) {
+      bigCarry[i] += 256 * carryPolys[1][i];
+    }
+    if (carryBytes > 2) {
+      bigCarry[i] += 65536 * carryPolys[2][i];
+    }
+    bigCarry[i] -= carryOffset;
+  }
+  for (size_t i = 0; i < coeffs; i++) {
+    int32_t shouldBeZero = poly[i];
+    shouldBeZero -= 256 * bigCarry[i];
+    if (i != 0) {
+      shouldBeZero += bigCarry[i - 1];
+    }
+    if (shouldBeZero != 0) {
+      throw std::runtime_error("INVALID CARRY");
+    }
+  }
+  return carryPolys;
+}
+
+void checkOperandA(const Op& op, size_t opIndex) {
+  if (op.operandA >= opIndex) {
+    throw std::runtime_error("Forward reference to undefined value");
+  }
+}
+
+void checkOperands(const Op& op, size_t opIndex) {
+  // Have both operandA and operandB been defined?
+  if (op.operandA >= opIndex || op.operandB >= opIndex) {
+    throw std::runtime_error("Forward reference to undefined value");
+  }
+}
+
 } // namespace
 
 EvalOutput eval(const Program& inFunc, std::vector<BQInt>& witnessValues) {
@@ -177,16 +238,19 @@ EvalOutput eval(const Program& inFunc, std::vector<BQInt>& witnessValues) {
       ret.constantWitness.push_back(poly);
     } break;
     case Op::Add: {
+      checkOperands(op, opIndex);
       auto lhs = polys[op.operandA];
       auto rhs = polys[op.operandB];
       polys[opIndex] = add(lhs, rhs);
     } break;
     case Op::Sub: {
+      checkOperands(op, opIndex);
       auto lhs = polys[op.operandA];
       auto rhs = polys[op.operandB];
       polys[opIndex] = sub(lhs, rhs);
     } break;
     case Op::Mul: {
+      checkOperands(op, opIndex);
       auto lhs = polys[op.operandA];
       auto rhs = polys[op.operandB];
       polys[opIndex] = mul(lhs, rhs);
@@ -194,6 +258,7 @@ EvalOutput eval(const Program& inFunc, std::vector<BQInt>& witnessValues) {
     case Op::Rem: {
       const Type& type = inFunc.types[op.type];
       uint32_t coeffs = type.coeffs;
+      checkOperands(op, opIndex);
       auto lhs = polys[op.operandA];
       auto rhs = polys[op.operandB];
       auto poly = nondetRem(lhs, rhs, coeffs);
@@ -203,6 +268,7 @@ EvalOutput eval(const Program& inFunc, std::vector<BQInt>& witnessValues) {
     case Op::Quo: {
       const Type& type = inFunc.types[op.type];
       uint32_t coeffs = type.coeffs;
+      checkOperands(op, opIndex);
       auto lhs = polys[op.operandA];
       auto rhs = polys[op.operandB];
       auto poly = nondetQuot(lhs, rhs, coeffs);
@@ -212,6 +278,7 @@ EvalOutput eval(const Program& inFunc, std::vector<BQInt>& witnessValues) {
     case Op::Inv: {
       const Type& type = inFunc.types[op.type];
       uint32_t coeffs = type.coeffs;
+      checkOperands(op, opIndex);
       auto lhs = polys[op.operandA];
       auto rhs = polys[op.operandB];
       auto poly = nondetInvMod(lhs, rhs, coeffs);
@@ -219,56 +286,12 @@ EvalOutput eval(const Program& inFunc, std::vector<BQInt>& witnessValues) {
       ret.privateWitness.push_back(poly);
     } break;
     case Op::Eqz: {
+      checkOperandA(op, opIndex);
       auto poly = polys[op.operandA];
-      if (toBQInt(poly) != 0) {
-        throw std::runtime_error("NONZERO");
-      }
       const Type& type = inFunc.types[op.type];
-      uint32_t coeffs = type.coeffs;
-      int32_t carryOffset = getCarryOffset(type);
-      size_t carryBytes = getCarryBytes(type);
-      std::vector<BytePoly> carryPolys;
-      for (size_t i = 0; i < carryBytes; i++) {
-        carryPolys.emplace_back(coeffs);
-      };
-      int32_t carry = 0;
-      for (size_t i = 0; i < coeffs; i++) {
-        carry = (poly[i] + carry) / 256;
-        uint32_t carryU = carry + carryOffset;
-        carryPolys[0][i] = carryU & 0xff;
-        if (carryBytes > 1) {
-          carryPolys[1][i] = ((carryU >> 8) & 0xff);
-        }
-        if (carryBytes > 2) {
-          carryPolys[2][i] = ((carryU >> 16) & 0xff);
-          carryPolys[3][i] = ((carryU >> 16) & 0xff) * 4;
-        }
-      }
-      // Verify carry computation
-      BytePoly bigCarry(coeffs);
-      for (size_t i = 0; i < coeffs; i++) {
-        bigCarry[i] = carryPolys[0][i];
-        if (carryBytes > 1) {
-          bigCarry[i] += 256 * carryPolys[1][i];
-        }
-        if (carryBytes > 2) {
-          bigCarry[i] += 65536 * carryPolys[2][i];
-        }
-        bigCarry[i] -= carryOffset;
-      }
-      for (size_t i = 0; i < coeffs; i++) {
-        int32_t shouldBeZero = poly[i];
-        shouldBeZero -= 256 * bigCarry[i];
-        if (i != 0) {
-          shouldBeZero += bigCarry[i - 1];
-        }
-        if (shouldBeZero != 0) {
-          throw std::runtime_error("INVALID CARRY");
-        }
-      }
-      // Store the results
-      for (size_t i = 0; i < carryPolys.size(); i++) {
-        ret.privateWitness.push_back(carryPolys[i]);
+      auto carryPolys = eqz(poly, type);
+      for (auto &p: carryPolys) {
+        ret.privateWitness.push_back(p);
       }
     } break;
     default: {
