@@ -83,8 +83,6 @@ fn clear_invalid<B: Buffer<impl Elem>>(buf: &B) {
     });
 }
 
-include! {"golden_data.rs.inc"}
-
 pub fn prove<
     'a,
     H: Hal<Field = CircuitField, Elem = Val, ExtElem = ExtVal>,
@@ -108,12 +106,6 @@ pub fn prove<
         }
     };
     let data = alloc_elem("data", keccak_circuit::REGCOUNT_DATA * tot_cycles);
-    /*        data.view_mut(|slice| {
-        for (d, expected) in slice.iter_mut().zip(GOLDEN_DATA) {
-            *d = H::Elem::from_u64(*expected as u64)
-        }
-    });*/
-
     let code = alloc_elem("code", keccak_circuit::REGCOUNT_CODE * tot_cycles);
     let global = alloc_elem("global", keccak_circuit::REGCOUNT_GLOBAL);
     let accum = alloc_elem("accum", keccak_circuit::REGCOUNT_ACCUM * tot_cycles);

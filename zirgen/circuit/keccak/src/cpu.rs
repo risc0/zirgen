@@ -274,7 +274,7 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
 
         let args: &[&[BabyBearElem]] = &[&accum, &data, &out, &mix];
 
-        (0..domain).into_iter().for_each(|cycle| {
+        (0..domain).into_par_iter().for_each(|cycle| {
             let tot = CircuitImpl.poly_fp(cycle, domain, poly_mix_pows, args);
             let x = BabyBearElem::ROU_FWD[po2 + EXP_PO2].pow(cycle);
             // TODO: what is this magic number 3?
