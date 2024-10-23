@@ -166,7 +166,7 @@ std::unique_ptr<Program> encode(mlir::func::FuncOp func) {
           size_t type = builder.lookup(origOp.getResultTypes()[0]);
           builder.emitBin(Op::Quo, type, op.getLhs(), op.getRhs());
         })
-        .Case<NondetInvModOp>([&](auto op) {
+        .Case<NondetInvOp>([&](auto op) {
           size_t type = builder.lookup(origOp.getResultTypes()[0]);
           builder.emitBin(Op::Inv, type, op.getLhs(), op.getRhs());
         })
@@ -176,7 +176,7 @@ std::unique_ptr<Program> encode(mlir::func::FuncOp func) {
           newOp.operandA = builder.lookup(*op.getIn().getDefiningOp());
           builder.emit(newOp);
         })
-        .Case<ModularInvOp>([&](auto op) {
+        .Case<InvOp>([&](auto op) {
           llvm::errs() << *op << "\n";
           throw std::runtime_error("Cannot write ModularInvOp; use lower-modular-inv pass");
         })

@@ -139,7 +139,7 @@ size_t getCarryBytes(const Type& type) {
   return 4;
 }
 
-std::vector<BytePoly> eqz(const BytePoly &poly, const Type &type) {
+std::vector<BytePoly> eqz(const BytePoly& poly, const Type& type) {
   if (toBQInt(poly) != 0) {
     throw std::runtime_error("NONZERO");
   }
@@ -290,7 +290,7 @@ EvalOutput eval(const Program& inFunc, std::vector<BQInt>& witnessValues) {
       auto poly = polys[op.operandA];
       const Type& type = inFunc.types[op.type];
       auto carryPolys = eqz(poly, type);
-      for (auto &p: carryPolys) {
+      for (auto& p : carryPolys) {
         ret.privateWitness.push_back(p);
       }
     } break;
