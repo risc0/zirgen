@@ -123,13 +123,13 @@ mlir::func::FuncOp decode(mlir::ModuleOp module, const Program& prog) {
         mlir::Value lhs, rhs;
         state.operands(i, lhs, rhs);
         mlir::Type t = state.type(op);
-        state.emit(i, builder.create<AddOp>(loc, t, lhs, rhs));
+        state.emit(i, builder.create<SubOp>(loc, t, lhs, rhs));
       } break;
       case Op::Mul: {
         mlir::Value lhs, rhs;
         state.operands(i, lhs, rhs);
         mlir::Type t = state.type(op);
-        state.emit(i, builder.create<AddOp>(loc, t, lhs, rhs));
+        state.emit(i, builder.create<MulOp>(loc, t, lhs, rhs));
       } break;
       case Op::Rem: {
         mlir::Value lhs, rhs;
