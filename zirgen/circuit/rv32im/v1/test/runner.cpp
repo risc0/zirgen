@@ -394,7 +394,19 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
     }
     return q;
   }
-
+  if (name == "syscallBigInt2Witness") {
+    if (fpArgs.size() != 4 || outCount != 16) {
+      throw std::runtime_error("Invalid extern call to syscallBigInt2Witness");
+    }
+    uint32_t op = fpArgs[0];
+    std::vector<uint64_t> ret(16, 0);
+    switch (op) {
+    case PolyOp::kEnd:
+      return ret;
+    default:
+      throw std::runtime_error("Unhandled BigInt2 op");
+    }
+  }
   return RamExternHandler::doExtern(name, extra, args, outCount);
 }
 
@@ -503,6 +515,14 @@ PageFaultInfo Runner::getPageFaultInfo(uint32_t pc, uint32_t inst) {
           info.include(addr1 + j);
           info.include(addr2 + j);
         }
+      }
+    } break;
+    case ECallType::kBigInt2: {
+      llvm::errs() << "ecall/bigint\n";
+      uint32_t addr = loadU32(RegAddr::kA0);
+      // TODO: Right now we just page in 100 words @ A0
+      for (size_t i = 0; i < 100; i++) {
+        info.include((addr / kWordSize) + i);
       }
     } break;
     }

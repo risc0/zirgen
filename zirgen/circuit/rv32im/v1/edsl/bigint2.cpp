@@ -1,0 +1,215 @@
+// Copyright 2024 RISC Zero, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#include "zirgen/circuit/rv32im/v1/edsl/compute.h"
+
+#include "zirgen/circuit/rv32im/v1/edsl/top.h"
+
+namespace zirgen::rv32im_v1 {
+
+BigInt2CycleImpl::BigInt2CycleImpl(RamHeader ramHeader)
+    : ram(ramHeader, 6), mix("mix"), poly("accum"), term("accum"), tot("accum") {
+  this->registerCallback("compute_accum", &BigInt2CycleImpl::onAccum);
+}
+
+void BigInt2CycleImpl::setByte(Val v, size_t i) {
+  if (i < 13) {
+    bytes[i]->set(v);
+  } else {
+    twitBytes[i - 13]->set(v);
+  }
+}
+
+Val BigInt2CycleImpl::getByte(size_t i) {
+  if (i < 13) {
+    return bytes[i]->get();
+  } else {
+    return twitBytes[i - 13]->get();
+  }
+}
+
+void BigInt2CycleImpl::set(Top top) {
+  XLOG("BIGINT");
+  // Get some basic state data
+  Val cycle = top->code->cycle;
+  BodyStep body = top->mux->at<StepType::BODY>();
+  Val curPC = BACK(1, body->pc->get());
+
+  // Verify prev major was set right
+  eqz(BACK(1, body->nextMajor->get()) - MajorType::kBigInt2);
+
+  // Get current instruction address (either from ecall or prev instruction
+  Val isFirstCycle = BACK(1, body->majorSelect->at(MajorType::kECall));
+
+  IF(isFirstCycle) {
+    XLOG("First Cycle");
+    // If first cycle, do special initalization
+    ECallCycle ecall = body->majorMux->at<MajorType::kECall>();
+    ECallBigInt2 ecallBigInt2 = ecall->minorMux->at<ECallType::kBigInt2>();
+    instWordAddr->set(BACK(1, ecallBigInt2->readA0->data().flat()) / kWordSize - 1);
+    readInst->doNOP();
+    polyOp->set(0);
+    memOp->set(2);
+    reg->set(0);
+    offset->set(0);
+  }
+  IF(1 - isFirstCycle) {
+    // Read & decode the instruction
+    instWordAddr->set(BACK(1, instWordAddr + 1));
+    readInst->doRead(cycle, instWordAddr);
+    Val instType = readInst->data().bytes[3];
+    NONDET {
+      polyOp->set(instType & 0xf);
+      memOp->set((instType - polyOp->get()) / 16);
+    }
+    eq(instType, polyOp->get() + memOp->get() * 16);
+    reg->set(readInst->data().bytes[2]);
+    offset->set(readInst->data().bytes[1] * 256 + readInst->data().bytes[0]);
+  }
+  XLOG("Cycle: polyOp=%u, memOp=%u, reg=%u, offset=%u", polyOp, memOp, reg, offset);
+
+  // Make sure reg is [0, 31)
+  Val checkRegOut = 0;
+  for (size_t i = 0; i < 5; i++) {
+    NONDET { checkReg[i]->set(reg & (1 << i)); }
+    checkRegOut = checkRegOut + checkReg[i]->get() * (1 << i);
+  }
+  eq(checkRegOut, reg);
+
+  // Read the register value and compute initial address
+  readRegAddr->doRead(cycle, kRegisterOffset + reg);
+  Val addr = readRegAddr->data().flat() / 4 + offset * 4;
+
+  // MemoryOp 0 (read)
+  IF(memOp->at(0)) {
+    for (size_t i = 0; i < 4; i++) {
+      io[i]->doRead(cycle, addr + i);
+      for (size_t j = 0; j < 4; j++) {
+        setByte(io[i]->data().bytes[j], i * 4 + j);
+      }
+    }
+  }
+
+  // MemoryOp (1, 2) (write / check)
+  IF(memOp->at(1) + memOp->at(2)) {
+    NONDET {
+      std::vector<Val> ret =
+          doExtern("syscallBigInt2Witness", "", 16, {polyOp->get(), memOp->get(), reg, offset});
+      for (size_t i = 0; i < 16; i++) {
+        setByte(ret[i], i);
+      }
+    }
+  }
+
+  // Memory Op 1 (write)
+  IF(memOp->at(1)) {
+    for (size_t i = 0; i < 4; i++) {
+      io[i]->doWrite(
+          cycle,
+          addr + i,
+          U32Val(getByte(i * 4 + 0), getByte(i * 4 + 1), getByte(i * 4 + 2), getByte(i * 4 + 3)));
+    }
+  }
+  IF(memOp->at(2)) {
+    for (size_t i = 0; i < 4; i++) {
+      io[i]->doNOP();
+    }
+  }
+
+  // Check is the instruction is a pure NOP + not first
+  isLast->set(polyOp->at(0) * (1 - isFirstCycle));
+  // If last, back to decoding
+  IF(isLast) {
+    body->pc->set(curPC + 4);
+    body->nextMajor->set(MajorType::kMuxSize);
+  }
+  // Otherwise, next is also BigInt2 major
+  IF(1 - isLast) {
+    body->pc->set(curPC);
+    body->nextMajor->set(MajorType::kBigInt2);
+  }
+  XLOG("BIGINT Done");
+}
+
+static FpExt extBack(FpExtReg in) {
+  std::array<Val, kExtSize> oldVals;
+  for (size_t i = 0; i < 4; i++) {
+    oldVals[i] = UNCHECKED_BACK(1, in->elem(i));
+  }
+  return FpExt(oldVals);
+}
+
+void BigInt2CycleImpl::onAccum() {
+  std::vector<FpExt> powers;
+  FpExt zero(Val(0));
+  FpExt one(Val(1));
+  FpExt c64(Val(64));
+  FpExt c256(Val(256));
+  FpExt cur = one;
+  for (size_t i = 0; i < 17; i++) {
+    powers.push_back(cur);
+    cur = cur * mix;
+  }
+  FpExt oldPoly = extBack(poly);
+  FpExt oldTerm = extBack(term);
+  FpExt oldTot = extBack(tot);
+  FpExt newPoly = oldPoly;
+  for (size_t i = 0; i < 16; i++) {
+    newPoly = newPoly + powers[i] * FpExt(getByte(i));
+  }
+
+  IF(polyOp->at(PolyOp::kOpShift)) {
+    poly->set(newPoly * (powers[16]));
+    term->set(oldTerm);
+    tot->set(oldTot);
+  }
+  IF(polyOp->at(PolyOp::kOpSetTerm)) {
+    poly->set(zero);
+    term->set(newPoly);
+    tot->set(oldTot);
+  }
+  IF(polyOp->at(PolyOp::kOpAddTot)) {
+    poly->set(zero);
+    term->set(one);
+    tot->set(oldTot + oldTerm * newPoly);
+  }
+  IF(polyOp->at(PolyOp::kOpSubTot)) {
+    poly->set(zero);
+    term->set(one);
+    tot->set(oldTot - oldTerm * newPoly);
+  }
+  IF(polyOp->at(PolyOp::kOpTimes64)) {
+    poly->set(newPoly * c64);
+    term->set(oldTerm);
+    tot->set(oldTot);
+  }
+  IF(polyOp->at(PolyOp::kOpTimes256)) {
+    poly->set(newPoly * c256);
+    term->set(oldTerm);
+    tot->set(oldTot);
+  }
+  IF(polyOp->at(PolyOp::kOpEqz)) {
+    FpExt carryMul = powers[16] - c256;
+    FpExt goalZero = oldTot + newPoly * carryMul;
+    eqz(goalZero.elem(0));
+    eqz(goalZero.elem(1));
+    eqz(goalZero.elem(2));
+    eqz(goalZero.elem(3));
+    poly->set(zero);
+    term->set(one);
+    tot->set(zero);
+  }
+}
+
+} // namespace zirgen::rv32im_v1

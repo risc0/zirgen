@@ -135,6 +135,24 @@ sys_bigint(uint32_t* result, const uint32_t* x, const uint32_t* y, const uint32_
   );
 }
 
+inline void sys_bigint2(uint32_t* code,
+                        const uint32_t* a = nullptr,
+                        const uint32_t* b = nullptr,
+                        const uint32_t* c = nullptr,
+                        const uint32_t* d = nullptr) {
+  asm volatile("li t0, 6\n" // BigInt
+               "mv a0, %0\n"
+               "mv a1, %0\n"
+               "mv a2, %1\n"
+               "mv a3, %2\n"
+               "mv a4, %3\n"
+               "ecall\n"
+               :                                              // outputs
+               : "r"(code), "r"(a), "r"(b), "r"(c), "r"(d)    // inputs
+               : "t0", "a0", "a1", "a2", "a3", "a4", "memory" // clobbers
+  );
+}
+
 inline void sys_usermode() {
   asm volatile("li t0, 5\n" // Jump to usermode
                "ecall\n"

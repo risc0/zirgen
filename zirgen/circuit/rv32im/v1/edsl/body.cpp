@@ -231,6 +231,7 @@ BodyStepImpl::BodyStepImpl(BytesHeader bytesHeader)
                        "page_fault",
                        "ecall_copy_in",
                        "big_int",
+                       "big_int2",
                        "halt"}),
                majorSelect,
                ramHeader) {}

@@ -78,6 +78,24 @@ cc_test(
 )
 
 risc0_cc_binary(
+    name = "test-bigint2-guest",
+    srcs = ["test-bigint2-guest.cpp"],
+    deps = [":guest"],
+)
+
+cc_test(
+    name = "test-bigint2",
+    timeout = "long",
+    srcs = ["test-bigint2-host.cpp"],
+    data = [":test-bigint2-guest"],
+    deps = [
+        ":runner",
+        "//risc0/core",
+        "//risc0/core/test:gtest_main",
+    ],
+)
+
+risc0_cc_binary(
     name = "test-io-guest",
     srcs = ["test-io-guest.cpp"],
     deps = [":guest"],
