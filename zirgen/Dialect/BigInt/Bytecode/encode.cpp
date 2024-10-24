@@ -18,7 +18,7 @@
 
 #include "zirgen/Dialect/BigInt/IR/BigInt.h"
 
-#include "mlir.h"
+#include "encode.h"
 
 namespace zirgen::BigInt::Bytecode {
 

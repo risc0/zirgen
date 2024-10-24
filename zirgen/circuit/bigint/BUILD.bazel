@@ -22,7 +22,7 @@ cc_library(
     deps = [
         "//zirgen/Dialect/BigInt/IR",
         "//zirgen/Dialect/BigInt/Transforms",
-        "//zirgen/Dialect/BigInt/Bytecode:lib",
+        "//zirgen/Dialect/BigInt/Bytecode",
         "//zirgen/circuit/recursion:lib",
         "//zirgen/circuit/verify:lib",
         "//zirgen/compiler/edsl",
@@ -59,6 +59,7 @@ build_circuit(
         zkr + ".zkr",
         zkr + ".zkr.dbg",
         zkr + ".bibc",
+        zkr + ".mlir",
     ]] + ["bigint.rs.inc"],
     deps = [":lib"],
 )
@@ -72,3 +73,15 @@ pkg_zip(
     name = "bigint_bibc",
     srcs = [x + ".bibc" for x in ZKRS],
 )
+
+cc_binary(
+    name = "bibc-exec",
+    srcs = ["bibc-exec.cpp"],
+    deps = [
+        "//zirgen/Dialect/BigInt/IR",
+        "//zirgen/Dialect/BigInt/Bytecode",
+        "@llvm-project//llvm:Support",
+        "@llvm-project//mlir:MlirOptLib",
+    ],
+)
+
