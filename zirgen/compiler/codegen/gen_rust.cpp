@@ -108,13 +108,15 @@ public:
         ofs);
   }
 
-  void emitPolyFunc(const std::string& fn, func::FuncOp func) override {
+  void emitPolyFunc(const std::string& fn, func::FuncOp func, size_t splitIndex, size_t splitCount) override {
     MixPowAnalysis mixPows(func);
 
     mustache tmpl = openTemplate("zirgen/compiler/codegen/cpp/poly.tmpl.cpp");
 
-    list calledFuncs;
+    list funcProtos;
+    list funcs;
 
+    size_t curSplitIndex = 0;
     for (mlir::func::FuncOp calledFunc : mixPows.getCalledFuncs()) {
       FileContext ctx;
       std::string args;
@@ -140,6 +142,14 @@ public:
         args += " " + argName;
       }
 
+      funcProtos.push_back(object{
+          {"args", args},
+          {"fn", calledFunc.getName().str()}
+        });
+      
+      if ((curSplitIndex++ % splitCount) != splitIndex)
+        continue;
+      
       list lines;
       for (Operation& op : calledFunc.front().without_terminator()) {
         LLVM_DEBUG(llvm::dbgs() << "emitPolyFunc: " << op << "\n");
@@ -147,45 +157,54 @@ public:
       }
       Value retVal = calledFunc.front().getTerminator()->getOperand(0);
       lines.push_back(llvm::formatv("return {0};", ctx.use(retVal)).str());
-
-      calledFuncs.push_back(object{
+        funcs.push_back(object{
           {"args", args},
           {"fn", calledFunc.getName().str()},
           {"body", lines},
       });
     }
 
-    FileContext ctx;
-    for (auto [idx, arg] : llvm::enumerate(func.getArguments())) {
-      std::string argsDesc;
-      if (auto argName = func.getArgAttrOfType<StringAttr>(idx, "zirgen.argName")) {
-        argsDesc = ("/*" + argName.strref() + "=*/").str();
+      // Main function
+      FileContext ctx;
+      for (auto [idx, arg] : llvm::enumerate(func.getArguments())) {
+        std::string argsDesc;
+        if (auto argName = func.getArgAttrOfType<StringAttr>(idx, "zirgen.argName")) {
+          argsDesc = ("/*" + argName.strref() + "=*/").str();
+        }
+        ctx.vars[arg] = llvm::formatv("{0}args[{1}]", argsDesc, idx).str();
       }
-      ctx.vars[arg] = llvm::formatv("{0}args[{1}]", argsDesc, idx).str();
-    }
+      
+    funcProtos.push_back(object{
+        {"args", ", Fp** args"},
+        {"fn", fn}});
 
-    list lines;
-    for (Operation& op : func.front().without_terminator()) {
-      LLVM_DEBUG(llvm::dbgs() << "emitPolyFunc: " << op << "\n");
-      emitOperation(&op, ctx, lines, /*depth=*/0, "Fp", FuncKind::PolyFp, &mixPows);
-    }
-    Value retVal = func.front().getTerminator()->getOperand(0);
-    if (kPrintDebug)
-      lines.push_back(
+    if ((curSplitIndex++ % splitCount) == splitIndex) {
+      list lines;
+      for (Operation& op : func.front().without_terminator()) {
+        LLVM_DEBUG(llvm::dbgs() << "emitPolyFunc: " << op << "\n");
+        emitOperation(&op, ctx, lines, /*depth=*/0, "Fp", FuncKind::PolyFp, &mixPows);
+      }
+      Value retVal = func.front().getTerminator()->getOperand(0);
+      if (kPrintDebug)
+        lines.push_back(
           llvm::formatv("if (!(cycle&3)) std::cerr << \"Returning {0} \" << {0} << \"\\n\";",
                         ctx.use(retVal))
-              .str());
-    lines.push_back(llvm::formatv("return {0};", ctx.use(retVal)).str());
+          .str());
+      lines.push_back(llvm::formatv("return {0};", ctx.use(retVal)).str());
+    
+      funcs.push_back(object{
+        {"args", ", Fp** args"},
+        {"fn", fn},
+        {"body", lines}});
+    }
 
     tmpl.render(
-        object{
-            {"funcs", calledFuncs},
-            {"args", std::string("Fp** args")},
-            {"name", func.getName().str()},
-            {"fn", fn},
-            {"body", lines},
-        },
-        ofs);
+      object{
+        {"decls", funcProtos},
+        {"funcs", funcs},
+        {"name", func.getName().str()}
+      },
+      ofs);
   }
 
 private:
@@ -306,6 +325,17 @@ private:
                                                  ctx.def(op.getOut()),
                                                  emitPolynomialAttr(op, "coefficients"))
                                        .str());
+        })
+        .Case<MakeTemporaryBufferOp>([&](MakeTemporaryBufferOp op) {
+          StringRef typeName;
+          if (op.getType().getElement().getFieldK() > 1)
+            typeName = "FpExt";
+          else
+            typeName = "Fp";
+          lines.push_back((
+              indent +
+              llvm::formatv("{0} {1}[{2}];", typeName, ctx.def(op.getOut()), op.getType().getSize())
+                  .str()));
         })
         .Case<func::CallOp>([&](func::CallOp op) {
           auto out = ctx.def(op.getResult(0));

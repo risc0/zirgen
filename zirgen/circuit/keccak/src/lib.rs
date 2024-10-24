@@ -150,8 +150,8 @@ pub fn prove<
         prover.iop().write_field_elem_slice(vec.as_slice());
     });
 
-//    code.view(|slice| eprintln!("group[code] is {slice:?}"));
-//    data.view(|slice| eprintln!("group[data] is {slice:?}"));
+    //    code.view(|slice| eprintln!("group[code] is {slice:?}"));
+    //    data.view(|slice| eprintln!("group[data] is {slice:?}"));
     global.view(|slice| eprintln!("group[global] is {slice:?}"));
     prover.commit_group(keccak_circuit::REGISTER_GROUP_CODE, &code);
     prover.commit_group(keccak_circuit::REGISTER_GROUP_DATA, &data);
@@ -165,7 +165,7 @@ pub fn prove<
     circuit_hal.step_accum(tot_cycles, &accum, &data, &mix)?;
     clear_invalid(&accum);
     mix.view(|slice| eprintln!("group[mix] is {slice:?}"));
-//    accum.view(|slice| eprintln!("group[accum] is {slice:?}"));
+    //    accum.view(|slice| eprintln!("group[accum] is {slice:?}"));
     prover.commit_group(keccak_circuit::REGISTER_GROUP_ACCUM, &accum);
     let seal = prover.finalize(&[&mix, &global], circuit_hal);
 

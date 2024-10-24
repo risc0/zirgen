@@ -32,7 +32,11 @@ fn build_cpu_kernels() {
     KernelBuild::new(KernelType::Cpp)
         .files([
             "cxx/ffi.cpp",
-            "cxx/rust_poly_fp.cpp",
+            "cxx/rust_poly_fp_0.cpp",
+            "cxx/rust_poly_fp_1.cpp",
+            "cxx/rust_poly_fp_2.cpp",
+            "cxx/rust_poly_fp_3.cpp",
+            "cxx/rust_poly_fp_4.cpp",
         ])
         .include(env::var("DEP_RISC0_SYS_CXX_ROOT").unwrap())
         .compile("circuit");
@@ -41,7 +45,11 @@ fn build_cpu_kernels() {
 fn build_cuda_kernels() {
     KernelBuild::new(KernelType::Cuda)
         .files([
-            "kernels/cuda/eval_check.cu",
+            "kernels/cuda/eval_check_0.cu",
+            "kernels/cuda/eval_check_1.cu",
+            "kernels/cuda/eval_check_2.cu",
+            "kernels/cuda/eval_check_3.cu",
+            "kernels/cuda/eval_check_4.cu",
             "kernels/cuda/ffi.cu",
             "kernels/cuda/ffi_supra.cu",
         ])

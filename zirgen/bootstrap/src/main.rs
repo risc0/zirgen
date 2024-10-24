@@ -71,7 +71,11 @@ const ZIRGEN_SYS_OUTPUTS: &[&str] = &[
     "types.h.inc",
     "layout.cpp.inc",
     "steps.cpp.inc",
-    "rust_poly_fp.cpp",
+    "rust_poly_fp_0.cpp",
+    "rust_poly_fp_1.cpp",
+    "rust_poly_fp_2.cpp",
+    "rust_poly_fp_3.cpp",
+    "rust_poly_fp_4.cpp",
 ];
 const ZIRGEN_METAL_OUTPUTS: &[&str] = &[
     "eval_check.metal",

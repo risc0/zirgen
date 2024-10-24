@@ -51,8 +51,6 @@ using namespace mlir;
 
 static cl::opt<std::string>
     inputFilename(cl::Positional, cl::desc("input.zir"), cl::value_desc("filename"), cl::Required);
-static cl::opt<std::string>
-    outputDir("output-dir", cl::desc("Output directory"), cl::value_desc("dir"), cl::Required);
 static cl::list<std::string> includeDirs("I", cl::desc("Add include path"), cl::value_desc("path"));
 static cl::opt<size_t>
     maxDegree("max-degree", cl::desc("Maximum degree of validity polynomial"), cl::init(5));
@@ -72,7 +70,7 @@ void openMainFile(llvm::SourceMgr& sourceManager, std::string filename) {
 }
 
 std::unique_ptr<llvm::raw_ostream> openOutput(StringRef filename) {
-  std::string path = (outputDir + "/" + filename).str();
+  std::string path = (codegenCLOptions->outputDir + "/" + filename).str();
   std::error_code ec;
   auto ofs = std::make_unique<llvm::raw_fd_ostream>(path, ec);
   if (ec) {
@@ -144,8 +142,6 @@ void emitPoly(ModuleOp mod, StringRef circuitName) {
     opm.addPass(createCSEPass());
     opm.addPass(Zll::createComputeTapsPass());
   }
-  pm.addPass(Zll::createBalancedSplitPass(/*maxOps=*/1000));
-  pm.addPass(createCSEPass());
 
   //  pm.addPass(createPrintIRPass());
 
@@ -155,7 +151,7 @@ void emitPoly(ModuleOp mod, StringRef circuitName) {
     exit(1);
   }
 
-  emitCodeZirgenPoly(funcMod, outputDir);
+  emitCodeZirgenPoly(funcMod, codegenCLOptions->outputDir);
 }
 
 } // namespace
@@ -163,6 +159,7 @@ void emitPoly(ModuleOp mod, StringRef circuitName) {
 int main(int argc, char* argv[]) {
   llvm::InitLLVM y(argc, argv);
 
+  zirgen::registerCodegenCLOptions();
   zirgen::registerZirgenCommon();
   zirgen::registerRunTestsCLOptions();
 

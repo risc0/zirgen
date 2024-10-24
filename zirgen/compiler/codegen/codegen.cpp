@@ -136,22 +136,17 @@ void optimizePoly(ModuleOp module, const EmitCodeOptions& opts) {
   }
 }
 
-struct CodegenCLOptions {
-  cl::opt<std::string> outputDir{
-      "output-dir", cl::desc("Output directory"), cl::value_desc("dir"), cl::Required};
-};
-
-static llvm::ManagedStatic<CodegenCLOptions> clOptions;
-
 llvm::StringRef getOutputDir() {
-  if (!clOptions.isConstructed()) {
+  if (!codegenCLOptions.isConstructed()) {
     throw(std::runtime_error("codegen command line options must be registered"));
   }
 
-  return clOptions->outputDir;
+  return codegenCLOptions->outputDir;
 }
 
 } // namespace
+
+llvm::ManagedStatic<CodegenCLOptions> codegenCLOptions;
 
 class FileEmitter {
 public:
@@ -168,8 +163,16 @@ public:
   }
 
   void emitPolyFunc(const std::string& fn, func::FuncOp func) {
-    auto ofs = openOutputFile("rust_" + fn + ".cpp");
-    createRustStreamEmitter(*ofs)->emitPolyFunc(fn, func);
+    if (codegenCLOptions->validitySplitCount > 1) {
+      for (size_t i : llvm::seq(size_t(codegenCLOptions->validitySplitCount))) {
+        auto ofs = openOutputFile("rust_" + fn + "_" + std::to_string(i) + ".cpp");
+        createRustStreamEmitter(*ofs)->emitPolyFunc(
+            fn, func, i, size_t(codegenCLOptions->validitySplitCount));
+      }
+    } else {
+      auto ofs = openOutputFile("rust_" + fn + ".cpp");
+      createRustStreamEmitter(*ofs)->emitPolyFunc(fn, func, /*split part=*/0, /*num splits=*/1);
+    }
   }
 
   void emitPolyEdslFunc(func::FuncOp func) {
@@ -203,8 +206,16 @@ public:
   }
 
   void emitEvalCheck(const std::string& suffix, func::FuncOp func) {
-    auto ofs = openOutputFile("eval_check" + suffix);
-    createGpuStreamEmitter(*ofs, suffix)->emitPoly(func);
+    if (codegenCLOptions->validitySplitCount > 1) {
+      for (size_t i : llvm::seq(size_t(codegenCLOptions->validitySplitCount))) {
+        auto ofs = openOutputFile("eval_check_" + std::to_string(i) + suffix);
+        createRustStreamEmitter(*ofs)->emitPolyFunc(
+            fn, func, i, size_t(codegenCLOptions->validitySplitCount));
+      }
+    } else {
+      auto ofs = openOutputFile("eval_check" + suffix);
+      createGpuStreamEmitter(*ofs, suffix)->emitPoly(func);
+    }
   }
 
   void emitAllLayouts(mlir::ModuleOp op) {
@@ -237,7 +248,7 @@ private:
 };
 
 void registerCodegenCLOptions() {
-  *clOptions;
+   *codegenCLOptions;
 }
 
 void emitCode(ModuleOp module, const EmitCodeOptions& opts) {
@@ -295,13 +306,6 @@ void emitCode(ModuleOp module, const EmitCodeOptions& opts) {
 void emitCodeZirgenPoly(ModuleOp module, StringRef outputDir) {
   FileEmitter emitter(outputDir);
 
-  module.walk([&](func::FuncOp func) {
-    if (SymbolTable::getSymbolVisibility(func) == SymbolTable::Visibility::Private)
-      return;
-
-    emitter.emitPolyFunc("poly_fp", func);
-  });
-
   // Inline everything, since everything else expects there to be a single function left.
   PassManager pm(module.getContext());
   pm.addPass(mlir::createInlinerPass());
@@ -315,9 +319,25 @@ void emitCodeZirgenPoly(ModuleOp module, StringRef outputDir) {
     emitter.emitPolyExtFunc(func);
     emitter.emitTaps(func);
     emitter.emitInfo(func);
+    emitter.emitTapsCpp(func);
+  });
+
+  // Split up functions for poly_fp
+  pm.clear();
+  pm.addPass(Zll::createBalancedSplitPass(/*maxOps=*/1000));
+  pm.addPass(createCanonicalizerPass());
+  pm.addPass(createCSEPass());
+  if (failed(pm.run(module))) {
+    throw std::runtime_error("Failed to balanced split");
+  }
+
+  module.walk([&](func::FuncOp func) {
+    if (SymbolTable::getSymbolVisibility(func) == SymbolTable::Visibility::Private)
+      return;
+
+    emitter.emitPolyFunc("poly_fp", func);
     emitter.emitEvalCheck(".cu", func);
     emitter.emitEvalCheck(".metal", func);
-    emitter.emitTapsCpp(func);
   });
 }
 

@@ -314,3 +314,13 @@ def NormalizeOp : ZllOp<"normalize", [Pure, EvalOpAdaptor, IsReduce, InferTypeOp
       DefaultValuedAttr<StrAttr, "\"\"">:$low);
   let results = (outs Val:$out);
 }
+
+def MakeTemporaryBufferOp : ZllOp<"temp_buffer"> {
+  let summary = "Create a temporary buffer that can be used by `load` and `store`.";
+  let builders = [
+    OpBuilder<(ins "Zll::ValType":$element, "unsigned":$size), [{
+      build($_builder, $_state, $_builder.getType<zirgen::Zll::BufferType>(element, size, Zll::BufferKind::Temporary));
+    }]>
+  ];
+  let results = (outs Buffer:$out);
+}

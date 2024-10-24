@@ -236,6 +236,10 @@ void getCallStack(SmallVector<Location>& calls, Location loc) {
     calls.push_back(NameLoc::get(nameLoc.getName(), stripColumn(nameLoc.getChildLoc())));
   } else if (llvm::isa<FileLineColLoc>(loc)) {
     calls.push_back(stripColumn(loc));
+  } else if (llvm::isa<FusedLoc>(loc)) {
+    for (Location subLoc : llvm::cast<FusedLoc>(loc).getLocations()) {
+      getCallStack(calls, subLoc);
+    }
   } else if (!llvm::isa<UnknownLoc>(loc)) {
     llvm::errs() << "UNKNOWN location " << loc << "\n";
     calls.push_back(loc);

@@ -21,9 +21,31 @@ glob_lit_tests(
     test_file_exts = ["zir"],
 )
 
+KECCAK_OUTS = [
+    "defs.cpp.inc",
+    "defs.rs.inc",
+    "info.rs",
+    "eval_check.cu",
+    "eval_check.metal",
+    "layout.cpp.inc",
+    "layout.rs.inc",
+    "poly_ext.rs",
+    "rust_poly_fp_0.cpp",
+    "rust_poly_fp_1.cpp",
+    "rust_poly_fp_2.cpp",
+    "rust_poly_fp_3.cpp",
+    "rust_poly_fp_4.cpp",
+    "taps.cpp",
+    "taps.rs",
+    "steps.cpp.inc",
+    "steps.rs.inc",
+    "types.h.inc",
+    "types.rs.inc"
+]
+
 build_circuit(
     name = "keccak",
-    outs = ZIRGEN_OUTS,
+    outs = KECCAK_OUTS,
     bin = "//zirgen/Main:gen_zirgen",
     data = KECCAK_ZIR_FILES + ["//zirgen/dsl/examples:calculator.zir", "//zirgen/dsl/test:simple-accum.zir"],
     extra_args = [
@@ -33,5 +55,6 @@ build_circuit(
         "zirgen/circuit/keccak",
         "--mlir-print-debuginfo",
         "--mlir-pretty-debuginfo",
+        "--validity-split-count=5",
     ],
 )

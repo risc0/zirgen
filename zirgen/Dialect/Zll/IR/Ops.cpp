@@ -1146,7 +1146,8 @@ LogicalResult SetOp::verify() {
 
 LogicalResult GetGlobalOp::verify() {
   // Verify that buffer is not global
-  if (getBuf().getType().cast<BufferType>().getKind() != BufferKind::Global) {
+  if (getBuf().getType().cast<BufferType>().getKind() != BufferKind::Global &&
+      getBuf().getType().cast<BufferType>().getKind() != BufferKind::Temporary) {
     return failure();
   }
   return success();
@@ -1154,7 +1155,8 @@ LogicalResult GetGlobalOp::verify() {
 
 LogicalResult SetGlobalOp::verify() {
   // Verify that buffer is not global
-  if (getBuf().getType().cast<BufferType>().getKind() != BufferKind::Global) {
+  if (getBuf().getType().cast<BufferType>().getKind() != BufferKind::Global &&
+      getBuf().getType().cast<BufferType>().getKind() != BufferKind::Temporary) {
     return failure();
   }
   return success();

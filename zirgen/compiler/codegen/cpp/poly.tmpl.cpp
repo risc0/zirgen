@@ -24,26 +24,18 @@ constexpr size_t kInvRate = 4;
 // clang-format off
 namespace risc0::circuit::{{name}} {
 
-{{#funcs}}
-static __attribute__((noinline)) FpExt {{fn}}(size_t cycle, size_t steps, FpExt* poly_mix{{args}});
-{{/funcs}}
+{{#decls}}
+FpExt {{fn}}(size_t cycle, size_t steps, FpExt* poly_mix{{args}});
+{{/decls}}
 
 {{#funcs}}
-static __attribute__((noinline)) FpExt {{fn}}(size_t cycle, size_t steps, FpExt* poly_mix{{args}}) {
+FpExt {{fn}}(size_t cycle, size_t steps, FpExt* poly_mix{{args}}) {
   size_t mask = steps - 1;
 {{#body}}
   {{.}}
 {{/body}}
 }
 {{/funcs}}
-
-FpExt {{fn}}(size_t cycle, size_t steps, FpExt* poly_mix, Fp** args) {
-  //  std::cerr << "poly_fp cycle " << cycle << "/" << steps << "\n";
-  size_t mask = steps - 1;
-{{#body}}
-  {{.}}
-{{/body}}
-}
 
 } // namespace risc0::circuit::{{name}}
 // clang-format on
