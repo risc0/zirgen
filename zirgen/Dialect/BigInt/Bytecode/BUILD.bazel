@@ -1,0 +1,23 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "Bytecode",
+    srcs = [
+        "bibc.cpp",
+        "decode.cpp",
+        "encode.cpp",
+        "file.cpp",
+    ],
+    hdrs = [
+        "bibc.h",
+        "decode.h",
+        "encode.h",
+        "file.h",
+    ],
+    deps = [
+        "//zirgen/Dialect/BigInt/IR",
+        "@llvm-project//mlir:FuncDialect",
+    ],
+)
