@@ -34,6 +34,36 @@ static cl::list<std::string> inputs(cl::Positional,
   cl::value_desc("inputs"),
   cl::ZeroOrMore);
 
+static cl::opt<bool> verbose("v", cl::desc("Verbose output"));
+
+using BytePoly = zirgen::BigInt::BytePoly;
+
+void printBytePoly(const BytePoly &bp) {
+  bool first = true;
+  for (auto coeff: bp) {
+    if (first) {
+      first = false;
+    } else {
+      std::cerr << " ";
+    }
+    std::cerr << coeff;
+  }
+}
+
+void printWitness(std::string name, const std::vector<BytePoly> &witness) {
+  std::cerr << name << " witness";
+  if (witness.size()) {
+    std::cerr << ":\n";
+     for (auto &bp: witness) {
+        std::cerr << "  ";
+        printBytePoly(bp);
+        std::cerr << "\n";
+      }
+   } else {
+    std::cerr << " is empty\n";
+  }
+}
+
 int main(int argc, char **argv) {
   llvm::InitLLVM y(argc, argv);
   mlir::registerAsmPrinterCLOptions();
@@ -82,7 +112,13 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  auto witness = zirgen::BigInt::eval(func, inputVals);
-  std::cout << witness.z[0] << " " << witness.z[1] << " ";
-  std::cout << witness.z[2] << " " << witness.z[3] << "\n";
+  auto output = zirgen::BigInt::eval(func, inputVals);
+
+  if (verbose) {
+    printWitness("constant", output.constantWitness);
+    printWitness("public", output.publicWitness);
+    printWitness("private", output.privateWitness);
+  }
+  std::cout << output.z[0] << " " << output.z[1] << " ";
+  std::cout << output.z[2] << " " << output.z[3] << "\n";
 }
