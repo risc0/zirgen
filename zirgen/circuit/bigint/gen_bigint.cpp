@@ -13,6 +13,8 @@
 // limitations under the License.
 
 #include "mlir/Transforms/Passes.h"
+#include "zirgen/Dialect/BigInt/Bytecode/encode.h"
+#include "zirgen/Dialect/BigInt/Bytecode/file.h"
 #include "zirgen/Dialect/BigInt/IR/BigInt.h"
 #include "zirgen/Dialect/BigInt/Transforms/Passes.h"
 #include "zirgen/circuit/bigint/elliptic_curve.h"
@@ -239,6 +241,18 @@ int main(int argc, char* argv[]) {
   if (failed(pm.run(module.getModule()))) {
     throw std::runtime_error("Failed to apply basic optimization passes");
   }
+
+  module.getModule().walk([&](mlir::func::FuncOp func) {
+    auto prog = BigInt::Bytecode::encode(func);
+    std::string fileName = func.getName().str() + ".bibc";
+    std::string filePath = outputDir + "/" + fileName;
+    FILE* stream = fopen(filePath.c_str(), "w");
+    if (!stream) {
+      throw std::runtime_error("Failed to create output file " + filePath);
+    }
+    BigInt::Bytecode::write(*prog, stream);
+    fclose(stream);
+  });
 
   auto rustOpts = codegen::getRustCodegenOpts();
   rustOpts.addFuncContextArgument<mlir::func::FuncOp>("ctx: &mut BigIntContext");
