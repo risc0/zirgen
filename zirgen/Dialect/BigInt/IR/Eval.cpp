@@ -82,7 +82,7 @@ BytePoly sub(const BytePoly& lhs, const BytePoly& rhs) {
 }
 
 BytePoly mul(const BytePoly& lhs, const BytePoly& rhs) {
-  BytePoly out(lhs.size() + rhs.size());
+  BytePoly out(lhs.size() + rhs.size() - 1);
   for (size_t i = 0; i < lhs.size(); i++) {
     for (size_t j = 0; j < rhs.size(); j++) {
       out[i + j] += lhs[i] * rhs[j];
