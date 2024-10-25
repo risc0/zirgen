@@ -59,7 +59,6 @@ build_circuit(
         zkr + ".zkr",
         zkr + ".zkr.dbg",
         zkr + ".bibc",
-        zkr + ".mlir",
     ]] + ["bigint.rs.inc"],
     deps = [":lib"],
 )

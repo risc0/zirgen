@@ -14,7 +14,7 @@
 
 #include "mlir/Transforms/Passes.h"
 #include "zirgen/Dialect/BigInt/Bytecode/file.h"
-#include "zirgen/Dialect/BigInt/Bytecode/mlir.h"
+#include "zirgen/Dialect/BigInt/Bytecode/encode.h"
 #include "zirgen/Dialect/BigInt/IR/BigInt.h"
 #include "zirgen/Dialect/BigInt/Transforms/Passes.h"
 #include "zirgen/circuit/bigint/elliptic_curve.h"

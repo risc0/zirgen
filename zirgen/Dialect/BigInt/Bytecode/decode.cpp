@@ -31,14 +31,12 @@ public:
   BigIntType type(const Op &op);
 private:
   const Program &prog;
-  mlir::MLIRContext *ctx = nullptr;
   std::vector<BigIntType> types;
   std::vector<mlir::Value> polys;
 };
 
 Decoder::Decoder(const Program &prog, mlir::MLIRContext *ctx):
     prog(prog),
-    ctx(ctx),
     types(prog.types.size()),
     polys(prog.ops.size()) {
   for (size_t i = 0; i < prog.types.size(); ++i) {
