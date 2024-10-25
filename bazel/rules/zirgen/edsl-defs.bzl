@@ -28,15 +28,38 @@ DEFAULT_OUTS = [
     "layout.cu.inc",
 ]
 
+ZIRGEN_OUTS = [
+    "circuit.ir",
+    "types.h.inc",
+    "types.rs.inc",
+    "defs.cpp.inc",
+    "defs.rs.inc",
+    "layout.cpp.inc",
+    "layout.rs.inc",
+    "steps.cpp.inc",
+    "steps.rs.inc",
+    "validity_regs.cpp.inc",
+    "validity_regs.rs.inc",
+    "validity_taps.cpp.inc",
+    "validity_taps.rs.inc",
+]
+
 def _impl(ctx):
     outs = []
+    out_dirs = dict()
     for out in ctx.attr.outs:
-        outs.append(ctx.actions.declare_file(out.name))
+        declared = ctx.actions.declare_file(out.name)
+        outs.append(declared)
+        dirname = declared.dirname
+        out_dirs[dirname] = dirname
+
+    if len(out_dirs) != 1:
+        fail("Must have exactly one output directory")
 
     ctx.actions.run(
         mnemonic = "CodegenCircuits",
         executable = ctx.executable.binary,
-        arguments = [x.path for x in outs],
+        arguments = ctx.attr.extra_args + ["--output-dir", dirname],
         inputs = ctx.files.data,
         outputs = outs,
         tools = [ctx.executable.binary],
@@ -58,27 +81,29 @@ _build_circuit_rule = rule(
             allow_files = True,
         ),
         "outs": attr.output_list(mandatory = True),
+        "extra_args": attr.string_list(),
     },
 )
 
-def build_circuit(name, srcs, deps = [], outs = None):
-    bin = name + "_gen"
-
+def build_circuit(name, srcs = [], bin = None, deps = [], outs = None, data = [], extra_args = []):
     if outs == None:
         outs = DEFAULT_OUTS
 
-    native.cc_binary(
-        name = bin,
-        srcs = srcs,
-        deps = deps + [
-            "//zirgen/compiler/edsl",
-            "//zirgen/compiler/codegen",
-        ],
-    )
+    if not bin:
+        bin = name + "_gen"
+        native.cc_binary(
+            name = bin,
+            srcs = srcs,
+            deps = deps + [
+                "//zirgen/compiler/edsl",
+                "//zirgen/compiler/codegen",
+            ],
+        )
 
     _build_circuit_rule(
         name = name,
         binary = bin,
-        data = ["//zirgen/compiler/codegen:data"],
+        data = ["//zirgen/compiler/codegen:data"] + data,
         outs = outs,
+        extra_args = extra_args,
     )

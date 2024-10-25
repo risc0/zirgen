@@ -345,6 +345,54 @@ void Module::beginFunc(const std::string& name,
   pushIP(func.addEntryBlock());
 }
 
+void Module::setPhases(mlir::func::FuncOp funcOp, llvm::ArrayRef<std::string> phases) {
+  // First find all the buffers that are tap buffers.  These need to be sorted alphabetically
+  llvm::SmallVector<std::string> tapBufs;
+  for (auto [argIdx, buf] : llvm::enumerate(funcOp.getArguments())) {
+    auto argName =
+        llvm::dyn_cast_if_present<mlir::StringAttr>(funcOp.getArgAttr(argIdx, "zirgen.argName"));
+    if (!argName)
+      argName = builder.getStringAttr("arg" + std::to_string(argIdx));
+    auto arg = funcOp.getArgument(argIdx);
+    auto ty = llvm::cast<BufferType>(arg.getType());
+    if (ty.getKind() != BufferKind::Global) {
+      tapBufs.push_back(argName.str());
+    }
+  }
+
+  // Now we can calculate reg group ids and construct our BufferDescAttrs.
+  llvm::sort(tapBufs);
+  llvm::StringMap<std::optional<size_t>> regGroupIds;
+  for (auto [idx, name] : llvm::enumerate(tapBufs)) {
+    regGroupIds[name] = idx;
+  }
+
+  llvm::SmallVector<BufferDescAttr> buffers;
+  for (auto [argIdx, buf] : llvm::enumerate(funcOp.getArguments())) {
+    auto argName =
+        llvm::dyn_cast_if_present<mlir::StringAttr>(funcOp.getArgAttr(argIdx, "zirgen.argName"));
+    if (!argName)
+      argName = builder.getStringAttr("arg" + std::to_string(argIdx));
+    auto arg = funcOp.getArgument(argIdx);
+    auto ty = llvm::cast<BufferType>(arg.getType());
+
+    buffers.push_back(builder.getAttr<BufferDescAttr>(argName, ty, regGroupIds[argName]));
+  }
+
+  auto& builder = getBuilder();
+  setModuleAttr(funcOp, builder.getAttr<BuffersAttr>(buffers));
+
+  llvm::SmallVector<mlir::StringAttr> steps;
+  for (auto phase : phases) {
+    steps.push_back(builder.getAttr<mlir::StringAttr>(phase));
+  }
+  setModuleAttr(funcOp, builder.getAttr<StepsAttr>(steps));
+}
+
+void Module::setProtocolInfo(ProtocolInfo info) {
+  setModuleAttr(getModule(), getBuilder().getAttr<ProtocolInfoAttr>(info));
+}
+
 void Module::sortForReproducibility() {
   DenseMap<Operation*, std::string> propInfo;
   DenseMap<Operation*, size_t> argPositions;
@@ -646,15 +694,22 @@ std::vector<Val> doExtern(const std::string& name,
 
 void emitLayoutInternal(std::shared_ptr<ConstructInfo> info) {
   auto& builder = getBuilder();
-  mlir::Type layoutType;
-  mlir::Attribute layoutAttr;
-  transformLayout(getCtx(), info, layoutType, layoutAttr);
+  DenseMap<StringAttr, mlir::Type> layoutTypes;
+  DenseMap<StringAttr, mlir::Attribute> layoutAttrs;
+  transformLayout(getCtx(), info, layoutTypes, layoutAttrs);
 
-  if (layoutAttr) {
+  SmallVector<StringAttr> bufNames =
+      llvm::map_to_vector(layoutAttrs, [](auto kv) { return kv.first; });
+  // Make sure the order of buffer names is deterministic
+  llvm::sort(bufNames, [&](auto a, auto b) { return a.strref() < b.strref(); });
+
+  for (auto bufName : bufNames) {
     OpBuilder::InsertionGuard guard(builder);
     builder.setInsertionPointToEnd(curModule->getModule().getBody());
-    builder.create<ZStruct::GlobalConstOp>(
-        builder.getUnknownLoc(), "layout", layoutType, layoutAttr);
+    builder.create<ZStruct::GlobalConstOp>(builder.getUnknownLoc(),
+                                           bufName.str() + "_layout",
+                                           layoutTypes.at(bufName),
+                                           layoutAttrs.at(bufName));
   }
 }
 

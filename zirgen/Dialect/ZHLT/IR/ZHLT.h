@@ -57,6 +57,12 @@ isValidSegmentSizes(llvm::ArrayRef<int32_t> segmentSizes, ssize_t numRaw, size_t
 // Constant names for generated constants.
 std::string getTapsConstName();
 
+/// Populates value names based on the `zirgen.argName` attribute.  Intended
+/// to be used with getAsmBlockArgumentNames.
+void getZirgenBlockArgumentNames(mlir::FunctionOpInterface funcOp,
+                                 mlir::Region& r,
+                                 mlir::OpAsmSetValueNameFn setNameFn);
+
 } // namespace zirgen::Zhlt
 
 #define GET_TYPEDEF_CLASSES

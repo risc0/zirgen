@@ -8,10 +8,12 @@ package(
 cc_library(
     name = "lib",
     srcs = [
+        "elliptic_curve.cpp",
         "op_tests.cpp",
         "rsa.cpp",
     ],
     hdrs = [
+        "elliptic_curve.h",
         "op_tests.h",
         "rsa.h",
         "//zirgen/circuit/recursion",
@@ -30,6 +32,7 @@ cc_library(
 ZKRS = [
     "rsa_256_x1",
     "rsa_256_x2",
+    "rsa_3072_x1",
     "rsa_3072_x15",
     "const_add_test_8",
     "const_add_alt_test_16",

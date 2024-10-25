@@ -133,7 +133,7 @@ macro_rules! zirgen_preamble {
                     raw_buffers.map_rows(|x| -> () { panic!("Unexpected tap in poly_ext") });
                 assert_eq!(u.len(), TAP_LIST.len());
 
-                let res = validity_taps_(&buffers, *mix, u.try_into().unwrap()).unwrap();
+                let res = validity_taps(&buffers, &u, *mix, get_global_buffer(&buffers)).unwrap();
 
                 res
             }
@@ -154,7 +154,7 @@ macro_rules! zirgen_preamble {
 
         impl risc0_zkp::layout::Component for Reg {
             fn walk<V: risc0_zkp::layout::Visitor>(&self, v: &mut V) -> core::fmt::Result {
-                v.visit_reg("Reg", self.offset)
+                v.visit_reg(self.offset)
             }
             fn ty_name(&self) -> &'static str {
                 "reg"

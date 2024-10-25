@@ -2,6 +2,10 @@ package(
     default_visibility = ["//visibility:public"],
 )
 
+load("//bazel/rules/lit:defs.bzl", "glob_lit_tests")
+
+glob_lit_tests()
+
 cc_binary(
     name = "test",
     srcs = [

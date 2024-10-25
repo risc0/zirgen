@@ -25,7 +25,8 @@ include "zirgen/Dialect/ZStruct/IR/Types.td"
 
 def IsPoly : DeclareOpInterfaceMethods<PolyOp>;
 
-// A FuncOp-like operation which codegens as a function.
+// A mlir::func::FuncOp-like operation which allows specification of different types of arguments by names with
+// `funcInputs` and `funcOutputs`.
 class ZFuncOp<string aspectArg, list<Trait> childTraits = [], string mnemonic = aspectArg # "_func">
     : Op<ZhltDialect, mnemonic,
     // Redefine traits later, since they depend on calculated predicates.
@@ -145,6 +146,7 @@ class ZFuncOp<string aspectArg, list<Trait> childTraits = [], string mnemonic = 
          if (!name.starts_with("constructParam"))
             realSetNameFn(value, name);
        };
+       (void)setNameFn;
        }] # inputSubstSnippets.setValueNames # [{
     }
   }]
@@ -377,37 +379,11 @@ def CheckFuncOp : ZFuncOp<"check", [CodegenSkip, SingletonOpTrait]> {
 
      This is a circuit-wide singleton, and there should only be one instance of this operation.
   }];
-  let funcInputs = (ins
-    ExecContext:$ctx);
   let hasRegionVerifier = 1;
   let extraClassDeclaration = extraZFuncClassDeclaration # [{
      // Ensures all constraints are less than or equal to the provided degree
      mlir::LogicalResult verifyMaxDegree(size_t maxDegree);
   }];
-  let singleton = 1;
-}
-
-def ValidityRegsFuncOp : ZFuncOp<"validity_regs", [SingletonOpTrait]> {
-  let summary = "Evaluates the validity polynomial from a layout";
-  let funcInputs = (ins
-     ValidityRegsContext:$ctx,
-     PolyMix:$polyMix);
-  let funcResults = (outs Constraint:$out);
-  let hasRegionVerifier = 1;
-  let singleton = 1;
-}
-
-def ValidityTapsFuncOp : ZFuncOp<"validity_taps", [SingletonOpTrait]> {
-  let summary = "Evaluates the validity polynomial from an array of taps";
-  let description = [{
-     This is a circuit-wide singleton, and there should only be one instance of this operation.
-  }];
-  let funcInputs = (ins
-      ValidityTapsContext:$ctx,
-      PolyMix:$polyMix,
-      ArrayType:$taps);
-  let funcResults = (outs Constraint:$out);
-  let hasRegionVerifier = 1;
   let singleton = 1;
 }
 
@@ -417,7 +393,6 @@ def ExecFuncOp : ZFuncOp<"exec"> {
      Also checks constraints unless the --circuit-ndebug option is specified,
   }];
   let funcInputs = (ins
-      ExecContext:$ctx,
       Variadic<ZirType>:$constructParam,
       Optional<IsLayoutType>:$layout);
   let funcResults = (outs ZirType:$out);
@@ -428,7 +403,6 @@ def ExecCallOp : ZCallOp<ExecFuncOp, [AttrSizedOperandSegments]>;
 def BackFuncOp : ZFuncOp<"back"> {
   let summary = "Retrieves the value of a component based on its layout";
   let funcInputs = (ins
-      ExecContext:$ctx,
       Index:$distance,
       Optional<IsLayoutType>:$layout);
   let funcResults = (outs ZirType:$out);
@@ -436,9 +410,145 @@ def BackFuncOp : ZFuncOp<"back"> {
 
 def BackCallOp : ZCallOp<BackFuncOp>;
 
-def StepFuncOp : ZFuncOp<"step"> {
-  let summary = "Defines an operation to be exposed as a public symbol.";
-  let funcInputs = (ins ExecContext:$ctx);
+
+// A FuncOp-like operation that has names associated with
+// arguments.  It also allows creating multiple function ops to allow
+// them to be handled differently in patterns.  Unlike ZFuncOp, this
+// doesn't allow convenient access to argument or result groups by
+// name, nor does it verify the types of arguments.
+//
+class ZLooseFuncOp<string mnemonic, list<Trait> childTraits = []>
+    : Op<ZhltDialect, mnemonic,
+         childTraits # [CallableOpInterface, FunctionOpInterface, IsolatedFromAbove, OpAsmOpInterface]> {
+  string cppClassName = NAME;
+
+  let arguments = (ins
+    SymbolNameAttr:$sym_name,
+    TypeAttrOf<FunctionType>: $function_type,
+    OptionalAttr<StrAttr>:$sym_visibility,
+    OptionalAttr<DictArrayAttr>:$arg_attrs,
+    OptionalAttr<DictArrayAttr>:$res_attrs
+  );
+
+  let builders = [
+    OpBuilder<(ins
+      "mlir::StringRef":$name, "mlir::FunctionType":$type,
+      CArg<"llvm::ArrayRef<llvm::StringRef>", "{}">:$argNames), [{
+        $_state.addAttribute(SymbolTable::getSymbolAttrName(),
+            $_builder.getStringAttr(name));
+        $_state.addAttribute(getFunctionTypeAttrName($_state.name), TypeAttr::get(type));
+        $_state.addRegion();
+        auto argAttrs = llvm::map_to_vector(argNames, [&](auto argName) -> mlir::Attribute {
+            if (argName.empty()) return $_builder.getDictionaryAttr({});
+            return $_builder.getDictionaryAttr({$_builder.getNamedAttr("zirgen.argName", $_builder.getStringAttr(argName))});
+        });
+        $_state.addAttribute(getArgAttrsAttrName($_state.name), $_builder.getArrayAttr(argAttrs));
+      }]>];
+  let regions = (region SizedRegion<1>:$body);
+
+  let extraClassDeclaration = [{
+    // FunctionOpInterface Methods
+    ::mlir::Region *getCallableRegion() { return isExternal() ? nullptr : &getBody(); }
+    ::llvm::ArrayRef<mlir::Type> getArgumentTypes() { return getFunctionType().getInputs(); }
+    ::llvm::ArrayRef<mlir::Type> getResultTypes() { return getFunctionType().getResults(); }
+    // OpAsmOpInterface Methods
+    void getAsmBlockArgumentNames(::mlir::Region& r, ::mlir::OpAsmSetValueNameFn setNameFn) {
+      getZirgenBlockArgumentNames(*this, r, setNameFn);
+    }
+  }];
+
+  code extraClassDefinition = [{
+mlir::ParseResult $cppClass::parse(mlir::OpAsmParser& parser, mlir::OperationState& result) {
+  // Dispatch to the FunctionOpInterface provided utility method that parses the
+  // function operation.
+  auto buildFuncType = [](mlir::Builder& builder,
+                          llvm::ArrayRef<mlir::Type> argTypes,
+                          llvm::ArrayRef<mlir::Type> results,
+                          mlir::function_interface_impl::VariadicFlag,
+                          std::string&) { return builder.getFunctionType(argTypes, results); };
+
+  return mlir::function_interface_impl::parseFunctionOp(parser,
+                                                        result,
+                                                        /*allowVariadic=*/false,
+                                                        getFunctionTypeAttrName(result.name),
+                                                        buildFuncType,
+                                                        getArgAttrsAttrName(result.name),
+                                                        getResAttrsAttrName(result.name));
 }
 
-def StepCallOp : ZCallOp<StepFuncOp>;
+void $cppClass::print(mlir::OpAsmPrinter& p) {
+  // Dispatch to the FunctionOpInterface provided utility method that prints the
+  // function operation.
+  mlir::function_interface_impl::printFunctionOp(p,
+                                                 *this,
+                                                 /*isVariadic=*/false,
+                                                 getFunctionTypeAttrName(),
+                                                 getArgAttrsAttrName(),
+                                                 getResAttrsAttrName());
+}
+
+  }];
+  let hasCustomAssemblyFormat = 1;
+}
+
+class ZLooseCallOp<ZLooseFuncOp func, string mnemonic, list<Trait> childTraits = []>
+    : Op<ZhltDialect, mnemonic, childTraits # [CallOpInterface]> {
+   let arguments =
+      (ins FlatSymbolRefAttr: $callee,
+           TypeAttrOf<FunctionType>: $callee_type,
+           Variadic<AnyType>: $operands);
+   let results = (outs Variadic<AnyType>: $results);
+   let builders = [
+      // Build given a ZLooseFuncOp.  In this case, we can infer result types
+      // and only need operand values.
+      OpBuilder<
+        (ins CArg<func.cppNamespace # "::" # func.cppClassName>: $component,
+             CArg<"mlir::ValueRange", "{}">:$operands), [{
+          mlir::FunctionType funcType = component.getFunctionType();
+          build($_builder, $_state,
+                funcType.getResults(),
+                $_builder.getAttr<mlir::FlatSymbolRefAttr>(component.getSymName()),
+                TypeAttr::get(funcType),
+                operands);
+       }]>];
+  let extraClassDeclaration = [{
+    /// Get the argument operands to the called function.
+    mlir::Operation::operand_range getArgOperands() {
+      return getOperation()->getOperands();
+    }
+
+    mlir::MutableOperandRange getArgOperandsMutable() {
+      return mlir::MutableOperandRange(getOperation(), 0, getOperation()->getNumOperands());
+    }
+
+    /// Return the callee of this operation.
+    mlir::CallInterfaceCallable getCallableForCallee() {
+      return (*this)->getAttrOfType<mlir::SymbolRefAttr>("callee");
+    }
+
+    /// Set the callee for this operation.
+    void setCalleeFromCallable(mlir::CallInterfaceCallable callee) {
+      (*this)->setAttr("callee", callee.get<mlir::SymbolRefAttr>());
+    }
+  }];
+  let assemblyFormat = [{
+    $callee `(` operands `)` `:` functional-type(operands, results) attr-dict
+  }];
+}
+
+def StepFuncOp : ZLooseFuncOp<"step_func"> {
+  let summary = "A function that's intended to be used to populate the witness";
+}
+
+def StepCallOp : ZLooseCallOp<StepFuncOp, "call_step">;
+
+def ValidityRegsFuncOp : ZLooseFuncOp<"validity_regs_func"> {
+  let summary = "Evaluates the validity polynomial from a layout";
+  let hasRegionVerifier = 1;
+}
+
+def ValidityTapsFuncOp : ZLooseFuncOp<"validity_taps_func"> {
+  let summary = "Evaluates the validity polynomial from an array of taps";
+  let hasRegionVerifier = 1;
+}
+

@@ -25,6 +25,7 @@ std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createOptimizeLayoutPass();
 std::unique_ptr<mlir::Pass> createUnrollPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createExpandLayoutPass();
 std::unique_ptr<mlir::Pass> createInlineLayoutPass();
+std::unique_ptr<mlir::Pass> createBuffersToArgsPass();
 
 // Generate the code for registering passes.
 #define GEN_PASS_REGISTRATION

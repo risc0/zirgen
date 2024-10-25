@@ -129,4 +129,73 @@ LogicalResult FieldAttr::verify(function_ref<InFlightDiagnostic()> emitError,
   return success();
 }
 
+llvm::SmallVector<BufferDescAttr> BuffersAttr::getTapBuffers() const {
+  llvm::SmallVector<BufferDescAttr> tapBuffers;
+  for (auto bufDesc : getBuffers()) {
+    if (!bufDesc.getRegGroupId())
+      continue;
+
+    size_t regGroupId = *bufDesc.getRegGroupId();
+
+    if (tapBuffers.size() <= regGroupId)
+      tapBuffers.resize(regGroupId + 1);
+    tapBuffers[regGroupId] = bufDesc;
+  }
+  return tapBuffers;
+}
+
+BufferDescAttr BuffersAttr::getBuffer(StringRef bufName) const {
+  for (auto bufDesc : getBuffers()) {
+    if (bufDesc.getName() == bufName)
+      return bufDesc;
+  }
+  return {};
+}
+
+LogicalResult ProtocolInfoAttr::verify(llvm::function_ref<::mlir::InFlightDiagnostic()> emitError,
+                                       StringRef protocolInfo) {
+  if (protocolInfo.size() != PROTOCOL_INFO_LEN) {
+    return emitError() << "Protocol info must be a fixed length of " << PROTOCOL_INFO_LEN;
+  }
+
+  return success();
+}
+
+ProtocolInfo ProtocolInfoAttr::getValue() {
+  ProtocolInfo result;
+  auto str = getProtocolInfo();
+  assert(str.size() == PROTOCOL_INFO_LEN);
+  std::copy(str.begin(), str.end(), result.begin());
+  result[PROTOCOL_INFO_LEN] = '\0';
+  return result;
+}
+
+ProtocolInfoAttr ProtocolInfoAttr::get(MLIRContext* ctx, ProtocolInfo info) {
+  assert(info[PROTOCOL_INFO_LEN] == '\0');
+  return get(ctx, StringRef(info.data()));
+}
+
+LogicalResult BuffersAttr::verify(llvm::function_ref<::mlir::InFlightDiagnostic()> emitError,
+                                  ArrayRef<BufferDescAttr> buffers) {
+  llvm::StringSet bufNames;
+  SmallVector<size_t> tapGroupIds;
+
+  for (auto buf : buffers) {
+    if (bufNames.contains(buf.getName()))
+      return emitError() << "Duplicate buffer name " << buf.getName() << "\n";
+
+    if (buf.getRegGroupId())
+      tapGroupIds.push_back(*buf.getRegGroupId());
+  }
+
+  llvm::sort(tapGroupIds);
+  for (auto [idx, groupId] : llvm::enumerate(tapGroupIds)) {
+    if (idx != groupId) {
+      return emitError() << "Tap groups must start at zero and be monotonically increasing";
+    }
+  }
+
+  return success();
+}
+
 } // namespace zirgen::Zll

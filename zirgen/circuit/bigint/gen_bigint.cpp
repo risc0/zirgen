@@ -15,6 +15,7 @@
 #include "mlir/Transforms/Passes.h"
 #include "zirgen/Dialect/BigInt/IR/BigInt.h"
 #include "zirgen/Dialect/BigInt/Transforms/Passes.h"
+#include "zirgen/circuit/bigint/elliptic_curve.h"
 #include "zirgen/circuit/bigint/op_tests.h"
 #include "zirgen/circuit/bigint/rsa.h"
 #include "zirgen/circuit/recursion/code.h"
@@ -41,14 +42,12 @@ std::unique_ptr<llvm::raw_fd_ostream> openOutputFile(StringRef path, StringRef n
   return ofs;
 }
 
-void emitLang(StringRef langName,
-              zirgen::codegen::LanguageSyntax* lang,
-              StringRef path,
-              ModuleOp module) {
+void emit(StringRef langName,
+          const zirgen::codegen::CodegenOptions& codegenOpts,
+          StringRef path,
+          ModuleOp module) {
   auto ofs = openOutputFile(path, ("bigint." + langName + ".inc").str());
 
-  codegen::CodegenOptions codegenOpts;
-  codegenOpts.lang = lang;
   zirgen::codegen::CodegenEmitter cg(codegenOpts, ofs.get(), module.getContext());
   cg.emitModule(module);
 
@@ -94,6 +93,13 @@ struct RsaSpec {
   size_t iters;
 };
 
+// Specification of elliptic curve (EC) parameters used to generate EC ZKRs
+struct ECSpec {
+  llvm::StringLiteral name;
+  size_t numBits;
+  zirgen::BigInt::EC::WeierstrassCurve curve;
+};
+
 const RsaSpec kRsaSpecs[] = {
     // 256-bit RSA; primarily used for testing.
     {"rsa_256_x1", 256, 1},
@@ -101,20 +107,52 @@ const RsaSpec kRsaSpecs[] = {
 
     // 3072-bit RSA.  As of this writing, verifying more than 15
     // claims makes the ZKR too big to run in BIGINT_PO2.
+    {"rsa_3072_x1", 3072, 1},
     {"rsa_3072_x15", 3072, 15},
+};
+
+// rz8test parameters
+// rz8test is an 8-bit testing curve that is far too small to be secure but good for short tests
+const APInt rz8test_prime(8, 179);
+const APInt rz8test_a(8, 1);
+const APInt rz8test_b(8, 12);
+// Base point
+const APInt rz8test_G_x(8, 157);
+const APInt rz8test_G_y(8, 34);
+const APInt rz8test_order(8, 199);
+
+// secp256k1 parameters
+const APInt secp256k1_prime = APInt::getAllOnes(256) - APInt::getOneBitSet(256, 32) -
+                              APInt::getOneBitSet(256, 9) - APInt::getOneBitSet(256, 8) -
+                              APInt::getOneBitSet(256, 7) - APInt::getOneBitSet(256, 6) -
+                              APInt::getOneBitSet(256, 4);
+const APInt secp256k1_a(8, 0);
+const APInt secp256k1_b(8, 7);
+// Base point
+const APInt
+    secp256k1_G_x(256, "79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798", 16);
+const APInt
+    secp256k1_G_y(256, "483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8", 16);
+const APInt
+    secp256k1_order(256, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16);
+
+const ECSpec kECSpecs[] = {
+    // rz8test -- an in-house 8-bit testing curve; nowhere near big enough to be secure
+    {"rz8test", 8, {rz8test_prime, rz8test_a, rz8test_b}},
+
+    // secp256k1
+    {"secp256k1", 256, {secp256k1_prime, secp256k1_a, secp256k1_b}},
 };
 
 } // namespace
 
-cl::list<std::string> outputFiles{
-    cl::Positional, cl::OneOrMore, cl::desc("files in output directory")};
+cl::opt<std::string> outputDir{
+    "output-dir", cl::desc("Output directory"), cl::value_desc("dir"), cl::Required};
 
 int main(int argc, char* argv[]) {
   llvm::InitLLVM y(argc, argv);
   registerEdslCLOptions();
   llvm::cl::ParseCommandLineOptions(argc, argv, "gen_bigint");
-
-  std::string dir = llvm::StringRef(outputFiles[0]).rsplit('/').first.str();
 
   Module module;
   auto* ctx = module.getCtx();
@@ -128,7 +166,6 @@ int main(int argc, char* argv[]) {
     });
     BigInt::setIterationCount(funcOp, rsa.iters);
   }
-  // TODO: More bitwidth coverage?
   for (size_t numBits : {8}) {
     module.addFunc<0>("nondet_inv_test_" + std::to_string(numBits), {}, [&]() {
       auto& builder = Module::getCurModule()->getBuilder();
@@ -203,15 +240,19 @@ int main(int argc, char* argv[]) {
     throw std::runtime_error("Failed to apply basic optimization passes");
   }
 
-  static codegen::RustLanguageSyntax rustLang;
-  rustLang.addContextArgument("ctx: &mut BigIntContext");
-  rustLang.addItemsMacro("bigint_program_info");
-  rustLang.addItemsMacro("bigint_program_list");
-  emitLang("rs", &rustLang, dir, module.getModule());
+  auto rustOpts = codegen::getRustCodegenOpts();
+  rustOpts.addFuncContextArgument<mlir::func::FuncOp>("ctx: &mut BigIntContext");
+  rustOpts.addCallContextArgument<mlir::func::CallOp>("ctx");
+  auto rustLang = dynamic_cast<codegen::RustLanguageSyntax*>(rustOpts.lang);
+  assert(rustLang && "expecting getRustCodegenOpts to use RustLanguage");
+  rustLang->addItemsMacro("bigint_program_info");
+  rustLang->addItemsMacro("bigint_program_list");
+  emit("rs", rustOpts, outputDir, module.getModule());
 
-  static codegen::CppLanguageSyntax cppLang;
-  cppLang.addContextArgument("BigIntContext& ctx");
-  emitLang("cpp", &cppLang, dir, module.getModule());
+  auto cppOpts = codegen::getCppCodegenOpts();
+  cppOpts.addFuncContextArgument<mlir::func::FuncOp>("BigIntContext& ctx");
+  cppOpts.addCallContextArgument<mlir::func::CallOp>("ctx");
+  emit("cpp", cppOpts, outputDir, module.getModule());
 
   PassManager pm2(module.getCtx());
   if (failed(applyPassManagerCLOptions(pm2))) {
@@ -229,7 +270,7 @@ int main(int argc, char* argv[]) {
   bool exceeded = false;
   module.getModule().walk([&](mlir::func::FuncOp func) {
     recursion::EncodeStats stats;
-    zirgen::emitRecursion(dir, func, &stats);
+    zirgen::emitRecursion(outputDir, func, &stats);
     size_t iters = BigInt::getIterationCount(func);
     if (stats.totCycles > (1 << recursion::kRecursionPo2)) {
       exceeded = true;
@@ -245,7 +286,7 @@ int main(int argc, char* argv[]) {
   });
 
   if (exceeded) {
-    llvm::errs() << "One or more bigint probgrams exceeded the total number of allowed cycles.  "
+    llvm::errs() << "One or more bigint programs exceeded the total number of allowed cycles.  "
                     "Perhaps decrease iterations?\n";
     return 1;
   }

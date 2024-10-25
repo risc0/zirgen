@@ -45,13 +45,13 @@ class BinaryOp<string mnemonic, list<Trait> traits = []>
   let assemblyFormat = [{ $lhs `:` type($lhs) `,` $rhs `:` type($rhs) `->` type($out) attr-dict }];
 }
 
-def AddOp : BinaryOp<"add", [Pure, Commutative]> {}
-def SubOp : BinaryOp<"sub", [Pure, ]> {}
-def MulOp : BinaryOp<"mul", [Pure, Commutative]> {}
+def AddOp : BinaryOp<"add", [Pure, Commutative, DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {}
+def SubOp : BinaryOp<"sub", [Pure, DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {}
+def MulOp : BinaryOp<"mul", [Pure, Commutative, DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {}
 def NondetRemOp : BinaryOp<"nondet_rem", [DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {}
 def NondetQuotOp : BinaryOp<"nondet_quot", [DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {}
-def NondetInvModOp : BinaryOp<"nondet_invmod", [DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {}
-def ModularInvOp : BinaryOp<"inv", []> {}
+def NondetInvOp : BinaryOp<"nondet_inv", [DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {}
+def InvOp : BinaryOp<"inv", []> {}
 def ReduceOp : BinaryOp<"reduce", []> {}
 
 def EqualZeroOp : BigIntOp<"eqz", [DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {

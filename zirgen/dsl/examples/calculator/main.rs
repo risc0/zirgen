@@ -18,7 +18,7 @@ mod cpu;
 use anyhow::Result;
 use clap::Parser;
 use risc0_zkp::core::digest::Digest;
-use risc0_zkp::core::hash::{poseidon::PoseidonHashSuite, HashSuite};
+use risc0_zkp::core::hash::{poseidon2::Poseidon2HashSuite, HashSuite};
 use risc0_zkp::hal::{cpu::CpuHal, Buffer, Hal};
 use std::path::PathBuf;
 
@@ -105,7 +105,7 @@ pub fn main() {
     env_logger::init();
 
     let args = Args::parse();
-    let hash_suite = PoseidonHashSuite::new_suite();
+    let hash_suite = Poseidon2HashSuite::new_suite();
     let hal = CpuHal::new(hash_suite.clone());
     let circuit_hal = cpu::CpuCircuitHal::new(OP_ADD, 456, 123);
     let seal = prove(&hal, &circuit_hal).unwrap();
@@ -121,7 +121,7 @@ mod tests {
     use test_log::test;
 
     fn run_test(op: usize) {
-        let hash_suite = PoseidonHashSuite::new_suite();
+        let hash_suite = Poseidon2HashSuite::new_suite();
         let hal = CpuHal::new(hash_suite.clone());
         let circuit_hal = cpu::CpuCircuitHal::new(op, 456, 123);
         let seal = prove(&hal, &circuit_hal).unwrap();

@@ -1,0 +1,16 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "circuit",
+    srcs = [
+        "//zirgen/circuit/bigint:bigint_zkr",
+        "//zirgen/circuit/bigint:gen_bigint",
+        "//zirgen/circuit/fib",
+        "//zirgen/circuit/keccak",
+        "//zirgen/circuit/predicates:gen_predicates",
+        "//zirgen/circuit/recursion",
+        "//zirgen/circuit/rv32im/v1/edsl:rv32im",
+    ],
+)

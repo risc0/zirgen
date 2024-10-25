@@ -17,17 +17,6 @@
 // library.
 
 #[macro_export]
-macro_rules! codegen_make_ref {
-    ($offset:literal) => {
-        paste::paste! {
-            &Reg {
-                offset: $offset,
-            }
-        }
-    };
-}
-
-#[macro_export]
 macro_rules! codegen_make_tap {
     ($regGroupId:literal, $offset:literal, $back:literal) => {
         paste::paste! {
@@ -44,24 +33,6 @@ macro_rules! codegen_make_tap {
 macro_rules! codegen_invoke_extern {
     ($ctx:ident, $name:ident $(, $exprs:expr)*) => {
         $ctx.$name($($exprs),*)?
-    }
-}
-
-#[macro_export]
-macro_rules! codegen_make_val {
-    ($val:literal) => {
-        paste::paste! {
-            Val::new($val)
-        }
-    };
-}
-
-#[macro_export]
-macro_rules! codegen_make_val_ext {
-    ($($val:literal),*) => {
-        paste::paste! {
-            ExtVal::new($(Val::new($val),)*)
-        }
     }
 }
 
@@ -245,15 +216,6 @@ macro_rules! codegen_define_buffer_list {
             }
         }
     }
-}
-
-#[macro_export]
-macro_rules! codegen_get_buffer {
-    ($ctx:expr, $buffer:ident) => {
-        paste::paste! {
-            [< get_ $buffer _buffer >] ($ctx)
-        }
-    };
 }
 
 #[macro_export]

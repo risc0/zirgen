@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "zirgen/Dialect/ZHLT/IR/Codegen.h"
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
-#include "zirgen/Dialect/ZStruct/Analysis/BufferAnalysis.h"
 
 namespace zirgen::Zhlt {
 namespace {
@@ -23,100 +23,69 @@ using namespace zirgen::codegen;
 using namespace zirgen::ZStruct;
 using namespace zirgen::Zll;
 
-class EmitZhltBase {
-public:
-  EmitZhltBase(ModuleOp module, CodegenEmitter& cg)
-      : module(module), cg(cg), ctx(module.getContext()), bufferAnalysis(module) {}
-  virtual ~EmitZhltBase() = default;
+struct RustEmitZhlt : public EmitZhlt {
+  using EmitZhlt::EmitZhlt;
 
-  LogicalResult emit() {
-    if (failed(doValType()))
-      return failure();
-
-    if (failed(doBuffers()))
-      return failure();
-
-    cg.emitModule(module);
-
-    return success();
-  }
-
-protected:
-  virtual LogicalResult emitBufferList(ArrayRef<BufferDesc> bufs) { return success(); }
-
-  ModuleOp module;
-  CodegenEmitter& cg;
-  MLIRContext* ctx;
-  BufferAnalysis bufferAnalysis;
-
-private:
-  // Declares "Val" to be a type alias to the appropriete field element.
-  LogicalResult doValType();
-
-  // Provide buffers and sizes
-  LogicalResult doBuffers();
-};
-
-struct RustEmitZhlt : public EmitZhltBase {
-  using EmitZhltBase::EmitZhltBase;
-
-  LogicalResult emitBufferList(ArrayRef<BufferDesc> bufs) override {
+  LogicalResult emitBufferList(ArrayRef<BufferDescAttr> bufs) override {
     cg << CodegenIdent<IdentKind::Macro>(cg.getStringAttr("defineBufferList")) << "!{\n";
 
     cg << "all: [";
     for (auto desc : bufs)
-      cg << CodegenIdent<IdentKind::Var>(desc.name) << ",";
+      cg << CodegenIdent<IdentKind::Var>(desc.getName()) << ",";
     cg << "],\n";
 
     cg << "rows: [";
     for (auto desc : bufs)
-      if (!desc.global)
-        cg << CodegenIdent<IdentKind::Var>(desc.name) << ",";
+      if (desc.getType().getKind() != BufferKind::Global)
+        cg << CodegenIdent<IdentKind::Var>(desc.getName()) << ",";
     cg << "],\n";
 
     cg << "taps: [";
     for (auto desc : bufs)
-      if (desc.regGroupId)
-        cg << CodegenIdent<IdentKind::Var>(desc.name) << ",";
+      if (desc.getRegGroupId())
+        cg << CodegenIdent<IdentKind::Var>(desc.getName()) << ",";
     cg << "],\n";
 
     cg << "globals: [";
     for (auto desc : bufs)
-      if (desc.global)
-        cg << CodegenIdent<IdentKind::Var>(desc.name) << ",";
+      if (desc.isGlobal())
+        cg << CodegenIdent<IdentKind::Var>(desc.getName()) << ",";
     cg << "],}\n";
 
     for (auto desc : bufs) {
-      auto name = CodegenIdent<IdentKind::Var>(desc.name);
-      if (desc.regGroupId) {
+      auto name = CodegenIdent<IdentKind::Var>(desc.getName());
+      if (desc.getRegGroupId()) {
         cg << CodegenIdent<IdentKind::Macro>(cg.getStringAttr("defineTapBuffer")) << "!{" << name
-           << ", /*count=*/" << desc.regCount << ", /*groupId=*/" << *desc.regGroupId << "}\n";
-      } else if (desc.kind == BufferKind::Global) {
+           << ", /*count=*/" << desc.getRegCount() << ", /*groupId=*/" << *desc.getRegGroupId()
+           << "}\n";
+      } else if (desc.getKind() == BufferKind::Global) {
         cg << CodegenIdent<IdentKind::Macro>(cg.getStringAttr("defineGlobalBuffer")) << "!{" << name
-           << ", /*count=*/" << desc.regCount << "}\n";
+           << ", /*count=*/" << desc.getRegCount() << "}\n";
       } else {
         cg << CodegenIdent<IdentKind::Macro>(cg.getStringAttr("defineBuffer")) << "!{" << name
-           << ", /*count=*/" << desc.regCount << "}\n";
+           << ", /*count=*/" << desc.getRegCount() << "}\n";
       }
     }
     return success();
   }
 };
 
-struct CppEmitZhlt : public EmitZhltBase {
-  using EmitZhltBase::EmitZhltBase;
+struct CppEmitZhlt : public EmitZhlt {
+  using EmitZhlt::EmitZhlt;
 
-  LogicalResult emitBufferList(ArrayRef<BufferDesc> bufs) override {
+  LogicalResult emitBufferList(ArrayRef<BufferDescAttr> bufs) override {
     for (auto desc : bufs) {
-      auto name = cg.getStringAttr("regCount_" + desc.name.str());
-      cg << "constexpr size_t " << CodegenIdent<IdentKind::Const>(name) << " = " << desc.regCount
-         << ";\n";
+      auto name = cg.getStringAttr("regCount_" + desc.getName().str());
+      cg << "constexpr size_t " << CodegenIdent<IdentKind::Const>(name) << " = "
+         << desc.getRegCount() << ";\n";
     }
     return success();
   }
 };
 
-LogicalResult EmitZhltBase::doValType() {
+} // namespace
+
+LogicalResult EmitZhlt::doValType() {
   DenseSet<Zll::FieldAttr> fields;
 
   AttrTypeWalker typeWalker;
@@ -148,17 +117,16 @@ LogicalResult EmitZhltBase::doValType() {
   return success();
 }
 
-LogicalResult EmitZhltBase::doBuffers() {
-  if (failed(emitBufferList(bufferAnalysis.getAllBuffers())))
+LogicalResult EmitZhlt::doBuffers() {
+  auto bufs = Zll::lookupModuleAttr<BuffersAttr>(module);
+  if (failed(emitBufferList(bufs.getBuffers())))
     return failure();
 
   return success();
 }
 
-} // namespace
-
-LogicalResult emitModule(mlir::ModuleOp module, zirgen::codegen::CodegenEmitter& cg) {
-  std::unique_ptr<EmitZhltBase> impl;
+std::unique_ptr<EmitZhlt> getEmitter(mlir::ModuleOp module, zirgen::codegen::CodegenEmitter& cg) {
+  std::unique_ptr<EmitZhlt> impl;
 
   switch (cg.getLanguageKind()) {
   case LanguageKind::Cpp:
@@ -171,7 +139,31 @@ LogicalResult emitModule(mlir::ModuleOp module, zirgen::codegen::CodegenEmitter&
 
   assert(impl && "Unknown language kind");
 
-  return impl->emit();
+  return impl;
+}
+
+LogicalResult emitModule(mlir::ModuleOp module, zirgen::codegen::CodegenEmitter& cg) {
+  auto emitter = getEmitter(module, cg);
+  if (failed(emitter->emitDefs()))
+    return failure();
+  cg.emitModule(module);
+  return success();
+}
+
+void addCppSyntax(codegen::CodegenOptions& opts) {
+  opts.addFuncContextArgument<CheckFuncOp, ExecFuncOp, BackFuncOp, StepFuncOp>("ExecContext& ctx");
+  opts.addFuncContextArgument<ValidityTapsFuncOp>("ValidityTapsContext& ctx");
+  opts.addFuncContextArgument<ValidityRegsFuncOp>("ValidityRegsContext& ctx");
+
+  opts.addCallContextArgument<ExecCallOp, BackCallOp, StepCallOp>("ctx");
+}
+
+void addRustSyntax(codegen::CodegenOptions& opts) {
+  opts.addFuncContextArgument<CheckFuncOp, ExecFuncOp, BackFuncOp, StepFuncOp>("ctx: &ExecContext");
+  opts.addFuncContextArgument<ValidityTapsFuncOp>("ctx: &ValidityTapsContext");
+  opts.addFuncContextArgument<ValidityRegsFuncOp>("ctx: &ValidityRegsContext");
+
+  opts.addCallContextArgument<ExecCallOp, BackCallOp, StepCallOp>("ctx");
 }
 
 } // namespace zirgen::Zhlt

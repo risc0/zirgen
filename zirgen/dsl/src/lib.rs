@@ -25,13 +25,13 @@ pub use buffers::{BufferSpec, Buffers};
 /// execution trace or a set of global registers that are common to
 /// all cycles.
 pub trait BufferRow: Clone {
-    type ValType: Clone + Copy;
+    type ValType: Clone + Copy + Default;
 
     fn load(&self, offset: usize, back: usize) -> Self::ValType;
     fn store(&self, offset: usize, val: Self::ValType);
 }
 
-impl<T: Clone + Copy> BufferRow for &[T] {
+impl<T: Clone + Copy + Default> BufferRow for &[T] {
     type ValType = T;
 
     fn load(&self, offset: usize, back: usize) -> T {

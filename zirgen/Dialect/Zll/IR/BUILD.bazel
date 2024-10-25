@@ -176,6 +176,7 @@ cc_library(
         ":OpsIncGen",
         ":TypeInterfacesIncGen",
         ":TypesIncGen",
+        "//zirgen/compiler/codegen:protocol_info_const",
         "//zirgen/compiler/zkp",
         "@llvm-project//mlir:FuncDialect",
         "@llvm-project//mlir:IR",
