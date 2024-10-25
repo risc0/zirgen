@@ -188,7 +188,7 @@ EvalOutput eval(func::FuncOp inFunc, ArrayRef<APInt> witnessValues) {
 
   llvm::DenseMap<Value, BytePoly> polys;
 
-  for (Operation& origOp : inFunc.getBody().front().without_terminator()) {
+  for (Operation& origOp : inFunc.getBody().front()) {
     llvm::TypeSwitch<Operation*>(&origOp)
         .Case<DefOp>([&](auto op) {
           APInt val = witnessValues[op.getLabel()];
