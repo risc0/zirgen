@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <iostream>
-#include "llvm/Support/CommandLine.h"
-#include "llvm/Support/InitLLVM.h"
+#include "mlir/Dialect/Func/IR/FuncOps.h"
 #include "mlir/IR/DialectRegistry.h"
 #include "mlir/IR/MLIRContext.h"
-#include "mlir/Dialect/Func/IR/FuncOps.h"
+#include "zirgen/Dialect/BigInt/Bytecode/bibc.h"
+#include "zirgen/Dialect/BigInt/Bytecode/decode.h"
+#include "zirgen/Dialect/BigInt/Bytecode/file.h"
 #include "zirgen/Dialect/BigInt/IR/BigInt.h"
 #include "zirgen/Dialect/BigInt/IR/Eval.h"
-#include "zirgen/Dialect/BigInt/Bytecode/bibc.h"
-#include "zirgen/Dialect/BigInt/Bytecode/file.h"
-#include "zirgen/Dialect/BigInt/Bytecode/decode.h"
+#include "llvm/Support/CommandLine.h"
+#include "llvm/Support/InitLLVM.h"
+#include <iostream>
 
 namespace bibc = zirgen::BigInt::Bytecode;
 namespace cl = llvm::cl;
@@ -31,18 +31,16 @@ static cl::opt<std::string> inputBibcFile(cl::Positional,
                                           cl::value_desc("filename"),
                                           cl::Required);
 
-static cl::list<std::string> inputs(cl::Positional,
-  cl::desc("values for inputs"),
-  cl::value_desc("inputs"),
-  cl::ZeroOrMore);
+static cl::list<std::string>
+    inputs(cl::Positional, cl::desc("values for inputs"), cl::value_desc("inputs"), cl::ZeroOrMore);
 
 static cl::opt<bool> verbose("v", cl::desc("Verbose output"));
 
 using BytePoly = zirgen::BigInt::BytePoly;
 
-void printBytePoly(const BytePoly &bp) {
+void printBytePoly(const BytePoly& bp) {
   bool first = true;
-  for (auto coeff: bp) {
+  for (auto coeff : bp) {
     if (first) {
       first = false;
     } else {
@@ -52,21 +50,21 @@ void printBytePoly(const BytePoly &bp) {
   }
 }
 
-void printWitness(std::string name, const std::vector<BytePoly> &witness) {
+void printWitness(std::string name, const std::vector<BytePoly>& witness) {
   std::cerr << name << " witness";
   if (witness.size()) {
     std::cerr << ":\n";
-     for (auto &bp: witness) {
-        std::cerr << "  ";
-        printBytePoly(bp);
-        std::cerr << "\n";
-      }
-   } else {
+    for (auto& bp : witness) {
+      std::cerr << "  ";
+      printBytePoly(bp);
+      std::cerr << "\n";
+    }
+  } else {
     std::cerr << " is empty\n";
   }
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   llvm::InitLLVM y(argc, argv);
   mlir::registerAsmPrinterCLOptions();
   mlir::registerMLIRContextCLOptions();
@@ -100,7 +98,7 @@ int main(int argc, char **argv) {
 
   // run the evaluator and generate digests
   std::vector<mlir::APInt> inputVals;
-  for (auto &input: inputs) {
+  for (auto& input : inputs) {
     inputVals.push_back(mlir::APInt(64, strtoull(input.c_str(), NULL, 10)));
   }
   if (inputVals.size() < prog.inputs.size()) {
@@ -110,7 +108,7 @@ int main(int argc, char **argv) {
   }
   if (inputVals.size() > prog.inputs.size()) {
     std::cerr << "too many inputs: expected " << prog.inputs.size();
-    std::cerr << " but got " <<  inputVals.size() << "\n";
+    std::cerr << " but got " << inputVals.size() << "\n";
     return 1;
   }
 
