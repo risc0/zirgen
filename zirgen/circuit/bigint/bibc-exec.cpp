@@ -119,6 +119,11 @@ int main(int argc, char** argv) {
     printWitness("public", output.publicWitness);
     printWitness("private", output.privateWitness);
   }
-  std::cout << output.z[0] << " " << output.z[1] << " ";
-  std::cout << output.z[2] << " " << output.z[3] << "\n";
+  // The evaluator returns an extension element which is not in Montgomery
+  // form, which we will convert before display in order to match the result
+  // expected from random_ext_elem() in the risc0_zkp crate.
+  std::cout << zirgen::toMontgomery(output.z[0]) << " ";
+  std::cout << zirgen::toMontgomery(output.z[1]) << " ";
+  std::cout << zirgen::toMontgomery(output.z[2]) << " ";
+  std::cout << zirgen::toMontgomery(output.z[3]) << "\n";
 }

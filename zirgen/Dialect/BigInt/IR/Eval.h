@@ -23,6 +23,7 @@ namespace zirgen::BigInt {
 using BytePoly = std::vector<int32_t>;
 
 struct EvalOutput {
+  // This extension element is not in Montgomery form
   std::array<uint32_t, 4> z;
   std::vector<BytePoly> constantWitness;
   std::vector<BytePoly> publicWitness;
