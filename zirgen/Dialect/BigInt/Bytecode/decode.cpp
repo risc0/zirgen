@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <vector>
-
 #include "zirgen/Dialect/BigInt/IR/BigInt.h"
+#include "llvm/ADT/APSInt.h"
+#include <vector>
 
 #include "decode.h"
 
@@ -107,7 +107,7 @@ mlir::func::FuncOp decode(mlir::ModuleOp module, const Program& prog) {
       }
       mlir::APInt value(count * 64, mlir::ArrayRef<uint64_t>(words));
       mlir::Type t = state.type(op);
-      auto attr = mlir::IntegerAttr::get(t, value);
+      auto attr = mlir::IntegerAttr::get(ctx, llvm::APSInt(value));
       state.emit(i, builder.create<ConstOp>(loc, t, attr));
     } break;
     case Op::Add: {
