@@ -20,8 +20,11 @@
 
 namespace zirgen::BigInt::Bytecode {
 
+size_t tell(const Program&);
 void write(const Program&, FILE*);
+void write(const Program&, void* buf, size_t len);
 void read(Program&, FILE*);
+void read(Program&, const void* buf, size_t len);
 
 struct IOException : public std::runtime_error {
   IOException(const char*, const char*, int, const char*);
