@@ -17,7 +17,7 @@
 #include "guest.h"
 
 uint32_t code[] = {
-    0x20000000,
+#include "zirgen/circuit/rv32im/v1/test/bigint2.inc"
 };
 
 extern "C" void start() {

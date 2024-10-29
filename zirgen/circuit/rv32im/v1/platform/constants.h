@@ -30,7 +30,7 @@ constexpr size_t kDigestBytes = kDigestWords * kWordSize;
 constexpr size_t kCodeSize = 16;
 constexpr size_t kSystemStateSize = kWordSize + kDigestBytes;
 constexpr size_t kInOutSize = kSystemStateSize * 2 + kDigestBytes * 2 + 2;
-constexpr size_t kDataSize = 225;
+constexpr size_t kDataSize = 226;
 constexpr size_t kMixSize = 40;
 constexpr size_t kAccumSize = 48;
 
@@ -173,13 +173,12 @@ constexpr size_t kEnd = 0;     // poly' = newPoly, term' = term, tot' = tot
 constexpr size_t kOpShift = 1; // poly' = newPoly * x^16, term' = term, tot' = tot
 // For 'read/write'
 constexpr size_t kOpSetTerm = 2; // poly' = 0, term' = newPoly, tot' = tot
-constexpr size_t kOpAddTot = 3;  // poly' = 0, term' = 1, tot' = tot + newPoly * term
-constexpr size_t kOpSubTot = 4;  // poly' = 0, term' = 1, tot' = tot - newPoly * term
+constexpr size_t kOpAddTot = 3;  // poly' = 0, term' = 1, tot' = tot + coeff * newPoly * term
 // For 'check'
-constexpr size_t kOpTimes64 = 5;  // poly' = newPoly * 64, term' = term, tot' = tot
-constexpr size_t kOpTimes256 = 6; // poly' = newPoly * 256, term' = term, tot' = tot
+constexpr size_t kOpCarry1 = 4; // poly' = newPoly * 256, term' = term, tot' = tot
+constexpr size_t kOpCarry2 = 5; // poly' = newPoly * 64, term' = term, tot' = tot
 constexpr size_t kOpEqz =
-    7; // poly' = 0, term' = 1, tot' = 0, assert tot + (z - 256) * newPoly == 0
+    6; // poly' = 0, term' = 1, tot' = 0, assert tot + (z - 256) * newPoly == 0
 } // namespace PolyOp
 
 constexpr size_t kUserPC = 0x0BFFFF00;

@@ -87,7 +87,7 @@ std::vector<uint64_t> ExternHandler::doExtern(llvm::StringRef name,
     return ret;
   }
   if (name == "log") {
-    auto& os = llvm::outs();
+    auto& os = llvm::errs();
     size_t argNum = 0;
     auto nextArg = [&]() {
       if (argNum >= args.size()) {

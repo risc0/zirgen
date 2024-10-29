@@ -45,13 +45,13 @@ public:
   RamReg readInst;
   RamReg readRegAddr;
   std::array<RamReg, 4> io;
-  OneHot<8> polyOp;
+  OneHot<7> polyOp;
   OneHot<3> memOp;
-  Reg reg;
-  Reg offset;
   Reg isLast;
+  Reg offset;
   Reg instWordAddr;
   std::array<Bit, 5> checkReg;
+  std::array<Bit, 3> checkCoeff;
   std::array<ByteReg, 13> bytes;
   std::array<TwitByteReg, 3> twitBytes;
   FpExtReg mix;

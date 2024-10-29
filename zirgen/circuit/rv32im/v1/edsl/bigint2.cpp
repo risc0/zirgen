@@ -57,35 +57,53 @@ void BigInt2CycleImpl::set(Top top) {
     // If first cycle, do special initalization
     ECallCycle ecall = body->majorMux->at<MajorType::kECall>();
     ECallBigInt2 ecallBigInt2 = ecall->minorMux->at<ECallType::kBigInt2>();
-    instWordAddr->set(BACK(1, ecallBigInt2->readA0->data().flat()) / kWordSize - 1);
+    instWordAddr->set(BACK(1, ecallBigInt2->readVerifyAddr->data().flat()) / kWordSize - 1);
     readInst->doNOP();
     polyOp->set(0);
     memOp->set(2);
-    reg->set(0);
+    for (size_t i = 0; i < 5; i++) {
+      checkReg[i]->set(0);
+    }
+    for (size_t i = 0; i < 3; i++) {
+      checkCoeff[i]->set(0);
+    }
     offset->set(0);
   }
   IF(1 - isFirstCycle) {
     // Read & decode the instruction
-    instWordAddr->set(BACK(1, instWordAddr + 1));
+    instWordAddr->set(BACK(1, instWordAddr->get()) + 1);
+    XLOG("InstAddr = %x", instWordAddr);
     readInst->doRead(cycle, instWordAddr);
     Val instType = readInst->data().bytes[3];
+    Val coeffReg = readInst->data().bytes[2];
     NONDET {
       polyOp->set(instType & 0xf);
       memOp->set((instType - polyOp->get()) / 16);
+      for (size_t i = 0; i < 5; i++) {
+        checkReg[i]->set((coeffReg & (1 << i)) / (1 << i));
+      }
+      for (size_t i = 0; i < 3; i++) {
+        checkCoeff[i]->set((coeffReg & (1 << (5 + i))) / (1 << (5 + i)));
+      }
     }
     eq(instType, polyOp->get() + memOp->get() * 16);
-    reg->set(readInst->data().bytes[2]);
     offset->set(readInst->data().bytes[1] * 256 + readInst->data().bytes[0]);
   }
-  XLOG("Cycle: polyOp=%u, memOp=%u, reg=%u, offset=%u", polyOp, memOp, reg, offset);
-
-  // Make sure reg is [0, 31)
-  Val checkRegOut = 0;
+  Val reg = 0;
   for (size_t i = 0; i < 5; i++) {
-    NONDET { checkReg[i]->set(reg & (1 << i)); }
-    checkRegOut = checkRegOut + checkReg[i]->get() * (1 << i);
+    reg = reg + checkReg[i] * (1 << i);
   }
-  eq(checkRegOut, reg);
+  Val coeff = 0;
+  for (size_t i = 0; i < 3; i++) {
+    coeff = coeff + checkCoeff[i] * (1 << i);
+  }
+  coeff = coeff - 4;
+  XLOG("Cycle: polyOp=%u, memOp=%u, reg=%u, coeff+4=%u, offset=%u",
+       polyOp,
+       memOp,
+       reg,
+       coeff + 4,
+       offset);
 
   // Read the register value and compute initial address
   readRegAddr->doRead(cycle, kRegisterOffset + reg);
@@ -131,13 +149,13 @@ void BigInt2CycleImpl::set(Top top) {
   isLast->set(polyOp->at(0) * (1 - isFirstCycle));
   // If last, back to decoding
   IF(isLast) {
-    body->pc->set(curPC + 4);
     body->nextMajor->set(MajorType::kMuxSize);
+    body->pc->set(curPC + 4);
   }
   // Otherwise, next is also BigInt2 major
   IF(1 - isLast) {
-    body->pc->set(curPC);
     body->nextMajor->set(MajorType::kBigInt2);
+    body->pc->set(curPC);
   }
   XLOG("BIGINT Done");
 }
@@ -184,18 +202,13 @@ void BigInt2CycleImpl::onAccum() {
     term->set(one);
     tot->set(oldTot + oldTerm * newPoly);
   }
-  IF(polyOp->at(PolyOp::kOpSubTot)) {
-    poly->set(zero);
-    term->set(one);
-    tot->set(oldTot - oldTerm * newPoly);
-  }
-  IF(polyOp->at(PolyOp::kOpTimes64)) {
-    poly->set(newPoly * c64);
+  IF(polyOp->at(PolyOp::kOpCarry1)) {
+    poly->set(newPoly * c256);
     term->set(oldTerm);
     tot->set(oldTot);
   }
-  IF(polyOp->at(PolyOp::kOpTimes256)) {
-    poly->set(newPoly * c256);
+  IF(polyOp->at(PolyOp::kOpCarry2)) {
+    poly->set(newPoly * c64);
     term->set(oldTerm);
     tot->set(oldTot);
   }

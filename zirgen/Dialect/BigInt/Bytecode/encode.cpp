@@ -146,6 +146,22 @@ std::unique_ptr<Program> encode(mlir::func::FuncOp func) {
           newOp.operandB = value.getNumWords();
           builder.emit(newOp);
         })
+        .Case<LoadOp>([&](auto op) {
+          Op newOp{};
+          newOp.code = Op::Load;
+          newOp.type = builder.lookup(origOp.getResultTypes()[0]);
+          newOp.operandA = op.getArena();
+          newOp.operandB = op.getOffset();
+          builder.emit(newOp);
+        })
+        .Case<StoreOp>([&](auto op) {
+          Op newOp{};
+          newOp.code = Op::Load;
+          newOp.type = builder.lookup(op.getIn().getType());
+          newOp.operandA = op.getArena();
+          newOp.operandB = op.getOffset();
+          builder.emit(newOp);
+        })
         .Case<AddOp>([&](auto op) {
           size_t type = builder.lookup(origOp.getResultTypes()[0]);
           builder.emitBin(Op::Add, type, op.getLhs(), op.getRhs());

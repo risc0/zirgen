@@ -1,9 +1,32 @@
 load("//bazel/toolchain/risc0:defs.bzl", "risc0_cc_binary")
 load("//bazel/toolchain/rv32im-linux:defs.bzl", "risc0_cc_kernel_binary_v1", linux_risc0_cc_binary = "risc0_cc_binary")
 load(":defs.bzl", "riscv_test_suite")
+load("@bazel_skylib//rules:run_binary.bzl", "run_binary")
 
 package(
     default_visibility = ["//visibility:public"],
+)
+
+cc_binary(
+    name = "bigint2-makeinc",
+    srcs = ["bigint2-makeinc.cpp"],
+    deps = [
+        "//zirgen/Dialect/BigInt/IR",
+        "//zirgen/Dialect/BigInt/Bytecode",
+        "//zirgen/circuit/bigint:lib",
+    ],
+)
+
+run_binary(
+    name = "run-makeinc",
+    outs = ["bigint2.inc"],
+    args = ["$(location :bigint2.inc)"],
+    tool = ":bigint2-makeinc",
+)
+
+cc_library(
+    name = "bigint2-inc",
+    hdrs = [":run-makeinc"],
 )
 
 cc_library(
@@ -80,7 +103,10 @@ cc_test(
 risc0_cc_binary(
     name = "test-bigint2-guest",
     srcs = ["test-bigint2-guest.cpp"],
-    deps = [":guest"],
+    deps = [
+      ":guest",
+      ":bigint2-inc",
+    ],
 )
 
 cc_test(

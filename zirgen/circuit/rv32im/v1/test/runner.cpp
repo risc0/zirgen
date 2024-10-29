@@ -518,10 +518,10 @@ PageFaultInfo Runner::getPageFaultInfo(uint32_t pc, uint32_t inst) {
       }
     } break;
     case ECallType::kBigInt2: {
-      llvm::errs() << "ecall/bigint\n";
-      uint32_t addr = loadU32(RegAddr::kA0);
-      // TODO: Right now we just page in 100 words @ A0
-      for (size_t i = 0; i < 100; i++) {
+      llvm::errs() << "ecall/bigint2\n";
+      uint32_t addr = loadU32(RegAddr::kT2);
+      // TODO: Right now we just page in 1000 words @ T2
+      for (size_t i = 0; i < 1000; i++) {
         info.include((addr / kWordSize) + i);
       }
     } break;

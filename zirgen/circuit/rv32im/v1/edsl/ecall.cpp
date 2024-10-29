@@ -153,7 +153,7 @@ void ECallBigInt2Impl::set(Top top) {
   Val curPC = BACK(1, body->pc->get());
 
   // TODO: Verify it's a valid address
-  readA0->doRead(cycle, RegAddr::kA0);
+  readVerifyAddr->doRead(cycle, RegAddr::kT2);
 
   // Keep the current PC and set the next major cycle to BigInt.
   body->pc->set(curPC);

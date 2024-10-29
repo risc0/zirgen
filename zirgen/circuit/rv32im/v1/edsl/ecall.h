@@ -85,8 +85,8 @@ class ECallBigInt2Impl : public CompImpl<ECallBigInt2Impl> {
 public:
   void set(Top top);
 
-  // a0 BigInt pc
-  RamReg readA0;
+  // BigInt pc
+  RamReg readVerifyAddr;
 };
 using ECallBigInt2 = Comp<ECallBigInt2Impl>;
 

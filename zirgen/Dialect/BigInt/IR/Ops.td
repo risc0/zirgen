@@ -30,6 +30,19 @@ def DefOp : BigIntOp<"def", [InferTypeOpAdaptor, DeclareOpInterfaceMethods<Codeg
   let assemblyFormat = [{ $bitWidth `,` $label `,` $isPublic `->` type($out) attr-dict }];
 }
 
+def LoadOp : BigIntOp<"load", [InferTypeOpAdaptor]> {
+  let summary = "Load a value";
+  let arguments = (ins UI32Attr:$bitWidth, UI32Attr:$arena, UI32Attr:$offset);
+  let results = (outs BigInt:$out);
+  let assemblyFormat = [{ $bitWidth `,` $arena `,` $offset `->` type($out) attr-dict }];
+}
+
+def StoreOp : BigIntOp<"store", []> {
+  let summary = "Load a value";
+  let arguments = (ins BigInt:$in, UI32Attr:$arena, UI32Attr:$offset);
+  let assemblyFormat = [{ $in `,` $arena `,` $offset `:` type($in) attr-dict }];
+}
+
 def ConstOp : BigIntOp<"const", [Pure, ConstantLike, InferTypeOpAdaptor, CodegenNeverInlineOp, DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
   let summary = "Introduce a numeric constant";
   let arguments = (ins APIntAttr:$value);

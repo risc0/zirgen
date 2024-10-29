@@ -41,15 +41,17 @@ struct Input {
 
 struct Op {
   enum Code {
-    Eqz = 0x0, // unary: value
-    Def = 0x1, // unary: input index
-    Con = 0x2, // unary: constant index
-    Add = 0x8, // binary
-    Sub = 0x9, // binary
-    Mul = 0xA, // binary
-    Rem = 0xB, // binary
-    Quo = 0xC, // binary
-    Inv = 0xE, // binary
+    Eqz = 0x0,   // unary: value
+    Def = 0x1,   // unary: input index
+    Con = 0x2,   // unary: constant index
+    Load = 0x3,  // unary: constant index
+    Store = 0x4, // unary: constant index
+    Add = 0x8,   // binary
+    Sub = 0x9,   // binary
+    Mul = 0xA,   // binary
+    Rem = 0xB,   // binary
+    Quo = 0xC,   // binary
+    Inv = 0xE,   // binary
   };
   uint32_t code;
   size_t type;
