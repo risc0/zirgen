@@ -149,6 +149,8 @@ mlir::func::FuncOp decode(mlir::ModuleOp module, const Program& prog) {
     }
   }
 
+  // Add terminator op, for the sake of propriety.
+  builder.create<mlir::func::ReturnOp>(loc);
   return out;
 }
 
