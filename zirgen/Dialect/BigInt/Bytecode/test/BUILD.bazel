@@ -1,0 +1,21 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+load("//bazel/rules/lit:defs.bzl", "glob_lit_tests")
+
+glob_lit_tests()
+
+cc_test(
+    name = "test",
+    srcs = [
+        "test.cpp",
+    ],
+    deps = [
+        "//risc0/core/test:gtest_main",
+        "//zirgen/Dialect/BigInt/Bytecode",
+        "//zirgen/Dialect/BigInt/IR",
+        "//zirgen/Dialect/BigInt/Transforms",
+        "//zirgen/circuit/bigint:lib",
+    ],
+)
