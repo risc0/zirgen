@@ -81,6 +81,7 @@ struct BibcTest : public testing::Test {
     mlir::PassManager pm(ctx);
     pm.enableVerifier(true);
     pm.addPass(zirgen::BigInt::createLowerReducePass());
+    pm.addPass(zirgen::BigInt::createLowerInvPass());
     if (failed(pm.run(module))) {
       llvm::errs() << "an internal validation error occurred:\n";
       module.print(llvm::errs());
