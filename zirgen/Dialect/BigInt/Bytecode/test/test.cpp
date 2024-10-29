@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "llvm/ADT/APInt.h"
-#include "mlir/IR/MLIRContext.h"
-#include "mlir/IR/DialectRegistry.h"
 #include "mlir/Dialect/Func/IR/FuncOps.h"
+#include "mlir/IR/DialectRegistry.h"
+#include "mlir/IR/MLIRContext.h"
 #include "mlir/Pass/PassManager.h"
+#include "zirgen/Dialect/BigInt/Bytecode/decode.h"
+#include "zirgen/Dialect/BigInt/Bytecode/encode.h"
+#include "zirgen/Dialect/BigInt/Bytecode/file.h"
 #include "zirgen/Dialect/BigInt/IR/BigInt.h"
 #include "zirgen/Dialect/BigInt/IR/Eval.h"
 #include "zirgen/Dialect/BigInt/Transforms/Passes.h"
-#include "zirgen/Dialect/BigInt/Bytecode/encode.h"
-#include "zirgen/Dialect/BigInt/Bytecode/decode.h"
-#include "zirgen/Dialect/BigInt/Bytecode/file.h"
 #include "zirgen/circuit/bigint/op_tests.h"
 #include "zirgen/circuit/bigint/rsa.h"
+#include "llvm/ADT/APInt.h"
 
 #include <gtest/gtest.h>
 
@@ -50,7 +50,7 @@ struct BibcTest : public testing::Test {
     module = mlir::ModuleOp::create(loc);
   }
 
-  mlir::func::FuncOp makeFunc(std::string name, mlir::OpBuilder &builder) {
+  mlir::func::FuncOp makeFunc(std::string name, mlir::OpBuilder& builder) {
     auto loc = mlir::UnknownLoc::get(ctx);
     builder.setInsertionPointToEnd(&module.getBodyRegion().front());
     auto funcType = mlir::FunctionType::get(ctx, {}, {});
@@ -77,7 +77,7 @@ struct BibcTest : public testing::Test {
   }
 
   void lower() {
-    // Lower the inverse and reduce ops to simpler, executable ops 
+    // Lower the inverse and reduce ops to simpler, executable ops
     mlir::PassManager pm(ctx);
     pm.enableVerifier(true);
     pm.addPass(zirgen::BigInt::createLowerReducePass());
@@ -178,9 +178,6 @@ TEST_F(BibcTest, RSA256) {
   BigInt::makeRSA(builder, func.getLoc(), 256);
   lower();
 
-  llvm::errs() << "RSA Function\n";
-  func.dump();
-
   llvm::APInt N(64, 101);
   llvm::APInt S(64, 32766);
   auto M = BigInt::RSA(N, S);
@@ -197,9 +194,6 @@ TEST_F(BibcTest, RSA3072) {
   BigInt::makeRSA(builder, func.getLoc(), 3072);
   lower();
 
-  llvm::errs() << "RSA Function\n";
-  func.dump();
-
   llvm::APInt N(64, 22764235167642101);
   llvm::APInt S(64, 10116847215);
   auto M = BigInt::RSA(N, S);
@@ -209,4 +203,3 @@ TEST_F(BibcTest, RSA3072) {
   AB(func, inputs, a, b);
   EXPECT_EQ(a, b);
 }
-
