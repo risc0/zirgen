@@ -19,7 +19,14 @@
 #include "zirgen/circuit/rv32im/v1/platform/opcodes.h"
 #include "zirgen/circuit/rv32im/v1/platform/page_table.h"
 #include "zirgen/compiler/zkp/sha256.h"
+#include "llvm/ADT/TypeSwitch.h"
 #include "llvm/Support/Format.h"
+
+#include "zirgen/Dialect/BigInt/IR/BigInt.h"
+#include "zirgen/Dialect/BigInt/IR/Eval.h"
+#include "zirgen/Dialect/BigInt/Bytecode/decode.h"
+#include "zirgen/Dialect/BigInt/Bytecode/file.h"
+
 
 namespace zirgen::rv32im_v1 {
 
@@ -394,6 +401,33 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
     }
     return q;
   }
+  if (name == "syscallBigInt2Precompute") {
+    // Get t1 = ptr to bibc
+    uint32_t bibcAddr = loadU32(RegAddr::kT1) / 4;
+    // Presume bibc end where verify begins (TODO: support discontigous code)
+    uint32_t bibcEnd = loadU32(RegAddr::kT2) / 4;
+    // Extract into array
+    std::vector<uint32_t> data;
+    for (uint32_t cur = bibcAddr; cur < bibcEnd; cur++) {
+      data.push_back(loadU32(cur));
+    }
+    // Convert to file + deserialize
+    FILE* file = tmpfile();
+    fwrite(data.data(), data.size(), 4, file);
+    fseek(file, 0, SEEK_SET);
+    zirgen::BigInt::Bytecode::Program prog;
+    zirgen::BigInt::Bytecode::read(prog, file);
+    mlir::DialectRegistry registry;
+    registry.insert<mlir::func::FuncDialect>();
+    registry.insert<zirgen::BigInt::BigIntDialect>();
+    mlir::MLIRContext ctx(registry);
+    ctx.loadAllAvailableDialects();
+    auto loc = mlir::UnknownLoc::get(&ctx);
+    auto module = mlir::ModuleOp::create(loc);
+    auto func = zirgen::BigInt::Bytecode::decode(module, prog);
+    computePolyWitness(func);
+    return std::vector<uint64_t>();
+  }
   if (name == "syscallBigInt2Witness") {
     if (fpArgs.size() != 4 || outCount != 16) {
       throw std::runtime_error("Invalid extern call to syscallBigInt2Witness");
@@ -756,6 +790,47 @@ void Runner::setMix() {
   for (size_t i = 0; i < mix.size(); i++) {
     mix[i] = {static_cast<uint64_t>(distribution(generator))};
   }
+}
+
+namespace {
+
+struct RunnerBigIntIO : public zirgen::BigInt::BigIntIO {
+  Runner& runner;
+  RunnerBigIntIO(Runner& runner) : runner(runner) {}
+  llvm::APInt load(uint32_t arena, uint32_t offset, uint32_t count) override {
+    uint32_t regVal = runner.loadU32(kRegisterOffset + arena);
+    uint32_t addr = regVal + offset * 16;
+    uint32_t baseWord = addr / 4;
+    std::vector<uint64_t> limbs64;
+    for (size_t i = 0; i < count; i++) {
+      std::array<uint32_t, 4> words;
+      for (size_t j = 0; j < 4; j++) { words[j] = runner.loadU32(baseWord + i*4 + j); }
+      limbs64.push_back(uint64_t(words[0]) | ((uint64_t(words[1])) << 32));
+      limbs64.push_back(uint64_t(words[2]) | ((uint64_t(words[3])) << 32));
+    }
+    return llvm::APInt(count * 128, limbs64);
+  }
+  void store(uint32_t arena, uint32_t offset, uint32_t count, llvm::APInt val) override {
+    uint32_t regVal = runner.loadU32(kRegisterOffset + arena);
+    uint32_t addr = regVal + offset * 16;
+    uint32_t baseWord = addr / 4;
+    llvm::errs() << "Bit width = " << val.getBitWidth() << "\n";
+    llvm::errs() << "count = " << count << "\n";
+    llvm::errs() << "val = " << val << "\n";
+    val = val.zext(count * 128);
+    for (size_t i = 0; i < count * 4; i++) {
+      runner.polyWitness[baseWord + i] = val.extractBitsAsZExtValue(32, i*32);
+    }
+  }
+};
+
+}  // end namespace
+
+void Runner::computePolyWitness(mlir::func::FuncOp func) {
+  llvm::DenseMap<mlir::Value, llvm::APInt> values;
+  llvm::errs() << "Compute function:\n";
+  RunnerBigIntIO io(*this);
+  zirgen::BigInt::eval(func, io, false);
 }
 
 } // namespace zirgen::rv32im_v1

@@ -29,6 +29,7 @@ public:
   void operand(size_t i, mlir::Value& val);
   void emit(size_t i, mlir::Value);
   BigIntType type(const Op& op);
+  mlir::Value getPoly(size_t i);
 
 private:
   const Program& prog;
@@ -69,6 +70,10 @@ BigIntType Decoder::type(const Op& op) {
   return types[op.type];
 }
 
+mlir::Value Decoder::getPoly(size_t i) {
+  return polys[i];
+}
+
 } // namespace
 
 mlir::func::FuncOp decode(mlir::ModuleOp module, const Program& prog) {
@@ -107,8 +112,22 @@ mlir::func::FuncOp decode(mlir::ModuleOp module, const Program& prog) {
       }
       mlir::APInt value(count * 64, mlir::ArrayRef<uint64_t>(words));
       mlir::Type t = state.type(op);
-      auto attr = mlir::IntegerAttr::get(t, value);
+      mlir::Type it = builder.getIntegerType(value.getBitWidth());
+      auto attr = mlir::IntegerAttr::get(it, value);
       state.emit(i, builder.create<ConstOp>(loc, t, attr));
+    } break;
+    case Op::Load: {
+      uint32_t arena = op.operandA >> 16;
+      uint32_t offset = op.operandA & 0xffff;
+      mlir::Type t = state.type(op);
+      uint32_t bitWidth = llvm::dyn_cast<BigIntType>(t).getCoeffs() * 8;
+      state.emit(i, builder.create<LoadOp>(loc, bitWidth, arena, offset));
+    } break;
+    case Op::Store: {
+      uint32_t arena = op.operandA >> 16;
+      uint32_t offset = op.operandA & 0xffff;
+      mlir::Value in = state.getPoly(op.operandB);
+      builder.create<StoreOp>(loc, in, arena, offset);
     } break;
     case Op::Add: {
       mlir::Value lhs, rhs;

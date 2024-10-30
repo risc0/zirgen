@@ -105,6 +105,11 @@ private:
   std::deque<uint64_t> syscallPending;
   uint32_t syscallA0Out;
   uint32_t syscallA1Out;
+
+  void computePolyWitness(mlir::func::FuncOp func);
+
+public: // TODO: Hack
+  std::map<uint32_t, uint32_t> polyWitness;
 };
 
 } // namespace zirgen::rv32im_v1

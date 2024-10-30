@@ -37,6 +37,7 @@ cc_library(
     ],
     deps = [
         "//zirgen/circuit/rv32im/v1/edsl:lib",
+        "//zirgen/Dialect/BigInt/Bytecode",
         "//zirgen/compiler/zkp",
     ],
 )

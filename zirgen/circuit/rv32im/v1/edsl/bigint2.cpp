@@ -54,6 +54,9 @@ void BigInt2CycleImpl::set(Top top) {
 
   IF(isFirstCycle) {
     XLOG("First Cycle");
+    NONDET {
+      doExtern("syscallBigInt2Precompute", "", 0, {});
+    }
     // If first cycle, do special initalization
     ECallCycle ecall = body->majorMux->at<MajorType::kECall>();
     ECallBigInt2 ecallBigInt2 = ecall->minorMux->at<ECallType::kBigInt2>();
