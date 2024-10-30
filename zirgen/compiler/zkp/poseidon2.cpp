@@ -162,7 +162,7 @@ Digest poseidon2Hash(const uint32_t* data, size_t size) {
       curUsed = 0;
     }
   }
-  if (curUsed != 0) {
+  if (curUsed != 0 || size == 0) {
     // If `size` is not an even multiple of 16, zero-pad
     for (size_t loc = curUsed; loc < 16; loc++) {
       cur[loc] = 0;

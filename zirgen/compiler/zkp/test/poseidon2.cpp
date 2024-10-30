@@ -72,4 +72,19 @@ TEST(zkp, poseidon2_unaligned) {
   ASSERT_EQ(out, goal);
 }
 
+TEST(zkp, poseidon2_empty) {
+  uint32_t input[1] = {0};
+  Digest out = poseidon2Hash(input, 0);
+
+  Digest goal = {0x6c506ad3,
+                 0x5f9bf6f5,
+                 0x52e0e2d3,
+                 0x62b9418a,
+                 0x08710488,
+                 0x2eae5f3a,
+                 0x503eb8c2,
+                 0x4e1f9cd9};
+  ASSERT_EQ(out, goal);
+}
+
 } // namespace zirgen
