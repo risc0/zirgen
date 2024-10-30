@@ -22,11 +22,24 @@ using namespace mlir;
 namespace zirgen {
 namespace dsl {
 
+// Represents a lattice point whose value is uninitialized. This is the bottom
+// of the lattice.
 struct Uninitialized {
   bool operator==(const Uninitialized&) const { return true; }
   friend raw_ostream& operator<<(raw_ostream& os, Uninitialized) { return os << "uninitialized"; }
 };
 
+// Represents a lattice point whose value depends on undefined behavior. In the
+// lattice, Undefined is greater than Uninitialized and less than any defined
+// value. This is chosen so that where defined and undefined values conflict,
+// the defined behavior wins out.
+struct Undefined {
+  bool operator==(const Undefined&) const { return true; }
+  friend raw_ostream& operator<<(raw_ostream& os, Undefined) { return os << "undefined"; }
+};
+
+// Represents a lattice point with conflicting values. This is the top of the
+// lattice.
 struct Overdefined {
   bool operator==(const Overdefined&) const { return true; }
   friend raw_ostream& operator<<(raw_ostream& os, Overdefined) { return os << "overdefined"; }
@@ -34,15 +47,17 @@ struct Overdefined {
 
 template <typename T, typename Self> struct LatticeValue {
   LatticeValue() : value(Uninitialized{}) {}
+  LatticeValue(Undefined) : value(Undefined{}) {}
   LatticeValue(Overdefined) : value(Overdefined{}) {}
   LatticeValue(T value) : value(value) {}
 
   bool isUninitialized() const { return std::holds_alternative<Uninitialized>(value); }
+  bool isUndefined() const { return std::holds_alternative<Undefined>(value); }
   bool isOverdefined() const { return std::holds_alternative<Overdefined>(value); }
-  bool isDefined() const { return std::holds_alternative<T>(value); }
+  bool hasValue() const { return std::holds_alternative<T>(value); }
 
   const T& get() const {
-    assert(isDefined());
+    assert(hasValue());
     return std::get<T>(value);
   }
 
@@ -50,9 +65,9 @@ template <typename T, typename Self> struct LatticeValue {
   bool operator!=(const LatticeValue& other) const { return !(*this == other); }
 
   static Self join(const Self& lhs, const Self& rhs) {
-    if (lhs.isUninitialized()) {
+    if (lhs.isUninitialized() || rhs.isUndefined()) {
       return rhs;
-    } else if (rhs.isUninitialized()) {
+    } else if (rhs.isUninitialized() || lhs.isUndefined()) {
       return lhs;
     } else if (lhs == rhs) {
       return lhs;
@@ -71,9 +86,11 @@ template <typename T, typename Self> struct LatticeValue {
   void print(raw_ostream& os) const {
     if (const auto* ui = std::get_if<Uninitialized>(&value)) {
       os << *ui;
+    } else if (const auto* ud = std::get_if<Undefined>(&value)) {
+      os << *ud;
     } else if (const auto* od = std::get_if<Overdefined>(&value)) {
       os << *od;
-    } else if (isDefined()) {
+    } else if (hasValue()) {
       static_cast<const Self&>(*this).printValue(os);
     } else {
       llvm_unreachable("bad variant");
@@ -97,7 +114,7 @@ protected:
     return os << get();
   }
 
-  std::variant<Uninitialized, Overdefined, T> value;
+  std::variant<Uninitialized, Undefined, Overdefined, T> value;
 };
 
 // A generalization of mlir::dataflow::Lattice which can be attached to any kind

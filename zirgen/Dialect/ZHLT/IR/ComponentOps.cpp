@@ -95,7 +95,7 @@ void addDegreeContext(InFlightDiagnostic& diag,
                       Value val,
                       DenseSet<std::pair<Location, /*degree=*/unsigned>>& seenLocs) {
   auto degree = solver.lookupState<ZStruct::DegreeAnalysis::Element>(val)->getValue();
-  if (!degree.isDefined()) {
+  if (!degree.hasValue()) {
     diag.attachNote(val.getLoc()) << "Unknown degree producer";
     return;
   }
@@ -142,7 +142,7 @@ mlir::LogicalResult CheckFuncOp::verifyMaxDegree(size_t maxDegree) {
   LogicalResult res = success();
   this->walk([&](Zll::EqualZeroOp op) {
     auto degree = solver.lookupState<ZStruct::DegreeAnalysis::Element>(op)->getValue();
-    assert(degree.isDefined());
+    assert(degree.hasValue());
     if (degree.get() <= maxDegree)
       return;
 
@@ -152,7 +152,7 @@ mlir::LogicalResult CheckFuncOp::verifyMaxDegree(size_t maxDegree) {
     // Note the degree contribution of enclosing muxes
     Operation* parent = op->getParentOp();
     auto parentDegree = solver.lookupState<ZStruct::DegreeAnalysis::Element>(parent)->getValue();
-    assert(parentDegree.isDefined());
+    assert(parentDegree.hasValue());
     if (parentDegree.get() != 0) {
       diag.attachNote(parent->getLoc()) << "At mux depth " << parentDegree.get();
     }

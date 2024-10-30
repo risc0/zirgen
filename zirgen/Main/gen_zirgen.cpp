@@ -155,7 +155,7 @@ int main(int argc, char* argv[]) {
   }
   pm.enableVerifier(true);
   zirgen::addAccumAndGlobalPasses(pm);
-  pm.addPass(zirgen::ZStruct::createOptimizeLayoutPass());
+  // pm.addPass(zirgen::ZStruct::createOptimizeLayoutPass());
 
   pm.addPass(mlir::createCanonicalizerPass());
   pm.addPass(mlir::createCSEPass());

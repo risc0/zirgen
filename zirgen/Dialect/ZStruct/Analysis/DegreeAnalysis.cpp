@@ -18,7 +18,7 @@ namespace zirgen::ZStruct {
 
 void DegreeAnalysis::visitOp(LookupOp op) {
   Zll::Degree base = getOrCreateFor<Element>(op.getOut(), op.getBase())->getValue();
-  if (base.isDefined()) {
+  if (base.hasValue()) {
     auto lattice = getOrCreate<Element>(op.getOut());
     propagateIfChanged(lattice, lattice->join(base.get()));
     lattice->addContribution(op.getBase());
@@ -27,7 +27,7 @@ void DegreeAnalysis::visitOp(LookupOp op) {
 
 void DegreeAnalysis::visitOp(SubscriptOp op) {
   Zll::Degree base = getOrCreateFor<Element>(op.getOut(), op.getBase())->getValue();
-  if (base.isDefined()) {
+  if (base.hasValue()) {
     auto lattice = getOrCreate<Element>(op.getOut());
     propagateIfChanged(lattice, lattice->join(base.get()));
     lattice->addContribution(op.getBase());
@@ -36,7 +36,7 @@ void DegreeAnalysis::visitOp(SubscriptOp op) {
 
 void DegreeAnalysis::visitOp(LoadOp op) {
   Zll::Degree ref = getOrCreateFor<Element>(op.getOut(), op.getRef())->getValue();
-  if (ref.isDefined()) {
+  if (ref.hasValue()) {
     auto lattice = getOrCreate<Element>(op.getOut());
     propagateIfChanged(lattice, lattice->join(ref.get()));
     lattice->addContribution(op.getRef());

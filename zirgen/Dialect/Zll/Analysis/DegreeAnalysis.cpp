@@ -35,7 +35,7 @@ void DegreeAnalysis::visitOp(GetGlobalOp op) {
 void DegreeAnalysis::visitOp(AddOp op) {
   Degree lhs = getOrCreateFor<Element>(op.getOut(), op.getLhs())->getValue();
   Degree rhs = getOrCreateFor<Element>(op.getOut(), op.getRhs())->getValue();
-  if (lhs.isDefined() && rhs.isDefined()) {
+  if (lhs.hasValue() && rhs.hasValue()) {
     auto lattice = getOrCreate<Element>(op.getOut());
     propagateIfChanged(lattice, lattice->join(std::max(lhs.get(), rhs.get())));
     lattice->addContribution(op.getLhs());
@@ -46,7 +46,7 @@ void DegreeAnalysis::visitOp(AddOp op) {
 void DegreeAnalysis::visitOp(SubOp op) {
   Degree lhs = getOrCreateFor<Element>(op.getOut(), op.getLhs())->getValue();
   Degree rhs = getOrCreateFor<Element>(op.getOut(), op.getRhs())->getValue();
-  if (lhs.isDefined() && rhs.isDefined()) {
+  if (lhs.hasValue() && rhs.hasValue()) {
     auto lattice = getOrCreate<Element>(op.getOut());
     propagateIfChanged(lattice, lattice->join(std::max(lhs.get(), rhs.get())));
     lattice->addContribution(op.getLhs());
@@ -56,7 +56,7 @@ void DegreeAnalysis::visitOp(SubOp op) {
 
 void DegreeAnalysis::visitOp(NegOp op) {
   Degree in = getOrCreateFor<Element>(op.getOut(), op.getIn())->getValue();
-  if (in.isDefined()) {
+  if (in.hasValue()) {
     auto lattice = getOrCreate<Element>(op.getOut());
     propagateIfChanged(lattice, lattice->join(in.get()));
     lattice->addContribution(op.getIn());
@@ -66,7 +66,7 @@ void DegreeAnalysis::visitOp(NegOp op) {
 void DegreeAnalysis::visitOp(MulOp op) {
   Degree lhs = getOrCreateFor<Element>(op.getOut(), op.getLhs())->getValue();
   Degree rhs = getOrCreateFor<Element>(op.getOut(), op.getRhs())->getValue();
-  if (lhs.isDefined() && rhs.isDefined()) {
+  if (lhs.hasValue() && rhs.hasValue()) {
     auto lattice = getOrCreate<Element>(op.getOut());
     propagateIfChanged(lattice, lattice->join(lhs.get() + rhs.get()));
     lattice->addContribution(op.getLhs());
@@ -77,7 +77,7 @@ void DegreeAnalysis::visitOp(MulOp op) {
 void DegreeAnalysis::visitOp(PowOp op) {
   Degree in = getOrCreateFor<Element>(op.getOut(), op.getIn())->getValue();
   unsigned exp = op.getExponent();
-  if (in.isDefined()) {
+  if (in.hasValue()) {
     auto lattice = getOrCreate<Element>(op.getOut());
     propagateIfChanged(lattice, lattice->join(in.get() * exp));
     lattice->addContribution(op.getIn());
@@ -87,7 +87,7 @@ void DegreeAnalysis::visitOp(PowOp op) {
 void DegreeAnalysis::visitOp(EqualZeroOp op) {
   Degree in = getOrCreateFor<Element>(op, op.getIn())->getValue();
   Degree parent = getOrCreateFor<Element>(op, op->getParentOp())->getValue();
-  if (in.isDefined() && parent.isDefined()) {
+  if (in.hasValue() && parent.hasValue()) {
     auto lattice = getOrCreate<Element>(op);
     propagateIfChanged(lattice, lattice->join(parent.get() + in.get()));
     lattice->addContribution(op.getIn());
@@ -102,7 +102,7 @@ void DegreeAnalysis::visitOp(TrueOp op) {
 void DegreeAnalysis::visitOp(AndEqzOp op) {
   Degree in = getOrCreateFor<Element>(op.getOut(), op.getIn())->getValue();
   Degree val = getOrCreateFor<Element>(op.getOut(), op.getVal())->getValue();
-  if (in.isDefined() && val.isDefined()) {
+  if (in.hasValue() && val.hasValue()) {
     auto lattice = getOrCreate<Element>(op.getOut());
     propagateIfChanged(lattice, lattice->join(std::max(in.get(), val.get())));
     lattice->addContribution(op.getIn());
@@ -115,7 +115,7 @@ void DegreeAnalysis::visitOp(AndCondOp op) {
   Degree in = getOrCreateFor<Element>(out, op.getIn())->getValue();
   Degree cond = getOrCreateFor<Element>(out, op.getCond())->getValue();
   Degree inner = getOrCreateFor<Element>(out, op.getInner())->getValue();
-  if (in.isDefined() && cond.isDefined() && inner.isDefined()) {
+  if (in.hasValue() && cond.hasValue() && inner.hasValue()) {
     auto lattice = getOrCreate<Element>(out);
     propagateIfChanged(lattice, lattice->join(std::max(in.get(), cond.get() + inner.get())));
     lattice->addContribution(op.getIn());
@@ -127,7 +127,7 @@ void DegreeAnalysis::visitOp(AndCondOp op) {
 void DegreeAnalysis::visitOp(IfOp op) {
   Degree cond = getOrCreateFor<Element>(op, op.getCond())->getValue();
   Degree parent = getOrCreateFor<Element>(op, op->getParentOp())->getValue();
-  if (cond.isDefined() && parent.isDefined()) {
+  if (cond.hasValue() && parent.hasValue()) {
     auto lattice = getOrCreate<Element>(op);
     propagateIfChanged(lattice, lattice->join(parent.get() + cond.get()));
     lattice->addContribution(op.getCond());
@@ -143,7 +143,7 @@ void DegreeAnalysis::visitReturnLikeOp(Operation* op) {
   SmallVector<unsigned, 1> operandDegrees;
   for (Value operand : op->getOperands()) {
     auto operandDegree = getOrCreateFor<Element>(op, operand)->getValue();
-    if (operandDegree.isDefined())
+    if (operandDegree.hasValue())
       operandDegrees.push_back(operandDegree.get());
     else
       return;

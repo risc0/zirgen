@@ -183,8 +183,10 @@ void LayoutDAGAnalysis::visitOp(AliasLayoutOp op) {
   // op so that we revisit once lhs and rhs both have their lattice points
   const auto& lhs = getOrCreateFor<Element>(op, op.getLhs())->getValue();
   const auto& rhs = getOrCreateFor<Element>(op, op.getRhs())->getValue();
-  if (lhs.isDefined() && rhs.isDefined()) {
+  if (lhs.hasValue() && rhs.hasValue()) {
     assert(succeeded(LayoutDAG::unify(lhs.get(), rhs.get())));
+  } else if (lhs.isUndefined() || rhs.isUndefined()) {
+    // Aliasing with an undefined layout is a no-op
   } else {
     auto diag = op.emitWarning() << "Failed to make layouts properly alias";
     diag.attachNote(op.getLhs().getLoc()) << "first aliased layout:";
@@ -195,11 +197,14 @@ void LayoutDAGAnalysis::visitOp(AliasLayoutOp op) {
 void LayoutDAGAnalysis::visitOp(LookupOp op) {
   // [[ base.member ]] := [[ base ]].member
   if (isa<LayoutType>(op.getBase().getType())) {
-    const auto* baseLayout = getOrCreateFor<Element>(op.getOut(), op.getBase());
-    if (baseLayout->getValue().isDefined()) {
-      LayoutDAG::Ptr sublayout = baseLayout->getValue().get()->lookup(op.getMemberAttr());
+    const auto& baseLayout = getOrCreateFor<Element>(op.getOut(), op.getBase())->getValue();
+    if (baseLayout.hasValue()) {
+      LayoutDAG::Ptr sublayout = baseLayout.get()->lookup(op.getMemberAttr());
       auto* lattice = getOrCreate<Element>(op.getOut());
       propagateIfChanged(lattice, lattice->join(sublayout));
+    } else if (baseLayout.isUndefined()) {
+      auto* lattice = getOrCreate<Element>(op.getOut());
+      propagateIfChanged(lattice, lattice->join(Undefined{}));
     }
   }
 }
@@ -210,7 +215,7 @@ void LayoutDAGAnalysis::visitOp(SubscriptOp op) {
     const auto* baseLayout = getOrCreateFor<Element>(op.getOut(), op.getBase());
     ConstantValue indexValue =
         getOrCreateFor<Lattice<ConstantValue>>(op.getOut(), op.getIndex())->getValue();
-    if (baseLayout->getValue().isDefined() && !indexValue.isUninitialized()) {
+    if (baseLayout->getValue().hasValue() && !indexValue.isUninitialized()) {
       Attribute indexAttr = indexValue.getConstantValue();
       if (!indexAttr)
         return;
@@ -219,6 +224,10 @@ void LayoutDAGAnalysis::visitOp(SubscriptOp op) {
       if (sublayout) {
         auto* lattice = getOrCreate<Element>(op.getOut());
         propagateIfChanged(lattice, lattice->join(sublayout));
+      } else {
+        // Array index out of bounds, mark as undefined
+        auto* lattice = getOrCreate<Element>(op.getOut());
+        propagateIfChanged(lattice, lattice->join(Undefined{}));
       }
     }
   }
@@ -226,15 +235,21 @@ void LayoutDAGAnalysis::visitOp(SubscriptOp op) {
 
 void LayoutDAGAnalysis::visitOp(LayoutArrayOp op) {
   // [[ [a, ..., z] ]] := [[[ a ]], ..., [[ z ]]]
+  auto* lattice = getOrCreate<Element>(op.getOut());
+
   SmallVector<LayoutDAG::Ptr> elements;
   for (Value element : op.getElements()) {
     auto subLattice = getOrCreateFor<Element>(op.getOut(), element)->getValue();
-    if (!subLattice.isDefined())
+    if (subLattice.isUndefined()) {
+      propagateIfChanged(lattice, lattice->join(Undefined{}));
       return;
+    }
+    if (!subLattice.hasValue()) {
+      return;
+    }
     elements.push_back(subLattice.get());
   }
   auto updated = std::make_shared<LayoutDAG>(AbstractArray{op.getResult().getType(), elements});
-  auto* lattice = getOrCreate<Element>(op.getOut());
   propagateIfChanged(lattice, lattice->join(updated));
 }
 
@@ -244,7 +259,7 @@ void LayoutDAGAnalysis::visitOp(CheckLayoutFuncOp op) {
   if (op.getLayout()) {
     auto* lattice = getOrCreate<Element>(op.getLayout());
     // There's no point in generating the naive layout more than once
-    if (!lattice->getValue().isDefined()) {
+    if (lattice->getValue().isUninitialized()) {
       auto naiveLayout = LayoutDAG::generateNaiveAbstractLayout(op.getLayoutType());
       propagateIfChanged(lattice, lattice->join(naiveLayout));
     }
