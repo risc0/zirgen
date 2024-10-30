@@ -51,7 +51,7 @@ struct InlineCalls : public OpInterfaceRewritePattern<CallOpInterface> {
   using OpType = CallOpInterface;
   using OpInterfaceRewritePattern::OpInterfaceRewritePattern;
 
-  LogicalResult matchAndRewrite(CallOpInterface callOp, PatternRewriter& rewriter) const final;
+  LogicalResult matchAndRewrite(CallOpInterface callOp, PatternRewriter& rewriter) const;
 };
 
 template <typename WrappedPattern> struct RewritePatternSuper {

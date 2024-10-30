@@ -18,6 +18,7 @@
 #include "zirgen/Dialect/ZStruct/Analysis/DegreeAnalysis.h"
 #include "zirgen/Dialect/Zll/Analysis/TapsAnalysis.h"
 #include "zirgen/Dialect/Zll/IR/IR.h"
+#include "llvm/Support/Format.h"
 #include "llvm/Support/FormatVariadic.h"
 
 using namespace mlir;
@@ -88,8 +89,81 @@ struct StatsPrinter {
       for (size_t i = 0; i < constraintsPerDegree.size(); i++)
         llvm::outs() << "  - degree " << i << " constraints: " << constraintsPerDegree[i] << "\n";
       llvm::outs() << "  - total constraints: " << totalConstraints << "\n";
+
+      printDetailedConstraints(check, totalConstraints);
     });
     llvm::outs() << "\n";
+  }
+
+  void printDetailedConstraints(Zhlt::CheckFuncOp check, size_t totalConstraints) {
+    DenseMap<Location, size_t> counts;
+    check.walk([&](Zll::EqualZeroOp eqzOp) {
+      Location topLoc = eqzOp.getLoc();
+      Attribute walkLoc = topLoc;
+      while (auto scLoc = llvm::dyn_cast<CallSiteLoc>(walkLoc)) {
+        AttrTypeReplacer replacer;
+        replacer.addReplacement([&](LocationAttr attr) -> LocationAttr {
+          if (attr == scLoc.getCaller()) {
+            return UnknownLoc::get(scLoc.getContext());
+          } else {
+            return attr;
+          }
+        });
+        if (auto nameLoc = llvm::dyn_cast<NameLoc>(scLoc.getCallee())) {
+          replacer.addReplacement([&](LocationAttr attr) -> LocationAttr {
+            if (attr == nameLoc.getChildLoc()) {
+              return UnknownLoc::get(scLoc.getContext());
+            } else {
+              return attr;
+            }
+          });
+        }
+        auto replaced = replacer.replace(topLoc);
+        counts[llvm::cast<Location>(replaced)]++;
+
+        walkLoc = scLoc.getCaller();
+        counts[CallSiteLoc::get(UnknownLoc::get(eqzOp.getContext()),
+                                llvm::cast<Location>(walkLoc))]++;
+      }
+    });
+
+    auto countsVec = llvm::to_vector(counts);
+    llvm::sort(countsVec, [&](auto a, auto b) { return a.second > b.second; });
+
+    llvm::outs() << "\nConstraint locations:\n";
+    for (auto [lco, count] : countsVec) {
+      if (count * 300 < totalConstraints)
+        break;
+      llvm::outs() << llvm::format("%5d (%6.2f%%) ", count, count * 100.0 / totalConstraints);
+      displayLoc(llvm::outs(), lco);
+      llvm::outs() << "\n";
+    }
+  }
+
+  void displayLoc(llvm::raw_ostream& os, Location loc) {
+    TypeSwitch<Location>(loc)
+        .Case<FileLineColLoc>([&](auto loc) {
+          StringRef fn = loc.getFilename();
+          fn.consume_front("../risczero-wip/");
+          fn.consume_front("zirgen/");
+          os << fn << ":" << loc.getLine() << ":" << loc.getColumn();
+        })
+        .Case<NameLoc>([&](auto loc) {
+          os << loc.getName().strref() << "(";
+          displayLoc(os, loc.getChildLoc());
+          os << ")";
+        })
+        .Case<UnknownLoc>([&](auto loc) { os << "*"; })
+        .Case<CallSiteLoc>([&](auto loc) {
+          os << "(";
+          displayLoc(os, loc.getCallee());
+          os << " at ";
+          displayLoc(os, loc.getCaller());
+          os << ")";
+        })
+        .Default([&](auto loc) {
+          os << "Unknown " << loc->getAbstractAttribute().getName() << ": " << loc;
+        });
   }
 
   // Print statistics on evaluating the validity polynomial.  This

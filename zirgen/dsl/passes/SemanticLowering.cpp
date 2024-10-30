@@ -22,6 +22,7 @@
 #include "mlir/Pass/PassManager.h"
 #include "mlir/Transforms/CSE.h"
 #include "mlir/Transforms/GreedyPatternRewriteDriver.h"
+#include "mlir/Transforms/TopologicalSortUtils.h"
 #include "llvm/ADT/TypeSwitch.h"
 
 #include "zirgen/Dialect/ZHLT/IR/TypeUtils.h"
@@ -591,9 +592,9 @@ struct GenerateExecPass : public GenerateExecBase<GenerateExecPass> {
 
 // Transform ComponentOps into constraint-checking functions.
 struct GenerateCheckPass : public GenerateCheckBase<GenerateCheckPass> {
-  void runOnOperation() override {
-    auto* ctx = &getContext();
-
+  void
+  generateCheckFunc(OpBuilder& builder, StringRef checkFuncName, ArrayRef<StringAttr> callees) {
+    MLIRContext* ctx = builder.getContext();
     RewritePatternSet patterns(ctx);
     patterns.insert<InlineCheckConstruct>(ctx);
     patterns.insert<BackToCall>(ctx);
@@ -616,29 +617,47 @@ struct GenerateCheckPass : public GenerateCheckBase<GenerateCheckPass> {
 
     FrozenRewritePatternSet frozenPatterns(std::move(patterns));
 
-    OpBuilder builder(ctx);
-    mlir::ModuleOp mod = getOperation();
-
-    builder.setInsertionPointToEnd(mod.getBody());
-    auto checkFuncOp = builder.create<Zhlt::CheckFuncOp>(mod.getLoc());
+    OpBuilder::InsertionGuard guard(builder);
+    auto checkFuncOp = builder.create<Zhlt::CheckFuncOp>(builder.getUnknownLoc(), checkFuncName);
     builder.setInsertionPointToStart(checkFuncOp.addEntryBlock());
 
-    mod.walk([&](Zhlt::StepFuncOp op) {
-      // Skip tests when generating circuit constraints.
-      if (op.getName().starts_with("step$test$"))
-        return;
-
-      // Call this step to gather constraints.
-      builder.create<func::CallOp>(op.getLoc(), op.getSymName(), /*results=*/TypeRange{});
-    });
+    for (auto callee : callees) {
+      builder.create<func::CallOp>(builder.getUnknownLoc(), callee, /*results=*/TypeRange{});
+    }
 
     // Now, inline everything and get rid of everything that's not a constraint.
-    builder.create<Zhlt::ReturnOp>(mod.getLoc());
+    builder.create<Zhlt::ReturnOp>(builder.getUnknownLoc());
     GreedyRewriteConfig config;
     config.maxIterations = 100;
     if (applyPatternsAndFoldGreedily(checkFuncOp, frozenPatterns, config).failed()) {
       checkFuncOp->emitError("Could not generate check function");
       signalPassFailure();
+    }
+  }
+
+  void runOnOperation() override {
+    auto* ctx = &getContext();
+
+    OpBuilder builder(ctx);
+    mlir::ModuleOp mod = getOperation();
+    builder.setInsertionPointToEnd(mod.getBody());
+
+    std::map</*checkFuncName=*/std::string, /*callees=*/SmallVector<StringAttr>> checkFuncs;
+
+    mod.walk([&](Zhlt::StepFuncOp op) {
+      // Generate a circuit-wide constraint checker, plus one for teach t3est.
+      StringRef stepName = op.getName();
+      std::string checkName;
+      if (stepName.consume_front("step$test$")) {
+        stepName.consume_back("$accum");
+        checkName = ("test$" + stepName).str();
+      }
+
+      checkFuncs[checkName].push_back(op.getSymNameAttr());
+    });
+
+    for (const auto& [name, callees] : checkFuncs) {
+      generateCheckFunc(builder, name, callees);
     }
   }
 };
@@ -651,7 +670,10 @@ struct GenerateValidityRegsPass : public GenerateValidityRegsBase<GenerateValidi
                    Value state,
                    Value polyMixArg) {
     for (Operation& origOp : block.without_terminator()) {
-      Location opLoc = CallSiteLoc::get(loc, origOp.getLoc());
+      Location opLoc = origOp.getLoc();
+      if (opLoc != loc)
+        opLoc = CallSiteLoc::get(loc, origOp.getLoc());
+
       TypeSwitch<Operation*>(&origOp)
           .Case<EqualZeroOp>([&](EqualZeroOp op) {
             auto oldIn = op.getIn();
@@ -683,7 +705,12 @@ struct GenerateValidityRegsPass : public GenerateValidityRegsBase<GenerateValidi
                 ArrayOp,
                 BindLayoutOp,
                 arith::ConstantOp,
-                arith::AddIOp>([&](auto op) { builder.clone(origOp, mapper); })
+                arith::AddIOp>([&](auto op) {
+            OpBuilder::InsertionGuard guard(builder);
+            if (llvm::isa<LoadOp, LookupOp, SubscriptOp>(op.getOperation()))
+              builder.setInsertionPointToStart(builder.getBlock());
+            builder.clone(origOp, mapper);
+          })
           .Default([&](Operation* op) {
             llvm::errs() << *op;
             op->emitError("Invalid op for MakePolynomial");
@@ -698,6 +725,8 @@ struct GenerateValidityRegsPass : public GenerateValidityRegsBase<GenerateValidi
 
     module.walk([&](Zhlt::CheckFuncOp checkFunc) {
       OpBuilder builder(checkFunc);
+      if (checkFunc.getSymName() != "check$")
+        return;
       auto func = builder.create<Zhlt::ValidityRegsFuncOp>(
           checkFunc.getLoc(),
           "validity_regs",
@@ -712,6 +741,7 @@ struct GenerateValidityRegsPass : public GenerateValidityRegsBase<GenerateValidi
       mixState = runOnBlock(
           checkFunc.getLoc(), checkFunc.getBody().front(), builder, mapper, mixState, polyMix);
       builder.create<Zhlt::ReturnOp>(func.getLoc(), mixState);
+      sortTopologically(builder.getBlock());
     });
   }
 };
@@ -750,6 +780,32 @@ private:
   Interpreter& interp;
   DenseMap<NamedTap, Value>& tapIndex;
 };
+
+namespace {
+
+void reinferReturnType(InferTypeOpInterface op) {
+  SmallVector<Type> newTypes;
+  if (failed(op.inferReturnTypes(op.getContext(),
+                                 op->getLoc(),
+                                 op->getOperands(),
+                                 op->getAttrDictionary(),
+                                 op->getPropertiesStorage(),
+                                 op->getRegions(),
+                                 newTypes)))
+    return;
+
+  if (TypeRange(newTypes) != op->getResultTypes()) {
+    for (auto [newType, result] : llvm::zip_equal(newTypes, op->getResults())) {
+      result.setType(newType);
+    }
+    for (Operation* user : op->getUsers()) {
+      if (auto inferUser = dyn_cast<InferTypeOpInterface>(user)) {
+        reinferReturnType(inferUser);
+      }
+    }
+  }
+}
+} // namespace
 
 struct GenerateValidityTapsPass : public GenerateValidityTapsBase<GenerateValidityTapsPass> {
   void runOnOperation() override {
@@ -833,6 +889,9 @@ struct GenerateValidityTapsPass : public GenerateValidityTapsBase<GenerateValidi
       // Convert field elements and NondetRegs to extension field elements in all types.
       extendFieldTypes.recursivelyReplaceElementsIn(
           func, /*replaceAttrs=*/true, /*replaceLocs=*/false, /*replaceTypes=*/true);
+
+      // Re-infer types on any load-ops, since we may have changed their return types
+      func.walk([&](ZStruct::LoadOp loadOp) { reinferReturnType(loadOp); });
 
       // Elminate dead code referring to old layout.
       IRRewriter rewriter(builder);

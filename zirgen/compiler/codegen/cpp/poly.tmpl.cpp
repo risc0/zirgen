@@ -24,12 +24,18 @@ constexpr size_t kInvRate = 4;
 // clang-format off
 namespace risc0::circuit::{{name}} {
 
-FpExt {{fn}}(size_t cycle, size_t steps, FpExt* poly_mix, Fp** args) {
+{{#decls}}
+FpExt {{fn}}(size_t cycle, size_t steps, FpExt* poly_mix{{args}});
+{{/decls}}
+
+{{#funcs}}
+FpExt {{fn}}(size_t cycle, size_t steps, FpExt* poly_mix{{args}}) {
   size_t mask = steps - 1;
 {{#body}}
   {{.}}
 {{/body}}
 }
+{{/funcs}}
 
 } // namespace risc0::circuit::{{name}}
 // clang-format on

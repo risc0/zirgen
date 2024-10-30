@@ -356,9 +356,6 @@ def ConstructOp : ZCallOp<ComponentOp, [AttrSizedOperandSegments]> {
   let opName = "construct";
 }
 
-def SingletonOpTrait : PredOpTrait<"Is a singleton",
-    CPred<[{mlir::SymbolTable::getSymbolName(&$_op).strref().ends_with("$")}]>>;
-
 def CheckLayoutFuncOp : ZFuncOp<"check_layout", [CodegenSkip]> {
   let summary = "An inlined collection of layout constraints from a circuit entry point";
   let description = [{
@@ -371,20 +368,19 @@ def CheckLayoutFuncOp : ZFuncOp<"check_layout", [CodegenSkip]> {
   let hasRegionVerifier = 1;
 }
 
-def CheckFuncOp : ZFuncOp<"check", [CodegenSkip, SingletonOpTrait]> {
+def CheckFuncOp : ZFuncOp<"check", [CodegenSkip]> {
   let summary = "An inlined version of a circuit-wide CheckFuncOp.";
   let description = [{
      This function checks all constraints in the circuit that (not including test constraints).
      All callees are inlined, and all control structures are unrolled into "zll.if"s.
 
-     This is a circuit-wide singleton, and there should only be one instance of this operation.
+     This is a circuit-wide singleton, and there should only be one non-test instance of this operation.
   }];
   let hasRegionVerifier = 1;
   let extraClassDeclaration = extraZFuncClassDeclaration # [{
      // Ensures all constraints are less than or equal to the provided degree
      mlir::LogicalResult verifyMaxDegree(size_t maxDegree);
   }];
-  let singleton = 1;
 }
 
 def ExecFuncOp : ZFuncOp<"exec"> {

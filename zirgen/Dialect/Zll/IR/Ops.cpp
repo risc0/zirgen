@@ -232,7 +232,7 @@ LogicalResult IfOp::evaluate(Interpreter& interp,
 LogicalResult GetOp::evaluate(Interpreter& interp,
                               llvm::ArrayRef<zirgen::Zll::InterpVal*> outs,
                               EvalAdaptor& adaptor) {
-  if (getBack() > interp.getCycle()) {
+  if (getBack() > interp.getCycle() && !interp.getTotCycles()) {
     // TODO: Change this back to a throw once the DSL works enough that we can
     // avoid reading back too far.
     // throw std::runtime_error("Attempt to read back too far");
@@ -242,7 +242,7 @@ LogicalResult GetOp::evaluate(Interpreter& interp,
   }
   auto buf = adaptor.getBuf()->getBuf();
   size_t size = getBuf().getType().cast<BufferType>().getSize();
-  size_t totOffset = size * (interp.getCycle() - getBack()) + getOffset();
+  size_t totOffset = size * interp.getBackCycle(getBack()) + getOffset();
   if (totOffset >= buf.size()) {
     return emitError() << "Attempting to get out of bounds index " << totOffset
                        << " from buffer of size " << buf.size();
@@ -1132,12 +1132,18 @@ LogicalResult SetOp::verify() {
   if (getBuf().getType().cast<BufferType>().getKind() == BufferKind::Global) {
     return failure();
   }
+  // Make sure the element we're storing is the same type
+  auto bufType = getBuf().getType().getElement();
+  auto valType = getIn().getType();
+  if (bufType.getFieldK() < valType.getFieldK() || bufType.getFieldP() != valType.getFieldP())
+    return failure();
   return success();
 }
 
 LogicalResult GetGlobalOp::verify() {
   // Verify that buffer is not global
-  if (getBuf().getType().cast<BufferType>().getKind() != BufferKind::Global) {
+  if (getBuf().getType().cast<BufferType>().getKind() != BufferKind::Global &&
+      getBuf().getType().cast<BufferType>().getKind() != BufferKind::Temporary) {
     return failure();
   }
   return success();
@@ -1145,7 +1151,8 @@ LogicalResult GetGlobalOp::verify() {
 
 LogicalResult SetGlobalOp::verify() {
   // Verify that buffer is not global
-  if (getBuf().getType().cast<BufferType>().getKind() != BufferKind::Global) {
+  if (getBuf().getType().cast<BufferType>().getKind() != BufferKind::Global &&
+      getBuf().getType().cast<BufferType>().getKind() != BufferKind::Temporary) {
     return failure();
   }
   return success();

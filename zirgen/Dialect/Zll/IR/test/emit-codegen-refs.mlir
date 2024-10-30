@@ -14,7 +14,7 @@ zstruct.global_const @emptyLayout : !emptyLayout = #zstruct<bound_layout "empty"
 
 func.func @ref_clone_test(%arg0 : !zll.val<BabyBear>, %arg1 : !emptyLayout, %arg2: !emptyStruct, %arg4 : !layoutWithEmpty,   %globbuf : !zll.buffer<4, global>) -> !structWithEmpty {
   // CHECK-LABEL: fn ref_clone_test
-  // CHECK-SAME: (arg0: Val, arg1: BoundLayout<EmptyLayout, impl BufferRow<ValType = Val>>, arg2: &EmptyStruct, arg3: BoundLayout<WithEmptyLayout, impl BufferRow<ValType = Val>>, arg4: &impl BufferRow<ValType = Val>) -> Result<WithEmptyStruct>
+  // CHECK-SAME: (arg0: Val, arg1: &BoundLayout<EmptyLayout, impl BufferRow<ValType = Val>>, arg2: &EmptyStruct, arg3: &BoundLayout<WithEmptyLayout, impl BufferRow<ValType = Val>>, arg4: &impl BufferRow<ValType = Val>) -> Result<WithEmptyStruct>
 
   // arg1 is already a reference and must always be continued to be passed by reference.
   func.call @layout_black_box(%arg1) : (!emptyLayout) -> ()
@@ -23,7 +23,7 @@ func.func @ref_clone_test(%arg0 : !zll.val<BabyBear>, %arg1 : !emptyLayout, %arg
   // CHECK: layout_black_box(arg1)
 
   // Layouts should be passed by reference
-  %glob0 = zstruct.bind_layout @emptyLayout : !emptyLayout = %globbuf : <4, global>
+  %glob0 = zstruct.bind_layout @emptyLayout -> !emptyLayout = %globbuf : <4, global>
   func.call @layout_black_box(%glob0) : (!emptyLayout) -> ()
   // CHECK: bind_layout
   // CHECK: layout_black_box(x

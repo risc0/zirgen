@@ -5,31 +5,35 @@
 extern configureInput(bytesPerElem: Val);
 extern readInput() : Val;
 
+component readInputReg() {
+  NondetReg(readInput())
+}
+
 test bytes {
 // CHECK-LABEL: Running bytes
   configureInput(1);
-  readInput() = 0;
-  readInput() = 1;
-  readInput() = 2;
-  readInput() = 3;
-  readInput() = 4;
-  readInput() = 5;
-  readInput() = 6;
-  readInput() = 7;
+  readInputReg() = 0;
+  readInputReg() = 1;
+  readInputReg() = 2;
+  readInputReg() = 3;
+  readInputReg() = 4;
+  readInputReg() = 5;
+  readInputReg() = 6;
+  readInputReg() = 7;
 }
 
 test shorts {
 // CHECK-LABEL: Running shorts
   configureInput(2);
-  readInput() = 0 + 1 * 256;
-  readInput() = 2 + 3 * 256;
-  readInput() = 4 + 5 * 256;
-  readInput() = 6 + 7 * 256;
+  readInputReg() = 0 + 1 * 256;
+  readInputReg() = 2 + 3 * 256;
+  readInputReg() = 4 + 5 * 256;
+  readInputReg() = 6 + 7 * 256;
 }
 
 test u32s {
 // CHECK-LABEL: Running u32s
   configureInput(4);
-  readInput() = 0 + 1 * 256 + 2 * 256 * 256 + 3 * 256 * 256 * 256;
-  readInput() = 4 + 5 * 256 + 6 * 256 * 256 + 7 * 256 * 256 * 256;
+  readInputReg() = 0 + 1 * 256 + 2 * 256 * 256 + 3 * 256 * 256 * 256;
+  readInputReg() = 4 + 5 * 256 + 6 * 256 * 256 + 7 * 256 * 256 * 256;
 }

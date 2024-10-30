@@ -147,4 +147,24 @@ def ElideTrivialStructs : Pass<"elide-trivial-structs", "mlir::ModuleOp"> {
   let dependentDialects = ["zirgen::ZStruct::ZStructDialect"];
 }
 
+def InlinePure : Pass<"inline-pure", "mlir::ModuleOp"> {
+  let summary = "Inline pure functions and operations without layouts";
+  let constructor = "zirgen::dsl::createInlinePurePass()";
+}
+
+def FieldDCE : Pass<"field-dce", "mlir::ModuleOp"> {
+  let summary = "Remove unused structure fields";
+  let constructor = "zirgen::dsl::createFieldDCEPass()";
+}
+
+def HoistInvariants : Pass<"hoist-invariants", "mlir::ModuleOp"> {
+  let summary = "Hoist invariants outside of control structures like if, switch, map, etc.";
+  let constructor = "zirgen::dsl::createHoistInvariantsPass()";
+}
+
+def TopologicalShuffle : Pass<"topological-shuffle"> {
+  let summary = "Reverse blocks, then topologically sort";
+  let constructor = "zirgen::dsl::createTopologicalShufflePass()";
+}
+
 #endif // ZIRGEN_PASSES

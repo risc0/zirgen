@@ -41,13 +41,19 @@ public:
   // for the analysed function.
   llvm::ArrayRef<size_t> getPowersNeeded() { return powsNeeded; }
 
+  // Returns any called functions encountered
+  llvm::ArrayRef<mlir::func::FuncOp> getCalledFuncs() { return calledFuncs; }
+
 private:
-  size_t processChain(mlir::Value val, size_t offset);
+  size_t processChain(mlir::Value val,
+                      size_t offset,
+                      llvm::SmallVector<mlir::func::CallOp> callStack = {});
 
   llvm::DenseMap<mlir::Operation*, size_t> mixPows;
   llvm::SmallVector<size_t> powsNeeded;
   llvm::DenseMap<size_t, size_t> mixPowIndex;
   llvm::DenseMap<mlir::Operation*, size_t> useCount;
+  llvm::SmallVector<mlir::func::FuncOp> calledFuncs;
 };
 
 } // namespace zirgen

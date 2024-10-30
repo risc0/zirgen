@@ -7,9 +7,9 @@ func.func @get(%cbuf : !zll.buffer<16, constant> {zirgen.argName = "code"},
                %mbuf : !zll.buffer<16, mutable> {zirgen.argName = "data"})
                -> !zll.val<BabyBear> {
    // CHECK-LABEL: func @get
-   // CHECK-DAG: taps = [#zll.tap<1, 3, 5>, #zll.tap<2, 1, 0>, #zll.tap<2, 1, 2>]
-   // CHECK-DAG: tapRegs = [#zll.tapReg<1, 3, [5], 1>, #zll.tapReg<2, 1, [0, 2], 0>]
-   // CHECK-DAG{LITERAL}: tapCombos = [[0 : ui32, 2 : ui32], [5 : ui32]]
+   // CHECK-DAG: taps = [#zll.tap<0, 0, 0>, #zll.tap<1, 0, 0>, #zll.tap<1, 3, 5>, #zll.tap<2, 0, 0>, #zll.tap<2, 1, 0>, #zll.tap<2, 1, 2>]
+   // CHECK-DAG: tapRegs = [#zll.tapReg<0, 0, [0], 0>, #zll.tapReg<1, 0, [0], 0>, #zll.tapReg<1, 3, [5], 2>, #zll.tapReg<2, 0, [0], 0>, #zll.tapReg<2, 1, [0, 2], 1>]
+   // CHECK-DAG{LITERAL}: tapCombos = [[0 : ui32], [0 : ui32, 2 : ui32], [5 : ui32]]
    // CHECK-DAG: tapType = !zll.val<BabyBear>,
    // CHECK-NEXT: zll.get
    %0 = zll.get %cbuf[3] back 5 : <16, constant>

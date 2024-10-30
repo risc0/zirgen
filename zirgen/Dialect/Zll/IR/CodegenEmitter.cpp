@@ -36,7 +36,7 @@ namespace cl = llvm::cl;
 static cl::opt<size_t> inlineDepth("codegen-inline-depth",
                                    cl::desc("Maximum depth of generated calls to inline instead of "
                                             "assigning to a variable for readability"),
-                                   cl::init(5));
+                                   cl::init(2));
 
 namespace zirgen::codegen {
 
@@ -59,7 +59,18 @@ void CodegenEmitter::emitTopLevel(Operation* op) {
       .Default([&](auto op) { emitStatement(op); });
 }
 
-std::string CodegenEmitter::canonIdent(llvm::StringRef ident, IdentKind idt) {
+StringAttr CodegenEmitter::canonIdent(llvm::StringRef ident, IdentKind idt) {
+  return canonIdent(StringAttr::get(ctx, ident), idt);
+}
+
+StringAttr CodegenEmitter::canonIdent(StringAttr identAttr, IdentKind idt) {
+
+  auto& existing = canonIdents[std::make_pair(identAttr, idt)];
+  if (existing) {
+    return existing;
+  }
+
+  StringRef ident = identAttr.strref();
   assert(!ident.empty());
 
   std::string id;
@@ -79,7 +90,17 @@ std::string CodegenEmitter::canonIdent(llvm::StringRef ident, IdentKind idt) {
     }
   }
   // Apply language-specific canonicalization.
-  return opts.lang->canonIdent(id, idt);
+  std::string canonStr = opts.lang->canonIdent(id, idt);
+  auto canon = StringAttr::get(ctx, opts.lang->canonIdent(id, idt));
+
+  size_t unique_index = 0;
+  while (identsUsed.contains(canon)) {
+    canon = StringAttr::get(ctx, canonStr + "_" + std::to_string(unique_index++));
+  }
+
+  existing = canon;
+  identsUsed.insert(canon);
+  return canon;
 }
 
 void CodegenEmitter::resetValueNumbering() {
@@ -215,6 +236,10 @@ void getCallStack(SmallVector<Location>& calls, Location loc) {
     calls.push_back(NameLoc::get(nameLoc.getName(), stripColumn(nameLoc.getChildLoc())));
   } else if (llvm::isa<FileLineColLoc>(loc)) {
     calls.push_back(stripColumn(loc));
+  } else if (llvm::isa<FusedLoc>(loc)) {
+    for (Location subLoc : llvm::cast<FusedLoc>(loc).getLocations()) {
+      getCallStack(calls, subLoc);
+    }
   } else if (!llvm::isa<UnknownLoc>(loc)) {
     llvm::errs() << "UNKNOWN location " << loc << "\n";
     calls.push_back(loc);
@@ -333,6 +358,10 @@ CodegenEmitter::getNewValueName(mlir::Value val, llvm::StringRef namePrefix, boo
 }
 
 void CodegenEmitter::emitExpr(Operation* op) {
+  if (auto f = opts.opSyntax.lookup(op->getName().getStringRef())) {
+    f(*this, op);
+    return;
+  }
   if (auto codegenOp = dyn_cast<CodegenExprOpInterface>(op)) {
     codegenOp.emitExpr(*this);
     return;
@@ -380,7 +409,7 @@ void CodegenEmitter::emitExpr(Operation* op) {
 }
 
 void CodegenEmitter::emitLiteral(mlir::Type ty, mlir::Attribute value) {
-  if (auto f = opts.literalHandlers.lookup(value.getAbstractAttribute().getName())) {
+  if (auto f = opts.literalSyntax.lookup(value.getAbstractAttribute().getName())) {
     f(*this, value);
     return;
   }

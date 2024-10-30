@@ -28,12 +28,12 @@ namespace zirgen::ZStruct {
 
 struct UnrollMaps : public mlir::OpRewritePattern<MapOp> {
   using OpRewritePattern::OpRewritePattern;
-  mlir::LogicalResult matchAndRewrite(MapOp op, mlir::PatternRewriter& rewriter) const final;
+  mlir::LogicalResult matchAndRewrite(MapOp op, mlir::PatternRewriter& rewriter) const;
 };
 
 struct UnrollReduces : public mlir::OpRewritePattern<ReduceOp> {
   using OpRewritePattern::OpRewritePattern;
-  mlir::LogicalResult matchAndRewrite(ReduceOp op, mlir::PatternRewriter& rewriter) const final;
+  mlir::LogicalResult matchAndRewrite(ReduceOp op, mlir::PatternRewriter& rewriter) const;
 };
 
 inline void getUnrollPatterns(mlir::RewritePatternSet& patterns, mlir::MLIRContext* ctx) {
@@ -44,7 +44,7 @@ inline void getUnrollPatterns(mlir::RewritePatternSet& patterns, mlir::MLIRConte
 // Convert switch statements to if statements.
 struct SplitSwitchArms : public mlir::OpRewritePattern<SwitchOp> {
   using OpRewritePattern::OpRewritePattern;
-  mlir::LogicalResult matchAndRewrite(SwitchOp op, mlir::PatternRewriter& rewriter) const final;
+  mlir::LogicalResult matchAndRewrite(SwitchOp op, mlir::PatternRewriter& rewriter) const;
 };
 
 } // namespace zirgen::ZStruct

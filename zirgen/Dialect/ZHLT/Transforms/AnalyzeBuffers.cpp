@@ -53,11 +53,8 @@ StringRef getLayoutBuffer(ZStruct::GlobalConstOp globalConstOp) {
 
 void getRegCount(ModuleOp mod, Attribute layoutAttr, size_t& regCount) {
   layoutAttr.walk([&](ZStruct::RefAttr refAttr) {
-    // auto refType = llvm::cast<RefType>(refAttr.getType());
-    // TODO: use refType.getElement().getFieldK() elements per ref
-    // or change the buffer type to ExtElem
-    size_t elemsPerRef = 1;
-    regCount = std::max<size_t>(regCount, refAttr.getIndex() + elemsPerRef);
+    auto refType = llvm::cast<RefType>(refAttr.getType());
+    regCount = std::max<size_t>(regCount, refAttr.getIndex() + refType.getElement().getFieldK());
   });
   layoutAttr.walk([&](SymbolRefAttr symRef) {
     // Symbolic reference to another layout; follow the reference.
