@@ -7,12 +7,14 @@
 #include "mlir/Dialect/Func/IR/FuncOps.h"
 #include "mlir/IR/DialectRegistry.h"
 #include "mlir/IR/MLIRContext.h"
+#include "mlir/Pass/PassManager.h"
 #include "mlir/Transforms/Passes.h"
 
 #include "zirgen/Dialect/BigInt/Bytecode/encode.h"
 #include "zirgen/Dialect/BigInt/Bytecode/file.h"
 #include "zirgen/Dialect/BigInt/IR/BigInt.h"
 #include "zirgen/circuit/bigint/elliptic_curve.h"
+#include "zirgen/Dialect/BigInt/Transforms/Passes.h"
 
 using namespace zirgen;
 
@@ -259,7 +261,7 @@ void polySplit(mlir::func::FuncOp func) {
   int offsetTmp = 0;
   int offsetConst = 0;
   // Do analysis to split into polynomial evaluations + nondet computations
-  for (auto& origOp : llvm::reverse(*block)) {
+  for (auto& origOp : llvm::reverse(block->without_terminator())) {
     TypeSwitch<Operation*>(&origOp)
         .Case<BigInt::EqualZeroOp>([&](auto op) { state[op.getIn()].apply(PolySplitState(1, 0)); })
         .Case<BigInt::StoreOp>([&](auto op) {
@@ -307,6 +309,7 @@ void polySplit(mlir::func::FuncOp func) {
               (op.getType().template dyn_cast<BigInt::BigIntType>().getCoeffs() + 15) / 16;
           state[op].atom = PolyAtom(op.getArena(), op.getOffset(), size);
         })
+        .Case<mlir::func::ReturnOp>([&](auto op) {})
         .Default([&](auto op) {
           llvm::errs() << "Invalid op: " << *op << "\n";
           throw std::runtime_error("Invalid op in split");
@@ -333,7 +336,7 @@ void polySplit(mlir::func::FuncOp func) {
     }
   }
   // Add in 'stores' for any tmp values
-  OpBuilder builder(block, block->end());
+  OpBuilder builder(block->getTerminator());
   for (const auto& kvp : state) {
     if (kvp.second.atom.arena == kArenaTmp) {
       builder.create<BigInt::StoreOp>(func.getLoc(), kvp.first, kArenaTmp, kvp.second.atom.offset);
@@ -404,12 +407,20 @@ int main(int argc, char* argv[]) {
   auto a_x = builder.create<BigInt::LoadOp>(loc, 256, 11, 0);
   auto a_y = builder.create<BigInt::LoadOp>(loc, 256, 11, 2);
   auto a = BigInt::EC::AffinePt(a_x, a_y, curve);
-  auto b_x = builder.create<BigInt::LoadOp>(loc, 256, 12, 0);
-  auto b_y = builder.create<BigInt::LoadOp>(loc, 256, 12, 2);
-  auto b = BigInt::EC::AffinePt(b_x, b_y, curve);
-  auto c = BigInt::EC::add(builder, loc, a, b);
+  auto c = BigInt::EC::doub(builder, loc, a);
   builder.create<BigInt::StoreOp>(loc, c.x(), 13, 0);
   builder.create<BigInt::StoreOp>(loc, c.y(), 13, 2);
+  builder.create<func::ReturnOp>(loc);
+
+  // Remove reduce
+  PassManager pm(&ctx);
+  pm.addPass(createCanonicalizerPass());
+  pm.addPass(createCSEPass());
+  pm.addPass(BigInt::createLowerReducePass());
+  pm.addPass(createCSEPass());
+  if (failed(pm.run(module))) {
+    throw std::runtime_error("Failed to apply basic optimization passes");
+  }
 
   polySplit(func);
 }

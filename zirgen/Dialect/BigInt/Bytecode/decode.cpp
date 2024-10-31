@@ -167,7 +167,7 @@ mlir::func::FuncOp decode(mlir::ModuleOp module, const Program& prog) {
     } break;
     }
   }
-
+  builder.create<mlir::func::ReturnOp>(loc);
   return out;
 }
 

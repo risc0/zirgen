@@ -115,8 +115,7 @@ size_t Builder::def(const mlir::APInt& value) {
 
 std::unique_ptr<Program> encode(mlir::func::FuncOp func) {
   Builder builder;
-
-  for (mlir::Operation& origOp : func.getBody().front()){
+  for (mlir::Operation& origOp : func.getBody().front().without_terminator()) {
     builder.enroll(origOp);
     llvm::TypeSwitch<mlir::Operation*>(&origOp)
         .Case<DefOp>([&](auto op) {

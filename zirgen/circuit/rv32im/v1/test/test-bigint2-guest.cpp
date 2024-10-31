@@ -20,9 +20,29 @@ uint32_t code[] = {
 #include "zirgen/circuit/rv32im/v1/test/bigint2.inc"
 };
 
+uint32_t point_g[] = {
+  0x16F81798,
+  0x59F2815B,
+  0x2DCE28D9,
+  0x029BFCDB,
+  0xCE870B07,
+  0x55A06295,
+  0xF9DCBBAC,
+  0x79BE667E,
+
+  0xFB10D4B8,
+  0x9C47D08F,
+  0xA6855419,
+  0xFD17B448,
+  0x0E1108A8,
+  0x5DA4FBFC,
+  0x26A3C465,
+  0x483ADA77,
+};
+
 extern "C" void start() {
   // Run some test code
-  sys_bigint2(code);
+  sys_bigint2(code, point_g);
 
   sys_halt();
 }

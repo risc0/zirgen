@@ -804,19 +804,24 @@ struct RunnerBigIntIO : public zirgen::BigInt::BigIntIO {
     std::vector<uint64_t> limbs64;
     for (size_t i = 0; i < count; i++) {
       std::array<uint32_t, 4> words;
-      for (size_t j = 0; j < 4; j++) { words[j] = runner.loadU32(baseWord + i*4 + j); }
+      for (size_t j = 0; j < 4; j++) { 
+        words[j] = runner.loadU32(baseWord + i*4 + j); 
+        llvm::errs() << "Word " << i*4 + j << ": " << words[j] << "\n";
+      }
       limbs64.push_back(uint64_t(words[0]) | ((uint64_t(words[1])) << 32));
       limbs64.push_back(uint64_t(words[2]) | ((uint64_t(words[3])) << 32));
     }
+    llvm::errs() << "Load, arena=" << arena << ", offset=" << offset << "\n";
+    llvm::errs() << "Addr = " << addr << "\n";
+    llvm::errs() << "  " << llvm::APInt(count * 128, limbs64) << "\n";
     return llvm::APInt(count * 128, limbs64);
   }
   void store(uint32_t arena, uint32_t offset, uint32_t count, llvm::APInt val) override {
     uint32_t regVal = runner.loadU32(kRegisterOffset + arena);
     uint32_t addr = regVal + offset * 16;
     uint32_t baseWord = addr / 4;
-    llvm::errs() << "Bit width = " << val.getBitWidth() << "\n";
-    llvm::errs() << "count = " << count << "\n";
-    llvm::errs() << "val = " << val << "\n";
+    llvm::errs() << "Store, arena=" << arena << ", offset=" << offset << "\n";
+    llvm::errs() << "  " << val << "\n";
     val = val.zext(count * 128);
     for (size_t i = 0; i < count * 4; i++) {
       runner.polyWitness[baseWord + i] = val.extractBitsAsZExtValue(32, i*32);
