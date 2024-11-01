@@ -129,11 +129,16 @@ public:
         TypeSwitch<Type>(arg.getType())
             .Case<ValType>([&](auto valType) {
               if (valType.getFieldK() > 1)
-                args += "FpExt ";
+                args += "FpExt";
               else
-                args += "Fp ";
+                args += "Fp";
             })
-            .Case<BufferType>([&](auto) { args += "Fp*"; })
+            .Case<BufferType>([&](auto bufType) {
+              if (bufType.getElement().getFieldK() > 1)
+                args += "FpExt*";
+              else
+                args += "Fp*";
+            })
             .Case<ConstraintType>([&](auto) { args += "FpExt"; })
             .Default([&](Type ty) {
               llvm::errs() << "Unknown type to pass to call: " << ty << "\n";

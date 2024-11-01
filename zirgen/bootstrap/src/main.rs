@@ -67,7 +67,6 @@ const KECCAK_RUST_OUTPUTS: &[&str] = &[
 ];
 
 const KECCAK_SYS_OUTPUTS: &[&str] = &[
-    "taps.cpp",
     "defs.cpp.inc",
     "types.h.inc",
     "layout.cpp.inc",
