@@ -47,5 +47,4 @@ struct BigIntIO {
 EvalOutput eval(mlir::func::FuncOp inFunc, BigIntIO& io, bool computeZ);
 EvalOutput eval(mlir::func::FuncOp inFunc, llvm::ArrayRef<llvm::APInt> witnessValues);
 
-
 } // namespace zirgen::BigInt

@@ -183,11 +183,10 @@ Digest computeDigest(std::vector<BytePoly> witness, size_t groupCount) {
   return poseidon2Hash(words.data(), words.size());
 }
 
-struct Def{
-    virtual APInt load(uint32_t arena, uint32_t offset, uint32_t count) = 0;
-      virtual void store(uint32_t arena, uint32_t offset, uint32_t count, APInt val) = 0;
+struct Def {
+  virtual APInt load(uint32_t arena, uint32_t offset, uint32_t count) = 0;
+  virtual void store(uint32_t arena, uint32_t offset, uint32_t count, APInt val) = 0;
 };
-
 
 EvalOutput eval(func::FuncOp inFunc, BigIntIO& io, bool computeZ) {
   EvalOutput ret;
@@ -307,6 +306,8 @@ EvalOutput eval(func::FuncOp inFunc, BigIntIO& io, bool computeZ) {
             ret.privateWitness.push_back(carryPolys[i]);
           }
         })
+        // TODO: We seem to be terminating inconsitently
+        .Case<mlir::func::ReturnOp>([&](auto op) {})
         .Default([&](Operation* op) {
           errs() << *op << "\n";
           throw std::runtime_error("Unknown op in eval");

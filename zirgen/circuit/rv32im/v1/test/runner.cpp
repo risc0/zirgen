@@ -22,11 +22,10 @@
 #include "llvm/ADT/TypeSwitch.h"
 #include "llvm/Support/Format.h"
 
-#include "zirgen/Dialect/BigInt/IR/BigInt.h"
-#include "zirgen/Dialect/BigInt/IR/Eval.h"
 #include "zirgen/Dialect/BigInt/Bytecode/decode.h"
 #include "zirgen/Dialect/BigInt/Bytecode/file.h"
-
+#include "zirgen/Dialect/BigInt/IR/BigInt.h"
+#include "zirgen/Dialect/BigInt/IR/Eval.h"
 
 namespace zirgen::rv32im_v1 {
 
@@ -71,6 +70,62 @@ void PageFaultInfo::dump() {
   for (uint32_t pageIndex : reads) {
     llvm::errs() << "  " << llvm::format_hex(pageIndex, 10) << "\n";
   }
+}
+
+BytePolynomial::BytePolynomial() {}
+
+BytePolynomial BytePolynomial::zero() {
+  BytePolynomial r;
+  r.coeffs.push_back(0);
+  return r;
+}
+
+BytePolynomial BytePolynomial::one() {
+  BytePolynomial r;
+  r.coeffs.push_back(1);
+  return r;
+}
+
+BytePolynomial BytePolynomial::shift() const {
+  BytePolynomial r;
+  std::vector<int32_t> zeros(16);
+  r.coeffs = coeffs;
+  r.coeffs.insert(r.coeffs.begin(), zeros.begin(), zeros.end());
+  return r;
+}
+
+BytePolynomial BytePolynomial::operator*(int x) const {
+  BytePolynomial r;
+  r.coeffs = coeffs;
+  for (size_t i = 0; i < coeffs.size(); i++) {
+    r.coeffs[i] = coeffs[i] * x;
+  }
+  return r;
+}
+
+BytePolynomial BytePolynomial::operator+(const BytePolynomial& rhs) const {
+  BytePolynomial r;
+  r.coeffs.resize(std::max(coeffs.size(), rhs.coeffs.size()));
+  for (size_t i = 0; i < r.coeffs.size(); i++) {
+    if (i < coeffs.size()) {
+      r.coeffs[i] += coeffs[i];
+    }
+    if (i < rhs.coeffs.size()) {
+      r.coeffs[i] += rhs.coeffs[i];
+    }
+  }
+  return r;
+}
+
+BytePolynomial BytePolynomial::operator*(const BytePolynomial& rhs) const {
+  BytePolynomial r;
+  r.coeffs.resize(coeffs.size() + rhs.coeffs.size() - 1);
+  for (size_t i = 0; i < coeffs.size(); i++) {
+    for (size_t j = 0; j < rhs.coeffs.size(); j++) {
+      r.coeffs[i + j] += coeffs[i] * rhs.coeffs[j];
+    }
+  }
+  return r;
 }
 
 std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
@@ -426,20 +481,128 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
     auto module = mlir::ModuleOp::create(loc);
     auto func = zirgen::BigInt::Bytecode::decode(module, prog);
     computePolyWitness(func);
+    poly = BytePolynomial::zero();
+    term = BytePolynomial::one();
+    total = BytePolynomial::zero();
+    inCarry = false;
     return std::vector<uint64_t>();
   }
   if (name == "syscallBigInt2Witness") {
-    if (fpArgs.size() != 4 || outCount != 16) {
+    if (fpArgs.size() != 5 || outCount != 16) {
       throw std::runtime_error("Invalid extern call to syscallBigInt2Witness");
     }
-    uint32_t op = fpArgs[0];
-    std::vector<uint64_t> ret(16, 0);
-    switch (op) {
+    uint32_t polyOp = fpArgs[0];
+    uint32_t memOp = fpArgs[1];
+    uint32_t reg = fpArgs[2];
+    uint32_t offset = fpArgs[3];
+    int coeff = int(fpArgs[4]) - 4;
+    uint32_t regVal = loadU32(kRegisterOffset + reg);
+    uint32_t addr = regVal + offset * 16;
+    llvm::errs() << "syscallBigInt2Witness: polyOp=" << polyOp << ", memOp=" << memOp
+                 << ", reg=" << reg << ", offset=" << offset << ", addr=" << addr << "\n";
+    uint32_t baseWord = addr / 4;
+    std::vector<uint64_t> ret(16);
+    if (memOp == 2 && polyOp != 0) {
+      if (!inCarry) {
+        inCarry = true;
+        totCarry = total;
+        int32_t carry = 0;
+        // Do carry propagation
+        for (size_t i = 0; i < totCarry.coeffs.size(); i++) {
+          totCarry.coeffs[i] += carry;
+          if (totCarry.coeffs[i] % 256 != 0) {
+            llvm::errs() << "totCarry.coeffs[" << i << "]=" << totCarry.coeffs[i] << "\n";
+            throw std::runtime_error("Bad carry");
+          }
+          totCarry.coeffs[i] /= 256;
+          carry = totCarry.coeffs[i];
+        }
+        llvm::errs() << "Carry propagate complete\n";
+      }
+      int32_t basePoint = 128 * 256 * (coeff ? 64 : 1);
+      for (size_t i = 0; i < 16; i++) {
+        uint32_t val = totCarry.coeffs[offset * 16 + i] + basePoint;
+        switch (polyOp) {
+        case PolyOp::kOpCarry1:
+          ret[i] = (val >> (coeff ? 14 : 8)) & 0xff;
+          break;
+        case PolyOp::kOpCarry2:
+          ret[i] = (val >> 8) & 0x3f;
+          break;
+        case PolyOp::kOpShift:
+        case PolyOp::kOpEqz:
+          ret[i] = val & 0xff;
+          break;
+        default:
+          throw std::runtime_error("Invalid memOp=2 operation");
+        }
+      }
+    } else {
+      for (size_t i = 0; i < 4; i++) {
+        uint32_t word = (memOp == 0) ? loadU32(baseWord + i) : polyWitness[baseWord + i];
+        for (size_t j = 0; j < 4; j++) {
+          ret[i * 4 + j] = (word >> (8 * j)) & 0xff;
+        }
+        if (memOp == 1) {
+          storeU32(baseWord + i, word);
+        }
+      }
+    }
+    BytePolynomial negPoly;
+    negPoly.coeffs.resize(16, -128);
+    BytePolynomial deltaPoly;
+    for (size_t i = 0; i < 16; i++) {
+      deltaPoly.coeffs.push_back(ret[i]);
+    }
+    BytePolynomial newPoly = poly + deltaPoly;
+    BytePolynomial bp;
+    bp.coeffs.push_back(-256);
+    bp.coeffs.push_back(1);
+    switch (polyOp) {
     case PolyOp::kEnd:
-      return ret;
+      poly = BytePolynomial::zero();
+      term = BytePolynomial::one();
+      total = BytePolynomial::zero();
+      break;
+    case PolyOp::kOpShift:
+      poly = newPoly.shift();
+      break;
+    case PolyOp::kOpSetTerm:
+      poly = BytePolynomial::zero();
+      term = newPoly;
+      break;
+    case PolyOp::kOpAddTot:
+      total = total + newPoly * term * coeff;
+      term = BytePolynomial::one();
+      poly = BytePolynomial::zero();
+      break;
+    case PolyOp::kOpCarry1:
+      poly = poly + (deltaPoly + negPoly) * (coeff ? 64 * 256 : 256);
+      break;
+    case PolyOp::kOpCarry2:
+      poly = poly + deltaPoly * 256;
+      break;
+    case PolyOp::kOpEqz:
+      total = total + bp * newPoly;
+      for (size_t i = 0; i < total.coeffs.size(); i++) {
+        if (total.coeffs[i] != 0) {
+          llvm::errs() << "Coeffs[" << i << "]=" << total.coeffs[i] << "\n";
+          throw std::runtime_error("INVALID EQZ");
+        }
+      }
+      poly = BytePolynomial::zero();
+      term = BytePolynomial::one();
+      total = BytePolynomial::zero();
+      inCarry = false;
+      break;
     default:
       throw std::runtime_error("Unhandled BigInt2 op");
     }
+    llvm::errs() << "deltaPoly[0] = " << deltaPoly.coeffs[0] << "\n";
+    llvm::errs() << "poly[0] = " << poly.coeffs[0] << "\n";
+    llvm::errs() << "term[0] = " << term.coeffs[0] << "\n";
+    llvm::errs() << "total[0] = " << total.coeffs[0] << "\n";
+    return ret;
   }
   return RamExternHandler::doExtern(name, extra, args, outCount);
 }
@@ -804,32 +967,37 @@ struct RunnerBigIntIO : public zirgen::BigInt::BigIntIO {
     std::vector<uint64_t> limbs64;
     for (size_t i = 0; i < count; i++) {
       std::array<uint32_t, 4> words;
-      for (size_t j = 0; j < 4; j++) { 
-        words[j] = runner.loadU32(baseWord + i*4 + j); 
-        llvm::errs() << "Word " << i*4 + j << ": " << words[j] << "\n";
+      for (size_t j = 0; j < 4; j++) {
+        words[j] = runner.loadU32(baseWord + i * 4 + j);
       }
       limbs64.push_back(uint64_t(words[0]) | ((uint64_t(words[1])) << 32));
       limbs64.push_back(uint64_t(words[2]) | ((uint64_t(words[3])) << 32));
     }
+    llvm::APInt val(count * 128, limbs64);
     llvm::errs() << "Load, arena=" << arena << ", offset=" << offset << "\n";
-    llvm::errs() << "Addr = " << addr << "\n";
-    llvm::errs() << "  " << llvm::APInt(count * 128, limbs64) << "\n";
-    return llvm::APInt(count * 128, limbs64);
+    llvm::errs() << "  Addr = " << addr << "\n";
+    llvm::errs() << "  ";
+    val.print(llvm::errs(), false);
+    llvm::errs() << "\n";
+    return val;
   }
   void store(uint32_t arena, uint32_t offset, uint32_t count, llvm::APInt val) override {
     uint32_t regVal = runner.loadU32(kRegisterOffset + arena);
     uint32_t addr = regVal + offset * 16;
     uint32_t baseWord = addr / 4;
     llvm::errs() << "Store, arena=" << arena << ", offset=" << offset << "\n";
-    llvm::errs() << "  " << val << "\n";
+    llvm::errs() << "  Addr = " << addr << "\n";
+    llvm::errs() << "  ";
+    val.print(llvm::errs(), false);
+    llvm::errs() << "\n";
     val = val.zext(count * 128);
     for (size_t i = 0; i < count * 4; i++) {
-      runner.polyWitness[baseWord + i] = val.extractBitsAsZExtValue(32, i*32);
+      runner.polyWitness[baseWord + i] = val.extractBitsAsZExtValue(32, i * 32);
     }
   }
 };
 
-}  // end namespace
+} // end namespace
 
 void Runner::computePolyWitness(mlir::func::FuncOp func) {
   llvm::DenseMap<mlir::Value, llvm::APInt> values;

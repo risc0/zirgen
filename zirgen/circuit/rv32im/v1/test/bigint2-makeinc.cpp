@@ -13,8 +13,8 @@
 #include "zirgen/Dialect/BigInt/Bytecode/encode.h"
 #include "zirgen/Dialect/BigInt/Bytecode/file.h"
 #include "zirgen/Dialect/BigInt/IR/BigInt.h"
-#include "zirgen/circuit/bigint/elliptic_curve.h"
 #include "zirgen/Dialect/BigInt/Transforms/Passes.h"
+#include "zirgen/circuit/bigint/elliptic_curve.h"
 
 using namespace zirgen;
 
@@ -37,16 +37,17 @@ const APInt
     secp256k1_order(256, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16);
 */
 
-int kArenaConst = 6; // Reg T1 = x6
-int kArenaTmp = 2;   // Reg SP = x2
+int kArenaConst = 28; // Reg T3 = x28
+int kArenaTmp = 2;    // Reg SP = x2
 
 struct PolyAtom {
   uint32_t arena;
   uint32_t offset;
   uint32_t size;
+  bool doWrite;
   PolyAtom() : arena(0), offset(0), size(0) {}
-  PolyAtom(uint32_t arena, uint32_t offset, uint32_t size)
-      : arena(arena), offset(offset), size(size) {}
+  PolyAtom(uint32_t arena, uint32_t offset, uint32_t size, bool doWrite)
+      : arena(arena), offset(offset), size(size), doWrite(doWrite) {}
   bool operator<(const PolyAtom& rhs) const {
     if (arena != rhs.arena) {
       return arena < rhs.arena;
@@ -147,7 +148,7 @@ constexpr size_t kNop = 2;
 
 struct Flattener {
   std::vector<uint32_t> out;
-  mlir::DenseSet<uint32_t> tmpWritten;
+  mlir::DenseSet<std::pair<uint32_t, uint32_t>> written;
   Flattener() {}
   void finalize() {
     // Add final nop to return
@@ -155,15 +156,18 @@ struct Flattener {
   }
   void flatten(const PolyAtom& atom, bool doFinal, int coeff) {
     uint32_t memOp = MemOp::kRead;
-    if (atom.arena == kArenaTmp && !tmpWritten.count(atom.offset)) {
-      memOp = MemOp::kWrite;
-      tmpWritten.insert(atom.offset);
+    if (atom.doWrite) {
+      auto key = std::make_pair(atom.arena, atom.offset);
+      if (!written.count(key)) {
+        memOp = MemOp::kWrite;
+        written.insert(key);
+      }
     }
     uint32_t finalPolyOp = (doFinal ? PolyOp::kOpAddTot : PolyOp::kOpSetTerm);
     for (size_t i = 0; i < atom.size; i++) {
       uint32_t polyOp = (i + 1 == atom.size ? finalPolyOp : PolyOp::kOpShift);
       out.push_back(memOp << 28 | polyOp << 24 | (coeff + 4) << 21 | atom.arena << 16 |
-                    atom.offset + i);
+                    atom.offset + atom.size - 1 - i);
     }
   }
   void flatten(const PolyProd& prod, int coeff) {
@@ -194,16 +198,17 @@ struct Flattener {
     size_t carryCount = (bit.getCoeffs() + 15) / 16;
     size_t range = std::max(bit.getMaxPos(), bit.getMaxNeg());
     range = (range + 255) / 256;
-    bool addMiddle = range > 3200;
+    uint32_t addMiddle = range > 3200;
     for (size_t i = 0; i < carryCount; i++) {
-      out.push_back(MemOp::kNop << 28 | PolyOp::kOpCarry1 << 24);
+      uint32_t rest = addMiddle << 21 | carryCount - 1 - i;
+      out.push_back(MemOp::kNop << 28 | PolyOp::kOpCarry1 << 24 | rest);
       if (addMiddle) {
-        out.push_back(MemOp::kNop << 28 | PolyOp::kOpCarry2 << 24);
+        out.push_back(MemOp::kNop << 28 | PolyOp::kOpCarry2 << 24 | rest);
       }
       if (i == carryCount - 1) {
-        out.push_back(MemOp::kNop << 28 | PolyOp::kOpEqz << 24);
+        out.push_back(MemOp::kNop << 28 | PolyOp::kOpEqz << 24 | rest);
       } else {
-        out.push_back(MemOp::kNop << 28 | PolyOp::kOpShift << 24);
+        out.push_back(MemOp::kNop << 28 | PolyOp::kOpShift << 24 | rest);
       }
     }
   }
@@ -272,13 +277,13 @@ void polySplit(mlir::func::FuncOp func) {
             throw std::runtime_error("Invalid store");
           }
           state[op.getIn()].apply(PolySplitState(0, 1));
-          state[op.getIn()].atom = PolyAtom(op.getArena(), op.getOffset(), size);
+          state[op.getIn()].atom = PolyAtom(op.getArena(), op.getOffset(), size, true);
         })
         .Case<BigInt::NondetRemOp, BigInt::NondetQuotOp, BigInt::NondetInvOp>([&](auto op) {
           size_t size =
               (op.getType().template dyn_cast<BigInt::BigIntType>().getCoeffs() + 15) / 16;
           if (state[op].neededForEq && state[op].atom.arena == 0) {
-            state[op].atom = PolyAtom(kArenaTmp, offsetTmp, size);
+            state[op].atom = PolyAtom(kArenaTmp, offsetTmp, size, true);
             offsetTmp += size;
           }
           if (state[op].neededForEq || state[op].neededForNondet) {
@@ -301,13 +306,13 @@ void polySplit(mlir::func::FuncOp func) {
           for (size_t i = 0; i < size * 4; i++) {
             constData.push_back(value.extractBitsAsZExtValue(32, i * 32));
           }
-          state[op].atom = PolyAtom(kArenaConst, offsetConst, size);
+          state[op].atom = PolyAtom(kArenaConst, offsetConst, size, false);
           offsetConst += size;
         })
         .Case<BigInt::LoadOp>([&](auto op) {
           size_t size =
               (op.getType().template dyn_cast<BigInt::BigIntType>().getCoeffs() + 15) / 16;
-          state[op].atom = PolyAtom(op.getArena(), op.getOffset(), size);
+          state[op].atom = PolyAtom(op.getArena(), op.getOffset(), size, false);
         })
         .Case<mlir::func::ReturnOp>([&](auto op) {})
         .Default([&](auto op) {
@@ -408,8 +413,8 @@ int main(int argc, char* argv[]) {
   auto a_y = builder.create<BigInt::LoadOp>(loc, 256, 11, 2);
   auto a = BigInt::EC::AffinePt(a_x, a_y, curve);
   auto c = BigInt::EC::doub(builder, loc, a);
-  builder.create<BigInt::StoreOp>(loc, c.x(), 13, 0);
-  builder.create<BigInt::StoreOp>(loc, c.y(), 13, 2);
+  builder.create<BigInt::StoreOp>(loc, c.x(), 12, 0);
+  builder.create<BigInt::StoreOp>(loc, c.y(), 12, 2);
   builder.create<func::ReturnOp>(loc);
 
   // Remove reduce

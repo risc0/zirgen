@@ -142,7 +142,7 @@ inline void sys_bigint2(uint32_t* entry,
                         const uint32_t* d = nullptr) {
   uint32_t* nondetProg = entry + 4;
   uint32_t* verifyProg = nondetProg + entry[0];
-  uint32_t* consts = nondetProg + entry[1];
+  uint32_t* consts = verifyProg + entry[1];
   uint32_t tmpSpace = entry[3] * 4;
 
   asm volatile("li t0, 6\n" // BigInt

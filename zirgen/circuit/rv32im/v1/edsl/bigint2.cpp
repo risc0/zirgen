@@ -54,9 +54,7 @@ void BigInt2CycleImpl::set(Top top) {
 
   IF(isFirstCycle) {
     XLOG("First Cycle");
-    NONDET {
-      doExtern("syscallBigInt2Precompute", "", 0, {});
-    }
+    NONDET { doExtern("syscallBigInt2Precompute", "", 0, {}); }
     // If first cycle, do special initalization
     ECallCycle ecall = body->majorMux->at<MajorType::kECall>();
     ECallBigInt2 ecallBigInt2 = ecall->minorMux->at<ECallType::kBigInt2>();
@@ -100,12 +98,11 @@ void BigInt2CycleImpl::set(Top top) {
   for (size_t i = 0; i < 3; i++) {
     coeff = coeff + checkCoeff[i] * (1 << i);
   }
-  coeff = coeff - 4;
   XLOG("Cycle: polyOp=%u, memOp=%u, reg=%u, coeff+4=%u, offset=%u",
        polyOp,
        memOp,
        reg,
-       coeff + 4,
+       coeff,
        offset);
 
   // Read the register value and compute initial address
@@ -114,6 +111,9 @@ void BigInt2CycleImpl::set(Top top) {
 
   // MemoryOp 0 (read)
   IF(memOp->at(0)) {
+    NONDET {
+      doExtern("syscallBigInt2Witness", "", 16, {polyOp->get(), memOp->get(), reg, offset, coeff});
+    }
     for (size_t i = 0; i < 4; i++) {
       io[i]->doRead(cycle, addr + i);
       for (size_t j = 0; j < 4; j++) {
@@ -125,8 +125,8 @@ void BigInt2CycleImpl::set(Top top) {
   // MemoryOp (1, 2) (write / check)
   IF(memOp->at(1) + memOp->at(2)) {
     NONDET {
-      std::vector<Val> ret =
-          doExtern("syscallBigInt2Witness", "", 16, {polyOp->get(), memOp->get(), reg, offset});
+      std::vector<Val> ret = doExtern(
+          "syscallBigInt2Witness", "", 16, {polyOp->get(), memOp->get(), reg, offset, coeff});
       for (size_t i = 0; i < 16; i++) {
         setByte(ret[i], i);
       }

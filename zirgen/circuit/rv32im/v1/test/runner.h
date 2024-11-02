@@ -38,6 +38,18 @@ struct PageFaultInfo {
 
 using Polynomial = llvm::SmallVector<uint64_t, 4>;
 
+// TODO: Highly redundant with stuff in Exec.cpp
+struct BytePolynomial {
+  BytePolynomial();
+  static BytePolynomial zero();
+  static BytePolynomial one();
+  BytePolynomial shift() const;
+  BytePolynomial operator*(int x) const;
+  BytePolynomial operator+(const BytePolynomial& rhs) const;
+  BytePolynomial operator*(const BytePolynomial& rhs) const;
+  std::vector<int32_t> coeffs;
+};
+
 struct Runner : public RamExternHandler {
   Runner(size_t maxCycles, std::map<uint32_t, uint32_t> elfImage, uint32_t entryPoint);
 
@@ -107,6 +119,12 @@ private:
   uint32_t syscallA1Out;
 
   void computePolyWitness(mlir::func::FuncOp func);
+
+  bool inCarry;
+  BytePolynomial poly;
+  BytePolynomial term;
+  BytePolynomial total;
+  BytePolynomial totCarry;
 
 public: // TODO: Hack
   std::map<uint32_t, uint32_t> polyWitness;
