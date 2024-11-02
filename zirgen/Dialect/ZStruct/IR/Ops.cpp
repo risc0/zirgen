@@ -623,13 +623,6 @@ namespace {
 struct RemoveStaticCondition : public OpRewritePattern<SwitchOp> {
   using OpRewritePattern::OpRewritePattern;
   LogicalResult matchAndRewrite(SwitchOp op, PatternRewriter& rewriter) const override {
-    // We can safely delete runtime side effects like witness generation and
-    // constraints, but we need to keep AliasLayoutOps around until layout
-    // generation.
-    auto walkResult = op.walk([](AliasLayoutOp) { return WalkResult::interrupt(); });
-    if (walkResult.wasInterrupted())
-      return failure();
-
     size_t numTrue = 0;
     size_t trueIndex;
     for (size_t i = 0; i < op.getSelector().size(); i++) {
@@ -650,6 +643,13 @@ struct RemoveStaticCondition : public OpRewritePattern<SwitchOp> {
                             << numTrue;
 
     if (numTrue == 1) {
+      // We can safely delete runtime side effects like witness generation and
+      // constraints, but we need to keep AliasLayoutOps around until layout
+      // generation.
+      auto walkResult = op.walk([](AliasLayoutOp) { return WalkResult::interrupt(); });
+      if (walkResult.wasInterrupted())
+        return failure();
+
       // We found the one true region; inline into parent.
       auto* region = op.getRegions()[trueIndex];
       assert(region->hasOneBlock() && "expected single-region block");
