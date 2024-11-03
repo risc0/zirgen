@@ -193,7 +193,7 @@ EvalOutput eval(func::FuncOp inFunc, BigIntIO& io, bool computeZ) {
 
   llvm::DenseMap<Value, BytePoly> polys;
 
-  for (Operation& origOp : inFunc.getBody().front()) {
+  for (Operation& origOp : inFunc.getBody().front().without_terminator()) {
     llvm::TypeSwitch<Operation*>(&origOp)
         .Case<DefOp>([&](auto op) {
           APInt val = io.load(0, op.getLabel(), 0);
