@@ -480,7 +480,7 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
     auto module = mlir::ModuleOp::create(loc);
     auto func = zirgen::BigInt::Bytecode::decode(module, prog);
 
-    // Run 
+    // Run
     computePolyWitness(func);
 
     // Initialize other state

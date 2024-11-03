@@ -354,7 +354,7 @@ void polySplit(mlir::func::FuncOp func) {
   size_t progSizeBytes = BigInt::Bytecode::tell(*prog);
   assert(progSizeBytes % 4 == 0);
   size_t progSizeWords = progSizeBytes / 4;
-  std::vector<uint32_t> flat(progSizeWords + 4);  // 4 'header' values
+  std::vector<uint32_t> flat(progSizeWords + 4); // 4 'header' values
   BigInt::Bytecode::write(*prog, &flat[4], progSizeBytes);
   flat[0] = progSizeWords;
   flat[1] = flattener.out.size();
