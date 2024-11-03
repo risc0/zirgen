@@ -519,12 +519,12 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
         }
         llvm::errs() << "Carry propagate complete\n";
       }
-      int32_t basePoint = 128 * 256 * (coeff ? 64 : 1);
+      int32_t basePoint = 128 * 256 * 64;
       for (size_t i = 0; i < 16; i++) {
         uint32_t val = totCarry.coeffs[offset * 16 + i] + basePoint;
         switch (polyOp) {
         case PolyOp::kOpCarry1:
-          ret[i] = (val >> (coeff ? 14 : 8)) & 0xff;
+          ret[i] = (val >> 14) & 0xff;
           break;
         case PolyOp::kOpCarry2:
           ret[i] = (val >> 8) & 0x3f;
@@ -577,7 +577,7 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
       poly = BytePolynomial::zero();
       break;
     case PolyOp::kOpCarry1:
-      poly = poly + (deltaPoly + negPoly) * (coeff ? 64 * 256 : 256);
+      poly = poly + (deltaPoly + negPoly) * 64 * 256;
       break;
     case PolyOp::kOpCarry2:
       poly = poly + deltaPoly * 256;

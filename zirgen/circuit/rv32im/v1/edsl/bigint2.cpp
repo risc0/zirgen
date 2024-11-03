@@ -40,7 +40,6 @@ Val BigInt2CycleImpl::getByte(size_t i) {
 }
 
 void BigInt2CycleImpl::set(Top top) {
-  XLOG("BIGINT");
   // Get some basic state data
   Val cycle = top->code->cycle;
   BodyStep body = top->mux->at<StepType::BODY>();
@@ -53,7 +52,6 @@ void BigInt2CycleImpl::set(Top top) {
   Val isFirstCycle = BACK(1, body->majorSelect->at(MajorType::kECall));
 
   IF(isFirstCycle) {
-    XLOG("First Cycle");
     NONDET { doExtern("syscallBigInt2Precompute", "", 0, {}); }
     // If first cycle, do special initalization
     ECallCycle ecall = body->majorMux->at<MajorType::kECall>();
@@ -73,7 +71,6 @@ void BigInt2CycleImpl::set(Top top) {
   IF(1 - isFirstCycle) {
     // Read & decode the instruction
     instWordAddr->set(BACK(1, instWordAddr->get()) + 1);
-    XLOG("InstAddr = %x", instWordAddr);
     readInst->doRead(cycle, instWordAddr);
     Val instType = readInst->data().bytes[3];
     Val coeffReg = readInst->data().bytes[2];
@@ -98,7 +95,8 @@ void BigInt2CycleImpl::set(Top top) {
   for (size_t i = 0; i < 3; i++) {
     coeff = coeff + checkCoeff[i] * (1 << i);
   }
-  XLOG("Cycle: polyOp=%u, memOp=%u, reg=%u, coeff+4=%u, offset=%u",
+  XLOG("BigInt2: instAddr = %x, polyOp=%u, memOp=%u, reg=%u, coeff+4=%u, offset=%u",
+       instWordAddr * 4,
        polyOp,
        memOp,
        reg,
@@ -160,7 +158,6 @@ void BigInt2CycleImpl::set(Top top) {
     body->nextMajor->set(MajorType::kBigInt2);
     body->pc->set(curPC);
   }
-  XLOG("BIGINT Done");
 }
 
 static FpExt extBack(FpExtReg in) {
@@ -177,17 +174,13 @@ void BigInt2CycleImpl::onAccum() {
   FpExt coeff(coeffVal);
   FpExt zero(Val(0));
   FpExt one(Val(1));
-  FpExt c64(Val(64));
   FpExt c256(Val(256));
+  FpExt c16k(Val(16384));
   FpExt cur = one;
   for (size_t i = 0; i < 17; i++) {
     powers.push_back(cur);
     cur = cur * mix;
   }
-  //powers.push_back(one);
-  //for (size_t i = 0; i < 16; i++) {
-  //  powers.push_back(zero);
-  //}
 
   FpExt oldPoly = extBack(poly);
   FpExt oldTerm = extBack(term);
@@ -201,48 +194,39 @@ void BigInt2CycleImpl::onAccum() {
   FpExt newPoly = oldPoly + deltaPoly;
 
   IF(polyOp->at(0)) {
-    XLOG("Nopy");
     poly->set(zero);
     term->set(one);
     tot->set(zero);
   }
   IF(polyOp->at(PolyOp::kOpShift)) {
-    XLOG("Shift");
     poly->set(newPoly * powers[16]);
     term->set(oldTerm);
     tot->set(oldTot);
   }
   IF(polyOp->at(PolyOp::kOpSetTerm)) {
-    XLOG("SetTerm");
     poly->set(zero);
     term->set(newPoly);
     tot->set(oldTot);
   }
   IF(polyOp->at(PolyOp::kOpAddTot)) {
-    XLOG("AddTot");
     poly->set(zero);
     term->set(one);
     tmp->set(coeff * oldTerm);
     tot->set(oldTot + tmp * newPoly);
   }
   IF(polyOp->at(PolyOp::kOpCarry1)) {
-    XLOG("Carry1");
-    poly->set(oldPoly + (deltaPoly - negPoly) * c256 * c64);
+    poly->set(oldPoly + (deltaPoly - negPoly) * c16k);
     term->set(oldTerm);
     tot->set(oldTot);
   }
   IF(polyOp->at(PolyOp::kOpCarry2)) {
-    XLOG("Carry2");
     poly->set(oldPoly + deltaPoly * c256);
     term->set(oldTerm);
     tot->set(oldTot);
   }
   IF(polyOp->at(PolyOp::kOpEqz)) {
-    XLOG("Eqz: Delta[0] = %u", deltaPoly.elem(0));
-    XLOG("Eqz: newPoly[0] = %u", newPoly.elem(0));
     FpExt carryMul = powers[1] - c256;
     FpExt goalZero = oldTot + newPoly * carryMul;
-    XLOG("Goal zero = (%u, %u, %u, %u)", goalZero);
     eqz(goalZero.elem(0));
     eqz(goalZero.elem(1));
     eqz(goalZero.elem(2));
@@ -251,12 +235,6 @@ void BigInt2CycleImpl::onAccum() {
     term->set(one);
     tot->set(zero);
   }
-  XLOG("newPoly = %u, delta = %u, poly = %u, term = %u, tot = %u",
-      newPoly.elem(0),
-      deltaPoly.elem(0),
-      poly->elem(0),
-      term->elem(0),
-      tot->elem(0));
 }
 
 } // namespace zirgen::rv32im_v1

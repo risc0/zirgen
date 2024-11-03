@@ -196,19 +196,14 @@ struct Flattener {
       flatten(kvp.first, kvp.second);
     }
     size_t carryCount = (bit.getCoeffs() + 15) / 16;
-    size_t range = std::max(bit.getMaxPos(), bit.getMaxNeg());
-    range = (range + 255) / 256;
-    uint32_t addMiddle = range > 3200;
     for (size_t i = 0; i < carryCount; i++) {
-      uint32_t rest = addMiddle << 21 | carryCount - 1 - i;
-      out.push_back(MemOp::kNop << 28 | PolyOp::kOpCarry1 << 24 | rest);
-      if (addMiddle) {
-        out.push_back(MemOp::kNop << 28 | PolyOp::kOpCarry2 << 24 | rest);
-      }
+      uint32_t common = MemOp::kNop << 28 | carryCount - 1 - i;
+      out.push_back(PolyOp::kOpCarry1 << 24 | common);
+      out.push_back(PolyOp::kOpCarry2 << 24 | common);
       if (i == carryCount - 1) {
-        out.push_back(MemOp::kNop << 28 | PolyOp::kOpEqz << 24 | rest);
+        out.push_back(PolyOp::kOpEqz << 24 | common);
       } else {
-        out.push_back(MemOp::kNop << 28 | PolyOp::kOpShift << 24 | rest);
+        out.push_back(PolyOp::kOpShift << 24 | common);
       }
     }
   }
