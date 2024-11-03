@@ -306,8 +306,6 @@ EvalOutput eval(func::FuncOp inFunc, BigIntIO& io, bool computeZ) {
             ret.privateWitness.push_back(carryPolys[i]);
           }
         })
-        // TODO: We seem to be terminating inconsitently
-        .Case<mlir::func::ReturnOp>([&](auto op) {})
         .Default([&](Operation* op) {
           errs() << *op << "\n";
           throw std::runtime_error("Unknown op in eval");
