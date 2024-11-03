@@ -184,7 +184,7 @@ struct Flattener {
     if (atomsFlat.size() == 1) {
       flatten(atomsFlat[0], true, coeff);
     } else if (atomsFlat.size() == 2) {
-      flatten(atomsFlat[0], false, 0);
+      flatten(atomsFlat[0], false, coeff);
       flatten(atomsFlat[1], true, coeff);
     } else {
       llvm::errs() << "Invalid coefficent degree\n";

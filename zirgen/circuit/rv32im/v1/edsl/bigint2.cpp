@@ -19,7 +19,7 @@
 namespace zirgen::rv32im_v1 {
 
 BigInt2CycleImpl::BigInt2CycleImpl(RamHeader ramHeader)
-    : ram(ramHeader, 6), mix("mix"), poly("accum"), term("accum"), tot("accum") {
+    : ram(ramHeader, 6), mix("mix"), poly("accum"), term("accum"), tot("accum"), tmp("accum") {
   this->registerCallback("compute_accum", &BigInt2CycleImpl::onAccum);
 }
 
@@ -173,6 +173,8 @@ static FpExt extBack(FpExtReg in) {
 
 void BigInt2CycleImpl::onAccum() {
   std::vector<FpExt> powers;
+  Val coeffVal = checkCoeff[0] + checkCoeff[1] * 2 + checkCoeff[2] * 4 - 4;
+  FpExt coeff(coeffVal);
   FpExt zero(Val(0));
   FpExt one(Val(1));
   FpExt c64(Val(64));
@@ -182,42 +184,65 @@ void BigInt2CycleImpl::onAccum() {
     powers.push_back(cur);
     cur = cur * mix;
   }
+  //powers.push_back(one);
+  //for (size_t i = 0; i < 16; i++) {
+  //  powers.push_back(zero);
+  //}
+
   FpExt oldPoly = extBack(poly);
   FpExt oldTerm = extBack(term);
   FpExt oldTot = extBack(tot);
-  FpExt newPoly = oldPoly;
+  FpExt deltaPoly = zero;
+  FpExt negPoly = zero;
   for (size_t i = 0; i < 16; i++) {
-    newPoly = newPoly + powers[i] * FpExt(getByte(i));
+    deltaPoly = deltaPoly + powers[i] * FpExt(getByte(i));
+    negPoly = negPoly + powers[i] * FpExt(Val(128));
   }
+  FpExt newPoly = oldPoly + deltaPoly;
 
+  IF(polyOp->at(0)) {
+    XLOG("Nopy");
+    poly->set(zero);
+    term->set(one);
+    tot->set(zero);
+  }
   IF(polyOp->at(PolyOp::kOpShift)) {
-    poly->set(newPoly * (powers[16]));
+    XLOG("Shift");
+    poly->set(newPoly * powers[16]);
     term->set(oldTerm);
     tot->set(oldTot);
   }
   IF(polyOp->at(PolyOp::kOpSetTerm)) {
+    XLOG("SetTerm");
     poly->set(zero);
     term->set(newPoly);
     tot->set(oldTot);
   }
   IF(polyOp->at(PolyOp::kOpAddTot)) {
+    XLOG("AddTot");
     poly->set(zero);
     term->set(one);
-    tot->set(oldTot + oldTerm * newPoly);
+    tmp->set(coeff * oldTerm);
+    tot->set(oldTot + tmp * newPoly);
   }
   IF(polyOp->at(PolyOp::kOpCarry1)) {
-    poly->set(newPoly * c256);
+    XLOG("Carry1");
+    poly->set(oldPoly + (deltaPoly - negPoly) * c256 * c64);
     term->set(oldTerm);
     tot->set(oldTot);
   }
   IF(polyOp->at(PolyOp::kOpCarry2)) {
-    poly->set(newPoly * c64);
+    XLOG("Carry2");
+    poly->set(oldPoly + deltaPoly * c256);
     term->set(oldTerm);
     tot->set(oldTot);
   }
   IF(polyOp->at(PolyOp::kOpEqz)) {
-    FpExt carryMul = powers[16] - c256;
+    XLOG("Eqz: Delta[0] = %u", deltaPoly.elem(0));
+    XLOG("Eqz: newPoly[0] = %u", newPoly.elem(0));
+    FpExt carryMul = powers[1] - c256;
     FpExt goalZero = oldTot + newPoly * carryMul;
+    XLOG("Goal zero = (%u, %u, %u, %u)", goalZero);
     eqz(goalZero.elem(0));
     eqz(goalZero.elem(1));
     eqz(goalZero.elem(2));
@@ -226,6 +251,12 @@ void BigInt2CycleImpl::onAccum() {
     term->set(one);
     tot->set(zero);
   }
+  XLOG("newPoly = %u, delta = %u, poly = %u, term = %u, tot = %u",
+      newPoly.elem(0),
+      deltaPoly.elem(0),
+      poly->elem(0),
+      term->elem(0),
+      tot->elem(0));
 }
 
 } // namespace zirgen::rv32im_v1

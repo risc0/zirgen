@@ -58,6 +58,7 @@ public:
   FpExtReg poly;
   FpExtReg term;
   FpExtReg tot;
+  FpExtReg tmp;
 };
 using BigInt2Cycle = Comp<BigInt2CycleImpl>;
 

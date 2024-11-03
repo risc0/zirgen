@@ -598,10 +598,11 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
     default:
       throw std::runtime_error("Unhandled BigInt2 op");
     }
-    llvm::errs() << "deltaPoly[0] = " << deltaPoly.coeffs[0] << "\n";
-    llvm::errs() << "poly[0] = " << poly.coeffs[0] << "\n";
-    llvm::errs() << "term[0] = " << term.coeffs[0] << "\n";
-    llvm::errs() << "total[0] = " << total.coeffs[0] << "\n";
+    llvm::errs() << "deltaPoly[0] = " << deltaPoly.coeffs[0];
+    llvm::errs() << ", newPoly[0] = " << newPoly.coeffs[0];
+    llvm::errs() << ", poly[0] = " << poly.coeffs[0];
+    llvm::errs() << ". term[0] = " << term.coeffs[0];
+    llvm::errs() << ", total[0] = " << total.coeffs[0] << "\n";
     return ret;
   }
   return RamExternHandler::doExtern(name, extra, args, outCount);

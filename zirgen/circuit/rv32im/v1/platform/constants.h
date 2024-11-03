@@ -32,7 +32,7 @@ constexpr size_t kSystemStateSize = kWordSize + kDigestBytes;
 constexpr size_t kInOutSize = kSystemStateSize * 2 + kDigestBytes * 2 + 2;
 constexpr size_t kDataSize = 226;
 constexpr size_t kMixSize = 40;
-constexpr size_t kAccumSize = 48;
+constexpr size_t kAccumSize = 52;
 
 constexpr size_t kSetupStepRegs = 84;
 constexpr size_t kRamLoadStepIOCount = 3;
