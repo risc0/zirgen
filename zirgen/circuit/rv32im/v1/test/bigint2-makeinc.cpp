@@ -351,14 +351,12 @@ void polySplit(mlir::func::FuncOp func) {
   // [verification code]
   // [constants]
   auto prog = BigInt::Bytecode::encode(func);
-  FILE* file = tmpfile();
-  write(*prog, file);
-  size_t fileSize = ftell(file);
-  assert(fileSize % 4 == 0);
-  fseek(file, 0, SEEK_SET);
-  std::vector<uint32_t> flat(fileSize / 4 + 4);
-  fread(&flat[4], fileSize / 4, 4, file);
-  flat[0] = fileSize / 4;
+  size_t progSizeBytes = BigInt::Bytecode::tell(*prog);
+  assert(progSizeBytes % 4 == 0);
+  size_t progSizeWords = progSizeBytes / 4;
+  std::vector<uint32_t> flat(progSizeWords + 4);  // 4 'header' values
+  BigInt::Bytecode::write(*prog, &flat[4], progSizeBytes);
+  flat[0] = progSizeWords;
   flat[1] = flattener.out.size();
   flat[2] = constData.size();
   flat[3] = offsetTmp * 4;

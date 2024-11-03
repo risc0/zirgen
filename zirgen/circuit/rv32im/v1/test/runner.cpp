@@ -466,12 +466,11 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
     for (uint32_t cur = bibcAddr; cur < bibcEnd; cur++) {
       data.push_back(loadU32(cur));
     }
-    // Convert to file + deserialize
-    FILE* file = tmpfile();
-    fwrite(data.data(), data.size(), 4, file);
-    fseek(file, 0, SEEK_SET);
+    // Deserialize
     zirgen::BigInt::Bytecode::Program prog;
-    zirgen::BigInt::Bytecode::read(prog, file);
+    zirgen::BigInt::Bytecode::read(prog, &data[0], data.size() * 4);
+
+    // Build a module + func
     mlir::DialectRegistry registry;
     registry.insert<mlir::func::FuncDialect>();
     registry.insert<zirgen::BigInt::BigIntDialect>();
@@ -480,7 +479,11 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
     auto loc = mlir::UnknownLoc::get(&ctx);
     auto module = mlir::ModuleOp::create(loc);
     auto func = zirgen::BigInt::Bytecode::decode(module, prog);
+
+    // Run 
     computePolyWitness(func);
+
+    // Initialize other state
     poly = BytePolynomial::zero();
     term = BytePolynomial::one();
     total = BytePolynomial::zero();
