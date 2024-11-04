@@ -33,7 +33,8 @@ class RustStreamEmitter {
 public:
   virtual ~RustStreamEmitter() = default;
   virtual void emitStepFunc(const std::string& name, mlir::func::FuncOp func) = 0;
-  virtual void emitPolyFunc(const std::string& fn, mlir::func::FuncOp func) = 0;
+  virtual void
+  emitPolyFunc(const std::string& fn, mlir::func::FuncOp func, size_t idx, size_t nsplit) = 0;
   virtual void emitPolyExtFunc(mlir::func::FuncOp func) = 0;
   virtual void emitTaps(mlir::func::FuncOp func) = 0;
   virtual void emitInfo(mlir::func::FuncOp func) = 0;
@@ -249,8 +250,8 @@ std::unique_ptr<GpuStreamEmitter> createGpuStreamEmitter(llvm::raw_ostream& ofs,
                                                          const std::string& suffix);
 std::unique_ptr<CppStreamEmitter> createCppStreamEmitter(llvm::raw_ostream& ofs);
 
-void registerCodegenCLOptions();
 void emitCode(mlir::ModuleOp module, const EmitCodeOptions& opts = {});
+void emitCodeZirgenPoly(mlir::ModuleOp module, llvm::StringRef outputDir);
 void emitRecursion(const std::string& path,
                    mlir::func::FuncOp func,
                    recursion::EncodeStats* stats = nullptr);
@@ -262,6 +263,7 @@ struct FileContext {
   std::string use(mlir::Value value) const {
     auto it = vars.find(value);
     if (it == vars.end()) {
+      llvm::errs() << "Missing use: " << value << "\n";
       throw std::runtime_error("Missing use");
     }
     return it->second;
@@ -275,5 +277,20 @@ struct FileContext {
 };
 
 std::string escapeString(llvm::StringRef str);
+
+struct CodegenCLOptions {
+  llvm::cl::opt<std::string> outputDir{"output-dir",
+                                       llvm::cl::desc("Output directory"),
+                                       llvm::cl::value_desc("dir"),
+                                       llvm::cl::Required};
+  llvm::cl::opt<size_t> validitySplitCount{
+      "validity-split-count",
+      llvm::cl::desc("Split up validity polynomial into this many files"),
+      llvm::cl::value_desc("numParts"),
+      llvm::cl::init(1)};
+};
+
+extern llvm::ManagedStatic<CodegenCLOptions> codegenCLOptions;
+void registerCodegenCLOptions();
 
 } // namespace zirgen

@@ -42,6 +42,9 @@ struct GenerateTapsPass : public GenerateTapsBase<GenerateTapsPass> {
 
     DenseMap<std::pair</*buffer=*/StringAttr, /*offset=*/size_t>, /*backs=*/DenseSet<size_t>>
         namedTaps;
+    DenseMap<std::tuple</*buffer=*/StringAttr, /*offset=*/size_t, /*back=*/size_t>,
+             SmallVector<Zll::GetOp>>
+        getOps;
 
     auto walkResult = module.walk([&](Zhlt::CheckFuncOp check) {
       Zll::Interpreter interp(ctx);
@@ -60,6 +63,20 @@ struct GenerateTapsPass : public GenerateTapsBase<GenerateTapsPass> {
         size_t distance = getIndexVal(distanceAttr);
         namedTaps[std::make_pair(ref.getBuffer(), llvm::cast<RefAttr>(ref.getLayout()).getIndex())]
             .insert(distance);
+        return WalkResult::advance();
+      });
+      if (res.wasInterrupted())
+        return WalkResult::interrupt();
+
+      res = check->walk([&](Zll::GetOp op) {
+        auto bufOp = op.getBuf().getDefiningOp<GetBufferOp>();
+        if (!bufOp) {
+          op->emitError() << "unable to determine buffer";
+          return WalkResult::interrupt();
+        }
+
+        namedTaps[std::make_pair(bufOp.getNameAttr(), op.getOffset())].insert(op.getBack());
+        getOps[std::make_tuple(bufOp.getNameAttr(), op.getOffset(), op.getBack())].push_back(op);
         return WalkResult::advance();
       });
       if (res.wasInterrupted())

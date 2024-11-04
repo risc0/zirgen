@@ -104,13 +104,15 @@ component RGZ<N: Val>(arr: Array<Val, N>) {
 component vConcatenate<N: Val, M: Val>(a: Array<Val, N>, b: Array<Val, M>) {
   for i : 0..(N + M) {
     low := InRange(0, i, N);
-    low*a[i] + (1-low)*b[i-N]
+    //low*a[i] + (1-low)*b[i-N]
+    [low, 1-low] -> (a[i], b[i-N])
   }
 }
 component Concatenate<N: Val, M: Val>(a: Array<NondetReg, N>, b: Array<NondetReg, M>) {
   result := for i : 0..(N + M) {
     low := InRange(0, i, N);
-    NondetReg(low*a[i] + (1-low)*b[i-N])
+    //NondetReg(low*a[i] + (1-low)*b[i-N])
+    NondetReg([low, 1-low] -> (a[i], b[i-N]))
   };
   for i : 0..N { AliasLayout!(a[i], result[i]); };
   for i : N..M+N { AliasLayout!(b[i-N], result[i]); };
@@ -127,7 +129,8 @@ component ConcatZeros<N: Val, M: Val>(a: Array<NondetReg, N>) {
 component ConcatElem<N: Val>(a: Array<NondetReg, N>, b: NondetReg) {
   result := for i : 0..(N + 1) {
     low := InRange(0, i, N);
-    NondetReg(low*a[i] + (1-low)*b)
+    //NondetReg(low*a[i] + (1-low)*b)
+    NondetReg([low, 1-low] -> (a[i], b))
   };
   for i : 0..N { AliasLayout!(a[i], result[i]); };
   AliasLayout!(b, result[N]);
@@ -172,6 +175,7 @@ component RetTuple(a: Array<NondetReg, BLEN()>,
   blk := Reg(block); //AliasLayout!(blk, block);
   midx := Reg(memIdx); //AliasLayout!(midx, memIdx);
   auxr := for elem : auxregs { NondetReg(elem) }; AliasLayout!(auxregs, auxr);
+  //Log("major %u minor %u memidx %u blk %u rnd %u", major, minor, midx, blk, rnd);
 }
 
 component s2a(rtuple: RetTuple) {
@@ -254,13 +258,11 @@ component TwoShorts(lsbs: Val, msbs: Val) {
 }
 
 component rightRotate<A: Val, N: Val>(a: Array<Val, A>) {
-  r := for i : 0..A {
+  for i : 0..A {
     wraparound := InRange(0,i,A-N);
     wraparound*a[i+N] + (1-wraparound)*a[i+N-A]
-  };
-  //for i : 0..A-N { AliasLayout!( r[i], a[i+N]); };
-  //for i : A-N..A { AliasLayout!( r[i], a[i+N-A]); };
-  r
+    //[wraparound, 1-wraparound] -> (a[i+N], a[i+N-A])
+  }
 }
 
 component rightShift<A: Val, N: Val>(a: Array<Val, A>) {

@@ -90,6 +90,7 @@ mlir::LogicalResult checkDegreeExceeded(mlir::ModuleOp module, size_t maxDegree)
       tmpMod->print(llvm::outs());
     }
   });
+
   if (degreeExceeded)
     return mlir::failure();
 

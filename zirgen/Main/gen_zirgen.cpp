@@ -18,6 +18,7 @@
 #include "risc0/core/elf.h"
 #include "risc0/core/util.h"
 
+#include "mlir/IR/IRMapping.h"
 #include "mlir/Pass/PassManager.h"
 #include "mlir/Transforms/Passes.h"
 #include "zirgen/Conversions/Typing/BuiltinComponents.h"
@@ -28,6 +29,7 @@
 #include "zirgen/Dialect/ZStruct/Transforms/Passes.h"
 #include "zirgen/Dialect/Zll/IR/IR.h"
 #include "zirgen/Dialect/Zll/IR/Interpreter.h"
+#include "zirgen/Dialect/Zll/Transforms/Passes.h"
 #include "zirgen/Main/Main.h"
 #include "zirgen/Main/RunTests.h"
 #include "zirgen/compiler/codegen/codegen.h"
@@ -45,16 +47,20 @@
 namespace cl = llvm::cl;
 using namespace zirgen;
 using namespace zirgen::codegen;
-;
 using namespace mlir;
 
 static cl::opt<std::string>
     inputFilename(cl::Positional, cl::desc("input.zir"), cl::value_desc("filename"), cl::Required);
-static cl::opt<std::string>
-    outputDir("output-dir", cl::desc("Output directory"), cl::value_desc("dir"), cl::Required);
 static cl::list<std::string> includeDirs("I", cl::desc("Add include path"), cl::value_desc("path"));
 static cl::opt<size_t>
     maxDegree("max-degree", cl::desc("Maximum degree of validity polynomial"), cl::init(5));
+static cl::opt<std::string> protocolInfo("protocol-info",
+                                         cl::desc("Protocol information string"),
+                                         cl::init("ZIRGEN_TEST_____"));
+static cl::opt<bool> multiplyIf("multiply-if",
+                                cl::desc("Mulitply out and refactor `if` statements when "
+                                         "generating constraints, which can improve CSE."),
+                                cl::init(false));
 
 namespace {
 
@@ -68,7 +74,7 @@ void openMainFile(llvm::SourceMgr& sourceManager, std::string filename) {
 }
 
 std::unique_ptr<llvm::raw_ostream> openOutput(StringRef filename) {
-  std::string path = (outputDir + "/" + filename).str();
+  std::string path = (codegenCLOptions->outputDir + "/" + filename).str();
   std::error_code ec;
   auto ofs = std::make_unique<llvm::raw_fd_ostream>(path, ec);
   if (ec) {
@@ -103,11 +109,60 @@ template <typename... OpT> void emitOps(CodegenEmitter& cg, ModuleOp mod, String
   }
 }
 
+void emitPoly(ModuleOp mod, StringRef circuitName) {
+  ModuleOp funcMod = mod.cloneWithoutRegions();
+  OpBuilder builder(funcMod.getContext());
+  builder.createBlock(&funcMod->getRegion(0));
+
+  // Convert functions to func::FuncOp, since that's what the edsl
+  // codegen knows how to deal with
+  mod.walk([&](zirgen::Zhlt::CheckFuncOp funcOp) {
+    auto newFuncOp = builder.create<func::FuncOp>(funcOp.getLoc(),
+                                                  builder.getStringAttr(circuitName),
+                                                  TypeAttr::get(funcOp.getFunctionType()),
+                                                  funcOp.getSymVisibilityAttr(),
+                                                  funcOp.getArgAttrsAttr(),
+                                                  funcOp.getResAttrsAttr());
+    IRMapping mapping;
+    newFuncOp.getBody().getBlocks().clear();
+    funcOp.getBody().cloneInto(&newFuncOp.getBody(), mapping);
+  });
+
+  zirgen::Zll::setModuleAttr(funcMod, builder.getAttr<zirgen::Zll::ProtocolInfoAttr>(protocolInfo));
+
+  mlir::PassManager pm(mod.getContext());
+  applyDefaultTimingPassManagerCLOptions(pm);
+  if (failed(applyPassManagerCLOptions(pm))) {
+    llvm::errs() << "Pass manager does not agree with command line options.\n";
+    exit(1);
+  }
+  {
+    auto& opm = pm.nest<mlir::func::FuncOp>();
+    opm.addPass(zirgen::ZStruct::createInlineLayoutPass());
+    opm.addPass(zirgen::ZStruct::createBuffersToArgsPass());
+    opm.addPass(Zll::createMakePolynomialPass());
+    opm.addPass(createCanonicalizerPass());
+    opm.addPass(createCSEPass());
+    opm.addPass(Zll::createComputeTapsPass());
+  }
+
+  //  pm.addPass(createPrintIRPass());
+
+  if (failed(pm.run(funcMod))) {
+    llvm::errs() << "an internal compiler error occurred while lowering this module:\n";
+    funcMod.print(llvm::errs());
+    exit(1);
+  }
+
+  emitCodeZirgenPoly(funcMod, codegenCLOptions->outputDir);
+}
+
 } // namespace
 
 int main(int argc, char* argv[]) {
   llvm::InitLLVM y(argc, argv);
 
+  zirgen::registerCodegenCLOptions();
   zirgen::registerZirgenCommon();
   zirgen::registerRunTestsCLOptions();
 
@@ -156,19 +211,53 @@ int main(int argc, char* argv[]) {
   pm.enableVerifier(true);
   zirgen::addAccumAndGlobalPasses(pm);
   pm.addPass(zirgen::ZStruct::createOptimizeLayoutPass());
-
+  pm.addPass(zirgen::dsl::createFieldDCEPass());
   pm.addPass(mlir::createCanonicalizerPass());
   pm.addPass(mlir::createCSEPass());
   zirgen::addTypingPasses(pm);
 
   pm.addPass(zirgen::dsl::createGenerateCheckPass());
-  pm.addPass(zirgen::dsl::createGenerateTapsPass());
-  pm.addPass(zirgen::dsl::createGenerateValidityRegsPass());
-  pm.addPass(zirgen::dsl::createGenerateValidityTapsPass());
+  pm.addPass(zirgen::dsl::createInlinePurePass());
+  pm.addPass(zirgen::dsl::createHoistInvariantsPass());
 
+  auto& checkPasses = pm.nest<zirgen::Zhlt::CheckFuncOp>();
+  checkPasses.addPass(zirgen::ZStruct::createInlineLayoutPass());
+  if (multiplyIf)
+    checkPasses.addPass(zirgen::Zll::createIfToMultiplyPass());
+  checkPasses.addPass(mlir::createCanonicalizerPass());
+  checkPasses.addPass(mlir::createCSEPass());
+  if (multiplyIf) {
+    checkPasses.addPass(zirgen::Zll::createMultiplyToIfPass());
+    checkPasses.addPass(mlir::createCanonicalizerPass());
+    checkPasses.addPass(zirgen::dsl::createTopologicalShufflePass());
+  }
+
+  if (failed(pm.run(typedModule.value()))) {
+    llvm::errs() << "an internal compiler error occurred while lowering this module:\n";
+    typedModule->print(llvm::errs());
+    return 1;
+  }
+
+  typedModule->walk([&](mlir::FunctionOpInterface op) {
+    if (op.getName().contains("test$"))
+      op.erase();
+  });
+
+  StringRef circuitName = StringRef(inputFilename).rsplit('/').second;
+  if (circuitName.empty())
+    circuitName = inputFilename;
+  circuitName.consume_back(".zir");
+  circuitName = "keccak";
+
+  emitPoly(*typedModule, circuitName);
+
+  pm.clear();
   pm.addPass(zirgen::dsl::createElideTrivialStructsPass());
   pm.addPass(zirgen::ZStruct::createExpandLayoutPass());
+  pm.addPass(zirgen::dsl::createFieldDCEPass());
   pm.addPass(mlir::createSymbolDCEPass());
+  pm.addPass(zirgen::dsl::createFieldDCEPass());
+  pm.addPass(mlir::createCSEPass());
 
   if (failed(pm.run(typedModule.value()))) {
     llvm::errs() << "an internal compiler error occurred while lowering this module:\n";
@@ -201,8 +290,6 @@ int main(int argc, char* argv[]) {
   CodegenEmitter rustCg(rustOpts, &context);
   emitDefs(rustCg, *typedModule, "defs.rs.inc");
   emitTypes(rustCg, *typedModule, "types.rs.inc");
-  emitOps<Zhlt::ValidityRegsFuncOp>(rustCg, *typedModule, "validity_regs.rs.inc");
-  emitOps<Zhlt::ValidityTapsFuncOp>(rustCg, *typedModule, "validity_taps.rs.inc");
   emitOps<ZStruct::GlobalConstOp>(rustCg, *typedModule, "layout.rs.inc");
   emitOps<Zhlt::StepFuncOp>(rustCg, stepFuncs, "steps.rs.inc");
 
@@ -210,13 +297,8 @@ int main(int argc, char* argv[]) {
   CodegenEmitter cppCg(cppOpts, &context);
   emitDefs(cppCg, *typedModule, "defs.cpp.inc");
   emitTypes(cppCg, *typedModule, "types.h.inc");
-  emitOps<Zhlt::ValidityTapsFuncOp>(cppCg, *typedModule, "validity_regs.cpp.inc");
-  emitOps<Zhlt::ValidityRegsFuncOp>(cppCg, *typedModule, "validity_taps.cpp.inc");
   emitOps<ZStruct::GlobalConstOp>(cppCg, *typedModule, "layout.cpp.inc");
   emitOps<Zhlt::StepFuncOp, Zhlt::ExecFuncOp>(cppCg, stepFuncs, "steps.cpp.inc");
-
-  typedModule->print(*openOutput("circuit.ir"));
-  stepFuncs.print(*openOutput("steps.ir"));
 
   return 0;
 }

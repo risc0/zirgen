@@ -11,7 +11,7 @@ func.func @add_with_0(%arg : !zll.val<BabyBear>) -> !zll.val<BabyBear> {
   // RUST-CHECK: let x1 : Val = isz((Val::new(0) + arg0))
   zll.if %2 : <BabyBear> {
     // CPP-CHECK: if (to_size_t(x1)) {
-    // RUST-CHECK: if is_nonzero(x1) {
+    // RUST-CHECK: if is_true(x1) {
     %three = zll.const 3
     zll.eqz %three : <BabyBear>
     // CPP-CHECK: EQZ(Val(3), "Dialect/Zll/IR/test/emit-codegen.mlir:16")

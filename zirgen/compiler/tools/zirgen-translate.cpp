@@ -127,7 +127,7 @@ int main(int argc, char** argv) {
       [](mlir::ModuleOp module, llvm::raw_ostream& output) {
         auto func = module.lookupSymbol<mlir::func::FuncOp>(funcName);
         auto rust = zirgen::createRustStreamEmitter(output);
-        rust->emitPolyFunc("poly_fp", func);
+        rust->emitPolyFunc("poly_fp", func, /*idx=*/0, /*num split=*/1);
         return mlir::success();
       },
       [](mlir::DialectRegistry& registry) {

@@ -28,8 +28,7 @@ struct EraseUnusedAspectsPass : public EraseUnusedAspectsBase<EraseUnusedAspects
       getOperation().walk([&](Operation* op) {
         // keep steps and execs, except for Top
         if (isa<Zhlt::ComponentOp>(op) || isa<Zhlt::CheckLayoutFuncOp>(op) ||
-            isa<Zhlt::CheckFuncOp>(op) || isa<Zhlt::ValidityRegsFuncOp>(op) ||
-            isa<Zhlt::ValidityTapsFuncOp>(op)) {
+            isa<Zhlt::ValidityRegsFuncOp>(op) || isa<Zhlt::ValidityTapsFuncOp>(op)) {
           op->erase();
           return;
         }

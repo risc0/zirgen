@@ -18,6 +18,7 @@
 #include "zirgen/Dialect/ZHLT/IR/TypeUtils.h"
 #include "zirgen/Dialect/Zll/IR/IR.h"
 #include "zirgen/Utilities/KeyPath.h"
+#include "zirgen/compiler/edsl/source_loc.h"
 #include "zirgen/dsl/passes/PassDetail.h"
 
 using namespace mlir;
@@ -25,28 +26,34 @@ using namespace zirgen::Zhlt;
 using namespace zirgen::ZStruct;
 using namespace zirgen::Zll;
 
+namespace {
+
+mlir::Location currentLoc(MLIRContext* ctx, risc0::SourceLoc loc = risc0::SourceLoc::current()) {
+  return FileLineColLoc::get(StringAttr::get(ctx, loc.filename), loc.line, loc.column);
+}
+
+} // namespace
 namespace zirgen {
 namespace dsl {
 
 struct RandomnessMap {
   RandomnessMap() = default;
-  RandomnessMap(OpBuilder& builder, Value pivot, Value zeroDistance) : pivot(pivot) {
-    ValType extValType = Zhlt::getValExtType(builder.getContext());
-
+  RandomnessMap(OpBuilder& builder, Value pivot, Value zeroDistance)
+      : pivot(pivot), ctx(pivot.getContext()) {
     if (pivot.getType() == Zhlt::getExtRefType(pivot.getContext())) {
-      this->pivot = builder.create<LoadOp>(pivot.getLoc(), extValType, pivot, zeroDistance);
+      this->pivot = builder.create<LoadOp>(currentLoc(ctx), pivot, zeroDistance);
     } else if (auto pivotType = dyn_cast<LayoutType>(pivot.getType())) {
       for (auto field : pivotType.getFields()) {
         if (field.name == "$offset")
           continue;
 
-        Value member = builder.create<LookupOp>(pivot.getLoc(), pivot, field.name);
+        Value member = builder.create<LookupOp>(currentLoc(ctx), pivot, field.name);
         map.insert({field.name, RandomnessMap(builder, member, zeroDistance)});
       }
     } else if (auto pivotType = dyn_cast<LayoutArrayType>(pivot.getType())) {
       for (size_t i = 0; i < pivotType.getSize(); i++) {
-        Value index = builder.create<arith::ConstantOp>(pivot.getLoc(), builder.getIndexAttr(i));
-        Value element = builder.create<SubscriptOp>(pivot.getLoc(), pivot, index);
+        Value index = builder.create<arith::ConstantOp>(currentLoc(ctx), builder.getIndexAttr(i));
+        Value element = builder.create<SubscriptOp>(currentLoc(ctx), pivot, index);
         map.insert({i, RandomnessMap(builder, element, zeroDistance)});
       }
     } else {
@@ -56,32 +63,33 @@ struct RandomnessMap {
   }
 
   Value pivot;
+  MLIRContext* ctx = nullptr;
   std::map<Key, RandomnessMap> map;
 };
 
 class AccumBuilder {
 public:
   AccumBuilder(OpBuilder& builder, Value accumLayout, Value randomnessLayout)
-      : builder(builder), accumLayout(accumLayout) {
+      : builder(builder), ctx(builder.getContext()), accumLayout(accumLayout) {
     // Preemptively lookup all verifier randomness values and store them in a
     // dictionary. Unneeded values will be pruned later by folding.
-    zeroDistance =
-        builder.create<arith::ConstantOp>(randomnessLayout.getLoc(), builder.getIndexAttr(0));
-    ValType extValType = Zhlt::getValExtType(builder.getContext());
+    zeroDistance = builder.create<arith::ConstantOp>(currentLoc(ctx), builder.getIndexAttr(0));
 
     verifierRandomness = RandomnessMap(builder, randomnessLayout, zeroDistance);
 
-    offset = builder.create<LookupOp>(randomnessLayout.getLoc(), randomnessLayout, "$offset");
-    offset = builder.create<ZStruct::LoadOp>(offset.getLoc(), extValType, offset, zeroDistance);
+    offset = builder.create<LookupOp>(currentLoc(ctx), randomnessLayout, "$offset");
+    offset = builder.create<ZStruct::LoadOp>(currentLoc(ctx), offset, zeroDistance);
 
-    Location loc = accumLayout.getLoc();
     auto accumLayoutType = accumLayout.getType().cast<LayoutArrayType>();
 
     // Read last accumulator from previous row
     IntegerAttr distanceAttr = builder.getIndexAttr(1);
-    Value distance = builder.create<arith::ConstantOp>(loc, builder.getIndexType(), distanceAttr);
+    Value distance =
+        builder.create<arith::ConstantOp>(currentLoc(ctx), builder.getIndexType(), distanceAttr);
     Value lastLayout = getAccumColumnLayout(accumLayoutType.getSize() - 1);
-    this->oldT = builder.create<ZStruct::LoadOp>(loc, extValType, lastLayout, distance);
+    auto loadPrevOp = builder.create<ZStruct::LoadOp>(currentLoc(ctx), lastLayout, distance);
+    loadPrevOp->setAttr("unchecked", builder.getUnitAttr());
+    this->oldT = loadPrevOp;
     this->t = oldT;
 
     this->accCount = 0;
@@ -93,9 +101,7 @@ public:
   // Write and constrain the ultimate accumulator value for this cycle to the
   // last column in the accum buffer.
   void finalize() {
-    Location loc = accumLayout.getLoc();
     auto accumLayoutType = accumLayout.getType().cast<LayoutArrayType>();
-    ValType extValType = Zhlt::getValExtType(builder.getContext());
 
     // If we have a non-multiple of 3 number of arguments, be sure to write
     // the last accumulator value into a register
@@ -110,11 +116,10 @@ public:
     // we still need to write the last accum column for this cycle.
     if (accCol == 0 || accCol != accumLayoutType.getSize()) {
       Value lastLayout = getAccumColumnLayout(accumLayoutType.getSize() - 1);
-      builder.create<StoreOp>(loc, lastLayout, t);
-      Value newT =
-          builder.create<LoadOp>(lastLayout.getLoc(), extValType, lastLayout, zeroDistance);
-      Value diff = builder.create<SubOp>(newT.getLoc(), newT, oldT);
-      builder.create<EqualZeroOp>(diff.getLoc(), diff);
+      builder.create<StoreOp>(currentLoc(ctx), lastLayout, t);
+      Value newT = builder.create<LoadOp>(currentLoc(ctx), lastLayout, zeroDistance);
+      Value diff = builder.create<SubOp>(currentLoc(ctx), newT, oldT);
+      builder.create<EqualZeroOp>(currentLoc(ctx), diff);
     }
   }
 
@@ -126,39 +131,37 @@ private:
   // an expression like the one above.
   Value condenseArgument(Value layout, const RandomnessMap& randomness) {
     MLIRContext* ctx = builder.getContext();
+    ValType valType = Zhlt::getValType(ctx);
     ValType extValType = Zhlt::getValExtType(ctx);
 
     if (layout.getType() == Zhlt::getNondetRegLayoutType(ctx)) {
       // For a single register, compute r_a * a[i]
       assert(randomness.pivot.getType() == extValType);
       Value r = randomness.pivot;
-      Value colLayout = builder.create<LookupOp>(layout.getLoc(), layout, "@super");
-      Value colValue =
-          builder.create<ZStruct::LoadOp>(colLayout.getLoc(), extValType, colLayout, zeroDistance);
-      return builder.create<MulOp>(colValue.getLoc(), r, colValue);
+      Value colLayout = builder.create<LookupOp>(currentLoc(ctx), layout, "@super");
+      Value colValue = builder.create<ZStruct::LoadOp>(currentLoc(ctx), colLayout, zeroDistance);
+      return builder.create<MulOp>(currentLoc(ctx), r, colValue);
     } else if (auto layoutType = dyn_cast<LayoutType>(layout.getType())) {
       // for a LayoutType, sum condensations of non-count fields
       auto fields = layoutType.getFields();
       if (layoutType.getKind() == LayoutKind::Argument)
         fields = fields.drop_front();
 
-      SmallVector<uint64_t> zero(extValType.getFieldK(), 0);
-      Value v = builder.create<ConstOp>(layout.getLoc(), extValType, zero);
+      Value v = builder.create<ConstOp>(currentLoc(ctx), valType, 0);
       for (auto field : fields) {
-        Value sublayout = builder.create<LookupOp>(layout.getLoc(), layout, field.name);
+        Value sublayout = builder.create<LookupOp>(currentLoc(ctx), layout, field.name);
         Value sumTerm = condenseArgument(sublayout, randomness.map.at(field.name.getValue()));
-        v = builder.create<AddOp>(sumTerm.getLoc(), v, sumTerm);
+        v = builder.create<AddOp>(currentLoc(ctx), v, sumTerm);
       }
       return v;
     } else if (auto layoutType = dyn_cast<LayoutArrayType>(layout.getType())) {
       // For a LayoutArrayType, sum condensations at all subscripts
-      SmallVector<uint64_t> zero(extValType.getFieldK(), 0);
-      Value v = builder.create<ConstOp>(layout.getLoc(), extValType, zero);
+      Value v = builder.create<ConstOp>(currentLoc(ctx), valType, 0);
       for (size_t i = 0; i < layoutType.getSize(); i++) {
-        Value index = builder.create<arith::ConstantOp>(layout.getLoc(), builder.getIndexAttr(i));
-        Value sublayout = builder.create<SubscriptOp>(layout.getLoc(), layout, index);
+        Value index = builder.create<arith::ConstantOp>(currentLoc(ctx), builder.getIndexAttr(i));
+        Value sublayout = builder.create<SubscriptOp>(currentLoc(ctx), layout, index);
         Value sumTerm = condenseArgument(sublayout, randomness.map.at(i));
-        v = builder.create<AddOp>(sumTerm.getLoc(), v, sumTerm);
+        v = builder.create<AddOp>(currentLoc(ctx), v, sumTerm);
       }
       return v;
     } else {
@@ -168,21 +171,20 @@ private:
   }
 
   void addConstraint(Value newT) {
-    Value deltaT = builder.create<SubOp>(newT.getLoc(), newT, oldT);
-    Value constraint = builder.create<MulOp>(deltaT.getLoc(), deltaT, constraintLhs);
+    Value deltaT = builder.create<SubOp>(currentLoc(ctx), newT, oldT);
+    Value constraint = builder.create<MulOp>(currentLoc(ctx), deltaT, constraintLhs);
     for (size_t i = 0; i < accCount; i++) {
-      constraint = builder.create<SubOp>(constraint.getLoc(), constraint, constraintRhsTerms[i]);
+      constraint = builder.create<SubOp>(currentLoc(ctx), constraint, constraintRhsTerms[i]);
     }
-    builder.create<EqualZeroOp>(constraint.getLoc(), constraint);
+    builder.create<EqualZeroOp>(currentLoc(ctx), constraint);
   }
 
   // Writes t to the next accum column, and returns a value loaded from it.
   Value storeTemporarySum(Value t) {
     assert(accCount != 0 && "writing accum column without accumulating any new arguments");
-    ValType extValType = Zhlt::getValExtType(builder.getContext());
     Value tLayout = getAccumColumnLayout(accCol);
-    builder.create<StoreOp>(t.getLoc(), tLayout, t);
-    Value newT = builder.create<ZStruct::LoadOp>(t.getLoc(), extValType, tLayout, zeroDistance);
+    builder.create<StoreOp>(currentLoc(ctx), tLayout, t);
+    Value newT = builder.create<ZStruct::LoadOp>(currentLoc(ctx), tLayout, zeroDistance);
     addConstraint(newT);
 
     oldT = newT;
@@ -209,13 +211,13 @@ private:
       constraintRhsTerms[1] = vPlusOffset;
       constraintRhsTerms[2] = vPlusOffset;
     } else {
-      constraintLhs = builder.create<MulOp>(vPlusOffset.getLoc(), constraintLhs, vPlusOffset);
+      constraintLhs = builder.create<MulOp>(currentLoc(ctx), constraintLhs, vPlusOffset);
       constraintRhsTerms[accCount] =
-          builder.create<MulOp>(c.getLoc(), constraintRhsTerms[accCount], c);
+          builder.create<MulOp>(currentLoc(ctx), constraintRhsTerms[accCount], c);
       for (size_t i = 0; i < 3; i++) {
         if (i != accCount) {
           constraintRhsTerms[i] =
-              builder.create<MulOp>(vPlusOffset.getLoc(), constraintRhsTerms[i], vPlusOffset);
+              builder.create<MulOp>(currentLoc(ctx), constraintRhsTerms[i], vPlusOffset);
         }
       }
     }
@@ -225,16 +227,15 @@ private:
   // t' = t + c[i] / (v[i] + x)
   Value accumulateArgument(Value t, LayoutType type, Value layout) {
     MLIRContext* ctx = builder.getContext();
-    ValType extValType = Zhlt::getValExtType(builder.getContext());
     StringAttr countName = type.getFields()[0].name;
-    Value cLayout = builder.create<LookupOp>(layout.getLoc(), layout, countName);
+    Value cLayout = builder.create<LookupOp>(currentLoc(ctx), layout, countName);
     cLayout = Zhlt::coerceTo(cLayout, Zhlt::getRefType(ctx), builder);
-    Value c = builder.create<ZStruct::LoadOp>(cLayout.getLoc(), extValType, cLayout, zeroDistance);
+    Value c = builder.create<ZStruct::LoadOp>(currentLoc(ctx), cLayout, zeroDistance);
     Value v = condenseArgument(layout, verifierRandomness.map.at(type.getId()));
-    Value vPlusOffset = builder.create<AddOp>(v.getLoc(), v, offset);
-    Value denominator = builder.create<InvOp>(v.getLoc(), vPlusOffset);
-    Value delta = builder.create<MulOp>(c.getLoc(), c, denominator);
-    Value tNew = builder.create<AddOp>(t.getLoc(), t, delta);
+    Value vPlusOffset = builder.create<AddOp>(currentLoc(ctx), v, offset);
+    Value denominator = builder.create<InvOp>(currentLoc(ctx), vPlusOffset);
+    Value delta = builder.create<MulOp>(currentLoc(ctx), c, denominator);
+    Value tNew = builder.create<AddOp>(currentLoc(ctx), t, delta);
 
     buildConstraintTerms(vPlusOffset, c);
 
@@ -254,8 +255,8 @@ private:
           for (size_t i = 0; i < layoutArrayType.getSize(); i++) {
             IntegerAttr indexAttr = builder.getIndexAttr(i);
             Value indexValue = builder.create<arith::ConstantOp>(
-                layout.getLoc(), builder.getIndexType(), indexAttr);
-            Value sublayout = builder.create<SubscriptOp>(layout.getLoc(), layout, indexValue);
+                currentLoc(ctx), builder.getIndexType(), indexAttr);
+            Value sublayout = builder.create<SubscriptOp>(currentLoc(ctx), layout, indexValue);
             t = doAccum(t, sublayout);
           }
         })
@@ -269,7 +270,7 @@ private:
             return;
           }
           for (auto field : layoutType.getFields()) {
-            Value sublayout = builder.create<LookupOp>(layout.getLoc(), layout, field.name);
+            Value sublayout = builder.create<LookupOp>(currentLoc(ctx), layout, field.name);
             t = doAccum(t, sublayout);
           }
         });
@@ -277,13 +278,15 @@ private:
   }
 
   Value getAccumColumnLayout(size_t index) {
-    Location loc = accumLayout.getLoc();
     IntegerAttr indexAttr = builder.getIndexAttr(index);
-    Value indexValue = builder.create<arith::ConstantOp>(loc, builder.getIndexType(), indexAttr);
-    return builder.create<SubscriptOp>(loc, accumLayout, indexValue);
+    Value indexValue =
+        builder.create<arith::ConstantOp>(currentLoc(ctx), builder.getIndexType(), indexAttr);
+    return builder.create<SubscriptOp>(currentLoc(ctx), accumLayout, indexValue);
   }
 
   OpBuilder& builder;
+
+  MLIRContext* ctx;
 
   // The layout of the accum buffer
   Value accumLayout;
@@ -387,7 +390,6 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
     }
 
     auto ctx = component->getContext();
-    auto loc = component->getLoc();
     OpBuilder builder(ctx);
     builder.setInsertionPointToEnd(getOperation().getBody());
 
@@ -397,45 +399,45 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
     auto accumLayoutType = LayoutArrayType::get(ctx, Zhlt::getExtRefType(ctx), columns);
     std::string accumName = (component.getName() + "$accum").str();
     auto accum = builder.create<Zhlt::ComponentOp>(
-        loc, accumName, Zhlt::getComponentType(ctx), accumParams, accumLayoutType);
+        currentLoc(ctx), accumName, Zhlt::getComponentType(ctx), accumParams, accumLayoutType);
     SymbolTable::setSymbolVisibility(accum, SymbolTable::Visibility::Public);
     builder.setInsertionPointToStart(accum.addEntryBlock());
 
     // Create globals for verifier randomness
     LayoutType mixLayoutType = getRandomnessLayoutType();
-    auto randomnessLayout =
-        builder.create<Zhlt::GetGlobalLayoutOp>(loc, mixLayoutType, "mix", "randomness");
+    auto randomnessLayout = builder.create<Zhlt::GetGlobalLayoutOp>(
+        currentLoc(ctx), mixLayoutType, "mix", "randomness");
 
     // Walk down the key path to the major mux layout component
     Value cur = accum.getConstructParam()[0];
     for (const Key& key : keyPath) {
       if (auto* strKey = std::get_if<mlir::StringRef>(&key)) {
-        cur = builder.create<LookupOp>(loc, cur, *strKey);
+        cur = builder.create<LookupOp>(currentLoc(ctx), cur, *strKey);
       } else {
-        Value index =
-            builder.create<arith::ConstantOp>(loc, builder.getIndexAttr(std::get<size_t>(key)));
-        cur = builder.create<SubscriptOp>(loc, cur, index);
+        Value index = builder.create<arith::ConstantOp>(
+            currentLoc(ctx), builder.getIndexAttr(std::get<size_t>(key)));
+        cur = builder.create<SubscriptOp>(currentLoc(ctx), cur, index);
       }
     }
 
     // Load from the list of saved selectors
-    Value selectorLayoutArray = builder.create<LookupOp>(loc, cur, "@selector");
+    Value selectorLayoutArray = builder.create<LookupOp>(currentLoc(ctx), cur, "@selector");
     size_t armCount = selectorLayoutArray.getType().dyn_cast<LayoutArrayType>().getSize();
     SmallVector<Value> selectors;
-    Value zeroDistance = builder.create<arith::ConstantOp>(loc, builder.getIndexAttr(0));
-    ValType valType = Zhlt::getValType(builder.getContext());
+    Value zeroDistance =
+        builder.create<arith::ConstantOp>(currentLoc(ctx), builder.getIndexAttr(0));
     for (size_t i = 0; i < armCount; i++) {
-      Value index = builder.create<arith::ConstantOp>(loc, builder.getIndexAttr(i));
-      Value nondetReg = builder.create<SubscriptOp>(loc, selectorLayoutArray, index);
-      Value ref = builder.create<LookupOp>(loc, nondetReg, "@super");
-      Value val = builder.create<LoadOp>(loc, valType, ref, zeroDistance);
+      Value index = builder.create<arith::ConstantOp>(currentLoc(ctx), builder.getIndexAttr(i));
+      Value nondetReg = builder.create<SubscriptOp>(currentLoc(ctx), selectorLayoutArray, index);
+      Value ref = builder.create<LookupOp>(currentLoc(ctx), nondetReg, "@super");
+      Value val = builder.create<LoadOp>(currentLoc(ctx), ref, zeroDistance);
       selectors.push_back(val);
     }
 
     // Build a switch op over the (saved) selectors
     Type componentType = Zhlt::getComponentType(builder.getContext());
-    auto switchOp =
-        builder.create<ZStruct::SwitchOp>(loc, componentType, selectors, /*numArms=*/armCount);
+    auto switchOp = builder.create<ZStruct::SwitchOp>(
+        currentLoc(ctx), componentType, selectors, /*numArms=*/armCount);
 
     // Now, generate each arm
     for (size_t i = 0; i < armCount; i++) {
@@ -447,29 +449,35 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
                                 majorType.getFields().end(),
                                 [&](auto field) { return field.name == armName; });
       if (hasArm) {
-        Value armLayout = builder.create<LookupOp>(loc, cur, armName);
+        Value armLayout = builder.create<LookupOp>(currentLoc(ctx), cur, armName);
         AccumBuilder accumBuilder(builder, accum.getLayout(), randomnessLayout);
         accumBuilder.build(armLayout);
         accumBuilder.finalize();
       } else {
         // Read accumulator + forward
-        ValType extValType = Zhlt::getValExtType(builder.getContext());
-        Value distance =
-            builder.create<arith::ConstantOp>(loc, builder.getIndexType(), builder.getIndexAttr(1));
-        Value indexValue = builder.create<arith::ConstantOp>(
-            loc, builder.getIndexType(), builder.getIndexAttr(accumLayoutType.getSize() - 1));
-        Value lastLayout = builder.create<SubscriptOp>(loc, accum.getLayout(), indexValue);
-        Value prevVal = builder.create<LoadOp>(loc, extValType, lastLayout, distance);
-        builder.create<StoreOp>(loc, lastLayout, prevVal);
+        Value distance = builder.create<arith::ConstantOp>(
+            currentLoc(ctx), builder.getIndexType(), builder.getIndexAttr(1));
+        Value indexValue =
+            builder.create<arith::ConstantOp>(currentLoc(ctx),
+                                              builder.getIndexType(),
+                                              builder.getIndexAttr(accumLayoutType.getSize() - 1));
+        Value lastLayout =
+            builder.create<SubscriptOp>(currentLoc(ctx), accum.getLayout(), indexValue);
+        auto prevLoadOp = builder.create<LoadOp>(currentLoc(ctx), lastLayout, distance);
+        prevLoadOp->setAttr("unchecked", builder.getUnitAttr());
+        Value prevVal = prevLoadOp;
+        builder.create<StoreOp>(currentLoc(ctx), lastLayout, prevVal);
       }
 
-      Value empty = builder.create<ZStruct::PackOp>(loc, Zhlt::getComponentType(ctx), ValueRange{});
-      builder.create<ZStruct::YieldOp>(loc, empty);
+      Value empty = builder.create<ZStruct::PackOp>(
+          currentLoc(ctx), Zhlt::getComponentType(ctx), ValueRange{});
+      builder.create<ZStruct::YieldOp>(currentLoc(ctx), empty);
     }
 
     // Make a null return
-    Value empty = builder.create<ZStruct::PackOp>(loc, Zhlt::getComponentType(ctx), ValueRange{});
-    builder.create<Zhlt::ReturnOp>(loc, empty);
+    Value empty =
+        builder.create<ZStruct::PackOp>(currentLoc(ctx), Zhlt::getComponentType(ctx), ValueRange{});
+    builder.create<Zhlt::ReturnOp>(currentLoc(ctx), empty);
   }
 
 private:

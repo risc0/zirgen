@@ -136,17 +136,20 @@ component RotLeft3impl<A: Val, B: Val, C: Val, S: Val>
   (a: Array<NondetReg, A>, b: Array<NondetReg, B>, c: Array<NondetReg, C>) {
   ra := for i : 0..A {
     wraparound := InRange(0,i,S);
-    NondetReg(wraparound*c[C-S+i] + (1-wraparound)*a[i-S])};
+    //NondetReg(wraparound*c[C-S+i] + (1-wraparound)*a[i-S])};
+    NondetReg([wraparound,1-wraparound] -> (c[C-S+i],a[i-S]))};
   for i : 0..S { AliasLayout!(c[C-S+i], ra[i]); };
   for i : S..A { AliasLayout!(a[i-S], ra[i]); };
   rb := for i : 0..B {
     wraparound := InRange(0,i,S);
-    NondetReg(wraparound*a[A-S+i] + (1-wraparound)*b[i-S])};
+    //NondetReg(wraparound*a[A-S+i] + (1-wraparound)*b[i-S])};
+    NondetReg([wraparound,1-wraparound] -> (a[A-S+i],b[i-S]))};
   for i : 0..S { AliasLayout!(a[A-S+i], rb[i]); };
   for i : S..B { AliasLayout!(b[i-S], rb[i]); };
   rc := for i : 0..C {
     wraparound := InRange(0,i,S);
-    NondetReg(wraparound*b[B-S+i] + (1-wraparound)*c[i-S])};
+    //NondetReg(wraparound*b[B-S+i] + (1-wraparound)*c[i-S])};
+    NondetReg([wraparound,1-wraparound] -> (b[B-S+i],c[i-S]))};
   for i : 0..S { AliasLayout!(b[B-S+i], rc[i]); };
   for i : S..C { AliasLayout!(c[i-S], rc[i]); };
 }
@@ -168,13 +171,16 @@ component vRotLeft3impl<A: Val, B: Val, C: Val, S: Val>
   (a: Array<Val, A>, b: Array<Val, B>, c: Array<Val, C>) {
   ra := for i : 0..A {
     wraparound := InRange(0,i,S);
-    wraparound*c[C-S+i] + (1-wraparound)*a[i-S]};
+    //wraparound*c[C-S+i] + (1-wraparound)*a[i-S]};
+    [wraparound,1-wraparound] -> (c[C-S+i],a[i-S])};
   rb := for i : 0..B {
     wraparound := InRange(0,i,S);
-    wraparound*a[A-S+i] + (1-wraparound)*b[i-S]};
+    //wraparound*a[A-S+i] + (1-wraparound)*b[i-S]};
+    [wraparound,1-wraparound] -> (a[A-S+i],b[i-S])};
   rc := for i : 0..C {
     wraparound := InRange(0,i,S);
-    wraparound*b[B-S+i] + (1-wraparound)*c[i-S]};
+    //wraparound*b[B-S+i] + (1-wraparound)*c[i-S]};
+    [wraparound,1-wraparound] -> (b[B-S+i],c[i-S])};
 }
 component vRotLeft3<A: Val, B: Val, C: Val, S1: Val, S2: Val, S3: Val>
   (a: Array<Val, A>, b: Array<Val, B>, c: Array<Val, C>) {
@@ -1308,6 +1314,7 @@ component equal_word<X: Val>(rvprev: RetTuple,
     RetTuple(unpack_a, arr12, c,
       ConcatZeros<SLEN(), RLEN()-SLEN()>(arr34),
       e, f, X+1, 16, 0, 0, memidx, auxregs),
+  //Log("Z: %u", Z);
     { blk := NondetReg(readInput());
       readInput(); readInput(); readInput();
       invBlk := NondetReg(Inv(blk));
@@ -1325,6 +1332,7 @@ component equal_word<X: Val>(rvprev: RetTuple,
         { invmidxNN*midxNN = 1;
           WriteMemory(midxNN, MemDigest([0x0080,0,0,0]));
           nskip := NondetReg(7 - ((midxNN+1)&7)); // 7 - num_of_writes%8
+          //Log("Unpack: %u, %u, %u -> 0x%x", unpack_nskip[0], unpack_nskip[1], unpack_nskip[2], nskip);
           bitlen := 64*midxNN; // TODO: overflow
           r := RetTuple(unpack_a, arr12, c, d, e, f,
                  S2MINOR_SKIP()-1, 16, bitlen, nskip, midxNN, auxregs);
@@ -1396,6 +1404,10 @@ component mem_padding_sha256(rvprev01: RetTuple,
     })
 }
 
+component ShaOutput(vals: Array<Val, 16>) {
+  vals := for v : vals { Reg(v) };
+}
+
 component setup_major(rvals: RetTuple) {
   m := rvals@1.minor;
   minor_onehot := OneHotU<AUXBIN()>(m);
@@ -1414,6 +1426,7 @@ component setup_major(rvals: RetTuple) {
     sha256fini<7>(rvals@0, minor_onehot),
     sha256fini<8>(rvals@0, minor_onehot),
     { rvp01 := rvals@1;
+      global output := ShaOutput(for i : 0..16 { rvp01.arr_d[i] } );
       Log("sha256output: %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x",
         rvp01.arr_d[0], rvp01.arr_d[1], rvp01.arr_d[2], rvp01.arr_d[3],
         rvp01.arr_d[4], rvp01.arr_d[5],  rvp01.arr_d[6],  rvp01.arr_d[7],
@@ -1457,6 +1470,7 @@ component Top() {
       retvals@1.major
     });
   major_onehot := OneHot<22>(major_idx);
+  //Log("major = %u", major_idx);
   retvals := major_onehot ->! (
     xor5words_minor0(retvals@1),
     xor5words_minor1(retvals@0),
@@ -1494,44 +1508,51 @@ component Top() {
   for i : 0..AUXBIN() { 0 = retvals.auxr[i] * (1-retvals.auxr[i]); };
 }
 
+// Constraints must be applied to registers, so make registers to house the calculated values in tests.
+component TestEqz(v: Val) {
+  NondetReg(v) = 0;
+}
+
 test TestKeccak01 { // test_cycles >= 2969
   x := Top();
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[ 0] - 0xb395) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[ 1] - 0x7463) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[ 2] - 0x8e98) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[ 3] - 0x0a6e) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[ 4] - 0x7cec) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[ 5] - 0x17b3) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[ 6] - 0xfd54) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[ 7] - 0x4748) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[ 8] - 0x09b0) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[ 9] - 0x9293) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[10] - 0xfcda) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[11] - 0x5947) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[12] - 0x573f) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[13] - 0x6678) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[14] - 0x268a) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[15] - 0x23c7) = 0;
+  end := NondetReg(Isz(16-x.retvals.major) * Isz(13-x.retvals.minor));
+  end * (x.retvals.arr_d[ 0] - 0xb395) = 0;
+  end * (x.retvals.arr_d[ 1] - 0x7463) = 0;
+  end * (x.retvals.arr_d[ 2] - 0x8e98) = 0;
+  end * (x.retvals.arr_d[ 3] - 0x0a6e) = 0;
+  end * (x.retvals.arr_d[ 4] - 0x7cec) = 0;
+  end * (x.retvals.arr_d[ 5] - 0x17b3) = 0;
+  end * (x.retvals.arr_d[ 6] - 0xfd54) = 0;
+  end * (x.retvals.arr_d[ 7] - 0x4748) = 0;
+  end * (x.retvals.arr_d[ 8] - 0x09b0) = 0;
+  end * (x.retvals.arr_d[ 9] - 0x9293) = 0;
+  end * (x.retvals.arr_d[10] - 0xfcda) = 0;
+  end * (x.retvals.arr_d[11] - 0x5947) = 0;
+  end * (x.retvals.arr_d[12] - 0x573f) = 0;
+  end * (x.retvals.arr_d[13] - 0x6678) = 0;
+  end * (x.retvals.arr_d[14] - 0x268a) = 0;
+  end * (x.retvals.arr_d[15] - 0x23c7) = 0;
 }
 
 /*
 test TestKeccak02 { // test_cycles >= 22773
   x := Top();
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[ 0] - 0x420e) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[ 1] - 0x6b2c) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[ 2] - 0xc4cd) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[ 3] - 0x396e) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[ 4] - 0xcf6b) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[ 5] - 0x7e4c) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[ 6] - 0x8b4c) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[ 7] - 0x1c1e) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[ 8] - 0x88c3) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[ 9] - 0x5895) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[10] - 0x34b5) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[11] - 0x81fd) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[12] - 0x1337) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[13] - 0x93a6) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[14] - 0xe530) = 0;
-  Isz(16-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_d[15] - 0x06f1) = 0;
+  end := NondetReg(Isz(16-x.retvals.major) * Isz(13-x.retvals.minor));
+  end * (x.retvals.arr_d[ 0] - 0x420e) = 0;
+  end * (x.retvals.arr_d[ 1] - 0x6b2c) = 0;
+  end * (x.retvals.arr_d[ 2] - 0xc4cd) = 0;
+  end * (x.retvals.arr_d[ 3] - 0x396e) = 0;
+  end * (x.retvals.arr_d[ 4] - 0xcf6b) = 0;
+  end * (x.retvals.arr_d[ 5] - 0x7e4c) = 0;
+  end * (x.retvals.arr_d[ 6] - 0x8b4c) = 0;
+  end * (x.retvals.arr_d[ 7] - 0x1c1e) = 0;
+  end * (x.retvals.arr_d[ 8] - 0x88c3) = 0;
+  end * (x.retvals.arr_d[ 9] - 0x5895) = 0;
+  end * (x.retvals.arr_d[10] - 0x34b5) = 0;
+  end * (x.retvals.arr_d[11] - 0x81fd) = 0;
+  end * (x.retvals.arr_d[12] - 0x1337) = 0;
+  end * (x.retvals.arr_d[13] - 0x93a6) = 0;
+  end * (x.retvals.arr_d[14] - 0xe530) = 0;
+  end * (x.retvals.arr_d[15] - 0x06f1) = 0;
 }
 */

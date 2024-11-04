@@ -36,7 +36,7 @@ struct TapMap {
     if (regGroupIds.contains(ba))
       return regGroupIds.at(ba);
 
-    auto func = llvm::cast<mlir::func::FuncOp>(ba.getOwner()->getParentOp());
+    auto func = llvm::cast<mlir::FunctionOpInterface>(ba.getOwner()->getParentOp());
     auto name = func.getArgAttrOfType<StringAttr>(ba.getArgNumber(), "zirgen.argName");
     if (!name) {
       llvm::errs() << "Cannot find argument name for arg " << ba << "\n";
@@ -67,7 +67,7 @@ struct TapMap {
 struct ComputeTapsPass : public ComputeTapsBase<ComputeTapsPass> {
   void runOnOperation() override {
     auto func = getOperation();
-    auto loc = func.getLoc();
+    auto loc = func->getLoc();
     Builder builder(&getContext());
     Type valType;
 
@@ -86,6 +86,11 @@ struct ComputeTapsPass : public ComputeTapsBase<ComputeTapsPass> {
                          op.getBack()));
       }
     });
+
+    // Make sure none of our three hardcoded buffers are empty.
+    for (auto i : llvm::seq(3)) {
+      tapAttrs.push_back(TapAttr::get(&getContext(), i, 0, 0));
+    }
 
     TapsAnalysis tapsAnalysis(&getContext(), std::move(tapAttrs));
 

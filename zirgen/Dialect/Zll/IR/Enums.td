@@ -18,6 +18,7 @@ def BufferKind : I32EnumAttr<"BufferKind", "Buffer Type", [
      I32EnumAttrCase<"Constant", 0, "constant">,
      I32EnumAttrCase<"Mutable", 1, "mutable">,
      I32EnumAttrCase<"Global", 2, "global">,
+     I32EnumAttrCase<"Temporary", 3, "temporary">, // per cycle temporary that doesn't need to be saved
 ]> {
   let cppNamespace = "::zirgen::Zll";
 }

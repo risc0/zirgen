@@ -34,27 +34,35 @@ llvm::StringRef trimFilename(llvm::StringRef fn) {
 }
 
 std::string getLocString(mlir::Location loc) {
+  std::string out;
   auto named = loc->dyn_cast<mlir::NameLoc>();
   if (named) {
     auto innerLoc = named.getChildLoc()->dyn_cast<mlir::FileLineColLoc>();
     if (innerLoc) {
-      return llvm::formatv("{0}({1}:{2})",
-                           named.getName(),
-                           trimFilename(innerLoc.getFilename()),
-                           innerLoc.getLine());
+      out = llvm::formatv("{0}({1}:{2})",
+                          named.getName(),
+                          trimFilename(innerLoc.getFilename()),
+                          innerLoc.getLine());
     } else {
-      return llvm::formatv("{0}", named.getName());
+      out = llvm::formatv("{0}", named.getName());
+    }
+  } else {
+    auto fileLineCol = loc->dyn_cast<mlir::FileLineColLoc>();
+    if (fileLineCol) {
+      out =
+          llvm::formatv("{0}:{1}", trimFilename(fileLineCol.getFilename()), fileLineCol.getLine());
     }
   }
 
-  auto fileLineCol = loc->dyn_cast<mlir::FileLineColLoc>();
-  if (fileLineCol) {
-    return llvm::formatv("{0}:{1}", trimFilename(fileLineCol.getFilename()), fileLineCol.getLine());
+  if (out.empty()) {
+    llvm::raw_string_ostream rso(out);
+    loc.print(rso);
   }
 
-  std::string out;
-  llvm::raw_string_ostream rso(out);
-  loc.print(rso);
+  for (auto& c : out) {
+    if (c == '\n' || c == '"' || c == '\r')
+      c = ' ';
+  }
   return out;
 }
 
