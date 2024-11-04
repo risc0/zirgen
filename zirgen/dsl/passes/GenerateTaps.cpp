@@ -88,7 +88,7 @@ struct GenerateTapsPass : public GenerateTapsBase<GenerateTapsPass> {
       signalPassFailure();
     }
 
-    SmallVector<Attribute> taps;
+    SmallVector<Zll::TapAttr> taps;
     for (auto tapBuf : bufs.getTapBuffers()) {
       for (size_t offset = 0; offset != tapBuf.getRegCount(); ++offset) {
         SmallVector<size_t> backs =
@@ -110,8 +110,12 @@ struct GenerateTapsPass : public GenerateTapsBase<GenerateTapsPass> {
 
     Type tapArrayType = builder.getType<ArrayType>(builder.getType<TapType>(), taps.size());
 
-    builder.create<GlobalConstOp>(
-        loc, Zhlt::getTapsConstName(), tapArrayType, ArrayAttr::get(ctx, taps));
+    builder.create<GlobalConstOp>(loc,
+                                  Zhlt::getTapsConstName(),
+                                  tapArrayType,
+                                  builder.getArrayAttr(llvm::to_vector_of<Attribute>(taps)));
+
+    Zll::setModuleAttr(module, builder.getAttr<Zll::TapsAttr>(taps));
   }
 };
 

@@ -276,6 +276,11 @@ struct Rewriter {
           .Case<InvOp>([&](auto op) { doInv(op); })
           .Case<MulOp>([&](auto op) { doMul(op); })
           .Case<NormalizeOp>([&](auto op) { doUnaryEltwise(op); })
+          .Case<ExternOp>([&](auto op) {
+            if (op.getName() != "log") {
+              llvm::errs() << "Warning: discarding non-log extern " << op;
+            }
+          })
           .Case<HashFoldOp,
                 HashAssertEqOp,
                 Iop::CommitOp,

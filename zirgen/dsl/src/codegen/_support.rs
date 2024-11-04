@@ -16,7 +16,7 @@
 
 use std::array::from_fn;
 
-use crate::{BoundLayout, BufferRow};
+use crate::{BoundLayout, BufferRow, CycleContext};
 use anyhow::Result;
 use risc0_core::field::{Elem, ExtElem, Field};
 use risc0_zkp::adapter::MixState;
@@ -167,10 +167,10 @@ where
     Ok(output)
 }
 
-pub fn is_true(val: impl Elem + From<u32>) -> bool {
-    if val == 0u32.into() {
+pub fn is_true(val: impl Elem) -> bool {
+    if val == Elem::ZERO {
         false
-    } else if val == 1u32.into() {
+    } else if val == Elem::ONE {
         true
     } else {
         panic!("Expected one or zero, got {val:?}");
@@ -229,6 +229,45 @@ impl Usizable for i32 {
 
 pub fn to_usize<E: Usizable>(elem: E) -> usize {
     elem.as_usize()
+}
+
+pub fn get<B: BufferRow>(
+    ctx: &impl CycleContext,
+    buf: &B,
+    offset: usize,
+    back: usize,
+) -> Result<B::ValType> {
+    Ok(buf.load(ctx, offset, back))
+}
+
+pub fn set<Val>(
+    ctx: &impl CycleContext,
+    buf: &impl BufferRow<ValType = Val>,
+    offset: usize,
+    val: Val,
+) -> Result<()> {
+    buf.store(ctx, offset, val);
+    Ok(())
+}
+
+// Stub cycle context to use for when we know we're only going to be accessing globals
+struct GlobalCycleContext;
+impl CycleContext for GlobalCycleContext {
+    fn cycle(&self) -> usize {
+        unreachable!()
+    }
+    fn tot_cycles(&self) -> usize {
+        unreachable!()
+    }
+}
+
+pub fn get_global<B: BufferRow>(buf: &B, offset: usize) -> Result<B::ValType> {
+    Ok(buf.load(&GlobalCycleContext, offset, 0))
+}
+
+pub fn set_global<Val>(buf: &impl BufferRow<ValType = Val>, offset: usize, val: Val) -> Result<()> {
+    buf.store(&GlobalCycleContext, offset, val);
+    Ok(())
 }
 
 // Locally import all the codegen_* macros without the codegen_ prefix.

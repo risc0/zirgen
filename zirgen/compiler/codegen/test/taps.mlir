@@ -1,14 +1,7 @@
 // RUN: zirgen-translate -zirgen-to-rust-taps --function=fib %s | FileCheck %s
 
-func.func @fib(
-  %arg0: !zll.buffer<3, constant>,
-  %arg1: !zll.buffer<1, global>,
-  %arg2: !zll.buffer<1, mutable>,
-  %arg3: !zll.buffer<1, global>,
-  %arg4: !zll.buffer<1, mutable>
-) -> !zll.constraint attributes {
-  deg = 2 : ui32,
-  tapRegs = [
+module attributes {
+  zll.taps = #zll<taps
     // CHECK:      TapData {
     // CHECK-NEXT:     offset: 0
     // CHECK-NEXT:     back: 0
@@ -16,7 +9,7 @@ func.func @fib(
     // CHECK-NEXT:     combo: 0
     // CHECK-NEXT:     skip: 1
     // CHECK-NEXT: }
-    #zll.tapReg<0, 0, [0], 0>,
+    <0, 0, 0>,
     // CHECK:      TapData {
     // CHECK-NEXT:     offset: 0
     // CHECK-NEXT:     back: 0
@@ -24,7 +17,7 @@ func.func @fib(
     // CHECK-NEXT:     combo: 0
     // CHECK-NEXT:     skip: 1
     // CHECK-NEXT: }
-    #zll.tapReg<1, 0, [0], 0>,
+    <1, 0, 0>,
     // CHECK:      TapData {
     // CHECK-NEXT:     offset: 1
     // CHECK-NEXT:     back: 0
@@ -32,7 +25,7 @@ func.func @fib(
     // CHECK-NEXT:     combo: 0
     // CHECK-NEXT:     skip: 1
     // CHECK-NEXT: }
-    #zll.tapReg<1, 1, [0], 0>,
+    <1, 1, 0>,
     // CHECK:      TapData {
     // CHECK-NEXT:     offset: 2
     // CHECK-NEXT:     back: 0
@@ -40,7 +33,7 @@ func.func @fib(
     // CHECK-NEXT:     combo: 0
     // CHECK-NEXT:     skip: 1
     // CHECK-NEXT: }
-    #zll.tapReg<1, 2, [0], 0>,
+    <1, 2, 0>,
     // CHECK:      TapData {
     // CHECK-NEXT:     offset: 0
     // CHECK-NEXT:     back: 0
@@ -48,6 +41,7 @@ func.func @fib(
     // CHECK-NEXT:     combo: 1
     // CHECK-NEXT:     skip: 3
     // CHECK-NEXT: }
+    <2, 0, 0>,
     // CHECK-NEXT: TapData {
     // CHECK-NEXT:     offset: 0
     // CHECK-NEXT:     back: 1
@@ -55,6 +49,7 @@ func.func @fib(
     // CHECK-NEXT:     combo: 1
     // CHECK-NEXT:     skip: 3
     // CHECK-NEXT: }
+    <2, 0, 1>,
     // CHECK-NEXT: TapData {
     // CHECK-NEXT:     offset: 0
     // CHECK-NEXT:     back: 2
@@ -62,29 +57,22 @@ func.func @fib(
     // CHECK-NEXT:     combo: 1
     // CHECK-NEXT:     skip: 3
     // CHECK-NEXT: }
-    #zll.tapReg<2, 0, [0, 1, 2], 1>
-  ],
-  tapType = !zll.val<BabyBear>,
-  taps = [
-    #zll.tap<0, 0, 0>,
-    #zll.tap<1, 0, 0>,
-    #zll.tap<1, 1, 0>,
-    #zll.tap<1, 2, 0>,
-    #zll.tap<2, 0, 0>,
-    #zll.tap<2, 0, 1>,
-    #zll.tap<2, 0, 2>
-  ],
+    <2, 0, 2>>
   // CHECK:      combo_taps: &[
   // CHECK-NEXT:     0, 0, 1, 2
   // CHECK-NEXT: ]
   // CHECK-DAG: combos_count: 2
   // CHECK-DAG: tot_combo_backs: 4
-  tapCombos = [
-    [0 : ui32],
-    [0 : ui32, 1 : ui32, 2 : ui32]
-  ]
   // CHECK-DAG: reg_count: 5
 } {
+
+func.func @fib(
+  %arg0: !zll.buffer<3, constant>,
+  %arg1: !zll.buffer<1, global>,
+  %arg2: !zll.buffer<1, mutable>,
+  %arg3: !zll.buffer<1, global>,
+  %arg4: !zll.buffer<1, mutable>
+) -> !zll.constraint attributes {deg = 2 : ui32} {
   %0 = zll.const 1 {deg = 0 : ui32}
   %1 = zll.true {deg = 0 : ui32}
   %2 = zll.get %arg0[0] back 0 tap 1 : <3, constant> {deg = 1 : ui32}
@@ -111,4 +99,6 @@ func.func @fib(
   %23 = zll.and_eqz %1, %22 : <BabyBear> {deg = 1 : ui32}
   %24 = zll.and_cond %18, %20 : <BabyBear>, %23 {deg = 2 : ui32}
   return {deg = 2 : ui32} %24 : !zll.constraint
+}
+
 }

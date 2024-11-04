@@ -781,32 +781,6 @@ private:
   DenseMap<NamedTap, Value>& tapIndex;
 };
 
-namespace {
-
-void reinferReturnType(InferTypeOpInterface op) {
-  SmallVector<Type> newTypes;
-  if (failed(op.inferReturnTypes(op.getContext(),
-                                 op->getLoc(),
-                                 op->getOperands(),
-                                 op->getAttrDictionary(),
-                                 op->getPropertiesStorage(),
-                                 op->getRegions(),
-                                 newTypes)))
-    return;
-
-  if (TypeRange(newTypes) != op->getResultTypes()) {
-    for (auto [newType, result] : llvm::zip_equal(newTypes, op->getResults())) {
-      result.setType(newType);
-    }
-    for (Operation* user : op->getUsers()) {
-      if (auto inferUser = dyn_cast<InferTypeOpInterface>(user)) {
-        reinferReturnType(inferUser);
-      }
-    }
-  }
-}
-} // namespace
-
 struct GenerateValidityTapsPass : public GenerateValidityTapsBase<GenerateValidityTapsPass> {
   void runOnOperation() override {
     auto module = getOperation();

@@ -1263,11 +1263,9 @@ void EqualZeroOp::emitExpr(codegen::CodegenEmitter& cg) {
 
 void AndEqzOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
   if (getVal().getType().getFieldK() > 1)
-    cg.emitFuncCall(cg.getStringAttr("andEqzExt"),
-                    {lookupNearestImplicitArg<PolyMixType>(getOperation()), getIn(), getVal()});
+    cg.emitFuncCall(cg.getStringAttr("andEqzExt"), /*contextArgs=*/{"ctx"}, {getIn(), getVal()});
   else
-    cg.emitFuncCall(cg.getStringAttr("andEqz"),
-                    {lookupNearestImplicitArg<PolyMixType>(getOperation()), getIn(), getVal()});
+    cg.emitFuncCall(cg.getStringAttr("andEqz"), /*contextArgs=*/{"ctx"}, {getIn(), getVal()});
 }
 
 void AndCondOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
@@ -1275,6 +1273,19 @@ void AndCondOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
     cg.emitFuncCall(cg.getStringAttr("andCondExt"), {getIn(), getCond(), getInner()});
   else
     cg.emitFuncCall(cg.getStringAttr("andCond"), {getIn(), getCond(), getInner()});
+}
+
+void GetOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
+  cg.emitFuncCall(
+      cg.getStringAttr("get"),
+      /*ContextArgs=*/{"ctx"},
+      {getBuf(), cg.guessAttributeType(getOffsetAttr()), cg.guessAttributeType(getBackAttr())});
+}
+
+void SetOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
+  cg.emitFuncCall(cg.getStringAttr("set"),
+                  /*ContextArgs=*/{"ctx"},
+                  {getBuf(), cg.guessAttributeType(getOffsetAttr())});
 }
 
 } // namespace zirgen::Zll
