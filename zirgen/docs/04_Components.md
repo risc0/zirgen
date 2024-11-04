@@ -113,3 +113,4 @@ component Fib(n: Val) {
 ```
 
 [Prev](03_Building_a_Fibonacci_Circuit.md)
+[Next](05_Muxes.md)
