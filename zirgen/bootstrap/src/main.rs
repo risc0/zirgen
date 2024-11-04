@@ -56,21 +56,26 @@ const BIGINT_OUTPUTS: &[&str] = &["bigint.rs.inc"];
 const BIGINT_ZKR_ZIP: &str = "bigint_zkr.zip";
 const BIGINT_BIBC_ZIP: &str = "bigint_bibc.zip";
 
-const ZIRGEN_RUST_OUTPUTS: &[&str] = &[
+const KECCAK_RUST_OUTPUTS: &[&str] = &[
+    "taps.rs",
+    "info.rs",
+    "poly_ext.rs",
     "defs.rs.inc",
     "types.rs.inc",
     "layout.rs.inc",
     "steps.rs.inc",
-    "validity_regs.rs.inc",
-    "validity_taps.rs.inc",
 ];
-const ZIRGEN_SYS_OUTPUTS: &[&str] = &[
+
+const KECCAK_SYS_OUTPUTS: &[&str] = &[
     "defs.cpp.inc",
     "types.h.inc",
     "layout.cpp.inc",
     "steps.cpp.inc",
-    "validity_regs.cpp.inc",
-    "validity_taps.cpp.inc",
+    "rust_poly_fp_0.cpp",
+    "rust_poly_fp_1.cpp",
+    "rust_poly_fp_2.cpp",
+    "rust_poly_fp_3.cpp",
+    "rust_poly_fp_4.cpp",
 ];
 
 #[derive(Clone, Debug, ValueEnum)]
@@ -241,26 +246,21 @@ impl Args {
     }
 
     fn keccak(&self) {
+        let out = &self.output;
         let circuit = "keccak";
         let src_path = Path::new("zirgen/circuit/keccak");
-        let risc0_root = self.output.as_ref().expect("--output is required");
-        let risc0_root = risc0_root.join("risc0");
-        let rust_path = risc0_root.join("circuit/keccak");
-        let rust_path = Some(rust_path);
-        let sys_path = risc0_root.join("circuit/keccak-sys");
-        let sys_path = Some(sys_path);
+        let sys_root = Path::new("zirgen/circuit/keccak-sys").to_path_buf();
 
+        copy_group(circuit, &src_path, out, KECCAK_RUST_OUTPUTS, "src", "");
         copy_group(
             circuit,
             &src_path,
-            &rust_path,
-            ZIRGEN_RUST_OUTPUTS,
-            "src",
+            &Some(sys_root),
+            KECCAK_SYS_OUTPUTS,
+            "cxx",
             "",
         );
-        copy_group(circuit, &src_path, &sys_path, ZIRGEN_SYS_OUTPUTS, "cxx", "");
-        // TODO: Improve formatting performance
-        // cargo_fmt_circuit(circuit, &rust_path, &None);
+        cargo_fmt_circuit(circuit, &self.output, &None);
     }
 
     fn copy_edsl_style(&self, circuit: &str, src_dir: &str) {

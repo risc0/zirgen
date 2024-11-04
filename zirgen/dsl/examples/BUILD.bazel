@@ -26,23 +26,29 @@ cc_library(
     ],
 )
 
-zirgen_genfiles(
+# TODO: uncomment when calculator example is fixed.
+# zirgen_genfiles(
+#     name = "CalculatorIncs",
+#     zir_file = ":calculator.zir",
+#     zirgen_outs = [
+#         (
+#             ["--emit=cpp"],
+#             "calculator.cpp.inc",
+#         ),
+#         (
+#             ["--emit=rust"],
+#             "calculator.rs.inc",
+#         ),
+#         (
+#             ["--emit=zstruct"],
+#             "calculator.ir",
+#         ),
+#     ],
+# )
+# And comment this out, which is needed by the zirgen verify wrapper:
+filegroup(
     name = "CalculatorIncs",
-    zir_file = ":calculator.zir",
-    zirgen_outs = [
-        (
-            ["--emit=cpp"],
-            "calculator.cpp.inc",
-        ),
-        (
-            ["--emit=rust"],
-            "calculator.rs.inc",
-        ),
-        (
-            ["--emit=zstruct"],
-            "calculator.ir",
-        ),
-    ],
+    srcs = ["calculator.ir"],
 )
 
 zirgen_genfiles(

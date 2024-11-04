@@ -22,8 +22,11 @@
 #include "zirgen/Dialect/Zll/Analysis/MixPowerAnalysis.h"
 #include "zirgen/Dialect/Zll/IR/IR.h"
 #include "llvm/ADT/TypeSwitch.h"
+#include "llvm/Support/Debug.h"
 #include "llvm/Support/FormatVariadic.h"
 #include "llvm/include/llvm/ADT/StringExtras.h"
+
+#define DEBUG_TYPE "codegen"
 
 using namespace mlir;
 using namespace kainjow::mustache;
@@ -47,6 +50,7 @@ struct Vars {
   size_t use(Value value) const {
     auto it = vars.find(value);
     if (it == vars.end()) {
+      llvm::errs() << "Missing use: " << value << "\n";
       throw std::runtime_error("Missing use");
     }
     return it->second;
@@ -101,36 +105,100 @@ public:
         ofs);
   }
 
-  void emitPolyFunc(const std::string& fn, func::FuncOp func) override {
+  void emitPolyFunc(const std::string& fn,
+                    func::FuncOp func,
+                    size_t splitIndex,
+                    size_t splitCount) override {
     MixPowAnalysis mixPows(func);
 
     mustache tmpl = openTemplate("zirgen/compiler/codegen/cpp/poly.tmpl.cpp");
 
+    list funcProtos;
+    list funcs;
+
+    size_t curSplitIndex = 0;
+    for (mlir::func::FuncOp calledFunc : mixPows.getCalledFuncs()) {
+      FileContext ctx;
+      std::string args;
+      for (auto [idx, arg] : llvm::enumerate(calledFunc.getArguments())) {
+        std::string argName = llvm::formatv("arg{0}", idx).str();
+        ctx.vars[arg] = argName;
+
+        args += ", ";
+
+        TypeSwitch<Type>(arg.getType())
+            .Case<ValType>([&](auto valType) {
+              if (valType.getFieldK() > 1)
+                args += "FpExt";
+              else
+                args += "Fp";
+            })
+            .Case<BufferType>([&](auto bufType) {
+              if (bufType.getElement().getFieldK() > 1)
+                args += "FpExt*";
+              else
+                args += "Fp*";
+            })
+            .Case<ConstraintType>([&](auto) { args += "FpExt"; })
+            .Default([&](Type ty) {
+              llvm::errs() << "Unknown type to pass to call: " << ty << "\n";
+              assert(false);
+            });
+        args += " " + argName;
+      }
+
+      funcProtos.push_back(object{{"args", args}, {"fn", calledFunc.getName().str()}});
+
+      if ((curSplitIndex++ % splitCount) != splitIndex)
+        continue;
+
+      list lines;
+      for (Operation& op : calledFunc.front().without_terminator()) {
+        LLVM_DEBUG(llvm::dbgs() << "emitPolyFunc: " << op << "\n");
+        emitOperation(&op, ctx, lines, /*depth=*/0, "Fp", FuncKind::PolyFp, &mixPows);
+      }
+      Value retVal = calledFunc.front().getTerminator()->getOperand(0);
+      lines.push_back(llvm::formatv("return {0};", ctx.use(retVal)).str());
+      funcs.push_back(object{
+          {"args", args},
+          {"fn", calledFunc.getName().str()},
+          {"body", lines},
+      });
+    }
+
+    // Main function
     FileContext ctx;
     for (auto [idx, arg] : llvm::enumerate(func.getArguments())) {
-      ctx.vars[arg] = llvm::formatv("args[{0}]", idx).str();
+      std::string argsDesc;
+      if (auto argName = func.getArgAttrOfType<StringAttr>(idx, "zirgen.argName")) {
+        argsDesc = ("/*" + argName.strref() + "=*/").str();
+      }
+      ctx.vars[arg] = llvm::formatv("{0}args[{1}]", argsDesc, idx).str();
     }
 
-    list lines;
-    for (Operation& op : func.front().without_terminator()) {
-      emitOperation(&op, ctx, lines, /*depth=*/0, "Fp", FuncKind::PolyFp, &mixPows);
-    }
-    Value retVal = func.front().getTerminator()->getOperand(0);
-    lines.push_back(llvm::formatv("return {0};", ctx.use(retVal)).str());
+    funcProtos.push_back(object{{"args", ", Fp** args"}, {"fn", fn}});
 
-    tmpl.render(
-        object{
-            {"name", func.getName().str()},
-            {"fn", fn},
-            {"body", lines},
-        },
-        ofs);
+    if ((curSplitIndex++ % splitCount) == splitIndex) {
+      list lines;
+      for (Operation& op : func.front().without_terminator()) {
+        LLVM_DEBUG(llvm::dbgs() << "emitPolyFunc: " << op << "\n");
+        emitOperation(&op, ctx, lines, /*depth=*/0, "Fp", FuncKind::PolyFp, &mixPows);
+      }
+      Value retVal = func.front().getTerminator()->getOperand(0);
+      lines.push_back(llvm::formatv("return {0};", ctx.use(retVal)).str());
+
+      funcs.push_back(object{{"args", ", Fp** args"}, {"fn", fn}, {"body", lines}});
+    }
+
+    tmpl.render(object{{"decls", funcProtos}, {"funcs", funcs}, {"name", func.getName().str()}},
+                ofs);
   }
 
 private:
   void emitStepBlock(Block& block, FileContext& ctx, list& lines, size_t depth, bool isRecursion) {
     std::string indent(depth * 2, ' ');
     for (Operation& op : block.without_terminator()) {
+      LLVM_DEBUG(llvm::dbgs() << "emitStepBlock: " << op << "\n");
       mlir::TypeSwitch<Operation*>(&op)
           .Case<NondetOp>([&](NondetOp op) {
             lines.push_back(indent + "{");
@@ -224,21 +292,49 @@ private:
                      FileContext& ctx,
                      list& lines,
                      size_t depth,
-                     const char* type,
+                     const char* baseType,
                      FuncKind kind,
                      MixPowAnalysis* mixPows = nullptr) {
+
+    const char* type = baseType;
+    if (op->getNumResults() == 1) {
+      auto valType = llvm::dyn_cast<ValType>(op->getResults()[0].getType());
+      if (valType && valType.getFieldK() > 1) {
+        type = "FpExt";
+      }
+    }
     std::string indent(depth * 2, ' ');
-    std::string locStr;
-    llvm::raw_string_ostream locStrStream(locStr);
-    op->getLoc()->print(locStrStream);
-    lines.push_back(indent + "// " + locStrStream.str());
+    lines.push_back(indent + "// " + getLocString(op->getLoc()));
     mlir::TypeSwitch<Operation*>(op)
         .Case<ConstOp>([&](ConstOp op) {
-          lines.push_back(indent + llvm::formatv("{0} {1}({2});",
+          lines.push_back(indent + llvm::formatv("constexpr {0} {1}({2});",
                                                  type,
                                                  ctx.def(op.getOut()),
                                                  emitPolynomialAttr(op, "coefficients"))
                                        .str());
+        })
+        .Case<MakeTemporaryBufferOp>([&](MakeTemporaryBufferOp op) {
+          StringRef typeName;
+          if (op.getType().getElement().getFieldK() > 1)
+            typeName = "FpExt";
+          else
+            typeName = "Fp";
+          lines.push_back((
+              indent +
+              llvm::formatv("{0} {1}[{2}];", typeName, ctx.def(op.getOut()), op.getType().getSize())
+                  .str()));
+        })
+        .Case<func::CallOp>([&](func::CallOp op) {
+          auto out = ctx.def(op.getResult(0));
+          std::string line =
+              indent +
+              llvm::formatv("auto {0} = {1}(cycle, steps, poly_mix", out, op.getCallee()).str();
+
+          for (mlir::Value arg : op.getOperands()) {
+            line += ", " + ctx.use(arg);
+          }
+          line += ");";
+          lines.push_back(line);
         })
         .Case<GetOp>([&](GetOp op) {
           auto out = ctx.def(op.getOut());
@@ -251,10 +347,11 @@ private:
                                           emitIntAttr(op, "back"))
                                 .str());
             if (op->hasAttr("unchecked")) {
-              lines.push_back(indent +
-                              llvm::formatv("if ({0} == Fp::invalid()) {0} = 0;", out).str());
+              lines.push_back(
+                  indent + llvm::formatv("if ({0} == {1}::invalid()) {0} = 0;", out, type).str());
             } else {
-              lines.push_back(indent + llvm::formatv("assert({0} != Fp::invalid());", out).str());
+              lines.push_back(indent +
+                              llvm::formatv("assert({0} != {1}::invalid());", out, type).str());
             }
           } else {
             lines.push_back(
@@ -274,8 +371,9 @@ private:
                                                 ctx.use(op->getOperand(0)),
                                                 emitIntAttr(op, "offset"))
                                       .str());
-          lines.push_back(inner + llvm::formatv("assert(reg == Fp::invalid() || reg == {0});",
-                                                ctx.use(op->getOperand(1)))
+          lines.push_back(inner + llvm::formatv("assert(reg == {1}::invalid() || reg == {0});",
+                                                ctx.use(op->getOperand(1)),
+                                                type)
                                       .str());
           lines.push_back(inner + llvm::formatv("reg = {0};", ctx.use(op->getOperand(1))).str());
           lines.push_back(indent + "}");
@@ -303,9 +401,10 @@ private:
                   .str());
         })
         .Case<IsZeroOp>([&](IsZeroOp op) {
-          lines.push_back(indent + llvm::formatv("auto {0} = ({1} == 0) ? Fp(1) : Fp(0);",
+          lines.push_back(indent + llvm::formatv("auto {0} = ({1} == 0) ? {2}(1) : {2}(0);",
                                                  ctx.def(op.getOut()),
-                                                 ctx.use(op->getOperand(0)))
+                                                 ctx.use(op->getOperand(0)),
+                                                 type)
                                        .str());
         })
         .Case<InvOp>([&](InvOp op) {
@@ -342,10 +441,11 @@ private:
                                        .str());
         })
         .Case<BitAndOp>([&](BitAndOp op) {
-          lines.push_back(indent + llvm::formatv("auto {0} = Fp({1}.asUInt32() & {2}.asUInt32());",
+          lines.push_back(indent + llvm::formatv("auto {0} ={3}p({1}.asUInt32() & {2}.asUInt32());",
                                                  ctx.def(op.getOut()),
                                                  ctx.use(op->getOperand(0)),
-                                                 ctx.use(op->getOperand(1)))
+                                                 ctx.use(op->getOperand(1)),
+                                                 type)
                                        .str());
         })
         .Case<TrueOp>([&](TrueOp op) {
@@ -390,8 +490,11 @@ private:
 
   std::string emitPolynomialAttr(Operation* op, const char* attrName) {
     auto attr = op->getAttrOfType<PolynomialAttr>(attrName);
-    assert(attr.size() == 1 && "not yet unsupported");
-    return std::to_string(attr[0]);
+    std::string result = std::to_string(attr[0]);
+    for (size_t i = 1; i < attr.size(); i++) {
+      result += "," + std::to_string(attr[i]);
+    }
+    return result;
   }
 
   std::string emitOperand(Operation* op, Vars& vars, size_t idx) {
@@ -402,9 +505,21 @@ private:
     std::stringstream ss;
     ss << "&[";
     for (Operation& origOp : block.without_terminator()) {
+      LLVM_DEBUG(llvm::dbgs() << "emitPolyExtBlock: " << origOp << "\n");
       mlir::TypeSwitch<Operation*>(&origOp)
           .Case<ConstOp>([&](ConstOp op) {
-            ss << "PolyExtStep::Const(" << emitPolynomialAttr(op, "coefficients") << ")";
+            auto attr = op->getAttrOfType<PolynomialAttr>("coefficients");
+            if (attr.size() != 1) {
+              SmallVector<uint64_t> expected = {{0, 1, 0, 0}};
+              if (!attr.asArrayRef().equals(expected)) {
+                llvm::errs() << "Unsupported field extension constant: "
+                             << emitPolynomialAttr(op, "coefficients") << "\n";
+                throw(std::runtime_error("unsupported field extension constant"));
+              }
+              ss << "PolyExtStep::Shift";
+            } else {
+              ss << "PolyExtStep::Const(" << emitPolynomialAttr(op, "coefficients") << ")";
+            }
             ctx.fp.var(op.getOut());
           })
           .Case<GetOp>([&](GetOp op) {
@@ -444,7 +559,12 @@ private:
             ss << "PolyExtStep::AndCond(" << emitOperand(op, ctx.mix, 0) << ", "
                << emitOperand(op, ctx.fp, 1) << ", " << emitOperand(op, ctx.mix, 2) << ")";
             ctx.mix.var(op.getOut());
+          })
+          .Default([&](Operation* op) {
+            llvm::errs() << "Don't know how to codegen PolyExtStep for " << *op << "\n";
+            assert(op->use_empty());
           });
+
       ss << ", // " << getLocString(origOp.getLoc()) << "\n";
     }
     ss << "]";
@@ -532,12 +652,17 @@ public:
     for (auto [idx, buf] : llvm::enumerate(bufs.getBuffers())) {
       auto bufType = llvm::cast<BufferType>(buf.getType());
       if (bufType.getKind() == BufferKind::Global) {
-        if (idx == 1) {
-          out_size = bufType.getSize();
+        size_t* size_var = StringSwitch<size_t*>(buf.getName())
+                               .Case("global", &out_size)
+                               .Case("out", &out_size)
+                               .Case("mix", &mix_size)
+                               .Default(nullptr);
+        if (!size_var) {
+          llvm::errs() << "Unable to determine what to do with global buffer " << buf.getName()
+                       << "\n";
+          abort();
         }
-        if (idx == 3) {
-          mix_size = bufType.getSize();
-        }
+        *size_var = bufType.getSize();
       }
     }
 

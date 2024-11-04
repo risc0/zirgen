@@ -38,24 +38,56 @@ MixPowAnalysis::MixPowAnalysis(Operation* funcOp) {
   mixPowIndex.insert(indexed.begin(), indexed.end());
 }
 
-size_t MixPowAnalysis::processChain(Value val, size_t offset) {
-  SmallVector<Operation*> ops;
+size_t MixPowAnalysis::processChain(Value val, size_t offset, SmallVector<func::CallOp> callStack) {
+  SmallVector<std::pair<Operation*, SmallVector<func::CallOp>>> ops;
 
+  //  llvm::errs() << "(" << offset << ") Tracing chain\n";
   while (val) {
-    Operation* op = val.getDefiningOp();
-    TypeSwitch<Operation*>(op)
-        .Case<AndEqzOp, AndCondOp>([&](auto op) {
-          ops.push_back(op);
-          val = op.getIn();
+    //    llvm::errs() << "(" << offset << ")" << val << "\n";
+    TypeSwitch<Value>(val)
+        .Case<mlir::BlockArgument>([&](BlockArgument blockVal) {
+          // Trace back into caller
+          //        llvm::errs() << "Block argument on " << *blockVal.getOwner()->getParentOp() <<
+          //        "\n";;
+          if (callStack.empty()) {
+            llvm::errs() << "Can't trace past " << blockVal << "\n";
+            assert(false);
+          }
+          auto callOp = callStack.back();
+          //        llvm::errs() << "Popping " << callOp << "\n";
+          callStack.pop_back();
+          val = callOp->getOperand(blockVal.getArgNumber());
         })
-        .Case<TrueOp>([&](auto) { val = Value(); })
-        .Default([&](auto) {
-          llvm::errs() << "Unexpected operation in constraint chain: " << *op << "\n";
-          assert(false);
+        .Case<OpResult>([&](OpResult resultVal) {
+          Operation* op = resultVal.getDefiningOp();
+          TypeSwitch<Operation*>(op)
+              .Case<AndEqzOp, AndCondOp>([&](auto op) {
+                ops.push_back({op, callStack});
+                val = op.getIn();
+              })
+              .Case<func::CallOp>([&](auto op) {
+                //            llvm::errs() << "Calling " << op << "\n";
+                callStack.push_back(op);
+                auto callee = llvm::cast<SymbolRefAttr>(op.getCallableForCallee());
+                auto funcOp = SymbolTable::lookupNearestSymbolFrom<func::FuncOp>(op, callee);
+                calledFuncs.push_back(funcOp);
+                if (!funcOp) {
+                  llvm::errs() << "Couldn't find callee " << callee << "\n";
+                  assert(false);
+                }
+                val = funcOp.getBody().front().getTerminator()->getOperand(0);
+              })
+              .Case<TrueOp>([&](auto) { val = Value(); })
+              .Default([&](auto) {
+                llvm::errs() << "Unexpected operation in constraint chain: " << *op << "\n";
+                assert(false);
+              });
         });
   }
 
-  for (Operation* op : llvm::reverse(ops)) {
+  //  llvm::errs() << "(" << offset << ") Processing chain\n";
+  for (auto [op, opCallStackA] : llvm::reverse(ops)) {
+    SmallVector<func::CallOp> opCallStack = opCallStackA;
     TypeSwitch<Operation*>(op)
         .Case<AndEqzOp>([&](auto op) {
           auto [it, didInsert] = mixPows.try_emplace(op, offset);
@@ -69,7 +101,7 @@ size_t MixPowAnalysis::processChain(Value val, size_t offset) {
           ++offset;
         })
         .Case<AndCondOp>([&](auto op) {
-          size_t innerOffset = processChain(op.getInner(), 0);
+          size_t innerOffset = processChain(op.getInner(), 0, opCallStack);
           auto [it, didInsert] = mixPows.try_emplace(op, offset);
           if (!didInsert) {
             if (it->second != offset) {
@@ -81,6 +113,7 @@ size_t MixPowAnalysis::processChain(Value val, size_t offset) {
           offset += innerOffset;
         });
   }
+  //  llvm::errs() << "(" << offset << ") Done chain\n";
   return offset;
 }
 

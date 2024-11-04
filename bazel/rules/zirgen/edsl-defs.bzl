@@ -95,15 +95,15 @@ def build_circuit(name, srcs = [], bin = None, deps = [], outs = None, data = []
             name = bin,
             srcs = srcs,
             deps = deps + [
-                "//zirgen/compiler/edsl",
-                "//zirgen/compiler/codegen",
+                "@zirgen//zirgen/compiler/edsl",
+                "@zirgen//zirgen/compiler/codegen",
             ],
         )
 
     _build_circuit_rule(
         name = name,
         binary = bin,
-        data = ["//zirgen/compiler/codegen:data"] + data,
+        data = ["@zirgen//zirgen/compiler/codegen:data"] + data,
         outs = outs,
         extra_args = extra_args,
     )

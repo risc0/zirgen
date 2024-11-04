@@ -8,8 +8,8 @@ component TwoVals(a: Val, b: Val) {
 }
 
 component TwoValsAre(vals: TwoVals, a: Val, b: Val) {
-  vals.a = a;
-  vals.b = b;
+  NondetReg(vals.a) = a;
+  NondetReg(vals.b) = b;
 }
 
 extern configureInput(bytesPerElem: Val);

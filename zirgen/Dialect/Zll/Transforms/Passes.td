@@ -60,4 +60,22 @@ def AddReductions : Pass<"add-reductions", "mlir::func::FuncOp"> {
   ];
 }
 
+def IfToMultiply : Pass<"if-to-multiply"> {
+  let summary = "Remove EqualZeroOp constraints from if blocks by multiplying with the condition";
+  let constructor = "zirgen::Zll::createIfToMultiplyPass()";
+}
+
+def MultiplyToIf : Pass<"multiply-to-if"> {
+  let summary = "Remove factors from EqualZeroOp constraints by moving them into `if` blocks.";
+  let constructor = "zirgen::Zll::createMultiplyToIfPass()";
+}
+
+def BalancedSplit : Pass<"balanced-split"> {
+  let summary = "Attempt to split up large blocks";
+  let constructor = "zirgen::Zll::createBalancedSplitPass()";
+  let options = [
+    Option<"maxOps", "max-ops", "unsigned", /*default=*/"5000", "Maximum number of operations in a block before splitting it">
+    ];
+}
+
 #endif // ZLL_TRANSFORM_PASSES

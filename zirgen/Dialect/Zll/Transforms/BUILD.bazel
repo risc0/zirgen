@@ -33,15 +33,19 @@ cc_library(
     name = "passes",
     srcs = [
         "AddReductions.cpp",
+        "BalancedSplit.cpp",
         "ComputeTaps.cpp",
         "DropConstraints.cpp",
+        "IfToMultiply.cpp",
         "InlineFpExt.cpp",
         "MakePolynomial.cpp",
         "MakeVerifyTaps.cpp",
+        "MultiplyToIf.cpp",
         "PassDetail.h",
         "SplitStage.cpp",
     ],
     hdrs = [
+        "BalancedSplit.h",
         "Passes.h",
     ],
     deps = [

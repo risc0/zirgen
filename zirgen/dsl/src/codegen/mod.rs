@@ -62,14 +62,11 @@ macro_rules! zirgen_preamble {
     ($protocol_info:expr) => {
         use anyhow::{bail, Context, Result};
         use risc0_zkp::adapter::ProtocolInfo;
+        use risc0_zkp::layout::Reg;
         use $crate::codegen::_support::*;
         use $crate::codegen::taps::{make_taps, Tap};
         use $crate::{BoundLayout, BufferRow, BufferSpec, Buffers};
-
-        lazy_static::lazy_static! {
-            pub static ref TAPS : risc0_zkp::taps::TapSet<'static> = make_taps(TAP_LIST.as_slice(),
-                                                                               TAP_GROUP_NAMES);
-        }
+        use $crate::{CycleContext, CycleRow, GlobalRow};
 
         // Explicitly instantiate calls that cause rustc to be very slow
         // when processing large generated code.
@@ -85,25 +82,6 @@ macro_rules! zirgen_preamble {
         fn and_eqz_ext(poly_mix: ExtVal, x: MixState, val: ExtVal) -> Result<MixState> {
             and_eqz_generic::<CircuitField, ExtVal>(poly_mix, x, val)
         }
-        fn load(buf: BoundLayout<Reg, impl BufferRow<ValType = Val>>, back: usize) -> Val {
-            buf.buf().load(buf.layout().offset, back)
-        }
-        fn load_ext(buf: BoundLayout<Reg, impl BufferRow<ValType = Val>>, back: usize) -> ExtVal {
-            ExtVal::new(
-                buf.buf().load(buf.layout().offset + 0, back),
-                buf.buf().load(buf.layout().offset + 1, back),
-                buf.buf().load(buf.layout().offset + 2, back),
-                buf.buf().load(buf.layout().offset + 3, back),
-            )
-        }
-        fn store(buf: BoundLayout<Reg, impl BufferRow<ValType = Val>>, val: Val) {
-            buf.buf().store(buf.layout().offset, val)
-        }
-        fn store_ext(buf: BoundLayout<Reg, impl BufferRow<ValType = Val>>, val: ExtVal) {
-            for (i, coef) in val.elems().iter().enumerate() {
-                buf.buf().store(buf.layout().offset + i, *coef);
-            }
-        }
         fn alias_layout<Layout: PartialEq, B: BufferRow>(
             x: BoundLayout<Layout, B>,
             y: BoundLayout<Layout, B>,
@@ -112,52 +90,6 @@ macro_rules! zirgen_preamble {
                 Ok(())
             } else {
                 bail!("layouts did not match at runtime!")
-            }
-        }
-
-        // risc0_zkp-compatible CircuitDef
-        pub struct CircuitDef;
-        type ValidityRegsContext<'a> = $crate::cpu::CpuBuffers<'a, Val, ()>;
-        type ValidityTapsContext<'a> = $crate::Buffers<(), &'a [Val], ()>;
-        impl risc0_zkp::adapter::CircuitInfo for CircuitDef {
-            const CIRCUIT_INFO: ProtocolInfo = ProtocolInfo($protocol_info);
-            const OUTPUT_SIZE: usize = REGCOUNT_GLOBAL;
-            const MIX_SIZE: usize = REGCOUNT_MIX;
-        }
-        impl risc0_zkp::adapter::PolyExt<CircuitField> for CircuitDef {
-            fn poly_ext(&self, mix: &ExtVal, u: &[ExtVal], args: &[&[Val]]) -> MixState {
-                use risc0_zkp::field::Elem;
-
-                let raw_buffers = get_named_buffers($crate::poly_ext_named_buffers(args));
-                let buffers =
-                    raw_buffers.map_rows(|x| -> () { panic!("Unexpected tap in poly_ext") });
-                assert_eq!(u.len(), TAP_LIST.len());
-
-                let res = validity_taps(&buffers, &u, *mix, get_global_buffer(&buffers)).unwrap();
-
-                res
-            }
-        }
-
-        impl risc0_zkp::adapter::TapsProvider for CircuitDef {
-            fn get_taps(&self) -> &'static risc0_zkp::taps::TapSet<'static> {
-                &*TAPS
-            }
-        }
-
-        impl risc0_zkp::adapter::CircuitCoreDef<CircuitField> for CircuitDef {}
-
-        #[derive(Debug, Copy, Clone, PartialEq)]
-        pub struct Reg {
-            pub offset: usize,
-        }
-
-        impl risc0_zkp::layout::Component for Reg {
-            fn walk<V: risc0_zkp::layout::Visitor>(&self, v: &mut V) -> core::fmt::Result {
-                v.visit_reg(self.offset)
-            }
-            fn ty_name(&self) -> &'static str {
-                "reg"
             }
         }
 

@@ -94,13 +94,13 @@ component Concatenate<T: Type, N: Val, M: Val>(a: Array<T, N>, b: Array<T, M>) {
 component ConcatZeros<N: Val, M: Val>(a: Array<Val, N>) {
   for i : 0..(N + M) {
     low := InRange(0, i, N);
-    low*a[i] + (1-low)*NondetReg(0)
+    [low, 1-low] -> (a[i], 0)
   }
 }
 component ConcatElem<T: Type, N: Val>(a: Array<T, N>, b: T) {
   for i : 0..(N + 1) {
     low := InRange(0, i, N);
-    low*a[i] + (1-low)*b
+    [low, 1-low] -> (a[i], b)
   }
 }
 // EOF concatenate.zir
@@ -140,6 +140,7 @@ component RetTuple(a: Array<Val, BLEN()>,
   rnd := Reg(round);
   blk := Reg(block);
   midx := Reg(memIdx);
+  Log("major %u minor %u memidx %u blk %u rnd %u", major, minor, midx, blk, rnd);
 }
 
 component s2a(rtuple: RetTuple) {

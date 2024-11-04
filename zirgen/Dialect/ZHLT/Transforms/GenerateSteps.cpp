@@ -53,8 +53,11 @@ struct AttachGlobalLayoutPattern : public OpInterfaceRewritePattern<FunctionOpIn
         StringRef buffer = getGlobalOp.getBuffer();
         auto getBufferOp =
             rewriter.create<ZStruct::GetBufferOp>(getGlobalOp.getLoc(), globalBufferType, buffer);
-        bindLayoutOp = rewriter.create<ZStruct::BindLayoutOp>(
-            funcOp.getLoc(), constOp.getType(), constOp.getSymName(), getBufferOp);
+        bindLayoutOp =
+            rewriter.create<ZStruct::BindLayoutOp>(funcOp.getLoc(),
+                                                   constOp.getType(),
+                                                   SymbolRefAttr::get(constOp.getSymNameAttr()),
+                                                   getBufferOp);
       }
 
       rewriter.setInsertionPoint(getGlobalOp);
@@ -137,8 +140,11 @@ struct GenerateStepsPass : public GenerateStepsBase<GenerateStepsPass> {
       }
       auto getBufferOp = builder.create<ZStruct::GetBufferOp>(
           funcOp.getLoc(), bufferDesc.getType(), bufferDesc.getName());
-      args.push_back(builder.create<ZStruct::BindLayoutOp>(
-          funcOp.getLoc(), constOp.getType(), constOp.getSymName(), getBufferOp));
+      args.push_back(
+          builder.create<ZStruct::BindLayoutOp>(funcOp.getLoc(),
+                                                constOp.getType(),
+                                                SymbolRefAttr::get(constOp.getSymNameAttr()),
+                                                getBufferOp));
     }
 
     mlir::FunctionType funcType = funcOp.getFunctionType();
