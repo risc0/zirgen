@@ -491,7 +491,7 @@ private:
   std::string emitPolynomialAttr(Operation* op, const char* attrName) {
     auto attr = op->getAttrOfType<PolynomialAttr>(attrName);
     std::string result = std::to_string(attr[0]);
-    for (size_t i = 1; i < attr.size(); i++) {
+    for (ssize_t i = 1; i < attr.size(); i++) {
       result += "," + std::to_string(attr[i]);
     }
     return result;
