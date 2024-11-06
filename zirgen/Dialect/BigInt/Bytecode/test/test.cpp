@@ -181,7 +181,8 @@ TEST_F(BibcTest, RSA256) {
 
   llvm::APInt N(64, 101);
   llvm::APInt S(64, 32766);
-  auto M = BigInt::RSA(N, S);
+  llvm::APInt M(64, 53);
+  EXPECT_EQ(M, BigInt::RSA(N, S));
   std::vector<llvm::APInt> inputs = {N, S, M};
 
   ZType a, b;
@@ -197,7 +198,8 @@ TEST_F(BibcTest, RSA3072) {
 
   llvm::APInt N(64, 22764235167642101);
   llvm::APInt S(64, 10116847215);
-  auto M = BigInt::RSA(N, S);
+  llvm::APInt M(64, 14255570451702775);
+  EXPECT_EQ(M, BigInt::RSA(N, S));
   std::vector<llvm::APInt> inputs = {N, S, M};
 
   ZType a, b;

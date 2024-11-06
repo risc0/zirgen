@@ -25,8 +25,9 @@ namespace {
 class Decoder {
 public:
   Decoder(const Program& prog, mlir::MLIRContext* ctx);
-  void operands(size_t i, mlir::Value& lhs, mlir::Value& rhs);
-  void operand(size_t i, mlir::Value& val);
+  void operandsAB(size_t i, mlir::Value& lhs, mlir::Value& rhs);
+  void operandA(size_t i, mlir::Value& val);
+  void operandB(size_t i, mlir::Value& val);
   void emit(size_t i, mlir::Value);
   BigIntType type(const Op& op);
 
@@ -44,7 +45,7 @@ Decoder::Decoder(const Program& prog, mlir::MLIRContext* ctx)
   }
 }
 
-void Decoder::operands(size_t i, mlir::Value& lhs, mlir::Value& rhs) {
+void Decoder::operandsAB(size_t i, mlir::Value& lhs, mlir::Value& rhs) {
   const Op& op = prog.ops[i];
   if (op.operandA >= i || op.operandB >= i) {
     throw std::runtime_error("reference to undefined value");
@@ -53,12 +54,20 @@ void Decoder::operands(size_t i, mlir::Value& lhs, mlir::Value& rhs) {
   rhs = polys[op.operandB];
 }
 
-void Decoder::operand(size_t i, mlir::Value& val) {
+void Decoder::operandA(size_t i, mlir::Value& val) {
   const Op& op = prog.ops[i];
   if (op.operandA >= i) {
     throw std::runtime_error("reference to undefined value");
   }
   val = polys[op.operandA];
+}
+
+void Decoder::operandB(size_t i, mlir::Value& val) {
+  const Op& op = prog.ops[i];
+  if (op.operandB >= i) {
+    throw std::runtime_error("reference to undefined value");
+  }
+  val = polys[op.operandB];
 }
 
 void Decoder::emit(size_t i, mlir::Value poly) {
@@ -86,7 +95,7 @@ mlir::func::FuncOp decode(mlir::ModuleOp module, const Program& prog) {
     switch (op.code) {
     case Op::Eqz: {
       mlir::Value val;
-      state.operand(i, val);
+      state.operandA(i, val);
       builder.create<EqualZeroOp>(loc, val);
     } break;
     case Op::Def: {
@@ -110,45 +119,58 @@ mlir::func::FuncOp decode(mlir::ModuleOp module, const Program& prog) {
       auto attr = mlir::IntegerAttr::get(ctx, llvm::APSInt(value));
       state.emit(i, builder.create<ConstOp>(loc, t, attr));
     } break;
+    case Op::Load: {
+      uint32_t arena = op.operandA >> 16;
+      uint32_t offset = op.operandA & 0xffff;
+      mlir::Type t = state.type(op);
+      uint32_t bitWidth = llvm::dyn_cast<BigIntType>(t).getCoeffs() * 8;
+      state.emit(i, builder.create<LoadOp>(loc, bitWidth, arena, offset));
+    } break;
+    case Op::Store: {
+      uint32_t arena = op.operandA >> 16;
+      uint32_t offset = op.operandA & 0xffff;
+      mlir::Value in;
+      state.operandB(i, in);
+      builder.create<StoreOp>(loc, in, arena, offset);
+    } break;
     case Op::Add: {
       mlir::Value lhs, rhs;
-      state.operands(i, lhs, rhs);
+      state.operandsAB(i, lhs, rhs);
       mlir::Type t = state.type(op);
       state.emit(i, builder.create<AddOp>(loc, t, lhs, rhs));
     } break;
     case Op::Sub: {
       mlir::Value lhs, rhs;
-      state.operands(i, lhs, rhs);
+      state.operandsAB(i, lhs, rhs);
       mlir::Type t = state.type(op);
       state.emit(i, builder.create<SubOp>(loc, t, lhs, rhs));
     } break;
     case Op::Mul: {
       mlir::Value lhs, rhs;
-      state.operands(i, lhs, rhs);
+      state.operandsAB(i, lhs, rhs);
       mlir::Type t = state.type(op);
       state.emit(i, builder.create<MulOp>(loc, t, lhs, rhs));
     } break;
     case Op::Rem: {
       mlir::Value lhs, rhs;
-      state.operands(i, lhs, rhs);
+      state.operandsAB(i, lhs, rhs);
       mlir::Type t = state.type(op);
       state.emit(i, builder.create<NondetRemOp>(loc, t, lhs, rhs));
     } break;
     case Op::Quo: {
       mlir::Value lhs, rhs;
-      state.operands(i, lhs, rhs);
+      state.operandsAB(i, lhs, rhs);
       mlir::Type t = state.type(op);
       state.emit(i, builder.create<NondetQuotOp>(loc, t, lhs, rhs));
     } break;
     case Op::Inv: {
       mlir::Value lhs, rhs;
-      state.operands(i, lhs, rhs);
+      state.operandsAB(i, lhs, rhs);
       mlir::Type t = state.type(op);
       state.emit(i, builder.create<NondetInvOp>(loc, t, lhs, rhs));
     } break;
     }
   }
-
   // Add terminator op, for the sake of propriety.
   builder.create<mlir::func::ReturnOp>(loc);
   return out;
