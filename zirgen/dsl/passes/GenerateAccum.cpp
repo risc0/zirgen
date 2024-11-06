@@ -132,7 +132,7 @@ private:
   Value condenseArgument(Value layout, const RandomnessMap& randomness) {
     MLIRContext* ctx = builder.getContext();
     ValType valType = Zhlt::getValType(ctx);
-    ValType extValType = Zhlt::getValExtType(ctx);
+    ValType extValType = Zhlt::getExtValType(ctx);
 
     if (layout.getType() == Zhlt::getNondetRegLayoutType(ctx)) {
       // For a single register, compute r_a * a[i]

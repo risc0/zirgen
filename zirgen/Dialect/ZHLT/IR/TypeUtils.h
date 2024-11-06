@@ -134,13 +134,15 @@ bool isGenericBuiltin(StringRef name);
 
 using ZStruct::getComponentType;
 using ZStruct::getEmptyLayoutType;
-using ZStruct::getExtRefType;
 using ZStruct::getNondetRegLayoutType;
+using ZStruct::getNondetExtRegLayoutType;
 using ZStruct::getNondetRegType;
+using ZStruct::getNondetExtRegType;
 using ZStruct::getRefType;
+using ZStruct::getExtRefType;
 using ZStruct::getStringType;
 using ZStruct::getTypeType;
-using ZStruct::getValExtType;
+using ZStruct::getExtValType;
 using ZStruct::getValType;
 
 Zll::ValType getFieldTypeOfValType(Type valType);
