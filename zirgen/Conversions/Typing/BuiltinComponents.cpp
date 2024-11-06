@@ -51,6 +51,7 @@ private:
   void genNondetReg();
   void genNondetExtReg();
   void genMakeExt();
+  void genEqzExt();
   void genComponent();
   void genInRange();
 
@@ -165,6 +166,18 @@ void Builtins::genMakeExt() {
               });
 }
 
+void Builtins::genEqzExt() {
+  makeBuiltin("EqzExt",
+              /*valueType=*/Zhlt::getComponentType(ctx),
+              /*constructParams=*/{extValType},
+              /*layout=*/Type(),
+              [&](ValueRange args) {
+                builder.create<Zll::EqualZeroOp>(loc, args[0]);
+                auto packed = builder.create<ZStruct::PackOp>(
+                    loc, Zhlt::getComponentType(ctx), /*members=*/ValueRange{});
+                builder.create<Zhlt::ReturnOp>(loc, packed);
+              });
+}
 
 void Builtins::genComponent() {
   makeBuiltin("Component",
@@ -247,6 +260,7 @@ void Builtins::addBuiltins() {
   genNondetReg();
   genNondetExtReg();
   genMakeExt();
+  genEqzExt();
   genComponent();
   genInRange();
 
@@ -263,6 +277,12 @@ static llvm::StringLiteral zirPreamble = R"(
 component Reg(v: Val) {
    reg := NondetReg(v);
    v = reg;
+   reg
+}
+
+component ExtReg(v: ExtVal) {
+   reg := NondetExtReg(v);
+   EqzExt(ExtSub(reg, v));
    reg
 }
 

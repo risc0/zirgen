@@ -374,7 +374,17 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
     patterns.insert<EraseOp<ZStruct::AliasLayoutOp>>(ctx);
     patterns.insert<EraseOp<Zll::ExternOp>>(ctx);
     patterns.insert<EraseOp<Zll::EqualZeroOp>>(ctx);
+    patterns.insert<EraseOp<VariadicPackOp>>(ctx);
+    patterns.insert<EraseOp<Zhlt::MagicOp>>(ctx);
     patterns.insert<InlineCalls>(ctx);
+    ZStruct::SwitchOp::getCanonicalizationPatterns(patterns, ctx);
+    ZStruct::getUnrollPatterns(patterns, ctx);
+
+    // Only try these if nothing else work, since they cause a lot of duplication.
+    //patterns.insert<UnravelSwitchPackResult>(ctx, /*benefit=*/0);
+    //patterns.insert<UnravelSwitchArrayResult>(ctx, /*benefit=*/0);
+    //patterns.insert<UnravelSwitchValResult>(ctx, /*benefit=*/0);
+
     FrozenRewritePatternSet frozenPatterns(std::move(patterns));
 
     GreedyRewriteConfig config;
