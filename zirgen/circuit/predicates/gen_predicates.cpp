@@ -158,6 +158,21 @@ template <typename Func> void addSingleton(Module& module, const std::string nam
                     });
 }
 
+template <typename Func> void addUnion(Module& module, const std::string name, Func func) {
+  module.addFunc<4>(name,
+                    {gbuf(recursion::kOutSize), ioparg(), ioparg(), ioparg()},
+                    [&](Buffer out, ReadIopVal rootIop, ReadIopVal leftIop, ReadIopVal rightIop) {
+                      auto circuit = getInterfaceRecursion();
+                      DigestVal root = rootIop.readDigests(1)[0];
+                      Assumption left = verifyAssumption(root, leftIop, *circuit);
+                      Assumption right = verifyAssumption(root, rightIop, *circuit);
+
+                      auto outData = func(left, right);
+                      writeOutObj(out, outData);
+                      out.setDigest(0, root, "root");
+                    });
+}
+
 static cl::opt<std::string>
     outputDir("output-dir", cl::desc("Output directory"), cl::value_desc("dir"), cl::Required);
 
@@ -190,6 +205,9 @@ int main(int argc, char* argv[]) {
       });
 
   addSingleton(module, "identity", [&](ReceiptClaim a) { return identity(a); });
+
+  addUnion(
+      module, "union", [&](Assumption left, Assumption right) { return unionFunc(left, right); });
 
   module.optimize();
   module.getModule().walk([&](mlir::func::FuncOp func) { zirgen::emitRecursion(outputDir, func); });
