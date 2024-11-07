@@ -227,6 +227,27 @@ void registerRunTestsCLOptions() {
   *clOpts;
 }
 
+LogicalResult verifyConstraints(Zll::Interpreter& interp, StringRef baseName, ModuleOp mod) {
+  std::string name = ("check$" + baseName).str();
+  auto checkFunc = mod.lookupSymbol<zirgen::Zhlt::CheckFuncOp>(name);
+  if (!checkFunc) {
+    llvm::errs() << "Could not find check function for test " << name << "\n";
+    exit(1);
+  }
+
+  bool failed = false;
+  interp.setTotCycles(clOpts->testCycles);
+  for (size_t cycle = 0; cycle != clOpts->testCycles; ++cycle) {
+    interp.setCycle(cycle);
+    if (mlir::failed(interp.runBlock(checkFunc.getBody().front()))) {
+      failed = true;
+      break;
+    }
+  }
+
+  return failed ? failure() : success();
+}
+
 int runTests(mlir::ModuleOp module) {
   mlir::MLIRContext& context = *module.getContext();
   // Set all the symbols to private
@@ -248,6 +269,16 @@ int runTests(mlir::ModuleOp module) {
   opm.addPass(mlir::createCSEPass());
   if (failed(pm.run(module))) {
     llvm::errs() << "an internal compiler error occurred while inlining the tests:\n";
+    module.print(llvm::errs());
+    return 1;
+  }
+
+  pm.clear();
+  mlir::ModuleOp zllMod = module.clone();
+  pm.nest<zirgen::Zhlt::CheckFuncOp>().addPass(zirgen::ZStruct::createInlineLayoutPass());
+  pm.addPass(mlir::createCanonicalizerPass());
+  if (failed(pm.run(zllMod))) {
+    llvm::errs() << "an internal compiler error occurred while inlining layouts:\n";
     module.print(llvm::errs());
     return 1;
   }
@@ -289,11 +320,10 @@ int runTests(mlir::ModuleOp module) {
           std::default_random_engine generator;
           std::uniform_int_distribution<int> distribution(1, zirgen::Zll::kFieldPrimeDefault - 1);
           newBuf->clear();
-          newBuf->resize(bufDesc.getRegCount(), Polynomial(4, zirgen::Zll::kFieldInvalid));
+          newBuf->resize(bufDesc.getRegCount(), Polynomial(1, zirgen::Zll::kFieldInvalid));
           for (size_t i = 0; i < bufDesc.getRegCount(); i++) {
-            for (size_t j = 0; j < 4; j++) {
-              (*newBuf)[i][j] = static_cast<uint64_t>(distribution(generator));
-            }
+            //            (*newBuf)[i][0] = static_cast<uint64_t>(distribution(generator));
+            (*newBuf)[i][0] = i + 1;
           }
         }
       } else {
@@ -366,7 +396,20 @@ int runTests(mlir::ModuleOp module) {
           break;
         }
       }
+    }
 
+    llvm::errs() << "Verifying constraints for " << testName << "\n";
+    if (verifyConstraints(interp, baseName, module).failed()) {
+      llvm::errs() << "Checking constraints failed\n";
+      failed = true;
+    }
+    llvm::errs() << "Verifying zll constraints for " << testName << "\n";
+    if (verifyConstraints(interp, baseName, zllMod).failed()) {
+      llvm::errs() << "Checking constraints after lowering to zll failed\n";
+      failed = true;
+    }
+
+    if (!failed && accum) {
       // TODO: the accum code doesn't actually generate a constraint that the
       // accumulator grand sum starts and ends at the same value... We can't do
       // that until "circular constraints" work or the accum code generates extra
@@ -375,7 +418,13 @@ int runTests(mlir::ModuleOp module) {
       for (auto [buf, bufDesc] : llvm::zip(bufs, allBufs)) {
         if (bufDesc.getName() == "accum") {
           llvm::outs() << "final accum: [";
-          llvm::interleaveComma(buf->back(), llvm::outs());
+          for (size_t i = 4; i > 0; i--) {
+            Polynomial& elem = buf->at(buf->size() - i);
+            assert(elem.size() == 1);
+            llvm::outs() << elem[0];
+            if (i != 1)
+              llvm::outs() << ", ";
+          }
           llvm::outs() << "]\n";
         }
       }

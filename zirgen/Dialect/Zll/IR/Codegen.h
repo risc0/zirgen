@@ -21,9 +21,7 @@
 #include "mlir/Transforms/DialectConversion.h"
 #include "llvm/ADT/StringSet.h"
 
-namespace zirgen {
-
-namespace codegen {
+namespace zirgen ::codegen {
 
 enum class IdentKind {
   Var,
@@ -33,6 +31,22 @@ enum class IdentKind {
   Func,
   Macro,
 };
+
+} // namespace zirgen::codegen
+
+namespace llvm {
+using zirgen::codegen::IdentKind;
+template <> struct DenseMapInfo<zirgen::codegen::IdentKind> {
+  static inline IdentKind getEmptyKey() { return (IdentKind)~0; }
+  static inline IdentKind getTombstoneKey() { return (IdentKind)(~0 - 1); }
+  static unsigned getHashValue(const IdentKind& Val) { return size_t(Val) * 37U; }
+
+  static bool isEqual(const IdentKind& LHS, const IdentKind& RHS) { return LHS == RHS; }
+};
+
+} // namespace llvm
+
+namespace zirgen ::codegen {
 
 enum class LanguageKind { Rust, Cpp };
 
@@ -207,20 +221,33 @@ struct CodegenOptions {
   CodegenOptions() = default;
   CodegenOptions(LanguageSyntax* lang) : lang(lang) {}
 
-  // Add a handler to emit specific syntax to construct a literal value.
-  template <typename AttrT> void addLiteralHandler(std::function<void(CodegenEmitter&, AttrT)> f) {
-    addLiteralHandler(AttrT::name, [f](CodegenEmitter& cg, mlir::Attribute attr) {
+  // Add a syntax to to construct a literal value.
+  template <typename AttrT> void addLiteralSyntax(std::function<void(CodegenEmitter&, AttrT)> f) {
+    addLiteralSyntax(AttrT::name, [f](CodegenEmitter& cg, mlir::Attribute attr) {
       f(cg, llvm::cast<AttrT>(attr));
     });
   }
-  void addLiteralHandler(llvm::StringRef name,
-                         std::function<void(CodegenEmitter&, mlir::Attribute)> f) {
-    if (literalHandlers.contains(name)) {
-      llvm::errs() << "Duplicate literal handler defined for attribute " << name << "\b";
+  void addLiteralSyntax(llvm::StringRef name,
+                        std::function<void(CodegenEmitter&, mlir::Attribute)> f) {
+    if (literalSyntax.contains(name)) {
+      llvm::errs() << "Duplicate literal syntax defined for attribute " << name << "\b";
       abort();
     }
 
-    literalHandlers[name] = f;
+    literalSyntax[name] = f;
+  }
+
+  template <typename OpT> void addOpSyntax(std::function<void(CodegenEmitter&, OpT)> f) {
+    addOpSyntax(OpT::getOperationName(),
+                [f](CodegenEmitter& cg, mlir::Operation* op) { f(cg, llvm::cast<OpT>(op)); });
+  }
+  void addOpSyntax(llvm::StringRef name, std::function<void(CodegenEmitter&, mlir::Operation*)> f) {
+    if (opSyntax.contains(name)) {
+      llvm::errs() << "Duplicate operation syntax defined for operation " << name << "\b";
+      abort();
+    }
+
+    opSyntax[name] = f;
   }
 
   // Add a context argument to be included when defining functions of the given operation type(s)
@@ -246,9 +273,11 @@ struct CodegenOptions {
 
   LanguageSyntax* lang = nullptr;
 
-  llvm::StringMap<std::function<void(CodegenEmitter&, mlir::Attribute)>> literalHandlers;
   llvm::StringMap<llvm::SmallVector<std::string>> funcContextArgs;
   llvm::StringMap<llvm::SmallVector<std::string>> callContextArgs;
+
+  llvm::StringMap<std::function<void(CodegenEmitter&, mlir::Attribute)>> literalSyntax;
+  llvm::StringMap<std::function<void(CodegenEmitter&, mlir::Operation*)>> opSyntax;
 };
 
 // Manages emitting generated code.
@@ -408,7 +437,8 @@ private:
   getNewValueName(mlir::Value val, llvm::StringRef namePrefix = "x", bool owned = true);
   void resetValueNumbering();
 
-  std::string canonIdent(llvm::StringRef ident, IdentKind idt);
+  mlir::StringAttr canonIdent(mlir::StringAttr ident, IdentKind idt);
+  mlir::StringAttr canonIdent(llvm::StringRef ident, IdentKind idt);
 
   void emitTypeDefs(mlir::TypeRange vals);
 
@@ -432,6 +462,11 @@ private:
   mlir::MLIRContext* ctx = nullptr;
 
   llvm::DenseSet<mlir::Location> currentLocations;
+
+  // Identifiers and what they've been canonicalized to
+  llvm::DenseMap<std::pair<mlir::StringAttr, IdentKind>, mlir::StringAttr> canonIdents;
+  // Identifiers that have already been allocated, to avoid duplication.
+  llvm::DenseSet<mlir::StringAttr> identsUsed;
 };
 
 // A piece of generated code that can be emitted through
@@ -466,9 +501,9 @@ public:
   template <IdentKind kind>
   EmitPart(CodegenIdent<kind> ident)
       : emitFunc([ident](CodegenEmitter& cg) {
-        std::string identStr =
-            ident.isCanonicalized() ? ident.str() : cg.canonIdent(ident.strref(), kind);
-        *cg.getOutputStream() << identStr;
+        mlir::StringAttr identStr =
+            ident.isCanonicalized() ? ident.getAttr() : cg.canonIdent(ident.getAttr(), kind);
+        *cg.getOutputStream() << identStr.strref();
       }) {}
 
   // Any integer type.
@@ -528,5 +563,4 @@ template <typename Container, typename T> void CodegenEmitter::interleaveComma(c
 mlir::LogicalResult
 translateCodegen(mlir::Operation* op, CodegenOptions opts, llvm::raw_ostream& os);
 
-} // namespace codegen
-} // namespace zirgen
+} // namespace zirgen::codegen

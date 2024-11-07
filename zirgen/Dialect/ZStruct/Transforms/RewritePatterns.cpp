@@ -103,6 +103,10 @@ LogicalResult SplitSwitchArms::matchAndRewrite(SwitchOp op, PatternRewriter& rew
   rewriter.setInsertionPoint(op);
   for (auto [cond, arm] : llvm::zip(op.getSelector(), op.getArms())) {
     auto ifOp = rewriter.create<Zll::IfOp>(op.getLoc(), cond);
+    auto termOp = arm.front().getTerminator();
+    OpBuilder::InsertionGuard guard(rewriter);
+    rewriter.setInsertionPoint(termOp);
+    rewriter.replaceOpWithNewOp<Zll::TerminateOp>(termOp);
     ifOp.getInner().takeBody(arm);
   }
   rewriter.eraseOp(op);

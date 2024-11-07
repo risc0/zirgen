@@ -110,6 +110,7 @@ def SetOp : ZllOp<"set", [EvalOpAdaptor, CodegenOpWithProperties<["Offset"]>]> {
 
 def GetGlobalOp : ZllOp<"get_global", [Pure, EvalOpAdaptor, IsPoly, InferTypeOpAdaptor,
                                           CodegenOpWithProperties<["Offset"]>]> {
+  let summary = "Read from a buffer that doesn't support cycle offsets (e.g. a Global or Temporary buffer)";
   let arguments = (ins Buffer:$buf, UI32Attr:$offset);
   let results = (outs Val:$out);
   let assemblyFormat = [{ $buf `[` $offset `]` `:` type($buf) attr-dict }];
@@ -119,6 +120,7 @@ def GetGlobalOp : ZllOp<"get_global", [Pure, EvalOpAdaptor, IsPoly, InferTypeOpA
 
 def SetGlobalOp : ZllOp<"set_global", [EvalOpAdaptor, IsReduce,
                                           CodegenOpWithProperties<["Offset"]>]> {
+  let summary = "Store to a buffer that doesn't support cycle offsets (e.g. a Global or Temporary buffer)";
   let arguments = (ins Buffer:$buf, UI32Attr:$offset, Val:$in);
   let assemblyFormat = [{ $buf `:` type($buf) `[` $offset `]` `=` $in `:` type($in) attr-dict }];
   let hasCanonicalizer = 1;
@@ -312,4 +314,14 @@ def NormalizeOp : ZllOp<"normalize", [Pure, EvalOpAdaptor, IsReduce, InferTypeOp
       DefaultValuedAttr<UI32Attr, "0">:$bits,
       DefaultValuedAttr<StrAttr, "\"\"">:$low);
   let results = (outs Val:$out);
+}
+
+def MakeTemporaryBufferOp : ZllOp<"temp_buffer"> {
+  let summary = "Create a temporary buffer that can be used by `load` and `store`.";
+  let builders = [
+    OpBuilder<(ins "Zll::ValType":$element, "unsigned":$size), [{
+      build($_builder, $_state, $_builder.getType<zirgen::Zll::BufferType>(element, size, Zll::BufferKind::Temporary));
+    }]>
+  ];
+  let results = (outs Buffer:$out);
 }

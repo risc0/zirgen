@@ -470,7 +470,7 @@ component rho_minor3<Y: Val>(rvals: RetTuple) {
                   rvprev01.arr_f[0], rvprev01.arr_f[1]+0];
           b := Concatenate<Val, 8, 14>(for i : 0..8 { rvpstate.arr_b[i] }, rs1);
           rs2 := for i : 2..3 { rvprev01.arr_f[i] };
-          c := Concatenate<Reg, 1, 21>(rs2, for i : 1..22 { rvpstate.arr_c[i] });
+          c := Concatenate<Val, 1, 21>(rs2, for i : 1..22 { rvpstate.arr_c[i] });
           RetTuple(rvpstate.arr_a, b, c, rvpstate.arr_d, dummyB(), dummyB(),
                    0, 8, rvprev01.rnd, rvprev01.blk, rvprev01.midx)
         },
@@ -1049,12 +1049,15 @@ component equal_word<X: Val>(rvprev: RetTuple) {
     { unpack_f[i+3*WORDLEN()-BLEN()-SLEN()] = unpack_4[i]; };
 
   Z := Isz(X-3);
+  Log("Z: %u", Z);
   nxt := [1-Z, Z] -> (
     [X+1, 17, 0, 0, memidx],
     { blk := NondetReg(readInput());
       invBlk := NondetReg(Inv(blk));
       prod := Reg(blk*invBlk);
       blk*(1-prod) = 0;
+
+      Log("blk, prod %u, %u", blk, prod);
 
       readInput(); readInput(); readInput();
       memidxNxt := memidx + 1;
@@ -1067,10 +1070,12 @@ component equal_word<X: Val>(rvprev: RetTuple) {
         { midxNN := memidxNxt + 1;
           invmidxNN := NondetReg(Inv(midxNN));
           invmidxNN*midxNN = 1;
+          Log("midx %u (hex %x)", midxNN, midxNN);
           WriteMemory(midxNN, MemDigest([0x0080,0,0,0]));
           nskip := NondetReg(7 -
-            (midxNN+1 - ((midxNN+1) & 0xfffffff8))); // 7 - num_of_writes%8
+            ((midxNN+1)&7)); // 7 - num_of_writes%8
           unpack_nskip := ToBits<3>(nskip);
+          Log("Unpack: %u, %u, %u -> 0x%x", unpack_nskip[0], unpack_nskip[1], unpack_nskip[2], nskip);
           FromBits<3>(unpack_nskip) = nskip; // 0 <= nskip <= 7
           bitlen := 64*midxNN; // TODO: overflow
           [S2MINOR_SKIP()-1, 17, bitlen, nskip, midxNN]
@@ -1125,6 +1130,10 @@ component mem_padding_sha256(rvprev01: RetTuple) {
     })
 }
 
+component ShaOutput(vals: Array<Val, 16>) {
+  vals := for v : vals { Reg(v) };
+}
+
 component setup_major(rvals: RetTuple) {
   minor_onehot := OneHot<14>(rvals@1.minor);
   minor_onehot -> (
@@ -1142,6 +1151,7 @@ component setup_major(rvals: RetTuple) {
     sha256fini<7>(rvals@0),
     sha256fini<8>(rvals@0),
     { rvp01 := rvals@1;
+      global output := ShaOutput(for i : 0..16 { rvp01.arr_a[i] } );
       Log("sha256output: %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x",
         rvp01.arr_a[0], rvp01.arr_a[1], rvp01.arr_a[2], rvp01.arr_a[3],
         rvp01.arr_a[4], rvp01.arr_a[5],  rvp01.arr_a[6],  rvp01.arr_a[7],
@@ -1170,6 +1180,7 @@ component Top() {
       PC = PC@1 + 1;
       retvals@1.major
     });
+  Log("major = %u", major_idx);
   major_onehot := OneHot<23>(major_idx);
   retvals := major_onehot ->! (
     xor5words_major<0>(retvals@0),
@@ -1204,44 +1215,49 @@ component Top() {
   );
 }
 
+// Constraints must be applied to registers, so make registers to house the calculated values in tests.
+component TestEqz(v: Val) {
+  NondetReg(v) = 0;
+}
+
 test TestKeccak01 { // test_cycles >= 2969
   x := Top();
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 0] - 0xb395) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 1] - 0x7463) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 2] - 0x8e98) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 3] - 0x0a6e) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 4] - 0x7cec) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 5] - 0x17b3) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 6] - 0xfd54) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 7] - 0x4748) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 8] - 0x09b0) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 9] - 0x9293) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[10] - 0xfcda) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[11] - 0x5947) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[12] - 0x573f) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[13] - 0x6678) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[14] - 0x268a) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[15] - 0x23c7) = 0;
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 0] - 0xb395));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 1] - 0x7463));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 2] - 0x8e98));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 3] - 0x0a6e));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 4] - 0x7cec));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 5] - 0x17b3));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 6] - 0xfd54));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 7] - 0x4748));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 8] - 0x09b0));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 9] - 0x9293));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[10] - 0xfcda));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[11] - 0x5947));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[12] - 0x573f));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[13] - 0x6678));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[14] - 0x268a));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[15] - 0x23c7));
 }
 
 /*
 test TestKeccak02 { // test_cycles >= 22772
   x := Top();
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 0] - 0x420e) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 1] - 0x6b2c) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 2] - 0xc4cd) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 3] - 0x396e) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 4] - 0xcf6b) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 5] - 0x7e4c) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 6] - 0x8b4c) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 7] - 0x1c1e) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 8] - 0x88c3) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 9] - 0x5895) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[10] - 0x34b5) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[11] - 0x81fd) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[12] - 0x1337) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[13] - 0x93a6) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[14] - 0xe530) = 0;
-  Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[15] - 0x06f1) = 0;
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 0] - 0x420e));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 1] - 0x6b2c));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 2] - 0xc4cd));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 3] - 0x396e));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 4] - 0xcf6b));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 5] - 0x7e4c));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 6] - 0x8b4c));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 7] - 0x1c1e));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 8] - 0x88c3));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[ 9] - 0x5895));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[10] - 0x34b5));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[11] - 0x81fd));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[12] - 0x1337));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[13] - 0x93a6));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[14] - 0xe530));
+  TestEqz(Isz(17-x.retvals.major)*Isz(13-x.retvals.minor)*(x.retvals.arr_a[15] - 0x06f1));
 }
 */

@@ -1,15 +1,18 @@
 // RUN: zirgen --test %s --test-cycles 2 | FileCheck %s
 
 extern Output(v: Val);
+extern GetCycle() : Val;
 
 component AddDoubler(v: Val) {
   reg := Reg(v);
-  reg + 2 * reg@1
+  first := NondetReg(Isz(GetCycle()));
+  reg + 2 * (1 - first) * reg@1
 }
 
 component TriangleSum(x: Val, y: Val) {
   reg := Reg(x + y);
-  reg + reg@1
+  first := NondetReg(Isz(GetCycle()));
+  reg + (1 - first) * reg@1
 }
 
 component SumRegs<numRegs: Val>(vals: Array<Val, numRegs>) {

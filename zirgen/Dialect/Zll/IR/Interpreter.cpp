@@ -178,11 +178,32 @@ Interpreter::Interpreter(MLIRContext* ctx, std::unique_ptr<IHashSuite> hashSuite
 Interpreter::~Interpreter() {}
 
 void Interpreter::setCycle(size_t cycle) {
+  LLVM_DEBUG({ llvm::dbgs() << "Starting cycle " << cycle << "\n"; });
   this->cycle = cycle;
 }
 
 size_t Interpreter::getCycle() {
   return cycle;
+}
+
+void Interpreter::setTotCycles(size_t totCycles) {
+  this->totCycles = totCycles;
+}
+
+size_t Interpreter::getTotCycles() {
+  return totCycles;
+}
+
+size_t Interpreter::getBackCycle(size_t backDistance) {
+  size_t cycle = getCycle();
+  if (totCycles && cycle < backDistance) {
+    cycle += totCycles;
+  }
+  if (backDistance > cycle) {
+    llvm::errs() << "Back distance " << backDistance << " too far, with no totCycles specified\n";
+    abort();
+  }
+  return cycle - backDistance;
 }
 
 const IHashSuite& Interpreter::getHashSuite() {
@@ -205,11 +226,21 @@ Interpreter::BufferRef Interpreter::makeBuf(mlir::Value buffer, size_t size, Buf
 }
 
 Interpreter::BufferRef Interpreter::getNamedBuf(llvm::StringRef name) {
+  if (!namedBufs.count(name)) {
+    llvm::errs() << "Undefined buffer " << name << "\n";
+  }
   assert(namedBufs.count(name));
   return namedBufs[name].first;
 }
 
+bool Interpreter::hasNamedBuf(llvm::StringRef name) {
+  return namedBufs.count(name);
+}
+
 size_t Interpreter::getNamedBufSize(llvm::StringRef name) {
+  if (!namedBufs.count(name)) {
+    llvm::errs() << "Undefined buffer " << name << "\n";
+  }
   assert(namedBufs.count(name));
   return namedBufs[name].second;
 }
@@ -360,7 +391,7 @@ mlir::LogicalResult Interpreter::evaluate(OpEvaluator* eval) {
       module->print(llvm::nulls(), *asmState);
     }
     eval->op->print(llvm::dbgs(), *asmState);
-    llvm::dbgs() << " (" << eval->getStrategy() << ")\n";
+    llvm::dbgs() << " (" << eval->getStrategy() << ") at " << eval->op->getLoc() << "\n";
     if (!eval->inputs.empty()) {
       llvm::dbgs() << "  Inputs:\n";
       for (auto input : eval->inputs) {

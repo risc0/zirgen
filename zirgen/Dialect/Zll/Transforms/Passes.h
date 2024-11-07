@@ -29,6 +29,9 @@ std::unique_ptr<mlir::OperationPass<mlir::func::FuncOp>> createDropConstraintsPa
 std::unique_ptr<mlir::OperationPass<mlir::func::FuncOp>> createSplitStagePass(unsigned stage);
 std::unique_ptr<mlir::OperationPass<mlir::func::FuncOp>> createInlineFpExtPass();
 std::unique_ptr<mlir::OperationPass<mlir::func::FuncOp>> createAddReductionsPass();
+std::unique_ptr<mlir::Pass> createIfToMultiplyPass();
+std::unique_ptr<mlir::Pass> createMultiplyToIfPass();
+std::unique_ptr<mlir::Pass> createBalancedSplitPass(size_t maxOps = 1000);
 
 // Generate the code for registering passes.
 #define GEN_PASS_REGISTRATION

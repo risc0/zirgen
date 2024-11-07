@@ -222,7 +222,6 @@ EvalOutput eval(func::FuncOp inFunc, BigIntIO& io, bool computeZ) {
         })
         .Case<StoreOp>([&](auto op) {
           uint32_t coeffs = op.getIn().getType().getCoeffs();
-          llvm::errs() << "Coeffs = " << coeffs << "\n";
           uint32_t count = (coeffs + 15) / 16;
           auto poly = polys[op.getIn()];
           auto val = toAPInt(poly);
