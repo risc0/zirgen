@@ -30,7 +30,6 @@ public:
   void operandB(size_t i, mlir::Value& val);
   void emit(size_t i, mlir::Value);
   BigIntType type(const Op& op);
-  mlir::Value getPoly(size_t i);
 
 private:
   const Program& prog;
@@ -77,10 +76,6 @@ void Decoder::emit(size_t i, mlir::Value poly) {
 
 BigIntType Decoder::type(const Op& op) {
   return types[op.type];
-}
-
-mlir::Value Decoder::getPoly(size_t i) {
-  return polys[i];
 }
 
 } // namespace
