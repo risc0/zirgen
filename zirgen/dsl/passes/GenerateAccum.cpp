@@ -18,6 +18,7 @@
 
 #include "zirgen/Dialect/ZHLT/IR/TypeUtils.h"
 #include "zirgen/Dialect/Zll/IR/IR.h"
+#include "zirgen/Dialect/ZStruct/Transforms/RewritePatterns.h"
 #include "zirgen/Utilities/KeyPath.h"
 #include "zirgen/compiler/edsl/source_loc.h"
 #include "zirgen/dsl/passes/CommonRewrites.h"

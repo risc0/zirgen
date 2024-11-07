@@ -44,10 +44,10 @@ void addCppSyntax(CodegenOptions& opts) {
     auto elems = polyAttr.asArrayRef();
     if (elems.size() == 1) {
       cg << "Val(" << elems[0] << ")";
-    } else {
-      cg << "Val" << elems.size() << "{";
+    } else if (elems.size() == 4) {
+      cg << "ExtVal(";
       cg.interleaveComma(elems);
-      cg << "}";
+      cg << ")";
     }
   });
 }
