@@ -445,12 +445,13 @@ LogicalResult ExternOp::evaluate(Interpreter& interp,
   }
   // TODO: We used to flatten extension field elements here... is that necessary?
   size_t outCount = getNumResults();
-  std::vector<uint64_t> outFp = handler->doExtern(getName(), getExtra(), adaptor.getIn(), outCount);
+  bool failed = false;
+  std::vector<uint64_t> outFp = handler->doExtern(getName(), getExtra(), adaptor.getIn(), outCount, &failed);
   assert(outFp.size() == outCount);
   for (size_t i = 0; i < getNumResults(); i++) {
     outs[i]->setVal(outFp[i]);
   }
-  return success();
+  return failure(failed);
 }
 
 LogicalResult HashOp::evaluate(Interpreter& interp,

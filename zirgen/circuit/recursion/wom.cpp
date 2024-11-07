@@ -124,7 +124,8 @@ WomExternHandler::WomExternHandler() {
 std::vector<uint64_t> WomExternHandler::doExtern(llvm::StringRef name,
                                                  llvm::StringRef extra,
                                                  llvm::ArrayRef<const Zll::InterpVal*> args,
-                                                 size_t outCount) {
+                                                 size_t outCount,
+                                                 bool* failed) {
   if (name == "womWrite") {
     uint64_t addr = args[0]->getBaseFieldVal();
     if (state.count(addr) != 0) {
@@ -147,7 +148,7 @@ std::vector<uint64_t> WomExternHandler::doExtern(llvm::StringRef name,
     auto data = state[addr];
     return {data[0], data[1], data[2], data[3]};
   }
-  return PlonkExternHandler::doExtern(name, extra, args, outCount);
+  return PlonkExternHandler::doExtern(name, extra, args, outCount, failed);
 }
 
 } // namespace zirgen::recursion

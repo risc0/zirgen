@@ -23,7 +23,8 @@ namespace zirgen {
 std::vector<uint64_t> PlonkExternHandler::doExtern(llvm::StringRef name,
                                                    llvm::StringRef extra,
                                                    llvm::ArrayRef<const Zll::InterpVal*> args,
-                                                   size_t outCount) {
+                                                   size_t outCount,
+                                                   bool* failed) {
   if (name == "plonkWrite") {
     assert(outCount == 0);
     plonkRows[extra.str()].emplace_back(asFpArray(args));
@@ -49,7 +50,7 @@ std::vector<uint64_t> PlonkExternHandler::doExtern(llvm::StringRef name,
     plonkAccumRows[extra.str()].pop_front();
     return top;
   }
-  return ExternHandler::doExtern(name, extra, args, outCount);
+  return ExternHandler::doExtern(name, extra, args, outCount, failed);
 }
 
 void PlonkExternHandler::sort(llvm::StringRef name) {

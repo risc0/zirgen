@@ -213,7 +213,8 @@ RamExternHandler::RamExternHandler() : image(256 * 1024 * 1024 / 4) {}
 std::vector<uint64_t> RamExternHandler::doExtern(llvm::StringRef name,
                                                  llvm::StringRef extra,
                                                  llvm::ArrayRef<const Zll::InterpVal*> args,
-                                                 size_t outCount) {
+                                                 size_t outCount,
+                                                 bool* failed) {
   if (name == "ramRead") {
     uint32_t addr = args[0]->getBaseFieldVal();
     uint32_t word = image[addr];
@@ -238,7 +239,7 @@ std::vector<uint64_t> RamExternHandler::doExtern(llvm::StringRef name,
     image[addr] = word;
     return {};
   }
-  return PlonkExternHandler::doExtern(name, extra, args, outCount);
+  return PlonkExternHandler::doExtern(name, extra, args, outCount, failed);
 }
 
 uint32_t RamExternHandler::loadU32(uint32_t addr) {

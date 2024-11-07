@@ -44,7 +44,8 @@ template <typename T> void formatFieldElem(const InterpVal* interpVal, llvm::raw
 std::vector<uint64_t> ExternHandler::doExtern(llvm::StringRef name,
                                               llvm::StringRef extra,
                                               llvm::ArrayRef<const InterpVal*> args,
-                                              size_t outCount) {
+                                              size_t outCount,
+                                              bool* failed) {
   if (name == "readCoefficients") {
     // TODO: Migrate users of readCoefficients to use readInput, or
     // move readCoefficients to a circuit-specific extern handler.
@@ -507,7 +508,7 @@ FailureOr<SmallVector<Attribute>> Interpreter::runBlock(mlir::Block& block) {
     evaluator = eval;
     if (failed(evaluate(evaluator))) {
       if (!gotErrorMsg && !getSilenceErrors())
-        eval->op->emitError() << "Unknown evaluation error occured";
+        eval->op->emitError() << "Evaluation error occured";
       return failure();
     }
   }

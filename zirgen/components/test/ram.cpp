@@ -156,7 +156,8 @@ public:
   std::vector<uint64_t> doExtern(llvm::StringRef name,
                                  llvm::StringRef extra,
                                  llvm::ArrayRef<const InterpVal*> args,
-                                 size_t outCount) override {
+                                 size_t outCount,
+                                 bool* failed) override {
     if (name == "getTestData") {
       assert(outCount == 4);
       if (data.size() == 0) {
@@ -166,7 +167,7 @@ public:
       data.pop_front();
       return ret;
     }
-    return PlonkExternHandler::doExtern(name, extra, args, outCount);
+    return PlonkExternHandler::doExtern(name, extra, args, outCount, failed);
   }
 
   std::deque<std::vector<uint64_t>> data;

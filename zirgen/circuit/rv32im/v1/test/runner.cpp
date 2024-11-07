@@ -131,7 +131,8 @@ BytePolynomial BytePolynomial::operator*(const BytePolynomial& rhs) const {
 std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
                                        llvm::StringRef extra,
                                        llvm::ArrayRef<const InterpVal*> args,
-                                       size_t outCount) {
+                                       size_t outCount,
+                                       bool* failed) {
   auto fpArgs = asFpArray(args);
   if (name == "setUserMode") {
     userMode = fpArgs[0];
@@ -258,7 +259,7 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
       }
       assert(residentWords.count(addr) && "Memory read before page in");
     }
-    return RamExternHandler::doExtern(name, extra, args, outCount);
+    return RamExternHandler::doExtern(name, extra, args, outCount, failed);
   }
   if (name == "ramWrite") {
     uint32_t addr = fpArgs[0];
@@ -268,7 +269,7 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
     } else {
       assert(residentWords.count(addr) && "Memory write before page in");
     }
-    return RamExternHandler::doExtern(name, extra, args, outCount);
+    return RamExternHandler::doExtern(name, extra, args, outCount, failed);
   }
   if (name == "getMajor") {
     uint32_t cycle = fpArgs[0];
@@ -608,7 +609,7 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
     llvm::errs() << ", total[0] = " << total.coeffs[0] << "\n";
     return ret;
   }
-  return RamExternHandler::doExtern(name, extra, args, outCount);
+  return RamExternHandler::doExtern(name, extra, args, outCount, failed);
 }
 
 bool Runner::needsFlush(uint32_t cycle) {

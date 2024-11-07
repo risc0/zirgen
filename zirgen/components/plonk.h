@@ -320,7 +320,8 @@ public:
   std::vector<uint64_t> doExtern(llvm::StringRef name,
                                  llvm::StringRef extra,
                                  llvm::ArrayRef<const Zll::InterpVal*> args,
-                                 size_t outCount) override;
+                                 size_t outCount,
+                                 bool* failed = nullptr) override;
   void sort(llvm::StringRef name);
   void calcPrefixProducts(Zll::ExtensionField f);
 

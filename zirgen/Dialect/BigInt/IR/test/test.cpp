@@ -71,7 +71,8 @@ struct CheckedBytesExternHandler : public Zll::ExternHandler {
   std::vector<uint64_t> doExtern(llvm::StringRef name,
                                  llvm::StringRef extra,
                                  llvm::ArrayRef<const Zll::InterpVal*> arg,
-                                 size_t outCount) override {
+                                 size_t outCount,
+                                 bool* failed) override {
     if (name == "readCoefficients") {
       assert(outCount == 16);
       if (coeffs.size() < 16) {
@@ -85,7 +86,7 @@ struct CheckedBytesExternHandler : public Zll::ExternHandler {
       }
       return ret;
     }
-    return ExternHandler::doExtern(name, extra, arg, outCount);
+    return ExternHandler::doExtern(name, extra, arg, outCount, failed);
   }
 };
 
