@@ -30,9 +30,9 @@ constexpr size_t kDigestBytes = kDigestWords * kWordSize;
 constexpr size_t kCodeSize = 16;
 constexpr size_t kSystemStateSize = kWordSize + kDigestBytes;
 constexpr size_t kInOutSize = kSystemStateSize * 2 + kDigestBytes * 2 + 2;
-constexpr size_t kDataSize = 224;
+constexpr size_t kDataSize = 226;
 constexpr size_t kMixSize = 40;
-constexpr size_t kAccumSize = 36;
+constexpr size_t kAccumSize = 52;
 
 constexpr size_t kSetupStepRegs = 84;
 constexpr size_t kRamLoadStepIOCount = 3;
@@ -62,8 +62,9 @@ constexpr size_t kShaMain = 11;
 constexpr size_t kPageFault = 12;
 constexpr size_t kECallCopyIn = 13;
 constexpr size_t kBigInt = 14;
-constexpr size_t kHalt = 15;
-constexpr size_t kMuxSize = 16;
+constexpr size_t kBigInt2 = 15;
+constexpr size_t kHalt = 16;
+constexpr size_t kMuxSize = 17;
 
 } // namespace MajorType
 
@@ -76,7 +77,8 @@ constexpr size_t kSoftware = 2;
 constexpr size_t kSha = 3;
 constexpr size_t kBigInt = 4;
 constexpr size_t kUser = 5;
-constexpr size_t kMuxSize = 6;
+constexpr size_t kBigInt2 = 6;
+constexpr size_t kMuxSize = 7;
 
 } // namespace ECallType
 
@@ -162,6 +164,22 @@ constexpr size_t kCyclesPerStage = 2;
 constexpr size_t kStages = 5;
 
 } // namespace BigInt
+
+namespace PolyOp {
+// Every poly op begins with 'newPoly = poly + newData'
+// Then what happens next is:
+// For all memory types
+constexpr size_t kEnd = 0;     // poly' = newPoly, term' = term, tot' = tot
+constexpr size_t kOpShift = 1; // poly' = newPoly * x^16, term' = term, tot' = tot
+// For 'read/write'
+constexpr size_t kOpSetTerm = 2; // poly' = 0, term' = newPoly, tot' = tot
+constexpr size_t kOpAddTot = 3;  // poly' = 0, term' = 1, tot' = tot + coeff * newPoly * term
+// For 'check'
+constexpr size_t kOpCarry1 = 4; // poly' = newPoly * 256, term' = term, tot' = tot
+constexpr size_t kOpCarry2 = 5; // poly' = newPoly * 64, term' = term, tot' = tot
+constexpr size_t kOpEqz =
+    6; // poly' = 0, term' = 1, tot' = 0, assert tot + (z - 256) * newPoly == 0
+} // namespace PolyOp
 
 constexpr size_t kUserPC = 0x0BFFFF00;
 constexpr size_t kECallEntry = 0x0BFFFF04;

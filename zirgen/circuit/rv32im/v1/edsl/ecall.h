@@ -81,6 +81,15 @@ public:
 };
 using ECallBigInt = Comp<ECallBigIntImpl>;
 
+class ECallBigInt2Impl : public CompImpl<ECallBigInt2Impl> {
+public:
+  void set(Top top);
+
+  // BigInt pc
+  RamReg readVerifyAddr;
+};
+using ECallBigInt2 = Comp<ECallBigInt2Impl>;
+
 // Jump to user mode
 class ECallUserImpl : public CompImpl<ECallUserImpl> {
 public:
@@ -110,10 +119,26 @@ public:
   RamReg readSelector;
   OneHot<ECallType::kMuxSize + 1> minorSelect;
   Bit isTrap;
-  Mux<ECallHalt, ECallInput, ECallSoftware, ECallSha, ECallBigInt, ECallUser, ECallMachine>
+  Mux<ECallHalt,
+      ECallInput,
+      ECallSoftware,
+      ECallSha,
+      ECallBigInt,
+      ECallUser,
+      ECallBigInt2,
+      ECallMachine>
       minorMux;
 };
 using ECallCycle = Comp<ECallCycleImpl>;
+
+class TwitByteRegImpl : public CompImpl<TwitByteRegImpl> {
+public:
+  TwitByteRegImpl();
+  void set(Val val);
+  Val get();
+  std::array<Twit, 4> twits;
+};
+using TwitByteReg = Comp<TwitByteRegImpl>;
 
 class ECallCopyInCycleImpl : public CompImpl<ECallCopyInCycleImpl> {
 public:
@@ -130,6 +155,10 @@ public:
   // Number of words to output this cycle; 0 means we're done and we
   // should fill a0 and a1 for returning to user.
   OneHot<kIoChunkWords + 1> outputWords;
+
+  // Verifiers for all 16 bytes, last two
+  std::array<ByteReg, 14> checkBytes;
+  std::array<TwitByteReg, 2> checkBytesTwits;
 
   IsZero chunksRemainingZ;
 };
