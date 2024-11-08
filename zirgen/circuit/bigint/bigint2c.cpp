@@ -416,6 +416,20 @@ void genECDouble(mlir::Location loc, mlir::OpBuilder &builder) {
   builder.create<BigInt::StoreOp>(loc, c.y(), 12, 2);
 }
 
+void genECAdd(mlir::Location loc, mlir::OpBuilder &builder) {
+  auto curve =
+      std::make_shared<BigInt::EC::WeierstrassCurve>(secp256k1_prime, secp256k1_a, secp256k1_b);
+  auto p_x = builder.create<BigInt::LoadOp>(loc, 256, 11, 0);
+  auto p_y = builder.create<BigInt::LoadOp>(loc, 256, 11, 2);
+  auto q_x = builder.create<BigInt::LoadOp>(loc, 256, 11, 4);
+  auto q_y = builder.create<BigInt::LoadOp>(loc, 256, 11, 6);
+  auto lhs = BigInt::EC::AffinePt(p_x, p_y, curve);
+  auto rhs = BigInt::EC::AffinePt(q_x, q_y, curve);
+  auto result = BigInt::EC::add(builder, loc, lhs, rhs);
+  builder.create<BigInt::StoreOp>(loc, result.x(), 12, 0);
+  builder.create<BigInt::StoreOp>(loc, result.y(), 12, 2);
+}
+
 int main(int argc, char* argv[]) {
   llvm::InitLLVM y(argc, argv);
   mlir::registerAsmPrinterCLOptions();
@@ -439,6 +453,7 @@ int main(int argc, char* argv[]) {
 
   switch (program) {
     case Program::EC_Double: genECDouble(loc, builder); break;
+    case Program::EC_Add: genECAdd(loc, builder); break;
     default: throw std::runtime_error("Unimplemented program");
   }
 
