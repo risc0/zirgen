@@ -17,8 +17,8 @@
 #include "llvm/ADT/TypeSwitch.h"
 
 #include "zirgen/Dialect/ZHLT/IR/TypeUtils.h"
-#include "zirgen/Dialect/Zll/IR/IR.h"
 #include "zirgen/Dialect/ZStruct/Transforms/RewritePatterns.h"
+#include "zirgen/Dialect/Zll/IR/IR.h"
 #include "zirgen/Utilities/KeyPath.h"
 #include "zirgen/compiler/edsl/source_loc.h"
 #include "zirgen/dsl/passes/CommonRewrites.h"
@@ -382,9 +382,9 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
     ZStruct::getUnrollPatterns(patterns, ctx);
 
     // Only try these if nothing else work, since they cause a lot of duplication.
-    //patterns.insert<UnravelSwitchPackResult>(ctx, /*benefit=*/0);
-    //patterns.insert<UnravelSwitchArrayResult>(ctx, /*benefit=*/0);
-    //patterns.insert<UnravelSwitchValResult>(ctx, /*benefit=*/0);
+    // patterns.insert<UnravelSwitchPackResult>(ctx, /*benefit=*/0);
+    // patterns.insert<UnravelSwitchArrayResult>(ctx, /*benefit=*/0);
+    // patterns.insert<UnravelSwitchValResult>(ctx, /*benefit=*/0);
 
     FrozenRewritePatternSet frozenPatterns(std::move(patterns));
 
@@ -483,7 +483,10 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
     return 0;
   }
 
-  void buildAccumStep(ComponentOp component, KeyPath keyPath, LayoutType& majorType, ComponentOp userAccum) {
+  void buildAccumStep(ComponentOp component,
+                      KeyPath keyPath,
+                      LayoutType& majorType,
+                      ComponentOp userAccum) {
     // Get the worst case column count
     size_t columns = 0;
     for (auto& field : majorType.getFields()) {
@@ -597,7 +600,8 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
                                 [&](auto field) { return field.name == armName; });
       if (hasArm) {
         Value armLayout = builder.create<LookupOp>(currentLoc(ctx), cur, armName);
-        Value columnsLayout = builder.create<LookupOp>(currentLoc(ctx), accum.getLayout(), "columns");
+        Value columnsLayout =
+            builder.create<LookupOp>(currentLoc(ctx), accum.getLayout(), "columns");
         AccumBuilder accumBuilder(builder, columnsLayout, randomnessLayout);
         accumBuilder.build(armLayout);
         accumBuilder.finalize();
@@ -605,13 +609,11 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
         // Read accumulator + forward
         Value distance = builder.create<arith::ConstantOp>(
             currentLoc(ctx), builder.getIndexType(), builder.getIndexAttr(1));
-        Value indexValue =
-            builder.create<arith::ConstantOp>(currentLoc(ctx),
-                                              builder.getIndexType(),
-                                              builder.getIndexAttr(columns - 1));
-        Value columnsLayout = builder.create<LookupOp>(currentLoc(ctx), accum.getLayout(), "columns");
-        Value lastLayout =
-            builder.create<SubscriptOp>(currentLoc(ctx), columnsLayout, indexValue);
+        Value indexValue = builder.create<arith::ConstantOp>(
+            currentLoc(ctx), builder.getIndexType(), builder.getIndexAttr(columns - 1));
+        Value columnsLayout =
+            builder.create<LookupOp>(currentLoc(ctx), accum.getLayout(), "columns");
+        Value lastLayout = builder.create<SubscriptOp>(currentLoc(ctx), columnsLayout, indexValue);
         auto prevLoadOp = builder.create<LoadOp>(currentLoc(ctx), lastLayout, distance);
         prevLoadOp->setAttr("unchecked", builder.getUnitAttr());
         Value prevVal = prevLoadOp;

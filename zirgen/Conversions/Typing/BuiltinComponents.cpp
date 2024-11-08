@@ -268,7 +268,6 @@ void Builtins::addBuiltins() {
   genTrivial("Val", valType);
   genTrivial("ExtVal", extValType);
   genTrivial("String", Zhlt::getStringType(ctx));
-
 }
 
 // Builtins that are defined using the DSL.
