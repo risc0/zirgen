@@ -441,7 +441,7 @@ private:
                                        .str());
         })
         .Case<BitAndOp>([&](BitAndOp op) {
-          lines.push_back(indent + llvm::formatv("auto {0} ={3}p({1}.asUInt32() & {2}.asUInt32());",
+          lines.push_back(indent + llvm::formatv("auto {0} = {3}({1}.asUInt32() & {2}.asUInt32());",
                                                  ctx.def(op.getOut()),
                                                  ctx.use(op->getOperand(0)),
                                                  ctx.use(op->getOperand(1)),
