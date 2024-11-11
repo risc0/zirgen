@@ -32,7 +32,7 @@ A BytePoly consists of one or more field elements of our native field
 of the represented BigInt is $b_0 + 256 b_1 + 256^2 b_2 + ...$ .
 
 When we're processing operations in the BigInt dialect, we keep the
-following information about each BigInt we manpulate:
+following information about each BigInt we manipulate:
 
 * Number of polynomial coefficients, i.e. the number of native field
   elements that comprise the BytePoly.
@@ -102,7 +102,7 @@ $b_0 + b_1 Z + b_2 Z^2 + ...$ and it will also equal zero.
 
 Evaluating at the evaluation point `Z` prevents a malicious actor from
 being able to find a set of witness values where a constraint
-evaluates to zero when the constraint isn't actually fulfillfed, since
+evaluates to zero when the constraint isn't actually fulfilled, since
 the evaluation point isn't known until after a commitment has been
 made to the witness values.
 
