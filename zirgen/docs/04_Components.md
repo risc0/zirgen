@@ -13,7 +13,7 @@ Fundamentally, a component is defined by:
 * An algorithm for populating its columns
 
 The ability to compose components is a central design goal of Zirgen, so it
-provides a few builtin ones to act as the core building blocks. These are
+provides a few built-in ones to act as the core building blocks. These are
 described in [Builtin Components](A1_Builtin_Components.md), and the examples in
 this section assume basic familiarity with these. In terms of how components are
 composed, there are two fundamental mechanisms for this: components can be
