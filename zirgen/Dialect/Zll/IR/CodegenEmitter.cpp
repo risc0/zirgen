@@ -395,7 +395,7 @@ void CodegenEmitter::emitExpr(Operation* op) {
     }
   }
 
-  // If all else fails and we have no internal reigons, emit as a function call.
+  // If all else fails and we have no internal regions, emit as a function call.
   if (op->getRegions().empty()) {
     opts.lang->emitCall(*this,
                         getStringAttr(op->getName().stripDialect()),

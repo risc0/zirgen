@@ -66,4 +66,25 @@ std::string getLocString(mlir::Location loc) {
   return out;
 }
 
+void reinferReturnType(mlir::InferTypeOpInterface op) {
+  llvm::SmallVector<mlir::Type> newTypes;
+  if (failed(op.inferReturnTypes(op.getContext(),
+                                 op->getLoc(),
+                                 op->getOperands(),
+                                 op->getAttrDictionary(),
+                                 op->getPropertiesStorage(),
+                                 op->getRegions(),
+                                 newTypes)))
+    return;
+
+  if (mlir::TypeRange(newTypes) != op->getResultTypes()) {
+    for (auto [newType, result] : llvm::zip_equal(newTypes, op->getResults()))
+      result.setType(newType);
+    for (mlir::Operation* user : op->getUsers()) {
+      if (auto inferUser = llvm::dyn_cast<mlir::InferTypeOpInterface>(user))
+        reinferReturnType(inferUser);
+    }
+  }
+}
+
 } // namespace zirgen::Zll

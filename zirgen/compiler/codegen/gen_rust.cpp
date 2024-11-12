@@ -20,6 +20,7 @@
 #include "mlir/Support/DebugStringHelper.h"
 #include "mustache.h"
 #include "zirgen/Dialect/Zll/Analysis/MixPowerAnalysis.h"
+#include "zirgen/Dialect/Zll/Analysis/TapsAnalysis.h"
 #include "zirgen/Dialect/Zll/IR/IR.h"
 #include "llvm/ADT/TypeSwitch.h"
 #include "llvm/Support/Debug.h"
@@ -600,22 +601,24 @@ public:
   void emitTaps(func::FuncOp func) override {
     mustache tmpl = openTemplate("zirgen/compiler/codegen/rust/taps.tmpl.rs");
 
-    auto regsAttr = func->getAttrOfType<ArrayAttr>("tapRegs");
-    auto combosAttr = func->getAttrOfType<ArrayAttr>("tapCombos");
+    TapsAnalysis tapsAnalysis(func);
+    const auto& tapSet = tapsAnalysis.getTapSet();
 
     // Flatten regs to taps, tracking start offsets of each reg group.
     list taps;
     list groupBegin;
-    for (auto reg : regsAttr.getAsRange<TapRegAttr>()) {
-      while (groupBegin.size() <= reg.getRegGroupId()) {
-        groupBegin.push_back(std::to_string(taps.size()));
-      }
-      for (uint32_t back : reg.getBacks()) {
-        taps.push_back(object{{"group", std::to_string(reg.getRegGroupId())},
-                              {"offset", std::to_string(reg.getOffset())},
-                              {"back", std::to_string(back)},
-                              {"combo", std::to_string(reg.getComboId())},
-                              {"skip", std::to_string(reg.getBacks().size())}});
+    size_t totRegs = 0;
+    for (auto [groupId, group] : llvm::enumerate(tapSet.groups)) {
+      groupBegin.push_back(std::to_string(taps.size()));
+      for (auto reg : group.regs) {
+        ++totRegs;
+        for (uint32_t back : reg.backs) {
+          taps.push_back(object{{"group", std::to_string(groupId)},
+                                {"offset", std::to_string(reg.offset)},
+                                {"back", std::to_string(back)},
+                                {"combo", std::to_string(reg.combo)},
+                                {"skip", std::to_string(reg.backs.size())}});
+        }
       }
     }
     groupBegin.push_back(std::to_string(taps.size()));
@@ -624,10 +627,10 @@ public:
     list comboBacks;
     list comboBegin;
 
-    for (auto backs : combosAttr.getAsRange<ArrayAttr>()) {
+    for (auto combo : tapSet.combos) {
       comboBegin.push_back(std::to_string(comboBacks.size()));
-      for (auto back : backs.getAsRange<IntegerAttr>()) {
-        comboBacks.push_back(std::to_string(back.getUInt()));
+      for (unsigned back : combo.backs) {
+        comboBacks.push_back(std::to_string(back));
       }
     }
     comboBegin.push_back(std::to_string(comboBacks.size()));
@@ -636,8 +639,8 @@ public:
                        {"combo_taps", comboBacks},
                        {"combo_begin", comboBegin},
                        {"group_begin", groupBegin},
-                       {"combos_count", std::to_string(combosAttr.size())},
-                       {"reg_count", std::to_string(regsAttr.size())},
+                       {"combos_count", std::to_string(tapSet.combos.size())},
+                       {"reg_count", std::to_string(totRegs)},
                        {"tot_combo_backs", std::to_string(comboBacks.size())}},
                 ofs);
   }

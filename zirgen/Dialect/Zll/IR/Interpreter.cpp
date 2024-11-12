@@ -25,6 +25,22 @@ using namespace mlir;
 
 namespace zirgen::Zll {
 
+namespace {
+
+// Formats as either a base field element or an extension field element.
+template <typename T> void formatFieldElem(const InterpVal* interpVal, llvm::raw_ostream& os, T f) {
+  auto val = interpVal->getVal();
+  if (val.size() == 1) {
+    f(val[0]);
+  } else {
+    os << "[";
+    interleaveComma(val, os, f);
+    os << "]";
+  }
+}
+
+} // namespace
+
 std::vector<uint64_t> ExternHandler::doExtern(llvm::StringRef name,
                                               llvm::StringRef extra,
                                               llvm::ArrayRef<const InterpVal*> args,
@@ -110,10 +126,10 @@ std::vector<uint64_t> ExternHandler::doExtern(llvm::StringRef name,
           os << "%";
           p++;
         } else if (*p == 'x') {
-          os << llvm::format_hex(nextArg()->getBaseFieldVal(), len);
+          formatFieldElem(nextArg(), os, [&](auto elem) { os << llvm::format_hex(elem, len); });
           p++;
         } else if (*p == 'u') {
-          os << llvm::format_decimal(nextArg()->getBaseFieldVal(), len);
+          formatFieldElem(nextArg(), os, [&](auto elem) { os << llvm::format_decimal(elem, len); });
           p++;
         } else if (*p == 'p') {
           auto poly = nextArg()->getVal();
@@ -335,7 +351,7 @@ mlir::Attribute Interpreter::evaluateConstant(mlir::Value value) {
 
 void InterpVal::print(llvm::raw_ostream& os) const {
   if (std::holds_alternative<Polynomial>(storage)) {
-    os << getBaseFieldVal();
+    formatFieldElem(this, os, [&](auto elem) { os << elem; });
   } else if (std::holds_alternative<Attribute>(storage)) {
     os << std::get<Attribute>(storage);
   } else if (std::holds_alternative<BufferRef>(storage)) {

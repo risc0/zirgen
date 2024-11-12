@@ -27,11 +27,8 @@ struct TapAttrOrder {
   }
 };
 
-TapsAnalysis::TapsAnalysis(MLIRContext* ctx, llvm::SmallVector<TapAttr> tapAttrsArg)
-    : ctx(ctx), tapAttrs(std::move(tapAttrsArg)) {
-  llvm::sort(tapAttrs, TapAttrOrder());
-  auto last_it = std::unique(tapAttrs.begin(), tapAttrs.end());
-  tapAttrs.erase(last_it, tapAttrs.end());
+TapsAnalysis::TapsAnalysis(Operation* op) : ctx(op->getContext()) {
+  tapAttrs = lookupModuleAttr<Zll::TapsAttr>(op).getTaps();
 
   std::map</*regGroupId=*/unsigned,
            std::map</*offset=*/unsigned,
@@ -58,7 +55,6 @@ TapsAnalysis::TapsAnalysis(MLIRContext* ctx, llvm::SmallVector<TapAttr> tapAttrs
   for (auto [index, backs] : llvm::enumerate(backCombos)) {
     auto backVec = llvm::to_vector(backs);
     auto comboAttr = comboToAttr(backVec);
-    tapComboAttrs.push_back(comboAttr);
     backComboIndex[comboAttr] = index;
     tapSet.combos.push_back(
         Combo{.combo = unsigned(index), .backs = std::vector(backVec.begin(), backVec.end())});
@@ -83,16 +79,6 @@ TapsAnalysis::TapsAnalysis(MLIRContext* ctx, llvm::SmallVector<TapAttr> tapAttrs
   for (auto [idx, tapAttr] : llvm::enumerate(tapAttrs)) {
     tapIndex[tapAttr] = idx;
   }
-}
-
-llvm::SmallVector<TapRegAttr> TapsAnalysis::getTapRegAttrs() {
-  llvm::SmallVector<TapRegAttr> result;
-  for (auto [regGroupId, grp] : llvm::enumerate(tapSet.groups)) {
-    for (auto reg : grp.regs) {
-      result.push_back(TapRegAttr::get(ctx, regGroupId, reg.offset, reg.backs, reg.combo));
-    }
-  }
-  return result;
 }
 
 mlir::ArrayAttr TapsAnalysis::comboToAttr(llvm::ArrayRef<unsigned> backs) {

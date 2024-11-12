@@ -17,6 +17,7 @@
 #include "zirgen/circuit/verify/merkle.h"
 #include "zirgen/circuit/verify/wrap_recursion.h"
 #include "zirgen/circuit/verify/wrap_rv32im.h"
+#include "zirgen/circuit/verify/wrap_zirgen.h"
 #include "zirgen/compiler/codegen/codegen.h"
 
 using namespace zirgen;
@@ -104,6 +105,27 @@ template <typename Func> void addLift(Module& module, const std::string name, Fu
   }
 }
 
+template <typename Func>
+void addZirgenLift(Module& module, const std::string name, const std::string path, Func func) {
+  auto circuit = getInterfaceZirgen(module.getModule().getContext(), path);
+  for (size_t po2 = 14; po2 < 26; ++po2) {
+    module.addFunc<3>(name + "_" + std::to_string(po2),
+                      {gbuf(recursion::kOutSize), ioparg(), ioparg()},
+                      [&](Buffer out, ReadIopVal rootIop, ReadIopVal zirgenSeal) {
+                        DigestVal root = rootIop.readDigests(1)[0];
+                        VerifyInfo info = verifyAndValidate(root, zirgenSeal, po2, *circuit);
+                        llvm::ArrayRef inStream(info.out);
+                        DigestVal outData = func(inStream);
+
+                        std::vector<Val> outStream;
+                        writeSha(outData, outStream);
+                        doExtern("write", "", 0, outStream);
+                        out.setDigest(1, outData, "outDigest");
+                        out.setDigest(0, root, "root");
+                      });
+  }
+}
+
 template <typename Func> void addJoin(Module& module, const std::string name, Func func) {
   module.addFunc<4>(name,
                     {gbuf(recursion::kOutSize), ioparg(), ioparg(), ioparg()},
@@ -160,6 +182,10 @@ template <typename Func> void addSingleton(Module& module, const std::string nam
 
 static cl::opt<std::string>
     outputDir("output-dir", cl::desc("Output directory"), cl::value_desc("dir"), cl::Required);
+static cl::opt<std::string> keccakIR("keccak-ir",
+                                     cl::desc("Keccak validity polynomial IR"),
+                                     cl::value_desc("path"),
+                                     cl::init("bazel-bin/zirgen/circuit/keccak/validity.ir"));
 
 int main(int argc, char* argv[]) {
   llvm::InitLLVM y(argc, argv);
@@ -190,6 +216,9 @@ int main(int argc, char* argv[]) {
       });
 
   addSingleton(module, "identity", [&](ReceiptClaim a) { return identity(a); });
+  addZirgenLift(module, "keccak", keccakIR.getValue(), [](llvm::ArrayRef<Val>& inStream) {
+    return readSha(inStream);
+  });
 
   module.optimize();
   module.getModule().walk([&](mlir::func::FuncOp func) { zirgen::emitRecursion(outputDir, func); });

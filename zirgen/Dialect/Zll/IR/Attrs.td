@@ -32,15 +32,25 @@ def Tap : ZllAttr<"Tap", "tap"> {
   let assemblyFormat = "`<` $regGroupId `,` $offset `,` $back `>`";
 }
 
-def TapReg : ZllAttr<"TapReg", "tapReg"> {
-  let summary = "A tap register, which has one or more backs";
+def TapsAttr : ZllAttr<"Taps", "taps"> {
+  let summary = "Set of tap registers and back distances associated with a circuit.   Normally associated with the module operation; use Zll::lookupModuleAttr to access.";
+  let genVerifyDecl = 1;
   let parameters = (ins
-      "uint32_t" : $regGroupId,
-      "uint32_t" : $offset,
-      ArrayRefParameter<"uint32_t", "backs">: $backs,
-      "uint32_t" : $comboId);
-  let assemblyFormat = "`<` $regGroupId `,` $offset `,` `[` $backs `]` `,` $comboId `>`";
+      ArrayRefParameter<"zirgen::Zll::TapAttr">:$taps
+  );
+
+  code extraClassDeclaration = [{
+    static constexpr llvm::StringLiteral lookupModuleAttrName() { return "zll.taps"; }
+
+    /// Sort the given tap set and pad to fill the given buffers with no holes.
+    static TapsAttr sortAndPad(
+                        llvm::SmallVector<zirgen::Zll::TapAttr> taps,
+                        zirgen::Zll::BuffersAttr);
+  }];
+
+  let assemblyFormat = [{ $taps }];
 }
+
 
 def PolynomialAttr : DenseArrayAttrBase<"PolynomialAttr", "uint64_t", "i64"> {
   let summary = "A compile-time constant element of an extension field";
@@ -129,7 +139,7 @@ def BuffersAttr : ZllAttr<"Buffers", "buffers"> {
     BufferDescAttr getBuffer(llvm::StringRef bufferName) const;
   }];
   let genVerifyDecl = 1;
-  let assemblyFormat = [{  $buffers }];
+  let assemblyFormat = [{ $buffers }];
 }
 
 def StepsAttr : ZllAttr<"Steps", "steps"> {

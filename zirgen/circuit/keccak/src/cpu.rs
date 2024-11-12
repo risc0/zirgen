@@ -236,16 +236,6 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
         // usage is within this function and each thread access will not overlap with
         // each other.
 
-        for (idx, grp) in globals.iter().enumerate() {
-            use risc0_zkp::hal::Buffer;
-            eprintln!(
-                "globals[{idx}] is {} len {}: {:?}",
-                grp.name(),
-                grp.as_slice().len(),
-                grp.as_slice()
-            );
-        }
-
         let data = groups[dbg!(REGISTER_GROUP_DATA)].as_slice();
         let data = unsafe { std::slice::from_raw_parts(data.as_ptr(), data.len()) };
         let accum = groups[dbg!(REGISTER_GROUP_ACCUM)].as_slice();

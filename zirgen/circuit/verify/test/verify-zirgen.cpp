@@ -27,7 +27,7 @@ TEST(verify_zirgen, calculator) {
   FILE* file = fopen("/tmp/calc.seal", "rb");
   if (!file) {
     // TODO: Make this test always run, right now we skip if file doesn't exist
-    std::cerr << "Didn't find file: /tmp/seal.r0, to generate run:\n";
+    std::cerr << "Didn't find file: /tmp/calc.seal, to generate run:\n";
     std::cerr << "cargo run --example calculator -- --seal /tmp/calc.seal\n";
     return;
   }
@@ -45,8 +45,7 @@ TEST(verify_zirgen, calculator) {
 
   // Extract the PO2 from its known position
   auto circuit = getInterfaceZirgen(module.getModule().getContext(),
-                                    "zirgen/dsl/examples/calculator.ir",
-                                    ProtocolInfo{"calculator______"});
+                                    "zirgen/dsl/examples/calculator/validity.ir");
   size_t po2 = proof[circuit->out_size()];
 
   std::cerr << "po2 = " << po2 << "\n";
@@ -59,7 +58,7 @@ TEST(verify_zirgen, calculator) {
   // Run the verifier
   auto func = module.getModule().lookupSymbol<mlir::func::FuncOp>("verify");
   ExternHandler baseExternHandler;
-  Interpreter interp(module.getCtx(), poseidonHashSuite());
+  Interpreter interp(module.getCtx(), poseidon2HashSuite());
   interp.setExternHandler(&baseExternHandler);
   auto rng = interp.getHashSuite().makeRng();
   ReadIop riop(std::move(rng), proof.data(), proof.size());

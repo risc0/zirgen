@@ -198,4 +198,80 @@ LogicalResult BuffersAttr::verify(llvm::function_ref<::mlir::InFlightDiagnostic(
   return success();
 }
 
+LogicalResult TapsAttr::verify(llvm::function_ref<::mlir::InFlightDiagnostic()> emitError,
+                               ArrayRef<TapAttr> tapAttrs) {
+  if (tapAttrs.empty())
+    return emitError() << "TapsAttr must have at least one tap";
+  ssize_t curRegGroupId = -1;
+  size_t curOffset = 0;
+  size_t curBack = 0;
+
+  for (TapAttr tapAttr : tapAttrs) {
+    if (curRegGroupId == -1 || tapAttr.getRegGroupId() != curRegGroupId) {
+      // New register group
+      ++curRegGroupId;
+      if (tapAttr.getRegGroupId() != curRegGroupId)
+        return emitError() << "Expected register group " << curRegGroupId << "; got "
+                           << tapAttr.getRegGroupId();
+      if (tapAttr.getOffset() != 0)
+        return emitError() << "Expected register group " << curRegGroupId
+                           << " to start at offset 0, not " << tapAttr.getOffset();
+      curOffset = 0;
+      curBack = tapAttr.getBack();
+    } else if (tapAttr.getOffset() != curOffset) {
+      // New offset in same group
+      curOffset++;
+      if (tapAttr.getOffset() != curOffset)
+        return emitError() << "Group " << curRegGroupId << " offset " << curOffset
+                           << " missing; got " << tapAttr.getOffset() << " instead";
+      curBack = tapAttr.getBack();
+    } else {
+      // New back distance in same register
+      if (tapAttr.getBack() <= curBack)
+        return emitError() << "Group " << curRegGroupId << " offset " << curOffset
+                           << " has unsorted or duplicate backs";
+      curBack = tapAttr.getBack();
+    }
+  }
+  return success();
+}
+
+namespace {
+
+struct TapAttrOrder {
+  bool operator()(TapAttr a, TapAttr b) const {
+    return std::make_tuple(a.getRegGroupId(), a.getOffset(), a.getBack()) <
+           std::make_tuple(b.getRegGroupId(), b.getOffset(), b.getBack());
+  }
+};
+
+} // namespace
+
+TapsAttr TapsAttr::sortAndPad(SmallVector<TapAttr> taps, BuffersAttr buffers) {
+  MLIRContext* ctx = buffers.getContext();
+
+  // Calculate which registers have taps
+  DenseMap</*regGroupId=*/size_t, DenseSet</*offset=*/size_t>> tapRegs;
+  for (auto tap : taps) {
+    tapRegs[tap.getRegGroupId()].insert(tap.getOffset());
+  }
+
+  // Add taps with back=0 for any registers missing taps
+  for (auto buf : buffers.getTapBuffers()) {
+    size_t regGroupId = *buf.getRegGroupId();
+    const auto& offsets = tapRegs[regGroupId];
+
+    for (size_t i = 0; i < buf.getRegCount(); ++i)
+      if (!offsets.contains(i))
+        taps.push_back(TapAttr::get(ctx, regGroupId, i, 0));
+  }
+
+  // Sort and deduplicate
+  llvm::sort(taps, TapAttrOrder());
+  auto last_it = std::unique(taps.begin(), taps.end());
+  taps.erase(last_it, taps.end());
+
+  return TapsAttr::get(ctx, taps);
+}
+
 } // namespace zirgen::Zll

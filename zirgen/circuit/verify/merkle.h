@@ -44,8 +44,12 @@ protected:
 class MerkleTreeVerifier : public MerkleTreeParams {
 public:
   // Construct a merkle tree verifier, reading the top from the IOP, commit to root.
-  MerkleTreeVerifier(
-      ReadIopVal& iop, size_t rowSize, size_t colSize, size_t queries, bool useExtension = false);
+  MerkleTreeVerifier(std::string bufName,
+                     ReadIopVal& iop,
+                     size_t rowSize,
+                     size_t colSize,
+                     size_t queries,
+                     bool useExtension = false);
 
   // Get the root digest of the tree
   DigestVal getRoot() const;
@@ -55,6 +59,7 @@ public:
 
 private:
   std::vector<DigestVal> top;
+  std::string bufName;
 };
 
 // Calculates the root of a given Merkle inclusion proof.

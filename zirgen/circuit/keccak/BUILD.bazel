@@ -1,6 +1,6 @@
 load("@rules_pkg//pkg:zip.bzl", "pkg_zip")
 load("//bazel/rules/lit:defs.bzl", "glob_lit_tests")
-load("//bazel/rules/zirgen:edsl-defs.bzl", "build_circuit")
+load("//bazel/rules/zirgen:edsl-defs.bzl", "ZIRGEN_OUTS", "build_circuit")
 
 package(
     default_visibility = ["//visibility:public"],
@@ -21,23 +21,12 @@ glob_lit_tests(
     test_file_exts = ["zir"],
 )
 
-KECCAK_OUTS = [
-    "defs.cpp.inc",
-    "defs.rs.inc",
-    "info.rs",
-    "layout.cpp.inc",
-    "layout.rs.inc",
-    "poly_ext.rs",
+KECCAK_OUTS = ZIRGEN_OUTS + [
     "rust_poly_fp_0.cpp",
     "rust_poly_fp_1.cpp",
     "rust_poly_fp_2.cpp",
     "rust_poly_fp_3.cpp",
     "rust_poly_fp_4.cpp",
-    "taps.rs",
-    "steps.cpp.inc",
-    "steps.rs.inc",
-    "types.h.inc",
-    "types.rs.inc",
 ]
 
 build_circuit(

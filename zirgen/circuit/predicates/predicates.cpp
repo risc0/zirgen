@@ -39,7 +39,7 @@ static DigestVal readDigest(llvm::ArrayRef<Val>& stream, bool longDigest = false
   return out;
 }
 
-static DigestVal readSha(llvm::ArrayRef<Val>& stream, bool longDigest = false) {
+DigestVal readSha(llvm::ArrayRef<Val>& stream, bool longDigest) {
   size_t digestSize = (longDigest ? 32 : 16);
   assert(stream.size() >= digestSize);
   DigestVal out = intoDigest(stream.take_front(digestSize), DigestKind::Sha256);

@@ -47,13 +47,7 @@ struct StatsPrinter {
 
   // Print information about the tap set for the whole circuit
   void printTapStats() {
-    auto tapsGlob = moduleOp.lookupSymbol<ZStruct::GlobalConstOp>(Zhlt::getTapsConstName());
-    assert(tapsGlob && "Taps global not found");
-
-    Zll::TapsAnalysis tapsAnalysis(
-        moduleOp.getContext(),
-        llvm::to_vector(
-            llvm::cast<mlir::ArrayAttr>(tapsGlob.getConstant()).getAsRange<Zll::TapAttr>()));
+    Zll::TapsAnalysis tapsAnalysis(moduleOp);
     Zll::TapSet tapSet = tapsAnalysis.getTapSet();
 
     llvm::outs() << "taps:\n";
