@@ -48,6 +48,7 @@ private:
   template <typename OpT> void makeBinValOp(StringRef name);
   template <typename OpT> void makeBinExtValOp(StringRef name);
   template <typename OpT> void makeUnaryValOp(StringRef name);
+  template <typename OpT> void makeUnaryExtValOp(StringRef name);
   void genNondetReg();
   void genNondetExtReg();
   void genMakeExt();
@@ -102,6 +103,17 @@ template <typename OpT> void Builtins::makeUnaryValOp(StringRef name) {
   makeBuiltin(name,
               /*valueType=*/valType,
               /*constructParams=*/{valType},
+              /*layout=*/Type(),
+              [&](ValueRange args) {
+                auto op = builder.create<OpT>(loc, args[0]);
+                builder.create<Zhlt::ReturnOp>(loc, op);
+              });
+}
+
+template <typename OpT> void Builtins::makeUnaryExtValOp(StringRef name) {
+  makeBuiltin(name,
+              /*valueType=*/extValType,
+              /*constructParams=*/{extValType},
               /*layout=*/Type(),
               [&](ValueRange args) {
                 auto op = builder.create<OpT>(loc, args[0]);
@@ -252,6 +264,8 @@ void Builtins::addBuiltins() {
   makeBinValOp<Zll::AddOp>("Add");
   makeBinValOp<Zll::SubOp>("Sub");
   makeBinValOp<Zll::MulOp>("Mul");
+
+  makeUnaryExtValOp<Zll::InvOp>("ExtInv");
 
   makeBinExtValOp<Zll::AddOp>("ExtAdd");
   makeBinExtValOp<Zll::SubOp>("ExtSub");
