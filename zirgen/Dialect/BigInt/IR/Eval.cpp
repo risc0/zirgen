@@ -183,7 +183,12 @@ Digest computeDigest(std::vector<BytePoly> witness, size_t groupCount) {
   return poseidon2Hash(words.data(), words.size());
 }
 
-EvalOutput eval(func::FuncOp inFunc, ArrayRef<APInt> witnessValues) {
+struct Def {
+  virtual APInt load(uint32_t arena, uint32_t offset, uint32_t count) = 0;
+  virtual void store(uint32_t arena, uint32_t offset, uint32_t count, APInt val) = 0;
+};
+
+EvalOutput eval(func::FuncOp inFunc, BigIntIO& io, bool computeZ) {
   EvalOutput ret;
 
   llvm::DenseMap<Value, BytePoly> polys;
@@ -191,7 +196,7 @@ EvalOutput eval(func::FuncOp inFunc, ArrayRef<APInt> witnessValues) {
   for (Operation& origOp : inFunc.getBody().front().without_terminator()) {
     llvm::TypeSwitch<Operation*>(&origOp)
         .Case<DefOp>([&](auto op) {
-          APInt val = witnessValues[op.getLabel()];
+          APInt val = io.load(0, op.getLabel(), 0);
           uint32_t coeffs = op.getOut().getType().getCoeffs();
           auto poly = fromAPInt(val, coeffs);
           polys[op.getOut()] = poly;
@@ -207,6 +212,20 @@ EvalOutput eval(func::FuncOp inFunc, ArrayRef<APInt> witnessValues) {
           auto poly = fromAPInt(op.getValue(), coeffs);
           polys[op.getOut()] = poly;
           ret.constantWitness.push_back(poly);
+        })
+        .Case<LoadOp>([&](auto op) {
+          uint32_t coeffs = op.getOut().getType().getCoeffs();
+          uint32_t count = (coeffs + 15) / 16;
+          APInt val = io.load(op.getArena(), op.getOffset(), count);
+          auto poly = fromAPInt(val, coeffs);
+          polys[op.getOut()] = poly;
+        })
+        .Case<StoreOp>([&](auto op) {
+          uint32_t coeffs = op.getIn().getType().getCoeffs();
+          uint32_t count = (coeffs + 15) / 16;
+          auto poly = polys[op.getIn()];
+          auto val = toAPInt(poly);
+          io.store(op.getArena(), op.getOffset(), count, val.trunc(coeffs * 8));
         })
         .Case<AddOp>(
             [&](auto op) { polys[op.getOut()] = add(polys[op.getLhs()], polys[op.getRhs()]); })
@@ -292,21 +311,46 @@ EvalOutput eval(func::FuncOp inFunc, ArrayRef<APInt> witnessValues) {
         });
   }
 
-  Digest publicDigest = computeDigest(ret.publicWitness, 1);
-  LLVM_DEBUG({ dbgs() << "publicDigest: " << publicDigest << "\n"; });
-  Digest privateDigest = computeDigest(ret.privateWitness, 3);
-  LLVM_DEBUG({ dbgs() << "privateDigest: " << privateDigest << "\n"; });
-  Digest folded = poseidon2HashPair(publicDigest, privateDigest);
-  LLVM_DEBUG({ dbgs() << "folded: " << folded << "\n"; });
+  if (computeZ) {
+    Digest publicDigest = computeDigest(ret.publicWitness, 1);
+    LLVM_DEBUG({ dbgs() << "publicDigest: " << publicDigest << "\n"; });
+    Digest privateDigest = computeDigest(ret.privateWitness, 3);
+    LLVM_DEBUG({ dbgs() << "privateDigest: " << privateDigest << "\n"; });
+    Digest folded = poseidon2HashPair(publicDigest, privateDigest);
+    LLVM_DEBUG({ dbgs() << "folded: " << folded << "\n"; });
 
-  // Now, compute the value of Z
-  Poseidon2Rng rng;
-  rng.mix(folded);
-  for (size_t i = 0; i < 4; i++) {
-    ret.z[i] = rng.generateFp();
+    // Now, compute the value of Z
+    Poseidon2Rng rng;
+    rng.mix(folded);
+    for (size_t i = 0; i < 4; i++) {
+      ret.z[i] = rng.generateFp();
+    }
   }
 
   return ret;
+}
+
+namespace {
+
+struct DefBigIntIO : public BigIntIO {
+  ArrayRef<APInt> witnessValues;
+  APInt load(uint32_t arena, uint32_t offset, uint32_t count) override {
+    assert(arena == 0);
+    assert(count == 0);
+    assert(offset < witnessValues.size());
+    return witnessValues[offset];
+  }
+  void store(uint32_t arena, uint32_t offset, uint32_t count, APInt val) override {
+    throw std::runtime_error("Unimplemented");
+  }
+};
+
+} // namespace
+
+EvalOutput eval(func::FuncOp inFunc, ArrayRef<APInt> witnessValues) {
+  DefBigIntIO io;
+  io.witnessValues = witnessValues;
+  return eval(inFunc, io, true);
 }
 
 namespace {

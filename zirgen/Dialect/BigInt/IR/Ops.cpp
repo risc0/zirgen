@@ -45,6 +45,19 @@ LogicalResult DefOp::inferReturnTypes(MLIRContext* ctx,
   return success();
 }
 
+LogicalResult LoadOp::inferReturnTypes(MLIRContext* ctx,
+                                       std::optional<Location> loc,
+                                       Adaptor adaptor,
+                                       SmallVectorImpl<Type>& out) {
+  size_t coeffsWidth = ceilDiv(adaptor.getBitWidth(), kBitsPerCoeff);
+  out.push_back(BigIntType::get(ctx,
+                                /*coeffs=*/coeffsWidth,
+                                /*maxPos=*/(1 << kBitsPerCoeff) - 1,
+                                /*maxNeg=*/0,
+                                /*minBits=*/0));
+  return success();
+}
+
 LogicalResult ConstOp::inferReturnTypes(MLIRContext* ctx,
                                         std::optional<Location> loc,
                                         Adaptor adaptor,

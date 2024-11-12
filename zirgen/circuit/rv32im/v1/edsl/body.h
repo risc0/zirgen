@@ -15,6 +15,7 @@
 #pragma once
 
 #include "zirgen/circuit/rv32im/v1/edsl/bigint.h"
+#include "zirgen/circuit/rv32im/v1/edsl/bigint2.h"
 #include "zirgen/circuit/rv32im/v1/edsl/compute.h"
 #include "zirgen/circuit/rv32im/v1/edsl/divide.h"
 #include "zirgen/circuit/rv32im/v1/edsl/ecall.h"
@@ -119,6 +120,7 @@ public:
       PageFaultCycle,
       ECallCopyInCycle,
       BigIntCycle,
+      BigInt2Cycle,
       HaltCycle>
       majorMux;
 };
