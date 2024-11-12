@@ -54,7 +54,6 @@ const RECURSION_ZKR_ZIP: &str = "recursion_zkr.zip";
 
 const BIGINT_OUTPUTS: &[&str] = &["bigint.rs.inc"];
 const BIGINT_ZKR_ZIP: &str = "bigint_zkr.zip";
-const BIGINT_BIBC_ZIP: &str = "bigint_bibc.zip";
 
 const ZIRGEN_RUST_OUTPUTS: &[&str] = &[
     "taps.rs",
@@ -363,7 +362,6 @@ impl Args {
         let src_path = bazel_bin.join("zirgen/circuit/bigint");
 
         copy_file(&src_path, &out, BIGINT_ZKR_ZIP);
-        copy_file(&src_path, &out, BIGINT_BIBC_ZIP);
         copy_group(
             circuit,
             &src_path,
