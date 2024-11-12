@@ -4,40 +4,82 @@ import one_hot;
 extern SimpleMemoryPoke(index: Val, data: Val);
 extern SimpleMemoryPeek(index: Val) : Val;
 component MEM_DIGEST_LEN() { 4 }
+/*
 component MemDigest(elems: Array<Val, MEM_DIGEST_LEN()>) {
   elems
 }
-/*
 component NondetDigestReg(elems: MemDigest) {
   elemRegs := for elem : elems { NondetReg(elem) };
   MemDigest(elemRegs)
 }
 */
-argument UseOnceMemoryElement(c: Val, i: Val, d: MemDigest) {
-  count := NondetReg(c);
-  index := NondetReg(i);
+component tmpUseOnceMemoryElement(_count: Val, _index: Val,
+                              arw: Array<Val, MEM_DIGEST_LEN()>) {
+  count := NondetReg(_count); //AliasLayout!(count, _count);
+  index := NondetReg(_index); //AliasLayout!(index, _index);
+  digest0 := NondetReg(arw[0]); //AliasLayout!(digest0, arw[0]);
+  digest1 := NondetReg(arw[1]); //AliasLayout!(digest1, arw[1]);
+  digest2 := NondetReg(arw[2]); //AliasLayout!(digest2, arw[2]);
+  digest3 := NondetReg(arw[3]); //AliasLayout!(digest3, arw[3]);
   //digest := NondetDigestReg(d);
-  digest := [NondetReg(d[0]), NondetReg(d[1]), NondetReg(d[2]), NondetReg(d[3])];
+  //digest := [NondetReg(d[0]), NondetReg(d[1]), NondetReg(d[2]), NondetReg(d[3])];
+}
+
+//  c: Val, i: Val, d: MemDigest) {
+argument UseOnceMemoryElement(_count: Val, _index: Val,
+                              arw: Array<Val, MEM_DIGEST_LEN()>) {
+  count := NondetReg(_count); //AliasLayout!(count, _count);
+  index := NondetReg(_index); //AliasLayout!(index, _index);
+  digest0 := NondetReg(arw[0]); //AliasLayout!(digest0, arw[0]);
+  digest1 := NondetReg(arw[1]); //AliasLayout!(digest1, arw[1]);
+  digest2 := NondetReg(arw[2]); //AliasLayout!(digest2, arw[2]);
+  digest3 := NondetReg(arw[3]); //AliasLayout!(digest3, arw[3]);
+  //digest := NondetDigestReg(d);
+  //digest := [NondetReg(d[0]), NondetReg(d[1]), NondetReg(d[2]), NondetReg(d[3])];
 }
 component ReadMemory(i: Val) {
-  digest := MemDigest(for elemIdx : 0..MEM_DIGEST_LEN() {
-    SimpleMemoryPeek(i * MEM_DIGEST_LEN() + elemIdx)
-  });
-  elem := UseOnceMemoryElement(-1, i, digest);
-  elem.digest
-}
-component WriteMemory(i: Val, d: MemDigest) {
-  for elemIdx : 0..MEM_DIGEST_LEN() {
-     SimpleMemoryPoke(i * MEM_DIGEST_LEN() + elemIdx, d[elemIdx]);
+  digest := for elemIdx : 0..MEM_DIGEST_LEN() {
+    NondetReg(SimpleMemoryPeek(i * MEM_DIGEST_LEN() + elemIdx))
   };
-  elem := UseOnceMemoryElement(1, i, d);
-  elem.count = 1;
-  elem.index = i;
+  elem := UseOnceMemoryElement(NondetReg(-1), NondetReg(i), digest);
+  //elem.digest
+}
+component WriteMemory(c: Reg, i: Reg,
+                      aw: Array<NondetReg, MEM_DIGEST_LEN()>) {
+  for elemIdx : 0..MEM_DIGEST_LEN() {
+     SimpleMemoryPoke(i * MEM_DIGEST_LEN() + elemIdx, aw[elemIdx]);
+  };
+  elem := UseOnceMemoryElement(c, i, aw);
+  AliasLayout!(c, elem.count);
+  AliasLayout!(i, elem.index);
+  AliasLayout!(elem.digest0, aw[0]);
+  AliasLayout!(elem.digest1, aw[1]);
+  AliasLayout!(elem.digest2, aw[2]);
+  AliasLayout!(elem.digest3, aw[3]);
+  //elem.count = 1;
+  //elem.index = i;
+/*
+ //Val, d: MemDigest) {
   for elemIdx : 0..MEM_DIGEST_LEN() {
     elem.digest[elemIdx] = d[elemIdx];
   }
+  elem.digest0 = d[0];
+  elem.digest1 = d[1];
+  elem.digest2 = d[2];
+  elem.digest3 = d[3];
+*/
 }
 // EOF use_once_mem_arg.zir
+component tmpWriteMemory(c: Reg, i: Reg,
+                      aw: Array<NondetReg, MEM_DIGEST_LEN()>) {
+  elem := tmpUseOnceMemoryElement(c, i, aw);
+  AliasLayout!(c, elem.count);
+  AliasLayout!(i, elem.index);
+  AliasLayout!(elem.digest0, aw[0]);
+  AliasLayout!(elem.digest1, aw[1]);
+  AliasLayout!(elem.digest2, aw[2]);
+  AliasLayout!(elem.digest3, aw[3]);
+}
 
 // po2.zir unpacking up to 31 bits
 component Po2(n: Val) {
@@ -104,15 +146,15 @@ component RGZ<N: Val>(arr: Array<Val, N>) {
 component vConcatenate<N: Val, M: Val>(a: Array<Val, N>, b: Array<Val, M>) {
   for i : 0..(N + M) {
     low := InRange(0, i, N);
-    //low*a[i] + (1-low)*b[i-N]
-    [low, 1-low] -> (a[i], b[i-N])
+    low*a[i] + (1-low)*b[i-N]
+    //[low, 1-low] -> (a[i], b[i-N])
   }
 }
 component Concatenate<N: Val, M: Val>(a: Array<NondetReg, N>, b: Array<NondetReg, M>) {
   result := for i : 0..(N + M) {
     low := InRange(0, i, N);
-    //NondetReg(low*a[i] + (1-low)*b[i-N])
-    NondetReg([low, 1-low] -> (a[i], b[i-N]))
+    NondetReg(low*a[i] + (1-low)*b[i-N])
+    //NondetReg([low, 1-low] -> (a[i], b[i-N]))
   };
   for i : 0..N { AliasLayout!(a[i], result[i]); };
   for i : N..M+N { AliasLayout!(b[i-N], result[i]); };
@@ -129,8 +171,8 @@ component ConcatZeros<N: Val, M: Val>(a: Array<NondetReg, N>) {
 component ConcatElem<N: Val>(a: Array<NondetReg, N>, b: NondetReg) {
   result := for i : 0..(N + 1) {
     low := InRange(0, i, N);
-    //NondetReg(low*a[i] + (1-low)*b)
-    NondetReg([low, 1-low] -> (a[i], b))
+    NondetReg(low*a[i] + (1-low)*b)
+    //NondetReg([low, 1-low] -> (a[i], b))
   };
   for i : 0..N { AliasLayout!(a[i], result[i]); };
   AliasLayout!(b, result[N]);
@@ -142,7 +184,7 @@ component S2MAJOR_SETUP() { 16 }
 component S2MAJOR_LOAD()  { 18 }
 component S2MAJOR_MIX()   { 19 }
 
-component S2MINOR_SKIP()   { 5 }
+component S2MINOR_SKIP()   { 1 }
 component S2MINOR_INIT()   { 0 }
 component S2MINOR_FINI()   { 4 }
 component S2MINOR_OUTPUT() { 8 }
@@ -260,16 +302,16 @@ component TwoShorts(lsbs: Val, msbs: Val) {
 component rightRotate<A: Val, N: Val>(a: Array<Val, A>) {
   for i : 0..A {
     wraparound := InRange(0,i,A-N);
-    //wraparound*a[i+N] + (1-wraparound)*a[i+N-A]
-    [wraparound, 1-wraparound] -> (a[i+N], a[i+N-A])
+    wraparound*a[i+N] + (1-wraparound)*a[i+N-A]
+    //[wraparound, 1-wraparound] -> (a[i+N], a[i+N-A])
   }
 }
 
 component rightShift<A: Val, N: Val>(a: Array<Val, A>) {
   for i : 0..A {
     wraparound := InRange(0,i,A-N);
-    //[wraparound, 1-wraparound] -> (NondetReg(wraparound*a[i+N]), 0)
-    wraparound*a[i+N] + 0
+    [wraparound, 1-wraparound] -> (NondetReg(wraparound*a[i+N]), 0)
+    //wraparound*a[i+N] + 0
   }
   //for i : 0..A-N { AliasLayout!( r[i], a[i+N]); };
 }
@@ -357,16 +399,44 @@ component sha256load<I: Val>(rvals: RetTuple,
   invWithin := NondetReg(Inv(within));
   within*invWithin = 1;
   flag := rvprev01.rnd;
+  rs : Array<NondetReg, 6>;
   vals := [1-flag, flag] -> (
+/*
     { mem := ReadMemory(idx);
-      [mem[0],mem[1],mem[2],mem[3],1,idx]
+      //mem := [m.elem.index,m.elem.count,m.digest0,m.digest1,m.digest2,m.digest3];
+      //m := for i : 0..6 {NondetReg(i)};
+      //for i : 2..6 { AliasLayout!(mem[i-2], rs@0[i]); };
+      AliasLayout!(mem.elem.count, rs@0[0]);
+      AliasLayout!(mem.elem.index, rs@0[1]);
+      AliasLayout!(mem.elem.digest0, rs@0[2]);
+      AliasLayout!(mem.elem.digest1, rs@0[3]);
+      AliasLayout!(mem.elem.digest2, rs@0[4]);
+      AliasLayout!(mem.elem.digest3, rs@0[5]);
+      rs@0
     },
-    [rvprev01.arr_d[RLEN()-2],rvprev01.arr_d[RLEN()-1],0,0,0,idx+1]);
+*/
+{ m := 
+    [NondetReg(0),NondetReg(0),
+     Reg(rvprev01.arr_d[RLEN()-2]),Reg(rvprev01.arr_d[RLEN()-1]),
+     NondetReg(0),NondetReg(0)];
+      for i : 0..6 { AliasLayout!(m[i], rs@0[i]); };
+      m
+    },
+    { m := 
+    [NondetReg(0),NondetReg(0),
+     Reg(rvprev01.arr_d[RLEN()-2]),Reg(rvprev01.arr_d[RLEN()-1]),
+     NondetReg(0),NondetReg(0)];
+      for i : 0..6 { AliasLayout!(m[i], rs@0[i]); };
+      m
+    });
+      
+  //rs := for i : 0..6 { NondetReg(vals[i]) };
+  nxt := [1-flag, flag] -> ([1,idx], [0,idx+1]);
 
-  inp1 := vals[0];
+  inp1 := vals[2];
   high_w := ToBitsU<16>(inp1); //big endian
   FromBits<16>(high_w) = inp1;
-  inp2 := vals[1];
+  inp2 := vals[3];
   low_w := ToBitsU<16>(inp2);
   FromBits<16>(low_w) = inp2;
   unpacked_w := [
@@ -386,12 +456,16 @@ component sha256load<I: Val>(rvals: RetTuple,
   tmpb := Concatenate<7,5>(new_a.carrybits, for i : 0..5 {new_e.carrybits[i]});
   padb := Concatenate<10,12>(stw.b, tmpb);
   padc := Concatenate<20,2>(stae.c, for i : 5..7 {new_e.carrybits[i]});
-  d := Concatenate<21,3>(dummyS(), [invWithin,Reg(vals[2]),Reg(vals[3])]);
+  //e := Concatenate<RLEN()-6, 6>(for i : 0..RLEN()-6 { NondetReg(0) },
+  //     rs@0);
+  d := Concatenate<RLEN()-7, 7>(for i : 0..RLEN()-7 { NondetReg(0) },
+    [invWithin,rs@0[0],rs@0[1],rs@0[2],rs@0[3],rs@0[4],rs@0[5]]);
+  //d := dummyE();
   [1-Z, Z] -> (
     RetTuple(stw.a, padb, padc, d, stae.e, stae.f,
-             I+1, S2MAJOR_LOAD(), vals[4], vals[5], rvprev01.midx, aux_regs),
+             I+1, S2MAJOR_LOAD(), nxt[0], nxt[1], rvprev01.midx, aux_regs),
     RetTuple(stw.a, padb, padc, d, stae.e, stae.f,
-             0, S2MAJOR_MIX(), vals[4], vals[5], rvprev01.midx, aux_regs))
+             0, S2MAJOR_MIX(), nxt[0], nxt[1], rvprev01.midx, aux_regs))
 }
 
 component sha256load_all(rvals: RetTuple) {
@@ -487,7 +561,7 @@ component sha256mix_all<S: Val>(rvals: RetTuple) {
 }
 
 component sha256init<I: Val>(rvprev01: RetTuple,
-                             aux_regs: Array<NondetReg, AUXBIN()>) {
+                             auxr: Array<NondetReg, AUXLEN()>) {
   packed_a := IVvals(4-I);
   low_a := ToBitsU<16>(packed_a.low);
   FromBits<16>(low_a) = packed_a.low;
@@ -503,7 +577,6 @@ component sha256init<I: Val>(rvprev01: RetTuple,
 
   stae := ae2s(unpacked_a, unpacked_e);
   padc := ConcatZeros<20,2>(stae.c);
-  auxr := ConcatZeros<AUXBIN(),AUXLEN()-AUXBIN()>(aux_regs);
   Z := Isz(4-I);
   [1-Z, Z] -> (
     RetTuple(dummyB(), dummyB(), padc, dummy24(), stae.e, stae.f,
@@ -513,7 +586,7 @@ component sha256init<I: Val>(rvprev01: RetTuple,
 }
 
 component sha256fini<I: Val>(rvals: RetTuple,
-                             aux_regs: Array<NondetReg, AUXBIN()>) {
+                             auxr: Array<NondetReg, AUXLEN()>) {
   rvprev01 := rvals@1;
   rvprev02 := rvals@2;
   rvprev03 := rvals@3;
@@ -529,7 +602,6 @@ component sha256fini<I: Val>(rvals: RetTuple,
   pada := ConcatZeros<14,8>(tmp14);
   padc := ConcatZeros<20,2>(stae.c);
 
-  auxr := ConcatZeros<AUXBIN(),AUXLEN()-AUXBIN()>(aux_regs);
   Z := Isz(8-I);
   moreInput := rvprev01.midx + 1 - rvprev01.blk;
   invMoreInput := NondetReg(Inv(moreInput));
