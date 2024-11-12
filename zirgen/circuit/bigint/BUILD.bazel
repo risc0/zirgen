@@ -68,17 +68,25 @@ pkg_zip(
     srcs = [x + ".zkr" for x in ZKRS],
 )
 
-pkg_zip(
-    name = "bigint_bibc",
-    srcs = [x + ".bibc" for x in ZKRS],
-)
-
 cc_binary(
     name = "bibc-exec",
     srcs = ["bibc-exec.cpp"],
     deps = [
         "//zirgen/Dialect/BigInt/IR",
         "//zirgen/Dialect/BigInt/Bytecode",
+        "@llvm-project//llvm:Support",
+        "@llvm-project//mlir:MlirOptLib",
+    ],
+)
+
+cc_binary(
+    name = "bigint2c",
+    srcs = ["bigint2c.cpp"],
+    deps = [
+        "//zirgen/circuit/bigint:lib",
+        "//zirgen/Dialect/BigInt/Bytecode",
+        "//zirgen/Dialect/BigInt/IR",
+        "//zirgen/Dialect/BigInt/Transforms",
         "@llvm-project//llvm:Support",
         "@llvm-project//mlir:MlirOptLib",
     ],
