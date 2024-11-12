@@ -185,6 +185,8 @@ struct TestExternHandler : public zirgen::Zll::ExternHandler {
         valPtrs[i] = &vals[i];
       }
       results = zirgen::Zll::ExternHandler::doExtern("log", message, valPtrs, outCount, failed);
+    } else if (name == "Abort") {
+      *failed = true;
     } else if (name == "Assert") {
       auto condition = args[0]->getBaseFieldVal();
       llvm::StringRef message = args[1]->getAttr<mlir::StringAttr>().getValue();

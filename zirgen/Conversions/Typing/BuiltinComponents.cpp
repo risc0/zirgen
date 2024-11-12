@@ -213,6 +213,7 @@ function Div(lhs: Val, rhs: Val) {
 }
 
 extern Log(message: String, vals: Val...);
+extern Abort();
 extern Assert(x: Val, message: String);
 
 )";
