@@ -34,10 +34,8 @@
 using namespace zirgen;
 namespace cl = llvm::cl;
 
-cl::opt<std::string> output("o",
-    cl::desc("Specify output filename"),
-    cl::value_desc("filename"),
-    cl::Optional);
+cl::opt<std::string>
+    output("o", cl::desc("Specify output filename"), cl::value_desc("filename"), cl::Optional);
 
 namespace {
 enum class Program {
@@ -47,15 +45,13 @@ enum class Program {
 };
 } // namespace
 
-static cl::opt<enum Program> program(
-    "program",
-    cl::desc("The program to compile"),
-    cl::values(
-        clEnumValN(Program::ModPow_65537, "modpow_65537", "ModPow_65537"),
-        clEnumValN(Program::EC_Double, "ec_double", "EC_Double"),
-        clEnumValN(Program::EC_Add, "ec_add", "EC_Add")),
-    cl::Required);
-
+static cl::opt<enum Program>
+    program("program",
+            cl::desc("The program to compile"),
+            cl::values(clEnumValN(Program::ModPow_65537, "modpow_65537", "ModPow_65537"),
+                       clEnumValN(Program::EC_Double, "ec_double", "EC_Double"),
+                       clEnumValN(Program::EC_Add, "ec_add", "EC_Add")),
+            cl::Required);
 
 const APInt secp256k1_prime = APInt::getAllOnes(256) - APInt::getOneBitSet(256, 32) -
                               APInt::getOneBitSet(256, 9) - APInt::getOneBitSet(256, 8) -
@@ -73,8 +69,8 @@ const APInt
     secp256k1_order(256, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16);
 */
 
-int kArenaConst = 28; // Reg T3 = x28
-uint32_t kArenaTmp = 2;    // Reg SP = x2
+int kArenaConst = 28;   // Reg T3 = x28
+uint32_t kArenaTmp = 2; // Reg SP = x2
 
 struct PolyAtom {
   uint32_t arena;
@@ -165,7 +161,6 @@ struct Polynomial {
   }
 };
 
-// TODO: Maybe don't copy;
 namespace PolyOp {
 constexpr size_t kNop = 0;
 constexpr size_t kOpShift = 1;
@@ -404,7 +399,7 @@ std::vector<uint32_t> polySplit(mlir::func::FuncOp func) {
   return flat;
 }
 
-void genModPow65537(mlir::Location loc, mlir::OpBuilder &builder) {
+void genModPow65537(mlir::Location loc, mlir::OpBuilder& builder) {
   const size_t bits = 3072;
   // Check if (S^e = M (mod N)), where e = 65537
   auto N = builder.create<BigInt::LoadOp>(loc, bits, 11, 0);
@@ -422,7 +417,7 @@ void genModPow65537(mlir::Location loc, mlir::OpBuilder &builder) {
   builder.create<BigInt::StoreOp>(loc, x, 12, 0);
 }
 
-void genECDouble(mlir::Location loc, mlir::OpBuilder &builder) {
+void genECDouble(mlir::Location loc, mlir::OpBuilder& builder) {
   auto curve =
       std::make_shared<BigInt::EC::WeierstrassCurve>(secp256k1_prime, secp256k1_a, secp256k1_b);
 
@@ -434,7 +429,7 @@ void genECDouble(mlir::Location loc, mlir::OpBuilder &builder) {
   builder.create<BigInt::StoreOp>(loc, c.y(), 12, 2);
 }
 
-void genECAdd(mlir::Location loc, mlir::OpBuilder &builder) {
+void genECAdd(mlir::Location loc, mlir::OpBuilder& builder) {
   auto curve =
       std::make_shared<BigInt::EC::WeierstrassCurve>(secp256k1_prime, secp256k1_a, secp256k1_b);
   auto p_x = builder.create<BigInt::LoadOp>(loc, 256, 11, 0);
@@ -470,9 +465,15 @@ int main(int argc, char* argv[]) {
   builder.setInsertionPointToStart(func.addEntryBlock());
 
   switch (program) {
-    case Program::ModPow_65537: genModPow65537(loc, builder); break;
-    case Program::EC_Double: genECDouble(loc, builder); break;
-    case Program::EC_Add: genECAdd(loc, builder); break;
+  case Program::ModPow_65537:
+    genModPow65537(loc, builder);
+    break;
+  case Program::EC_Double:
+    genECDouble(loc, builder);
+    break;
+  case Program::EC_Add:
+    genECAdd(loc, builder);
+    break;
   }
 
   builder.create<func::ReturnOp>(loc);
@@ -491,7 +492,8 @@ int main(int argc, char* argv[]) {
 
   // Write blob to stdout or output file as raw bytes.
   if (output.empty()) {
-    llvm::support::endian::write_array(llvm::outs(), llvm::ArrayRef(flat), llvm::endianness::little);
+    llvm::support::endian::write_array(
+        llvm::outs(), llvm::ArrayRef(flat), llvm::endianness::little);
   } else {
     std::error_code err;
     llvm::raw_fd_ostream out(output, err);
