@@ -26,9 +26,9 @@ class ZllAttr<string name, string attrMnemonic, list<Trait> traits = []>
 def Tap : ZllAttr<"Tap", "tap"> {
   let summary = "A Tap, which specifies a register and a back.";
   let parameters = (ins
-      "unsigned" : $regGroupId,
-      "unsigned" : $offset,
-      "unsigned" : $back);
+      "uint32_t" : $regGroupId,
+      "uint32_t" : $offset,
+      "uint32_t" : $back);
   let assemblyFormat = "`<` $regGroupId `,` $offset `,` $back `>`";
 }
 

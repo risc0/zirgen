@@ -24,7 +24,7 @@ namespace zirgen::verify {
 
 namespace {
 
-// If true, emit debug logging.  NOTE: This will change the code roof of predicates, so
+// If true, emit debug logging.  NOTE: This will change the code root of predicates, so
 // should not be left on when generating release ZKRs.
 constexpr bool kDebug = false;
 

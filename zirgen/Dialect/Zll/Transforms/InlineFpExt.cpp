@@ -278,7 +278,7 @@ struct Rewriter {
           .Case<NormalizeOp>([&](auto op) { doUnaryEltwise(op); })
           .Case<ExternOp>([&](auto op) {
             if (op.getName() != "log") {
-              llvm::errs() << "Warning: discarding non-log extern " << op;
+              op->emitWarning() << "Warning: discarding non-log extern";
             }
           })
           .Case<HashFoldOp,

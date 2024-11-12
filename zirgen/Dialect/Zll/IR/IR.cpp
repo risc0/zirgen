@@ -78,15 +78,11 @@ void reinferReturnType(mlir::InferTypeOpInterface op) {
     return;
 
   if (mlir::TypeRange(newTypes) != op->getResultTypes()) {
-    for (auto [newType, result] : llvm::zip_equal(newTypes, op->getResults())) {
-      if (llvm::isa<ConstOp>(op))
-        llvm::errs() << "Reinfering " << result << " -> " << newType << "\n";
+    for (auto [newType, result] : llvm::zip_equal(newTypes, op->getResults()))
       result.setType(newType);
-    }
     for (mlir::Operation* user : op->getUsers()) {
-      if (auto inferUser = llvm::dyn_cast<mlir::InferTypeOpInterface>(user)) {
+      if (auto inferUser = llvm::dyn_cast<mlir::InferTypeOpInterface>(user))
         reinferReturnType(inferUser);
-      }
     }
   }
 }

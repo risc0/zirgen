@@ -4,6 +4,11 @@ package(
 
 load("//bazel/rules/zirgen:edsl-defs.bzl", "ZIRGEN_OUTS", "build_circuit")
 
+# Calculator uses rust-based validity polynomial evaluation instead of
+# c++-based so that we don't have to have all the FFI boilerplate
+# code.  This works, since the calculator circuit is pretty simple and
+# doesn't have the compilation performance problems that bigger
+# circuits have.
 CALCULATOR_OUTS = ZIRGEN_OUTS + ["validity.rs.inc"]
 
 CALCULATOR_ZIR_FILES = [":calculator.zir"]
