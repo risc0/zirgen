@@ -1180,7 +1180,6 @@ component Top() {
       PC = PC@1 + 1;
       retvals@1.major
     });
-  Log("major = %u", major_idx);
   major_onehot := OneHot<23>(major_idx);
   retvals := major_onehot ->! (
     xor5words_major<0>(retvals@0),

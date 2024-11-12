@@ -140,7 +140,6 @@ component RetTuple(a: Array<Val, BLEN()>,
   rnd := Reg(round);
   blk := Reg(block);
   midx := Reg(memIdx);
-  Log("major %u minor %u memidx %u blk %u rnd %u", major, minor, midx, blk, rnd);
 }
 
 component s2a(rtuple: RetTuple) {

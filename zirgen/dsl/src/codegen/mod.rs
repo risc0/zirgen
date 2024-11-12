@@ -118,7 +118,7 @@ macro_rules! zirgen_preamble {
 /// Default implementation of "log" for circuits.  Circuits can take advantage
 /// of this implementation by supplying a forwarding function such as this on
 /// a context object:
-///    pub fn log(& self, message: &str, x: &[Val]) -> Result<()> {
+///    pub fn log(& self, message: &str, x: &\[Val\]) -> Result<()> {
 ///        default_log(message, x)
 ///    }
 pub fn default_log<E: risc0_zkp::field::Elem + Into<u32>>(

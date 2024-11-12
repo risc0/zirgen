@@ -206,12 +206,12 @@ pub fn main() {
 
 #[cfg(test)]
 mod tests {
+    /*
     use super::*;
     use risc0_zkp::field::Elem;
     use test_log::test;
 
     // TODO: fix this test
-    /*
     fn run_test(op: usize) {
         let hash_suite = Poseidon2HashSuite::new_suite();
         let hal = CpuHal::new(hash_suite.clone());
