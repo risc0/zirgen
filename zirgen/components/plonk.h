@@ -317,10 +317,10 @@ using PlonkBody = Comp<PlonkBodyImpl<Element, Verifier, Header>>;
 
 class PlonkExternHandler : public Zll::ExternHandler {
 public:
-  std::vector<uint64_t> doExtern(llvm::StringRef name,
-                                 llvm::StringRef extra,
-                                 llvm::ArrayRef<const Zll::InterpVal*> args,
-                                 size_t outCount) override;
+  std::optional<std::vector<uint64_t>> doExtern(llvm::StringRef name,
+                                                llvm::StringRef extra,
+                                                llvm::ArrayRef<const Zll::InterpVal*> args,
+                                                size_t outCount) override;
   void sort(llvm::StringRef name);
   void calcPrefixProducts(Zll::ExtensionField f);
 

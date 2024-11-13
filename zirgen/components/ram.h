@@ -128,10 +128,10 @@ using RamBody = Comp<RamBodyImpl>;
 class RamExternHandler : public PlonkExternHandler {
 public:
   RamExternHandler();
-  std::vector<uint64_t> doExtern(llvm::StringRef name,
-                                 llvm::StringRef extra,
-                                 llvm::ArrayRef<const Zll::InterpVal*> args,
-                                 size_t outCount) override;
+  std::optional<std::vector<uint64_t>> doExtern(llvm::StringRef name,
+                                                llvm::StringRef extra,
+                                                llvm::ArrayRef<const Zll::InterpVal*> args,
+                                                size_t outCount) override;
 
   uint32_t loadU32(uint32_t addr);
   void storeU32(uint32_t addr, uint32_t value);
