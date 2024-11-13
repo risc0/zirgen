@@ -445,7 +445,8 @@ LogicalResult ExternOp::evaluate(Interpreter& interp,
   }
   // TODO: We used to flatten extension field elements here... is that necessary?
   size_t outCount = getNumResults();
-  std::optional<std::vector<uint64_t>> outFp = handler->doExtern(getName(), getExtra(), adaptor.getIn(), outCount);
+  std::optional<std::vector<uint64_t>> outFp =
+      handler->doExtern(getName(), getExtra(), adaptor.getIn(), outCount);
   if (!outFp)
     return failure();
   assert(outFp->size() == outCount);
@@ -622,7 +623,8 @@ LogicalResult HashCheckedBytesOp::evaluate(Interpreter& interp,
   std::vector<uint32_t> accumCoeffs(16, 0);
   size_t countAccumed = 0;
   for (size_t i = 0; i < adaptor.getEvalsCount(); i++) {
-    std::optional<std::vector<uint64_t>> newCoeffs = handler->doExtern("readCoefficients", "", {}, 16);
+    std::optional<std::vector<uint64_t>> newCoeffs =
+        handler->doExtern("readCoefficients", "", {}, 16);
     assert(newCoeffs && "readCoefficients shouldn't fail");
     auto result = field.Zero();
     auto currentPower = field.One();
@@ -670,7 +672,8 @@ LogicalResult HashCheckedBytesPublicOp::evaluate(Interpreter& interp,
   auto evalPt = adaptor.getEvalPt()->getVal();
   std::vector<uint32_t> coeffs;
   for (size_t i = 0; i < adaptor.getEvalsCount(); i++) {
-    std::optional<std::vector<uint64_t>> newCoeffs = handler->doExtern("readCoefficients", "", {}, 16);
+    std::optional<std::vector<uint64_t>> newCoeffs =
+        handler->doExtern("readCoefficients", "", {}, 16);
     assert(newCoeffs && "readCoefficients shouldn't fail");
     auto result = field.Zero();
     auto currentPower = field.One();

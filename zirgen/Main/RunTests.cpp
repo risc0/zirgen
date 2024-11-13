@@ -87,9 +87,9 @@ struct TestExternHandler : public zirgen::Zll::ExternHandler {
   }
 
   std::optional<std::vector<uint64_t>> doExtern(llvm::StringRef name,
-                                 llvm::StringRef extra,
-                                 llvm::ArrayRef<const zirgen::Zll::InterpVal*> args,
-                                 size_t outCount) override {
+                                                llvm::StringRef extra,
+                                                llvm::ArrayRef<const zirgen::Zll::InterpVal*> args,
+                                                size_t outCount) override {
     auto& os = llvm::outs();
     os << "[" << cycle << "] ";
     llvm::printEscapedString(name, os);

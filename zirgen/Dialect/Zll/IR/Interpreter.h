@@ -94,9 +94,9 @@ class ExternHandler {
 public:
   virtual ~ExternHandler() {}
   virtual std::optional<std::vector<uint64_t>> doExtern(llvm::StringRef name,
-                                         llvm::StringRef extra,
-                                         llvm::ArrayRef<const InterpVal*> arg,
-                                         size_t outCount);
+                                                        llvm::StringRef extra,
+                                                        llvm::ArrayRef<const InterpVal*> arg,
+                                                        size_t outCount);
 
   // Add input data bytes available through the readInput extern.
   void addInput(llvm::StringRef inputName, llvm::StringRef inputBytes);

@@ -129,17 +129,17 @@ BytePolynomial BytePolynomial::operator*(const BytePolynomial& rhs) const {
 }
 
 std::optional<std::vector<uint64_t>> Runner::doExtern(llvm::StringRef name,
-                                       llvm::StringRef extra,
-                                       llvm::ArrayRef<const InterpVal*> args,
-                                       size_t outCount) {
+                                                      llvm::StringRef extra,
+                                                      llvm::ArrayRef<const InterpVal*> args,
+                                                      size_t outCount) {
   auto fpArgs = asFpArray(args);
   if (name == "setUserMode") {
     userMode = fpArgs[0];
-    return std::vector<uint64_t> {};
+    return std::vector<uint64_t>{};
   }
   if (name == "isTrap") {
     // TODO: tests for trap
-    return std::vector<uint64_t> {0};
+    return std::vector<uint64_t>{0};
   }
   if (name == "halt") {
     if (!isHalted) {
@@ -161,7 +161,7 @@ std::optional<std::vector<uint64_t>> Runner::doExtern(llvm::StringRef name,
       }
       isHalted = true;
     }
-    return std::vector<uint64_t> {};
+    return std::vector<uint64_t>{};
   }
   if (name == "syscallInit") {
     syscallPending.clear();
@@ -192,7 +192,7 @@ std::optional<std::vector<uint64_t>> Runner::doExtern(llvm::StringRef name,
     }
 
     llvm::errs() << "syscall id=" << id << "\n";
-    return std::vector<uint64_t> {};
+    return std::vector<uint64_t>{};
   }
   if (name == "syscallBody") {
     size_t val = 0;
@@ -200,21 +200,21 @@ std::optional<std::vector<uint64_t>> Runner::doExtern(llvm::StringRef name,
       val = syscallPending.front();
       syscallPending.pop_front();
     }
-    return std::vector<uint64_t> {(val >> 0) & 0xFF, (val >> 8) & 0xFF, (val >> 16) & 0xFF, (val >> 24) & 0xFF};
+    return std::vector<uint64_t>{
+        (val >> 0) & 0xFF, (val >> 8) & 0xFF, (val >> 16) & 0xFF, (val >> 24) & 0xFF};
   }
   if (name == "syscallFini") {
-    return std::vector<uint64_t> {
-            (syscallA0Out >> 0) & 0xFF,
-            (syscallA0Out >> 8) & 0xFF,
-            (syscallA0Out >> 16) & 0xFF,
-            (syscallA0Out >> 24) & 0xFF,
-            (syscallA1Out >> 0) & 0xFF,
-            (syscallA1Out >> 8) & 0xFF,
-            (syscallA1Out >> 16) & 0xFF,
-            (syscallA1Out >> 24) & 0xFF};
+    return std::vector<uint64_t>{(syscallA0Out >> 0) & 0xFF,
+                                 (syscallA0Out >> 8) & 0xFF,
+                                 (syscallA0Out >> 16) & 0xFF,
+                                 (syscallA0Out >> 24) & 0xFF,
+                                 (syscallA1Out >> 0) & 0xFF,
+                                 (syscallA1Out >> 8) & 0xFF,
+                                 (syscallA1Out >> 16) & 0xFF,
+                                 (syscallA1Out >> 24) & 0xFF};
   }
   if (name == "trace") {
-    return std::vector<uint64_t> {};
+    return std::vector<uint64_t>{};
   }
   if (name == "pageInfo") {
     uint32_t pc = fpArgs[0];
@@ -227,7 +227,7 @@ std::optional<std::vector<uint64_t>> Runner::doExtern(llvm::StringRef name,
         llvm::errs() << "  pageRead> pc: " << llvm::format_hex(pc, 10)
                      << ", inst: " << llvm::format_hex(inst, 10)
                      << ", pageIndex: " << llvm::format_hex(pageIndex, 10) << "\n";
-        return std::vector<uint64_t> {1, pageIndex, 0};
+        return std::vector<uint64_t>{1, pageIndex, 0};
       }
     }
     if (isFlushing) {
@@ -238,9 +238,9 @@ std::optional<std::vector<uint64_t>> Runner::doExtern(llvm::StringRef name,
         llvm::errs() << "  pageWrite> pc: " << llvm::format_hex(pc, 10)
                      << ", inst: " << llvm::format_hex(inst, 10)
                      << ", pageIndex: " << llvm::format_hex(pageIndex, 10) << "\n";
-        return std::vector<uint64_t> {0, pageIndex, 0};
+        return std::vector<uint64_t>{0, pageIndex, 0};
       }
-      return std::vector<uint64_t> {0, 0, 1};
+      return std::vector<uint64_t>{0, 0, 1};
     }
     return std::vector<uint64_t>(outCount);
   }
@@ -283,23 +283,23 @@ std::optional<std::vector<uint64_t>> Runner::doExtern(llvm::StringRef name,
     // info.dump();
     for (uint32_t pageIndex : info.reads) {
       if (!finishedPageReads.count(pageIndex)) {
-        return std::vector<uint64_t> {MajorType::kPageFault};
+        return std::vector<uint64_t>{MajorType::kPageFault};
       }
     }
     if (isFlushing) {
       if (!info.forceFlush || !dirtyPages.empty()) {
-        return std::vector<uint64_t> {MajorType::kPageFault};
+        return std::vector<uint64_t>{MajorType::kPageFault};
       }
     } else {
       // TODO: Only add to dirtyPages if the next instruction will require a flush.
       dirtyPages.insert(info.writes.begin(), info.writes.end());
       if (info.forceFlush || needsFlush(cycle)) {
         isFlushing = true;
-        return std::vector<uint64_t> {MajorType::kPageFault};
+        return std::vector<uint64_t>{MajorType::kPageFault};
       }
     }
     llvm::errs() << "  Mnemonic: " << opcode.mnemonic << "\n";
-    return std::vector<uint64_t> {opcode.major};
+    return std::vector<uint64_t>{opcode.major};
   }
   if (name == "getMinor") {
     uint32_t inst = fpArgs[0] | (fpArgs[1] << 8) | (fpArgs[2] << 16) | (fpArgs[3] << 24);
@@ -310,7 +310,7 @@ std::optional<std::vector<uint64_t>> Runner::doExtern(llvm::StringRef name,
     if (opcode.minor == kMinorMuxSize) {
       throw std::runtime_error("Invalid minor opcode");
     }
-    return std::vector<uint64_t> {opcode.minor};
+    return std::vector<uint64_t>{opcode.minor};
   }
   if (name == "divide") {
     uint32_t numer = fpArgs[0] | (fpArgs[1] << 8) | (fpArgs[2] << 16) | (fpArgs[3] << 24);
@@ -342,15 +342,14 @@ std::optional<std::vector<uint64_t>> Runner::doExtern(llvm::StringRef name,
     if (remNegOut) {
       rem = -rem - onesComp;
     }
-    return std::vector<uint64_t> {
-            (quot >> 0) & 0xff,
-            (quot >> 8) & 0xff,
-            (quot >> 16) & 0xff,
-            (quot >> 24) & 0xff,
-            (rem >> 0) & 0xff,
-            (rem >> 8) & 0xff,
-            (rem >> 16) & 0xff,
-            (rem >> 24) & 0xff};
+    return std::vector<uint64_t>{(quot >> 0) & 0xff,
+                                 (quot >> 8) & 0xff,
+                                 (quot >> 16) & 0xff,
+                                 (quot >> 24) & 0xff,
+                                 (rem >> 0) & 0xff,
+                                 (rem >> 8) & 0xff,
+                                 (rem >> 16) & 0xff,
+                                 (rem >> 24) & 0xff};
   }
   if (name == "bigintQuotient") {
     // Division of two little-endian positive byte-limbed bigints. a = q * b + r.

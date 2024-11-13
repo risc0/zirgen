@@ -42,9 +42,9 @@ template <typename T> void formatFieldElem(const InterpVal* interpVal, llvm::raw
 } // namespace
 
 std::optional<std::vector<uint64_t>> ExternHandler::doExtern(llvm::StringRef name,
-                                              llvm::StringRef extra,
-                                              llvm::ArrayRef<const InterpVal*> args,
-                                              size_t outCount) {
+                                                             llvm::StringRef extra,
+                                                             llvm::ArrayRef<const InterpVal*> args,
+                                                             size_t outCount) {
   if (name == "readCoefficients") {
     // TODO: Migrate users of readCoefficients to use readInput, or
     // move readCoefficients to a circuit-specific extern handler.
@@ -68,7 +68,7 @@ std::optional<std::vector<uint64_t>> ExternHandler::doExtern(llvm::StringRef nam
       throw std::runtime_error("wrong number of arguments to configureInput");
     size_t bytesPerElem = fpArgs[0];
     inputBytesPerElem[extra] = bytesPerElem;
-    return std::vector<uint64_t> {};
+    return std::vector<uint64_t>{};
   }
   if (name == "readInput") {
     // Usage: readInput(/*extra=*/inputName)
@@ -179,7 +179,7 @@ std::optional<std::vector<uint64_t>> ExternHandler::doExtern(llvm::StringRef nam
       throw std::runtime_error(("Unused arguments in format " + extra).str());
     }
     os << "\n";
-    return std::vector<uint64_t> {};
+    return std::vector<uint64_t>{};
   }
   throw std::runtime_error(("Unknown extern: " + name).str());
 }
