@@ -402,8 +402,8 @@ std::vector<uint32_t> polySplit(mlir::func::FuncOp func) {
 void genModPow65537(mlir::Location loc, mlir::OpBuilder& builder) {
   const size_t bits = 3072;
   // Check if (S^e = M (mod N)), where e = 65537
-  auto N = builder.create<BigInt::LoadOp>(loc, bits, 11, 0);
-  auto S = builder.create<BigInt::LoadOp>(loc, bits, 11, 2);
+  auto S = builder.create<BigInt::LoadOp>(loc, bits, 11, 0);
+  auto N = builder.create<BigInt::LoadOp>(loc, bits, 12, 0);
   // We square S 16 times to get S^65536
   Value x = S;
   for (size_t i = 0; i < 16; i++) {
@@ -414,7 +414,7 @@ void genModPow65537(mlir::Location loc, mlir::OpBuilder& builder) {
   auto xm = builder.create<BigInt::MulOp>(loc, x, S);
   x = builder.create<BigInt::ReduceOp>(loc, xm, N);
   // this is our result
-  builder.create<BigInt::StoreOp>(loc, x, 12, 0);
+  builder.create<BigInt::StoreOp>(loc, x, 13, 0);
 }
 
 void genECDouble(mlir::Location loc, mlir::OpBuilder& builder) {
