@@ -54,9 +54,8 @@ const RECURSION_ZKR_ZIP: &str = "recursion_zkr.zip";
 
 const BIGINT_OUTPUTS: &[&str] = &["bigint.rs.inc"];
 const BIGINT_ZKR_ZIP: &str = "bigint_zkr.zip";
-const BIGINT_BIBC_ZIP: &str = "bigint_bibc.zip";
 
-const KECCAK_RUST_OUTPUTS: &[&str] = &[
+const ZIRGEN_RUST_OUTPUTS: &[&str] = &[
     "taps.rs",
     "info.rs",
     "poly_ext.rs",
@@ -64,6 +63,24 @@ const KECCAK_RUST_OUTPUTS: &[&str] = &[
     "types.rs.inc",
     "layout.rs.inc",
     "steps.rs.inc",
+];
+
+const CALCULATOR_RUST_OUTPUTS: &[&str] = &[
+    "taps.rs",
+    "info.rs",
+    "poly_ext.rs",
+    "defs.rs.inc",
+    "types.rs.inc",
+    "layout.rs.inc",
+    "steps.rs.inc",
+    "validity.rs.inc",
+];
+
+const ZIRGEN_SYS_OUTPUTS: &[&str] = &[
+    "defs.cpp.inc",
+    "types.h.inc",
+    "layout.cpp.inc",
+    "steps.cpp.inc",
 ];
 
 const KECCAK_SYS_OUTPUTS: &[&str] = &[
@@ -85,6 +102,7 @@ enum Circuit {
     Recursion,
     Rv32im,
     Keccak,
+    Calculator,
     Verify,
     #[clap(name("bigint"))]
     BigInt,
@@ -211,6 +229,7 @@ impl Args {
             Circuit::Recursion => self.recursion(),
             Circuit::Rv32im => self.rv32im(),
             Circuit::Keccak => self.keccak(),
+            Circuit::Calculator => self.calculator(),
             Circuit::Verify => self.stark_verify(),
             Circuit::BigInt => self.bigint(),
         }
@@ -251,7 +270,7 @@ impl Args {
         let src_path = Path::new("zirgen/circuit/keccak");
         let sys_root = Path::new("zirgen/circuit/keccak-sys").to_path_buf();
 
-        copy_group(circuit, &src_path, out, KECCAK_RUST_OUTPUTS, "src", "");
+        copy_group(circuit, &src_path, out, ZIRGEN_RUST_OUTPUTS, "src", "");
         copy_group(
             circuit,
             &src_path,
@@ -260,6 +279,18 @@ impl Args {
             "cxx",
             "",
         );
+        cargo_fmt_circuit(circuit, &self.output, &None);
+    }
+
+    fn calculator(&self) {
+        let out = self.output.clone().or(Some(
+            Path::new("zirgen/dsl/examples/calculator").to_path_buf(),
+        ));
+        let circuit = "calculator";
+        let src_path = Path::new("zirgen/dsl/examples/calculator/");
+
+        copy_group(circuit, &src_path, &out, CALCULATOR_RUST_OUTPUTS, "", "");
+        copy_group(circuit, &src_path, &out, ZIRGEN_SYS_OUTPUTS, "", "");
         cargo_fmt_circuit(circuit, &self.output, &None);
     }
 
@@ -331,7 +362,6 @@ impl Args {
         let src_path = bazel_bin.join("zirgen/circuit/bigint");
 
         copy_file(&src_path, &out, BIGINT_ZKR_ZIP);
-        copy_file(&src_path, &out, BIGINT_BIBC_ZIP);
         copy_group(
             circuit,
             &src_path,

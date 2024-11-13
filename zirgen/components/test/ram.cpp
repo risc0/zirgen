@@ -153,14 +153,14 @@ class RamTestExternHandler : public RamExternHandler {
 public:
   RamTestExternHandler(std::deque<std::vector<uint64_t>> data) : data(data) {}
 
-  std::vector<uint64_t> doExtern(llvm::StringRef name,
-                                 llvm::StringRef extra,
-                                 llvm::ArrayRef<const InterpVal*> args,
-                                 size_t outCount) override {
+  std::optional<std::vector<uint64_t>> doExtern(llvm::StringRef name,
+                                                llvm::StringRef extra,
+                                                llvm::ArrayRef<const InterpVal*> args,
+                                                size_t outCount) override {
     if (name == "getTestData") {
       assert(outCount == 4);
       if (data.size() == 0) {
-        return {0, 0, 0, 0};
+        return std::vector<uint64_t>{0, 0, 0, 0};
       }
       auto ret = data.front();
       data.pop_front();

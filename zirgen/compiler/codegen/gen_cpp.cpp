@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "zirgen/Dialect/Zll/Analysis/TapsAnalysis.h"
 #include "zirgen/compiler/codegen/codegen.h"
-
 #include "llvm/ADT/StringExtras.h"
 #include "llvm/ADT/TypeSwitch.h"
 
@@ -129,34 +129,32 @@ struct CppStreamEmitterImpl : CppStreamEmitter {
 
   virtual void emitTaps(func::FuncOp func) override {
     header(func);
-    auto regsArray = func->getAttrOfType<ArrayAttr>("tapRegs");
-    auto combosArray = func->getAttrOfType<ArrayAttr>("tapCombos");
+
+    TapsAnalysis taps(func);
+    const auto& tapSet = taps.getTapSet();
     ofs << "void CircuitImpl::add_taps() {\n";
     ofs << "  tapSet = {\n";
     ofs << "    { // groups\n";
     size_t tapPos = 0;
-    for (size_t groupId = 0; groupId < 3; ++groupId) {
+    for (auto [groupId, regGroup] : llvm::enumerate(tapSet.groups)) {
       if (groupId != 0) {
         ofs << ",";
       }
       ofs << "    { // group " << groupId << "\n";
       ofs << "{\n";
       bool firstReg = true;
-      for (const auto& reg : regsArray.getAsRange<TapRegAttr>()) {
-        if (reg.getRegGroupId() != groupId) {
-          continue;
-        }
+      for (const auto& reg : regGroup.regs) {
         if (firstReg) {
           firstReg = false;
         } else {
           ofs << ",";
         }
-        ofs << "{" << reg.getOffset() << "," << reg.getComboId() << "," << tapPos << ", {";
-        for (size_t i = 0; i != reg.getBacks().size(); ++i) {
+        ofs << "{" << reg.offset << "," << reg.combo << "," << tapPos << ", {";
+        for (size_t i = 0; i != reg.backs.size(); ++i) {
           if (i != 0) {
             ofs << ",";
           }
-          ofs << reg.getBacks()[i];
+          ofs << reg.backs[i];
           tapPos++;
         }
         ofs << "}}\n";
@@ -166,15 +164,12 @@ struct CppStreamEmitterImpl : CppStreamEmitter {
     ofs << " }, // groups\n";
     ofs << " { // combos\n";
     size_t comboIndex = 0;
-    for (const auto& combo : combosArray.getAsRange<ArrayAttr>()) {
+    for (const auto& combo : tapSet.combos) {
       if (comboIndex != 0) {
         ofs << ",";
       }
       ofs << "{" << comboIndex << ", {";
-      ofs << llvm::join(
-          llvm::map_range(combo.getAsRange<IntegerAttr>(),
-                          [&](IntegerAttr val) { return std::to_string(val.getUInt()); }),
-          ",");
+      llvm::interleaveComma(combo.backs, ofs);
       ofs << "}}\n";
       comboIndex++;
     }

@@ -59,10 +59,11 @@ macro_rules! zirgen_inhibit_warnings {
 ///    struct ValidityTapsContext...;
 #[macro_export]
 macro_rules! zirgen_preamble {
-    ($protocol_info:expr) => {
+    {} => {
         use anyhow::{bail, Context, Result};
         use risc0_zkp::adapter::ProtocolInfo;
         use risc0_zkp::layout::Reg;
+        use risc0_zkp::field::Elem;
         use $crate::codegen::_support::*;
         use $crate::codegen::taps::{make_taps, Tap};
         use $crate::{BoundLayout, BufferRow, BufferSpec, Buffers};
@@ -70,17 +71,17 @@ macro_rules! zirgen_preamble {
 
         // Explicitly instantiate calls that cause rustc to be very slow
         // when processing large generated code.
+        fn trivial_constraint() -> Result<MixState> {
+            Ok(MixState {
+                tot: ExtVal::ZERO,
+                mul: ExtVal::ONE,
+            })
+        }
         fn and_cond(x: MixState, cond: Val, inner: MixState) -> Result<MixState> {
             and_cond_generic::<CircuitField, Val>(x, cond, inner)
         }
         fn and_cond_ext(x: MixState, cond: ExtVal, inner: MixState) -> Result<MixState> {
             and_cond_generic::<CircuitField, ExtVal>(x, cond, inner)
-        }
-        fn and_eqz(poly_mix: ExtVal, x: MixState, val: Val) -> Result<MixState> {
-            and_eqz_generic::<CircuitField, Val>(poly_mix, x, val)
-        }
-        fn and_eqz_ext(poly_mix: ExtVal, x: MixState, val: ExtVal) -> Result<MixState> {
-            and_eqz_generic::<CircuitField, ExtVal>(poly_mix, x, val)
         }
         fn alias_layout<Layout: PartialEq, B: BufferRow>(
             x: BoundLayout<Layout, B>,

@@ -39,7 +39,6 @@ cc_library(
         "IfToMultiply.cpp",
         "InlineFpExt.cpp",
         "MakePolynomial.cpp",
-        "MakeVerifyTaps.cpp",
         "MultiplyToIf.cpp",
         "PassDetail.h",
         "SplitStage.cpp",

@@ -25,10 +25,26 @@ using namespace mlir;
 
 namespace zirgen::Zll {
 
-std::vector<uint64_t> ExternHandler::doExtern(llvm::StringRef name,
-                                              llvm::StringRef extra,
-                                              llvm::ArrayRef<const InterpVal*> args,
-                                              size_t outCount) {
+namespace {
+
+// Formats as either a base field element or an extension field element.
+template <typename T> void formatFieldElem(const InterpVal* interpVal, llvm::raw_ostream& os, T f) {
+  auto val = interpVal->getVal();
+  if (val.size() == 1) {
+    f(val[0]);
+  } else {
+    os << "[";
+    interleaveComma(val, os, f);
+    os << "]";
+  }
+}
+
+} // namespace
+
+std::optional<std::vector<uint64_t>> ExternHandler::doExtern(llvm::StringRef name,
+                                                             llvm::StringRef extra,
+                                                             llvm::ArrayRef<const InterpVal*> args,
+                                                             size_t outCount) {
   if (name == "readCoefficients") {
     // TODO: Migrate users of readCoefficients to use readInput, or
     // move readCoefficients to a circuit-specific extern handler.
@@ -52,7 +68,7 @@ std::vector<uint64_t> ExternHandler::doExtern(llvm::StringRef name,
       throw std::runtime_error("wrong number of arguments to configureInput");
     size_t bytesPerElem = fpArgs[0];
     inputBytesPerElem[extra] = bytesPerElem;
-    return {};
+    return std::vector<uint64_t>{};
   }
   if (name == "readInput") {
     // Usage: readInput(/*extra=*/inputName)
@@ -110,10 +126,10 @@ std::vector<uint64_t> ExternHandler::doExtern(llvm::StringRef name,
           os << "%";
           p++;
         } else if (*p == 'x') {
-          os << llvm::format_hex(nextArg()->getBaseFieldVal(), len);
+          formatFieldElem(nextArg(), os, [&](auto elem) { os << llvm::format_hex(elem, len); });
           p++;
         } else if (*p == 'u') {
-          os << llvm::format_decimal(nextArg()->getBaseFieldVal(), len);
+          formatFieldElem(nextArg(), os, [&](auto elem) { os << llvm::format_decimal(elem, len); });
           p++;
         } else if (*p == 'p') {
           auto poly = nextArg()->getVal();
@@ -163,7 +179,7 @@ std::vector<uint64_t> ExternHandler::doExtern(llvm::StringRef name,
       throw std::runtime_error(("Unused arguments in format " + extra).str());
     }
     os << "\n";
-    return {};
+    return std::vector<uint64_t>{};
   }
   throw std::runtime_error(("Unknown extern: " + name).str());
 }
@@ -335,7 +351,7 @@ mlir::Attribute Interpreter::evaluateConstant(mlir::Value value) {
 
 void InterpVal::print(llvm::raw_ostream& os) const {
   if (std::holds_alternative<Polynomial>(storage)) {
-    os << getBaseFieldVal();
+    formatFieldElem(this, os, [&](auto elem) { os << elem; });
   } else if (std::holds_alternative<Attribute>(storage)) {
     os << std::get<Attribute>(storage);
   } else if (std::holds_alternative<BufferRef>(storage)) {
@@ -491,7 +507,7 @@ FailureOr<SmallVector<Attribute>> Interpreter::runBlock(mlir::Block& block) {
     evaluator = eval;
     if (failed(evaluate(evaluator))) {
       if (!gotErrorMsg && !getSilenceErrors())
-        eval->op->emitError() << "Unknown evaluation error occured";
+        eval->op->emitError() << "Evaluation error occured";
       return failure();
     }
   }

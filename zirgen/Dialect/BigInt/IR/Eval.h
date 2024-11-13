@@ -40,6 +40,12 @@ inline llvm::raw_ostream& operator<<(llvm::raw_ostream& os, const EvalOutput& ou
 BytePoly fromAPInt(llvm::APInt value, size_t coeffs);
 Digest computeDigest(std::vector<BytePoly> witness, size_t groupSize = 3);
 
+struct BigIntIO {
+  virtual llvm::APInt load(uint32_t arena, uint32_t offset, uint32_t count) = 0;
+  virtual void store(uint32_t arena, uint32_t offset, uint32_t count, llvm::APInt val) = 0;
+};
+
+EvalOutput eval(mlir::func::FuncOp inFunc, BigIntIO& io, bool computeZ);
 EvalOutput eval(mlir::func::FuncOp inFunc, llvm::ArrayRef<llvm::APInt> witnessValues);
 
 } // namespace zirgen::BigInt

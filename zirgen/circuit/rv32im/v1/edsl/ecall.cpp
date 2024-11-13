@@ -147,6 +147,20 @@ void ECallBigIntImpl::set(Top top) {
   body->nextMajor->set(MajorType::kBigInt);
 }
 
+void ECallBigInt2Impl::set(Top top) {
+  Val cycle = top->code->cycle;
+  BodyStep body = top->mux->at<StepType::BODY>();
+  Val curPC = BACK(1, body->pc->get());
+
+  // TODO: Verify it's a valid address
+  readVerifyAddr->doRead(cycle, RegAddr::kT2);
+
+  // Keep the current PC and set the next major cycle to BigInt.
+  body->pc->set(curPC);
+  body->userMode->set(BACK(1, body->userMode->get()));
+  body->nextMajor->set(MajorType::kBigInt2);
+}
+
 void ECallUserImpl::set(Top top) {
   Val cycle = top->code->cycle;
   BodyStep body = top->mux->at<StepType::BODY>();
@@ -214,6 +228,28 @@ void ECallCycleImpl::set(Top top) {
   }
   // Call into selected code
   minorMux->doMux([&](auto inner) { inner->set(top); });
+}
+
+TwitByteRegImpl::TwitByteRegImpl() {}
+
+void TwitByteRegImpl::set(Val val) {
+  Val check = 0;
+  for (size_t i = 0; i < 4; i++) {
+    uint32_t po2 = 1 << (2 * i);
+    uint32_t mask = 3 * po2;
+    NONDET { twits[i]->set((val & mask) / po2); }
+    check = check + twits[i]->get() * po2;
+  }
+  eq(check, val);
+}
+
+Val TwitByteRegImpl::get() {
+  Val ret = 0;
+  for (size_t i = 0; i < 4; i++) {
+    uint32_t po2 = 1 << (2 * i);
+    ret = ret + twits[i]->get() * po2;
+  }
+  return ret;
 }
 
 ECallCopyInCycleImpl::ECallCopyInCycleImpl(RamHeader ramHeader) : ram(ramHeader, 4) {}
@@ -310,6 +346,16 @@ void ECallCopyInCycleImpl::set(Top top) {
       eq(io[ioReg]->addr(), writeAddr);
     }
     IF(nopThisReg) { io[ioReg]->doNOP(); }
+    // Verify input was bytes
+    for (size_t i = 0; i < 4; i++) {
+      size_t byteId = ioReg * 4 + i;
+      Val byte = io[ioReg]->data().bytes[i];
+      if (byteId < 14) {
+        checkBytes[byteId]->set(byte);
+      } else {
+        checkBytesTwits[byteId - 14]->set(byte);
+      }
+    }
   }
 }
 

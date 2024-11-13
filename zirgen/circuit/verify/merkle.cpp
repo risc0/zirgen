@@ -16,6 +16,14 @@
 
 namespace zirgen::verify {
 
+namespace {
+
+// If true, emit debug logging.  NOTE: This will change the code root of predicates, so
+// should not be left on when generating release ZKRs.
+constexpr bool kDebug = false;
+
+} // namespace
+
 MerkleTreeParams::MerkleTreeParams(size_t rowSize,
                                    size_t colSize,
                                    size_t queries,
@@ -36,9 +44,13 @@ MerkleTreeParams::MerkleTreeParams(size_t rowSize,
   topSize = 1 << topLayer;
 }
 
-MerkleTreeVerifier::MerkleTreeVerifier(
-    ReadIopVal& iop, size_t rowSize, size_t colSize, size_t queries, bool useExtension)
-    : MerkleTreeParams(rowSize, colSize, queries, useExtension), top(topSize) {
+MerkleTreeVerifier::MerkleTreeVerifier(std::string bufName,
+                                       ReadIopVal& iop,
+                                       size_t rowSize,
+                                       size_t colSize,
+                                       size_t queries,
+                                       bool useExtension)
+    : MerkleTreeParams(rowSize, colSize, queries, useExtension), top(topSize), bufName(bufName) {
   auto topRec = iop.readDigests(topSize);
   top.insert(top.end(), topRec.begin(), topRec.end());
   for (size_t i = topSize; i-- > 1;) {
@@ -70,6 +82,8 @@ std::vector<Val> MerkleTreeVerifier::verify(ReadIopVal& iop, Val idx) const {
     cur = fold(lhs, rhs);
   }
   auto topDigest = select(idx - topSize, llvm::ArrayRef(top).slice(topSize, topSize));
+  if (kDebug)
+    XLOG("Merkle " + bufName + " expected: %h, calculated %h", topDigest, cur);
   assert_eq(cur, topDigest);
   return out;
 }

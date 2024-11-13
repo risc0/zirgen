@@ -28,11 +28,6 @@ def MakePolynomial : Pass<"make-polynomial", "mlir::func::FuncOp"> {
   let constructor = "zirgen::Zll::createMakePolynomialPass()";
 }
 
-def MakeVerifyTaps : Pass<"make-verify-taps", "mlir::ModuleOp"> {
-  let summary = "Generate code for verifying taps for FRI queries";
-  let constructor = "zirgen::Zll::createMakeVerifyTapsPass()";
-}
-
 def SplitStage : Pass<"split-stage", "mlir::func::FuncOp"> {
   let summary = "Split a function into one of its stages";
   let constructor = "zirgen::Zll::createSplitStagePass()";

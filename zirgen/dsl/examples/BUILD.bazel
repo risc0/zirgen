@@ -4,53 +4,6 @@ package(
     default_visibility = ["//visibility:public"],
 )
 
-cc_test(
-    name = "calculator",
-    size = "small",
-    srcs = [
-        "calculator.cpp",
-    ],
-    deps = [
-        ":calc_cpp_incs",
-        "//risc0/core/test:gtest_main",
-        "//zirgen/dsl",
-        "//zirgen/dsl/test:test_utils",
-    ],
-)
-
-cc_library(
-    name = "calc_cpp_incs",
-    textual_hdrs = [
-        ":calculator.cpp.inc",
-        ":Fp.h",
-    ],
-)
-
-# TODO: uncomment when calculator example is fixed.
-# zirgen_genfiles(
-#     name = "CalculatorIncs",
-#     zir_file = ":calculator.zir",
-#     zirgen_outs = [
-#         (
-#             ["--emit=cpp"],
-#             "calculator.cpp.inc",
-#         ),
-#         (
-#             ["--emit=rust"],
-#             "calculator.rs.inc",
-#         ),
-#         (
-#             ["--emit=zstruct"],
-#             "calculator.ir",
-#         ),
-#     ],
-# )
-# And comment this out, which is needed by the zirgen verify wrapper:
-filegroup(
-    name = "CalculatorIncs",
-    srcs = ["calculator.ir"],
-)
-
 zirgen_genfiles(
     name = "FibonacciIncs",
     zir_file = ":fibonacci.zir",

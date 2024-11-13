@@ -1,6 +1,6 @@
-// Simple example circuit that calls an external "GetValFromUser"
-// twice to acquire two values, adds them, and outputs the reuslt
-// using an external "OutputToUser".
+// Simple example circuit that does simple calculations.
+// SECURITY WARNING: This is not an example
+// of a sound zirgen circuit.
 
 extern GetValFromUser() : Val;
 extern OutputToUser(val: Val);
@@ -20,25 +20,24 @@ component OneHot(v: Val) {
   bits
 }
 
-component GetGlobalResult() {
-  global result : Reg;
-  result
-}
-
 component SetGlobalResult(val: Val) {
   global result := Reg(val);
+  result
 }
 
 component Top() {
   op := NondetReg(GetValFromUser());
-  left := NondetReg(GetValFromUser());
-  right := NondetReg(GetValFromUser());
+  arg1 := NondetReg(GetValFromUser());
+  arg2 := NondetReg(GetValFromUser());
+  expected := NondetReg(GetValFromUser());
   result := OneHot(op) -> (
-    Reg(left + right),
-    Reg(left - right)
+    // add
+    Reg(arg1 + arg2),
+    // subtract
+    Reg(arg1 - arg2)
   );
-  Log("result = %u", result);
-  SetGlobalResult(result);
-  GetGlobalResult() = result;
+  Log("op = %u, arg1 = %u arg2 = %u result = %u expected = %u", op, arg1, arg2, result, expected);
+  result = expected;
+  SetGlobalResult(5);
   OutputToUser(result);
 }

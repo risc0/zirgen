@@ -116,6 +116,9 @@ ReceiptClaim join(ReceiptClaim in1, ReceiptClaim in2);
 ReceiptClaim identity(ReceiptClaim in);
 ReceiptClaim resolve(ReceiptClaim cond, Assumption assum, DigestVal tail, DigestVal journal);
 
+DigestVal readSha(llvm::ArrayRef<Val>& stream, bool longDigest = false);
+void writeSha(DigestVal val, std::vector<Val>& stream);
+
 // Cannot be called "union" as that is a keyword.
 UnionClaim unionFunc(Assumption left, Assumption right);
 

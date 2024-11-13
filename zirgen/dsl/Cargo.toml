@@ -3,8 +3,6 @@ name = "risc0-zirgen-dsl"
 description = "RISC Zero zero-knowledge circuit compiler"
 version = "0.1.0"
 edition = "2021"
-# TODO: remove autoexamples=false when calculator is fixed
-autoexamples = false
 
 [dependencies]
 anyhow = "1.0"
@@ -24,7 +22,6 @@ test-log = { version = "0.2", features = ["trace"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 
-# TODO: Fix calculator
-#[[example]]
-#name = "calculator"
-#test = true
+[[example]]
+name = "calculator"
+test = true

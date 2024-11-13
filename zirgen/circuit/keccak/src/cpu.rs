@@ -121,6 +121,19 @@ impl<'a> CpuExecContext<'a> {
         tracing::trace!("Read returns {val:?}");
         Ok(val)
     }
+
+    pub fn abort(&self) -> Result<()> {
+        Err(anyhow!("circuit aborted proving"))
+    }
+
+    pub fn assert(&self, condition: Val, message: &str) -> Result<()> {
+        if condition == Val::ZERO {
+            Err(anyhow!(message.to_owned()))
+        } else {
+            Ok(())
+        }
+    }
+
     pub fn log(&self, message: &str, x: impl AsRef<[Val]>) -> Result<()> {
         risc0_zirgen_dsl::codegen::default_log(message, x.as_ref())
     }
@@ -235,16 +248,6 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
         // it over the thread boundary. This should be safe because the scope of the
         // usage is within this function and each thread access will not overlap with
         // each other.
-
-        for (idx, grp) in globals.iter().enumerate() {
-            use risc0_zkp::hal::Buffer;
-            eprintln!(
-                "globals[{idx}] is {} len {}: {:?}",
-                grp.name(),
-                grp.as_slice().len(),
-                grp.as_slice()
-            );
-        }
 
         let data = groups[dbg!(REGISTER_GROUP_DATA)].as_slice();
         let data = unsafe { std::slice::from_raw_parts(data.as_ptr(), data.len()) };
