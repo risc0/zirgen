@@ -445,13 +445,14 @@ LogicalResult ExternOp::evaluate(Interpreter& interp,
   }
   // TODO: We used to flatten extension field elements here... is that necessary?
   size_t outCount = getNumResults();
-  bool failed = false;
-  std::vector<uint64_t> outFp = handler->doExtern(getName(), getExtra(), adaptor.getIn(), outCount, &failed);
-  assert(outFp.size() == outCount);
+  std::optional<std::vector<uint64_t>> outFp = handler->doExtern(getName(), getExtra(), adaptor.getIn(), outCount);
+  if (!outFp)
+    return failure();
+  assert(outFp->size() == outCount);
   for (size_t i = 0; i < getNumResults(); i++) {
-    outs[i]->setVal(outFp[i]);
+    outs[i]->setVal((*outFp)[i]);
   }
-  return failure(failed);
+  return success();
 }
 
 LogicalResult HashOp::evaluate(Interpreter& interp,
@@ -621,17 +622,18 @@ LogicalResult HashCheckedBytesOp::evaluate(Interpreter& interp,
   std::vector<uint32_t> accumCoeffs(16, 0);
   size_t countAccumed = 0;
   for (size_t i = 0; i < adaptor.getEvalsCount(); i++) {
-    std::vector<uint64_t> newCoeffs = handler->doExtern("readCoefficients", "", {}, 16);
+    std::optional<std::vector<uint64_t>> newCoeffs = handler->doExtern("readCoefficients", "", {}, 16);
+    assert(newCoeffs && "readCoefficients shouldn't fail");
     auto result = field.Zero();
     auto currentPower = field.One();
     for (size_t j = 0; j < 16; j++) {
-      if (newCoeffs[j] > 255) {
+      if ((*newCoeffs)[j] > 255) {
         throw std::runtime_error("Coefficient fails range check");
       }
-      result = field.Add(result, field.Mul(newCoeffs[j], currentPower));
+      result = field.Add(result, field.Mul((*newCoeffs)[j], currentPower));
       currentPower = field.Mul(currentPower, evalPt);
       accumCoeffs[j] *= 256;
-      accumCoeffs[j] += newCoeffs[j];
+      accumCoeffs[j] += (*newCoeffs)[j];
     }
     outs[1 + i]->setVal(result);
     countAccumed++;
@@ -668,18 +670,19 @@ LogicalResult HashCheckedBytesPublicOp::evaluate(Interpreter& interp,
   auto evalPt = adaptor.getEvalPt()->getVal();
   std::vector<uint32_t> coeffs;
   for (size_t i = 0; i < adaptor.getEvalsCount(); i++) {
-    std::vector<uint64_t> newCoeffs = handler->doExtern("readCoefficients", "", {}, 16);
+    std::optional<std::vector<uint64_t>> newCoeffs = handler->doExtern("readCoefficients", "", {}, 16);
+    assert(newCoeffs && "readCoefficients shouldn't fail");
     auto result = field.Zero();
     auto currentPower = field.One();
     for (size_t j = 0; j < 16; j++) {
-      if (newCoeffs[j] > 255) {
+      if ((*newCoeffs)[j] > 255) {
         throw std::runtime_error("Coefficient fails range check");
       }
-      result = field.Add(result, field.Mul(newCoeffs[j], currentPower));
+      result = field.Add(result, field.Mul((*newCoeffs)[j], currentPower));
       currentPower = field.Mul(currentPower, evalPt);
     }
     outs[2 + i]->setVal(result);
-    coeffs.insert(coeffs.end(), newCoeffs.begin(), newCoeffs.end());
+    coeffs.insert(coeffs.end(), (*newCoeffs).begin(), (*newCoeffs).end());
   }
   auto hashVal1 = psuite->hash(coeffs.data(), coeffs.size());
   outs[0]->setDigest(hashVal1);

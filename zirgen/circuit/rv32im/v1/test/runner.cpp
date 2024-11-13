@@ -128,19 +128,18 @@ BytePolynomial BytePolynomial::operator*(const BytePolynomial& rhs) const {
   return r;
 }
 
-std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
+std::optional<std::vector<uint64_t>> Runner::doExtern(llvm::StringRef name,
                                        llvm::StringRef extra,
                                        llvm::ArrayRef<const InterpVal*> args,
-                                       size_t outCount,
-                                       bool* failed) {
+                                       size_t outCount) {
   auto fpArgs = asFpArray(args);
   if (name == "setUserMode") {
     userMode = fpArgs[0];
-    return {};
+    return std::vector<uint64_t> {};
   }
   if (name == "isTrap") {
     // TODO: tests for trap
-    return {0};
+    return std::vector<uint64_t> {0};
   }
   if (name == "halt") {
     if (!isHalted) {
@@ -162,7 +161,7 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
       }
       isHalted = true;
     }
-    return {};
+    return std::vector<uint64_t> {};
   }
   if (name == "syscallInit") {
     syscallPending.clear();
@@ -193,7 +192,7 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
     }
 
     llvm::errs() << "syscall id=" << id << "\n";
-    return {};
+    return std::vector<uint64_t> {};
   }
   if (name == "syscallBody") {
     size_t val = 0;
@@ -201,10 +200,11 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
       val = syscallPending.front();
       syscallPending.pop_front();
     }
-    return {(val >> 0) & 0xFF, (val >> 8) & 0xFF, (val >> 16) & 0xFF, (val >> 24) & 0xFF};
+    return std::vector<uint64_t> {(val >> 0) & 0xFF, (val >> 8) & 0xFF, (val >> 16) & 0xFF, (val >> 24) & 0xFF};
   }
   if (name == "syscallFini") {
-    return {(syscallA0Out >> 0) & 0xFF,
+    return std::vector<uint64_t> {
+            (syscallA0Out >> 0) & 0xFF,
             (syscallA0Out >> 8) & 0xFF,
             (syscallA0Out >> 16) & 0xFF,
             (syscallA0Out >> 24) & 0xFF,
@@ -214,7 +214,7 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
             (syscallA1Out >> 24) & 0xFF};
   }
   if (name == "trace") {
-    return {};
+    return std::vector<uint64_t> {};
   }
   if (name == "pageInfo") {
     uint32_t pc = fpArgs[0];
@@ -227,7 +227,7 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
         llvm::errs() << "  pageRead> pc: " << llvm::format_hex(pc, 10)
                      << ", inst: " << llvm::format_hex(inst, 10)
                      << ", pageIndex: " << llvm::format_hex(pageIndex, 10) << "\n";
-        return {1, pageIndex, 0};
+        return std::vector<uint64_t> {1, pageIndex, 0};
       }
     }
     if (isFlushing) {
@@ -238,9 +238,9 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
         llvm::errs() << "  pageWrite> pc: " << llvm::format_hex(pc, 10)
                      << ", inst: " << llvm::format_hex(inst, 10)
                      << ", pageIndex: " << llvm::format_hex(pageIndex, 10) << "\n";
-        return {0, pageIndex, 0};
+        return std::vector<uint64_t> {0, pageIndex, 0};
       }
-      return {0, 0, 1};
+      return std::vector<uint64_t> {0, 0, 1};
     }
     return std::vector<uint64_t>(outCount);
   }
@@ -259,7 +259,7 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
       }
       assert(residentWords.count(addr) && "Memory read before page in");
     }
-    return RamExternHandler::doExtern(name, extra, args, outCount, failed);
+    return RamExternHandler::doExtern(name, extra, args, outCount);
   }
   if (name == "ramWrite") {
     uint32_t addr = fpArgs[0];
@@ -269,7 +269,7 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
     } else {
       assert(residentWords.count(addr) && "Memory write before page in");
     }
-    return RamExternHandler::doExtern(name, extra, args, outCount, failed);
+    return RamExternHandler::doExtern(name, extra, args, outCount);
   }
   if (name == "getMajor") {
     uint32_t cycle = fpArgs[0];
@@ -283,23 +283,23 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
     // info.dump();
     for (uint32_t pageIndex : info.reads) {
       if (!finishedPageReads.count(pageIndex)) {
-        return {MajorType::kPageFault};
+        return std::vector<uint64_t> {MajorType::kPageFault};
       }
     }
     if (isFlushing) {
       if (!info.forceFlush || !dirtyPages.empty()) {
-        return {MajorType::kPageFault};
+        return std::vector<uint64_t> {MajorType::kPageFault};
       }
     } else {
       // TODO: Only add to dirtyPages if the next instruction will require a flush.
       dirtyPages.insert(info.writes.begin(), info.writes.end());
       if (info.forceFlush || needsFlush(cycle)) {
         isFlushing = true;
-        return {MajorType::kPageFault};
+        return std::vector<uint64_t> {MajorType::kPageFault};
       }
     }
     llvm::errs() << "  Mnemonic: " << opcode.mnemonic << "\n";
-    return {opcode.major};
+    return std::vector<uint64_t> {opcode.major};
   }
   if (name == "getMinor") {
     uint32_t inst = fpArgs[0] | (fpArgs[1] << 8) | (fpArgs[2] << 16) | (fpArgs[3] << 24);
@@ -310,7 +310,7 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
     if (opcode.minor == kMinorMuxSize) {
       throw std::runtime_error("Invalid minor opcode");
     }
-    return {opcode.minor};
+    return std::vector<uint64_t> {opcode.minor};
   }
   if (name == "divide") {
     uint32_t numer = fpArgs[0] | (fpArgs[1] << 8) | (fpArgs[2] << 16) | (fpArgs[3] << 24);
@@ -342,7 +342,8 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
     if (remNegOut) {
       rem = -rem - onesComp;
     }
-    return {(quot >> 0) & 0xff,
+    return std::vector<uint64_t> {
+            (quot >> 0) & 0xff,
             (quot >> 8) & 0xff,
             (quot >> 16) & 0xff,
             (quot >> 24) & 0xff,
@@ -609,7 +610,7 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
     llvm::errs() << ", total[0] = " << total.coeffs[0] << "\n";
     return ret;
   }
-  return RamExternHandler::doExtern(name, extra, args, outCount, failed);
+  return RamExternHandler::doExtern(name, extra, args, outCount);
 }
 
 bool Runner::needsFlush(uint32_t cycle) {

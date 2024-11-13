@@ -86,11 +86,10 @@ struct TestExternHandler : public zirgen::Zll::ExternHandler {
     results.push_back(rem >> 16);
   }
 
-  std::vector<uint64_t> doExtern(llvm::StringRef name,
+  std::optional<std::vector<uint64_t>> doExtern(llvm::StringRef name,
                                  llvm::StringRef extra,
                                  llvm::ArrayRef<const zirgen::Zll::InterpVal*> args,
-                                 size_t outCount,
-                                 bool* failed) override {
+                                 size_t outCount) override {
     auto& os = llvm::outs();
     os << "[" << cycle << "] ";
     llvm::printEscapedString(name, os);
@@ -184,19 +183,22 @@ struct TestExternHandler : public zirgen::Zll::ExternHandler {
         vals[i].setVal(varArgs[i].cast<mlir::PolynomialAttr>().asArrayRef());
         valPtrs[i] = &vals[i];
       }
-      results = zirgen::Zll::ExternHandler::doExtern("log", message, valPtrs, outCount, failed);
+      results = *zirgen::Zll::ExternHandler::doExtern("log", message, valPtrs, outCount);
     } else if (name == "Abort") {
-      *failed = true;
+      os << ")\n";
+      os.flush();
+      return std::nullopt;
     } else if (name == "Assert") {
       auto condition = args[0]->getBaseFieldVal();
       llvm::StringRef message = args[1]->getAttr<mlir::StringAttr>().getValue();
       if (condition != 0) {
         os << " failed: " << message << "\n";
-        *failed = true;
+        os.flush();
+        return std::nullopt;
       }
     } else if (name == "configureInput" || name == "readInput") {
       // Pass through to common implementation
-      results = zirgen::Zll::ExternHandler::doExtern(name, extra, args, outCount, failed);
+      results = *zirgen::Zll::ExternHandler::doExtern(name, extra, args, outCount);
     } else {
       // By default, let random externs pass
       // Fill with 0, 1, 2, ...

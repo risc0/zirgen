@@ -102,11 +102,10 @@ using WomBody = Comp<WomBodyImpl>;
 class WomExternHandler : public PlonkExternHandler {
 public:
   WomExternHandler();
-  std::vector<uint64_t> doExtern(llvm::StringRef name,
+  std::optional<std::vector<uint64_t>> doExtern(llvm::StringRef name,
                                  llvm::StringRef extra,
                                  llvm::ArrayRef<const Zll::InterpVal*> args,
-                                 size_t outCount,
-                                 bool* failed = nullptr) override;
+                                 size_t outCount) override;
 
   std::map<size_t, std::array<uint64_t, kExtSize>> state;
 };
