@@ -99,8 +99,6 @@ struct UnionClaim {
   constexpr static size_t size = 2 * kDigestHalfs;
   // Default constructor
   UnionClaim() = default;
-  // Construct via reading from a stream
-  UnionClaim(llvm::ArrayRef<Val>& stream, bool longDigest = false);
   // Write to an output
   void write(std::vector<Val>& stream);
   // Digest into a single value

@@ -121,9 +121,6 @@ DigestVal Assumption::digest() {
   return taggedStruct("risc0.Assumption", {claim, controlRoot}, {});
 }
 
-UnionClaim::UnionClaim(llvm::ArrayRef<Val>& stream, bool longDigest)
-    : left(readSha(stream, longDigest)), right(readDigest(stream, longDigest)) {}
-
 void UnionClaim::write(std::vector<Val>& stream) {
   writeSha(left, stream);
   writeSha(right, stream);
