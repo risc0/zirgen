@@ -106,6 +106,8 @@ enum Circuit {
     Verify,
     #[clap(name("bigint"))]
     BigInt,
+    #[clap(name("bigint2"))]
+    BigInt2,
 }
 
 #[derive(Parser)]
@@ -232,6 +234,7 @@ impl Args {
             Circuit::Calculator => self.calculator(),
             Circuit::Verify => self.stark_verify(),
             Circuit::BigInt => self.bigint(),
+            Circuit::BigInt2 => self.bigint2(),
         }
     }
 
@@ -404,6 +407,22 @@ impl Args {
         std::fs::write(out.join("control_id.rs"), output.stdout).unwrap();
 
         cargo_fmt_circuit(circuit, &Some(bigint_crate_root), &None);
+    }
+
+    fn bigint2(&self) {
+        let risc0_root = self.output.as_ref().expect("--output is required");
+        let risc0_root = risc0_root.join("risc0");
+        let bazel_bin = get_bazel_bin();
+        let src_path = bazel_bin.join("zirgen/circuit/bigint");
+        let rsa_path = risc0_root.join("bigint2/src/rsa");
+        let ec_path = risc0_root.join("bigint2/src/ec");
+
+        copy_file(&src_path, &rsa_path, "modpow_65537.blob");
+        copy(
+            &src_path.join("ec_double.blob"),
+            &ec_path.join("double.blob"),
+        );
+        copy(&src_path.join("ec_add.blob"), &ec_path.join("add.blob"));
     }
 }
 
