@@ -24,7 +24,10 @@ use risc0_zkp::{
     core::log2_ceil,
     field::baby_bear::{BabyBearElem, BabyBearExtElem},
     field::{map_pow, Elem, ExtElem, RootsOfUnity},
-    hal::cpu::{CpuBuffer, CpuHal},
+    hal::{
+        cpu::{CpuBuffer, CpuHal},
+        AccumPreflight,
+    },
     INV_RATE,
 };
 use std::collections::VecDeque;
@@ -32,6 +35,7 @@ use std::collections::VecDeque;
 pub const GLOBAL_MIX: usize = 0;
 pub const GLOBAL_OUT: usize = 1;
 
+#[derive(Default)]
 pub struct CpuCircuitHal {
     mem: RefCell<Vec<Val>>,
     input: RefCell<VecDeque<u32>>,
@@ -209,6 +213,7 @@ impl<'a> keccak_circuit::CircuitHal<'a, CpuHal<CircuitField>> for CpuCircuitHal 
 impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
     fn accumulate(
         &self,
+        _preflight: &AccumPreflight,
         _ctrl: &CpuBuffer<Val>,
         _io: &CpuBuffer<Val>,
         _data: &CpuBuffer<Val>,

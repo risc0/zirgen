@@ -136,6 +136,7 @@ impl<'a> calc_circuit::CircuitHal<'a, CpuHal<CircuitField>> for CpuCircuitHal {
 impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
     fn accumulate(
         &self,
+        _preflight: &AccumPreflight,
         _ctrl: &CpuBuffer<Val>,
         _io: &CpuBuffer<Val>,
         _data: &CpuBuffer<Val>,

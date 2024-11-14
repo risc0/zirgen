@@ -29,7 +29,12 @@ use super::CircuitImpl;
 
 mod cpp;
 pub mod cpu;
+#[cfg(feature = "cuda")]
+pub mod cuda;
 pub mod zkr;
+
+#[cfg(test)]
+pub mod testutil;
 
 risc0_zirgen_dsl::zirgen_inhibit_warnings! {
 
