@@ -9,7 +9,7 @@ filegroup(
         "//zirgen/circuit/bigint:gen_bigint",
         "//zirgen/circuit/fib",
         "//zirgen/circuit/keccak",
-        "//zirgen/circuit/predicates:gen_predicates",
+        "//zirgen/circuit/predicates:recursion_zkr",
         "//zirgen/circuit/recursion",
         "//zirgen/circuit/rv32im/v1/edsl:rv32im",
         "//zirgen/dsl/examples/calculator",
