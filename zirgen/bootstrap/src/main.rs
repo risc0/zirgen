@@ -125,6 +125,8 @@ struct Args {
 fn get_bazel_bin() -> PathBuf {
     let bazel_bin = Command::new("bazelisk")
         .arg("info")
+        .arg("--config")
+        .arg(bazel_config())
         .arg("bazel-bin")
         .output()
         .unwrap();
@@ -409,19 +411,22 @@ impl Args {
     }
 }
 
+fn bazel_config() -> &'static str {
+    // Use a hermetic C++ toolchain to get consistent builds across host platforms.
+    // See: https://github.com/uber/hermetic_cc_toolchain
+    // Also ensure that these configs exist in `.bazelrc`.
+    if cfg!(target_os = "macos") {
+        "bootstrap_macos_arm64"
+    } else {
+        "bootstrap_linux_amd64"
+    }
+}
+
 fn main() {
     env_logger::init();
     let args = Args::parse();
 
-    // Use a hermetic C++ toolchain to get consistent builds across host platforms.
-    // See: https://github.com/uber/hermetic_cc_toolchain
-    // Also ensure that these configs exist in `.bazelrc`.
-    let config = if cfg!(target_os = "macos") {
-        "bootstrap_macos_arm64"
-    } else {
-        "bootstrap_linux_amd64"
-    };
-    let bazel_args = ["build", "--config", config, "//zirgen/circuit"];
+    let bazel_args = ["build", "--config", bazel_config(), "//zirgen/circuit"];
 
     // Build the circuits using bazel(isk).
     let status = Command::new("bazelisk").args(bazel_args).status();
