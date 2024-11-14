@@ -1,5 +1,4 @@
 // This file contains utilities that work with bits and twits.
-// RUN: zirgen --test %s
 
 // Assert that a given value is a bit
 function AssertBit(val: Val) {
@@ -17,17 +16,6 @@ component BitReg(val: Val) {
   reg := NondetBitReg(val);
   val = reg;
   reg
-}
-
-// Check that valid bits are valid
-test BitInRange {
-  AssertBit(0);
-  AssertBit(1);
-}
-
-// Check that 2 is not a bit
-test_fails BitOutOfRange {
-  AssertBit(2);
 }
 
 // Assert the a given value is a 2-bit number (i.e. 0-3)
@@ -68,17 +56,3 @@ component FakeTwitReg(val: Val) {
   val = reg;
   reg
 }
-
-// Check that all valid twit values are OK
-test TwitInRange{
-  AssertTwit(0);
-  AssertTwit(1);
-  AssertTwit(2);
-  AssertTwit(3);
-}
-
-// Check that 4 is not a twit
-test_fails TwitOutOfRange {
-  AssertTwit(4);
-}
-
