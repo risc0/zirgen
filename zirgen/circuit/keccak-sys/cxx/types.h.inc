@@ -1,469 +1,723 @@
 struct NondetRegLayout {
   Reg _super;
 };
-using NondetRegLayout23LayoutArray = std::array<NondetRegLayout, 23>;
-struct OneHot_23_Layout {
-  NondetRegLayout23LayoutArray _super;
+using NondetRegLayout22LayoutArray = std::array<NondetRegLayout, 22>;
+struct OneHot_22_Layout {
+  NondetRegLayout22LayoutArray _super;
 };
 using NondetRegLayout24LayoutArray = std::array<NondetRegLayout, 24>;
-using NondetRegLayout22LayoutArray = std::array<NondetRegLayout, 22>;
+using NondetRegLayout16LayoutArray = std::array<NondetRegLayout, 16>;
 struct RetTupleLayout {
-  NondetRegLayout minor;
   NondetRegLayout24LayoutArray arrD;
   NondetRegLayout22LayoutArray arrF;
   NondetRegLayout22LayoutArray arrE;
   NondetRegLayout22LayoutArray arrC;
   NondetRegLayout22LayoutArray arrB;
   NondetRegLayout22LayoutArray arrA;
+  NondetRegLayout16LayoutArray auxr;
+  NondetRegLayout minor;
   NondetRegLayout major;
   NondetRegLayout rnd;
   NondetRegLayout blk;
   NondetRegLayout midx;
 };
+struct ConcatZeros_5__11_Layout {
+  NondetRegLayout16LayoutArray _super;
+};
+using NondetRegLayout5LayoutArray = std::array<NondetRegLayout, 5>;
+struct OneHotU_5_Layout {
+  NondetRegLayout5LayoutArray _super;
+};
+struct ToBitsU_22_Layout {
+  NondetRegLayout22LayoutArray _super;
+};
 struct ToBits_22_Layout {
   NondetRegLayout22LayoutArray _super;
 };
-struct Xor5wordsResult_0__0_Layout {
+struct Xor5wordsResult_0_Layout {
   NondetRegLayout22LayoutArray xorAbc;
+  OneHotU_5_Layout minorOnehot;
+  ToBitsU_22_Layout unpackE;
   ToBits_22_Layout unpackA;
   ToBits_22_Layout unpackB;
   ToBits_22_Layout unpackC;
   ToBits_22_Layout unpackD;
-  ToBits_22_Layout unpackE;
 };
-struct Xor5wordsMinor0_0_Layout {
+struct Concatenate_22__2_Layout {
+  NondetRegLayout24LayoutArray _super;
+};
+struct Xor5wordsMinor0Layout {
   RetTupleLayout _super;
+  ConcatZeros_5__11_Layout auxRegs;
+  Xor5wordsResult_0_Layout r;
   NondetRegLayout result;
-  Xor5wordsResult_0__0_Layout _0;
+  NondetRegLayout _0;
+  Concatenate_22__2_Layout withrD;
 };
 using NondetRegLayout21LayoutArray = std::array<NondetRegLayout, 21>;
+struct ToBitsU_21_Layout {
+  NondetRegLayout21LayoutArray _super;
+};
 struct ToBits_21_Layout {
   NondetRegLayout21LayoutArray _super;
 };
-struct Xor5wordsResult_0__1_Layout {
-  ToBits_21_Layout unpackA;
+struct Xor5wordsResult_1_Layout {
   NondetRegLayout21LayoutArray xorAbc;
+  OneHotU_5_Layout minorOnehot;
+  ToBitsU_21_Layout unpackE;
+  ToBits_21_Layout unpackA;
   ToBits_21_Layout unpackB;
   ToBits_21_Layout unpackC;
   ToBits_21_Layout unpackD;
-  ToBits_21_Layout unpackE;
 };
-struct Xor5wordsMinor1_0_Layout {
+struct ConcatZeros_21__1_Layout {
+  NondetRegLayout22LayoutArray _super;
+};
+struct ConcatZeros_21__3_Layout {
+  NondetRegLayout24LayoutArray _super;
+};
+struct ConcatElem_21_Layout {
+  NondetRegLayout22LayoutArray _super;
+};
+struct Xor5wordsMinor1Layout {
   RetTupleLayout _super;
+  ConcatZeros_5__11_Layout auxRegs;
+  Xor5wordsResult_1_Layout r;
+  ConcatZeros_21__1_Layout zc;
   NondetRegLayout result;
-  Xor5wordsResult_0__1_Layout _0;
-};
-struct Xor5wordsResult_0__2_Layout {
-  ToBits_21_Layout unpackA;
-  NondetRegLayout21LayoutArray xorAbc;
-  ToBits_21_Layout unpackB;
-  ToBits_21_Layout unpackC;
-  ToBits_21_Layout unpackD;
-  ToBits_21_Layout unpackE;
-};
-struct Xor5wordsMinor2_0_Layout {
-  RetTupleLayout _super;
-  NondetRegLayout result;
-  Xor5wordsResult_0__2_Layout _0;
-};
-using NondetRegLayout9LayoutArray = std::array<NondetRegLayout, 9>;
-struct Xor5wordsMinor3_0_Layout {
-  RetTupleLayout _super;
   NondetRegLayout _0;
-  NondetRegLayout22LayoutArray inpC;
-  NondetRegLayout22LayoutArray inpB;
-  NondetRegLayout22LayoutArray inpA;
-  NondetRegLayout9LayoutArray tmp_1;
+  ConcatZeros_21__3_Layout zd;
+  ConcatZeros_21__1_Layout ze;
+  ConcatZeros_21__1_Layout zx;
+  ConcatElem_21_Layout withrA;
+  ConcatElem_21_Layout withrB;
+};
+struct Xor5wordsResult_2_Layout {
+  NondetRegLayout21LayoutArray xorAbc;
+  OneHotU_5_Layout minorOnehot;
+  ToBitsU_21_Layout unpackE;
+  ToBits_21_Layout unpackA;
+  ToBits_21_Layout unpackB;
+  ToBits_21_Layout unpackC;
+  ToBits_21_Layout unpackD;
+};
+struct Xor5wordsMinor2Layout {
+  RetTupleLayout _super;
+  ConcatZeros_5__11_Layout auxRegs;
+  Xor5wordsResult_2_Layout r;
+  ConcatElem_21_Layout withrA;
+  NondetRegLayout result;
+  NondetRegLayout _0;
   NondetRegLayout _1;
-  NondetRegLayout _2;
+  ConcatZeros_21__3_Layout zd;
+  ConcatZeros_21__1_Layout ze;
+  ConcatZeros_21__1_Layout zx;
+  ConcatElem_21_Layout withrB;
+  ConcatElem_21_Layout withrC;
 };
-struct Xor5wordsMajor_0__SuperLayout {
+struct DummyBLayout {
+  NondetRegLayout22LayoutArray _super;
+};
+struct Xor5wordsM3impl_0_Arm0Layout {
   RetTupleLayout _super;
-  Xor5wordsMinor0_0_Layout arm0;
-  Xor5wordsMinor1_0_Layout arm1;
-  Xor5wordsMinor2_0_Layout arm2;
-  Xor5wordsMinor3_0_Layout arm3;
+  DummyBLayout _0;
+  DummyBLayout _1;
 };
-using NondetRegLayout4LayoutArray = std::array<NondetRegLayout, 4>;
-struct OneHot_4_Layout {
-  NondetRegLayout4LayoutArray _super;
-};
-struct Xor5wordsMajor_0_Layout {
-  Xor5wordsMajor_0__SuperLayout _super;
-  OneHot_4_Layout minorOnehot;
-};
-struct Xor5wordsResult_1__0_Layout {
-  NondetRegLayout22LayoutArray xorAbc;
-  ToBits_22_Layout unpackA;
-  ToBits_22_Layout unpackB;
-  ToBits_22_Layout unpackC;
-  ToBits_22_Layout unpackD;
-  ToBits_22_Layout unpackE;
-};
-struct Xor5wordsMinor0_1_Layout {
+struct Xor5wordsM3impl_0_Arm1Layout {
   RetTupleLayout _super;
-  NondetRegLayout result;
-  Xor5wordsResult_1__0_Layout _0;
+  DummyBLayout _0;
+  DummyBLayout _1;
 };
-struct Xor5wordsResult_1__1_Layout {
-  ToBits_21_Layout unpackA;
-  NondetRegLayout21LayoutArray xorAbc;
-  ToBits_21_Layout unpackB;
-  ToBits_21_Layout unpackC;
-  ToBits_21_Layout unpackD;
-  ToBits_21_Layout unpackE;
-};
-struct Xor5wordsMinor1_1_Layout {
+struct Xor5wordsM3impl_0__SuperLayout {
   RetTupleLayout _super;
-  NondetRegLayout result;
-  Xor5wordsResult_1__1_Layout _0;
+  Xor5wordsM3impl_0_Arm0Layout arm0;
+  Xor5wordsM3impl_0_Arm1Layout arm1;
 };
-struct Xor5wordsResult_1__2_Layout {
-  ToBits_21_Layout unpackA;
-  NondetRegLayout21LayoutArray xorAbc;
-  ToBits_21_Layout unpackB;
-  ToBits_21_Layout unpackC;
-  ToBits_21_Layout unpackD;
-  ToBits_21_Layout unpackE;
+struct RGZ_22_Layout {
+  NondetRegLayout22LayoutArray _super;
 };
-struct Xor5wordsMinor2_1_Layout {
-  RetTupleLayout _super;
-  NondetRegLayout result;
-  Xor5wordsResult_1__2_Layout _0;
+struct ConcatZeros_12__12_Layout {
+  NondetRegLayout24LayoutArray _super;
 };
 using NondetRegLayout12LayoutArray = std::array<NondetRegLayout, 12>;
-struct Xor5wordsMinor3_1_Layout {
-  RetTupleLayout _super;
+struct Concatenate_9__3_Layout {
+  NondetRegLayout12LayoutArray _super;
+};
+using NondetRegLayout9LayoutArray = std::array<NondetRegLayout, 9>;
+struct Xor5wordsM3impl_0_Layout {
+  Xor5wordsM3impl_0__SuperLayout _super;
+  RGZ_22_Layout inpA;
+  RGZ_22_Layout inpB;
+  RGZ_22_Layout inpC;
   NondetRegLayout _0;
-  NondetRegLayout22LayoutArray inpC;
-  NondetRegLayout22LayoutArray inpB;
-  NondetRegLayout22LayoutArray inpA;
-  NondetRegLayout12LayoutArray tmp_1;
   NondetRegLayout _1;
   NondetRegLayout _2;
+  ConcatZeros_12__12_Layout inpD;
+  Concatenate_9__3_Layout tmp_2;
+  NondetRegLayout9LayoutArray tmp_1;
 };
-struct Xor5wordsMajor_1__SuperLayout {
+struct Xor5wordsM3impl_1_Arm0Layout {
   RetTupleLayout _super;
-  Xor5wordsMinor0_1_Layout arm0;
-  Xor5wordsMinor1_1_Layout arm1;
-  Xor5wordsMinor2_1_Layout arm2;
-  Xor5wordsMinor3_1_Layout arm3;
+  DummyBLayout _0;
+  DummyBLayout _1;
 };
-struct Xor5wordsMajor_1_Layout {
-  Xor5wordsMajor_1__SuperLayout _super;
-  OneHot_4_Layout minorOnehot;
-};
-struct Xor5wordsResult_2__0_Layout {
-  NondetRegLayout22LayoutArray xorAbc;
-  ToBits_22_Layout unpackA;
-  ToBits_22_Layout unpackB;
-  ToBits_22_Layout unpackC;
-  ToBits_22_Layout unpackD;
-  ToBits_22_Layout unpackE;
-};
-struct Xor5wordsMinor0_2_Layout {
+struct Xor5wordsM3impl_1_Arm1Layout {
   RetTupleLayout _super;
-  NondetRegLayout result;
-  Xor5wordsResult_2__0_Layout _0;
+  DummyBLayout _0;
+  DummyBLayout _1;
 };
-struct Xor5wordsResult_2__1_Layout {
-  ToBits_21_Layout unpackA;
-  NondetRegLayout21LayoutArray xorAbc;
-  ToBits_21_Layout unpackB;
-  ToBits_21_Layout unpackC;
-  ToBits_21_Layout unpackD;
-  ToBits_21_Layout unpackE;
-};
-struct Xor5wordsMinor1_2_Layout {
+struct Xor5wordsM3impl_1__SuperLayout {
   RetTupleLayout _super;
-  NondetRegLayout result;
-  Xor5wordsResult_2__1_Layout _0;
+  Xor5wordsM3impl_1_Arm0Layout arm0;
+  Xor5wordsM3impl_1_Arm1Layout arm1;
 };
-struct Xor5wordsResult_2__2_Layout {
-  ToBits_21_Layout unpackA;
-  NondetRegLayout21LayoutArray xorAbc;
-  ToBits_21_Layout unpackB;
-  ToBits_21_Layout unpackC;
-  ToBits_21_Layout unpackD;
-  ToBits_21_Layout unpackE;
-};
-struct Xor5wordsMinor2_2_Layout {
-  RetTupleLayout _super;
-  NondetRegLayout result;
-  Xor5wordsResult_2__2_Layout _0;
+struct ConcatZeros_15__9_Layout {
+  NondetRegLayout24LayoutArray _super;
 };
 using NondetRegLayout15LayoutArray = std::array<NondetRegLayout, 15>;
-struct Xor5wordsMinor3_2_Layout {
-  RetTupleLayout _super;
+struct Concatenate_12__3_Layout {
+  NondetRegLayout15LayoutArray _super;
+};
+struct Xor5wordsM3impl_1_Layout {
+  Xor5wordsM3impl_1__SuperLayout _super;
+  RGZ_22_Layout inpA;
+  RGZ_22_Layout inpB;
+  RGZ_22_Layout inpC;
   NondetRegLayout _0;
-  NondetRegLayout22LayoutArray inpC;
-  NondetRegLayout22LayoutArray inpB;
-  NondetRegLayout22LayoutArray inpA;
-  NondetRegLayout15LayoutArray tmp_1;
   NondetRegLayout _1;
   NondetRegLayout _2;
+  ConcatZeros_15__9_Layout inpD;
+  Concatenate_12__3_Layout tmp_2;
+  NondetRegLayout12LayoutArray tmp_1;
 };
-struct Xor5wordsMajor_2__SuperLayout {
+struct Xor5wordsM3impl_2_Arm0Layout {
   RetTupleLayout _super;
-  Xor5wordsMinor0_2_Layout arm0;
-  Xor5wordsMinor1_2_Layout arm1;
-  Xor5wordsMinor2_2_Layout arm2;
-  Xor5wordsMinor3_2_Layout arm3;
+  DummyBLayout _0;
+  DummyBLayout _1;
 };
-struct Xor5wordsMajor_2_Layout {
-  Xor5wordsMajor_2__SuperLayout _super;
-  OneHot_4_Layout minorOnehot;
-};
-struct Xor5wordsResult_3__0_Layout {
-  NondetRegLayout22LayoutArray xorAbc;
-  ToBits_22_Layout unpackA;
-  ToBits_22_Layout unpackB;
-  ToBits_22_Layout unpackC;
-  ToBits_22_Layout unpackD;
-  ToBits_22_Layout unpackE;
-};
-struct Xor5wordsMinor0_3_Layout {
+struct Xor5wordsM3impl_2_Arm1Layout {
   RetTupleLayout _super;
-  NondetRegLayout result;
-  Xor5wordsResult_3__0_Layout _0;
+  DummyBLayout _0;
+  DummyBLayout _1;
 };
-struct Xor5wordsResult_3__1_Layout {
-  ToBits_21_Layout unpackA;
-  NondetRegLayout21LayoutArray xorAbc;
-  ToBits_21_Layout unpackB;
-  ToBits_21_Layout unpackC;
-  ToBits_21_Layout unpackD;
-  ToBits_21_Layout unpackE;
-};
-struct Xor5wordsMinor1_3_Layout {
+struct Xor5wordsM3impl_2__SuperLayout {
   RetTupleLayout _super;
-  NondetRegLayout result;
-  Xor5wordsResult_3__1_Layout _0;
+  Xor5wordsM3impl_2_Arm0Layout arm0;
+  Xor5wordsM3impl_2_Arm1Layout arm1;
 };
-struct Xor5wordsResult_3__2_Layout {
-  ToBits_21_Layout unpackA;
-  NondetRegLayout21LayoutArray xorAbc;
-  ToBits_21_Layout unpackB;
-  ToBits_21_Layout unpackC;
-  ToBits_21_Layout unpackD;
-  ToBits_21_Layout unpackE;
-};
-struct Xor5wordsMinor2_3_Layout {
-  RetTupleLayout _super;
-  NondetRegLayout result;
-  Xor5wordsResult_3__2_Layout _0;
+struct ConcatZeros_18__6_Layout {
+  NondetRegLayout24LayoutArray _super;
 };
 using NondetRegLayout18LayoutArray = std::array<NondetRegLayout, 18>;
-struct Xor5wordsMinor3_3_Layout {
-  RetTupleLayout _super;
+struct Concatenate_15__3_Layout {
+  NondetRegLayout18LayoutArray _super;
+};
+struct Xor5wordsM3impl_2_Layout {
+  Xor5wordsM3impl_2__SuperLayout _super;
+  RGZ_22_Layout inpA;
+  RGZ_22_Layout inpB;
+  RGZ_22_Layout inpC;
   NondetRegLayout _0;
-  NondetRegLayout22LayoutArray inpC;
-  NondetRegLayout22LayoutArray inpB;
-  NondetRegLayout22LayoutArray inpA;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  ConcatZeros_18__6_Layout inpD;
+  Concatenate_15__3_Layout tmp_2;
+  NondetRegLayout15LayoutArray tmp_1;
+};
+struct Xor5wordsM3impl_3_Arm0Layout {
+  RetTupleLayout _super;
+  DummyBLayout _0;
+  DummyBLayout _1;
+};
+struct Xor5wordsM3impl_3_Arm1Layout {
+  RetTupleLayout _super;
+  DummyBLayout _0;
+  DummyBLayout _1;
+};
+struct Xor5wordsM3impl_3__SuperLayout {
+  RetTupleLayout _super;
+  Xor5wordsM3impl_3_Arm0Layout arm0;
+  Xor5wordsM3impl_3_Arm1Layout arm1;
+};
+struct Concatenate_18__3_Layout {
+  NondetRegLayout21LayoutArray _super;
+};
+struct Xor5wordsM3impl_3_Layout {
+  Xor5wordsM3impl_3__SuperLayout _super;
+  RGZ_22_Layout inpA;
+  RGZ_22_Layout inpB;
+  RGZ_22_Layout inpC;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  ConcatZeros_21__3_Layout inpD;
+  Concatenate_18__3_Layout tmp_2;
   NondetRegLayout18LayoutArray tmp_1;
-  NondetRegLayout _1;
-  NondetRegLayout _2;
 };
-struct Xor5wordsMajor_3__SuperLayout {
+struct Xor5wordsM3impl_4_Arm0Layout {
   RetTupleLayout _super;
-  Xor5wordsMinor0_3_Layout arm0;
-  Xor5wordsMinor1_3_Layout arm1;
-  Xor5wordsMinor2_3_Layout arm2;
-  Xor5wordsMinor3_3_Layout arm3;
+  DummyBLayout _0;
+  DummyBLayout _1;
 };
-struct Xor5wordsMajor_3_Layout {
-  Xor5wordsMajor_3__SuperLayout _super;
-  OneHot_4_Layout minorOnehot;
-};
-struct Xor5wordsResult_4__0_Layout {
-  NondetRegLayout22LayoutArray xorAbc;
-  ToBits_22_Layout unpackA;
-  ToBits_22_Layout unpackB;
-  ToBits_22_Layout unpackC;
-  ToBits_22_Layout unpackD;
-  ToBits_22_Layout unpackE;
-};
-struct Xor5wordsMinor0_4_Layout {
+struct Xor5wordsM3impl_4_Arm1Layout {
   RetTupleLayout _super;
-  NondetRegLayout result;
-  Xor5wordsResult_4__0_Layout _0;
+  DummyBLayout _0;
+  DummyBLayout _1;
 };
-struct Xor5wordsResult_4__1_Layout {
-  ToBits_21_Layout unpackA;
-  NondetRegLayout21LayoutArray xorAbc;
-  ToBits_21_Layout unpackB;
-  ToBits_21_Layout unpackC;
-  ToBits_21_Layout unpackD;
-  ToBits_21_Layout unpackE;
-};
-struct Xor5wordsMinor1_4_Layout {
+struct Xor5wordsM3impl_4__SuperLayout {
   RetTupleLayout _super;
-  NondetRegLayout result;
-  Xor5wordsResult_4__1_Layout _0;
+  Xor5wordsM3impl_4_Arm0Layout arm0;
+  Xor5wordsM3impl_4_Arm1Layout arm1;
 };
-struct Xor5wordsResult_4__2_Layout {
-  ToBits_21_Layout unpackA;
-  NondetRegLayout21LayoutArray xorAbc;
-  ToBits_21_Layout unpackB;
-  ToBits_21_Layout unpackC;
-  ToBits_21_Layout unpackD;
-  ToBits_21_Layout unpackE;
+struct Concatenate_21__3_Layout {
+  NondetRegLayout24LayoutArray _super;
 };
-struct Xor5wordsMinor2_4_Layout {
-  RetTupleLayout _super;
-  NondetRegLayout result;
-  Xor5wordsResult_4__2_Layout _0;
+struct ConcatZeros_24__0_Layout {
+  NondetRegLayout24LayoutArray _super;
 };
-struct Xor5wordsMinor3_4_Layout {
-  RetTupleLayout _super;
+struct Xor5wordsM3impl_4_Layout {
+  Xor5wordsM3impl_4__SuperLayout _super;
+  RGZ_22_Layout inpA;
+  RGZ_22_Layout inpB;
+  RGZ_22_Layout inpC;
   NondetRegLayout _0;
-  NondetRegLayout22LayoutArray inpC;
-  NondetRegLayout22LayoutArray inpB;
-  NondetRegLayout22LayoutArray inpA;
-  NondetRegLayout21LayoutArray tmp_1;
   NondetRegLayout _1;
   NondetRegLayout _2;
+  Concatenate_21__3_Layout tmp_2;
+  ConcatZeros_24__0_Layout inpD;
+  NondetRegLayout21LayoutArray tmp_1;
 };
-struct Xor5wordsMajor_4__SuperLayout {
+struct Xor5wordsMinor3_SuperLayout {
   RetTupleLayout _super;
-  Xor5wordsMinor0_4_Layout arm0;
-  Xor5wordsMinor1_4_Layout arm1;
-  Xor5wordsMinor2_4_Layout arm2;
-  Xor5wordsMinor3_4_Layout arm3;
+  Xor5wordsM3impl_0_Layout arm0;
+  Xor5wordsM3impl_1_Layout arm1;
+  Xor5wordsM3impl_2_Layout arm2;
+  Xor5wordsM3impl_3_Layout arm3;
+  Xor5wordsM3impl_4_Layout arm4;
 };
-struct Xor5wordsMajor_4_Layout {
-  Xor5wordsMajor_4__SuperLayout _super;
-  OneHot_4_Layout minorOnehot;
+struct Xor5wordsMinor3Layout {
+  Xor5wordsMinor3_SuperLayout _super;
+  ConcatZeros_5__11_Layout auxRegs;
+  OneHotU_5_Layout minorOnehot;
+};
+struct ConcatZeros_22__2_Layout {
+  NondetRegLayout24LayoutArray _super;
+};
+struct RotLeft3impl_22__21__21__1_Layout {
+  NondetRegLayout22LayoutArray ra;
+  NondetRegLayout21LayoutArray rb;
+  NondetRegLayout21LayoutArray rc;
 };
 struct RhoMinor0_0__0_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
+  ConcatZeros_22__2_Layout paddedM1;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedM3;
+  ConcatZeros_21__1_Layout padRb;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  ConcatZeros_21__1_Layout padRc;
+};
+struct RhoMinor1_0__0_Arm0Layout {
+  RetTupleLayout _super;
+  DummyBLayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct RhoMinor1_0__0_Arm1_SuperLayout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ConcatZeros_21__1_Layout paddedM3;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
 };
 struct RhoMinor1_0__0__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor1_0__0_Arm0Layout arm0;
   RhoMinor1_0__0_Arm1_SuperLayout arm1;
 };
 struct RhoMinor1_0__0_Layout {
   RhoMinor1_0__0__SuperLayout _super;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
+  Concatenate_21__3_Layout withrsD;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
 struct RhoMinor2_0__0_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  Concatenate_21__3_Layout withrsD;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedP2;
+  ConcatZeros_21__1_Layout paddedP3;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
 struct RhoMinor0_2__0_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
+  ConcatZeros_22__2_Layout paddedM1;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedM3;
+  ConcatZeros_21__1_Layout padRb;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  ConcatZeros_21__1_Layout padRc;
+};
+struct RhoMinor1_2__0_Arm0Layout {
+  RetTupleLayout _super;
+  DummyBLayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct RhoMinor1_2__0_Arm1_SuperLayout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ConcatZeros_21__1_Layout paddedM3;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
 };
 struct RhoMinor1_2__0__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor1_2__0_Arm0Layout arm0;
   RhoMinor1_2__0_Arm1_SuperLayout arm1;
 };
 struct RhoMinor1_2__0_Layout {
   RhoMinor1_2__0__SuperLayout _super;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
+  Concatenate_21__3_Layout withrsD;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
 struct RhoMinor2_2__0_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  Concatenate_21__3_Layout withrsD;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedP2;
+  ConcatZeros_21__1_Layout paddedP3;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
 struct RhoMinor0_4__0_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
+  ConcatZeros_22__2_Layout paddedM1;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedM3;
+  ConcatZeros_21__1_Layout padRb;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  ConcatZeros_21__1_Layout padRc;
+};
+struct RhoMinor1_4__0_Arm0Layout {
+  RetTupleLayout _super;
+  DummyBLayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct RhoMinor1_4__0_Arm1_SuperLayout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ConcatZeros_21__1_Layout paddedM3;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
 };
 struct RhoMinor1_4__0__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor1_4__0_Arm0Layout arm0;
   RhoMinor1_4__0_Arm1_SuperLayout arm1;
 };
 struct RhoMinor1_4__0_Layout {
   RhoMinor1_4__0__SuperLayout _super;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
+  Concatenate_21__3_Layout withrsD;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
+struct RGZ_24_Layout {
+  NondetRegLayout24LayoutArray _super;
+};
+struct Concatenate_15__7_Layout {
+  NondetRegLayout22LayoutArray _super;
+};
+struct Concatenate_6__3_Layout {
+  NondetRegLayout9LayoutArray _super;
+};
+using NondetRegLayout7LayoutArray = std::array<NondetRegLayout, 7>;
+using NondetRegLayout6LayoutArray = std::array<NondetRegLayout, 6>;
+struct Concatenate_3__3_Layout {
+  NondetRegLayout6LayoutArray _super;
+};
+using NondetRegLayout3LayoutArray = std::array<NondetRegLayout, 3>;
+struct RhoMinor3_0_Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _11;
+  DummyBLayout _12;
+  DummyBLayout _13;
+  RGZ_22_Layout _9;
+  RGZ_22_Layout _10;
+  Concatenate_15__7_Layout a;
+  Concatenate_12__3_Layout rs1;
+  Concatenate_9__3_Layout _6;
+  Concatenate_6__3_Layout _4;
+  NondetRegLayout7LayoutArray _8;
+  Concatenate_3__3_Layout _2;
+  NondetRegLayout3LayoutArray _0;
+  NondetRegLayout3LayoutArray _1;
+  NondetRegLayout3LayoutArray _3;
+  NondetRegLayout3LayoutArray _5;
+  NondetRegLayout3LayoutArray _7;
+};
+struct Concatenate_8__14_Layout {
+  NondetRegLayout22LayoutArray _super;
+};
+using NondetRegLayout14LayoutArray = std::array<NondetRegLayout, 14>;
+struct RhoMinor3_0_Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _18;
+  DummyBLayout _19;
+  DummyBLayout _20;
+  RGZ_22_Layout _17;
+  Concatenate_8__14_Layout b;
+  Concatenate_15__7_Layout a;
+  NondetRegLayout15LayoutArray _7;
+  NondetRegLayout14LayoutArray _16;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+};
+struct Concatenate_1__21_Layout {
+  NondetRegLayout22LayoutArray _super;
+};
+using NondetRegLayout8LayoutArray = std::array<NondetRegLayout, 8>;
+using NondetRegLayout1LayoutArray = std::array<NondetRegLayout, 1>;
+struct RhoMinor3_0_Arm1Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _17;
+  DummyBLayout _18;
+  DummyBLayout _19;
+  RGZ_22_Layout _16;
+  Concatenate_8__14_Layout b;
+  Concatenate_1__21_Layout c;
+  NondetRegLayout21LayoutArray _15;
+  NondetRegLayout8LayoutArray _14;
+  NondetRegLayout1LayoutArray rs2;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+};
+struct Concatenate_16__6_Layout {
+  NondetRegLayout22LayoutArray _super;
+};
+struct Concatenate_1__15_Layout {
+  NondetRegLayout16LayoutArray _super;
+};
+struct RhoMinor3_0_Arm1Arm1Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  DummyBLayout _20;
+  DummyBLayout _21;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  RGZ_24_Layout _19;
+  RGZ_22_Layout _17;
+  RGZ_22_Layout _18;
+  Concatenate_16__6_Layout c;
+  Concatenate_1__15_Layout c1;
+  NondetRegLayout6LayoutArray _16;
+};
+struct RhoMinor3_0_Arm1Arm1Arm1Arm1_SuperLayout {
+  RetTupleLayout _super;
+  DummyBLayout _90;
+  DummyBLayout _91;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  NondetRegLayout _16;
+  NondetRegLayout _17;
+  NondetRegLayout _18;
+  NondetRegLayout _19;
+  NondetRegLayout _20;
+  NondetRegLayout _21;
+  NondetRegLayout _22;
+  NondetRegLayout _23;
+  NondetRegLayout _24;
+  NondetRegLayout _25;
+  NondetRegLayout _26;
+  NondetRegLayout _27;
+  NondetRegLayout _28;
+  NondetRegLayout _29;
+  NondetRegLayout _30;
+  NondetRegLayout _31;
+  NondetRegLayout _32;
+  NondetRegLayout _33;
+  NondetRegLayout _34;
+  NondetRegLayout _35;
+  NondetRegLayout _36;
+  NondetRegLayout _37;
+  NondetRegLayout _38;
+  NondetRegLayout _39;
+  NondetRegLayout _40;
+  NondetRegLayout _41;
+  NondetRegLayout _42;
+  NondetRegLayout _43;
+  NondetRegLayout _44;
+  NondetRegLayout _45;
+  NondetRegLayout _46;
+  NondetRegLayout _47;
+  NondetRegLayout _48;
+  NondetRegLayout _49;
+  NondetRegLayout _50;
+  NondetRegLayout _51;
+  NondetRegLayout _52;
+  NondetRegLayout _53;
+  NondetRegLayout _54;
+  NondetRegLayout _55;
+  NondetRegLayout _56;
+  NondetRegLayout _57;
+  NondetRegLayout _58;
+  NondetRegLayout _59;
+  NondetRegLayout _60;
+  NondetRegLayout _61;
+  NondetRegLayout _62;
+  NondetRegLayout _63;
+  NondetRegLayout _64;
+  NondetRegLayout _65;
+  NondetRegLayout _66;
+  NondetRegLayout _67;
+  NondetRegLayout _68;
+  NondetRegLayout _69;
+  NondetRegLayout _70;
+  NondetRegLayout _71;
+  NondetRegLayout _72;
+  NondetRegLayout _73;
+  NondetRegLayout _74;
+  NondetRegLayout _75;
+  NondetRegLayout _76;
+  NondetRegLayout _77;
+  NondetRegLayout _78;
+  NondetRegLayout _79;
+  NondetRegLayout _80;
+  NondetRegLayout _81;
+  NondetRegLayout _82;
+  NondetRegLayout _83;
+  NondetRegLayout _84;
+  NondetRegLayout _85;
+  NondetRegLayout _86;
+  NondetRegLayout _87;
+  NondetRegLayout _88;
+  NondetRegLayout _89;
+};
 struct RhoMinor3_0_Arm1Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
-  RetTupleLayout arm1;
+  RhoMinor3_0_Arm1Arm1Arm1Arm0_SuperLayout arm0;
+  RhoMinor3_0_Arm1Arm1Arm1Arm1_SuperLayout arm1;
 };
 struct RhoMinor3_0_Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor3_0_Arm1Arm1Arm0_SuperLayout arm0;
   RhoMinor3_0_Arm1Arm1Arm1_SuperLayout arm1;
 };
 struct RhoMinor3_0_Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor3_0_Arm1Arm0_SuperLayout arm0;
   RhoMinor3_0_Arm1Arm1_SuperLayout arm1;
 };
 struct RhoMinor3_0__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor3_0_Arm0_SuperLayout arm0;
   RhoMinor3_0_Arm1_SuperLayout arm1;
 };
 struct RhoMajor_0__SuperLayout {
@@ -478,142 +732,397 @@ struct RhoMajor_0__SuperLayout {
   RhoMinor1_4__0_Layout arm7;
   RhoMinor3_0__SuperLayout arm8;
 };
-struct OneHot_9_Layout {
+struct ConcatZeros_9__7_Layout {
+  NondetRegLayout16LayoutArray _super;
+};
+struct OneHotU_9_Layout {
   NondetRegLayout9LayoutArray _super;
 };
 struct RhoMajor_0_Layout {
   RhoMajor_0__SuperLayout _super;
-  OneHot_9_Layout minorOnehot;
+  ConcatZeros_9__7_Layout auxRegs;
+  OneHotU_9_Layout minorOnehot;
 };
 struct RhoMinor0_0__1_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
+  ConcatZeros_22__2_Layout paddedM1;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedM3;
+  ConcatZeros_21__1_Layout padRb;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  ConcatZeros_21__1_Layout padRc;
+};
+struct RhoMinor1_0__1_Arm0Layout {
+  RetTupleLayout _super;
+  DummyBLayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct RhoMinor1_0__1_Arm1_SuperLayout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ConcatZeros_21__1_Layout paddedM3;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
 };
 struct RhoMinor1_0__1__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor1_0__1_Arm0Layout arm0;
   RhoMinor1_0__1_Arm1_SuperLayout arm1;
 };
 struct RhoMinor1_0__1_Layout {
   RhoMinor1_0__1__SuperLayout _super;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
+  Concatenate_21__3_Layout withrsD;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
 struct RhoMinor2_0__1_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  Concatenate_21__3_Layout withrsD;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedP2;
+  ConcatZeros_21__1_Layout paddedP3;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
 struct RhoMinor0_2__1_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
+  ConcatZeros_22__2_Layout paddedM1;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedM3;
+  ConcatZeros_21__1_Layout padRb;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  ConcatZeros_21__1_Layout padRc;
+};
+struct RhoMinor1_2__1_Arm0Layout {
+  RetTupleLayout _super;
+  DummyBLayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct RhoMinor1_2__1_Arm1_SuperLayout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ConcatZeros_21__1_Layout paddedM3;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
 };
 struct RhoMinor1_2__1__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor1_2__1_Arm0Layout arm0;
   RhoMinor1_2__1_Arm1_SuperLayout arm1;
 };
 struct RhoMinor1_2__1_Layout {
   RhoMinor1_2__1__SuperLayout _super;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
+  Concatenate_21__3_Layout withrsD;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
 struct RhoMinor2_2__1_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  Concatenate_21__3_Layout withrsD;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedP2;
+  ConcatZeros_21__1_Layout paddedP3;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
 struct RhoMinor0_4__1_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
+  ConcatZeros_22__2_Layout paddedM1;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedM3;
+  ConcatZeros_21__1_Layout padRb;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  ConcatZeros_21__1_Layout padRc;
+};
+struct RhoMinor1_4__1_Arm0Layout {
+  RetTupleLayout _super;
+  DummyBLayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct RhoMinor1_4__1_Arm1_SuperLayout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ConcatZeros_21__1_Layout paddedM3;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
 };
 struct RhoMinor1_4__1__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor1_4__1_Arm0Layout arm0;
   RhoMinor1_4__1_Arm1_SuperLayout arm1;
 };
 struct RhoMinor1_4__1_Layout {
   RhoMinor1_4__1__SuperLayout _super;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
+  Concatenate_21__3_Layout withrsD;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
+struct RhoMinor3_1_Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _11;
+  DummyBLayout _12;
+  DummyBLayout _13;
+  RGZ_22_Layout _9;
+  RGZ_22_Layout _10;
+  Concatenate_15__7_Layout a;
+  Concatenate_12__3_Layout rs1;
+  Concatenate_9__3_Layout _6;
+  Concatenate_6__3_Layout _4;
+  NondetRegLayout7LayoutArray _8;
+  Concatenate_3__3_Layout _2;
+  NondetRegLayout3LayoutArray _0;
+  NondetRegLayout3LayoutArray _1;
+  NondetRegLayout3LayoutArray _3;
+  NondetRegLayout3LayoutArray _5;
+  NondetRegLayout3LayoutArray _7;
+};
+struct RhoMinor3_1_Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _18;
+  DummyBLayout _19;
+  DummyBLayout _20;
+  RGZ_22_Layout _17;
+  Concatenate_8__14_Layout b;
+  Concatenate_15__7_Layout a;
+  NondetRegLayout15LayoutArray _7;
+  NondetRegLayout14LayoutArray _16;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+};
+struct RhoMinor3_1_Arm1Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _17;
+  DummyBLayout _18;
+  DummyBLayout _19;
+  RGZ_22_Layout _16;
+  Concatenate_8__14_Layout b;
+  Concatenate_1__21_Layout c;
+  NondetRegLayout21LayoutArray _15;
+  NondetRegLayout8LayoutArray _14;
+  NondetRegLayout1LayoutArray rs2;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+};
+struct RhoMinor3_1_Arm1Arm1Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  DummyBLayout _20;
+  DummyBLayout _21;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  RGZ_24_Layout _19;
+  RGZ_22_Layout _17;
+  RGZ_22_Layout _18;
+  Concatenate_16__6_Layout c;
+  Concatenate_1__15_Layout c1;
+  NondetRegLayout6LayoutArray _16;
+};
+struct RhoMinor3_1_Arm1Arm1Arm1Arm1_SuperLayout {
+  RetTupleLayout _super;
+  DummyBLayout _90;
+  DummyBLayout _91;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  NondetRegLayout _16;
+  NondetRegLayout _17;
+  NondetRegLayout _18;
+  NondetRegLayout _19;
+  NondetRegLayout _20;
+  NondetRegLayout _21;
+  NondetRegLayout _22;
+  NondetRegLayout _23;
+  NondetRegLayout _24;
+  NondetRegLayout _25;
+  NondetRegLayout _26;
+  NondetRegLayout _27;
+  NondetRegLayout _28;
+  NondetRegLayout _29;
+  NondetRegLayout _30;
+  NondetRegLayout _31;
+  NondetRegLayout _32;
+  NondetRegLayout _33;
+  NondetRegLayout _34;
+  NondetRegLayout _35;
+  NondetRegLayout _36;
+  NondetRegLayout _37;
+  NondetRegLayout _38;
+  NondetRegLayout _39;
+  NondetRegLayout _40;
+  NondetRegLayout _41;
+  NondetRegLayout _42;
+  NondetRegLayout _43;
+  NondetRegLayout _44;
+  NondetRegLayout _45;
+  NondetRegLayout _46;
+  NondetRegLayout _47;
+  NondetRegLayout _48;
+  NondetRegLayout _49;
+  NondetRegLayout _50;
+  NondetRegLayout _51;
+  NondetRegLayout _52;
+  NondetRegLayout _53;
+  NondetRegLayout _54;
+  NondetRegLayout _55;
+  NondetRegLayout _56;
+  NondetRegLayout _57;
+  NondetRegLayout _58;
+  NondetRegLayout _59;
+  NondetRegLayout _60;
+  NondetRegLayout _61;
+  NondetRegLayout _62;
+  NondetRegLayout _63;
+  NondetRegLayout _64;
+  NondetRegLayout _65;
+  NondetRegLayout _66;
+  NondetRegLayout _67;
+  NondetRegLayout _68;
+  NondetRegLayout _69;
+  NondetRegLayout _70;
+  NondetRegLayout _71;
+  NondetRegLayout _72;
+  NondetRegLayout _73;
+  NondetRegLayout _74;
+  NondetRegLayout _75;
+  NondetRegLayout _76;
+  NondetRegLayout _77;
+  NondetRegLayout _78;
+  NondetRegLayout _79;
+  NondetRegLayout _80;
+  NondetRegLayout _81;
+  NondetRegLayout _82;
+  NondetRegLayout _83;
+  NondetRegLayout _84;
+  NondetRegLayout _85;
+  NondetRegLayout _86;
+  NondetRegLayout _87;
+  NondetRegLayout _88;
+  NondetRegLayout _89;
+};
 struct RhoMinor3_1_Arm1Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
-  RetTupleLayout arm1;
+  RhoMinor3_1_Arm1Arm1Arm1Arm0_SuperLayout arm0;
+  RhoMinor3_1_Arm1Arm1Arm1Arm1_SuperLayout arm1;
 };
 struct RhoMinor3_1_Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor3_1_Arm1Arm1Arm0_SuperLayout arm0;
   RhoMinor3_1_Arm1Arm1Arm1_SuperLayout arm1;
 };
 struct RhoMinor3_1_Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor3_1_Arm1Arm0_SuperLayout arm0;
   RhoMinor3_1_Arm1Arm1_SuperLayout arm1;
 };
 struct RhoMinor3_1__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor3_1_Arm0_SuperLayout arm0;
   RhoMinor3_1_Arm1_SuperLayout arm1;
 };
 struct RhoMajor_1__SuperLayout {
@@ -630,137 +1139,389 @@ struct RhoMajor_1__SuperLayout {
 };
 struct RhoMajor_1_Layout {
   RhoMajor_1__SuperLayout _super;
-  OneHot_9_Layout minorOnehot;
+  ConcatZeros_9__7_Layout auxRegs;
+  OneHotU_9_Layout minorOnehot;
 };
 struct RhoMinor0_0__2_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
+  ConcatZeros_22__2_Layout paddedM1;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedM3;
+  ConcatZeros_21__1_Layout padRb;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  ConcatZeros_21__1_Layout padRc;
+};
+struct RhoMinor1_0__2_Arm0Layout {
+  RetTupleLayout _super;
+  DummyBLayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct RhoMinor1_0__2_Arm1_SuperLayout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ConcatZeros_21__1_Layout paddedM3;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
 };
 struct RhoMinor1_0__2__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor1_0__2_Arm0Layout arm0;
   RhoMinor1_0__2_Arm1_SuperLayout arm1;
 };
 struct RhoMinor1_0__2_Layout {
   RhoMinor1_0__2__SuperLayout _super;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
+  Concatenate_21__3_Layout withrsD;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
 struct RhoMinor2_0__2_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  Concatenate_21__3_Layout withrsD;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedP2;
+  ConcatZeros_21__1_Layout paddedP3;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
 struct RhoMinor0_2__2_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
+  ConcatZeros_22__2_Layout paddedM1;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedM3;
+  ConcatZeros_21__1_Layout padRb;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  ConcatZeros_21__1_Layout padRc;
+};
+struct RhoMinor1_2__2_Arm0Layout {
+  RetTupleLayout _super;
+  DummyBLayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct RhoMinor1_2__2_Arm1_SuperLayout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ConcatZeros_21__1_Layout paddedM3;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
 };
 struct RhoMinor1_2__2__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor1_2__2_Arm0Layout arm0;
   RhoMinor1_2__2_Arm1_SuperLayout arm1;
 };
 struct RhoMinor1_2__2_Layout {
   RhoMinor1_2__2__SuperLayout _super;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
+  Concatenate_21__3_Layout withrsD;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
 struct RhoMinor2_2__2_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  Concatenate_21__3_Layout withrsD;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedP2;
+  ConcatZeros_21__1_Layout paddedP3;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
 struct RhoMinor0_4__2_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
+  ConcatZeros_22__2_Layout paddedM1;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedM3;
+  ConcatZeros_21__1_Layout padRb;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  ConcatZeros_21__1_Layout padRc;
+};
+struct RhoMinor1_4__2_Arm0Layout {
+  RetTupleLayout _super;
+  DummyBLayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct RhoMinor1_4__2_Arm1_SuperLayout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ConcatZeros_21__1_Layout paddedM3;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
 };
 struct RhoMinor1_4__2__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor1_4__2_Arm0Layout arm0;
   RhoMinor1_4__2_Arm1_SuperLayout arm1;
 };
 struct RhoMinor1_4__2_Layout {
   RhoMinor1_4__2__SuperLayout _super;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
+  Concatenate_21__3_Layout withrsD;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
+struct RhoMinor3_2_Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _11;
+  DummyBLayout _12;
+  DummyBLayout _13;
+  RGZ_22_Layout _9;
+  RGZ_22_Layout _10;
+  Concatenate_15__7_Layout a;
+  Concatenate_12__3_Layout rs1;
+  Concatenate_9__3_Layout _6;
+  Concatenate_6__3_Layout _4;
+  NondetRegLayout7LayoutArray _8;
+  Concatenate_3__3_Layout _2;
+  NondetRegLayout3LayoutArray _0;
+  NondetRegLayout3LayoutArray _1;
+  NondetRegLayout3LayoutArray _3;
+  NondetRegLayout3LayoutArray _5;
+  NondetRegLayout3LayoutArray _7;
+};
+struct RhoMinor3_2_Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _18;
+  DummyBLayout _19;
+  DummyBLayout _20;
+  RGZ_22_Layout _17;
+  Concatenate_8__14_Layout b;
+  Concatenate_15__7_Layout a;
+  NondetRegLayout15LayoutArray _7;
+  NondetRegLayout14LayoutArray _16;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+};
+struct RhoMinor3_2_Arm1Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _17;
+  DummyBLayout _18;
+  DummyBLayout _19;
+  RGZ_22_Layout _16;
+  Concatenate_8__14_Layout b;
+  Concatenate_1__21_Layout c;
+  NondetRegLayout21LayoutArray _15;
+  NondetRegLayout8LayoutArray _14;
+  NondetRegLayout1LayoutArray rs2;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+};
+struct RhoMinor3_2_Arm1Arm1Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  DummyBLayout _20;
+  DummyBLayout _21;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  RGZ_24_Layout _19;
+  RGZ_22_Layout _17;
+  RGZ_22_Layout _18;
+  Concatenate_16__6_Layout c;
+  Concatenate_1__15_Layout c1;
+  NondetRegLayout6LayoutArray _16;
+};
+struct RhoMinor3_2_Arm1Arm1Arm1Arm1_SuperLayout {
+  RetTupleLayout _super;
+  DummyBLayout _90;
+  DummyBLayout _91;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  NondetRegLayout _16;
+  NondetRegLayout _17;
+  NondetRegLayout _18;
+  NondetRegLayout _19;
+  NondetRegLayout _20;
+  NondetRegLayout _21;
+  NondetRegLayout _22;
+  NondetRegLayout _23;
+  NondetRegLayout _24;
+  NondetRegLayout _25;
+  NondetRegLayout _26;
+  NondetRegLayout _27;
+  NondetRegLayout _28;
+  NondetRegLayout _29;
+  NondetRegLayout _30;
+  NondetRegLayout _31;
+  NondetRegLayout _32;
+  NondetRegLayout _33;
+  NondetRegLayout _34;
+  NondetRegLayout _35;
+  NondetRegLayout _36;
+  NondetRegLayout _37;
+  NondetRegLayout _38;
+  NondetRegLayout _39;
+  NondetRegLayout _40;
+  NondetRegLayout _41;
+  NondetRegLayout _42;
+  NondetRegLayout _43;
+  NondetRegLayout _44;
+  NondetRegLayout _45;
+  NondetRegLayout _46;
+  NondetRegLayout _47;
+  NondetRegLayout _48;
+  NondetRegLayout _49;
+  NondetRegLayout _50;
+  NondetRegLayout _51;
+  NondetRegLayout _52;
+  NondetRegLayout _53;
+  NondetRegLayout _54;
+  NondetRegLayout _55;
+  NondetRegLayout _56;
+  NondetRegLayout _57;
+  NondetRegLayout _58;
+  NondetRegLayout _59;
+  NondetRegLayout _60;
+  NondetRegLayout _61;
+  NondetRegLayout _62;
+  NondetRegLayout _63;
+  NondetRegLayout _64;
+  NondetRegLayout _65;
+  NondetRegLayout _66;
+  NondetRegLayout _67;
+  NondetRegLayout _68;
+  NondetRegLayout _69;
+  NondetRegLayout _70;
+  NondetRegLayout _71;
+  NondetRegLayout _72;
+  NondetRegLayout _73;
+  NondetRegLayout _74;
+  NondetRegLayout _75;
+  NondetRegLayout _76;
+  NondetRegLayout _77;
+  NondetRegLayout _78;
+  NondetRegLayout _79;
+  NondetRegLayout _80;
+  NondetRegLayout _81;
+  NondetRegLayout _82;
+  NondetRegLayout _83;
+  NondetRegLayout _84;
+  NondetRegLayout _85;
+  NondetRegLayout _86;
+  NondetRegLayout _87;
+  NondetRegLayout _88;
+  NondetRegLayout _89;
+};
 struct RhoMinor3_2_Arm1Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
-  RetTupleLayout arm1;
+  RhoMinor3_2_Arm1Arm1Arm1Arm0_SuperLayout arm0;
+  RhoMinor3_2_Arm1Arm1Arm1Arm1_SuperLayout arm1;
 };
 struct RhoMinor3_2_Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor3_2_Arm1Arm1Arm0_SuperLayout arm0;
   RhoMinor3_2_Arm1Arm1Arm1_SuperLayout arm1;
 };
 struct RhoMinor3_2_Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor3_2_Arm1Arm0_SuperLayout arm0;
   RhoMinor3_2_Arm1Arm1_SuperLayout arm1;
 };
 struct RhoMinor3_2__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor3_2_Arm0_SuperLayout arm0;
   RhoMinor3_2_Arm1_SuperLayout arm1;
 };
 struct RhoMajor_2__SuperLayout {
@@ -777,137 +1538,389 @@ struct RhoMajor_2__SuperLayout {
 };
 struct RhoMajor_2_Layout {
   RhoMajor_2__SuperLayout _super;
-  OneHot_9_Layout minorOnehot;
+  ConcatZeros_9__7_Layout auxRegs;
+  OneHotU_9_Layout minorOnehot;
 };
 struct RhoMinor0_0__3_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
+  ConcatZeros_22__2_Layout paddedM1;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedM3;
+  ConcatZeros_21__1_Layout padRb;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  ConcatZeros_21__1_Layout padRc;
+};
+struct RhoMinor1_0__3_Arm0Layout {
+  RetTupleLayout _super;
+  DummyBLayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct RhoMinor1_0__3_Arm1_SuperLayout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ConcatZeros_21__1_Layout paddedM3;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
 };
 struct RhoMinor1_0__3__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor1_0__3_Arm0Layout arm0;
   RhoMinor1_0__3_Arm1_SuperLayout arm1;
 };
 struct RhoMinor1_0__3_Layout {
   RhoMinor1_0__3__SuperLayout _super;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
+  Concatenate_21__3_Layout withrsD;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
 struct RhoMinor2_0__3_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  Concatenate_21__3_Layout withrsD;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedP2;
+  ConcatZeros_21__1_Layout paddedP3;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
 struct RhoMinor0_2__3_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
+  ConcatZeros_22__2_Layout paddedM1;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedM3;
+  ConcatZeros_21__1_Layout padRb;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  ConcatZeros_21__1_Layout padRc;
+};
+struct RhoMinor1_2__3_Arm0Layout {
+  RetTupleLayout _super;
+  DummyBLayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct RhoMinor1_2__3_Arm1_SuperLayout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ConcatZeros_21__1_Layout paddedM3;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
 };
 struct RhoMinor1_2__3__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor1_2__3_Arm0Layout arm0;
   RhoMinor1_2__3_Arm1_SuperLayout arm1;
 };
 struct RhoMinor1_2__3_Layout {
   RhoMinor1_2__3__SuperLayout _super;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
+  Concatenate_21__3_Layout withrsD;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
 struct RhoMinor2_2__3_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  Concatenate_21__3_Layout withrsD;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedP2;
+  ConcatZeros_21__1_Layout paddedP3;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
 struct RhoMinor0_4__3_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
+  ConcatZeros_22__2_Layout paddedM1;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedM3;
+  ConcatZeros_21__1_Layout padRb;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  ConcatZeros_21__1_Layout padRc;
+};
+struct RhoMinor1_4__3_Arm0Layout {
+  RetTupleLayout _super;
+  DummyBLayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct RhoMinor1_4__3_Arm1_SuperLayout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ConcatZeros_21__1_Layout paddedM3;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
 };
 struct RhoMinor1_4__3__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor1_4__3_Arm0Layout arm0;
   RhoMinor1_4__3_Arm1_SuperLayout arm1;
 };
 struct RhoMinor1_4__3_Layout {
   RhoMinor1_4__3__SuperLayout _super;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
+  Concatenate_21__3_Layout withrsD;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
+struct RhoMinor3_3_Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _11;
+  DummyBLayout _12;
+  DummyBLayout _13;
+  RGZ_22_Layout _9;
+  RGZ_22_Layout _10;
+  Concatenate_15__7_Layout a;
+  Concatenate_12__3_Layout rs1;
+  Concatenate_9__3_Layout _6;
+  Concatenate_6__3_Layout _4;
+  NondetRegLayout7LayoutArray _8;
+  Concatenate_3__3_Layout _2;
+  NondetRegLayout3LayoutArray _0;
+  NondetRegLayout3LayoutArray _1;
+  NondetRegLayout3LayoutArray _3;
+  NondetRegLayout3LayoutArray _5;
+  NondetRegLayout3LayoutArray _7;
+};
+struct RhoMinor3_3_Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _18;
+  DummyBLayout _19;
+  DummyBLayout _20;
+  RGZ_22_Layout _17;
+  Concatenate_8__14_Layout b;
+  Concatenate_15__7_Layout a;
+  NondetRegLayout15LayoutArray _7;
+  NondetRegLayout14LayoutArray _16;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+};
+struct RhoMinor3_3_Arm1Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _17;
+  DummyBLayout _18;
+  DummyBLayout _19;
+  RGZ_22_Layout _16;
+  Concatenate_8__14_Layout b;
+  Concatenate_1__21_Layout c;
+  NondetRegLayout21LayoutArray _15;
+  NondetRegLayout8LayoutArray _14;
+  NondetRegLayout1LayoutArray rs2;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+};
+struct RhoMinor3_3_Arm1Arm1Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  DummyBLayout _20;
+  DummyBLayout _21;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  RGZ_24_Layout _19;
+  RGZ_22_Layout _17;
+  RGZ_22_Layout _18;
+  Concatenate_16__6_Layout c;
+  Concatenate_1__15_Layout c1;
+  NondetRegLayout6LayoutArray _16;
+};
+struct RhoMinor3_3_Arm1Arm1Arm1Arm1_SuperLayout {
+  RetTupleLayout _super;
+  DummyBLayout _90;
+  DummyBLayout _91;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  NondetRegLayout _16;
+  NondetRegLayout _17;
+  NondetRegLayout _18;
+  NondetRegLayout _19;
+  NondetRegLayout _20;
+  NondetRegLayout _21;
+  NondetRegLayout _22;
+  NondetRegLayout _23;
+  NondetRegLayout _24;
+  NondetRegLayout _25;
+  NondetRegLayout _26;
+  NondetRegLayout _27;
+  NondetRegLayout _28;
+  NondetRegLayout _29;
+  NondetRegLayout _30;
+  NondetRegLayout _31;
+  NondetRegLayout _32;
+  NondetRegLayout _33;
+  NondetRegLayout _34;
+  NondetRegLayout _35;
+  NondetRegLayout _36;
+  NondetRegLayout _37;
+  NondetRegLayout _38;
+  NondetRegLayout _39;
+  NondetRegLayout _40;
+  NondetRegLayout _41;
+  NondetRegLayout _42;
+  NondetRegLayout _43;
+  NondetRegLayout _44;
+  NondetRegLayout _45;
+  NondetRegLayout _46;
+  NondetRegLayout _47;
+  NondetRegLayout _48;
+  NondetRegLayout _49;
+  NondetRegLayout _50;
+  NondetRegLayout _51;
+  NondetRegLayout _52;
+  NondetRegLayout _53;
+  NondetRegLayout _54;
+  NondetRegLayout _55;
+  NondetRegLayout _56;
+  NondetRegLayout _57;
+  NondetRegLayout _58;
+  NondetRegLayout _59;
+  NondetRegLayout _60;
+  NondetRegLayout _61;
+  NondetRegLayout _62;
+  NondetRegLayout _63;
+  NondetRegLayout _64;
+  NondetRegLayout _65;
+  NondetRegLayout _66;
+  NondetRegLayout _67;
+  NondetRegLayout _68;
+  NondetRegLayout _69;
+  NondetRegLayout _70;
+  NondetRegLayout _71;
+  NondetRegLayout _72;
+  NondetRegLayout _73;
+  NondetRegLayout _74;
+  NondetRegLayout _75;
+  NondetRegLayout _76;
+  NondetRegLayout _77;
+  NondetRegLayout _78;
+  NondetRegLayout _79;
+  NondetRegLayout _80;
+  NondetRegLayout _81;
+  NondetRegLayout _82;
+  NondetRegLayout _83;
+  NondetRegLayout _84;
+  NondetRegLayout _85;
+  NondetRegLayout _86;
+  NondetRegLayout _87;
+  NondetRegLayout _88;
+  NondetRegLayout _89;
+};
 struct RhoMinor3_3_Arm1Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
-  RetTupleLayout arm1;
+  RhoMinor3_3_Arm1Arm1Arm1Arm0_SuperLayout arm0;
+  RhoMinor3_3_Arm1Arm1Arm1Arm1_SuperLayout arm1;
 };
 struct RhoMinor3_3_Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor3_3_Arm1Arm1Arm0_SuperLayout arm0;
   RhoMinor3_3_Arm1Arm1Arm1_SuperLayout arm1;
 };
 struct RhoMinor3_3_Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor3_3_Arm1Arm0_SuperLayout arm0;
   RhoMinor3_3_Arm1Arm1_SuperLayout arm1;
 };
 struct RhoMinor3_3__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor3_3_Arm0_SuperLayout arm0;
   RhoMinor3_3_Arm1_SuperLayout arm1;
 };
 struct RhoMajor_3__SuperLayout {
@@ -924,137 +1937,389 @@ struct RhoMajor_3__SuperLayout {
 };
 struct RhoMajor_3_Layout {
   RhoMajor_3__SuperLayout _super;
-  OneHot_9_Layout minorOnehot;
+  ConcatZeros_9__7_Layout auxRegs;
+  OneHotU_9_Layout minorOnehot;
 };
 struct RhoMinor0_0__4_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
+  ConcatZeros_22__2_Layout paddedM1;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedM3;
+  ConcatZeros_21__1_Layout padRb;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  ConcatZeros_21__1_Layout padRc;
+};
+struct RhoMinor1_0__4_Arm0Layout {
+  RetTupleLayout _super;
+  DummyBLayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct RhoMinor1_0__4_Arm1_SuperLayout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ConcatZeros_21__1_Layout paddedM3;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
 };
 struct RhoMinor1_0__4__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor1_0__4_Arm0Layout arm0;
   RhoMinor1_0__4_Arm1_SuperLayout arm1;
 };
 struct RhoMinor1_0__4_Layout {
   RhoMinor1_0__4__SuperLayout _super;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
+  Concatenate_21__3_Layout withrsD;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
 struct RhoMinor2_0__4_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  Concatenate_21__3_Layout withrsD;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedP2;
+  ConcatZeros_21__1_Layout paddedP3;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
 struct RhoMinor0_2__4_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
+  ConcatZeros_22__2_Layout paddedM1;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedM3;
+  ConcatZeros_21__1_Layout padRb;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  ConcatZeros_21__1_Layout padRc;
+};
+struct RhoMinor1_2__4_Arm0Layout {
+  RetTupleLayout _super;
+  DummyBLayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct RhoMinor1_2__4_Arm1_SuperLayout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ConcatZeros_21__1_Layout paddedM3;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
 };
 struct RhoMinor1_2__4__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor1_2__4_Arm0Layout arm0;
   RhoMinor1_2__4_Arm1_SuperLayout arm1;
 };
 struct RhoMinor1_2__4_Layout {
   RhoMinor1_2__4__SuperLayout _super;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
+  Concatenate_21__3_Layout withrsD;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
 struct RhoMinor2_2__4_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  Concatenate_21__3_Layout withrsD;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedP2;
+  ConcatZeros_21__1_Layout paddedP3;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
 struct RhoMinor0_4__4_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
-  ToBits_22_Layout unpackP1;
-  ToBits_21_Layout unpackP2;
-  ToBits_21_Layout unpackP3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
+  ConcatZeros_22__2_Layout paddedM1;
+  RotLeft3impl_22__21__21__1_Layout rotp;
+  ToBitsU_22_Layout unpackP1;
+  ConcatZeros_21__1_Layout paddedM3;
+  ConcatZeros_21__1_Layout padRb;
+  ToBitsU_21_Layout unpackP2;
+  ToBitsU_21_Layout unpackP3;
+  ConcatZeros_21__1_Layout padRc;
+};
+struct RhoMinor1_4__4_Arm0Layout {
+  RetTupleLayout _super;
+  DummyBLayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct RhoMinor1_4__4_Arm1_SuperLayout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackM1;
-  ToBits_21_Layout unpackM2;
-  ToBits_21_Layout unpackM3;
+  ToBitsU_22_Layout unpackM1;
+  ConcatZeros_21__1_Layout paddedM2;
+  ConcatZeros_21__1_Layout paddedM3;
+  ToBitsU_21_Layout unpackM2;
+  ToBitsU_21_Layout unpackM3;
 };
 struct RhoMinor1_4__4__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor1_4__4_Arm0Layout arm0;
   RhoMinor1_4__4_Arm1_SuperLayout arm1;
 };
 struct RhoMinor1_4__4_Layout {
   RhoMinor1_4__4__SuperLayout _super;
-  ToBits_22_Layout unpackXy1;
-  ToBits_21_Layout unpackXy2;
-  ToBits_21_Layout unpackXy3;
+  ToBitsU_22_Layout unpackXy1;
+  ConcatZeros_21__1_Layout paddedXy2;
+  ToBitsU_21_Layout unpackXy2;
+  ToBitsU_21_Layout unpackXy3;
+  Concatenate_21__3_Layout withrsD;
   NondetRegLayout _0;
   NondetRegLayout _1;
   NondetRegLayout _2;
 };
+struct RhoMinor3_4_Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _11;
+  DummyBLayout _12;
+  DummyBLayout _13;
+  RGZ_22_Layout _9;
+  RGZ_22_Layout _10;
+  Concatenate_15__7_Layout a;
+  Concatenate_12__3_Layout rs1;
+  Concatenate_9__3_Layout _6;
+  Concatenate_6__3_Layout _4;
+  NondetRegLayout7LayoutArray _8;
+  Concatenate_3__3_Layout _2;
+  NondetRegLayout3LayoutArray _0;
+  NondetRegLayout3LayoutArray _1;
+  NondetRegLayout3LayoutArray _3;
+  NondetRegLayout3LayoutArray _5;
+  NondetRegLayout3LayoutArray _7;
+};
+struct RhoMinor3_4_Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _18;
+  DummyBLayout _19;
+  DummyBLayout _20;
+  RGZ_22_Layout _17;
+  Concatenate_8__14_Layout b;
+  Concatenate_15__7_Layout a;
+  NondetRegLayout15LayoutArray _7;
+  NondetRegLayout14LayoutArray _16;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+};
+struct RhoMinor3_4_Arm1Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _17;
+  DummyBLayout _18;
+  DummyBLayout _19;
+  RGZ_22_Layout _16;
+  Concatenate_8__14_Layout b;
+  Concatenate_1__21_Layout c;
+  NondetRegLayout21LayoutArray _15;
+  NondetRegLayout8LayoutArray _14;
+  NondetRegLayout1LayoutArray rs2;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+};
+struct RhoMinor3_4_Arm1Arm1Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  DummyBLayout _20;
+  DummyBLayout _21;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  RGZ_24_Layout _19;
+  RGZ_22_Layout _17;
+  RGZ_22_Layout _18;
+  Concatenate_16__6_Layout c;
+  Concatenate_1__15_Layout c1;
+  NondetRegLayout6LayoutArray _16;
+};
+struct RhoMinor3_4_Arm1Arm1Arm1Arm1_SuperLayout {
+  RetTupleLayout _super;
+  DummyBLayout _90;
+  DummyBLayout _91;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  NondetRegLayout _16;
+  NondetRegLayout _17;
+  NondetRegLayout _18;
+  NondetRegLayout _19;
+  NondetRegLayout _20;
+  NondetRegLayout _21;
+  NondetRegLayout _22;
+  NondetRegLayout _23;
+  NondetRegLayout _24;
+  NondetRegLayout _25;
+  NondetRegLayout _26;
+  NondetRegLayout _27;
+  NondetRegLayout _28;
+  NondetRegLayout _29;
+  NondetRegLayout _30;
+  NondetRegLayout _31;
+  NondetRegLayout _32;
+  NondetRegLayout _33;
+  NondetRegLayout _34;
+  NondetRegLayout _35;
+  NondetRegLayout _36;
+  NondetRegLayout _37;
+  NondetRegLayout _38;
+  NondetRegLayout _39;
+  NondetRegLayout _40;
+  NondetRegLayout _41;
+  NondetRegLayout _42;
+  NondetRegLayout _43;
+  NondetRegLayout _44;
+  NondetRegLayout _45;
+  NondetRegLayout _46;
+  NondetRegLayout _47;
+  NondetRegLayout _48;
+  NondetRegLayout _49;
+  NondetRegLayout _50;
+  NondetRegLayout _51;
+  NondetRegLayout _52;
+  NondetRegLayout _53;
+  NondetRegLayout _54;
+  NondetRegLayout _55;
+  NondetRegLayout _56;
+  NondetRegLayout _57;
+  NondetRegLayout _58;
+  NondetRegLayout _59;
+  NondetRegLayout _60;
+  NondetRegLayout _61;
+  NondetRegLayout _62;
+  NondetRegLayout _63;
+  NondetRegLayout _64;
+  NondetRegLayout _65;
+  NondetRegLayout _66;
+  NondetRegLayout _67;
+  NondetRegLayout _68;
+  NondetRegLayout _69;
+  NondetRegLayout _70;
+  NondetRegLayout _71;
+  NondetRegLayout _72;
+  NondetRegLayout _73;
+  NondetRegLayout _74;
+  NondetRegLayout _75;
+  NondetRegLayout _76;
+  NondetRegLayout _77;
+  NondetRegLayout _78;
+  NondetRegLayout _79;
+  NondetRegLayout _80;
+  NondetRegLayout _81;
+  NondetRegLayout _82;
+  NondetRegLayout _83;
+  NondetRegLayout _84;
+  NondetRegLayout _85;
+  NondetRegLayout _86;
+  NondetRegLayout _87;
+  NondetRegLayout _88;
+  NondetRegLayout _89;
+};
 struct RhoMinor3_4_Arm1Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
-  RetTupleLayout arm1;
+  RhoMinor3_4_Arm1Arm1Arm1Arm0_SuperLayout arm0;
+  RhoMinor3_4_Arm1Arm1Arm1Arm1_SuperLayout arm1;
 };
 struct RhoMinor3_4_Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor3_4_Arm1Arm1Arm0_SuperLayout arm0;
   RhoMinor3_4_Arm1Arm1Arm1_SuperLayout arm1;
 };
 struct RhoMinor3_4_Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor3_4_Arm1Arm0_SuperLayout arm0;
   RhoMinor3_4_Arm1Arm1_SuperLayout arm1;
 };
 struct RhoMinor3_4__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  RhoMinor3_4_Arm0_SuperLayout arm0;
   RhoMinor3_4_Arm1_SuperLayout arm1;
 };
 struct RhoMajor_4__SuperLayout {
@@ -1071,160 +2336,375 @@ struct RhoMajor_4__SuperLayout {
 };
 struct RhoMajor_4_Layout {
   RhoMajor_4__SuperLayout _super;
-  OneHot_9_Layout minorOnehot;
+  ConcatZeros_9__7_Layout auxRegs;
+  OneHotU_9_Layout minorOnehot;
 };
 struct ChiMinor0_0__0_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
+};
+struct DummyELayout {
+  NondetRegLayout24LayoutArray _super;
+};
+struct ChiMinor1_0__0_Arm0Layout {
+  RetTupleLayout _super;
+  DummyELayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct ChiMinor1_0__0_Arm1_SuperLayout {
   RetTupleLayout _super;
   NondetRegLayout res3n;
-  ToBits_21_Layout unpack_2nx;
-  ToBits_21_Layout unpack_2nxp1;
-  ToBits_21_Layout unpack_2nxp2;
+  Concatenate_21__3_Layout withrD;
+  ConcatZeros_21__1_Layout e;
+  ConcatZeros_21__1_Layout f;
+  ToBitsU_21_Layout unpack_2nx;
+  ToBitsU_21_Layout unpack_2nxp1;
+  ToBitsU_21_Layout unpack_2nxp2;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct ChiMinor1_0__0__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor1_0__0_Arm0Layout arm0;
   ChiMinor1_0__0_Arm1_SuperLayout arm1;
 };
 struct ChiMinor1_0__0_Layout {
   ChiMinor1_0__0__SuperLayout _super;
-  ToBits_21_Layout unpack_2x;
-  ToBits_21_Layout unpack_2xp1;
-  ToBits_21_Layout unpack_2xp2;
   NondetRegLayout res3;
+  NondetRegLayout _0;
+  ToBitsU_21_Layout unpack_2x;
+  ToBitsU_21_Layout unpack_2xp1;
+  ConcatElem_21_Layout withrA;
+  ConcatElem_21_Layout withrB;
+  ConcatElem_21_Layout withrC;
+  NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_2xp2;
 };
 struct ChiMinor0_1__0_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
 };
 struct ChiMinor0_2__0_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
+};
+struct ChiMinor1_2__0_Arm0Layout {
+  RetTupleLayout _super;
+  DummyELayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct ChiMinor1_2__0_Arm1_SuperLayout {
   RetTupleLayout _super;
   NondetRegLayout res3n;
-  ToBits_21_Layout unpack_2nx;
-  ToBits_21_Layout unpack_2nxp1;
-  ToBits_21_Layout unpack_2nxp2;
+  Concatenate_21__3_Layout withrD;
+  ConcatZeros_21__1_Layout e;
+  ConcatZeros_21__1_Layout f;
+  ToBitsU_21_Layout unpack_2nx;
+  ToBitsU_21_Layout unpack_2nxp1;
+  ToBitsU_21_Layout unpack_2nxp2;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct ChiMinor1_2__0__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor1_2__0_Arm0Layout arm0;
   ChiMinor1_2__0_Arm1_SuperLayout arm1;
 };
 struct ChiMinor1_2__0_Layout {
   ChiMinor1_2__0__SuperLayout _super;
-  ToBits_21_Layout unpack_2x;
-  ToBits_21_Layout unpack_2xp1;
-  ToBits_21_Layout unpack_2xp2;
   NondetRegLayout res3;
+  NondetRegLayout _0;
+  ToBitsU_21_Layout unpack_2x;
+  ToBitsU_21_Layout unpack_2xp1;
+  ConcatElem_21_Layout withrA;
+  ConcatElem_21_Layout withrB;
+  ConcatElem_21_Layout withrC;
+  NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_2xp2;
 };
 struct ChiMinor0_3__0_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
 };
 struct ChiMinor0_4__0_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
+};
+struct ChiMinor1_4__0_Arm0Layout {
+  RetTupleLayout _super;
+  DummyELayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct ChiMinor1_4__0_Arm1_SuperLayout {
   RetTupleLayout _super;
   NondetRegLayout res3n;
-  ToBits_21_Layout unpack_2nx;
-  ToBits_21_Layout unpack_2nxp1;
-  ToBits_21_Layout unpack_2nxp2;
+  Concatenate_21__3_Layout withrD;
+  ConcatZeros_21__1_Layout e;
+  ConcatZeros_21__1_Layout f;
+  ToBitsU_21_Layout unpack_2nx;
+  ToBitsU_21_Layout unpack_2nxp1;
+  ToBitsU_21_Layout unpack_2nxp2;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct ChiMinor1_4__0__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor1_4__0_Arm0Layout arm0;
   ChiMinor1_4__0_Arm1_SuperLayout arm1;
 };
 struct ChiMinor1_4__0_Layout {
   ChiMinor1_4__0__SuperLayout _super;
-  ToBits_21_Layout unpack_2x;
-  ToBits_21_Layout unpack_2xp1;
-  ToBits_21_Layout unpack_2xp2;
   NondetRegLayout res3;
+  NondetRegLayout _0;
+  ToBitsU_21_Layout unpack_2x;
+  ToBitsU_21_Layout unpack_2xp1;
+  ConcatElem_21_Layout withrA;
+  ConcatElem_21_Layout withrB;
+  ConcatElem_21_Layout withrC;
+  NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_2xp2;
 };
-struct OneHot_24_Layout {
+struct ChiMinor2_0_Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _24;
+  DummyBLayout _25;
+  DummyBLayout _26;
+  RGZ_22_Layout _22;
+  RGZ_22_Layout _23;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  NondetRegLayout _16;
+  NondetRegLayout _17;
+  NondetRegLayout _18;
+  NondetRegLayout _19;
+  NondetRegLayout _20;
+  NondetRegLayout _21;
+};
+struct ChiMinor2_0_Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _18;
+  DummyBLayout _19;
+  DummyBLayout _20;
+  RGZ_22_Layout _17;
+  Concatenate_8__14_Layout b;
+  Concatenate_15__7_Layout a;
+  NondetRegLayout15LayoutArray _7;
+  NondetRegLayout14LayoutArray _16;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+};
+struct ChiMinor2_0_Arm1Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _18;
+  DummyBLayout _19;
+  DummyBLayout _20;
+  RGZ_22_Layout _17;
+  Concatenate_8__14_Layout b;
+  Concatenate_1__21_Layout c;
+  NondetRegLayout21LayoutArray _16;
+  NondetRegLayout8LayoutArray _14;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _15;
+};
+struct ChiMinor2_0_Arm1Arm1Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_22_Layout _16;
+  RGZ_22_Layout _17;
+  Concatenate_16__6_Layout c;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  RGZ_24_Layout _18;
+  DummyBLayout _19;
+  DummyBLayout _20;
+  Concatenate_1__15_Layout c1;
+  NondetRegLayout6LayoutArray _15;
+};
+struct OneHotU_24_Layout {
   NondetRegLayout24LayoutArray _super;
 };
+struct ConcatZeros_9__13_Layout {
+  NondetRegLayout22LayoutArray _super;
+};
+using NondetRegLayout2LayoutArray = std::array<NondetRegLayout, 2>;
 struct ChiMinor2_0_Arm1Arm1Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  OneHot_24_Layout unpackRnd;
-  ToBits_22_Layout unpackA002;
+  RGZ_22_Layout _16;
+  RGZ_22_Layout _17;
+  Concatenate_16__6_Layout c;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  OneHotU_24_Layout unpackRound;
+  Concatenate_22__2_Layout d;
+  NondetRegLayout22LayoutArray rnd_2;
+  ToBitsU_22_Layout unpackA002;
+  ConcatZeros_9__13_Layout tmpD;
+  NondetRegLayout16LayoutArray _6;
+  NondetRegLayout2LayoutArray rnd_1;
 };
 struct ChiMinor2_0_Arm1Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor2_0_Arm1Arm1Arm1Arm0_SuperLayout arm0;
   ChiMinor2_0_Arm1Arm1Arm1Arm1_SuperLayout arm1;
 };
 struct ChiMinor2_0_Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor2_0_Arm1Arm1Arm0_SuperLayout arm0;
   ChiMinor2_0_Arm1Arm1Arm1_SuperLayout arm1;
 };
 struct ChiMinor2_0_Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor2_0_Arm1Arm0_SuperLayout arm0;
   ChiMinor2_0_Arm1Arm1_SuperLayout arm1;
 };
 struct ChiMinor2_0__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor2_0_Arm0_SuperLayout arm0;
   ChiMinor2_0_Arm1_SuperLayout arm1;
 };
-struct IotaXorRcArm23_SuperLayout {
-  NondetRegLayout invNewBlk;
-  NondetRegLayout prod;
-};
-struct IotaXorRcNxtLayout {
-  IotaXorRcArm23_SuperLayout arm23;
+using NondetRegLayout19LayoutArray = std::array<NondetRegLayout, 19>;
+struct Concatenate_3__19_Layout {
+  NondetRegLayout22LayoutArray _super;
 };
 struct IotaXorRcLayout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpackA001;
-  IotaXorRcNxtLayout nxt;
-  ToBits_22_Layout unpackA000;
+  NondetRegLayout prod;
+  NondetRegLayout _0;
+  NondetRegLayout19LayoutArray _3;
+  NondetRegLayout _1;
+  NondetRegLayout invNewBlk;
+  NondetRegLayout9LayoutArray _4;
+  NondetRegLayout _2;
+  Concatenate_22__2_Layout d;
+  ToBitsU_22_Layout unpackA000;
+  ToBitsU_22_Layout unpackA001;
+  RGZ_22_Layout _5;
+  RGZ_22_Layout _6;
+  Concatenate_3__19_Layout a;
+  ConcatZeros_9__13_Layout dTmp;
 };
 struct ChiMajor_0__SuperLayout {
   RetTupleLayout _super;
@@ -1239,149 +2719,352 @@ struct ChiMajor_0__SuperLayout {
   ChiMinor2_0__SuperLayout arm8;
   IotaXorRcLayout arm9;
 };
+struct ConcatZeros_10__6_Layout {
+  NondetRegLayout16LayoutArray _super;
+};
 using NondetRegLayout10LayoutArray = std::array<NondetRegLayout, 10>;
-struct OneHot_10_Layout {
+struct OneHotU_10_Layout {
   NondetRegLayout10LayoutArray _super;
 };
 struct ChiMajor_0_Layout {
   ChiMajor_0__SuperLayout _super;
-  OneHot_10_Layout minorOnehot;
+  ConcatZeros_10__6_Layout auxRegs;
+  OneHotU_10_Layout minorOnehot;
 };
 struct ChiMinor0_0__1_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
+};
+struct ChiMinor1_0__1_Arm0Layout {
+  RetTupleLayout _super;
+  DummyELayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct ChiMinor1_0__1_Arm1_SuperLayout {
   RetTupleLayout _super;
   NondetRegLayout res3n;
-  ToBits_21_Layout unpack_2nx;
-  ToBits_21_Layout unpack_2nxp1;
-  ToBits_21_Layout unpack_2nxp2;
+  Concatenate_21__3_Layout withrD;
+  ConcatZeros_21__1_Layout e;
+  ConcatZeros_21__1_Layout f;
+  ToBitsU_21_Layout unpack_2nx;
+  ToBitsU_21_Layout unpack_2nxp1;
+  ToBitsU_21_Layout unpack_2nxp2;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct ChiMinor1_0__1__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor1_0__1_Arm0Layout arm0;
   ChiMinor1_0__1_Arm1_SuperLayout arm1;
 };
 struct ChiMinor1_0__1_Layout {
   ChiMinor1_0__1__SuperLayout _super;
-  ToBits_21_Layout unpack_2x;
-  ToBits_21_Layout unpack_2xp1;
-  ToBits_21_Layout unpack_2xp2;
   NondetRegLayout res3;
+  NondetRegLayout _0;
+  ToBitsU_21_Layout unpack_2x;
+  ToBitsU_21_Layout unpack_2xp1;
+  ConcatElem_21_Layout withrA;
+  ConcatElem_21_Layout withrB;
+  ConcatElem_21_Layout withrC;
+  NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_2xp2;
 };
 struct ChiMinor0_1__1_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
 };
 struct ChiMinor0_2__1_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
+};
+struct ChiMinor1_2__1_Arm0Layout {
+  RetTupleLayout _super;
+  DummyELayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct ChiMinor1_2__1_Arm1_SuperLayout {
   RetTupleLayout _super;
   NondetRegLayout res3n;
-  ToBits_21_Layout unpack_2nx;
-  ToBits_21_Layout unpack_2nxp1;
-  ToBits_21_Layout unpack_2nxp2;
+  Concatenate_21__3_Layout withrD;
+  ConcatZeros_21__1_Layout e;
+  ConcatZeros_21__1_Layout f;
+  ToBitsU_21_Layout unpack_2nx;
+  ToBitsU_21_Layout unpack_2nxp1;
+  ToBitsU_21_Layout unpack_2nxp2;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct ChiMinor1_2__1__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor1_2__1_Arm0Layout arm0;
   ChiMinor1_2__1_Arm1_SuperLayout arm1;
 };
 struct ChiMinor1_2__1_Layout {
   ChiMinor1_2__1__SuperLayout _super;
-  ToBits_21_Layout unpack_2x;
-  ToBits_21_Layout unpack_2xp1;
-  ToBits_21_Layout unpack_2xp2;
   NondetRegLayout res3;
+  NondetRegLayout _0;
+  ToBitsU_21_Layout unpack_2x;
+  ToBitsU_21_Layout unpack_2xp1;
+  ConcatElem_21_Layout withrA;
+  ConcatElem_21_Layout withrB;
+  ConcatElem_21_Layout withrC;
+  NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_2xp2;
 };
 struct ChiMinor0_3__1_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
 };
 struct ChiMinor0_4__1_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
+};
+struct ChiMinor1_4__1_Arm0Layout {
+  RetTupleLayout _super;
+  DummyELayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct ChiMinor1_4__1_Arm1_SuperLayout {
   RetTupleLayout _super;
   NondetRegLayout res3n;
-  ToBits_21_Layout unpack_2nx;
-  ToBits_21_Layout unpack_2nxp1;
-  ToBits_21_Layout unpack_2nxp2;
+  Concatenate_21__3_Layout withrD;
+  ConcatZeros_21__1_Layout e;
+  ConcatZeros_21__1_Layout f;
+  ToBitsU_21_Layout unpack_2nx;
+  ToBitsU_21_Layout unpack_2nxp1;
+  ToBitsU_21_Layout unpack_2nxp2;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct ChiMinor1_4__1__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor1_4__1_Arm0Layout arm0;
   ChiMinor1_4__1_Arm1_SuperLayout arm1;
 };
 struct ChiMinor1_4__1_Layout {
   ChiMinor1_4__1__SuperLayout _super;
-  ToBits_21_Layout unpack_2x;
-  ToBits_21_Layout unpack_2xp1;
-  ToBits_21_Layout unpack_2xp2;
   NondetRegLayout res3;
+  NondetRegLayout _0;
+  ToBitsU_21_Layout unpack_2x;
+  ToBitsU_21_Layout unpack_2xp1;
+  ConcatElem_21_Layout withrA;
+  ConcatElem_21_Layout withrB;
+  ConcatElem_21_Layout withrC;
+  NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_2xp2;
+};
+struct ChiMinor2_1_Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _24;
+  DummyBLayout _25;
+  DummyBLayout _26;
+  RGZ_22_Layout _22;
+  RGZ_22_Layout _23;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  NondetRegLayout _16;
+  NondetRegLayout _17;
+  NondetRegLayout _18;
+  NondetRegLayout _19;
+  NondetRegLayout _20;
+  NondetRegLayout _21;
+};
+struct ChiMinor2_1_Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _18;
+  DummyBLayout _19;
+  DummyBLayout _20;
+  RGZ_22_Layout _17;
+  Concatenate_8__14_Layout b;
+  Concatenate_15__7_Layout a;
+  NondetRegLayout15LayoutArray _7;
+  NondetRegLayout14LayoutArray _16;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+};
+struct ChiMinor2_1_Arm1Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _18;
+  DummyBLayout _19;
+  DummyBLayout _20;
+  RGZ_22_Layout _17;
+  Concatenate_8__14_Layout b;
+  Concatenate_1__21_Layout c;
+  NondetRegLayout21LayoutArray _16;
+  NondetRegLayout8LayoutArray _14;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _15;
+};
+struct ChiMinor2_1_Arm1Arm1Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_22_Layout _16;
+  RGZ_22_Layout _17;
+  Concatenate_16__6_Layout c;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  RGZ_24_Layout _18;
+  DummyBLayout _19;
+  DummyBLayout _20;
+  Concatenate_1__15_Layout c1;
+  NondetRegLayout6LayoutArray _15;
 };
 struct ChiMinor2_1_Arm1Arm1Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  OneHot_24_Layout unpackRnd;
-  ToBits_22_Layout unpackA002;
+  RGZ_22_Layout _16;
+  RGZ_22_Layout _17;
+  Concatenate_16__6_Layout c;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  OneHotU_24_Layout unpackRound;
+  Concatenate_22__2_Layout d;
+  NondetRegLayout22LayoutArray rnd_2;
+  ToBitsU_22_Layout unpackA002;
+  ConcatZeros_9__13_Layout tmpD;
+  NondetRegLayout16LayoutArray _6;
+  NondetRegLayout2LayoutArray rnd_1;
 };
 struct ChiMinor2_1_Arm1Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor2_1_Arm1Arm1Arm1Arm0_SuperLayout arm0;
   ChiMinor2_1_Arm1Arm1Arm1Arm1_SuperLayout arm1;
 };
 struct ChiMinor2_1_Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor2_1_Arm1Arm1Arm0_SuperLayout arm0;
   ChiMinor2_1_Arm1Arm1Arm1_SuperLayout arm1;
 };
 struct ChiMinor2_1_Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor2_1_Arm1Arm0_SuperLayout arm0;
   ChiMinor2_1_Arm1Arm1_SuperLayout arm1;
 };
 struct ChiMinor2_1__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor2_1_Arm0_SuperLayout arm0;
   ChiMinor2_1_Arm1_SuperLayout arm1;
 };
 struct ChiMajor_1__SuperLayout {
@@ -1399,143 +3082,343 @@ struct ChiMajor_1__SuperLayout {
 };
 struct ChiMajor_1_Layout {
   ChiMajor_1__SuperLayout _super;
-  OneHot_10_Layout minorOnehot;
+  ConcatZeros_10__6_Layout auxRegs;
+  OneHotU_10_Layout minorOnehot;
 };
 struct ChiMinor0_0__2_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
+};
+struct ChiMinor1_0__2_Arm0Layout {
+  RetTupleLayout _super;
+  DummyELayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct ChiMinor1_0__2_Arm1_SuperLayout {
   RetTupleLayout _super;
   NondetRegLayout res3n;
-  ToBits_21_Layout unpack_2nx;
-  ToBits_21_Layout unpack_2nxp1;
-  ToBits_21_Layout unpack_2nxp2;
+  Concatenate_21__3_Layout withrD;
+  ConcatZeros_21__1_Layout e;
+  ConcatZeros_21__1_Layout f;
+  ToBitsU_21_Layout unpack_2nx;
+  ToBitsU_21_Layout unpack_2nxp1;
+  ToBitsU_21_Layout unpack_2nxp2;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct ChiMinor1_0__2__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor1_0__2_Arm0Layout arm0;
   ChiMinor1_0__2_Arm1_SuperLayout arm1;
 };
 struct ChiMinor1_0__2_Layout {
   ChiMinor1_0__2__SuperLayout _super;
-  ToBits_21_Layout unpack_2x;
-  ToBits_21_Layout unpack_2xp1;
-  ToBits_21_Layout unpack_2xp2;
   NondetRegLayout res3;
+  NondetRegLayout _0;
+  ToBitsU_21_Layout unpack_2x;
+  ToBitsU_21_Layout unpack_2xp1;
+  ConcatElem_21_Layout withrA;
+  ConcatElem_21_Layout withrB;
+  ConcatElem_21_Layout withrC;
+  NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_2xp2;
 };
 struct ChiMinor0_1__2_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
 };
 struct ChiMinor0_2__2_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
+};
+struct ChiMinor1_2__2_Arm0Layout {
+  RetTupleLayout _super;
+  DummyELayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct ChiMinor1_2__2_Arm1_SuperLayout {
   RetTupleLayout _super;
   NondetRegLayout res3n;
-  ToBits_21_Layout unpack_2nx;
-  ToBits_21_Layout unpack_2nxp1;
-  ToBits_21_Layout unpack_2nxp2;
+  Concatenate_21__3_Layout withrD;
+  ConcatZeros_21__1_Layout e;
+  ConcatZeros_21__1_Layout f;
+  ToBitsU_21_Layout unpack_2nx;
+  ToBitsU_21_Layout unpack_2nxp1;
+  ToBitsU_21_Layout unpack_2nxp2;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct ChiMinor1_2__2__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor1_2__2_Arm0Layout arm0;
   ChiMinor1_2__2_Arm1_SuperLayout arm1;
 };
 struct ChiMinor1_2__2_Layout {
   ChiMinor1_2__2__SuperLayout _super;
-  ToBits_21_Layout unpack_2x;
-  ToBits_21_Layout unpack_2xp1;
-  ToBits_21_Layout unpack_2xp2;
   NondetRegLayout res3;
+  NondetRegLayout _0;
+  ToBitsU_21_Layout unpack_2x;
+  ToBitsU_21_Layout unpack_2xp1;
+  ConcatElem_21_Layout withrA;
+  ConcatElem_21_Layout withrB;
+  ConcatElem_21_Layout withrC;
+  NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_2xp2;
 };
 struct ChiMinor0_3__2_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
 };
 struct ChiMinor0_4__2_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
+};
+struct ChiMinor1_4__2_Arm0Layout {
+  RetTupleLayout _super;
+  DummyELayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct ChiMinor1_4__2_Arm1_SuperLayout {
   RetTupleLayout _super;
   NondetRegLayout res3n;
-  ToBits_21_Layout unpack_2nx;
-  ToBits_21_Layout unpack_2nxp1;
-  ToBits_21_Layout unpack_2nxp2;
+  Concatenate_21__3_Layout withrD;
+  ConcatZeros_21__1_Layout e;
+  ConcatZeros_21__1_Layout f;
+  ToBitsU_21_Layout unpack_2nx;
+  ToBitsU_21_Layout unpack_2nxp1;
+  ToBitsU_21_Layout unpack_2nxp2;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct ChiMinor1_4__2__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor1_4__2_Arm0Layout arm0;
   ChiMinor1_4__2_Arm1_SuperLayout arm1;
 };
 struct ChiMinor1_4__2_Layout {
   ChiMinor1_4__2__SuperLayout _super;
-  ToBits_21_Layout unpack_2x;
-  ToBits_21_Layout unpack_2xp1;
-  ToBits_21_Layout unpack_2xp2;
   NondetRegLayout res3;
+  NondetRegLayout _0;
+  ToBitsU_21_Layout unpack_2x;
+  ToBitsU_21_Layout unpack_2xp1;
+  ConcatElem_21_Layout withrA;
+  ConcatElem_21_Layout withrB;
+  ConcatElem_21_Layout withrC;
+  NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_2xp2;
+};
+struct ChiMinor2_2_Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _24;
+  DummyBLayout _25;
+  DummyBLayout _26;
+  RGZ_22_Layout _22;
+  RGZ_22_Layout _23;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  NondetRegLayout _16;
+  NondetRegLayout _17;
+  NondetRegLayout _18;
+  NondetRegLayout _19;
+  NondetRegLayout _20;
+  NondetRegLayout _21;
+};
+struct ChiMinor2_2_Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _18;
+  DummyBLayout _19;
+  DummyBLayout _20;
+  RGZ_22_Layout _17;
+  Concatenate_8__14_Layout b;
+  Concatenate_15__7_Layout a;
+  NondetRegLayout15LayoutArray _7;
+  NondetRegLayout14LayoutArray _16;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+};
+struct ChiMinor2_2_Arm1Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _18;
+  DummyBLayout _19;
+  DummyBLayout _20;
+  RGZ_22_Layout _17;
+  Concatenate_8__14_Layout b;
+  Concatenate_1__21_Layout c;
+  NondetRegLayout21LayoutArray _16;
+  NondetRegLayout8LayoutArray _14;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _15;
+};
+struct ChiMinor2_2_Arm1Arm1Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_22_Layout _16;
+  RGZ_22_Layout _17;
+  Concatenate_16__6_Layout c;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  RGZ_24_Layout _18;
+  DummyBLayout _19;
+  DummyBLayout _20;
+  Concatenate_1__15_Layout c1;
+  NondetRegLayout6LayoutArray _15;
 };
 struct ChiMinor2_2_Arm1Arm1Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  OneHot_24_Layout unpackRnd;
-  ToBits_22_Layout unpackA002;
+  RGZ_22_Layout _16;
+  RGZ_22_Layout _17;
+  Concatenate_16__6_Layout c;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  OneHotU_24_Layout unpackRound;
+  Concatenate_22__2_Layout d;
+  NondetRegLayout22LayoutArray rnd_2;
+  ToBitsU_22_Layout unpackA002;
+  ConcatZeros_9__13_Layout tmpD;
+  NondetRegLayout16LayoutArray _6;
+  NondetRegLayout2LayoutArray rnd_1;
 };
 struct ChiMinor2_2_Arm1Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor2_2_Arm1Arm1Arm1Arm0_SuperLayout arm0;
   ChiMinor2_2_Arm1Arm1Arm1Arm1_SuperLayout arm1;
 };
 struct ChiMinor2_2_Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor2_2_Arm1Arm1Arm0_SuperLayout arm0;
   ChiMinor2_2_Arm1Arm1Arm1_SuperLayout arm1;
 };
 struct ChiMinor2_2_Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor2_2_Arm1Arm0_SuperLayout arm0;
   ChiMinor2_2_Arm1Arm1_SuperLayout arm1;
 };
 struct ChiMinor2_2__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor2_2_Arm0_SuperLayout arm0;
   ChiMinor2_2_Arm1_SuperLayout arm1;
 };
 struct ChiMajor_2__SuperLayout {
@@ -1553,143 +3436,343 @@ struct ChiMajor_2__SuperLayout {
 };
 struct ChiMajor_2_Layout {
   ChiMajor_2__SuperLayout _super;
-  OneHot_10_Layout minorOnehot;
+  ConcatZeros_10__6_Layout auxRegs;
+  OneHotU_10_Layout minorOnehot;
 };
 struct ChiMinor0_0__3_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
+};
+struct ChiMinor1_0__3_Arm0Layout {
+  RetTupleLayout _super;
+  DummyELayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct ChiMinor1_0__3_Arm1_SuperLayout {
   RetTupleLayout _super;
   NondetRegLayout res3n;
-  ToBits_21_Layout unpack_2nx;
-  ToBits_21_Layout unpack_2nxp1;
-  ToBits_21_Layout unpack_2nxp2;
+  Concatenate_21__3_Layout withrD;
+  ConcatZeros_21__1_Layout e;
+  ConcatZeros_21__1_Layout f;
+  ToBitsU_21_Layout unpack_2nx;
+  ToBitsU_21_Layout unpack_2nxp1;
+  ToBitsU_21_Layout unpack_2nxp2;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct ChiMinor1_0__3__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor1_0__3_Arm0Layout arm0;
   ChiMinor1_0__3_Arm1_SuperLayout arm1;
 };
 struct ChiMinor1_0__3_Layout {
   ChiMinor1_0__3__SuperLayout _super;
-  ToBits_21_Layout unpack_2x;
-  ToBits_21_Layout unpack_2xp1;
-  ToBits_21_Layout unpack_2xp2;
   NondetRegLayout res3;
+  NondetRegLayout _0;
+  ToBitsU_21_Layout unpack_2x;
+  ToBitsU_21_Layout unpack_2xp1;
+  ConcatElem_21_Layout withrA;
+  ConcatElem_21_Layout withrB;
+  ConcatElem_21_Layout withrC;
+  NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_2xp2;
 };
 struct ChiMinor0_1__3_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
 };
 struct ChiMinor0_2__3_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
+};
+struct ChiMinor1_2__3_Arm0Layout {
+  RetTupleLayout _super;
+  DummyELayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct ChiMinor1_2__3_Arm1_SuperLayout {
   RetTupleLayout _super;
   NondetRegLayout res3n;
-  ToBits_21_Layout unpack_2nx;
-  ToBits_21_Layout unpack_2nxp1;
-  ToBits_21_Layout unpack_2nxp2;
+  Concatenate_21__3_Layout withrD;
+  ConcatZeros_21__1_Layout e;
+  ConcatZeros_21__1_Layout f;
+  ToBitsU_21_Layout unpack_2nx;
+  ToBitsU_21_Layout unpack_2nxp1;
+  ToBitsU_21_Layout unpack_2nxp2;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct ChiMinor1_2__3__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor1_2__3_Arm0Layout arm0;
   ChiMinor1_2__3_Arm1_SuperLayout arm1;
 };
 struct ChiMinor1_2__3_Layout {
   ChiMinor1_2__3__SuperLayout _super;
-  ToBits_21_Layout unpack_2x;
-  ToBits_21_Layout unpack_2xp1;
-  ToBits_21_Layout unpack_2xp2;
   NondetRegLayout res3;
+  NondetRegLayout _0;
+  ToBitsU_21_Layout unpack_2x;
+  ToBitsU_21_Layout unpack_2xp1;
+  ConcatElem_21_Layout withrA;
+  ConcatElem_21_Layout withrB;
+  ConcatElem_21_Layout withrC;
+  NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_2xp2;
 };
 struct ChiMinor0_3__3_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
 };
 struct ChiMinor0_4__3_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
+};
+struct ChiMinor1_4__3_Arm0Layout {
+  RetTupleLayout _super;
+  DummyELayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct ChiMinor1_4__3_Arm1_SuperLayout {
   RetTupleLayout _super;
   NondetRegLayout res3n;
-  ToBits_21_Layout unpack_2nx;
-  ToBits_21_Layout unpack_2nxp1;
-  ToBits_21_Layout unpack_2nxp2;
+  Concatenate_21__3_Layout withrD;
+  ConcatZeros_21__1_Layout e;
+  ConcatZeros_21__1_Layout f;
+  ToBitsU_21_Layout unpack_2nx;
+  ToBitsU_21_Layout unpack_2nxp1;
+  ToBitsU_21_Layout unpack_2nxp2;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct ChiMinor1_4__3__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor1_4__3_Arm0Layout arm0;
   ChiMinor1_4__3_Arm1_SuperLayout arm1;
 };
 struct ChiMinor1_4__3_Layout {
   ChiMinor1_4__3__SuperLayout _super;
-  ToBits_21_Layout unpack_2x;
-  ToBits_21_Layout unpack_2xp1;
-  ToBits_21_Layout unpack_2xp2;
   NondetRegLayout res3;
+  NondetRegLayout _0;
+  ToBitsU_21_Layout unpack_2x;
+  ToBitsU_21_Layout unpack_2xp1;
+  ConcatElem_21_Layout withrA;
+  ConcatElem_21_Layout withrB;
+  ConcatElem_21_Layout withrC;
+  NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_2xp2;
+};
+struct ChiMinor2_3_Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _24;
+  DummyBLayout _25;
+  DummyBLayout _26;
+  RGZ_22_Layout _22;
+  RGZ_22_Layout _23;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  NondetRegLayout _16;
+  NondetRegLayout _17;
+  NondetRegLayout _18;
+  NondetRegLayout _19;
+  NondetRegLayout _20;
+  NondetRegLayout _21;
+};
+struct ChiMinor2_3_Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _18;
+  DummyBLayout _19;
+  DummyBLayout _20;
+  RGZ_22_Layout _17;
+  Concatenate_8__14_Layout b;
+  Concatenate_15__7_Layout a;
+  NondetRegLayout15LayoutArray _7;
+  NondetRegLayout14LayoutArray _16;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+};
+struct ChiMinor2_3_Arm1Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _18;
+  DummyBLayout _19;
+  DummyBLayout _20;
+  RGZ_22_Layout _17;
+  Concatenate_8__14_Layout b;
+  Concatenate_1__21_Layout c;
+  NondetRegLayout21LayoutArray _16;
+  NondetRegLayout8LayoutArray _14;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _15;
+};
+struct ChiMinor2_3_Arm1Arm1Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_22_Layout _16;
+  RGZ_22_Layout _17;
+  Concatenate_16__6_Layout c;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  RGZ_24_Layout _18;
+  DummyBLayout _19;
+  DummyBLayout _20;
+  Concatenate_1__15_Layout c1;
+  NondetRegLayout6LayoutArray _15;
 };
 struct ChiMinor2_3_Arm1Arm1Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  OneHot_24_Layout unpackRnd;
-  ToBits_22_Layout unpackA002;
+  RGZ_22_Layout _16;
+  RGZ_22_Layout _17;
+  Concatenate_16__6_Layout c;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  OneHotU_24_Layout unpackRound;
+  Concatenate_22__2_Layout d;
+  NondetRegLayout22LayoutArray rnd_2;
+  ToBitsU_22_Layout unpackA002;
+  ConcatZeros_9__13_Layout tmpD;
+  NondetRegLayout16LayoutArray _6;
+  NondetRegLayout2LayoutArray rnd_1;
 };
 struct ChiMinor2_3_Arm1Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor2_3_Arm1Arm1Arm1Arm0_SuperLayout arm0;
   ChiMinor2_3_Arm1Arm1Arm1Arm1_SuperLayout arm1;
 };
 struct ChiMinor2_3_Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor2_3_Arm1Arm1Arm0_SuperLayout arm0;
   ChiMinor2_3_Arm1Arm1Arm1_SuperLayout arm1;
 };
 struct ChiMinor2_3_Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor2_3_Arm1Arm0_SuperLayout arm0;
   ChiMinor2_3_Arm1Arm1_SuperLayout arm1;
 };
 struct ChiMinor2_3__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor2_3_Arm0_SuperLayout arm0;
   ChiMinor2_3_Arm1_SuperLayout arm1;
 };
 struct ChiMajor_3__SuperLayout {
@@ -1707,143 +3790,343 @@ struct ChiMajor_3__SuperLayout {
 };
 struct ChiMajor_3_Layout {
   ChiMajor_3__SuperLayout _super;
-  OneHot_10_Layout minorOnehot;
+  ConcatZeros_10__6_Layout auxRegs;
+  OneHotU_10_Layout minorOnehot;
 };
 struct ChiMinor0_0__4_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
+};
+struct ChiMinor1_0__4_Arm0Layout {
+  RetTupleLayout _super;
+  DummyELayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct ChiMinor1_0__4_Arm1_SuperLayout {
   RetTupleLayout _super;
   NondetRegLayout res3n;
-  ToBits_21_Layout unpack_2nx;
-  ToBits_21_Layout unpack_2nxp1;
-  ToBits_21_Layout unpack_2nxp2;
+  Concatenate_21__3_Layout withrD;
+  ConcatZeros_21__1_Layout e;
+  ConcatZeros_21__1_Layout f;
+  ToBitsU_21_Layout unpack_2nx;
+  ToBitsU_21_Layout unpack_2nxp1;
+  ToBitsU_21_Layout unpack_2nxp2;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct ChiMinor1_0__4__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor1_0__4_Arm0Layout arm0;
   ChiMinor1_0__4_Arm1_SuperLayout arm1;
 };
 struct ChiMinor1_0__4_Layout {
   ChiMinor1_0__4__SuperLayout _super;
-  ToBits_21_Layout unpack_2x;
-  ToBits_21_Layout unpack_2xp1;
-  ToBits_21_Layout unpack_2xp2;
   NondetRegLayout res3;
+  NondetRegLayout _0;
+  ToBitsU_21_Layout unpack_2x;
+  ToBitsU_21_Layout unpack_2xp1;
+  ConcatElem_21_Layout withrA;
+  ConcatElem_21_Layout withrB;
+  ConcatElem_21_Layout withrC;
+  NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_2xp2;
 };
 struct ChiMinor0_1__4_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
 };
 struct ChiMinor0_2__4_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
+};
+struct ChiMinor1_2__4_Arm0Layout {
+  RetTupleLayout _super;
+  DummyELayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct ChiMinor1_2__4_Arm1_SuperLayout {
   RetTupleLayout _super;
   NondetRegLayout res3n;
-  ToBits_21_Layout unpack_2nx;
-  ToBits_21_Layout unpack_2nxp1;
-  ToBits_21_Layout unpack_2nxp2;
+  Concatenate_21__3_Layout withrD;
+  ConcatZeros_21__1_Layout e;
+  ConcatZeros_21__1_Layout f;
+  ToBitsU_21_Layout unpack_2nx;
+  ToBitsU_21_Layout unpack_2nxp1;
+  ToBitsU_21_Layout unpack_2nxp2;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct ChiMinor1_2__4__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor1_2__4_Arm0Layout arm0;
   ChiMinor1_2__4_Arm1_SuperLayout arm1;
 };
 struct ChiMinor1_2__4_Layout {
   ChiMinor1_2__4__SuperLayout _super;
-  ToBits_21_Layout unpack_2x;
-  ToBits_21_Layout unpack_2xp1;
-  ToBits_21_Layout unpack_2xp2;
   NondetRegLayout res3;
+  NondetRegLayout _0;
+  ToBitsU_21_Layout unpack_2x;
+  ToBitsU_21_Layout unpack_2xp1;
+  ConcatElem_21_Layout withrA;
+  ConcatElem_21_Layout withrB;
+  ConcatElem_21_Layout withrC;
+  NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_2xp2;
 };
 struct ChiMinor0_3__4_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
 };
 struct ChiMinor0_4__4_Layout {
   RetTupleLayout _super;
-  ToBits_21_Layout unpack_1xp1;
-  ToBits_21_Layout unpack_1xp2;
-  ToBits_21_Layout unpack_1x;
   NondetRegLayout _0;
-  ToBits_22_Layout unpack_0xp1;
-  ToBits_22_Layout unpack_0xp2;
-  ToBits_22_Layout unpack_0x;
   NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_1xp1;
+  ToBitsU_21_Layout unpack_1xp2;
+  ToBitsU_22_Layout unpack_0xp1;
+  ToBitsU_21_Layout unpack_1x;
+  Concatenate_22__2_Layout withrsD;
+  ToBitsU_22_Layout unpack_0xp2;
+  ToBitsU_22_Layout unpack_0x;
+  ConcatZeros_21__1_Layout a;
+  ConcatZeros_21__1_Layout c;
+  ConcatZeros_21__1_Layout f;
+};
+struct ChiMinor1_4__4_Arm0Layout {
+  RetTupleLayout _super;
+  DummyELayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
 };
 struct ChiMinor1_4__4_Arm1_SuperLayout {
   RetTupleLayout _super;
   NondetRegLayout res3n;
-  ToBits_21_Layout unpack_2nx;
-  ToBits_21_Layout unpack_2nxp1;
-  ToBits_21_Layout unpack_2nxp2;
+  Concatenate_21__3_Layout withrD;
+  ConcatZeros_21__1_Layout e;
+  ConcatZeros_21__1_Layout f;
+  ToBitsU_21_Layout unpack_2nx;
+  ToBitsU_21_Layout unpack_2nxp1;
+  ToBitsU_21_Layout unpack_2nxp2;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct ChiMinor1_4__4__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor1_4__4_Arm0Layout arm0;
   ChiMinor1_4__4_Arm1_SuperLayout arm1;
 };
 struct ChiMinor1_4__4_Layout {
   ChiMinor1_4__4__SuperLayout _super;
-  ToBits_21_Layout unpack_2x;
-  ToBits_21_Layout unpack_2xp1;
-  ToBits_21_Layout unpack_2xp2;
   NondetRegLayout res3;
+  NondetRegLayout _0;
+  ToBitsU_21_Layout unpack_2x;
+  ToBitsU_21_Layout unpack_2xp1;
+  ConcatElem_21_Layout withrA;
+  ConcatElem_21_Layout withrB;
+  ConcatElem_21_Layout withrC;
+  NondetRegLayout _1;
+  ToBitsU_21_Layout unpack_2xp2;
+};
+struct ChiMinor2_4_Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _24;
+  DummyBLayout _25;
+  DummyBLayout _26;
+  RGZ_22_Layout _22;
+  RGZ_22_Layout _23;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  NondetRegLayout _16;
+  NondetRegLayout _17;
+  NondetRegLayout _18;
+  NondetRegLayout _19;
+  NondetRegLayout _20;
+  NondetRegLayout _21;
+};
+struct ChiMinor2_4_Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _18;
+  DummyBLayout _19;
+  DummyBLayout _20;
+  RGZ_22_Layout _17;
+  Concatenate_8__14_Layout b;
+  Concatenate_15__7_Layout a;
+  NondetRegLayout15LayoutArray _7;
+  NondetRegLayout14LayoutArray _16;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+};
+struct ChiMinor2_4_Arm1Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_24_Layout _18;
+  DummyBLayout _19;
+  DummyBLayout _20;
+  RGZ_22_Layout _17;
+  Concatenate_8__14_Layout b;
+  Concatenate_1__21_Layout c;
+  NondetRegLayout21LayoutArray _16;
+  NondetRegLayout8LayoutArray _14;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _15;
+};
+struct ChiMinor2_4_Arm1Arm1Arm1Arm0_SuperLayout {
+  RetTupleLayout _super;
+  RGZ_22_Layout _16;
+  RGZ_22_Layout _17;
+  Concatenate_16__6_Layout c;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  RGZ_24_Layout _18;
+  DummyBLayout _19;
+  DummyBLayout _20;
+  Concatenate_1__15_Layout c1;
+  NondetRegLayout6LayoutArray _15;
 };
 struct ChiMinor2_4_Arm1Arm1Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  OneHot_24_Layout unpackRnd;
-  ToBits_22_Layout unpackA002;
+  RGZ_22_Layout _16;
+  RGZ_22_Layout _17;
+  Concatenate_16__6_Layout c;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  OneHotU_24_Layout unpackRound;
+  Concatenate_22__2_Layout d;
+  NondetRegLayout22LayoutArray rnd_2;
+  ToBitsU_22_Layout unpackA002;
+  ConcatZeros_9__13_Layout tmpD;
+  NondetRegLayout16LayoutArray _6;
+  NondetRegLayout2LayoutArray rnd_1;
 };
 struct ChiMinor2_4_Arm1Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor2_4_Arm1Arm1Arm1Arm0_SuperLayout arm0;
   ChiMinor2_4_Arm1Arm1Arm1Arm1_SuperLayout arm1;
 };
 struct ChiMinor2_4_Arm1Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor2_4_Arm1Arm1Arm0_SuperLayout arm0;
   ChiMinor2_4_Arm1Arm1Arm1_SuperLayout arm1;
 };
 struct ChiMinor2_4_Arm1_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor2_4_Arm1Arm0_SuperLayout arm0;
   ChiMinor2_4_Arm1Arm1_SuperLayout arm1;
 };
 struct ChiMinor2_4__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  ChiMinor2_4_Arm0_SuperLayout arm0;
   ChiMinor2_4_Arm1_SuperLayout arm1;
 };
 struct ChiMajor_4__SuperLayout {
@@ -1861,10 +4144,10 @@ struct ChiMajor_4__SuperLayout {
 };
 struct ChiMajor_4_Layout {
   ChiMajor_4__SuperLayout _super;
-  OneHot_10_Layout minorOnehot;
+  ConcatZeros_10__6_Layout auxRegs;
+  OneHotU_10_Layout minorOnehot;
 };
-using NondetRegLayout16LayoutArray = std::array<NondetRegLayout, 16>;
-struct ToBits_16_Layout {
+struct ToBitsU_16_Layout {
   NondetRegLayout16LayoutArray _super;
 };
 struct UseOnceMemoryElementLayout {
@@ -1880,114 +4163,265 @@ struct WriteMemoryLayout {
 };
 struct AbsorbWord_0__0_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackA;
-  ToBits_22_Layout unpackE;
-  ToBits_22_Layout unpackF;
-  ToBits_16_Layout unpack_1;
-  ToBits_16_Layout unpack_2;
-  ToBits_16_Layout unpack_3;
-  ToBits_16_Layout unpack_4;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  Concatenate_21__3_Layout withr34;
+  ToBitsU_22_Layout unpackA;
+  ConcatZeros_21__1_Layout paddedE;
+  ConcatZeros_21__1_Layout paddedF;
+  ConcatElem_21_Layout padded23;
+  NondetRegLayout22LayoutArray arr12;
+  ToBitsU_21_Layout unpackE;
+  ToBitsU_21_Layout unpackF;
+  ToBitsU_16_Layout unpack_1;
+  ToBitsU_16_Layout unpack_2;
+  ToBitsU_16_Layout unpack_3;
+  ToBitsU_16_Layout unpack_4;
   WriteMemoryLayout _0;
   NondetRegLayout invmidx;
+  NondetRegLayout21LayoutArray arr34;
+  NondetRegLayout21LayoutArray arr23;
 };
 struct AbsorbWord_1__0_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackA;
-  ToBits_22_Layout unpackE;
-  ToBits_22_Layout unpackF;
-  ToBits_16_Layout unpack_1;
-  ToBits_16_Layout unpack_2;
-  ToBits_16_Layout unpack_3;
-  ToBits_16_Layout unpack_4;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  Concatenate_21__3_Layout withr34;
+  ToBitsU_22_Layout unpackA;
+  ConcatZeros_21__1_Layout paddedE;
+  ConcatZeros_21__1_Layout paddedF;
+  ConcatElem_21_Layout padded23;
+  NondetRegLayout22LayoutArray arr12;
+  ToBitsU_21_Layout unpackE;
+  ToBitsU_21_Layout unpackF;
+  ToBitsU_16_Layout unpack_1;
+  ToBitsU_16_Layout unpack_2;
+  ToBitsU_16_Layout unpack_3;
+  ToBitsU_16_Layout unpack_4;
   WriteMemoryLayout _0;
   NondetRegLayout invmidx;
+  NondetRegLayout21LayoutArray arr34;
+  NondetRegLayout21LayoutArray arr23;
 };
 struct AbsorbWord_2__0_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackA;
-  ToBits_22_Layout unpackE;
-  ToBits_22_Layout unpackF;
-  ToBits_16_Layout unpack_1;
-  ToBits_16_Layout unpack_2;
-  ToBits_16_Layout unpack_3;
-  ToBits_16_Layout unpack_4;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  Concatenate_21__3_Layout withr34;
+  ToBitsU_22_Layout unpackA;
+  ConcatZeros_21__1_Layout paddedE;
+  ConcatZeros_21__1_Layout paddedF;
+  ConcatElem_21_Layout padded23;
+  NondetRegLayout22LayoutArray arr12;
+  ToBitsU_21_Layout unpackE;
+  ToBitsU_21_Layout unpackF;
+  ToBitsU_16_Layout unpack_1;
+  ToBitsU_16_Layout unpack_2;
+  ToBitsU_16_Layout unpack_3;
+  ToBitsU_16_Layout unpack_4;
   WriteMemoryLayout _0;
   NondetRegLayout invmidx;
+  NondetRegLayout21LayoutArray arr34;
+  NondetRegLayout21LayoutArray arr23;
 };
 struct AbsorbWord_3__0_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackA;
-  ToBits_22_Layout unpackE;
-  ToBits_22_Layout unpackF;
-  ToBits_16_Layout unpack_1;
-  ToBits_16_Layout unpack_2;
-  ToBits_16_Layout unpack_3;
-  ToBits_16_Layout unpack_4;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  Concatenate_21__3_Layout withr34;
+  ToBitsU_22_Layout unpackA;
+  ConcatZeros_21__1_Layout paddedE;
+  ConcatZeros_21__1_Layout paddedF;
+  ConcatElem_21_Layout padded23;
+  NondetRegLayout22LayoutArray arr12;
+  ToBitsU_21_Layout unpackE;
+  ToBitsU_21_Layout unpackF;
+  ToBitsU_16_Layout unpack_1;
+  ToBitsU_16_Layout unpack_2;
+  ToBitsU_16_Layout unpack_3;
+  ToBitsU_16_Layout unpack_4;
   WriteMemoryLayout _0;
   NondetRegLayout invmidx;
+  NondetRegLayout21LayoutArray arr34;
+  NondetRegLayout21LayoutArray arr23;
 };
 struct AbsorbWord_4__0_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackA;
-  ToBits_22_Layout unpackE;
-  ToBits_22_Layout unpackF;
-  ToBits_16_Layout unpack_1;
-  ToBits_16_Layout unpack_2;
-  ToBits_16_Layout unpack_3;
-  ToBits_16_Layout unpack_4;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  Concatenate_21__3_Layout withr34;
+  ToBitsU_22_Layout unpackA;
+  ConcatZeros_21__1_Layout paddedE;
+  ConcatZeros_21__1_Layout paddedF;
+  ConcatElem_21_Layout padded23;
+  NondetRegLayout22LayoutArray arr12;
+  ToBitsU_21_Layout unpackE;
+  ToBitsU_21_Layout unpackF;
+  ToBitsU_16_Layout unpack_1;
+  ToBitsU_16_Layout unpack_2;
+  ToBitsU_16_Layout unpack_3;
+  ToBitsU_16_Layout unpack_4;
   WriteMemoryLayout _0;
   NondetRegLayout invmidx;
+  NondetRegLayout21LayoutArray arr34;
+  NondetRegLayout21LayoutArray arr23;
 };
 struct AbsorbWord_0__1_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackA;
-  ToBits_22_Layout unpackE;
-  ToBits_22_Layout unpackF;
-  ToBits_16_Layout unpack_1;
-  ToBits_16_Layout unpack_2;
-  ToBits_16_Layout unpack_3;
-  ToBits_16_Layout unpack_4;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  Concatenate_21__3_Layout withr34;
+  ToBitsU_22_Layout unpackA;
+  ConcatZeros_21__1_Layout paddedE;
+  ConcatZeros_21__1_Layout paddedF;
+  ConcatElem_21_Layout padded23;
+  NondetRegLayout22LayoutArray arr12;
+  ToBitsU_21_Layout unpackE;
+  ToBitsU_21_Layout unpackF;
+  ToBitsU_16_Layout unpack_1;
+  ToBitsU_16_Layout unpack_2;
+  ToBitsU_16_Layout unpack_3;
+  ToBitsU_16_Layout unpack_4;
   WriteMemoryLayout _0;
   NondetRegLayout invmidx;
+  NondetRegLayout21LayoutArray arr34;
+  NondetRegLayout21LayoutArray arr23;
 };
 struct AbsorbWord_1__1_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackA;
-  ToBits_22_Layout unpackE;
-  ToBits_22_Layout unpackF;
-  ToBits_16_Layout unpack_1;
-  ToBits_16_Layout unpack_2;
-  ToBits_16_Layout unpack_3;
-  ToBits_16_Layout unpack_4;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  Concatenate_21__3_Layout withr34;
+  ToBitsU_22_Layout unpackA;
+  ConcatZeros_21__1_Layout paddedE;
+  ConcatZeros_21__1_Layout paddedF;
+  ConcatElem_21_Layout padded23;
+  NondetRegLayout22LayoutArray arr12;
+  ToBitsU_21_Layout unpackE;
+  ToBitsU_21_Layout unpackF;
+  ToBitsU_16_Layout unpack_1;
+  ToBitsU_16_Layout unpack_2;
+  ToBitsU_16_Layout unpack_3;
+  ToBitsU_16_Layout unpack_4;
   WriteMemoryLayout _0;
   NondetRegLayout invmidx;
+  NondetRegLayout21LayoutArray arr34;
+  NondetRegLayout21LayoutArray arr23;
 };
 struct AbsorbWord_2__1_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackA;
-  ToBits_22_Layout unpackE;
-  ToBits_22_Layout unpackF;
-  ToBits_16_Layout unpack_1;
-  ToBits_16_Layout unpack_2;
-  ToBits_16_Layout unpack_3;
-  ToBits_16_Layout unpack_4;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  Concatenate_21__3_Layout withr34;
+  ToBitsU_22_Layout unpackA;
+  ConcatZeros_21__1_Layout paddedE;
+  ConcatZeros_21__1_Layout paddedF;
+  ConcatElem_21_Layout padded23;
+  NondetRegLayout22LayoutArray arr12;
+  ToBitsU_21_Layout unpackE;
+  ToBitsU_21_Layout unpackF;
+  ToBitsU_16_Layout unpack_1;
+  ToBitsU_16_Layout unpack_2;
+  ToBitsU_16_Layout unpack_3;
+  ToBitsU_16_Layout unpack_4;
   WriteMemoryLayout _0;
   NondetRegLayout invmidx;
+  NondetRegLayout21LayoutArray arr34;
+  NondetRegLayout21LayoutArray arr23;
 };
 struct AbsorbWord_3__1_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackA;
-  ToBits_22_Layout unpackE;
-  ToBits_22_Layout unpackF;
-  ToBits_16_Layout unpack_1;
-  ToBits_16_Layout unpack_2;
-  ToBits_16_Layout unpack_3;
-  ToBits_16_Layout unpack_4;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  Concatenate_21__3_Layout withr34;
+  ToBitsU_22_Layout unpackA;
+  ConcatZeros_21__1_Layout paddedE;
+  ConcatZeros_21__1_Layout paddedF;
+  ConcatElem_21_Layout padded23;
+  NondetRegLayout22LayoutArray arr12;
+  ToBitsU_21_Layout unpackE;
+  ToBitsU_21_Layout unpackF;
+  ToBitsU_16_Layout unpack_1;
+  ToBitsU_16_Layout unpack_2;
+  ToBitsU_16_Layout unpack_3;
+  ToBitsU_16_Layout unpack_4;
   WriteMemoryLayout _0;
   NondetRegLayout invmidx;
+  NondetRegLayout21LayoutArray arr34;
+  NondetRegLayout21LayoutArray arr23;
+};
+struct AbsorbCopy1Layout {
+  RetTupleLayout _super;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  DummyBLayout _46;
+  DummyBLayout _47;
+  RGZ_22_Layout _44;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  NondetRegLayout _16;
+  NondetRegLayout _17;
+  NondetRegLayout _18;
+  NondetRegLayout _19;
+  NondetRegLayout _20;
+  NondetRegLayout _21;
+  NondetRegLayout _22;
+  NondetRegLayout _23;
+  NondetRegLayout _24;
+  NondetRegLayout _25;
+  NondetRegLayout _26;
+  NondetRegLayout _27;
+  NondetRegLayout _28;
+  NondetRegLayout _29;
+  NondetRegLayout _30;
+  NondetRegLayout _31;
+  NondetRegLayout _32;
+  NondetRegLayout _33;
+  NondetRegLayout _34;
+  NondetRegLayout _35;
+  NondetRegLayout _36;
+  NondetRegLayout _37;
+  NondetRegLayout _38;
+  NondetRegLayout _39;
+  NondetRegLayout _40;
+  NondetRegLayout _41;
+  NondetRegLayout _42;
+  NondetRegLayout _43;
+  RGZ_24_Layout _45;
 };
 struct AbsorbMajor1Arm9Layout {
+  AbsorbCopy1Layout _super;
+  UseOnceMemoryElementLayout _extra0;
+};
+struct AbsorbMajor1Arm10Layout {
   RetTupleLayout _super;
+  DummyELayout _3;
+  DummyBLayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
+  DummyBLayout _4;
+  DummyBLayout _5;
   UseOnceMemoryElementLayout _extra0;
 };
 struct AbsorbMajor1_SuperLayout {
@@ -2002,114 +4436,254 @@ struct AbsorbMajor1_SuperLayout {
   AbsorbWord_2__1_Layout arm7;
   AbsorbWord_3__1_Layout arm8;
   AbsorbMajor1Arm9Layout arm9;
+  AbsorbMajor1Arm10Layout arm10;
+};
+struct ConcatZeros_11__5_Layout {
+  NondetRegLayout16LayoutArray _super;
 };
 using UseOnceMemoryElementLayout1LayoutArray = std::array<UseOnceMemoryElementLayout, 1>;
 struct _ArgumentsAbsorbMajor1_SuperLayout {
   UseOnceMemoryElementLayout1LayoutArray useOnceMemoryElement;
 };
+using NondetRegLayout11LayoutArray = std::array<NondetRegLayout, 11>;
+struct OneHotU_11_Layout {
+  NondetRegLayout11LayoutArray _super;
+};
 struct AbsorbMajor1Layout {
   AbsorbMajor1_SuperLayout _super;
-  OneHot_10_Layout minorOnehot;
+  ConcatZeros_11__5_Layout auxRegs;
   _ArgumentsAbsorbMajor1_SuperLayout _arguments_Super;
+  OneHotU_11_Layout minorOnehot;
 };
 struct AbsorbWord_4__1_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackA;
-  ToBits_22_Layout unpackE;
-  ToBits_22_Layout unpackF;
-  ToBits_16_Layout unpack_1;
-  ToBits_16_Layout unpack_2;
-  ToBits_16_Layout unpack_3;
-  ToBits_16_Layout unpack_4;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  Concatenate_21__3_Layout withr34;
+  ToBitsU_22_Layout unpackA;
+  ConcatZeros_21__1_Layout paddedE;
+  ConcatZeros_21__1_Layout paddedF;
+  ConcatElem_21_Layout padded23;
+  ToBitsU_21_Layout unpackE;
+  ToBitsU_21_Layout unpackF;
+  ToBitsU_16_Layout unpack_1;
+  ToBitsU_16_Layout unpack_2;
+  ToBitsU_16_Layout unpack_3;
+  ToBitsU_16_Layout unpack_4;
   WriteMemoryLayout _0;
   NondetRegLayout invmidx;
+  NondetRegLayout22LayoutArray arr12;
+  NondetRegLayout21LayoutArray arr34;
+  NondetRegLayout21LayoutArray arr23;
 };
 struct AbsorbWord_0__2_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackA;
-  ToBits_22_Layout unpackE;
-  ToBits_22_Layout unpackF;
-  ToBits_16_Layout unpack_1;
-  ToBits_16_Layout unpack_2;
-  ToBits_16_Layout unpack_3;
-  ToBits_16_Layout unpack_4;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  Concatenate_21__3_Layout withr34;
+  ToBitsU_22_Layout unpackA;
+  ConcatZeros_21__1_Layout paddedE;
+  ConcatZeros_21__1_Layout paddedF;
+  ConcatElem_21_Layout padded23;
+  ToBitsU_21_Layout unpackE;
+  ToBitsU_21_Layout unpackF;
+  ToBitsU_16_Layout unpack_1;
+  ToBitsU_16_Layout unpack_2;
+  ToBitsU_16_Layout unpack_3;
+  ToBitsU_16_Layout unpack_4;
   WriteMemoryLayout _0;
   NondetRegLayout invmidx;
+  NondetRegLayout22LayoutArray arr12;
+  NondetRegLayout21LayoutArray arr34;
+  NondetRegLayout21LayoutArray arr23;
 };
 struct AbsorbWord_1__2_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackA;
-  ToBits_22_Layout unpackE;
-  ToBits_22_Layout unpackF;
-  ToBits_16_Layout unpack_1;
-  ToBits_16_Layout unpack_2;
-  ToBits_16_Layout unpack_3;
-  ToBits_16_Layout unpack_4;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  Concatenate_21__3_Layout withr34;
+  ToBitsU_22_Layout unpackA;
+  ConcatZeros_21__1_Layout paddedE;
+  ConcatZeros_21__1_Layout paddedF;
+  ConcatElem_21_Layout padded23;
+  ToBitsU_21_Layout unpackE;
+  ToBitsU_21_Layout unpackF;
+  ToBitsU_16_Layout unpack_1;
+  ToBitsU_16_Layout unpack_2;
+  ToBitsU_16_Layout unpack_3;
+  ToBitsU_16_Layout unpack_4;
   WriteMemoryLayout _0;
   NondetRegLayout invmidx;
+  NondetRegLayout22LayoutArray arr12;
+  NondetRegLayout21LayoutArray arr34;
+  NondetRegLayout21LayoutArray arr23;
 };
 struct AbsorbWord_2__2_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackA;
-  ToBits_22_Layout unpackE;
-  ToBits_22_Layout unpackF;
-  ToBits_16_Layout unpack_1;
-  ToBits_16_Layout unpack_2;
-  ToBits_16_Layout unpack_3;
-  ToBits_16_Layout unpack_4;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  Concatenate_21__3_Layout withr34;
+  ToBitsU_22_Layout unpackA;
+  ConcatZeros_21__1_Layout paddedE;
+  ConcatZeros_21__1_Layout paddedF;
+  ConcatElem_21_Layout padded23;
+  ToBitsU_21_Layout unpackE;
+  ToBitsU_21_Layout unpackF;
+  ToBitsU_16_Layout unpack_1;
+  ToBitsU_16_Layout unpack_2;
+  ToBitsU_16_Layout unpack_3;
+  ToBitsU_16_Layout unpack_4;
   WriteMemoryLayout _0;
   NondetRegLayout invmidx;
+  NondetRegLayout22LayoutArray arr12;
+  NondetRegLayout21LayoutArray arr34;
+  NondetRegLayout21LayoutArray arr23;
 };
 struct AbsorbWord_3__2_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackA;
-  ToBits_22_Layout unpackE;
-  ToBits_22_Layout unpackF;
-  ToBits_16_Layout unpack_1;
-  ToBits_16_Layout unpack_2;
-  ToBits_16_Layout unpack_3;
-  ToBits_16_Layout unpack_4;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  Concatenate_21__3_Layout withr34;
+  ToBitsU_22_Layout unpackA;
+  ConcatZeros_21__1_Layout paddedE;
+  ConcatZeros_21__1_Layout paddedF;
+  ConcatElem_21_Layout padded23;
+  ToBitsU_21_Layout unpackE;
+  ToBitsU_21_Layout unpackF;
+  ToBitsU_16_Layout unpack_1;
+  ToBitsU_16_Layout unpack_2;
+  ToBitsU_16_Layout unpack_3;
+  ToBitsU_16_Layout unpack_4;
   WriteMemoryLayout _0;
   NondetRegLayout invmidx;
+  NondetRegLayout22LayoutArray arr12;
+  NondetRegLayout21LayoutArray arr34;
+  NondetRegLayout21LayoutArray arr23;
 };
 struct AbsorbWord_4__2_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackA;
-  ToBits_22_Layout unpackE;
-  ToBits_22_Layout unpackF;
-  ToBits_16_Layout unpack_1;
-  ToBits_16_Layout unpack_2;
-  ToBits_16_Layout unpack_3;
-  ToBits_16_Layout unpack_4;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  Concatenate_21__3_Layout withr34;
+  ToBitsU_22_Layout unpackA;
+  ConcatZeros_21__1_Layout paddedE;
+  ConcatZeros_21__1_Layout paddedF;
+  ConcatElem_21_Layout padded23;
+  ToBitsU_21_Layout unpackE;
+  ToBitsU_21_Layout unpackF;
+  ToBitsU_16_Layout unpack_1;
+  ToBitsU_16_Layout unpack_2;
+  ToBitsU_16_Layout unpack_3;
+  ToBitsU_16_Layout unpack_4;
   WriteMemoryLayout _0;
   NondetRegLayout invmidx;
+  NondetRegLayout22LayoutArray arr12;
+  NondetRegLayout21LayoutArray arr34;
+  NondetRegLayout21LayoutArray arr23;
 };
 struct AbsorbWord_0__3_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackA;
-  ToBits_22_Layout unpackE;
-  ToBits_22_Layout unpackF;
-  ToBits_16_Layout unpack_1;
-  ToBits_16_Layout unpack_2;
-  ToBits_16_Layout unpack_3;
-  ToBits_16_Layout unpack_4;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  Concatenate_21__3_Layout withr34;
+  ToBitsU_22_Layout unpackA;
+  ConcatZeros_21__1_Layout paddedE;
+  ConcatZeros_21__1_Layout paddedF;
+  ConcatElem_21_Layout padded23;
+  ToBitsU_21_Layout unpackE;
+  ToBitsU_21_Layout unpackF;
+  ToBitsU_16_Layout unpack_1;
+  ToBitsU_16_Layout unpack_2;
+  ToBitsU_16_Layout unpack_3;
+  ToBitsU_16_Layout unpack_4;
   WriteMemoryLayout _0;
   NondetRegLayout invmidx;
+  NondetRegLayout22LayoutArray arr12;
+  NondetRegLayout21LayoutArray arr34;
+  NondetRegLayout21LayoutArray arr23;
 };
 struct AbsorbWord_1__3_Layout {
   RetTupleLayout _super;
-  ToBits_22_Layout unpackA;
-  ToBits_22_Layout unpackE;
-  ToBits_22_Layout unpackF;
-  ToBits_16_Layout unpack_1;
-  ToBits_16_Layout unpack_2;
-  ToBits_16_Layout unpack_3;
-  ToBits_16_Layout unpack_4;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  Concatenate_21__3_Layout withr34;
+  ToBitsU_22_Layout unpackA;
+  ConcatZeros_21__1_Layout paddedE;
+  ConcatZeros_21__1_Layout paddedF;
+  ConcatElem_21_Layout padded23;
+  ToBitsU_21_Layout unpackE;
+  ToBitsU_21_Layout unpackF;
+  ToBitsU_16_Layout unpack_1;
+  ToBitsU_16_Layout unpack_2;
+  ToBitsU_16_Layout unpack_3;
+  ToBitsU_16_Layout unpack_4;
   WriteMemoryLayout _0;
   NondetRegLayout invmidx;
+  NondetRegLayout22LayoutArray arr12;
+  NondetRegLayout21LayoutArray arr34;
+  NondetRegLayout21LayoutArray arr23;
+};
+struct AbsorbCopy2Layout {
+  RetTupleLayout _super;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  RGZ_24_Layout _45;
+  DummyBLayout _46;
+  DummyBLayout _47;
+  RGZ_22_Layout _44;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  NondetRegLayout _16;
+  NondetRegLayout _17;
+  NondetRegLayout _18;
+  NondetRegLayout _19;
+  NondetRegLayout _20;
+  NondetRegLayout _21;
+  NondetRegLayout _22;
+  NondetRegLayout _23;
+  NondetRegLayout _24;
+  NondetRegLayout _25;
+  NondetRegLayout _26;
+  NondetRegLayout _27;
+  NondetRegLayout _28;
+  NondetRegLayout _29;
+  NondetRegLayout _30;
+  NondetRegLayout _31;
+  NondetRegLayout _32;
+  NondetRegLayout _33;
+  NondetRegLayout _34;
+  NondetRegLayout _35;
+  NondetRegLayout _36;
+  NondetRegLayout _37;
+  NondetRegLayout _38;
+  NondetRegLayout _39;
+  NondetRegLayout _40;
+  NondetRegLayout _41;
+  NondetRegLayout _42;
+  NondetRegLayout _43;
 };
 struct AbsorbMajor2Arm8Layout {
-  RetTupleLayout _super;
+  AbsorbCopy2Layout _super;
   UseOnceMemoryElementLayout _extra0;
 };
 struct AbsorbMajor2_SuperLayout {
@@ -2129,27 +4703,27 @@ struct _ArgumentsAbsorbMajor2_SuperLayout {
 };
 struct AbsorbMajor2Layout {
   AbsorbMajor2_SuperLayout _super;
-  OneHot_9_Layout minorOnehot;
+  ConcatZeros_9__7_Layout auxRegs;
+  OneHotU_9_Layout minorOnehot;
   _ArgumentsAbsorbMajor2_SuperLayout _arguments_Super;
 };
 struct EqualWord_0_Arm0Layout {
+  RetTupleLayout _super;
+  ConcatZeros_21__3_Layout _0;
   UseOnceMemoryElementLayout _extra0;
   UseOnceMemoryElementLayout _extra1;
 };
 struct EqualWord_0_Arm1_SuperArm0Layout {
+  RetTupleLayout _super;
   UseOnceMemoryElementLayout _extra0;
 };
-using NondetRegLayout3LayoutArray = std::array<NondetRegLayout, 3>;
-struct ToBits_3_Layout {
-  NondetRegLayout3LayoutArray _super;
-};
 struct EqualWord_0_Arm1_SuperArm1_SuperLayout {
-  NondetRegLayout invmidxNN;
-  NondetRegLayout nskip;
+  RetTupleLayout _super;
   WriteMemoryLayout _0;
-  ToBits_3_Layout unpackNskip;
+  NondetRegLayout nskip;
 };
 struct EqualWord_0_Arm1_Super_SuperLayout {
+  RetTupleLayout _super;
   EqualWord_0_Arm1_SuperArm0Layout arm0;
   EqualWord_0_Arm1_SuperArm1_SuperLayout arm1;
 };
@@ -2158,49 +4732,64 @@ struct _ArgumentsEqualWord_0_Arm1_Super_SuperLayout {
 };
 struct EqualWord_0_Arm1_SuperLayout {
   EqualWord_0_Arm1_Super_SuperLayout _super;
-  NondetRegLayout blk;
-  NondetRegLayout invBlk;
-  NondetRegLayout invmidxnxt;
+  NondetRegLayout prod;
+  Concatenate_21__3_Layout d;
   WriteMemoryLayout _0;
   _ArgumentsEqualWord_0_Arm1_Super_SuperLayout _arguments_Super;
-  NondetRegLayout prod;
+  NondetRegLayout blk;
+  NondetRegLayout invBlk;
 };
-struct EqualWord_0_NxtLayout {
+struct EqualWord_0__SuperLayout {
+  RetTupleLayout _super;
   EqualWord_0_Arm0Layout arm0;
   EqualWord_0_Arm1_SuperLayout arm1;
 };
+struct Concatenate_14__2_Layout {
+  NondetRegLayout16LayoutArray _super;
+};
 using UseOnceMemoryElementLayout2LayoutArray = std::array<UseOnceMemoryElementLayout, 2>;
-struct _ArgumentsEqualWord_0_NxtLayout {
+struct _ArgumentsEqualWord_0__SuperLayout {
   UseOnceMemoryElementLayout2LayoutArray useOnceMemoryElement;
 };
 struct EqualWord_0_Layout {
-  RetTupleLayout _super;
-  ToBits_16_Layout unpack_1;
-  EqualWord_0_NxtLayout nxt;
-  _ArgumentsEqualWord_0_NxtLayout _argumentsNxt;
-  ToBits_16_Layout unpack_2;
-  ToBits_16_Layout unpack_3;
-  ToBits_16_Layout unpack_4;
+  EqualWord_0__SuperLayout _super;
+  Concatenate_14__2_Layout auxregs;
   NondetRegLayout invmidx;
-  ToBits_22_Layout unpackA;
-  ToBits_21_Layout unpackE;
-  ToBits_21_Layout unpackF;
+  ConcatZeros_21__1_Layout e;
+  ToBitsU_22_Layout unpackA;
+  ConcatZeros_21__1_Layout f;
   WriteMemoryLayout _0;
+  _ArgumentsEqualWord_0__SuperLayout _arguments_Super;
+  NondetRegLayout invmidxNxt;
+  ToBitsU_21_Layout unpackE;
+  ToBitsU_16_Layout unpack_1;
+  ToBitsU_16_Layout unpack_2;
+  ToBitsU_21_Layout unpackF;
+  NondetRegLayout22LayoutArray arr12;
+  NondetRegLayout21LayoutArray arr34;
+  NondetRegLayout invmidxNN;
+  ConcatElem_21_Layout c;
+  ToBitsU_16_Layout unpack_3;
+  ToBitsU_16_Layout unpack_4;
+  NondetRegLayout21LayoutArray arr23;
 };
 struct EqualWord_1_Arm0Layout {
+  RetTupleLayout _super;
+  ConcatZeros_21__3_Layout _0;
   UseOnceMemoryElementLayout _extra0;
   UseOnceMemoryElementLayout _extra1;
 };
 struct EqualWord_1_Arm1_SuperArm0Layout {
+  RetTupleLayout _super;
   UseOnceMemoryElementLayout _extra0;
 };
 struct EqualWord_1_Arm1_SuperArm1_SuperLayout {
-  NondetRegLayout invmidxNN;
-  NondetRegLayout nskip;
+  RetTupleLayout _super;
   WriteMemoryLayout _0;
-  ToBits_3_Layout unpackNskip;
+  NondetRegLayout nskip;
 };
 struct EqualWord_1_Arm1_Super_SuperLayout {
+  RetTupleLayout _super;
   EqualWord_1_Arm1_SuperArm0Layout arm0;
   EqualWord_1_Arm1_SuperArm1_SuperLayout arm1;
 };
@@ -2209,48 +4798,60 @@ struct _ArgumentsEqualWord_1_Arm1_Super_SuperLayout {
 };
 struct EqualWord_1_Arm1_SuperLayout {
   EqualWord_1_Arm1_Super_SuperLayout _super;
-  NondetRegLayout blk;
-  NondetRegLayout invBlk;
-  NondetRegLayout invmidxnxt;
+  NondetRegLayout prod;
+  Concatenate_21__3_Layout d;
   WriteMemoryLayout _0;
   _ArgumentsEqualWord_1_Arm1_Super_SuperLayout _arguments_Super;
-  NondetRegLayout prod;
+  NondetRegLayout blk;
+  NondetRegLayout invBlk;
 };
-struct EqualWord_1_NxtLayout {
+struct EqualWord_1__SuperLayout {
+  RetTupleLayout _super;
   EqualWord_1_Arm0Layout arm0;
   EqualWord_1_Arm1_SuperLayout arm1;
 };
-struct _ArgumentsEqualWord_1_NxtLayout {
+struct _ArgumentsEqualWord_1__SuperLayout {
   UseOnceMemoryElementLayout2LayoutArray useOnceMemoryElement;
 };
 struct EqualWord_1_Layout {
-  RetTupleLayout _super;
-  ToBits_16_Layout unpack_1;
-  EqualWord_1_NxtLayout nxt;
-  _ArgumentsEqualWord_1_NxtLayout _argumentsNxt;
-  ToBits_16_Layout unpack_2;
-  ToBits_16_Layout unpack_3;
-  ToBits_16_Layout unpack_4;
+  EqualWord_1__SuperLayout _super;
+  Concatenate_14__2_Layout auxregs;
   NondetRegLayout invmidx;
-  ToBits_22_Layout unpackA;
-  ToBits_21_Layout unpackE;
-  ToBits_21_Layout unpackF;
+  ConcatZeros_21__1_Layout e;
+  ToBitsU_22_Layout unpackA;
+  ConcatZeros_21__1_Layout f;
   WriteMemoryLayout _0;
+  _ArgumentsEqualWord_1__SuperLayout _arguments_Super;
+  NondetRegLayout invmidxNxt;
+  ToBitsU_21_Layout unpackE;
+  ToBitsU_16_Layout unpack_1;
+  ToBitsU_16_Layout unpack_2;
+  ToBitsU_21_Layout unpackF;
+  NondetRegLayout22LayoutArray arr12;
+  NondetRegLayout21LayoutArray arr34;
+  NondetRegLayout invmidxNN;
+  ConcatElem_21_Layout c;
+  ToBitsU_16_Layout unpack_3;
+  ToBitsU_16_Layout unpack_4;
+  NondetRegLayout21LayoutArray arr23;
 };
 struct EqualWord_2_Arm0Layout {
+  RetTupleLayout _super;
+  ConcatZeros_21__3_Layout _0;
   UseOnceMemoryElementLayout _extra0;
   UseOnceMemoryElementLayout _extra1;
 };
 struct EqualWord_2_Arm1_SuperArm0Layout {
+  RetTupleLayout _super;
   UseOnceMemoryElementLayout _extra0;
 };
 struct EqualWord_2_Arm1_SuperArm1_SuperLayout {
-  NondetRegLayout invmidxNN;
-  NondetRegLayout nskip;
+  RetTupleLayout _super;
   WriteMemoryLayout _0;
-  ToBits_3_Layout unpackNskip;
+  NondetRegLayout nskip;
 };
 struct EqualWord_2_Arm1_Super_SuperLayout {
+  RetTupleLayout _super;
   EqualWord_2_Arm1_SuperArm0Layout arm0;
   EqualWord_2_Arm1_SuperArm1_SuperLayout arm1;
 };
@@ -2259,48 +4860,60 @@ struct _ArgumentsEqualWord_2_Arm1_Super_SuperLayout {
 };
 struct EqualWord_2_Arm1_SuperLayout {
   EqualWord_2_Arm1_Super_SuperLayout _super;
-  NondetRegLayout blk;
-  NondetRegLayout invBlk;
-  NondetRegLayout invmidxnxt;
+  NondetRegLayout prod;
+  Concatenate_21__3_Layout d;
   WriteMemoryLayout _0;
   _ArgumentsEqualWord_2_Arm1_Super_SuperLayout _arguments_Super;
-  NondetRegLayout prod;
+  NondetRegLayout blk;
+  NondetRegLayout invBlk;
 };
-struct EqualWord_2_NxtLayout {
+struct EqualWord_2__SuperLayout {
+  RetTupleLayout _super;
   EqualWord_2_Arm0Layout arm0;
   EqualWord_2_Arm1_SuperLayout arm1;
 };
-struct _ArgumentsEqualWord_2_NxtLayout {
+struct _ArgumentsEqualWord_2__SuperLayout {
   UseOnceMemoryElementLayout2LayoutArray useOnceMemoryElement;
 };
 struct EqualWord_2_Layout {
-  RetTupleLayout _super;
-  ToBits_16_Layout unpack_1;
-  EqualWord_2_NxtLayout nxt;
-  _ArgumentsEqualWord_2_NxtLayout _argumentsNxt;
-  ToBits_16_Layout unpack_2;
-  ToBits_16_Layout unpack_3;
-  ToBits_16_Layout unpack_4;
+  EqualWord_2__SuperLayout _super;
+  Concatenate_14__2_Layout auxregs;
   NondetRegLayout invmidx;
-  ToBits_22_Layout unpackA;
-  ToBits_21_Layout unpackE;
-  ToBits_21_Layout unpackF;
+  ConcatZeros_21__1_Layout e;
+  ToBitsU_22_Layout unpackA;
+  ConcatZeros_21__1_Layout f;
   WriteMemoryLayout _0;
+  _ArgumentsEqualWord_2__SuperLayout _arguments_Super;
+  NondetRegLayout invmidxNxt;
+  ToBitsU_21_Layout unpackE;
+  ToBitsU_16_Layout unpack_1;
+  ToBitsU_16_Layout unpack_2;
+  ToBitsU_21_Layout unpackF;
+  NondetRegLayout22LayoutArray arr12;
+  NondetRegLayout21LayoutArray arr34;
+  NondetRegLayout invmidxNN;
+  ConcatElem_21_Layout c;
+  ToBitsU_16_Layout unpack_3;
+  ToBitsU_16_Layout unpack_4;
+  NondetRegLayout21LayoutArray arr23;
 };
 struct EqualWord_3_Arm0Layout {
+  RetTupleLayout _super;
+  ConcatZeros_21__3_Layout _0;
   UseOnceMemoryElementLayout _extra0;
   UseOnceMemoryElementLayout _extra1;
 };
 struct EqualWord_3_Arm1_SuperArm0Layout {
+  RetTupleLayout _super;
   UseOnceMemoryElementLayout _extra0;
 };
 struct EqualWord_3_Arm1_SuperArm1_SuperLayout {
-  NondetRegLayout invmidxNN;
-  NondetRegLayout nskip;
+  RetTupleLayout _super;
   WriteMemoryLayout _0;
-  ToBits_3_Layout unpackNskip;
+  NondetRegLayout nskip;
 };
 struct EqualWord_3_Arm1_Super_SuperLayout {
+  RetTupleLayout _super;
   EqualWord_3_Arm1_SuperArm0Layout arm0;
   EqualWord_3_Arm1_SuperArm1_SuperLayout arm1;
 };
@@ -2309,37 +4922,50 @@ struct _ArgumentsEqualWord_3_Arm1_Super_SuperLayout {
 };
 struct EqualWord_3_Arm1_SuperLayout {
   EqualWord_3_Arm1_Super_SuperLayout _super;
-  NondetRegLayout blk;
-  NondetRegLayout invBlk;
-  NondetRegLayout invmidxnxt;
+  NondetRegLayout prod;
+  Concatenate_21__3_Layout d;
   WriteMemoryLayout _0;
   _ArgumentsEqualWord_3_Arm1_Super_SuperLayout _arguments_Super;
-  NondetRegLayout prod;
+  NondetRegLayout blk;
+  NondetRegLayout invBlk;
 };
-struct EqualWord_3_NxtLayout {
+struct EqualWord_3__SuperLayout {
+  RetTupleLayout _super;
   EqualWord_3_Arm0Layout arm0;
   EqualWord_3_Arm1_SuperLayout arm1;
 };
-struct _ArgumentsEqualWord_3_NxtLayout {
+struct _ArgumentsEqualWord_3__SuperLayout {
   UseOnceMemoryElementLayout2LayoutArray useOnceMemoryElement;
 };
 struct EqualWord_3_Layout {
-  RetTupleLayout _super;
-  ToBits_16_Layout unpack_1;
-  EqualWord_3_NxtLayout nxt;
-  _ArgumentsEqualWord_3_NxtLayout _argumentsNxt;
-  ToBits_16_Layout unpack_2;
-  ToBits_16_Layout unpack_3;
-  ToBits_16_Layout unpack_4;
+  EqualWord_3__SuperLayout _super;
+  Concatenate_14__2_Layout auxregs;
   NondetRegLayout invmidx;
-  ToBits_22_Layout unpackA;
-  ToBits_21_Layout unpackE;
-  ToBits_21_Layout unpackF;
+  ConcatZeros_21__1_Layout e;
+  ToBitsU_22_Layout unpackA;
+  ConcatZeros_21__1_Layout f;
   WriteMemoryLayout _0;
+  _ArgumentsEqualWord_3__SuperLayout _arguments_Super;
+  NondetRegLayout invmidxNxt;
+  ToBitsU_21_Layout unpackE;
+  ToBitsU_16_Layout unpack_1;
+  ToBitsU_16_Layout unpack_2;
+  ToBitsU_21_Layout unpackF;
+  NondetRegLayout22LayoutArray arr12;
+  NondetRegLayout21LayoutArray arr34;
+  NondetRegLayout invmidxNN;
+  ConcatElem_21_Layout c;
+  ToBitsU_16_Layout unpack_3;
+  ToBitsU_16_Layout unpack_4;
+  NondetRegLayout21LayoutArray arr23;
 };
 struct MemPaddingSha256Arm0_SuperLayout {
   RetTupleLayout _super;
   WriteMemoryLayout _0;
+  DummyBLayout _1;
+  DummyBLayout _2;
+  DummyBLayout _3;
+  DummyBLayout _4;
 };
 struct MemPaddingSha256Arm0Layout {
   MemPaddingSha256Arm0_SuperLayout _super;
@@ -2347,10 +4973,18 @@ struct MemPaddingSha256Arm0Layout {
 };
 struct MemPaddingSha256Arm1_SuperArm0_SuperLayout {
   RetTupleLayout _super;
+  DummyBLayout _1;
+  DummyBLayout _2;
+  DummyBLayout _3;
+  DummyBLayout _4;
   WriteMemoryLayout _0;
 };
 struct MemPaddingSha256Arm1_SuperArm1_SuperLayout {
   RetTupleLayout _super;
+  DummyBLayout _1;
+  DummyBLayout _2;
+  DummyBLayout _3;
+  DummyBLayout _4;
   WriteMemoryLayout _0;
 };
 struct MemPaddingSha256Arm1_Super_SuperLayout {
@@ -2371,37 +5005,92 @@ struct MemPaddingSha256_SuperLayout {
   MemPaddingSha256Arm0Layout arm0;
   MemPaddingSha256Arm1_SuperLayout arm1;
 };
+struct ConcatZeros_14__2_Layout {
+  NondetRegLayout16LayoutArray _super;
+};
+using NondetRegLayout30LayoutArray = std::array<NondetRegLayout, 30>;
+struct ToBitsU_30_Layout {
+  NondetRegLayout30LayoutArray _super;
+};
 struct _ArgumentsMemPaddingSha256_SuperLayout {
   UseOnceMemoryElementLayout2LayoutArray useOnceMemoryElement;
 };
-using NondetRegLayout30LayoutArray = std::array<NondetRegLayout, 30>;
-struct ToBits_30_Layout {
-  NondetRegLayout30LayoutArray _super;
+struct ToBitsU_3_Layout {
+  NondetRegLayout3LayoutArray _super;
+};
+struct ConcatZeros_12__9_Layout {
+  NondetRegLayout21LayoutArray _super;
 };
 struct MemPaddingSha256Layout {
   MemPaddingSha256_SuperLayout _super;
-  _ArgumentsMemPaddingSha256_SuperLayout _arguments_Super;
+  ConcatZeros_14__2_Layout auxregs;
+  NondetRegLayout invn;
+  ConcatZeros_21__1_Layout a;
+  ToBitsU_30_Layout unpackBitlen;
+  Concatenate_21__3_Layout d;
+  NondetRegLayout9LayoutArray dTmp;
+  NondetRegLayout21LayoutArray aTmp;
   NondetRegLayout prod;
   NondetRegLayout prodNxt;
-  NondetRegLayout invn;
-  ToBits_30_Layout unpackBitlen;
+  Concatenate_9__3_Layout dTmp2;
+  _ArgumentsMemPaddingSha256_SuperLayout _arguments_Super;
+  ToBitsU_3_Layout unpackNskip;
   NondetRegLayout invnNxt;
+  ConcatZeros_12__9_Layout dTmp3;
 };
 struct SetupMajorArm4Layout {
   MemPaddingSha256Layout _super;
   UseOnceMemoryElementLayout _extra0;
 };
+struct Dummy24Layout {
+  NondetRegLayout24LayoutArray _super;
+};
+struct Sha256init_1_Arm0Layout {
+  RetTupleLayout _super;
+  Dummy24Layout _2;
+  DummyBLayout _0;
+  DummyBLayout _1;
+};
+struct Sha256init_1_Arm1Layout {
+  RetTupleLayout _super;
+  Dummy24Layout _2;
+  DummyBLayout _0;
+  DummyBLayout _1;
+};
 struct Sha256init_1__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
-  RetTupleLayout arm1;
+  Sha256init_1_Arm0Layout arm0;
+  Sha256init_1_Arm1Layout arm1;
+};
+struct Concatenate_10__12_Layout {
+  NondetRegLayout22LayoutArray _super;
+};
+using NondetRegLayout20LayoutArray = std::array<NondetRegLayout, 20>;
+struct Ae2sLayout {
+  NondetRegLayout22LayoutArray e;
+  Concatenate_10__12_Layout f;
+  NondetRegLayout20LayoutArray c;
+  NondetRegLayout12LayoutArray f2;
+  NondetRegLayout10LayoutArray f1;
+};
+struct ConcatZeros_20__2_Layout {
+  NondetRegLayout22LayoutArray _super;
+};
+using NondetRegLayout32LayoutArray = std::array<NondetRegLayout, 32>;
+struct Concatenate_16__16_Layout {
+  NondetRegLayout32LayoutArray _super;
 };
 struct Sha256init_1_Layout {
   Sha256init_1__SuperLayout _super;
-  ToBits_16_Layout lowA;
-  ToBits_16_Layout highA;
-  ToBits_16_Layout lowE;
-  ToBits_16_Layout highE;
+  ConcatZeros_14__2_Layout auxr;
+  Ae2sLayout stae;
+  ConcatZeros_20__2_Layout padc;
+  ToBitsU_16_Layout lowA;
+  ToBitsU_16_Layout highA;
+  Concatenate_16__16_Layout unpackedA;
+  Concatenate_16__16_Layout unpackedE;
+  ToBitsU_16_Layout lowE;
+  ToBitsU_16_Layout highE;
 };
 struct SetupMajorArm5Layout {
   Sha256init_1_Layout _super;
@@ -2409,17 +5098,34 @@ struct SetupMajorArm5Layout {
   UseOnceMemoryElementLayout _extra1;
   UseOnceMemoryElementLayout _extra2;
 };
+struct Sha256init_2_Arm0Layout {
+  RetTupleLayout _super;
+  Dummy24Layout _2;
+  DummyBLayout _0;
+  DummyBLayout _1;
+};
+struct Sha256init_2_Arm1Layout {
+  RetTupleLayout _super;
+  Dummy24Layout _2;
+  DummyBLayout _0;
+  DummyBLayout _1;
+};
 struct Sha256init_2__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
-  RetTupleLayout arm1;
+  Sha256init_2_Arm0Layout arm0;
+  Sha256init_2_Arm1Layout arm1;
 };
 struct Sha256init_2_Layout {
   Sha256init_2__SuperLayout _super;
-  ToBits_16_Layout lowA;
-  ToBits_16_Layout highA;
-  ToBits_16_Layout lowE;
-  ToBits_16_Layout highE;
+  ConcatZeros_14__2_Layout auxr;
+  Ae2sLayout stae;
+  ConcatZeros_20__2_Layout padc;
+  ToBitsU_16_Layout lowA;
+  ToBitsU_16_Layout highA;
+  Concatenate_16__16_Layout unpackedA;
+  Concatenate_16__16_Layout unpackedE;
+  ToBitsU_16_Layout lowE;
+  ToBitsU_16_Layout highE;
 };
 struct SetupMajorArm6Layout {
   Sha256init_2_Layout _super;
@@ -2427,17 +5133,34 @@ struct SetupMajorArm6Layout {
   UseOnceMemoryElementLayout _extra1;
   UseOnceMemoryElementLayout _extra2;
 };
+struct Sha256init_3_Arm0Layout {
+  RetTupleLayout _super;
+  Dummy24Layout _2;
+  DummyBLayout _0;
+  DummyBLayout _1;
+};
+struct Sha256init_3_Arm1Layout {
+  RetTupleLayout _super;
+  Dummy24Layout _2;
+  DummyBLayout _0;
+  DummyBLayout _1;
+};
 struct Sha256init_3__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
-  RetTupleLayout arm1;
+  Sha256init_3_Arm0Layout arm0;
+  Sha256init_3_Arm1Layout arm1;
 };
 struct Sha256init_3_Layout {
   Sha256init_3__SuperLayout _super;
-  ToBits_16_Layout lowA;
-  ToBits_16_Layout highA;
-  ToBits_16_Layout lowE;
-  ToBits_16_Layout highE;
+  ConcatZeros_14__2_Layout auxr;
+  Ae2sLayout stae;
+  ConcatZeros_20__2_Layout padc;
+  ToBitsU_16_Layout lowA;
+  ToBitsU_16_Layout highA;
+  Concatenate_16__16_Layout unpackedA;
+  Concatenate_16__16_Layout unpackedE;
+  ToBitsU_16_Layout lowE;
+  ToBitsU_16_Layout highE;
 };
 struct SetupMajorArm7Layout {
   Sha256init_3_Layout _super;
@@ -2445,17 +5168,34 @@ struct SetupMajorArm7Layout {
   UseOnceMemoryElementLayout _extra1;
   UseOnceMemoryElementLayout _extra2;
 };
+struct Sha256init_4_Arm0Layout {
+  RetTupleLayout _super;
+  Dummy24Layout _2;
+  DummyBLayout _0;
+  DummyBLayout _1;
+};
+struct Sha256init_4_Arm1Layout {
+  RetTupleLayout _super;
+  Dummy24Layout _2;
+  DummyBLayout _0;
+  DummyBLayout _1;
+};
 struct Sha256init_4__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
-  RetTupleLayout arm1;
+  Sha256init_4_Arm0Layout arm0;
+  Sha256init_4_Arm1Layout arm1;
 };
 struct Sha256init_4_Layout {
   Sha256init_4__SuperLayout _super;
-  ToBits_16_Layout lowA;
-  ToBits_16_Layout highA;
-  ToBits_16_Layout lowE;
-  ToBits_16_Layout highE;
+  ConcatZeros_14__2_Layout auxr;
+  Ae2sLayout stae;
+  ConcatZeros_20__2_Layout padc;
+  ToBitsU_16_Layout lowA;
+  ToBitsU_16_Layout highA;
+  Concatenate_16__16_Layout unpackedA;
+  Concatenate_16__16_Layout unpackedE;
+  ToBitsU_16_Layout lowE;
+  ToBitsU_16_Layout highE;
 };
 struct SetupMajorArm8Layout {
   Sha256init_4_Layout _super;
@@ -2463,55 +5203,90 @@ struct SetupMajorArm8Layout {
   UseOnceMemoryElementLayout _extra1;
   UseOnceMemoryElementLayout _extra2;
 };
-struct Pack2Layout {
-  NondetRegLayout low;
-  NondetRegLayout high;
+struct DummySLayout {
+  NondetRegLayout21LayoutArray _super;
+};
+struct Sha256fini_5_Arm0Layout {
+  RetTupleLayout _super;
+  Concatenate_21__3_Layout _1;
+  DummySLayout _0;
+};
+struct Sha256fini_5_Arm1_SuperArm0Layout {
+  RetTupleLayout _super;
+  Concatenate_21__3_Layout _1;
+  DummySLayout _0;
 };
 struct Sha256fini_5_Arm1_SuperArm1_SuperLayout {
   RetTupleLayout _super;
-  Pack2Layout fa;
-  Pack2Layout fb;
-  Pack2Layout fc;
-  Pack2Layout fd;
-  Pack2Layout fe;
-  Pack2Layout ff;
-  Pack2Layout fg;
-  Pack2Layout fh;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  Concatenate_21__3_Layout result;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  NondetRegLayout _16;
+  NondetRegLayout _17;
+  NondetRegLayout _18;
+  NondetRegLayout _19;
+  NondetRegLayout _20;
 };
 struct Sha256fini_5_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  Sha256fini_5_Arm1_SuperArm0Layout arm0;
   Sha256fini_5_Arm1_SuperArm1_SuperLayout arm1;
-};
-struct Sha256fini_5_Arm1_SuperLayout {
-  Sha256fini_5_Arm1_Super_SuperLayout _super;
-  NondetRegLayout invMoreInput;
 };
 struct Sha256fini_5__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
-  Sha256fini_5_Arm1_SuperLayout arm1;
+  Sha256fini_5_Arm0Layout arm0;
+  Sha256fini_5_Arm1_Super_SuperLayout arm1;
 };
-using NondetRegLayout20LayoutArray = std::array<NondetRegLayout, 20>;
-struct ToBits_20_Layout {
-  NondetRegLayout20LayoutArray _super;
+struct Concatenate_7__7_Layout {
+  NondetRegLayout14LayoutArray _super;
 };
-using NondetRegLayout19LayoutArray = std::array<NondetRegLayout, 19>;
-struct ToBits_19_Layout {
+struct ToBitsU_19_Layout {
   NondetRegLayout19LayoutArray _super;
 };
+struct ToBitsU_20_Layout {
+  NondetRegLayout20LayoutArray _super;
+};
+struct Concatenate_3__4_Layout {
+  NondetRegLayout7LayoutArray _super;
+};
 struct UnpackWithCarryLayout {
-  ToBits_20_Layout highBits;
-  ToBits_19_Layout lowBits;
+  Concatenate_16__16_Layout _super;
+  ToBitsU_19_Layout lowBits;
+  ToBitsU_20_Layout highBits;
+  Concatenate_3__4_Layout carrybits;
+};
+struct ConcatZeros_14__8_Layout {
+  NondetRegLayout22LayoutArray _super;
 };
 struct Sha256fini_5_Layout {
   Sha256fini_5__SuperLayout _super;
-  Pack2Layout _0;
-  Pack2Layout _1;
-  Pack2Layout _2;
-  Pack2Layout _3;
+  ConcatZeros_14__2_Layout auxr;
+  Ae2sLayout stae;
+  ConcatZeros_20__2_Layout padc;
+  NondetRegLayout prod;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  Concatenate_7__7_Layout tmp14;
   UnpackWithCarryLayout newA;
+  NondetRegLayout invMoreInput;
+  ConcatElem_21_Layout zb;
   UnpackWithCarryLayout newE;
+  ConcatZeros_14__8_Layout pada;
+  DummySLayout _2;
 };
 struct SetupMajorArm9Layout {
   Sha256fini_5_Layout _super;
@@ -2519,39 +5294,66 @@ struct SetupMajorArm9Layout {
   UseOnceMemoryElementLayout _extra1;
   UseOnceMemoryElementLayout _extra2;
 };
+struct Sha256fini_6_Arm0Layout {
+  RetTupleLayout _super;
+  Concatenate_21__3_Layout _1;
+  DummySLayout _0;
+};
+struct Sha256fini_6_Arm1_SuperArm0Layout {
+  RetTupleLayout _super;
+  Concatenate_21__3_Layout _1;
+  DummySLayout _0;
+};
 struct Sha256fini_6_Arm1_SuperArm1_SuperLayout {
   RetTupleLayout _super;
-  Pack2Layout fa;
-  Pack2Layout fb;
-  Pack2Layout fc;
-  Pack2Layout fd;
-  Pack2Layout fe;
-  Pack2Layout ff;
-  Pack2Layout fg;
-  Pack2Layout fh;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  Concatenate_21__3_Layout result;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  NondetRegLayout _16;
+  NondetRegLayout _17;
+  NondetRegLayout _18;
+  NondetRegLayout _19;
+  NondetRegLayout _20;
 };
 struct Sha256fini_6_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  Sha256fini_6_Arm1_SuperArm0Layout arm0;
   Sha256fini_6_Arm1_SuperArm1_SuperLayout arm1;
-};
-struct Sha256fini_6_Arm1_SuperLayout {
-  Sha256fini_6_Arm1_Super_SuperLayout _super;
-  NondetRegLayout invMoreInput;
 };
 struct Sha256fini_6__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
-  Sha256fini_6_Arm1_SuperLayout arm1;
+  Sha256fini_6_Arm0Layout arm0;
+  Sha256fini_6_Arm1_Super_SuperLayout arm1;
 };
 struct Sha256fini_6_Layout {
   Sha256fini_6__SuperLayout _super;
-  Pack2Layout _0;
-  Pack2Layout _1;
-  Pack2Layout _2;
-  Pack2Layout _3;
+  ConcatZeros_14__2_Layout auxr;
+  Ae2sLayout stae;
+  ConcatZeros_20__2_Layout padc;
+  NondetRegLayout prod;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  Concatenate_7__7_Layout tmp14;
   UnpackWithCarryLayout newA;
+  NondetRegLayout invMoreInput;
+  ConcatElem_21_Layout zb;
   UnpackWithCarryLayout newE;
+  ConcatZeros_14__8_Layout pada;
+  DummySLayout _2;
 };
 struct SetupMajorArm10Layout {
   Sha256fini_6_Layout _super;
@@ -2559,39 +5361,66 @@ struct SetupMajorArm10Layout {
   UseOnceMemoryElementLayout _extra1;
   UseOnceMemoryElementLayout _extra2;
 };
+struct Sha256fini_7_Arm0Layout {
+  RetTupleLayout _super;
+  Concatenate_21__3_Layout _1;
+  DummySLayout _0;
+};
+struct Sha256fini_7_Arm1_SuperArm0Layout {
+  RetTupleLayout _super;
+  Concatenate_21__3_Layout _1;
+  DummySLayout _0;
+};
 struct Sha256fini_7_Arm1_SuperArm1_SuperLayout {
   RetTupleLayout _super;
-  Pack2Layout fa;
-  Pack2Layout fb;
-  Pack2Layout fc;
-  Pack2Layout fd;
-  Pack2Layout fe;
-  Pack2Layout ff;
-  Pack2Layout fg;
-  Pack2Layout fh;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  Concatenate_21__3_Layout result;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  NondetRegLayout _16;
+  NondetRegLayout _17;
+  NondetRegLayout _18;
+  NondetRegLayout _19;
+  NondetRegLayout _20;
 };
 struct Sha256fini_7_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  Sha256fini_7_Arm1_SuperArm0Layout arm0;
   Sha256fini_7_Arm1_SuperArm1_SuperLayout arm1;
-};
-struct Sha256fini_7_Arm1_SuperLayout {
-  Sha256fini_7_Arm1_Super_SuperLayout _super;
-  NondetRegLayout invMoreInput;
 };
 struct Sha256fini_7__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
-  Sha256fini_7_Arm1_SuperLayout arm1;
+  Sha256fini_7_Arm0Layout arm0;
+  Sha256fini_7_Arm1_Super_SuperLayout arm1;
 };
 struct Sha256fini_7_Layout {
   Sha256fini_7__SuperLayout _super;
-  Pack2Layout _0;
-  Pack2Layout _1;
-  Pack2Layout _2;
-  Pack2Layout _3;
+  ConcatZeros_14__2_Layout auxr;
+  Ae2sLayout stae;
+  ConcatZeros_20__2_Layout padc;
+  NondetRegLayout prod;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  Concatenate_7__7_Layout tmp14;
   UnpackWithCarryLayout newA;
+  NondetRegLayout invMoreInput;
+  ConcatElem_21_Layout zb;
   UnpackWithCarryLayout newE;
+  ConcatZeros_14__8_Layout pada;
+  DummySLayout _2;
 };
 struct SetupMajorArm11Layout {
   Sha256fini_7_Layout _super;
@@ -2599,39 +5428,66 @@ struct SetupMajorArm11Layout {
   UseOnceMemoryElementLayout _extra1;
   UseOnceMemoryElementLayout _extra2;
 };
+struct Sha256fini_8_Arm0Layout {
+  RetTupleLayout _super;
+  Concatenate_21__3_Layout _1;
+  DummySLayout _0;
+};
+struct Sha256fini_8_Arm1_SuperArm0Layout {
+  RetTupleLayout _super;
+  Concatenate_21__3_Layout _1;
+  DummySLayout _0;
+};
 struct Sha256fini_8_Arm1_SuperArm1_SuperLayout {
   RetTupleLayout _super;
-  Pack2Layout fa;
-  Pack2Layout fb;
-  Pack2Layout fc;
-  Pack2Layout fd;
-  Pack2Layout fe;
-  Pack2Layout ff;
-  Pack2Layout fg;
-  Pack2Layout fh;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  Concatenate_21__3_Layout result;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  NondetRegLayout _16;
+  NondetRegLayout _17;
+  NondetRegLayout _18;
+  NondetRegLayout _19;
+  NondetRegLayout _20;
 };
 struct Sha256fini_8_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
+  Sha256fini_8_Arm1_SuperArm0Layout arm0;
   Sha256fini_8_Arm1_SuperArm1_SuperLayout arm1;
-};
-struct Sha256fini_8_Arm1_SuperLayout {
-  Sha256fini_8_Arm1_Super_SuperLayout _super;
-  NondetRegLayout invMoreInput;
 };
 struct Sha256fini_8__SuperLayout {
   RetTupleLayout _super;
-  RetTupleLayout arm0;
-  Sha256fini_8_Arm1_SuperLayout arm1;
+  Sha256fini_8_Arm0Layout arm0;
+  Sha256fini_8_Arm1_Super_SuperLayout arm1;
 };
 struct Sha256fini_8_Layout {
   Sha256fini_8__SuperLayout _super;
-  Pack2Layout _0;
-  Pack2Layout _1;
-  Pack2Layout _2;
-  Pack2Layout _3;
+  ConcatZeros_14__2_Layout auxr;
+  Ae2sLayout stae;
+  ConcatZeros_20__2_Layout padc;
+  NondetRegLayout prod;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  Concatenate_7__7_Layout tmp14;
   UnpackWithCarryLayout newA;
+  NondetRegLayout invMoreInput;
+  ConcatElem_21_Layout zb;
   UnpackWithCarryLayout newE;
+  ConcatZeros_14__8_Layout pada;
+  DummySLayout _2;
 };
 struct SetupMajorArm12Layout {
   Sha256fini_8_Layout _super;
@@ -2639,8 +5495,41 @@ struct SetupMajorArm12Layout {
   UseOnceMemoryElementLayout _extra1;
   UseOnceMemoryElementLayout _extra2;
 };
-struct SetupMajorArm13Layout {
+struct SetupMajorArm13_SuperLayout {
   RetTupleLayout _super;
+  ConcatZeros_14__2_Layout auxr;
+  NondetRegLayout _16;
+  DummyBLayout _24;
+  DummyBLayout _25;
+  DummyBLayout _26;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
+  NondetRegLayout _3;
+  NondetRegLayout _4;
+  NondetRegLayout _5;
+  NondetRegLayout _6;
+  NondetRegLayout _7;
+  NondetRegLayout _8;
+  NondetRegLayout _9;
+  NondetRegLayout _10;
+  NondetRegLayout _11;
+  NondetRegLayout _12;
+  NondetRegLayout _17;
+  NondetRegLayout _18;
+  NondetRegLayout _19;
+  NondetRegLayout _20;
+  NondetRegLayout _21;
+  NondetRegLayout _22;
+  NondetRegLayout _13;
+  NondetRegLayout _14;
+  NondetRegLayout _15;
+  DummyBLayout _27;
+  NondetRegLayout _23;
+  DummyBLayout _28;
+};
+struct SetupMajorArm13Layout {
+  SetupMajorArm13_SuperLayout _super;
   UseOnceMemoryElementLayout _extra0;
   UseOnceMemoryElementLayout _extra1;
   UseOnceMemoryElementLayout _extra2;
@@ -2662,8 +5551,7 @@ struct SetupMajor_SuperLayout {
   SetupMajorArm12Layout arm12;
   SetupMajorArm13Layout arm13;
 };
-using NondetRegLayout14LayoutArray = std::array<NondetRegLayout, 14>;
-struct OneHot_14_Layout {
+struct OneHotU_14_Layout {
   NondetRegLayout14LayoutArray _super;
 };
 using UseOnceMemoryElementLayout3LayoutArray = std::array<UseOnceMemoryElementLayout, 3>;
@@ -2672,27 +5560,38 @@ struct _ArgumentsSetupMajor_SuperLayout {
 };
 struct SetupMajorLayout {
   SetupMajor_SuperLayout _super;
-  OneHot_14_Layout minorOnehot;
+  OneHotU_14_Layout minorOnehot;
   _ArgumentsSetupMajor_SuperLayout _arguments_Super;
 };
-struct TopArm18_SuperLayout {
+struct DummyALayout {
+  NondetRegLayout16LayoutArray _super;
+};
+struct TopArm17_SuperLayout {
   RetTupleLayout _super;
+  DummyALayout _7;
+  DummyBLayout _1;
   WriteMemoryLayout _0;
   NondetRegLayout blk;
+  DummyELayout _4;
+  DummyBLayout _2;
+  DummyBLayout _3;
+  DummyBLayout _5;
+  DummyBLayout _6;
 };
 struct Sha256load_0__SuperLayout {
   RetTupleLayout _super;
   RetTupleLayout arm0;
   RetTupleLayout arm1;
 };
-struct ComputeAELayout {
-  Pack2Layout packCh;
-  Pack2Layout _0;
-  Pack2Layout _1;
-  Pack2Layout _2;
-  Pack2Layout packMaj;
-  Pack2Layout _3;
-  Pack2Layout _4;
+struct W2sLayout {
+  NondetRegLayout22LayoutArray a;
+  NondetRegLayout10LayoutArray b;
+};
+struct Concatenate_20__2_Layout {
+  NondetRegLayout22LayoutArray _super;
+};
+struct Concatenate_7__5_Layout {
+  NondetRegLayout12LayoutArray _super;
 };
 struct ReadMemoryLayout {
   UseOnceMemoryElementLayout elem;
@@ -2712,11 +5611,19 @@ struct _ArgumentsSha256load_0_ValsLayout {
 };
 struct Sha256load_0_Layout {
   Sha256load_0__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ToBits_16_Layout highW;
-  ToBits_16_Layout lowW;
-  ComputeAELayout ae;
+  W2sLayout stw;
+  Concatenate_21__3_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  DummySLayout _0;
+  ToBitsU_16_Layout highW;
+  ToBitsU_16_Layout lowW;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
   NondetRegLayout invWithin;
   Sha256load_0_ValsLayout vals;
   _ArgumentsSha256load_0_ValsLayout _argumentsVals;
@@ -2741,11 +5648,19 @@ struct _ArgumentsSha256load_1_ValsLayout {
 };
 struct Sha256load_1_Layout {
   Sha256load_1__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ToBits_16_Layout highW;
-  ToBits_16_Layout lowW;
-  ComputeAELayout ae;
+  W2sLayout stw;
+  Concatenate_21__3_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  DummySLayout _0;
+  ToBitsU_16_Layout highW;
+  ToBitsU_16_Layout lowW;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
   NondetRegLayout invWithin;
   Sha256load_1_ValsLayout vals;
   _ArgumentsSha256load_1_ValsLayout _argumentsVals;
@@ -2770,11 +5685,19 @@ struct _ArgumentsSha256load_2_ValsLayout {
 };
 struct Sha256load_2_Layout {
   Sha256load_2__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ToBits_16_Layout highW;
-  ToBits_16_Layout lowW;
-  ComputeAELayout ae;
+  W2sLayout stw;
+  Concatenate_21__3_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  DummySLayout _0;
+  ToBitsU_16_Layout highW;
+  ToBitsU_16_Layout lowW;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
   NondetRegLayout invWithin;
   Sha256load_2_ValsLayout vals;
   _ArgumentsSha256load_2_ValsLayout _argumentsVals;
@@ -2799,11 +5722,19 @@ struct _ArgumentsSha256load_3_ValsLayout {
 };
 struct Sha256load_3_Layout {
   Sha256load_3__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ToBits_16_Layout highW;
-  ToBits_16_Layout lowW;
-  ComputeAELayout ae;
+  W2sLayout stw;
+  Concatenate_21__3_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  DummySLayout _0;
+  ToBitsU_16_Layout highW;
+  ToBitsU_16_Layout lowW;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
   NondetRegLayout invWithin;
   Sha256load_3_ValsLayout vals;
   _ArgumentsSha256load_3_ValsLayout _argumentsVals;
@@ -2828,11 +5759,19 @@ struct _ArgumentsSha256load_4_ValsLayout {
 };
 struct Sha256load_4_Layout {
   Sha256load_4__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ToBits_16_Layout highW;
-  ToBits_16_Layout lowW;
-  ComputeAELayout ae;
+  W2sLayout stw;
+  Concatenate_21__3_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  DummySLayout _0;
+  ToBitsU_16_Layout highW;
+  ToBitsU_16_Layout lowW;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
   NondetRegLayout invWithin;
   Sha256load_4_ValsLayout vals;
   _ArgumentsSha256load_4_ValsLayout _argumentsVals;
@@ -2857,11 +5796,19 @@ struct _ArgumentsSha256load_5_ValsLayout {
 };
 struct Sha256load_5_Layout {
   Sha256load_5__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ToBits_16_Layout highW;
-  ToBits_16_Layout lowW;
-  ComputeAELayout ae;
+  W2sLayout stw;
+  Concatenate_21__3_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  DummySLayout _0;
+  ToBitsU_16_Layout highW;
+  ToBitsU_16_Layout lowW;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
   NondetRegLayout invWithin;
   Sha256load_5_ValsLayout vals;
   _ArgumentsSha256load_5_ValsLayout _argumentsVals;
@@ -2886,11 +5833,19 @@ struct _ArgumentsSha256load_6_ValsLayout {
 };
 struct Sha256load_6_Layout {
   Sha256load_6__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ToBits_16_Layout highW;
-  ToBits_16_Layout lowW;
-  ComputeAELayout ae;
+  W2sLayout stw;
+  Concatenate_21__3_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  DummySLayout _0;
+  ToBitsU_16_Layout highW;
+  ToBitsU_16_Layout lowW;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
   NondetRegLayout invWithin;
   Sha256load_6_ValsLayout vals;
   _ArgumentsSha256load_6_ValsLayout _argumentsVals;
@@ -2915,11 +5870,19 @@ struct _ArgumentsSha256load_7_ValsLayout {
 };
 struct Sha256load_7_Layout {
   Sha256load_7__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ToBits_16_Layout highW;
-  ToBits_16_Layout lowW;
-  ComputeAELayout ae;
+  W2sLayout stw;
+  Concatenate_21__3_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  DummySLayout _0;
+  ToBitsU_16_Layout highW;
+  ToBitsU_16_Layout lowW;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
   NondetRegLayout invWithin;
   Sha256load_7_ValsLayout vals;
   _ArgumentsSha256load_7_ValsLayout _argumentsVals;
@@ -2944,11 +5907,19 @@ struct _ArgumentsSha256load_8_ValsLayout {
 };
 struct Sha256load_8_Layout {
   Sha256load_8__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ToBits_16_Layout highW;
-  ToBits_16_Layout lowW;
-  ComputeAELayout ae;
+  W2sLayout stw;
+  Concatenate_21__3_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  DummySLayout _0;
+  ToBitsU_16_Layout highW;
+  ToBitsU_16_Layout lowW;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
   NondetRegLayout invWithin;
   Sha256load_8_ValsLayout vals;
   _ArgumentsSha256load_8_ValsLayout _argumentsVals;
@@ -2973,11 +5944,19 @@ struct _ArgumentsSha256load_9_ValsLayout {
 };
 struct Sha256load_9_Layout {
   Sha256load_9__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ToBits_16_Layout highW;
-  ToBits_16_Layout lowW;
-  ComputeAELayout ae;
+  W2sLayout stw;
+  Concatenate_21__3_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  DummySLayout _0;
+  ToBitsU_16_Layout highW;
+  ToBitsU_16_Layout lowW;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
   NondetRegLayout invWithin;
   Sha256load_9_ValsLayout vals;
   _ArgumentsSha256load_9_ValsLayout _argumentsVals;
@@ -3002,11 +5981,19 @@ struct _ArgumentsSha256load_10_ValsLayout {
 };
 struct Sha256load_10_Layout {
   Sha256load_10__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ToBits_16_Layout highW;
-  ToBits_16_Layout lowW;
-  ComputeAELayout ae;
+  W2sLayout stw;
+  Concatenate_21__3_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  DummySLayout _0;
+  ToBitsU_16_Layout highW;
+  ToBitsU_16_Layout lowW;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
   NondetRegLayout invWithin;
   Sha256load_10_ValsLayout vals;
   _ArgumentsSha256load_10_ValsLayout _argumentsVals;
@@ -3031,11 +6018,19 @@ struct _ArgumentsSha256load_11_ValsLayout {
 };
 struct Sha256load_11_Layout {
   Sha256load_11__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ToBits_16_Layout highW;
-  ToBits_16_Layout lowW;
-  ComputeAELayout ae;
+  W2sLayout stw;
+  Concatenate_21__3_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  DummySLayout _0;
+  ToBitsU_16_Layout highW;
+  ToBitsU_16_Layout lowW;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
   NondetRegLayout invWithin;
   Sha256load_11_ValsLayout vals;
   _ArgumentsSha256load_11_ValsLayout _argumentsVals;
@@ -3060,11 +6055,19 @@ struct _ArgumentsSha256load_12_ValsLayout {
 };
 struct Sha256load_12_Layout {
   Sha256load_12__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ToBits_16_Layout highW;
-  ToBits_16_Layout lowW;
-  ComputeAELayout ae;
+  W2sLayout stw;
+  Concatenate_21__3_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  DummySLayout _0;
+  ToBitsU_16_Layout highW;
+  ToBitsU_16_Layout lowW;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
   NondetRegLayout invWithin;
   Sha256load_12_ValsLayout vals;
   _ArgumentsSha256load_12_ValsLayout _argumentsVals;
@@ -3089,11 +6092,19 @@ struct _ArgumentsSha256load_13_ValsLayout {
 };
 struct Sha256load_13_Layout {
   Sha256load_13__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ToBits_16_Layout highW;
-  ToBits_16_Layout lowW;
-  ComputeAELayout ae;
+  W2sLayout stw;
+  Concatenate_21__3_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  DummySLayout _0;
+  ToBitsU_16_Layout highW;
+  ToBitsU_16_Layout lowW;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
   NondetRegLayout invWithin;
   Sha256load_13_ValsLayout vals;
   _ArgumentsSha256load_13_ValsLayout _argumentsVals;
@@ -3118,11 +6129,19 @@ struct _ArgumentsSha256load_14_ValsLayout {
 };
 struct Sha256load_14_Layout {
   Sha256load_14__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ToBits_16_Layout highW;
-  ToBits_16_Layout lowW;
-  ComputeAELayout ae;
+  W2sLayout stw;
+  Concatenate_21__3_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  DummySLayout _0;
+  ToBitsU_16_Layout highW;
+  ToBitsU_16_Layout lowW;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
   NondetRegLayout invWithin;
   Sha256load_14_ValsLayout vals;
   _ArgumentsSha256load_14_ValsLayout _argumentsVals;
@@ -3147,11 +6166,19 @@ struct _ArgumentsSha256load_15_ValsLayout {
 };
 struct Sha256load_15_Layout {
   Sha256load_15__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ToBits_16_Layout highW;
-  ToBits_16_Layout lowW;
-  ComputeAELayout ae;
+  W2sLayout stw;
+  Concatenate_21__3_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  DummySLayout _0;
+  ToBitsU_16_Layout highW;
+  ToBitsU_16_Layout lowW;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _1;
+  NondetRegLayout _2;
   NondetRegLayout invWithin;
   Sha256load_15_ValsLayout vals;
   _ArgumentsSha256load_15_ValsLayout _argumentsVals;
@@ -3175,16 +6202,16 @@ struct Sha256loadAll_SuperLayout {
   Sha256load_14_Layout arm14;
   Sha256load_15_Layout arm15;
 };
+struct OneHotU_16_Layout {
+  NondetRegLayout16LayoutArray _super;
+};
 struct _ArgumentsSha256loadAll_SuperLayout {
   UseOnceMemoryElementLayout1LayoutArray useOnceMemoryElement;
 };
-struct OneHot_16_Layout {
-  NondetRegLayout16LayoutArray _super;
-};
 struct Sha256loadAllLayout {
   Sha256loadAll_SuperLayout _super;
+  OneHotU_16_Layout m;
   _ArgumentsSha256loadAll_SuperLayout _arguments_Super;
-  OneHot_16_Layout minorOnehot;
 };
 struct Sha256mix_0__0_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3196,19 +6223,23 @@ struct Sha256mix_0__0__SuperLayout {
   RetTupleLayout arm0;
   Sha256mix_0__0_Arm1_Super_SuperLayout arm1;
 };
-struct ComputeWLayout {
-  Pack2Layout packS0;
-  Pack2Layout packS1;
-  Pack2Layout _0;
-  Pack2Layout _1;
+struct ConcatZeros_7__15_Layout {
+  NondetRegLayout22LayoutArray _super;
 };
 struct Sha256mix_0__0_Layout {
   Sha256mix_0__0__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_0__1_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3222,11 +6253,18 @@ struct Sha256mix_0__1__SuperLayout {
 };
 struct Sha256mix_0__1_Layout {
   Sha256mix_0__1__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_0__2_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3240,11 +6278,18 @@ struct Sha256mix_0__2__SuperLayout {
 };
 struct Sha256mix_0__2_Layout {
   Sha256mix_0__2__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_0__3_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3258,11 +6303,18 @@ struct Sha256mix_0__3__SuperLayout {
 };
 struct Sha256mix_0__3_Layout {
   Sha256mix_0__3__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_0__4_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3276,11 +6328,18 @@ struct Sha256mix_0__4__SuperLayout {
 };
 struct Sha256mix_0__4_Layout {
   Sha256mix_0__4__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_0__5_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3294,11 +6353,18 @@ struct Sha256mix_0__5__SuperLayout {
 };
 struct Sha256mix_0__5_Layout {
   Sha256mix_0__5__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_0__6_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3312,11 +6378,18 @@ struct Sha256mix_0__6__SuperLayout {
 };
 struct Sha256mix_0__6_Layout {
   Sha256mix_0__6__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_0__7_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3330,11 +6403,18 @@ struct Sha256mix_0__7__SuperLayout {
 };
 struct Sha256mix_0__7_Layout {
   Sha256mix_0__7__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_0__8_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3348,11 +6428,18 @@ struct Sha256mix_0__8__SuperLayout {
 };
 struct Sha256mix_0__8_Layout {
   Sha256mix_0__8__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_0__9_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3366,11 +6453,18 @@ struct Sha256mix_0__9__SuperLayout {
 };
 struct Sha256mix_0__9_Layout {
   Sha256mix_0__9__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_0__10_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3384,11 +6478,18 @@ struct Sha256mix_0__10__SuperLayout {
 };
 struct Sha256mix_0__10_Layout {
   Sha256mix_0__10__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_0__11_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3402,11 +6503,18 @@ struct Sha256mix_0__11__SuperLayout {
 };
 struct Sha256mix_0__11_Layout {
   Sha256mix_0__11__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_0__12_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3420,11 +6528,18 @@ struct Sha256mix_0__12__SuperLayout {
 };
 struct Sha256mix_0__12_Layout {
   Sha256mix_0__12__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_0__13_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3438,11 +6553,18 @@ struct Sha256mix_0__13__SuperLayout {
 };
 struct Sha256mix_0__13_Layout {
   Sha256mix_0__13__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_0__14_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3456,11 +6578,18 @@ struct Sha256mix_0__14__SuperLayout {
 };
 struct Sha256mix_0__14_Layout {
   Sha256mix_0__14__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_0__15_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3474,11 +6603,18 @@ struct Sha256mix_0__15__SuperLayout {
 };
 struct Sha256mix_0__15_Layout {
   Sha256mix_0__15__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mixAll_0__SuperLayout {
   RetTupleLayout _super;
@@ -3501,7 +6637,7 @@ struct Sha256mixAll_0__SuperLayout {
 };
 struct Sha256mixAll_0_Layout {
   Sha256mixAll_0__SuperLayout _super;
-  OneHot_16_Layout minorOnehot;
+  OneHotU_16_Layout m;
 };
 struct Sha256mix_1__0_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3515,11 +6651,18 @@ struct Sha256mix_1__0__SuperLayout {
 };
 struct Sha256mix_1__0_Layout {
   Sha256mix_1__0__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_1__1_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3533,11 +6676,18 @@ struct Sha256mix_1__1__SuperLayout {
 };
 struct Sha256mix_1__1_Layout {
   Sha256mix_1__1__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_1__2_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3551,11 +6701,18 @@ struct Sha256mix_1__2__SuperLayout {
 };
 struct Sha256mix_1__2_Layout {
   Sha256mix_1__2__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_1__3_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3569,11 +6726,18 @@ struct Sha256mix_1__3__SuperLayout {
 };
 struct Sha256mix_1__3_Layout {
   Sha256mix_1__3__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_1__4_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3587,11 +6751,18 @@ struct Sha256mix_1__4__SuperLayout {
 };
 struct Sha256mix_1__4_Layout {
   Sha256mix_1__4__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_1__5_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3605,11 +6776,18 @@ struct Sha256mix_1__5__SuperLayout {
 };
 struct Sha256mix_1__5_Layout {
   Sha256mix_1__5__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_1__6_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3623,11 +6801,18 @@ struct Sha256mix_1__6__SuperLayout {
 };
 struct Sha256mix_1__6_Layout {
   Sha256mix_1__6__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_1__7_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3641,11 +6826,18 @@ struct Sha256mix_1__7__SuperLayout {
 };
 struct Sha256mix_1__7_Layout {
   Sha256mix_1__7__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_1__8_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3659,11 +6851,18 @@ struct Sha256mix_1__8__SuperLayout {
 };
 struct Sha256mix_1__8_Layout {
   Sha256mix_1__8__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_1__9_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3677,11 +6876,18 @@ struct Sha256mix_1__9__SuperLayout {
 };
 struct Sha256mix_1__9_Layout {
   Sha256mix_1__9__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_1__10_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3695,11 +6901,18 @@ struct Sha256mix_1__10__SuperLayout {
 };
 struct Sha256mix_1__10_Layout {
   Sha256mix_1__10__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_1__11_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3713,11 +6926,18 @@ struct Sha256mix_1__11__SuperLayout {
 };
 struct Sha256mix_1__11_Layout {
   Sha256mix_1__11__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_1__12_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3731,11 +6951,18 @@ struct Sha256mix_1__12__SuperLayout {
 };
 struct Sha256mix_1__12_Layout {
   Sha256mix_1__12__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_1__13_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3749,11 +6976,18 @@ struct Sha256mix_1__13__SuperLayout {
 };
 struct Sha256mix_1__13_Layout {
   Sha256mix_1__13__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_1__14_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3767,11 +7001,18 @@ struct Sha256mix_1__14__SuperLayout {
 };
 struct Sha256mix_1__14_Layout {
   Sha256mix_1__14__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_1__15_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3785,11 +7026,18 @@ struct Sha256mix_1__15__SuperLayout {
 };
 struct Sha256mix_1__15_Layout {
   Sha256mix_1__15__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mixAll_1__SuperLayout {
   RetTupleLayout _super;
@@ -3812,7 +7060,7 @@ struct Sha256mixAll_1__SuperLayout {
 };
 struct Sha256mixAll_1_Layout {
   Sha256mixAll_1__SuperLayout _super;
-  OneHot_16_Layout minorOnehot;
+  OneHotU_16_Layout m;
 };
 struct Sha256mix_2__0_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3826,11 +7074,18 @@ struct Sha256mix_2__0__SuperLayout {
 };
 struct Sha256mix_2__0_Layout {
   Sha256mix_2__0__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_2__1_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3844,11 +7099,18 @@ struct Sha256mix_2__1__SuperLayout {
 };
 struct Sha256mix_2__1_Layout {
   Sha256mix_2__1__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_2__2_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3862,11 +7124,18 @@ struct Sha256mix_2__2__SuperLayout {
 };
 struct Sha256mix_2__2_Layout {
   Sha256mix_2__2__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_2__3_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3880,11 +7149,18 @@ struct Sha256mix_2__3__SuperLayout {
 };
 struct Sha256mix_2__3_Layout {
   Sha256mix_2__3__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_2__4_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3898,11 +7174,18 @@ struct Sha256mix_2__4__SuperLayout {
 };
 struct Sha256mix_2__4_Layout {
   Sha256mix_2__4__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_2__5_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3916,11 +7199,18 @@ struct Sha256mix_2__5__SuperLayout {
 };
 struct Sha256mix_2__5_Layout {
   Sha256mix_2__5__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_2__6_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3934,11 +7224,18 @@ struct Sha256mix_2__6__SuperLayout {
 };
 struct Sha256mix_2__6_Layout {
   Sha256mix_2__6__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_2__7_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3952,11 +7249,18 @@ struct Sha256mix_2__7__SuperLayout {
 };
 struct Sha256mix_2__7_Layout {
   Sha256mix_2__7__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_2__8_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3970,11 +7274,18 @@ struct Sha256mix_2__8__SuperLayout {
 };
 struct Sha256mix_2__8_Layout {
   Sha256mix_2__8__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_2__9_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -3988,11 +7299,18 @@ struct Sha256mix_2__9__SuperLayout {
 };
 struct Sha256mix_2__9_Layout {
   Sha256mix_2__9__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_2__10_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -4006,11 +7324,18 @@ struct Sha256mix_2__10__SuperLayout {
 };
 struct Sha256mix_2__10_Layout {
   Sha256mix_2__10__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_2__11_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -4024,11 +7349,18 @@ struct Sha256mix_2__11__SuperLayout {
 };
 struct Sha256mix_2__11_Layout {
   Sha256mix_2__11__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_2__12_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -4042,11 +7374,18 @@ struct Sha256mix_2__12__SuperLayout {
 };
 struct Sha256mix_2__12_Layout {
   Sha256mix_2__12__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_2__13_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -4060,11 +7399,18 @@ struct Sha256mix_2__13__SuperLayout {
 };
 struct Sha256mix_2__13_Layout {
   Sha256mix_2__13__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_2__14_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -4078,11 +7424,18 @@ struct Sha256mix_2__14__SuperLayout {
 };
 struct Sha256mix_2__14_Layout {
   Sha256mix_2__14__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mix_2__15_Arm1_Super_SuperLayout {
   RetTupleLayout _super;
@@ -4096,11 +7449,18 @@ struct Sha256mix_2__15__SuperLayout {
 };
 struct Sha256mix_2__15_Layout {
   Sha256mix_2__15__SuperLayout _super;
+  Ae2sLayout stae;
   UnpackWithCarryLayout newW;
   UnpackWithCarryLayout newA;
   UnpackWithCarryLayout newE;
-  ComputeAELayout ae;
-  ComputeWLayout packedW;
+  W2sLayout stw;
+  Concatenate_22__2_Layout d;
+  Concatenate_20__2_Layout padc;
+  Concatenate_10__12_Layout padb;
+  ConcatZeros_7__15_Layout tmpd;
+  Concatenate_7__5_Layout tmpb;
+  NondetRegLayout _0;
+  NondetRegLayout _1;
 };
 struct Sha256mixAll_2__SuperLayout {
   RetTupleLayout _super;
@@ -4123,66 +7483,47 @@ struct Sha256mixAll_2__SuperLayout {
 };
 struct Sha256mixAll_2_Layout {
   Sha256mixAll_2__SuperLayout _super;
-  OneHot_16_Layout minorOnehot;
+  OneHotU_16_Layout m;
 };
 struct TopRetvalsLayout {
   RetTupleLayout _super;
-  NondetRegLayout23LayoutArray _selector;
-  Xor5wordsMajor_0_Layout arm0;
-  Xor5wordsMajor_1_Layout arm1;
-  Xor5wordsMajor_2_Layout arm2;
-  Xor5wordsMajor_3_Layout arm3;
-  Xor5wordsMajor_4_Layout arm4;
-  RhoMajor_0_Layout arm5;
-  RhoMajor_1_Layout arm6;
-  RhoMajor_2_Layout arm7;
-  RhoMajor_3_Layout arm8;
-  RhoMajor_4_Layout arm9;
-  ChiMajor_0_Layout arm10;
-  ChiMajor_1_Layout arm11;
-  ChiMajor_2_Layout arm12;
-  ChiMajor_3_Layout arm13;
-  ChiMajor_4_Layout arm14;
-  AbsorbMajor1Layout arm15;
-  AbsorbMajor2Layout arm16;
-  SetupMajorLayout arm17;
-  TopArm18_SuperLayout arm18;
-  Sha256loadAllLayout arm19;
-  Sha256mixAll_0_Layout arm20;
-  Sha256mixAll_1_Layout arm21;
-  Sha256mixAll_2_Layout arm22;
+  NondetRegLayout22LayoutArray _selector;
+  Xor5wordsMinor0Layout arm0;
+  Xor5wordsMinor1Layout arm1;
+  Xor5wordsMinor2Layout arm2;
+  Xor5wordsMinor3Layout arm3;
+  RhoMajor_0_Layout arm4;
+  RhoMajor_1_Layout arm5;
+  RhoMajor_2_Layout arm6;
+  RhoMajor_3_Layout arm7;
+  RhoMajor_4_Layout arm8;
+  ChiMajor_0_Layout arm9;
+  ChiMajor_1_Layout arm10;
+  ChiMajor_2_Layout arm11;
+  ChiMajor_3_Layout arm12;
+  ChiMajor_4_Layout arm13;
+  AbsorbMajor1Layout arm14;
+  AbsorbMajor2Layout arm15;
+  SetupMajorLayout arm16;
+  TopArm17_SuperLayout arm17;
+  Sha256loadAllLayout arm18;
+  Sha256mixAll_0_Layout arm19;
+  Sha256mixAll_1_Layout arm20;
+  Sha256mixAll_2_Layout arm21;
 };
 struct TopLayout {
   NondetRegLayout pC;
   NondetRegLayout invPC;
-  OneHot_23_Layout majorOnehot;
+  OneHot_22_Layout majorOnehot;
   TopRetvalsLayout retvals;
 };
 struct ShaOutputLayout {
   NondetRegLayout16LayoutArray vals;
 };
 using Reg1LayoutArray = std::array<Reg, 1>;
-struct TestEqzLayout {
-  NondetRegLayout _0;
-};
 struct TestSucc_TestKeccak01Layout {
   TopLayout x;
-  TestEqzLayout _0;
-  TestEqzLayout _1;
-  TestEqzLayout _2;
-  TestEqzLayout _3;
-  TestEqzLayout _4;
-  TestEqzLayout _5;
-  TestEqzLayout _6;
-  TestEqzLayout _7;
-  TestEqzLayout _8;
-  TestEqzLayout _9;
-  TestEqzLayout _10;
-  TestEqzLayout _11;
-  TestEqzLayout _12;
-  TestEqzLayout _13;
-  TestEqzLayout _14;
-  TestEqzLayout _15;
+  NondetRegLayout end;
 };
 struct _globalLayout {
   ShaOutputLayout output;
@@ -4221,8 +7562,13 @@ struct WriteMemoryStruct {
 };
 using Val22Array = std::array<Val, 22>;
 using NondetRegStruct22Array = std::array<NondetRegStruct, 22>;
+struct DummyBStruct {
+  NondetRegStruct22Array _super;
+};
 using Val24Array = std::array<Val, 24>;
 using NondetRegStruct24Array = std::array<NondetRegStruct, 24>;
+using Val16Array = std::array<Val, 16>;
+using NondetRegStruct16Array = std::array<NondetRegStruct, 16>;
 struct RetTupleStruct {
   NondetRegStruct22Array arrA;
   NondetRegStruct22Array arrB;
@@ -4235,75 +7581,225 @@ struct RetTupleStruct {
   NondetRegStruct rnd;
   NondetRegStruct blk;
   NondetRegStruct midx;
+  NondetRegStruct16Array auxr;
 };
-using Val32Array = std::array<Val, 32>;
-struct TwoShortsStruct {
-  Val low;
-  Val high;
+using NondetRegStruct32Array = std::array<NondetRegStruct, 32>;
+using Val10Array = std::array<Val, 10>;
+using NondetRegStruct10Array = std::array<NondetRegStruct, 10>;
+struct W2sStruct {
+  NondetRegStruct22Array a;
+  NondetRegStruct10Array b;
 };
-struct Pack2Struct {
-  TwoShortsStruct _super;
-  NondetRegStruct low;
-  NondetRegStruct high;
+using NondetRegStruct12Array = std::array<NondetRegStruct, 12>;
+struct Concatenate_10__12_Struct {
+  NondetRegStruct22Array _super;
 };
-struct ComputeAEStruct {
-  TwoShortsStruct aOut;
-  TwoShortsStruct eOut;
+using Val12Array = std::array<Val, 12>;
+using Val20Array = std::array<Val, 20>;
+using NondetRegStruct20Array = std::array<NondetRegStruct, 20>;
+struct Ae2sStruct {
+  NondetRegStruct22Array e;
+  Concatenate_10__12_Struct f;
+  NondetRegStruct20Array c;
+};
+struct Dummy24Struct {
+  NondetRegStruct24Array _super;
 };
 using Val19Array = std::array<Val, 19>;
 using Val31Array = std::array<Val, 31>;
 using NondetRegStruct19Array = std::array<NondetRegStruct, 19>;
-struct ToBits_19_Struct {
+struct ToBitsU_19_Struct {
   NondetRegStruct19Array _super;
 };
-using Val20Array = std::array<Val, 20>;
-using NondetRegStruct20Array = std::array<NondetRegStruct, 20>;
-struct ToBits_20_Struct {
+struct ToBitsU_20_Struct {
   NondetRegStruct20Array _super;
 };
-struct Concatenate_NondetReg__16__16__Super_SuperStruct {
-  Val _super;
+using Val7Array = std::array<Val, 7>;
+using NondetRegStruct3Array = std::array<NondetRegStruct, 3>;
+using NondetRegStruct7Array = std::array<NondetRegStruct, 7>;
+struct Concatenate_3__4_Struct {
+  NondetRegStruct7Array _super;
 };
-using Concatenate_NondetReg__16__16__Super_SuperStruct32Array = std::array<Concatenate_NondetReg__16__16__Super_SuperStruct, 32>;
-struct Concatenate_NondetReg__16__16_Struct {
-  Concatenate_NondetReg__16__16__Super_SuperStruct32Array _super;
+using NondetRegLayout4LayoutArray = std::array<NondetRegLayout, 4>;
+using Val32Array = std::array<Val, 32>;
+struct Concatenate_16__16_Struct {
+  NondetRegStruct32Array _super;
 };
-using Val16Array = std::array<Val, 16>;
-using NondetRegStruct16Array = std::array<NondetRegStruct, 16>;
-struct OneHot_16_Struct {
+struct UnpackWithCarryStruct {
+  Concatenate_16__16_Struct _super;
+  Concatenate_3__4_Struct carrybits;
+};
+struct OneHotU_16_Struct {
   NondetRegStruct16Array _super;
 };
-struct ToBits_16_Struct {
+struct ToBitsU_16_Struct {
   NondetRegStruct16Array _super;
+};
+using NondetRegStruct5Array = std::array<NondetRegStruct, 5>;
+struct Concatenate_7__5_Struct {
+  NondetRegStruct12Array _super;
+};
+using NondetRegStruct2Array = std::array<NondetRegStruct, 2>;
+struct Concatenate_20__2_Struct {
+  NondetRegStruct22Array _super;
+};
+using NondetRegStruct21Array = std::array<NondetRegStruct, 21>;
+struct Concatenate_21__3_Struct {
+  NondetRegStruct24Array _super;
+};
+using Val21Array = std::array<Val, 21>;
+struct DummySStruct {
+  NondetRegStruct21Array _super;
 };
 using Val6Array = std::array<Val, 6>;
+struct DummyAStruct {
+  NondetRegStruct16Array _super;
+};
+struct DummyEStruct {
+  NondetRegStruct24Array _super;
+};
+using Val5Array = std::array<Val, 5>;
+struct OneHotU_5_Struct {
+  NondetRegStruct5Array _super;
+};
 struct ToBits_22_Struct {
   NondetRegStruct22Array _super;
 };
-using Val21Array = std::array<Val, 21>;
-using NondetRegStruct21Array = std::array<NondetRegStruct, 21>;
+struct ToBitsU_22_Struct {
+  NondetRegStruct22Array _super;
+};
+struct FromBits_22_Struct {
+  Val _super;
+};
+struct Xor5wordsResult_0_Struct {
+  FromBits_22_Struct _super;
+  OneHotU_5_Struct minorOnehot;
+  ToBits_22_Struct unpackA;
+  ToBits_22_Struct unpackB;
+  ToBits_22_Struct unpackC;
+  ToBits_22_Struct unpackD;
+  ToBitsU_22_Struct unpackE;
+  NondetRegStruct22Array xorAbc;
+};
+struct Concatenate_22__2_Struct {
+  NondetRegStruct24Array _super;
+};
+struct ConcatZeros_5__11_Struct {
+  NondetRegStruct16Array _super;
+};
 struct ToBits_21_Struct {
   NondetRegStruct21Array _super;
+};
+struct ToBitsU_21_Struct {
+  NondetRegStruct21Array _super;
+};
+struct FromBits_21_Struct {
+  Val _super;
+};
+struct Xor5wordsResult_1_Struct {
+  FromBits_21_Struct _super;
+  OneHotU_5_Struct minorOnehot;
+  ToBits_21_Struct unpackA;
+  ToBits_21_Struct unpackB;
+  ToBits_21_Struct unpackC;
+  ToBits_21_Struct unpackD;
+  ToBitsU_21_Struct unpackE;
+  NondetRegStruct21Array xorAbc;
+};
+struct ConcatElem_21_Struct {
+  NondetRegStruct22Array _super;
+};
+struct ConcatZeros_21__1_Struct {
+  NondetRegStruct22Array _super;
+};
+struct ConcatZeros_21__3_Struct {
+  NondetRegStruct24Array _super;
+};
+struct Xor5wordsResult_2_Struct {
+  FromBits_21_Struct _super;
+  OneHotU_5_Struct minorOnehot;
+  ToBits_21_Struct unpackA;
+  ToBits_21_Struct unpackB;
+  ToBits_21_Struct unpackC;
+  ToBits_21_Struct unpackD;
+  ToBitsU_21_Struct unpackE;
+  NondetRegStruct21Array xorAbc;
+};
+struct RGZ_22_Struct {
+  NondetRegStruct22Array _super;
+};
+using NondetRegStruct9Array = std::array<NondetRegStruct, 9>;
+struct Concatenate_9__3_Struct {
+  NondetRegStruct12Array _super;
+};
+struct ConcatZeros_12__12_Struct {
+  NondetRegStruct24Array _super;
+};
+using Val9Array = std::array<Val, 9>;
+using Val15Array = std::array<Val, 15>;
+using NondetRegStruct15Array = std::array<NondetRegStruct, 15>;
+struct Concatenate_12__3_Struct {
+  NondetRegStruct15Array _super;
+};
+struct ConcatZeros_15__9_Struct {
+  NondetRegStruct24Array _super;
+};
+using Val18Array = std::array<Val, 18>;
+using NondetRegStruct18Array = std::array<NondetRegStruct, 18>;
+struct Concatenate_15__3_Struct {
+  NondetRegStruct18Array _super;
+};
+struct ConcatZeros_18__6_Struct {
+  NondetRegStruct24Array _super;
+};
+struct Concatenate_18__3_Struct {
+  NondetRegStruct21Array _super;
+};
+struct ConcatZeros_24__0_Struct {
+  NondetRegStruct24Array _super;
+};
+struct Concatenate_3__19_Struct {
+  NondetRegStruct22Array _super;
+};
+struct ConcatZeros_9__13_Struct {
+  NondetRegStruct22Array _super;
 };
 using Val22Array3Array = std::array<Val22Array, 3>;
 struct RctableStruct {
   Val22Array3Array _super;
 };
 using Val3Array = std::array<Val, 3>;
-using Val10Array = std::array<Val, 10>;
-using NondetRegStruct10Array = std::array<NondetRegStruct, 10>;
-struct OneHot_10_Struct {
-  NondetRegStruct10Array _super;
+struct RGZ_24_Struct {
+  NondetRegStruct24Array _super;
 };
-using Val9Array = std::array<Val, 9>;
-using NondetRegStruct9Array = std::array<NondetRegStruct, 9>;
-struct OneHot_9_Struct {
+using Val11Array = std::array<Val, 11>;
+using NondetRegStruct11Array = std::array<NondetRegStruct, 11>;
+struct OneHotU_11_Struct {
+  NondetRegStruct11Array _super;
+};
+struct ConcatZeros_11__5_Struct {
+  NondetRegStruct16Array _super;
+};
+struct OneHotU_9_Struct {
   NondetRegStruct9Array _super;
+};
+struct ConcatZeros_9__7_Struct {
+  NondetRegStruct16Array _super;
+};
+using NondetRegStruct14Array = std::array<NondetRegStruct, 14>;
+struct ConcatZeros_14__2_Struct {
+  NondetRegStruct16Array _super;
 };
 using Val30Array = std::array<Val, 30>;
 using NondetRegStruct30Array = std::array<NondetRegStruct, 30>;
-struct ToBits_30_Struct {
+struct ToBitsU_30_Struct {
   NondetRegStruct30Array _super;
+};
+struct ToBitsU_3_Struct {
+  NondetRegStruct3Array _super;
+};
+struct ConcatZeros_12__9_Struct {
+  NondetRegStruct21Array _super;
 };
 struct ShaOutputValsStruct {
 };
@@ -4311,37 +7807,70 @@ using ShaOutputValsStruct16Array = std::array<ShaOutputValsStruct, 16>;
 struct ShaOutputStruct {
 };
 using Val14Array = std::array<Val, 14>;
-using NondetRegStruct14Array = std::array<NondetRegStruct, 14>;
-struct OneHot_14_Struct {
+struct OneHotU_14_Struct {
   NondetRegStruct14Array _super;
 };
-using NondetRegStruct3Array = std::array<NondetRegStruct, 3>;
-struct ToBits_3_Struct {
-  NondetRegStruct3Array _super;
+struct Concatenate_14__2_Struct {
+  NondetRegStruct16Array _super;
 };
-using Val5Array = std::array<Val, 5>;
-using Val23Array = std::array<Val, 23>;
-using NondetRegStruct23Array = std::array<NondetRegStruct, 23>;
-struct OneHot_23_Struct {
-  NondetRegStruct23Array _super;
+struct ConcatZeros_20__2_Struct {
+  NondetRegStruct22Array _super;
 };
-struct OneHot_4_Struct {
-  NondetRegStruct4Array _super;
+struct Concatenate_7__7_Struct {
+  NondetRegStruct14Array _super;
 };
-struct FromBits_22_Struct {
-  Val _super;
+struct ConcatZeros_14__8_Struct {
+  NondetRegStruct22Array _super;
 };
-struct FromBits_21_Struct {
-  Val _super;
+struct OneHot_22_Struct {
+  NondetRegStruct22Array _super;
 };
-using Val12Array = std::array<Val, 12>;
-using NondetRegStruct12Array = std::array<NondetRegStruct, 12>;
-using Val15Array = std::array<Val, 15>;
-using NondetRegStruct15Array = std::array<NondetRegStruct, 15>;
-using Val18Array = std::array<Val, 18>;
-using NondetRegStruct18Array = std::array<NondetRegStruct, 18>;
-struct OneHot_24_Struct {
+struct RotLeft3impl_22__21__21__1_Struct {
+  NondetRegStruct22Array ra;
+  NondetRegStruct21Array rb;
+  NondetRegStruct21Array rc;
+};
+struct ConcatZeros_22__2_Struct {
   NondetRegStruct24Array _super;
+};
+using NondetRegStruct6Array = std::array<NondetRegStruct, 6>;
+struct Concatenate_6__3_Struct {
+  NondetRegStruct9Array _super;
+};
+struct Concatenate_3__3_Struct {
+  NondetRegStruct6Array _super;
+};
+struct Concatenate_15__7_Struct {
+  NondetRegStruct22Array _super;
+};
+using NondetRegStruct8Array = std::array<NondetRegStruct, 8>;
+struct Concatenate_8__14_Struct {
+  NondetRegStruct22Array _super;
+};
+using NondetRegStruct1Array = std::array<NondetRegStruct, 1>;
+struct Concatenate_1__21_Struct {
+  NondetRegStruct22Array _super;
+};
+struct Concatenate_1__15_Struct {
+  NondetRegStruct16Array _super;
+};
+struct Concatenate_16__6_Struct {
+  NondetRegStruct22Array _super;
+};
+using Val8Array = std::array<Val, 8>;
+using Val1Array = std::array<Val, 1>;
+struct OneHotU_10_Struct {
+  NondetRegStruct10Array _super;
+};
+struct ConcatZeros_10__6_Struct {
+  NondetRegStruct16Array _super;
+};
+struct OneHotU_24_Struct {
+  NondetRegStruct24Array _super;
+};
+using Val2Array = std::array<Val, 2>;
+struct ConcatZeros_7__15_Struct {
+  NondetRegStruct22Array _super;
 };
 struct TopStruct {
 };
