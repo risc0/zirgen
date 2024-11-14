@@ -418,7 +418,10 @@ impl Args {
         let ec_path = risc0_root.join("bigint2/src/ec");
 
         copy_file(&src_path, &rsa_path, "modpow_65537.blob");
-        copy(&src_path.join("ec_double.blob"), &ec_path.join("double.blob"));
+        copy(
+            &src_path.join("ec_double.blob"),
+            &ec_path.join("double.blob"),
+        );
         copy(&src_path.join("ec_add.blob"), &ec_path.join("add.blob"));
     }
 }
