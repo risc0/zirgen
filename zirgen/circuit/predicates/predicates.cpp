@@ -121,6 +121,15 @@ DigestVal Assumption::digest() {
   return taggedStruct("risc0.Assumption", {claim, controlRoot}, {});
 }
 
+void UnionClaim::write(std::vector<Val>& stream) {
+  writeSha(left, stream);
+  writeSha(right, stream);
+}
+
+DigestVal UnionClaim::digest() {
+  return taggedStruct("risc0.UnionClaim", {left, right}, {});
+}
+
 ReceiptClaim join(ReceiptClaim claim1, ReceiptClaim claim2) {
   // Make an empty output
   ReceiptClaim claimOut;
@@ -188,6 +197,13 @@ ReceiptClaim resolve(ReceiptClaim cond, Assumption assum, DigestVal tail, Digest
 ReceiptClaim identity(ReceiptClaim in) {
   // Make an empty output
   return in;
+}
+
+UnionClaim unionFunc(Assumption left, Assumption right) {
+  UnionClaim claim;
+  claim.left = left.digest();
+  claim.right = right.digest();
+  return claim;
 }
 
 } // namespace zirgen::predicates
