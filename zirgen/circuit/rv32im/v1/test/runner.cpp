@@ -19,7 +19,13 @@
 #include "zirgen/circuit/rv32im/v1/platform/opcodes.h"
 #include "zirgen/circuit/rv32im/v1/platform/page_table.h"
 #include "zirgen/compiler/zkp/sha256.h"
+#include "llvm/ADT/TypeSwitch.h"
 #include "llvm/Support/Format.h"
+
+#include "zirgen/Dialect/BigInt/Bytecode/decode.h"
+#include "zirgen/Dialect/BigInt/Bytecode/file.h"
+#include "zirgen/Dialect/BigInt/IR/BigInt.h"
+#include "zirgen/Dialect/BigInt/IR/Eval.h"
 
 namespace zirgen::rv32im_v1 {
 
@@ -66,18 +72,74 @@ void PageFaultInfo::dump() {
   }
 }
 
-std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
-                                       llvm::StringRef extra,
-                                       llvm::ArrayRef<const InterpVal*> args,
-                                       size_t outCount) {
+BytePolynomial::BytePolynomial() {}
+
+BytePolynomial BytePolynomial::zero() {
+  BytePolynomial r;
+  r.coeffs.push_back(0);
+  return r;
+}
+
+BytePolynomial BytePolynomial::one() {
+  BytePolynomial r;
+  r.coeffs.push_back(1);
+  return r;
+}
+
+BytePolynomial BytePolynomial::shift() const {
+  BytePolynomial r;
+  std::vector<int32_t> zeros(16);
+  r.coeffs = coeffs;
+  r.coeffs.insert(r.coeffs.begin(), zeros.begin(), zeros.end());
+  return r;
+}
+
+BytePolynomial BytePolynomial::operator*(int x) const {
+  BytePolynomial r;
+  r.coeffs = coeffs;
+  for (size_t i = 0; i < coeffs.size(); i++) {
+    r.coeffs[i] = coeffs[i] * x;
+  }
+  return r;
+}
+
+BytePolynomial BytePolynomial::operator+(const BytePolynomial& rhs) const {
+  BytePolynomial r;
+  r.coeffs.resize(std::max(coeffs.size(), rhs.coeffs.size()));
+  for (size_t i = 0; i < r.coeffs.size(); i++) {
+    if (i < coeffs.size()) {
+      r.coeffs[i] += coeffs[i];
+    }
+    if (i < rhs.coeffs.size()) {
+      r.coeffs[i] += rhs.coeffs[i];
+    }
+  }
+  return r;
+}
+
+BytePolynomial BytePolynomial::operator*(const BytePolynomial& rhs) const {
+  BytePolynomial r;
+  r.coeffs.resize(coeffs.size() + rhs.coeffs.size() - 1);
+  for (size_t i = 0; i < coeffs.size(); i++) {
+    for (size_t j = 0; j < rhs.coeffs.size(); j++) {
+      r.coeffs[i + j] += coeffs[i] * rhs.coeffs[j];
+    }
+  }
+  return r;
+}
+
+std::optional<std::vector<uint64_t>> Runner::doExtern(llvm::StringRef name,
+                                                      llvm::StringRef extra,
+                                                      llvm::ArrayRef<const InterpVal*> args,
+                                                      size_t outCount) {
   auto fpArgs = asFpArray(args);
   if (name == "setUserMode") {
     userMode = fpArgs[0];
-    return {};
+    return std::vector<uint64_t>{};
   }
   if (name == "isTrap") {
     // TODO: tests for trap
-    return {0};
+    return std::vector<uint64_t>{0};
   }
   if (name == "halt") {
     if (!isHalted) {
@@ -99,7 +161,7 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
       }
       isHalted = true;
     }
-    return {};
+    return std::vector<uint64_t>{};
   }
   if (name == "syscallInit") {
     syscallPending.clear();
@@ -130,7 +192,7 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
     }
 
     llvm::errs() << "syscall id=" << id << "\n";
-    return {};
+    return std::vector<uint64_t>{};
   }
   if (name == "syscallBody") {
     size_t val = 0;
@@ -138,20 +200,21 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
       val = syscallPending.front();
       syscallPending.pop_front();
     }
-    return {(val >> 0) & 0xFF, (val >> 8) & 0xFF, (val >> 16) & 0xFF, (val >> 24) & 0xFF};
+    return std::vector<uint64_t>{
+        (val >> 0) & 0xFF, (val >> 8) & 0xFF, (val >> 16) & 0xFF, (val >> 24) & 0xFF};
   }
   if (name == "syscallFini") {
-    return {(syscallA0Out >> 0) & 0xFF,
-            (syscallA0Out >> 8) & 0xFF,
-            (syscallA0Out >> 16) & 0xFF,
-            (syscallA0Out >> 24) & 0xFF,
-            (syscallA1Out >> 0) & 0xFF,
-            (syscallA1Out >> 8) & 0xFF,
-            (syscallA1Out >> 16) & 0xFF,
-            (syscallA1Out >> 24) & 0xFF};
+    return std::vector<uint64_t>{(syscallA0Out >> 0) & 0xFF,
+                                 (syscallA0Out >> 8) & 0xFF,
+                                 (syscallA0Out >> 16) & 0xFF,
+                                 (syscallA0Out >> 24) & 0xFF,
+                                 (syscallA1Out >> 0) & 0xFF,
+                                 (syscallA1Out >> 8) & 0xFF,
+                                 (syscallA1Out >> 16) & 0xFF,
+                                 (syscallA1Out >> 24) & 0xFF};
   }
   if (name == "trace") {
-    return {};
+    return std::vector<uint64_t>{};
   }
   if (name == "pageInfo") {
     uint32_t pc = fpArgs[0];
@@ -164,7 +227,7 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
         llvm::errs() << "  pageRead> pc: " << llvm::format_hex(pc, 10)
                      << ", inst: " << llvm::format_hex(inst, 10)
                      << ", pageIndex: " << llvm::format_hex(pageIndex, 10) << "\n";
-        return {1, pageIndex, 0};
+        return std::vector<uint64_t>{1, pageIndex, 0};
       }
     }
     if (isFlushing) {
@@ -175,9 +238,9 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
         llvm::errs() << "  pageWrite> pc: " << llvm::format_hex(pc, 10)
                      << ", inst: " << llvm::format_hex(inst, 10)
                      << ", pageIndex: " << llvm::format_hex(pageIndex, 10) << "\n";
-        return {0, pageIndex, 0};
+        return std::vector<uint64_t>{0, pageIndex, 0};
       }
-      return {0, 0, 1};
+      return std::vector<uint64_t>{0, 0, 1};
     }
     return std::vector<uint64_t>(outCount);
   }
@@ -220,23 +283,23 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
     // info.dump();
     for (uint32_t pageIndex : info.reads) {
       if (!finishedPageReads.count(pageIndex)) {
-        return {MajorType::kPageFault};
+        return std::vector<uint64_t>{MajorType::kPageFault};
       }
     }
     if (isFlushing) {
       if (!info.forceFlush || !dirtyPages.empty()) {
-        return {MajorType::kPageFault};
+        return std::vector<uint64_t>{MajorType::kPageFault};
       }
     } else {
       // TODO: Only add to dirtyPages if the next instruction will require a flush.
       dirtyPages.insert(info.writes.begin(), info.writes.end());
       if (info.forceFlush || needsFlush(cycle)) {
         isFlushing = true;
-        return {MajorType::kPageFault};
+        return std::vector<uint64_t>{MajorType::kPageFault};
       }
     }
     llvm::errs() << "  Mnemonic: " << opcode.mnemonic << "\n";
-    return {opcode.major};
+    return std::vector<uint64_t>{opcode.major};
   }
   if (name == "getMinor") {
     uint32_t inst = fpArgs[0] | (fpArgs[1] << 8) | (fpArgs[2] << 16) | (fpArgs[3] << 24);
@@ -247,7 +310,7 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
     if (opcode.minor == kMinorMuxSize) {
       throw std::runtime_error("Invalid minor opcode");
     }
-    return {opcode.minor};
+    return std::vector<uint64_t>{opcode.minor};
   }
   if (name == "divide") {
     uint32_t numer = fpArgs[0] | (fpArgs[1] << 8) | (fpArgs[2] << 16) | (fpArgs[3] << 24);
@@ -279,14 +342,14 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
     if (remNegOut) {
       rem = -rem - onesComp;
     }
-    return {(quot >> 0) & 0xff,
-            (quot >> 8) & 0xff,
-            (quot >> 16) & 0xff,
-            (quot >> 24) & 0xff,
-            (rem >> 0) & 0xff,
-            (rem >> 8) & 0xff,
-            (rem >> 16) & 0xff,
-            (rem >> 24) & 0xff};
+    return std::vector<uint64_t>{(quot >> 0) & 0xff,
+                                 (quot >> 8) & 0xff,
+                                 (quot >> 16) & 0xff,
+                                 (quot >> 24) & 0xff,
+                                 (rem >> 0) & 0xff,
+                                 (rem >> 8) & 0xff,
+                                 (rem >> 16) & 0xff,
+                                 (rem >> 24) & 0xff};
   }
   if (name == "bigintQuotient") {
     // Division of two little-endian positive byte-limbed bigints. a = q * b + r.
@@ -394,7 +457,158 @@ std::vector<uint64_t> Runner::doExtern(llvm::StringRef name,
     }
     return q;
   }
+  if (name == "syscallBigInt2Precompute") {
+    // Get t1 = ptr to bibc
+    uint32_t bibcAddr = loadU32(RegAddr::kT1) / 4;
+    // Presume bibc end where verify begins (TODO: support discontigous code)
+    uint32_t bibcEnd = loadU32(RegAddr::kT2) / 4;
+    // Extract into array
+    std::vector<uint32_t> data;
+    for (uint32_t cur = bibcAddr; cur < bibcEnd; cur++) {
+      data.push_back(loadU32(cur));
+    }
+    // Deserialize
+    zirgen::BigInt::Bytecode::Program prog;
+    zirgen::BigInt::Bytecode::read(prog, &data[0], data.size() * 4);
 
+    // Build a module + func
+    mlir::DialectRegistry registry;
+    registry.insert<mlir::func::FuncDialect>();
+    registry.insert<zirgen::BigInt::BigIntDialect>();
+    mlir::MLIRContext ctx(registry);
+    ctx.loadAllAvailableDialects();
+    auto loc = mlir::UnknownLoc::get(&ctx);
+    auto module = mlir::ModuleOp::create(loc);
+    auto func = zirgen::BigInt::Bytecode::decode(module, prog);
+
+    // Run
+    computePolyWitness(func);
+
+    // Initialize other state
+    poly = BytePolynomial::zero();
+    term = BytePolynomial::one();
+    total = BytePolynomial::zero();
+    inCarry = false;
+    return std::vector<uint64_t>();
+  }
+  if (name == "syscallBigInt2Witness") {
+    if (fpArgs.size() != 5 || outCount != 16) {
+      throw std::runtime_error("Invalid extern call to syscallBigInt2Witness");
+    }
+    uint32_t polyOp = fpArgs[0];
+    uint32_t memOp = fpArgs[1];
+    uint32_t reg = fpArgs[2];
+    uint32_t offset = fpArgs[3];
+    int coeff = int(fpArgs[4]) - 4;
+    uint32_t regVal = loadU32(kRegisterOffset + reg);
+    uint32_t addr = regVal + offset * 16;
+    llvm::errs() << "syscallBigInt2Witness: polyOp=" << polyOp << ", memOp=" << memOp
+                 << ", reg=" << reg << ", offset=" << offset << ", addr=" << addr << "\n";
+    uint32_t baseWord = addr / 4;
+    std::vector<uint64_t> ret(16);
+    if (memOp == 2 && polyOp != 0) {
+      if (!inCarry) {
+        inCarry = true;
+        totCarry = total;
+        int32_t carry = 0;
+        // Do carry propagation
+        for (size_t i = 0; i < totCarry.coeffs.size(); i++) {
+          totCarry.coeffs[i] += carry;
+          if (totCarry.coeffs[i] % 256 != 0) {
+            llvm::errs() << "totCarry.coeffs[" << i << "]=" << totCarry.coeffs[i] << "\n";
+            throw std::runtime_error("Bad carry");
+          }
+          totCarry.coeffs[i] /= 256;
+          carry = totCarry.coeffs[i];
+        }
+        llvm::errs() << "Carry propagate complete\n";
+      }
+      int32_t basePoint = 128 * 256 * 64;
+      for (size_t i = 0; i < 16; i++) {
+        uint32_t val = totCarry.coeffs[offset * 16 + i] + basePoint;
+        switch (polyOp) {
+        case PolyOp::kOpCarry1:
+          ret[i] = (val >> 14) & 0xff;
+          break;
+        case PolyOp::kOpCarry2:
+          ret[i] = (val >> 8) & 0x3f;
+          break;
+        case PolyOp::kOpShift:
+        case PolyOp::kOpEqz:
+          ret[i] = val & 0xff;
+          break;
+        default:
+          throw std::runtime_error("Invalid memOp=2 operation");
+        }
+      }
+    } else {
+      for (size_t i = 0; i < 4; i++) {
+        uint32_t word = (memOp == 0) ? loadU32(baseWord + i) : polyWitness[baseWord + i];
+        for (size_t j = 0; j < 4; j++) {
+          ret[i * 4 + j] = (word >> (8 * j)) & 0xff;
+        }
+        if (memOp == 1) {
+          storeU32(baseWord + i, word);
+        }
+      }
+    }
+    BytePolynomial negPoly;
+    negPoly.coeffs.resize(16, -128);
+    BytePolynomial deltaPoly;
+    for (size_t i = 0; i < 16; i++) {
+      deltaPoly.coeffs.push_back(ret[i]);
+    }
+    BytePolynomial newPoly = poly + deltaPoly;
+    BytePolynomial bp;
+    bp.coeffs.push_back(-256);
+    bp.coeffs.push_back(1);
+    switch (polyOp) {
+    case PolyOp::kEnd:
+      poly = BytePolynomial::zero();
+      term = BytePolynomial::one();
+      total = BytePolynomial::zero();
+      break;
+    case PolyOp::kOpShift:
+      poly = newPoly.shift();
+      break;
+    case PolyOp::kOpSetTerm:
+      poly = BytePolynomial::zero();
+      term = newPoly;
+      break;
+    case PolyOp::kOpAddTot:
+      total = total + newPoly * term * coeff;
+      term = BytePolynomial::one();
+      poly = BytePolynomial::zero();
+      break;
+    case PolyOp::kOpCarry1:
+      poly = poly + (deltaPoly + negPoly) * 64 * 256;
+      break;
+    case PolyOp::kOpCarry2:
+      poly = poly + deltaPoly * 256;
+      break;
+    case PolyOp::kOpEqz:
+      total = total + bp * newPoly;
+      for (size_t i = 0; i < total.coeffs.size(); i++) {
+        if (total.coeffs[i] != 0) {
+          llvm::errs() << "Coeffs[" << i << "]=" << total.coeffs[i] << "\n";
+          throw std::runtime_error("INVALID EQZ");
+        }
+      }
+      poly = BytePolynomial::zero();
+      term = BytePolynomial::one();
+      total = BytePolynomial::zero();
+      inCarry = false;
+      break;
+    default:
+      throw std::runtime_error("Unhandled BigInt2 op");
+    }
+    llvm::errs() << "deltaPoly[0] = " << deltaPoly.coeffs[0];
+    llvm::errs() << ", newPoly[0] = " << newPoly.coeffs[0];
+    llvm::errs() << ", poly[0] = " << poly.coeffs[0];
+    llvm::errs() << ". term[0] = " << term.coeffs[0];
+    llvm::errs() << ", total[0] = " << total.coeffs[0] << "\n";
+    return ret;
+  }
   return RamExternHandler::doExtern(name, extra, args, outCount);
 }
 
@@ -503,6 +717,14 @@ PageFaultInfo Runner::getPageFaultInfo(uint32_t pc, uint32_t inst) {
           info.include(addr1 + j);
           info.include(addr2 + j);
         }
+      }
+    } break;
+    case ECallType::kBigInt2: {
+      llvm::errs() << "ecall/bigint2\n";
+      uint32_t addr = loadU32(RegAddr::kT2);
+      // TODO: Right now we just page in 1000 words @ T2
+      for (size_t i = 0; i < 1000; i++) {
+        info.include((addr / kWordSize) + i);
       }
     } break;
     }
@@ -736,6 +958,57 @@ void Runner::setMix() {
   for (size_t i = 0; i < mix.size(); i++) {
     mix[i] = {static_cast<uint64_t>(distribution(generator))};
   }
+}
+
+namespace {
+
+struct RunnerBigIntIO : public zirgen::BigInt::BigIntIO {
+  Runner& runner;
+  RunnerBigIntIO(Runner& runner) : runner(runner) {}
+  llvm::APInt load(uint32_t arena, uint32_t offset, uint32_t count) override {
+    uint32_t regVal = runner.loadU32(kRegisterOffset + arena);
+    uint32_t addr = regVal + offset * 16;
+    uint32_t baseWord = addr / 4;
+    std::vector<uint64_t> limbs64;
+    for (size_t i = 0; i < count; i++) {
+      std::array<uint32_t, 4> words;
+      for (size_t j = 0; j < 4; j++) {
+        words[j] = runner.loadU32(baseWord + i * 4 + j);
+      }
+      limbs64.push_back(uint64_t(words[0]) | ((uint64_t(words[1])) << 32));
+      limbs64.push_back(uint64_t(words[2]) | ((uint64_t(words[3])) << 32));
+    }
+    llvm::APInt val(count * 128, limbs64);
+    llvm::errs() << "Load, arena=" << arena << ", offset=" << offset << "\n";
+    llvm::errs() << "  Addr = " << addr << "\n";
+    llvm::errs() << "  ";
+    val.print(llvm::errs(), false);
+    llvm::errs() << "\n";
+    return val;
+  }
+  void store(uint32_t arena, uint32_t offset, uint32_t count, llvm::APInt val) override {
+    uint32_t regVal = runner.loadU32(kRegisterOffset + arena);
+    uint32_t addr = regVal + offset * 16;
+    uint32_t baseWord = addr / 4;
+    llvm::errs() << "Store, arena=" << arena << ", offset=" << offset << "\n";
+    llvm::errs() << "  Addr = " << addr << "\n";
+    llvm::errs() << "  ";
+    val.print(llvm::errs(), false);
+    llvm::errs() << "\n";
+    val = val.zext(count * 128);
+    for (size_t i = 0; i < count * 4; i++) {
+      runner.polyWitness[baseWord + i] = val.extractBitsAsZExtValue(32, i * 32);
+    }
+  }
+};
+
+} // end namespace
+
+void Runner::computePolyWitness(mlir::func::FuncOp func) {
+  llvm::DenseMap<mlir::Value, llvm::APInt> values;
+  llvm::errs() << "Compute function:\n";
+  RunnerBigIntIO io(*this);
+  zirgen::BigInt::eval(func, io, false);
 }
 
 } // namespace zirgen::rv32im_v1

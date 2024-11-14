@@ -23,7 +23,6 @@ namespace zirgen::Zll {
 // Pass constructors
 std::unique_ptr<mlir::OperationPass<mlir::func::FuncOp>> createComputeTapsPass();
 std::unique_ptr<mlir::OperationPass<mlir::func::FuncOp>> createMakePolynomialPass();
-std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createMakeVerifyTapsPass();
 std::unique_ptr<mlir::OperationPass<mlir::func::FuncOp>> createSplitStagePass();
 std::unique_ptr<mlir::OperationPass<mlir::func::FuncOp>> createDropConstraintsPass();
 std::unique_ptr<mlir::OperationPass<mlir::func::FuncOp>> createSplitStagePass(unsigned stage);

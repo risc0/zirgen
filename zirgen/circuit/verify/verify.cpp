@@ -22,6 +22,21 @@
 
 namespace zirgen::verify {
 
+namespace {
+
+// If true, emit debug logging.  NOTE: This will change the code root of predicates, so
+// should not be left on when generating release ZKRs.
+constexpr bool kDebug = false;
+
+// Version of XLOG that returns its single value, so it can be used inline like rust's dbg! macro.
+template <typename T> T dbg(std::string fmt, T arg) {
+  if (kDebug)
+    XLOG(fmt, arg);
+  return arg;
+}
+
+} // namespace
+
 VerifyInfo verify(ReadIopVal& iop, size_t po2, const CircuitInterface& circuit) {
   VerifyInfo verifyInfo;
 
@@ -33,8 +48,8 @@ VerifyInfo verify(ReadIopVal& iop, size_t po2, const CircuitInterface& circuit) 
     proof_system_info.push_back(PROOF_SYSTEM_INFO.at(i));
     circuit_info.push_back(circuit_info_bytes.at(i));
   }
-  iop.commit(hash(proof_system_info));
-  iop.commit(hash(circuit_info));
+  iop.commit(dbg("proof system: %h", hash(proof_system_info)));
+  iop.commit(dbg("circuit: %h", hash(circuit_info)));
 
   size_t size = size_t(1) << po2;
   size_t domain = size * kInvRate;
@@ -62,9 +77,16 @@ VerifyInfo verify(ReadIopVal& iop, size_t po2, const CircuitInterface& circuit) 
   size_t accumSize = tapSet.groups.at(/*REGISTER_GROUP_ACCUM=*/0).regs.size();
   size_t tapCount = tapSet.tapCount;
 
+  if (kDebug)
+    XLOG("code size: %u data size: %u accum size: %u tap count: %u",
+         codeSize,
+         dataSize,
+         accumSize,
+         tapCount);
+
   // Read the code + data merkle roots
-  MerkleTreeVerifier codeMerkle(iop, domain, codeSize, kQueries);
-  MerkleTreeVerifier dataMerkle(iop, domain, dataSize, kQueries);
+  MerkleTreeVerifier codeMerkle("code", iop, domain, codeSize, kQueries);
+  MerkleTreeVerifier dataMerkle("data", iop, domain, dataSize, kQueries);
 
   verifyInfo.codeRoot = codeMerkle.getRoot();
 
@@ -75,18 +97,18 @@ VerifyInfo verify(ReadIopVal& iop, size_t po2, const CircuitInterface& circuit) 
   }
 
   // Read accum merkle root
-  MerkleTreeVerifier accumMerkle(iop, domain, accumSize, kQueries);
+  MerkleTreeVerifier accumMerkle("accum", iop, domain, accumSize, kQueries);
 
   // Set the Fiat-Shamir parameter for mixing constraint polynomials
-  Val polyMix = iop.rngExtVal();
-  //   XLOG("polyMix: %e", polyMix);
+  Val polyMix = dbg("polyMix: %u", iop.rngExtVal());
 
   // Read check merkle root
-  MerkleTreeVerifier checkMerkle(iop, domain, kCheckSize, kQueries);
+  MerkleTreeVerifier checkMerkle("check", iop, domain, kCheckSize, kQueries);
 
   // Pick a random place to check the polynomial constaints at
   Val Z = iop.rngExtVal();
-  // XLOG("Z: %e", Z);
+  if (kDebug)
+    XLOG("Z: %u", Z);
 
   // Read the tap coefficents, hash them, and commit to them
   auto coeffU = iop.readExtVals(tapCount + kCheckSize, /*flip=*/true);
@@ -109,7 +131,8 @@ VerifyInfo verify(ReadIopVal& iop, size_t po2, const CircuitInterface& circuit) 
 
   // Compute the core polynomial
   Val result = circuit.compute_poly(evalU, out, accumMix, polyMix);
-  // XLOG("Core polynomial: %e", result);
+  if (kDebug)
+    XLOG("result: %u", result);
 
   // Generate the check polynomial
   Val check = 0;
@@ -123,7 +146,8 @@ VerifyInfo verify(ReadIopVal& iop, size_t po2, const CircuitInterface& circuit) 
     check = check + coeffU[tapCount + rmi + 12] * zi * Val({0, 0, 0, 1});
   }
   check = check * (raisepow(3 * Z, size) - 1);
-  // XLOG("Check polynomial: %e", check);
+  if (kDebug)
+    XLOG("Check polynomial: %u", check);
 
   // Make sure they match
   eq(check, result);
@@ -201,7 +225,6 @@ VerifyInfo verifyRecursion(ReadIopVal& allowedRoot,
   for (size_t i = 0; i != recursion::kNumRollup; ++i) {
     VerifyInfo subInfo = zirgen::verify::verify(seals[i], recursion::kRecursionPo2, circuit);
     Val codeRootIndex = alloweds[i].readBaseVals(1)[0];
-    XLOG("allowed code merkle index = %u", codeRootIndex);
     verifyMerkleGroupMember(subInfo.codeRoot,
                             codeRootIndex,
                             alloweds[i].readDigests(recursion::kAllowedCodeMerkleDepth),

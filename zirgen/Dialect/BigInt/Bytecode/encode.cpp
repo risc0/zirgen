@@ -115,7 +115,6 @@ size_t Builder::def(const mlir::APInt& value) {
 
 std::unique_ptr<Program> encode(mlir::func::FuncOp func) {
   Builder builder;
-
   for (mlir::Operation& origOp : func.getBody().front().without_terminator()) {
     builder.enroll(origOp);
     llvm::TypeSwitch<mlir::Operation*>(&origOp)
@@ -144,6 +143,21 @@ std::unique_ptr<Program> encode(mlir::func::FuncOp func) {
           mlir::APInt value = op.getValue();
           newOp.operandA = builder.def(value);
           newOp.operandB = value.getNumWords();
+          builder.emit(newOp);
+        })
+        .Case<LoadOp>([&](auto op) {
+          Op newOp{};
+          newOp.code = Op::Load;
+          newOp.type = builder.lookup(origOp.getResultTypes()[0]);
+          newOp.operandA = op.getArena() << 16 | op.getOffset();
+          builder.emit(newOp);
+        })
+        .Case<StoreOp>([&](auto op) {
+          Op newOp{};
+          newOp.code = Op::Store;
+          newOp.type = builder.lookup(op.getIn().getType());
+          newOp.operandA = op.getArena() << 16 | op.getOffset();
+          newOp.operandB = builder.lookup(*op.getIn().getDefiningOp());
           builder.emit(newOp);
         })
         .Case<AddOp>([&](auto op) {

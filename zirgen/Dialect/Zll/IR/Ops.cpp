@@ -445,10 +445,13 @@ LogicalResult ExternOp::evaluate(Interpreter& interp,
   }
   // TODO: We used to flatten extension field elements here... is that necessary?
   size_t outCount = getNumResults();
-  std::vector<uint64_t> outFp = handler->doExtern(getName(), getExtra(), adaptor.getIn(), outCount);
-  assert(outFp.size() == outCount);
+  std::optional<std::vector<uint64_t>> outFp =
+      handler->doExtern(getName(), getExtra(), adaptor.getIn(), outCount);
+  if (!outFp)
+    return failure();
+  assert(outFp->size() == outCount);
   for (size_t i = 0; i < getNumResults(); i++) {
-    outs[i]->setVal(outFp[i]);
+    outs[i]->setVal((*outFp)[i]);
   }
   return success();
 }
@@ -620,17 +623,19 @@ LogicalResult HashCheckedBytesOp::evaluate(Interpreter& interp,
   std::vector<uint32_t> accumCoeffs(16, 0);
   size_t countAccumed = 0;
   for (size_t i = 0; i < adaptor.getEvalsCount(); i++) {
-    std::vector<uint64_t> newCoeffs = handler->doExtern("readCoefficients", "", {}, 16);
+    std::optional<std::vector<uint64_t>> newCoeffs =
+        handler->doExtern("readCoefficients", "", {}, 16);
+    assert(newCoeffs && "readCoefficients shouldn't fail");
     auto result = field.Zero();
     auto currentPower = field.One();
     for (size_t j = 0; j < 16; j++) {
-      if (newCoeffs[j] > 255) {
+      if ((*newCoeffs)[j] > 255) {
         throw std::runtime_error("Coefficient fails range check");
       }
-      result = field.Add(result, field.Mul(newCoeffs[j], currentPower));
+      result = field.Add(result, field.Mul((*newCoeffs)[j], currentPower));
       currentPower = field.Mul(currentPower, evalPt);
       accumCoeffs[j] *= 256;
-      accumCoeffs[j] += newCoeffs[j];
+      accumCoeffs[j] += (*newCoeffs)[j];
     }
     outs[1 + i]->setVal(result);
     countAccumed++;
@@ -667,18 +672,20 @@ LogicalResult HashCheckedBytesPublicOp::evaluate(Interpreter& interp,
   auto evalPt = adaptor.getEvalPt()->getVal();
   std::vector<uint32_t> coeffs;
   for (size_t i = 0; i < adaptor.getEvalsCount(); i++) {
-    std::vector<uint64_t> newCoeffs = handler->doExtern("readCoefficients", "", {}, 16);
+    std::optional<std::vector<uint64_t>> newCoeffs =
+        handler->doExtern("readCoefficients", "", {}, 16);
+    assert(newCoeffs && "readCoefficients shouldn't fail");
     auto result = field.Zero();
     auto currentPower = field.One();
     for (size_t j = 0; j < 16; j++) {
-      if (newCoeffs[j] > 255) {
+      if ((*newCoeffs)[j] > 255) {
         throw std::runtime_error("Coefficient fails range check");
       }
-      result = field.Add(result, field.Mul(newCoeffs[j], currentPower));
+      result = field.Add(result, field.Mul((*newCoeffs)[j], currentPower));
       currentPower = field.Mul(currentPower, evalPt);
     }
     outs[2 + i]->setVal(result);
-    coeffs.insert(coeffs.end(), newCoeffs.begin(), newCoeffs.end());
+    coeffs.insert(coeffs.end(), (*newCoeffs).begin(), (*newCoeffs).end());
   }
   auto hashVal1 = psuite->hash(coeffs.data(), coeffs.size());
   outs[0]->setDigest(hashVal1);
@@ -1263,11 +1270,9 @@ void EqualZeroOp::emitExpr(codegen::CodegenEmitter& cg) {
 
 void AndEqzOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
   if (getVal().getType().getFieldK() > 1)
-    cg.emitFuncCall(cg.getStringAttr("andEqzExt"),
-                    {lookupNearestImplicitArg<PolyMixType>(getOperation()), getIn(), getVal()});
+    cg.emitFuncCall(cg.getStringAttr("andEqzExt"), /*contextArgs=*/{"ctx"}, {getIn(), getVal()});
   else
-    cg.emitFuncCall(cg.getStringAttr("andEqz"),
-                    {lookupNearestImplicitArg<PolyMixType>(getOperation()), getIn(), getVal()});
+    cg.emitFuncCall(cg.getStringAttr("andEqz"), /*contextArgs=*/{"ctx"}, {getIn(), getVal()});
 }
 
 void AndCondOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
@@ -1275,6 +1280,19 @@ void AndCondOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
     cg.emitFuncCall(cg.getStringAttr("andCondExt"), {getIn(), getCond(), getInner()});
   else
     cg.emitFuncCall(cg.getStringAttr("andCond"), {getIn(), getCond(), getInner()});
+}
+
+void GetOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
+  cg.emitFuncCall(
+      cg.getStringAttr("get"),
+      /*ContextArgs=*/{"ctx"},
+      {getBuf(), cg.guessAttributeType(getOffsetAttr()), cg.guessAttributeType(getBackAttr())});
+}
+
+void SetOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
+  cg.emitFuncCall(cg.getStringAttr("set"),
+                  /*ContextArgs=*/{"ctx"},
+                  {getBuf(), cg.guessAttributeType(getOffsetAttr())});
 }
 
 } // namespace zirgen::Zll

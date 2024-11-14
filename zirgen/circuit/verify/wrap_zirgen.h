@@ -19,9 +19,8 @@
 
 namespace zirgen::verify {
 
-std::unique_ptr<CircuitInterface> getInterfaceZirgen(mlir::ModuleOp zhltModule,
-                                                     ProtocolInfo protocolInfo);
-std::unique_ptr<CircuitInterface>
-getInterfaceZirgen(mlir::MLIRContext* ctx, mlir::StringRef filename, ProtocolInfo protocolInfo);
+std::unique_ptr<CircuitInterface> getInterfaceZirgen(mlir::ModuleOp zhltModule);
+std::unique_ptr<CircuitInterface> getInterfaceZirgen(mlir::MLIRContext* ctx,
+                                                     mlir::StringRef filename);
 
 } // namespace zirgen::verify

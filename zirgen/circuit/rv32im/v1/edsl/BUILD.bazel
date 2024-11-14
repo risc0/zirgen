@@ -15,6 +15,7 @@ cc_library(
     name = "lib",
     srcs = [
         "bigint.cpp",
+        "bigint2.cpp",
         "body.cpp",
         "code.cpp",
         "compute.cpp",
@@ -29,6 +30,7 @@ cc_library(
     ],
     hdrs = [
         "bigint.h",
+        "bigint2.h",
         "body.h",
         "code.h",
         "compute.h",

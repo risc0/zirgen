@@ -342,6 +342,13 @@ private:
   mlir::Value value;
 };
 
+// Pretend the DigestVal is a plain old Val to pass it to the extern.
+// TODO: This seems kludgy; do we want to convert the log vector to a vector of mlir::Value instead
+// of Val?
+template <> struct LogPrep<DigestVal> {
+  static void toLogVec(std::vector<Val>& out, DigestVal x) { out.push_back(Val(x.getValue())); }
+};
+
 DigestVal hash(llvm::ArrayRef<Val> inputs, bool flip = false, SourceLoc loc = current());
 DigestVal intoDigest(llvm::ArrayRef<Val> inputs,
                      Zll::DigestKind kind = Zll::DigestKind::Default,

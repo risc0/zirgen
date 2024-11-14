@@ -155,6 +155,15 @@ void emitPoly(ModuleOp mod, StringRef circuitName) {
   }
 
   emitCodeZirgenPoly(funcMod, codegenCLOptions->outputDir);
+
+  // TODO: modularize generating the validity stuff
+  auto rustOpts = codegen::getRustCodegenOpts();
+  rustOpts.addFuncContextArgument<func::FuncOp>("ctx: &ValidityCtx");
+  rustOpts.addCallContextArgument<Zll::GetOp, Zll::SetOp>("ctx");
+  CodegenEmitter rustCg(rustOpts, mod.getContext());
+  auto os = openOutput("validity.rs.inc");
+  CodegenEmitter::StreamOutputGuard guard(rustCg, os.get());
+  rustCg.emitModule(funcMod);
 }
 
 } // namespace
@@ -247,7 +256,6 @@ int main(int argc, char* argv[]) {
   if (circuitName.empty())
     circuitName = inputFilename;
   circuitName.consume_back(".zir");
-  circuitName = "keccak";
 
   emitPoly(*typedModule, circuitName);
 

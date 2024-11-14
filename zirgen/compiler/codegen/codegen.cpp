@@ -152,6 +152,11 @@ class FileEmitter {
 public:
   FileEmitter(StringRef path) : path(path) {}
 
+  void emitIR(const std::string& fn, Operation* op) {
+    auto ofs = openOutputFile(fn + ".ir");
+    op->print(*ofs.get());
+  }
+
   void emitRustStep(const std::string& stage, func::FuncOp func) {
     auto ofs = openOutputFile("rust_step_" + stage + ".cpp");
     createRustStreamEmitter(*ofs)->emitStepFunc(stage, func);
@@ -306,6 +311,9 @@ void emitCodeZirgenPoly(ModuleOp module, StringRef outputDir) {
   if (failed(pm.run(module))) {
     throw std::runtime_error("Failed to apply stage1 passes");
   }
+
+  // Save as IR so we can generate predicates to verify the validity polynomial.
+  emitter.emitIR("validity", module);
 
   module.walk([&](func::FuncOp func) {
     emitter.emitPolyExtFunc(func);

@@ -34,7 +34,7 @@ use std::{path::PathBuf, rc::Rc};
 risc0_zirgen_dsl::zirgen_inhibit_warnings! {
 
 mod keccak_circuit {
-    risc0_zirgen_dsl::zirgen_preamble!(*b"keccack_________");
+    risc0_zirgen_dsl::zirgen_preamble!{}
 
     type ExecContext<'a> = super::cpu::CpuExecContext<'a>;
 

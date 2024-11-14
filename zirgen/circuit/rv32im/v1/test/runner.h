@@ -38,6 +38,18 @@ struct PageFaultInfo {
 
 using Polynomial = llvm::SmallVector<uint64_t, 4>;
 
+// TODO: Highly redundant with stuff in Exec.cpp
+struct BytePolynomial {
+  BytePolynomial();
+  static BytePolynomial zero();
+  static BytePolynomial one();
+  BytePolynomial shift() const;
+  BytePolynomial operator*(int x) const;
+  BytePolynomial operator+(const BytePolynomial& rhs) const;
+  BytePolynomial operator*(const BytePolynomial& rhs) const;
+  std::vector<int32_t> coeffs;
+};
+
 struct Runner : public RamExternHandler {
   Runner(size_t maxCycles, std::map<uint32_t, uint32_t> elfImage, uint32_t entryPoint);
 
@@ -60,10 +72,10 @@ private:
 
   void storePageEntry(uint32_t pgidx, const Digest& digest);
 
-  std::vector<uint64_t> doExtern(llvm::StringRef name,
-                                 llvm::StringRef extra,
-                                 llvm::ArrayRef<const Zll::InterpVal*> args,
-                                 size_t outCount) override;
+  std::optional<std::vector<uint64_t>> doExtern(llvm::StringRef name,
+                                                llvm::StringRef extra,
+                                                llvm::ArrayRef<const Zll::InterpVal*> args,
+                                                size_t outCount) override;
 
   PageFaultInfo getPageFaultInfo(uint32_t pc, uint32_t inst);
 
@@ -105,6 +117,17 @@ private:
   std::deque<uint64_t> syscallPending;
   uint32_t syscallA0Out;
   uint32_t syscallA1Out;
+
+  void computePolyWitness(mlir::func::FuncOp func);
+
+  bool inCarry;
+  BytePolynomial poly;
+  BytePolynomial term;
+  BytePolynomial total;
+  BytePolynomial totCarry;
+
+public: // TODO: Hack
+  std::map<uint32_t, uint32_t> polyWitness;
 };
 
 } // namespace zirgen::rv32im_v1

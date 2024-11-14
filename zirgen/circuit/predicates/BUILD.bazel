@@ -39,10 +39,35 @@ build_circuit(
         zkr + ".zkr",
         zkr + ".zkr.dbg",
     ]],
+    data = ["@zirgen//zirgen/circuit/keccak:validity.ir"],
+    extra_args = [
+        "--keccak-ir=$(location @zirgen//zirgen/circuit/keccak:validity.ir)",
+    ],
     deps = [":lib"],
 )
 
 pkg_zip(
     name = "recursion_zkr",
     srcs = [x + ".zkr" for x in ZKRS],
+)
+
+genrule(
+    name = "actual_hashes",
+    srcs = [x + ".zkr" for x in ZKRS],
+    outs = ["actual_hashes.txt"],
+    cmd = "shasum -a 256 $(SRCS) | sed 's@ .*/@ @g' >$(location actual_hashes.txt)",
+)
+
+# Make sure that we only change predicate hashes on purpose, not by accident.
+sh_test(
+    name = "golden_hashes_test",
+    srcs = ["golden_hashes_test.sh"],
+    args = [
+        "$(location :actual_hashes.txt)",
+        "$(location :golden_hashes.txt)",
+    ],
+    data = [
+        ":actual_hashes.txt",
+        ":golden_hashes.txt",
+    ],
 )

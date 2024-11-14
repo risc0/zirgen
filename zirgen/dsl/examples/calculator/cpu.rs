@@ -14,32 +14,63 @@
 
 use super::calc_circuit;
 use anyhow::Result;
-use calc_circuit::{CircuitField, ExtVal, MixState, Val};
+use calc_circuit::{CircuitField, ExtVal, Val, REGISTER_GROUP_DATA};
 use core::cell::RefCell;
-use risc0_zkp::hal::cpu::{CpuBuffer, CpuHal};
+use risc0_zirgen_dsl::{CycleContext, CycleRow, GlobalRow};
+use risc0_zkp::{
+    core::log2_ceil,
+    field::{Elem, ExtElem, RootsOfUnity},
+    hal::cpu::{CpuBuffer, CpuHal},
+    INV_RATE,
+};
 use std::collections::VecDeque;
+
+pub const _GLOBAL_MIX: usize = 1;
+pub const GLOBAL_OUT: usize = 0;
 
 pub struct CpuCircuitHal {
     from_user: VecDeque<Val>,
     to_user: VecDeque<Val>,
 }
 
-fn val_array<const SIZE: usize>(vals: [usize; SIZE]) -> [Val; SIZE] {
-    vals.map(|val| Val::new(val as u32))
-}
-
 impl CpuCircuitHal {
-    pub fn new(op: usize, lhs: usize, rhs: usize) -> Self {
+    pub fn new(from_user: &[usize]) -> Self {
         Self {
-            from_user: val_array([op, lhs, rhs]).into(),
+            from_user: from_user.iter().map(|val| Val::new(*val as u32)).collect(),
             to_user: [].into(),
         }
     }
 }
 
 pub struct CpuExecContext {
+    cycle: usize,
+    tot_cycles: usize,
     from_user: RefCell<VecDeque<Val>>,
     to_user: RefCell<VecDeque<Val>>,
+}
+
+impl CycleContext for CpuExecContext {
+    fn cycle(&self) -> usize {
+        self.cycle
+    }
+    fn tot_cycles(&self) -> usize {
+        self.tot_cycles
+    }
+}
+
+pub struct ValidityCtx {
+    cycle: usize,
+    domain: usize,
+    pub poly_mix: ExtVal,
+}
+
+impl CycleContext for ValidityCtx {
+    fn cycle(&self) -> usize {
+        self.cycle
+    }
+    fn tot_cycles(&self) -> usize {
+        self.domain
+    }
 }
 
 impl CpuExecContext {
@@ -56,8 +87,8 @@ impl CpuExecContext {
         Ok(())
     }
 
-    pub fn log(&self, message: &str, x: &[Val]) -> Result<()> {
-        zirgen_dsl::codegen::default_log(message, x)
+    pub fn log(&self, message: &str, x: impl AsRef<[Val]>) -> Result<()> {
+        risc0_zirgen_dsl::codegen::default_log(message, x.as_ref())
     }
 }
 
@@ -68,26 +99,26 @@ impl<'a> calc_circuit::CircuitHal<'a, CpuHal<CircuitField>> for CpuCircuitHal {
         data: &CpuBuffer<Val>,
         global: &CpuBuffer<Val>,
     ) -> Result<()> {
-        zirgen_dsl::cpu::run_serial(
-            calc_circuit::get_named_buffers([("data", data), ("global", global)]),
+        let data = &data.as_slice_sync();
+        let data = CycleRow { buf: data };
+        let global = global.as_slice_sync();
+        let global = GlobalRow { buf: &global };
+
+        let mut exec_context = CpuExecContext {
+            cycle: 0,
             tot_cycles,
-            |ctx, _cycle| -> Result<()> {
-                // Clone it so we run with identical inputs and outputs for each cycle.
-                let exec_context = CpuExecContext {
-                    from_user: RefCell::new(self.from_user.clone()),
-                    to_user: RefCell::new(self.to_user.clone()),
-                };
-                let ctx = ctx.wrap(&exec_context);
+            from_user: RefCell::new(self.from_user.clone()),
+            to_user: RefCell::new(self.to_user.clone()),
+        };
+        for cycle in 0..tot_cycles {
+            exec_context.cycle = cycle;
+            tracing::trace!("exec {cycle}/{tot_cycles}");
 
-                calc_circuit::step_top(
-                    &ctx,
-                    calc_circuit::get_data_buffer(&ctx),
-                    calc_circuit::get_global_buffer(&ctx),
-                )?;
+            calc_circuit::step_top(&exec_context, &data, &global)?;
+        }
+        tracing::trace!("exec complete");
 
-                Ok(())
-            },
-        )
+        Ok(())
     }
 
     fn step_accum(
@@ -105,43 +136,53 @@ impl<'a> calc_circuit::CircuitHal<'a, CpuHal<CircuitField>> for CpuCircuitHal {
 impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
     fn accumulate(
         &self,
-        ctrl: &CpuBuffer<Val>,
-        io: &CpuBuffer<Val>,
-        data: &CpuBuffer<Val>,
-        mix: &CpuBuffer<Val>,
-        accum: &CpuBuffer<Val>,
-        steps: usize,
+        _ctrl: &CpuBuffer<Val>,
+        _io: &CpuBuffer<Val>,
+        _data: &CpuBuffer<Val>,
+        _mix: &CpuBuffer<Val>,
+        _accum: &CpuBuffer<Val>,
+        _steps: usize,
     ) {
-        unimplemented!()
     }
 
     fn eval_check(
         &self,
-        check: &CpuBuffer<Val>,
+        orig_check: &CpuBuffer<Val>,
         groups: &[&CpuBuffer<Val>],
         globals: &[&CpuBuffer<Val>],
         poly_mix: ExtVal,
         po2: usize,
-        cycles: usize,
+        steps: usize,
     ) {
-        let buffers =
-            calc_circuit::get_named_buffers(zirgen_dsl::eval_check_named_buffers(groups, globals));
+        const EXP_PO2: usize = log2_ceil(INV_RATE);
+        let domain = steps * INV_RATE;
 
-        zirgen_dsl::cpu::eval_check(
-            check,
-            buffers,
-            poly_mix,
-            po2,
-            cycles,
-            |ctx, poly_mix| -> Result<MixState> {
-                calc_circuit::validity_regs(
-                    &ctx,
+        let data = groups[REGISTER_GROUP_DATA].as_slice_sync();
+        let data = CycleRow { buf: &data };
+        let global = globals[GLOBAL_OUT].as_slice_sync();
+        let global = GlobalRow { buf: &global };
+        let check = orig_check.as_slice_sync();
+
+        // TODO: modularize this
+        (0..domain).into_iter().for_each(|cycle| {
+            let tot = calc_circuit::validity::calculator(
+                &ValidityCtx {
+                    cycle,
+                    domain,
                     poly_mix,
-                    calc_circuit::get_data_buffer(&ctx),
-                    calc_circuit::get_global_buffer(&ctx),
-                )
-            },
-        )
-        .expect("Expected eval check to succeed");
+                },
+                &data,
+                &global,
+            )
+            .unwrap();
+            let x = Val::ROU_FWD[po2 + EXP_PO2].pow(cycle);
+            // TODO: what is this magic number 3?
+            let y = (Val::new(3) * x).pow(1 << po2);
+            let ret = tot.tot * (y - Val::new(1)).inv();
+
+            for i in 0..ExtVal::EXT_SIZE {
+                check.set(i * domain + cycle, ret.elems()[i]);
+            }
+        });
     }
 }

@@ -68,10 +68,10 @@ Digest hashPublic(llvm::ArrayRef<APInt> inputs) {
 
 struct CheckedBytesExternHandler : public Zll::ExternHandler {
   std::deque<uint8_t> coeffs;
-  std::vector<uint64_t> doExtern(llvm::StringRef name,
-                                 llvm::StringRef extra,
-                                 llvm::ArrayRef<const Zll::InterpVal*> arg,
-                                 size_t outCount) override {
+  std::optional<std::vector<uint64_t>> doExtern(llvm::StringRef name,
+                                                llvm::StringRef extra,
+                                                llvm::ArrayRef<const Zll::InterpVal*> arg,
+                                                size_t outCount) override {
     if (name == "readCoefficients") {
       assert(outCount == 16);
       if (coeffs.size() < 16) {

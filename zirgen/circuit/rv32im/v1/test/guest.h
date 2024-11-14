@@ -135,6 +135,40 @@ sys_bigint(uint32_t* result, const uint32_t* x, const uint32_t* y, const uint32_
   );
 }
 
+inline void sys_bigint2(uint32_t* entry,
+                        const uint32_t* a = nullptr,
+                        const uint32_t* b = nullptr,
+                        const uint32_t* c = nullptr,
+                        const uint32_t* d = nullptr) {
+  uint32_t* nondetProg = entry + 4;
+  uint32_t* verifyProg = nondetProg + entry[0];
+  uint32_t* consts = verifyProg + entry[1];
+  uint32_t tmpSpace = entry[3] * 4;
+
+  asm volatile("li t0, 6\n" // BigInt
+               "mv t1, %0\n"
+               "mv t2, %1\n"
+               "mv t3, %2\n"
+               "sub sp, sp, %3\n"
+               "mv a1, %4\n"
+               "mv a2, %5\n"
+               "mv a3, %6\n"
+               "mv a4, %7\n"
+               "ecall\n"
+               "add sp, sp, %3\n"
+               : // outputs
+               : "r"(nondetProg),
+                 "r"(verifyProg),
+                 "r"(consts),
+                 "r"(tmpSpace),
+                 "r"(a),
+                 "r"(b),
+                 "r"(c),
+                 "r"(d)                                                         // inputs
+               : "t0", "t1", "t2", "t3", "a0", "a1", "a2", "a3", "a4", "memory" // clobbers
+  );
+}
+
 inline void sys_usermode() {
   asm volatile("li t0, 5\n" // Jump to usermode
                "ecall\n"
