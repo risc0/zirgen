@@ -12,15 +12,11 @@ required-features = ["make_control_ids"]
 
 [dependencies]
 anyhow = "1.0"
-bytemuck = "1.16.1"
 clap = "4.5"
 hex = "0.4"
 lazy_static = "1.5.0"
 paste = "1.0"
-rayon = "1.10.0"
 risc0-binfmt = { workspace = true }
-risc0-circuit-keccak-sys = { workspace = true, optional = true }
-risc0-circuit-recursion = { workspace = true, default-features = false }
 risc0-core = { workspace = true }
 risc0-zirgen-dsl = { workspace = true, optional = true }
 risc0-zkp = { workspace = true, features = ["default"] }
@@ -31,6 +27,15 @@ risc0-zkvm = { workspace = true, features = [
 risc0-zkvm-platform = { workspace = true, features = ["unstable"] }
 tracing = { version = "0.1", default-features = false, features = ["attributes"] }
 zip = { version = "2.0", default-features = false, features = ["deflate"] }
+
+[target.'cfg(not(target_os = "zkvm"))'.dependencies]
+bytemuck = "1.12"
+rand = { version = "0.8" }
+cust = { version = "0.3", optional = true }
+risc0-circuit-keccak-sys = { workspace = true, optional = true }
+risc0-circuit-recursion = { workspace = true, default-features = false }
+risc0-sys = { workspace = true, optional = true }
+rayon = "1.10"
 
 [dev-dependencies]
 test-log = { version = "0.2", default-features = false, features = ["trace"] }
