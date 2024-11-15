@@ -56,7 +56,7 @@ cuda = [
   "risc0-sys/cuda",
   "risc0-zkp/cuda",
 ]
-default = ["prove", "cuda"]
+default = ["prove"]
 # Omits control_ids.rs, and instead uses all zeros for control ids.
 # This is needed for the 'make_control_ids' binary to compile to
 # generate control ids fot lift predicates.
