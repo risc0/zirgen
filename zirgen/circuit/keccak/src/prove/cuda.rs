@@ -35,11 +35,11 @@ use risc0_zkp::{
 
 use crate::{
     info::{NUM_POLY_MIX_POWERS, POLY_MIX_POWERS},
-    prove::keccak_circuit::{REGISTER_GROUP_ACCUM, REGISTER_GROUP_CODE, REGISTER_GROUP_DATA},
+    prove::{
+        keccak_circuit::{REGISTER_GROUP_ACCUM, REGISTER_GROUP_CODE, REGISTER_GROUP_DATA},
+        GLOBAL_MIX, GLOBAL_OUT,
+    },
 };
-
-pub const GLOBAL_MIX: usize = 1;
-pub const GLOBAL_OUT: usize = 0;
 
 pub struct CudaCircuitHal<CH: CudaHash> {
     _hal: Rc<CudaHal<CH>>, // retain a reference to ensure the context remains valid
@@ -90,9 +90,9 @@ impl<CH: CudaHash> CircuitHal<CudaHal<CH>> for CudaCircuitHal<CH> {
     ) {
         scope!("eval_check");
 
+        let accum = groups[REGISTER_GROUP_ACCUM];
         let ctrl = groups[REGISTER_GROUP_CODE];
         let data = groups[REGISTER_GROUP_DATA];
-        let accum = groups[REGISTER_GROUP_ACCUM];
         let mix = globals[GLOBAL_MIX];
         let out = globals[GLOBAL_OUT];
         tracing::debug!(
@@ -113,15 +113,12 @@ impl<CH: CudaHash> CircuitHal<CudaHal<CH>> for CudaCircuitHal<CH> {
         let domain = steps * INV_RATE;
         let rou = BabyBearElem::ROU_FWD[po2 + EXP_PO2];
 
-
-        tracing::debug!("steps {steps} domain {domain} rou {rou:?}");
+        tracing::debug!("steps: {steps}, domain: {domain}, po2: {po2}, rou: {rou:?}");
         let poly_mix_pows = map_pow(poly_mix, POLY_MIX_POWERS);
         let poly_mix_pows: &[u32; BabyBearExtElem::EXT_SIZE * NUM_POLY_MIX_POWERS] =
             BabyBearExtElem::as_u32_slice(poly_mix_pows.as_slice())
                 .try_into()
-            .unwrap();
-
-        tracing::debug!("domain: {domain:?} po2 {po2:?} rou: {rou:?}");
+                .unwrap();
 
         ffi_wrap(|| unsafe {
             risc0_circuit_keccak_cuda_eval_check(

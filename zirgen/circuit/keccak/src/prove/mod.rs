@@ -12,21 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::taps;
-use anyhow::Result;
-use rayon::prelude::*;
-use risc0_core::field::Elem;
-use risc0_zkp::hal::{Buffer, Hal};
-use risc0_zkp::{
-    adapter::{CircuitCoreDef, CircuitInfo, TapsProvider, PROOF_SYSTEM_INFO},
-    core::{digest::Digest, hash::HashSuite},
-    field::baby_bear::BabyBear,
-    taps::TapSet,
-};
-use std::rc::Rc;
-
-use super::CircuitImpl;
-
 mod cpp;
 pub mod cpu;
 #[cfg(feature = "cuda")]
@@ -35,6 +20,21 @@ pub mod zkr;
 
 #[cfg(test)]
 pub mod testutil;
+
+use std::rc::Rc;
+
+use anyhow::Result;
+use rayon::prelude::*;
+use risc0_core::field::Elem;
+use risc0_zkp::{
+    adapter::{CircuitCoreDef, CircuitInfo, TapsProvider, PROOF_SYSTEM_INFO},
+    core::{digest::Digest, hash::HashSuite},
+    field::baby_bear::BabyBear,
+    hal::{Buffer, Hal},
+    taps::TapSet,
+};
+
+use super::{taps, CircuitImpl};
 
 risc0_zirgen_dsl::zirgen_inhibit_warnings! {
 
@@ -52,6 +52,9 @@ mod keccak_circuit {
 
 pub use keccak_circuit::REGCOUNT_GLOBAL;
 use keccak_circuit::{CircuitField, CircuitHal, ExtVal, Val};
+
+const GLOBAL_MIX: usize = 0;
+const GLOBAL_OUT: usize = 1;
 
 fn clear_invalid<B: Buffer<impl Elem>>(buf: &B) {
     // Zero out 'invalid' entries

@@ -12,10 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use risc0_zkp::core::digest::Digest;
-
-pub struct CircuitImpl;
-
 #[cfg(not(feature = "make_control_ids"))]
 mod control_id;
 #[cfg(feature = "make_control_ids")]
@@ -38,6 +34,10 @@ pub use guest::*;
 
 #[cfg(test)]
 mod tests;
+
+use risc0_zkp::core::digest::Digest;
+
+pub struct CircuitImpl;
 
 // TODO: Can we import this from somewhere other than ZKVM?
 pub const RECURSION_PO2: usize = 18;

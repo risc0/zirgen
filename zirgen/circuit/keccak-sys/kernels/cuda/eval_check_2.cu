@@ -14352,5 +14352,5 @@ __device__ FpExt keccak_poly_fp(uint32_t idx,
   x39[1] = x1176;
   auto x1177 = keccak_46(idx, size, x39, x1129, x381, x209, x358, x447, data, accum, mix, out);
 
-  return x1177 + FpExt(1);
+  return x1177;
 }

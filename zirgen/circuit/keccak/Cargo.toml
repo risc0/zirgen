@@ -25,7 +25,9 @@ risc0-zkvm = { workspace = true, features = [
   "unstable",
 ], default-features = false }
 risc0-zkvm-platform = { workspace = true, features = ["unstable"] }
-tracing = { version = "0.1", default-features = false, features = ["attributes"] }
+tracing = { version = "0.1", default-features = false, features = [
+  "attributes",
+] }
 zip = { version = "2.0", default-features = false, features = ["deflate"] }
 
 [target.'cfg(not(target_os = "zkvm"))'.dependencies]
@@ -53,7 +55,12 @@ default = ["prove"]
 # generate control ids fot lift predicates.
 make_control_ids = ["risc0-zkvm/prove", "risc0-circuit-recursion/prove"]
 # Enables ZKR registration to actually generate proofs.
-prove = ["risc0-zkvm/prove", "risc0-circuit-recursion/prove", "dep:risc0-circuit-keccak-sys", "dep:risc0-zirgen-dsl"]
+prove = [
+  "risc0-zkvm/prove",
+  "risc0-circuit-recursion/prove",
+  "dep:risc0-circuit-keccak-sys",
+  "dep:risc0-zirgen-dsl",
+]
 # Enables CUDA GPU support
 cuda = [
   "dep:cust",
