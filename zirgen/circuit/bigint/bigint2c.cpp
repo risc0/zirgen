@@ -434,8 +434,8 @@ void genECAdd(mlir::Location loc, mlir::OpBuilder& builder) {
       std::make_shared<BigInt::EC::WeierstrassCurve>(secp256k1_prime, secp256k1_a, secp256k1_b);
   auto p_x = builder.create<BigInt::LoadOp>(loc, 256, 11, 0);
   auto p_y = builder.create<BigInt::LoadOp>(loc, 256, 11, 2);
-  auto q_x = builder.create<BigInt::LoadOp>(loc, 256, 12, 4);
-  auto q_y = builder.create<BigInt::LoadOp>(loc, 256, 12, 6);
+  auto q_x = builder.create<BigInt::LoadOp>(loc, 256, 12, 0);
+  auto q_y = builder.create<BigInt::LoadOp>(loc, 256, 12, 2);
   auto lhs = BigInt::EC::AffinePt(p_x, p_y, curve);
   auto rhs = BigInt::EC::AffinePt(q_x, q_y, curve);
   auto result = BigInt::EC::add(builder, loc, lhs, rhs);
