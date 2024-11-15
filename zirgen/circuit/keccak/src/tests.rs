@@ -12,42 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::prove::{prove, verify};
+use std::{cell::RefCell, collections::VecDeque, rc::Rc};
+
 use anyhow::Result;
 use hex::FromHex;
 use risc0_binfmt::read_sha_halfs;
 use risc0_circuit_keccak_test_methods::{KECCAK_ELF, KECCAK_ID};
 use risc0_core::field::baby_bear::BabyBearElem;
-use risc0_zkp::{
-    core::{
-        digest::{Digest, DIGEST_SHORTS},
-        hash::poseidon2::Poseidon2HashSuite,
-    },
-    hal::cpu::CpuHal,
-};
+use risc0_zkp::core::digest::{Digest, DIGEST_SHORTS};
 use risc0_zkvm::{
     get_prover_server, ExecutorEnv, KeccakCoprocessorCallback, ProveKeccakRequest,
     ProveKeccakResponse, ProveZkrRequest, ProverOpts,
 };
-use std::{cell::RefCell, collections::VecDeque, rc::Rc};
 
+use crate::prove::keccak_prover;
+
+#[derive(Default)]
 struct Coprocessor;
-
-impl Coprocessor {
-    fn new() -> Self {
-        Self
-    }
-}
 
 impl KeccakCoprocessorCallback for Coprocessor {
     fn prove_keccak(&mut self, req: ProveKeccakRequest) -> Result<ProveKeccakResponse> {
-        let hash_suite = Poseidon2HashSuite::new_suite();
-        let hal = CpuHal::new(hash_suite.clone());
         let input_u32s: &[u32] = bytemuck::cast_slice(req.input.as_slice());
         let input: VecDeque<u32> = Vec::from(input_u32s).into();
-        let circuit_hal = crate::prove::cpu::CpuCircuitHal::new(input);
+        let prover = keccak_prover()?;
         let control_root: Digest = *crate::get_control_root(req.po2);
-        let seal = prove(&hal, &circuit_hal, req.po2).unwrap();
+        let seal = prover.prove(input, req.po2)?;
         let claim_digest: Digest = read_sha_halfs(&mut VecDeque::from_iter(
             bytemuck::checked::cast_slice::<_, BabyBearElem>(&seal[0..DIGEST_SHORTS])
                 .iter()
@@ -56,7 +45,7 @@ impl KeccakCoprocessorCallback for Coprocessor {
         ))?;
 
         // Make sure we have a valid seal so we can fail early if anything went wrong
-        verify(seal.as_slice(), &hash_suite).expect("Verification failed");
+        prover.verify(&seal).expect("Verification failed");
 
         let claim_sha_input = claim_digest
             .as_words()
@@ -96,7 +85,7 @@ fn from_hex(input: &str) -> Vec<u32> {
 fn run_test(claim_digest: Digest, input: Vec<u32>, po2: usize) -> Result<()> {
     let to_guest: (Digest, Vec<u32>, usize) = (claim_digest, input, po2);
 
-    let coprocessor = Rc::new(RefCell::new(Coprocessor::new()));
+    let coprocessor = Rc::new(RefCell::new(Coprocessor::default()));
 
     let env = ExecutorEnv::builder()
         .keccak_coprocessor_callback_ref(coprocessor.clone())

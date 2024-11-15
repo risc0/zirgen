@@ -12,28 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//use core::ffi::{c_void, CStr};
-
-//use anyhow::{anyhow, Result};
-use risc0_circuit_keccak_sys::ffi::{
-    // get_trampoline,
-    risc0_circuit_keccak_poly_fp,
-    //risc0_circuit_keccak_step_compute_accum,
-    //risc0_circuit_keccak_step_exec, risc0_circuit_keccak_step_verify_accum,
-    //    risc0_circuit_keccak_step_verify_bytes, risc0_circuit_keccak_step_verify_mem,
-    // risc0_circuit_keccak_string_free,
-    //     risc0_circuit_keccak_string_ptr,
-    //    Callback,
-    //    RawError,
-};
+use risc0_circuit_keccak_sys::ffi::risc0_circuit_keccak_poly_fp;
 use risc0_zkp::{
-    adapter::{
-        //CircuitProveDef,
-        //CircuitStep, CircuitStepContext, CircuitStepHandler,
-        PolyFp,
-    },
+    adapter::PolyFp,
     field::baby_bear::{BabyBear, BabyBearElem, BabyBearExtElem},
-    //    hal::cpu::SyncSlice,
 };
 
 use crate::CircuitImpl;

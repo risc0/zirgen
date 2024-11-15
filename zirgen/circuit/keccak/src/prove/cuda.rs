@@ -14,7 +14,8 @@
 
 use std::rc::Rc;
 
-use cust::prelude::*;
+use anyhow::Result;
+use risc0_circuit_keccak_sys::ffi::risc0_circuit_keccak_cuda_eval_check;
 use risc0_core::{
     field::{
         baby_bear::{BabyBearElem, BabyBearExtElem},
@@ -27,7 +28,10 @@ use risc0_zkp::{
     core::log2_ceil,
     field::ExtElem as _,
     hal::{
-        cuda::{BufferImpl as CudaBuffer, CudaHal, CudaHash, CudaHashPoseidon2, CudaHashSha256},
+        cuda::{
+            BufferImpl as CudaBuffer, CudaHal, CudaHalPoseidon2, CudaHash, CudaHashPoseidon2,
+            CudaHashSha256,
+        },
         AccumPreflight, Buffer, CircuitHal,
     },
     INV_RATE,
@@ -35,11 +39,11 @@ use risc0_zkp::{
 
 use crate::{
     info::{NUM_POLY_MIX_POWERS, POLY_MIX_POWERS},
-    prove::keccak_circuit::{REGISTER_GROUP_ACCUM, REGISTER_GROUP_CODE, REGISTER_GROUP_DATA},
+    prove::{
+        keccak_circuit::{REGISTER_GROUP_ACCUM, REGISTER_GROUP_CODE, REGISTER_GROUP_DATA},
+        KeccakProver, KeccakProverImpl, GLOBAL_MIX, GLOBAL_OUT,
+    },
 };
-
-pub const GLOBAL_MIX: usize = 1;
-pub const GLOBAL_OUT: usize = 0;
 
 pub struct CudaCircuitHal<CH: CudaHash> {
     _hal: Rc<CudaHal<CH>>, // retain a reference to ensure the context remains valid
@@ -49,21 +53,6 @@ impl<CH: CudaHash> CudaCircuitHal<CH> {
     pub fn new(hal: Rc<CudaHal<CH>>) -> Self {
         Self { _hal: hal }
     }
-}
-
-extern "C" {
-    fn risc0_circuit_keccak_cuda_eval_check(
-        check: DevicePointer<u8>,
-        ctrl: DevicePointer<u8>,
-        data: DevicePointer<u8>,
-        accum: DevicePointer<u8>,
-        mix: DevicePointer<u8>,
-        out: DevicePointer<u8>,
-        rou: *const BabyBearElem,
-        po2: u32,
-        domain: u32,
-        poly_mix_pows: *const u32,
-    ) -> *const std::os::raw::c_char;
 }
 
 impl<CH: CudaHash> CircuitHal<CudaHal<CH>> for CudaCircuitHal<CH> {
@@ -90,9 +79,9 @@ impl<CH: CudaHash> CircuitHal<CudaHal<CH>> for CudaCircuitHal<CH> {
     ) {
         scope!("eval_check");
 
+        let accum = groups[REGISTER_GROUP_ACCUM];
         let ctrl = groups[REGISTER_GROUP_CODE];
         let data = groups[REGISTER_GROUP_DATA];
-        let accum = groups[REGISTER_GROUP_ACCUM];
         let mix = globals[GLOBAL_MIX];
         let out = globals[GLOBAL_OUT];
         tracing::debug!(
@@ -113,15 +102,12 @@ impl<CH: CudaHash> CircuitHal<CudaHal<CH>> for CudaCircuitHal<CH> {
         let domain = steps * INV_RATE;
         let rou = BabyBearElem::ROU_FWD[po2 + EXP_PO2];
 
-
-        tracing::debug!("steps {steps} domain {domain} rou {rou:?}");
+        tracing::debug!("steps: {steps}, domain: {domain}, po2: {po2}, rou: {rou:?}");
         let poly_mix_pows = map_pow(poly_mix, POLY_MIX_POWERS);
         let poly_mix_pows: &[u32; BabyBearExtElem::EXT_SIZE * NUM_POLY_MIX_POWERS] =
             BabyBearExtElem::as_u32_slice(poly_mix_pows.as_slice())
                 .try_into()
-            .unwrap();
-
-        tracing::debug!("domain: {domain:?} po2 {po2:?} rou: {rou:?}");
+                .unwrap();
 
         ffi_wrap(|| unsafe {
             risc0_circuit_keccak_cuda_eval_check(
@@ -144,6 +130,12 @@ impl<CH: CudaHash> CircuitHal<CudaHal<CH>> for CudaCircuitHal<CH> {
 pub type CudaCircuitHalSha256 = CudaCircuitHal<CudaHashSha256>;
 pub type CudaCircuitHalPoseidon2 = CudaCircuitHal<CudaHashPoseidon2>;
 
+pub fn keccak_prover() -> Result<Box<dyn KeccakProver>> {
+    let hal = Rc::new(CudaHalPoseidon2::new());
+    let circuit_hal = Rc::new(CudaCircuitHalPoseidon2::new(hal.clone()));
+    Ok(Box::new(KeccakProverImpl { hal, circuit_hal }))
+}
+
 #[cfg(test)]
 mod tests {
     use std::rc::Rc;
@@ -155,13 +147,13 @@ mod tests {
     };
     use test_log::test;
 
-    use crate::prove::cpu::CpuCircuitHal;
+    use crate::prove::cpu::ZkpCpuCircuitHal;
 
     #[test]
     fn eval_check() {
         const PO2: usize = 4;
         let cpu_hal: CpuHal<BabyBear> = CpuHal::new(Sha256HashSuite::new_suite());
-        let cpu_eval = CpuCircuitHal::default();
+        let cpu_eval = ZkpCpuCircuitHal;
         let gpu_hal = Rc::new(CudaHalSha256::new());
         let gpu_eval = super::CudaCircuitHal::new(gpu_hal.clone());
         crate::prove::testutil::eval_check(&cpu_hal, cpu_eval, gpu_hal.as_ref(), gpu_eval, PO2);

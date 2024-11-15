@@ -39,8 +39,19 @@ const char* risc0_circuit_keccak_cuda_eval_check(Fp* check,
                                                  uint32_t po2,
                                                  uint32_t domain,
                                                  const FpExt* poly_mix_pows) {
-  cudaMemcpyToSymbol(poly_mix, poly_mix_pows, sizeof(poly_mix));
-  return launchKernel(keccak_eval_check, domain, 0, check, ctrl, data, accum, mix, out, rou, po2, domain);
+  try {
+    CUDA_OK(cudaDeviceSynchronize());
+
+    CudaStream stream;
+    auto cfg = getSimpleConfig(domain);
+    cudaMemcpyToSymbol(poly_mix, poly_mix_pows, sizeof(poly_mix));
+    keccak_eval_check<<<cfg.grid, cfg.block, 0, stream>>>(
+        check, ctrl, data, accum, mix, out, rou, po2, domain);
+    CUDA_OK(cudaStreamSynchronize(stream));
+  } catch (const std::runtime_error& err) {
+    return strdup(err.what());
+  }
+  return nullptr;
 }
 
 } // extern "C"

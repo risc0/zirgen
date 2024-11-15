@@ -5,12 +5,12 @@
 __constant__ FpExt poly_mix[483];
 
 extern __device__ FpExt keccak_poly_fp(uint32_t idx,
-                                uint32_t size,
-                                const Fp* ctrl,
-                                const Fp* out,
-                                const Fp* data,
-                                const Fp* mix,
-                                const Fp* accum);
+                                       uint32_t size,
+                                       const Fp* ctrl,
+                                       const Fp* out,
+                                       const Fp* data,
+                                       const Fp* mix,
+                                       const Fp* accum);
 
 __global__ void keccak_eval_check(Fp* check,
                                   const Fp* ctrl,

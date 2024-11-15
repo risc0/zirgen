@@ -1,4 +1,3 @@
-
 use rand::{thread_rng, Rng};
 use risc0_zkp::{
     adapter::{CircuitInfo, TapsProvider},
@@ -12,7 +11,7 @@ use risc0_zkp::{
 
 use crate::{
     prove::keccak_circuit::{REGISTER_GROUP_ACCUM, REGISTER_GROUP_CODE, REGISTER_GROUP_DATA},
-    CircuitImpl,
+    CircuitImpl, CIRCUIT,
 };
 
 pub struct EvalCheckParams {
@@ -32,8 +31,7 @@ impl EvalCheckParams {
         let mut rng = thread_rng();
         let steps = 1 << po2;
         let domain = steps * INV_RATE;
-        let circuit = CircuitImpl;
-        let taps = circuit.get_taps();
+        let taps = CIRCUIT.get_taps();
         let code_size = taps.group_size(REGISTER_GROUP_CODE);
         let data_size = taps.group_size(REGISTER_GROUP_DATA);
         let accum_size = taps.group_size(REGISTER_GROUP_ACCUM);
@@ -84,7 +82,7 @@ where
     assert_eq!(check1, check2);
 }
 
-pub fn eval_check_impl<H, C>(params: &EvalCheckParams, hal: &H, eval: &C) -> Vec<H::Elem>
+pub fn eval_check_impl<H, C>(params: &EvalCheckParams, hal: &H, circuit_hal: &C) -> Vec<H::Elem>
 where
     H: Hal<Elem = BabyBearElem, ExtElem = BabyBearExtElem>,
     C: CircuitHal<H>,
@@ -95,7 +93,7 @@ where
     let accum = hal.copy_from_elem("accum", &params.accum);
     let mix = hal.copy_from_elem("mix", &params.mix);
     let out = hal.copy_from_elem("out", &params.out);
-    eval.eval_check(
+    circuit_hal.eval_check(
         &check,
         &[&accum, &code, &data],
         &[&mix, &out],
@@ -105,7 +103,6 @@ where
     );
     let mut ret = vec![H::Elem::ZERO; check.size()];
     check.view(|view| {
-        eprintln!("after eval check view: {view:?}");
         ret.clone_from_slice(view);
     });
     ret

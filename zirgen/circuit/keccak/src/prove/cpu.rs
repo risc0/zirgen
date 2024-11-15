@@ -12,28 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use super::{keccak_circuit, CircuitImpl};
+use std::{cell::RefCell, collections::VecDeque, rc::Rc};
+
 use anyhow::{anyhow, Result};
-use core::cell::RefCell;
 use keccak_circuit::{CircuitField, ExtVal, Val, REGISTER_GROUP_ACCUM, REGISTER_GROUP_DATA};
-use rayon::iter::IntoParallelIterator;
-use rayon::prelude::*;
+use rayon::{iter::IntoParallelIterator, prelude::*};
 use risc0_zirgen_dsl::{CycleContext, CycleRow, GlobalRow};
 use risc0_zkp::{
     adapter::PolyFp,
-    core::log2_ceil,
-    field::baby_bear::{BabyBearElem, BabyBearExtElem},
-    field::{map_pow, Elem, ExtElem, RootsOfUnity},
+    core::{hash::poseidon2::Poseidon2HashSuite, log2_ceil},
+    field::{
+        baby_bear::{BabyBearElem, BabyBearExtElem},
+        map_pow, Elem, ExtElem, RootsOfUnity,
+    },
     hal::{
         cpu::{CpuBuffer, CpuHal},
         AccumPreflight,
     },
     INV_RATE,
 };
-use std::collections::VecDeque;
 
-pub const GLOBAL_MIX: usize = 0;
-pub const GLOBAL_OUT: usize = 1;
+use super::{keccak_circuit, KeccakProver, KeccakProverImpl};
+use crate::{
+    prove::{GLOBAL_MIX, GLOBAL_OUT},
+    CIRCUIT,
+};
 
 #[derive(Default)]
 pub struct CpuCircuitHal {
@@ -64,6 +67,7 @@ impl<'a> CycleContext for CpuExecContext<'a> {
     fn cycle(&self) -> usize {
         self.cycle
     }
+
     fn tot_cycles(&self) -> usize {
         self.tot_cycles
     }
@@ -108,6 +112,7 @@ impl<'a> CpuExecContext<'a> {
         *stored = elems_per_word;
         Ok(())
     }
+
     pub fn read_input(&self) -> Result<Val> {
         let mut elems = self.input_elems.borrow_mut();
         if elems.is_empty() {
@@ -125,6 +130,7 @@ impl<'a> CpuExecContext<'a> {
         tracing::trace!("Read returns {val:?}");
         Ok(val)
     }
+
     pub fn log(&self, message: &str, x: impl AsRef<[Val]>) -> Result<()> {
         risc0_zirgen_dsl::codegen::default_log(message, x.as_ref())
     }
@@ -134,13 +140,14 @@ impl<'a> CpuExecContext<'a> {
     pub fn get_val_from_user(&self) -> Result<Val> {
         Ok(1u32.into())
     }
+
     #[allow(dead_code)]
     pub fn output_to_user(&self, _ov: Val) -> Result<()> {
         Ok(())
     }
 }
 
-impl<'a> keccak_circuit::CircuitHal<'a, CpuHal<CircuitField>> for CpuCircuitHal {
+impl keccak_circuit::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
     fn step_exec(
         &self,
         tot_cycles: usize,
@@ -185,8 +192,6 @@ impl<'a> keccak_circuit::CircuitHal<'a, CpuHal<CircuitField>> for CpuCircuitHal 
         let input = &RefCell::default();
         let input_elems = &RefCell::default();
 
-        let orig_accum = accum;
-
         let data = &data.as_slice_sync();
         let data = CycleRow { buf: data };
         let mix = mix.as_slice_sync();
@@ -194,7 +199,7 @@ impl<'a> keccak_circuit::CircuitHal<'a, CpuHal<CircuitField>> for CpuCircuitHal 
 
         for cycle in 0..tot_cycles {
             tracing::trace!("accum {cycle}/{tot_cycles}");
-            let accum = &orig_accum.as_slice_sync();
+            let accum = &accum.as_slice_sync();
             let accum = CycleRow { buf: accum };
             let exec_context = CpuExecContext {
                 mem,
@@ -210,7 +215,9 @@ impl<'a> keccak_circuit::CircuitHal<'a, CpuHal<CircuitField>> for CpuCircuitHal 
     }
 }
 
-impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
+pub struct ZkpCpuCircuitHal;
+
+impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for ZkpCpuCircuitHal {
     fn accumulate(
         &self,
         _preflight: &AccumPreflight,
@@ -225,38 +232,48 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
 
     fn eval_check(
         &self,
-        orig_check: &CpuBuffer<Val>,
+        check: &CpuBuffer<Val>,
         groups: &[&CpuBuffer<Val>],
         globals: &[&CpuBuffer<Val>],
         poly_mix: ExtVal,
         po2: usize,
         steps: usize,
     ) {
+        let check = check.as_slice();
+        let accum = groups[REGISTER_GROUP_ACCUM].as_slice();
+        let data = groups[REGISTER_GROUP_DATA].as_slice();
+        let mix = globals[GLOBAL_MIX].as_slice();
+        let out = globals[GLOBAL_OUT].as_slice();
+
+        tracing::debug!(
+            "check: {}, data: {}, accum: {}, mix: {} out: {}",
+            check.len(),
+            data.len(),
+            accum.len(),
+            mix.len(),
+            out.len()
+        );
+
         const EXP_PO2: usize = log2_ceil(INV_RATE);
         let domain = steps * INV_RATE;
-        let poly_mix_pows = map_pow(dbg!(poly_mix), crate::info::POLY_MIX_POWERS);
+        let poly_mix_pows = map_pow(poly_mix, crate::info::POLY_MIX_POWERS);
 
         // SAFETY: Convert a borrow of a cell into a raw const slice so that we can pass
         // it over the thread boundary. This should be safe because the scope of the
         // usage is within this function and each thread access will not overlap with
         // each other.
 
-        let data = groups[dbg!(REGISTER_GROUP_DATA)].as_slice();
         let data = unsafe { std::slice::from_raw_parts(data.as_ptr(), data.len()) };
-        let accum = groups[dbg!(REGISTER_GROUP_ACCUM)].as_slice();
         let accum = unsafe { std::slice::from_raw_parts(accum.as_ptr(), accum.len()) };
-        let mix = globals[GLOBAL_MIX].as_slice();
         let mix = unsafe { std::slice::from_raw_parts(mix.as_ptr(), mix.len()) };
-        let out = globals[GLOBAL_OUT].as_slice();
         let out = unsafe { std::slice::from_raw_parts(out.as_ptr(), out.len()) };
-        let check = orig_check.as_slice();
         let check = unsafe { std::slice::from_raw_parts(check.as_ptr(), check.len()) };
         let poly_mix_pows = poly_mix_pows.as_slice();
 
         let args: &[&[BabyBearElem]] = &[&accum, &data, &out, &mix];
 
         (0..domain).into_par_iter().for_each(|cycle| {
-            let tot = CircuitImpl.poly_fp(cycle, domain, poly_mix_pows, args);
+            let tot = CIRCUIT.poly_fp(cycle, domain, poly_mix_pows, args);
             let x = BabyBearElem::ROU_FWD[po2 + EXP_PO2].pow(cycle);
             // TODO: what is this magic number 3?
             let y = (BabyBearElem::new(3) * x).pow(1 << po2);
@@ -272,4 +289,11 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
             }
         });
     }
+}
+
+pub fn keccak_prover() -> Result<Box<dyn KeccakProver>> {
+    let hash_suite = Poseidon2HashSuite::new_suite();
+    let hal = Rc::new(CpuHal::new(hash_suite));
+    let circuit_hal = Rc::new(ZkpCpuCircuitHal);
+    Ok(Box::new(KeccakProverImpl { hal, circuit_hal }))
 }

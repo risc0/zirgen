@@ -54,4 +54,3 @@ fn build_cuda_kernels() {
         .include(env::var("DEP_SPPARK_ROOT").unwrap())
         .compile("risc0_keccak_cuda");
 }
-

@@ -77,12 +77,15 @@ macro_rules! zirgen_preamble {
                 mul: ExtVal::ONE,
             })
         }
+
         fn and_cond(x: MixState, cond: Val, inner: MixState) -> Result<MixState> {
             and_cond_generic::<CircuitField, Val>(x, cond, inner)
         }
+
         fn and_cond_ext(x: MixState, cond: ExtVal, inner: MixState) -> Result<MixState> {
             and_cond_generic::<CircuitField, ExtVal>(x, cond, inner)
         }
+
         fn alias_layout<Layout: PartialEq, B: BufferRow>(
             x: BoundLayout<Layout, B>,
             y: BoundLayout<Layout, B>,
@@ -96,7 +99,7 @@ macro_rules! zirgen_preamble {
 
         // Eventually we want to generate this trait based on what functions are available,
         // but for now we can hardcode it.
-        pub trait CircuitHal<'a, H: risc0_zkp::hal::Hal<Elem = Val>> {
+        pub trait CircuitHal<H: risc0_zkp::hal::Hal<Elem = Val>> {
             fn step_exec(
                 &self,
                 tot_cycles: usize,

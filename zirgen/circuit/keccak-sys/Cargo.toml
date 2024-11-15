@@ -10,6 +10,7 @@ version = "0.1.0"
 links = "risc0-circuit-keccak-sys"
 
 [dependencies]
+cust = { version = "0.3", optional = true }
 risc0-core = { workspace = true }
 risc0-sys = { workspace = true }
 sppark = { workspace = true, optional = true }
@@ -20,5 +21,5 @@ risc0-build-kernel = { workspace = true }
 
 [features]
 default = []
-cuda = ["dep:sppark", "risc0-sys/cuda"]
+cuda = ["dep:cust", "dep:sppark", "risc0-sys/cuda"]
 metal = []
