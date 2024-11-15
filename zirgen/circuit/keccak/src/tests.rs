@@ -34,9 +34,9 @@ impl KeccakCoprocessorCallback for Coprocessor {
     fn prove_keccak(&mut self, req: ProveKeccakRequest) -> Result<ProveKeccakResponse> {
         let input_u32s: &[u32] = bytemuck::cast_slice(req.input.as_slice());
         let input: VecDeque<u32> = Vec::from(input_u32s).into();
-        let prover = keccak_prover(input)?;
+        let prover = keccak_prover()?;
         let control_root: Digest = *crate::get_control_root(req.po2);
-        let seal = prover.prove(req.po2)?;
+        let seal = prover.prove(input, req.po2)?;
         let claim_digest: Digest = read_sha_halfs(&mut VecDeque::from_iter(
             bytemuck::checked::cast_slice::<_, BabyBearElem>(&seal[0..DIGEST_SHORTS])
                 .iter()

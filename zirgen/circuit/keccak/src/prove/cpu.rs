@@ -215,7 +215,9 @@ impl keccak_circuit::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
     }
 }
 
-impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
+pub struct ZkpCpuCircuitHal;
+
+impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for ZkpCpuCircuitHal {
     fn accumulate(
         &self,
         _preflight: &AccumPreflight,
@@ -289,9 +291,9 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
     }
 }
 
-pub fn keccak_prover(input: VecDeque<u32>) -> Result<Box<dyn KeccakProver>> {
+pub fn keccak_prover() -> Result<Box<dyn KeccakProver>> {
     let hash_suite = Poseidon2HashSuite::new_suite();
     let hal = Rc::new(CpuHal::new(hash_suite));
-    let circuit_hal = Rc::new(CpuCircuitHal::new(input));
+    let circuit_hal = Rc::new(ZkpCpuCircuitHal);
     Ok(Box::new(KeccakProverImpl { hal, circuit_hal }))
 }

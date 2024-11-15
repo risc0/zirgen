@@ -17,8 +17,8 @@ use test_log::test;
 use super::*;
 
 fn run_test(input: Vec<u32>, po2: usize) {
-    let prover = keccak_prover(input.into()).unwrap();
-    let seal = prover.prove(po2).unwrap();
+    let prover = keccak_prover().unwrap();
+    let seal = prover.prove(input.into(), po2).unwrap();
     prover.verify(&seal).expect("Verification failed");
 }
 

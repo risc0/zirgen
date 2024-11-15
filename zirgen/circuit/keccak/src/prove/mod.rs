@@ -32,13 +32,13 @@ use risc0_zkp::{
     adapter::{CircuitCoreDef, CircuitInfo, TapsProvider, PROOF_SYSTEM_INFO},
     core::{digest::Digest, hash::poseidon2::Poseidon2HashSuite},
     field::baby_bear::BabyBear,
-    hal::{Buffer, Hal},
+    hal::{cpu::CpuHal, Buffer, Hal},
     taps::TapSet,
 };
 
-use crate::CIRCUIT;
-
+use self::cpu::CpuCircuitHal;
 use super::{taps, CircuitImpl};
+use crate::CIRCUIT;
 
 risc0_zirgen_dsl::zirgen_inhibit_warnings! {
 
@@ -63,7 +63,7 @@ const GLOBAL_OUT: usize = 1;
 pub type Seal = Vec<u32>;
 
 pub trait KeccakProver {
-    fn prove(&self, po2: usize) -> Result<Seal>;
+    fn prove(&self, input: VecDeque<u32>, po2: usize) -> Result<Seal>;
 
     fn verify(&self, seal: &Seal) -> Result<()> {
         let hash_suite = Poseidon2HashSuite::new_suite();
@@ -80,14 +80,14 @@ pub trait KeccakProver {
     }
 }
 
-pub fn keccak_prover(input: VecDeque<u32>) -> Result<Box<dyn KeccakProver>> {
+pub fn keccak_prover() -> Result<Box<dyn KeccakProver>> {
     cfg_if! {
         if #[cfg(feature = "cuda")] {
-            self::cuda::keccak_prover(input)
+            self::cuda::keccak_prover()
         } else if #[cfg(any(all(target_os = "macos", target_arch = "aarch64"), target_os = "ios"))] {
-            self::metal::keccak_prover(input)
+            self::metal::keccak_prover()
         } else {
-            self::cpu::keccak_prover(input)
+            self::cpu::keccak_prover()
         }
     }
 }
@@ -95,7 +95,7 @@ pub fn keccak_prover(input: VecDeque<u32>) -> Result<Box<dyn KeccakProver>> {
 pub(crate) struct KeccakProverImpl<H, C>
 where
     H: Hal<Field = CircuitField, Elem = Val, ExtElem = ExtVal>,
-    C: CircuitHal<H> + risc0_zkp::hal::CircuitHal<H>,
+    C: risc0_zkp::hal::CircuitHal<H>,
 {
     hal: Rc<H>,
     circuit_hal: Rc<C>,
@@ -104,35 +104,37 @@ where
 impl<H, C> KeccakProver for KeccakProverImpl<H, C>
 where
     H: Hal<Field = CircuitField, Elem = Val, ExtElem = ExtVal>,
-    C: CircuitHal<H> + risc0_zkp::hal::CircuitHal<H>,
+    C: risc0_zkp::hal::CircuitHal<H>,
 {
-    fn prove(&self, po2: usize) -> Result<Seal> {
+    fn prove(&self, input: VecDeque<u32>, po2: usize) -> Result<Seal> {
         let tot_cycles: usize = 1 << po2;
+
+        let cpu_hal = CpuHal::new(self.hal.get_hash_suite().clone());
+        let cpu_circuit_hal = CpuCircuitHal::new(input);
 
         let alloc_elem = |name, size| {
             if cfg!(debug_assertions) {
-                self.hal
-                    .copy_from_elem(name, vec![H::Elem::INVALID; size].as_slice())
+                cpu_hal.copy_from_elem(name, vec![H::Elem::INVALID; size].as_slice())
             } else {
-                self.hal.alloc_elem(name, size)
+                cpu_hal.alloc_elem(name, size)
             }
         };
-        let data = alloc_elem("data", keccak_circuit::REGCOUNT_DATA * tot_cycles);
-        let code = alloc_elem("code", keccak_circuit::REGCOUNT_CODE * tot_cycles);
-        let global = alloc_elem("global", keccak_circuit::REGCOUNT_GLOBAL);
-        let accum = alloc_elem("accum", keccak_circuit::REGCOUNT_ACCUM * tot_cycles);
+        let cpu_data = alloc_elem("data", keccak_circuit::REGCOUNT_DATA * tot_cycles);
+        let cpu_code = alloc_elem("code", keccak_circuit::REGCOUNT_CODE * tot_cycles);
+        let cpu_global = alloc_elem("global", keccak_circuit::REGCOUNT_GLOBAL);
+        let cpu_accum = alloc_elem("accum", keccak_circuit::REGCOUNT_ACCUM * tot_cycles);
 
-        self.circuit_hal.step_exec(tot_cycles, &data, &global)?;
+        cpu_circuit_hal.step_exec(tot_cycles, &cpu_data, &cpu_global)?;
 
-        clear_invalid(&data);
-        clear_invalid(&global);
-        clear_invalid(&code);
+        clear_invalid(&cpu_data);
+        clear_invalid(&cpu_global);
+        clear_invalid(&cpu_code);
 
         let mut prover = risc0_zkp::prove::Prover::new(self.hal.as_ref(), &*crate::taps::TAPSET);
 
         // At the start of the protocol, seed the Fiat-Shamir transcript with context information
         // about the proof system and circuit.
-        let hashfn = Rc::clone(&self.hal.get_hash_suite().hashfn);
+        let hashfn = &self.hal.get_hash_suite().hashfn;
         prover
             .iop()
             .commit(&hashfn.hash_elem_slice(&PROOF_SYSTEM_INFO.encode()));
@@ -142,7 +144,7 @@ where
         prover.set_po2(po2);
 
         // Concat io (i.e. globals) and po2 into a vector.
-        global.view(|out_slice| {
+        cpu_global.view(|out_slice| {
             let vec: Vec<_> = out_slice
                 .iter()
                 .chain(Elem::from_u32_slice(&[po2 as u32]))
@@ -155,17 +157,24 @@ where
             prover.iop().write_field_elem_slice(vec.as_slice());
         });
 
-        prover.commit_group(keccak_circuit::REGISTER_GROUP_CODE, &code);
-        prover.commit_group(keccak_circuit::REGISTER_GROUP_DATA, &data);
+        let hal_code = self.hal.copy_from_elem("code", &cpu_code.as_slice());
+        let hal_data = self.hal.copy_from_elem("data", &cpu_data.as_slice());
+
+        prover.commit_group(keccak_circuit::REGISTER_GROUP_CODE, &hal_code);
+        prover.commit_group(keccak_circuit::REGISTER_GROUP_DATA, &hal_data);
 
         let mix: [Val; keccak_circuit::REGCOUNT_MIX] =
             std::array::from_fn(|_| prover.iop().random_elem());
-        let mix = self.hal.copy_from_elem("mix", mix.as_slice());
-        self.circuit_hal
-            .step_accum(tot_cycles, &accum, &data, &mix)?;
-        clear_invalid(&accum);
-        prover.commit_group(keccak_circuit::REGISTER_GROUP_ACCUM, &accum);
-        let seal = prover.finalize(&[&mix, &global], self.circuit_hal.as_ref());
+        let cpu_mix = cpu_hal.copy_from_elem("mix", mix.as_slice());
+        cpu_circuit_hal.step_accum(tot_cycles, &cpu_accum, &cpu_data, &cpu_mix)?;
+        clear_invalid(&cpu_accum);
+
+        let hal_accum = self.hal.copy_from_elem("accum", &cpu_accum.as_slice());
+        prover.commit_group(keccak_circuit::REGISTER_GROUP_ACCUM, &hal_accum);
+
+        let hal_mix = self.hal.copy_from_elem("mix", &cpu_mix.as_slice());
+        let hal_global = self.hal.copy_from_elem("global", &cpu_global.as_slice());
+        let seal = prover.finalize(&[&hal_mix, &hal_global], self.circuit_hal.as_ref());
 
         Ok(seal)
     }

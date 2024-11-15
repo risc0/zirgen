@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::{cell::RefCell, collections::VecDeque, rc::Rc};
+use std::rc::Rc;
 
 use anyhow::Result;
 use risc0_circuit_keccak_sys::ffi::risc0_circuit_keccak_cuda_eval_check;
@@ -24,7 +24,6 @@ use risc0_core::{
     scope,
 };
 use risc0_sys::ffi_wrap;
-use risc0_zirgen_dsl::{CycleRow, GlobalRow};
 use risc0_zkp::{
     core::log2_ceil,
     field::ExtElem as _,
@@ -41,10 +40,7 @@ use risc0_zkp::{
 use crate::{
     info::{NUM_POLY_MIX_POWERS, POLY_MIX_POWERS},
     prove::{
-        cpu::CpuExecContext,
-        keccak_circuit::{
-            self, Val, REGISTER_GROUP_ACCUM, REGISTER_GROUP_CODE, REGISTER_GROUP_DATA,
-        },
+        keccak_circuit::{REGISTER_GROUP_ACCUM, REGISTER_GROUP_CODE, REGISTER_GROUP_DATA},
         KeccakProver, KeccakProverImpl, GLOBAL_MIX, GLOBAL_OUT,
     },
 };
@@ -131,54 +127,10 @@ impl<CH: CudaHash> CircuitHal<CudaHal<CH>> for CudaCircuitHal<CH> {
     }
 }
 
-impl<CH: CudaHash> keccak_circuit::CircuitHal<CudaHal<CH>> for CudaCircuitHal<CH> {
-    fn step_exec(
-        &self,
-        tot_cycles: usize,
-        data: &CudaBuffer<BabyBearElem>,
-        global: &CudaBuffer<BabyBearElem>,
-    ) -> Result<()> {
-        let elems_per_word = &RefCell::new(0);
-        let input_elems: &RefCell<VecDeque<Val>> = &RefCell::new(Default::default());
-
-        // let data = &data.as_slice_sync();
-        let data = CycleRow { buf: data };
-        // let global = global.as_slice_sync();
-        let global = GlobalRow { buf: &global };
-
-        for cycle in 0..tot_cycles {
-            tracing::trace!("exec {cycle}/{tot_cycles}");
-            let exec_context = CpuExecContext {
-                mem: &self.mem,
-                cycle,
-                tot_cycles,
-                elems_per_word,
-                input: &self.input,
-                input_elems,
-            };
-
-            keccak_circuit::step_top(&exec_context, &data, &global)?;
-        }
-        tracing::trace!("exec complete");
-
-        Ok(())
-    }
-
-    fn step_accum(
-        &self,
-        tot_cycles: usize,
-        accum: &CudaBuffer<BabyBearElem>,
-        data: &CudaBuffer<BabyBearElem>,
-        global: &CudaBuffer<BabyBearElem>,
-    ) -> Result<()> {
-        todo!()
-    }
-}
-
 pub type CudaCircuitHalSha256 = CudaCircuitHal<CudaHashSha256>;
 pub type CudaCircuitHalPoseidon2 = CudaCircuitHal<CudaHashPoseidon2>;
 
-pub fn keccak_prover(input: VecDeque<u32>) -> Result<Box<dyn KeccakProver>> {
+pub fn keccak_prover() -> Result<Box<dyn KeccakProver>> {
     let hal = Rc::new(CudaHalPoseidon2::new());
     let circuit_hal = Rc::new(CudaCircuitHalPoseidon2::new(hal.clone()));
     Ok(Box::new(KeccakProverImpl { hal, circuit_hal }))
@@ -195,13 +147,13 @@ mod tests {
     };
     use test_log::test;
 
-    use crate::prove::cpu::CpuCircuitHal;
+    use crate::prove::cpu::ZkpCpuCircuitHal;
 
     #[test]
     fn eval_check() {
         const PO2: usize = 4;
         let cpu_hal: CpuHal<BabyBear> = CpuHal::new(Sha256HashSuite::new_suite());
-        let cpu_eval = CpuCircuitHal::default();
+        let cpu_eval = ZkpCpuCircuitHal;
         let gpu_hal = Rc::new(CudaHalSha256::new());
         let gpu_eval = super::CudaCircuitHal::new(gpu_hal.clone());
         crate::prove::testutil::eval_check(&cpu_hal, cpu_eval, gpu_hal.as_ref(), gpu_eval, PO2);
