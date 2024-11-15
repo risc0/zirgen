@@ -30,6 +30,7 @@ ZKRS = [
     "join",
     "resolve",
     "identity",
+    "union",
 ]
 
 build_circuit(
