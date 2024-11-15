@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::{cell::RefCell, collections::VecDeque};
+use std::{cell::RefCell, collections::VecDeque, rc::Rc};
 
 use anyhow::{anyhow, Result};
 use keccak_circuit::{CircuitField, ExtVal, Val, REGISTER_GROUP_ACCUM, REGISTER_GROUP_DATA};
@@ -20,9 +20,11 @@ use rayon::{iter::IntoParallelIterator, prelude::*};
 use risc0_zirgen_dsl::{CycleContext, CycleRow, GlobalRow};
 use risc0_zkp::{
     adapter::PolyFp,
-    core::log2_ceil,
-    field::baby_bear::{BabyBearElem, BabyBearExtElem},
-    field::{map_pow, Elem, ExtElem, RootsOfUnity},
+    core::{hash::poseidon2::Poseidon2HashSuite, log2_ceil},
+    field::{
+        baby_bear::{BabyBearElem, BabyBearExtElem},
+        map_pow, Elem, ExtElem, RootsOfUnity,
+    },
     hal::{
         cpu::{CpuBuffer, CpuHal},
         AccumPreflight,
@@ -30,7 +32,7 @@ use risc0_zkp::{
     INV_RATE,
 };
 
-use super::keccak_circuit;
+use super::{keccak_circuit, KeccakProver, KeccakProverImpl};
 use crate::{
     prove::{GLOBAL_MIX, GLOBAL_OUT},
     CIRCUIT,
@@ -65,6 +67,7 @@ impl<'a> CycleContext for CpuExecContext<'a> {
     fn cycle(&self) -> usize {
         self.cycle
     }
+
     fn tot_cycles(&self) -> usize {
         self.tot_cycles
     }
@@ -109,6 +112,7 @@ impl<'a> CpuExecContext<'a> {
         *stored = elems_per_word;
         Ok(())
     }
+
     pub fn read_input(&self) -> Result<Val> {
         let mut elems = self.input_elems.borrow_mut();
         if elems.is_empty() {
@@ -126,6 +130,7 @@ impl<'a> CpuExecContext<'a> {
         tracing::trace!("Read returns {val:?}");
         Ok(val)
     }
+
     pub fn log(&self, message: &str, x: impl AsRef<[Val]>) -> Result<()> {
         risc0_zirgen_dsl::codegen::default_log(message, x.as_ref())
     }
@@ -135,13 +140,14 @@ impl<'a> CpuExecContext<'a> {
     pub fn get_val_from_user(&self) -> Result<Val> {
         Ok(1u32.into())
     }
+
     #[allow(dead_code)]
     pub fn output_to_user(&self, _ov: Val) -> Result<()> {
         Ok(())
     }
 }
 
-impl<'a> keccak_circuit::CircuitHal<'a, CpuHal<CircuitField>> for CpuCircuitHal {
+impl keccak_circuit::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
     fn step_exec(
         &self,
         tot_cycles: usize,
@@ -281,4 +287,11 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
             }
         });
     }
+}
+
+pub fn keccak_prover(input: VecDeque<u32>) -> Result<Box<dyn KeccakProver>> {
+    let hash_suite = Poseidon2HashSuite::new_suite();
+    let hal = Rc::new(CpuHal::new(hash_suite));
+    let circuit_hal = Rc::new(CpuCircuitHal::new(input));
+    Ok(Box::new(KeccakProverImpl { hal, circuit_hal }))
 }

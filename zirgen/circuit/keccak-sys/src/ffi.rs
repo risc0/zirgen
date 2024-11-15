@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#[cfg(feature = "cuda")]
+use cust::memory::DevicePointer;
+
 use risc0_core::field::baby_bear::{BabyBearElem, BabyBearExtElem};
 
 extern "C" {
@@ -21,4 +24,20 @@ extern "C" {
         poly_mixs: *const BabyBearExtElem,
         args_ptr: *const *const BabyBearElem,
     ) -> BabyBearExtElem;
+}
+
+#[cfg(feature = "cuda")]
+extern "C" {
+    pub fn risc0_circuit_keccak_cuda_eval_check(
+        check: DevicePointer<u8>,
+        ctrl: DevicePointer<u8>,
+        data: DevicePointer<u8>,
+        accum: DevicePointer<u8>,
+        mix: DevicePointer<u8>,
+        out: DevicePointer<u8>,
+        rou: *const BabyBearElem,
+        po2: u32,
+        domain: u32,
+        poly_mix_pows: *const u32,
+    ) -> *const std::os::raw::c_char;
 }

@@ -32,8 +32,8 @@ zip = { version = "2.0", default-features = false, features = ["deflate"] }
 
 [target.'cfg(not(target_os = "zkvm"))'.dependencies]
 bytemuck = "1.12"
+cfg-if = { version = "1.0", optional = true }
 rand = { version = "0.8" }
-cust = { version = "0.3", optional = true }
 risc0-circuit-keccak-sys = { workspace = true, optional = true }
 risc0-circuit-recursion = { workspace = true, default-features = false }
 risc0-sys = { workspace = true, optional = true }
@@ -49,23 +49,23 @@ risc0-circuit-keccak-test-methods = { path = "methods" }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 [features]
-default = ["prove"]
+# Enables CUDA GPU support
+cuda = [
+  "prove",
+  "risc0-circuit-keccak-sys/cuda",
+  "risc0-sys/cuda",
+  "risc0-zkp/cuda",
+]
+default = ["prove", "cuda"]
 # Omits control_ids.rs, and instead uses all zeros for control ids.
 # This is needed for the 'make_control_ids' binary to compile to
 # generate control ids fot lift predicates.
 make_control_ids = ["risc0-zkvm/prove", "risc0-circuit-recursion/prove"]
 # Enables ZKR registration to actually generate proofs.
 prove = [
-  "risc0-zkvm/prove",
-  "risc0-circuit-recursion/prove",
+  "dep:cfg-if",
   "dep:risc0-circuit-keccak-sys",
   "dep:risc0-zirgen-dsl",
-]
-# Enables CUDA GPU support
-cuda = [
-  "dep:cust",
-  "prove",
-  "risc0-circuit-keccak-sys/cuda",
-  "risc0-sys/cuda",
-  "risc0-zkp/cuda",
+  "risc0-zkvm/prove",
+  "risc0-circuit-recursion/prove",
 ]
