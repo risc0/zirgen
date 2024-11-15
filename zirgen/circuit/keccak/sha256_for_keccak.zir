@@ -346,6 +346,10 @@ component sha256init<I: Val>(rvprev01: RetTuple,
              0, S2MAJOR_LOAD(), 0, 0, rvprev01.midx, auxr))
 }
 
+component ShaOutput(vals: Array<Val, 16>) {
+  vals := for v : vals { Reg(v) };
+}
+
 component sha256fini<I: Val>(rvals: RetTuple,
                              auxr: Array<NondetReg, AUXLEN()>) {
   rvprev01 := rvals@1;
@@ -369,17 +373,16 @@ component sha256fini<I: Val>(rvals: RetTuple,
   prod := Reg(moreInput*invMoreInput);
   moreInput*(1-prod) = 0;
   d_suffix := [prod, Reg(rvprev01.arr_d[22]), Reg(rvprev01.arr_d[23])];
+  d := Concatenate<21,3>(dummyS(), d_suffix);
   zb := ConcatElem<SLEN()>(dummyS(), invMoreInput);
   [1-Z, Z] -> (
-    RetTuple(pada, zb, padc,
-             Concatenate<21,3>(dummyS(), d_suffix),
-             stae.e, stae.f, S2MINOR_SKIP()+I, S2MAJOR_SETUP(),
+    RetTuple(pada, zb, padc, d, stae.e, stae.f,
+             S2MINOR_SKIP()+I, S2MAJOR_SETUP(),
              rvprev01.rnd, rvprev01.blk, rvprev01.midx, auxr),
     { 
       [prod, 1-prod] -> (
-        RetTuple(pada, zb, padc,
-                 Concatenate<21,3>(dummyS(), d_suffix),
-                 stae.e, stae.f, 0, S2MAJOR_LOAD(),
+        RetTuple(pada, zb, padc, d, stae.e, stae.f,
+                 0, S2MAJOR_LOAD(),
                  rvprev01.rnd, rvprev01.blk, rvprev01.midx, auxr),
         { fa := pack2(new_a);
           fb := pack2(s2a(rvprev01));
@@ -389,15 +392,18 @@ component sha256fini<I: Val>(rvals: RetTuple,
           ff := pack2(s2e(rvprev01));
           fg := pack2(s2e(rvprev02));
           fh := pack2(s2e(rvprev03));
-          tmpres := [Reg(fa.high),Reg(fa.low),Reg(fb.high),Reg(fb.low),
-                     Reg(fc.high),Reg(fc.low),Reg(fd.high),Reg(fd.low),
-                     Reg(fe.high),Reg(fe.low),Reg(ff.high),Reg(ff.low),
-                     Reg(fg.high),Reg(fg.low),Reg(fh.high),Reg(fh.low),
-                     NondetReg(0),NondetReg(0),NondetReg(0),
-                     NondetReg(0),NondetReg(0)];
-          result := Concatenate<21,3>(tmpres, d_suffix);
-          RetTuple(pada, zb, padc, result, stae.e, stae.f,
+          res := [fa.high, fa.low, fb.high, fb.low,
+                  fc.high, fc.low, fd.high, fd.low,
+                  fe.high, fe.low, ff.high, ff.low,
+                  fg.high, fg.low, fh.high, fh.low];
+          Log("sha256output: %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x",
+            res[0],  res[1],  res[2],  res[3],
+            res[4],  res[5],  res[6],  res[7],
+            res[8],  res[9],  res[10], res[11],
+            res[12], res[13], res[14], res[15]);
+          global output := ShaOutput(res);
+          RetTuple(pada, zb, padc, d, stae.e, stae.f,
                    S2MINOR_SKIP()+S2MINOR_OUTPUT(), S2MAJOR_SETUP(),
-                   0, 0, rvprev01.midx, auxr)
+                   0, 0, 0, auxr)
         })})
 }

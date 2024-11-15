@@ -1676,10 +1676,6 @@ component mem_padding_sha256(rvprev01: RetTuple,
              rvprev01.rnd, nskip-1, memidx, auxr))
 }
 
-component ShaOutput(vals: Array<Val, 16>) {
-  vals := for v : vals { Reg(v) };
-}
-
 component sha256setup_major(rvals: RetTuple) {
   m := rvals@1.minor;
   minor_onehot := OneHotU<10>(m);
@@ -1694,24 +1690,9 @@ component sha256setup_major(rvals: RetTuple) {
     sha256fini<6>(rvals@0, aux_regs),
     sha256fini<7>(rvals@0, aux_regs),
     sha256fini<8>(rvals@0, aux_regs),
-    { rvp01 := rvals@1;
-      global output := ShaOutput(for i : 0..16 { rvp01.arr_d[i] } );
-      Log("sha256output: %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x %x,%x",
-        rvp01.arr_d[0], rvp01.arr_d[1], rvp01.arr_d[2], rvp01.arr_d[3],
-        rvp01.arr_d[4], rvp01.arr_d[5],  rvp01.arr_d[6],  rvp01.arr_d[7],
-        rvp01.arr_d[8], rvp01.arr_d[9],  rvp01.arr_d[10], rvp01.arr_d[11],
-        rvp01.arr_d[12], rvp01.arr_d[13], rvp01.arr_d[14], rvp01.arr_d[15]);
-      d := [Reg(rvp01.arr_d[ 0]),Reg(rvp01.arr_d[ 1]),Reg(rvp01.arr_d[ 2]),
-            Reg(rvp01.arr_d[ 3]),Reg(rvp01.arr_d[ 4]),Reg(rvp01.arr_d[ 5]),
-            Reg(rvp01.arr_d[ 6]),Reg(rvp01.arr_d[ 7]),Reg(rvp01.arr_d[ 8]),
-            Reg(rvp01.arr_d[ 9]),Reg(rvp01.arr_d[10]),Reg(rvp01.arr_d[11]),
-            Reg(rvp01.arr_d[12]),Reg(rvp01.arr_d[13]),Reg(rvp01.arr_d[14]),
-            Reg(rvp01.arr_d[15]),NondetReg(0),NondetReg(0),NondetReg(0),
-            NondetReg(0),NondetReg(0),NondetReg(0),NondetReg(0),NondetReg(0)];
-      RetTuple(dummyB(), dummyB(), dummyB(), d, dummyB(), dummyB(),
-               S2MINOR_SKIP()+S2MINOR_OUTPUT(), S2MAJOR_SETUP(),
-               0, 0, 0, aux_regs)
-    }
+    RetTuple(dummyB(), dummyB(), dummyB(), dummyE(), dummyB(), dummyB(),
+             S2MINOR_SKIP()+S2MINOR_OUTPUT(), S2MAJOR_SETUP(),
+             0, 0, 0, aux_regs)
   );
   for i : 0..SLEN() { 0 = r.arr_a[i] * (1-r.arr_a[i]); };
   for i : 0..SLEN() { 0 = r.arr_b[i] * (1-r.arr_b[i]); };
@@ -1798,47 +1779,3 @@ component Top() {
   for i : 0..BLEN() { 0 = retvals.arr_f[i] * (1-retvals.arr_f[i]); };
   for i : 0..AUXBIN() { 0 = retvals.auxr[i] * (1-retvals.auxr[i]); };
 }
-
-test TestKeccak01 { // test_cycles >= 2974
-  x := Top();
-  end := NondetReg(Isz(16-x.retvals.major) * Isz(13-x.retvals.minor));
-  end * (x.retvals.arr_d[ 0] - 0xb395) = 0;
-  end * (x.retvals.arr_d[ 1] - 0x7463) = 0;
-  end * (x.retvals.arr_d[ 2] - 0x8e98) = 0;
-  end * (x.retvals.arr_d[ 3] - 0x0a6e) = 0;
-  end * (x.retvals.arr_d[ 4] - 0x7cec) = 0;
-  end * (x.retvals.arr_d[ 5] - 0x17b3) = 0;
-  end * (x.retvals.arr_d[ 6] - 0xfd54) = 0;
-  end * (x.retvals.arr_d[ 7] - 0x4748) = 0;
-  end * (x.retvals.arr_d[ 8] - 0x09b0) = 0;
-  end * (x.retvals.arr_d[ 9] - 0x9293) = 0;
-  end * (x.retvals.arr_d[10] - 0xfcda) = 0;
-  end * (x.retvals.arr_d[11] - 0x5947) = 0;
-  end * (x.retvals.arr_d[12] - 0x573f) = 0;
-  end * (x.retvals.arr_d[13] - 0x6678) = 0;
-  end * (x.retvals.arr_d[14] - 0x268a) = 0;
-  end * (x.retvals.arr_d[15] - 0x23c7) = 0;
-}
-
-/*
-test TestKeccak02 { // test_cycles >= 22776
-  x := Top();
-  end := NondetReg(Isz(16-x.retvals.major) * Isz(13-x.retvals.minor));
-  end * (x.retvals.arr_d[ 0] - 0x420e) = 0;
-  end * (x.retvals.arr_d[ 1] - 0x6b2c) = 0;
-  end * (x.retvals.arr_d[ 2] - 0xc4cd) = 0;
-  end * (x.retvals.arr_d[ 3] - 0x396e) = 0;
-  end * (x.retvals.arr_d[ 4] - 0xcf6b) = 0;
-  end * (x.retvals.arr_d[ 5] - 0x7e4c) = 0;
-  end * (x.retvals.arr_d[ 6] - 0x8b4c) = 0;
-  end * (x.retvals.arr_d[ 7] - 0x1c1e) = 0;
-  end * (x.retvals.arr_d[ 8] - 0x88c3) = 0;
-  end * (x.retvals.arr_d[ 9] - 0x5895) = 0;
-  end * (x.retvals.arr_d[10] - 0x34b5) = 0;
-  end * (x.retvals.arr_d[11] - 0x81fd) = 0;
-  end * (x.retvals.arr_d[12] - 0x1337) = 0;
-  end * (x.retvals.arr_d[13] - 0x93a6) = 0;
-  end * (x.retvals.arr_d[14] - 0xe530) = 0;
-  end * (x.retvals.arr_d[15] - 0x06f1) = 0;
-}
-*/
