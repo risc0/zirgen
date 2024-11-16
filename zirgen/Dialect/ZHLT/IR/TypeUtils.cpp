@@ -39,6 +39,8 @@ std::string mangledTypeName(StringRef componentName, llvm::ArrayRef<Attribute> t
         stream << strAttr.getValue();
       } else if (auto intAttr = typeArg.dyn_cast<PolynomialAttr>()) {
         stream << intAttr[0];
+      } else if (auto intAttr = typeArg.dyn_cast<IntegerAttr>()) {
+        stream << intAttr;
       } else {
         llvm::errs() << "Mangling type " << typeArg << " not implemented\n";
         assert(false && "not implemented");
