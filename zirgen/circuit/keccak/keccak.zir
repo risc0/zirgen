@@ -245,13 +245,18 @@ component xor5words_result<Sidx: Val>(rvpst: RetTuple) {
   unpack_e := ToBitsU<CURRLEN>(val_e);
   FromBits<CURRLEN>(unpack_e) = val_e;
 
-  xor_abc := for i : 0..CURRLEN {
-    Reg(xor3(unpack_a[i], unpack_b[i], unpack_c[i])) };
+  sum := for i : 0..CURRLEN {
+    unpack_a[i] + unpack_b[i] +
+    unpack_c[i] + unpack_d[i] + unpack_e[i] };
 
-  xor_abcde := for i : 0..CURRLEN {
-    xor3(xor_abc[i], unpack_d[i], unpack_e[i]) };
+  resbits := for i : 0..CURRLEN { NondetReg(1 & sum[i]) };
 
-  FromBits<CURRLEN>(xor_abcde)
+  for i : 0 .. CURRLEN {
+    diff := sum[i] - resbits[i];
+    0 = diff * (diff-2) * (diff-4); 
+  };
+
+  FromBits<CURRLEN>(resbits)
 }
 
 component xor5words_minor0(rvprev: RetTuple) {
@@ -259,7 +264,7 @@ component xor5words_minor0(rvprev: RetTuple) {
   result := Reg(r);
   withr_d := Concatenate<BLEN(),2>(r.unpack_d, [result, NondetReg(0)]);
   aux_regs := ConcatZeros<5,AUXLEN()-5>(r.minor_onehot);
-  RetTuple(r.unpack_a, r.unpack_b, r.unpack_c, withr_d, r.unpack_e, r.xor_abc,
+  RetTuple(r.unpack_a, r.unpack_b, r.unpack_c, withr_d, r.unpack_e, r.resbits,
            rvprev.minor, 1, rvprev.rnd, rvprev.blk, rvprev.midx, aux_regs)
 }
 
@@ -273,7 +278,7 @@ component xor5words_minor1(rvals: RetTuple) {
   zc := ConcatZeros<SLEN(),BLEN()-SLEN()>(r.unpack_c);
   zd := ConcatZeros<SLEN(),RLEN()-SLEN()>(r.unpack_d);
   ze := ConcatZeros<SLEN(),BLEN()-SLEN()>(r.unpack_e);
-  zx := ConcatZeros<SLEN(),BLEN()-SLEN()>(r.xor_abc);
+  zx := ConcatZeros<SLEN(),BLEN()-SLEN()>(r.resbits);
   aux_regs := ConcatZeros<5,AUXLEN()-5>(r.minor_onehot);
   RetTuple(withr_a, withr_b, zc, zd, ze, zx,
            rvp01.minor, 2, rvp01.rnd, rvp01.blk, rvp01.midx, aux_regs)
@@ -289,7 +294,7 @@ component xor5words_minor2(rvals: RetTuple) {
   withr_c := ConcatElem<SLEN()>(r.unpack_c, result);
   zd := ConcatZeros<SLEN(),RLEN()-SLEN()>(r.unpack_d);
   ze := ConcatZeros<SLEN(),BLEN()-SLEN()>(r.unpack_e);
-  zx := ConcatZeros<SLEN(),BLEN()-SLEN()>(r.xor_abc);
+  zx := ConcatZeros<SLEN(),BLEN()-SLEN()>(r.resbits);
   aux_regs := ConcatZeros<5,AUXLEN()-5>(r.minor_onehot);
   RetTuple(withr_a, withr_b, withr_c, zd, ze, zx,
            rvp01.minor, 3, rvp01.rnd, rvp01.blk, rvp01.midx, aux_regs)
