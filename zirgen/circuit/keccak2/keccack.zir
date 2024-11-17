@@ -141,7 +141,7 @@ component Iota(a: Array<Array<Array<Val, 64>, 5>, 5>, round: Val) {
   for i : 0..5 {
     for j : 0..5 {
       if (Isz(i) * Isz(j)) {
-        for k: 0..64 { Xor(iotaArray[k], Reg(a[i][j][k])) }
+        for k: 0..64 { Xor(iotaArray[k], a[i][j][k]) }
       } else {
         a[i][j]
       }
@@ -149,24 +149,85 @@ component Iota(a: Array<Array<Array<Val, 64>, 5>, 5>, round: Val) {
   }
 }
 
-component Registerize(a: Array<Array<Array<Val, 64>, 5>, 5>) {
+// Convert state to 50 * 32 bits (so it's compatible with SHA2)
+component FlattenKeccack(a: Array<Array<Array<Val, 64>, 5>, 5>) {
+  // Hmm, we probably should add mod/tdiv
+  // Some very annoying work for some simple index mechanics
+  xi := [0,0,0,0,0,1,1,1,1,1,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4];
+  xj := [0,1,2,3,4,0,1,2,3,4,0,1,2,3,4,0,1,2,3,4,0,1,2,3,4];
+  for ijkh : 0..50 {
+    kh := ijkh & 1;
+    ij := (ijkh - kh) * 1006632961; // (1/2)
+    i := xi[ij];
+    j := xj[ij];
+    for kl : 0..32 {
+      a[i][j][kh * 32 + kl]
+    }
+  }
+}
+
+// Convert back to 5x5x64
+component ExpandKeccack(a: Array<Array<Val, 32>, 50>) {
   for i : 0..5 {
     for j : 0..5 {
       for k : 0..64 {
-        Reg(a[i][j][k])
+        kl := k & 31;
+        kh := (k - kl) * 1950351361; // (1/32)
+        a[i*10 + j*2 + kh][kl]
       }
     }
   }
 }
 
+component TopState(a: Array<Array<Val, 32>, 50>) {
+  // TODO: Add other state elements (i.e. current mode, etc)
+  words := for i : 0..50 {
+    for j : 0..32 {
+      Reg(a[i][j])
+    }
+  };
+}
 
-component TestDoRound(a: Array<Array<Array<Val, 64>, 5>, 5>, round: Val) {
-  a := Registerize(Pi(Rho(Theta(a))));
-  Registerize(Iota(Chi(a), round))
+component SaveKeccack(a: Array<Array<Array<Val, 64>, 5>, 5>) {
+  TopState(FlattenKeccack(a))
+}
+
+component LoadKeccack(a: TopState) {
+  ExpandKeccack(a.words)
+}
+
+test FlattenExpand {
+  LoadKeccack(SaveKeccack(for i : 0..5 { for j : 0..5 { for k : 0..64 { 0 }}}))
+}
+
+component TestDoRound(a: TopState, round: Val) {
+  a := SaveKeccack(Pi(Rho(Theta(LoadKeccack(a)))));
+  SaveKeccack(Iota(Chi(LoadKeccack(a)), round))
 }
 
 component TestPermute(a: Array<Array<Array<Val, 64>, 5>, 5>) {
-  reduce 0..4 init a with TestDoRound
+  LoadKeccack(reduce 0..4 init SaveKeccack(a) with TestDoRound)
+}
+
+extern GetCycleType(): Val;
+extern GetRound(): Val;
+
+component Top() {
+  cycleType := NondetReg(GetCycleType());
+  round := NondetReg(GetRound());
+  cycleMux := OneHot<4>(cycleType);
+  curState: TopState;
+  curState := cycleMux -> (
+    SaveKeccack(for i : 0..5 { for j : 0..5 { for k : 0..64 { 0 } } }),
+    SaveKeccack(Pi(Rho(Theta(LoadKeccack(curState@1))))),
+    SaveKeccack(Iota(Chi(LoadKeccack(curState@1)), round)),
+    // TODO: Intesting compiler bug here: If all the branches are
+    // SaveKeecack, then nearest supertype of Mux is also SaveKeccack, which
+    // is not type identical to TopState, so we need to add a TopState in.
+    // If we actually had a SHA example, this wouldn't be required, as the
+    // nearest common super would automatically be TopState
+    TopState(for i : 0..50 { for j : 0..32 { 0 } })
+  );
 }
   
 component Po2(n: Val) {
@@ -185,7 +246,7 @@ component ExpandWord(in: Array<Val, 4>) {
   for n : 0..64 {
     j := n & 15;
     i := (n - j) * 1887436801;  // THis constant is 1/16: TODO fix compiler divide
-    NondetBitReg((in[i] & Po2(j)) / Po2(j))
+    (in[i] & Po2(j)) / Po2(j)
   }
 }
 
@@ -257,7 +318,7 @@ test TestIota {
 */
 
 test Permute {
-  input := ExpandState(for i : 0..5 { for j : 0..5 { [ 0, 0, 0, 0] } });
+  input := for i : 0..5 { for j : 0..5 { for k : 0..64 { 0 } } };
   output := TestPermute(input);
   PrintState(output);
 }
@@ -320,9 +381,5 @@ test Xor5 {
   Xor5([1, 1, 1, 0, 1]) = 0;
   Xor5([1, 1, 1, 1, 0]) = 0;
   Xor5([1, 1, 1, 1, 1]) = 1;
-}
-
-test HelloWorld {
-  Log("Hello")
 }
 */
