@@ -6,8 +6,6 @@
 .DS_Store
 .idea/
 bazel-*
-Cargo.lock
-!**/methods/**/Cargo.lock
 dist/
 rust-project.json
 target/
