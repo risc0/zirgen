@@ -139,6 +139,9 @@ where
         );
 
         cpu_circuit_hal.step_exec(tot_cycles, &cpu_data, &cpu_global)?;
+        scope!("zeroize(code)", cpu_hal.eltwise_zeroize_elem(&cpu_code));
+        scope!("zeroize(data)", cpu_hal.eltwise_zeroize_elem(&cpu_data));
+        scope!("zeroize(global)", cpu_hal.eltwise_zeroize_elem(&cpu_global));
 
         let mut prover = risc0_zkp::prove::Prover::new(self.hal.as_ref(), &*crate::taps::TAPSET);
 
@@ -169,8 +172,6 @@ where
 
         let hal_code = self.hal.copy_from_elem("code", &cpu_code.as_slice());
         let hal_data = self.hal.copy_from_elem("data", &cpu_data.as_slice());
-        scope!("zeroize(code)", self.hal.eltwise_zeroize_elem(&hal_code));
-        scope!("zeroize(data)", self.hal.eltwise_zeroize_elem(&hal_data));
 
         prover.commit_group(keccak_circuit::REGISTER_GROUP_CODE, &hal_code);
         prover.commit_group(keccak_circuit::REGISTER_GROUP_DATA, &hal_data);
@@ -187,10 +188,6 @@ where
         let hal_mix = self.hal.copy_from_elem("mix", &cpu_mix.as_slice());
 
         let hal_global = self.hal.copy_from_elem("global", &cpu_global.as_slice());
-        scope!(
-            "zeroize(global)",
-            self.hal.eltwise_zeroize_elem(&hal_global)
-        );
 
         let seal = prover.finalize(&[&hal_mix, &hal_global], self.circuit_hal.as_ref());
 
