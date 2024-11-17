@@ -32,10 +32,10 @@ struct Runner::RecursionExternHandler : public WomExternHandler {
   size_t offset;
   std::deque<llvm::SmallVector<uint64_t, 4>> body;
 
-  std::vector<uint64_t> doExtern(llvm::StringRef name,
-                                 llvm::StringRef extra,
-                                 llvm::ArrayRef<const InterpVal*> args,
-                                 size_t outCount) override {
+  std::optional<std::vector<uint64_t>> doExtern(llvm::StringRef name,
+                                                llvm::StringRef extra,
+                                                llvm::ArrayRef<const InterpVal*> args,
+                                                size_t outCount) override {
     auto fpArgs = asFpArray(args);
     // TODO: this probably breaks log externs
     if (name == "readIOPHeader") {
@@ -75,7 +75,7 @@ struct Runner::RecursionExternHandler : public WomExternHandler {
           body.push_back(poly);
         }
       }
-      return {};
+      return std::vector<uint64_t>{};
     }
     if (name == "readIOPBody") {
       auto front = body.front();

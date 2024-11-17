@@ -30,6 +30,7 @@ ZKRS = [
     "join",
     "resolve",
     "identity",
+    "union",
 ]
 
 KECCAK_ZKRS = [("keccak_lift_" + str(po2)) for po2 in range(14, 25)]

@@ -2,7 +2,7 @@
 
 import keccak;
 
-test TestKeccak02k { // test_cycles >= 22772
+test TestKeccak02k { // test_cycles >= 22773
 // CHECK-LABEL: Running TestKeccak02k
 // CHECK: sha256output: 0x420e,0x6b2c 0xc4cd,0x396e 0xcf6b,0x7e4c 0x8b4c,0x1c1e 0x88c3,0x5895 0x34b5,0x81fd 0x1337,0x93a6 0xe530,0x6f1
 // CHECK: final accum: [0, 0, 0, 0]

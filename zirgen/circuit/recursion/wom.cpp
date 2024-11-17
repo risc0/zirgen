@@ -121,10 +121,11 @@ WomExternHandler::WomExternHandler() {
   state[0] = {0, 0, 0, 0};
 }
 
-std::vector<uint64_t> WomExternHandler::doExtern(llvm::StringRef name,
-                                                 llvm::StringRef extra,
-                                                 llvm::ArrayRef<const Zll::InterpVal*> args,
-                                                 size_t outCount) {
+std::optional<std::vector<uint64_t>>
+WomExternHandler::doExtern(llvm::StringRef name,
+                           llvm::StringRef extra,
+                           llvm::ArrayRef<const Zll::InterpVal*> args,
+                           size_t outCount) {
   if (name == "womWrite") {
     uint64_t addr = args[0]->getBaseFieldVal();
     if (state.count(addr) != 0) {
@@ -136,7 +137,7 @@ std::vector<uint64_t> WomExternHandler::doExtern(llvm::StringRef name,
       data[i] = args[1 + i]->getBaseFieldVal();
     }
     state[addr] = data;
-    return {};
+    return std::vector<uint64_t>{};
   }
   if (name == "womRead") {
     uint32_t addr = args[0]->getBaseFieldVal();
@@ -145,7 +146,7 @@ std::vector<uint64_t> WomExternHandler::doExtern(llvm::StringRef name,
       throw std::runtime_error("INVALID WOM READ");
     }
     auto data = state[addr];
-    return {data[0], data[1], data[2], data[3]};
+    return std::vector<uint64_t>{data[0], data[1], data[2], data[3]};
   }
   return PlonkExternHandler::doExtern(name, extra, args, outCount);
 }
