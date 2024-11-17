@@ -33,6 +33,7 @@ zip = { version = "2.0", default-features = false, features = ["deflate"] }
 [target.'cfg(not(target_os = "zkvm"))'.dependencies]
 bytemuck = "1.12"
 cfg-if = { version = "1.0", optional = true }
+hex-literal = "0.4"
 rand = { version = "0.8" }
 risc0-circuit-keccak-sys = { workspace = true, optional = true }
 risc0-circuit-recursion = { workspace = true, default-features = false }

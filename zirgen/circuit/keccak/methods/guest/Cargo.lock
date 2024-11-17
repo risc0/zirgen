@@ -898,6 +898,7 @@ dependencies = [
  "bytemuck",
  "clap",
  "hex",
+ "hex-literal",
  "lazy_static",
  "paste",
  "rand",

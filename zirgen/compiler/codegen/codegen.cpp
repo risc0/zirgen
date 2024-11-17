@@ -214,7 +214,8 @@ public:
     if (codegenCLOptions->validitySplitCount > 1) {
       for (size_t i : llvm::seq(size_t(codegenCLOptions->validitySplitCount))) {
         auto ofs = openOutputFile("eval_check_" + std::to_string(i) + suffix);
-        createGpuStreamEmitter(*ofs, suffix)->emitPoly(func, i, size_t(codegenCLOptions->validitySplitCount));
+        createGpuStreamEmitter(*ofs, suffix)
+            ->emitPoly(func, i, size_t(codegenCLOptions->validitySplitCount));
       }
     } else {
       auto ofs = openOutputFile("eval_check" + suffix);

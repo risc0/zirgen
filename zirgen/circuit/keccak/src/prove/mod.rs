@@ -26,8 +26,7 @@ use std::{collections::VecDeque, rc::Rc};
 
 use anyhow::Result;
 use cfg_if::cfg_if;
-use rayon::prelude::*;
-use risc0_core::field::Elem;
+use risc0_core::{field::Elem, scope};
 use risc0_zkp::{
     adapter::{CircuitCoreDef, CircuitInfo, TapsProvider, PROOF_SYSTEM_INFO},
     core::{digest::Digest, hash::poseidon2::Poseidon2HashSuite},
@@ -107,6 +106,8 @@ where
     C: risc0_zkp::hal::CircuitHal<H>,
 {
     fn prove(&self, input: VecDeque<u32>, po2: usize) -> Result<Seal> {
+        scope!("prove");
+
         let tot_cycles: usize = 1 << po2;
 
         let cpu_hal = CpuHal::new(self.hal.get_hash_suite().clone());
@@ -119,16 +120,25 @@ where
                 cpu_hal.alloc_elem(name, size)
             }
         };
-        let cpu_data = alloc_elem("data", keccak_circuit::REGCOUNT_DATA * tot_cycles);
-        let cpu_code = alloc_elem("code", keccak_circuit::REGCOUNT_CODE * tot_cycles);
-        let cpu_global = alloc_elem("global", keccak_circuit::REGCOUNT_GLOBAL);
-        let cpu_accum = alloc_elem("accum", keccak_circuit::REGCOUNT_ACCUM * tot_cycles);
+
+        let cpu_data = scope!(
+            "alloc(data)",
+            alloc_elem("data", keccak_circuit::REGCOUNT_DATA * tot_cycles)
+        );
+        let cpu_code = scope!(
+            "alloc(code)",
+            alloc_elem("code", keccak_circuit::REGCOUNT_CODE * tot_cycles)
+        );
+        let cpu_global = scope!(
+            "alloc(global)",
+            alloc_elem("global", keccak_circuit::REGCOUNT_GLOBAL)
+        );
+        let cpu_accum = scope!(
+            "alloc(accum)",
+            alloc_elem("accum", keccak_circuit::REGCOUNT_ACCUM * tot_cycles)
+        );
 
         cpu_circuit_hal.step_exec(tot_cycles, &cpu_data, &cpu_global)?;
-
-        clear_invalid(&cpu_data);
-        clear_invalid(&cpu_global);
-        clear_invalid(&cpu_code);
 
         let mut prover = risc0_zkp::prove::Prover::new(self.hal.as_ref(), &*crate::taps::TAPSET);
 
@@ -159,6 +169,8 @@ where
 
         let hal_code = self.hal.copy_from_elem("code", &cpu_code.as_slice());
         let hal_data = self.hal.copy_from_elem("data", &cpu_data.as_slice());
+        scope!("zeroize(code)", self.hal.eltwise_zeroize_elem(&hal_code));
+        scope!("zeroize(data)", self.hal.eltwise_zeroize_elem(&hal_data));
 
         prover.commit_group(keccak_circuit::REGISTER_GROUP_CODE, &hal_code);
         prover.commit_group(keccak_circuit::REGISTER_GROUP_DATA, &hal_data);
@@ -167,13 +179,19 @@ where
             std::array::from_fn(|_| prover.iop().random_elem());
         let cpu_mix = cpu_hal.copy_from_elem("mix", mix.as_slice());
         cpu_circuit_hal.step_accum(tot_cycles, &cpu_accum, &cpu_data, &cpu_mix)?;
-        clear_invalid(&cpu_accum);
 
         let hal_accum = self.hal.copy_from_elem("accum", &cpu_accum.as_slice());
+        scope!("zeroize(accum)", self.hal.eltwise_zeroize_elem(&hal_accum));
         prover.commit_group(keccak_circuit::REGISTER_GROUP_ACCUM, &hal_accum);
 
         let hal_mix = self.hal.copy_from_elem("mix", &cpu_mix.as_slice());
+
         let hal_global = self.hal.copy_from_elem("global", &cpu_global.as_slice());
+        scope!(
+            "zeroize(global)",
+            self.hal.eltwise_zeroize_elem(&hal_global)
+        );
+
         let seal = prover.finalize(&[&hal_mix, &hal_global], self.circuit_hal.as_ref());
 
         Ok(seal)
@@ -186,13 +204,4 @@ impl TapsProvider for CircuitImpl {
     fn get_taps(&self) -> &'static TapSet<'static> {
         self::taps::TAPSET
     }
-}
-
-fn clear_invalid<B: Buffer<impl Elem>>(buf: &B) {
-    // Zero out 'invalid' entries
-    buf.view_mut(|slice| {
-        slice
-            .par_iter_mut()
-            .for_each(|value| *value = value.valid_or_zero())
-    });
 }

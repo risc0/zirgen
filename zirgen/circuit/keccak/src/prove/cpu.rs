@@ -17,6 +17,7 @@ use std::{cell::RefCell, collections::VecDeque, rc::Rc};
 use anyhow::{anyhow, Result};
 use keccak_circuit::{CircuitField, ExtVal, Val, REGISTER_GROUP_ACCUM, REGISTER_GROUP_DATA};
 use rayon::{iter::IntoParallelIterator, prelude::*};
+use risc0_core::scope;
 use risc0_zirgen_dsl::{CycleContext, CycleRow, GlobalRow};
 use risc0_zkp::{
     adapter::PolyFp,
@@ -143,8 +144,9 @@ impl<'a> CpuExecContext<'a> {
         }
     }
 
-    pub fn log(&self, message: &str, x: impl AsRef<[Val]>) -> Result<()> {
-        risc0_zirgen_dsl::codegen::default_log(message, x.as_ref())
+    pub fn log(&self, _message: &str, _x: impl AsRef<[Val]>) -> Result<()> {
+        // risc0_zirgen_dsl::codegen::default_log(message, x.as_ref())
+        Ok(())
     }
 
     // Stubs so we can compile with calculator circuit for rapid iteration
@@ -166,6 +168,8 @@ impl keccak_circuit::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
         data: &CpuBuffer<Val>,
         global: &CpuBuffer<Val>,
     ) -> Result<()> {
+        scope!("step_exec");
+
         let elems_per_word = &RefCell::new(0);
         let input_elems: &RefCell<VecDeque<Val>> = &RefCell::new(Default::default());
 
@@ -199,6 +203,8 @@ impl keccak_circuit::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
         data: &CpuBuffer<Val>,
         mix: &CpuBuffer<Val>,
     ) -> Result<()> {
+        scope!("step_accum");
+
         let mem = &RefCell::default();
         let elems_per_word = &RefCell::default();
         let input = &RefCell::default();
@@ -251,6 +257,8 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for ZkpCpuCircuitHal {
         po2: usize,
         steps: usize,
     ) {
+        scope!("eval_check");
+
         let check = check.as_slice();
         let accum = groups[REGISTER_GROUP_ACCUM].as_slice();
         let data = groups[REGISTER_GROUP_DATA].as_slice();
