@@ -302,7 +302,14 @@ impl Args {
             "cxx",
             "",
         );
-        copy_group(circuit, &src_path, &hal_root, KECCAK_CUDA_OUTPUTS, "cuda", "");
+        copy_group(
+            circuit,
+            &src_path,
+            &hal_root,
+            KECCAK_CUDA_OUTPUTS,
+            "cuda",
+            "",
+        );
         copy_file(&zkr_src_path, &zkr_tgt_path, KECCAK_ZKR_ZIP);
         cargo_fmt_circuit(circuit, &self.output, &None);
     }
