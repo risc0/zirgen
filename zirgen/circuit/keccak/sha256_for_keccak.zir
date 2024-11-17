@@ -319,8 +319,9 @@ component computeW(w_2: Array<Val, 32>, w_7: Array<Val, 32>,
   add(pack2(w_16), add(pack_s0, add(pack2(w_7), pack_s1)))
 }
 
-component computeAE(a_: Array<Val, 32>, b_: Array<Val, 32>, c_: Array<Val, 32>,
-                    d_: Array<Val, 32>, e_: Array<Val, 32>, f_: Array<Val, 32>,
+component computeAE(a_: Array<Val, 32>, b_: Array<Val, 32>,
+                    c_: Array<Val, 32>, d_: Array<Val, 32>,
+                    e_: Array<Val, 32>, f_: Array<Val, 32>,
                     g_: Array<Val, 32>, h_: Array<Val, 32>,
                     w_: Array<Val, 32>, k_rc: TwoShorts) {
   s0 := xor3a<32>(rightRotate<32,2>(a_),
@@ -328,7 +329,8 @@ component computeAE(a_: Array<Val, 32>, b_: Array<Val, 32>, c_: Array<Val, 32>,
   s1 := xor3a<32>(rightRotate<32,6>(e_),
              rightRotate<32,11>(e_), rightRotate<32,25>(e_));
   pack_ch := pack2(ch<32>(e_, f_, g_));
-  stage1 := add(pack2(w_), add(k_rc, add(pack2(h_), add(pack_ch, pack2(s1)))));
+  stage1 :=
+    add(pack2(w_), add(k_rc, add(pack2(h_), add(pack_ch, pack2(s1)))));
   pack_maj := pack2(maj3<32>(a_, b_, c_));
   aOut := add(stage1, add(pack_maj, pack2(s0)));
   eOut := add(stage1, pack2(d_));
@@ -381,21 +383,26 @@ component sha256load<I: Val>(rvals: RetTuple,
   inp2 := vals[1];
   low_w := ToBitsU<16>(inp2);
   FromBits<16>(low_w) = inp2;
-  unpacked_w := [
-    low_w[8],low_w[9],low_w[10],low_w[11],low_w[12],low_w[13],low_w[14],low_w[15],
-    low_w[0],low_w[1],low_w[2],low_w[3],low_w[4],low_w[5],low_w[6],low_w[7],
-    high_w[8],high_w[9],high_w[10],high_w[11],high_w[12],high_w[13],high_w[14],high_w[15],
-    high_w[0],high_w[1],high_w[2],high_w[3],high_w[4],high_w[5],high_w[6],high_w[7]];
+  unpacked_w := [low_w[8],low_w[9],low_w[10],low_w[11],
+                 low_w[12],low_w[13],low_w[14],low_w[15],
+                 low_w[0],low_w[1],low_w[2],low_w[3],
+                 low_w[4],low_w[5],low_w[6],low_w[7],
+                 high_w[8],high_w[9],high_w[10],high_w[11],
+                 high_w[12],high_w[13],high_w[14],high_w[15],
+                 high_w[0],high_w[1],high_w[2],high_w[3],
+                 high_w[4],high_w[5],high_w[6],high_w[7]];
 
-  compae := computeAE(s2a(rvprev01), s2a(rvprev02), s2a(rvprev03), s2a(rvprev04),
-                      s2e(rvprev01), s2e(rvprev02), s2e(rvprev03), s2e(rvprev04),
-                      unpacked_w, sha256rc_table<I>());
+  compae := computeAE(
+    s2a(rvprev01), s2a(rvprev02), s2a(rvprev03), s2a(rvprev04),
+    s2e(rvprev01), s2e(rvprev02), s2e(rvprev03), s2e(rvprev04),
+    unpacked_w, sha256rc_table<I>());
   new_a := unpack_with_carry(compae.aOut.low, compae.aOut.high);
   new_e := unpack_with_carry(compae.eOut.low, compae.eOut.high);
   Z := Isz(I-15);
   stae := ae2s(new_a, new_e);
   stw := w2s(unpacked_w);
-  tmpb := Concatenate<7,5>(new_a.carrybits, for i : 0..5 {new_e.carrybits[i]});
+  tmpb := Concatenate<7,5>(
+    new_a.carrybits, for i : 0..5 { new_e.carrybits[i]} );
   padb := Concatenate<10,12>(stw.b, tmpb);
   padc := Concatenate<20,2>(stae.c, for i : 5..7 {new_e.carrybits[i]});
   d := Concatenate<RLEN()-6, 6>(for i : 0..RLEN()-6 { NondetReg(0) },
@@ -451,7 +458,8 @@ component sha256mix<S: Val, I: Val>(rvals: RetTuple,
   new_e := unpack_with_carry(compae.eOut.low, compae.eOut.high);
   stae := ae2s(new_a, new_e);
   stw := w2s(new_w);
-  tmpb := Concatenate<7,5>(new_a.carrybits, for i : 0..5 {new_e.carrybits[i]});
+  tmpb := Concatenate<7,5>(
+    new_a.carrybits, for i : 0..5 {new_e.carrybits[i]});
   padb := Concatenate<10,12>(stw.b, tmpb);
   padc := Concatenate<20,2>(stae.c, for i : 5..7 {new_e.carrybits[i]});
   tmpd := ConcatZeros<7,15>(new_w.carrybits);
