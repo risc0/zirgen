@@ -85,9 +85,8 @@ fn clear_invalid<B: Buffer<impl Elem>>(buf: &B) {
 }
 
 fn prove<
-    'a,
     H: Hal<Field = CircuitField, Elem = Val, ExtElem = ExtVal>,
-    CH: CircuitHal<'a, H> + risc0_zkp::hal::CircuitHal<H>,
+    CH: CircuitHal<H> + risc0_zkp::hal::CircuitHal<H>,
 >(
     hal: &H,
     circuit_hal: &CH,
