@@ -95,6 +95,16 @@ const KECCAK_SYS_OUTPUTS: &[&str] = &[
     "rust_poly_fp_4.cpp",
 ];
 
+const KECCAK_CUDA_OUTPUTS: &[&str] = &[
+    "eval_check_0.cu",
+    "eval_check_1.cu",
+    "eval_check_2.cu",
+    "eval_check_3.cu",
+    "eval_check_4.cu",
+];
+
+const KECCAK_ZKR_ZIP: &str = "keccak_zkr.zip";
+
 #[derive(Clone, Debug, ValueEnum)]
 enum Circuit {
     Fib,
@@ -272,10 +282,16 @@ impl Args {
     }
 
     fn keccak(&self) {
+        let bazel_bin = get_bazel_bin();
         let out = &self.output;
         let circuit = "keccak";
         let src_path = Path::new("zirgen/circuit/keccak");
         let sys_root = Path::new("zirgen/circuit/keccak-sys").to_path_buf();
+        let hal_root = Some(sys_root.join("kernels"));
+        let zkr_src_path = bazel_bin.join("zirgen/circuit/predicates");
+        let zkr_tgt_path = out
+            .clone()
+            .unwrap_or(Path::new("zirgen/circuit/keccak/src/prove").to_path_buf());
 
         copy_group(circuit, &src_path, out, ZIRGEN_RUST_OUTPUTS, "src", "");
         copy_group(
@@ -286,6 +302,15 @@ impl Args {
             "cxx",
             "",
         );
+        copy_group(
+            circuit,
+            &src_path,
+            &hal_root,
+            KECCAK_CUDA_OUTPUTS,
+            "cuda",
+            "",
+        );
+        copy_file(&zkr_src_path, &zkr_tgt_path, KECCAK_ZKR_ZIP);
         cargo_fmt_circuit(circuit, &self.output, &None);
     }
 

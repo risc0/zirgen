@@ -43,7 +43,7 @@ public:
 class GpuStreamEmitter {
 public:
   virtual ~GpuStreamEmitter() = default;
-  virtual void emitPoly(mlir::func::FuncOp func) = 0;
+  virtual void emitPoly(mlir::func::FuncOp func, size_t idx, size_t nsplit) = 0;
   virtual void emitStepFunc(const std::string& name, mlir::func::FuncOp func) = 0;
 };
 

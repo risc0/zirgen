@@ -20,7 +20,10 @@ use risc0_zirgen_dsl::{CycleContext, CycleRow, GlobalRow};
 use risc0_zkp::{
     core::log2_ceil,
     field::{Elem, ExtElem, RootsOfUnity},
-    hal::cpu::{CpuBuffer, CpuHal},
+    hal::{
+        cpu::{CpuBuffer, CpuHal},
+        AccumPreflight,
+    },
     INV_RATE,
 };
 use std::collections::VecDeque;
@@ -92,7 +95,7 @@ impl CpuExecContext {
     }
 }
 
-impl<'a> calc_circuit::CircuitHal<'a, CpuHal<CircuitField>> for CpuCircuitHal {
+impl calc_circuit::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
     fn step_exec(
         &self,
         tot_cycles: usize,
@@ -136,6 +139,7 @@ impl<'a> calc_circuit::CircuitHal<'a, CpuHal<CircuitField>> for CpuCircuitHal {
 impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
     fn accumulate(
         &self,
+        _preflight: &AccumPreflight,
         _ctrl: &CpuBuffer<Val>,
         _io: &CpuBuffer<Val>,
         _data: &CpuBuffer<Val>,

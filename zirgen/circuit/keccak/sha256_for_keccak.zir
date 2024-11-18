@@ -542,7 +542,7 @@ component sha256fini<I: Val>(rvals: RetTuple,
              Concatenate<21,3>(dummyS(), d_suffix),
              stae.e, stae.f, S2MINOR_SKIP()+I, S2MAJOR_SETUP(),
              rvprev01.rnd, rvprev01.blk, rvprev01.midx, auxr),
-    { 
+    {
       [prod, 1-prod] -> (
         RetTuple(pada, zb, padc,
                  Concatenate<21,3>(dummyS(), d_suffix),
