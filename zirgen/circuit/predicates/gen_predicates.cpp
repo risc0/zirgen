@@ -113,10 +113,9 @@ void addZirgenLift(Module& module, const std::string name, const std::string pat
                       {gbuf(recursion::kOutSize), ioparg(), ioparg()},
                       [&](Buffer out, ReadIopVal rootIop, ReadIopVal zirgenSeal) {
                         DigestVal root = rootIop.readDigests(1)[0];
-                        VerifyInfo info = verifyAndValidate(root, zirgenSeal, po2, *circuit);
+                        VerifyInfo info = zirgen::verify::verify(zirgenSeal, po2, *circuit);
                         llvm::ArrayRef inStream(info.out);
                         DigestVal outData = func(inStream);
-
                         std::vector<Val> outStream;
                         writeSha(outData, outStream);
                         doExtern("write", "", 0, outStream);
@@ -231,7 +230,7 @@ int main(int argc, char* argv[]) {
       });
 
   addSingleton(module, "identity", [&](ReceiptClaim a) { return identity(a); });
-  addZirgenLift(module, "keccak", keccakIR.getValue(), [](llvm::ArrayRef<Val>& inStream) {
+  addZirgenLift(module, "keccak_lift", keccakIR.getValue(), [](llvm::ArrayRef<Val>& inStream) {
     return readSha(inStream);
   });
 

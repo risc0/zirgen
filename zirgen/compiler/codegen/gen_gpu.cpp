@@ -42,10 +42,12 @@ enum class FuncKind {
   PolyExt,
 };
 
-// Apply fixups; apparently gpus use `ctrl` to reference the `code` buffer
+// Apply fixups; apparently gpus use different names than cpus.
 std::string gpuMapName(std::string name) {
   if (name == "code")
     return "ctrl";
+  if (name == "global")
+    return "out";
   return name;
 }
 
@@ -131,7 +133,9 @@ public:
                 ofs);
   }
 
-  void emitPoly(mlir::func::FuncOp func) override {
+  void emitPoly(mlir::func::FuncOp func, size_t splitIndex, size_t splitCount) override {
+    MixPowAnalysis mixPows(func);
+
     mustache tmpl;
     bool isRecursion = func.getName() == "recursion";
     if (isRecursion && suffix == ".cu") {
@@ -140,24 +144,94 @@ public:
       tmpl = openTemplate("zirgen/compiler/codegen/gpu/eval_check.tmpl" + suffix);
     }
 
+    list funcProtos;
+    list funcs;
+
+    size_t curSplitIndex = 0;
+    for (mlir::func::FuncOp calledFunc : mixPows.getCalledFuncs()) {
+      FileContext ctx;
+      std::string args;
+
+      for (auto [argNum, arg] : llvm::enumerate(calledFunc.getArguments())) {
+        std::string argName = llvm::formatv("arg{0}", argNum).str();
+        ctx.vars[arg] = argName;
+
+        args += ", ";
+
+        TypeSwitch<Type>(arg.getType())
+            .Case<ValType>([&](auto valType) {
+              if (valType.getFieldK() > 1)
+                args += "FpExt";
+              else
+                args += "Fp";
+            })
+            .Case<BufferType>([&](auto bufType) {
+              if (bufType.getKind() != BufferKind::Temporary)
+                args += "const ";
+              if (bufType.getElement().getFieldK() > 1)
+                args += "FpExt*";
+              else
+                args += "Fp*";
+            })
+            .Case<ConstraintType>([&](auto) { args += "FpExt"; })
+            .Default([&](Type ty) {
+              llvm::errs() << "Unknown type to pass to call: " << ty << "\n";
+              assert(false);
+            });
+        args += " " + argName;
+      }
+
+      funcProtos.push_back(object{{"args", args}, {"fn", calledFunc.getName().str()}});
+
+      if ((curSplitIndex++ % splitCount) != splitIndex)
+        continue;
+
+      list lines;
+      for (Operation& op : calledFunc.front().without_terminator()) {
+        emitOp(&op, ctx, lines, mixPows);
+      }
+      lines.push_back("return " + ctx.use(calledFunc.front().getTerminator()->getOperand(0)) + ";");
+
+      funcs.push_back(object{
+          {"args", args},
+          {"fn", calledFunc.getName().str()},
+          {"block", lines},
+      });
+    }
+
+    // Main function
     FileContext ctx;
-    for (auto [argNum, arg] : llvm::enumerate(func.getArguments())) {
-      if (auto name = func.getArgAttrOfType<StringAttr>(argNum, "zirgen.argName")) {
-        ctx.vars[arg] = gpuMapName(name.str());
+    for (auto [idx, arg] : llvm::enumerate(func.getArguments())) {
+      if (auto argName = func.getArgAttrOfType<StringAttr>(idx, "zirgen.argName")) {
+        ctx.vars[arg] = gpuMapName(argName.str());
       }
     }
 
-    MixPowAnalysis mixPows(func);
+    std::string mainArgs = ", "
+                           "const Fp* ctrl, "
+                           "const Fp* out, "
+                           "const Fp* data, "
+                           "const Fp* mix, "
+                           "const Fp* accum";
 
-    list lines;
-    for (Operation& op : func.front().without_terminator()) {
-      emitOp(&op, ctx, lines, mixPows);
+    funcProtos.push_back(object{{"args", mainArgs}, {"fn", "poly_fp"}});
+
+    if ((curSplitIndex++ % splitCount) == splitIndex) {
+      list lines;
+      for (Operation& op : func.front().without_terminator()) {
+        emitOp(&op, ctx, lines, mixPows);
+      }
+      Value retVal = func.front().getTerminator()->getOperand(0);
+      lines.push_back(llvm::formatv("return {0};", ctx.use(retVal)).str());
+
+      funcs.push_back(object{{"args", mainArgs}, {"fn", "poly_fp"}, {"block", lines}});
     }
-    lines.push_back("return " + ctx.use(func.front().getTerminator()->getOperand(0)) + ";");
 
     tmpl.render(
         object{
-            {"block", lines},
+            {"decls", funcProtos},
+            {"funcs", funcs},
+            {"name", func.getName().str()},
             {"num_mix_powers", std::to_string(mixPows.getPowersNeeded().size())},
         },
         ofs);
@@ -499,33 +573,65 @@ private:
 
   void emitOp(Operation* op, FileContext& ctx, list& lines, MixPowAnalysis& mixPows) {
     std::stringstream ss;
+    const char* outType = "Fp";
+    if (op->getNumResults() == 1) {
+      auto valType = llvm::dyn_cast<ValType>(op->getResults()[0].getType());
+      if (valType && valType.getFieldK() > 1) {
+        outType = "FpExt";
+      }
+    }
+
     mlir::TypeSwitch<Operation*>(op)
         .Case<ConstOp>([&](ConstOp op) {
-          ss << "Fp " << ctx.def(op.getOut()) << "(" << emitPolynomialAttr(op, "coefficients")
-             << ");";
+          if (op.getType().getFieldK() > 1)
+            ss << "FpExt " << ctx.def(op.getOut()) << emitPolynomialAttr(op, "coefficients") << ";";
+          else
+            ss << "Fp " << ctx.def(op.getOut()) << "(" << emitPolynomialAttr(op, "coefficients")
+               << ");";
+        })
+        .Case<MakeTemporaryBufferOp>([&](MakeTemporaryBufferOp op) {
+          ss << llvm::formatv(
+                    "{0} {1}[{2}];\n", outType, ctx.def(op.getOut()), op.getType().getSize())
+                    .str();
+        })
+        .Case<func::CallOp>([&](func::CallOp op) {
+          auto out = ctx.def(op.getResult(0));
+          ss << llvm::formatv("auto {0} = {1}(idx, size", out, op.getCallee()).str();
+
+          for (mlir::Value arg : op.getOperands()) {
+            ss << ", " << ctx.use(arg);
+          }
+          ss << ");\n";
         })
         .Case<GetOp>([&](GetOp op) {
           auto buf = emitOperand(op, ctx, 0);
           auto reg = emitIntAttr(op, "offset");
           auto back = emitIntAttr(op, "back");
-          ss << "Fp " << ctx.def(op.getOut()) << " = " << buf << "[" << reg
+          ss << outType << " " << ctx.def(op.getOut()) << " = " << buf << "[" << reg
              << " * size + ((idx - INV_RATE * " << back << ") & mask)];";
+        })
+        .Case<SetGlobalOp>([&](SetGlobalOp op) {
+          ss << llvm::formatv("{0}[{1}] = {2};",
+                              emitOperand(op, ctx, 0),
+                              emitIntAttr(op, "offset"),
+                              emitOperand(op, ctx, 1))
+                    .str();
         })
         .Case<GetGlobalOp>([&](GetGlobalOp op) {
           auto global = emitOperand(op, ctx, 0);
           auto reg = emitIntAttr(op, "offset");
-          ss << "Fp " << ctx.def(op.getOut()) << " = " << global << "[" << reg << "];";
+          ss << outType << " " << ctx.def(op.getOut()) << " = " << global << "[" << reg << "];";
         })
         .Case<AddOp>([&](AddOp op) {
-          ss << "Fp " << ctx.def(op.getOut()) << " = " << emitOperand(op, ctx, 0) << " + "
+          ss << outType << " " << ctx.def(op.getOut()) << " = " << emitOperand(op, ctx, 0) << " + "
              << emitOperand(op, ctx, 1) << ";";
         })
         .Case<SubOp>([&](SubOp op) {
-          ss << "Fp " << ctx.def(op.getOut()) << " = " << emitOperand(op, ctx, 0) << " - "
+          ss << outType << " " << ctx.def(op.getOut()) << " = " << emitOperand(op, ctx, 0) << " - "
              << emitOperand(op, ctx, 1) << ";";
         })
         .Case<MulOp>([&](MulOp op) {
-          ss << "Fp " << ctx.def(op.getOut()) << " = " << emitOperand(op, ctx, 0) << " * "
+          ss << outType << " " << ctx.def(op.getOut()) << " = " << emitOperand(op, ctx, 0) << " * "
              << emitOperand(op, ctx, 1) << ";";
         })
         .Case<TrueOp>([&](TrueOp op) { ss << "FpExt " << ctx.def(op.getOut()) << " = FpExt(0);"; })
@@ -542,7 +648,13 @@ private:
           auto inner = emitOperand(op, ctx, 2);
           ss << "FpExt " << ctx.def(op.getOut()) << " = " << x << " + " << cond << " * " << inner
              << " * poly_mix[" << mixPows.getMixPowIndex(op) << "];";
+        })
+        .Default([&](Operation* op) -> std::string {
+          llvm::errs() << "Found invalid op during poly codegen!\n";
+          llvm::errs() << *op << "\n";
+          throw std::runtime_error("invalid op");
         });
+
     lines.push_back(ss.str());
   }
 

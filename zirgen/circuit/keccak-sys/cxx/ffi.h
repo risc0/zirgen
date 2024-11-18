@@ -48,8 +48,6 @@ template <typename T, typename F> T ffi_wrap(risc0_error* err, T val, F fn) {
 
 namespace risc0::circuit::keccak {
 
-using HostBridge = void(void*, const char*, const char*, const Fp*, size_t, Fp*, size_t);
-
 FpExt poly_fp(size_t cycle, size_t steps, FpExt* poly_mix, Fp** args);
 
 } // namespace risc0::circuit::keccak
