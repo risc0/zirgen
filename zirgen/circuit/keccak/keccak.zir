@@ -6,19 +6,192 @@ extern GetCycle() : Val;
 extern configureInput(bytesPerElem: Val);
 extern readInput() : Val;
 
+// use_once_mem_arg.zir
+extern SimpleMemoryPoke(index: Val, data: Val);
+extern SimpleMemoryPeek(index: Val) : Val;
+component MEM_DIGEST_LEN() { 4 }
+argument UseOnceMemoryElement(_count: Val, _index: Val,
+                              arw: Array<Val, MEM_DIGEST_LEN()>) {
+  count := NondetReg(_count);
+  index := NondetReg(_index);
+  digest0 := NondetReg(arw[0]);
+  digest1 := NondetReg(arw[1]);
+  digest2 := NondetReg(arw[2]);
+  digest3 := NondetReg(arw[3]);
+  //digest := [d1,d2,d3,d4]; // error: does not own the layout of member
+}
+component ReadMemory(i: Val, ar: Array<NondetReg, MEM_DIGEST_LEN()+1>) {
+  digest := for elemIdx : 0..MEM_DIGEST_LEN() {
+    SimpleMemoryPeek(i * MEM_DIGEST_LEN() + elemIdx)
+  };
+  elem := UseOnceMemoryElement(-1, i, digest);
+  AliasLayout!(elem.digest0, ar[0]);
+  AliasLayout!(elem.digest1, ar[1]);
+  AliasLayout!(elem.digest2, ar[2]);
+  AliasLayout!(elem.digest3, ar[3]);
+  AliasLayout!(elem.index, ar[4]);
+}
+component WriteMemory(idx: Reg, aw: Array<NondetReg, MEM_DIGEST_LEN()>) {
+  for elemIdx : 0..MEM_DIGEST_LEN() {
+     SimpleMemoryPoke(idx * MEM_DIGEST_LEN() + elemIdx, aw[elemIdx]);
+  };
+  elem := UseOnceMemoryElement(1, idx, aw);
+  elem.count = 1;
+  AliasLayout!(idx, elem.index);
+  AliasLayout!(elem.digest0, aw[0]);
+  AliasLayout!(elem.digest1, aw[1]);
+  AliasLayout!(elem.digest2, aw[2]);
+  AliasLayout!(elem.digest3, aw[3]);
+}
+// EOF use_once_mem_arg.zir
+
+// po2.zir unpacking up to 31 bits
+component Po2(n: Val) {
+  arr := [
+    0x1,
+    0x2,
+    0x4,
+    0x8,
+    0x10,
+    0x20,
+    0x40,
+    0x80,
+    0x100,
+    0x200,
+    0x400,
+    0x800,
+    0x1000,
+    0x2000,
+    0x4000,
+    0x8000,
+    0x10000,
+    0x20000,
+    0x40000,
+    0x80000,
+    0x100000,
+    0x200000,
+    0x400000,
+    0x800000,
+    0x1000000,
+    0x2000000,
+    0x4000000,
+    0x8000000,
+    0x10000000,
+    0x20000000,
+    0x40000000
+  ];
+  arr[n]
+}
+component ToBitsU<n: Val>(x: Val) {
+  for i : 0..n { NondetReg((x & Po2(i)) / Po2(i)) }
+}
+component ToBits<n: Val>(x: Val) {
+  for i : 0..n { NondetBitReg((x & Po2(i)) / Po2(i)) }
+}
+component FromBits<n: Val>(bits: Array<Val, n>) {
+  reduce for i : 0..n { Po2(i) * bits[i] } init 0 with Add
+}
+component OneHotU<N: Val>(v: Val) {
+  // Make N bit registers, with bit v set and all others 0
+  bits := for i : 0..N { NondetReg(Isz(i - v)) };
+  // Verify exactly one bit is set
+  reduce bits init 0 with Add = 1;
+  // Verify the right bit is set
+  reduce for i : 0..N { bits[i] * i } init 0 with Add = v;
+  bits
+}
+// EOF po2.zir
+
+// concatenate.zir
+component vConcatenate<N: Val, M: Val>(a: Array<Val, N>, b: Array<Val, M>) {
+  for i : 0..(N + M) {
+    low := InRange(0, i, N);
+    low*a[i] + (1-low)*b[i-N]
+    //[low, 1-low] -> (a[i], b[i-N])
+  }
+}
+component Concatenate<N: Val, M: Val>(a: Array<NondetReg, N>, b: Array<NondetReg, M>) {
+  result := for i : 0..(N + M) {
+    low := InRange(0, i, N);
+    NondetReg(low*a[i] + (1-low)*b[i-N])
+    //NondetReg([low, 1-low] -> (a[i], b[i-N]))
+  };
+  for i : 0..N { AliasLayout!(a[i], result[i]); };
+  for i : N..M+N { AliasLayout!(b[i-N], result[i]); };
+  result
+}
+component ConcatZeros<N: Val, M: Val>(a: Array<NondetReg, N>) {
+  result := for i : 0..(N + M) {
+    low := InRange(0, i, N);
+    NondetReg(low*a[i] /* + (1-low)*0 */ )
+  };
+  for i : 0..N { AliasLayout!(a[i], result[i]); };
+  result
+}
+component ConcatElem<N: Val>(a: Array<NondetReg, N>, b: NondetReg) {
+  result := for i : 0..(N + 1) {
+    low := InRange(0, i, N);
+    NondetReg(low*a[i] + (1-low)*b)
+    //NondetReg([low, 1-low] -> (a[i], b))
+  };
+  for i : 0..N { AliasLayout!(a[i], result[i]); };
+  AliasLayout!(b, result[N]);
+  result
+}
+// EOF concatenate.zir
+
 component MAJOR_EXTRA() { 17 }
 component MINOR_1STCYC() { 5 }
+component S2MAJOR_SETUP() { 16 }
+component S2MAJOR_LOAD()  { 18 }
+component S2MAJOR_MIX()   { 19 }
+component S2MINOR_SKIP()   { 1 }
+component S2MINOR_INIT()   { 0 }
+component S2MINOR_FINI()   { 4 }
+component S2MINOR_OUTPUT() { 8 }
+
 component AUXLEN() { 16 }
 component AUXBIN() { 11 }
-component dummyA() { for i : 0..AUXLEN() { NondetReg(0) } }
+component BLEN() { 22 }
 component SLEN() { 21 }
 component INPLEN() { 75 }
 component EREGLEN() { 15 }
 component RLEN() { INPLEN()+EREGLEN()-3*BLEN() }
+component dummyB() { for i : 0.. BLEN() { NondetReg(0) } }
 component dummyS() { for i : 0.. SLEN() { NondetReg(0) } }
 component dummyE() { for i : 0.. RLEN() { NondetReg(0) } }
 component WORDLEN() { 16 }
 component BABYMAX() { 30 }
+
+component RetTuple(a: Array<NondetReg, BLEN()>,
+                   b: Array<NondetReg, BLEN()>,
+                   c: Array<NondetReg, BLEN()>,
+                   d: Array<NondetReg, RLEN()>,
+                   e: Array<NondetReg, BLEN()>,
+                   f: Array<NondetReg, BLEN()>,
+                   minor_count: Val,
+                   major_count: Val,
+                   round: Val,
+                   block: Val,
+                   memIdx: Val,
+                   auxregs: Array<NondetReg, AUXLEN()>) {
+  arr_a := for elem : a { NondetReg(elem) }; AliasLayout!(a, arr_a);
+  arr_b := for elem : b { NondetReg(elem) }; AliasLayout!(b, arr_b);
+  arr_c := for elem : c { NondetReg(elem) }; AliasLayout!(c, arr_c);
+  arr_d := for elem : d { NondetReg(elem) }; AliasLayout!(d, arr_d);
+  arr_e := for elem : e { NondetReg(elem) }; AliasLayout!(e, arr_e);
+  arr_f := for elem : f { NondetReg(elem) }; AliasLayout!(f, arr_f);
+  minor := Reg(minor_count);
+  major := Reg(major_count);
+  rnd := Reg(round);
+  blk := Reg(block);
+  midx := Reg(memIdx);
+  auxr := for elem : auxregs { NondetReg(elem) }; AliasLayout!(auxregs, auxr);
+}
+
+component RGZ<N: Val>(arr: Array<Val, N>) {
+  for i : 0..N { Reg(arr[i]) }
+}
 
 component rctable(idx: Val) {
   arr := [ [[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
