@@ -105,8 +105,11 @@ public:
 
   void supplyLayout(std::function<Value(/*name=*/StringAttr, Type)> finalizeLayoutFn) {
     assert(layout());
-    layout()->supplyLayout(
-        [&](Type layoutType) -> Value { return finalizeLayoutFn(memberNameInParent, layoutType); });
+    layout()->supplyLayout([&](Type layoutType) -> Value {
+      Value layout = finalizeLayoutFn(memberNameInParent, layoutType);
+      val()->addMember("@layout", layout);
+      return layout;
+    });
     layoutBuilder.reset();
   }
 
@@ -169,32 +172,6 @@ public:
   StructType getValueTypeSoFar() {
     assert(val());
     return val()->getType();
-  }
-
-  Value expandLayoutMember(Location loc, Value origLayout, Type newType) {
-    if (origLayout.getType() == newType)
-      return origLayout;
-    if (!Zhlt::isCoercibleTo(newType, origLayout.getType())) {
-      emitError(loc) << "Unable to expand layout " << origLayout << " to incompatible type "
-                     << newType;
-      return {};
-    }
-
-    auto lookupOp = origLayout.getDefiningOp<ZStruct::LookupOp>();
-    if (!lookupOp)
-      return {};
-
-    auto memberName = lookupOp.getMember();
-    layoutBuilder->removeMember(origLayout, memberName);
-    Value newMember = layoutBuilder->addMember(loc, memberName, newType);
-
-    OpBuilder::InsertionGuard insertionGuard(builder);
-    builder.setInsertionPointAfterValue(newMember);
-
-    Value definedMemberAsDeclaredType = Zhlt::coerceTo(newMember, lookupOp.getType(), builder);
-    lookupOp.replaceAllUsesWith(definedMemberAsDeclaredType);
-    lookupOp.erase();
-    return newMember;
   }
 
 private:
@@ -282,6 +259,21 @@ private:
   /// Walk the value's super chain until we hit an array or the chain ends
   Value coerceToArray(Value value);
 
+  /// Extract the layout from the given ZHL value.  This may either be
+  /// a layout, or an array of values which might have layouts
+  /// elementwise.
+  Value asAliasableLayout(Value);
+
+  /// Extract the two given aliasable layouts together.  If either are
+  /// ArrayType (as opposed to LayoutArrayType), they will be treated
+  /// as arrays of values from which we can extract `@layout` fields.
+  void genAliasLayout(Location loc, Value left, Value right);
+
+  void genAliasLayoutArray(
+      Location loc, Value left, bool convertLeftValue, Value right, bool convertRightValue);
+
+  Value expandLayoutMember(Location loc, ComponentBuilder& cb, Value origLayout, Type newType);
+
   // Converts the given value/attribute into a constant attribute by
   // interpreting it if it's not already an attribute.
   Attribute asConstant(Value v);
@@ -289,9 +281,6 @@ private:
   PolynomialAttr asFieldElement(Value v);
 
   Value asValue(Value zhlVal);
-
-  // Returns the ZHLT layout corresponding to the given ZHL value.
-  Value asLayout(Value zhlVal);
 
   // Same as addLayoutMember, but handles the case where we add a
   // definition for a previously declared member.
@@ -304,10 +293,7 @@ private:
     Value layoutValue;
     StringAttr name;
     bool isSuper = false;
-    for (auto& resultUse : result.getUses()) {
-      Operation* useOp = resultUse.getOwner();
-      if (!useOp)
-        continue;
+    for (Operation* useOp : result.getUsers()) {
       TypeSwitch<Operation*>(useOp)
           .Case<DefinitionOp>([&](auto defOp) {
             auto declaration = cast<DeclarationOp>(defOp.getDeclaration().getDefiningOp());
@@ -320,7 +306,7 @@ private:
     }
 
     if (layoutValue) {
-      Value expanded = cb.expandLayoutMember(loc, layoutValue, type);
+      Value expanded = expandLayoutMember(loc, cb, layoutValue, type);
       if (!expanded) {
         auto diag = emitError(loc) << "definition of type `" << getTypeId(type)
                                    << "` is not a subtype of the declared type `"
@@ -853,7 +839,6 @@ void LoweringImpl::gen(ConstructOp construct, ComponentBuilder& cb) {
     construct.emitError("cannot construct an undefined type");
     throw MalformedIRException();
   }
-
   SmallVector<Value> arguments;
   auto argumentTypes = ctor.getConstructParamTypes();
   auto expectedArgType = argumentTypes.begin();
@@ -885,10 +870,15 @@ void LoweringImpl::gen(ConstructOp construct, ComponentBuilder& cb) {
         diag.attachNote(construct.getLoc()) << "which is expected by this constructor call:";
         return failure();
       });
-      Value layout = asLayout(zhlArg);
-      Value castedLayout = coerceTo(layout, *expectedArgType);
+      Value layout = asAliasableLayout(zhlArg);
+      if (layout.getType() != *expectedArgType) {
+        Value casted =
+            cb.addLayoutMember(construct.getLoc(), /*name=*/StringAttr(), *expectedArgType);
+        genAliasLayout(construct.getLoc(), casted, layout);
+        layout = casted;
+      }
       expectedArgType++;
-      arguments.push_back(castedLayout);
+      arguments.push_back(layout);
     }
   }
   // If there is a variadic parameter, add its pack to the argument list
@@ -943,71 +933,110 @@ void LoweringImpl::gen(ConstructOp construct, ComponentBuilder& cb) {
 }
 
 // Gets the value of the layout corresponding to a ZHL value
-Value LoweringImpl::asLayout(Value value) {
+Value LoweringImpl::asAliasableLayout(Value value) {
   Value layout = layoutMapping[value];
   if (layout)
     return layout;
 
-  layout = TypeSwitch<Operation*, Value>(value.getDefiningOp())
-               .Case<LookupOp>([&](LookupOp op) {
-                 Value componentLayout = asLayout(op.getComponent());
-                 StringRef member = op.getMember();
-                 Value sublayout = lookup(componentLayout, member);
-                 if (!sublayout) {
-                   emitError(op.getLoc())
-                       << "type `" << getTypeId(componentLayout.getType())
-                       << "` does not own the layout of member \"" << member << "\"";
-                   throw MalformedIRException();
-                 }
-                 return sublayout;
-               })
-               .Case<SubscriptOp>([&](SubscriptOp op) {
-                 Value arrayLayout = asLayout(op.getArray());
-                 Value index = asValue(op.getElement());
-                 return subscript(arrayLayout, index);
-               })
-               .Case<BackOp>([&](BackOp op) { return asLayout(op.getTarget()); })
-               .Case<ArrayOp>([&](ArrayOp op) {
-                 SmallVector<Value> layouts;
-                 for (Value element : op.getElements())
-                   layouts.push_back(asLayout(element));
-                 return builder.create<ZStruct::LayoutArrayOp>(op.getLoc(), layouts);
-               })
-               .Case<MapOp>([&](MapOp op) {
-                 Value array = asValue(op.getArray());
-                 Type elemType = cast<ArrayType>(array.getType()).getElement();
-                 Region mapBody(regionAnchor);
-                 Type layoutType;
-                 {
-                   OpBuilder::InsertionGuard insertionGuard(builder);
-                   Block* mapBodyBlock = builder.createBlock(&mapBody);
-                   auto mapArg = op.getFunction().getArgument(0);
-                   valueMapping[mapArg] = mapBodyBlock->addArgument(elemType, mapArg.getLoc());
-                   auto super = cast<SuperOp>(op.getFunction().back().getTerminator());
-                   auto layout = asLayout(super.getValue());
-                   layoutType = layout.getType();
-                   builder.create<ZStruct::YieldOp>(super->getLoc(), layout);
-                 }
-                 size_t size = cast<ArrayType>(array.getType()).getSize();
-                 Type layoutArrayType = LayoutArrayType::get(ctx, layoutType, size);
-                 auto map =
-                     builder.create<ZStruct::MapOp>(op->getLoc(), layoutArrayType, array, Value());
-                 map.getBody().takeBody(mapBody);
-                 return map;
-               })
-               .Case<BlockOp>([&](BlockOp op) {
-                 // If a block has layout for its members, it will be associated in the
-                 // layoutMapping during lowering. At this point that must not be the
-                 // case so look for the super's layout coming from outside the block.
-                 auto super = cast<SuperOp>(op.getInner().back().getTerminator());
-                 return asLayout(super.getValue());
-               })
-               .Default([&](Operation* op) {
-                 llvm::outs() << "unhandled op: " << *op << "\n";
-                 return nullptr;
-               });
-  layoutMapping[value] = layout;
-  return layout;
+  Value val = valueMapping[value];
+  if (!val)
+    return {};
+  Value superLayout = lookup(val, "@layout");
+  if (superLayout) {
+    layoutMapping[value] = superLayout;
+    return superLayout;
+  }
+
+  return coerceToArray(val);
+}
+
+void LoweringImpl::genAliasLayoutArray(
+    Location loc, Value left, bool convertLeftValue, Value right, bool convertRightValue) {
+  ZStruct::ArrayLikeTypeInterface leftArrayType = Zhlt::getCoercibleArrayType(left.getType());
+  ZStruct::ArrayLikeTypeInterface rightArrayType = Zhlt::getCoercibleArrayType(right.getType());
+  if (!leftArrayType) {
+    auto diag = emitError(loc) << "Unable to coerce value into array: " << left;
+    diag.attachNote(left.getLoc()) << "this value";
+  }
+  if (!rightArrayType) {
+    auto diag = emitError(loc) << "Unable to coerce value into array: " << right;
+    diag.attachNote(right.getLoc()) << "this value";
+  }
+  if (!leftArrayType || !rightArrayType) {
+    return;
+  }
+
+  if (leftArrayType.getSize() != rightArrayType.getSize()) {
+    emitError(loc) << "Unable to coerce " << left << " and " << right
+                   << " to the same size array\n";
+    return;
+  }
+
+  Value leftArray = coerceToArray(left);
+  Value rightArray = coerceToArray(right);
+
+  for (auto i : llvm::seq(leftArrayType.getSize())) {
+    auto constOp = builder.create<Zll::ConstOp>(loc, i);
+    Value leftElem = builder.create<ZStruct::SubscriptOp>(loc, leftArray, constOp);
+    Value rightElem = builder.create<ZStruct::SubscriptOp>(loc, rightArray, constOp);
+
+    if (convertLeftValue) {
+      leftElem = lookup(leftElem, "@layout");
+    }
+    if (convertRightValue) {
+      rightElem = lookup(rightElem, "@layout");
+    }
+    genAliasLayout(loc, leftElem, rightElem);
+  }
+}
+
+void LoweringImpl::genAliasLayout(Location loc, Value left, Value right) {
+  bool leftArray = llvm::isa<ArrayType>(left.getType());
+  bool rightArray = llvm::isa<ArrayType>(right.getType());
+
+  if (leftArray || rightArray) {
+    genAliasLayoutArray(loc, left, leftArray, right, rightArray);
+    return;
+  }
+  Type type = Zhlt::getLeastCommonSuper({left.getType(), right.getType()}, /*isLayout=*/true);
+  if (type && (left.getType() == right.getType() || !llvm::isa<LayoutArrayType>(type))) {
+    left = coerceTo(left, type);
+    right = coerceTo(right, type);
+    builder.create<ZStruct::AliasLayoutOp>(loc, left, right);
+  } else {
+    genAliasLayoutArray(loc, left, /*convertLeftValue=*/false, right, /*convertRightValue=*/false);
+  }
+}
+
+Value LoweringImpl::expandLayoutMember(Location loc,
+                                       ComponentBuilder& cb,
+                                       Value origLayout,
+                                       Type newType) {
+  if (origLayout.getType() == newType)
+    return origLayout;
+
+  bool isCoercible = Zhlt::isCoercibleTo(newType, origLayout.getType(), /*isLayout=*/true);
+  bool isCoercibleArray = false;
+  auto origLayoutArrayType = Zhlt::getCoercibleArrayType(origLayout.getType());
+  auto newLayoutArrayType = Zhlt::getCoercibleArrayType(newType);
+  if (origLayoutArrayType && newLayoutArrayType &&
+      Zhlt::isCoercibleTo(
+          newLayoutArrayType.getElement(), origLayoutArrayType.getElement(), /*isLayout=*/true))
+    isCoercibleArray = true;
+
+  if (!(isCoercible || isCoercibleArray)) {
+    emitError(loc) << "Unable to expand layout " << origLayout.getType()
+                   << "\nto incompatible type " << newType;
+    return {};
+  }
+
+  auto lookupOp = origLayout.getDefiningOp<ZStruct::LookupOp>();
+  if (!lookupOp)
+    return {};
+  auto memberName = lookupOp.getMember();
+  auto newMember = cb.addLayoutMember(loc, memberName.str() + "$redef", newType);
+  genAliasLayout(loc, origLayout, newMember);
+  return newMember;
 }
 
 void LoweringImpl::gen(DirectiveOp directive, ComponentBuilder& cb) {
@@ -1016,13 +1045,16 @@ void LoweringImpl::gen(DirectiveOp directive, ComponentBuilder& cb) {
       size_t args = directive.getArgs().size();
       directive.emitError() << "'AliasLayout' directive expects two arguments, got " << args;
     }
-    Value left = asLayout(directive.getArgs()[0]);
-    Value right = asLayout(directive.getArgs()[1]);
-    assert(left && right);
-    Type type = Zhlt::getLeastCommonSuper({left.getType(), right.getType()}, /*isLayout=*/1);
-    left = coerceTo(left, type);
-    right = coerceTo(right, type);
-    builder.create<ZStruct::AliasLayoutOp>(directive.getLoc(), left, right);
+    Value left = asAliasableLayout(directive.getArgs()[0]);
+    Value right = asAliasableLayout(directive.getArgs()[1]);
+    if (left && right) {
+      genAliasLayout(directive.getLoc(), left, right);
+      return;
+    }
+    if (!left)
+      directive.emitError() << "Unable to determine layout of " << directive.getArgs()[0];
+    if (!right)
+      directive.emitError() << "Unable to determine layout of " << directive.getArgs()[1];
   } else {
     directive.emitError() << "Unknown compiler directive '" << directive.getName() << "'";
   }
@@ -1060,15 +1092,15 @@ void LoweringImpl::gen(MapOp map, ComponentBuilder& cb) {
     auto mapArg = map.getFunction().getArgument(0);
     valueMapping[mapArg] = mapBodyBlock->addArgument(elemType, mapArg.getLoc());
     gen(map.getFunction(), subBlock);
-    Value outValue = subBlock.getValue(mapArg.getLoc());
-    outValueType = outValue.getType();
-    builder.create<ZStruct::YieldOp>(map.getLoc(), outValue);
     subBlock.supplyLayout([&](StringAttr name, Type layoutType) -> Value {
       Value bodyLayout = mapBodyBlock->addArgument(layoutType, mapArg.getLoc());
       Type outLayoutType = builder.getType<ZStruct::LayoutArrayType>(layoutType, size);
       outLayout = addOrExpandLayoutMember(map.getLoc(), cb, map.getOut(), outLayoutType);
       return bodyLayout;
     });
+    Value outValue = subBlock.getValue(mapArg.getLoc());
+    outValueType = outValue.getType();
+    builder.create<ZStruct::YieldOp>(map.getLoc(), outValue);
   }
 
   auto outArrayType = builder.getType<ArrayType>(outValueType, size);
@@ -1178,7 +1210,7 @@ void LoweringImpl::gen(SwitchOp sw, ComponentBuilder& cb) {
         LayoutArrayType::get(ctx, Zhlt::getNondetRegLayoutType(ctx), size);
     Value saveArray = muxContext.addLayoutMember(sw.getLoc(), "@selector", selectorSaveType);
     // Alias them to the actual selectors
-    Value selectorArray = asLayout(sw.getSelector());
+    Value selectorArray = layoutMapping.lookup(sw.getSelector());
     while (!selectorArray.getType().isa<LayoutArrayType>()) {
       selectorArray = builder.create<ZStruct::LookupOp>(sw.getLoc(), selectorArray, "@super");
     }
@@ -1360,10 +1392,8 @@ void LoweringImpl::gen(SwitchOp sw, ComponentBuilder& cb) {
       Value fullArmLayout = muxContext.addLayoutMember(armLoc, name, layoutType);
       // If the common super has layout, the common part must have the same
       // layout on each mux arm
-      if (superLayout) {
-        Value armCommonSuperLayout = coerceTo(fullArmLayout, commonArmLayoutType);
-        builder.create<ZStruct::AliasLayoutOp>(armLoc, superLayout, armCommonSuperLayout);
-      }
+      if (superLayout)
+        genAliasLayout(armLoc, superLayout, fullArmLayout);
       // We hoist all argument layouts out of the major mux, and so the argument
       // sublayouts within each major mux arm need to alias the hoisted ones.
       if (!worstCase.empty()) {
@@ -1473,15 +1503,24 @@ void LoweringImpl::gen(ArrayOp array, ComponentBuilder& cb) {
   }
 
   auto arrayOp = builder.create<ZStruct::ArrayOp>(array.getLoc(), elements);
-  valueMapping[array.getOut()] = arrayOp.getOut();
+  valueMapping[array.getOut()] = arrayOp;
 
   if (llvm::all_of(layouts, [](Value v) { return v; })) {
-    Type layoutType = Zhlt::getLeastCommonSuper(ValueRange(layouts).getTypes(), /*isLayout=*/true);
-    for (Value& layout : layouts) {
-      layout = coerceTo(layout, layoutType);
+    Type layoutElemType =
+        Zhlt::getLeastCommonSuper(ValueRange(layouts).getTypes(), /*isLayout=*/true);
+    auto arrayLayout =
+        cb.addLayoutMember(array.getLoc(),
+                           array.getOut(),
+                           builder.getType<LayoutArrayType>(layoutElemType, layouts.size()));
+
+    for (auto [i, layout] : llvm::enumerate(layouts)) {
+      auto constOp = builder.create<Zll::ConstOp>(array.getLoc(), i);
+      auto subscriptOp = builder.create<ZStruct::SubscriptOp>(array.getLoc(), arrayLayout, constOp);
+      layout = coerceTo(layout, layoutElemType);
+      genAliasLayout(array.getLoc(), layout, subscriptOp);
     }
-    auto layoutArrayOp = builder.create<ZStruct::LayoutArrayOp>(array.getLoc(), layouts);
-    layoutMapping[array.getOut()] = layoutArrayOp.getOut();
+
+    layoutMapping[array.getOut()] = arrayLayout;
   }
 }
 
