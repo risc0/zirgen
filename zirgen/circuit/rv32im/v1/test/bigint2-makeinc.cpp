@@ -50,8 +50,8 @@ const APInt
     secp256k1_order(256, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16);
 */
 
-int kArenaConst = 28; // Reg T3 = x28
-const uint32_t kArenaTmp = 2;    // Reg SP = x2
+int kArenaConst = 28;         // Reg T3 = x28
+const uint32_t kArenaTmp = 2; // Reg SP = x2
 
 struct PolyAtom {
   uint32_t arena;
