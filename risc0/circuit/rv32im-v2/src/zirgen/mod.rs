@@ -17,3 +17,23 @@ pub mod info;
 pub mod taps;
 
 use super::CircuitImpl;
+
+#[allow(unused_parens)]
+#[allow(unused_assignments)]
+#[allow(unused_variables)]
+#[allow(dead_code)]
+#[allow(non_camel_case_types)]
+#[allow(non_snake_case)]
+pub mod circuit {
+    use risc0_zkp::{
+        field::baby_bear::{BabyBearElem, BabyBearExtElem},
+        layout::Reg,
+    };
+
+    type Val = BabyBearElem;
+    type ExtVal = BabyBearExtElem;
+
+    include! {"types.inc.rs"}
+    // include! {"defs.rs.inc"}
+    include! {"layout.inc.rs"}
+}

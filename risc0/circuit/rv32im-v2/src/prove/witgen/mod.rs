@@ -22,25 +22,27 @@ use super::hal::{CircuitWitnessGenerator, StepMode, WitnessBuffer};
 use crate::{
     execute::{platform::LOOKUP_TABLE_CYCLES, segment::Segment},
     prove::{REG_COUNT_DATA, REG_COUNT_GLOBAL},
+    zirgen::circuit::{LAYOUT_GLOBAL, LAYOUT_TOP},
 };
 
-// kLayout_Top.nextPcLow._super.col
-const TOP_STATE_COL: usize = 12;
+const TOP_STATE_COL: usize = LAYOUT_TOP.next_pc_low._super.offset;
 
-// kLayout_Top.instResult.arm8.s0._super.col;
-const TOP_ECALL0_STATE_COL: usize = 71;
+const TOP_ECALL0_STATE_COL: usize = LAYOUT_TOP.inst_result.arm8.s0._super.offset;
 
-// kLayout_Top.instResult.arm9.state._super.hasState._super.col;
-const TOP_POSEIDON_STATE_COL: usize = 27;
+const TOP_POSEIDON_STATE_COL: usize = LAYOUT_TOP
+    .inst_result
+    .arm9
+    .state
+    ._super
+    .has_state
+    ._super
+    .offset;
 
-// kLayoutGlobal.input
-const GLOBAL_INPUT_BASE: usize = 0;
+const GLOBAL_INPUT_BASE: usize = LAYOUT_GLOBAL.input.values[0].low._super.offset;
 
-// kLayoutGlobal.isTerminate
-const GLOBAL_IS_TERMINATE: usize = 16;
+const GLOBAL_IS_TERMINATE: usize = LAYOUT_GLOBAL.is_terminate._super.offset;
 
-// kLayoutGlobal.output
-const GLOBAL_STATE_IN_BASE: usize = 33;
+const GLOBAL_STATE_IN_BASE: usize = LAYOUT_GLOBAL.state_in.values[0].low._super.offset;
 
 pub(crate) struct WitnessGenerator<H: Hal> {
     pub cycles: usize,
