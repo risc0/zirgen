@@ -6,29 +6,25 @@ edition = "2021"
 
 [dependencies]
 anyhow = { version = "1.0", features = ["backtrace"] }
-env_logger = "0.11.3"
-flate2 = "1.0"
-lazy_static = "1.4"
-log = "0.4.20"
-paste = "1.0"
-rayon = "1.8"
 risc0-binfmt = { workspace = true }
 risc0-core = { workspace = true }
 risc0-zkp = { workspace = true, default-features = false, features = ["prove"] }
-serde_json = "1.0"
-tar = "0.4"
-tracing = "0.1.40"
+tracing = "0.1"
 
 [target.'cfg(not(target_os = "zkvm"))'.dependencies]
+bytemuck = { version = "1.13", optional = true }
 cfg-if = { version = "1.0", optional = true }
+derive_more = { version = "1.0", features = [
+  "add",
+  "add_assign",
+  "debug",
+], optional = true }
+rayon = { version = "1.5", optional = true }
 risc0-circuit-rv32im-v2-sys = { workspace = true, optional = true }
 risc0-sys = { workspace = true, optional = true }
-risc0-zirgen-dsl = { workspace = true, optional = true }
 
 [dev-dependencies]
 test-log = { version = "0.2", default-features = false, features = ["trace"] }
-tracing-forest = "0.1"
-tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 [features]
 cuda = [
@@ -38,9 +34,15 @@ cuda = [
   "risc0-zkp/cuda",
 ]
 default = ["prove"]
+execute = ["dep:bytemuck", "dep:derive_more", "std"]
 prove = [
   "dep:cfg-if",
+  "dep:rayon",
   "dep:risc0-circuit-rv32im-v2-sys",
   "dep:risc0-sys",
-  "dep:risc0-zirgen-dsl",
+  "execute",
+  "risc0-core/perf",
+  "risc0-zkp/prove",
+  "std",
 ]
+std = ["risc0-zkp/std"]

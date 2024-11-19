@@ -952,10 +952,10 @@ struct ControlUserECALLLayout {
   MemoryWriteLayout _1;
   MemoryReadLayout loadInst;
   U16RegLayout _0;
-  NondetRegLayout safeMode;
   MemoryReadLayout dispatchIdx;
   MemoryReadLayout newPcAddr;
   AddrDecomposeBitsLayout pcAddr;
+  NondetRegLayout safeMode;
 };
 struct Control0Arm2Layout {
   ControlUserECALLLayout _super;
@@ -1003,10 +1003,10 @@ struct Control0Arm2Layout {
 };
 struct ControlMRETLayout {
   NormalizeU32Layout pcAdd;
-  NondetRegLayout safeMode;
   MemoryReadLayout loadInst;
   MemoryReadLayout pc;
   AddrDecomposeBitsLayout pcAddr;
+  NondetRegLayout safeMode;
 };
 struct Control0Arm3Layout {
   ControlMRETLayout _super;
@@ -1901,13 +1901,13 @@ struct _Arguments_PoseidonPaging__1Layout {
 };
 struct PoseidonPagingLayout {
   PoseidonPaging_SuperLayout _super;
+  NondetRegLayout curIdx;
+  NondetRegLayout curMode;
   OneHot_6_Layout modeSplit;
   PoseidonPaging__0Layout _2;
   IsU24Layout _0;
   _Arguments_PoseidonPaging__1Layout _arguments__1;
   NondetRegLayout _3;
-  NondetRegLayout curIdx;
-  NondetRegLayout curMode;
 };
 struct Poseidon0Arm6Layout {
   PoseidonPagingLayout _super;

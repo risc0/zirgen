@@ -1,19 +1,20 @@
-load("@zirgen//bazel/rules/lit:defs.bzl", "glob_lit_tests")
-load("@zirgen//bazel/rules/zirgen:dsl-defs.bzl", "zirgen_build", "zirgen_genfiles")
+load("//bazel/rules/lit:defs.bzl", "glob_lit_tests")
+load("//bazel/rules/zirgen:dsl-defs.bzl", "zirgen_build", "zirgen_genfiles")
+load("//bazel/rules/zirgen:edsl-defs.bzl", "ZIRGEN_OUTS", "build_circuit")
 
-package(
-    default_visibility = ["//visibility:public"],
-)
+package(default_visibility = ["//visibility:public"])
+
+ZIR_FILES = glob(["*.zir"])
 
 filegroup(
     name = "imports",
-    srcs = glob(["*.zir"]),
+    srcs = ZIR_FILES,
 )
 
 glob_lit_tests(
     data = [
         ":imports",
-        "@zirgen//zirgen/circuit/rv32im/shared/test:riscv_test_bins",
+        "//zirgen/circuit/rv32im/shared/test:riscv_test_bins",
     ],
     size_override = {"top.zir": "medium"},
     test_file_exts = ["zir"],
@@ -41,3 +42,29 @@ zirgen_build(
 #         ),
 #     ],
 # )
+
+OUTS = ZIRGEN_OUTS + [
+    "rust_poly_fp_0.cpp",
+    "rust_poly_fp_1.cpp",
+    "rust_poly_fp_2.cpp",
+    "rust_poly_fp_3.cpp",
+    "rust_poly_fp_4.cpp",
+    "eval_check_0.cu",
+    "eval_check_1.cu",
+    "eval_check_2.cu",
+    "eval_check_3.cu",
+    "eval_check_4.cu",
+]
+
+build_circuit(
+    name = "codegen",
+    outs = OUTS,
+    bin = "//zirgen/Main:gen_zirgen",
+    data = ZIR_FILES,
+    extra_args = [
+        "zirgen/circuit/rv32im/v2/dsl/top.zir",
+        "-I",
+        "zirgen/circuit/rv32im/v2/dsl",
+        "--validity-split-count=5",
+    ],
+)

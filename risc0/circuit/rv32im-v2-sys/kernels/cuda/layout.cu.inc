@@ -2441,20 +2441,20 @@ __device__ constexpr NondetU16RegLayout kLayout__524 =
                                            .val = NondetRegLayout{._super = /*offset=*/124}}};
 __device__ constexpr U16RegLayout kLayout__523 = U16RegLayout{.ret = kLayout__524};
 __device__ constexpr AddrDecomposeBitsLayout kLayout__522 =
-    AddrDecomposeBitsLayout{.low0 = NondetRegLayout{._super = /*offset=*/172},
-                            .low1 = NondetRegLayout{._super = /*offset=*/173},
+    AddrDecomposeBitsLayout{.low0 = NondetRegLayout{._super = /*offset=*/171},
+                            .low1 = NondetRegLayout{._super = /*offset=*/172},
                             .upperDiff = kLayout__523,
-                            ._0 = IsZeroLayout{._super = NondetRegLayout{._super = /*offset=*/174},
-                                               .inv = NondetRegLayout{._super = /*offset=*/175}},
+                            ._0 = IsZeroLayout{._super = NondetRegLayout{._super = /*offset=*/173},
+                                               .inv = NondetRegLayout{._super = /*offset=*/174}},
                             .med14 = kLayout__427};
 __device__ constexpr ControlUserECALLLayout kLayout__519 =
     ControlUserECALLLayout{._1 = kLayout__496,
                            .loadInst = kLayout__479,
                            ._0 = kLayout__520,
-                           .safeMode = NondetRegLayout{._super = /*offset=*/171},
                            .dispatchIdx = kLayout__482,
                            .newPcAddr = kLayout__521,
-                           .pcAddr = kLayout__522};
+                           .pcAddr = kLayout__522,
+                           .safeMode = NondetRegLayout{._super = /*offset=*/175}};
 __device__ constexpr Control0Arm2Layout kLayout__518 = Control0Arm2Layout{
     ._super = kLayout__519,
     ._extra25 = ArgU8Layout{.count = NondetRegLayout{._super = /*offset=*/91},
@@ -2540,18 +2540,18 @@ __device__ constexpr NormalizeU32Layout kLayout__527 =
                        .lowCarry = NondetRegLayout{._super = /*offset=*/171},
                        .highCarry = NondetRegLayout{._super = /*offset=*/172}};
 __device__ constexpr AddrDecomposeBitsLayout kLayout__529 =
-    AddrDecomposeBitsLayout{.low0 = NondetRegLayout{._super = /*offset=*/174},
-                            .low1 = NondetRegLayout{._super = /*offset=*/175},
+    AddrDecomposeBitsLayout{.low0 = NondetRegLayout{._super = /*offset=*/173},
+                            .low1 = NondetRegLayout{._super = /*offset=*/174},
                             .upperDiff = kLayout__523,
-                            ._0 = IsZeroLayout{._super = NondetRegLayout{._super = /*offset=*/176},
-                                               .inv = NondetRegLayout{._super = /*offset=*/177}},
+                            ._0 = IsZeroLayout{._super = NondetRegLayout{._super = /*offset=*/175},
+                                               .inv = NondetRegLayout{._super = /*offset=*/176}},
                             .med14 = kLayout__427};
 __device__ constexpr ControlMRETLayout kLayout__526 =
     ControlMRETLayout{.pcAdd = kLayout__527,
-                      .safeMode = NondetRegLayout{._super = /*offset=*/173},
                       .loadInst = kLayout__479,
                       .pc = kLayout__482,
-                      .pcAddr = kLayout__529};
+                      .pcAddr = kLayout__529,
+                      .safeMode = NondetRegLayout{._super = /*offset=*/177}};
 __device__ constexpr Control0Arm3Layout kLayout__525 = Control0Arm3Layout{
     ._super = kLayout__526,
     ._extra30 = ArgU8Layout{.count = NondetRegLayout{._super = /*offset=*/91},
@@ -4541,12 +4541,12 @@ __device__ constexpr PoseidonPaging_SuperLayout kLayout__854 =
                                .arm4 = kLayout__656,
                                .arm5 = kLayout__656};
 __device__ constexpr NondetRegLayout6LayoutArray kLayout__856 = {
-    NondetRegLayout{._super = /*offset=*/182},
-    NondetRegLayout{._super = /*offset=*/183},
     NondetRegLayout{._super = /*offset=*/184},
     NondetRegLayout{._super = /*offset=*/185},
     NondetRegLayout{._super = /*offset=*/186},
-    NondetRegLayout{._super = /*offset=*/187}};
+    NondetRegLayout{._super = /*offset=*/187},
+    NondetRegLayout{._super = /*offset=*/188},
+    NondetRegLayout{._super = /*offset=*/189}};
 __device__ constexpr OneHot_6_Layout kLayout__855 = OneHot_6_Layout{._super = kLayout__856};
 __device__ constexpr NondetU8RegLayout kLayout__861 =
     NondetU8RegLayout{.arg = ArgU8Layout{.count = NondetRegLayout{._super = /*offset=*/108},
@@ -4574,13 +4574,13 @@ __device__ constexpr _Arguments_PoseidonPaging__1Layout kLayout__866 =
                               .val = NondetRegLayout{._super = /*offset=*/109}}}};
 __device__ constexpr PoseidonPagingLayout kLayout__853 =
     PoseidonPagingLayout{._super = kLayout__854,
+                         .curIdx = NondetRegLayout{._super = /*offset=*/182},
+                         .curMode = NondetRegLayout{._super = /*offset=*/183},
                          .modeSplit = kLayout__855,
                          ._2 = kLayout__857,
                          ._0 = kLayout__863,
                          ._arguments__1 = kLayout__866,
-                         ._3 = NondetRegLayout{._super = /*offset=*/188},
-                         .curIdx = NondetRegLayout{._super = /*offset=*/189},
-                         .curMode = NondetRegLayout{._super = /*offset=*/190}};
+                         ._3 = NondetRegLayout{._super = /*offset=*/190}};
 __device__ constexpr Poseidon0Arm6Layout kLayout__852 = Poseidon0Arm6Layout{
     ._super = kLayout__853,
     ._extra24 = ArgU16Layout{.count = NondetRegLayout{._super = /*offset=*/114},

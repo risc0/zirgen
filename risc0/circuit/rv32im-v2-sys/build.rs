@@ -26,21 +26,13 @@ fn main() {
 
 fn build_cpu_kernels() {
     KernelBuild::new(KernelType::Cpp)
-        .files([
-            "cxx/ffi.cpp",
-            "cxx/rust_poly_fp_0.cpp",
-            "cxx/rust_poly_fp_1.cpp",
-            "cxx/rust_poly_fp_2.cpp",
-            "cxx/rust_poly_fp_3.cpp",
-            "cxx/rust_poly_fp_4.cpp",
-        ])
-        .deps([
-            "cxx/defs.cpp.inc",
-            "cxx/ffi.h",
-            "cxx/layout.cpp.inc",
-            "cxx/steps.cpp.inc",
-            "cxx/types.h.inc",
-        ])
+        .files(glob::glob("kernels/cxx/*.cpp").unwrap().map(|x| x.unwrap()))
+        .deps(glob::glob("kernels/cxx/*.h").unwrap().map(|x| x.unwrap()))
+        .deps(
+            glob::glob("kernels/cxx/*.cpp.inc")
+                .unwrap()
+                .map(|x| x.unwrap()),
+        )
         .include(env::var("DEP_RISC0_SYS_CXX_ROOT").unwrap())
         .compile("risc0_rv32im_v2_cpu");
 }

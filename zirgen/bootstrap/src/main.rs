@@ -113,15 +113,15 @@ const KECCAK_ZKR_ZIP: &str = "keccak_zkr.zip";
 
 #[derive(Clone, Debug, ValueEnum)]
 enum Circuit {
+    Bigint2,
+    Calculator,
     Fib,
+    Keccak,
     Predicates,
     Recursion,
     Rv32im,
     Rv32imV2,
-    Keccak,
-    Calculator,
     Verify,
-    BigInt2,
 }
 
 #[derive(Parser)]
@@ -244,15 +244,15 @@ fn cargo_fmt(manifest: &Path) {
 impl Args {
     fn run(&self) {
         match self.circuit {
+            Circuit::Bigint2 => self.bigint2(),
+            Circuit::Calculator => self.calculator(),
             Circuit::Fib => self.fib(),
+            Circuit::Keccak => self.keccak(),
             Circuit::Predicates => self.predicates(),
             Circuit::Recursion => self.recursion(),
             Circuit::Rv32im => self.rv32im(),
             Circuit::Rv32imV2 => self.rv32im_v2(),
-            Circuit::Keccak => self.keccak(),
-            Circuit::Calculator => self.calculator(),
             Circuit::Verify => self.stark_verify(),
-            Circuit::BigInt2 => self.bigint2(),
         }
     }
 

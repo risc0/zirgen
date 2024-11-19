@@ -20,7 +20,7 @@ mod zirgen;
 
 pub struct CircuitImpl;
 
-pub const CIRCUIT: CircuitImpl = CircuitImpl::new();
+pub const CIRCUIT: CircuitImpl = CircuitImpl;
 
 // use anyhow::Result;
 // use micro_circuit::{CircuitField, ExtVal, Val};

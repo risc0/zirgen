@@ -296,10 +296,10 @@ int main(int argc, char* argv[]) {
 
   auto rustOpts = codegen::getRustCodegenOpts();
   CodegenEmitter rustCg(rustOpts, &context);
-  emitDefs(rustCg, *typedModule, "defs.rs.inc");
-  emitTypes(rustCg, *typedModule, "types.rs.inc");
+  // emitDefs(rustCg, *typedModule, "defs.rs.inc");
+  // emitTypes(rustCg, *typedModule, "types.rs.inc");
   emitOps<ZStruct::GlobalConstOp>(rustCg, *typedModule, "layout.rs.inc");
-  emitOps<Zhlt::StepFuncOp>(rustCg, stepFuncs, "steps.rs.inc");
+  // emitOps<Zhlt::StepFuncOp>(rustCg, stepFuncs, "steps.rs.inc");
 
   auto cppOpts = codegen::getCppCodegenOpts();
   CodegenEmitter cppCg(cppOpts, &context);
@@ -307,6 +307,13 @@ int main(int argc, char* argv[]) {
   emitTypes(cppCg, *typedModule, "types.h.inc");
   emitOps<ZStruct::GlobalConstOp>(cppCg, *typedModule, "layout.cpp.inc");
   emitOps<Zhlt::StepFuncOp, Zhlt::ExecFuncOp>(cppCg, stepFuncs, "steps.cpp.inc");
+
+  auto cudaOpts = codegen::getCudaCodegenOpts();
+  CodegenEmitter cudaCg(cudaOpts, &context);
+  emitDefs(cudaCg, *typedModule, "defs.cu.inc");
+  emitTypes(cudaCg, *typedModule, "types.cuh.inc");
+  emitOps<ZStruct::GlobalConstOp>(cudaCg, *typedModule, "layout.cu.inc");
+  emitOps<Zhlt::StepFuncOp, Zhlt::ExecFuncOp>(cudaCg, stepFuncs, "steps.cu.inc");
 
   return 0;
 }
