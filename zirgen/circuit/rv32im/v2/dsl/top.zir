@@ -1,0 +1,93 @@
+// RUN: true
+
+// TODO: Now that the v2 circuit uses an extern to compute major/minor it no
+// longer makes sense to do rv32im conformance testing here.  Make sure
+// integration tests are covering this.
+
+import inst_div;
+import inst_misc;
+import inst_mul;
+import inst_mem;
+import inst_control;
+import inst_ecall;
+import inst_p2;
+import mem;
+import one_hot;
+
+extern IsFirstCycle() : Val;
+extern GetCycle() : Val;
+
+component MajorMinor(major: Val, minor: Val) {
+  major := major;
+  minor := minor;
+}
+
+extern GetMajorMinor(): MajorMinor;
+
+component Top() {
+  // Global state
+  global stateIn: DigestReg;
+  global stateOut: DigestReg;
+  global input: DigestReg;
+  global output: DigestReg;
+  global isTerminate: Reg;
+  global termA0low: Reg;
+  global termA0high: Reg;
+  global termA1low: Reg;
+  global termA1high: Reg;
+  global rng: ExtReg;
+
+  // Top state
+  next_pc_low : Reg;
+  next_pc_high : Reg;
+  next_state : Reg;
+  next_machine_mode : Reg;
+
+  // Registerize first cycle + cycle number [TODO, verify]
+  is_first_cycle := NondetReg(IsFirstCycle());
+  cycleND := NondetReg(GetCycle());
+  cycle := Reg(cycleND);
+  AliasLayout!(cycleND, cycle);
+  // Get PC (init pc == 0)
+  low_pc := (1 - is_first_cycle) * next_pc_low@1;
+  high_pc := (1 - is_first_cycle) * next_pc_high@1;
+  pc_u32 := ValU32(low_pc, high_pc);
+  // Get state (init state == 0)
+  state := (1 - is_first_cycle) * next_state@1 + is_first_cycle * StateLoadRoot();
+  // Get machine mode (init mode == 1)
+  machine_mode := (1 - is_first_cycle) * next_machine_mode@1 + is_first_cycle;
+  // Now, guess major + minor
+  peek_major_minor := GetMajorMinor();
+  // Finally, time to registerize our results
+  major := NondetReg(peek_major_minor.major);
+  minor := NondetReg(peek_major_minor.minor);
+  Log("Major/Minor = ", major, minor);
+  // Make a nice input to all the instructions
+  inst_input := InstInput(cycle, major, minor, pc_u32, state, machine_mode);
+  // Now we split on major
+  major_onehot := OneHot<11>(major);
+  inst_result := major_onehot ->! (
+    Misc0(cycle, inst_input),
+    Misc1(cycle, inst_input),
+    Misc2(cycle, inst_input),
+    Mul0(cycle, inst_input),
+    Div0(cycle, inst_input),
+    Mem0(cycle, inst_input),
+    Mem1(cycle, inst_input),
+    Control0(cycle, inst_input),
+    ECall0(cycle, inst_input),
+    Poseidon0(cycle, inst_input),
+    Poseidon1(cycle, inst_input)
+  );
+  // Compute next PC
+  pc_word := inst_result.new_pc.low / 4 + inst_result.new_pc.high * 16384;
+  Log("Cycle, pc, state, mm", cycle, pc_word, inst_result.new_state, inst_result.new_mode);
+  next_pc_low := Reg(inst_result.new_pc.low);
+  next_pc_high := Reg(inst_result.new_pc.high);
+  next_state := Reg(inst_result.new_state);
+  next_machine_mode := Reg(inst_result.new_mode);
+}
+
+test run {
+  Top();
+}

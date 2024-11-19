@@ -1,0 +1,179 @@
+// RUN: true
+
+import inst;
+import consts;
+
+
+// Prepare to read a certain length, maybe return a smaller one
+extern HostReadPrepare(fd: Val, len: Val): Val;
+
+// Get return from write size
+extern HostWrite(fd: Val, addr: ValU32, len: Val): Val;
+
+component ECallOutput(state: Val, s0: Val, s1: Val, s2: Val) {
+  state := state;
+  s0 := s0;
+  s1 := s1;
+  s2 := s2;
+}
+
+component IllegalECall() {
+  0 = 1;
+  ECallOutput(0, 0, 0, 0)
+}
+
+component MachineECall(cycle: Reg, input: InstInput, pc_addr: Val) {
+  load_inst := MemoryRead(cycle, pc_addr);
+  input.state = StateDecode();
+  load_inst.high = 0x0000;
+  load_inst.low = 0x0073;
+  input.mode = 1;
+  dispatch_idx := MemoryRead(cycle, MachineRegBase() + RegA7());
+  dispatch_idx.high = 0;
+  dispatch := OneHot<4>(dispatch_idx.low);
+  state := dispatch -> (
+    StateTerminate(),
+    StateHostReadSetup(),
+    StateHostWrite(),
+    StatePoseidonEcall()
+  );
+  ECallOutput(state, 0, 0, 0)
+}
+
+component ECallTerminate(cycle: Reg, input: InstInput) {
+  input.state = StateTerminate();
+  a0 := MemoryRead(cycle, UserRegBase() + RegA0());
+  a1 := MemoryRead(cycle, UserRegBase() + RegA1());
+  global termA0low := Reg(a0.low);
+  global termA0high := Reg(a0.high);
+  global termA1low := Reg(a1.low);
+  global termA1high := Reg(a1.high);
+
+  ECallOutput(StateSuspend(), 0, 0, 0)
+}
+
+component DecomposeLow2(len: Val) {
+  // We split len into a multiple of 4, and the low 2 bits as one hot
+  high := NondetReg((len & 0xfffc) / 4);
+  low2 := NondetReg(len & 0x3);
+  low2Hot := OneHot<4>(low2);
+  highZero := IsZero(high);
+  isZero := Reg(highZero * low2Hot[0]);
+  low2Zero := low2Hot[0];
+  low2Nonzero := low2Hot[1] + low2Hot[2] + low2Hot[3];
+}
+
+component ECallHostReadSetup(cycle: Reg, input: InstInput) {
+  input.state = StateHostReadSetup();
+  // Read fd, pointer + length
+  fd := MemoryRead(cycle, MachineRegBase() + RegA0());
+  ptr := MemoryRead(cycle, MachineRegBase() + RegA1());
+  len := MemoryRead(cycle, MachineRegBase() + RegA2());
+  // fd < 64k
+  fd.high = 0;
+  // Make sure length < 64k (about 1k cycles)
+  len.high = 0;
+  // Get the 'returned' length
+  newLen := NondetU16Reg(HostReadPrepare(fd.low, len.low));
+  // Verify it's less than or equal to the the input length
+  diff := U16Reg(len.low - newLen);
+  // Write back to A0
+  MemoryWrite(cycle, MachineRegBase() + RegA0(), ValU32(newLen, 0));
+  // Decompose into low bits
+  ptrDecomp := DecomposeLow2(ptr.low);
+  ptrWord := ptr.high * 0x4000 + ptrDecomp.high;
+  lenDecomp := DecomposeLow2(newLen);
+  // Check if length is exactly 1, 2, or 3
+  len123 := Reg(lenDecomp.highZero * lenDecomp.low2Nonzero);
+  // Check if things are 'uneven'
+  uneven := Reg(len123 * ptrDecomp.low2Nonzero);
+  // Now pick the next cycle
+  nextCycle :=
+    // If length == 0, go back to decoding
+    lenDecomp.isZero * StateDecode() +
+    // If length != 0 and uneven, do bytes
+    (1 - lenDecomp.isZero) * uneven * StateHostReadBytes() +
+    // If lenght != 0 and even, do words
+    (1 - lenDecomp.isZero) * (1 - uneven) * StateHostReadWords();
+  ECallOutput(nextCycle, ptrWord, ptrDecomp.low2, newLen)
+}
+
+component ECallHostWrite(cycle: Reg, input: InstInput) {
+  input.state = StateHostWrite();
+  // Read fd, pointer + length
+  fd := MemoryRead(cycle, MachineRegBase() + RegA0());
+  ptr := MemoryRead(cycle, MachineRegBase() + RegA1());
+  len := MemoryRead(cycle, MachineRegBase() + RegA2());
+  fd.high = 0;
+  len.high = 0;
+  // Do write extern and get return length
+  newLen := NondetU16Reg(HostWrite(fd.low, ptr, len.low));
+  // Verify it's less than or equal to the the input length
+  diff := U16Reg(len.low - newLen);
+  // Write back to A0
+  MemoryWrite(cycle, MachineRegBase() + RegA0(), ValU32(newLen, 0));
+  // Back to decoding
+  ECallOutput(StateDecode(), 0, 0, 0)
+}
+
+component ECallHostReadBytes(cycle: Reg, input: InstInput) {
+  // TODO
+  input.state = StateHostReadBytes();
+  0 = 1;
+  ECallOutput(16, 0, 0, 0)
+}
+
+component ECallHostReadWords(cycle: Reg, input: InstInput, ptrWord: Val, len: Val) {
+  input.state = StateHostReadWords();
+  lenDecomp := DecomposeLow2(len);
+  wordsDecomp := DecomposeLow2(lenDecomp.high);
+  doWord := [
+    wordsDecomp.low2Hot[1] * wordsDecomp.highZero,
+    wordsDecomp.low2Hot[2] * wordsDecomp.highZero,
+    wordsDecomp.low2Hot[3] * wordsDecomp.highZero,
+    (1 - wordsDecomp.highZero)
+  ];
+  count := reduce doWord init 0 with Add;
+  for i : 0..4 {
+    addr := Reg(doWord[i] * (ptrWord + i) + (1 - doWord[i]) * SafeWriteWord());
+    MemoryWriteUnconstrained(cycle, addr);
+  };
+  lenZero := IsZero(len - 4 * count);
+  nextCycle :=
+    // If length == 0, go back to decoding
+    lenZero * StateDecode() +
+    // If length != 0 and uneven, do bytes
+    (1 - lenZero) * (lenDecomp.low2Nonzero) * StateHostReadBytes() +
+    // If lengtj != 0 and even, more words
+    (1 - lenZero) * (1 - lenDecomp.low2Nonzero) * StateHostReadWords();
+  ECallOutput(nextCycle, ptrWord + count, 0, len - count * 4)
+}
+
+component ECall0(cycle: Reg, inst_input: InstInput) {
+  s0 : Reg;
+  s1 : Reg;
+  s2 : Reg;
+  pc_addr := AddrDecomposeBits(inst_input.pc_u32, inst_input.mode);
+  pc_addr.low2 = 0;
+  output := inst_input.minor_onehot -> (
+    MachineECall(cycle, inst_input, pc_addr),
+    ECallTerminate(cycle, inst_input),
+    ECallHostReadSetup(cycle, inst_input),
+    ECallHostWrite(cycle, inst_input),
+    ECallHostReadBytes(cycle, inst_input),
+    ECallHostReadWords(cycle, inst_input, s0@1, s2@1),
+    IllegalECall(),
+    IllegalECall()
+  );
+  s0 := Reg(output.s0);
+  s1 := Reg(output.s1);
+  s2 := Reg(output.s2);
+  isDecode := IsZero(output.state - StateDecode());
+  isP2Entry := IsZero(output.state - StatePoseidonEcall());
+  addPC := NormalizeU32(AddU32(inst_input.pc_u32, ValU32((isDecode + isP2Entry) * 4, 0)));
+  // Cancel out 'cycle' table entries
+  arg := CycleArg(-GetDiffCount(cycle), cycle);
+  AliasLayout!(arg.cycle, cycle);
+  arg.cycle = cycle;
+  InstOutput(addPC, output.state, 1)
+}
