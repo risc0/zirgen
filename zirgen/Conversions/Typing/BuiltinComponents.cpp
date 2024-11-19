@@ -29,6 +29,7 @@ struct Builtins {
       : builder(builder)
       , ctx(builder.getContext())
       , valType(Zhlt::getValType(ctx))
+      , extValType(Zhlt::getExtValType(ctx))
       , loc(builder.getUnknownLoc()) {}
 
   void addBuiltins();
@@ -45,15 +46,21 @@ private:
                    Type layoutType,
                    const std::function<void(/*args=*/ValueRange)>& buildBody);
   template <typename OpT> void makeBinValOp(StringRef name);
+  template <typename OpT> void makeBinExtValOp(StringRef name);
   template <typename OpT> void makeUnaryValOp(StringRef name);
+  template <typename OpT> void makeUnaryExtValOp(StringRef name);
   void genNondetReg();
+  void genNondetExtReg();
+  void genMakeExt();
+  void genEqzExt();
   void genComponent();
   void genInRange();
 
   OpBuilder& builder;
   MLIRContext* ctx;
 
-  Type valType;
+  Zll::ValType valType;
+  Zll::ValType extValType;
   Location loc;
 };
 
@@ -81,10 +88,32 @@ template <typename OpT> void Builtins::makeBinValOp(StringRef name) {
               });
 }
 
+template <typename OpT> void Builtins::makeBinExtValOp(StringRef name) {
+  makeBuiltin(name,
+              /*valueType=*/extValType,
+              /*constructParams=*/{extValType, extValType},
+              /*layout=*/Type(),
+              [&](ValueRange args) {
+                auto op = builder.create<OpT>(loc, args[0], args[1]);
+                builder.create<Zhlt::ReturnOp>(loc, op);
+              });
+}
+
 template <typename OpT> void Builtins::makeUnaryValOp(StringRef name) {
   makeBuiltin(name,
               /*valueType=*/valType,
               /*constructParams=*/{valType},
+              /*layout=*/Type(),
+              [&](ValueRange args) {
+                auto op = builder.create<OpT>(loc, args[0]);
+                builder.create<Zhlt::ReturnOp>(loc, op);
+              });
+}
+
+template <typename OpT> void Builtins::makeUnaryExtValOp(StringRef name) {
+  makeBuiltin(name,
+              /*valueType=*/extValType,
+              /*constructParams=*/{extValType},
               /*layout=*/Type(),
               [&](ValueRange args) {
                 auto op = builder.create<OpT>(loc, args[0]);
@@ -109,6 +138,55 @@ void Builtins::genNondetReg() {
                     builder.create<ZStruct::LoadOp>(loc, valType, ref, /*distance=*/zero);
                 mlir::Value packed = builder.create<ZStruct::PackOp>(
                     loc, Zhlt::getNondetRegType(ctx), /*members=*/ValueRange{loaded});
+                builder.create<Zhlt::ReturnOp>(loc, packed);
+              });
+}
+
+void Builtins::genNondetExtReg() {
+  auto returnType = Zhlt::getNondetExtRegType(builder.getContext());
+  auto refType = Zhlt::getNondetExtRegLayoutType(builder.getContext());
+  makeBuiltin("NondetExtReg",
+              /*valueType=*/returnType,
+              /*constructParams=*/{extValType},
+              /*layout=*/refType,
+              [&](ValueRange args) {
+                Value val = args[0];
+                Value ref = builder.create<ZStruct::LookupOp>(loc, args[1], "@super");
+                builder.create<ZStruct::StoreOp>(loc, ref, val);
+                Value zero = builder.create<arith::ConstantOp>(
+                    loc, builder.getIndexType(), builder.getIndexAttr(0));
+                mlir::Value loaded =
+                    builder.create<ZStruct::LoadOp>(loc, extValType, ref, /*distance=*/zero);
+                mlir::Value packed = builder.create<ZStruct::PackOp>(
+                    loc, Zhlt::getNondetExtRegType(ctx), /*members=*/ValueRange{loaded});
+                builder.create<Zhlt::ReturnOp>(loc, packed);
+              });
+}
+
+void Builtins::genMakeExt() {
+  makeBuiltin("MakeExt",
+              /*valueType=*/extValType,
+              /*constructParams=*/{valType},
+              /*layout=*/Type(),
+              [&](ValueRange args) {
+                // Convert from Fp -> FpExt by adding an Ext of 0
+                Value val = args[0];
+                SmallVector<uint64_t> zero(extValType.getFieldK(), 0);
+                Value zConst = builder.create<Zll::ConstOp>(loc, extValType, zero);
+                Value result = builder.create<Zll::AddOp>(loc, val, zConst);
+                builder.create<Zhlt::ReturnOp>(loc, result);
+              });
+}
+
+void Builtins::genEqzExt() {
+  makeBuiltin("EqzExt",
+              /*valueType=*/Zhlt::getComponentType(ctx),
+              /*constructParams=*/{extValType},
+              /*layout=*/Type(),
+              [&](ValueRange args) {
+                builder.create<Zll::EqualZeroOp>(loc, args[0]);
+                auto packed = builder.create<ZStruct::PackOp>(
+                    loc, Zhlt::getComponentType(ctx), /*members=*/ValueRange{});
                 builder.create<Zhlt::ReturnOp>(loc, packed);
               });
 }
@@ -187,12 +265,22 @@ void Builtins::addBuiltins() {
   makeBinValOp<Zll::SubOp>("Sub");
   makeBinValOp<Zll::MulOp>("Mul");
 
+  makeUnaryExtValOp<Zll::InvOp>("ExtInv");
+
+  makeBinExtValOp<Zll::AddOp>("ExtAdd");
+  makeBinExtValOp<Zll::SubOp>("ExtSub");
+  makeBinExtValOp<Zll::MulOp>("ExtMul");
+
   genNondetReg();
+  genNondetExtReg();
+  genMakeExt();
+  genEqzExt();
   genComponent();
   genInRange();
 
   genTrivial("Type", Zhlt::getTypeType(ctx));
   genTrivial("Val", valType);
+  genTrivial("ExtVal", extValType);
   genTrivial("String", Zhlt::getStringType(ctx));
 }
 
@@ -202,6 +290,12 @@ static llvm::StringLiteral zirPreamble = R"(
 component Reg(v: Val) {
    reg := NondetReg(v);
    v = reg;
+   reg
+}
+
+component ExtReg(v: ExtVal) {
+   reg := NondetExtReg(v);
+   EqzExt(ExtSub(reg, v));
    reg
 }
 
