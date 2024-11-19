@@ -1,0 +1,134 @@
+// RUN: true
+
+import u32;
+
+// Memory at this level is addressed by word (so an address in the entire 4GB
+// space fits in a single field element).  Each memory address holds two field
+// elements (a ValU32) which represent the high and low short of a word.
+
+// Because we use 'paged' memory, we also need to verify that paging behavior
+// is correct.  That is: we need to be sure that the VM pages in memory before
+// using it, and that dirty values are paged out.  To do this, we add a 'kind'
+// to each memory transaction which is one of: PageIn, Read, Write, PageOut.
+
+// Define symbolic names for the memory transaction type.  At some point it
+// would be nice to add 'constant' support to zirgen since constant functions
+// are a bit ugly.
+function TxKindRead() { 0 }
+function TxKindPageIn() { 1 }
+function TxKindPageOut() { 2 }
+
+extern MemoryDelta(addr: Val, cycle: Val, dataLow: Val, dataHigh: Val, count: Val);
+extern GetDiffCount(cycle: Val): Val;
+
+argument MemoryArg(count: Val, addr: Val, cycle: Val, data: ValU32) {
+  count := NondetReg(count);
+  addr := NondetReg(addr);
+  cycle := NondetReg(cycle);
+  dataLow := NondetReg(data.low);
+  dataHigh := NondetReg(data.high);
+  MemoryDelta(addr, cycle, dataLow, dataHigh, count);  
+}
+
+component GetData(arg: MemoryArg, diffLow: Val, diffHigh: Val) {
+  diffLow := diffLow;
+  diffHigh := diffHigh;
+  ValU32(arg.dataLow, arg.dataHigh)
+}
+
+// The following externs perform the actual nondeterministic changes to
+// memory state:  That is, the do the work of reading and writing memory but
+// are not part of the memory argument itself.  These are wrapped by more
+// complete memory access mechanisms that also verify the memory.
+
+component MemoryTxnResult(prevCycle: Val, prevData: ValU32, data: ValU32) {
+  prevCycle := prevCycle;
+  prevData := prevData;
+  data := data;
+}
+
+// Peek at the past value of memory nondeterministically
+extern GetMemoryTxn(addr: Val): MemoryTxnResult;
+
+argument CycleArg(count: Val, cycle: Val) {
+  count := NondetReg(count);
+  cycle := NondetReg(cycle);
+  LookupDelta(0, cycle, count);
+}
+
+component IsCycle(x: Val) {
+  arg := CycleArg(1, x);
+  arg.count = 1;
+  arg.cycle = x;
+}
+
+component MemoryIO(cycle: Reg, addr: Val) {
+  ret := GetMemoryTxn(addr);
+  oldTxn := MemoryArg(-1, addr, ret.prevCycle, ret.prevData);
+  newTxn := MemoryArg(1, addr, cycle, ret.data);
+  oldTxn.count = -1;
+  newTxn.count = 1;
+  AliasLayout!(newTxn.cycle, cycle);
+  newTxn.cycle = cycle;
+  AliasLayout!(oldTxn.addr, newTxn.addr);
+  oldTxn.addr = newTxn.addr;
+  newTxn.addr = addr;
+}
+
+component IsRead(io: MemoryIO) {
+  io.oldTxn.dataLow = io.newTxn.dataLow;
+  io.oldTxn.dataHigh = io.newTxn.dataHigh;
+}
+
+component IsForward(io: MemoryIO) {
+  IsCycle(io.newTxn.cycle - io.oldTxn.cycle);
+}
+
+// A normal memory read, the most constrainted case
+component MemoryRead(cycle: Reg, addr: Val) {
+  io := MemoryIO(cycle, addr);
+  IsRead(io);
+  IsForward(io);
+  GetData(io.newTxn, 0, 1)
+}
+
+// A normal memory write
+component MemoryWrite(cycle: Reg, addr: Val, data: ValU32) {
+  io := MemoryIO(cycle, addr);
+  IsForward(io);
+  io.newTxn.dataLow = data.low;
+  io.newTxn.dataHigh = data.high;
+}
+
+// Let the host write anythings (used in host read words)
+component MemoryWriteUnconstrained(cycle: Reg, addr: Val) {
+  io := MemoryIO(cycle, addr);
+  IsForward(io);
+}
+
+// A page in: does not constrain cycle to go up, and indeed, the 'previous' cycle
+// is actual the final cycle.
+component MemoryPageIn(cycle: Reg, addr: Val) {
+  io := MemoryIO(cycle, addr);
+  IsRead(io);
+  GetData(io.newTxn, 0, io.newTxn.cycle - io.oldTxn.cycle)
+}
+
+// Contrained like a write, but actually returns the value to it's page in
+// value, while returning it's prior state
+component MemoryPageOut(cycle: Reg, addr: Val) {
+  io := MemoryIO(cycle, addr);
+  IsForward(io);
+  GetData(io.oldTxn, io.newTxn.dataLow - io.oldTxn.dataLow,
+    io.newTxn.dataHigh - io.oldTxn.dataHigh)
+}
+
+// Base 'get' that might be a page in, or might not be
+component MemoryGet(cycle: Reg, addr: Val, txnType: OneHot<3>) {
+  txnType -> (
+    MemoryRead(cycle, addr),
+    MemoryPageIn(cycle, addr),
+    MemoryPageOut(cycle, addr)
+  )
+}
+

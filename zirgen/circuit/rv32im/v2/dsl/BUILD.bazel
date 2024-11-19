@@ -1,0 +1,43 @@
+load("@zirgen//bazel/rules/lit:defs.bzl", "glob_lit_tests")
+load("@zirgen//bazel/rules/zirgen:dsl-defs.bzl", "zirgen_build", "zirgen_genfiles")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "imports",
+    srcs = glob(["*.zir"]),
+)
+
+glob_lit_tests(
+    data = [
+        ":imports",
+        "@zirgen//zirgen/circuit/rv32im/shared/test:riscv_test_bins",
+    ],
+    size_override = {"top.zir": "medium"},
+    test_file_exts = ["zir"],
+)
+
+zirgen_build(
+    name = "cppinc",
+    out = "rv32im.cpp.inc",
+    data = [":imports"],
+    opts = [
+        "--emit=cpp",
+        "--validity=false",
+    ],
+    zir_file = ":top.zir",
+)
+
+# zirgen_genfiles(
+#     name = "Incs",
+#     data = [":imports"],
+#     zir_file = ":top.zir",
+#     zirgen_outs = [
+#         (
+#             ["--emit=rust"],
+#             "micro.rs.inc",
+#         ),
+#     ],
+# )

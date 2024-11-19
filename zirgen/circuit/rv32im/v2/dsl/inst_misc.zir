@@ -1,0 +1,219 @@
+// RUN: true
+
+import inst;
+import is_zero;
+
+component MiscInput(cycle: Reg, inst_input: InstInput) {
+  inst_input.state = StateDecode();
+  ii := inst_input;
+  decoded := DecodeInst(cycle, ii);
+  rs1 := ReadReg(cycle, ii, decoded.rs1);
+  rs2 := ReadReg(cycle, ii, decoded.rs2);
+  ii
+}
+
+component MiscOutput(do_write: Val, to_write: DenormedValU32, new_pc: DenormedValU32) {
+  do_write := do_write;
+  to_write := to_write;
+  new_pc := new_pc;
+}
+
+component FinalizeMisc(cycle: Reg, input: MiscInput, output: MiscOutput) {
+  write_data := NormalizeU32(output.to_write);
+  pc_norm := NormalizeU32(output.new_pc);
+  WriteRd(cycle, input.ii, input.decoded, output.do_write, write_data);
+  InstOutput(pc_norm, StateDecode(), input.ii.mode)
+}
+
+component Misc0(cycle: Reg, inst_input: InstInput) {
+  input := MiscInput(cycle, inst_input);
+  misc_output := input.minor_onehot -> (
+    OpADD(input),
+    OpSUB(input),
+    OpXOR(input),
+    OpOR(input),
+    OpAND(input),
+    OpSLT(input),
+    OpSLTU(input),
+    OpADDI(input)
+  );
+  FinalizeMisc(cycle, input, misc_output)
+}
+
+component Misc1(cycle: Reg, inst_input: InstInput) {
+  input := MiscInput(cycle, inst_input);
+  misc_output := input.minor_onehot -> (
+    OpXORI(input),
+    OpORI(input),
+    OpANDI(input),
+    OpSLTI(input),
+    OpSLTIU(input),
+    OpBEQ(input),
+    OpBNE(input),
+    OpBLT(input)
+  );
+  FinalizeMisc(cycle, input, misc_output)
+}
+
+component Misc2(cycle: Reg, inst_input: InstInput) {
+  input := MiscInput(cycle, inst_input);
+  misc_output := input.minor_onehot -> (
+    OpBGE(input),
+    OpBLTU(input),
+    OpBGEU(input),
+    OpJAL(input),
+    OpJALR(input),
+    OpLUI(input),
+    OpAUIPC(input),
+    OpECALL(input)
+  );
+  FinalizeMisc(cycle, input, misc_output)
+}
+
+component SimpleOp(input: MiscInput, rd_val: DenormedValU32) {
+  new_pc := AddU32(input.pc_u32, ConstU32<4>());
+  MiscOutput(1, rd_val, new_pc)
+}
+
+component CmpOp(input: MiscInput, cond: Val) {
+  new_pc := CondDenormed(cond,
+    AddU32(input.pc_u32, input.decoded.immB),
+    AddU32(input.pc_u32, ConstU32<4>()));
+  MiscOutput(0, Denorm(ConstU32<0>()), new_pc)
+}
+
+component OpADD(input: MiscInput) {
+  VerifyOpcodeF3F7(input.decoded, 0x33, 0x0, 0x00);
+  SimpleOp(input, AddU32(input.rs1, input.rs2))
+}
+
+component OpSUB(input: MiscInput) {
+  VerifyOpcodeF3F7(input.decoded, 0x33, 0x0, 0x20);
+  SimpleOp(input, SubU32(input.rs1, input.rs2))
+}
+
+component OpXOR(input: MiscInput) {
+  VerifyOpcodeF3F7(input.decoded, 0x33, 0x4, 0x00);
+  SimpleOp(input, Denorm(BitwiseXor(input.rs1, input.rs2)))
+}
+
+component OpOR(input: MiscInput) {
+  VerifyOpcodeF3F7(input.decoded, 0x33, 0x6, 0x00);
+  SimpleOp(input, Denorm(BitwiseOr(input.rs1, input.rs2)))
+}
+
+component OpAND(input: MiscInput) {
+  VerifyOpcodeF3F7(input.decoded, 0x33, 0x7, 0x00);
+  SimpleOp(input, Denorm(BitwiseAnd(input.rs1, input.rs2)))
+}
+
+component OpSLT(input: MiscInput) {
+  VerifyOpcodeF3F7(input.decoded, 0x33, 0x2, 0x00);
+  cmp := CmpLessThan(input.rs1, input.rs2);
+  SimpleOp(input, DenormedValU32(cmp.is_less_than, 0))
+}
+
+component OpSLTU(input: MiscInput) {
+  VerifyOpcodeF3F7(input.decoded, 0x33, 0x3, 0x00);
+  cmp := CmpLessThanUnsigned(input.rs1, input.rs2);
+  SimpleOp(input, DenormedValU32(cmp.is_less_than, 0))
+}
+
+component OpADDI(input: MiscInput) {
+  VerifyOpcodeF3(input.decoded, 0x13, 0x0);
+  SimpleOp(input, AddU32(input.rs1, input.decoded.immI))
+}
+
+component OpXORI(input: MiscInput) {
+  VerifyOpcodeF3(input.decoded, 0x13, 0x4);
+  SimpleOp(input, Denorm(BitwiseXor(input.rs1, input.decoded.immI)))
+}
+
+component OpORI(input: MiscInput) {
+  VerifyOpcodeF3(input.decoded, 0x13, 0x6);
+  SimpleOp(input, Denorm(BitwiseOr(input.rs1, input.decoded.immI)))
+}
+
+component OpANDI(input: MiscInput) {
+  VerifyOpcodeF3(input.decoded, 0x13, 0x7);
+  SimpleOp(input, Denorm(BitwiseAnd(input.rs1, input.decoded.immI)))
+}
+
+component OpSLTI(input: MiscInput) {
+  VerifyOpcodeF3(input.decoded, 0x13, 0x2);
+  cmp := CmpLessThan(input.rs1, input.decoded.immI);
+  SimpleOp(input, DenormedValU32(cmp.is_less_than, 0))
+}
+
+component OpSLTIU(input: MiscInput) {
+  VerifyOpcodeF3(input.decoded, 0x13, 0x3);
+  cmp := CmpLessThanUnsigned(input.rs1, input.decoded.immI);
+  SimpleOp(input, DenormedValU32(cmp.is_less_than, 0))
+}
+
+component OpBEQ(input: MiscInput) {
+  VerifyOpcodeF3(input.decoded, 0x63, 0x0);
+  cmp := CmpEqual(input.rs1, input.rs2);
+  CmpOp(input, cmp.is_equal)
+}
+
+component OpBNE(input: MiscInput) {
+  VerifyOpcodeF3(input.decoded, 0x63, 0x1);
+  cmp := CmpEqual(input.rs1, input.rs2);
+  CmpOp(input, 1 - cmp.is_equal)
+}
+
+component OpBLT(input: MiscInput) {
+  VerifyOpcodeF3(input.decoded, 0x63, 0x4);
+  cmp := CmpLessThan(input.rs1, input.rs2);
+  CmpOp(input, cmp.is_less_than)
+}
+
+component OpBGE(input: MiscInput) {
+  VerifyOpcodeF3(input.decoded, 0x63, 0x5);
+  cmp := CmpLessThan(input.rs1, input.rs2);
+  CmpOp(input, 1 - cmp.is_less_than)
+}
+
+component OpBLTU(input: MiscInput) {
+  VerifyOpcodeF3(input.decoded, 0x63, 0x6);
+  cmp := CmpLessThanUnsigned(input.rs1, input.rs2);
+  CmpOp(input, cmp.is_less_than)
+}
+
+component OpBGEU(input: MiscInput) {
+  VerifyOpcodeF3(input.decoded, 0x63, 0x7);
+  cmp := CmpLessThanUnsigned(input.rs1, input.rs2);
+  CmpOp(input, 1 - cmp.is_less_than)
+}
+
+component OpJAL(input: MiscInput) {
+  VerifyOpcode(input.decoded, 0x6f);
+  MiscOutput(1,
+    AddU32(input.pc_u32, ConstU32<4>()),
+    AddU32(input.pc_u32, input.decoded.immJ))
+}
+
+component OpJALR(input: MiscInput) {
+  VerifyOpcodeF3(input.decoded, 0x67, 0x0);
+  MiscOutput(1,
+    AddU32(input.pc_u32, ConstU32<4>()),
+    AddU32(input.rs1, input.decoded.immI))
+}
+
+component OpLUI(input: MiscInput) {
+  VerifyOpcode(input.decoded, 0x37);
+  SimpleOp(input, Denorm(input.decoded.immU))
+}
+
+component OpAUIPC(input: MiscInput) {
+  VerifyOpcode(input.decoded, 0x17);
+  SimpleOp(input, AddU32(input.pc_u32, input.decoded.immU))
+}
+
+// We currently implement ECALL as a busy loop (i.e. keep PC still)
+component OpECALL(input: MiscInput) {
+  VerifyOpcodeF3F7(input.decoded, 0x73, 0x0, 0x00);
+  MiscOutput(0, DenormedValU32(0, 0), AddU32(input.pc_u32, ValU32(0, 0)))
+}
+
