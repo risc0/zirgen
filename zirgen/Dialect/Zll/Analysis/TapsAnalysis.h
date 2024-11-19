@@ -50,28 +50,27 @@ public:
     unsigned tapCount;
   };
 
-  TapsAnalysis(mlir::MLIRContext* ctx, llvm::SmallVector<TapAttr> taps);
+  TapsAnalysis(mlir::Operation* op);
 
   const TapSet& getTapSet() { return tapSet; }
   llvm::ArrayRef<TapAttr> getTapAttrs() { return tapAttrs; }
-  llvm::SmallVector<TapRegAttr> getTapRegAttrs();
-  llvm::SmallVector<mlir::ArrayAttr> getTapCombosAttrs() { return tapComboAttrs; }
 
   unsigned getTapIndex(unsigned regGroupId, unsigned offset, unsigned back) {
     return getTapIndex(TapAttr::get(ctx, regGroupId, offset, back));
   }
   unsigned getTapIndex(TapAttr tapAttr) { return tapIndex.lookup(tapAttr); }
+
+private:
+  mlir::ArrayAttr comboToAttr(llvm::ArrayRef<unsigned> backs);
   unsigned getComboIndex(llvm::ArrayRef<unsigned> backs) {
     return backComboIndex.lookup(comboToAttr(backs));
   }
-  mlir::ArrayAttr comboToAttr(llvm::ArrayRef<unsigned> backs);
 
-private:
   mlir::MLIRContext* ctx;
 
   TapSet tapSet;
   llvm::DenseMap<TapAttr, /*index=*/unsigned> tapIndex;
-  llvm::SmallVector<TapAttr> tapAttrs;
+  llvm::ArrayRef<TapAttr> tapAttrs;
   llvm::SmallVector<mlir::ArrayAttr> tapComboAttrs;
   llvm::DenseMap<mlir::ArrayAttr, /*comboIndex=*/unsigned> backComboIndex;
 };

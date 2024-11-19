@@ -59,10 +59,11 @@ macro_rules! zirgen_inhibit_warnings {
 ///    struct ValidityTapsContext...;
 #[macro_export]
 macro_rules! zirgen_preamble {
-    ($protocol_info:expr) => {
+    {} => {
         use anyhow::{bail, Context, Result};
         use risc0_zkp::adapter::ProtocolInfo;
         use risc0_zkp::layout::Reg;
+        use risc0_zkp::field::Elem;
         use $crate::codegen::_support::*;
         use $crate::codegen::taps::{make_taps, Tap};
         use $crate::{BoundLayout, BufferRow, BufferSpec, Buffers};
@@ -70,18 +71,21 @@ macro_rules! zirgen_preamble {
 
         // Explicitly instantiate calls that cause rustc to be very slow
         // when processing large generated code.
+        fn trivial_constraint() -> Result<MixState> {
+            Ok(MixState {
+                tot: ExtVal::ZERO,
+                mul: ExtVal::ONE,
+            })
+        }
+
         fn and_cond(x: MixState, cond: Val, inner: MixState) -> Result<MixState> {
             and_cond_generic::<CircuitField, Val>(x, cond, inner)
         }
+
         fn and_cond_ext(x: MixState, cond: ExtVal, inner: MixState) -> Result<MixState> {
             and_cond_generic::<CircuitField, ExtVal>(x, cond, inner)
         }
-        fn and_eqz(poly_mix: ExtVal, x: MixState, val: Val) -> Result<MixState> {
-            and_eqz_generic::<CircuitField, Val>(poly_mix, x, val)
-        }
-        fn and_eqz_ext(poly_mix: ExtVal, x: MixState, val: ExtVal) -> Result<MixState> {
-            and_eqz_generic::<CircuitField, ExtVal>(poly_mix, x, val)
-        }
+
         fn alias_layout<Layout: PartialEq, B: BufferRow>(
             x: BoundLayout<Layout, B>,
             y: BoundLayout<Layout, B>,
@@ -95,7 +99,7 @@ macro_rules! zirgen_preamble {
 
         // Eventually we want to generate this trait based on what functions are available,
         // but for now we can hardcode it.
-        pub trait CircuitHal<'a, H: risc0_zkp::hal::Hal<Elem = Val>> {
+        pub trait CircuitHal<H: risc0_zkp::hal::Hal<Elem = Val>> {
             fn step_exec(
                 &self,
                 tot_cycles: usize,
@@ -117,7 +121,7 @@ macro_rules! zirgen_preamble {
 /// Default implementation of "log" for circuits.  Circuits can take advantage
 /// of this implementation by supplying a forwarding function such as this on
 /// a context object:
-///    pub fn log(& self, message: &str, x: &[Val]) -> Result<()> {
+///    pub fn log(& self, message: &str, x: &\[Val\]) -> Result<()> {
 ///        default_log(message, x)
 ///    }
 pub fn default_log<E: risc0_zkp::field::Elem + Into<u32>>(

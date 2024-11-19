@@ -68,11 +68,6 @@ pkg_zip(
     srcs = [x + ".zkr" for x in ZKRS],
 )
 
-pkg_zip(
-    name = "bigint_bibc",
-    srcs = [x + ".bibc" for x in ZKRS],
-)
-
 cc_binary(
     name = "bibc-exec",
     srcs = ["bibc-exec.cpp"],
@@ -82,5 +77,50 @@ cc_binary(
         "@llvm-project//llvm:Support",
         "@llvm-project//mlir:MlirOptLib",
     ],
+)
+
+cc_binary(
+    name = "bigint2c",
+    srcs = ["bigint2c.cpp"],
+    deps = [
+        "//zirgen/circuit/bigint:lib",
+        "//zirgen/Dialect/BigInt/Bytecode",
+        "//zirgen/Dialect/BigInt/IR",
+        "//zirgen/Dialect/BigInt/Transforms",
+        "@llvm-project//llvm:Support",
+        "@llvm-project//mlir:MlirOptLib",
+    ],
+)
+
+BLOBS = [
+    "modpow_65537",
+    "ec_double",
+    "ec_add",
+]
+
+genrule(
+    name = "modpow_65537",
+    outs = ["modpow_65537.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modpow_65537 > $(OUTS)"
+)
+
+genrule(
+    name = "ec_double",
+    outs = ["ec_double.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=ec_double > $(OUTS)"
+)
+
+genrule(
+    name = "ec_add",
+    outs = ["ec_add.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=ec_add > $(OUTS)"
+)
+
+pkg_zip(
+    name = "bigint_blob",
+    srcs = [x + ".blob" for x in BLOBS],
 )
 

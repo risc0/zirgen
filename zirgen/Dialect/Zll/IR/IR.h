@@ -137,6 +137,9 @@ template <typename AttrT> void setModuleAttr(mlir::Operation* op, AttrT newValue
   op->setAttr(AttrT::lookupModuleAttrName(), newValue);
 }
 
+// Re-infer the return type of the given operation, in case its input types have changed.
+void reinferReturnType(mlir::InferTypeOpInterface op);
+
 } // namespace zirgen::Zll
 
 #include "zirgen/Dialect/Zll/IR/TypeInterfaces.h.inc"

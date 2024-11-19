@@ -9,27 +9,14 @@ func.func @fib(
   %arg4: !zll.buffer<1, mutable>
 ) -> !zll.constraint attributes {
   deg = 2 : ui32,
-  tapCombos = [
-    [0 : ui32],
-    [0 : ui32, 1 : ui32, 2 : ui32]
-  ],
-  tapRegs = [
-    #zll.tapReg<0, 0, [0], 0>,
-    #zll.tapReg<1, 0, [0], 0>,
-    #zll.tapReg<1, 1, [0], 0>,
-    #zll.tapReg<1, 2, [0], 0>,
-    #zll.tapReg<2, 0, [0, 1, 2], 1>
-  ],
-  tapType = !zll.val<BabyBear>,
-  taps = [
-    #zll.tap<0, 0, 0>,
-    #zll.tap<1, 0, 0>,
-    #zll.tap<1, 1, 0>,
-    #zll.tap<1, 2, 0>,
-    #zll.tap<2, 0, 0>,
-    #zll.tap<2, 0, 1>,
-    #zll.tap<2, 0, 2>
-  ]
+  zll.taps = #zll<taps
+    <0, 0, 0>,
+    <1, 0, 0>,
+    <1, 1, 0>,
+    <1, 2, 0>,
+    <2, 0, 0>,
+    <2, 0, 1>,
+    <2, 0, 2>>
 } {
   // CHECK: block: &[PolyExtStep::Const(1),
   %0 = zll.const 1 {deg = 0 : ui32}

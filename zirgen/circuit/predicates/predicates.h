@@ -88,8 +88,6 @@ struct Assumption {
   Assumption() = default;
   // Construct via reading from a stream
   Assumption(llvm::ArrayRef<Val>& stream, bool longDigest = false);
-  // Write to an output
-  void write(std::vector<Val>& stream);
   // Digest into a single value
   DigestVal digest();
 
@@ -97,10 +95,29 @@ struct Assumption {
   DigestVal controlRoot;
 };
 
+struct UnionClaim {
+  constexpr static size_t size = 2 * kDigestHalfs;
+  // Default constructor
+  UnionClaim() = default;
+  // Write to an output
+  void write(std::vector<Val>& stream);
+  // Digest into a single value
+  DigestVal digest();
+
+  DigestVal left;
+  DigestVal right;
+};
+
 // ReciptClaim lift(size_t po2, ReadIopVal seal);
 
 ReceiptClaim join(ReceiptClaim in1, ReceiptClaim in2);
 ReceiptClaim identity(ReceiptClaim in);
 ReceiptClaim resolve(ReceiptClaim cond, Assumption assum, DigestVal tail, DigestVal journal);
+
+DigestVal readSha(llvm::ArrayRef<Val>& stream, bool longDigest = false);
+void writeSha(DigestVal val, std::vector<Val>& stream);
+
+// Cannot be called "union" as that is a keyword.
+UnionClaim unionFunc(Assumption left, Assumption right);
 
 } // namespace zirgen::predicates

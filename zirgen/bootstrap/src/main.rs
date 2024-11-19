@@ -54,9 +54,8 @@ const RECURSION_ZKR_ZIP: &str = "recursion_zkr.zip";
 
 const BIGINT_OUTPUTS: &[&str] = &["bigint.rs.inc"];
 const BIGINT_ZKR_ZIP: &str = "bigint_zkr.zip";
-const BIGINT_BIBC_ZIP: &str = "bigint_bibc.zip";
 
-const KECCAK_RUST_OUTPUTS: &[&str] = &[
+const ZIRGEN_RUST_OUTPUTS: &[&str] = &[
     "taps.rs",
     "info.rs",
     "poly_ext.rs",
@@ -64,6 +63,24 @@ const KECCAK_RUST_OUTPUTS: &[&str] = &[
     "types.rs.inc",
     "layout.rs.inc",
     "steps.rs.inc",
+];
+
+const CALCULATOR_RUST_OUTPUTS: &[&str] = &[
+    "taps.rs",
+    "info.rs",
+    "poly_ext.rs",
+    "defs.rs.inc",
+    "types.rs.inc",
+    "layout.rs.inc",
+    "steps.rs.inc",
+    "validity.rs.inc",
+];
+
+const ZIRGEN_SYS_OUTPUTS: &[&str] = &[
+    "defs.cpp.inc",
+    "types.h.inc",
+    "layout.cpp.inc",
+    "steps.cpp.inc",
 ];
 
 const KECCAK_SYS_OUTPUTS: &[&str] = &[
@@ -78,6 +95,16 @@ const KECCAK_SYS_OUTPUTS: &[&str] = &[
     "rust_poly_fp_4.cpp",
 ];
 
+const KECCAK_CUDA_OUTPUTS: &[&str] = &[
+    "eval_check_0.cu",
+    "eval_check_1.cu",
+    "eval_check_2.cu",
+    "eval_check_3.cu",
+    "eval_check_4.cu",
+];
+
+const KECCAK_ZKR_ZIP: &str = "keccak_zkr.zip";
+
 #[derive(Clone, Debug, ValueEnum)]
 enum Circuit {
     Fib,
@@ -85,9 +112,12 @@ enum Circuit {
     Recursion,
     Rv32im,
     Keccak,
+    Calculator,
     Verify,
     #[clap(name("bigint"))]
     BigInt,
+    #[clap(name("bigint2"))]
+    BigInt2,
 }
 
 #[derive(Parser)]
@@ -98,6 +128,8 @@ struct Args {
     circuit: Circuit,
 
     /// Output path for the generated circuit files.
+    ///
+    /// When bootstapping the risc0 monorepo, this should be the path to the repo root.
     #[clap(long)]
     output: Option<PathBuf>,
 }
@@ -105,6 +137,8 @@ struct Args {
 fn get_bazel_bin() -> PathBuf {
     let bazel_bin = Command::new("bazelisk")
         .arg("info")
+        .arg("--config")
+        .arg(bazel_config())
         .arg("bazel-bin")
         .output()
         .unwrap();
@@ -211,8 +245,10 @@ impl Args {
             Circuit::Recursion => self.recursion(),
             Circuit::Rv32im => self.rv32im(),
             Circuit::Keccak => self.keccak(),
+            Circuit::Calculator => self.calculator(),
             Circuit::Verify => self.stark_verify(),
             Circuit::BigInt => self.bigint(),
+            Circuit::BigInt2 => self.bigint2(),
         }
     }
 
@@ -246,12 +282,18 @@ impl Args {
     }
 
     fn keccak(&self) {
+        let bazel_bin = get_bazel_bin();
         let out = &self.output;
         let circuit = "keccak";
         let src_path = Path::new("zirgen/circuit/keccak");
         let sys_root = Path::new("zirgen/circuit/keccak-sys").to_path_buf();
+        let hal_root = Some(sys_root.join("kernels"));
+        let zkr_src_path = bazel_bin.join("zirgen/circuit/predicates");
+        let zkr_tgt_path = out
+            .clone()
+            .unwrap_or(Path::new("zirgen/circuit/keccak/src/prove").to_path_buf());
 
-        copy_group(circuit, &src_path, out, KECCAK_RUST_OUTPUTS, "src", "");
+        copy_group(circuit, &src_path, out, ZIRGEN_RUST_OUTPUTS, "src", "");
         copy_group(
             circuit,
             &src_path,
@@ -260,6 +302,27 @@ impl Args {
             "cxx",
             "",
         );
+        copy_group(
+            circuit,
+            &src_path,
+            &hal_root,
+            KECCAK_CUDA_OUTPUTS,
+            "cuda",
+            "",
+        );
+        copy_file(&zkr_src_path, &zkr_tgt_path, KECCAK_ZKR_ZIP);
+        cargo_fmt_circuit(circuit, &self.output, &None);
+    }
+
+    fn calculator(&self) {
+        let out = self.output.clone().or(Some(
+            Path::new("zirgen/dsl/examples/calculator").to_path_buf(),
+        ));
+        let circuit = "calculator";
+        let src_path = Path::new("zirgen/dsl/examples/calculator/");
+
+        copy_group(circuit, &src_path, &out, CALCULATOR_RUST_OUTPUTS, "", "");
+        copy_group(circuit, &src_path, &out, ZIRGEN_SYS_OUTPUTS, "", "");
         cargo_fmt_circuit(circuit, &self.output, &None);
     }
 
@@ -331,7 +394,6 @@ impl Args {
         let src_path = bazel_bin.join("zirgen/circuit/bigint");
 
         copy_file(&src_path, &out, BIGINT_ZKR_ZIP);
-        copy_file(&src_path, &out, BIGINT_BIBC_ZIP);
         copy_group(
             circuit,
             &src_path,
@@ -375,21 +437,40 @@ impl Args {
 
         cargo_fmt_circuit(circuit, &Some(bigint_crate_root), &None);
     }
+
+    fn bigint2(&self) {
+        let risc0_root = self.output.as_ref().expect("--output is required");
+        let risc0_root = risc0_root.join("risc0");
+        let bazel_bin = get_bazel_bin();
+        let src_path = bazel_bin.join("zirgen/circuit/bigint");
+        let rsa_path = risc0_root.join("bigint2/src/rsa");
+        let ec_path = risc0_root.join("bigint2/src/ec");
+
+        copy_file(&src_path, &rsa_path, "modpow_65537.blob");
+        copy(
+            &src_path.join("ec_double.blob"),
+            &ec_path.join("double.blob"),
+        );
+        copy(&src_path.join("ec_add.blob"), &ec_path.join("add.blob"));
+    }
+}
+
+fn bazel_config() -> &'static str {
+    // Use a hermetic C++ toolchain to get consistent builds across host platforms.
+    // See: https://github.com/uber/hermetic_cc_toolchain
+    // Also ensure that these configs exist in `.bazelrc`.
+    if cfg!(target_os = "macos") {
+        "bootstrap_macos_arm64"
+    } else {
+        "bootstrap_linux_amd64"
+    }
 }
 
 fn main() {
     env_logger::init();
     let args = Args::parse();
 
-    // Use a hermetic C++ toolchain to get consistent builds across host platforms.
-    // See: https://github.com/uber/hermetic_cc_toolchain
-    // Also ensure that these configs exist in `.bazelrc`.
-    let config = if cfg!(target_os = "macos") {
-        "bootstrap_macos_arm64"
-    } else {
-        "bootstrap_linux_amd64"
-    };
-    let bazel_args = ["build", "--config", config, "//zirgen/circuit"];
+    let bazel_args = ["build", "--config", bazel_config(), "//zirgen/circuit"];
 
     // Build the circuits using bazel(isk).
     let status = Command::new("bazelisk").args(bazel_args).status();

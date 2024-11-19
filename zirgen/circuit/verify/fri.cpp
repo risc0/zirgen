@@ -94,7 +94,7 @@ struct VerifyRoundInfo {
 
   VerifyRoundInfo(ReadIopVal& iop, size_t inDomain)
       : domain(inDomain / kFriFold)
-      , merkle(iop, domain, kFriFold, kQueries, /*useExtension=*/true)
+      , merkle("fri", iop, domain, kFriFold, kQueries, /*useExtension=*/true)
       , mix(iop.rngExtVal()) {}
 
   void verifyQuery(ReadIopVal& iop, Val* pos, Val* goal) const {

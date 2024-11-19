@@ -161,10 +161,10 @@ using Top = Comp<TopImpl>;
 
 class PlonkTestExternHandler : public PlonkExternHandler {
 public:
-  std::vector<uint64_t> doExtern(llvm::StringRef name,
-                                 llvm::StringRef extra,
-                                 llvm::ArrayRef<const InterpVal*> args,
-                                 size_t outCount) override {
+  std::optional<std::vector<uint64_t>> doExtern(llvm::StringRef name,
+                                                llvm::StringRef extra,
+                                                llvm::ArrayRef<const InterpVal*> args,
+                                                size_t outCount) override {
     if (name == "getTestData") {
       assert(outCount == 1);
       assert(args.size() == 0);

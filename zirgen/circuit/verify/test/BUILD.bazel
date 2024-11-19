@@ -25,7 +25,7 @@ cc_test(
         "verify-zirgen.cpp",
     ],
     data = [
-        "//zirgen/dsl/examples:CalculatorIncs",
+        "//zirgen/dsl/examples/calculator:validity.ir",
     ],
     deps = [
         "//risc0/core/test:gtest_main",

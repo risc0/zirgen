@@ -12,12 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// DO NOT MERGE; this still needs some work.
-
 #[macro_use]
 pub mod codegen;
-
 mod buffers;
+
 pub use buffers::{BufferSpec, Buffers};
 use risc0_core::{field::Elem, field::ExtElem};
 use risc0_zkp::{hal::cpu::SyncSlice, layout::Reg};
@@ -59,6 +57,7 @@ impl<'a, E: Copy + Clone + Default + Elem> BufferRow for GlobalRow<'a, E> {
         debug_assert!(val.is_valid(), "Global offset {offset}");
         val
     }
+
     fn store(&self, _ctx: &impl CycleContext, offset: usize, val: E) {
         if cfg!(debug_assertions) {
             let old_val = self.buf.get(offset);
@@ -86,6 +85,7 @@ impl<'a, E: Copy + Clone + Default + Elem> BufferRow for CycleRow<'a, E> {
         tracing::trace!("Load {val:?} from offset {offset} back {back}");
         val
     }
+
     fn store(&self, ctx: &impl CycleContext, offset: usize, val: E) {
         if cfg!(debug_assertions) {
             let old_val = self.buf.get(ctx.offset_this_cycle(offset, 0));
@@ -117,6 +117,7 @@ impl<'a, L, B: BufferRow> BoundLayout<'a, L, B> {
     pub fn new(layout: &'static L, buf: &'a B) -> Self {
         Self { layout, buf }
     }
+
     pub fn map<NewL, F: FnOnce(&'static L) -> &'static NewL>(
         &self,
         f: F,
@@ -130,6 +131,7 @@ impl<'a, L, B: BufferRow> BoundLayout<'a, L, B> {
     pub fn layout(&self) -> &'static L {
         self.layout
     }
+
     pub fn buf(&self) -> &B {
         &self.buf
     }
@@ -153,6 +155,7 @@ where
             E::from_subelems(subelems)
         }
     }
+
     pub fn load_unchecked_ext<E: ExtElem<SubElem = B::ValType>>(
         &self,
         ctx: &impl CycleContext,
@@ -160,6 +163,7 @@ where
     ) -> E {
         self.load_ext::<E>(ctx, back).valid_or_zero()
     }
+
     pub fn store_ext<E: ExtElem<SubElem = B::ValType>>(&self, ctx: &impl CycleContext, val: E) {
         for (idx, elem) in val.subelems().into_iter().enumerate() {
             self.buf.store(ctx, self.layout.offset + idx, *elem)
@@ -171,9 +175,11 @@ impl<'a, E: Elem, B: BufferRow<ValType = E>> BoundLayout<'a, Reg, B> {
     pub fn load(&self, ctx: &impl CycleContext, back: usize) -> E {
         self.buf.load(ctx, self.layout.offset, back)
     }
+
     pub fn load_unchecked(&self, ctx: &impl CycleContext, back: usize) -> E {
         self.load(ctx, back).valid_or_zero()
     }
+
     pub fn store(&self, ctx: &impl CycleContext, val: E) {
         self.buf.store(ctx, self.layout.offset, val);
     }

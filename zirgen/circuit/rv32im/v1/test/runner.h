@@ -72,10 +72,10 @@ private:
 
   void storePageEntry(uint32_t pgidx, const Digest& digest);
 
-  std::vector<uint64_t> doExtern(llvm::StringRef name,
-                                 llvm::StringRef extra,
-                                 llvm::ArrayRef<const Zll::InterpVal*> args,
-                                 size_t outCount) override;
+  std::optional<std::vector<uint64_t>> doExtern(llvm::StringRef name,
+                                                llvm::StringRef extra,
+                                                llvm::ArrayRef<const Zll::InterpVal*> args,
+                                                size_t outCount) override;
 
   PageFaultInfo getPageFaultInfo(uint32_t pc, uint32_t inst);
 

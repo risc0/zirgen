@@ -17,6 +17,10 @@ use std::env;
 use risc0_build_kernel::{KernelBuild, KernelType};
 
 fn main() {
+    if env::var("CARGO_FEATURE_CUDA").is_ok() {
+        build_cuda_kernels();
+    }
+
     build_cpu_kernels();
 }
 
@@ -31,5 +35,22 @@ fn build_cpu_kernels() {
             "cxx/rust_poly_fp_4.cpp",
         ])
         .include(env::var("DEP_RISC0_SYS_CXX_ROOT").unwrap())
-        .compile("circuit");
+        .compile("risc0_keccak_cpu");
+}
+
+fn build_cuda_kernels() {
+    KernelBuild::new(KernelType::Cuda)
+        .files([
+            "kernels/cuda/eval_check_0.cu",
+            "kernels/cuda/eval_check_1.cu",
+            "kernels/cuda/eval_check_2.cu",
+            "kernels/cuda/eval_check_3.cu",
+            "kernels/cuda/eval_check_4.cu",
+            "kernels/cuda/eval_check.cu",
+            "kernels/cuda/ffi_supra.cu",
+        ])
+        .deps(["kernels/cuda/kernels.h"])
+        .include(env::var("DEP_RISC0_SYS_CUDA_ROOT").unwrap())
+        .include(env::var("DEP_SPPARK_ROOT").unwrap())
+        .compile("risc0_keccak_cuda");
 }

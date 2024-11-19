@@ -90,7 +90,7 @@ def SliceOp : ZllOp<"slice", [Pure, InferTypeOpAdaptor]> {
 }
 
 def GetOp : ZllOp<"get", [Pure, EvalOpAdaptor, IsPoly, InferTypeOpAdaptor,
-                             CodegenOpWithProperties<["Offset", "Back"]>]> {
+                             DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
   let arguments = (ins Buffer:$buf, UI32Attr:$offset, UI32Attr:$back, OptionalAttr<UI32Attr>:$tap);
   let results = (outs Val:$out);
   let assemblyFormat = [{ $buf `[` $offset `]` `back` $back (`tap` $tap^)? `:` type($buf) attr-dict }];
@@ -101,7 +101,7 @@ def GetOp : ZllOp<"get", [Pure, EvalOpAdaptor, IsPoly, InferTypeOpAdaptor,
   }];
 }
 
-def SetOp : ZllOp<"set", [EvalOpAdaptor, CodegenOpWithProperties<["Offset"]>]> {
+def SetOp : ZllOp<"set", [EvalOpAdaptor, DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
   let arguments = (ins Buffer:$buf, UI32Attr:$offset, Val:$in);
   let assemblyFormat = [{ $buf `:` type($buf) `[` $offset `]` `=` $in `:` type($in) attr-dict }];
   let hasCanonicalizer = 1;

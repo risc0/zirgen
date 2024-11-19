@@ -152,6 +152,11 @@ class FileEmitter {
 public:
   FileEmitter(StringRef path) : path(path) {}
 
+  void emitIR(const std::string& fn, Operation* op) {
+    auto ofs = openOutputFile(fn + ".ir");
+    op->print(*ofs.get());
+  }
+
   void emitRustStep(const std::string& stage, func::FuncOp func) {
     auto ofs = openOutputFile("rust_step_" + stage + ".cpp");
     createRustStreamEmitter(*ofs)->emitStepFunc(stage, func);
@@ -206,8 +211,16 @@ public:
   }
 
   void emitEvalCheck(const std::string& suffix, func::FuncOp func) {
-    auto ofs = openOutputFile("eval_check" + suffix);
-    createGpuStreamEmitter(*ofs, suffix)->emitPoly(func);
+    if (codegenCLOptions->validitySplitCount > 1) {
+      for (size_t i : llvm::seq(size_t(codegenCLOptions->validitySplitCount))) {
+        auto ofs = openOutputFile("eval_check_" + std::to_string(i) + suffix);
+        createGpuStreamEmitter(*ofs, suffix)
+            ->emitPoly(func, i, size_t(codegenCLOptions->validitySplitCount));
+      }
+    } else {
+      auto ofs = openOutputFile("eval_check" + suffix);
+      createGpuStreamEmitter(*ofs, suffix)->emitPoly(func, /*split part=*/0, /*num splits=*/1);
+    }
   }
 
   void emitAllLayouts(mlir::ModuleOp op) {
@@ -307,6 +320,9 @@ void emitCodeZirgenPoly(ModuleOp module, StringRef outputDir) {
     throw std::runtime_error("Failed to apply stage1 passes");
   }
 
+  // Save as IR so we can generate predicates to verify the validity polynomial.
+  emitter.emitIR("validity", module);
+
   module.walk([&](func::FuncOp func) {
     emitter.emitPolyExtFunc(func);
     emitter.emitTaps(func);
@@ -328,6 +344,7 @@ void emitCodeZirgenPoly(ModuleOp module, StringRef outputDir) {
       return;
 
     emitter.emitPolyFunc("poly_fp", func);
+    emitter.emitEvalCheck(".cu", func);
   });
 }
 

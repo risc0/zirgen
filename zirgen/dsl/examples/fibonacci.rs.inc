@@ -452,14 +452,14 @@ pub fn validity_taps(
     poly_mix1: PolyMix,
     global2: &impl BufferRow<ValType = Val>,
 ) -> Result<MixState> {
-    let x3: ExtVal = get(taps0, 2, 0)?;
-    let x4: ExtVal = get(taps0, 4, 0)?;
-    let x5: ExtVal = get(taps0, 5, 0)?;
-    let x6: ExtVal = get(taps0, 6, 0)?;
-    let x7: ExtVal = get(taps0, 8, 0)?;
-    let x8: ExtVal = get(taps0, 10, 0)?;
-    let x9: ExtVal = get(taps0, 11, 0)?;
-    let x10: ExtVal = get(taps0, 12, 0)?;
+    let x3: ExtVal = get(ctx, taps0, 2, 0)?;
+    let x4: ExtVal = get(ctx, taps0, 4, 0)?;
+    let x5: ExtVal = get(ctx, taps0, 5, 0)?;
+    let x6: ExtVal = get(ctx, taps0, 6, 0)?;
+    let x7: ExtVal = get(ctx, taps0, 8, 0)?;
+    let x8: ExtVal = get(ctx, taps0, 10, 0)?;
+    let x9: ExtVal = get(ctx, taps0, 11, 0)?;
+    let x10: ExtVal = get(ctx, taps0, 12, 0)?;
     // CycleCounter(zirgen/dsl/examples/fibonacci.zir:34)
     // Top(zirgen/dsl/examples/fibonacci.zir:49)
     let x11: MixState = trivial_constraint()?;
@@ -473,23 +473,15 @@ pub fn validity_taps(
     // Top(zirgen/dsl/examples/fibonacci.zir:49)
     let x15: ExtVal = (ExtVal::new(Val::new(1), Val::new(0), Val::new(0), Val::new(0)) - x4);
     // IsZero(zirgen/dsl/examples/fibonacci.zir:14)
-    let x16: MixState = and_eqz_ext(
-        poly_mix1,
-        and_eqz_ext(poly_mix1, x11, (x4 * x15))?,
-        ((x3 * x5) - x15),
-    )?;
+    let x16: MixState = and_eqz_ext(ctx, and_eqz_ext(ctx, x11, (x4 * x15))?, ((x3 * x5) - x15))?;
     // CycleCounter(zirgen/dsl/examples/fibonacci.zir:34)
     let x17: MixState = and_cond_ext(
-        and_eqz_ext(
-            poly_mix1,
-            and_eqz_ext(poly_mix1, x16, (x4 * x3))?,
-            (x4 * x5),
-        )?,
+        and_eqz_ext(ctx, and_eqz_ext(ctx, x16, (x4 * x3))?, (x4 * x5))?,
         x15,
         and_eqz_ext(
-            poly_mix1,
+            ctx,
             x11,
-            (x3 - (get(taps0, 3, 0)?
+            (x3 - (get(ctx, taps0, 3, 0)?
                 + ExtVal::new(Val::new(1), Val::new(0), Val::new(0), Val::new(0)))),
         )?,
     )?;
@@ -499,31 +491,23 @@ pub fn validity_taps(
     let x19: ExtVal = ((&(&x12.map(|c| c.f1)).map(|c| c._super)).load_unchecked(ctx, 0) * x4);
     // Reg(<preamble>:5)
     let x20: MixState = and_eqz_ext(
-        poly_mix1,
-        and_eqz_ext(poly_mix1, x17, ((x18 + (get(taps0, 7, 0)? * x15)) - x8))?,
-        ((x19 + (get(taps0, 9, 0)? * x15)) - x6),
+        ctx,
+        and_eqz_ext(ctx, x17, ((x18 + (get(ctx, taps0, 7, 0)? * x15)) - x8))?,
+        ((x19 + (get(ctx, taps0, 9, 0)? * x15)) - x6),
     )?;
     // IsZero(zirgen/dsl/examples/fibonacci.zir:14)
     // Top(zirgen/dsl/examples/fibonacci.zir:62)
     let x21: MixState = and_eqz_ext(
-        poly_mix1,
-        and_eqz_ext(
-            poly_mix1,
-            and_eqz_ext(poly_mix1, x20, ((x8 + x6) - x7))?,
-            (x9 * x14),
-        )?,
+        ctx,
+        and_eqz_ext(ctx, and_eqz_ext(ctx, x20, ((x8 + x6) - x7))?, (x9 * x14))?,
         ((x13 * x10) - x14),
     )?;
     // Top(zirgen/dsl/examples/fibonacci.zir:63)
     let x22: MixState = and_cond_ext(
-        and_eqz_ext(
-            poly_mix1,
-            and_eqz_ext(poly_mix1, x21, (x9 * x13))?,
-            (x9 * x10),
-        )?,
+        and_eqz_ext(ctx, and_eqz_ext(ctx, x21, (x9 * x13))?, (x9 * x10))?,
         x9,
         and_eqz_ext(
-            poly_mix1,
+            ctx,
             x11,
             (x7 - (&(&x12.map(|c| c.f_last)).map(|c| c._super)).load(ctx, 0)),
         )?,
@@ -583,11 +567,7 @@ pub fn validity_regs(
     let x24: Val = ((&x10.map(|c| c._super)).load(ctx, 0)
         * (&(&x9.map(|c| c.inv)).map(|c| c._super)).load(ctx, 0));
     let x25: Val = (Val::new(1) - (&(&x9.map(|c| c._super)).map(|c| c._super)).load(ctx, 0));
-    let x26: MixState = and_eqz(
-        poly_mix0,
-        and_eqz(poly_mix0, trivial_constraint()?, x23)?,
-        (x24 - x25),
-    )?;
+    let x26: MixState = and_eqz(ctx, and_eqz(ctx, trivial_constraint()?, x23)?, (x24 - x25))?;
     // IsZero(zirgen/dsl/examples/fibonacci.zir:16)
     let x27: Val = ((&(&x9.map(|c| c._super)).map(|c| c._super)).load(ctx, 0)
         * (&x10.map(|c| c._super)).load(ctx, 0));
@@ -597,9 +577,9 @@ pub fn validity_regs(
     // CycleCounter(zirgen/dsl/examples/fibonacci.zir:34)
     let x29: Val = (Val::new(1) - (&(&x9.map(|c| c._super)).map(|c| c._super)).load(ctx, 0));
     let x30: MixState = and_cond(
-        and_eqz(poly_mix0, and_eqz(poly_mix0, x26, x27)?, x28)?,
+        and_eqz(ctx, and_eqz(ctx, x26, x27)?, x28)?,
         x29,
-        and_eqz(poly_mix0, trivial_constraint()?, x12)?,
+        and_eqz(ctx, trivial_constraint()?, x12)?,
     )?;
     // Top(zirgen/dsl/examples/fibonacci.zir:55)
     let x31: Val = (Val::new(1) - (&(&x9.map(|c| c._super)).map(|c| c._super)).load(ctx, 0));
@@ -617,22 +597,22 @@ pub fn validity_regs(
     let x38: Val = ((x36 + x37) - (&x7.map(|c| c._super)).load(ctx, 0));
     // Top(zirgen/dsl/examples/fibonacci.zir:59)
     let x39: MixState = and_eqz(
-        poly_mix0,
-        and_eqz(poly_mix0, and_eqz(poly_mix0, x30, x34)?, x38)?,
+        ctx,
+        and_eqz(ctx, and_eqz(ctx, x30, x34)?, x38)?,
         (x13 - (&x6.map(|c| c._super)).load(ctx, 0)),
     )?;
     // IsZero(zirgen/dsl/examples/fibonacci.zir:14)
     // Top(zirgen/dsl/examples/fibonacci.zir:62)
     let x40: MixState = and_eqz(
-        poly_mix0,
-        and_eqz(poly_mix0, x39, x17)?,
+        ctx,
+        and_eqz(ctx, x39, x17)?,
         ((x15 * (&(&x5.map(|c| c.inv)).map(|c| c._super)).load(ctx, 0)) - x18),
     )?;
     // Top(zirgen/dsl/examples/fibonacci.zir:63)
     let x41: MixState = and_cond(
-        and_eqz(poly_mix0, and_eqz(poly_mix0, x40, x19)?, x20)?,
+        and_eqz(ctx, and_eqz(ctx, x40, x19)?, x20)?,
         (&(&x5.map(|c| c._super)).map(|c| c._super)).load(ctx, 0),
-        and_eqz(poly_mix0, trivial_constraint()?, x21)?,
+        and_eqz(ctx, trivial_constraint()?, x21)?,
     )?;
     return Ok(x41);
 }
