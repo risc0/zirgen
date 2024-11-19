@@ -1,0 +1,48 @@
+// This file contains helpers for U8 and U16 lookups
+// RUN: zirgen --test %s
+
+extern LookupDelta(table: Val, index: Val, count: Val);
+extern LookupCurrent(table: Val, index: Val): Val;
+
+argument ArgU8(count: Val, val: Val) {
+  count := NondetReg(count);
+  val := NondetReg(val);
+  LookupDelta(8, val, count);
+}
+
+// Set a register nodeterministically, and then verify it is a U8
+component NondetU8Reg(val: Val) {
+  arg := ArgU8(1, val);
+  arg.count = 1;
+  arg.val
+}
+
+// Set a register and verify it is a U8
+component U8Reg(val: Val) {
+  ret := NondetU8Reg(val);
+  ret = val;
+  val
+}
+
+argument ArgU16(count: Val, val: Val) {
+  count := NondetReg(count);
+  val := NondetReg(val);
+  LookupDelta(16, val, count);
+}
+
+// Set a register nodeterministically, and then verify it is a U16
+component NondetU16Reg(val: Val) {
+  arg := ArgU16(1, val);
+  arg.count = 1;
+  arg.val
+}
+
+// Set a register and verify it is a U16
+component U16Reg(val: Val) {
+  ret := NondetU16Reg(val);
+  ret = val;
+  val
+}
+
+// TODO: Tests
+

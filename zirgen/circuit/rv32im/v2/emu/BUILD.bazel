@@ -1,0 +1,29 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "emu",
+    srcs = [
+        "exec.cpp",
+        "image.cpp",
+        "paging.cpp",
+        "preflight.cpp",
+        "trace.cpp",
+    ],
+    hdrs = [
+        "exec.h",
+        "image.h",
+        "p2.h",
+        "paging.h",
+        "preflight.h",
+        "r0vm.h",
+        "trace.h",
+    ],
+    deps = [
+        "//zirgen/circuit/rv32im/v2/platform:core",
+        "@zirgen//risc0/fp",
+        "@zirgen//zirgen/circuit/rv32im/shared",
+        "@zirgen//zirgen/compiler/zkp",
+    ],
+)

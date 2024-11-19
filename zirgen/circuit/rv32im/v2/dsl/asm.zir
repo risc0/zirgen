@@ -1,0 +1,32 @@
+// RUN: true
+
+// This is a tiny 'assembler' to build ValU32 values for various RV32IM instructions
+
+function AsmRType(opcode: Val, func3: Val, func7: Val, rd: Val, rs1: Val, rs2: Val) {
+  rs1_low := rs1 & 1;
+  rs1_high := (rs1 - rs1_low) / 2;
+  ValU32(rs1_low * 32768 + func3 * 1024 + rd * 128 + opcode, func7 * 0x200 + rs2 * 16 + rs1_high)
+}
+
+function AsmADD(rd: Val, rs1: Val, rs2: Val)  { AsmRType(0x33, 0x0, 0x00, rd, rs1, rs2) }
+function AsmSUB(rd: Val, rs1: Val, rs2: Val)  { AsmRType(0x33, 0x0, 0x20, rd, rs1, rs2) }
+function AsmXOR(rd: Val, rs1: Val, rs2: Val)  { AsmRType(0x33, 0x4, 0x00, rd, rs1, rs2) }
+function AsmOR(rd: Val, rs1: Val, rs2: Val)   { AsmRType(0x33, 0x6, 0x00, rd, rs1, rs2) }
+function AsmAND(rd: Val, rs1: Val, rs2: Val)  { AsmRType(0x33, 0x8, 0x00, rd, rs1, rs2) }
+function AsmSLL(rd: Val, rs1: Val, rs2: Val)  { AsmRType(0x33, 0x1, 0x00, rd, rs1, rs2) }
+function AsmSRL(rd: Val, rs1: Val, rs2: Val)  { AsmRType(0x33, 0x5, 0x00, rd, rs1, rs2) }
+function AsmSRA(rd: Val, rs1: Val, rs2: Val)  { AsmRType(0x33, 0x5, 0x20, rd, rs1, rs2) }
+function AsmSLT(rd: Val, rs1: Val, rs2: Val)  { AsmRType(0x33, 0x2, 0x00, rd, rs1, rs2) }
+function AsmSLTU(rd: Val, rs1: Val, rs2: Val) { AsmRType(0x33, 0x3, 0x00, rd, rs1, rs2) }
+
+function AsmMUL(rd: Val, rs1: Val, rs2: Val)   { AsmRType(0x33, 0x0, 0x01, rd, rs1, rs2) }
+function AsmMULH(rd: Val, rs1: Val, rs2: Val)  { AsmRType(0x33, 0x1, 0x01, rd, rs1, rs2) }
+function AsmMULSU(rd: Val, rs1: Val, rs2: Val) { AsmRType(0x33, 0x2, 0x01, rd, rs1, rs2) }
+function AsmMULU(rd: Val, rs1: Val, rs2: Val)  { AsmRType(0x33, 0x3, 0x01, rd, rs1, rs2) }
+function AsmDIV(rd: Val, rs1: Val, rs2: Val)   { AsmRType(0x33, 0x4, 0x01, rd, rs1, rs2) }
+function AsmDIVU(rd: Val, rs1: Val, rs2: Val)  { AsmRType(0x33, 0x5, 0x01, rd, rs1, rs2) }
+function AsmREM(rd: Val, rs1: Val, rs2: Val)   { AsmRType(0x33, 0x6, 0x01, rd, rs1, rs2) }
+function AsmREMU(rd: Val, rs1: Val, rs2: Val)  { AsmRType(0x33, 0x7, 0x01, rd, rs1, rs2) }
+  
+
+

@@ -1,0 +1,20 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "run",
+    srcs = [
+        "run.cpp",
+        "wrap_dsl.cpp",
+        "//zirgen/circuit/rv32im/v2/dsl:cppinc",
+    ],
+    hdrs = [
+        "run.h",
+        "wrap_dsl.h",
+    ],
+    deps = [
+        "//zirgen/circuit/rv32im/v2/emu",
+        "@zirgen//risc0/core",
+    ],
+)

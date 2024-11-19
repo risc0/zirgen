@@ -1,0 +1,76 @@
+// RUN: true
+
+import inst;
+import mult;
+import po2;
+
+component MulInput(cycle: Reg, inst_input: InstInput) {
+  inst_input.state = StateDecode();
+  ii := inst_input;
+  decoded := DecodeInst(cycle, ii);
+  rs1 := ReadReg(cycle, ii, decoded.rs1);
+  rs2 := ReadReg(cycle, ii, decoded.rs2);
+  ii
+}
+
+component IllegalMulOp(input: MulInput) {
+  0 = 1;
+  ValU32(0, 0)
+}
+
+component Mul0(cycle: Reg, inst_input: InstInput) {
+  input := MulInput(cycle, inst_input);
+  mul_output := input.minor_onehot -> (
+    OpSLL(input),
+    OpSLLI(input),
+    OpMUL(input),
+    OpMULH(input),
+    OpMULHSU(input),
+    OpMULHU(input),
+    IllegalMulOp(input),
+    IllegalMulOp(input)
+  );
+  WriteRd(cycle, input.ii, input.decoded, 1, mul_output);
+  pc_add := NormalizeU32(AddU32(inst_input.pc_u32, ConstU32<4>()));
+  InstOutput(pc_add, StateDecode(), inst_input.mode)
+}
+
+component DoMul(in1: ValU32, in2: ValU32, sign1: Val, sign2: Val) {
+  settings := MultiplySettings(sign1, sign2, 0);
+  mul := MultiplyAccumulate(in1, in2, ConstU32<0>(), settings);
+  low := mul.outLow;
+  high := mul.outHigh;
+}
+
+component OpSLL(input: MulInput) {
+  VerifyOpcodeF3F7(input.decoded, 0x33, 0x1, 0x00);
+  shift_mul := DynPo2(input.rs2.low);
+  DoMul(input.rs1, shift_mul, 0, 0).low
+}
+
+component OpSLLI(input: MulInput) {
+  VerifyOpcodeF3F7(input.decoded, 0x13, 0x1, 0x00);
+  shift_mul := DynPo2(input.decoded.rs2);
+  DoMul(input.rs1, shift_mul, 0, 0).low
+}
+
+component OpMUL(input: MulInput) {
+  VerifyOpcodeF3F7(input.decoded, 0x33, 0x0, 0x01);
+  DoMul(input.rs1, input.rs2, 0, 0).low
+}
+
+component OpMULH(input: MulInput) {
+  VerifyOpcodeF3F7(input.decoded, 0x33, 0x1, 0x01);
+  DoMul(input.rs1, input.rs2, 1, 1).high
+}
+
+component OpMULHSU(input: MulInput) {
+  VerifyOpcodeF3F7(input.decoded, 0x33, 0x2, 0x01);
+  DoMul(input.rs1, input.rs2, 1, 0).high
+}
+
+component OpMULHU(input: MulInput) {
+  VerifyOpcodeF3F7(input.decoded, 0x33, 0x3, 0x01);
+  DoMul(input.rs1, input.rs2, 0, 0).high
+}
+
