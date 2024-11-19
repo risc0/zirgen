@@ -375,23 +375,6 @@ struct ConstructToBack : public OpRewritePattern<Zhlt::ConstructOp> {
   }
 };
 
-// Replace a "Back" inside an execution function to call the back
-// function.  Assumes it's within an "exec" or "check" function.
-struct BackToCall : public OpRewritePattern<Zhlt::BackOp> {
-  using OpRewritePattern::OpRewritePattern;
-
-  LogicalResult matchAndRewrite(Zhlt::BackOp op, PatternRewriter& rewriter) const final {
-    // TODO: unify distance types and just call op.getDistanceAttr().
-    auto distance = rewriter.create<arith::ConstantOp>(
-        op->getLoc(), rewriter.getIndexAttr(op.getDistance().getZExtValue()));
-    auto callee = SymbolTable::lookupNearestSymbolFrom<Zhlt::ComponentOp>(op, op.getCalleeAttr());
-    auto callOp = rewriter.create<Zhlt::BackCallOp>(
-        op->getLoc(), callee.getSymName(), callee.getOutType(), distance, op.getLayout());
-    rewriter.replaceOp(op, callOp);
-    return success();
-  }
-};
-
 // Replace a "back" inside a back function to add its distance to the
 // parent's.  Assumes it's within a "back$" function.
 struct BackBackToCall : public OpRewritePattern<Zhlt::BackOp> {
@@ -501,6 +484,7 @@ struct GenerateBackPass : public GenerateBackBase<GenerateBackPass> {
     patterns.insert<EraseOp<StoreOp>>(ctx);
     patterns.insert<EraseOp<ExternOp>>(ctx);
     patterns.insert<EraseOp<Zhlt::MagicOp>>(ctx);
+    patterns.insert<EraseOp<ZStruct::AliasLayoutOp>>(ctx);
     patterns.insert<EraseOp<EqualZeroOp>>(ctx);
     patterns.insert<ConstructToBack>(ctx);
     patterns.insert<BackBackToCall>(ctx);

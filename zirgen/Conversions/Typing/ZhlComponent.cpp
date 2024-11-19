@@ -1470,6 +1470,7 @@ void LoweringImpl::gen(BackOp back, ComponentBuilder& cb) {
   }
 
   Value layout = layoutMapping.lookup(back.getTarget());
+  layoutMapping[back.getOut()] = layout;
   if (layout) {
     Value reconstructed = reconstructFromLayout(back.getLoc(), layout, distance[0]);
     if (!reconstructed) {
