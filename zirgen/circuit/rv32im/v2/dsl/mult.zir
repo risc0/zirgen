@@ -1,0 +1,185 @@
+// This file implements a 32 bit multipler
+// RUN: true
+
+import bits;
+import lookups;
+import u32;
+
+/*
+This file implements a 32 bit multiplier, with multiply-accumulate support
+
+At a high level, to handle the fact that we are in a small field, we need to divide
+the inputs (which are naturally represented in shorts) into bytes since otherwise
+multiplying the limbs would immediately overflow babybear.  Once we do that, we can
+use schoolbook multiplication, where we take the low bits of an accumulation and
+'carry' any remaining bits to the next limb.  But here we use a slight variant,
+and make our 'output' limb size 16 bits to reduce the number of range-checks we need.
+That is: our input limbs are bytes, our output limbs are shorts.  Additionally, due
+to this, we need up to 10 bits of carry, but we don't really have a 10 bit range check
+handy, so we use one byte and one twit.
+
+To handle two's complement signed arithmetic, we note that if we call xu the two's
+complement value interpeted as a u32, and we call the sign bit xs, we have:
+
+x = xs * -2^32 + xu
+
+Let's consider what that looks like when we multiply x * y
+x * y = (xs * -2^32 + xu) * (ys * -2^32 + yu)
+
+x * y = xu * yu - 2^32 * (xs * yu + xu * ys) + 2^64 * (don't care).
+
+Note: we can ignore the factors of 2^64 since they are outside our representation
+
+So really, we just need to optionally subtract some things... Because subtraction
+is fraught due to underflow, we additionally need to add some additional 'carry'
+tricks to turn (-x) into (C - x) where C is a constant larger than x, and larger
+than the limb size which will then be 'carried'.  Of course we need to subract
+this carry from the limb above to zero it out.
+
+Oh, and just to add one more wrinkle: if a number is treated as signed, we allow
+it to be treated as a 'ones complement' signed number (needed for use in ASL/ASR).
+That effectively just means an extra one gets added in the right place.
+
+Whew, that the 'high level', good luck!
+*/
+
+// Expand a u32 into bytes, and extract the sign bit.  We then set an additional
+// 'neg' bit based on the combination of the actual sign bit and if we are
+// interpreting the value as signed.
+component ExpandU32(x: ValU32, signed: Val) {
+  b0 := NondetU8Reg(x.low & 0xff);
+  b1 := NondetU8Reg((x.low & 0xff00) / 0x100);
+  b2 := NondetU8Reg(x.high & 0xff);
+  b3 := NondetU8Reg((x.high & 0xff00) / 0x100);
+  // We decompose the top byte into sign bit and lower 7 bits
+  // In so doing, we multiply the top 7 bits by 2 so the range check enforces
+  // the fact that the value is only 7 bits
+  // If the value is set to an odd number by an invalid prover, it will
+  // make the verification of x.high fail to be in range of a u16
+  b3Top7times2 := NondetU8Reg((x.high & 0x7f00) / 0x80);
+  topBit := NondetBitReg((x.high & 0x8000) / 0x8000);
+  // Now we verify that our guessed values match x
+  x.low = b0 + b1 * 0x100;
+  x.high = b2 + b3Top7times2 * 0x80 + topBit * 0x8000;
+  // Now compute neg
+  neg := topBit * signed;
+  // Now we make b3, which should equal the orignal byte (and is linear).
+  b3 = b3Top7times2 / 2 + 0x80 * topBit;
+}
+
+// Helper to make a nice test case.  While we do little endian for parameters for normal
+// code, for test cases, we do big endian so it scans better.
+component Expand32TestCase(xHigh: Val, xLow: Val, signed: Val, negg: Val, b3g: Val, b2g: Val, b1g: Val, b0g: Val) {
+  expanded := ExpandU32(ValU32(xLow, xHigh), signed);
+  expanded.neg = negg;
+  expanded.b0 = b0g;
+  expanded.b1 = b1g;
+  expanded.b2 = b2g;
+  expanded.b3 = b3g;
+}
+
+test ExpandU32Test {
+  // Wrap tests in pointless major mux to allow arguments
+  always := Reg(1);
+  [always] ->! ({
+    Expand32TestCase(0xcba9, 0x8765, 0, 0, 0xcb, 0xa9, 0x87, 0x65);
+    Expand32TestCase(0xcba9, 0x8765, 1, 1, 0xcb, 0xa9, 0x87, 0x65);
+    Expand32TestCase(0x1234, 0x5678, 0, 0, 0x12, 0x34, 0x56, 0x78);
+    Expand32TestCase(0x1234, 0x5678, 1, 0, 0x12, 0x34, 0x56, 0x78);
+  });
+}
+
+// Split a total value into 3 parts:
+// - out: bits 0-15
+// - carry byte: bits 16-23
+// - carry extra: bits 24-25
+component SplitTotal(a: Val) {
+  out := NondetU16Reg(a & 0xffff);
+  carryByte := NondetU8Reg((a & 0xff0000) / 0x10000);
+  carryExtra := NondetFakeTwitReg((a & 0xf000000) / 0x1000000);
+  a = carryExtra * 0x1000000 + carryByte * 0x10000 + out;
+  carry := carryExtra * 0x100 + carryByte;
+}
+
+component MultiplySettings(aSigned: Val, bSigned: Val, cSigned: Val) {
+  aSigned := aSigned;
+  bSigned := bSigned;
+  cSigned := cSigned;
+}
+
+// Compute a * b + c, where a, b, and c are 32 bit numbers, and the output is
+// 64 bits, divided into two 32 bit parts (outLow + outHigh).  We have settings
+// that determine if a, b, and c are to be treated as signed.
+component MultiplyAccumulate(a: ValU32, b: ValU32, c: ValU32, settings: MultiplySettings) {
+  // Expand both a and b
+  ax := ExpandU32(a, settings.aSigned);
+  bx := ExpandU32(b, settings.bSigned);
+  // Extract sign from c
+  cSign := NondetBitReg((c.high & 0x8000) / 0x8000);
+  cRestTimes2 := NondetU16Reg((c.high & 0x7fff) * 2);
+  c.high = cSign * 0x8000 + cRestTimes2 / 2;
+  // Compute low 16 limb, extra carry is at most 1 bit
+  s0 := SplitTotal(
+      c.low +
+      ax.b0 * bx.b0 +
+      0x100 * (ax.b0 * bx.b1 + ax.b1 * bx.b0)
+  );
+  // Compute next 16 limb, extra carry is now a twit
+  s1 := SplitTotal(
+      c.high +
+      s0.carry +
+      ax.b0 * bx.b2 + ax.b1 * bx.b1 + ax.b2 * bx.b0 +
+      0x100 * (ax.b0 * bx.b3 + ax.b1 * bx.b2 + ax.b2 * bx.b1 + ax.b3 * bx.b0)
+  );
+  // Compute next 16 limb, extra carry is now also twit
+  // Here we also need to subtract neg values, but with some extra carry to prevent underflow
+  s2 := SplitTotal(
+      s1.carry +
+      (0xffff * cSign * settings.cSigned) +
+      0x20000 - (ax.b0 + ax.b1 * 0x100) * bx.neg - (bx.b0 + bx.b1 * 0x100) * ax.neg +
+      ax.b1 * bx.b3 + ax.b2 * bx.b2 + ax.b3 * bx.b1 +
+      0x100 * (ax.b2 * bx.b3 + ax.b3 * bx.b2)
+  );
+  // Final limb, this one is weird because there is no byte carry at all, but there is
+  // at least a final few bits due to the subtraction carry. Also, we drop 2 due to borrowing
+  // two from the prior limb
+  s3Tot := s2.carry +
+      (0xffff * cSign * settings.cSigned) +
+      0x1fffe - (ax.b2 + ax.b3 * 0x100) * bx.neg - (bx.b2 + bx.b3 * 0x100) * ax.neg +
+      ax.b3 * bx.b3;
+  s3Out := NondetU16Reg(s3Tot & 0xffff);
+  s3Carry := FakeTwitReg((s3Tot - s3Out) / 0x10000);
+  outLow := ValU32(s0.out, s1.out);
+  outHigh := ValU32(s2.out, s3Out);
+}
+
+component MultiplyTestCase(a: ValU32, b: ValU32, c: ValU32, settings: MultiplySettings, ol: ValU32, oh: ValU32) {
+  mul := MultiplyAccumulate(a, b, c, settings);
+  mul.outLow.low = ol.low;
+  mul.outLow.high = ol.high;
+  mul.outHigh.low = oh.low;
+  mul.outHigh.high = oh.high;
+}
+
+test MultiplyTest {
+  mulUU := MultiplySettings(0, 0, 0);
+  mulSS := MultiplySettings(1, 1, 0);
+  p7 := ValU32(7, 0);
+  n7 := ValU32(0x10000 - 7, 0xffff);
+  p3 := ValU32(3, 0);
+  n3 := ValU32(0x10000 - 3, 0xffff);
+  p21 := ValU32(21, 0);
+  n21 := ValU32(0x10000 - 21, 0xffff);
+  zero := ValU32(0, 0);
+  topNeg := ValU32(0xffff, 0xffff);
+  // Wrap tests in pointless major mux to allow arguments
+  always := Reg(1);
+  [always] ->! ({
+    MultiplyTestCase(p7, p3, zero, mulUU, p21, zero);
+    MultiplyTestCase(p7, p3, zero, mulSS, p21, zero);
+    MultiplyTestCase(p7, n3, zero, mulSS, n21, topNeg);
+    MultiplyTestCase(n7, n3, zero, mulSS, p21, zero);
+    MultiplyTestCase(topNeg, topNeg, zero, mulUU, ValU32(1, 0), ValU32(0xfffe, 0xffff));
+  });
+}
+

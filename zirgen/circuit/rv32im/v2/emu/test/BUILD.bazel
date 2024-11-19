@@ -1,0 +1,20 @@
+load("@zirgen//bazel/toolchain/rv32im-linux:defs.bzl", "risc0_cc_binary")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+risc0_cc_binary(
+    name = "guest",
+    srcs = ["guest.cpp"],
+)
+
+cc_binary(
+    name = "test",
+    srcs = ["test.cpp"],
+    data = [
+        ":guest",
+        "//zirgen/circuit/rv32im/v2/kernel",
+    ],
+    deps = ["//zirgen/circuit/rv32im/v2/emu"],
+)

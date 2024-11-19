@@ -1,0 +1,11 @@
+load("@zirgen//bazel/toolchain/rv32im-linux:defs.bzl", "risc0_cc_kernel_binary")
+
+risc0_cc_kernel_binary(
+    name = "kernel",
+    srcs = [
+        "entry.s",
+        "kernel.cpp",
+    ],
+    visibility = ["//visibility:public"],
+    deps = ["//zirgen/circuit/rv32im/v2/platform:core"],
+)
