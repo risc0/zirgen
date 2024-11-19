@@ -25,8 +25,6 @@ use crate::{
     zirgen::circuit::{LAYOUT_GLOBAL, LAYOUT_TOP},
 };
 
-const TOP_STATE_COL: usize = LAYOUT_TOP.next_pc_low._super.offset;
-
 const TOP_ECALL0_STATE_COL: usize = LAYOUT_TOP.inst_result.arm8.s0._super.offset;
 
 const TOP_POSEIDON_STATE_COL: usize = LAYOUT_TOP
@@ -166,10 +164,18 @@ impl Injector {
     }
 
     pub fn set_cycle(&mut self, row: usize, cycle: &RawPreflightCycle, extras: &[u32]) {
-        self.set(row, TOP_STATE_COL + 0, cycle.pc & 0xffff);
-        self.set(row, TOP_STATE_COL + 1, cycle.pc >> 16);
-        self.set(row, TOP_STATE_COL + 2, cycle.state);
-        self.set(row, TOP_STATE_COL + 3, cycle.machine_mode as u32);
+        self.set(row, LAYOUT_TOP.next_pc_low._super.offset, cycle.pc & 0xffff);
+        self.set(
+            row,
+            LAYOUT_TOP.next_pc_high._super.offset + 1,
+            cycle.pc >> 16,
+        );
+        self.set(row, LAYOUT_TOP.next_state_0._super.offset, cycle.state);
+        self.set(
+            row,
+            LAYOUT_TOP.next_machine_mode._super.offset,
+            cycle.machine_mode as u32,
+        );
         let base = if extras.len() == 3 {
             TOP_ECALL0_STATE_COL
         } else {
