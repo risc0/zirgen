@@ -1,0 +1,6 @@
+{
+  "rust-analyzer.linkedProjects": [
+    "Cargo.toml",
+    "zirgen/bootstrap/Cargo.toml"
+  ]
+}

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 use std::{
-    collections::BTreeMap,
     io,
     path::{Path, PathBuf},
     process::{exit, Command},
@@ -21,49 +20,83 @@ use std::{
 
 use clap::{Parser, ValueEnum};
 
-const MAIN_CPP_OUTPUTS: &[&str] = &[
-    "poly_fp.cpp",
-    "step_exec.cpp",
-    "step_verify_bytes.cpp",
-    "step_verify_mem.cpp",
-    "step_compute_accum.cpp",
-    "step_verify_accum.cpp",
-];
+mod edsl {
+    pub const RUST_OUTPUTS: &[&str] = &["poly_ext.rs", "taps.rs", "info.rs", "layout.rs.inc"];
 
-const MAIN_RUST_OUTPUTS: &[&str] = &["poly_ext.rs", "taps.rs", "info.rs", "layout.rs.inc"];
+    pub const CPP_OUTPUTS: &[&str] = &[
+        "poly_fp.cpp",
+        "step_exec.cpp",
+        "step_verify_bytes.cpp",
+        "step_verify_mem.cpp",
+        "step_compute_accum.cpp",
+        "step_verify_accum.cpp",
+    ];
 
-const CUDA_OUTPUTS: &[&str] = &[
-    "step_exec.cu",
-    "step_verify_bytes.cu",
-    "step_verify_mem.cu",
-    "step_compute_accum.cu",
-    "step_verify_accum.cu",
-    "eval_check.cu",
-];
+    pub const CUDA_OUTPUTS: &[&str] = &[
+        "step_exec.cu",
+        "step_verify_bytes.cu",
+        "step_verify_mem.cu",
+        "step_compute_accum.cu",
+        "step_verify_accum.cu",
+        "eval_check.cu",
+    ];
 
-const METAL_OUTPUTS: &[&str] = &[
-    // "step_exec.metal",
-    // "step_verify_bytes.metal",
-    // "step_verify_mem.metal",
-    "step_compute_accum.metal",
-    "step_verify_accum.metal",
-    "eval_check.metal",
-];
+    pub const METAL_OUTPUTS: &[&str] = &[
+        // "step_exec.metal",
+        // "step_verify_bytes.metal",
+        // "step_verify_mem.metal",
+        "step_compute_accum.metal",
+        "step_verify_accum.metal",
+        "eval_check.metal",
+    ];
+}
+
+mod zirgen {
+    pub const RUST_OUTPUTS: &[&str] = &[
+        "taps.rs",
+        "info.rs",
+        "poly_ext.rs",
+        "defs.rs.inc",
+        "types.rs.inc",
+        "layout.rs.inc",
+        "steps.rs.inc",
+    ];
+
+    pub const SYS_OUTPUTS: &[&str] = &[
+        "defs.cpp.inc",
+        "types.h.inc",
+        "layout.cpp.inc",
+        "steps.cpp.inc",
+    ];
+
+    pub const CPP_OUTPUTS: &[&str] = &[
+        "defs.cpp.inc",
+        "types.h.inc",
+        "layout.cpp.inc",
+        "steps.cpp.inc",
+        "rust_poly_fp_0.cpp",
+        "rust_poly_fp_1.cpp",
+        "rust_poly_fp_2.cpp",
+        "rust_poly_fp_3.cpp",
+        "rust_poly_fp_4.cpp",
+    ];
+
+    pub const CUDA_OUTPUTS: &[&str] = &[
+        "defs.cu.inc",
+        "eval_check_0.cu",
+        "eval_check_1.cu",
+        "eval_check_2.cu",
+        "eval_check_3.cu",
+        "eval_check_4.cu",
+        "layout.cu.inc",
+        "steps.cu.inc",
+        "types.cuh.inc",
+    ];
+
+    pub const METAL_OUTPUTS: &[&str] = &[];
+}
 
 const RECURSION_ZKR_ZIP: &str = "recursion_zkr.zip";
-
-const BIGINT_OUTPUTS: &[&str] = &["bigint.rs.inc"];
-const BIGINT_ZKR_ZIP: &str = "bigint_zkr.zip";
-
-const ZIRGEN_RUST_OUTPUTS: &[&str] = &[
-    "taps.rs",
-    "info.rs",
-    "poly_ext.rs",
-    "defs.rs.inc",
-    "types.rs.inc",
-    "layout.rs.inc",
-    "steps.rs.inc",
-];
 
 const CALCULATOR_RUST_OUTPUTS: &[&str] = &[
     "taps.rs",
@@ -76,33 +109,6 @@ const CALCULATOR_RUST_OUTPUTS: &[&str] = &[
     "validity.rs.inc",
 ];
 
-const ZIRGEN_SYS_OUTPUTS: &[&str] = &[
-    "defs.cpp.inc",
-    "types.h.inc",
-    "layout.cpp.inc",
-    "steps.cpp.inc",
-];
-
-const KECCAK_SYS_OUTPUTS: &[&str] = &[
-    "defs.cpp.inc",
-    "types.h.inc",
-    "layout.cpp.inc",
-    "steps.cpp.inc",
-    "rust_poly_fp_0.cpp",
-    "rust_poly_fp_1.cpp",
-    "rust_poly_fp_2.cpp",
-    "rust_poly_fp_3.cpp",
-    "rust_poly_fp_4.cpp",
-];
-
-const KECCAK_CUDA_OUTPUTS: &[&str] = &[
-    "eval_check_0.cu",
-    "eval_check_1.cu",
-    "eval_check_2.cu",
-    "eval_check_3.cu",
-    "eval_check_4.cu",
-];
-
 const KECCAK_ZKR_ZIP: &str = "keccak_zkr.zip";
 
 #[derive(Clone, Debug, ValueEnum)]
@@ -111,12 +117,10 @@ enum Circuit {
     Predicates,
     Recursion,
     Rv32im,
+    Rv32imV2,
     Keccak,
     Calculator,
     Verify,
-    #[clap(name("bigint"))]
-    BigInt,
-    #[clap(name("bigint2"))]
     BigInt2,
 }
 
@@ -244,10 +248,10 @@ impl Args {
             Circuit::Predicates => self.predicates(),
             Circuit::Recursion => self.recursion(),
             Circuit::Rv32im => self.rv32im(),
+            Circuit::Rv32imV2 => self.rv32im_v2(),
             Circuit::Keccak => self.keccak(),
             Circuit::Calculator => self.calculator(),
             Circuit::Verify => self.stark_verify(),
-            Circuit::BigInt => self.bigint(),
             Circuit::BigInt2 => self.bigint2(),
         }
     }
@@ -256,10 +260,10 @@ impl Args {
         let circuit = "fib";
         let src_path = Path::new("zirgen/circuit/fib");
         let out = &self.output;
-        copy_group(circuit, &src_path, out, MAIN_CPP_OUTPUTS, "cxx", "rust_");
-        copy_group(circuit, &src_path, out, MAIN_RUST_OUTPUTS, "src", "");
-        copy_group(circuit, &src_path, out, CUDA_OUTPUTS, "kernels", "");
-        copy_group(circuit, &src_path, out, METAL_OUTPUTS, "kernels", "");
+        copy_group(circuit, &src_path, out, edsl::CPP_OUTPUTS, "cxx", "rust_");
+        copy_group(circuit, &src_path, out, edsl::RUST_OUTPUTS, "src", "");
+        copy_group(circuit, &src_path, out, edsl::CUDA_OUTPUTS, "kernels", "");
+        copy_group(circuit, &src_path, out, edsl::METAL_OUTPUTS, "kernels", "");
         cargo_fmt_circuit(circuit, &self.output, &None);
     }
 
@@ -281,24 +285,35 @@ impl Args {
         self.copy_edsl_style("rv32im", "zirgen/circuit/rv32im/v1/edsl")
     }
 
+    fn rv32im_v2(&self) {
+        self.copy_zirgen_style("rv32im-v2", "zirgen/circuit/rv32im/v2/dsl")
+    }
+
     fn keccak(&self) {
         let bazel_bin = get_bazel_bin();
-        let out = &self.output;
         let circuit = "keccak";
         let src_path = Path::new("zirgen/circuit/keccak");
         let sys_root = Path::new("zirgen/circuit/keccak-sys").to_path_buf();
         let hal_root = Some(sys_root.join("kernels"));
         let zkr_src_path = bazel_bin.join("zirgen/circuit/predicates");
-        let zkr_tgt_path = out
+        let zkr_tgt_path = self
+            .output
             .clone()
             .unwrap_or(Path::new("zirgen/circuit/keccak/src/prove").to_path_buf());
 
-        copy_group(circuit, &src_path, out, ZIRGEN_RUST_OUTPUTS, "src", "");
+        copy_group(
+            circuit,
+            &src_path,
+            &self.output,
+            zirgen::RUST_OUTPUTS,
+            "src",
+            "",
+        );
         copy_group(
             circuit,
             &src_path,
             &Some(sys_root),
-            KECCAK_SYS_OUTPUTS,
+            zirgen::SYS_OUTPUTS,
             "cxx",
             "",
         );
@@ -306,7 +321,7 @@ impl Args {
             circuit,
             &src_path,
             &hal_root,
-            KECCAK_CUDA_OUTPUTS,
+            zirgen::CUDA_OUTPUTS,
             "cuda",
             "",
         );
@@ -322,51 +337,47 @@ impl Args {
         let src_path = Path::new("zirgen/dsl/examples/calculator/");
 
         copy_group(circuit, &src_path, &out, CALCULATOR_RUST_OUTPUTS, "", "");
-        copy_group(circuit, &src_path, &out, ZIRGEN_SYS_OUTPUTS, "", "");
+        copy_group(circuit, &src_path, &out, zirgen::SYS_OUTPUTS, "", "");
         cargo_fmt_circuit(circuit, &self.output, &None);
+    }
+
+    fn copy_zirgen_style(&self, circuit: &str, src_dir: &str) {
+        let root = std::env::current_dir().unwrap().join("risc0");
+        let src = Path::new(src_dir);
+        let rust = Some(root.join("circuit").join(circuit));
+        let kernels = root
+            .join("circuit")
+            .join(String::from(circuit) + "-sys")
+            .join("kernels");
+        let kernels = Some(kernels);
+
+        copy_group(circuit, &src, &rust, zirgen::RUST_OUTPUTS, "src", "");
+        copy_group(circuit, &src, &kernels, zirgen::CPP_OUTPUTS, "cxx", "");
+        copy_group(circuit, &src, &kernels, zirgen::CUDA_OUTPUTS, "cuda", "");
+        copy_group(circuit, &src, &kernels, zirgen::METAL_OUTPUTS, "metal", "");
+
+        cargo_fmt_circuit(circuit, &rust, &None);
     }
 
     fn copy_edsl_style(&self, circuit: &str, src_dir: &str) {
         let risc0_root = self.output.as_ref().expect("--output is required");
         let risc0_root = risc0_root.join("risc0");
-        let src_path = Path::new(src_dir);
-        let rust_path = risc0_root.join("circuit").join(circuit);
-        let rust_path = Some(rust_path);
-        let sys_path = risc0_root
+        let src = Path::new(src_dir);
+        let rust = Some(risc0_root.join("circuit").join(circuit));
+        let sys = risc0_root
             .join("circuit")
             .join(String::from(circuit) + "-sys");
-        let hal_root = Some(sys_path.join("kernels"));
-        let sys_path = Some(sys_path);
+        let kernels = Some(sys.join("kernels"));
+        let sys = Some(sys);
 
-        copy_group(
-            circuit,
-            &src_path,
-            &sys_path,
-            MAIN_CPP_OUTPUTS,
-            "cxx",
-            "rust_",
-        );
-        copy_group(circuit, &src_path, &rust_path, MAIN_RUST_OUTPUTS, "src", "");
-        copy_group(circuit, &src_path, &hal_root, CUDA_OUTPUTS, "cuda", "");
-        copy_group(circuit, &src_path, &hal_root, METAL_OUTPUTS, "metal", "");
+        copy_group(circuit, &src, &rust, edsl::RUST_OUTPUTS, "src", "");
+        copy_group(circuit, &src, &sys, edsl::CPP_OUTPUTS, "cxx", "rust_");
+        copy_group(circuit, &src, &kernels, edsl::CUDA_OUTPUTS, "cuda", "");
+        copy_group(circuit, &src, &kernels, edsl::METAL_OUTPUTS, "metal", "");
 
-        copy_group(
-            circuit,
-            &src_path,
-            &sys_path,
-            &["layout.cpp.inc"],
-            "cxx",
-            "",
-        );
-        copy_group(
-            circuit,
-            &src_path,
-            &hal_root,
-            &["layout.cu.inc"],
-            "cuda",
-            "",
-        );
-        cargo_fmt_circuit(circuit, &rust_path, &None);
+        copy_group(circuit, &src, &sys, &["layout.cpp.inc"], "cxx", "");
+        copy_group(circuit, &src, &kernels, &["layout.cu.inc"], "cuda", "");
+        cargo_fmt_circuit(circuit, &rust, &None);
     }
 
     fn stark_verify(&self) {
@@ -381,61 +392,6 @@ impl Args {
         copy_file(&src_path, &tgt_path, "stark_verify.circom");
         copy_file(&src_path, &rust_path, "seal_format.rs");
         cargo_fmt(&risc0_root.join("risc0/groth16/Cargo.toml"));
-    }
-
-    fn bigint(&self) {
-        let circuit = "bigint";
-        let risc0_root = self.output.as_ref().expect("--output is required");
-        let risc0_root = risc0_root.join("risc0");
-        let bigint_crate_root = risc0_root.join("circuit/bigint");
-        let out = bigint_crate_root.join("src");
-
-        let bazel_bin = get_bazel_bin();
-        let src_path = bazel_bin.join("zirgen/circuit/bigint");
-
-        copy_file(&src_path, &out, BIGINT_ZKR_ZIP);
-        copy_group(
-            circuit,
-            &src_path,
-            &Some(out.clone()),
-            BIGINT_OUTPUTS,
-            "",
-            "",
-        );
-
-        // Generate control IDs
-
-        // Remove magic rust environment variables for the
-        // risczero-wip repositroy so we can use the risc0 repository
-        // settings.
-        let filtered_env: BTreeMap<String, String> = std::env::vars()
-            .filter(|&(ref k, _)| !k.starts_with("CARGO") && !k.starts_with("RUSTUP"))
-            .collect();
-
-        let output = Command::new("cargo")
-            .current_dir(&risc0_root)
-            .env_clear()
-            .envs(filtered_env)
-            .arg("run")
-            .arg("-p")
-            .arg("risc0-circuit-bigint")
-            .arg("-F")
-            .arg("make_control_ids")
-            .arg("--bin")
-            .arg("make_control_ids")
-            .output()
-            .unwrap();
-
-        if !output.status.success() {
-            panic!(
-                "Failed to generate bigint control_ids:\n{}",
-                String::from_utf8(output.stderr).unwrap()
-            );
-        }
-
-        std::fs::write(out.join("control_id.rs"), output.stdout).unwrap();
-
-        cargo_fmt_circuit(circuit, &Some(bigint_crate_root), &None);
     }
 
     fn bigint2(&self) {

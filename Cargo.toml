@@ -1,6 +1,21 @@
 [workspace]
 resolver = "2"
-members = ["zirgen/circuit/fib", "zirgen/circuit/keccak", "zirgen/circuit/keccak-sys", "zirgen/dsl"]
+members = [
+  "risc0/circuit/rv32im-v2",
+  "risc0/circuit/rv32im-v2-sys",
+  "zirgen/circuit/fib",
+  "zirgen/circuit/keccak",
+  "zirgen/circuit/keccak-sys",
+  "zirgen/dsl",
+]
+
+[workspace.dependencies]
+risc0-circuit-keccak = { path = "zirgen/circuit/keccak" }
+risc0-circuit-keccak-sys = { path = "zirgen/circuit/keccak-sys" }
+risc0-circuit-rv32im-v2 = { path = "risc0/circuit/rv32im-v2" }
+risc0-circuit-rv32im-v2-sys = { path = "risc0/circuit/rv32im-v2-sys" }
+risc0-zirgen-dsl = { path = "zirgen/dsl" }
+sppark = "0.1.8"
 
 [workspace.dependencies.risc0-binfmt]
 git = "https://github.com/risc0/risc0.git"
@@ -47,12 +62,6 @@ git = "https://github.com/risc0/risc0.git"
 rev = "3c20ddcb2f5a707115d1cea896fb375818d798cf"
 default-features = false
 
-[workspace.dependencies.risc0-zirgen-dsl]
-path = "zirgen/dsl"
-
-[workspace.dependencies.risc0-circuit-keccak-sys]
-path = "zirgen/circuit/keccak-sys"
-
 [profile.bench]
 lto = true
 
@@ -69,6 +78,3 @@ lto = true
 
 [profile.release.build-override]
 opt-level = 3
-
-[workspace.dependencies]
-sppark = "0.1.8"
