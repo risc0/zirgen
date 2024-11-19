@@ -158,7 +158,7 @@ struct MutableBufObj : public BufferObj {
 
   Val load(size_t col, size_t back) override {
     if (back > ctx.cycle) {
-      std::cerr << "Going back too far\n";
+      std::cerr << "Going back too far, back: " << back << ", cycle: " << ctx.cycle << "\n";
       return 0;
     }
     return buf.get(ctx.cycle - back, col);

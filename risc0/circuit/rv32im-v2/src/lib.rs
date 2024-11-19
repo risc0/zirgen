@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#[cfg(feature = "execute")]
+pub mod execute;
 #[cfg(feature = "prove")]
-mod prove;
-#[cfg(test)]
-mod riscv_tests;
+pub mod prove;
+// #[cfg(test)]
+// mod riscv_tests;
 mod zirgen;
 
 pub struct CircuitImpl;

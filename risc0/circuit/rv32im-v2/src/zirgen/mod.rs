@@ -11,3 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+pub mod info;
+// pub mod poly_ext;
+pub mod taps;
+
+use super::CircuitImpl;

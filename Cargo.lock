@@ -2437,6 +2437,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "risc0-circuit-rv32im-v2"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bytemuck",
+ "cfg-if",
+ "derive_more 1.0.0",
+ "rayon",
+ "risc0-binfmt",
+ "risc0-circuit-rv32im-v2-sys",
+ "risc0-core",
+ "risc0-sys",
+ "risc0-zkp",
+ "serde",
+ "test-log",
+ "tracing",
+]
+
+[[package]]
 name = "risc0-circuit-rv32im-v2-sys"
 version = "0.1.0"
 dependencies = [
@@ -3849,24 +3868,6 @@ dependencies = [
  "memchr",
  "thiserror 1.0.69",
  "zopfli",
-]
-
-[[package]]
-name = "zirgen-circuit-rv32im-v2"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "bytemuck",
- "cfg-if",
- "derive_more 1.0.0",
- "rayon",
- "risc0-binfmt",
- "risc0-circuit-rv32im-v2-sys",
- "risc0-core",
- "risc0-sys",
- "risc0-zkp",
- "test-log",
- "tracing",
 ]
 
 [[package]]
