@@ -262,7 +262,7 @@ pub fn exec_reg(
     });
 }
 pub fn exec_log(ctx: &ExecContext, arg0: &str, arg1: &[Val]) -> Result<ComponentStruct> {
-    // Log(<preamble>:16)
+    // Log(<preamble>:22)
     invoke_extern!(ctx, log, arg0, arg1);
     return Ok(ComponentStruct {});
 }
