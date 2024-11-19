@@ -1,6 +1,16 @@
-// Copyright (c) 2024 RISC Zero, Inc.
+// Copyright 2024 RISC Zero, Inc.
 //
-// All rights reserved.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <stdint.h>
 #include <sys/errno.h>
@@ -121,28 +131,27 @@ inline uint32_t sys_write(uint32_t fd, uint32_t buf, uint32_t len) {
 #define SYS_CALL_LIST \
   SyscallEntry(63, read, 3) \
   SyscallEntry(64, write, 3) \
-  SyscallEntry(93, exit, 1) \
-// clang-format on
+  SyscallEntry(93, exit, 1) // clang-format on
 
 // Make wrappers for syscalls with various numbers of arguments
-#define SYSCALL_WRAP_1(name) \
-  void sys_ ## name ## _wrap() { \
-    set_ureg(REG_A0, sys_ ## name(get_ureg(REG_A0))); \
-    mret(); \
+#define SYSCALL_WRAP_1(name)                                                                       \
+  void sys_##name##_wrap() {                                                                       \
+    set_ureg(REG_A0, sys_##name(get_ureg(REG_A0)));                                                \
+    mret();                                                                                        \
   }
-#define SYSCALL_WRAP_2(name) \
-  void sys_ ## name ## _wrap() { \
-    set_ureg(REG_A0, sys_ ## name(get_ureg(REG_A0), get_ureg(REG_A1))); \
-    mret(); \
+#define SYSCALL_WRAP_2(name)                                                                       \
+  void sys_##name##_wrap() {                                                                       \
+    set_ureg(REG_A0, sys_##name(get_ureg(REG_A0), get_ureg(REG_A1)));                              \
+    mret();                                                                                        \
   }
-#define SYSCALL_WRAP_3(name) \
-  void sys_ ## name ## _wrap() { \
-    set_ureg(REG_A0, sys_ ## name(get_ureg(REG_A0), get_ureg(REG_A1), get_ureg(REG_A2))); \
-    mret(); \
+#define SYSCALL_WRAP_3(name)                                                                       \
+  void sys_##name##_wrap() {                                                                       \
+    set_ureg(REG_A0, sys_##name(get_ureg(REG_A0), get_ureg(REG_A1), get_ureg(REG_A2)));            \
+    mret();                                                                                        \
   }
 
 // Wrap all the syscalls
-#define SyscallEntry(id, name, args) SYSCALL_WRAP_ ## args(name)
+#define SyscallEntry(id, name, args) SYSCALL_WRAP_##args(name)
 SYS_CALL_LIST
 #undef SyscallEntry
 
@@ -151,7 +160,7 @@ extern "C" void start() {
   set_ureg(REG_SP, 0xbffffffc);
   uint32_t* table = reinterpret_cast<uint32_t*>(ECALL_DISPATCH_ADDR);
   // Set up syscall dispatch table
-#define SyscallEntry(id, name, args) table[id] = reinterpret_cast<uint32_t>(sys_ ## name ## _wrap);
+#define SyscallEntry(id, name, args) table[id] = reinterpret_cast<uint32_t>(sys_##name##_wrap);
   SYS_CALL_LIST
 #undef SyscallEntry
   // Jump into userland
