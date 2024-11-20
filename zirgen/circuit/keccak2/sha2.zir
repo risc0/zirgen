@@ -129,14 +129,14 @@ component GetK(round: Val) {
   }
 }
 
-component DoStepLoad(in: TestState, round: Val) {
+component DoTestStepLoad(in: TestState, round: Val) {
   comp := ComputeAE(in.a, in.e, in.w[round], GetK(round));
   a := CarryAndExpand(comp.rawA);
   e := CarryAndExpand(comp.rawE);
   TestState(PushFront<4>(a, in.a), PushFront<4>(e, in.e), in.w)
 }
 
-component DoStepMix(in: TestState, round: Val) {
+component DoTestStepMix(in: TestState, round: Val) {
   w := CarryAndExpand(ComputeW(in.w));
   comp := ComputeAE(in.a, in.e, w, GetK(16 + round));
   a := CarryAndExpand(comp.rawA);
@@ -149,8 +149,8 @@ test TestVector {
     for i : 0..4 { UnpackReg<32, 16>(InitA()[i]) },
     for i : 0..4 { UnpackReg<32, 16>(InitE()[i]) },
     for i : 0..16 { for j : 0..32 { Reg(0) } });
-  afterLoads := reduce 0..16 init initState with DoStepLoad;
-  finalState := reduce 0..48 init afterLoads with DoStepMix;
+  afterLoads := reduce 0..16 init initState with DoTestStepLoad;
+  finalState := reduce 0..48 init afterLoads with DoTestStepMix;
 }
 
   

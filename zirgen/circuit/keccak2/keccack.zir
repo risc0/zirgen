@@ -129,37 +129,13 @@ component Iota(a: Array<Array<Array<Val, 64>, 5>, 5>, round: Val) {
   }
 }
 
+/* Testing only components */
+
 component RegisterizeKeccack(a: Array<Array<Array<Val, 64>, 5>, 5>) {
   for i : 0..5 {
     for j : 0..5 {
       for k : 0..64 {
         Reg(a[i][j][k])
-      }
-    }
-  }
-}
-
-// Convert state to 2 arrays of 800 bit each
-component FlattenKeccack(a: Array<Array<Array<Val, 64>, 5>, 5>) {
-  for kh : 0..2 {
-    for y : 0..800 {
-      kl := y & 31;
-      ij := (y - kl) / 32;
-      j := ij % 5;
-      i := (ij - j) / 5; 
-      a[i + 0][j + 0][kh * 32 + kl]
-    }
-  }
-}
-
-// Convert back to 5x5x64
-component ExpandKeccack(a: Array<Array<Val, 800>, 2>) {
-  for i : 0..5 {
-    for j : 0..5 {
-      for k : 0..64 {
-        kl := k & 31;
-        kh := (k - kl) / 32;
-        a[kh + 0][i*5*32 + j*32 + kl]
       }
     }
   }
