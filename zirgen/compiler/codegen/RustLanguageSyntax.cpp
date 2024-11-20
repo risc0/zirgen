@@ -32,6 +32,15 @@ bool isReserved(StringRef ident) {
   return reserved.contains(ident);
 }
 
+bool isReferenceType(CodegenValue value) {
+  // TODO: This seems kludgy; maybe figure out some way to propagate whether it's already a
+  // reference?
+  auto blockArg = llvm::dyn_cast_if_present<BlockArgument>(value.getValue());
+  if (!blockArg)
+    return false;
+  return llvm::isa<FunctionOpInterface>(blockArg.getOwner()->getParentOp());
+}
+
 } // namespace
 
 void RustLanguageSyntax::emitConditional(CodegenEmitter& cg,
@@ -54,7 +63,11 @@ void RustLanguageSyntax::emitSwitchStatement(CodegenEmitter& cg,
   for (const auto& [cond, emitArm] : llvm::zip(conditions, emitArm)) {
     cg << "if is_true(" << cond << ") {\n";
     auto result = emitArm();
-    cg << resultName << " = " << result << ";\n";
+    cg << resultName << " = " << result;
+    if (isReferenceType(result) && !Type(resultType).hasTrait<CodegenOnlyPassByReferenceTypeTrait>()) {
+      cg << ".clone()";
+    }
+    cg<< ";\n";
     cg << "} else\n";
   }
   cg << "{\n";
@@ -155,15 +168,6 @@ void RustLanguageSyntax::emitSaveConst(CodegenEmitter& cg,
   if (ty.hasTrait<CodegenOnlyPassByReferenceTypeTrait>())
     cg << "&";
   cg << cg.getTypeName(value.getType()) << " = " << value << ";\n";
-}
-
-static bool isReferenceType(CodegenValue value) {
-  // TODO: This seems kludgy; maybe figure out some way to propagate whether it's already a
-  // reference?
-  auto blockArg = llvm::dyn_cast_if_present<BlockArgument>(value.getValue());
-  if (!blockArg)
-    return false;
-  return llvm::isa<FunctionOpInterface>(blockArg.getOwner()->getParentOp());
 }
 
 void RustLanguageSyntax::emitCall(CodegenEmitter& cg,
