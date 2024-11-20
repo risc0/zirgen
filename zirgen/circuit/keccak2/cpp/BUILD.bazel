@@ -1,0 +1,24 @@
+load("@zirgen//bazel/rules/zirgen:dsl-defs.bzl", "zirgen_build")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "run",
+    srcs = [
+        #"run.cpp",
+        "trace.cpp",
+        "wrap_dsl.cpp",
+        "//zirgen/circuit/keccak2:cppinc",
+    ],
+    hdrs = [
+        #"run.h",
+        "trace.h",
+        "wrap_dsl.h",
+    ],
+    deps = [
+        "//risc0/core",
+        "//risc0/fp",
+    ],
+)

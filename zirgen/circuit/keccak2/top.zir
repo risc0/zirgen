@@ -1,6 +1,6 @@
 
 
-import keccack;
+import keccak;
 import sha2;
 
 component TopState(bits: Array<Val, 800>, kflat: Array<Val, 100>, sflat: Array<Val, 16>) {
@@ -16,7 +16,7 @@ component TopState(bits: Array<Val, 800>, kflat: Array<Val, 100>, sflat: Array<V
 }
 
 // Convert state to 2 arrays of 800 bit each
-component FlattenKeccack(a: Array<Array<Array<Val, 64>, 5>, 5>) {
+component FlattenKeccak(a: Array<Array<Array<Val, 64>, 5>, 5>) {
   for kh : 0..2 {
     for y : 0..800 {
       kl := y & 31;
@@ -29,7 +29,7 @@ component FlattenKeccack(a: Array<Array<Array<Val, 64>, 5>, 5>) {
 }
 
 // Convert back to 5x5x64
-component ExpandKeccack(a: Array<Array<Val, 800>, 2>) {
+component ExpandKeccak(a: Array<Array<Val, 800>, 2>) {
   for i : 0..5 {
     for j : 0..5 {
       for k : 0..64 {
@@ -61,9 +61,9 @@ component ExpandThetaB(b: Array<Val, 800>) {
   }
 }
 
-// 5 cycles for 1 round of Keccack (ThetaP1, 2x Pi-Rho-ThetaP2, 2x Iota-Chi)
-component KeccackRound0(s0: TopState, s1: TopState) {
-  a := ExpandKeccack([s0.bits, s1.bits]);
+// 5 cycles for 1 round of Keccak (ThetaP1, 2x Pi-Rho-ThetaP2, 2x Iota-Chi)
+component KeccakRound0(s0: TopState, s1: TopState) {
+  a := ExpandKeccak([s0.bits, s1.bits]);
   b := ThetaP1(a);
   top := TopState(FlattenThetaB(b), s1.kflat, s1.sflat);
   for j : 0..5 {
@@ -74,15 +74,15 @@ component KeccackRound0(s0: TopState, s1: TopState) {
   top
 }
 
-component KeccackRound12<IDX: Val>(sb: TopState, s0: TopState, s1: TopState, back1: TopState) {
-  a := ExpandKeccack([s0.bits, s1.bits]);
+component KeccakRound12<IDX: Val>(sb: TopState, s0: TopState, s1: TopState, back1: TopState) {
+  a := ExpandKeccak([s0.bits, s1.bits]);
   b := ExpandThetaB(sb.bits);
-  TopState(FlattenKeccack(Pi(Rho(ThetaP2(a, b))))[IDX], back1.kflat, back1.sflat)
+  TopState(FlattenKeccak(Pi(Rho(ThetaP2(a, b))))[IDX], back1.kflat, back1.sflat)
 }
 
-component KeccackRound34<IDX: Val>(s0: TopState, s1: TopState, back1: TopState, round: Val) {
-  a := ExpandKeccack([s0.bits, s1.bits]);
-  TopState(FlattenKeccack(Iota(Chi(a), round))[IDX], back1.kflat, back1.sflat)
+component KeccakRound34<IDX: Val>(s0: TopState, s1: TopState, back1: TopState, round: Val) {
+  a := ExpandKeccak([s0.bits, s1.bits]);
+  TopState(FlattenKeccak(Iota(Chi(a), round))[IDX], back1.kflat, back1.sflat)
 }
 
 // Get K in groups of 8 
@@ -192,6 +192,36 @@ component ReadCycle(stateIn: TopState) {
   stateOut
 }
 
+/*
+- Init cycle (sets up)
+
+- 1 Read cycle - Loads kflat, sets up SHA
+- 8 * 4 sha cycles (mixes kflat + zeros into SHA state)
+- 2 Expand cycles: Loads kflat into Keccak state
+- 24 * 5 keccak cycles (mixes Keccak state)
+- Write cycle - Takes keccak output -> kflat
+- 8 * 4 sha cycles (mixes kflat + zeros into SHA state)
+*/
+
+/*
+component ExpandCycle(stateIn: TopState) {
+  // Expand from kflat -> bits
+  bits := for i : 0..800 {
+    
+  
+
+component WriteCycle(stateIn: TopState) {
+  // Set 
+  load := for i : 0..100 { NondetReg(GetPreimage(i)) };
+  bits := for i : 0..800 { 0 };  // TODO: load from sflat
+  stateOut := TopState(bits, load, stateIn.sflat);
+  for i : 0..100 {
+    AliasLayout!(stateOut.kflat[i], load[i]);
+  };
+  stateOut
+}
+*/
+
 extern GetCycleType(): Val;
 extern GetRound(): Val;
 extern GetBlock(): Val;
@@ -204,11 +234,11 @@ component Top() {
   curState: TopState;
   curState := cycleMux -> (
     ReadCycle(curState@1),
-    KeccackRound0(curState@2, curState@1),
-    KeccackRound12<0>(curState@3, curState@2, curState@1, curState@1),
-    KeccackRound12<1>(curState@4, curState@3, curState@2, curState@1),
-    KeccackRound34<0>(curState@2, curState@1, curState@1, round),
-    KeccackRound34<1>(curState@3, curState@2, curState@1, round),
+    KeccakRound0(curState@2, curState@1),
+    KeccakRound12<0>(curState@3, curState@2, curState@1, curState@1),
+    KeccakRound12<1>(curState@4, curState@3, curState@2, curState@1),
+    KeccakRound34<0>(curState@2, curState@1, curState@1, round),
+    KeccakRound34<1>(curState@3, curState@2, curState@1, round),
     ShaCycle(curState@1, curState@2, round, block)
   );
 }

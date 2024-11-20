@@ -131,7 +131,7 @@ component Iota(a: Array<Array<Array<Val, 64>, 5>, 5>, round: Val) {
 
 /* Testing only components */
 
-component RegisterizeKeccack(a: Array<Array<Array<Val, 64>, 5>, 5>) {
+component RegisterizeKeccak(a: Array<Array<Array<Val, 64>, 5>, 5>) {
   for i : 0..5 {
     for j : 0..5 {
       for k : 0..64 {
@@ -142,8 +142,8 @@ component RegisterizeKeccack(a: Array<Array<Array<Val, 64>, 5>, 5>) {
 }
 
 component TestDoRound(a: Array<Array<Array<Val, 64>, 5>, 5>, round: Val) {
-  a := RegisterizeKeccack(Pi(Rho(Theta(a))));
-  RegisterizeKeccack(Iota(Chi(a), round))
+  a := RegisterizeKeccak(Pi(Rho(Theta(a))));
+  RegisterizeKeccak(Iota(Chi(a), round))
 }
 
 component PrintState(in: Array<Array<Array<Val, 64>, 5>, 5>) {
