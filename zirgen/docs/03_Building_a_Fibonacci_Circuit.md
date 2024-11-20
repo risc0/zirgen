@@ -181,7 +181,7 @@ one of our two constraints depending on whether or not the current cycle is 0.
 Finally, in the last line, we declare `cycle` to be the supercomponent of our
 `CycleCounter` component, so that it can be coerced to a `NondetReg` and `Val`.
 
-Onward to `IsZero`! Zirgen defines a few builtin components that we'll make use
+Onward to `IsZero`! Zirgen defines a few built-in components that we'll make use
 of here: `Isz`, which is 1 if its argument is 0, and 0 if its argument is
 nonzero, and `Inv`, which computes the multiplicative inverse of its argument or
 0 if its argument is 0. Neither of these create any constraints, so as with
@@ -265,7 +265,7 @@ Onto the last order of business: for the final step of our computation, we need
 to copy the value of `d3` into our global output register `f_last`. Note that we
 can only write to the global register once, because globals are not "per cycle,"
 so we have to guard this assignment with another mux. As an added debugging
-feature, we can log the assignment using the builtin `Log` extern. When we run
+feature, we can log the assignment using the built-in `Log` extern. When we run
 our tests, this shows us the value that gets written to that global, and on
 which cycle of execution.
 

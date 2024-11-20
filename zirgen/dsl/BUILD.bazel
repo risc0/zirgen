@@ -39,4 +39,5 @@ cc_binary(
         "//zirgen/compiler/codegen",
         "//zirgen/compiler/layout",
     ],
+    data = ["//zirgen/dsl/Library/src"],
 )

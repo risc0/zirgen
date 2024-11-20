@@ -7,16 +7,14 @@ package(
 )
 
 KECCAK_ZIR_FILES = [
-    "bits.zir",
     "keccak.zir",
-    "one_hot.zir",
     "sha256_for_keccak.zir",
 ]
 
 glob_lit_tests(
     # TODO: shorten timeout once zirgen is faster
     timeout = "long",
-    data = KECCAK_ZIR_FILES,
+    data = KECCAK_ZIR_FILES + ["//zirgen/dsl/Library/src"],
     exclude = KECCAK_ZIR_FILES,
     test_file_exts = ["zir"],
 )
@@ -38,9 +36,11 @@ build_circuit(
     name = "keccak",
     outs = KECCAK_OUTS,
     bin = "//zirgen/Main:gen_zirgen",
-    data = KECCAK_ZIR_FILES,
+    data = KECCAK_ZIR_FILES + ["//zirgen/dsl/Library/src"],
     extra_args = [
         "zirgen/circuit/keccak/keccak.zir",
+        "-I",
+        "zirgen/dsl/Library/src",
         "-I",
         "zirgen/circuit/keccak",
         "--validity-split-count=5",

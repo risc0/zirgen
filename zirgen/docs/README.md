@@ -16,6 +16,6 @@ Table of Contents:
 3. [Building a Fibonacci Circuit](03_Building_a_Fibonacci_Circuit.md)
 4. [Components](04_Components.md)
 5. [Muxes](05_Muxes.md)
-6. [Built-in Components](A1_Builtin_Components.md)
+6. [Built-in Components](A1_Built-in_Components.md)
 
 [Next](01_Getting_Started.md)

@@ -1,4 +1,4 @@
-# Builtin Components
+# Built-in Components
 
 ## Val
 

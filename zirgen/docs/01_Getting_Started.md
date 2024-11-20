@@ -31,7 +31,7 @@ tests defined in the file we're running. Typically, the output of Zirgen is a
 generated Rust or C++ library that then needs to be integrated with the RISC
 Zero proof system. For the sake of simplicity here and as a useful practice
 during the development, it is easiest to experiment with Zirgen by writing tests
-alongside your circuit code, which can be run in the builtin interpreter without
+alongside your circuit code, which can be run in the built-in interpreter without
 doing this integration work using the `--test` option. Now, the important part
 of the file is the following:
 

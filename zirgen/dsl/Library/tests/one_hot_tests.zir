@@ -1,0 +1,19 @@
+// RUN: zirgen -I %S/../src --test %s
+
+import one_hot;
+
+test Simple {
+  x := OneHot<8>(3);
+  x.bits[0] = 0;
+  x.bits[1] = 0;
+  x.bits[2] = 0;
+  x.bits[3] = 1;
+  x.bits[4] = 0;
+  x.bits[5] = 0;
+  x.bits[6] = 0;
+  x.bits[7] = 0;
+}
+
+test_fails OutOfRange {
+  x := OneHot<8>(8);
+}
