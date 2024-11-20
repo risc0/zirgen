@@ -98,6 +98,7 @@ impl risc0_zkp::layout::Component for _globalLayout {
 #[derive(Copy, Clone, Debug)]
 pub struct NondetRegStruct {
     pub _super: Val,
+    pub _layout: &'static NondetRegLayout,
 }
 #[derive(Copy, Clone, Debug)]
 pub struct ComponentStruct {}
@@ -105,6 +106,7 @@ pub struct ComponentStruct {}
 pub struct RegStruct {
     pub _super: NondetRegStruct,
     pub reg: NondetRegStruct,
+    pub _layout: &'static NondetRegLayout,
 }
 #[derive(Copy, Clone, Debug)]
 pub struct GetCycleStruct {
@@ -115,12 +117,14 @@ pub struct IsZeroStruct {
     pub _super: NondetRegStruct,
     pub is_zero: NondetRegStruct,
     pub inv: NondetRegStruct,
+    pub _layout: &'static IsZeroLayout,
 }
 #[derive(Copy, Clone, Debug)]
 pub struct CycleCounterStruct {
     pub _super: NondetRegStruct,
     pub cycle: NondetRegStruct,
     pub is_first_cycle: IsZeroStruct,
+    pub _layout: &'static CycleCounterLayout,
 }
 #[derive(Copy, Clone, Debug)]
 pub struct TopStruct {
@@ -131,6 +135,7 @@ pub struct TopStruct {
     pub d2: RegStruct,
     pub d3: RegStruct,
     pub terminate: IsZeroStruct,
+    pub _layout: &'static TopLayout,
 }
 pub const LAYOUT__0: &CycleCounterLayout = &CycleCounterLayout {
     _super: &NondetRegLayout {
@@ -219,6 +224,7 @@ pub fn back_nondet_reg(
 ) -> Result<NondetRegStruct> {
     let x2: NondetRegStruct = NondetRegStruct {
         _super: (&layout1.map(|c| c._super)).load(ctx, distance0),
+        _layout: layout1,
     };
     return Ok(x2);
 }
@@ -231,6 +237,7 @@ pub fn exec_nondet_reg(
     x2.store(ctx, arg0);
     return Ok(NondetRegStruct {
         _super: x2.load(ctx, 0),
+        _layout: layout1,
     });
 }
 pub fn exec_component(ctx: &ExecContext) -> Result<ComponentStruct> {
@@ -246,6 +253,7 @@ pub fn back_reg(
     return Ok(RegStruct {
         _super: x2.clone(),
         reg: x2,
+        _layout: layout1,
     });
 }
 pub fn exec_reg(
@@ -259,6 +267,7 @@ pub fn exec_reg(
     return Ok(RegStruct {
         _super: x2.clone(),
         reg: x2,
+        _layout: layout1,
     });
 }
 pub fn exec_log(ctx: &ExecContext, arg0: &str, arg1: &[Val]) -> Result<ComponentStruct> {
@@ -304,6 +313,7 @@ pub fn exec_is_zero(
         _super: x3.clone(),
         is_zero: x3,
         inv: x5,
+        _layout: layout1,
     });
 }
 pub fn exec_cycle_counter(
@@ -348,6 +358,7 @@ pub fn exec_cycle_counter(
         _super: x6.clone(),
         cycle: x6,
         is_first_cycle: x8,
+        _layout: layout0,
     });
 }
 pub fn exec_top(
@@ -435,6 +446,7 @@ pub fn exec_top(
         d2: x17,
         d3: x19,
         terminate: x23,
+        _layout: layout0,
     });
 }
 pub fn step_top(

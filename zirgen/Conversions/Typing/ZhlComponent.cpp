@@ -1447,12 +1447,12 @@ void LoweringImpl::gen(BackOp back, ComponentBuilder& cb) {
   }
 
   Value layout = asAliasableLayout(back.getTarget());
-  if (!layout) {
+  if (!layout || !ZStruct::isLayoutType(layout.getType())) {
     back.emitError() << "back operation must apply to a subcomponent with a layout";
     throw MalformedIRException();
   }
-
   layoutMapping[back.getOut()] = layout;
+
   Value reconstructed = reconstructFromLayout(back.getLoc(), layout, distance[0]);
   if (!reconstructed) {
     back.emitError() << "Unable to reconstruct " << back.getTarget() << " from layout " << layout;
