@@ -1,11 +1,9 @@
-// RUN: not zirgen --emit=zhlt %s 2>&1 | FileCheck %s
+// RUN: zirgen --emit=zhlt %s 2>&1 | FileCheck %s
+// RUN: zirgen --emit=zstruct %s 2>&1
 
-// This test covers diagnostics related to implicit layout arguments. When a
-// component constructor makes use of the layout of a parameter, for example to
-// compute a back on it or to alias the layout, the compiler adds the layout as
-// an implicit argument and in turn must resolve the layout at the call sites.
-// Sometimes this isn't feasible, so we add a few diagnostics to make it easier
-// to understand why that is.
+// This test covers a few cases of semi-dynamic layouts. We run the test twice,
+// once to check the layout members are used as expected, and again to make sure
+// that the layouts fully resolve when generating the validity polynomial.
 
 component A(a: Val) {
   a := Reg(a);
@@ -23,22 +21,25 @@ component TakeAsValueAndLayout(a: A) {
   a@1.a // Make sure the layout of the parameter is actually used
 }
 
-test {
+component Top() {
   a := A(1);
+  // CHECK: [[B:%[0-9]+]] = zhlt.construct @B(
   b := B(a);
 
-  // No error
-  // CHECK-NOT: :[[# @LINE + 1]]:{{[0-9]+}}: error
+  // CHECK: [[TMP:%[0-9]+]] = zstruct.lookup [[B]]["@super"] : (!zstruct$B) -> !zstruct$A
+  // CHECK-NEXT: zhlt.construct @TakeAsValueOnly([[TMP]])
   TakeAsValueOnly(b);
 
 
-  // the super of b is not part of the layout of b
-  // CHECK: error: type `B` does not own a super layout of type `A`
-  // CHECK: :[[# @LINE + 1]]:{{[0-9]+}}: note: which is expected by this constructor call:
+  // CHECK: [[TMP:%[0-9]+]] = zstruct.lookup [[B]]["@super"] : (!zstruct$B) -> !zstruct$A
+  // CHECK-NEXT:  %8 = zhlt.construct @TakeAsValueAndLayout([[TMP]])
   TakeAsValueAndLayout(b);
 
-  // the layout of aa is not part of the layout of b
-  // CHECK: error: type `B` does not own the layout of member "aa"
-  // CHECK: :[[# @LINE + 1]]:{{[0-9]+}}: note: which is expected by this constructor call:
+  // CHECK: [[TMP:%[0-9]+]] = zstruct.lookup [[B]]["aa"] : (!zstruct$B) -> !zstruct$A
+  // CHECK-NEXT: %10 = zhlt.construct @TakeAsValueAndLayout([[TMP]])
   TakeAsValueAndLayout(b.aa);
+}
+
+test {
+  Top()
 }

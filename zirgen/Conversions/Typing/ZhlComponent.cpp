@@ -454,10 +454,6 @@ void LoweringImpl::gen(ConstructorParamOp ctorParam, Block* topBlock) {
   }
   auto value = topBlock->addArgument(valueType, ctorParam.getLoc());
   valueMapping[ctorParam.getOut()] = value;
-  if (layoutType) {
-    auto layout = topBlock->addArgument(layoutType, ctorParam.getLoc());
-    layoutMapping[ctorParam.getOut()] = layout;
-  }
 }
 
 void LoweringImpl::gen(TypeParamOp typeParam, ArrayRef<Attribute> typeArgs) {
@@ -534,13 +530,6 @@ Zhlt::ComponentOp LoweringImpl::gen(ComponentOp component,
 
       if (!valueType)
         valueType = Zhlt::getComponentType(ctx);
-    }
-
-    for (unsigned i = body.getNumArguments() - 1; i != (unsigned)-1; i--) {
-      BlockArgument arg = body.getArgument(i);
-      if (arg.use_empty() && ZStruct::isLayoutType(arg.getType())) {
-        body.eraseArgument(i);
-      }
     }
 
     constructArgsTypes = llvm::to_vector(bodyBlock->getArgumentTypes());
@@ -865,21 +854,6 @@ void LoweringImpl::gen(ConstructOp construct, ComponentBuilder& cb) {
       expectedArgType++;
       arguments.push_back(casted);
     }
-    if (expectedArgType != argumentTypes.end() && ZStruct::isLayoutType(*expectedArgType)) {
-      ScopedDiagnosticHandler scopedHandler(ctx, [&](Diagnostic& diag) {
-        diag.attachNote(construct.getLoc()) << "which is expected by this constructor call:";
-        return failure();
-      });
-      Value layout = asAliasableLayout(zhlArg);
-      if (layout.getType() != *expectedArgType) {
-        Value casted =
-            cb.addLayoutMember(construct.getLoc(), /*name=*/StringAttr(), *expectedArgType);
-        genAliasLayout(construct.getLoc(), casted, layout);
-        layout = casted;
-      }
-      expectedArgType++;
-      arguments.push_back(layout);
-    }
   }
   // If there is a variadic parameter, add its pack to the argument list
   if (expectedArgType != argumentTypes.end() && expectedArgType->isa<VariadicType>()) {
@@ -999,7 +973,10 @@ void LoweringImpl::genAliasLayout(Location loc, Value left, Value right) {
     return;
   }
   Type type = Zhlt::getLeastCommonSuper({left.getType(), right.getType()}, /*isLayout=*/true);
-  if (type && (left.getType() == right.getType() || !llvm::isa<LayoutArrayType>(type))) {
+  if (!type)
+    mlir::emitError(loc) << "attempting to alias layouts without a common super";
+
+  if (left.getType() == right.getType() || !llvm::isa<LayoutArrayType>(type)) {
     left = coerceTo(left, type);
     right = coerceTo(right, type);
     builder.create<ZStruct::AliasLayoutOp>(loc, left, right);
@@ -1469,21 +1446,20 @@ void LoweringImpl::gen(BackOp back, ComponentBuilder& cb) {
     return;
   }
 
-  Value layout = layoutMapping.lookup(back.getTarget());
-  layoutMapping[back.getOut()] = layout;
-  if (layout) {
-    Value reconstructed = reconstructFromLayout(back.getLoc(), layout, distance[0]);
-    if (!reconstructed) {
-      back.emitError() << "Unable to reconstruct " << back.getTarget() << " from layout " << layout;
-      throw MalformedIRException();
-    }
-
-    valueMapping[back.getOut()] = reconstructed;
-    return;
+  Value layout = asAliasableLayout(back.getTarget());
+  if (!layout) {
+    back.emitError() << "back operation must apply to a subcomponent with a layout";
+    throw MalformedIRException();
   }
 
-  back.emitError() << "back operation must apply to a subcomponent with a layout";
-  throw MalformedIRException();
+  layoutMapping[back.getOut()] = layout;
+  Value reconstructed = reconstructFromLayout(back.getLoc(), layout, distance[0]);
+  if (!reconstructed) {
+    back.emitError() << "Unable to reconstruct " << back.getTarget() << " from layout " << layout;
+    throw MalformedIRException();
+  }
+
+  valueMapping[back.getOut()] = reconstructed;
 }
 
 void LoweringImpl::gen(ArrayOp array, ComponentBuilder& cb) {
