@@ -366,7 +366,7 @@ void makeECAddTest(mlir::OpBuilder builder,
   auto yQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 4, true);
   auto yR = builder.create<BigInt::DefOp>(loc, bits, 5, true);
-  auto prime = builder.create<BigInt::DefOp>(loc, bits, 6, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 6, true, bits - 1);
   auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 7, true);
   auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 8, true);
 
@@ -385,7 +385,7 @@ void makeECDoubleTest(mlir::OpBuilder builder,
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto yR = builder.create<BigInt::DefOp>(loc, bits, 3, true);
-  auto prime = builder.create<BigInt::DefOp>(loc, bits, 4, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 4, true, bits - 1);
   auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 5, true);
   auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 6, true);
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
@@ -404,7 +404,7 @@ void makeECMultiplyTest(mlir::OpBuilder builder,
   auto scale = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 3, true);
   auto yR = builder.create<BigInt::DefOp>(loc, bits, 4, true);
-  auto prime = builder.create<BigInt::DefOp>(loc, bits, 5, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 5, true, bits - 1);
   auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 6, true);
   auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 7, true);
 
@@ -422,7 +422,7 @@ void makeECNegateTest(mlir::OpBuilder builder,
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto yR = builder.create<BigInt::DefOp>(loc, bits, 3, true);
-  auto prime = builder.create<BigInt::DefOp>(loc, bits, 4, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 4, true, bits - 1);
   auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 5, true);
   auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 6, true);
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
@@ -441,7 +441,7 @@ void makeECSubtractTest(mlir::OpBuilder builder,
   auto yQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 4, true);
   auto yR = builder.create<BigInt::DefOp>(loc, bits, 5, true);
-  auto prime = builder.create<BigInt::DefOp>(loc, bits, 4, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 4, true, bits - 1);
   auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 5, true);
   auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 6, true);
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
@@ -459,7 +459,7 @@ void makeECValidatePointsEqualTest(mlir::OpBuilder builder,
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto yQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
-  auto prime = builder.create<BigInt::DefOp>(loc, bits, 4, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 4, true, bits - 1);
   auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 5, true);
   auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 6, true);
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
@@ -473,7 +473,7 @@ void makeECValidatePointOnCurveTest(mlir::OpBuilder builder,
                                     size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
-  auto prime = builder.create<BigInt::DefOp>(loc, bits, 2, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 2, true, bits - 1);
   auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 3, true);
   auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 4, true);
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
@@ -489,7 +489,7 @@ void makeECAddFreelyTest(mlir::OpBuilder builder,
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto yQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
-  auto prime = builder.create<BigInt::DefOp>(loc, bits, 4, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 4, true, bits - 1);
   auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 5, true);
   auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 6, true);
 
@@ -506,7 +506,7 @@ void makeECDoubleFreelyTest(mlir::OpBuilder builder,
                             size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
-  auto prime = builder.create<BigInt::DefOp>(loc, bits, 2, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 2, true, bits - 1);
   auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 3, true);
   auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 4, true);
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
@@ -523,7 +523,7 @@ void makeECMultiplyFreelyTest(mlir::OpBuilder builder,
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto scale = builder.create<BigInt::DefOp>(loc, bits, 2, true);
-  auto prime = builder.create<BigInt::DefOp>(loc, bits, 3, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 3, true, bits - 1);
   auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 4, true);
   auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 5, true);
 
@@ -539,7 +539,7 @@ void makeECNegateFreelyTest(mlir::OpBuilder builder,
                             size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
-  auto prime = builder.create<BigInt::DefOp>(loc, bits, 2, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 2, true, bits - 1);
   auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 3, true);
   auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 4, true);
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
@@ -556,7 +556,7 @@ void makeECSubtractFreelyTest(mlir::OpBuilder builder,
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto yQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
-  auto prime = builder.create<BigInt::DefOp>(loc, bits, 4, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 4, true, bits - 1);
   auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 5, true);
   auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 6, true);
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
@@ -578,7 +578,7 @@ void makeRepeatedECAddTest(mlir::OpBuilder builder,
   auto yQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 4, true);
   auto yR = builder.create<BigInt::DefOp>(loc, bits, 5, true);
-  auto prime = builder.create<BigInt::DefOp>(loc, bits, 6, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 6, true, bits - 1);
   auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 7, true);
   auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 8, true);
 
@@ -603,7 +603,7 @@ void makeRepeatedECDoubleTest(mlir::OpBuilder builder,
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto yR = builder.create<BigInt::DefOp>(loc, bits, 3, true);
-  auto prime = builder.create<BigInt::DefOp>(loc, bits, 4, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 4, true, bits - 1);
   auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 5, true);
   auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 6, true);
 

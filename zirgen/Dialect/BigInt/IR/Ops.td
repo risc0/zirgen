@@ -32,7 +32,7 @@ def DefOp : BigIntOp<"def", [InferTypeOpAdaptor, DeclareOpInterfaceMethods<Codeg
 
 def LoadOp : BigIntOp<"load", [InferTypeOpAdaptor]> {
   let summary = "Load a value";
-  let arguments = (ins UI32Attr:$bitWidth, UI32Attr:$arena, UI32Attr:$offset);
+  let arguments = (ins UI32Attr:$bitWidth, UI32Attr:$arena, UI32Attr:$offset, DefaultValuedAttr<UI32Attr, "0">:$minBits);
   let results = (outs BigInt:$out);
   let assemblyFormat = [{ $bitWidth `,` $arena `,` $offset `->` type($out) attr-dict }];
 }

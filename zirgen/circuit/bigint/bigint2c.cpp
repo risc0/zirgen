@@ -423,7 +423,7 @@ void genECDouble(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) 
 
   auto pt_x = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, 0);
   auto pt_y = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, chunkwidth);
-  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0);
+  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0, bitwidth - 1);
   auto a = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, chunkwidth);
   auto b = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 2 * chunkwidth);
   auto curve =
@@ -441,7 +441,7 @@ void genECAdd(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) {
   auto p_y = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, chunkwidth);
   auto q_x = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0);
   auto q_y = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, chunkwidth);
-  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 0);
+  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 0, bitwidth - 1);
   auto a = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, chunkwidth);
   auto b = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 2 * chunkwidth);
   auto curve =
