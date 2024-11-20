@@ -175,6 +175,7 @@ def AddOp : BinaryOp<"add", [Pure, Commutative, IsPoly, CodegenInfixOp<"+">]> {}
 def SubOp : BinaryOp<"sub", [Pure, IsPoly, CodegenInfixOp<"-">]> {}
 def MulOp : BinaryOp<"mul", [Pure, Commutative, IsPoly, CodegenInfixOp<"*">]> {}
 def BitAndOp : BinaryOp<"bit_and", [Pure]> {}
+def ModOp : BinaryOp<"mod", [Pure]> {}
 
 def InRangeOp : ZllOp<"in_range", [Pure, SameOperandsAndResultType]> {
   let summary = [{

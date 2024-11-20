@@ -1,71 +1,51 @@
 
+import bits;
+import one_hot;
+import xor5;
+import arr;
+import pack;
 
-component NondetBitReg(x: Val) {
-  reg := NondetReg(x);
-  reg * (1 - reg) = 0;
-  reg
-}
-
-component OneHot<N: Val>(v: Val) {
-  // Make N bit registers, with bit v set and all others 0
-  bits := for i : 0..N { NondetBitReg(Isz(i - v)) };
-  // Verify exactly one bit is set
-  reduce bits init 0 with Add = 1;
-  // Verify the right bit is set
-  reduce for i : 0..N { bits[i] * i } init 0 with Add = v;
-  bits
-}
-
-component Xor5(vals: Array<Val, 5>) {
-  tot := reduce vals init 0 with Add;
-  out := NondetBitReg(tot & 1);
-  diff := tot - out;
-  diff * (2 - diff) * (4 - diff) = 0;
-  out
-}
-
-component Xor(a: Val, b: Val) {
-  a + b - 2 * a * b
-}
-
-component Theta(a: Array<Array<Array<Val, 64>, 5>, 5>) {
-  c := for j : 0..5 {
+// Computes the xor5 part of Theta, results are 'bits' and can be aliased
+component ThetaP1(a: Array<Array<Array<Val, 64>, 5>, 5>) {
+  for j : 0..5 {
     for k : 0..64 {
       Xor5(for i : 0..5 { a[i][j][k] } )
     }
-  };
+  }
+}
+
+// Computes part 2 of theta, results are not by register
+component ThetaP2(a: Array<Array<Array<Val, 64>, 5>, 5>, c: Array<Array<Val, 64>, 5>) {
   d := for j : 0..5 { 
     for k : 0..64 {
       jm1 := if (Isz(j)) { 4 } else { j - 1 };
       jp1 := if (Isz(j-4)) { 0 } else { j + 1 };
       kp1 := if (Isz(k)) { 63 } else { k - 1 };
-      Xor(c[jm1][k], c[jp1][kp1])
+      BitXor(c[jm1][k], c[jp1][kp1])
     }
   };
   for i : 0..5 {
     for j : 0..5 {
       for k : 0..64 {
-        Xor(a[i][j][k], d[j][k])
+        BitXor(a[i][j][k], d[j][k])
       }
     }
   }
+}
+
+// One-shot version of theta
+component Theta(a: Array<Array<Array<Val, 64>, 5>, 5>) {
+  ThetaP2(a, ThetaP1(a))
 }
 
 component RhoMatrix() {
   [[0,36,3,41,18],[1,44,10,45,2],[62,6,43,15,61],[28,55,25,21,56],[27,20,39,8,14]]
 }
 
-
-component RotateLeft(in: Array<Val, 64>, n: Val) {
-  for k : 0..64 {
-    if (InRange(0, k - n, 64)) { in[k - n] } else { in[64 + k - n] }
-  }
-}
-
 component Rho(a: Array<Array<Array<Val, 64>, 5>, 5>) {
   for i : 0..5 {
     for j : 0..5 {
-      RotateLeft(a[i][j], RhoMatrix()[j][i])
+      RotateLeft<64>(a[i][j], RhoMatrix()[j][i])
     }
   }
 }
@@ -89,7 +69,7 @@ component Chi(a: Array<Array<Array<Val, 64>, 5>, 5>) {
       for k : 0..64 {
         jp1 := if (Isz(4-j)) { 0 } else { j + 1 };
         jp2 := if (Isz(4-jp1)) { 0 } else { jp1 + 1 };
-        Xor(a[i][j][k], (1 - a[i][jp1][k]) * a[i][jp2][k])
+        BitXor(a[i][j][k], (1 - a[i][jp1][k]) * a[i][jp2][k])
       }
     }
   }
@@ -125,7 +105,7 @@ component IotaTable() {
 }
 
 component ExpandedIotaTable() {
-  for i : 0..24 { ExpandWord(IotaTable()[i]) }
+  for i : 0..24 { UnpackNondet<64, 16>(IotaTable()[i]) }
 }
 
 component RoundToArray(idx: Val) {
@@ -141,7 +121,7 @@ component Iota(a: Array<Array<Array<Val, 64>, 5>, 5>, round: Val) {
   for i : 0..5 {
     for j : 0..5 {
       if (Isz(i) * Isz(j)) {
-        for k: 0..64 { Xor(iotaArray[k], a[i][j][k]) }
+        for k: 0..64 { BitXor(iotaArray[k], a[i][j][k]) }
       } else {
         a[i][j]
       }
@@ -149,128 +129,52 @@ component Iota(a: Array<Array<Array<Val, 64>, 5>, 5>, round: Val) {
   }
 }
 
-// Convert state to 50 * 32 bits (so it's compatible with SHA2)
-component FlattenKeccack(a: Array<Array<Array<Val, 64>, 5>, 5>) {
-  // Hmm, we probably should add mod/tdiv
-  // Some very annoying work for some simple index mechanics
-  xi := [0,0,0,0,0,1,1,1,1,1,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4];
-  xj := [0,1,2,3,4,0,1,2,3,4,0,1,2,3,4,0,1,2,3,4,0,1,2,3,4];
-  for ijkh : 0..50 {
-    kh := ijkh & 1;
-    ij := (ijkh - kh) * 1006632961; // (1/2)
-    i := xi[ij];
-    j := xj[ij];
-    for kl : 0..32 {
-      a[i][j][kh * 32 + kl]
-    }
-  }
-}
-
-// Convert back to 5x5x64
-component ExpandKeccack(a: Array<Array<Val, 32>, 50>) {
+component RegisterizeKeccack(a: Array<Array<Array<Val, 64>, 5>, 5>) {
   for i : 0..5 {
     for j : 0..5 {
       for k : 0..64 {
-        kl := k & 31;
-        kh := (k - kl) * 1950351361; // (1/32)
-        a[i*10 + j*2 + kh][kl]
+        Reg(a[i][j][k])
       }
     }
   }
 }
 
-component TopState(a: Array<Array<Val, 32>, 50>) {
-  // TODO: Add other state elements (i.e. current mode, etc)
-  words := for i : 0..50 {
-    for j : 0..32 {
-      Reg(a[i][j])
+// Convert state to 2 arrays of 800 bit each
+component FlattenKeccack(a: Array<Array<Array<Val, 64>, 5>, 5>) {
+  for kh : 0..2 {
+    for y : 0..800 {
+      kl := y & 31;
+      ij := (y - kl) / 32;
+      j := ij % 5;
+      i := (ij - j) / 5; 
+      a[i + 0][j + 0][kh * 32 + kl]
     }
-  };
-}
-
-component SaveKeccack(a: Array<Array<Array<Val, 64>, 5>, 5>) {
-  TopState(FlattenKeccack(a))
-}
-
-component LoadKeccack(a: TopState) {
-  ExpandKeccack(a.words)
-}
-
-test FlattenExpand {
-  LoadKeccack(SaveKeccack(for i : 0..5 { for j : 0..5 { for k : 0..64 { 0 }}}))
-}
-
-component TestDoRound(a: TopState, round: Val) {
-  a := SaveKeccack(Pi(Rho(Theta(LoadKeccack(a)))));
-  SaveKeccack(Iota(Chi(LoadKeccack(a)), round))
-}
-
-component TestPermute(a: Array<Array<Array<Val, 64>, 5>, 5>) {
-  LoadKeccack(reduce 0..4 init SaveKeccack(a) with TestDoRound)
-}
-
-extern GetCycleType(): Val;
-extern GetRound(): Val;
-
-component Top() {
-  cycleType := NondetReg(GetCycleType());
-  round := NondetReg(GetRound());
-  cycleMux := OneHot<4>(cycleType);
-  curState: TopState;
-  curState := cycleMux -> (
-    SaveKeccack(for i : 0..5 { for j : 0..5 { for k : 0..64 { 0 } } }),
-    SaveKeccack(Pi(Rho(Theta(LoadKeccack(curState@1))))),
-    SaveKeccack(Iota(Chi(LoadKeccack(curState@1)), round)),
-    // TODO: Intesting compiler bug here: If all the branches are
-    // SaveKeecack, then nearest supertype of Mux is also SaveKeccack, which
-    // is not type identical to TopState, so we need to add a TopState in.
-    // If we actually had a SHA example, this wouldn't be required, as the
-    // nearest common super would automatically be TopState
-    TopState(for i : 0..50 { for j : 0..32 { 0 } })
-  );
-}
-  
-component Po2(n: Val) {
-  arr := [ 0x0001, 0x0002, 0x0004, 0x0008, 0x0010, 0x0020, 0x0040, 0x0080, 
-           0x0100, 0x0200, 0x0400, 0x0800, 0x1000, 0x2000, 0x4000, 0x8000 ];
-  arr[n]
-}
-
-component ContractWord(in: Array<Val, 64>) {
-  for i : 0..4 {
-    reduce for j : 0..16 { Po2(j) * in[i*16 + j] } init 0 with Add
-  }
-} 
-
-component ExpandWord(in: Array<Val, 4>) {
-  for n : 0..64 {
-    j := n & 15;
-    i := (n - j) * 1887436801;  // THis constant is 1/16: TODO fix compiler divide
-    (in[i] & Po2(j)) / Po2(j)
   }
 }
 
-component ExpandState(in: Array<Array<Array<Val, 4>, 5>, 5>) {
+// Convert back to 5x5x64
+component ExpandKeccack(a: Array<Array<Val, 800>, 2>) {
   for i : 0..5 {
     for j : 0..5 {
-      ExpandWord(in[i][j])
+      for k : 0..64 {
+        kl := k & 31;
+        kh := (k - kl) / 32;
+        a[kh + 0][i*5*32 + j*32 + kl]
+      }
     }
   }
 }
 
-component ContractState(in: Array<Array<Array<Val, 64>, 5>, 5>) {
-  for i : 0..5 {
-    for j : 0..5 {
-      ContractWord(in[i][j])
-    }
-  }
+component TestDoRound(a: Array<Array<Array<Val, 64>, 5>, 5>, round: Val) {
+  a := RegisterizeKeccack(Pi(Rho(Theta(a))));
+  RegisterizeKeccack(Iota(Chi(a), round))
 }
 
 component PrintState(in: Array<Array<Array<Val, 64>, 5>, 5>) {
-  con := ContractState(in);
   for i : 0..5 {  
     for j : 0..5 {
-      Log("%x, %x, %x, %x", con[i][j][0], con[i][j][1], con[i][j][2], con[i][j][3])
+      p := Pack<64, 16>(in[i][j]);
+      Log("%x, %x, %x, %x", p[0], p[1], p[2], p[3])
     }
   }
 }
@@ -319,67 +223,7 @@ test TestIota {
 
 test Permute {
   input := for i : 0..5 { for j : 0..5 { for k : 0..64 { 0 } } };
-  output := TestPermute(input);
+  output := reduce 0..4 init input with TestDoRound;
   PrintState(output);
 }
 
-/*
-test ExpandContract {
-  testPatternSmall := [0x1234, 0x5555, 0xaaaa, 0xffff];
-  testPatternBig := 
-    [0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0,
-     1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
-     0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 
-     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-  expanded := ExpandWord(testPatternSmall);
-  for i : 0..64 {
-    expanded[i] = testPatternBig[i];
-  };
-  contracted := ContractWord(testPatternBig);
-  for i : 0..4 {
-    contracted[i] = testPatternSmall[i];
-  };
-}
-   
-test Xor {
-  Xor(0, 0) = 0;
-  Xor(0, 1) = 1;
-  Xor(1, 0) = 1;
-  Xor(1, 1) = 0;
-}
-
-test Xor5 {
-  Xor5([0, 0, 0, 0, 0]) = 0;
-  Xor5([0, 0, 0, 0, 1]) = 1;
-  Xor5([0, 0, 0, 1, 0]) = 1;
-  Xor5([0, 0, 0, 1, 1]) = 0;
-  Xor5([0, 0, 1, 0, 0]) = 1;
-  Xor5([0, 0, 1, 0, 1]) = 0;
-  Xor5([0, 0, 1, 1, 0]) = 0;
-  Xor5([0, 0, 1, 1, 1]) = 1;
-  Xor5([0, 1, 0, 0, 0]) = 1;
-  Xor5([0, 1, 0, 0, 1]) = 0;
-  Xor5([0, 1, 0, 1, 0]) = 0;
-  Xor5([0, 1, 0, 1, 1]) = 1;
-  Xor5([0, 1, 1, 0, 0]) = 0;
-  Xor5([0, 1, 1, 0, 1]) = 1;
-  Xor5([0, 1, 1, 1, 0]) = 1;
-  Xor5([0, 1, 1, 1, 1]) = 0;
-  Xor5([1, 0, 0, 0, 0]) = 1;
-  Xor5([1, 0, 0, 0, 1]) = 0;
-  Xor5([1, 0, 0, 1, 0]) = 0;
-  Xor5([1, 0, 0, 1, 1]) = 1;
-  Xor5([1, 0, 1, 0, 0]) = 0;
-  Xor5([1, 0, 1, 0, 1]) = 1;
-  Xor5([1, 0, 1, 1, 0]) = 1;
-  Xor5([1, 0, 1, 1, 1]) = 0;
-  Xor5([1, 1, 0, 0, 0]) = 0;
-  Xor5([1, 1, 0, 0, 1]) = 1;
-  Xor5([1, 1, 0, 1, 0]) = 1;
-  Xor5([1, 1, 0, 1, 1]) = 0;
-  Xor5([1, 1, 1, 0, 0]) = 1;
-  Xor5([1, 1, 1, 0, 1]) = 0;
-  Xor5([1, 1, 1, 1, 0]) = 0;
-  Xor5([1, 1, 1, 1, 1]) = 1;
-}
-*/

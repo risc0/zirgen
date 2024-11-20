@@ -1,0 +1,55 @@
+
+
+component DoStep(x: Array<Val, 4>) {
+  o := NondetReg(x[0] + x[1] + x[2] + x[3]);
+  o = x[0] + x[1] + x[2] + x[3];
+  l := [o, x[0], x[1], x[2]];
+  l
+}
+
+component TopState(x: Array<Val, 4>) {
+  for i : 0..4 {
+    Reg(x[i])
+  }
+}
+
+component CollectStep<po2: Val>(x: Array<Val, 4>) {
+  if (Isz(po2)) {
+    out := DoStep(x);
+    regs := [out.o];
+    vals := out.l;
+  } else {
+    out1 := CollectStep<po2-1>(x);
+    out2 := CollectStep<po2-1>(out.vals);
+    vals := out2.vals;
+    regs := [out1.regs, out2.regs];
+  }
+} 
+
+component DoFourSteps(x: Array<Val, 4>) {
+  //newX := reduce 0..4 init x with FoldStep;
+  /*
+  v1 := DoStep(x);
+  v2 := DoStep(v1.l);
+  v3 := DoStep(v2.l);
+  v4 := DoStep(v3.l);
+  newX := [v4.o, v3.o, v2.o, v1.o];
+  out := TopState(x);
+  //AliasLayout!(out, newX);
+  */
+  collected := CollectStep<2>(x);
+  out := TopState(collected.vals);
+  out
+}
+
+extern GetSetup() : Val;
+
+component Top() {
+  isSetup := NondetReg(GetSetup());
+  state : TopState;
+  state := [isSetup, 1 - isSetup] -> (
+    TopState(for i : 0..4 { 0 } ),
+    DoFourSteps(state@1)
+  );
+}
+  

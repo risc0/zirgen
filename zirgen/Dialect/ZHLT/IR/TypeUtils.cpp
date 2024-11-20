@@ -306,6 +306,11 @@ mlir::Value LayoutBuilder::addMember(Location loc, StringRef memberName, mlir::T
     return Value();
 
   for (auto member : members) {
+    if (member.name == memberName) {
+      llvm::errs() << "dup names = " << memberName << "\n";
+      llvm::errs() << "Existing type = " << member.type << "\n";
+      llvm::errs() << "New type = " << type << "\n";
+    }
     assert(member.name != memberName && "adding layout member with duplicate name");
   }
   StringAttr memberNameAttr = builder.getStringAttr(memberName);

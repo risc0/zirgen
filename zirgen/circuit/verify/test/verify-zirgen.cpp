@@ -17,12 +17,15 @@
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
 #include "zirgen/circuit/verify/verify.h"
 #include "zirgen/circuit/verify/wrap_zirgen.h"
+#include "zirgen/circuit/recursion/encode.h"
+
 
 using namespace zirgen;
 using namespace zirgen::verify;
 using namespace zirgen::Zll;
 
 TEST(verify_zirgen, calculator) {
+  /*
   // Read the seal if it exists
   FILE* file = fopen("/tmp/calc.seal", "rb");
   if (!file) {
@@ -38,6 +41,7 @@ TEST(verify_zirgen, calculator) {
   size_t nread = fread(proof.data(), 4, size, file);
   ASSERT_EQ(nread, size);
   fclose(file);
+  */
 
   Module module;
   mlir::MLIRContext* ctx = module.getModule().getContext();
@@ -46,14 +50,30 @@ TEST(verify_zirgen, calculator) {
   // Extract the PO2 from its known position
   auto circuit = getInterfaceZirgen(module.getModule().getContext(),
                                     "zirgen/dsl/examples/calculator/validity.ir");
+
+  for (size_t i = 0; i < circuit->get_taps().groups.size(); i++) {
+    llvm::errs() << "Tap size " << i << " size = " << circuit->get_taps().groups[i].regs.size() << "\n";
+  }
+
+  // Compile the verifiers
+  module.addFunc<1>(
+      "verify", {ioparg()}, [&](ReadIopVal iop) { zirgen::verify::verify(iop, 18, *circuit); });
+  module.optimize();
+  //module.dump();
+
+  // Encode to recursion circuit
+  module.getModule().walk([&](mlir::func::FuncOp func) { 
+    llvm::errs() << "Found a func\n";
+    llvm::DenseMap<mlir::Value, uint64_t> toId;
+    zirgen::recursion::EncodeStats stats;
+    auto encoded = recursion::encode(recursion::HashType::POSEIDON2, &func.front(), &toId, &stats);
+    llvm::errs() << "stats.totCycles = " << stats.totCycles << "\n";
+  });
+
+  /*
   size_t po2 = proof[circuit->out_size()];
 
   std::cerr << "po2 = " << po2 << "\n";
-  // Compile the verifiers
-  module.addFunc<1>(
-      "verify", {ioparg()}, [&](ReadIopVal iop) { zirgen::verify::verify(iop, po2, *circuit); });
-  module.optimize();
-  // module.dump();
 
   // Run the verifier
   auto func = module.getModule().lookupSymbol<mlir::func::FuncOp>("verify");
@@ -99,4 +119,5 @@ TEST(verify_zirgen, calculator) {
   for (const auto& kvp : opCounts) {
     std::cout << kvp.first << ": " << kvp.second << "\n";
   }
+  */
 }

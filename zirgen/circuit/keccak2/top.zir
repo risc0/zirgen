@@ -1,35 +1,9 @@
 
-/* Utilities */
-
-component NondetBitReg(x: Val) {
-  reg := NondetReg(x);
-  reg * (1 - reg) = 0;
-  reg
-}
-
-component OneHot<N: Val>(v: Val) {
-  // Make N bit registers, with bit v set and all others 0
-  bits := for i : 0..N { NondetBitReg(Isz(i - v)) };
-  // Verify exactly one bit is set
-  reduce bits init 0 with Add = 1;
-  // Verify the right bit is set
-  reduce for i : 0..N { bits[i] * i } init 0 with Add = v;
-  bits
-}
+import bits;
+import one_hot;
+import xor5;
 
 /* Core Keccack */
-
-component Xor5(vals: Array<Val, 5>) {
-  tot := reduce vals init 0 with Add;
-  out := NondetBitReg(tot & 1);
-  diff := tot - out;
-  diff * (2 - diff) * (4 - diff) = 0;
-  out
-}
-
-component Xor(a: Val, b: Val) {
-  a + b - 2 * a * b
-}
 
 component Theta(a: Array<Array<Array<Val, 64>, 5>, 5>) {
   c := for j : 0..5 {
@@ -42,13 +16,13 @@ component Theta(a: Array<Array<Array<Val, 64>, 5>, 5>) {
       jm1 := if (Isz(j)) { 4 } else { j - 1 };
       jp1 := if (Isz(j-4)) { 0 } else { j + 1 };
       kp1 := if (Isz(k)) { 63 } else { k - 1 };
-      Xor(c[jm1][k], c[jp1][kp1])
+      BitXor(c[jm1][k], c[jp1][kp1])
     }
   };
   for i : 0..5 {
     for j : 0..5 {
       for k : 0..64 {
-        Xor(a[i][j][k], d[j][k])
+        BitXor(a[i][j][k], d[j][k])
       }
     }
   }
@@ -91,7 +65,7 @@ component Chi(a: Array<Array<Array<Val, 64>, 5>, 5>) {
       for k : 0..64 {
         jp1 := if (Isz(4-j)) { 0 } else { j + 1 };
         jp2 := if (Isz(4-jp1)) { 0 } else { jp1 + 1 };
-        Xor(a[i][j][k], (1 - a[i][jp1][k]) * a[i][jp2][k])
+        BitXor(a[i][j][k], (1 - a[i][jp1][k]) * a[i][jp2][k])
       }
     }
   }
@@ -127,7 +101,7 @@ component IotaTable() {
 }
 
 component ExpandedIotaTable() {
-  for i : 0..24 { ExpandWord(IotaTable()[i]) }
+  for i : 0..24 { ExpandU64(IotaTable()[i]) }
 }
 
 component RoundToArray(idx: Val) {
@@ -143,7 +117,7 @@ component Iota(a: Array<Array<Array<Val, 64>, 5>, 5>, round: Val) {
   for i : 0..5 {
     for j : 0..5 {
       if (Isz(i) * Isz(j)) {
-        for k: 0..64 { Xor(iotaArray[k], a[i][j][k]) }
+        for k: 0..64 { BitXor(iotaArray[k], a[i][j][k]) }
       } else {
         a[i][j]
       }
@@ -165,13 +139,13 @@ component ShiftRight(in: Array<Val, 32>, n: Val) {
   }
 }
 
-component XorWord(a: Array<Val, 32>, b: Array<Val, 32>) {
+component XorU32(a: Array<Val, 32>, b: Array<Val, 32>) {
   for i : 0..32 {
-    Xor(a[i], b[i])
+    BitXor(a[i], b[i])
   }
 }
 
-component MajWord(a: Array<Val, 32>, b: Array<Val, 32>, c: Array<Val, 32>) {
+component MajU32(a: Array<Val, 32>, b: Array<Val, 32>, c: Array<Val, 32>) {
   for i : 0..32 {
     a[i] * b[i] * (1 - c[i]) + 
     a[i] * (1 - b[i]) * c[i] + 
@@ -180,10 +154,113 @@ component MajWord(a: Array<Val, 32>, b: Array<Val, 32>, c: Array<Val, 32>) {
   }
 }
 
-component ChWord(a: Array<Val, 32>, b: Array<Val, 32>, c: Array<Val, 32>) {
+component ChU32(a: Array<Val, 32>, b: Array<Val, 32>, c: Array<Val, 32>) {
   for i : 0..32 {
     a[i] * b[i] + (1 - a[i]) * c[i]
   }
+}
+
+component Add2(a: Array<Val, 2>, b: Array<Val, 2>) {
+  for i : 0..2 { a[i] + b[i] }
+}
+
+component CarryExtract(in: Val) {
+  bit0 := NondetBitReg(((in & 0xf0000) / 0x10000) & 1);
+  bit1 := NondetBitReg((((in & 0xf0000) / 0x10000) & 2) / 2);
+  bit2 := NondetBitReg((((in & 0xf0000) / 0x10000) & 4) / 4);
+  carry := bit2 * 4 + bit1 * 2 + bit0;
+  out := in - carry * 0x10000;
+}
+
+component CarryAndExpand(in: Array<Val, 2>) {
+  lowCarry := CarryExtract(in[0]);
+  highCarry := CarryExtract(in[1] + lowCarry.carry);
+  exp := ExpandU32([lowCarry.out, highCarry.out]);
+  out := for i : 0..32 { NondetReg(exp[i]) };
+  // TODO: Verify
+  out  
+}
+
+component PushFront<SIZE: Val>(in: Array<Val, 32>, lst: Array<Array<Val, 32>, SIZE>) {
+  for i : 0..SIZE {
+    if (Isz(i)) { in }
+    else { lst[i - 1] }
+  }
+}
+
+// Given old Ws, produce new W.  We actually produce two outputs, one for the
+// new non-det registers (which we will eventual alias to the official state)
+// and one of the new 'previous' elemens)
+component StepW(w : Array<Array<Val, 32>, 16>) {
+  s0 := XorU32(RotateRight(w[14], 7), XorU32(RotateRight(w[14], 18), ShiftRight(w[14], 3)));
+  s1 := XorU32(RotateRight(w[1], 17), XorU32(RotateRight(w[1], 19), ShiftRight(w[1], 10)));
+  s0c := ContractU32(s0);
+  s1c := ContractU32(s1);
+  raw := Add2(ContractU32(s0), Add2(ContractU32(s1), Add2(ContractU32(w[15]), ContractU32(w[6]))));
+  reg := CarryAndExpand(raw);
+  next := PushFront<16>(reg, w);
+}
+
+// Given old A/E, new W, produce new A/E
+component StepAE(oa: Array<Array<Val, 32>, 4>, oe: Array<Array<Val, 32>, 4>, w: Array<NondetReg, 32>, k: Array<Val, 2>) {
+  a := oa[0];
+  b := oa[1];
+  c := oa[2];
+  d := oa[2];
+  e := oe[0];
+  f := oe[1];
+  g := oe[2];
+  h := oe[3];
+  s0 := XorU32(RotateRight(a, 2), XorU32(RotateRight(a, 13), RotateRight(a, 22)));
+  s1 := XorU32(RotateRight(e, 6), XorU32(RotateRight(e, 11), RotateRight(e, 25)));
+  stage1 := Add2(ContractU32(w), Add2(k, Add2(ContractU32(h), Add2(ContractU32(ChU32(e, f, g)), ContractU32(s1)))));
+  aRaw := Add2(stage1, Add2(ContractU32(MajU32(a, b, c)), ContractU32(s0)));
+  eRaw := Add2(stage1, ContractU32(d));
+  regW := w;
+  regA := CarryAndExpand(aRaw);
+  regE := CarryAndExpand(eRaw);
+  nextA := PushFront<4>(regA, oa);
+  nextE := PushFront<4>(regE, oa);
+}
+
+component ExtractReg(steps: Array<StepAE, 8>, w: Array<Array<NondetReg, 32>, 16>, lame: Array<Val, 32>, i: Val) {
+    [InRange(0, i, 8), InRange(8, i, 16), InRange(16, i, 24), InRange(24, i, 25)] ->
+      (w[i], steps[i - 8].regA, steps[i - 16].regE, lame)
+}
+
+component LoadStep() {
+  w := for i : 0..16 {
+    for j : 0..32 {
+      NondetReg(0)
+    }
+  };
+  initA := [ExpandU32([0, 1]), ExpandU32([0, 1]), ExpandU32([0, 1]), ExpandU32([0, 1])];
+  initE := [ExpandU32([0, 1]), ExpandU32([0, 1]), ExpandU32([0, 1]), ExpandU32([0, 1])];
+  step0 := StepAE(initA, initE, w[0], [0, 1]);
+  step1 := StepAE(step0.nextA, step0.nextE, w[1], [0, 1]);
+  step2 := StepAE(step1.nextA, step1.nextE, w[2], [0, 1]);
+  step3 := StepAE(step2.nextA, step2.nextE, w[3], [0, 1]);
+  step4 := StepAE(step3.nextA, step3.nextE, w[4], [0, 1]);
+  step5 := StepAE(step4.nextA, step4.nextE, w[5], [0, 1]);
+  step6 := StepAE(step5.nextA, step5.nextE, w[6], [0, 1]);
+  step7 := StepAE(step6.nextA, step6.nextE, w[7], [0, 1]);
+  steps := [step0, step1, step2, step3, step4, step5, step6, step7];
+  lame := for i : 0..32 { 0 };
+  regs := for i : 0..25 { ExtractReg(steps, w, lame, i) };
+  flat := for b : 0..800 {
+    j := b & 31;
+    i := (b - j) * 1950351361; // 1/32
+    regs[i][j]
+  };
+  topState := TopState(flat);
+  for i : 0..8 {
+    for j : 0..32 { 
+      AliasLayout!(w[i][j], topState.bits[i*32 + j]); 
+      AliasLayout!(steps[i].regA[j], topState.bits[256 + i*32 + j]); 
+      AliasLayout!(steps[i].regE[j], topState.bits[512 + i*32 + j]); 
+    }
+  };
+  topState
 }
 
 // Convert state to 2 arrays of 800 bit each
@@ -257,6 +334,7 @@ component Top() {
   curState: TopState;
   curState := cycleMux -> (
     TopState(for i : 0..800 {0}),
+    //LoadStep(),
     TopState(FlattenKeccack(Pi(Rho(Theta(ExpandKeccack([curState@1.bits, curState@2.bits])))))[0]),
     TopState(FlattenKeccack(Pi(Rho(Theta(ExpandKeccack([curState@2.bits, curState@3.bits])))))[1]),
     TopState(FlattenKeccack(Iota(Chi(ExpandKeccack([curState@1.bits, curState@2.bits])), round))[0]),
@@ -270,13 +348,27 @@ component Po2(n: Val) {
   arr[n]
 }
 
-component ContractWord(in: Array<Val, 64>) {
+component ContractU32(in: Array<Val, 32>) {
+  for i : 0..2 {
+    reduce for j : 0..16 { Po2(j) * in[i*16 + j] } init 0 with Add
+  }
+} 
+
+component ContractU64(in: Array<Val, 64>) {
   for i : 0..4 {
     reduce for j : 0..16 { Po2(j) * in[i*16 + j] } init 0 with Add
   }
 } 
 
-component ExpandWord(in: Array<Val, 4>) {
+component ExpandU32(in: Array<Val, 2>) {
+  for n : 0..32 {
+    j := n & 15;
+    i := (n - j) * 1887436801;  // THis constant is 1/16: TODO fix compiler divide
+    (in[i] & Po2(j)) / Po2(j)
+  }
+}
+
+component ExpandU64(in: Array<Val, 4>) {
   for n : 0..64 {
     j := n & 15;
     i := (n - j) * 1887436801;  // THis constant is 1/16: TODO fix compiler divide
@@ -287,7 +379,7 @@ component ExpandWord(in: Array<Val, 4>) {
 component ExpandState(in: Array<Array<Array<Val, 4>, 5>, 5>) {
   for i : 0..5 {
     for j : 0..5 {
-      ExpandWord(in[i][j])
+      ExpandU64(in[i][j])
     }
   }
 }
@@ -295,7 +387,7 @@ component ExpandState(in: Array<Array<Array<Val, 4>, 5>, 5>) {
 component ContractState(in: Array<Array<Array<Val, 64>, 5>, 5>) {
   for i : 0..5 {
     for j : 0..5 {
-      ContractWord(in[i][j])
+      ContractU64(in[i][j])
     }
   }
 }
@@ -374,46 +466,5 @@ test ExpandContract {
     contracted[i] = testPatternSmall[i];
   };
 }
-   
-test Xor {
-  Xor(0, 0) = 0;
-  Xor(0, 1) = 1;
-  Xor(1, 0) = 1;
-  Xor(1, 1) = 0;
-}
-
-test Xor5 {
-  Xor5([0, 0, 0, 0, 0]) = 0;
-  Xor5([0, 0, 0, 0, 1]) = 1;
-  Xor5([0, 0, 0, 1, 0]) = 1;
-  Xor5([0, 0, 0, 1, 1]) = 0;
-  Xor5([0, 0, 1, 0, 0]) = 1;
-  Xor5([0, 0, 1, 0, 1]) = 0;
-  Xor5([0, 0, 1, 1, 0]) = 0;
-  Xor5([0, 0, 1, 1, 1]) = 1;
-  Xor5([0, 1, 0, 0, 0]) = 1;
-  Xor5([0, 1, 0, 0, 1]) = 0;
-  Xor5([0, 1, 0, 1, 0]) = 0;
-  Xor5([0, 1, 0, 1, 1]) = 1;
-  Xor5([0, 1, 1, 0, 0]) = 0;
-  Xor5([0, 1, 1, 0, 1]) = 1;
-  Xor5([0, 1, 1, 1, 0]) = 1;
-  Xor5([0, 1, 1, 1, 1]) = 0;
-  Xor5([1, 0, 0, 0, 0]) = 1;
-  Xor5([1, 0, 0, 0, 1]) = 0;
-  Xor5([1, 0, 0, 1, 0]) = 0;
-  Xor5([1, 0, 0, 1, 1]) = 1;
-  Xor5([1, 0, 1, 0, 0]) = 0;
-  Xor5([1, 0, 1, 0, 1]) = 1;
-  Xor5([1, 0, 1, 1, 0]) = 1;
-  Xor5([1, 0, 1, 1, 1]) = 0;
-  Xor5([1, 1, 0, 0, 0]) = 0;
-  Xor5([1, 1, 0, 0, 1]) = 1;
-  Xor5([1, 1, 0, 1, 0]) = 1;
-  Xor5([1, 1, 0, 1, 1]) = 0;
-  Xor5([1, 1, 1, 0, 0]) = 1;
-  Xor5([1, 1, 1, 0, 1]) = 0;
-  Xor5([1, 1, 1, 1, 0]) = 0;
-  Xor5([1, 1, 1, 1, 1]) = 1;
-}
 */
+   

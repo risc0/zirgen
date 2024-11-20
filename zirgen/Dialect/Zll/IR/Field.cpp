@@ -171,6 +171,15 @@ ExtensionField::FieldResult ExtensionField::BitAnd(ExtensionField::FieldArg a,
   return c;
 }
 
+ExtensionField::FieldResult ExtensionField::Mod(ExtensionField::FieldArg a,
+                                                   ExtensionField::FieldArg b) const {
+  ExtensionField::FieldResult c(degree);
+  for (size_t i = 0; i < degree; i++) {
+    c[i] = a[i] % b[i];
+  }
+  return c;
+}
+
 ExtensionField::FieldResult ExtensionField::getIrreduciblePolynomial() const {
   assert(subfield.prime == kFieldPrimeDefault && "unsupported field prime");
   switch (degree) {
