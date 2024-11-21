@@ -118,6 +118,14 @@ component pack2(arr: Array<Val, 32>) {
   TwoShorts(low, high)
 }
 
+component pack2rev(arr: Array<Val, 32>) {
+  lowest := FromBits<8>(for i : 0..8 { arr[i] });
+  midlow := FromBits<8>(for i : 8..16 { arr[i] });
+  midhigh := FromBits<8>(for i : 16..24 { arr[i] });
+  highest := FromBits<8>(for i : 24..32 { arr[i] });
+  TwoShorts(lowest*256+midlow, midhigh*256+highest)
+}
+
 component add(a: TwoShorts, b: TwoShorts) {
   TwoShorts(a.low + b.low, a.high + b.high)
 }
@@ -384,14 +392,14 @@ component sha256fini<I: Val>(rvals: RetTuple,
         RetTuple(pada, zb, padc, d, stae.e, stae.f,
                  0, S2MAJOR_LOAD(),
                  rvprev01.rnd, rvprev01.blk, rvprev01.midx, auxr),
-        { fa := pack2(new_a);
-          fb := pack2(s2a(rvprev01));
-          fc := pack2(s2a(rvprev02));
-          fd := pack2(s2a(rvprev03));
-          fe := pack2(new_e);
-          ff := pack2(s2e(rvprev01));
-          fg := pack2(s2e(rvprev02));
-          fh := pack2(s2e(rvprev03));
+        { fa := pack2rev(new_a);
+          fb := pack2rev(s2a(rvprev01));
+          fc := pack2rev(s2a(rvprev02));
+          fd := pack2rev(s2a(rvprev03));
+          fe := pack2rev(new_e);
+          ff := pack2rev(s2e(rvprev01));
+          fg := pack2rev(s2e(rvprev02));
+          fh := pack2rev(s2e(rvprev03));
           res := [fa.high, fa.low, fb.high, fb.low,
                   fc.high, fc.low, fd.high, fd.low,
                   fe.high, fe.low, ff.high, ff.low,
