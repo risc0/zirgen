@@ -1,0 +1,29 @@
+// RUN: zirgen -I %S --test %s
+
+component PolyEvalState(z: ExtVal, curMul: ExtVal, curTot: ExtVal) {
+  z := z;
+  curMul := curMul;
+  curTot := curTot;
+}
+
+component Pow<pow: Val>(z: ExtVal) {
+  reduce for i : 0..pow { z } init MakeExt(1) with ExtMul
+}
+
+component PolyEvalStateReduce(in: PolyEvalState, coeff: Val) {
+  PolyEvalState(in.z, ExtMul(in.curMul, in.z), ExtAdd(in.curTot, ExtMul(MakeExt(coeff), in.curMul)))
+}
+
+component PolyEval<n: Val>(coeffs: Array<Val, n>, z: ExtVal) {
+  red := reduce coeffs init PolyEvalState(z, MakeExt(1), MakeExt(0)) with PolyEvalStateReduce;
+  red.curTot
+}
+
+test Foo {
+  z := MakeExt(5);
+  coeffs := for i:0..5 { i };
+  t := PolyEval<5>(coeffs, z);
+  EqzExt(ExtSub(t, MakeExt(2930)));
+}
+
+

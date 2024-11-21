@@ -357,8 +357,9 @@ void LayoutBuilder::supplyLayout(std::function<Value(Type)> finalizeLayoutFunc) 
 std::string getTypeId(Type ty) {
   return TypeSwitch<Type, std::string>(ty)
       .Case<StringType>([](auto) { return "String"; })
-      .Case<ValType>([](auto) { return "Val"; })
-      .Case<RefType>([](auto) { return "Ref"; })
+      .Case<ValType>([](auto valType) { return (valType.getFieldK() == 1) ? "Val" : "ExtVal"; })
+      .Case<RefType>(
+          [](auto refType) { return (refType.getElement().getFieldK() == 1) ? "Ref" : "ExtRef"; })
       .Case<StructType>([](auto structType) { return structType.getId(); })
       .Case<LayoutType>([](auto layoutType) { return layoutType.getId(); })
       .Case<ArrayLikeTypeInterface>([](auto arrayType) {

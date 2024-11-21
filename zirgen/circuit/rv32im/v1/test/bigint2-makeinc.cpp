@@ -50,8 +50,8 @@ const APInt
     secp256k1_order(256, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16);
 */
 
-int kArenaConst = 28; // Reg T3 = x28
-int kArenaTmp = 2;    // Reg SP = x2
+int kArenaConst = 28;         // Reg T3 = x28
+const uint32_t kArenaTmp = 2; // Reg SP = x2
 
 struct PolyAtom {
   uint32_t arena;
@@ -180,7 +180,7 @@ struct Flattener {
     for (size_t i = 0; i < atom.size; i++) {
       uint32_t polyOp = (i + 1 == atom.size ? finalPolyOp : PolyOp::kOpShift);
       out.push_back(memOp << 28 | polyOp << 24 | (coeff + 4) << 21 | atom.arena << 16 |
-                    atom.offset + atom.size - 1 - i);
+                    (atom.offset + atom.size - 1 - i));
     }
   }
   void flatten(const PolyProd& prod, int coeff) {
@@ -210,7 +210,7 @@ struct Flattener {
     }
     size_t carryCount = (bit.getCoeffs() + 15) / 16;
     for (size_t i = 0; i < carryCount; i++) {
-      uint32_t common = MemOp::kNop << 28 | carryCount - 1 - i;
+      uint32_t common = MemOp::kNop << 28 | (carryCount - 1 - i);
       out.push_back(PolyOp::kOpCarry1 << 24 | common);
       out.push_back(PolyOp::kOpCarry2 << 24 | common);
       if (i == carryCount - 1) {

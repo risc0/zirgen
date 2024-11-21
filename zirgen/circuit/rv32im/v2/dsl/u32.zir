@@ -1,0 +1,170 @@
+// This file defines the U32 type (as split into low + high words)
+// RUN: zirgen -I %S --test %s
+
+import bits;
+import is_zero;
+import lookups;
+import po2;
+
+// A u32 value as two components (low / high) of no more than 16 bits
+component ValU32(low: Val, high: Val) {
+  low := low;
+  high := high;
+}
+
+// Convert a constant field element to a U32
+component ConstU32<x:Val>() { ValU32(x & 0xffff, (x - (x & 0xffff)) / 0x10000) }
+
+// A denormalized u32, where the value is the low 32 bits of high*2^16 + low
+// but both low + high may be up to 2^17
+component DenormedValU32(low: Val, high: Val) {
+  low := low;
+  high := high;
+}
+
+// Add without normalization
+component AddU32(a: ValU32, b: ValU32) {
+  DenormedValU32(a.low + b.low, a.high + b.high)
+}
+
+// Sub without normalization, to make things not overflow, we add carry
+// to both limbs, but the high one gets a carry from the low, so is 1 smaller
+component SubU32(a: ValU32, b: ValU32) {
+  DenormedValU32(0x10000 + a.low - b.low, 0xffff + a.high - b.high)
+}
+
+// Denormalize a value
+component Denorm(a: ValU32) {
+  DenormedValU32(a.low, a.high)
+}
+
+// Normalize (and registerize) a Denormed U32
+component NormalizeU32(x: DenormedValU32) {
+  // Decompose + verify low
+  low16 := NondetU16Reg(x.low & 0xffff);
+  lowCarry := NondetBitReg((x.low & 0x10000) / 0x10000);
+  x.low = lowCarry * 0x10000 + low16;
+  // Do carry propagation into high
+  high := x.high + lowCarry;
+  // Decompose + verify high
+  high16 := NondetU16Reg(high & 0xffff);
+  highCarry := NondetBitReg((high & 0x10000) / 0x10000);
+  high = highCarry * 0x10000 + high16;
+  // Make the carry accessable
+  carry := highCarry;
+  // Make us cast as a value
+  ValU32(low16, high16)
+}
+
+// A helper to split a U32 into the top 30 bits (which fits in baby bear)
+// and the low 2 bits.  Basically, this is used for memory IO
+component AddrDecompose(x: ValU32, mode: Val) {
+  // Grab low 2 bits
+  low2 := NondetTwitReg(x.low & 0x3);
+  // Check that upper part is legal (below 0xc000 is not machine mode)
+  upperDiff := U16Reg(mode * 0xffff + (1 - mode) * 0xbfff - x.high);
+  // Check that we are not accessing the zero page
+  IsZero(x.high) = 0;
+  // Get medium 14 bits
+  med14 := NondetU16Reg((x.low - low2) / 4);
+  // Verify
+  med14 * 4 + low2 = x.low;
+  // Make addr (30 bits max)
+  addr := 0x4000 * x.high + med14;
+  // Cast as a val
+  addr
+}
+
+// Same as above but avoids the twit
+component AddrDecomposeBits(x: ValU32, mode: Val) {
+  // Grab low 2 bits
+  low0 := NondetBitReg(x.low & 0x1);
+  low1 := NondetBitReg((x.low & 0x2) / 2);
+  low2 := low1 * 2 + low0;
+  // Check that upper part is legal (below 0xc000 is not machine mode)
+  upperDiff := U16Reg(mode * 0xffff + (1 - mode) * 0xbfff - x.high);
+  // Check that we are not accessing the zero page
+  IsZero(x.high) = 0;
+  // Get medium 14 bits
+  med14 := NondetU16Reg((x.low - low2) / 4);
+  // Verify
+  med14 * 4 + low2 = x.low;
+  // Make addr (30 bits max)
+  addr := 0x4000 * x.high + med14;
+  // Cast as a val
+  addr
+}
+
+// Select between two DenormedValU32 values
+component CondDenormed(cond: Val, a: DenormedValU32, b: DenormedValU32) {
+  DenormedValU32(
+      cond * a.low + (1 - cond) * b.low,
+      cond * a.high + (1 - cond) * b.high)
+}
+
+component AssertEqU32(x: ValU32, y: ValU32) {
+  x.low = y.low;
+  x.high = y.high;
+}
+
+// Comparison operations
+component CmpEqual(x: ValU32, y: ValU32) {
+  low_same := IsZero(x.low - y.low);
+  high_same := IsZero(x.high - y.high);
+  is_equal := Reg(low_same * high_same);
+}
+
+// Comparison operations
+component CmpLessThanUnsigned(x: ValU32, y: ValU32) {
+  diff := NormalizeU32(SubU32(x, y));
+  is_less_than := 1 - diff.carry;
+}
+
+// Get the sign bit from a U32
+component GetSignU32(x: ValU32) {
+  sign := NondetBitReg((x.high & 0x8000) / 0x8000);
+  rest_times_two := NondetU16Reg((x.high & 0x7fff) * 2);
+  x.high = 0x8000 * sign + rest_times_two / 2;
+  sign
+}
+
+// Comparison operations
+component CmpLessThan(x: ValU32, y: ValU32) {
+  diff := NormalizeU32(SubU32(x, y));
+  s1 := GetSignU32(x);
+  s2 := GetSignU32(y);
+  s3 := GetSignU32(diff);
+  // Compute the 'overflow' status bit
+  overflow := Reg(s1 * (1 - s2) * (1 - s3) + (1 - s1) * s2 * s3);
+  // Compute signed LT
+  is_less_than := Reg(overflow + s3 - 2 * overflow * s3);
+}
+
+component BitwiseAndU16(x: Val, y: Val) {
+  bits_x := ToBits<16>(x);
+  x = FromBits<16>(bits_x);
+  bits_y := ToBits<16>(y);
+  y = FromBits<16>(bits_y);
+  bits_r := for i : 0..16 { bits_x[i] * bits_y[i] };
+  r := FromBits<16>(bits_r);
+  r
+}
+
+// Bitwise and
+component BitwiseAnd(x: ValU32, y: ValU32) {
+  ValU32(BitwiseAndU16(x.low, y.low), BitwiseAndU16(x.high, y.high))
+}
+
+component BitwiseOr(x: ValU32, y: ValU32) {
+  and_xy := BitwiseAnd(x, y);
+  ValU32(x.low + y.low - and_xy.low, x.high + y.high - and_xy.high)
+}
+
+component BitwiseXor(x: ValU32, y: ValU32) {
+  and_xy := BitwiseAnd(x, y);
+  ValU32(x.low + y.low - 2*and_xy.low, x.high + y.high - 2*and_xy.high)
+}
+
+component Flat(x: ValU32) {
+  x.low + 0x10000 * x.high
+}
