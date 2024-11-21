@@ -36,7 +36,6 @@ def StructType : ZStructType<"Struct", "struct", [
 
 def LayoutType : ZStructType<"Layout", "layout", [
     DeclareTypeInterfaceMethods<CodegenTypeInterface, ["emitTypeDefinition", "getTypeName", "emitLiteral"]>,
-    CodegenOnlyPassByReferenceType,
     CodegenLayoutType
   ]> {
   let summary = "Layout type, representing registers for a component to write to.";
@@ -101,7 +100,6 @@ def LayoutArrayType : ZStructType<"LayoutArray", "layout_array", [
 
 def Ref : ZStructType<"Ref", "ref", [
     DeclareTypeInterfaceMethods<CodegenTypeInterface, ["getTypeName"]>,
-    CodegenOnlyPassByReferenceType,
     CodegenLayoutType
   ]> {
   let summary = "reference to a register";

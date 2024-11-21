@@ -1,16 +1,16 @@
-pub fn calculator(
+pub fn calculator<'a>(
     ctx: &ValidityCtx,
-    data0: &impl BufferRow<ValType = Val>,
-    global1: &impl BufferRow<ValType = Val>,
+    data0: BufferRow<Val>,
+    global1: BufferRow<Val>,
 ) -> Result<MixState> {
     let x2: MixState = trivial_constraint()?;
-    // Top(zirgen/dsl/examples/calculator/calculator.zir:30)
-    // Top(zirgen/dsl/examples/calculator/calculator.zir:28)
+    // Top(zirgen/dsl/examples/calculator/calculator.zir:41)
+    // Top(zirgen/dsl/examples/calculator/calculator.zir:39)
     let x3: Val = get(ctx, data0, 1, 0)?;
-    // Top(zirgen/dsl/examples/calculator/calculator.zir:31)
+    // Top(zirgen/dsl/examples/calculator/calculator.zir:42)
     let x4: Val = get(ctx, data0, 2, 0)?;
     // OneHot(zirgen/dsl/examples/calculator/calculator.zir:13)
-    // Top(zirgen/dsl/examples/calculator/calculator.zir:33)
+    // Top(zirgen/dsl/examples/calculator/calculator.zir:44)
     let x5: Val = get(ctx, data0, 4, 0)?;
     let x6: Val = get(ctx, data0, 5, 0)?;
     // OneHot(zirgen/dsl/examples/calculator/calculator.zir:17)
@@ -24,9 +24,9 @@ pub fn calculator(
         ((x5 + x6) - Val::new(1)),
     )?;
     // Reg(<preamble>:4)
-    // Top(zirgen/dsl/examples/calculator/calculator.zir:35)
+    // Top(zirgen/dsl/examples/calculator/calculator.zir:46)
     let x8: Val = get(ctx, data0, 6, 0)?;
-    // Top(zirgen/dsl/examples/calculator/calculator.zir:33)
+    // Top(zirgen/dsl/examples/calculator/calculator.zir:44)
     let x9: MixState = and_cond(
         and_cond(
             and_eqz(ctx, x7, (x6 - get(ctx, data0, 0, 0)?))?,
@@ -38,10 +38,14 @@ pub fn calculator(
     )?;
     // Reg(<preamble>:5)
     // SetGlobalResult(zirgen/dsl/examples/calculator/calculator.zir:24)
-    // Top(zirgen/dsl/examples/calculator/calculator.zir:41)
+    // Top(zirgen/dsl/examples/calculator/calculator.zir:54)
     let x10: MixState = and_eqz(
         ctx,
-        and_eqz(ctx, x9, (x8 - get(ctx, data0, 3, 0)?))?,
+        and_eqz(
+            ctx,
+            and_eqz(ctx, x9, Val::new(0))?,
+            (x8 - get(ctx, data0, 3, 0)?),
+        )?,
         (Val::new(5) - get_global(global1, 0)?),
     )?;
     return Ok(x10);

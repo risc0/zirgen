@@ -23,6 +23,7 @@ struct _globalLayout {
 };
 struct NondetRegStruct {
   Val _super;
+  NondetRegLayout _layout;
 };
 using Val2Array = std::array<Val, 2>;
 using NondetRegStruct2Array = std::array<NondetRegStruct, 2>;

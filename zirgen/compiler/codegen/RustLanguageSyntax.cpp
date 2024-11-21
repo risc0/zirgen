@@ -25,7 +25,7 @@ using namespace zirgen::Zll;
 
 namespace zirgen::codegen {
 
-namespace {
+namespace detail {
 
 bool isReserved(StringRef ident) {
   static StringSet<> reserved = {"match"};
@@ -41,7 +41,47 @@ bool isReferenceType(CodegenValue value) {
   return llvm::isa<FunctionOpInterface>(blockArg.getOwner()->getParentOp());
 }
 
-} // namespace
+bool typeNeedsLifetime(mlir::Type ty) {
+  auto walkResult = ty.walk([&](Type subTy) {
+    if (subTy.hasTrait<CodegenLayoutTypeTrait>())
+      return WalkResult::interrupt();
+    return WalkResult::advance();
+  });
+
+  return walkResult.wasInterrupted();
+}
+
+void emitStructDef(CodegenEmitter& cg,
+                   mlir::Type ty,
+                   llvm::ArrayRef<CodegenIdent<IdentKind::Field>> names,
+                   llvm::ArrayRef<mlir::Type> types,
+                   bool layoutConst = false) {
+  cg << "pub struct " << cg.getTypeName(ty);
+  if (!layoutConst && typeNeedsLifetime(ty)) {
+    cg << "<'a>";
+  }
+
+  cg << " {\n";
+  assert(names.size() == types.size());
+  for (size_t i = 0; i != names.size(); i++) {
+    Type subTy = types[i];
+    cg << "  pub " << names[i] << ": ";
+    if (subTy.hasTrait<CodegenLayoutTypeTrait>() && !layoutConst) {
+      cg << "BoundLayout<'a, " << cg.getTypeName(types[i]) << ", Val>,";
+    } else if (subTy.hasTrait<CodegenLayoutTypeTrait>() ||
+               subTy.hasTrait<CodegenOnlyPassByReferenceTypeTrait>()) {
+      cg << "&'static " << cg.getTypeName(types[i]) << ",\n";
+    } else {
+      cg << cg.getTypeName(types[i]);
+      if (detail::typeNeedsLifetime(types[i]) && !layoutConst)
+        cg << "<'a>";
+      cg << ",\n";
+    }
+  }
+  cg << "}\n";
+}
+
+} // namespace detail
 
 void RustLanguageSyntax::emitConditional(CodegenEmitter& cg,
                                          CodegenValue condition,
@@ -64,10 +104,11 @@ void RustLanguageSyntax::emitSwitchStatement(CodegenEmitter& cg,
     cg << "if is_true(" << cond << ") {\n";
     auto result = emitArm();
     cg << resultName << " = " << result;
-    if (isReferenceType(result) && !Type(resultType).hasTrait<CodegenOnlyPassByReferenceTypeTrait>()) {
+    if (detail::isReferenceType(result) &&
+        !Type(resultType).hasTrait<CodegenOnlyPassByReferenceTypeTrait>()) {
       cg << ".clone()";
     }
-    cg<< ";\n";
+    cg << ";\n";
     cg << "} else\n";
   }
   cg << "{\n";
@@ -81,7 +122,7 @@ void RustLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
                                             llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                                             mlir::FunctionType funcType,
                                             mlir::Region* body) {
-  cg << "pub fn " << funcName << "(";
+  cg << "pub fn " << funcName << "<'a>(";
 
   if (!contextArgDecls.empty()) {
     cg.interleaveComma(contextArgDecls, [&](auto contextArg) { cg << EmitPart(contextArg); });
@@ -94,12 +135,12 @@ void RustLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
     Type ty = std::get<1>(nt);
     cg << name << ": ";
     if (ty.hasTrait<CodegenLayoutTypeTrait>())
-      cg << "&BoundLayout<" << cg.getTypeName(ty) << ", impl BufferRow<ValType = Val>>";
+      cg << "BoundLayout<'a, " << cg.getTypeName(ty) << ", Val>";
     else if (auto bufTy = llvm::dyn_cast<BufferType>(ty)) {
       if (bufTy.getElement().getExtended())
-        cg << "&impl BufferRow<ValType = ExtVal>";
+        cg << "BufferRow<ExtVal>";
       else
-        cg << "&impl BufferRow<ValType = Val>";
+        cg << "BufferRow<Val>";
     } else {
       if (ty.hasTrait<CodegenNeedsCloneTypeTrait>() ||
           ty.hasTrait<CodegenOnlyPassByReferenceTypeTrait>())
@@ -107,13 +148,19 @@ void RustLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
       else if (ty.hasTrait<CodegenPassByMutRefTypeTrait>())
         cg << "&mut ";
       cg << cg.getTypeName(ty);
+      if (detail::typeNeedsLifetime(ty))
+        cg << "<'a>";
     }
   });
   cg << ") -> Result<";
   if (funcType.getNumResults() != 1) {
     cg << "(";
   }
-  cg.interleaveComma(funcType.getResults(), [&](auto ty) { cg << cg.getTypeName(ty); });
+  cg.interleaveComma(funcType.getResults(), [&](auto ty) {
+    cg << cg.getTypeName(ty);
+    if (detail::typeNeedsLifetime(ty))
+      cg << "<'a>";
+  });
   if (funcType.getNumResults() != 1) {
     cg << ")";
   }
@@ -145,7 +192,7 @@ void RustLanguageSyntax::emitSaveResults(CodegenEmitter& cg,
     cg << "let " << names[0];
     Type ty = types[0];
     if (ty.hasTrait<CodegenLayoutTypeTrait>()) {
-      cg << " : &BoundLayout<" << cg.getTypeName(types[0]) << ", _>";
+      cg << " : BoundLayout<" << cg.getTypeName(types[0]) << ", _>";
     } else {
       cg << " : ";
       if (Type(types[0]).hasTrait<CodegenOnlyPassByReferenceTypeTrait>())
@@ -165,7 +212,7 @@ void RustLanguageSyntax::emitSaveConst(CodegenEmitter& cg,
                                        CodegenValue value) {
   Type ty = value.getType();
   cg << "pub const " << name << ": ";
-  if (ty.hasTrait<CodegenOnlyPassByReferenceTypeTrait>())
+  if (ty.hasTrait<CodegenOnlyPassByReferenceTypeTrait>() || ty.hasTrait<CodegenLayoutTypeTrait>())
     cg << "&";
   cg << cg.getTypeName(value.getType()) << " = " << value << ";\n";
 }
@@ -182,7 +229,7 @@ void RustLanguageSyntax::emitCall(CodegenEmitter& cg,
   }
   cg.interleaveComma(args, [&](auto arg) {
     Type ty = arg.getType();
-    bool isAlreadyRef = isReferenceType(arg);
+    bool isAlreadyRef = detail::isReferenceType(arg);
     if ((ty.hasTrait<CodegenNeedsCloneTypeTrait>() || ty.hasTrait<CodegenNeedsCloneTypeTrait>()) &&
         !isAlreadyRef) {
       cg << "&";
@@ -213,7 +260,7 @@ std::string RustLanguageSyntax::canonIdent(llvm::StringRef ident, IdentKind kind
   case IdentKind::Var:
   case IdentKind::Field:
   case IdentKind::Func:
-    if (isReserved(ident))
+    if (detail::isReserved(ident))
       return "r#" + convertToSnakeFromCamelCase(ident);
     else
       return convertToSnakeFromCamelCase(ident);
@@ -240,23 +287,6 @@ void RustLanguageSyntax::emitTakeReference(CodegenEmitter& cg, EmitPart emitTarg
   cg << "&" << emitTarget;
 }
 
-namespace detail {
-void emitStructDef(CodegenEmitter& cg,
-                   mlir::Type ty,
-                   llvm::ArrayRef<CodegenIdent<IdentKind::Field>> names,
-                   llvm::ArrayRef<mlir::Type> types) {
-  cg << "pub struct " << cg.getTypeName(ty) << " {\n";
-  assert(names.size() == types.size());
-  for (size_t i = 0; i != names.size(); i++) {
-    cg << "  pub " << names[i] << ": ";
-    if (Type(types[i]).hasTrait<CodegenOnlyPassByReferenceTypeTrait>())
-      cg << "&'static ";
-    cg << cg.getTypeName(types[i]) << ",\n";
-  }
-  cg << "}\n";
-}
-} // namespace detail
-
 void RustLanguageSyntax::emitStructDef(CodegenEmitter& cg,
                                        mlir::Type ty,
                                        llvm::ArrayRef<CodegenIdent<IdentKind::Field>> names,
@@ -269,7 +299,7 @@ void RustLanguageSyntax::emitStructConstruct(CodegenEmitter& cg,
                                              mlir::Type ty,
                                              llvm::ArrayRef<CodegenIdent<IdentKind::Field>> names,
                                              llvm::ArrayRef<CodegenValue> values) {
-  if (ty.hasTrait<CodegenOnlyPassByReferenceTypeTrait>())
+  if (ty.hasTrait<CodegenOnlyPassByReferenceTypeTrait>() || ty.hasTrait<CodegenLayoutTypeTrait>())
     cg << "&";
   cg << cg.getTypeName(ty) << "{\n";
   assert(names.size() == values.size());
@@ -284,17 +314,26 @@ void RustLanguageSyntax::emitArrayDef(CodegenEmitter& cg,
                                       mlir::Type ty,
                                       mlir::Type elemType,
                                       size_t numElems) {
-  cg << "pub type " << cg.getTypeName(ty) << " = [";
-  if (elemType.hasTrait<CodegenOnlyPassByReferenceTypeTrait>())
+  cg << "pub type " << cg.getTypeName(ty);
+  bool needsLifetime =
+      !ty.hasTrait<CodegenLayoutTypeTrait>() && detail::typeNeedsLifetime(elemType);
+  if (needsLifetime)
+    cg << "<'a>";
+  cg << " = [";
+  if (elemType.hasTrait<CodegenOnlyPassByReferenceTypeTrait>() ||
+      (ty.hasTrait<CodegenLayoutTypeTrait>()))
     cg << "&'static ";
-  cg << cg.getTypeName(elemType) << "; " << numElems << "];\n";
+  cg << cg.getTypeName(elemType);
+  if (needsLifetime)
+    cg << "<'a>";
+  cg << "; " << numElems << "];\n";
 }
 
 void RustLanguageSyntax::emitArrayConstruct(CodegenEmitter& cg,
                                             mlir::Type ty,
                                             mlir::Type elemType,
                                             llvm::ArrayRef<CodegenValue> values) {
-  if (ty.hasTrait<CodegenOnlyPassByReferenceTypeTrait>())
+  if (ty.hasTrait<CodegenOnlyPassByReferenceTypeTrait>() || ty.hasTrait<CodegenLayoutTypeTrait>())
     cg << "&";
   cg << "[";
   cg.interleaveComma(values, [&](auto value) { cg << value; });
@@ -310,7 +349,7 @@ void RustLanguageSyntax::emitMapConstruct(CodegenEmitter& cg,
     cg << "map_layout(";
   else
     cg << "map(";
-  if (isReferenceType(array))
+  if (detail::isReferenceType(array))
     cg << "*";
   cg << array;
   if (layout)
@@ -333,10 +372,10 @@ void RustLanguageSyntax::emitReduceConstruct(CodegenEmitter& cg,
     cg << "reduce_layout(";
   else
     cg << "reduce(";
-  if (isReferenceType(array))
+  if (detail::isReferenceType(array))
     cg << "*";
   cg << array << ", ";
-  if (isReferenceType(init))
+  if (detail::isReferenceType(init))
     cg << "*";
   cg << init;
   if (layout)
@@ -353,7 +392,7 @@ void RustLanguageSyntax::emitLayoutDef(CodegenEmitter& cg,
                                        llvm::ArrayRef<CodegenIdent<IdentKind::Field>> names,
                                        llvm::ArrayRef<mlir::Type> types) {
   // Layout structures define a visitor interface on top of a struct.
-  detail::emitStructDef(cg, ty, names, types);
+  detail::emitStructDef(cg, ty, names, types, /*layout constant=*/true);
 
   auto tyName = cg.getTypeName(ty);
 
@@ -364,7 +403,7 @@ void RustLanguageSyntax::emitLayoutDef(CodegenEmitter& cg,
   for (size_t i = 0; i != names.size(); ++i) {
     cg << "    v.visit_component(\"" << names[i] << "\", ";
     Type ty = types[i];
-    if (!ty.hasTrait<CodegenOnlyPassByReferenceTypeTrait>()) {
+    if (false && !ty.hasTrait<CodegenOnlyPassByReferenceTypeTrait>()) {
       // visit_component always requires a reference, so add one
       // if it's not already a reference type.
       cg << "&";
