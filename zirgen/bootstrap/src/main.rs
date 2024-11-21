@@ -15,7 +15,7 @@
 use std::{
     collections::BTreeMap,
     io,
-    io::BufRead,
+    io::{BufRead, BufReader},
     path::{Path, PathBuf},
     process::{exit, Command, Stdio},
 };
@@ -295,23 +295,18 @@ impl Args {
 
         let bazel_args = ["build", "--config", bazel_config(), build_target];
 
-        let cmd = Command::new("bazelisk")
+        let mut child = Command::new("bazelisk")
             .args(bazel_args)
             .stdout(Stdio::inherit())
-            .output()
+            .stderr(Stdio::piped())
+            .spawn()
             .expect("Unable to run bazelisk");
-        if !cmd.status.success() {
-            eprintln!(
-                "Bazel did not return success.  Output:\n{}",
-                String::from_utf8_lossy(&cmd.stderr)
-            );
-            exit(cmd.status.code().unwrap());
-        }
+        let child_out = BufReader::new(child.stderr.take().unwrap());
 
         let mut rules_used: Vec<bool> = Vec::new();
         rules_used.resize(install_rules.len(), false);
 
-        for line in cmd.stderr.lines() {
+        for line in child_out.lines() {
             let line = line.unwrap();
             eprintln!("{line}");
             if !line.starts_with("  bazel-bin/") {
@@ -330,6 +325,13 @@ impl Args {
             if !found_rule {
                 eprintln!("WARNING: Could not find rule to apply to {path:?}");
             }
+        }
+
+        let status = child.wait().expect("Unable to wait for bazel");
+
+        if !status.success() {
+            eprintln!("Bazel did not return success.");
+            exit(status.code().unwrap());
         }
 
         for (used, rule) in rules_used.iter().zip(install_rules) {
