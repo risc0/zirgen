@@ -41,21 +41,13 @@ bool isReferenceType(CodegenValue value) {
   return llvm::isa<FunctionOpInterface>(blockArg.getOwner()->getParentOp());
 }
 
-bool typeNeedsLifetime(mlir::Type ty) {
-  auto walkResult = ty.walk([&](Type subTy) {
-    if (subTy.hasTrait<CodegenLayoutTypeTrait>())
-      return WalkResult::interrupt();
-    return WalkResult::advance();
-  });
+} // namespace detail
 
-  return walkResult.wasInterrupted();
-}
-
-void emitStructDef(CodegenEmitter& cg,
-                   mlir::Type ty,
-                   llvm::ArrayRef<CodegenIdent<IdentKind::Field>> names,
-                   llvm::ArrayRef<mlir::Type> types,
-                   bool layoutConst = false) {
+void RustLanguageSyntax::emitStructDefImpl(CodegenEmitter& cg,
+                                           mlir::Type ty,
+                                           llvm::ArrayRef<CodegenIdent<IdentKind::Field>> names,
+                                           llvm::ArrayRef<mlir::Type> types,
+                                           bool layoutConst) {
   cg << "pub struct " << cg.getTypeName(ty);
   if (!layoutConst && typeNeedsLifetime(ty)) {
     cg << "<'a>";
@@ -73,7 +65,7 @@ void emitStructDef(CodegenEmitter& cg,
       cg << "&'static " << cg.getTypeName(types[i]) << ",\n";
     } else {
       cg << cg.getTypeName(types[i]);
-      if (detail::typeNeedsLifetime(types[i]) && !layoutConst)
+      if (typeNeedsLifetime(types[i]) && !layoutConst)
         cg << "<'a>";
       cg << ",\n";
     }
@@ -81,7 +73,23 @@ void emitStructDef(CodegenEmitter& cg,
   cg << "}\n";
 }
 
-} // namespace detail
+bool RustLanguageSyntax::typeNeedsLifetime(mlir::Type ty) {
+  if (!typesNeedLifetime.contains(ty)) {
+    if (ty.hasTrait<CodegenLayoutTypeTrait>())
+      typesNeedLifetime[ty] = true;
+    else {
+      auto walkResult = ty.walk([&](Type subTy) {
+        if (subTy == ty)
+          return WalkResult::advance();
+        if (typeNeedsLifetime(subTy))
+          return WalkResult::interrupt();
+        return WalkResult::skip();
+      });
+      typesNeedLifetime[ty] = walkResult.wasInterrupted();
+    }
+  }
+  return typesNeedLifetime.at(ty);
+}
 
 void RustLanguageSyntax::emitConditional(CodegenEmitter& cg,
                                          CodegenValue condition,
@@ -148,7 +156,7 @@ void RustLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
       else if (ty.hasTrait<CodegenPassByMutRefTypeTrait>())
         cg << "&mut ";
       cg << cg.getTypeName(ty);
-      if (detail::typeNeedsLifetime(ty))
+      if (typeNeedsLifetime(ty))
         cg << "<'a>";
     }
   });
@@ -158,7 +166,7 @@ void RustLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
   }
   cg.interleaveComma(funcType.getResults(), [&](auto ty) {
     cg << cg.getTypeName(ty);
-    if (detail::typeNeedsLifetime(ty))
+    if (typeNeedsLifetime(ty))
       cg << "<'a>";
   });
   if (funcType.getNumResults() != 1) {
@@ -292,7 +300,7 @@ void RustLanguageSyntax::emitStructDef(CodegenEmitter& cg,
                                        llvm::ArrayRef<CodegenIdent<IdentKind::Field>> names,
                                        llvm::ArrayRef<mlir::Type> types) {
   cg << "#[derive(Copy,Clone,Debug)]\n";
-  detail::emitStructDef(cg, ty, names, types);
+  emitStructDefImpl(cg, ty, names, types);
 }
 
 void RustLanguageSyntax::emitStructConstruct(CodegenEmitter& cg,
@@ -315,8 +323,7 @@ void RustLanguageSyntax::emitArrayDef(CodegenEmitter& cg,
                                       mlir::Type elemType,
                                       size_t numElems) {
   cg << "pub type " << cg.getTypeName(ty);
-  bool needsLifetime =
-      !ty.hasTrait<CodegenLayoutTypeTrait>() && detail::typeNeedsLifetime(elemType);
+  bool needsLifetime = !ty.hasTrait<CodegenLayoutTypeTrait>() && typeNeedsLifetime(elemType);
   if (needsLifetime)
     cg << "<'a>";
   cg << " = [";
@@ -392,7 +399,7 @@ void RustLanguageSyntax::emitLayoutDef(CodegenEmitter& cg,
                                        llvm::ArrayRef<CodegenIdent<IdentKind::Field>> names,
                                        llvm::ArrayRef<mlir::Type> types) {
   // Layout structures define a visitor interface on top of a struct.
-  detail::emitStructDef(cg, ty, names, types, /*layout constant=*/true);
+  emitStructDefImpl(cg, ty, names, types, /*layout constant=*/true);
 
   auto tyName = cg.getTypeName(ty);
 

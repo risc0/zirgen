@@ -159,7 +159,8 @@ void addCppSyntax(codegen::CodegenOptions& opts) {
 }
 
 void addRustSyntax(codegen::CodegenOptions& opts) {
-  opts.addFuncContextArgument<CheckFuncOp, ExecFuncOp, BackFuncOp, StepFuncOp>("ctx: &'a ExecContext");
+  opts.addFuncContextArgument<CheckFuncOp, ExecFuncOp, BackFuncOp, StepFuncOp>(
+      "ctx: &'a ExecContext");
   opts.addFuncContextArgument<ValidityTapsFuncOp>("ctx: &'a ValidityTapsContext");
   opts.addFuncContextArgument<ValidityRegsFuncOp>("ctx: &'a ValidityRegsContext");
 
