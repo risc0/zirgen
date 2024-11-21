@@ -35,14 +35,13 @@ struct PreflightCycle {
   uint8_t padding;
   uint32_t userCycle;
   uint32_t txnIdx;
-  uint32_t extraIdx;
+  uint32_t pagingIdx;
   uint32_t diffCount;
 };
 
 struct PreflightTrace {
   PreflightCycle* cycles;
   MemoryTransaction* txns;
-  uint32_t* extra;
   uint32_t tableSplitCycle;
 };
 

@@ -8,31 +8,43 @@ use anyhow::{anyhow, bail, Result};
 use derive_more::Debug;
 use risc0_circuit_rv32im_v2_sys::{RawMemoryTransaction, RawPreflightCycle};
 use risc0_core::scope;
-use risc0_zkp::core::digest::DIGEST_WORDS;
+use risc0_zkp::{core::digest::DIGEST_WORDS, field::baby_bear::BabyBearExtElem};
 
 use crate::execute::{
     addr::{ByteAddr, WordAddr},
-    node_idx_to_addr,
     pager::PagedMemory,
     platform::*,
-    poseidon2::{self, Poseidon2State},
     r0vm::{Risc0Context, Risc0Machine},
     rv32im::{DecodedInstruction, Emulator, InsnKind, Instruction},
     segment::Segment,
 };
 
+use self::poseidon2::Checksum;
+
+use super::{node_addr_to_idx, node_idx_to_addr, poseidon2, Poseidon2State};
+
 #[derive(Clone, Debug, Default)]
-pub struct PreflightTrace {
+pub(crate) enum Back {
+    #[default]
+    None,
+    Ecall(u32, u32, u32),
+    #[debug("Poseidon2")]
+    Poseidon2(Poseidon2State),
+}
+
+#[derive(Clone, Debug, Default)]
+pub(crate) struct PreflightTrace {
     #[debug("{}", cycles.len())]
     pub cycles: Vec<RawPreflightCycle>,
     #[debug("{}", txns.len())]
     pub txns: Vec<RawMemoryTransaction>,
-    #[debug("{}", extras.len())]
-    pub extras: Vec<u32>,
+    #[debug("{}", backs.len())]
+    pub backs: Vec<Back>,
     pub table_split_cycle: u32,
+    pub nonce: BabyBearExtElem,
 }
 
-struct Preflight<'a> {
+pub(crate) struct Preflight<'a> {
     pub trace: PreflightTrace,
     segment: &'a Segment,
     pager: PagedMemory,
@@ -42,7 +54,6 @@ struct Preflight<'a> {
     cur_read: usize,
     user_cycle: u32,
     txn_idx: u32,
-    extra_idx: u32,
     phys_cycles: u32,
     orig_words: BTreeMap<WordAddr, u32>,
     prev_cycle: BTreeMap<WordAddr, u32>,
@@ -50,16 +61,17 @@ struct Preflight<'a> {
 }
 
 impl Segment {
-    pub fn preflight(&self) -> Result<PreflightTrace> {
+    pub(crate) fn preflight(&self, nonce: BabyBearExtElem) -> Result<PreflightTrace> {
         scope!("preflight");
         tracing::debug!("preflight: {self:#?}");
 
-        let mut preflight = Preflight::new(self);
+        let mut preflight = Preflight::new(self, nonce);
         preflight.read_pages()?;
         preflight.body()?;
         preflight.write_pages()?;
         preflight.generate_tables()?;
         preflight.wrap_memory_txns()?;
+        preflight.update_p2_zcheck()?;
 
         tracing::trace!("paging_cycles: {}", preflight.pager.cycles);
 
@@ -81,7 +93,7 @@ fn get_digest_addr(idx: u32) -> WordAddr {
 // }
 
 impl<'a> Preflight<'a> {
-    fn new(segment: &'a Segment) -> Self {
+    fn new(segment: &'a Segment, nonce: BabyBearExtElem) -> Self {
         tracing::debug!("po2: {}", segment.po2);
 
         let mut page_memory = BTreeMap::new();
@@ -92,7 +104,10 @@ impl<'a> Preflight<'a> {
             }
         }
         Self {
-            trace: PreflightTrace::default(),
+            trace: PreflightTrace {
+                nonce,
+                ..Default::default()
+            },
             segment,
             pager: PagedMemory::new(segment.partial_image.clone()),
             pc: ByteAddr(0),
@@ -101,7 +116,6 @@ impl<'a> Preflight<'a> {
             cur_read: 0,
             txn_idx: 0,
             user_cycle: 0,
-            extra_idx: 0,
             phys_cycles: 0,
             orig_words: BTreeMap::new(),
             prev_cycle: BTreeMap::new(),
@@ -192,17 +206,50 @@ impl<'a> Preflight<'a> {
         Ok(())
     }
 
+    fn update_p2_zcheck(&mut self) -> Result<()> {
+        let mut checksum = Checksum::new(&self.trace.nonce);
+        for (row, back) in self.trace.backs.iter_mut().enumerate() {
+            match back {
+                Back::Poseidon2(p2_state) => {
+                    let cycle = &self.trace.cycles[row];
+                    let next_cycle = &self.trace.cycles[row + 1];
+                    let state = (cycle.major as u32 - 7) * 8 + cycle.minor as u32;
+                    if state == STATE_POSEIDON_LOAD_IN {
+                        checksum.start();
+                        for (i, txn_idx) in (cycle.txn_idx..next_cycle.txn_idx).enumerate() {
+                            let txn = &self.trace.txns[txn_idx as usize];
+                            checksum.add(p2_state.load_tx_type, i, txn);
+                        }
+                    }
+                    match state {
+                        STATE_POSEIDON_LOAD_IN
+                        | STATE_POSEIDON_EXT_ROUND
+                        | STATE_POSEIDON_INT_ROUND => {
+                            p2_state.zcheck = checksum.zcheck;
+                        }
+                        _ => {
+                            checksum.clear();
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+
+        Ok(())
+    }
+
     fn fini(&mut self) {
         for i in (16..256).step_by(16) {
-            self.add_cycle_special(STATE_CONTROL_TABLE, STATE_CONTROL_TABLE, i);
+            self.add_cycle_special(STATE_CONTROL_TABLE, STATE_CONTROL_TABLE, i, 0, Back::None);
         }
         self.machine_mode = 1;
         for i in (0..64 * 1024).step_by(16) {
-            self.add_cycle_special(STATE_CONTROL_TABLE, STATE_CONTROL_TABLE, i);
+            self.add_cycle_special(STATE_CONTROL_TABLE, STATE_CONTROL_TABLE, i, 0, Back::None);
         }
         self.machine_mode = 0;
-        self.add_cycle_special(STATE_CONTROL_TABLE, STATE_CONTROL_DONE, 0);
-        self.add_cycle_special(STATE_CONTROL_DONE, STATE_CONTROL_DONE, 0);
+        self.add_cycle_special(STATE_CONTROL_TABLE, STATE_CONTROL_DONE, 0, 0, Back::None);
+        self.add_cycle_special(STATE_CONTROL_DONE, STATE_CONTROL_DONE, 0, 0, Back::None);
     }
 
     fn read_root(&mut self) -> Result<()> {
@@ -210,7 +257,7 @@ impl<'a> Preflight<'a> {
         for i in 0..DIGEST_WORDS {
             self.load_u32(addr + i)?;
         }
-        self.add_cycle_special(STATE_LOAD_ROOT, STATE_POSEIDON_ENTRY, 0);
+        self.add_cycle_special(STATE_LOAD_ROOT, STATE_POSEIDON_ENTRY, 0, 0, Back::None);
         Ok(())
     }
 
@@ -219,11 +266,19 @@ impl<'a> Preflight<'a> {
         for i in 0..DIGEST_WORDS {
             self.load_u32(addr + i)?;
         }
-        self.add_cycle_special(STATE_STORE_ROOT, STATE_CONTROL_TABLE, 0);
+        self.add_cycle_special(STATE_STORE_ROOT, STATE_CONTROL_TABLE, 0, 0, Back::None);
         Ok(())
     }
 
-    fn add_cycle(&mut self, state: u32, pc: u32, major: u8, minor: u8) {
+    fn add_cycle(
+        &mut self,
+        state: u32,
+        pc: u32,
+        major: u8,
+        minor: u8,
+        paging_idx: u32,
+        back: Back,
+    ) {
         let cycle = RawPreflightCycle {
             state,
             pc,
@@ -233,13 +288,13 @@ impl<'a> Preflight<'a> {
             padding: 0,
             user_cycle: self.user_cycle,
             txn_idx: self.txn_idx,
-            extra_idx: self.extra_idx,
+            paging_idx,
             diff_count: 0,
         };
-        // tracing::trace!("{cycle:?}");
+        tracing::trace!("{cycle:?}");
         self.trace.cycles.push(cycle);
+        self.trace.backs.push(back);
         self.txn_idx = self.trace.txns.len() as u32;
-        self.extra_idx = self.trace.extras.len() as u32;
     }
 
     fn add_cycle_insn(&mut self, state: u32, pc: u32, insn: InsnKind) {
@@ -247,25 +302,91 @@ impl<'a> Preflight<'a> {
             InsnKind::Eany => {
                 // Technically we need to switch on the machine mode *entering* the EANY
                 if self.trace.cycles.last().unwrap().machine_mode != 0 {
-                    self.add_cycle(state, pc, major::ECALL0, ecall_minor::MACHINE_ECALL);
+                    self.add_cycle(
+                        state,
+                        pc,
+                        major::ECALL0,
+                        ecall_minor::MACHINE_ECALL,
+                        0,
+                        Back::None,
+                    );
                 } else {
-                    self.add_cycle(state, pc, major::CONTROL0, control_minor::USER_ECALL);
+                    self.add_cycle(
+                        state,
+                        pc,
+                        major::CONTROL0,
+                        control_minor::USER_ECALL,
+                        0,
+                        Back::None,
+                    );
                 }
             }
             InsnKind::Mret => {
-                self.add_cycle(state, pc, major::CONTROL0, control_minor::MRET);
+                self.add_cycle(
+                    state,
+                    pc,
+                    major::CONTROL0,
+                    control_minor::MRET,
+                    0,
+                    Back::None,
+                );
             }
             _ => {
-                self.add_cycle(state, pc, insn.major(), insn.minor());
+                self.add_cycle(state, pc, insn.major(), insn.minor(), 0, Back::None);
             }
         }
     }
 
-    fn add_cycle_special(&mut self, cur_state: u32, next_state: u32, pc: u32) {
+    fn add_cycle_special(
+        &mut self,
+        cur_state: u32,
+        next_state: u32,
+        pc: u32,
+        paging_idx: u32,
+        back: Back,
+    ) {
         let major = (7 + cur_state / 8) as u8;
         let minor = (cur_state % 8) as u8;
         // tracing::trace!("add_cycle_special(cur_state: {cur_state}, next_state: {next_state}, major: {major}, minor: {minor})");
-        self.add_cycle(next_state, pc, major, minor);
+        self.add_cycle(next_state, pc, major, minor, paging_idx, back);
+    }
+
+    pub(crate) fn on_poseidon2_cycle(&mut self, cur_state: u32, p2: &Poseidon2State) {
+        self.add_cycle_special(
+            cur_state,
+            p2.next_state,
+            self.pc.0,
+            node_addr_to_idx(WordAddr(p2.buf_out_addr)),
+            Back::Poseidon2(p2.clone()),
+        );
+        self.phys_cycles += 1;
+    }
+
+    pub(crate) fn load_u32_with_txn(
+        &mut self,
+        addr: WordAddr,
+    ) -> Result<(u32, RawMemoryTransaction)> {
+        let cycle = self.trace.cycles.len();
+        let word = if addr >= MERKLE_TREE_START_ADDR {
+            *self
+                .page_memory
+                .get(&addr)
+                .ok_or(anyhow!("Invalid load from page memory"))?
+        } else {
+            self.pager.load(addr)?
+        };
+        self.orig_words.entry(addr).or_insert(word);
+        let prev_cycle = *self.prev_cycle.get(&addr).unwrap_or(&u32::MAX);
+        let txn = RawMemoryTransaction {
+            addr: addr.0,
+            cycle: cycle as u32,
+            word,
+            prev_cycle,
+            prev_word: word,
+        };
+        self.prev_cycle.insert(addr, txn.cycle);
+        self.trace.txns.push(txn.clone());
+        Ok((word, txn))
     }
 }
 
@@ -287,22 +408,22 @@ impl<'a> Risc0Context for Preflight<'a> {
     }
 
     fn resume(&mut self) -> Result<()> {
-        self.add_cycle_special(STATE_RESUME, STATE_RESUME, self.pc.0);
+        self.add_cycle_special(STATE_RESUME, STATE_RESUME, self.pc.0, 0, Back::None);
         for i in 0..DIGEST_WORDS {
             self.store_u32(GLOBAL_INPUT_ADDR.waddr() + i, 0)?; // FIXME!
         }
-        self.add_cycle_special(STATE_RESUME, STATE_DECODE, self.pc.0);
+        self.add_cycle_special(STATE_RESUME, STATE_DECODE, self.pc.0, 0, Back::None);
         Ok(())
     }
 
     fn suspend(&mut self) -> Result<()> {
         self.pc = ByteAddr(0);
-        self.add_cycle_special(STATE_SUSPEND, STATE_SUSPEND, 0);
+        self.add_cycle_special(STATE_SUSPEND, STATE_SUSPEND, 0, 0, Back::None);
         for i in 0..DIGEST_WORDS {
             self.load_u32(GLOBAL_OUTPUT_ADDR.waddr() + i)?;
         }
         self.machine_mode = 3;
-        self.add_cycle_special(STATE_SUSPEND, STATE_POSEIDON_ENTRY, 0);
+        self.add_cycle_special(STATE_SUSPEND, STATE_POSEIDON_ENTRY, 0, 0, Back::None);
         Ok(())
     }
 
@@ -319,7 +440,6 @@ impl<'a> Risc0Context for Preflight<'a> {
 
     fn trap_rewind(&mut self) {
         self.trace.txns.truncate(self.txn_idx as usize);
-        self.trace.extras.truncate(self.extra_idx as usize);
     }
 
     fn peek_u32(&mut self, _addr: WordAddr) -> Result<u32> {
@@ -329,26 +449,7 @@ impl<'a> Risc0Context for Preflight<'a> {
 
     // Pass memory ops to pager + record
     fn load_u32(&mut self, addr: WordAddr) -> Result<u32> {
-        let cycle = self.trace.cycles.len();
-        let word = if addr >= MERKLE_TREE_START_ADDR {
-            *self
-                .page_memory
-                .get(&addr)
-                .ok_or(anyhow!("Invalid load from page memory"))?
-        } else {
-            self.pager.load(addr)?
-        };
-        self.orig_words.entry(addr).or_insert(word);
-        let prev_cycle = *self.prev_cycle.get(&addr).unwrap_or(&u32::MAX);
-        let txn = RawMemoryTransaction {
-            addr: addr.0,
-            cycle: cycle as u32,
-            word,
-            prev_cycle,
-            prev_word: word,
-        };
-        self.prev_cycle.insert(addr, txn.cycle);
-        self.trace.txns.push(txn);
+        let (word, _) = self.load_u32_with_txn(addr)?;
         Ok(word)
     }
 
@@ -379,16 +480,20 @@ impl<'a> Risc0Context for Preflight<'a> {
         Ok(())
     }
 
-    fn on_ecall_cycle(&mut self, cur_state: u32, next_state: u32, s0: u32, s1: u32, s2: u32) {
-        self.trace.extras.extend([s0, s1, s2]);
-        self.add_cycle_special(cur_state, next_state, self.pc.0);
+    fn on_ecall_cycle(
+        &mut self,
+        cur_state: u32,
+        next_state: u32,
+        s0: u32,
+        s1: u32,
+        s2: u32,
+    ) -> Result<()> {
+        self.add_cycle_special(cur_state, next_state, self.pc.0, 0, Back::Ecall(s0, s1, s2));
         self.phys_cycles += 1;
-    }
-
-    fn on_poseidon2_cycle(&mut self, cur_state: u32, p2: &Poseidon2State) {
-        self.trace.extras.extend_from_slice(p2.as_slice());
-        self.add_cycle_special(cur_state, p2.next_state(), self.pc.0);
-        self.phys_cycles += 1;
+        if next_state == STATE_POSEIDON_ENTRY {
+            poseidon2::ecall(self)?;
+        }
+        Ok(())
     }
 
     fn on_terminate(&mut self, _a0: u32, _a1: u32) {

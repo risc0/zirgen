@@ -2,6 +2,9 @@
 //
 // All rights reserved.
 
+use rand::thread_rng;
+use risc0_zkp::field::{baby_bear::BabyBearExtElem, Elem as _};
+
 use crate::execute::{
     image::MemoryImage2,
     testutil::{self, NullSyscall, DEFAULT_SESSION_LIMIT},
@@ -24,7 +27,10 @@ fn basic() {
     let segments = result.segments;
     let segment = segments.first().unwrap();
 
-    let mut trace = segment.preflight().unwrap();
+    let mut rng = thread_rng();
+    let nonce = BabyBearExtElem::random(&mut rng);
+
+    let mut trace = segment.preflight(nonce).unwrap();
     // let expected_cycles = [
     //     add_cycle(InsnKind::LUI, 0, Some(0x4000)),
     //     add_cycle(InsnKind::LUI, 3, Some(0x4004)),

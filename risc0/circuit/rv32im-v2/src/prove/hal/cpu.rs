@@ -71,11 +71,10 @@ impl CircuitWitnessGenerator<CpuHal> for CpuCircuitHal {
         let preflight = RawPreflightTrace {
             cycles: preflight.cycles.as_ptr(),
             txns: preflight.txns.as_ptr(),
-            extras: preflight.extras.as_ptr(),
             table_split_cycle: preflight.table_split_cycle,
         };
         ffi_wrap(|| unsafe {
-            risc0_circuit_rv32im_v2_cpu_witgen(&exec_trace, &preflight, cycles as u32)
+            risc0_circuit_rv32im_v2_cpu_witgen(mode as u32, &exec_trace, &preflight, cycles as u32)
         })
     }
 }

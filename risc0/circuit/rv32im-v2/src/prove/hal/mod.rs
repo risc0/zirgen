@@ -7,9 +7,13 @@ pub mod cpu;
 use std::rc::Rc;
 
 use anyhow::Result;
+use rand::thread_rng;
 use risc0_core::scope;
 use risc0_zkp::{
-    field::baby_bear::{BabyBear, BabyBearElem, BabyBearExtElem},
+    field::{
+        baby_bear::{BabyBear, BabyBearElem, BabyBearExtElem},
+        Elem as _,
+    },
     hal::{Buffer, CircuitHal, Hal},
 };
 
@@ -35,11 +39,12 @@ where
     }
 }
 
-#[derive(PartialEq)]
+#[derive(Clone, Copy, PartialEq)]
 pub(crate) enum StepMode {
     Parallel,
+    #[cfg(test)]
     SeqForward,
-    #[allow(dead_code)]
+    #[cfg(test)]
     SeqReverse,
 }
 
@@ -82,11 +87,15 @@ where
     fn prove_segment(&self, segment: &Segment) -> Result<Seal> {
         scope!("prove_segment");
 
-        let witgen = WitnessGenerator::new(
+        let mut rng = thread_rng();
+        let nonce = BabyBearExtElem::random(&mut rng);
+
+        let _witgen = WitnessGenerator::new(
             self.hal.as_ref(),
             self.circuit_hal.as_ref(),
             segment,
             StepMode::Parallel,
+            nonce,
         )?;
         // let steps = witgen.steps;
 

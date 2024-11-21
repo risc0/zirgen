@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#![allow(unused)]
+
 #[cfg(feature = "execute")]
 pub mod execute;
 #[cfg(feature = "prove")]

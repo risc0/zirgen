@@ -4,8 +4,13 @@
 
 use std::rc::Rc;
 
+use rand::thread_rng;
 use risc0_binfmt::Program;
-use risc0_zkp::{core::hash::poseidon2::Poseidon2HashSuite, hal::cpu::CpuHal};
+use risc0_zkp::{
+    core::hash::poseidon2::Poseidon2HashSuite,
+    field::{baby_bear::BabyBearExtElem, Elem as _},
+    hal::cpu::CpuHal,
+};
 use test_log::test;
 
 use super::{hal::StepMode, segment_prover};
@@ -45,14 +50,27 @@ fn fwd_rev_ab_test(program: Program) {
     //     }
     // }
 
+    let mut rng = thread_rng();
+    let nonce = BabyBearExtElem::random(&mut rng);
+
     let segments = result.segments;
     for segment in segments {
-        let fwd_witgen =
-            WitnessGenerator::new(hal.as_ref(), &circuit_hal, &segment, StepMode::SeqForward)
-                .unwrap();
-        let rev_witgen =
-            WitnessGenerator::new(hal.as_ref(), &circuit_hal, &segment, StepMode::SeqReverse)
-                .unwrap();
+        let fwd_witgen = WitnessGenerator::new(
+            hal.as_ref(),
+            &circuit_hal,
+            &segment,
+            StepMode::SeqForward,
+            nonce,
+        )
+        .unwrap();
+        let rev_witgen = WitnessGenerator::new(
+            hal.as_ref(),
+            &circuit_hal,
+            &segment,
+            StepMode::SeqReverse,
+            nonce,
+        )
+        .unwrap();
         assert!(fwd_witgen.data.to_vec() == rev_witgen.data.to_vec());
     }
 }

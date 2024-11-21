@@ -18,6 +18,8 @@
 #include "preflight.h"
 #include "tables.h"
 
+#include "vendor/poolstl.hpp"
+
 #include <array>
 #include <assert.h>
 #include <cstddef>
@@ -158,7 +160,7 @@ struct MutableBufObj : public BufferObj {
 
   Val load(size_t col, size_t back) override {
     if (back > ctx.cycle) {
-      std::cerr << "Going back too far, back: " << back << ", cycle: " << ctx.cycle << "\n";
+      // std::cerr << "Going back too far, back: " << back << ", cycle: " << ctx.cycle << "\n";
       return 0;
     }
     return buf.get(ctx.cycle - back, col);
@@ -367,7 +369,6 @@ void extern_print(ExecContext& ctx, Val v) {
 }
 
 std::array<Val, 2> extern_getMajorMinor(ExecContext& ctx) {
-  // std::cout << "getMajorMinor\n";
   uint8_t major = ctx.preflight.cycles[ctx.cycle].major;
   uint8_t minor = ctx.preflight.cycles[ctx.cycle].minor;
   return {major, minor};
@@ -390,22 +391,11 @@ Val extern_hostWrite(ExecContext& ctx, Val fdVal, Val addrLow, Val addrHigh, Val
   // return 0;
 }
 
-inline uint32_t nodeAddrToIdx(uint32_t addr) {
-  constexpr uint32_t MERKLE_TREE_END_ADDR = 0x44000000;
-
-  return (MERKLE_TREE_END_ADDR - addr) / 8;
-}
-
 std::array<Val, 2> extern_nextPagingIdx(ExecContext& ctx) {
-  constexpr size_t EXTRA_BUF_OUT_ADDR = 2;
-
-  size_t extraStart = ctx.preflight.cycles[ctx.cycle].extraIdx;
-  size_t extraEnd = ctx.preflight.cycles[ctx.cycle + 1].extraIdx;
-  size_t extraSize = extraEnd - extraStart;
-  uint32_t idx = nodeAddrToIdx(ctx.preflight.extra[extraStart + EXTRA_BUF_OUT_ADDR]);
+  uint32_t pagingIdx = ctx.preflight.cycles[ctx.cycle].pagingIdx;
   uint32_t machineMode = ctx.preflight.cycles[ctx.cycle].machineMode;
-  // printf("nextPagingIdx: (0x%05x, %u)\n", idx, machineMode);
-  return {idx, machineMode};
+  // printf("nextPagingIdx: (0x%05x, %u)\n", pagingIdx, machineMode);
+  return {pagingIdx, machineMode};
 }
 
 #include "defs.cpp.inc"
@@ -435,15 +425,36 @@ extern "C" {
 
 using namespace risc0;
 
-const char* risc0_circuit_rv32im_v2_cpu_witgen(ExecutionTrace* execTrace,
+constexpr size_t kStepModeParallel = 0;
+constexpr size_t kStepModeSeqForward = 1;
+constexpr size_t kStepModeSeqReverse = 2;
+
+const char* risc0_circuit_rv32im_v2_cpu_witgen(uint32_t mode,
+                                               ExecutionTrace* execTrace,
                                                PreflightTrace* preflight,
                                                uint32_t lastCycle) {
   GlobalContext globalContext;
   LookupTables tables;
   try {
-    for (size_t cycle = 0; cycle < lastCycle; cycle++) {
-      // printf("stepExec(%zu)\n", cycle);
-      stepExec(*execTrace, *preflight, tables, globalContext, cycle);
+    switch (mode) {
+    case kStepModeParallel: {
+      auto begin = poolstl::iota_iter<uint32_t>(0);
+      auto end = poolstl::iota_iter<uint32_t>(lastCycle);
+      std::for_each(poolstl::par, begin, end, [&](uint32_t cycle) {
+        stepExec(*execTrace, *preflight, tables, globalContext, cycle);
+      });
+    } break;
+    case kStepModeSeqForward:
+      for (size_t cycle = 0; cycle < lastCycle; cycle++) {
+        stepExec(*execTrace, *preflight, tables, globalContext, cycle);
+      }
+      break;
+    case kStepModeSeqReverse:
+      for (size_t i = 0; i < lastCycle; i++) {
+        size_t cycle = lastCycle - i - 1;
+        stepExec(*execTrace, *preflight, tables, globalContext, cycle);
+      }
+      break;
     }
   } catch (const std::exception& err) {
     return strdup(err.what());

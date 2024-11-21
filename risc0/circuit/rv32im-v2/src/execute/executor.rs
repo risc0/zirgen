@@ -13,7 +13,6 @@ use super::{
     image::MemoryImage2,
     pager::PagedMemory,
     platform::LOOKUP_TABLE_CYCLES,
-    poseidon2::Poseidon2State,
     r0vm::{Risc0Context, Risc0Machine},
     rv32im::{disasm, DecodedInstruction, Emulator, Instruction},
     segment::Segment,
@@ -240,12 +239,16 @@ impl<'a, 'b, S: Syscall> Risc0Context for Executor<'a, 'b, S> {
         Ok(())
     }
 
-    fn on_ecall_cycle(&mut self, _cur: u32, _next: u32, _s0: u32, _s1: u32, _s2: u32) {
+    fn on_ecall_cycle(
+        &mut self,
+        _cur: u32,
+        _next: u32,
+        _s0: u32,
+        _s1: u32,
+        _s2: u32,
+    ) -> Result<()> {
         self.phys_cycles += 1;
-    }
-
-    fn on_poseidon2_cycle(&mut self, _cur: u32, _state: &Poseidon2State) {
-        self.phys_cycles += 1;
+        Ok(())
     }
 
     fn peek_u32(&mut self, addr: WordAddr) -> Result<u32> {

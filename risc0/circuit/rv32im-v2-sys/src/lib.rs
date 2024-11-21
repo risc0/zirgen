@@ -41,7 +41,7 @@ pub struct RawPreflightCycle {
     pub padding: u8,
     pub user_cycle: u32,
     pub txn_idx: u32,
-    pub extra_idx: u32,
+    pub paging_idx: u32,
     pub diff_count: u32,
 }
 
@@ -49,7 +49,6 @@ pub struct RawPreflightCycle {
 pub struct RawPreflightTrace {
     pub cycles: *const RawPreflightCycle,
     pub txns: *const RawMemoryTransaction,
-    pub extras: *const u32,
     pub table_split_cycle: u32,
 }
 
@@ -69,6 +68,7 @@ pub struct RawExecutionTrace {
 
 extern "C" {
     pub fn risc0_circuit_rv32im_v2_cpu_witgen(
+        mode: u32,
         exec_trace: *const RawExecutionTrace,
         preflight: *const RawPreflightTrace,
         cycles: u32,

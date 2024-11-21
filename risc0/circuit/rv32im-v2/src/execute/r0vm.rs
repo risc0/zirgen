@@ -9,7 +9,6 @@ use anyhow::{bail, Result};
 use super::{
     addr::{ByteAddr, WordAddr},
     platform::*,
-    poseidon2::{self, Poseidon2State},
     rv32im::{DecodedInstruction, EmuContext, Emulator, Instruction, TrapCause},
 };
 
@@ -36,9 +35,7 @@ pub trait Risc0Context {
 
     fn store_u32(&mut self, addr: WordAddr, word: u32) -> Result<()>;
 
-    fn on_ecall_cycle(&mut self, cur: u32, next: u32, s0: u32, s1: u32, s2: u32);
-
-    fn on_poseidon2_cycle(&mut self, cur: u32, state: &Poseidon2State);
+    fn on_ecall_cycle(&mut self, cur: u32, next: u32, s0: u32, s1: u32, s2: u32) -> Result<()>;
 
     fn on_terminate(&mut self, a0: u32, a1: u32);
 
@@ -128,18 +125,18 @@ impl<'a> Risc0Machine<'a> {
 
     fn ecall_terminate(&mut self) -> Result<bool> {
         self.ctx
-            .on_ecall_cycle(STATE_MACHINE_ECALL, STATE_TERMINATE, 0, 0, 0);
+            .on_ecall_cycle(STATE_MACHINE_ECALL, STATE_TERMINATE, 0, 0, 0)?;
         let a0 = self.load_memory(USER_REGS_ADDR.waddr() + REG_A0)?;
         let a1 = self.load_memory(USER_REGS_ADDR.waddr() + REG_A1)?;
         self.ctx.on_terminate(a0, a1);
         self.ctx
-            .on_ecall_cycle(STATE_TERMINATE, STATE_SUSPEND, 0, 0, 0);
+            .on_ecall_cycle(STATE_TERMINATE, STATE_SUSPEND, 0, 0, 0)?;
         Ok(false)
     }
 
     fn ecall_read(&mut self) -> Result<bool> {
         self.ctx
-            .on_ecall_cycle(STATE_MACHINE_ECALL, STATE_HOST_READ_SETUP, 0, 0, 0);
+            .on_ecall_cycle(STATE_MACHINE_ECALL, STATE_HOST_READ_SETUP, 0, 0, 0)?;
         let mut cur_state = STATE_HOST_READ_SETUP;
         let fd = self.load_register(REG_A0)?;
         let mut ptr = ByteAddr(self.load_register(REG_A1)?);
@@ -169,7 +166,7 @@ impl<'a> Risc0Machine<'a> {
 
         let next_state = next_io_state(ptr, rlen);
         self.ctx
-            .on_ecall_cycle(cur_state, next_state, ptr.waddr().0, ptr.subaddr(), rlen);
+            .on_ecall_cycle(cur_state, next_state, ptr.waddr().0, ptr.subaddr(), rlen)?;
         cur_state = next_state;
 
         let mut i = 0;
@@ -201,7 +198,7 @@ impl<'a> Risc0Machine<'a> {
 
             let next_state = next_io_state(ptr, rlen);
             self.ctx
-                .on_ecall_cycle(cur_state, next_state, ptr.waddr().0, ptr.subaddr(), rlen);
+                .on_ecall_cycle(cur_state, next_state, ptr.waddr().0, ptr.subaddr(), rlen)?;
             cur_state = next_state;
         }
 
@@ -217,7 +214,7 @@ impl<'a> Risc0Machine<'a> {
 
     fn ecall_write(&mut self) -> Result<bool> {
         self.ctx
-            .on_ecall_cycle(STATE_MACHINE_ECALL, STATE_HOST_WRITE, 0, 0, 0);
+            .on_ecall_cycle(STATE_MACHINE_ECALL, STATE_HOST_WRITE, 0, 0, 0)?;
         let fd = self.load_register(REG_A0)?;
         let ptr = ByteAddr(self.load_register(REG_A1)?);
         let len = self.load_register(REG_A2)?;
@@ -232,15 +229,14 @@ impl<'a> Risc0Machine<'a> {
         self.store_register(REG_A0, rlen)?;
         self.next_pc();
         self.ctx
-            .on_ecall_cycle(STATE_HOST_WRITE, STATE_DECODE, 0, 0, 0);
+            .on_ecall_cycle(STATE_HOST_WRITE, STATE_DECODE, 0, 0, 0)?;
         Ok(false)
     }
 
     fn ecall_poseidon2(&mut self) -> Result<bool> {
         self.next_pc();
         self.ctx
-            .on_ecall_cycle(STATE_MACHINE_ECALL, STATE_POSEIDON_ENTRY, 0, 0, 0);
-        poseidon2::ecall(self.ctx)?;
+            .on_ecall_cycle(STATE_MACHINE_ECALL, STATE_POSEIDON_ENTRY, 0, 0, 0)?;
         Ok(false)
     }
 
