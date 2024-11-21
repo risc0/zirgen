@@ -76,9 +76,11 @@ macro_rules! zirgen_preamble {
                 mul: ExtVal::ONE,
             })
         }
+
         fn and_cond(x: MixState, cond: Val, inner: MixState) -> Result<MixState> {
             and_cond_generic::<CircuitField, Val>(x, cond, inner)
         }
+
         fn and_cond_ext(x: MixState, cond: ExtVal, inner: MixState) -> Result<MixState> {
             and_cond_generic::<CircuitField, ExtVal>(x, cond, inner)
         }
@@ -95,7 +97,7 @@ macro_rules! zirgen_preamble {
 
         // Eventually we want to generate this trait based on what functions are available,
         // but for now we can hardcode it.
-        pub trait CircuitHal<'a, H: risc0_zkp::hal::Hal<Elem = Val>> {
+        pub trait CircuitHal<H: risc0_zkp::hal::Hal<Elem = Val>> {
             fn step_exec(
                 &self,
                 tot_cycles: usize,
@@ -117,7 +119,7 @@ macro_rules! zirgen_preamble {
 /// Default implementation of "log" for circuits.  Circuits can take advantage
 /// of this implementation by supplying a forwarding function such as this on
 /// a context object:
-///    pub fn log(& self, message: &str, x: &[Val]) -> Result<()> {
+///    pub fn log(& self, message: &str, x: &\[Val\]) -> Result<()> {
 ///        default_log(message, x)
 ///    }
 pub fn default_log<E: risc0_zkp::field::Elem + Into<u32>>(

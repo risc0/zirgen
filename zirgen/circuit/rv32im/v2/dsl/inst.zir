@@ -1,0 +1,66 @@
+// RUN: true
+
+import consts;
+import decode;
+import mem;
+import one_hot;
+
+component InstInput(cycle: Val, major: Val, minor: Val, pc_u32: ValU32, state: Val, mode: Val) {
+  cycle := cycle;
+  major := major;
+  minor := minor;
+  pc_u32 := pc_u32;
+  state := state;
+  mode := mode;
+  minor_onehot := OneHot<8>(minor);
+}
+
+component DecodeInst(cycle: Reg, ii: InstInput) {
+  // Cancel out 'cycle' table entries
+  arg := CycleArg(-GetDiffCount(cycle), cycle);
+  AliasLayout!(arg.cycle, cycle);
+  arg.cycle = cycle;
+  // Decompose PC into an address
+  pc_addr := AddrDecompose(ii.pc_u32, ii.mode);
+  // Verify alignment
+  pc_addr.low2 = 0;
+  // Load instruction
+  load_inst := MemoryRead(cycle, pc_addr);
+  // Decode instruction
+  Decoder(load_inst)
+}
+
+component ReadReg(cycle: Reg, input: InstInput, reg: Val) {
+  addr := Reg(input.mode * MachineRegBase() + (1 - input.mode) * UserRegBase() + reg);
+  MemoryRead(cycle, addr)
+}
+
+component WriteRd(cycle: Reg, input: InstInput, decoded: Decoder, do_write: Val, write_data: ValU32) {
+  isRd0 := IsZero(decoded.rd);
+  do_write := (1 - isRd0) * do_write;
+  reg := do_write * decoded.rd;
+  write_addr := Reg(input.mode * MachineRegBase() + (1 - input.mode) * UserRegBase() + (1 - do_write) * 64 + reg);
+  MemoryWrite(cycle, write_addr, write_data);
+}
+
+component InstOutput(new_pc: ValU32, new_state: Val, new_mode: Val) {
+  new_pc := new_pc;
+  new_state := new_state;
+  new_mode := new_mode;
+}
+
+component VerifyOpcode(decoded: Decoder, opcode: Val) {
+  decoded.opcode = opcode;
+}
+
+component VerifyOpcodeF3(decoded: Decoder, opcode: Val, func3: Val) {
+  decoded.opcode = opcode;
+  decoded.func3 = func3;
+}
+
+component VerifyOpcodeF3F7(decoded: Decoder, opcode: Val, func3: Val, func7: Val) {
+  decoded.opcode = opcode;
+  decoded.func3 = func3;
+  decoded.func7 = func7;
+}
+

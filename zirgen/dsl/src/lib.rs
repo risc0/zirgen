@@ -14,8 +14,8 @@
 
 #[macro_use]
 pub mod codegen;
-
 mod buffers;
+
 pub use buffers::{BufferSpec, Buffers};
 use core::fmt::Debug;
 use risc0_core::{field::Elem, field::ExtElem};
@@ -145,6 +145,7 @@ impl<'a, L, E: Elem> BoundLayout<'a, L, E> {
     pub fn new(layout: &'static L, buf: BufferRow<'a, E>) -> Self {
         Self { layout, buf }
     }
+
     pub fn map<NewL, F: FnOnce(&'static L) -> &'static NewL>(
         &self,
         f: F,
@@ -192,9 +193,11 @@ impl<'a, E: Elem + Clone + Default + Copy> BoundLayout<'a, Reg, E> {
     pub fn load(&self, ctx: &impl CycleContext, back: usize) -> E {
         self.buf.load(ctx, self.layout.offset, back)
     }
+
     pub fn load_unchecked(&self, ctx: &impl CycleContext, back: usize) -> E {
         self.load(ctx, back).valid_or_zero()
     }
+
     pub fn store(&self, ctx: &impl CycleContext, val: E) {
         self.buf.store(ctx, self.layout.offset, val);
     }

@@ -265,13 +265,6 @@ RetTupleStruct exec_RetTuple(ExecContext& ctx,
   NondetRegStruct x39 = exec_Reg(ctx, arg9, LAYOUT_LOOKUP(layout11, blk));
   // RetTuple(zirgen/circuit/keccak/sha256_for_keccak.zir:142)
   NondetRegStruct x40 = exec_Reg(ctx, arg10, LAYOUT_LOOKUP(layout11, midx));
-  // Log(<preamble>:16)
-  // RetTuple(zirgen/circuit/keccak/sha256_for_keccak.zir:143)
-  INVOKE_EXTERN(
-      ctx,
-      log,
-      "major %u minor %u memidx %u blk %u rnd %u",
-      std::initializer_list<Val>{x37._super, x36._super, x40._super, x39._super, x38._super});
   return RetTupleStruct{.arrA = x12,
                         .arrB = x16,
                         .arrC = x20,
@@ -286,7 +279,7 @@ RetTupleStruct exec_RetTuple(ExecContext& ctx,
 }
 Pack2Struct execPack2(ExecContext& ctx, Val32Array arg0, BoundLayout<Pack2Layout> layout1) {
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // pack2(zirgen/circuit/keccak/sha256_for_keccak.zir:245)
+  // pack2(zirgen/circuit/keccak/sha256_for_keccak.zir:244)
   Val x2 = (arg0[0] + (arg0[1] * Val(2)));
   Val x3 = ((x2 + (arg0[2] * Val(4))) + (arg0[3] * Val(8)));
   Val x4 = ((x3 + (arg0[4] * Val(16))) + (arg0[5] * Val(32)));
@@ -297,7 +290,7 @@ Pack2Struct execPack2(ExecContext& ctx, Val32Array arg0, BoundLayout<Pack2Layout
   Val x9 = ((x8 + (arg0[14] * Val(16384))) + (arg0[15] * Val(32768)));
   NondetRegStruct x10 = exec_Reg(ctx, x9, LAYOUT_LOOKUP(layout1, low));
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // pack2(zirgen/circuit/keccak/sha256_for_keccak.zir:246)
+  // pack2(zirgen/circuit/keccak/sha256_for_keccak.zir:245)
   Val x11 = (arg0[16] + (arg0[17] * Val(2)));
   Val x12 = ((x11 + (arg0[18] * Val(4))) + (arg0[19] * Val(8)));
   Val x13 = ((x12 + (arg0[20] * Val(16))) + (arg0[21] * Val(32)));
@@ -307,7 +300,7 @@ Pack2Struct execPack2(ExecContext& ctx, Val32Array arg0, BoundLayout<Pack2Layout
   Val x17 = ((x16 + (arg0[28] * Val(4096))) + (arg0[29] * Val(8192)));
   Val x18 = ((x17 + (arg0[30] * Val(16384))) + (arg0[31] * Val(32768)));
   NondetRegStruct x19 = exec_Reg(ctx, x18, LAYOUT_LOOKUP(layout1, high));
-  // pack2(zirgen/circuit/keccak/sha256_for_keccak.zir:244)
+  // pack2(zirgen/circuit/keccak/sha256_for_keccak.zir:243)
   Pack2Struct x20 = Pack2Struct{
       ._super = TwoShortsStruct{.low = x10._super, .high = x19._super}, .low = x10, .high = x19};
   return x20;
@@ -318,277 +311,277 @@ TwoShortsStruct execComputeW(ExecContext& ctx,
                              Val32Array arg2,
                              Val32Array arg3,
                              BoundLayout<ComputeWLayout> layout4) {
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
-  // computeW(zirgen/circuit/keccak/sha256_for_keccak.zir:256)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
+  // computeW(zirgen/circuit/keccak/sha256_for_keccak.zir:255)
   Val x5 = (Val(1) - arg2[7]);
   Val x6 = (Val(1) - arg2[18]);
   Val x7 = ((arg2[7] * arg2[18]) + (x5 * x6));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x8 = (Val(1) - arg2[3]);
   Val x9 = ((Val(1) - x7) * x8);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x10 = (Val(1) - arg2[8]);
   Val x11 = (Val(1) - arg2[19]);
   Val x12 = ((arg2[8] * arg2[19]) + (x10 * x11));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x13 = (Val(1) - arg2[4]);
   Val x14 = ((Val(1) - x12) * x13);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x15 = (Val(1) - arg2[9]);
   Val x16 = (Val(1) - arg2[20]);
   Val x17 = ((arg2[9] * arg2[20]) + (x15 * x16));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x18 = (Val(1) - arg2[5]);
   Val x19 = ((Val(1) - x17) * x18);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x20 = (Val(1) - arg2[10]);
   Val x21 = (Val(1) - arg2[21]);
   Val x22 = ((arg2[10] * arg2[21]) + (x20 * x21));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x23 = (Val(1) - arg2[6]);
   Val x24 = ((Val(1) - x22) * x23);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x25 = (Val(1) - arg2[11]);
   Val x26 = (Val(1) - arg2[22]);
   Val x27 = ((arg2[11] * arg2[22]) + (x25 * x26));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x28 = ((Val(1) - x27) * x5);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x28 = ((Val(1) - x27) * x5);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x29 = (Val(1) - arg2[12]);
   Val x30 = (Val(1) - arg2[23]);
   Val x31 = ((arg2[12] * arg2[23]) + (x29 * x30));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x32 = ((Val(1) - x31) * x10);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x32 = ((Val(1) - x31) * x10);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x33 = (Val(1) - arg2[13]);
   Val x34 = (Val(1) - arg2[24]);
   Val x35 = ((arg2[13] * arg2[24]) + (x33 * x34));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x36 = ((Val(1) - x35) * x15);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x36 = ((Val(1) - x35) * x15);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x37 = (Val(1) - arg2[14]);
   Val x38 = (Val(1) - arg2[25]);
   Val x39 = ((arg2[14] * arg2[25]) + (x37 * x38));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x40 = ((Val(1) - x39) * x20);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x40 = ((Val(1) - x39) * x20);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x41 = (Val(1) - arg2[15]);
   Val x42 = (Val(1) - arg2[26]);
   Val x43 = ((arg2[15] * arg2[26]) + (x41 * x42));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x44 = ((Val(1) - x43) * x25);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x44 = ((Val(1) - x43) * x25);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x45 = (Val(1) - arg2[16]);
   Val x46 = (Val(1) - arg2[27]);
   Val x47 = ((arg2[16] * arg2[27]) + (x45 * x46));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x48 = ((Val(1) - x47) * x29);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x48 = ((Val(1) - x47) * x29);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x49 = (Val(1) - arg2[17]);
   Val x50 = (Val(1) - arg2[28]);
   Val x51 = ((arg2[17] * arg2[28]) + (x49 * x50));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x52 = ((Val(1) - x51) * x33);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x52 = ((Val(1) - x51) * x33);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x53 = (Val(1) - arg2[29]);
   Val x54 = ((arg2[18] * arg2[29]) + (x6 * x53));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x55 = ((Val(1) - x54) * x37);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x55 = ((Val(1) - x54) * x37);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x56 = (Val(1) - arg2[30]);
   Val x57 = ((arg2[19] * arg2[30]) + (x11 * x56));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x58 = ((Val(1) - x57) * x41);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x58 = ((Val(1) - x57) * x41);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x59 = (Val(1) - arg2[31]);
   Val x60 = ((arg2[20] * arg2[31]) + (x16 * x59));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x61 = ((Val(1) - x60) * x45);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x61 = ((Val(1) - x60) * x45);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x62 = (Val(1) - arg2[0]);
   Val x63 = ((arg2[21] * arg2[0]) + (x21 * x62));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x64 = ((Val(1) - x63) * x49);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x64 = ((Val(1) - x63) * x49);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x65 = (Val(1) - arg2[1]);
   Val x66 = ((arg2[22] * arg2[1]) + (x26 * x65));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x67 = ((Val(1) - x66) * x6);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x67 = ((Val(1) - x66) * x6);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x68 = (Val(1) - arg2[2]);
   Val x69 = ((arg2[23] * arg2[2]) + (x30 * x68));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x70 = ((Val(1) - x69) * x11);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x71 = ((arg2[24] * arg2[3]) + (x34 * x8));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x72 = ((Val(1) - x71) * x16);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x73 = ((arg2[25] * arg2[4]) + (x38 * x13));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x74 = ((Val(1) - x73) * x21);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x75 = ((arg2[26] * arg2[5]) + (x42 * x18));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x76 = ((Val(1) - x75) * x26);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x77 = ((arg2[27] * arg2[6]) + (x46 * x23));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x78 = ((Val(1) - x77) * x30);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x79 = ((arg2[28] * arg2[7]) + (x50 * x5));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x80 = ((Val(1) - x79) * x34);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x81 = ((arg2[29] * arg2[8]) + (x53 * x10));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x82 = ((Val(1) - x81) * x38);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x83 = ((arg2[30] * arg2[9]) + (x56 * x15));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x84 = ((Val(1) - x83) * x42);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x85 = ((arg2[31] * arg2[10]) + (x59 * x20));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x86 = ((Val(1) - x85) * x46);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x87 = ((arg2[0] * arg2[11]) + (x62 * x25));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x88 = ((Val(1) - x87) * x50);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x89 = ((arg2[1] * arg2[12]) + (x65 * x29));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x90 = ((Val(1) - x89) * x53);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x91 = ((arg2[2] * arg2[13]) + (x68 * x33));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x92 = ((Val(1) - x91) * x56);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x92 = ((Val(1) - x91) * x56);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x93 = ((arg2[3] * arg2[14]) + (x8 * x37));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x94 = ((Val(1) - x93) * x59);
   Val x95 = ((arg2[4] * arg2[15]) + (x13 * x41));
   Val x96 = ((arg2[5] * arg2[16]) + (x18 * x45));
   Val x97 = ((arg2[6] * arg2[17]) + (x23 * x49));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
-  // computeW(zirgen/circuit/keccak/sha256_for_keccak.zir:258)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
+  // computeW(zirgen/circuit/keccak/sha256_for_keccak.zir:257)
   Val x98 = (Val(1) - arg0[17]);
   Val x99 = (Val(1) - arg0[19]);
   Val x100 = ((arg0[17] * arg0[19]) + (x98 * x99));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x101 = (Val(1) - arg0[10]);
   Val x102 = ((Val(1) - x100) * x101);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x103 = (Val(1) - arg0[18]);
   Val x104 = (Val(1) - arg0[20]);
   Val x105 = ((arg0[18] * arg0[20]) + (x103 * x104));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x106 = (Val(1) - arg0[11]);
   Val x107 = ((Val(1) - x105) * x106);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x108 = (Val(1) - arg0[21]);
   Val x109 = ((arg0[19] * arg0[21]) + (x99 * x108));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x110 = (Val(1) - arg0[12]);
   Val x111 = ((Val(1) - x109) * x110);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x112 = (Val(1) - arg0[22]);
   Val x113 = ((arg0[20] * arg0[22]) + (x104 * x112));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x114 = (Val(1) - arg0[13]);
   Val x115 = ((Val(1) - x113) * x114);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x116 = (Val(1) - arg0[23]);
   Val x117 = ((arg0[21] * arg0[23]) + (x108 * x116));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x118 = (Val(1) - arg0[14]);
   Val x119 = ((Val(1) - x117) * x118);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x120 = (Val(1) - arg0[24]);
   Val x121 = ((arg0[22] * arg0[24]) + (x112 * x120));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x122 = (Val(1) - arg0[15]);
   Val x123 = ((Val(1) - x121) * x122);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x124 = (Val(1) - arg0[25]);
   Val x125 = ((arg0[23] * arg0[25]) + (x116 * x124));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x126 = (Val(1) - arg0[16]);
   Val x127 = ((Val(1) - x125) * x126);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x128 = (Val(1) - arg0[26]);
   Val x129 = ((arg0[24] * arg0[26]) + (x120 * x128));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x130 = ((Val(1) - x129) * x98);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x130 = ((Val(1) - x129) * x98);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x131 = (Val(1) - arg0[27]);
   Val x132 = ((arg0[25] * arg0[27]) + (x124 * x131));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x133 = ((Val(1) - x132) * x103);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x133 = ((Val(1) - x132) * x103);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x134 = (Val(1) - arg0[28]);
   Val x135 = ((arg0[26] * arg0[28]) + (x128 * x134));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x136 = ((Val(1) - x135) * x99);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x136 = ((Val(1) - x135) * x99);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x137 = (Val(1) - arg0[29]);
   Val x138 = ((arg0[27] * arg0[29]) + (x131 * x137));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x139 = ((Val(1) - x138) * x104);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x139 = ((Val(1) - x138) * x104);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x140 = (Val(1) - arg0[30]);
   Val x141 = ((arg0[28] * arg0[30]) + (x134 * x140));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x142 = ((Val(1) - x141) * x108);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x142 = ((Val(1) - x141) * x108);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x143 = (Val(1) - arg0[31]);
   Val x144 = ((arg0[29] * arg0[31]) + (x137 * x143));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x145 = ((Val(1) - x144) * x112);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x145 = ((Val(1) - x144) * x112);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x146 = (Val(1) - arg0[0]);
   Val x147 = ((arg0[30] * arg0[0]) + (x140 * x146));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x148 = ((Val(1) - x147) * x116);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x148 = ((Val(1) - x147) * x116);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x149 = (Val(1) - arg0[1]);
   Val x150 = ((arg0[31] * arg0[1]) + (x143 * x149));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x151 = ((Val(1) - x150) * x120);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x151 = ((Val(1) - x150) * x120);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x152 = (Val(1) - arg0[2]);
   Val x153 = ((arg0[0] * arg0[2]) + (x146 * x152));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x154 = ((Val(1) - x153) * x124);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x154 = ((Val(1) - x153) * x124);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x155 = (Val(1) - arg0[3]);
   Val x156 = ((arg0[1] * arg0[3]) + (x149 * x155));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x157 = ((Val(1) - x156) * x128);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x157 = ((Val(1) - x156) * x128);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x158 = (Val(1) - arg0[4]);
   Val x159 = ((arg0[2] * arg0[4]) + (x152 * x158));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x160 = ((Val(1) - x159) * x131);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x160 = ((Val(1) - x159) * x131);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x161 = (Val(1) - arg0[5]);
   Val x162 = ((arg0[3] * arg0[5]) + (x155 * x161));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x163 = ((Val(1) - x162) * x134);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x163 = ((Val(1) - x162) * x134);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x164 = (Val(1) - arg0[6]);
   Val x165 = ((arg0[4] * arg0[6]) + (x158 * x164));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x166 = ((Val(1) - x165) * x137);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x166 = ((Val(1) - x165) * x137);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x167 = (Val(1) - arg0[7]);
   Val x168 = ((arg0[5] * arg0[7]) + (x161 * x167));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x169 = ((Val(1) - x168) * x140);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x169 = ((Val(1) - x168) * x140);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x170 = (Val(1) - arg0[8]);
   Val x171 = ((arg0[6] * arg0[8]) + (x164 * x170));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x172 = ((Val(1) - x171) * x143);
   Val x173 = (Val(1) - arg0[9]);
   Val x174 = ((arg0[7] * arg0[9]) + (x167 * x173));
@@ -601,7 +594,7 @@ TwoShortsStruct execComputeW(ExecContext& ctx,
   Val x181 = ((arg0[14] * arg0[16]) + (x118 * x126));
   Val x182 = ((arg0[15] * arg0[17]) + (x122 * x98));
   Val x183 = ((arg0[16] * arg0[18]) + (x126 * x103));
-  // computeW(zirgen/circuit/keccak/sha256_for_keccak.zir:256)
+  // computeW(zirgen/circuit/keccak/sha256_for_keccak.zir:255)
   Val32Array x184 = Val32Array{((x7 * arg2[3]) + x9),    ((x12 * arg2[4]) + x14),
                                ((x17 * arg2[5]) + x19),  ((x22 * arg2[6]) + x24),
                                ((x27 * arg2[7]) + x28),  ((x31 * arg2[8]) + x32),
@@ -618,9 +611,9 @@ TwoShortsStruct execComputeW(ExecContext& ctx,
                                ((x89 * arg2[29]) + x90), ((x91 * arg2[30]) + x92),
                                ((x93 * arg2[31]) + x94), (Val(1) - x95),
                                (Val(1) - x96),           (Val(1) - x97)};
-  // computeW(zirgen/circuit/keccak/sha256_for_keccak.zir:260)
+  // computeW(zirgen/circuit/keccak/sha256_for_keccak.zir:259)
   Pack2Struct x185 = execPack2(ctx, x184, LAYOUT_LOOKUP(layout4, packS0));
-  // computeW(zirgen/circuit/keccak/sha256_for_keccak.zir:258)
+  // computeW(zirgen/circuit/keccak/sha256_for_keccak.zir:257)
   Val32Array x186 = Val32Array{((x100 * arg0[10]) + x102),
                                ((x105 * arg0[11]) + x107),
                                ((x109 * arg0[12]) + x111),
@@ -653,23 +646,23 @@ TwoShortsStruct execComputeW(ExecContext& ctx,
                                (Val(1) - x181),
                                (Val(1) - x182),
                                (Val(1) - x183)};
-  // computeW(zirgen/circuit/keccak/sha256_for_keccak.zir:261)
+  // computeW(zirgen/circuit/keccak/sha256_for_keccak.zir:260)
   Pack2Struct x187 = execPack2(ctx, x186, LAYOUT_LOOKUP(layout4, packS1));
-  // computeW(zirgen/circuit/keccak/sha256_for_keccak.zir:262)
+  // computeW(zirgen/circuit/keccak/sha256_for_keccak.zir:261)
   Pack2Struct x188 = execPack2(ctx, arg3, LAYOUT_LOOKUP(layout4, _0));
   Pack2Struct x189 = execPack2(ctx, arg1, LAYOUT_LOOKUP(layout4, _1));
   TwoShortsStruct x190 = x189._super;
-  // computeW(zirgen/circuit/keccak/sha256_for_keccak.zir:261)
-  TwoShortsStruct x191 = x187._super;
   // computeW(zirgen/circuit/keccak/sha256_for_keccak.zir:260)
+  TwoShortsStruct x191 = x187._super;
+  // computeW(zirgen/circuit/keccak/sha256_for_keccak.zir:259)
   TwoShortsStruct x192 = x185._super;
-  // add(zirgen/circuit/keccak/sha256_for_keccak.zir:251)
-  // computeW(zirgen/circuit/keccak/sha256_for_keccak.zir:262)
+  // add(zirgen/circuit/keccak/sha256_for_keccak.zir:250)
+  // computeW(zirgen/circuit/keccak/sha256_for_keccak.zir:261)
   Val x193 = (x192.low + (x190.low + x191.low));
   Val x194 = (x192.high + (x190.high + x191.high));
   TwoShortsStruct x195 = x188._super;
-  // TwoShorts(zirgen/circuit/keccak/sha256_for_keccak.zir:205)
-  // add(zirgen/circuit/keccak/sha256_for_keccak.zir:251)
+  // TwoShorts(zirgen/circuit/keccak/sha256_for_keccak.zir:204)
+  // add(zirgen/circuit/keccak/sha256_for_keccak.zir:250)
   TwoShortsStruct x196 = TwoShortsStruct{.low = (x195.low + x193), .high = (x195.high + x194)};
   return x196;
 }
@@ -685,330 +678,330 @@ ComputeAEStruct execComputeAE(ExecContext& ctx,
                               Val32Array arg8,
                               TwoShortsStruct arg9,
                               BoundLayout<ComputeAELayout> layout10) {
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
-  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:269)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
+  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:268)
   Val x11 = (Val(1) - arg0[2]);
   Val x12 = (Val(1) - arg0[13]);
   Val x13 = ((arg0[2] * arg0[13]) + (x11 * x12));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x14 = (Val(1) - arg0[22]);
   Val x15 = ((Val(1) - x13) * x14);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x16 = (Val(1) - arg0[3]);
   Val x17 = (Val(1) - arg0[14]);
   Val x18 = ((arg0[3] * arg0[14]) + (x16 * x17));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x19 = (Val(1) - arg0[23]);
   Val x20 = ((Val(1) - x18) * x19);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x21 = (Val(1) - arg0[4]);
   Val x22 = (Val(1) - arg0[15]);
   Val x23 = ((arg0[4] * arg0[15]) + (x21 * x22));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x24 = (Val(1) - arg0[24]);
   Val x25 = ((Val(1) - x23) * x24);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x26 = (Val(1) - arg0[5]);
   Val x27 = (Val(1) - arg0[16]);
   Val x28 = ((arg0[5] * arg0[16]) + (x26 * x27));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x29 = (Val(1) - arg0[25]);
   Val x30 = ((Val(1) - x28) * x29);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x31 = (Val(1) - arg0[6]);
   Val x32 = (Val(1) - arg0[17]);
   Val x33 = ((arg0[6] * arg0[17]) + (x31 * x32));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x34 = (Val(1) - arg0[26]);
   Val x35 = ((Val(1) - x33) * x34);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x36 = (Val(1) - arg0[7]);
   Val x37 = (Val(1) - arg0[18]);
   Val x38 = ((arg0[7] * arg0[18]) + (x36 * x37));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x39 = (Val(1) - arg0[27]);
   Val x40 = ((Val(1) - x38) * x39);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x41 = (Val(1) - arg0[8]);
   Val x42 = (Val(1) - arg0[19]);
   Val x43 = ((arg0[8] * arg0[19]) + (x41 * x42));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x44 = (Val(1) - arg0[28]);
   Val x45 = ((Val(1) - x43) * x44);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x46 = (Val(1) - arg0[9]);
   Val x47 = (Val(1) - arg0[20]);
   Val x48 = ((arg0[9] * arg0[20]) + (x46 * x47));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x49 = (Val(1) - arg0[29]);
   Val x50 = ((Val(1) - x48) * x49);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x51 = (Val(1) - arg0[10]);
   Val x52 = (Val(1) - arg0[21]);
   Val x53 = ((arg0[10] * arg0[21]) + (x51 * x52));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x54 = (Val(1) - arg0[30]);
   Val x55 = ((Val(1) - x53) * x54);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x56 = (Val(1) - arg0[11]);
   Val x57 = ((arg0[11] * arg0[22]) + (x56 * x14));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x58 = (Val(1) - arg0[31]);
   Val x59 = ((Val(1) - x57) * x58);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x60 = (Val(1) - arg0[12]);
   Val x61 = ((arg0[12] * arg0[23]) + (x60 * x19));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x62 = (Val(1) - arg0[0]);
   Val x63 = ((Val(1) - x61) * x62);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x64 = ((arg0[13] * arg0[24]) + (x12 * x24));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x65 = (Val(1) - arg0[1]);
   Val x66 = ((Val(1) - x64) * x65);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x67 = ((arg0[14] * arg0[25]) + (x17 * x29));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x68 = ((Val(1) - x67) * x11);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x69 = ((arg0[15] * arg0[26]) + (x22 * x34));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x70 = ((Val(1) - x69) * x16);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x71 = ((arg0[16] * arg0[27]) + (x27 * x39));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x72 = ((Val(1) - x71) * x21);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x73 = ((arg0[17] * arg0[28]) + (x32 * x44));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x74 = ((Val(1) - x73) * x26);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x75 = ((arg0[18] * arg0[29]) + (x37 * x49));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x76 = ((Val(1) - x75) * x31);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x77 = ((arg0[19] * arg0[30]) + (x42 * x54));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x78 = ((Val(1) - x77) * x36);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x79 = ((arg0[20] * arg0[31]) + (x47 * x58));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x80 = ((Val(1) - x79) * x41);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x81 = ((arg0[21] * arg0[0]) + (x52 * x62));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x82 = ((Val(1) - x81) * x46);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x83 = ((arg0[22] * arg0[1]) + (x14 * x65));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x84 = ((Val(1) - x83) * x51);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x85 = ((arg0[23] * arg0[2]) + (x19 * x11));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x86 = ((Val(1) - x85) * x56);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x87 = ((arg0[24] * arg0[3]) + (x24 * x16));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x88 = ((Val(1) - x87) * x60);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x89 = ((arg0[25] * arg0[4]) + (x29 * x21));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x90 = ((Val(1) - x89) * x12);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x91 = ((arg0[26] * arg0[5]) + (x34 * x26));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x92 = ((Val(1) - x91) * x17);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x93 = ((arg0[27] * arg0[6]) + (x39 * x31));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x94 = ((Val(1) - x93) * x22);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x95 = ((arg0[28] * arg0[7]) + (x44 * x36));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x96 = ((Val(1) - x95) * x27);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x97 = ((arg0[29] * arg0[8]) + (x49 * x41));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x98 = ((Val(1) - x97) * x32);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x99 = ((arg0[30] * arg0[9]) + (x54 * x46));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x100 = ((Val(1) - x99) * x37);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x101 = ((arg0[31] * arg0[10]) + (x58 * x51));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x102 = ((Val(1) - x101) * x42);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x103 = ((arg0[0] * arg0[11]) + (x62 * x56));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x104 = ((Val(1) - x103) * x47);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x105 = ((arg0[1] * arg0[12]) + (x65 * x60));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x106 = ((Val(1) - x105) * x52);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
-  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:271)
+  Val x106 = ((Val(1) - x105) * x52);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
+  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:270)
   Val x107 = (Val(1) - arg4[6]);
   Val x108 = (Val(1) - arg4[11]);
   Val x109 = ((arg4[6] * arg4[11]) + (x107 * x108));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x110 = (Val(1) - arg4[25]);
   Val x111 = ((Val(1) - x109) * x110);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x112 = (Val(1) - arg4[7]);
   Val x113 = (Val(1) - arg4[12]);
   Val x114 = ((arg4[7] * arg4[12]) + (x112 * x113));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x115 = (Val(1) - arg4[26]);
   Val x116 = ((Val(1) - x114) * x115);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x117 = (Val(1) - arg4[8]);
   Val x118 = (Val(1) - arg4[13]);
   Val x119 = ((arg4[8] * arg4[13]) + (x117 * x118));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x120 = (Val(1) - arg4[27]);
   Val x121 = ((Val(1) - x119) * x120);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x122 = (Val(1) - arg4[9]);
   Val x123 = (Val(1) - arg4[14]);
   Val x124 = ((arg4[9] * arg4[14]) + (x122 * x123));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x125 = (Val(1) - arg4[28]);
   Val x126 = ((Val(1) - x124) * x125);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x127 = (Val(1) - arg4[10]);
   Val x128 = (Val(1) - arg4[15]);
   Val x129 = ((arg4[10] * arg4[15]) + (x127 * x128));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x130 = (Val(1) - arg4[29]);
   Val x131 = ((Val(1) - x129) * x130);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x132 = (Val(1) - arg4[16]);
   Val x133 = ((arg4[11] * arg4[16]) + (x108 * x132));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x134 = (Val(1) - arg4[30]);
   Val x135 = ((Val(1) - x133) * x134);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x136 = (Val(1) - arg4[17]);
   Val x137 = ((arg4[12] * arg4[17]) + (x113 * x136));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x138 = (Val(1) - arg4[31]);
   Val x139 = ((Val(1) - x137) * x138);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x140 = (Val(1) - arg4[18]);
   Val x141 = ((arg4[13] * arg4[18]) + (x118 * x140));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x142 = (Val(1) - arg4[0]);
   Val x143 = ((Val(1) - x141) * x142);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x144 = (Val(1) - arg4[19]);
   Val x145 = ((arg4[14] * arg4[19]) + (x123 * x144));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x146 = (Val(1) - arg4[1]);
   Val x147 = ((Val(1) - x145) * x146);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x148 = (Val(1) - arg4[20]);
   Val x149 = ((arg4[15] * arg4[20]) + (x128 * x148));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x150 = (Val(1) - arg4[2]);
   Val x151 = ((Val(1) - x149) * x150);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x152 = (Val(1) - arg4[21]);
   Val x153 = ((arg4[16] * arg4[21]) + (x132 * x152));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x154 = (Val(1) - arg4[3]);
   Val x155 = ((Val(1) - x153) * x154);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x156 = (Val(1) - arg4[22]);
   Val x157 = ((arg4[17] * arg4[22]) + (x136 * x156));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x158 = (Val(1) - arg4[4]);
   Val x159 = ((Val(1) - x157) * x158);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x160 = (Val(1) - arg4[23]);
   Val x161 = ((arg4[18] * arg4[23]) + (x140 * x160));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x162 = (Val(1) - arg4[5]);
   Val x163 = ((Val(1) - x161) * x162);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x164 = (Val(1) - arg4[24]);
   Val x165 = ((arg4[19] * arg4[24]) + (x144 * x164));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x166 = ((Val(1) - x165) * x107);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x167 = ((arg4[20] * arg4[25]) + (x148 * x110));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x168 = ((Val(1) - x167) * x112);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x169 = ((arg4[21] * arg4[26]) + (x152 * x115));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x170 = ((Val(1) - x169) * x117);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x171 = ((arg4[22] * arg4[27]) + (x156 * x120));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x172 = ((Val(1) - x171) * x122);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x173 = ((arg4[23] * arg4[28]) + (x160 * x125));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x174 = ((Val(1) - x173) * x127);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x175 = ((arg4[24] * arg4[29]) + (x164 * x130));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x176 = ((Val(1) - x175) * x108);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x177 = ((arg4[25] * arg4[30]) + (x110 * x134));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x178 = ((Val(1) - x177) * x113);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x179 = ((arg4[26] * arg4[31]) + (x115 * x138));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x180 = ((Val(1) - x179) * x118);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x181 = ((arg4[27] * arg4[0]) + (x120 * x142));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x182 = ((Val(1) - x181) * x123);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x183 = ((arg4[28] * arg4[1]) + (x125 * x146));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x184 = ((Val(1) - x183) * x128);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x185 = ((arg4[29] * arg4[2]) + (x130 * x150));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x186 = ((Val(1) - x185) * x132);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x187 = ((arg4[30] * arg4[3]) + (x134 * x154));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x188 = ((Val(1) - x187) * x136);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x189 = ((arg4[31] * arg4[4]) + (x138 * x158));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x190 = ((Val(1) - x189) * x140);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x191 = ((arg4[0] * arg4[5]) + (x142 * x162));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x192 = ((Val(1) - x191) * x144);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x193 = ((arg4[1] * arg4[6]) + (x146 * x107));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x194 = ((Val(1) - x193) * x148);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x195 = ((arg4[2] * arg4[7]) + (x150 * x112));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x196 = ((Val(1) - x195) * x152);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x197 = ((arg4[3] * arg4[8]) + (x154 * x117));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x198 = ((Val(1) - x197) * x156);
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x199 = ((arg4[4] * arg4[9]) + (x158 * x122));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
-  Val x200 = ((Val(1) - x199) * x160);
   // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
+  Val x200 = ((Val(1) - x199) * x160);
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:226)
   Val x201 = ((arg4[5] * arg4[10]) + (x162 * x127));
-  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:228)
+  // xor3a(zirgen/circuit/keccak/sha256_for_keccak.zir:227)
   Val x202 = ((Val(1) - x201) * x164);
-  // ch(zirgen/circuit/keccak/sha256_for_keccak.zir:241)
-  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:273)
+  // ch(zirgen/circuit/keccak/sha256_for_keccak.zir:240)
+  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:272)
   Val x203 = ((arg4[0] * arg5[0]) + (x142 * arg6[0]));
   Val x204 = ((arg4[1] * arg5[1]) + (x146 * arg6[1]));
   Val x205 = ((arg4[2] * arg5[2]) + (x150 * arg6[2]));
@@ -1047,10 +1040,10 @@ ComputeAEStruct execComputeAE(ExecContext& ctx,
                            x214, x215, x216, x217, x218, x219, x220, x221, x222, x223, x224,
                            x225, x226, x227, x228, x229, x230, x231, x232, x233, x234},
                 LAYOUT_LOOKUP(layout10, packCh));
-  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:274)
+  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:273)
   Pack2Struct x236 = execPack2(ctx, arg8, LAYOUT_LOOKUP(layout10, _0));
   Pack2Struct x237 = execPack2(ctx, arg7, LAYOUT_LOOKUP(layout10, _1));
-  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:271)
+  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:270)
   Val32Array x238 =
       Val32Array{((x109 * arg4[25]) + x111), ((x114 * arg4[26]) + x116), ((x119 * arg4[27]) + x121),
                  ((x124 * arg4[28]) + x126), ((x129 * arg4[29]) + x131), ((x133 * arg4[30]) + x135),
@@ -1063,179 +1056,179 @@ ComputeAEStruct execComputeAE(ExecContext& ctx,
                  ((x187 * arg4[17]) + x188), ((x189 * arg4[18]) + x190), ((x191 * arg4[19]) + x192),
                  ((x193 * arg4[20]) + x194), ((x195 * arg4[21]) + x196), ((x197 * arg4[22]) + x198),
                  ((x199 * arg4[23]) + x200), ((x201 * arg4[24]) + x202)};
-  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:274)
-  Pack2Struct x239 = execPack2(ctx, x238, LAYOUT_LOOKUP(layout10, _2));
   // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:273)
+  Pack2Struct x239 = execPack2(ctx, x238, LAYOUT_LOOKUP(layout10, _2));
+  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:272)
   TwoShortsStruct x240 = x235._super;
-  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:274)
+  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:273)
   TwoShortsStruct x241 = x239._super;
   TwoShortsStruct x242 = x237._super;
-  // add(zirgen/circuit/keccak/sha256_for_keccak.zir:251)
+  // add(zirgen/circuit/keccak/sha256_for_keccak.zir:250)
   Val x243 = (x242.low + (x240.low + x241.low));
   Val x244 = (x242.high + (x240.high + x241.high));
   TwoShortsStruct x245 = x236._super;
-  // add(zirgen/circuit/keccak/sha256_for_keccak.zir:251)
+  // add(zirgen/circuit/keccak/sha256_for_keccak.zir:250)
   Val x246 = (x245.low + (arg9.low + x243));
   Val x247 = (x245.high + (arg9.high + x244));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
-  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:275)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
+  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:274)
   Val x248 = (arg0[0] * arg1[0]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x249 = (arg0[0] * (Val(1) - arg1[0]));
   Val x250 = (((x248 * (Val(1) - arg2[0])) + (x249 * arg2[0])) + ((x62 * arg1[0]) * arg2[0]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x251 = (arg0[1] * arg1[1]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x252 = (arg0[1] * (Val(1) - arg1[1]));
   Val x253 = (((x251 * (Val(1) - arg2[1])) + (x252 * arg2[1])) + ((x65 * arg1[1]) * arg2[1]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x254 = (arg0[2] * arg1[2]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x255 = (arg0[2] * (Val(1) - arg1[2]));
   Val x256 = (((x254 * (Val(1) - arg2[2])) + (x255 * arg2[2])) + ((x11 * arg1[2]) * arg2[2]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x257 = (arg0[3] * arg1[3]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x258 = (arg0[3] * (Val(1) - arg1[3]));
   Val x259 = (((x257 * (Val(1) - arg2[3])) + (x258 * arg2[3])) + ((x16 * arg1[3]) * arg2[3]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x260 = (arg0[4] * arg1[4]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x261 = (arg0[4] * (Val(1) - arg1[4]));
   Val x262 = (((x260 * (Val(1) - arg2[4])) + (x261 * arg2[4])) + ((x21 * arg1[4]) * arg2[4]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x263 = (arg0[5] * arg1[5]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x264 = (arg0[5] * (Val(1) - arg1[5]));
   Val x265 = (((x263 * (Val(1) - arg2[5])) + (x264 * arg2[5])) + ((x26 * arg1[5]) * arg2[5]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x266 = (arg0[6] * arg1[6]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x267 = (arg0[6] * (Val(1) - arg1[6]));
   Val x268 = (((x266 * (Val(1) - arg2[6])) + (x267 * arg2[6])) + ((x31 * arg1[6]) * arg2[6]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x269 = (arg0[7] * arg1[7]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x270 = (arg0[7] * (Val(1) - arg1[7]));
   Val x271 = (((x269 * (Val(1) - arg2[7])) + (x270 * arg2[7])) + ((x36 * arg1[7]) * arg2[7]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x272 = (arg0[8] * arg1[8]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x273 = (arg0[8] * (Val(1) - arg1[8]));
   Val x274 = (((x272 * (Val(1) - arg2[8])) + (x273 * arg2[8])) + ((x41 * arg1[8]) * arg2[8]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x275 = (arg0[9] * arg1[9]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x276 = (arg0[9] * (Val(1) - arg1[9]));
   Val x277 = (((x275 * (Val(1) - arg2[9])) + (x276 * arg2[9])) + ((x46 * arg1[9]) * arg2[9]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x278 = (arg0[10] * arg1[10]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x279 = (arg0[10] * (Val(1) - arg1[10]));
   Val x280 = (((x278 * (Val(1) - arg2[10])) + (x279 * arg2[10])) + ((x51 * arg1[10]) * arg2[10]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x281 = (arg0[11] * arg1[11]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x282 = (arg0[11] * (Val(1) - arg1[11]));
   Val x283 = (((x281 * (Val(1) - arg2[11])) + (x282 * arg2[11])) + ((x56 * arg1[11]) * arg2[11]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x284 = (arg0[12] * arg1[12]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x285 = (arg0[12] * (Val(1) - arg1[12]));
   Val x286 = (((x284 * (Val(1) - arg2[12])) + (x285 * arg2[12])) + ((x60 * arg1[12]) * arg2[12]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x287 = (arg0[13] * arg1[13]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x288 = (arg0[13] * (Val(1) - arg1[13]));
   Val x289 = (((x287 * (Val(1) - arg2[13])) + (x288 * arg2[13])) + ((x12 * arg1[13]) * arg2[13]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x290 = (arg0[14] * arg1[14]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x291 = (arg0[14] * (Val(1) - arg1[14]));
   Val x292 = (((x290 * (Val(1) - arg2[14])) + (x291 * arg2[14])) + ((x17 * arg1[14]) * arg2[14]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x293 = (arg0[15] * arg1[15]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x294 = (arg0[15] * (Val(1) - arg1[15]));
   Val x295 = (((x293 * (Val(1) - arg2[15])) + (x294 * arg2[15])) + ((x22 * arg1[15]) * arg2[15]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x296 = (arg0[16] * arg1[16]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x297 = (arg0[16] * (Val(1) - arg1[16]));
   Val x298 = (((x296 * (Val(1) - arg2[16])) + (x297 * arg2[16])) + ((x27 * arg1[16]) * arg2[16]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x299 = (arg0[17] * arg1[17]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x300 = (arg0[17] * (Val(1) - arg1[17]));
   Val x301 = (((x299 * (Val(1) - arg2[17])) + (x300 * arg2[17])) + ((x32 * arg1[17]) * arg2[17]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x302 = (arg0[18] * arg1[18]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x303 = (arg0[18] * (Val(1) - arg1[18]));
   Val x304 = (((x302 * (Val(1) - arg2[18])) + (x303 * arg2[18])) + ((x37 * arg1[18]) * arg2[18]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x305 = (arg0[19] * arg1[19]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x306 = (arg0[19] * (Val(1) - arg1[19]));
   Val x307 = (((x305 * (Val(1) - arg2[19])) + (x306 * arg2[19])) + ((x42 * arg1[19]) * arg2[19]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x308 = (arg0[20] * arg1[20]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x309 = (arg0[20] * (Val(1) - arg1[20]));
   Val x310 = (((x308 * (Val(1) - arg2[20])) + (x309 * arg2[20])) + ((x47 * arg1[20]) * arg2[20]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x311 = (arg0[21] * arg1[21]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x312 = (arg0[21] * (Val(1) - arg1[21]));
   Val x313 = (((x311 * (Val(1) - arg2[21])) + (x312 * arg2[21])) + ((x52 * arg1[21]) * arg2[21]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x314 = (arg0[22] * arg1[22]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x315 = (arg0[22] * (Val(1) - arg1[22]));
   Val x316 = (((x314 * (Val(1) - arg2[22])) + (x315 * arg2[22])) + ((x14 * arg1[22]) * arg2[22]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x317 = (arg0[23] * arg1[23]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x318 = (arg0[23] * (Val(1) - arg1[23]));
   Val x319 = (((x317 * (Val(1) - arg2[23])) + (x318 * arg2[23])) + ((x19 * arg1[23]) * arg2[23]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x320 = (arg0[24] * arg1[24]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x321 = (arg0[24] * (Val(1) - arg1[24]));
   Val x322 = (((x320 * (Val(1) - arg2[24])) + (x321 * arg2[24])) + ((x24 * arg1[24]) * arg2[24]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x323 = (arg0[25] * arg1[25]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x324 = (arg0[25] * (Val(1) - arg1[25]));
   Val x325 = (((x323 * (Val(1) - arg2[25])) + (x324 * arg2[25])) + ((x29 * arg1[25]) * arg2[25]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x326 = (arg0[26] * arg1[26]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x327 = (arg0[26] * (Val(1) - arg1[26]));
   Val x328 = (((x326 * (Val(1) - arg2[26])) + (x327 * arg2[26])) + ((x34 * arg1[26]) * arg2[26]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x329 = (arg0[27] * arg1[27]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x330 = (arg0[27] * (Val(1) - arg1[27]));
   Val x331 = (((x329 * (Val(1) - arg2[27])) + (x330 * arg2[27])) + ((x39 * arg1[27]) * arg2[27]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x332 = (arg0[28] * arg1[28]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x333 = (arg0[28] * (Val(1) - arg1[28]));
   Val x334 = (((x332 * (Val(1) - arg2[28])) + (x333 * arg2[28])) + ((x44 * arg1[28]) * arg2[28]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x335 = (arg0[29] * arg1[29]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x336 = (arg0[29] * (Val(1) - arg1[29]));
   Val x337 = (((x335 * (Val(1) - arg2[29])) + (x336 * arg2[29])) + ((x49 * arg1[29]) * arg2[29]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x338 = (arg0[30] * arg1[30]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x339 = (arg0[30] * (Val(1) - arg1[30]));
   Val x340 = (((x338 * (Val(1) - arg2[30])) + (x339 * arg2[30])) + ((x54 * arg1[30]) * arg2[30]));
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:233)
   Val x341 = (arg0[31] * arg1[31]);
-  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:235)
+  // maj3(zirgen/circuit/keccak/sha256_for_keccak.zir:234)
   Val x342 = (arg0[31] * (Val(1) - arg1[31]));
   Val x343 = (((x341 * (Val(1) - arg2[31])) + (x342 * arg2[31])) + ((x58 * arg1[31]) * arg2[31]));
   Pack2Struct x344 = execPack2(
@@ -1252,7 +1245,7 @@ ComputeAEStruct execComputeAE(ExecContext& ctx,
                  (x331 + (x329 * arg2[27])), (x334 + (x332 * arg2[28])), (x337 + (x335 * arg2[29])),
                  (x340 + (x338 * arg2[30])), (x343 + (x341 * arg2[31]))},
       LAYOUT_LOOKUP(layout10, packMaj));
-  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:269)
+  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:268)
   Val32Array x345 =
       Val32Array{((x13 * arg0[22]) + x15),   ((x18 * arg0[23]) + x20),  ((x23 * arg0[24]) + x25),
                  ((x28 * arg0[25]) + x30),   ((x33 * arg0[26]) + x35),  ((x38 * arg0[27]) + x40),
@@ -1265,16 +1258,16 @@ ComputeAEStruct execComputeAE(ExecContext& ctx,
                  ((x91 * arg0[14]) + x92),   ((x93 * arg0[15]) + x94),  ((x95 * arg0[16]) + x96),
                  ((x97 * arg0[17]) + x98),   ((x99 * arg0[18]) + x100), ((x101 * arg0[19]) + x102),
                  ((x103 * arg0[20]) + x104), ((x105 * arg0[21]) + x106)};
-  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:276)
-  Pack2Struct x346 = execPack2(ctx, x345, LAYOUT_LOOKUP(layout10, _3));
   // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:275)
+  Pack2Struct x346 = execPack2(ctx, x345, LAYOUT_LOOKUP(layout10, _3));
+  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:274)
   TwoShortsStruct x347 = x344._super;
-  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:276)
+  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:275)
   TwoShortsStruct x348 = x346._super;
-  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:277)
+  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:276)
   Pack2Struct x349 = execPack2(ctx, arg3, LAYOUT_LOOKUP(layout10, _4));
   TwoShortsStruct x350 = x349._super;
-  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:265)
+  // computeAE(zirgen/circuit/keccak/sha256_for_keccak.zir:264)
   ComputeAEStruct x351 = ComputeAEStruct{
       .aOut = TwoShortsStruct{.low = (x246 + (x347.low + x348.low)),
                               .high = (x247 + (x347.high + x348.high))},
@@ -1394,7 +1387,7 @@ exec_ToBits_20_(ExecContext& ctx, Val arg0, BoundLayout<ToBits_20_Layout> layout
 }
 Concatenate_NondetReg__16__16_Struct execUnpackWithCarry(
     ExecContext& ctx, Val arg0, Val arg1, BoundLayout<UnpackWithCarryLayout> layout2) {
-  // unpack_with_carry(zirgen/circuit/keccak/sha256_for_keccak.zir:281)
+  // unpack_with_carry(zirgen/circuit/keccak/sha256_for_keccak.zir:280)
   ToBits_19_Struct x3 = exec_ToBits_19_(ctx, arg0, LAYOUT_LOOKUP(layout2, lowBits));
   NondetRegStruct19Array x4 = x3._super;
   Val x5 = x4[0]._super;
@@ -1417,17 +1410,17 @@ Concatenate_NondetReg__16__16_Struct execUnpackWithCarry(
   Val x22 = x4[17]._super;
   Val x23 = x4[18]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // unpack_with_carry(zirgen/circuit/keccak/sha256_for_keccak.zir:282)
+  // unpack_with_carry(zirgen/circuit/keccak/sha256_for_keccak.zir:281)
   Val x24 = (((x5 + (x6 * Val(2))) + (x7 * Val(4))) + (x8 * Val(8)));
   Val x25 = (((x24 + (x9 * Val(16))) + (x10 * Val(32))) + (x11 * Val(64)));
   Val x26 = (((x25 + (x12 * Val(128))) + (x13 * Val(256))) + (x14 * Val(512)));
   Val x27 = (((x26 + (x15 * Val(1024))) + (x16 * Val(2048))) + (x17 * Val(4096)));
   Val x28 = (((x27 + (x18 * Val(8192))) + (x19 * Val(16384))) + (x20 * Val(32768)));
   Val x29 = (((x28 + (x21 * Val(65536))) + (x22 * Val(131072))) + (x23 * Val(262144)));
-  EQZ((x29 - arg0), "unpack_with_carry(zirgen/circuit/keccak/sha256_for_keccak.zir:282)");
-  // unpack_with_carry(zirgen/circuit/keccak/sha256_for_keccak.zir:284)
+  EQZ((x29 - arg0), "unpack_with_carry(zirgen/circuit/keccak/sha256_for_keccak.zir:281)");
+  // unpack_with_carry(zirgen/circuit/keccak/sha256_for_keccak.zir:283)
   Val x30 = (arg1 + ((x21 + (x22 * Val(2))) + (x23 * Val(4))));
-  // unpack_with_carry(zirgen/circuit/keccak/sha256_for_keccak.zir:285)
+  // unpack_with_carry(zirgen/circuit/keccak/sha256_for_keccak.zir:284)
   ToBits_20_Struct x31 = exec_ToBits_20_(ctx, x30, LAYOUT_LOOKUP(layout2, highBits));
   NondetRegStruct20Array x32 = x31._super;
   Val x33 = x32[0]._super;
@@ -1447,7 +1440,7 @@ Concatenate_NondetReg__16__16_Struct execUnpackWithCarry(
   Val x47 = x32[14]._super;
   Val x48 = x32[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // unpack_with_carry(zirgen/circuit/keccak/sha256_for_keccak.zir:286)
+  // unpack_with_carry(zirgen/circuit/keccak/sha256_for_keccak.zir:285)
   Val x49 = (x32[16]._super * Val(65536));
   Val x50 = (x32[17]._super * Val(131072));
   Val x51 = (x32[18]._super * Val(262144));
@@ -1458,9 +1451,9 @@ Concatenate_NondetReg__16__16_Struct execUnpackWithCarry(
   Val x56 = (((x55 + (x43 * Val(1024))) + (x44 * Val(2048))) + (x45 * Val(4096)));
   Val x57 = (((x56 + (x46 * Val(8192))) + (x47 * Val(16384))) + (x48 * Val(32768)));
   Val x58 = (((x57 + x49) + x50) + x51);
-  EQZ(((x58 + x52) - x30), "unpack_with_carry(zirgen/circuit/keccak/sha256_for_keccak.zir:286)");
+  EQZ(((x58 + x52) - x30), "unpack_with_carry(zirgen/circuit/keccak/sha256_for_keccak.zir:285)");
   // Concatenate(zirgen/circuit/keccak/sha256_for_keccak.zir:88)
-  // unpack_with_carry(zirgen/circuit/keccak/sha256_for_keccak.zir:289)
+  // unpack_with_carry(zirgen/circuit/keccak/sha256_for_keccak.zir:288)
   Concatenate_NondetReg__16__16_Struct x59 = Concatenate_NondetReg__16__16_Struct{
       ._super = Concatenate_NondetReg__16__16__Super_SuperStruct32Array{
           Concatenate_NondetReg__16__16__Super_SuperStruct{._super = x5},
@@ -1620,54 +1613,54 @@ RetTupleStruct execSha256load_0_(ExecContext& ctx,
                                  RetTupleStruct arg0,
                                  BoundLayout<RetTupleLayout> arg1,
                                  BoundLayout<Sha256load_0_Layout> layout2) {
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<Sha256load_0_ValsLayout> x3 = LAYOUT_LOOKUP(layout2, vals);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   BoundLayout<Sha256load_0__SuperLayout> x4 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   RetTupleStruct x5 = back_RetTuple(ctx, 1, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
-  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
-  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:296)
-  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
   // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
+  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
+  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x9 = x5.midx._super;
   Val x10 = x5.blk._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:298)
   Val x11 = ((x9 + Val(1)) - x10);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
   NondetRegStruct x12 = exec_NondetReg(ctx, inv(x11), LAYOUT_LOOKUP(layout2, invWithin));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)
-  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x13 = x5.rnd._super;
   NondetRegStruct24Array x14 = x5.arrD;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<NondetRegLayout> x15 =
       LAYOUT_LOOKUP(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm1), _extra0), count);
   BoundLayout<Reg> x16 = LAYOUT_LOOKUP(x15, _super);
   Val6Array x17;
   if (to_size_t((Val(1) - x13))) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
     ReadMemoryStruct x18 = exec_ReadMemory(ctx, x10, LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm0), mem));
     NondetRegStruct4Array x19 = x18._super;
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:305)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
     Val6Array x20 =
         Val6Array{x19[0]._super, x19[1]._super, x19[2]._super, x19[3]._super, Val(1), x10};
     x17 = x20;
   } else if (to_size_t(x13)) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:307)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:306)
     Val6Array x21 = Val6Array{x14[0]._super, x14[1]._super, Val(0), Val(0), Val(0), (x10 + Val(1))};
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
     STORE(x16, Val(0));
-    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)");
+    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)");
     x17 = x21;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:309)
   ToBits_16_Struct x22 = exec_ToBits_16_(ctx, x17[0], LAYOUT_LOOKUP(layout2, highW));
   NondetRegStruct16Array x23 = x22._super;
   Val x24 = x23[0]._super;
@@ -1687,14 +1680,14 @@ RetTupleStruct execSha256load_0_(ExecContext& ctx,
   Val x38 = x23[14]._super;
   Val x39 = x23[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
   Val x40 = (((x24 + (x25 * Val(2))) + (x26 * Val(4))) + (x27 * Val(8)));
   Val x41 = (((x40 + (x28 * Val(16))) + (x29 * Val(32))) + (x30 * Val(64)));
   Val x42 = (((x41 + (x31 * Val(128))) + (x32 * Val(256))) + (x33 * Val(512)));
   Val x43 = (((x42 + (x34 * Val(1024))) + (x35 * Val(2048))) + (x36 * Val(4096)));
   Val x44 = (((x43 + (x37 * Val(8192))) + (x38 * Val(16384))) + (x39 * Val(32768)));
-  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
+  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:312)
   ToBits_16_Struct x45 = exec_ToBits_16_(ctx, x17[1], LAYOUT_LOOKUP(layout2, lowW));
   NondetRegStruct16Array x46 = x45._super;
   Val x47 = x46[0]._super;
@@ -1714,15 +1707,15 @@ RetTupleStruct execSha256load_0_(ExecContext& ctx,
   Val x61 = x46[14]._super;
   Val x62 = x46[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
   Val x63 = (((x47 + (x48 * Val(2))) + (x49 * Val(4))) + (x50 * Val(8)));
   Val x64 = (((x63 + (x51 * Val(16))) + (x52 * Val(32))) + (x53 * Val(64)));
   Val x65 = (((x64 + (x54 * Val(128))) + (x55 * Val(256))) + (x56 * Val(512)));
   Val x66 = (((x65 + (x57 * Val(1024))) + (x58 * Val(2048))) + (x59 * Val(4096)));
   Val x67 = (((x66 + (x60 * Val(8192))) + (x61 * Val(16384))) + (x62 * Val(32768)));
-  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)");
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)");
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   NondetRegStruct22Array x68 = x5.arrA;
   NondetRegStruct22Array x69 = x5.arrB;
   NondetRegStruct22Array x70 = x6.arrA;
@@ -1731,13 +1724,13 @@ RetTupleStruct execSha256load_0_(ExecContext& ctx,
   NondetRegStruct22Array x73 = x7.arrB;
   NondetRegStruct22Array x74 = x8.arrA;
   NondetRegStruct22Array x75 = x8.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   NondetRegStruct22Array x76 = x5.arrC;
   NondetRegStruct22Array x77 = x6.arrC;
   NondetRegStruct22Array x78 = x7.arrC;
   NondetRegStruct22Array x79 = x8.arrC;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   Val32Array x80 =
       Val32Array{x68[0]._super,  x68[1]._super,  x68[2]._super,  x68[3]._super,  x68[4]._super,
                  x68[5]._super,  x68[6]._super,  x68[7]._super,  x68[8]._super,  x68[9]._super,
@@ -1770,7 +1763,7 @@ RetTupleStruct execSha256load_0_(ExecContext& ctx,
                  x74[20]._super, x74[21]._super, x75[0]._super,  x75[1]._super,  x75[2]._super,
                  x75[3]._super,  x75[4]._super,  x75[5]._super,  x75[6]._super,  x75[7]._super,
                  x75[8]._super,  x75[9]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   Val32Array x84 =
       Val32Array{x69[10]._super, x69[11]._super, x69[12]._super, x69[13]._super, x69[14]._super,
                  x69[15]._super, x69[16]._super, x69[17]._super, x69[18]._super, x69[19]._super,
@@ -1803,7 +1796,7 @@ RetTupleStruct execSha256load_0_(ExecContext& ctx,
                  x79[8]._super,  x79[9]._super,  x79[10]._super, x79[11]._super, x79[12]._super,
                  x79[13]._super, x79[14]._super, x79[15]._super, x79[16]._super, x79[17]._super,
                  x79[18]._super, x79[19]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   ComputeAEStruct x88 = execComputeAE(
       ctx,
       x80,
@@ -1819,19 +1812,19 @@ RetTupleStruct execSha256load_0_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(12184), .high = Val(17034)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x89 = x88.aOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16_Struct x90 =
       execUnpackWithCarry(ctx, x89.low, x89.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   TwoShortsStruct x91 = x88.eOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16_Struct x92 =
       execUnpackWithCarry(ctx, x91.low, x91.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x93 = x90._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x94 = x92._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:327)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:326)
   Val22Array x95 =
       Val22Array{x93[0]._super,  x93[1]._super,  x93[2]._super,  x93[3]._super,  x93[4]._super,
                  x93[5]._super,  x93[6]._super,  x93[7]._super,  x93[8]._super,  x93[9]._super,
@@ -1850,7 +1843,7 @@ RetTupleStruct execSha256load_0_(ExecContext& ctx,
                  x94[22]._super, x94[23]._super, x94[24]._super, x94[25]._super, x94[26]._super,
                  x94[27]._super, x94[28]._super, x94[29]._super, x94[30]._super, x94[31]._super,
                  Val(0),         Val(0)};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:330)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
   RetTupleStruct x98 =
       exec_RetTuple(ctx,
                     x95,
@@ -1870,7 +1863,7 @@ RetTupleStruct execSha256load_0_(ExecContext& ctx,
                     x17[5],
                     x9,
                     LAYOUT_LOOKUP(x4, arm0));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   RetTupleStruct x99 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x4, _super));
   return x99;
 }
@@ -1878,54 +1871,54 @@ RetTupleStruct execSha256load_1_(ExecContext& ctx,
                                  RetTupleStruct arg0,
                                  BoundLayout<RetTupleLayout> arg1,
                                  BoundLayout<Sha256load_1_Layout> layout2) {
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<Sha256load_1_ValsLayout> x3 = LAYOUT_LOOKUP(layout2, vals);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   BoundLayout<Sha256load_1__SuperLayout> x4 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   RetTupleStruct x5 = back_RetTuple(ctx, 1, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
-  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
-  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:296)
-  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
   // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
+  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
+  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x9 = x5.midx._super;
   Val x10 = x5.blk._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:298)
   Val x11 = ((x9 + Val(1)) - x10);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
   NondetRegStruct x12 = exec_NondetReg(ctx, inv(x11), LAYOUT_LOOKUP(layout2, invWithin));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)
-  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x13 = x5.rnd._super;
   NondetRegStruct24Array x14 = x5.arrD;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<NondetRegLayout> x15 =
       LAYOUT_LOOKUP(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm1), _extra0), count);
   BoundLayout<Reg> x16 = LAYOUT_LOOKUP(x15, _super);
   Val6Array x17;
   if (to_size_t((Val(1) - x13))) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
     ReadMemoryStruct x18 = exec_ReadMemory(ctx, x10, LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm0), mem));
     NondetRegStruct4Array x19 = x18._super;
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:305)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
     Val6Array x20 =
         Val6Array{x19[0]._super, x19[1]._super, x19[2]._super, x19[3]._super, Val(1), x10};
     x17 = x20;
   } else if (to_size_t(x13)) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:307)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:306)
     Val6Array x21 = Val6Array{x14[0]._super, x14[1]._super, Val(0), Val(0), Val(0), (x10 + Val(1))};
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
     STORE(x16, Val(0));
-    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)");
+    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)");
     x17 = x21;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:309)
   ToBits_16_Struct x22 = exec_ToBits_16_(ctx, x17[0], LAYOUT_LOOKUP(layout2, highW));
   NondetRegStruct16Array x23 = x22._super;
   Val x24 = x23[0]._super;
@@ -1945,14 +1938,14 @@ RetTupleStruct execSha256load_1_(ExecContext& ctx,
   Val x38 = x23[14]._super;
   Val x39 = x23[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
   Val x40 = (((x24 + (x25 * Val(2))) + (x26 * Val(4))) + (x27 * Val(8)));
   Val x41 = (((x40 + (x28 * Val(16))) + (x29 * Val(32))) + (x30 * Val(64)));
   Val x42 = (((x41 + (x31 * Val(128))) + (x32 * Val(256))) + (x33 * Val(512)));
   Val x43 = (((x42 + (x34 * Val(1024))) + (x35 * Val(2048))) + (x36 * Val(4096)));
   Val x44 = (((x43 + (x37 * Val(8192))) + (x38 * Val(16384))) + (x39 * Val(32768)));
-  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
+  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:312)
   ToBits_16_Struct x45 = exec_ToBits_16_(ctx, x17[1], LAYOUT_LOOKUP(layout2, lowW));
   NondetRegStruct16Array x46 = x45._super;
   Val x47 = x46[0]._super;
@@ -1972,15 +1965,15 @@ RetTupleStruct execSha256load_1_(ExecContext& ctx,
   Val x61 = x46[14]._super;
   Val x62 = x46[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
   Val x63 = (((x47 + (x48 * Val(2))) + (x49 * Val(4))) + (x50 * Val(8)));
   Val x64 = (((x63 + (x51 * Val(16))) + (x52 * Val(32))) + (x53 * Val(64)));
   Val x65 = (((x64 + (x54 * Val(128))) + (x55 * Val(256))) + (x56 * Val(512)));
   Val x66 = (((x65 + (x57 * Val(1024))) + (x58 * Val(2048))) + (x59 * Val(4096)));
   Val x67 = (((x66 + (x60 * Val(8192))) + (x61 * Val(16384))) + (x62 * Val(32768)));
-  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)");
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)");
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   NondetRegStruct22Array x68 = x5.arrA;
   NondetRegStruct22Array x69 = x5.arrB;
   NondetRegStruct22Array x70 = x6.arrA;
@@ -1989,13 +1982,13 @@ RetTupleStruct execSha256load_1_(ExecContext& ctx,
   NondetRegStruct22Array x73 = x7.arrB;
   NondetRegStruct22Array x74 = x8.arrA;
   NondetRegStruct22Array x75 = x8.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   NondetRegStruct22Array x76 = x5.arrC;
   NondetRegStruct22Array x77 = x6.arrC;
   NondetRegStruct22Array x78 = x7.arrC;
   NondetRegStruct22Array x79 = x8.arrC;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   Val32Array x80 =
       Val32Array{x68[0]._super,  x68[1]._super,  x68[2]._super,  x68[3]._super,  x68[4]._super,
                  x68[5]._super,  x68[6]._super,  x68[7]._super,  x68[8]._super,  x68[9]._super,
@@ -2028,7 +2021,7 @@ RetTupleStruct execSha256load_1_(ExecContext& ctx,
                  x74[20]._super, x74[21]._super, x75[0]._super,  x75[1]._super,  x75[2]._super,
                  x75[3]._super,  x75[4]._super,  x75[5]._super,  x75[6]._super,  x75[7]._super,
                  x75[8]._super,  x75[9]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   Val32Array x84 =
       Val32Array{x69[10]._super, x69[11]._super, x69[12]._super, x69[13]._super, x69[14]._super,
                  x69[15]._super, x69[16]._super, x69[17]._super, x69[18]._super, x69[19]._super,
@@ -2061,7 +2054,7 @@ RetTupleStruct execSha256load_1_(ExecContext& ctx,
                  x79[8]._super,  x79[9]._super,  x79[10]._super, x79[11]._super, x79[12]._super,
                  x79[13]._super, x79[14]._super, x79[15]._super, x79[16]._super, x79[17]._super,
                  x79[18]._super, x79[19]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   ComputeAEStruct x88 = execComputeAE(
       ctx,
       x80,
@@ -2077,19 +2070,19 @@ RetTupleStruct execSha256load_1_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(17553), .high = Val(28983)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x89 = x88.aOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16_Struct x90 =
       execUnpackWithCarry(ctx, x89.low, x89.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   TwoShortsStruct x91 = x88.eOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16_Struct x92 =
       execUnpackWithCarry(ctx, x91.low, x91.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x93 = x90._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x94 = x92._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:327)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:326)
   Val22Array x95 =
       Val22Array{x93[0]._super,  x93[1]._super,  x93[2]._super,  x93[3]._super,  x93[4]._super,
                  x93[5]._super,  x93[6]._super,  x93[7]._super,  x93[8]._super,  x93[9]._super,
@@ -2108,7 +2101,7 @@ RetTupleStruct execSha256load_1_(ExecContext& ctx,
                  x94[22]._super, x94[23]._super, x94[24]._super, x94[25]._super, x94[26]._super,
                  x94[27]._super, x94[28]._super, x94[29]._super, x94[30]._super, x94[31]._super,
                  Val(0),         Val(0)};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:330)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
   RetTupleStruct x98 =
       exec_RetTuple(ctx,
                     x95,
@@ -2128,7 +2121,7 @@ RetTupleStruct execSha256load_1_(ExecContext& ctx,
                     x17[5],
                     x9,
                     LAYOUT_LOOKUP(x4, arm0));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   RetTupleStruct x99 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x4, _super));
   return x99;
 }
@@ -2136,54 +2129,54 @@ RetTupleStruct execSha256load_2_(ExecContext& ctx,
                                  RetTupleStruct arg0,
                                  BoundLayout<RetTupleLayout> arg1,
                                  BoundLayout<Sha256load_2_Layout> layout2) {
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<Sha256load_2_ValsLayout> x3 = LAYOUT_LOOKUP(layout2, vals);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   BoundLayout<Sha256load_2__SuperLayout> x4 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   RetTupleStruct x5 = back_RetTuple(ctx, 1, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
-  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
-  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:296)
-  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
   // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
+  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
+  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x9 = x5.midx._super;
   Val x10 = x5.blk._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:298)
   Val x11 = ((x9 + Val(1)) - x10);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
   NondetRegStruct x12 = exec_NondetReg(ctx, inv(x11), LAYOUT_LOOKUP(layout2, invWithin));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)
-  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x13 = x5.rnd._super;
   NondetRegStruct24Array x14 = x5.arrD;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<NondetRegLayout> x15 =
       LAYOUT_LOOKUP(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm1), _extra0), count);
   BoundLayout<Reg> x16 = LAYOUT_LOOKUP(x15, _super);
   Val6Array x17;
   if (to_size_t((Val(1) - x13))) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
     ReadMemoryStruct x18 = exec_ReadMemory(ctx, x10, LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm0), mem));
     NondetRegStruct4Array x19 = x18._super;
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:305)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
     Val6Array x20 =
         Val6Array{x19[0]._super, x19[1]._super, x19[2]._super, x19[3]._super, Val(1), x10};
     x17 = x20;
   } else if (to_size_t(x13)) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:307)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:306)
     Val6Array x21 = Val6Array{x14[0]._super, x14[1]._super, Val(0), Val(0), Val(0), (x10 + Val(1))};
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
     STORE(x16, Val(0));
-    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)");
+    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)");
     x17 = x21;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:309)
   ToBits_16_Struct x22 = exec_ToBits_16_(ctx, x17[0], LAYOUT_LOOKUP(layout2, highW));
   NondetRegStruct16Array x23 = x22._super;
   Val x24 = x23[0]._super;
@@ -2203,14 +2196,14 @@ RetTupleStruct execSha256load_2_(ExecContext& ctx,
   Val x38 = x23[14]._super;
   Val x39 = x23[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
   Val x40 = (((x24 + (x25 * Val(2))) + (x26 * Val(4))) + (x27 * Val(8)));
   Val x41 = (((x40 + (x28 * Val(16))) + (x29 * Val(32))) + (x30 * Val(64)));
   Val x42 = (((x41 + (x31 * Val(128))) + (x32 * Val(256))) + (x33 * Val(512)));
   Val x43 = (((x42 + (x34 * Val(1024))) + (x35 * Val(2048))) + (x36 * Val(4096)));
   Val x44 = (((x43 + (x37 * Val(8192))) + (x38 * Val(16384))) + (x39 * Val(32768)));
-  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
+  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:312)
   ToBits_16_Struct x45 = exec_ToBits_16_(ctx, x17[1], LAYOUT_LOOKUP(layout2, lowW));
   NondetRegStruct16Array x46 = x45._super;
   Val x47 = x46[0]._super;
@@ -2230,15 +2223,15 @@ RetTupleStruct execSha256load_2_(ExecContext& ctx,
   Val x61 = x46[14]._super;
   Val x62 = x46[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
   Val x63 = (((x47 + (x48 * Val(2))) + (x49 * Val(4))) + (x50 * Val(8)));
   Val x64 = (((x63 + (x51 * Val(16))) + (x52 * Val(32))) + (x53 * Val(64)));
   Val x65 = (((x64 + (x54 * Val(128))) + (x55 * Val(256))) + (x56 * Val(512)));
   Val x66 = (((x65 + (x57 * Val(1024))) + (x58 * Val(2048))) + (x59 * Val(4096)));
   Val x67 = (((x66 + (x60 * Val(8192))) + (x61 * Val(16384))) + (x62 * Val(32768)));
-  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)");
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)");
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   NondetRegStruct22Array x68 = x5.arrA;
   NondetRegStruct22Array x69 = x5.arrB;
   NondetRegStruct22Array x70 = x6.arrA;
@@ -2247,13 +2240,13 @@ RetTupleStruct execSha256load_2_(ExecContext& ctx,
   NondetRegStruct22Array x73 = x7.arrB;
   NondetRegStruct22Array x74 = x8.arrA;
   NondetRegStruct22Array x75 = x8.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   NondetRegStruct22Array x76 = x5.arrC;
   NondetRegStruct22Array x77 = x6.arrC;
   NondetRegStruct22Array x78 = x7.arrC;
   NondetRegStruct22Array x79 = x8.arrC;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   Val32Array x80 =
       Val32Array{x68[0]._super,  x68[1]._super,  x68[2]._super,  x68[3]._super,  x68[4]._super,
                  x68[5]._super,  x68[6]._super,  x68[7]._super,  x68[8]._super,  x68[9]._super,
@@ -2286,7 +2279,7 @@ RetTupleStruct execSha256load_2_(ExecContext& ctx,
                  x74[20]._super, x74[21]._super, x75[0]._super,  x75[1]._super,  x75[2]._super,
                  x75[3]._super,  x75[4]._super,  x75[5]._super,  x75[6]._super,  x75[7]._super,
                  x75[8]._super,  x75[9]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   Val32Array x84 =
       Val32Array{x69[10]._super, x69[11]._super, x69[12]._super, x69[13]._super, x69[14]._super,
                  x69[15]._super, x69[16]._super, x69[17]._super, x69[18]._super, x69[19]._super,
@@ -2319,7 +2312,7 @@ RetTupleStruct execSha256load_2_(ExecContext& ctx,
                  x79[8]._super,  x79[9]._super,  x79[10]._super, x79[11]._super, x79[12]._super,
                  x79[13]._super, x79[14]._super, x79[15]._super, x79[16]._super, x79[17]._super,
                  x79[18]._super, x79[19]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   ComputeAEStruct x88 = execComputeAE(
       ctx,
       x80,
@@ -2335,19 +2328,19 @@ RetTupleStruct execSha256load_2_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(64463), .high = Val(46528)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x89 = x88.aOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16_Struct x90 =
       execUnpackWithCarry(ctx, x89.low, x89.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   TwoShortsStruct x91 = x88.eOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16_Struct x92 =
       execUnpackWithCarry(ctx, x91.low, x91.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x93 = x90._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x94 = x92._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:327)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:326)
   Val22Array x95 =
       Val22Array{x93[0]._super,  x93[1]._super,  x93[2]._super,  x93[3]._super,  x93[4]._super,
                  x93[5]._super,  x93[6]._super,  x93[7]._super,  x93[8]._super,  x93[9]._super,
@@ -2366,7 +2359,7 @@ RetTupleStruct execSha256load_2_(ExecContext& ctx,
                  x94[22]._super, x94[23]._super, x94[24]._super, x94[25]._super, x94[26]._super,
                  x94[27]._super, x94[28]._super, x94[29]._super, x94[30]._super, x94[31]._super,
                  Val(0),         Val(0)};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:330)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
   RetTupleStruct x98 =
       exec_RetTuple(ctx,
                     x95,
@@ -2386,7 +2379,7 @@ RetTupleStruct execSha256load_2_(ExecContext& ctx,
                     x17[5],
                     x9,
                     LAYOUT_LOOKUP(x4, arm0));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   RetTupleStruct x99 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x4, _super));
   return x99;
 }
@@ -2394,54 +2387,54 @@ RetTupleStruct execSha256load_3_(ExecContext& ctx,
                                  RetTupleStruct arg0,
                                  BoundLayout<RetTupleLayout> arg1,
                                  BoundLayout<Sha256load_3_Layout> layout2) {
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<Sha256load_3_ValsLayout> x3 = LAYOUT_LOOKUP(layout2, vals);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   BoundLayout<Sha256load_3__SuperLayout> x4 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   RetTupleStruct x5 = back_RetTuple(ctx, 1, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
-  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
-  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:296)
-  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
   // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
+  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
+  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x9 = x5.midx._super;
   Val x10 = x5.blk._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:298)
   Val x11 = ((x9 + Val(1)) - x10);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
   NondetRegStruct x12 = exec_NondetReg(ctx, inv(x11), LAYOUT_LOOKUP(layout2, invWithin));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)
-  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x13 = x5.rnd._super;
   NondetRegStruct24Array x14 = x5.arrD;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<NondetRegLayout> x15 =
       LAYOUT_LOOKUP(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm1), _extra0), count);
   BoundLayout<Reg> x16 = LAYOUT_LOOKUP(x15, _super);
   Val6Array x17;
   if (to_size_t((Val(1) - x13))) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
     ReadMemoryStruct x18 = exec_ReadMemory(ctx, x10, LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm0), mem));
     NondetRegStruct4Array x19 = x18._super;
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:305)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
     Val6Array x20 =
         Val6Array{x19[0]._super, x19[1]._super, x19[2]._super, x19[3]._super, Val(1), x10};
     x17 = x20;
   } else if (to_size_t(x13)) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:307)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:306)
     Val6Array x21 = Val6Array{x14[0]._super, x14[1]._super, Val(0), Val(0), Val(0), (x10 + Val(1))};
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
     STORE(x16, Val(0));
-    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)");
+    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)");
     x17 = x21;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:309)
   ToBits_16_Struct x22 = exec_ToBits_16_(ctx, x17[0], LAYOUT_LOOKUP(layout2, highW));
   NondetRegStruct16Array x23 = x22._super;
   Val x24 = x23[0]._super;
@@ -2461,14 +2454,14 @@ RetTupleStruct execSha256load_3_(ExecContext& ctx,
   Val x38 = x23[14]._super;
   Val x39 = x23[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
   Val x40 = (((x24 + (x25 * Val(2))) + (x26 * Val(4))) + (x27 * Val(8)));
   Val x41 = (((x40 + (x28 * Val(16))) + (x29 * Val(32))) + (x30 * Val(64)));
   Val x42 = (((x41 + (x31 * Val(128))) + (x32 * Val(256))) + (x33 * Val(512)));
   Val x43 = (((x42 + (x34 * Val(1024))) + (x35 * Val(2048))) + (x36 * Val(4096)));
   Val x44 = (((x43 + (x37 * Val(8192))) + (x38 * Val(16384))) + (x39 * Val(32768)));
-  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
+  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:312)
   ToBits_16_Struct x45 = exec_ToBits_16_(ctx, x17[1], LAYOUT_LOOKUP(layout2, lowW));
   NondetRegStruct16Array x46 = x45._super;
   Val x47 = x46[0]._super;
@@ -2488,15 +2481,15 @@ RetTupleStruct execSha256load_3_(ExecContext& ctx,
   Val x61 = x46[14]._super;
   Val x62 = x46[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
   Val x63 = (((x47 + (x48 * Val(2))) + (x49 * Val(4))) + (x50 * Val(8)));
   Val x64 = (((x63 + (x51 * Val(16))) + (x52 * Val(32))) + (x53 * Val(64)));
   Val x65 = (((x64 + (x54 * Val(128))) + (x55 * Val(256))) + (x56 * Val(512)));
   Val x66 = (((x65 + (x57 * Val(1024))) + (x58 * Val(2048))) + (x59 * Val(4096)));
   Val x67 = (((x66 + (x60 * Val(8192))) + (x61 * Val(16384))) + (x62 * Val(32768)));
-  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)");
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)");
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   NondetRegStruct22Array x68 = x5.arrA;
   NondetRegStruct22Array x69 = x5.arrB;
   NondetRegStruct22Array x70 = x6.arrA;
@@ -2505,13 +2498,13 @@ RetTupleStruct execSha256load_3_(ExecContext& ctx,
   NondetRegStruct22Array x73 = x7.arrB;
   NondetRegStruct22Array x74 = x8.arrA;
   NondetRegStruct22Array x75 = x8.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   NondetRegStruct22Array x76 = x5.arrC;
   NondetRegStruct22Array x77 = x6.arrC;
   NondetRegStruct22Array x78 = x7.arrC;
   NondetRegStruct22Array x79 = x8.arrC;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   Val32Array x80 =
       Val32Array{x68[0]._super,  x68[1]._super,  x68[2]._super,  x68[3]._super,  x68[4]._super,
                  x68[5]._super,  x68[6]._super,  x68[7]._super,  x68[8]._super,  x68[9]._super,
@@ -2544,7 +2537,7 @@ RetTupleStruct execSha256load_3_(ExecContext& ctx,
                  x74[20]._super, x74[21]._super, x75[0]._super,  x75[1]._super,  x75[2]._super,
                  x75[3]._super,  x75[4]._super,  x75[5]._super,  x75[6]._super,  x75[7]._super,
                  x75[8]._super,  x75[9]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   Val32Array x84 =
       Val32Array{x69[10]._super, x69[11]._super, x69[12]._super, x69[13]._super, x69[14]._super,
                  x69[15]._super, x69[16]._super, x69[17]._super, x69[18]._super, x69[19]._super,
@@ -2577,7 +2570,7 @@ RetTupleStruct execSha256load_3_(ExecContext& ctx,
                  x79[8]._super,  x79[9]._super,  x79[10]._super, x79[11]._super, x79[12]._super,
                  x79[13]._super, x79[14]._super, x79[15]._super, x79[16]._super, x79[17]._super,
                  x79[18]._super, x79[19]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   ComputeAEStruct x88 = execComputeAE(
       ctx,
       x80,
@@ -2593,19 +2586,19 @@ RetTupleStruct execSha256load_3_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(56229), .high = Val(59829)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x89 = x88.aOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16_Struct x90 =
       execUnpackWithCarry(ctx, x89.low, x89.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   TwoShortsStruct x91 = x88.eOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16_Struct x92 =
       execUnpackWithCarry(ctx, x91.low, x91.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x93 = x90._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x94 = x92._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:327)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:326)
   Val22Array x95 =
       Val22Array{x93[0]._super,  x93[1]._super,  x93[2]._super,  x93[3]._super,  x93[4]._super,
                  x93[5]._super,  x93[6]._super,  x93[7]._super,  x93[8]._super,  x93[9]._super,
@@ -2624,7 +2617,7 @@ RetTupleStruct execSha256load_3_(ExecContext& ctx,
                  x94[22]._super, x94[23]._super, x94[24]._super, x94[25]._super, x94[26]._super,
                  x94[27]._super, x94[28]._super, x94[29]._super, x94[30]._super, x94[31]._super,
                  Val(0),         Val(0)};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:330)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
   RetTupleStruct x98 =
       exec_RetTuple(ctx,
                     x95,
@@ -2644,7 +2637,7 @@ RetTupleStruct execSha256load_3_(ExecContext& ctx,
                     x17[5],
                     x9,
                     LAYOUT_LOOKUP(x4, arm0));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   RetTupleStruct x99 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x4, _super));
   return x99;
 }
@@ -2652,54 +2645,54 @@ RetTupleStruct execSha256load_4_(ExecContext& ctx,
                                  RetTupleStruct arg0,
                                  BoundLayout<RetTupleLayout> arg1,
                                  BoundLayout<Sha256load_4_Layout> layout2) {
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<Sha256load_4_ValsLayout> x3 = LAYOUT_LOOKUP(layout2, vals);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   BoundLayout<Sha256load_4__SuperLayout> x4 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   RetTupleStruct x5 = back_RetTuple(ctx, 1, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
-  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
-  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:296)
-  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
   // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
+  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
+  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x9 = x5.midx._super;
   Val x10 = x5.blk._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:298)
   Val x11 = ((x9 + Val(1)) - x10);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
   NondetRegStruct x12 = exec_NondetReg(ctx, inv(x11), LAYOUT_LOOKUP(layout2, invWithin));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)
-  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x13 = x5.rnd._super;
   NondetRegStruct24Array x14 = x5.arrD;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<NondetRegLayout> x15 =
       LAYOUT_LOOKUP(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm1), _extra0), count);
   BoundLayout<Reg> x16 = LAYOUT_LOOKUP(x15, _super);
   Val6Array x17;
   if (to_size_t((Val(1) - x13))) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
     ReadMemoryStruct x18 = exec_ReadMemory(ctx, x10, LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm0), mem));
     NondetRegStruct4Array x19 = x18._super;
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:305)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
     Val6Array x20 =
         Val6Array{x19[0]._super, x19[1]._super, x19[2]._super, x19[3]._super, Val(1), x10};
     x17 = x20;
   } else if (to_size_t(x13)) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:307)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:306)
     Val6Array x21 = Val6Array{x14[0]._super, x14[1]._super, Val(0), Val(0), Val(0), (x10 + Val(1))};
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
     STORE(x16, Val(0));
-    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)");
+    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)");
     x17 = x21;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:309)
   ToBits_16_Struct x22 = exec_ToBits_16_(ctx, x17[0], LAYOUT_LOOKUP(layout2, highW));
   NondetRegStruct16Array x23 = x22._super;
   Val x24 = x23[0]._super;
@@ -2719,14 +2712,14 @@ RetTupleStruct execSha256load_4_(ExecContext& ctx,
   Val x38 = x23[14]._super;
   Val x39 = x23[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
   Val x40 = (((x24 + (x25 * Val(2))) + (x26 * Val(4))) + (x27 * Val(8)));
   Val x41 = (((x40 + (x28 * Val(16))) + (x29 * Val(32))) + (x30 * Val(64)));
   Val x42 = (((x41 + (x31 * Val(128))) + (x32 * Val(256))) + (x33 * Val(512)));
   Val x43 = (((x42 + (x34 * Val(1024))) + (x35 * Val(2048))) + (x36 * Val(4096)));
   Val x44 = (((x43 + (x37 * Val(8192))) + (x38 * Val(16384))) + (x39 * Val(32768)));
-  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
+  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:312)
   ToBits_16_Struct x45 = exec_ToBits_16_(ctx, x17[1], LAYOUT_LOOKUP(layout2, lowW));
   NondetRegStruct16Array x46 = x45._super;
   Val x47 = x46[0]._super;
@@ -2746,15 +2739,15 @@ RetTupleStruct execSha256load_4_(ExecContext& ctx,
   Val x61 = x46[14]._super;
   Val x62 = x46[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
   Val x63 = (((x47 + (x48 * Val(2))) + (x49 * Val(4))) + (x50 * Val(8)));
   Val x64 = (((x63 + (x51 * Val(16))) + (x52 * Val(32))) + (x53 * Val(64)));
   Val x65 = (((x64 + (x54 * Val(128))) + (x55 * Val(256))) + (x56 * Val(512)));
   Val x66 = (((x65 + (x57 * Val(1024))) + (x58 * Val(2048))) + (x59 * Val(4096)));
   Val x67 = (((x66 + (x60 * Val(8192))) + (x61 * Val(16384))) + (x62 * Val(32768)));
-  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)");
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)");
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   NondetRegStruct22Array x68 = x5.arrA;
   NondetRegStruct22Array x69 = x5.arrB;
   NondetRegStruct22Array x70 = x6.arrA;
@@ -2763,13 +2756,13 @@ RetTupleStruct execSha256load_4_(ExecContext& ctx,
   NondetRegStruct22Array x73 = x7.arrB;
   NondetRegStruct22Array x74 = x8.arrA;
   NondetRegStruct22Array x75 = x8.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   NondetRegStruct22Array x76 = x5.arrC;
   NondetRegStruct22Array x77 = x6.arrC;
   NondetRegStruct22Array x78 = x7.arrC;
   NondetRegStruct22Array x79 = x8.arrC;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   Val32Array x80 =
       Val32Array{x68[0]._super,  x68[1]._super,  x68[2]._super,  x68[3]._super,  x68[4]._super,
                  x68[5]._super,  x68[6]._super,  x68[7]._super,  x68[8]._super,  x68[9]._super,
@@ -2802,7 +2795,7 @@ RetTupleStruct execSha256load_4_(ExecContext& ctx,
                  x74[20]._super, x74[21]._super, x75[0]._super,  x75[1]._super,  x75[2]._super,
                  x75[3]._super,  x75[4]._super,  x75[5]._super,  x75[6]._super,  x75[7]._super,
                  x75[8]._super,  x75[9]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   Val32Array x84 =
       Val32Array{x69[10]._super, x69[11]._super, x69[12]._super, x69[13]._super, x69[14]._super,
                  x69[15]._super, x69[16]._super, x69[17]._super, x69[18]._super, x69[19]._super,
@@ -2835,7 +2828,7 @@ RetTupleStruct execSha256load_4_(ExecContext& ctx,
                  x79[8]._super,  x79[9]._super,  x79[10]._super, x79[11]._super, x79[12]._super,
                  x79[13]._super, x79[14]._super, x79[15]._super, x79[16]._super, x79[17]._super,
                  x79[18]._super, x79[19]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   ComputeAEStruct x88 = execComputeAE(
       ctx,
       x80,
@@ -2851,19 +2844,19 @@ RetTupleStruct execSha256load_4_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(49755), .high = Val(14678)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x89 = x88.aOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16_Struct x90 =
       execUnpackWithCarry(ctx, x89.low, x89.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   TwoShortsStruct x91 = x88.eOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16_Struct x92 =
       execUnpackWithCarry(ctx, x91.low, x91.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x93 = x90._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x94 = x92._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:327)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:326)
   Val22Array x95 =
       Val22Array{x93[0]._super,  x93[1]._super,  x93[2]._super,  x93[3]._super,  x93[4]._super,
                  x93[5]._super,  x93[6]._super,  x93[7]._super,  x93[8]._super,  x93[9]._super,
@@ -2882,7 +2875,7 @@ RetTupleStruct execSha256load_4_(ExecContext& ctx,
                  x94[22]._super, x94[23]._super, x94[24]._super, x94[25]._super, x94[26]._super,
                  x94[27]._super, x94[28]._super, x94[29]._super, x94[30]._super, x94[31]._super,
                  Val(0),         Val(0)};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:330)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
   RetTupleStruct x98 =
       exec_RetTuple(ctx,
                     x95,
@@ -2902,7 +2895,7 @@ RetTupleStruct execSha256load_4_(ExecContext& ctx,
                     x17[5],
                     x9,
                     LAYOUT_LOOKUP(x4, arm0));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   RetTupleStruct x99 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x4, _super));
   return x99;
 }
@@ -2910,54 +2903,54 @@ RetTupleStruct execSha256load_5_(ExecContext& ctx,
                                  RetTupleStruct arg0,
                                  BoundLayout<RetTupleLayout> arg1,
                                  BoundLayout<Sha256load_5_Layout> layout2) {
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<Sha256load_5_ValsLayout> x3 = LAYOUT_LOOKUP(layout2, vals);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   BoundLayout<Sha256load_5__SuperLayout> x4 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   RetTupleStruct x5 = back_RetTuple(ctx, 1, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
-  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
-  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:296)
-  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
   // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
+  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
+  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x9 = x5.midx._super;
   Val x10 = x5.blk._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:298)
   Val x11 = ((x9 + Val(1)) - x10);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
   NondetRegStruct x12 = exec_NondetReg(ctx, inv(x11), LAYOUT_LOOKUP(layout2, invWithin));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)
-  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x13 = x5.rnd._super;
   NondetRegStruct24Array x14 = x5.arrD;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<NondetRegLayout> x15 =
       LAYOUT_LOOKUP(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm1), _extra0), count);
   BoundLayout<Reg> x16 = LAYOUT_LOOKUP(x15, _super);
   Val6Array x17;
   if (to_size_t((Val(1) - x13))) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
     ReadMemoryStruct x18 = exec_ReadMemory(ctx, x10, LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm0), mem));
     NondetRegStruct4Array x19 = x18._super;
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:305)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
     Val6Array x20 =
         Val6Array{x19[0]._super, x19[1]._super, x19[2]._super, x19[3]._super, Val(1), x10};
     x17 = x20;
   } else if (to_size_t(x13)) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:307)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:306)
     Val6Array x21 = Val6Array{x14[0]._super, x14[1]._super, Val(0), Val(0), Val(0), (x10 + Val(1))};
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
     STORE(x16, Val(0));
-    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)");
+    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)");
     x17 = x21;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:309)
   ToBits_16_Struct x22 = exec_ToBits_16_(ctx, x17[0], LAYOUT_LOOKUP(layout2, highW));
   NondetRegStruct16Array x23 = x22._super;
   Val x24 = x23[0]._super;
@@ -2977,14 +2970,14 @@ RetTupleStruct execSha256load_5_(ExecContext& ctx,
   Val x38 = x23[14]._super;
   Val x39 = x23[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
   Val x40 = (((x24 + (x25 * Val(2))) + (x26 * Val(4))) + (x27 * Val(8)));
   Val x41 = (((x40 + (x28 * Val(16))) + (x29 * Val(32))) + (x30 * Val(64)));
   Val x42 = (((x41 + (x31 * Val(128))) + (x32 * Val(256))) + (x33 * Val(512)));
   Val x43 = (((x42 + (x34 * Val(1024))) + (x35 * Val(2048))) + (x36 * Val(4096)));
   Val x44 = (((x43 + (x37 * Val(8192))) + (x38 * Val(16384))) + (x39 * Val(32768)));
-  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
+  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:312)
   ToBits_16_Struct x45 = exec_ToBits_16_(ctx, x17[1], LAYOUT_LOOKUP(layout2, lowW));
   NondetRegStruct16Array x46 = x45._super;
   Val x47 = x46[0]._super;
@@ -3004,15 +2997,15 @@ RetTupleStruct execSha256load_5_(ExecContext& ctx,
   Val x61 = x46[14]._super;
   Val x62 = x46[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
   Val x63 = (((x47 + (x48 * Val(2))) + (x49 * Val(4))) + (x50 * Val(8)));
   Val x64 = (((x63 + (x51 * Val(16))) + (x52 * Val(32))) + (x53 * Val(64)));
   Val x65 = (((x64 + (x54 * Val(128))) + (x55 * Val(256))) + (x56 * Val(512)));
   Val x66 = (((x65 + (x57 * Val(1024))) + (x58 * Val(2048))) + (x59 * Val(4096)));
   Val x67 = (((x66 + (x60 * Val(8192))) + (x61 * Val(16384))) + (x62 * Val(32768)));
-  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)");
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)");
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   NondetRegStruct22Array x68 = x5.arrA;
   NondetRegStruct22Array x69 = x5.arrB;
   NondetRegStruct22Array x70 = x6.arrA;
@@ -3021,13 +3014,13 @@ RetTupleStruct execSha256load_5_(ExecContext& ctx,
   NondetRegStruct22Array x73 = x7.arrB;
   NondetRegStruct22Array x74 = x8.arrA;
   NondetRegStruct22Array x75 = x8.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   NondetRegStruct22Array x76 = x5.arrC;
   NondetRegStruct22Array x77 = x6.arrC;
   NondetRegStruct22Array x78 = x7.arrC;
   NondetRegStruct22Array x79 = x8.arrC;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   Val32Array x80 =
       Val32Array{x68[0]._super,  x68[1]._super,  x68[2]._super,  x68[3]._super,  x68[4]._super,
                  x68[5]._super,  x68[6]._super,  x68[7]._super,  x68[8]._super,  x68[9]._super,
@@ -3060,7 +3053,7 @@ RetTupleStruct execSha256load_5_(ExecContext& ctx,
                  x74[20]._super, x74[21]._super, x75[0]._super,  x75[1]._super,  x75[2]._super,
                  x75[3]._super,  x75[4]._super,  x75[5]._super,  x75[6]._super,  x75[7]._super,
                  x75[8]._super,  x75[9]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   Val32Array x84 =
       Val32Array{x69[10]._super, x69[11]._super, x69[12]._super, x69[13]._super, x69[14]._super,
                  x69[15]._super, x69[16]._super, x69[17]._super, x69[18]._super, x69[19]._super,
@@ -3093,7 +3086,7 @@ RetTupleStruct execSha256load_5_(ExecContext& ctx,
                  x79[8]._super,  x79[9]._super,  x79[10]._super, x79[11]._super, x79[12]._super,
                  x79[13]._super, x79[14]._super, x79[15]._super, x79[16]._super, x79[17]._super,
                  x79[18]._super, x79[19]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   ComputeAEStruct x88 = execComputeAE(
       ctx,
       x80,
@@ -3109,19 +3102,19 @@ RetTupleStruct execSha256load_5_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(4593), .high = Val(23025)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x89 = x88.aOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16_Struct x90 =
       execUnpackWithCarry(ctx, x89.low, x89.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   TwoShortsStruct x91 = x88.eOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16_Struct x92 =
       execUnpackWithCarry(ctx, x91.low, x91.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x93 = x90._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x94 = x92._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:327)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:326)
   Val22Array x95 =
       Val22Array{x93[0]._super,  x93[1]._super,  x93[2]._super,  x93[3]._super,  x93[4]._super,
                  x93[5]._super,  x93[6]._super,  x93[7]._super,  x93[8]._super,  x93[9]._super,
@@ -3140,7 +3133,7 @@ RetTupleStruct execSha256load_5_(ExecContext& ctx,
                  x94[22]._super, x94[23]._super, x94[24]._super, x94[25]._super, x94[26]._super,
                  x94[27]._super, x94[28]._super, x94[29]._super, x94[30]._super, x94[31]._super,
                  Val(0),         Val(0)};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:330)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
   RetTupleStruct x98 =
       exec_RetTuple(ctx,
                     x95,
@@ -3160,7 +3153,7 @@ RetTupleStruct execSha256load_5_(ExecContext& ctx,
                     x17[5],
                     x9,
                     LAYOUT_LOOKUP(x4, arm0));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   RetTupleStruct x99 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x4, _super));
   return x99;
 }
@@ -3168,54 +3161,54 @@ RetTupleStruct execSha256load_6_(ExecContext& ctx,
                                  RetTupleStruct arg0,
                                  BoundLayout<RetTupleLayout> arg1,
                                  BoundLayout<Sha256load_6_Layout> layout2) {
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<Sha256load_6_ValsLayout> x3 = LAYOUT_LOOKUP(layout2, vals);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   BoundLayout<Sha256load_6__SuperLayout> x4 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   RetTupleStruct x5 = back_RetTuple(ctx, 1, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
-  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
-  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:296)
-  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
   // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
+  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
+  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x9 = x5.midx._super;
   Val x10 = x5.blk._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:298)
   Val x11 = ((x9 + Val(1)) - x10);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
   NondetRegStruct x12 = exec_NondetReg(ctx, inv(x11), LAYOUT_LOOKUP(layout2, invWithin));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)
-  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x13 = x5.rnd._super;
   NondetRegStruct24Array x14 = x5.arrD;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<NondetRegLayout> x15 =
       LAYOUT_LOOKUP(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm1), _extra0), count);
   BoundLayout<Reg> x16 = LAYOUT_LOOKUP(x15, _super);
   Val6Array x17;
   if (to_size_t((Val(1) - x13))) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
     ReadMemoryStruct x18 = exec_ReadMemory(ctx, x10, LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm0), mem));
     NondetRegStruct4Array x19 = x18._super;
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:305)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
     Val6Array x20 =
         Val6Array{x19[0]._super, x19[1]._super, x19[2]._super, x19[3]._super, Val(1), x10};
     x17 = x20;
   } else if (to_size_t(x13)) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:307)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:306)
     Val6Array x21 = Val6Array{x14[0]._super, x14[1]._super, Val(0), Val(0), Val(0), (x10 + Val(1))};
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
     STORE(x16, Val(0));
-    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)");
+    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)");
     x17 = x21;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:309)
   ToBits_16_Struct x22 = exec_ToBits_16_(ctx, x17[0], LAYOUT_LOOKUP(layout2, highW));
   NondetRegStruct16Array x23 = x22._super;
   Val x24 = x23[0]._super;
@@ -3235,14 +3228,14 @@ RetTupleStruct execSha256load_6_(ExecContext& ctx,
   Val x38 = x23[14]._super;
   Val x39 = x23[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
   Val x40 = (((x24 + (x25 * Val(2))) + (x26 * Val(4))) + (x27 * Val(8)));
   Val x41 = (((x40 + (x28 * Val(16))) + (x29 * Val(32))) + (x30 * Val(64)));
   Val x42 = (((x41 + (x31 * Val(128))) + (x32 * Val(256))) + (x33 * Val(512)));
   Val x43 = (((x42 + (x34 * Val(1024))) + (x35 * Val(2048))) + (x36 * Val(4096)));
   Val x44 = (((x43 + (x37 * Val(8192))) + (x38 * Val(16384))) + (x39 * Val(32768)));
-  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
+  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:312)
   ToBits_16_Struct x45 = exec_ToBits_16_(ctx, x17[1], LAYOUT_LOOKUP(layout2, lowW));
   NondetRegStruct16Array x46 = x45._super;
   Val x47 = x46[0]._super;
@@ -3262,15 +3255,15 @@ RetTupleStruct execSha256load_6_(ExecContext& ctx,
   Val x61 = x46[14]._super;
   Val x62 = x46[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
   Val x63 = (((x47 + (x48 * Val(2))) + (x49 * Val(4))) + (x50 * Val(8)));
   Val x64 = (((x63 + (x51 * Val(16))) + (x52 * Val(32))) + (x53 * Val(64)));
   Val x65 = (((x64 + (x54 * Val(128))) + (x55 * Val(256))) + (x56 * Val(512)));
   Val x66 = (((x65 + (x57 * Val(1024))) + (x58 * Val(2048))) + (x59 * Val(4096)));
   Val x67 = (((x66 + (x60 * Val(8192))) + (x61 * Val(16384))) + (x62 * Val(32768)));
-  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)");
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)");
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   NondetRegStruct22Array x68 = x5.arrA;
   NondetRegStruct22Array x69 = x5.arrB;
   NondetRegStruct22Array x70 = x6.arrA;
@@ -3279,13 +3272,13 @@ RetTupleStruct execSha256load_6_(ExecContext& ctx,
   NondetRegStruct22Array x73 = x7.arrB;
   NondetRegStruct22Array x74 = x8.arrA;
   NondetRegStruct22Array x75 = x8.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   NondetRegStruct22Array x76 = x5.arrC;
   NondetRegStruct22Array x77 = x6.arrC;
   NondetRegStruct22Array x78 = x7.arrC;
   NondetRegStruct22Array x79 = x8.arrC;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   Val32Array x80 =
       Val32Array{x68[0]._super,  x68[1]._super,  x68[2]._super,  x68[3]._super,  x68[4]._super,
                  x68[5]._super,  x68[6]._super,  x68[7]._super,  x68[8]._super,  x68[9]._super,
@@ -3318,7 +3311,7 @@ RetTupleStruct execSha256load_6_(ExecContext& ctx,
                  x74[20]._super, x74[21]._super, x75[0]._super,  x75[1]._super,  x75[2]._super,
                  x75[3]._super,  x75[4]._super,  x75[5]._super,  x75[6]._super,  x75[7]._super,
                  x75[8]._super,  x75[9]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   Val32Array x84 =
       Val32Array{x69[10]._super, x69[11]._super, x69[12]._super, x69[13]._super, x69[14]._super,
                  x69[15]._super, x69[16]._super, x69[17]._super, x69[18]._super, x69[19]._super,
@@ -3351,7 +3344,7 @@ RetTupleStruct execSha256load_6_(ExecContext& ctx,
                  x79[8]._super,  x79[9]._super,  x79[10]._super, x79[11]._super, x79[12]._super,
                  x79[13]._super, x79[14]._super, x79[15]._super, x79[16]._super, x79[17]._super,
                  x79[18]._super, x79[19]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   ComputeAEStruct x88 = execComputeAE(
       ctx,
       x80,
@@ -3367,19 +3360,19 @@ RetTupleStruct execSha256load_6_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(33444), .high = Val(37439)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x89 = x88.aOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16_Struct x90 =
       execUnpackWithCarry(ctx, x89.low, x89.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   TwoShortsStruct x91 = x88.eOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16_Struct x92 =
       execUnpackWithCarry(ctx, x91.low, x91.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x93 = x90._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x94 = x92._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:327)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:326)
   Val22Array x95 =
       Val22Array{x93[0]._super,  x93[1]._super,  x93[2]._super,  x93[3]._super,  x93[4]._super,
                  x93[5]._super,  x93[6]._super,  x93[7]._super,  x93[8]._super,  x93[9]._super,
@@ -3398,7 +3391,7 @@ RetTupleStruct execSha256load_6_(ExecContext& ctx,
                  x94[22]._super, x94[23]._super, x94[24]._super, x94[25]._super, x94[26]._super,
                  x94[27]._super, x94[28]._super, x94[29]._super, x94[30]._super, x94[31]._super,
                  Val(0),         Val(0)};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:330)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
   RetTupleStruct x98 =
       exec_RetTuple(ctx,
                     x95,
@@ -3418,7 +3411,7 @@ RetTupleStruct execSha256load_6_(ExecContext& ctx,
                     x17[5],
                     x9,
                     LAYOUT_LOOKUP(x4, arm0));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   RetTupleStruct x99 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x4, _super));
   return x99;
 }
@@ -3426,54 +3419,54 @@ RetTupleStruct execSha256load_7_(ExecContext& ctx,
                                  RetTupleStruct arg0,
                                  BoundLayout<RetTupleLayout> arg1,
                                  BoundLayout<Sha256load_7_Layout> layout2) {
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<Sha256load_7_ValsLayout> x3 = LAYOUT_LOOKUP(layout2, vals);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   BoundLayout<Sha256load_7__SuperLayout> x4 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   RetTupleStruct x5 = back_RetTuple(ctx, 1, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
-  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
-  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:296)
-  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
   // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
+  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
+  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x9 = x5.midx._super;
   Val x10 = x5.blk._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:298)
   Val x11 = ((x9 + Val(1)) - x10);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
   NondetRegStruct x12 = exec_NondetReg(ctx, inv(x11), LAYOUT_LOOKUP(layout2, invWithin));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)
-  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x13 = x5.rnd._super;
   NondetRegStruct24Array x14 = x5.arrD;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<NondetRegLayout> x15 =
       LAYOUT_LOOKUP(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm1), _extra0), count);
   BoundLayout<Reg> x16 = LAYOUT_LOOKUP(x15, _super);
   Val6Array x17;
   if (to_size_t((Val(1) - x13))) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
     ReadMemoryStruct x18 = exec_ReadMemory(ctx, x10, LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm0), mem));
     NondetRegStruct4Array x19 = x18._super;
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:305)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
     Val6Array x20 =
         Val6Array{x19[0]._super, x19[1]._super, x19[2]._super, x19[3]._super, Val(1), x10};
     x17 = x20;
   } else if (to_size_t(x13)) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:307)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:306)
     Val6Array x21 = Val6Array{x14[0]._super, x14[1]._super, Val(0), Val(0), Val(0), (x10 + Val(1))};
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
     STORE(x16, Val(0));
-    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)");
+    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)");
     x17 = x21;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:309)
   ToBits_16_Struct x22 = exec_ToBits_16_(ctx, x17[0], LAYOUT_LOOKUP(layout2, highW));
   NondetRegStruct16Array x23 = x22._super;
   Val x24 = x23[0]._super;
@@ -3493,14 +3486,14 @@ RetTupleStruct execSha256load_7_(ExecContext& ctx,
   Val x38 = x23[14]._super;
   Val x39 = x23[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
   Val x40 = (((x24 + (x25 * Val(2))) + (x26 * Val(4))) + (x27 * Val(8)));
   Val x41 = (((x40 + (x28 * Val(16))) + (x29 * Val(32))) + (x30 * Val(64)));
   Val x42 = (((x41 + (x31 * Val(128))) + (x32 * Val(256))) + (x33 * Val(512)));
   Val x43 = (((x42 + (x34 * Val(1024))) + (x35 * Val(2048))) + (x36 * Val(4096)));
   Val x44 = (((x43 + (x37 * Val(8192))) + (x38 * Val(16384))) + (x39 * Val(32768)));
-  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
+  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:312)
   ToBits_16_Struct x45 = exec_ToBits_16_(ctx, x17[1], LAYOUT_LOOKUP(layout2, lowW));
   NondetRegStruct16Array x46 = x45._super;
   Val x47 = x46[0]._super;
@@ -3520,15 +3513,15 @@ RetTupleStruct execSha256load_7_(ExecContext& ctx,
   Val x61 = x46[14]._super;
   Val x62 = x46[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
   Val x63 = (((x47 + (x48 * Val(2))) + (x49 * Val(4))) + (x50 * Val(8)));
   Val x64 = (((x63 + (x51 * Val(16))) + (x52 * Val(32))) + (x53 * Val(64)));
   Val x65 = (((x64 + (x54 * Val(128))) + (x55 * Val(256))) + (x56 * Val(512)));
   Val x66 = (((x65 + (x57 * Val(1024))) + (x58 * Val(2048))) + (x59 * Val(4096)));
   Val x67 = (((x66 + (x60 * Val(8192))) + (x61 * Val(16384))) + (x62 * Val(32768)));
-  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)");
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)");
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   NondetRegStruct22Array x68 = x5.arrA;
   NondetRegStruct22Array x69 = x5.arrB;
   NondetRegStruct22Array x70 = x6.arrA;
@@ -3537,13 +3530,13 @@ RetTupleStruct execSha256load_7_(ExecContext& ctx,
   NondetRegStruct22Array x73 = x7.arrB;
   NondetRegStruct22Array x74 = x8.arrA;
   NondetRegStruct22Array x75 = x8.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   NondetRegStruct22Array x76 = x5.arrC;
   NondetRegStruct22Array x77 = x6.arrC;
   NondetRegStruct22Array x78 = x7.arrC;
   NondetRegStruct22Array x79 = x8.arrC;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   Val32Array x80 =
       Val32Array{x68[0]._super,  x68[1]._super,  x68[2]._super,  x68[3]._super,  x68[4]._super,
                  x68[5]._super,  x68[6]._super,  x68[7]._super,  x68[8]._super,  x68[9]._super,
@@ -3576,7 +3569,7 @@ RetTupleStruct execSha256load_7_(ExecContext& ctx,
                  x74[20]._super, x74[21]._super, x75[0]._super,  x75[1]._super,  x75[2]._super,
                  x75[3]._super,  x75[4]._super,  x75[5]._super,  x75[6]._super,  x75[7]._super,
                  x75[8]._super,  x75[9]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   Val32Array x84 =
       Val32Array{x69[10]._super, x69[11]._super, x69[12]._super, x69[13]._super, x69[14]._super,
                  x69[15]._super, x69[16]._super, x69[17]._super, x69[18]._super, x69[19]._super,
@@ -3609,7 +3602,7 @@ RetTupleStruct execSha256load_7_(ExecContext& ctx,
                  x79[8]._super,  x79[9]._super,  x79[10]._super, x79[11]._super, x79[12]._super,
                  x79[13]._super, x79[14]._super, x79[15]._super, x79[16]._super, x79[17]._super,
                  x79[18]._super, x79[19]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   ComputeAEStruct x88 = execComputeAE(
       ctx,
       x80,
@@ -3625,19 +3618,19 @@ RetTupleStruct execSha256load_7_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(24277), .high = Val(43804)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x89 = x88.aOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16_Struct x90 =
       execUnpackWithCarry(ctx, x89.low, x89.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   TwoShortsStruct x91 = x88.eOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16_Struct x92 =
       execUnpackWithCarry(ctx, x91.low, x91.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x93 = x90._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x94 = x92._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:327)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:326)
   Val22Array x95 =
       Val22Array{x93[0]._super,  x93[1]._super,  x93[2]._super,  x93[3]._super,  x93[4]._super,
                  x93[5]._super,  x93[6]._super,  x93[7]._super,  x93[8]._super,  x93[9]._super,
@@ -3656,7 +3649,7 @@ RetTupleStruct execSha256load_7_(ExecContext& ctx,
                  x94[22]._super, x94[23]._super, x94[24]._super, x94[25]._super, x94[26]._super,
                  x94[27]._super, x94[28]._super, x94[29]._super, x94[30]._super, x94[31]._super,
                  Val(0),         Val(0)};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:330)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
   RetTupleStruct x98 =
       exec_RetTuple(ctx,
                     x95,
@@ -3676,7 +3669,7 @@ RetTupleStruct execSha256load_7_(ExecContext& ctx,
                     x17[5],
                     x9,
                     LAYOUT_LOOKUP(x4, arm0));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   RetTupleStruct x99 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x4, _super));
   return x99;
 }
@@ -3684,54 +3677,54 @@ RetTupleStruct execSha256load_8_(ExecContext& ctx,
                                  RetTupleStruct arg0,
                                  BoundLayout<RetTupleLayout> arg1,
                                  BoundLayout<Sha256load_8_Layout> layout2) {
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<Sha256load_8_ValsLayout> x3 = LAYOUT_LOOKUP(layout2, vals);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   BoundLayout<Sha256load_8__SuperLayout> x4 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   RetTupleStruct x5 = back_RetTuple(ctx, 1, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
-  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
-  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:296)
-  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
   // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
+  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
+  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x9 = x5.midx._super;
   Val x10 = x5.blk._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:298)
   Val x11 = ((x9 + Val(1)) - x10);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
   NondetRegStruct x12 = exec_NondetReg(ctx, inv(x11), LAYOUT_LOOKUP(layout2, invWithin));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)
-  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x13 = x5.rnd._super;
   NondetRegStruct24Array x14 = x5.arrD;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<NondetRegLayout> x15 =
       LAYOUT_LOOKUP(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm1), _extra0), count);
   BoundLayout<Reg> x16 = LAYOUT_LOOKUP(x15, _super);
   Val6Array x17;
   if (to_size_t((Val(1) - x13))) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
     ReadMemoryStruct x18 = exec_ReadMemory(ctx, x10, LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm0), mem));
     NondetRegStruct4Array x19 = x18._super;
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:305)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
     Val6Array x20 =
         Val6Array{x19[0]._super, x19[1]._super, x19[2]._super, x19[3]._super, Val(1), x10};
     x17 = x20;
   } else if (to_size_t(x13)) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:307)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:306)
     Val6Array x21 = Val6Array{x14[0]._super, x14[1]._super, Val(0), Val(0), Val(0), (x10 + Val(1))};
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
     STORE(x16, Val(0));
-    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)");
+    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)");
     x17 = x21;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:309)
   ToBits_16_Struct x22 = exec_ToBits_16_(ctx, x17[0], LAYOUT_LOOKUP(layout2, highW));
   NondetRegStruct16Array x23 = x22._super;
   Val x24 = x23[0]._super;
@@ -3751,14 +3744,14 @@ RetTupleStruct execSha256load_8_(ExecContext& ctx,
   Val x38 = x23[14]._super;
   Val x39 = x23[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
   Val x40 = (((x24 + (x25 * Val(2))) + (x26 * Val(4))) + (x27 * Val(8)));
   Val x41 = (((x40 + (x28 * Val(16))) + (x29 * Val(32))) + (x30 * Val(64)));
   Val x42 = (((x41 + (x31 * Val(128))) + (x32 * Val(256))) + (x33 * Val(512)));
   Val x43 = (((x42 + (x34 * Val(1024))) + (x35 * Val(2048))) + (x36 * Val(4096)));
   Val x44 = (((x43 + (x37 * Val(8192))) + (x38 * Val(16384))) + (x39 * Val(32768)));
-  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
+  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:312)
   ToBits_16_Struct x45 = exec_ToBits_16_(ctx, x17[1], LAYOUT_LOOKUP(layout2, lowW));
   NondetRegStruct16Array x46 = x45._super;
   Val x47 = x46[0]._super;
@@ -3778,15 +3771,15 @@ RetTupleStruct execSha256load_8_(ExecContext& ctx,
   Val x61 = x46[14]._super;
   Val x62 = x46[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
   Val x63 = (((x47 + (x48 * Val(2))) + (x49 * Val(4))) + (x50 * Val(8)));
   Val x64 = (((x63 + (x51 * Val(16))) + (x52 * Val(32))) + (x53 * Val(64)));
   Val x65 = (((x64 + (x54 * Val(128))) + (x55 * Val(256))) + (x56 * Val(512)));
   Val x66 = (((x65 + (x57 * Val(1024))) + (x58 * Val(2048))) + (x59 * Val(4096)));
   Val x67 = (((x66 + (x60 * Val(8192))) + (x61 * Val(16384))) + (x62 * Val(32768)));
-  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)");
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)");
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   NondetRegStruct22Array x68 = x5.arrA;
   NondetRegStruct22Array x69 = x5.arrB;
   NondetRegStruct22Array x70 = x6.arrA;
@@ -3795,13 +3788,13 @@ RetTupleStruct execSha256load_8_(ExecContext& ctx,
   NondetRegStruct22Array x73 = x7.arrB;
   NondetRegStruct22Array x74 = x8.arrA;
   NondetRegStruct22Array x75 = x8.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   NondetRegStruct22Array x76 = x5.arrC;
   NondetRegStruct22Array x77 = x6.arrC;
   NondetRegStruct22Array x78 = x7.arrC;
   NondetRegStruct22Array x79 = x8.arrC;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   Val32Array x80 =
       Val32Array{x68[0]._super,  x68[1]._super,  x68[2]._super,  x68[3]._super,  x68[4]._super,
                  x68[5]._super,  x68[6]._super,  x68[7]._super,  x68[8]._super,  x68[9]._super,
@@ -3834,7 +3827,7 @@ RetTupleStruct execSha256load_8_(ExecContext& ctx,
                  x74[20]._super, x74[21]._super, x75[0]._super,  x75[1]._super,  x75[2]._super,
                  x75[3]._super,  x75[4]._super,  x75[5]._super,  x75[6]._super,  x75[7]._super,
                  x75[8]._super,  x75[9]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   Val32Array x84 =
       Val32Array{x69[10]._super, x69[11]._super, x69[12]._super, x69[13]._super, x69[14]._super,
                  x69[15]._super, x69[16]._super, x69[17]._super, x69[18]._super, x69[19]._super,
@@ -3867,7 +3860,7 @@ RetTupleStruct execSha256load_8_(ExecContext& ctx,
                  x79[8]._super,  x79[9]._super,  x79[10]._super, x79[11]._super, x79[12]._super,
                  x79[13]._super, x79[14]._super, x79[15]._super, x79[16]._super, x79[17]._super,
                  x79[18]._super, x79[19]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   ComputeAEStruct x88 = execComputeAE(
       ctx,
       x80,
@@ -3883,19 +3876,19 @@ RetTupleStruct execSha256load_8_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(43672), .high = Val(55303)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x89 = x88.aOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16_Struct x90 =
       execUnpackWithCarry(ctx, x89.low, x89.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   TwoShortsStruct x91 = x88.eOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16_Struct x92 =
       execUnpackWithCarry(ctx, x91.low, x91.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x93 = x90._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x94 = x92._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:327)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:326)
   Val22Array x95 =
       Val22Array{x93[0]._super,  x93[1]._super,  x93[2]._super,  x93[3]._super,  x93[4]._super,
                  x93[5]._super,  x93[6]._super,  x93[7]._super,  x93[8]._super,  x93[9]._super,
@@ -3914,7 +3907,7 @@ RetTupleStruct execSha256load_8_(ExecContext& ctx,
                  x94[22]._super, x94[23]._super, x94[24]._super, x94[25]._super, x94[26]._super,
                  x94[27]._super, x94[28]._super, x94[29]._super, x94[30]._super, x94[31]._super,
                  Val(0),         Val(0)};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:330)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
   RetTupleStruct x98 =
       exec_RetTuple(ctx,
                     x95,
@@ -3934,7 +3927,7 @@ RetTupleStruct execSha256load_8_(ExecContext& ctx,
                     x17[5],
                     x9,
                     LAYOUT_LOOKUP(x4, arm0));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   RetTupleStruct x99 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x4, _super));
   return x99;
 }
@@ -3942,54 +3935,54 @@ RetTupleStruct execSha256load_9_(ExecContext& ctx,
                                  RetTupleStruct arg0,
                                  BoundLayout<RetTupleLayout> arg1,
                                  BoundLayout<Sha256load_9_Layout> layout2) {
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<Sha256load_9_ValsLayout> x3 = LAYOUT_LOOKUP(layout2, vals);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   BoundLayout<Sha256load_9__SuperLayout> x4 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   RetTupleStruct x5 = back_RetTuple(ctx, 1, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
-  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
-  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:296)
-  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
   // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
+  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
+  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x9 = x5.midx._super;
   Val x10 = x5.blk._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:298)
   Val x11 = ((x9 + Val(1)) - x10);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
   NondetRegStruct x12 = exec_NondetReg(ctx, inv(x11), LAYOUT_LOOKUP(layout2, invWithin));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)
-  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x13 = x5.rnd._super;
   NondetRegStruct24Array x14 = x5.arrD;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<NondetRegLayout> x15 =
       LAYOUT_LOOKUP(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm1), _extra0), count);
   BoundLayout<Reg> x16 = LAYOUT_LOOKUP(x15, _super);
   Val6Array x17;
   if (to_size_t((Val(1) - x13))) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
     ReadMemoryStruct x18 = exec_ReadMemory(ctx, x10, LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm0), mem));
     NondetRegStruct4Array x19 = x18._super;
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:305)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
     Val6Array x20 =
         Val6Array{x19[0]._super, x19[1]._super, x19[2]._super, x19[3]._super, Val(1), x10};
     x17 = x20;
   } else if (to_size_t(x13)) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:307)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:306)
     Val6Array x21 = Val6Array{x14[0]._super, x14[1]._super, Val(0), Val(0), Val(0), (x10 + Val(1))};
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
     STORE(x16, Val(0));
-    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)");
+    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)");
     x17 = x21;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:309)
   ToBits_16_Struct x22 = exec_ToBits_16_(ctx, x17[0], LAYOUT_LOOKUP(layout2, highW));
   NondetRegStruct16Array x23 = x22._super;
   Val x24 = x23[0]._super;
@@ -4009,14 +4002,14 @@ RetTupleStruct execSha256load_9_(ExecContext& ctx,
   Val x38 = x23[14]._super;
   Val x39 = x23[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
   Val x40 = (((x24 + (x25 * Val(2))) + (x26 * Val(4))) + (x27 * Val(8)));
   Val x41 = (((x40 + (x28 * Val(16))) + (x29 * Val(32))) + (x30 * Val(64)));
   Val x42 = (((x41 + (x31 * Val(128))) + (x32 * Val(256))) + (x33 * Val(512)));
   Val x43 = (((x42 + (x34 * Val(1024))) + (x35 * Val(2048))) + (x36 * Val(4096)));
   Val x44 = (((x43 + (x37 * Val(8192))) + (x38 * Val(16384))) + (x39 * Val(32768)));
-  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
+  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:312)
   ToBits_16_Struct x45 = exec_ToBits_16_(ctx, x17[1], LAYOUT_LOOKUP(layout2, lowW));
   NondetRegStruct16Array x46 = x45._super;
   Val x47 = x46[0]._super;
@@ -4036,15 +4029,15 @@ RetTupleStruct execSha256load_9_(ExecContext& ctx,
   Val x61 = x46[14]._super;
   Val x62 = x46[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
   Val x63 = (((x47 + (x48 * Val(2))) + (x49 * Val(4))) + (x50 * Val(8)));
   Val x64 = (((x63 + (x51 * Val(16))) + (x52 * Val(32))) + (x53 * Val(64)));
   Val x65 = (((x64 + (x54 * Val(128))) + (x55 * Val(256))) + (x56 * Val(512)));
   Val x66 = (((x65 + (x57 * Val(1024))) + (x58 * Val(2048))) + (x59 * Val(4096)));
   Val x67 = (((x66 + (x60 * Val(8192))) + (x61 * Val(16384))) + (x62 * Val(32768)));
-  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)");
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)");
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   NondetRegStruct22Array x68 = x5.arrA;
   NondetRegStruct22Array x69 = x5.arrB;
   NondetRegStruct22Array x70 = x6.arrA;
@@ -4053,13 +4046,13 @@ RetTupleStruct execSha256load_9_(ExecContext& ctx,
   NondetRegStruct22Array x73 = x7.arrB;
   NondetRegStruct22Array x74 = x8.arrA;
   NondetRegStruct22Array x75 = x8.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   NondetRegStruct22Array x76 = x5.arrC;
   NondetRegStruct22Array x77 = x6.arrC;
   NondetRegStruct22Array x78 = x7.arrC;
   NondetRegStruct22Array x79 = x8.arrC;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   Val32Array x80 =
       Val32Array{x68[0]._super,  x68[1]._super,  x68[2]._super,  x68[3]._super,  x68[4]._super,
                  x68[5]._super,  x68[6]._super,  x68[7]._super,  x68[8]._super,  x68[9]._super,
@@ -4092,7 +4085,7 @@ RetTupleStruct execSha256load_9_(ExecContext& ctx,
                  x74[20]._super, x74[21]._super, x75[0]._super,  x75[1]._super,  x75[2]._super,
                  x75[3]._super,  x75[4]._super,  x75[5]._super,  x75[6]._super,  x75[7]._super,
                  x75[8]._super,  x75[9]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   Val32Array x84 =
       Val32Array{x69[10]._super, x69[11]._super, x69[12]._super, x69[13]._super, x69[14]._super,
                  x69[15]._super, x69[16]._super, x69[17]._super, x69[18]._super, x69[19]._super,
@@ -4125,7 +4118,7 @@ RetTupleStruct execSha256load_9_(ExecContext& ctx,
                  x79[8]._super,  x79[9]._super,  x79[10]._super, x79[11]._super, x79[12]._super,
                  x79[13]._super, x79[14]._super, x79[15]._super, x79[16]._super, x79[17]._super,
                  x79[18]._super, x79[19]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   ComputeAEStruct x88 = execComputeAE(
       ctx,
       x80,
@@ -4141,19 +4134,19 @@ RetTupleStruct execSha256load_9_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(23297), .high = Val(4739)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x89 = x88.aOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16_Struct x90 =
       execUnpackWithCarry(ctx, x89.low, x89.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   TwoShortsStruct x91 = x88.eOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16_Struct x92 =
       execUnpackWithCarry(ctx, x91.low, x91.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x93 = x90._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x94 = x92._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:327)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:326)
   Val22Array x95 =
       Val22Array{x93[0]._super,  x93[1]._super,  x93[2]._super,  x93[3]._super,  x93[4]._super,
                  x93[5]._super,  x93[6]._super,  x93[7]._super,  x93[8]._super,  x93[9]._super,
@@ -4172,7 +4165,7 @@ RetTupleStruct execSha256load_9_(ExecContext& ctx,
                  x94[22]._super, x94[23]._super, x94[24]._super, x94[25]._super, x94[26]._super,
                  x94[27]._super, x94[28]._super, x94[29]._super, x94[30]._super, x94[31]._super,
                  Val(0),         Val(0)};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:330)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
   RetTupleStruct x98 =
       exec_RetTuple(ctx,
                     x95,
@@ -4192,7 +4185,7 @@ RetTupleStruct execSha256load_9_(ExecContext& ctx,
                     x17[5],
                     x9,
                     LAYOUT_LOOKUP(x4, arm0));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   RetTupleStruct x99 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x4, _super));
   return x99;
 }
@@ -4200,54 +4193,54 @@ RetTupleStruct execSha256load_10_(ExecContext& ctx,
                                   RetTupleStruct arg0,
                                   BoundLayout<RetTupleLayout> arg1,
                                   BoundLayout<Sha256load_10_Layout> layout2) {
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<Sha256load_10_ValsLayout> x3 = LAYOUT_LOOKUP(layout2, vals);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   BoundLayout<Sha256load_10__SuperLayout> x4 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   RetTupleStruct x5 = back_RetTuple(ctx, 1, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
-  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
-  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:296)
-  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
   // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
+  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
+  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x9 = x5.midx._super;
   Val x10 = x5.blk._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:298)
   Val x11 = ((x9 + Val(1)) - x10);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
   NondetRegStruct x12 = exec_NondetReg(ctx, inv(x11), LAYOUT_LOOKUP(layout2, invWithin));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)
-  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x13 = x5.rnd._super;
   NondetRegStruct24Array x14 = x5.arrD;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<NondetRegLayout> x15 =
       LAYOUT_LOOKUP(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm1), _extra0), count);
   BoundLayout<Reg> x16 = LAYOUT_LOOKUP(x15, _super);
   Val6Array x17;
   if (to_size_t((Val(1) - x13))) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
     ReadMemoryStruct x18 = exec_ReadMemory(ctx, x10, LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm0), mem));
     NondetRegStruct4Array x19 = x18._super;
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:305)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
     Val6Array x20 =
         Val6Array{x19[0]._super, x19[1]._super, x19[2]._super, x19[3]._super, Val(1), x10};
     x17 = x20;
   } else if (to_size_t(x13)) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:307)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:306)
     Val6Array x21 = Val6Array{x14[0]._super, x14[1]._super, Val(0), Val(0), Val(0), (x10 + Val(1))};
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
     STORE(x16, Val(0));
-    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)");
+    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)");
     x17 = x21;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:309)
   ToBits_16_Struct x22 = exec_ToBits_16_(ctx, x17[0], LAYOUT_LOOKUP(layout2, highW));
   NondetRegStruct16Array x23 = x22._super;
   Val x24 = x23[0]._super;
@@ -4267,14 +4260,14 @@ RetTupleStruct execSha256load_10_(ExecContext& ctx,
   Val x38 = x23[14]._super;
   Val x39 = x23[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
   Val x40 = (((x24 + (x25 * Val(2))) + (x26 * Val(4))) + (x27 * Val(8)));
   Val x41 = (((x40 + (x28 * Val(16))) + (x29 * Val(32))) + (x30 * Val(64)));
   Val x42 = (((x41 + (x31 * Val(128))) + (x32 * Val(256))) + (x33 * Val(512)));
   Val x43 = (((x42 + (x34 * Val(1024))) + (x35 * Val(2048))) + (x36 * Val(4096)));
   Val x44 = (((x43 + (x37 * Val(8192))) + (x38 * Val(16384))) + (x39 * Val(32768)));
-  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
+  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:312)
   ToBits_16_Struct x45 = exec_ToBits_16_(ctx, x17[1], LAYOUT_LOOKUP(layout2, lowW));
   NondetRegStruct16Array x46 = x45._super;
   Val x47 = x46[0]._super;
@@ -4294,15 +4287,15 @@ RetTupleStruct execSha256load_10_(ExecContext& ctx,
   Val x61 = x46[14]._super;
   Val x62 = x46[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
   Val x63 = (((x47 + (x48 * Val(2))) + (x49 * Val(4))) + (x50 * Val(8)));
   Val x64 = (((x63 + (x51 * Val(16))) + (x52 * Val(32))) + (x53 * Val(64)));
   Val x65 = (((x64 + (x54 * Val(128))) + (x55 * Val(256))) + (x56 * Val(512)));
   Val x66 = (((x65 + (x57 * Val(1024))) + (x58 * Val(2048))) + (x59 * Val(4096)));
   Val x67 = (((x66 + (x60 * Val(8192))) + (x61 * Val(16384))) + (x62 * Val(32768)));
-  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)");
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)");
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   NondetRegStruct22Array x68 = x5.arrA;
   NondetRegStruct22Array x69 = x5.arrB;
   NondetRegStruct22Array x70 = x6.arrA;
@@ -4311,13 +4304,13 @@ RetTupleStruct execSha256load_10_(ExecContext& ctx,
   NondetRegStruct22Array x73 = x7.arrB;
   NondetRegStruct22Array x74 = x8.arrA;
   NondetRegStruct22Array x75 = x8.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   NondetRegStruct22Array x76 = x5.arrC;
   NondetRegStruct22Array x77 = x6.arrC;
   NondetRegStruct22Array x78 = x7.arrC;
   NondetRegStruct22Array x79 = x8.arrC;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   Val32Array x80 =
       Val32Array{x68[0]._super,  x68[1]._super,  x68[2]._super,  x68[3]._super,  x68[4]._super,
                  x68[5]._super,  x68[6]._super,  x68[7]._super,  x68[8]._super,  x68[9]._super,
@@ -4350,7 +4343,7 @@ RetTupleStruct execSha256load_10_(ExecContext& ctx,
                  x74[20]._super, x74[21]._super, x75[0]._super,  x75[1]._super,  x75[2]._super,
                  x75[3]._super,  x75[4]._super,  x75[5]._super,  x75[6]._super,  x75[7]._super,
                  x75[8]._super,  x75[9]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   Val32Array x84 =
       Val32Array{x69[10]._super, x69[11]._super, x69[12]._super, x69[13]._super, x69[14]._super,
                  x69[15]._super, x69[16]._super, x69[17]._super, x69[18]._super, x69[19]._super,
@@ -4383,7 +4376,7 @@ RetTupleStruct execSha256load_10_(ExecContext& ctx,
                  x79[8]._super,  x79[9]._super,  x79[10]._super, x79[11]._super, x79[12]._super,
                  x79[13]._super, x79[14]._super, x79[15]._super, x79[16]._super, x79[17]._super,
                  x79[18]._super, x79[19]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   ComputeAEStruct x88 = execComputeAE(
       ctx,
       x80,
@@ -4399,19 +4392,19 @@ RetTupleStruct execSha256load_10_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(34238), .high = Val(9265)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x89 = x88.aOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16_Struct x90 =
       execUnpackWithCarry(ctx, x89.low, x89.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   TwoShortsStruct x91 = x88.eOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16_Struct x92 =
       execUnpackWithCarry(ctx, x91.low, x91.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x93 = x90._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x94 = x92._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:327)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:326)
   Val22Array x95 =
       Val22Array{x93[0]._super,  x93[1]._super,  x93[2]._super,  x93[3]._super,  x93[4]._super,
                  x93[5]._super,  x93[6]._super,  x93[7]._super,  x93[8]._super,  x93[9]._super,
@@ -4430,7 +4423,7 @@ RetTupleStruct execSha256load_10_(ExecContext& ctx,
                  x94[22]._super, x94[23]._super, x94[24]._super, x94[25]._super, x94[26]._super,
                  x94[27]._super, x94[28]._super, x94[29]._super, x94[30]._super, x94[31]._super,
                  Val(0),         Val(0)};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:330)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
   RetTupleStruct x98 =
       exec_RetTuple(ctx,
                     x95,
@@ -4450,7 +4443,7 @@ RetTupleStruct execSha256load_10_(ExecContext& ctx,
                     x17[5],
                     x9,
                     LAYOUT_LOOKUP(x4, arm0));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   RetTupleStruct x99 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x4, _super));
   return x99;
 }
@@ -4458,54 +4451,54 @@ RetTupleStruct execSha256load_11_(ExecContext& ctx,
                                   RetTupleStruct arg0,
                                   BoundLayout<RetTupleLayout> arg1,
                                   BoundLayout<Sha256load_11_Layout> layout2) {
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<Sha256load_11_ValsLayout> x3 = LAYOUT_LOOKUP(layout2, vals);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   BoundLayout<Sha256load_11__SuperLayout> x4 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   RetTupleStruct x5 = back_RetTuple(ctx, 1, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
-  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
-  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:296)
-  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
   // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
+  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
+  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x9 = x5.midx._super;
   Val x10 = x5.blk._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:298)
   Val x11 = ((x9 + Val(1)) - x10);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
   NondetRegStruct x12 = exec_NondetReg(ctx, inv(x11), LAYOUT_LOOKUP(layout2, invWithin));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)
-  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x13 = x5.rnd._super;
   NondetRegStruct24Array x14 = x5.arrD;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<NondetRegLayout> x15 =
       LAYOUT_LOOKUP(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm1), _extra0), count);
   BoundLayout<Reg> x16 = LAYOUT_LOOKUP(x15, _super);
   Val6Array x17;
   if (to_size_t((Val(1) - x13))) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
     ReadMemoryStruct x18 = exec_ReadMemory(ctx, x10, LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm0), mem));
     NondetRegStruct4Array x19 = x18._super;
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:305)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
     Val6Array x20 =
         Val6Array{x19[0]._super, x19[1]._super, x19[2]._super, x19[3]._super, Val(1), x10};
     x17 = x20;
   } else if (to_size_t(x13)) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:307)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:306)
     Val6Array x21 = Val6Array{x14[0]._super, x14[1]._super, Val(0), Val(0), Val(0), (x10 + Val(1))};
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
     STORE(x16, Val(0));
-    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)");
+    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)");
     x17 = x21;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:309)
   ToBits_16_Struct x22 = exec_ToBits_16_(ctx, x17[0], LAYOUT_LOOKUP(layout2, highW));
   NondetRegStruct16Array x23 = x22._super;
   Val x24 = x23[0]._super;
@@ -4525,14 +4518,14 @@ RetTupleStruct execSha256load_11_(ExecContext& ctx,
   Val x38 = x23[14]._super;
   Val x39 = x23[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
   Val x40 = (((x24 + (x25 * Val(2))) + (x26 * Val(4))) + (x27 * Val(8)));
   Val x41 = (((x40 + (x28 * Val(16))) + (x29 * Val(32))) + (x30 * Val(64)));
   Val x42 = (((x41 + (x31 * Val(128))) + (x32 * Val(256))) + (x33 * Val(512)));
   Val x43 = (((x42 + (x34 * Val(1024))) + (x35 * Val(2048))) + (x36 * Val(4096)));
   Val x44 = (((x43 + (x37 * Val(8192))) + (x38 * Val(16384))) + (x39 * Val(32768)));
-  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
+  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:312)
   ToBits_16_Struct x45 = exec_ToBits_16_(ctx, x17[1], LAYOUT_LOOKUP(layout2, lowW));
   NondetRegStruct16Array x46 = x45._super;
   Val x47 = x46[0]._super;
@@ -4552,15 +4545,15 @@ RetTupleStruct execSha256load_11_(ExecContext& ctx,
   Val x61 = x46[14]._super;
   Val x62 = x46[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
   Val x63 = (((x47 + (x48 * Val(2))) + (x49 * Val(4))) + (x50 * Val(8)));
   Val x64 = (((x63 + (x51 * Val(16))) + (x52 * Val(32))) + (x53 * Val(64)));
   Val x65 = (((x64 + (x54 * Val(128))) + (x55 * Val(256))) + (x56 * Val(512)));
   Val x66 = (((x65 + (x57 * Val(1024))) + (x58 * Val(2048))) + (x59 * Val(4096)));
   Val x67 = (((x66 + (x60 * Val(8192))) + (x61 * Val(16384))) + (x62 * Val(32768)));
-  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)");
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)");
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   NondetRegStruct22Array x68 = x5.arrA;
   NondetRegStruct22Array x69 = x5.arrB;
   NondetRegStruct22Array x70 = x6.arrA;
@@ -4569,13 +4562,13 @@ RetTupleStruct execSha256load_11_(ExecContext& ctx,
   NondetRegStruct22Array x73 = x7.arrB;
   NondetRegStruct22Array x74 = x8.arrA;
   NondetRegStruct22Array x75 = x8.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   NondetRegStruct22Array x76 = x5.arrC;
   NondetRegStruct22Array x77 = x6.arrC;
   NondetRegStruct22Array x78 = x7.arrC;
   NondetRegStruct22Array x79 = x8.arrC;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   Val32Array x80 =
       Val32Array{x68[0]._super,  x68[1]._super,  x68[2]._super,  x68[3]._super,  x68[4]._super,
                  x68[5]._super,  x68[6]._super,  x68[7]._super,  x68[8]._super,  x68[9]._super,
@@ -4608,7 +4601,7 @@ RetTupleStruct execSha256load_11_(ExecContext& ctx,
                  x74[20]._super, x74[21]._super, x75[0]._super,  x75[1]._super,  x75[2]._super,
                  x75[3]._super,  x75[4]._super,  x75[5]._super,  x75[6]._super,  x75[7]._super,
                  x75[8]._super,  x75[9]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   Val32Array x84 =
       Val32Array{x69[10]._super, x69[11]._super, x69[12]._super, x69[13]._super, x69[14]._super,
                  x69[15]._super, x69[16]._super, x69[17]._super, x69[18]._super, x69[19]._super,
@@ -4641,7 +4634,7 @@ RetTupleStruct execSha256load_11_(ExecContext& ctx,
                  x79[8]._super,  x79[9]._super,  x79[10]._super, x79[11]._super, x79[12]._super,
                  x79[13]._super, x79[14]._super, x79[15]._super, x79[16]._super, x79[17]._super,
                  x79[18]._super, x79[19]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   ComputeAEStruct x88 = execComputeAE(
       ctx,
       x80,
@@ -4657,19 +4650,19 @@ RetTupleStruct execSha256load_11_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(32195), .high = Val(21772)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x89 = x88.aOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16_Struct x90 =
       execUnpackWithCarry(ctx, x89.low, x89.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   TwoShortsStruct x91 = x88.eOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16_Struct x92 =
       execUnpackWithCarry(ctx, x91.low, x91.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x93 = x90._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x94 = x92._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:327)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:326)
   Val22Array x95 =
       Val22Array{x93[0]._super,  x93[1]._super,  x93[2]._super,  x93[3]._super,  x93[4]._super,
                  x93[5]._super,  x93[6]._super,  x93[7]._super,  x93[8]._super,  x93[9]._super,
@@ -4688,7 +4681,7 @@ RetTupleStruct execSha256load_11_(ExecContext& ctx,
                  x94[22]._super, x94[23]._super, x94[24]._super, x94[25]._super, x94[26]._super,
                  x94[27]._super, x94[28]._super, x94[29]._super, x94[30]._super, x94[31]._super,
                  Val(0),         Val(0)};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:330)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
   RetTupleStruct x98 =
       exec_RetTuple(ctx,
                     x95,
@@ -4708,7 +4701,7 @@ RetTupleStruct execSha256load_11_(ExecContext& ctx,
                     x17[5],
                     x9,
                     LAYOUT_LOOKUP(x4, arm0));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   RetTupleStruct x99 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x4, _super));
   return x99;
 }
@@ -4716,54 +4709,54 @@ RetTupleStruct execSha256load_12_(ExecContext& ctx,
                                   RetTupleStruct arg0,
                                   BoundLayout<RetTupleLayout> arg1,
                                   BoundLayout<Sha256load_12_Layout> layout2) {
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<Sha256load_12_ValsLayout> x3 = LAYOUT_LOOKUP(layout2, vals);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   BoundLayout<Sha256load_12__SuperLayout> x4 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   RetTupleStruct x5 = back_RetTuple(ctx, 1, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
-  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
-  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:296)
-  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
   // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
+  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
+  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x9 = x5.midx._super;
   Val x10 = x5.blk._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:298)
   Val x11 = ((x9 + Val(1)) - x10);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
   NondetRegStruct x12 = exec_NondetReg(ctx, inv(x11), LAYOUT_LOOKUP(layout2, invWithin));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)
-  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x13 = x5.rnd._super;
   NondetRegStruct24Array x14 = x5.arrD;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<NondetRegLayout> x15 =
       LAYOUT_LOOKUP(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm1), _extra0), count);
   BoundLayout<Reg> x16 = LAYOUT_LOOKUP(x15, _super);
   Val6Array x17;
   if (to_size_t((Val(1) - x13))) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
     ReadMemoryStruct x18 = exec_ReadMemory(ctx, x10, LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm0), mem));
     NondetRegStruct4Array x19 = x18._super;
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:305)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
     Val6Array x20 =
         Val6Array{x19[0]._super, x19[1]._super, x19[2]._super, x19[3]._super, Val(1), x10};
     x17 = x20;
   } else if (to_size_t(x13)) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:307)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:306)
     Val6Array x21 = Val6Array{x14[0]._super, x14[1]._super, Val(0), Val(0), Val(0), (x10 + Val(1))};
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
     STORE(x16, Val(0));
-    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)");
+    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)");
     x17 = x21;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:309)
   ToBits_16_Struct x22 = exec_ToBits_16_(ctx, x17[0], LAYOUT_LOOKUP(layout2, highW));
   NondetRegStruct16Array x23 = x22._super;
   Val x24 = x23[0]._super;
@@ -4783,14 +4776,14 @@ RetTupleStruct execSha256load_12_(ExecContext& ctx,
   Val x38 = x23[14]._super;
   Val x39 = x23[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
   Val x40 = (((x24 + (x25 * Val(2))) + (x26 * Val(4))) + (x27 * Val(8)));
   Val x41 = (((x40 + (x28 * Val(16))) + (x29 * Val(32))) + (x30 * Val(64)));
   Val x42 = (((x41 + (x31 * Val(128))) + (x32 * Val(256))) + (x33 * Val(512)));
   Val x43 = (((x42 + (x34 * Val(1024))) + (x35 * Val(2048))) + (x36 * Val(4096)));
   Val x44 = (((x43 + (x37 * Val(8192))) + (x38 * Val(16384))) + (x39 * Val(32768)));
-  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
+  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:312)
   ToBits_16_Struct x45 = exec_ToBits_16_(ctx, x17[1], LAYOUT_LOOKUP(layout2, lowW));
   NondetRegStruct16Array x46 = x45._super;
   Val x47 = x46[0]._super;
@@ -4810,15 +4803,15 @@ RetTupleStruct execSha256load_12_(ExecContext& ctx,
   Val x61 = x46[14]._super;
   Val x62 = x46[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
   Val x63 = (((x47 + (x48 * Val(2))) + (x49 * Val(4))) + (x50 * Val(8)));
   Val x64 = (((x63 + (x51 * Val(16))) + (x52 * Val(32))) + (x53 * Val(64)));
   Val x65 = (((x64 + (x54 * Val(128))) + (x55 * Val(256))) + (x56 * Val(512)));
   Val x66 = (((x65 + (x57 * Val(1024))) + (x58 * Val(2048))) + (x59 * Val(4096)));
   Val x67 = (((x66 + (x60 * Val(8192))) + (x61 * Val(16384))) + (x62 * Val(32768)));
-  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)");
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)");
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   NondetRegStruct22Array x68 = x5.arrA;
   NondetRegStruct22Array x69 = x5.arrB;
   NondetRegStruct22Array x70 = x6.arrA;
@@ -4827,13 +4820,13 @@ RetTupleStruct execSha256load_12_(ExecContext& ctx,
   NondetRegStruct22Array x73 = x7.arrB;
   NondetRegStruct22Array x74 = x8.arrA;
   NondetRegStruct22Array x75 = x8.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   NondetRegStruct22Array x76 = x5.arrC;
   NondetRegStruct22Array x77 = x6.arrC;
   NondetRegStruct22Array x78 = x7.arrC;
   NondetRegStruct22Array x79 = x8.arrC;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   Val32Array x80 =
       Val32Array{x68[0]._super,  x68[1]._super,  x68[2]._super,  x68[3]._super,  x68[4]._super,
                  x68[5]._super,  x68[6]._super,  x68[7]._super,  x68[8]._super,  x68[9]._super,
@@ -4866,7 +4859,7 @@ RetTupleStruct execSha256load_12_(ExecContext& ctx,
                  x74[20]._super, x74[21]._super, x75[0]._super,  x75[1]._super,  x75[2]._super,
                  x75[3]._super,  x75[4]._super,  x75[5]._super,  x75[6]._super,  x75[7]._super,
                  x75[8]._super,  x75[9]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   Val32Array x84 =
       Val32Array{x69[10]._super, x69[11]._super, x69[12]._super, x69[13]._super, x69[14]._super,
                  x69[15]._super, x69[16]._super, x69[17]._super, x69[18]._super, x69[19]._super,
@@ -4899,7 +4892,7 @@ RetTupleStruct execSha256load_12_(ExecContext& ctx,
                  x79[8]._super,  x79[9]._super,  x79[10]._super, x79[11]._super, x79[12]._super,
                  x79[13]._super, x79[14]._super, x79[15]._super, x79[16]._super, x79[17]._super,
                  x79[18]._super, x79[19]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   ComputeAEStruct x88 = execComputeAE(
       ctx,
       x80,
@@ -4915,19 +4908,19 @@ RetTupleStruct execSha256load_12_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(23924), .high = Val(29374)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x89 = x88.aOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16_Struct x90 =
       execUnpackWithCarry(ctx, x89.low, x89.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   TwoShortsStruct x91 = x88.eOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16_Struct x92 =
       execUnpackWithCarry(ctx, x91.low, x91.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x93 = x90._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x94 = x92._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:327)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:326)
   Val22Array x95 =
       Val22Array{x93[0]._super,  x93[1]._super,  x93[2]._super,  x93[3]._super,  x93[4]._super,
                  x93[5]._super,  x93[6]._super,  x93[7]._super,  x93[8]._super,  x93[9]._super,
@@ -4946,7 +4939,7 @@ RetTupleStruct execSha256load_12_(ExecContext& ctx,
                  x94[22]._super, x94[23]._super, x94[24]._super, x94[25]._super, x94[26]._super,
                  x94[27]._super, x94[28]._super, x94[29]._super, x94[30]._super, x94[31]._super,
                  Val(0),         Val(0)};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:330)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
   RetTupleStruct x98 =
       exec_RetTuple(ctx,
                     x95,
@@ -4966,7 +4959,7 @@ RetTupleStruct execSha256load_12_(ExecContext& ctx,
                     x17[5],
                     x9,
                     LAYOUT_LOOKUP(x4, arm0));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   RetTupleStruct x99 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x4, _super));
   return x99;
 }
@@ -4974,54 +4967,54 @@ RetTupleStruct execSha256load_13_(ExecContext& ctx,
                                   RetTupleStruct arg0,
                                   BoundLayout<RetTupleLayout> arg1,
                                   BoundLayout<Sha256load_13_Layout> layout2) {
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<Sha256load_13_ValsLayout> x3 = LAYOUT_LOOKUP(layout2, vals);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   BoundLayout<Sha256load_13__SuperLayout> x4 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   RetTupleStruct x5 = back_RetTuple(ctx, 1, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
-  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
-  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:296)
-  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
   // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
+  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
+  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x9 = x5.midx._super;
   Val x10 = x5.blk._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:298)
   Val x11 = ((x9 + Val(1)) - x10);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
   NondetRegStruct x12 = exec_NondetReg(ctx, inv(x11), LAYOUT_LOOKUP(layout2, invWithin));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)
-  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x13 = x5.rnd._super;
   NondetRegStruct24Array x14 = x5.arrD;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<NondetRegLayout> x15 =
       LAYOUT_LOOKUP(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm1), _extra0), count);
   BoundLayout<Reg> x16 = LAYOUT_LOOKUP(x15, _super);
   Val6Array x17;
   if (to_size_t((Val(1) - x13))) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
     ReadMemoryStruct x18 = exec_ReadMemory(ctx, x10, LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm0), mem));
     NondetRegStruct4Array x19 = x18._super;
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:305)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
     Val6Array x20 =
         Val6Array{x19[0]._super, x19[1]._super, x19[2]._super, x19[3]._super, Val(1), x10};
     x17 = x20;
   } else if (to_size_t(x13)) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:307)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:306)
     Val6Array x21 = Val6Array{x14[0]._super, x14[1]._super, Val(0), Val(0), Val(0), (x10 + Val(1))};
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
     STORE(x16, Val(0));
-    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)");
+    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)");
     x17 = x21;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:309)
   ToBits_16_Struct x22 = exec_ToBits_16_(ctx, x17[0], LAYOUT_LOOKUP(layout2, highW));
   NondetRegStruct16Array x23 = x22._super;
   Val x24 = x23[0]._super;
@@ -5041,14 +5034,14 @@ RetTupleStruct execSha256load_13_(ExecContext& ctx,
   Val x38 = x23[14]._super;
   Val x39 = x23[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
   Val x40 = (((x24 + (x25 * Val(2))) + (x26 * Val(4))) + (x27 * Val(8)));
   Val x41 = (((x40 + (x28 * Val(16))) + (x29 * Val(32))) + (x30 * Val(64)));
   Val x42 = (((x41 + (x31 * Val(128))) + (x32 * Val(256))) + (x33 * Val(512)));
   Val x43 = (((x42 + (x34 * Val(1024))) + (x35 * Val(2048))) + (x36 * Val(4096)));
   Val x44 = (((x43 + (x37 * Val(8192))) + (x38 * Val(16384))) + (x39 * Val(32768)));
-  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
+  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:312)
   ToBits_16_Struct x45 = exec_ToBits_16_(ctx, x17[1], LAYOUT_LOOKUP(layout2, lowW));
   NondetRegStruct16Array x46 = x45._super;
   Val x47 = x46[0]._super;
@@ -5068,15 +5061,15 @@ RetTupleStruct execSha256load_13_(ExecContext& ctx,
   Val x61 = x46[14]._super;
   Val x62 = x46[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
   Val x63 = (((x47 + (x48 * Val(2))) + (x49 * Val(4))) + (x50 * Val(8)));
   Val x64 = (((x63 + (x51 * Val(16))) + (x52 * Val(32))) + (x53 * Val(64)));
   Val x65 = (((x64 + (x54 * Val(128))) + (x55 * Val(256))) + (x56 * Val(512)));
   Val x66 = (((x65 + (x57 * Val(1024))) + (x58 * Val(2048))) + (x59 * Val(4096)));
   Val x67 = (((x66 + (x60 * Val(8192))) + (x61 * Val(16384))) + (x62 * Val(32768)));
-  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)");
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)");
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   NondetRegStruct22Array x68 = x5.arrA;
   NondetRegStruct22Array x69 = x5.arrB;
   NondetRegStruct22Array x70 = x6.arrA;
@@ -5085,13 +5078,13 @@ RetTupleStruct execSha256load_13_(ExecContext& ctx,
   NondetRegStruct22Array x73 = x7.arrB;
   NondetRegStruct22Array x74 = x8.arrA;
   NondetRegStruct22Array x75 = x8.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   NondetRegStruct22Array x76 = x5.arrC;
   NondetRegStruct22Array x77 = x6.arrC;
   NondetRegStruct22Array x78 = x7.arrC;
   NondetRegStruct22Array x79 = x8.arrC;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   Val32Array x80 =
       Val32Array{x68[0]._super,  x68[1]._super,  x68[2]._super,  x68[3]._super,  x68[4]._super,
                  x68[5]._super,  x68[6]._super,  x68[7]._super,  x68[8]._super,  x68[9]._super,
@@ -5124,7 +5117,7 @@ RetTupleStruct execSha256load_13_(ExecContext& ctx,
                  x74[20]._super, x74[21]._super, x75[0]._super,  x75[1]._super,  x75[2]._super,
                  x75[3]._super,  x75[4]._super,  x75[5]._super,  x75[6]._super,  x75[7]._super,
                  x75[8]._super,  x75[9]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   Val32Array x84 =
       Val32Array{x69[10]._super, x69[11]._super, x69[12]._super, x69[13]._super, x69[14]._super,
                  x69[15]._super, x69[16]._super, x69[17]._super, x69[18]._super, x69[19]._super,
@@ -5157,7 +5150,7 @@ RetTupleStruct execSha256load_13_(ExecContext& ctx,
                  x79[8]._super,  x79[9]._super,  x79[10]._super, x79[11]._super, x79[12]._super,
                  x79[13]._super, x79[14]._super, x79[15]._super, x79[16]._super, x79[17]._super,
                  x79[18]._super, x79[19]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   ComputeAEStruct x88 = execComputeAE(
       ctx,
       x80,
@@ -5173,19 +5166,19 @@ RetTupleStruct execSha256load_13_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(45566), .high = Val(32990)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x89 = x88.aOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16_Struct x90 =
       execUnpackWithCarry(ctx, x89.low, x89.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   TwoShortsStruct x91 = x88.eOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16_Struct x92 =
       execUnpackWithCarry(ctx, x91.low, x91.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x93 = x90._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x94 = x92._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:327)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:326)
   Val22Array x95 =
       Val22Array{x93[0]._super,  x93[1]._super,  x93[2]._super,  x93[3]._super,  x93[4]._super,
                  x93[5]._super,  x93[6]._super,  x93[7]._super,  x93[8]._super,  x93[9]._super,
@@ -5204,7 +5197,7 @@ RetTupleStruct execSha256load_13_(ExecContext& ctx,
                  x94[22]._super, x94[23]._super, x94[24]._super, x94[25]._super, x94[26]._super,
                  x94[27]._super, x94[28]._super, x94[29]._super, x94[30]._super, x94[31]._super,
                  Val(0),         Val(0)};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:330)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
   RetTupleStruct x98 =
       exec_RetTuple(ctx,
                     x95,
@@ -5224,7 +5217,7 @@ RetTupleStruct execSha256load_13_(ExecContext& ctx,
                     x17[5],
                     x9,
                     LAYOUT_LOOKUP(x4, arm0));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   RetTupleStruct x99 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x4, _super));
   return x99;
 }
@@ -5232,54 +5225,54 @@ RetTupleStruct execSha256load_14_(ExecContext& ctx,
                                   RetTupleStruct arg0,
                                   BoundLayout<RetTupleLayout> arg1,
                                   BoundLayout<Sha256load_14_Layout> layout2) {
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<Sha256load_14_ValsLayout> x3 = LAYOUT_LOOKUP(layout2, vals);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   BoundLayout<Sha256load_14__SuperLayout> x4 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   RetTupleStruct x5 = back_RetTuple(ctx, 1, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
-  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
-  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:296)
-  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
   // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
+  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
+  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x9 = x5.midx._super;
   Val x10 = x5.blk._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:298)
   Val x11 = ((x9 + Val(1)) - x10);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
   NondetRegStruct x12 = exec_NondetReg(ctx, inv(x11), LAYOUT_LOOKUP(layout2, invWithin));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)
-  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x13 = x5.rnd._super;
   NondetRegStruct24Array x14 = x5.arrD;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<NondetRegLayout> x15 =
       LAYOUT_LOOKUP(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm1), _extra0), count);
   BoundLayout<Reg> x16 = LAYOUT_LOOKUP(x15, _super);
   Val6Array x17;
   if (to_size_t((Val(1) - x13))) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
     ReadMemoryStruct x18 = exec_ReadMemory(ctx, x10, LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm0), mem));
     NondetRegStruct4Array x19 = x18._super;
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:305)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
     Val6Array x20 =
         Val6Array{x19[0]._super, x19[1]._super, x19[2]._super, x19[3]._super, Val(1), x10};
     x17 = x20;
   } else if (to_size_t(x13)) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:307)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:306)
     Val6Array x21 = Val6Array{x14[0]._super, x14[1]._super, Val(0), Val(0), Val(0), (x10 + Val(1))};
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
     STORE(x16, Val(0));
-    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)");
+    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)");
     x17 = x21;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:309)
   ToBits_16_Struct x22 = exec_ToBits_16_(ctx, x17[0], LAYOUT_LOOKUP(layout2, highW));
   NondetRegStruct16Array x23 = x22._super;
   Val x24 = x23[0]._super;
@@ -5299,14 +5292,14 @@ RetTupleStruct execSha256load_14_(ExecContext& ctx,
   Val x38 = x23[14]._super;
   Val x39 = x23[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
   Val x40 = (((x24 + (x25 * Val(2))) + (x26 * Val(4))) + (x27 * Val(8)));
   Val x41 = (((x40 + (x28 * Val(16))) + (x29 * Val(32))) + (x30 * Val(64)));
   Val x42 = (((x41 + (x31 * Val(128))) + (x32 * Val(256))) + (x33 * Val(512)));
   Val x43 = (((x42 + (x34 * Val(1024))) + (x35 * Val(2048))) + (x36 * Val(4096)));
   Val x44 = (((x43 + (x37 * Val(8192))) + (x38 * Val(16384))) + (x39 * Val(32768)));
-  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
+  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:312)
   ToBits_16_Struct x45 = exec_ToBits_16_(ctx, x17[1], LAYOUT_LOOKUP(layout2, lowW));
   NondetRegStruct16Array x46 = x45._super;
   Val x47 = x46[0]._super;
@@ -5326,15 +5319,15 @@ RetTupleStruct execSha256load_14_(ExecContext& ctx,
   Val x61 = x46[14]._super;
   Val x62 = x46[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
   Val x63 = (((x47 + (x48 * Val(2))) + (x49 * Val(4))) + (x50 * Val(8)));
   Val x64 = (((x63 + (x51 * Val(16))) + (x52 * Val(32))) + (x53 * Val(64)));
   Val x65 = (((x64 + (x54 * Val(128))) + (x55 * Val(256))) + (x56 * Val(512)));
   Val x66 = (((x65 + (x57 * Val(1024))) + (x58 * Val(2048))) + (x59 * Val(4096)));
   Val x67 = (((x66 + (x60 * Val(8192))) + (x61 * Val(16384))) + (x62 * Val(32768)));
-  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)");
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)");
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   NondetRegStruct22Array x68 = x5.arrA;
   NondetRegStruct22Array x69 = x5.arrB;
   NondetRegStruct22Array x70 = x6.arrA;
@@ -5343,13 +5336,13 @@ RetTupleStruct execSha256load_14_(ExecContext& ctx,
   NondetRegStruct22Array x73 = x7.arrB;
   NondetRegStruct22Array x74 = x8.arrA;
   NondetRegStruct22Array x75 = x8.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   NondetRegStruct22Array x76 = x5.arrC;
   NondetRegStruct22Array x77 = x6.arrC;
   NondetRegStruct22Array x78 = x7.arrC;
   NondetRegStruct22Array x79 = x8.arrC;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   Val32Array x80 =
       Val32Array{x68[0]._super,  x68[1]._super,  x68[2]._super,  x68[3]._super,  x68[4]._super,
                  x68[5]._super,  x68[6]._super,  x68[7]._super,  x68[8]._super,  x68[9]._super,
@@ -5382,7 +5375,7 @@ RetTupleStruct execSha256load_14_(ExecContext& ctx,
                  x74[20]._super, x74[21]._super, x75[0]._super,  x75[1]._super,  x75[2]._super,
                  x75[3]._super,  x75[4]._super,  x75[5]._super,  x75[6]._super,  x75[7]._super,
                  x75[8]._super,  x75[9]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   Val32Array x84 =
       Val32Array{x69[10]._super, x69[11]._super, x69[12]._super, x69[13]._super, x69[14]._super,
                  x69[15]._super, x69[16]._super, x69[17]._super, x69[18]._super, x69[19]._super,
@@ -5415,7 +5408,7 @@ RetTupleStruct execSha256load_14_(ExecContext& ctx,
                  x79[8]._super,  x79[9]._super,  x79[10]._super, x79[11]._super, x79[12]._super,
                  x79[13]._super, x79[14]._super, x79[15]._super, x79[16]._super, x79[17]._super,
                  x79[18]._super, x79[19]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   ComputeAEStruct x88 = execComputeAE(
       ctx,
       x80,
@@ -5431,19 +5424,19 @@ RetTupleStruct execSha256load_14_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(1703), .high = Val(39900)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x89 = x88.aOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16_Struct x90 =
       execUnpackWithCarry(ctx, x89.low, x89.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   TwoShortsStruct x91 = x88.eOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16_Struct x92 =
       execUnpackWithCarry(ctx, x91.low, x91.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x93 = x90._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x94 = x92._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:327)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:326)
   Val22Array x95 =
       Val22Array{x93[0]._super,  x93[1]._super,  x93[2]._super,  x93[3]._super,  x93[4]._super,
                  x93[5]._super,  x93[6]._super,  x93[7]._super,  x93[8]._super,  x93[9]._super,
@@ -5462,7 +5455,7 @@ RetTupleStruct execSha256load_14_(ExecContext& ctx,
                  x94[22]._super, x94[23]._super, x94[24]._super, x94[25]._super, x94[26]._super,
                  x94[27]._super, x94[28]._super, x94[29]._super, x94[30]._super, x94[31]._super,
                  Val(0),         Val(0)};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:330)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
   RetTupleStruct x98 =
       exec_RetTuple(ctx,
                     x95,
@@ -5482,7 +5475,7 @@ RetTupleStruct execSha256load_14_(ExecContext& ctx,
                     x17[5],
                     x9,
                     LAYOUT_LOOKUP(x4, arm0));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   RetTupleStruct x99 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x4, _super));
   return x99;
 }
@@ -5490,54 +5483,54 @@ RetTupleStruct execSha256load_15_(ExecContext& ctx,
                                   RetTupleStruct arg0,
                                   BoundLayout<RetTupleLayout> arg1,
                                   BoundLayout<Sha256load_15_Layout> layout2) {
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<Sha256load_15_ValsLayout> x3 = LAYOUT_LOOKUP(layout2, vals);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   BoundLayout<Sha256load_15__SuperLayout> x4 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   RetTupleStruct x5 = back_RetTuple(ctx, 1, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
-  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
-  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:296)
-  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
   // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  RetTupleStruct x6 = back_RetTuple(ctx, 2, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:294)
+  RetTupleStruct x7 = back_RetTuple(ctx, 3, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:295)
+  RetTupleStruct x8 = back_RetTuple(ctx, 4, arg1);
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x9 = x5.midx._super;
   Val x10 = x5.blk._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:298)
   Val x11 = ((x9 + Val(1)) - x10);
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:299)
   NondetRegStruct x12 = exec_NondetReg(ctx, inv(x11), LAYOUT_LOOKUP(layout2, invWithin));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)
-  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:301)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:293)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)
+  EQZ(((x11 * x12._super) - Val(1)), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:300)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:292)
   Val x13 = x5.rnd._super;
   NondetRegStruct24Array x14 = x5.arrD;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
   BoundLayout<NondetRegLayout> x15 =
       LAYOUT_LOOKUP(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm1), _extra0), count);
   BoundLayout<Reg> x16 = LAYOUT_LOOKUP(x15, _super);
   Val6Array x17;
   if (to_size_t((Val(1) - x13))) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
     ReadMemoryStruct x18 = exec_ReadMemory(ctx, x10, LAYOUT_LOOKUP(LAYOUT_LOOKUP(x3, arm0), mem));
     NondetRegStruct4Array x19 = x18._super;
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:305)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:304)
     Val6Array x20 =
         Val6Array{x19[0]._super, x19[1]._super, x19[2]._super, x19[3]._super, Val(1), x10};
     x17 = x20;
   } else if (to_size_t(x13)) {
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:307)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:306)
     Val6Array x21 = Val6Array{x14[0]._super, x14[1]._super, Val(0), Val(0), Val(0), (x10 + Val(1))};
-    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)
+    // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)
     STORE(x16, Val(0));
-    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:303)");
+    EQZ(LOAD(x16, 0), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:302)");
     x17 = x21;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:309)
   ToBits_16_Struct x22 = exec_ToBits_16_(ctx, x17[0], LAYOUT_LOOKUP(layout2, highW));
   NondetRegStruct16Array x23 = x22._super;
   Val x24 = x23[0]._super;
@@ -5557,14 +5550,14 @@ RetTupleStruct execSha256load_15_(ExecContext& ctx,
   Val x38 = x23[14]._super;
   Val x39 = x23[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)
   Val x40 = (((x24 + (x25 * Val(2))) + (x26 * Val(4))) + (x27 * Val(8)));
   Val x41 = (((x40 + (x28 * Val(16))) + (x29 * Val(32))) + (x30 * Val(64)));
   Val x42 = (((x41 + (x31 * Val(128))) + (x32 * Val(256))) + (x33 * Val(512)));
   Val x43 = (((x42 + (x34 * Val(1024))) + (x35 * Val(2048))) + (x36 * Val(4096)));
   Val x44 = (((x43 + (x37 * Val(8192))) + (x38 * Val(16384))) + (x39 * Val(32768)));
-  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:311)");
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
+  EQZ((x44 - x17[0]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:310)");
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:312)
   ToBits_16_Struct x45 = exec_ToBits_16_(ctx, x17[1], LAYOUT_LOOKUP(layout2, lowW));
   NondetRegStruct16Array x46 = x45._super;
   Val x47 = x46[0]._super;
@@ -5584,15 +5577,15 @@ RetTupleStruct execSha256load_15_(ExecContext& ctx,
   Val x61 = x46[14]._super;
   Val x62 = x46[15]._super;
   // FromBits(zirgen/circuit/keccak/sha256_for_keccak.zir:83)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)
   Val x63 = (((x47 + (x48 * Val(2))) + (x49 * Val(4))) + (x50 * Val(8)));
   Val x64 = (((x63 + (x51 * Val(16))) + (x52 * Val(32))) + (x53 * Val(64)));
   Val x65 = (((x64 + (x54 * Val(128))) + (x55 * Val(256))) + (x56 * Val(512)));
   Val x66 = (((x65 + (x57 * Val(1024))) + (x58 * Val(2048))) + (x59 * Val(4096)));
   Val x67 = (((x66 + (x60 * Val(8192))) + (x61 * Val(16384))) + (x62 * Val(32768)));
-  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:314)");
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  EQZ((x67 - x17[1]), "sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:313)");
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   NondetRegStruct22Array x68 = x5.arrA;
   NondetRegStruct22Array x69 = x5.arrB;
   NondetRegStruct22Array x70 = x6.arrA;
@@ -5601,13 +5594,13 @@ RetTupleStruct execSha256load_15_(ExecContext& ctx,
   NondetRegStruct22Array x73 = x7.arrB;
   NondetRegStruct22Array x74 = x8.arrA;
   NondetRegStruct22Array x75 = x8.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   NondetRegStruct22Array x76 = x5.arrC;
   NondetRegStruct22Array x77 = x6.arrC;
   NondetRegStruct22Array x78 = x7.arrC;
   NondetRegStruct22Array x79 = x8.arrC;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   Val32Array x80 =
       Val32Array{x68[0]._super,  x68[1]._super,  x68[2]._super,  x68[3]._super,  x68[4]._super,
                  x68[5]._super,  x68[6]._super,  x68[7]._super,  x68[8]._super,  x68[9]._super,
@@ -5640,7 +5633,7 @@ RetTupleStruct execSha256load_15_(ExecContext& ctx,
                  x74[20]._super, x74[21]._super, x75[0]._super,  x75[1]._super,  x75[2]._super,
                  x75[3]._super,  x75[4]._super,  x75[5]._super,  x75[6]._super,  x75[7]._super,
                  x75[8]._super,  x75[9]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:322)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
   Val32Array x84 =
       Val32Array{x69[10]._super, x69[11]._super, x69[12]._super, x69[13]._super, x69[14]._super,
                  x69[15]._super, x69[16]._super, x69[17]._super, x69[18]._super, x69[19]._super,
@@ -5673,7 +5666,7 @@ RetTupleStruct execSha256load_15_(ExecContext& ctx,
                  x79[8]._super,  x79[9]._super,  x79[10]._super, x79[11]._super, x79[12]._super,
                  x79[13]._super, x79[14]._super, x79[15]._super, x79[16]._super, x79[17]._super,
                  x79[18]._super, x79[19]._super};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   ComputeAEStruct x88 = execComputeAE(
       ctx,
       x80,
@@ -5689,19 +5682,19 @@ RetTupleStruct execSha256load_15_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(61812), .high = Val(49563)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x89 = x88.aOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16_Struct x90 =
       execUnpackWithCarry(ctx, x89.low, x89.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:321)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:320)
   TwoShortsStruct x91 = x88.eOut;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16_Struct x92 =
       execUnpackWithCarry(ctx, x91.low, x91.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:323)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x93 = x90._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:325)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:324)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x94 = x92._super;
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:327)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:326)
   Val22Array x95 =
       Val22Array{x93[0]._super,  x93[1]._super,  x93[2]._super,  x93[3]._super,  x93[4]._super,
                  x93[5]._super,  x93[6]._super,  x93[7]._super,  x93[8]._super,  x93[9]._super,
@@ -5720,7 +5713,7 @@ RetTupleStruct execSha256load_15_(ExecContext& ctx,
                  x94[22]._super, x94[23]._super, x94[24]._super, x94[25]._super, x94[26]._super,
                  x94[27]._super, x94[28]._super, x94[29]._super, x94[30]._super, x94[31]._super,
                  Val(0),         Val(0)};
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:332)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:331)
   RetTupleStruct x98 =
       exec_RetTuple(ctx,
                     x95,
@@ -5740,7 +5733,7 @@ RetTupleStruct execSha256load_15_(ExecContext& ctx,
                     x17[5],
                     x9,
                     LAYOUT_LOOKUP(x4, arm1));
-  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:329)
+  // sha256load(zirgen/circuit/keccak/sha256_for_keccak.zir:328)
   RetTupleStruct x99 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x4, _super));
   return x99;
 }
@@ -5748,81 +5741,81 @@ RetTupleStruct execSha256loadAll(ExecContext& ctx,
                                  RetTupleStruct arg0,
                                  BoundLayout<RetTupleLayout> arg1,
                                  BoundLayout<Sha256loadAllLayout> layout2) {
-  // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:338)
-  BoundLayout<Sha256loadAll_SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
   // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:337)
+  BoundLayout<Sha256loadAll_SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
+  // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:336)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
   OneHot_16_Struct x5 = exec_OneHot_16_(ctx, x4.minor._super, LAYOUT_LOOKUP(layout2, minorOnehot));
   NondetRegStruct16Array x6 = x5._super;
   RetTupleStruct x7;
   if (to_size_t(x6[0]._super)) {
-    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:339)
+    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:338)
     RetTupleStruct x8 = execSha256load_0_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm0));
     x7 = x8;
   } else if (to_size_t(x6[1]._super)) {
-    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:340)
+    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:339)
     RetTupleStruct x9 = execSha256load_1_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm1));
     x7 = x9;
   } else if (to_size_t(x6[2]._super)) {
-    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:341)
+    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:340)
     RetTupleStruct x10 = execSha256load_2_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm2));
     x7 = x10;
   } else if (to_size_t(x6[3]._super)) {
-    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:342)
+    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:341)
     RetTupleStruct x11 = execSha256load_3_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm3));
     x7 = x11;
   } else if (to_size_t(x6[4]._super)) {
-    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:343)
+    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:342)
     RetTupleStruct x12 = execSha256load_4_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm4));
     x7 = x12;
   } else if (to_size_t(x6[5]._super)) {
-    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:344)
+    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:343)
     RetTupleStruct x13 = execSha256load_5_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm5));
     x7 = x13;
   } else if (to_size_t(x6[6]._super)) {
-    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:345)
+    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:344)
     RetTupleStruct x14 = execSha256load_6_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm6));
     x7 = x14;
   } else if (to_size_t(x6[7]._super)) {
-    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:346)
+    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:345)
     RetTupleStruct x15 = execSha256load_7_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm7));
     x7 = x15;
   } else if (to_size_t(x6[8]._super)) {
-    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:347)
+    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:346)
     RetTupleStruct x16 = execSha256load_8_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm8));
     x7 = x16;
   } else if (to_size_t(x6[9]._super)) {
-    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:348)
+    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:347)
     RetTupleStruct x17 = execSha256load_9_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm9));
     x7 = x17;
   } else if (to_size_t(x6[10]._super)) {
-    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:349)
+    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:348)
     RetTupleStruct x18 = execSha256load_10_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm10));
     x7 = x18;
   } else if (to_size_t(x6[11]._super)) {
-    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:350)
+    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:349)
     RetTupleStruct x19 = execSha256load_11_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm11));
     x7 = x19;
   } else if (to_size_t(x6[12]._super)) {
-    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:351)
+    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:350)
     RetTupleStruct x20 = execSha256load_12_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm12));
     x7 = x20;
   } else if (to_size_t(x6[13]._super)) {
-    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:352)
+    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:351)
     RetTupleStruct x21 = execSha256load_13_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm13));
     x7 = x21;
   } else if (to_size_t(x6[14]._super)) {
-    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:353)
+    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:352)
     RetTupleStruct x22 = execSha256load_14_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm14));
     x7 = x22;
   } else if (to_size_t(x6[15]._super)) {
-    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:354)
+    // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:353)
     RetTupleStruct x23 = execSha256load_15_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm15));
     x7 = x23;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:338)
+  // sha256load_all(zirgen/circuit/keccak/sha256_for_keccak.zir:337)
   RetTupleStruct x24 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x24;
 }
@@ -15530,25 +15523,25 @@ execEqualWord_3_(ExecContext& ctx, RetTupleStruct arg0, BoundLayout<EqualWord_3_
 }
 RetTupleStruct
 execSha256init_1_(ExecContext& ctx, RetTupleStruct arg0, BoundLayout<Sha256init_1_Layout> layout1) {
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:423)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:422)
   BoundLayout<Sha256init_1__SuperLayout> x2 = LAYOUT_LOOKUP(layout1, _super);
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:414)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:413)
   ToBits_16_Struct x3 = exec_ToBits_16_(ctx, Val(62778), LAYOUT_LOOKUP(layout1, lowA));
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:415)
-  ToBits_16_Struct x4 = exec_ToBits_16_(ctx, Val(42319), LAYOUT_LOOKUP(layout1, highA));
   // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:414)
+  ToBits_16_Struct x4 = exec_ToBits_16_(ctx, Val(42319), LAYOUT_LOOKUP(layout1, highA));
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:413)
   NondetRegStruct16Array x5 = x3._super;
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:415)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:414)
   NondetRegStruct16Array x6 = x4._super;
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:418)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:417)
   ToBits_16_Struct x7 = exec_ToBits_16_(ctx, Val(52505), LAYOUT_LOOKUP(layout1, lowE));
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:419)
-  ToBits_16_Struct x8 = exec_ToBits_16_(ctx, Val(23520), LAYOUT_LOOKUP(layout1, highE));
   // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:418)
+  ToBits_16_Struct x8 = exec_ToBits_16_(ctx, Val(23520), LAYOUT_LOOKUP(layout1, highE));
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:417)
   NondetRegStruct16Array x9 = x7._super;
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:419)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:418)
   NondetRegStruct16Array x10 = x8._super;
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:421)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:420)
   Val22Array x11 = Val22Array{
       x5[0]._super,  x5[1]._super,  x5[2]._super,  x5[3]._super,  x5[4]._super,  x5[5]._super,
       x5[6]._super,  x5[7]._super,  x5[8]._super,  x5[9]._super,  x5[10]._super, x5[11]._super,
@@ -15565,7 +15558,7 @@ execSha256init_1_(ExecContext& ctx, RetTupleStruct arg0, BoundLayout<Sha256init_
                  x10[6]._super,  x10[7]._super,  x10[8]._super,  x10[9]._super,  x10[10]._super,
                  x10[11]._super, x10[12]._super, x10[13]._super, x10[14]._super, x10[15]._super,
                  Val(0),         Val(0)};
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:424)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:423)
   Val22Array x14 = Val22Array{Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
                               Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
                               Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)};
@@ -15585,30 +15578,30 @@ execSha256init_1_(ExecContext& ctx, RetTupleStruct arg0, BoundLayout<Sha256init_
                     Val(0),
                     arg0.midx._super,
                     LAYOUT_LOOKUP(x2, arm0));
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:423)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:422)
   RetTupleStruct x16 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x2, _super));
   return x16;
 }
 RetTupleStruct
 execSha256init_2_(ExecContext& ctx, RetTupleStruct arg0, BoundLayout<Sha256init_2_Layout> layout1) {
   BoundLayout<Sha256init_2__SuperLayout> x2 = LAYOUT_LOOKUP(layout1, _super);
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:414)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:413)
   ToBits_16_Struct x3 = exec_ToBits_16_(ctx, Val(62322), LAYOUT_LOOKUP(layout1, lowA));
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:415)
-  ToBits_16_Struct x4 = exec_ToBits_16_(ctx, Val(15470), LAYOUT_LOOKUP(layout1, highA));
   // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:414)
+  ToBits_16_Struct x4 = exec_ToBits_16_(ctx, Val(15470), LAYOUT_LOOKUP(layout1, highA));
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:413)
   NondetRegStruct16Array x5 = x3._super;
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:415)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:414)
   NondetRegStruct16Array x6 = x4._super;
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:418)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:417)
   ToBits_16_Struct x7 = exec_ToBits_16_(ctx, Val(55723), LAYOUT_LOOKUP(layout1, lowE));
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:419)
-  ToBits_16_Struct x8 = exec_ToBits_16_(ctx, Val(8067), LAYOUT_LOOKUP(layout1, highE));
   // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:418)
+  ToBits_16_Struct x8 = exec_ToBits_16_(ctx, Val(8067), LAYOUT_LOOKUP(layout1, highE));
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:417)
   NondetRegStruct16Array x9 = x7._super;
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:419)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:418)
   NondetRegStruct16Array x10 = x8._super;
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:421)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:420)
   Val22Array x11 = Val22Array{
       x5[0]._super,  x5[1]._super,  x5[2]._super,  x5[3]._super,  x5[4]._super,  x5[5]._super,
       x5[6]._super,  x5[7]._super,  x5[8]._super,  x5[9]._super,  x5[10]._super, x5[11]._super,
@@ -15625,7 +15618,7 @@ execSha256init_2_(ExecContext& ctx, RetTupleStruct arg0, BoundLayout<Sha256init_
                  x10[6]._super,  x10[7]._super,  x10[8]._super,  x10[9]._super,  x10[10]._super,
                  x10[11]._super, x10[12]._super, x10[13]._super, x10[14]._super, x10[15]._super,
                  Val(0),         Val(0)};
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:424)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:423)
   Val22Array x14 = Val22Array{Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
                               Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
                               Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)};
@@ -15645,30 +15638,30 @@ execSha256init_2_(ExecContext& ctx, RetTupleStruct arg0, BoundLayout<Sha256init_
                     Val(0),
                     arg0.midx._super,
                     LAYOUT_LOOKUP(x2, arm0));
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:423)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:422)
   RetTupleStruct x16 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x2, _super));
   return x16;
 }
 RetTupleStruct
 execSha256init_3_(ExecContext& ctx, RetTupleStruct arg0, BoundLayout<Sha256init_3_Layout> layout1) {
   BoundLayout<Sha256init_3__SuperLayout> x2 = LAYOUT_LOOKUP(layout1, _super);
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:414)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:413)
   ToBits_16_Struct x3 = exec_ToBits_16_(ctx, Val(44677), LAYOUT_LOOKUP(layout1, lowA));
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:415)
-  ToBits_16_Struct x4 = exec_ToBits_16_(ctx, Val(47975), LAYOUT_LOOKUP(layout1, highA));
   // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:414)
+  ToBits_16_Struct x4 = exec_ToBits_16_(ctx, Val(47975), LAYOUT_LOOKUP(layout1, highA));
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:413)
   NondetRegStruct16Array x5 = x3._super;
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:415)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:414)
   NondetRegStruct16Array x6 = x4._super;
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:418)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:417)
   ToBits_16_Struct x7 = exec_ToBits_16_(ctx, Val(26764), LAYOUT_LOOKUP(layout1, lowE));
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:419)
-  ToBits_16_Struct x8 = exec_ToBits_16_(ctx, Val(39685), LAYOUT_LOOKUP(layout1, highE));
   // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:418)
+  ToBits_16_Struct x8 = exec_ToBits_16_(ctx, Val(39685), LAYOUT_LOOKUP(layout1, highE));
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:417)
   NondetRegStruct16Array x9 = x7._super;
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:419)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:418)
   NondetRegStruct16Array x10 = x8._super;
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:421)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:420)
   Val22Array x11 = Val22Array{
       x5[0]._super,  x5[1]._super,  x5[2]._super,  x5[3]._super,  x5[4]._super,  x5[5]._super,
       x5[6]._super,  x5[7]._super,  x5[8]._super,  x5[9]._super,  x5[10]._super, x5[11]._super,
@@ -15685,7 +15678,7 @@ execSha256init_3_(ExecContext& ctx, RetTupleStruct arg0, BoundLayout<Sha256init_
                  x10[6]._super,  x10[7]._super,  x10[8]._super,  x10[9]._super,  x10[10]._super,
                  x10[11]._super, x10[12]._super, x10[13]._super, x10[14]._super, x10[15]._super,
                  Val(0),         Val(0)};
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:424)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:423)
   Val22Array x14 = Val22Array{Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
                               Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
                               Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)};
@@ -15705,30 +15698,30 @@ execSha256init_3_(ExecContext& ctx, RetTupleStruct arg0, BoundLayout<Sha256init_
                     Val(0),
                     arg0.midx._super,
                     LAYOUT_LOOKUP(x2, arm0));
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:423)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:422)
   RetTupleStruct x16 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x2, _super));
   return x16;
 }
 RetTupleStruct
 execSha256init_4_(ExecContext& ctx, RetTupleStruct arg0, BoundLayout<Sha256init_4_Layout> layout1) {
   BoundLayout<Sha256init_4__SuperLayout> x2 = LAYOUT_LOOKUP(layout1, _super);
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:414)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:413)
   ToBits_16_Struct x3 = exec_ToBits_16_(ctx, Val(58983), LAYOUT_LOOKUP(layout1, lowA));
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:415)
-  ToBits_16_Struct x4 = exec_ToBits_16_(ctx, Val(27145), LAYOUT_LOOKUP(layout1, highA));
   // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:414)
+  ToBits_16_Struct x4 = exec_ToBits_16_(ctx, Val(27145), LAYOUT_LOOKUP(layout1, highA));
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:413)
   NondetRegStruct16Array x5 = x3._super;
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:415)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:414)
   NondetRegStruct16Array x6 = x4._super;
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:418)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:417)
   ToBits_16_Struct x7 = exec_ToBits_16_(ctx, Val(21119), LAYOUT_LOOKUP(layout1, lowE));
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:419)
-  ToBits_16_Struct x8 = exec_ToBits_16_(ctx, Val(20750), LAYOUT_LOOKUP(layout1, highE));
   // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:418)
+  ToBits_16_Struct x8 = exec_ToBits_16_(ctx, Val(20750), LAYOUT_LOOKUP(layout1, highE));
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:417)
   NondetRegStruct16Array x9 = x7._super;
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:419)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:418)
   NondetRegStruct16Array x10 = x8._super;
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:421)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:420)
   Val22Array x11 = Val22Array{
       x5[0]._super,  x5[1]._super,  x5[2]._super,  x5[3]._super,  x5[4]._super,  x5[5]._super,
       x5[6]._super,  x5[7]._super,  x5[8]._super,  x5[9]._super,  x5[10]._super, x5[11]._super,
@@ -15745,7 +15738,7 @@ execSha256init_4_(ExecContext& ctx, RetTupleStruct arg0, BoundLayout<Sha256init_
                  x10[6]._super,  x10[7]._super,  x10[8]._super,  x10[9]._super,  x10[10]._super,
                  x10[11]._super, x10[12]._super, x10[13]._super, x10[14]._super, x10[15]._super,
                  Val(0),         Val(0)};
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:426)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:425)
   Val22Array x14 = Val22Array{Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
                               Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
                               Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)};
@@ -15765,7 +15758,7 @@ execSha256init_4_(ExecContext& ctx, RetTupleStruct arg0, BoundLayout<Sha256init_
                     Val(0),
                     arg0.midx._super,
                     LAYOUT_LOOKUP(x2, arm1));
-  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:423)
+  // sha256init(zirgen/circuit/keccak/sha256_for_keccak.zir:422)
   RetTupleStruct x16 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x2, _super));
   return x16;
 }
@@ -15773,20 +15766,20 @@ RetTupleStruct execSha256fini_5_(ExecContext& ctx,
                                  RetTupleStruct arg0,
                                  BoundLayout<RetTupleLayout> arg1,
                                  BoundLayout<Sha256fini_5_Layout> layout2) {
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:444)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:443)
   BoundLayout<Sha256fini_5__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:431)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:430)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:432)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:431)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:433)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:432)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:434)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:433)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:435)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:434)
   RetTupleStruct x8 = back_RetTuple(ctx, 68, arg1);
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:437)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:436)
   NondetRegStruct22Array x9 = x7.arrA;
   NondetRegStruct22Array x10 = x7.arrB;
   Val32Array x11 = Val32Array{
@@ -15797,7 +15790,7 @@ RetTupleStruct execSha256fini_5_(ExecContext& ctx,
       x10[2]._super, x10[3]._super, x10[4]._super, x10[5]._super, x10[6]._super, x10[7]._super,
       x10[8]._super, x10[9]._super};
   Pack2Struct x12 = execPack2(ctx, x11, LAYOUT_LOOKUP(layout2, _0));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
   NondetRegStruct22Array x13 = x8.arrA;
   NondetRegStruct22Array x14 = x8.arrB;
   Val32Array x15 =
@@ -15811,11 +15804,11 @@ RetTupleStruct execSha256fini_5_(ExecContext& ctx,
   Pack2Struct x16 = execPack2(ctx, x15, LAYOUT_LOOKUP(layout2, _1));
   TwoShortsStruct x17 = x12._super;
   TwoShortsStruct x18 = x16._super;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:438)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:437)
   Concatenate_NondetReg__16__16_Struct x19 = execUnpackWithCarry(
       ctx, (x17.low + x18.low), (x17.high + x18.high), LAYOUT_LOOKUP(layout2, newA));
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:439)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:438)
   NondetRegStruct22Array x20 = x7.arrC;
   Val32Array x21 =
       Val32Array{x10[10]._super, x10[11]._super, x10[12]._super, x10[13]._super, x10[14]._super,
@@ -15826,7 +15819,7 @@ RetTupleStruct execSha256fini_5_(ExecContext& ctx,
                  x20[13]._super, x20[14]._super, x20[15]._super, x20[16]._super, x20[17]._super,
                  x20[18]._super, x20[19]._super};
   Pack2Struct x22 = execPack2(ctx, x21, LAYOUT_LOOKUP(layout2, _2));
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
   NondetRegStruct22Array x23 = x8.arrC;
   Val32Array x24 =
       Val32Array{x14[10]._super, x14[11]._super, x14[12]._super, x14[13]._super, x14[14]._super,
@@ -15839,16 +15832,16 @@ RetTupleStruct execSha256fini_5_(ExecContext& ctx,
   Pack2Struct x25 = execPack2(ctx, x24, LAYOUT_LOOKUP(layout2, _3));
   TwoShortsStruct x26 = x22._super;
   TwoShortsStruct x27 = x25._super;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:440)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:439)
   Concatenate_NondetReg__16__16_Struct x28 = execUnpackWithCarry(
       ctx, (x26.low + x27.low), (x26.high + x27.high), LAYOUT_LOOKUP(layout2, newE));
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:438)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:437)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x29 = x19._super;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:440)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:439)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x30 = x28._super;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:431)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:430)
   NondetRegStruct24Array x31 = x4.arrD;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:441)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:440)
   Val22Array x32 =
       Val22Array{x29[0]._super,  x29[1]._super,  x29[2]._super,  x29[3]._super,  x29[4]._super,
                  x29[5]._super,  x29[6]._super,  x29[7]._super,  x29[8]._super,  x29[9]._super,
@@ -15867,14 +15860,14 @@ RetTupleStruct execSha256fini_5_(ExecContext& ctx,
                  x30[22]._super, x30[23]._super, x30[24]._super, x30[25]._super, x30[26]._super,
                  x30[27]._super, x30[28]._super, x30[29]._super, x30[30]._super, x30[31]._super,
                  Val(0),         Val(0)};
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:431)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:430)
   Val24Array x35 =
       Val24Array{x31[0]._super,  x31[1]._super,  x31[2]._super,  x31[3]._super,  x31[4]._super,
                  x31[5]._super,  x31[6]._super,  x31[7]._super,  x31[8]._super,  x31[9]._super,
                  x31[10]._super, x31[11]._super, x31[12]._super, x31[13]._super, x31[14]._super,
                  x31[15]._super, x31[16]._super, x31[17]._super, x31[18]._super, x31[19]._super,
                  x31[20]._super, x31[21]._super, x31[22]._super, x31[23]._super};
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:445)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:444)
   Val22Array x36 = Val22Array{Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
                               Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
                               Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)};
@@ -15891,7 +15884,7 @@ RetTupleStruct execSha256fini_5_(ExecContext& ctx,
                                      x4.blk._super,
                                      x4.midx._super,
                                      LAYOUT_LOOKUP(x3, arm0));
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:444)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:443)
   RetTupleStruct x38 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x38;
 }
@@ -15900,18 +15893,18 @@ RetTupleStruct execSha256fini_6_(ExecContext& ctx,
                                  BoundLayout<RetTupleLayout> arg1,
                                  BoundLayout<Sha256fini_6_Layout> layout2) {
   BoundLayout<Sha256fini_6__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:431)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:430)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:432)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:431)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:433)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:432)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:434)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:433)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:435)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:434)
   RetTupleStruct x8 = back_RetTuple(ctx, 68, arg1);
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:437)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:436)
   NondetRegStruct22Array x9 = x7.arrA;
   NondetRegStruct22Array x10 = x7.arrB;
   Val32Array x11 = Val32Array{
@@ -15922,7 +15915,7 @@ RetTupleStruct execSha256fini_6_(ExecContext& ctx,
       x10[2]._super, x10[3]._super, x10[4]._super, x10[5]._super, x10[6]._super, x10[7]._super,
       x10[8]._super, x10[9]._super};
   Pack2Struct x12 = execPack2(ctx, x11, LAYOUT_LOOKUP(layout2, _0));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
   NondetRegStruct22Array x13 = x8.arrA;
   NondetRegStruct22Array x14 = x8.arrB;
   Val32Array x15 =
@@ -15936,11 +15929,11 @@ RetTupleStruct execSha256fini_6_(ExecContext& ctx,
   Pack2Struct x16 = execPack2(ctx, x15, LAYOUT_LOOKUP(layout2, _1));
   TwoShortsStruct x17 = x12._super;
   TwoShortsStruct x18 = x16._super;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:438)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:437)
   Concatenate_NondetReg__16__16_Struct x19 = execUnpackWithCarry(
       ctx, (x17.low + x18.low), (x17.high + x18.high), LAYOUT_LOOKUP(layout2, newA));
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:439)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:438)
   NondetRegStruct22Array x20 = x7.arrC;
   Val32Array x21 =
       Val32Array{x10[10]._super, x10[11]._super, x10[12]._super, x10[13]._super, x10[14]._super,
@@ -15951,7 +15944,7 @@ RetTupleStruct execSha256fini_6_(ExecContext& ctx,
                  x20[13]._super, x20[14]._super, x20[15]._super, x20[16]._super, x20[17]._super,
                  x20[18]._super, x20[19]._super};
   Pack2Struct x22 = execPack2(ctx, x21, LAYOUT_LOOKUP(layout2, _2));
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
   NondetRegStruct22Array x23 = x8.arrC;
   Val32Array x24 =
       Val32Array{x14[10]._super, x14[11]._super, x14[12]._super, x14[13]._super, x14[14]._super,
@@ -15964,16 +15957,16 @@ RetTupleStruct execSha256fini_6_(ExecContext& ctx,
   Pack2Struct x25 = execPack2(ctx, x24, LAYOUT_LOOKUP(layout2, _3));
   TwoShortsStruct x26 = x22._super;
   TwoShortsStruct x27 = x25._super;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:440)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:439)
   Concatenate_NondetReg__16__16_Struct x28 = execUnpackWithCarry(
       ctx, (x26.low + x27.low), (x26.high + x27.high), LAYOUT_LOOKUP(layout2, newE));
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:438)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:437)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x29 = x19._super;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:440)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:439)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x30 = x28._super;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:431)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:430)
   NondetRegStruct24Array x31 = x4.arrD;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:441)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:440)
   Val22Array x32 =
       Val22Array{x29[0]._super,  x29[1]._super,  x29[2]._super,  x29[3]._super,  x29[4]._super,
                  x29[5]._super,  x29[6]._super,  x29[7]._super,  x29[8]._super,  x29[9]._super,
@@ -15992,14 +15985,14 @@ RetTupleStruct execSha256fini_6_(ExecContext& ctx,
                  x30[22]._super, x30[23]._super, x30[24]._super, x30[25]._super, x30[26]._super,
                  x30[27]._super, x30[28]._super, x30[29]._super, x30[30]._super, x30[31]._super,
                  Val(0),         Val(0)};
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:431)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:430)
   Val24Array x35 =
       Val24Array{x31[0]._super,  x31[1]._super,  x31[2]._super,  x31[3]._super,  x31[4]._super,
                  x31[5]._super,  x31[6]._super,  x31[7]._super,  x31[8]._super,  x31[9]._super,
                  x31[10]._super, x31[11]._super, x31[12]._super, x31[13]._super, x31[14]._super,
                  x31[15]._super, x31[16]._super, x31[17]._super, x31[18]._super, x31[19]._super,
                  x31[20]._super, x31[21]._super, x31[22]._super, x31[23]._super};
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:445)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:444)
   Val22Array x36 = Val22Array{Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
                               Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
                               Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)};
@@ -16016,7 +16009,7 @@ RetTupleStruct execSha256fini_6_(ExecContext& ctx,
                                      x4.blk._super,
                                      x4.midx._super,
                                      LAYOUT_LOOKUP(x3, arm0));
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:444)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:443)
   RetTupleStruct x38 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x38;
 }
@@ -16025,18 +16018,18 @@ RetTupleStruct execSha256fini_7_(ExecContext& ctx,
                                  BoundLayout<RetTupleLayout> arg1,
                                  BoundLayout<Sha256fini_7_Layout> layout2) {
   BoundLayout<Sha256fini_7__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:431)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:430)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:432)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:431)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:433)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:432)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:434)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:433)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:435)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:434)
   RetTupleStruct x8 = back_RetTuple(ctx, 68, arg1);
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:437)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:436)
   NondetRegStruct22Array x9 = x7.arrA;
   NondetRegStruct22Array x10 = x7.arrB;
   Val32Array x11 = Val32Array{
@@ -16047,7 +16040,7 @@ RetTupleStruct execSha256fini_7_(ExecContext& ctx,
       x10[2]._super, x10[3]._super, x10[4]._super, x10[5]._super, x10[6]._super, x10[7]._super,
       x10[8]._super, x10[9]._super};
   Pack2Struct x12 = execPack2(ctx, x11, LAYOUT_LOOKUP(layout2, _0));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
   NondetRegStruct22Array x13 = x8.arrA;
   NondetRegStruct22Array x14 = x8.arrB;
   Val32Array x15 =
@@ -16061,11 +16054,11 @@ RetTupleStruct execSha256fini_7_(ExecContext& ctx,
   Pack2Struct x16 = execPack2(ctx, x15, LAYOUT_LOOKUP(layout2, _1));
   TwoShortsStruct x17 = x12._super;
   TwoShortsStruct x18 = x16._super;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:438)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:437)
   Concatenate_NondetReg__16__16_Struct x19 = execUnpackWithCarry(
       ctx, (x17.low + x18.low), (x17.high + x18.high), LAYOUT_LOOKUP(layout2, newA));
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:439)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:438)
   NondetRegStruct22Array x20 = x7.arrC;
   Val32Array x21 =
       Val32Array{x10[10]._super, x10[11]._super, x10[12]._super, x10[13]._super, x10[14]._super,
@@ -16076,7 +16069,7 @@ RetTupleStruct execSha256fini_7_(ExecContext& ctx,
                  x20[13]._super, x20[14]._super, x20[15]._super, x20[16]._super, x20[17]._super,
                  x20[18]._super, x20[19]._super};
   Pack2Struct x22 = execPack2(ctx, x21, LAYOUT_LOOKUP(layout2, _2));
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
   NondetRegStruct22Array x23 = x8.arrC;
   Val32Array x24 =
       Val32Array{x14[10]._super, x14[11]._super, x14[12]._super, x14[13]._super, x14[14]._super,
@@ -16089,16 +16082,16 @@ RetTupleStruct execSha256fini_7_(ExecContext& ctx,
   Pack2Struct x25 = execPack2(ctx, x24, LAYOUT_LOOKUP(layout2, _3));
   TwoShortsStruct x26 = x22._super;
   TwoShortsStruct x27 = x25._super;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:440)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:439)
   Concatenate_NondetReg__16__16_Struct x28 = execUnpackWithCarry(
       ctx, (x26.low + x27.low), (x26.high + x27.high), LAYOUT_LOOKUP(layout2, newE));
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:438)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:437)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x29 = x19._super;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:440)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:439)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x30 = x28._super;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:431)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:430)
   NondetRegStruct24Array x31 = x4.arrD;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:441)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:440)
   Val22Array x32 =
       Val22Array{x29[0]._super,  x29[1]._super,  x29[2]._super,  x29[3]._super,  x29[4]._super,
                  x29[5]._super,  x29[6]._super,  x29[7]._super,  x29[8]._super,  x29[9]._super,
@@ -16117,14 +16110,14 @@ RetTupleStruct execSha256fini_7_(ExecContext& ctx,
                  x30[22]._super, x30[23]._super, x30[24]._super, x30[25]._super, x30[26]._super,
                  x30[27]._super, x30[28]._super, x30[29]._super, x30[30]._super, x30[31]._super,
                  Val(0),         Val(0)};
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:431)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:430)
   Val24Array x35 =
       Val24Array{x31[0]._super,  x31[1]._super,  x31[2]._super,  x31[3]._super,  x31[4]._super,
                  x31[5]._super,  x31[6]._super,  x31[7]._super,  x31[8]._super,  x31[9]._super,
                  x31[10]._super, x31[11]._super, x31[12]._super, x31[13]._super, x31[14]._super,
                  x31[15]._super, x31[16]._super, x31[17]._super, x31[18]._super, x31[19]._super,
                  x31[20]._super, x31[21]._super, x31[22]._super, x31[23]._super};
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:445)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:444)
   Val22Array x36 = Val22Array{Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
                               Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
                               Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)};
@@ -16141,7 +16134,7 @@ RetTupleStruct execSha256fini_7_(ExecContext& ctx,
                                      x4.blk._super,
                                      x4.midx._super,
                                      LAYOUT_LOOKUP(x3, arm0));
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:444)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:443)
   RetTupleStruct x38 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x38;
 }
@@ -16150,18 +16143,18 @@ RetTupleStruct execSha256fini_8_(ExecContext& ctx,
                                  BoundLayout<RetTupleLayout> arg1,
                                  BoundLayout<Sha256fini_8_Layout> layout2) {
   BoundLayout<Sha256fini_8__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:431)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:430)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:432)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:431)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:433)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:432)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:434)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:433)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:435)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:434)
   RetTupleStruct x8 = back_RetTuple(ctx, 68, arg1);
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:437)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:436)
   NondetRegStruct22Array x9 = x7.arrA;
   NondetRegStruct22Array x10 = x7.arrB;
   Val32Array x11 = Val32Array{
@@ -16172,7 +16165,7 @@ RetTupleStruct execSha256fini_8_(ExecContext& ctx,
       x10[2]._super, x10[3]._super, x10[4]._super, x10[5]._super, x10[6]._super, x10[7]._super,
       x10[8]._super, x10[9]._super};
   Pack2Struct x12 = execPack2(ctx, x11, LAYOUT_LOOKUP(layout2, _0));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
   NondetRegStruct22Array x13 = x8.arrA;
   NondetRegStruct22Array x14 = x8.arrB;
   Val32Array x15 =
@@ -16186,11 +16179,11 @@ RetTupleStruct execSha256fini_8_(ExecContext& ctx,
   Pack2Struct x16 = execPack2(ctx, x15, LAYOUT_LOOKUP(layout2, _1));
   TwoShortsStruct x17 = x12._super;
   TwoShortsStruct x18 = x16._super;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:438)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:437)
   Concatenate_NondetReg__16__16_Struct x19 = execUnpackWithCarry(
       ctx, (x17.low + x18.low), (x17.high + x18.high), LAYOUT_LOOKUP(layout2, newA));
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:439)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:438)
   NondetRegStruct22Array x20 = x7.arrC;
   Val32Array x21 =
       Val32Array{x10[10]._super, x10[11]._super, x10[12]._super, x10[13]._super, x10[14]._super,
@@ -16201,7 +16194,7 @@ RetTupleStruct execSha256fini_8_(ExecContext& ctx,
                  x20[13]._super, x20[14]._super, x20[15]._super, x20[16]._super, x20[17]._super,
                  x20[18]._super, x20[19]._super};
   Pack2Struct x22 = execPack2(ctx, x21, LAYOUT_LOOKUP(layout2, _2));
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
   NondetRegStruct22Array x23 = x8.arrC;
   Val32Array x24 =
       Val32Array{x14[10]._super, x14[11]._super, x14[12]._super, x14[13]._super, x14[14]._super,
@@ -16214,10 +16207,10 @@ RetTupleStruct execSha256fini_8_(ExecContext& ctx,
   Pack2Struct x25 = execPack2(ctx, x24, LAYOUT_LOOKUP(layout2, _3));
   TwoShortsStruct x26 = x22._super;
   TwoShortsStruct x27 = x25._super;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:440)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:439)
   Concatenate_NondetReg__16__16_Struct x28 = execUnpackWithCarry(
       ctx, (x26.low + x27.low), (x26.high + x27.high), LAYOUT_LOOKUP(layout2, newE));
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:438)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:437)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x29 = x19._super;
   Val x30 = x29[0]._super;
   Val x31 = x29[1]._super;
@@ -16251,7 +16244,7 @@ RetTupleStruct execSha256fini_8_(ExecContext& ctx,
   Val x59 = x29[29]._super;
   Val x60 = x29[30]._super;
   Val x61 = x29[31]._super;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:440)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:439)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x62 = x28._super;
   Val x63 = x62[0]._super;
   Val x64 = x62[1]._super;
@@ -16285,56 +16278,56 @@ RetTupleStruct execSha256fini_8_(ExecContext& ctx,
   Val x92 = x62[29]._super;
   Val x93 = x62[30]._super;
   Val x94 = x62[31]._super;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:444)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:443)
   BoundLayout<Sha256fini_8_Arm1_SuperLayout> x95 = LAYOUT_LOOKUP(x3, arm1);
   BoundLayout<Sha256fini_8_Arm1_Super_SuperLayout> x96 = LAYOUT_LOOKUP(x95, _super);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:431)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:430)
   Val x97 = x4.midx._super;
   Val x98 = x4.blk._super;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:448)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:447)
   Val x99 = ((x97 + Val(1)) - x98);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:449)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:448)
   NondetRegStruct x100 = exec_NondetReg(ctx, inv(x99), LAYOUT_LOOKUP(x95, invMoreInput));
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:450)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:449)
   Val x101 = (x99 * x100._super);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:451)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:450)
   Val x102 = (Val(1) - x101);
-  EQZ((x99 * x102), "sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:451)");
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:452)
+  EQZ((x99 * x102), "sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:450)");
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:451)
   BoundLayout<Sha256fini_8_Arm1_SuperArm1_SuperLayout> x103 = LAYOUT_LOOKUP(x96, arm1);
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:431)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:430)
   NondetRegStruct24Array x104 = x4.arrD;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:453)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:452)
   Val22Array x105 = Val22Array{Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
                                Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
                                Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)};
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:456)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:455)
   NondetRegStruct22Array x106 = x4.arrA;
   NondetRegStruct22Array x107 = x4.arrB;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:457)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:456)
   NondetRegStruct22Array x108 = x5.arrA;
   NondetRegStruct22Array x109 = x5.arrB;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:458)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:457)
   NondetRegStruct22Array x110 = x6.arrA;
   NondetRegStruct22Array x111 = x6.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:460)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:459)
   NondetRegStruct22Array x112 = x4.arrC;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:461)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:460)
   NondetRegStruct22Array x113 = x5.arrC;
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:462)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:461)
   NondetRegStruct22Array x114 = x6.arrC;
   RetTupleStruct x115;
   if (to_size_t(x101)) {
-    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:431)
+    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:430)
     Val24Array x116 = Val24Array{
         x104[0]._super,  x104[1]._super,  x104[2]._super,  x104[3]._super,  x104[4]._super,
         x104[5]._super,  x104[6]._super,  x104[7]._super,  x104[8]._super,  x104[9]._super,
         x104[10]._super, x104[11]._super, x104[12]._super, x104[13]._super, x104[14]._super,
         x104[15]._super, x104[16]._super, x104[17]._super, x104[18]._super, x104[19]._super,
         x104[20]._super, x104[21]._super, x104[22]._super, x104[23]._super};
-    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:453)
+    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:452)
     RetTupleStruct x117 =
         exec_RetTuple(ctx,
                       Val22Array{x30, x31, x32, x33, x34, x35, x36, x37, x38, x39, x40,
@@ -16354,13 +16347,13 @@ RetTupleStruct execSha256fini_8_(ExecContext& ctx,
                       LAYOUT_LOOKUP(x96, arm0));
     x115 = x117;
   } else if (to_size_t(x102)) {
-    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:455)
+    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:454)
     Pack2Struct x118 = execPack2(ctx,
                                  Val32Array{x30, x31, x32, x33, x34, x35, x36, x37, x38, x39, x40,
                                             x41, x42, x43, x44, x45, x46, x47, x48, x49, x50, x51,
                                             x52, x53, x54, x55, x56, x57, x58, x59, x60, x61},
                                  LAYOUT_LOOKUP(x103, fa));
-    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:456)
+    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:455)
     Val32Array x119 = Val32Array{x106[0]._super,  x106[1]._super,  x106[2]._super,  x106[3]._super,
                                  x106[4]._super,  x106[5]._super,  x106[6]._super,  x106[7]._super,
                                  x106[8]._super,  x106[9]._super,  x106[10]._super, x106[11]._super,
@@ -16370,7 +16363,7 @@ RetTupleStruct execSha256fini_8_(ExecContext& ctx,
                                  x107[2]._super,  x107[3]._super,  x107[4]._super,  x107[5]._super,
                                  x107[6]._super,  x107[7]._super,  x107[8]._super,  x107[9]._super};
     Pack2Struct x120 = execPack2(ctx, x119, LAYOUT_LOOKUP(x103, fb));
-    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:457)
+    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:456)
     Val32Array x121 = Val32Array{x108[0]._super,  x108[1]._super,  x108[2]._super,  x108[3]._super,
                                  x108[4]._super,  x108[5]._super,  x108[6]._super,  x108[7]._super,
                                  x108[8]._super,  x108[9]._super,  x108[10]._super, x108[11]._super,
@@ -16380,7 +16373,7 @@ RetTupleStruct execSha256fini_8_(ExecContext& ctx,
                                  x109[2]._super,  x109[3]._super,  x109[4]._super,  x109[5]._super,
                                  x109[6]._super,  x109[7]._super,  x109[8]._super,  x109[9]._super};
     Pack2Struct x122 = execPack2(ctx, x121, LAYOUT_LOOKUP(x103, fc));
-    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:458)
+    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:457)
     Val32Array x123 = Val32Array{x110[0]._super,  x110[1]._super,  x110[2]._super,  x110[3]._super,
                                  x110[4]._super,  x110[5]._super,  x110[6]._super,  x110[7]._super,
                                  x110[8]._super,  x110[9]._super,  x110[10]._super, x110[11]._super,
@@ -16390,13 +16383,13 @@ RetTupleStruct execSha256fini_8_(ExecContext& ctx,
                                  x111[2]._super,  x111[3]._super,  x111[4]._super,  x111[5]._super,
                                  x111[6]._super,  x111[7]._super,  x111[8]._super,  x111[9]._super};
     Pack2Struct x124 = execPack2(ctx, x123, LAYOUT_LOOKUP(x103, fd));
-    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:459)
+    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:458)
     Pack2Struct x125 = execPack2(ctx,
                                  Val32Array{x63, x64, x65, x66, x67, x68, x69, x70, x71, x72, x73,
                                             x74, x75, x76, x77, x78, x79, x80, x81, x82, x83, x84,
                                             x85, x86, x87, x88, x89, x90, x91, x92, x93, x94},
                                  LAYOUT_LOOKUP(x103, fe));
-    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:460)
+    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:459)
     Val32Array x126 = Val32Array{
         x107[10]._super, x107[11]._super, x107[12]._super, x107[13]._super, x107[14]._super,
         x107[15]._super, x107[16]._super, x107[17]._super, x107[18]._super, x107[19]._super,
@@ -16406,7 +16399,7 @@ RetTupleStruct execSha256fini_8_(ExecContext& ctx,
         x112[13]._super, x112[14]._super, x112[15]._super, x112[16]._super, x112[17]._super,
         x112[18]._super, x112[19]._super};
     Pack2Struct x127 = execPack2(ctx, x126, LAYOUT_LOOKUP(x103, ff));
-    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:461)
+    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:460)
     Val32Array x128 = Val32Array{
         x109[10]._super, x109[11]._super, x109[12]._super, x109[13]._super, x109[14]._super,
         x109[15]._super, x109[16]._super, x109[17]._super, x109[18]._super, x109[19]._super,
@@ -16416,7 +16409,7 @@ RetTupleStruct execSha256fini_8_(ExecContext& ctx,
         x113[13]._super, x113[14]._super, x113[15]._super, x113[16]._super, x113[17]._super,
         x113[18]._super, x113[19]._super};
     Pack2Struct x129 = execPack2(ctx, x128, LAYOUT_LOOKUP(x103, fg));
-    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:462)
+    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:461)
     Val32Array x130 = Val32Array{
         x111[10]._super, x111[11]._super, x111[12]._super, x111[13]._super, x111[14]._super,
         x111[15]._super, x111[16]._super, x111[17]._super, x111[18]._super, x111[19]._super,
@@ -16426,7 +16419,7 @@ RetTupleStruct execSha256fini_8_(ExecContext& ctx,
         x114[13]._super, x114[14]._super, x114[15]._super, x114[16]._super, x114[17]._super,
         x114[18]._super, x114[19]._super};
     Pack2Struct x131 = execPack2(ctx, x130, LAYOUT_LOOKUP(x103, fh));
-    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:463)
+    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:462)
     Val22Array x132 =
         Val22Array{x118.high._super, x118.low._super, x120.high._super, x120.low._super,
                    x122.high._super, x122.low._super, x124.high._super, x124.low._super,
@@ -16434,7 +16427,7 @@ RetTupleStruct execSha256fini_8_(ExecContext& ctx,
                    x129.high._super, x129.low._super, x131.high._super, x131.low._super,
                    Val(0),           Val(0),          Val(0),           Val(0),
                    Val(0),           Val(0)};
-    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:466)
+    // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:465)
     RetTupleStruct x133 =
         exec_RetTuple(ctx,
                       x132,
@@ -16455,9 +16448,9 @@ RetTupleStruct execSha256fini_8_(ExecContext& ctx,
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:452)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:451)
   RetTupleStruct x134 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x96, _super));
-  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:444)
+  // sha256fini(zirgen/circuit/keccak/sha256_for_keccak.zir:443)
   RetTupleStruct x135 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x135;
 }
@@ -66503,24 +66496,24 @@ RetTupleStruct execSha256mix_0__0_(ExecContext& ctx,
                                    RetTupleStruct arg0,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_0__0_Layout> layout2) {
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   BoundLayout<Sha256mix_0__0__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -66562,11 +66555,11 @@ RetTupleStruct execSha256mix_0__0_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -66575,13 +66568,13 @@ RetTupleStruct execSha256mix_0__0_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -66614,7 +66607,7 @@ RetTupleStruct execSha256mix_0__0_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -66647,7 +66640,7 @@ RetTupleStruct execSha256mix_0__0_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -66681,7 +66674,7 @@ RetTupleStruct execSha256mix_0__0_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -66697,19 +66690,19 @@ RetTupleStruct execSha256mix_0__0_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(27073), .high = Val(58523)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -66728,7 +66721,7 @@ RetTupleStruct execSha256mix_0__0_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -66748,7 +66741,7 @@ RetTupleStruct execSha256mix_0__0_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -66757,22 +66750,22 @@ RetTupleStruct execSha256mix_0__1_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_0__1_Layout> layout2) {
   BoundLayout<Sha256mix_0__1__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -66814,11 +66807,11 @@ RetTupleStruct execSha256mix_0__1_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -66827,13 +66820,13 @@ RetTupleStruct execSha256mix_0__1_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -66866,7 +66859,7 @@ RetTupleStruct execSha256mix_0__1_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -66899,7 +66892,7 @@ RetTupleStruct execSha256mix_0__1_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -66933,7 +66926,7 @@ RetTupleStruct execSha256mix_0__1_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -66949,19 +66942,19 @@ RetTupleStruct execSha256mix_0__1_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(18310), .high = Val(61374)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -66980,7 +66973,7 @@ RetTupleStruct execSha256mix_0__1_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -67000,7 +66993,7 @@ RetTupleStruct execSha256mix_0__1_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -67009,22 +67002,22 @@ RetTupleStruct execSha256mix_0__2_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_0__2_Layout> layout2) {
   BoundLayout<Sha256mix_0__2__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -67066,11 +67059,11 @@ RetTupleStruct execSha256mix_0__2_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -67079,13 +67072,13 @@ RetTupleStruct execSha256mix_0__2_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -67118,7 +67111,7 @@ RetTupleStruct execSha256mix_0__2_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -67151,7 +67144,7 @@ RetTupleStruct execSha256mix_0__2_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -67185,7 +67178,7 @@ RetTupleStruct execSha256mix_0__2_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -67201,19 +67194,19 @@ RetTupleStruct execSha256mix_0__2_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(40390), .high = Val(4033)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -67232,7 +67225,7 @@ RetTupleStruct execSha256mix_0__2_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -67252,7 +67245,7 @@ RetTupleStruct execSha256mix_0__2_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -67261,22 +67254,22 @@ RetTupleStruct execSha256mix_0__3_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_0__3_Layout> layout2) {
   BoundLayout<Sha256mix_0__3__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -67318,11 +67311,11 @@ RetTupleStruct execSha256mix_0__3_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -67331,13 +67324,13 @@ RetTupleStruct execSha256mix_0__3_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -67370,7 +67363,7 @@ RetTupleStruct execSha256mix_0__3_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -67403,7 +67396,7 @@ RetTupleStruct execSha256mix_0__3_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -67437,7 +67430,7 @@ RetTupleStruct execSha256mix_0__3_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -67453,19 +67446,19 @@ RetTupleStruct execSha256mix_0__3_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(41420), .high = Val(9228)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -67484,7 +67477,7 @@ RetTupleStruct execSha256mix_0__3_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -67504,7 +67497,7 @@ RetTupleStruct execSha256mix_0__3_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -67513,22 +67506,22 @@ RetTupleStruct execSha256mix_0__4_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_0__4_Layout> layout2) {
   BoundLayout<Sha256mix_0__4__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -67570,11 +67563,11 @@ RetTupleStruct execSha256mix_0__4_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -67583,13 +67576,13 @@ RetTupleStruct execSha256mix_0__4_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -67622,7 +67615,7 @@ RetTupleStruct execSha256mix_0__4_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -67655,7 +67648,7 @@ RetTupleStruct execSha256mix_0__4_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -67689,7 +67682,7 @@ RetTupleStruct execSha256mix_0__4_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -67705,19 +67698,19 @@ RetTupleStruct execSha256mix_0__4_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(11375), .high = Val(11753)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -67736,7 +67729,7 @@ RetTupleStruct execSha256mix_0__4_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -67756,7 +67749,7 @@ RetTupleStruct execSha256mix_0__4_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -67765,22 +67758,22 @@ RetTupleStruct execSha256mix_0__5_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_0__5_Layout> layout2) {
   BoundLayout<Sha256mix_0__5__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -67822,11 +67815,11 @@ RetTupleStruct execSha256mix_0__5_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -67835,13 +67828,13 @@ RetTupleStruct execSha256mix_0__5_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -67874,7 +67867,7 @@ RetTupleStruct execSha256mix_0__5_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -67907,7 +67900,7 @@ RetTupleStruct execSha256mix_0__5_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -67941,7 +67934,7 @@ RetTupleStruct execSha256mix_0__5_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -67957,19 +67950,19 @@ RetTupleStruct execSha256mix_0__5_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(33962), .high = Val(19060)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -67988,7 +67981,7 @@ RetTupleStruct execSha256mix_0__5_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -68008,7 +68001,7 @@ RetTupleStruct execSha256mix_0__5_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -68017,22 +68010,22 @@ RetTupleStruct execSha256mix_0__6_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_0__6_Layout> layout2) {
   BoundLayout<Sha256mix_0__6__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -68074,11 +68067,11 @@ RetTupleStruct execSha256mix_0__6_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -68087,13 +68080,13 @@ RetTupleStruct execSha256mix_0__6_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -68126,7 +68119,7 @@ RetTupleStruct execSha256mix_0__6_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -68159,7 +68152,7 @@ RetTupleStruct execSha256mix_0__6_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -68193,7 +68186,7 @@ RetTupleStruct execSha256mix_0__6_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -68209,19 +68202,19 @@ RetTupleStruct execSha256mix_0__6_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(43484), .high = Val(23728)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -68240,7 +68233,7 @@ RetTupleStruct execSha256mix_0__6_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -68260,7 +68253,7 @@ RetTupleStruct execSha256mix_0__6_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -68269,22 +68262,22 @@ RetTupleStruct execSha256mix_0__7_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_0__7_Layout> layout2) {
   BoundLayout<Sha256mix_0__7__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -68326,11 +68319,11 @@ RetTupleStruct execSha256mix_0__7_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -68339,13 +68332,13 @@ RetTupleStruct execSha256mix_0__7_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -68378,7 +68371,7 @@ RetTupleStruct execSha256mix_0__7_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -68411,7 +68404,7 @@ RetTupleStruct execSha256mix_0__7_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -68445,7 +68438,7 @@ RetTupleStruct execSha256mix_0__7_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -68461,19 +68454,19 @@ RetTupleStruct execSha256mix_0__7_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(35034), .high = Val(30457)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -68492,7 +68485,7 @@ RetTupleStruct execSha256mix_0__7_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -68512,7 +68505,7 @@ RetTupleStruct execSha256mix_0__7_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -68521,22 +68514,22 @@ RetTupleStruct execSha256mix_0__8_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_0__8_Layout> layout2) {
   BoundLayout<Sha256mix_0__8__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -68578,11 +68571,11 @@ RetTupleStruct execSha256mix_0__8_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -68591,13 +68584,13 @@ RetTupleStruct execSha256mix_0__8_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -68630,7 +68623,7 @@ RetTupleStruct execSha256mix_0__8_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -68663,7 +68656,7 @@ RetTupleStruct execSha256mix_0__8_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -68697,7 +68690,7 @@ RetTupleStruct execSha256mix_0__8_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -68713,19 +68706,19 @@ RetTupleStruct execSha256mix_0__8_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(20818), .high = Val(38974)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -68744,7 +68737,7 @@ RetTupleStruct execSha256mix_0__8_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -68764,7 +68757,7 @@ RetTupleStruct execSha256mix_0__8_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -68773,22 +68766,22 @@ RetTupleStruct execSha256mix_0__9_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_0__9_Layout> layout2) {
   BoundLayout<Sha256mix_0__9__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -68830,11 +68823,11 @@ RetTupleStruct execSha256mix_0__9_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -68843,13 +68836,13 @@ RetTupleStruct execSha256mix_0__9_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -68882,7 +68875,7 @@ RetTupleStruct execSha256mix_0__9_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -68915,7 +68908,7 @@ RetTupleStruct execSha256mix_0__9_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -68949,7 +68942,7 @@ RetTupleStruct execSha256mix_0__9_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -68965,19 +68958,19 @@ RetTupleStruct execSha256mix_0__9_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(50797), .high = Val(43057)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -68996,7 +68989,7 @@ RetTupleStruct execSha256mix_0__9_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -69016,7 +69009,7 @@ RetTupleStruct execSha256mix_0__9_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -69025,22 +69018,22 @@ RetTupleStruct execSha256mix_0__10_(ExecContext& ctx,
                                     BoundLayout<RetTupleLayout> arg1,
                                     BoundLayout<Sha256mix_0__10_Layout> layout2) {
   BoundLayout<Sha256mix_0__10__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -69082,11 +69075,11 @@ RetTupleStruct execSha256mix_0__10_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -69095,13 +69088,13 @@ RetTupleStruct execSha256mix_0__10_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -69134,7 +69127,7 @@ RetTupleStruct execSha256mix_0__10_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -69167,7 +69160,7 @@ RetTupleStruct execSha256mix_0__10_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -69201,7 +69194,7 @@ RetTupleStruct execSha256mix_0__10_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -69217,19 +69210,19 @@ RetTupleStruct execSha256mix_0__10_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(10184), .high = Val(45059)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -69248,7 +69241,7 @@ RetTupleStruct execSha256mix_0__10_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -69268,7 +69261,7 @@ RetTupleStruct execSha256mix_0__10_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -69277,22 +69270,22 @@ RetTupleStruct execSha256mix_0__11_(ExecContext& ctx,
                                     BoundLayout<RetTupleLayout> arg1,
                                     BoundLayout<Sha256mix_0__11_Layout> layout2) {
   BoundLayout<Sha256mix_0__11__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -69334,11 +69327,11 @@ RetTupleStruct execSha256mix_0__11_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -69347,13 +69340,13 @@ RetTupleStruct execSha256mix_0__11_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -69386,7 +69379,7 @@ RetTupleStruct execSha256mix_0__11_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -69419,7 +69412,7 @@ RetTupleStruct execSha256mix_0__11_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -69453,7 +69446,7 @@ RetTupleStruct execSha256mix_0__11_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -69469,19 +69462,19 @@ RetTupleStruct execSha256mix_0__11_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(32711), .high = Val(48985)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -69500,7 +69493,7 @@ RetTupleStruct execSha256mix_0__11_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -69520,7 +69513,7 @@ RetTupleStruct execSha256mix_0__11_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -69529,22 +69522,22 @@ RetTupleStruct execSha256mix_0__12_(ExecContext& ctx,
                                     BoundLayout<RetTupleLayout> arg1,
                                     BoundLayout<Sha256mix_0__12_Layout> layout2) {
   BoundLayout<Sha256mix_0__12__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -69586,11 +69579,11 @@ RetTupleStruct execSha256mix_0__12_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -69599,13 +69592,13 @@ RetTupleStruct execSha256mix_0__12_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -69638,7 +69631,7 @@ RetTupleStruct execSha256mix_0__12_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -69671,7 +69664,7 @@ RetTupleStruct execSha256mix_0__12_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -69705,7 +69698,7 @@ RetTupleStruct execSha256mix_0__12_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -69721,19 +69714,19 @@ RetTupleStruct execSha256mix_0__12_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(3059), .high = Val(50912)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -69752,7 +69745,7 @@ RetTupleStruct execSha256mix_0__12_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -69772,7 +69765,7 @@ RetTupleStruct execSha256mix_0__12_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -69781,22 +69774,22 @@ RetTupleStruct execSha256mix_0__13_(ExecContext& ctx,
                                     BoundLayout<RetTupleLayout> arg1,
                                     BoundLayout<Sha256mix_0__13_Layout> layout2) {
   BoundLayout<Sha256mix_0__13__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -69838,11 +69831,11 @@ RetTupleStruct execSha256mix_0__13_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -69851,13 +69844,13 @@ RetTupleStruct execSha256mix_0__13_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -69890,7 +69883,7 @@ RetTupleStruct execSha256mix_0__13_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -69923,7 +69916,7 @@ RetTupleStruct execSha256mix_0__13_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -69957,7 +69950,7 @@ RetTupleStruct execSha256mix_0__13_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -69973,19 +69966,19 @@ RetTupleStruct execSha256mix_0__13_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(37191), .high = Val(54695)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -70004,7 +69997,7 @@ RetTupleStruct execSha256mix_0__13_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -70024,7 +70017,7 @@ RetTupleStruct execSha256mix_0__13_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -70033,22 +70026,22 @@ RetTupleStruct execSha256mix_0__14_(ExecContext& ctx,
                                     BoundLayout<RetTupleLayout> arg1,
                                     BoundLayout<Sha256mix_0__14_Layout> layout2) {
   BoundLayout<Sha256mix_0__14__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -70090,11 +70083,11 @@ RetTupleStruct execSha256mix_0__14_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -70103,13 +70096,13 @@ RetTupleStruct execSha256mix_0__14_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -70142,7 +70135,7 @@ RetTupleStruct execSha256mix_0__14_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -70175,7 +70168,7 @@ RetTupleStruct execSha256mix_0__14_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -70209,7 +70202,7 @@ RetTupleStruct execSha256mix_0__14_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -70225,19 +70218,19 @@ RetTupleStruct execSha256mix_0__14_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(25425), .high = Val(1738)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -70256,7 +70249,7 @@ RetTupleStruct execSha256mix_0__14_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -70276,7 +70269,7 @@ RetTupleStruct execSha256mix_0__14_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -70285,22 +70278,22 @@ RetTupleStruct execSha256mix_0__15_(ExecContext& ctx,
                                     BoundLayout<RetTupleLayout> arg1,
                                     BoundLayout<Sha256mix_0__15_Layout> layout2) {
   BoundLayout<Sha256mix_0__15__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -70342,11 +70335,11 @@ RetTupleStruct execSha256mix_0__15_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -70355,13 +70348,13 @@ RetTupleStruct execSha256mix_0__15_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -70394,7 +70387,7 @@ RetTupleStruct execSha256mix_0__15_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -70427,7 +70420,7 @@ RetTupleStruct execSha256mix_0__15_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -70461,7 +70454,7 @@ RetTupleStruct execSha256mix_0__15_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -70477,23 +70470,23 @@ RetTupleStruct execSha256mix_0__15_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(10599), .high = Val(5161)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   BoundLayout<Sha256mix_0__15_Arm1_Super_SuperLayout> x85 = LAYOUT_LOOKUP(x3, arm1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   NondetRegStruct24Array x86 = x4.arrD;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x87 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -70512,14 +70505,14 @@ RetTupleStruct execSha256mix_0__15_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   Val24Array x90 =
       Val24Array{x86[0]._super,  x86[1]._super,  x86[2]._super,  x86[3]._super,  x86[4]._super,
                  x86[5]._super,  x86[6]._super,  x86[7]._super,  x86[8]._super,  x86[9]._super,
                  x86[10]._super, x86[11]._super, x86[12]._super, x86[13]._super, x86[14]._super,
                  x86[15]._super, x86[16]._super, x86[17]._super, x86[18]._super, x86[19]._super,
                  x86[20]._super, x86[21]._super, x86[22]._super, x86[23]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:381)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:380)
   RetTupleStruct x91 =
       exec_RetTuple(ctx,
                     x87,
@@ -70537,9 +70530,9 @@ RetTupleStruct execSha256mix_0__15_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x85, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:380)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:379)
   RetTupleStruct x92 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x85, _super));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x93 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x93;
 }
@@ -70547,81 +70540,81 @@ RetTupleStruct execSha256mixAll_0_(ExecContext& ctx,
                                    RetTupleStruct arg0,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mixAll_0_Layout> layout2) {
-  // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:392)
-  BoundLayout<Sha256mixAll_0__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
   // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:391)
+  BoundLayout<Sha256mixAll_0__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
+  // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:390)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
   OneHot_16_Struct x5 = exec_OneHot_16_(ctx, x4.minor._super, LAYOUT_LOOKUP(layout2, minorOnehot));
   NondetRegStruct16Array x6 = x5._super;
   RetTupleStruct x7;
   if (to_size_t(x6[0]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:393)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:392)
     RetTupleStruct x8 = execSha256mix_0__0_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm0));
     x7 = x8;
   } else if (to_size_t(x6[1]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:394)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:393)
     RetTupleStruct x9 = execSha256mix_0__1_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm1));
     x7 = x9;
   } else if (to_size_t(x6[2]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:395)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:394)
     RetTupleStruct x10 = execSha256mix_0__2_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm2));
     x7 = x10;
   } else if (to_size_t(x6[3]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:396)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:395)
     RetTupleStruct x11 = execSha256mix_0__3_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm3));
     x7 = x11;
   } else if (to_size_t(x6[4]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:397)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:396)
     RetTupleStruct x12 = execSha256mix_0__4_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm4));
     x7 = x12;
   } else if (to_size_t(x6[5]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:398)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:397)
     RetTupleStruct x13 = execSha256mix_0__5_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm5));
     x7 = x13;
   } else if (to_size_t(x6[6]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:399)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:398)
     RetTupleStruct x14 = execSha256mix_0__6_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm6));
     x7 = x14;
   } else if (to_size_t(x6[7]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:400)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:399)
     RetTupleStruct x15 = execSha256mix_0__7_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm7));
     x7 = x15;
   } else if (to_size_t(x6[8]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:401)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:400)
     RetTupleStruct x16 = execSha256mix_0__8_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm8));
     x7 = x16;
   } else if (to_size_t(x6[9]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:402)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:401)
     RetTupleStruct x17 = execSha256mix_0__9_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm9));
     x7 = x17;
   } else if (to_size_t(x6[10]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:403)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:402)
     RetTupleStruct x18 = execSha256mix_0__10_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm10));
     x7 = x18;
   } else if (to_size_t(x6[11]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:404)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:403)
     RetTupleStruct x19 = execSha256mix_0__11_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm11));
     x7 = x19;
   } else if (to_size_t(x6[12]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:405)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:404)
     RetTupleStruct x20 = execSha256mix_0__12_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm12));
     x7 = x20;
   } else if (to_size_t(x6[13]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:406)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:405)
     RetTupleStruct x21 = execSha256mix_0__13_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm13));
     x7 = x21;
   } else if (to_size_t(x6[14]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:407)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:406)
     RetTupleStruct x22 = execSha256mix_0__14_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm14));
     x7 = x22;
   } else if (to_size_t(x6[15]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:408)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:407)
     RetTupleStruct x23 = execSha256mix_0__15_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm15));
     x7 = x23;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:392)
+  // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:391)
   RetTupleStruct x24 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x24;
 }
@@ -70629,24 +70622,24 @@ RetTupleStruct execSha256mix_1__0_(ExecContext& ctx,
                                    RetTupleStruct arg0,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_1__0_Layout> layout2) {
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   BoundLayout<Sha256mix_1__0__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -70688,11 +70681,11 @@ RetTupleStruct execSha256mix_1__0_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -70701,13 +70694,13 @@ RetTupleStruct execSha256mix_1__0_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -70740,7 +70733,7 @@ RetTupleStruct execSha256mix_1__0_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -70773,7 +70766,7 @@ RetTupleStruct execSha256mix_1__0_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -70807,7 +70800,7 @@ RetTupleStruct execSha256mix_1__0_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -70823,19 +70816,19 @@ RetTupleStruct execSha256mix_1__0_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(2693), .high = Val(10167)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -70854,7 +70847,7 @@ RetTupleStruct execSha256mix_1__0_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -70874,7 +70867,7 @@ RetTupleStruct execSha256mix_1__0_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -70883,22 +70876,22 @@ RetTupleStruct execSha256mix_1__1_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_1__1_Layout> layout2) {
   BoundLayout<Sha256mix_1__1__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -70940,11 +70933,11 @@ RetTupleStruct execSha256mix_1__1_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -70953,13 +70946,13 @@ RetTupleStruct execSha256mix_1__1_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -70992,7 +70985,7 @@ RetTupleStruct execSha256mix_1__1_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -71025,7 +71018,7 @@ RetTupleStruct execSha256mix_1__1_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -71059,7 +71052,7 @@ RetTupleStruct execSha256mix_1__1_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -71075,19 +71068,19 @@ RetTupleStruct execSha256mix_1__1_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(8504), .high = Val(11803)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -71106,7 +71099,7 @@ RetTupleStruct execSha256mix_1__1_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -71126,7 +71119,7 @@ RetTupleStruct execSha256mix_1__1_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -71135,22 +71128,22 @@ RetTupleStruct execSha256mix_1__2_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_1__2_Layout> layout2) {
   BoundLayout<Sha256mix_1__2__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -71192,11 +71185,11 @@ RetTupleStruct execSha256mix_1__2_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -71205,13 +71198,13 @@ RetTupleStruct execSha256mix_1__2_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -71244,7 +71237,7 @@ RetTupleStruct execSha256mix_1__2_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -71277,7 +71270,7 @@ RetTupleStruct execSha256mix_1__2_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -71311,7 +71304,7 @@ RetTupleStruct execSha256mix_1__2_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -71327,19 +71320,19 @@ RetTupleStruct execSha256mix_1__2_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(28156), .high = Val(19756)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -71358,7 +71351,7 @@ RetTupleStruct execSha256mix_1__2_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -71378,7 +71371,7 @@ RetTupleStruct execSha256mix_1__2_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -71387,22 +71380,22 @@ RetTupleStruct execSha256mix_1__3_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_1__3_Layout> layout2) {
   BoundLayout<Sha256mix_1__3__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -71444,11 +71437,11 @@ RetTupleStruct execSha256mix_1__3_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -71457,13 +71450,13 @@ RetTupleStruct execSha256mix_1__3_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -71496,7 +71489,7 @@ RetTupleStruct execSha256mix_1__3_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -71529,7 +71522,7 @@ RetTupleStruct execSha256mix_1__3_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -71563,7 +71556,7 @@ RetTupleStruct execSha256mix_1__3_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -71579,19 +71572,19 @@ RetTupleStruct execSha256mix_1__3_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(3347), .high = Val(21304)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -71610,7 +71603,7 @@ RetTupleStruct execSha256mix_1__3_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -71630,7 +71623,7 @@ RetTupleStruct execSha256mix_1__3_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -71639,22 +71632,22 @@ RetTupleStruct execSha256mix_1__4_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_1__4_Layout> layout2) {
   BoundLayout<Sha256mix_1__4__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -71696,11 +71689,11 @@ RetTupleStruct execSha256mix_1__4_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -71709,13 +71702,13 @@ RetTupleStruct execSha256mix_1__4_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -71748,7 +71741,7 @@ RetTupleStruct execSha256mix_1__4_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -71781,7 +71774,7 @@ RetTupleStruct execSha256mix_1__4_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -71815,7 +71808,7 @@ RetTupleStruct execSha256mix_1__4_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -71831,19 +71824,19 @@ RetTupleStruct execSha256mix_1__4_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(29524), .high = Val(25866)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -71862,7 +71855,7 @@ RetTupleStruct execSha256mix_1__4_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -71882,7 +71875,7 @@ RetTupleStruct execSha256mix_1__4_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -71891,22 +71884,22 @@ RetTupleStruct execSha256mix_1__5_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_1__5_Layout> layout2) {
   BoundLayout<Sha256mix_1__5__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -71948,11 +71941,11 @@ RetTupleStruct execSha256mix_1__5_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -71961,13 +71954,13 @@ RetTupleStruct execSha256mix_1__5_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -72000,7 +71993,7 @@ RetTupleStruct execSha256mix_1__5_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -72033,7 +72026,7 @@ RetTupleStruct execSha256mix_1__5_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -72067,7 +72060,7 @@ RetTupleStruct execSha256mix_1__5_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -72083,19 +72076,19 @@ RetTupleStruct execSha256mix_1__5_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(2747), .high = Val(30314)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -72114,7 +72107,7 @@ RetTupleStruct execSha256mix_1__5_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -72134,7 +72127,7 @@ RetTupleStruct execSha256mix_1__5_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -72143,22 +72136,22 @@ RetTupleStruct execSha256mix_1__6_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_1__6_Layout> layout2) {
   BoundLayout<Sha256mix_1__6__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -72200,11 +72193,11 @@ RetTupleStruct execSha256mix_1__6_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -72213,13 +72206,13 @@ RetTupleStruct execSha256mix_1__6_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -72252,7 +72245,7 @@ RetTupleStruct execSha256mix_1__6_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -72285,7 +72278,7 @@ RetTupleStruct execSha256mix_1__6_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -72319,7 +72312,7 @@ RetTupleStruct execSha256mix_1__6_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -72335,19 +72328,19 @@ RetTupleStruct execSha256mix_1__6_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(51502), .high = Val(33218)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -72366,7 +72359,7 @@ RetTupleStruct execSha256mix_1__6_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -72386,7 +72379,7 @@ RetTupleStruct execSha256mix_1__6_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -72395,22 +72388,22 @@ RetTupleStruct execSha256mix_1__7_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_1__7_Layout> layout2) {
   BoundLayout<Sha256mix_1__7__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -72452,11 +72445,11 @@ RetTupleStruct execSha256mix_1__7_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -72465,13 +72458,13 @@ RetTupleStruct execSha256mix_1__7_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -72504,7 +72497,7 @@ RetTupleStruct execSha256mix_1__7_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -72537,7 +72530,7 @@ RetTupleStruct execSha256mix_1__7_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -72571,7 +72564,7 @@ RetTupleStruct execSha256mix_1__7_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -72587,19 +72580,19 @@ RetTupleStruct execSha256mix_1__7_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(11397), .high = Val(37490)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -72618,7 +72611,7 @@ RetTupleStruct execSha256mix_1__7_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -72638,7 +72631,7 @@ RetTupleStruct execSha256mix_1__7_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -72647,22 +72640,22 @@ RetTupleStruct execSha256mix_1__8_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_1__8_Layout> layout2) {
   BoundLayout<Sha256mix_1__8__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -72704,11 +72697,11 @@ RetTupleStruct execSha256mix_1__8_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -72717,13 +72710,13 @@ RetTupleStruct execSha256mix_1__8_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -72756,7 +72749,7 @@ RetTupleStruct execSha256mix_1__8_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -72789,7 +72782,7 @@ RetTupleStruct execSha256mix_1__8_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -72823,7 +72816,7 @@ RetTupleStruct execSha256mix_1__8_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -72839,19 +72832,19 @@ RetTupleStruct execSha256mix_1__8_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(59553), .high = Val(41663)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -72870,7 +72863,7 @@ RetTupleStruct execSha256mix_1__8_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -72890,7 +72883,7 @@ RetTupleStruct execSha256mix_1__8_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -72899,22 +72892,22 @@ RetTupleStruct execSha256mix_1__9_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_1__9_Layout> layout2) {
   BoundLayout<Sha256mix_1__9__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -72956,11 +72949,11 @@ RetTupleStruct execSha256mix_1__9_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -72969,13 +72962,13 @@ RetTupleStruct execSha256mix_1__9_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -73008,7 +73001,7 @@ RetTupleStruct execSha256mix_1__9_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -73041,7 +73034,7 @@ RetTupleStruct execSha256mix_1__9_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -73075,7 +73068,7 @@ RetTupleStruct execSha256mix_1__9_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -73091,19 +73084,19 @@ RetTupleStruct execSha256mix_1__9_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(26187), .high = Val(43034)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -73122,7 +73115,7 @@ RetTupleStruct execSha256mix_1__9_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -73142,7 +73135,7 @@ RetTupleStruct execSha256mix_1__9_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -73151,22 +73144,22 @@ RetTupleStruct execSha256mix_1__10_(ExecContext& ctx,
                                     BoundLayout<RetTupleLayout> arg1,
                                     BoundLayout<Sha256mix_1__10_Layout> layout2) {
   BoundLayout<Sha256mix_1__10__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -73208,11 +73201,11 @@ RetTupleStruct execSha256mix_1__10_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -73221,13 +73214,13 @@ RetTupleStruct execSha256mix_1__10_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -73260,7 +73253,7 @@ RetTupleStruct execSha256mix_1__10_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -73293,7 +73286,7 @@ RetTupleStruct execSha256mix_1__10_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -73327,7 +73320,7 @@ RetTupleStruct execSha256mix_1__10_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -73343,19 +73336,19 @@ RetTupleStruct execSha256mix_1__10_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(35696), .high = Val(49739)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -73374,7 +73367,7 @@ RetTupleStruct execSha256mix_1__10_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -73394,7 +73387,7 @@ RetTupleStruct execSha256mix_1__10_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -73403,22 +73396,22 @@ RetTupleStruct execSha256mix_1__11_(ExecContext& ctx,
                                     BoundLayout<RetTupleLayout> arg1,
                                     BoundLayout<Sha256mix_1__11_Layout> layout2) {
   BoundLayout<Sha256mix_1__11__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -73460,11 +73453,11 @@ RetTupleStruct execSha256mix_1__11_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -73473,13 +73466,13 @@ RetTupleStruct execSha256mix_1__11_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -73512,7 +73505,7 @@ RetTupleStruct execSha256mix_1__11_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -73545,7 +73538,7 @@ RetTupleStruct execSha256mix_1__11_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -73579,7 +73572,7 @@ RetTupleStruct execSha256mix_1__11_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -73595,19 +73588,19 @@ RetTupleStruct execSha256mix_1__11_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(20899), .high = Val(51052)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -73626,7 +73619,7 @@ RetTupleStruct execSha256mix_1__11_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -73646,7 +73639,7 @@ RetTupleStruct execSha256mix_1__11_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -73655,22 +73648,22 @@ RetTupleStruct execSha256mix_1__12_(ExecContext& ctx,
                                     BoundLayout<RetTupleLayout> arg1,
                                     BoundLayout<Sha256mix_1__12_Layout> layout2) {
   BoundLayout<Sha256mix_1__12__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -73712,11 +73705,11 @@ RetTupleStruct execSha256mix_1__12_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -73725,13 +73718,13 @@ RetTupleStruct execSha256mix_1__12_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -73764,7 +73757,7 @@ RetTupleStruct execSha256mix_1__12_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -73797,7 +73790,7 @@ RetTupleStruct execSha256mix_1__12_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -73831,7 +73824,7 @@ RetTupleStruct execSha256mix_1__12_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -73847,19 +73840,19 @@ RetTupleStruct execSha256mix_1__12_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(59417), .high = Val(53650)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -73878,7 +73871,7 @@ RetTupleStruct execSha256mix_1__12_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -73898,7 +73891,7 @@ RetTupleStruct execSha256mix_1__12_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -73907,22 +73900,22 @@ RetTupleStruct execSha256mix_1__13_(ExecContext& ctx,
                                     BoundLayout<RetTupleLayout> arg1,
                                     BoundLayout<Sha256mix_1__13_Layout> layout2) {
   BoundLayout<Sha256mix_1__13__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -73964,11 +73957,11 @@ RetTupleStruct execSha256mix_1__13_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -73977,13 +73970,13 @@ RetTupleStruct execSha256mix_1__13_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -74016,7 +74009,7 @@ RetTupleStruct execSha256mix_1__13_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -74049,7 +74042,7 @@ RetTupleStruct execSha256mix_1__13_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -74083,7 +74076,7 @@ RetTupleStruct execSha256mix_1__13_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -74099,19 +74092,19 @@ RetTupleStruct execSha256mix_1__13_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(1572), .high = Val(54937)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -74130,7 +74123,7 @@ RetTupleStruct execSha256mix_1__13_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -74150,7 +74143,7 @@ RetTupleStruct execSha256mix_1__13_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -74159,22 +74152,22 @@ RetTupleStruct execSha256mix_1__14_(ExecContext& ctx,
                                     BoundLayout<RetTupleLayout> arg1,
                                     BoundLayout<Sha256mix_1__14_Layout> layout2) {
   BoundLayout<Sha256mix_1__14__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -74216,11 +74209,11 @@ RetTupleStruct execSha256mix_1__14_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -74229,13 +74222,13 @@ RetTupleStruct execSha256mix_1__14_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -74268,7 +74261,7 @@ RetTupleStruct execSha256mix_1__14_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -74301,7 +74294,7 @@ RetTupleStruct execSha256mix_1__14_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -74335,7 +74328,7 @@ RetTupleStruct execSha256mix_1__14_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -74351,19 +74344,19 @@ RetTupleStruct execSha256mix_1__14_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(13701), .high = Val(62478)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -74382,7 +74375,7 @@ RetTupleStruct execSha256mix_1__14_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -74402,7 +74395,7 @@ RetTupleStruct execSha256mix_1__14_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -74411,22 +74404,22 @@ RetTupleStruct execSha256mix_1__15_(ExecContext& ctx,
                                     BoundLayout<RetTupleLayout> arg1,
                                     BoundLayout<Sha256mix_1__15_Layout> layout2) {
   BoundLayout<Sha256mix_1__15__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -74468,11 +74461,11 @@ RetTupleStruct execSha256mix_1__15_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -74481,13 +74474,13 @@ RetTupleStruct execSha256mix_1__15_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -74520,7 +74513,7 @@ RetTupleStruct execSha256mix_1__15_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -74553,7 +74546,7 @@ RetTupleStruct execSha256mix_1__15_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -74587,7 +74580,7 @@ RetTupleStruct execSha256mix_1__15_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -74603,23 +74596,23 @@ RetTupleStruct execSha256mix_1__15_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(41072), .high = Val(4202)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   BoundLayout<Sha256mix_1__15_Arm1_Super_SuperLayout> x85 = LAYOUT_LOOKUP(x3, arm1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   NondetRegStruct24Array x86 = x4.arrD;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x87 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -74638,14 +74631,14 @@ RetTupleStruct execSha256mix_1__15_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   Val24Array x90 =
       Val24Array{x86[0]._super,  x86[1]._super,  x86[2]._super,  x86[3]._super,  x86[4]._super,
                  x86[5]._super,  x86[6]._super,  x86[7]._super,  x86[8]._super,  x86[9]._super,
                  x86[10]._super, x86[11]._super, x86[12]._super, x86[13]._super, x86[14]._super,
                  x86[15]._super, x86[16]._super, x86[17]._super, x86[18]._super, x86[19]._super,
                  x86[20]._super, x86[21]._super, x86[22]._super, x86[23]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:381)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:380)
   RetTupleStruct x91 =
       exec_RetTuple(ctx,
                     x87,
@@ -74663,9 +74656,9 @@ RetTupleStruct execSha256mix_1__15_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x85, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:380)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:379)
   RetTupleStruct x92 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x85, _super));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x93 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x93;
 }
@@ -74673,81 +74666,81 @@ RetTupleStruct execSha256mixAll_1_(ExecContext& ctx,
                                    RetTupleStruct arg0,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mixAll_1_Layout> layout2) {
-  // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:392)
-  BoundLayout<Sha256mixAll_1__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
   // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:391)
+  BoundLayout<Sha256mixAll_1__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
+  // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:390)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
   OneHot_16_Struct x5 = exec_OneHot_16_(ctx, x4.minor._super, LAYOUT_LOOKUP(layout2, minorOnehot));
   NondetRegStruct16Array x6 = x5._super;
   RetTupleStruct x7;
   if (to_size_t(x6[0]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:393)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:392)
     RetTupleStruct x8 = execSha256mix_1__0_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm0));
     x7 = x8;
   } else if (to_size_t(x6[1]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:394)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:393)
     RetTupleStruct x9 = execSha256mix_1__1_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm1));
     x7 = x9;
   } else if (to_size_t(x6[2]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:395)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:394)
     RetTupleStruct x10 = execSha256mix_1__2_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm2));
     x7 = x10;
   } else if (to_size_t(x6[3]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:396)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:395)
     RetTupleStruct x11 = execSha256mix_1__3_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm3));
     x7 = x11;
   } else if (to_size_t(x6[4]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:397)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:396)
     RetTupleStruct x12 = execSha256mix_1__4_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm4));
     x7 = x12;
   } else if (to_size_t(x6[5]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:398)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:397)
     RetTupleStruct x13 = execSha256mix_1__5_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm5));
     x7 = x13;
   } else if (to_size_t(x6[6]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:399)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:398)
     RetTupleStruct x14 = execSha256mix_1__6_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm6));
     x7 = x14;
   } else if (to_size_t(x6[7]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:400)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:399)
     RetTupleStruct x15 = execSha256mix_1__7_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm7));
     x7 = x15;
   } else if (to_size_t(x6[8]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:401)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:400)
     RetTupleStruct x16 = execSha256mix_1__8_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm8));
     x7 = x16;
   } else if (to_size_t(x6[9]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:402)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:401)
     RetTupleStruct x17 = execSha256mix_1__9_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm9));
     x7 = x17;
   } else if (to_size_t(x6[10]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:403)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:402)
     RetTupleStruct x18 = execSha256mix_1__10_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm10));
     x7 = x18;
   } else if (to_size_t(x6[11]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:404)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:403)
     RetTupleStruct x19 = execSha256mix_1__11_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm11));
     x7 = x19;
   } else if (to_size_t(x6[12]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:405)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:404)
     RetTupleStruct x20 = execSha256mix_1__12_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm12));
     x7 = x20;
   } else if (to_size_t(x6[13]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:406)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:405)
     RetTupleStruct x21 = execSha256mix_1__13_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm13));
     x7 = x21;
   } else if (to_size_t(x6[14]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:407)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:406)
     RetTupleStruct x22 = execSha256mix_1__14_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm14));
     x7 = x22;
   } else if (to_size_t(x6[15]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:408)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:407)
     RetTupleStruct x23 = execSha256mix_1__15_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm15));
     x7 = x23;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:392)
+  // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:391)
   RetTupleStruct x24 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x24;
 }
@@ -74755,24 +74748,24 @@ RetTupleStruct execSha256mix_2__0_(ExecContext& ctx,
                                    RetTupleStruct arg0,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_2__0_Layout> layout2) {
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   BoundLayout<Sha256mix_2__0__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -74814,11 +74807,11 @@ RetTupleStruct execSha256mix_2__0_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -74827,13 +74820,13 @@ RetTupleStruct execSha256mix_2__0_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -74866,7 +74859,7 @@ RetTupleStruct execSha256mix_2__0_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -74899,7 +74892,7 @@ RetTupleStruct execSha256mix_2__0_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -74933,7 +74926,7 @@ RetTupleStruct execSha256mix_2__0_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -74949,19 +74942,19 @@ RetTupleStruct execSha256mix_2__0_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(49430), .high = Val(6564)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -74980,7 +74973,7 @@ RetTupleStruct execSha256mix_2__0_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -75000,7 +74993,7 @@ RetTupleStruct execSha256mix_2__0_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -75009,22 +75002,22 @@ RetTupleStruct execSha256mix_2__1_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_2__1_Layout> layout2) {
   BoundLayout<Sha256mix_2__1__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -75066,11 +75059,11 @@ RetTupleStruct execSha256mix_2__1_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -75079,13 +75072,13 @@ RetTupleStruct execSha256mix_2__1_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -75118,7 +75111,7 @@ RetTupleStruct execSha256mix_2__1_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -75151,7 +75144,7 @@ RetTupleStruct execSha256mix_2__1_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -75185,7 +75178,7 @@ RetTupleStruct execSha256mix_2__1_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -75201,19 +75194,19 @@ RetTupleStruct execSha256mix_2__1_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(27656), .high = Val(7735)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -75232,7 +75225,7 @@ RetTupleStruct execSha256mix_2__1_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -75252,7 +75245,7 @@ RetTupleStruct execSha256mix_2__1_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -75261,22 +75254,22 @@ RetTupleStruct execSha256mix_2__2_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_2__2_Layout> layout2) {
   BoundLayout<Sha256mix_2__2__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -75318,11 +75311,11 @@ RetTupleStruct execSha256mix_2__2_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -75331,13 +75324,13 @@ RetTupleStruct execSha256mix_2__2_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -75370,7 +75363,7 @@ RetTupleStruct execSha256mix_2__2_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -75403,7 +75396,7 @@ RetTupleStruct execSha256mix_2__2_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -75437,7 +75430,7 @@ RetTupleStruct execSha256mix_2__2_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -75453,19 +75446,19 @@ RetTupleStruct execSha256mix_2__2_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(30540), .high = Val(10056)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -75484,7 +75477,7 @@ RetTupleStruct execSha256mix_2__2_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -75504,7 +75497,7 @@ RetTupleStruct execSha256mix_2__2_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -75513,22 +75506,22 @@ RetTupleStruct execSha256mix_2__3_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_2__3_Layout> layout2) {
   BoundLayout<Sha256mix_2__3__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -75570,11 +75563,11 @@ RetTupleStruct execSha256mix_2__3_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -75583,13 +75576,13 @@ RetTupleStruct execSha256mix_2__3_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -75622,7 +75615,7 @@ RetTupleStruct execSha256mix_2__3_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -75655,7 +75648,7 @@ RetTupleStruct execSha256mix_2__3_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -75689,7 +75682,7 @@ RetTupleStruct execSha256mix_2__3_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -75705,19 +75698,19 @@ RetTupleStruct execSha256mix_2__3_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(48309), .high = Val(13488)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -75736,7 +75729,7 @@ RetTupleStruct execSha256mix_2__3_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -75756,7 +75749,7 @@ RetTupleStruct execSha256mix_2__3_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -75765,22 +75758,22 @@ RetTupleStruct execSha256mix_2__4_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_2__4_Layout> layout2) {
   BoundLayout<Sha256mix_2__4__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -75822,11 +75815,11 @@ RetTupleStruct execSha256mix_2__4_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -75835,13 +75828,13 @@ RetTupleStruct execSha256mix_2__4_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -75874,7 +75867,7 @@ RetTupleStruct execSha256mix_2__4_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -75907,7 +75900,7 @@ RetTupleStruct execSha256mix_2__4_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -75941,7 +75934,7 @@ RetTupleStruct execSha256mix_2__4_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -75957,19 +75950,19 @@ RetTupleStruct execSha256mix_2__4_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(3251), .high = Val(14620)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -75988,7 +75981,7 @@ RetTupleStruct execSha256mix_2__4_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -76008,7 +76001,7 @@ RetTupleStruct execSha256mix_2__4_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -76017,22 +76010,22 @@ RetTupleStruct execSha256mix_2__5_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_2__5_Layout> layout2) {
   BoundLayout<Sha256mix_2__5__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -76074,11 +76067,11 @@ RetTupleStruct execSha256mix_2__5_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -76087,13 +76080,13 @@ RetTupleStruct execSha256mix_2__5_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -76126,7 +76119,7 @@ RetTupleStruct execSha256mix_2__5_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -76159,7 +76152,7 @@ RetTupleStruct execSha256mix_2__5_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -76193,7 +76186,7 @@ RetTupleStruct execSha256mix_2__5_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -76209,19 +76202,19 @@ RetTupleStruct execSha256mix_2__5_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(43594), .high = Val(20184)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -76240,7 +76233,7 @@ RetTupleStruct execSha256mix_2__5_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -76260,7 +76253,7 @@ RetTupleStruct execSha256mix_2__5_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -76269,22 +76262,22 @@ RetTupleStruct execSha256mix_2__6_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_2__6_Layout> layout2) {
   BoundLayout<Sha256mix_2__6__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -76326,11 +76319,11 @@ RetTupleStruct execSha256mix_2__6_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -76339,13 +76332,13 @@ RetTupleStruct execSha256mix_2__6_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -76378,7 +76371,7 @@ RetTupleStruct execSha256mix_2__6_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -76411,7 +76404,7 @@ RetTupleStruct execSha256mix_2__6_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -76445,7 +76438,7 @@ RetTupleStruct execSha256mix_2__6_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -76461,19 +76454,19 @@ RetTupleStruct execSha256mix_2__6_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(51791), .high = Val(23452)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -76492,7 +76485,7 @@ RetTupleStruct execSha256mix_2__6_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -76512,7 +76505,7 @@ RetTupleStruct execSha256mix_2__6_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -76521,22 +76514,22 @@ RetTupleStruct execSha256mix_2__7_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_2__7_Layout> layout2) {
   BoundLayout<Sha256mix_2__7__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -76578,11 +76571,11 @@ RetTupleStruct execSha256mix_2__7_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -76591,13 +76584,13 @@ RetTupleStruct execSha256mix_2__7_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -76630,7 +76623,7 @@ RetTupleStruct execSha256mix_2__7_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -76663,7 +76656,7 @@ RetTupleStruct execSha256mix_2__7_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -76697,7 +76690,7 @@ RetTupleStruct execSha256mix_2__7_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -76713,19 +76706,19 @@ RetTupleStruct execSha256mix_2__7_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(28659), .high = Val(26670)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -76744,7 +76737,7 @@ RetTupleStruct execSha256mix_2__7_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -76764,7 +76757,7 @@ RetTupleStruct execSha256mix_2__7_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -76773,22 +76766,22 @@ RetTupleStruct execSha256mix_2__8_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_2__8_Layout> layout2) {
   BoundLayout<Sha256mix_2__8__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -76830,11 +76823,11 @@ RetTupleStruct execSha256mix_2__8_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -76843,13 +76836,13 @@ RetTupleStruct execSha256mix_2__8_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -76882,7 +76875,7 @@ RetTupleStruct execSha256mix_2__8_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -76915,7 +76908,7 @@ RetTupleStruct execSha256mix_2__8_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -76949,7 +76942,7 @@ RetTupleStruct execSha256mix_2__8_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -76965,19 +76958,19 @@ RetTupleStruct execSha256mix_2__8_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(33518), .high = Val(29839)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -76996,7 +76989,7 @@ RetTupleStruct execSha256mix_2__8_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -77016,7 +77009,7 @@ RetTupleStruct execSha256mix_2__8_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -77025,22 +77018,22 @@ RetTupleStruct execSha256mix_2__9_(ExecContext& ctx,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mix_2__9_Layout> layout2) {
   BoundLayout<Sha256mix_2__9__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -77082,11 +77075,11 @@ RetTupleStruct execSha256mix_2__9_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -77095,13 +77088,13 @@ RetTupleStruct execSha256mix_2__9_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -77134,7 +77127,7 @@ RetTupleStruct execSha256mix_2__9_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -77167,7 +77160,7 @@ RetTupleStruct execSha256mix_2__9_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -77201,7 +77194,7 @@ RetTupleStruct execSha256mix_2__9_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -77217,19 +77210,19 @@ RetTupleStruct execSha256mix_2__9_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(25455), .high = Val(30885)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -77248,7 +77241,7 @@ RetTupleStruct execSha256mix_2__9_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -77268,7 +77261,7 @@ RetTupleStruct execSha256mix_2__9_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -77277,22 +77270,22 @@ RetTupleStruct execSha256mix_2__10_(ExecContext& ctx,
                                     BoundLayout<RetTupleLayout> arg1,
                                     BoundLayout<Sha256mix_2__10_Layout> layout2) {
   BoundLayout<Sha256mix_2__10__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -77334,11 +77327,11 @@ RetTupleStruct execSha256mix_2__10_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -77347,13 +77340,13 @@ RetTupleStruct execSha256mix_2__10_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -77386,7 +77379,7 @@ RetTupleStruct execSha256mix_2__10_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -77419,7 +77412,7 @@ RetTupleStruct execSha256mix_2__10_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -77453,7 +77446,7 @@ RetTupleStruct execSha256mix_2__10_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -77469,19 +77462,19 @@ RetTupleStruct execSha256mix_2__10_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(30740), .high = Val(33992)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -77500,7 +77493,7 @@ RetTupleStruct execSha256mix_2__10_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -77520,7 +77513,7 @@ RetTupleStruct execSha256mix_2__10_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -77529,22 +77522,22 @@ RetTupleStruct execSha256mix_2__11_(ExecContext& ctx,
                                     BoundLayout<RetTupleLayout> arg1,
                                     BoundLayout<Sha256mix_2__11_Layout> layout2) {
   BoundLayout<Sha256mix_2__11__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -77586,11 +77579,11 @@ RetTupleStruct execSha256mix_2__11_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -77599,13 +77592,13 @@ RetTupleStruct execSha256mix_2__11_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -77638,7 +77631,7 @@ RetTupleStruct execSha256mix_2__11_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -77671,7 +77664,7 @@ RetTupleStruct execSha256mix_2__11_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -77705,7 +77698,7 @@ RetTupleStruct execSha256mix_2__11_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -77721,19 +77714,19 @@ RetTupleStruct execSha256mix_2__11_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(520), .high = Val(36039)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -77752,7 +77745,7 @@ RetTupleStruct execSha256mix_2__11_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -77772,7 +77765,7 @@ RetTupleStruct execSha256mix_2__11_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -77781,22 +77774,22 @@ RetTupleStruct execSha256mix_2__12_(ExecContext& ctx,
                                     BoundLayout<RetTupleLayout> arg1,
                                     BoundLayout<Sha256mix_2__12_Layout> layout2) {
   BoundLayout<Sha256mix_2__12__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -77838,11 +77831,11 @@ RetTupleStruct execSha256mix_2__12_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -77851,13 +77844,13 @@ RetTupleStruct execSha256mix_2__12_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -77890,7 +77883,7 @@ RetTupleStruct execSha256mix_2__12_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -77923,7 +77916,7 @@ RetTupleStruct execSha256mix_2__12_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -77957,7 +77950,7 @@ RetTupleStruct execSha256mix_2__12_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -77973,19 +77966,19 @@ RetTupleStruct execSha256mix_2__12_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(65530), .high = Val(37054)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -78004,7 +77997,7 @@ RetTupleStruct execSha256mix_2__12_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -78024,7 +78017,7 @@ RetTupleStruct execSha256mix_2__12_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -78033,22 +78026,22 @@ RetTupleStruct execSha256mix_2__13_(ExecContext& ctx,
                                     BoundLayout<RetTupleLayout> arg1,
                                     BoundLayout<Sha256mix_2__13_Layout> layout2) {
   BoundLayout<Sha256mix_2__13__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -78090,11 +78083,11 @@ RetTupleStruct execSha256mix_2__13_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -78103,13 +78096,13 @@ RetTupleStruct execSha256mix_2__13_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -78142,7 +78135,7 @@ RetTupleStruct execSha256mix_2__13_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -78175,7 +78168,7 @@ RetTupleStruct execSha256mix_2__13_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -78209,7 +78202,7 @@ RetTupleStruct execSha256mix_2__13_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -78225,19 +78218,19 @@ RetTupleStruct execSha256mix_2__13_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(27883), .high = Val(42064)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -78256,7 +78249,7 @@ RetTupleStruct execSha256mix_2__13_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -78276,7 +78269,7 @@ RetTupleStruct execSha256mix_2__13_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -78285,22 +78278,22 @@ RetTupleStruct execSha256mix_2__14_(ExecContext& ctx,
                                     BoundLayout<RetTupleLayout> arg1,
                                     BoundLayout<Sha256mix_2__14_Layout> layout2) {
   BoundLayout<Sha256mix_2__14__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -78342,11 +78335,11 @@ RetTupleStruct execSha256mix_2__14_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -78355,13 +78348,13 @@ RetTupleStruct execSha256mix_2__14_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -78394,7 +78387,7 @@ RetTupleStruct execSha256mix_2__14_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -78427,7 +78420,7 @@ RetTupleStruct execSha256mix_2__14_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -78461,7 +78454,7 @@ RetTupleStruct execSha256mix_2__14_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -78477,19 +78470,19 @@ RetTupleStruct execSha256mix_2__14_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(41975), .high = Val(48889)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x85 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -78508,7 +78501,7 @@ RetTupleStruct execSha256mix_2__14_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:377)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
   RetTupleStruct x88 =
       exec_RetTuple(ctx,
                     x85,
@@ -78528,7 +78521,7 @@ RetTupleStruct execSha256mix_2__14_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x3, arm0));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x89 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x89;
 }
@@ -78537,22 +78530,22 @@ RetTupleStruct execSha256mix_2__15_(ExecContext& ctx,
                                     BoundLayout<RetTupleLayout> arg1,
                                     BoundLayout<Sha256mix_2__15_Layout> layout2) {
   BoundLayout<Sha256mix_2__15__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
   RetTupleStruct x5 = back_RetTuple(ctx, 2, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:360)
   RetTupleStruct x6 = back_RetTuple(ctx, 3, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:361)
   RetTupleStruct x7 = back_RetTuple(ctx, 4, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:362)
   RetTupleStruct x8 = back_RetTuple(ctx, 7, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:363)
   RetTupleStruct x9 = back_RetTuple(ctx, 15, arg1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:365)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:364)
   RetTupleStruct x10 = back_RetTuple(ctx, 16, arg1);
-  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:156)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
+  // s2w(zirgen/circuit/keccak/sha256_for_keccak.zir:155)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:366)
   NondetRegStruct22Array x11 = x5.arrE;
   NondetRegStruct22Array x12 = x5.arrF;
   NondetRegStruct22Array x13 = x8.arrE;
@@ -78594,11 +78587,11 @@ RetTupleStruct execSha256mix_2__15_(ExecContext& ctx,
                  x18[3]._super,  x18[4]._super,  x18[5]._super,  x18[6]._super,  x18[7]._super,
                  x18[8]._super,  x18[9]._super};
   TwoShortsStruct x23 = execComputeW(ctx, x19, x20, x21, x22, LAYOUT_LOOKUP(layout2, packedW));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16_Struct x24 =
       execUnpackWithCarry(ctx, x23.low, x23.high, LAYOUT_LOOKUP(layout2, newW));
-  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:146)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // s2a(zirgen/circuit/keccak/sha256_for_keccak.zir:145)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   NondetRegStruct22Array x25 = x4.arrA;
   NondetRegStruct22Array x26 = x4.arrB;
   NondetRegStruct22Array x27 = x5.arrA;
@@ -78607,13 +78600,13 @@ RetTupleStruct execSha256mix_2__15_(ExecContext& ctx,
   NondetRegStruct22Array x30 = x6.arrB;
   NondetRegStruct22Array x31 = x7.arrA;
   NondetRegStruct22Array x32 = x7.arrB;
-  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:151)
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // s2e(zirgen/circuit/keccak/sha256_for_keccak.zir:150)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   NondetRegStruct22Array x33 = x4.arrC;
   NondetRegStruct22Array x34 = x5.arrC;
   NondetRegStruct22Array x35 = x6.arrC;
   NondetRegStruct22Array x36 = x7.arrC;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   Val32Array x37 =
       Val32Array{x25[0]._super,  x25[1]._super,  x25[2]._super,  x25[3]._super,  x25[4]._super,
                  x25[5]._super,  x25[6]._super,  x25[7]._super,  x25[8]._super,  x25[9]._super,
@@ -78646,7 +78639,7 @@ RetTupleStruct execSha256mix_2__15_(ExecContext& ctx,
                  x31[20]._super, x31[21]._super, x32[0]._super,  x32[1]._super,  x32[2]._super,
                  x32[3]._super,  x32[4]._super,  x32[5]._super,  x32[6]._super,  x32[7]._super,
                  x32[8]._super,  x32[9]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:370)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
   Val32Array x41 =
       Val32Array{x26[10]._super, x26[11]._super, x26[12]._super, x26[13]._super, x26[14]._super,
                  x26[15]._super, x26[16]._super, x26[17]._super, x26[18]._super, x26[19]._super,
@@ -78679,7 +78672,7 @@ RetTupleStruct execSha256mix_2__15_(ExecContext& ctx,
                  x36[8]._super,  x36[9]._super,  x36[10]._super, x36[11]._super, x36[12]._super,
                  x36[13]._super, x36[14]._super, x36[15]._super, x36[16]._super, x36[17]._super,
                  x36[18]._super, x36[19]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:367)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x45 = x24._super;
   Val x46 = x45[0]._super;
   Val x47 = x45[1]._super;
@@ -78713,7 +78706,7 @@ RetTupleStruct execSha256mix_2__15_(ExecContext& ctx,
   Val x75 = x45[29]._super;
   Val x76 = x45[30]._super;
   Val x77 = x45[31]._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   ComputeAEStruct x78 = execComputeAE(
       ctx,
       x37,
@@ -78729,23 +78722,23 @@ RetTupleStruct execSha256mix_2__15_(ExecContext& ctx,
       TwoShortsStruct{.low = Val(30962), .high = Val(50801)},
       LAYOUT_LOOKUP(layout2, ae));
   TwoShortsStruct x79 = x78.aOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16_Struct x80 =
       execUnpackWithCarry(ctx, x79.low, x79.high, LAYOUT_LOOKUP(layout2, newA));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:369)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:368)
   TwoShortsStruct x81 = x78.eOut;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16_Struct x82 =
       execUnpackWithCarry(ctx, x81.low, x81.high, LAYOUT_LOOKUP(layout2, newE));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:371)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x83 = x80._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:372)
   Concatenate_NondetReg__16__16__Super_SuperStruct32Array x84 = x82._super;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   BoundLayout<Sha256mix_2__15_Arm1_Super_SuperLayout> x85 = LAYOUT_LOOKUP(x3, arm1);
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   NondetRegStruct24Array x86 = x4.arrD;
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:374)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:373)
   Val22Array x87 =
       Val22Array{x83[0]._super,  x83[1]._super,  x83[2]._super,  x83[3]._super,  x83[4]._super,
                  x83[5]._super,  x83[6]._super,  x83[7]._super,  x83[8]._super,  x83[9]._super,
@@ -78764,14 +78757,14 @@ RetTupleStruct execSha256mix_2__15_(ExecContext& ctx,
                  x84[22]._super, x84[23]._super, x84[24]._super, x84[25]._super, x84[26]._super,
                  x84[27]._super, x84[28]._super, x84[29]._super, x84[30]._super, x84[31]._super,
                  Val(0),         Val(0)};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:359)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:358)
   Val24Array x90 =
       Val24Array{x86[0]._super,  x86[1]._super,  x86[2]._super,  x86[3]._super,  x86[4]._super,
                  x86[5]._super,  x86[6]._super,  x86[7]._super,  x86[8]._super,  x86[9]._super,
                  x86[10]._super, x86[11]._super, x86[12]._super, x86[13]._super, x86[14]._super,
                  x86[15]._super, x86[16]._super, x86[17]._super, x86[18]._super, x86[19]._super,
                  x86[20]._super, x86[21]._super, x86[22]._super, x86[23]._super};
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:384)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:383)
   RetTupleStruct x91 =
       exec_RetTuple(ctx,
                     x87,
@@ -78789,9 +78782,9 @@ RetTupleStruct execSha256mix_2__15_(ExecContext& ctx,
                     x4.blk._super,
                     x4.midx._super,
                     LAYOUT_LOOKUP(x85, arm1));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:380)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:379)
   RetTupleStruct x92 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x85, _super));
-  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:376)
+  // sha256mix(zirgen/circuit/keccak/sha256_for_keccak.zir:375)
   RetTupleStruct x93 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x93;
 }
@@ -78799,88 +78792,88 @@ RetTupleStruct execSha256mixAll_2_(ExecContext& ctx,
                                    RetTupleStruct arg0,
                                    BoundLayout<RetTupleLayout> arg1,
                                    BoundLayout<Sha256mixAll_2_Layout> layout2) {
-  // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:392)
-  BoundLayout<Sha256mixAll_2__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
   // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:391)
+  BoundLayout<Sha256mixAll_2__SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
+  // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:390)
   RetTupleStruct x4 = back_RetTuple(ctx, 1, arg1);
   OneHot_16_Struct x5 = exec_OneHot_16_(ctx, x4.minor._super, LAYOUT_LOOKUP(layout2, minorOnehot));
   NondetRegStruct16Array x6 = x5._super;
   RetTupleStruct x7;
   if (to_size_t(x6[0]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:393)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:392)
     RetTupleStruct x8 = execSha256mix_2__0_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm0));
     x7 = x8;
   } else if (to_size_t(x6[1]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:394)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:393)
     RetTupleStruct x9 = execSha256mix_2__1_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm1));
     x7 = x9;
   } else if (to_size_t(x6[2]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:395)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:394)
     RetTupleStruct x10 = execSha256mix_2__2_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm2));
     x7 = x10;
   } else if (to_size_t(x6[3]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:396)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:395)
     RetTupleStruct x11 = execSha256mix_2__3_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm3));
     x7 = x11;
   } else if (to_size_t(x6[4]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:397)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:396)
     RetTupleStruct x12 = execSha256mix_2__4_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm4));
     x7 = x12;
   } else if (to_size_t(x6[5]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:398)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:397)
     RetTupleStruct x13 = execSha256mix_2__5_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm5));
     x7 = x13;
   } else if (to_size_t(x6[6]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:399)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:398)
     RetTupleStruct x14 = execSha256mix_2__6_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm6));
     x7 = x14;
   } else if (to_size_t(x6[7]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:400)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:399)
     RetTupleStruct x15 = execSha256mix_2__7_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm7));
     x7 = x15;
   } else if (to_size_t(x6[8]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:401)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:400)
     RetTupleStruct x16 = execSha256mix_2__8_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm8));
     x7 = x16;
   } else if (to_size_t(x6[9]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:402)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:401)
     RetTupleStruct x17 = execSha256mix_2__9_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm9));
     x7 = x17;
   } else if (to_size_t(x6[10]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:403)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:402)
     RetTupleStruct x18 = execSha256mix_2__10_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm10));
     x7 = x18;
   } else if (to_size_t(x6[11]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:404)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:403)
     RetTupleStruct x19 = execSha256mix_2__11_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm11));
     x7 = x19;
   } else if (to_size_t(x6[12]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:405)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:404)
     RetTupleStruct x20 = execSha256mix_2__12_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm12));
     x7 = x20;
   } else if (to_size_t(x6[13]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:406)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:405)
     RetTupleStruct x21 = execSha256mix_2__13_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm13));
     x7 = x21;
   } else if (to_size_t(x6[14]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:407)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:406)
     RetTupleStruct x22 = execSha256mix_2__14_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm14));
     x7 = x22;
   } else if (to_size_t(x6[15]._super)) {
-    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:408)
+    // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:407)
     RetTupleStruct x23 = execSha256mix_2__15_(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm15));
     x7 = x23;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:392)
+  // sha256mix_all(zirgen/circuit/keccak/sha256_for_keccak.zir:391)
   RetTupleStruct x24 = back_RetTuple(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x24;
 }
 TopStruct exec_Top(ExecContext& ctx, BoundLayout<TopLayout> layout0, GlobalBuf global1) {
   // Top(zirgen/circuit/keccak/keccak.zir:1170)
   BoundLayout<NondetRegLayout> x2 = LAYOUT_LOOKUP(layout0, pC);
-  // Top(zirgen/circuit/keccak/keccak.zir:1185)
+  // Top(zirgen/circuit/keccak/keccak.zir:1184)
   BoundLayout<TopRetvalsLayout> x3 = LAYOUT_LOOKUP(layout0, retvals);
   BoundLayout<RetTupleLayout> x4 = LAYOUT_LOOKUP(x3, _super);
   // configureInput(zirgen/circuit/keccak/keccak.zir:6)
@@ -78910,128 +78903,125 @@ TopStruct exec_Top(ExecContext& ctx, BoundLayout<TopLayout> layout0, GlobalBuf g
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // Log(<preamble>:16)
   // Top(zirgen/circuit/keccak/keccak.zir:1183)
-  INVOKE_EXTERN(ctx, log, "major = %u", std::initializer_list<Val>{x10});
-  // Top(zirgen/circuit/keccak/keccak.zir:1184)
   OneHot_23_Struct x13 = exec_OneHot_23_(ctx, x10, LAYOUT_LOOKUP(layout0, majorOnehot));
   NondetRegStruct23Array x14 = x13._super;
-  // Top(zirgen/circuit/keccak/keccak.zir:1185)
+  // Top(zirgen/circuit/keccak/keccak.zir:1184)
   BoundLayout<TopArm18_SuperLayout> x15 = LAYOUT_LOOKUP(x3, arm18);
-  // Top(zirgen/circuit/keccak/keccak.zir:1208)
+  // Top(zirgen/circuit/keccak/keccak.zir:1207)
   Val22Array x16 = Val22Array{Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
                               Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
                               Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)};
   RetTupleStruct x17;
   if (to_size_t(x14[0]._super)) {
-    // Top(zirgen/circuit/keccak/keccak.zir:1186)
+    // Top(zirgen/circuit/keccak/keccak.zir:1185)
     RetTupleStruct x18 = back_RetTuple(ctx, 0, x4);
     RetTupleStruct x19 = execXor5wordsMajor_0_(ctx, x18, x4, LAYOUT_LOOKUP(x3, arm0));
     x17 = x19;
   } else if (to_size_t(x14[1]._super)) {
-    // Top(zirgen/circuit/keccak/keccak.zir:1187)
+    // Top(zirgen/circuit/keccak/keccak.zir:1186)
     RetTupleStruct x20 = back_RetTuple(ctx, 0, x4);
     RetTupleStruct x21 = execXor5wordsMajor_1_(ctx, x20, x4, LAYOUT_LOOKUP(x3, arm1));
     x17 = x21;
   } else if (to_size_t(x14[2]._super)) {
-    // Top(zirgen/circuit/keccak/keccak.zir:1188)
+    // Top(zirgen/circuit/keccak/keccak.zir:1187)
     RetTupleStruct x22 = back_RetTuple(ctx, 0, x4);
     RetTupleStruct x23 = execXor5wordsMajor_2_(ctx, x22, x4, LAYOUT_LOOKUP(x3, arm2));
     x17 = x23;
   } else if (to_size_t(x14[3]._super)) {
-    // Top(zirgen/circuit/keccak/keccak.zir:1189)
+    // Top(zirgen/circuit/keccak/keccak.zir:1188)
     RetTupleStruct x24 = back_RetTuple(ctx, 0, x4);
     RetTupleStruct x25 = execXor5wordsMajor_3_(ctx, x24, x4, LAYOUT_LOOKUP(x3, arm3));
     x17 = x25;
   } else if (to_size_t(x14[4]._super)) {
-    // Top(zirgen/circuit/keccak/keccak.zir:1190)
+    // Top(zirgen/circuit/keccak/keccak.zir:1189)
     RetTupleStruct x26 = back_RetTuple(ctx, 0, x4);
     RetTupleStruct x27 = execXor5wordsMajor_4_(ctx, x26, x4, LAYOUT_LOOKUP(x3, arm4));
     x17 = x27;
   } else if (to_size_t(x14[5]._super)) {
-    // Top(zirgen/circuit/keccak/keccak.zir:1191)
+    // Top(zirgen/circuit/keccak/keccak.zir:1190)
     RetTupleStruct x28 = back_RetTuple(ctx, 0, x4);
     RetTupleStruct x29 = execRhoMajor_0_(ctx, x28, x4, LAYOUT_LOOKUP(x3, arm5));
     x17 = x29;
   } else if (to_size_t(x14[6]._super)) {
-    // Top(zirgen/circuit/keccak/keccak.zir:1192)
+    // Top(zirgen/circuit/keccak/keccak.zir:1191)
     RetTupleStruct x30 = back_RetTuple(ctx, 0, x4);
     RetTupleStruct x31 = execRhoMajor_1_(ctx, x30, x4, LAYOUT_LOOKUP(x3, arm6));
     x17 = x31;
   } else if (to_size_t(x14[7]._super)) {
-    // Top(zirgen/circuit/keccak/keccak.zir:1193)
+    // Top(zirgen/circuit/keccak/keccak.zir:1192)
     RetTupleStruct x32 = back_RetTuple(ctx, 0, x4);
     RetTupleStruct x33 = execRhoMajor_2_(ctx, x32, x4, LAYOUT_LOOKUP(x3, arm7));
     x17 = x33;
   } else if (to_size_t(x14[8]._super)) {
-    // Top(zirgen/circuit/keccak/keccak.zir:1194)
+    // Top(zirgen/circuit/keccak/keccak.zir:1193)
     RetTupleStruct x34 = back_RetTuple(ctx, 0, x4);
     RetTupleStruct x35 = execRhoMajor_3_(ctx, x34, x4, LAYOUT_LOOKUP(x3, arm8));
     x17 = x35;
   } else if (to_size_t(x14[9]._super)) {
-    // Top(zirgen/circuit/keccak/keccak.zir:1195)
+    // Top(zirgen/circuit/keccak/keccak.zir:1194)
     RetTupleStruct x36 = back_RetTuple(ctx, 0, x4);
     RetTupleStruct x37 = execRhoMajor_4_(ctx, x36, x4, LAYOUT_LOOKUP(x3, arm9));
     x17 = x37;
   } else if (to_size_t(x14[10]._super)) {
-    // Top(zirgen/circuit/keccak/keccak.zir:1196)
+    // Top(zirgen/circuit/keccak/keccak.zir:1195)
     RetTupleStruct x38 = back_RetTuple(ctx, 0, x4);
     RetTupleStruct x39 = execChiMajor_0_(ctx, x38, x4, LAYOUT_LOOKUP(x3, arm10));
     x17 = x39;
   } else if (to_size_t(x14[11]._super)) {
-    // Top(zirgen/circuit/keccak/keccak.zir:1197)
+    // Top(zirgen/circuit/keccak/keccak.zir:1196)
     RetTupleStruct x40 = back_RetTuple(ctx, 0, x4);
     RetTupleStruct x41 = execChiMajor_1_(ctx, x40, x4, LAYOUT_LOOKUP(x3, arm11));
     x17 = x41;
   } else if (to_size_t(x14[12]._super)) {
-    // Top(zirgen/circuit/keccak/keccak.zir:1198)
+    // Top(zirgen/circuit/keccak/keccak.zir:1197)
     RetTupleStruct x42 = back_RetTuple(ctx, 0, x4);
     RetTupleStruct x43 = execChiMajor_2_(ctx, x42, x4, LAYOUT_LOOKUP(x3, arm12));
     x17 = x43;
   } else if (to_size_t(x14[13]._super)) {
-    // Top(zirgen/circuit/keccak/keccak.zir:1199)
+    // Top(zirgen/circuit/keccak/keccak.zir:1198)
     RetTupleStruct x44 = back_RetTuple(ctx, 0, x4);
     RetTupleStruct x45 = execChiMajor_3_(ctx, x44, x4, LAYOUT_LOOKUP(x3, arm13));
     x17 = x45;
   } else if (to_size_t(x14[14]._super)) {
-    // Top(zirgen/circuit/keccak/keccak.zir:1200)
+    // Top(zirgen/circuit/keccak/keccak.zir:1199)
     RetTupleStruct x46 = back_RetTuple(ctx, 0, x4);
     RetTupleStruct x47 = execChiMajor_4_(ctx, x46, x4, LAYOUT_LOOKUP(x3, arm14));
     x17 = x47;
   } else if (to_size_t(x14[15]._super)) {
-    // Top(zirgen/circuit/keccak/keccak.zir:1201)
+    // Top(zirgen/circuit/keccak/keccak.zir:1200)
     RetTupleStruct x48 = back_RetTuple(ctx, 0, x4);
     RetTupleStruct x49 = execAbsorbMajor1(ctx, x48, x4, LAYOUT_LOOKUP(x3, arm15));
     x17 = x49;
   } else if (to_size_t(x14[16]._super)) {
-    // Top(zirgen/circuit/keccak/keccak.zir:1202)
+    // Top(zirgen/circuit/keccak/keccak.zir:1201)
     RetTupleStruct x50 = back_RetTuple(ctx, 0, x4);
     RetTupleStruct x51 = execAbsorbMajor2(ctx, x50, x4, LAYOUT_LOOKUP(x3, arm16));
     x17 = x51;
   } else if (to_size_t(x14[17]._super)) {
-    // Top(zirgen/circuit/keccak/keccak.zir:1203)
+    // Top(zirgen/circuit/keccak/keccak.zir:1202)
     RetTupleStruct x52 = back_RetTuple(ctx, 0, x4);
     RetTupleStruct x53 = execSetupMajor(ctx, x52, x4, LAYOUT_LOOKUP(x3, arm17), global1);
     x17 = x53;
   } else if (to_size_t(x14[18]._super)) {
     // readInput(zirgen/circuit/keccak/keccak.zir:7)
-    // Top(zirgen/circuit/keccak/keccak.zir:1204)
+    // Top(zirgen/circuit/keccak/keccak.zir:1203)
     Val x54 = INVOKE_EXTERN(ctx, readInput);
     NondetRegStruct x55 = exec_NondetReg(ctx, x54, LAYOUT_LOOKUP(x15, blk));
     // readInput(zirgen/circuit/keccak/keccak.zir:7)
-    // Top(zirgen/circuit/keccak/keccak.zir:1206)
+    // Top(zirgen/circuit/keccak/keccak.zir:1205)
     Val x56 = INVOKE_EXTERN(ctx, readInput);
     Val x57 = INVOKE_EXTERN(ctx, readInput);
     Val x58 = INVOKE_EXTERN(ctx, readInput);
-    // Top(zirgen/circuit/keccak/keccak.zir:1204)
+    // Top(zirgen/circuit/keccak/keccak.zir:1203)
     Val x59 = x55._super;
-    // Top(zirgen/circuit/keccak/keccak.zir:1207)
+    // Top(zirgen/circuit/keccak/keccak.zir:1206)
     WriteMemoryStruct x60 =
         exec_WriteMemory(ctx,
                          Val(0),
                          MemDigestStruct{._super = Val4Array{x59, Val(0), Val(0), Val(0)}},
                          LAYOUT_LOOKUP(x15, _0));
-    // Top(zirgen/circuit/keccak/keccak.zir:1208)
+    // Top(zirgen/circuit/keccak/keccak.zir:1207)
     RetTupleStruct x61 =
         exec_RetTuple(ctx,
                       x16,
@@ -79050,29 +79040,29 @@ TopStruct exec_Top(ExecContext& ctx, BoundLayout<TopLayout> layout0, GlobalBuf g
                       LAYOUT_LOOKUP(x15, _super));
     x17 = x61;
   } else if (to_size_t(x14[19]._super)) {
-    // Top(zirgen/circuit/keccak/keccak.zir:1211)
+    // Top(zirgen/circuit/keccak/keccak.zir:1210)
     RetTupleStruct x62 = back_RetTuple(ctx, 0, x4);
     RetTupleStruct x63 = execSha256loadAll(ctx, x62, x4, LAYOUT_LOOKUP(x3, arm19));
     x17 = x63;
   } else if (to_size_t(x14[20]._super)) {
-    // Top(zirgen/circuit/keccak/keccak.zir:1212)
+    // Top(zirgen/circuit/keccak/keccak.zir:1211)
     RetTupleStruct x64 = back_RetTuple(ctx, 0, x4);
     RetTupleStruct x65 = execSha256mixAll_0_(ctx, x64, x4, LAYOUT_LOOKUP(x3, arm20));
     x17 = x65;
   } else if (to_size_t(x14[21]._super)) {
-    // Top(zirgen/circuit/keccak/keccak.zir:1213)
+    // Top(zirgen/circuit/keccak/keccak.zir:1212)
     RetTupleStruct x66 = back_RetTuple(ctx, 0, x4);
     RetTupleStruct x67 = execSha256mixAll_1_(ctx, x66, x4, LAYOUT_LOOKUP(x3, arm21));
     x17 = x67;
   } else if (to_size_t(x14[22]._super)) {
-    // Top(zirgen/circuit/keccak/keccak.zir:1214)
+    // Top(zirgen/circuit/keccak/keccak.zir:1213)
     RetTupleStruct x68 = back_RetTuple(ctx, 0, x4);
     RetTupleStruct x69 = execSha256mixAll_2_(ctx, x68, x4, LAYOUT_LOOKUP(x3, arm22));
     x17 = x69;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  // Top(zirgen/circuit/keccak/keccak.zir:1185)
+  // Top(zirgen/circuit/keccak/keccak.zir:1184)
   RetTupleStruct x70 = back_RetTuple(ctx, 0, x4);
   return TopStruct{};
 }

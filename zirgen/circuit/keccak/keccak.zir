@@ -755,7 +755,7 @@ component chi_minor0<X: Val, Y: Val>(rvpstate: RetTuple,
 
   withrs_d := Concatenate<BLEN(),2>(unpack_0xp1, result);
   Z := (X-1)*(X-3);
-  minor_new := [Isz(Z), 1-Isz(Z)] -> (3*(1+(X-1)/2), 1+3*(X/2)); 
+  minor_new := [Isz(Z), 1-Isz(Z)] -> (3*(1+(X-1)/2), 1+3*(X/2));
   a := ConcatZeros<SLEN(),BLEN()-SLEN()>(unpack_1xp1);
   c := ConcatZeros<SLEN(),BLEN()-SLEN()>(unpack_1xp2);
   f := ConcatZeros<SLEN(),BLEN()-SLEN()>(unpack_1x);
@@ -942,7 +942,7 @@ component chi_minor2<Y: Val>(rvals: RetTuple, auxr: Array<NondetReg, AUXLEN()>) 
           { rs1 := [Reg(rvprev07.arr_a[0+SLEN()]),Reg(rvprev07.arr_b[0+SLEN()]),
                     Reg(rvprev07.arr_c[0+SLEN()]),Reg(rvprev06.arr_d[0+BLEN()]),
                     Reg(rvprev06.arr_d[1+BLEN()]),Reg(rvprev07.arr_d[0+SLEN()])];
-            c := Concatenate<16, 6>(for i : 0..16 {Reg(rvpstate.arr_c[i])}, rs1); 
+            c := Concatenate<16, 6>(for i : 0..16 {Reg(rvpstate.arr_c[i])}, rs1);
             rs2 := [Reg(rvprev04.arr_a[0+SLEN()]),Reg(rvprev04.arr_b[0+SLEN()]),
                     Reg(rvprev04.arr_c[0+SLEN()]),Reg(rvprev03.arr_d[0+BLEN()]),
                     Reg(rvprev03.arr_d[1+BLEN()]),Reg(rvprev04.arr_d[0+SLEN()]),
@@ -952,7 +952,7 @@ component chi_minor2<Y: Val>(rvals: RetTuple, auxr: Array<NondetReg, AUXLEN()>) 
             unpack_round := OneHotU<24>(rvprev01.rnd);
             rnd_1 :=  for i : 0..2 { NondetReg(unpack_round[i]) };
             for i : 0..2 { AliasLayout!(rnd_1[i], unpack_round[i]); };
-            rnd_2 :=  for i : 0..BLEN() { NondetReg(unpack_round[i+2]) }; 
+            rnd_2 :=  for i : 0..BLEN() { NondetReg(unpack_round[i+2]) };
             for i : 0..22 { AliasLayout!(rnd_2[i], unpack_round[i+2]); };
 
             tmp_d := ConcatZeros<9,RLEN()-9-2>(rs2);
@@ -1116,8 +1116,8 @@ component absorb_word<X: Val, Y: Val>(rvprev: RetTuple,
   inc_idx := X+5*Y+1;
   in_first := InRange(0,inc_idx,10);
   nxt_major := 1 - in_first;
-  nxt_in := [in_first, nxt_major] -> (inc_idx, inc_idx-9); 
-  
+  nxt_in := [in_first, nxt_major] -> (inc_idx, inc_idx-9);
+
   RetTuple(unpack_a, arr12, padded23, withr34, padded_e, padded_f,
            nxt_in, 14+nxt_major, 0, rvprev.blk, rvprev.midx, auxr)
 }
@@ -1377,7 +1377,7 @@ component mem_padding_sha256(rvprev01: RetTuple,
   a_tmp := for i : 0 .. SLEN() { NondetReg(unpack_bitlen[i]) };
   for i : 0 .. SLEN() { AliasLayout!(a_tmp[i], unpack_bitlen[i]); };
   a := ConcatZeros<SLEN(),BLEN()-SLEN()>(a_tmp);
-  
+
   d_tmp := for i : SLEN() .. F { NondetReg(unpack_bitlen[i]) };
   for i :  SLEN() .. F {
     AliasLayout!(d_tmp[i-SLEN()], unpack_bitlen[i]); };
@@ -1385,7 +1385,7 @@ component mem_padding_sha256(rvprev01: RetTuple,
   ntmp := BABYMAX()-SLEN()+3;
   d_tmp3 := ConcatZeros<ntmp,RLEN()-3-ntmp>(d_tmp2);
   d := Concatenate<RLEN()-3,3>(d_tmp3, [invn, invnNxt, prodNxt]);
-  
+
   [1-prod, prod] -> (
     { WriteMemory(memidx, MemDigest([0,0,b34,b12]));
       RetTuple(a, dummyB(), dummyB(), d, dummyB(), dummyB(),

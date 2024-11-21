@@ -12,44 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::{
-    ffi::CStr,
-    os::raw::{c_char, c_void},
-    slice,
-};
+#[cfg(feature = "cuda")]
+use cust::memory::DevicePointer;
 
 use risc0_core::field::baby_bear::{BabyBearElem, BabyBearExtElem};
 
-pub type Callback = unsafe extern "C" fn(
-    ctx: *mut c_void,
-    name: *const c_char,
-    extra: *const c_char,
-    args_ptr: *const BabyBearElem,
-    args_len: usize,
-    outs_ptr: *mut BabyBearElem,
-    outs_len: usize,
-) -> bool;
-
-pub enum RawString {}
-
-#[repr(C)]
-pub struct RawError {
-    pub msg: *const RawString,
-}
-
-impl Default for RawError {
-    fn default() -> Self {
-        Self {
-            msg: std::ptr::null(),
-        }
-    }
-}
-
 extern "C" {
-    pub fn risc0_circuit_keccak_string_ptr(str: *const RawString) -> *const c_char;
-
-    pub fn risc0_circuit_keccak_string_free(str: *const RawString);
-
     pub fn risc0_circuit_keccak_poly_fp(
         cycle: usize,
         steps: usize,
@@ -58,31 +26,18 @@ extern "C" {
     ) -> BabyBearExtElem;
 }
 
-pub fn get_trampoline<F>(_closure: &F) -> Callback
-where
-    F: FnMut(&str, &str, &[BabyBearElem], &mut [BabyBearElem]) -> bool,
-{
-    trampoline::<F>
-}
-
-extern "C" fn trampoline<F>(
-    ctx: *mut c_void,
-    name: *const c_char,
-    extra: *const c_char,
-    args_ptr: *const BabyBearElem,
-    args_len: usize,
-    outs_ptr: *mut BabyBearElem,
-    outs_len: usize,
-) -> bool
-where
-    F: FnMut(&str, &str, &[BabyBearElem], &mut [BabyBearElem]) -> bool,
-{
-    unsafe {
-        let name = CStr::from_ptr(name).to_str().unwrap();
-        let extra = CStr::from_ptr(extra).to_str().unwrap();
-        let args = slice::from_raw_parts(args_ptr, args_len);
-        let outs = slice::from_raw_parts_mut(outs_ptr, outs_len);
-        let callback = &mut *(ctx as *mut F);
-        callback(name, extra, args, outs)
-    }
+#[cfg(feature = "cuda")]
+extern "C" {
+    pub fn risc0_circuit_keccak_cuda_eval_check(
+        check: DevicePointer<u8>,
+        ctrl: DevicePointer<u8>,
+        data: DevicePointer<u8>,
+        accum: DevicePointer<u8>,
+        mix: DevicePointer<u8>,
+        out: DevicePointer<u8>,
+        rou: *const BabyBearElem,
+        po2: u32,
+        domain: u32,
+        poly_mix_pows: *const u32,
+    ) -> *const std::os::raw::c_char;
 }
