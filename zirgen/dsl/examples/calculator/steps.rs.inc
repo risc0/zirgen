@@ -49,8 +49,8 @@ pub fn exec_one_hot<'a>(
     let x2: NondetRegStruct2Array = map_layout(
         [Val::new(0), Val::new(1)],
         (layout1.map(|c| c._super)),
-        |x3, x4| -> std::result::Result<NondetRegStruct<'a>, anyhow::Error> {
-            let x5: NondetRegStruct<'a> = exec_nondet_reg(ctx, isz((x3 - arg0))?, x4)?;
+        |x3, x4| {
+            let x5: NondetRegStruct = exec_nondet_reg(ctx, isz((x3 - arg0))?, x4)?;
             return Ok(x5);
         },
     )?;
@@ -127,7 +127,7 @@ pub fn exec_top<'a>(
     let x21: NondetRegStruct = back_reg(ctx, 0, x15)?;
     // Top(zirgen/dsl/examples/calculator/calculator.zir:43)
     let x22: Val = x11._super;
-    // Log(<preamble>:16)
+    // Log(<preamble>:22)
     // Top(zirgen/dsl/examples/calculator/calculator.zir:50)
     invoke_extern!(
         ctx,

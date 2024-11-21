@@ -88,7 +88,7 @@ TopStruct exec_Top(ExecContext& ctx, BoundLayout<TopLayout> layout0, GlobalBuf g
   NondetRegStruct x21 = back_Reg(ctx, 0, x15);
   // Top(zirgen/dsl/examples/calculator/calculator.zir:43)
   Val x22 = x11._super;
-  // Log(<preamble>:16)
+  // Log(<preamble>:22)
   // Top(zirgen/dsl/examples/calculator/calculator.zir:50)
   INVOKE_EXTERN(ctx,
                 log,

@@ -84,9 +84,15 @@ pub const TAPSET: &TapSet = &TapSet::<'static> {
             skip: 1,
         },
     ],
-    combo_taps: &[0],
-    combo_begin: &[0, 1],
-    group_begin: &[0, 1, 2, 9],
+    combo_taps: &[
+         0, 
+    ],
+    combo_begin: &[
+         0,  1, 
+    ],
+    group_begin: &[
+         0,  1,  2,  9, 
+    ],
     combos_count: 1,
     reg_count: 9,
     tot_combo_backs: 1,
