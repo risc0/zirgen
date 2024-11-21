@@ -421,8 +421,7 @@ int main(int argc, char* argv[]) {
   auto bAttr = builder.getIntegerAttr(int8Type, secp256k1_b);
   auto b = builder.create<BigInt::ConstOp>(loc, bAttr);
 
-  auto curve =
-      std::make_shared<BigInt::EC::WeierstrassCurve>(prime, a, b);
+  auto curve = std::make_shared<BigInt::EC::WeierstrassCurve>(prime, a, b);
 
   auto a_x = builder.create<BigInt::LoadOp>(loc, 256, 11, 0);
   auto a_y = builder.create<BigInt::LoadOp>(loc, 256, 11, 2);

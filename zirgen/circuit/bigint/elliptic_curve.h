@@ -66,51 +66,24 @@ AffinePt neg(OpBuilder builder, Location loc, const AffinePt& pt);
 AffinePt sub(OpBuilder builder, Location loc, const AffinePt& lhs, const AffinePt& rhs);
 
 // Test functions
-void makeECAddTest(mlir::OpBuilder builder,
-                   mlir::Location loc,
-                   size_t bits);
-void makeECDoubleTest(mlir::OpBuilder builder,
-                      mlir::Location loc,
-                      size_t bits);
-void makeECMultiplyTest(mlir::OpBuilder builder,
-                        mlir::Location loc,
-                        size_t bits);
-void makeECNegateTest(mlir::OpBuilder builder,
-                      mlir::Location loc,
-                      size_t bits);
-void makeECSubtractTest(mlir::OpBuilder builder,
-                        mlir::Location loc,
-                        size_t bits);
-void makeECValidatePointsEqualTest(mlir::OpBuilder builder,
-                                   mlir::Location loc,
-                                   size_t bits);
-void makeECValidatePointOnCurveTest(mlir::OpBuilder builder,
-                                    mlir::Location loc,
-                                    size_t bits);
+void makeECAddTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
+void makeECDoubleTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
+void makeECMultiplyTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
+void makeECNegateTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
+void makeECSubtractTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
+void makeECValidatePointsEqualTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
+void makeECValidatePointOnCurveTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
 
 // The "Freely" test functions run the op without checking the output
 // These are mostly useful for testing expected failures e.g. P + -P should always fail
-void makeECAddFreelyTest(mlir::OpBuilder builder,
-                         mlir::Location loc,
-                         size_t bits);
-void makeECDoubleFreelyTest(mlir::OpBuilder builder,
-                            mlir::Location loc,
-                            size_t bits);
-void makeECMultiplyFreelyTest(mlir::OpBuilder builder,
-                              mlir::Location loc,
-                              size_t bits);
-void makeECNegateFreelyTest(mlir::OpBuilder builder,
-                            mlir::Location loc,
-                            size_t bits);
-void makeECSubtractFreelyTest(mlir::OpBuilder builder,
-                              mlir::Location loc,
-                              size_t bits);
+void makeECAddFreelyTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
+void makeECDoubleFreelyTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
+void makeECMultiplyFreelyTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
+void makeECNegateFreelyTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
+void makeECSubtractFreelyTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
 
 // Perf test functions
-void makeRepeatedECAddTest(mlir::OpBuilder builder,
-                           mlir::Location _loc,
-                           size_t bits,
-                           size_t reps);
+void makeRepeatedECAddTest(mlir::OpBuilder builder, mlir::Location _loc, size_t bits, size_t reps);
 void makeRepeatedECDoubleTest(mlir::OpBuilder builder,
                               mlir::Location _loc,
                               size_t bits,

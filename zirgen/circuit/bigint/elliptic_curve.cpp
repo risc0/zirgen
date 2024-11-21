@@ -233,10 +233,8 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt) 
       auto yMerged = builder.create<BigInt::AddOp>(loc, yIfAdd, yIfNotAdd);
       // The reduces keep the coeff size small enough, but aren't otherwise needed for correctness;
       // could maybe eek out a bit of perf with lower-level nondets
-      auto newX = builder.create<BigInt::ReduceOp>(
-          loc, xMerged, result.curve()->prime());
-      auto newY = builder.create<BigInt::ReduceOp>(
-          loc, yMerged, result.curve()->prime());
+      auto newX = builder.create<BigInt::ReduceOp>(loc, xMerged, result.curve()->prime());
+      auto newY = builder.create<BigInt::ReduceOp>(loc, yMerged, result.curve()->prime());
 
       result = AffinePt(newX, newY, result.curve());
     }
@@ -253,11 +251,9 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt) 
   auto xIfNotSub = builder.create<BigInt::MulOp>(loc, result.x(), dont_subtract_pt);
   auto yIfNotSub = builder.create<BigInt::MulOp>(loc, result.y(), dont_subtract_pt);
   Value xFinal = builder.create<BigInt::AddOp>(loc, xIfSub, xIfNotSub);
-  xFinal =
-      builder.create<BigInt::ReduceOp>(loc, xFinal, result.curve()->prime());
+  xFinal = builder.create<BigInt::ReduceOp>(loc, xFinal, result.curve()->prime());
   Value yFinal = builder.create<BigInt::AddOp>(loc, yIfSub, yIfNotSub);
-  yFinal =
-      builder.create<BigInt::ReduceOp>(loc, yFinal, result.curve()->prime());
+  yFinal = builder.create<BigInt::ReduceOp>(loc, yFinal, result.curve()->prime());
 
   return AffinePt(xFinal, yFinal, result.curve());
 }
@@ -289,8 +285,7 @@ AffinePt doub(OpBuilder builder, Location loc, const AffinePt& pt) {
   Value x_sqr = builder.create<BigInt::MulOp>(loc, pt.x(), pt.x());
   Value lambda_num = builder.create<BigInt::AddOp>(loc, x_sqr, x_sqr);
   lambda_num = builder.create<BigInt::AddOp>(loc, lambda_num, x_sqr);
-  lambda_num =
-      builder.create<BigInt::AddOp>(loc, lambda_num, pt.curve()->a());
+  lambda_num = builder.create<BigInt::AddOp>(loc, lambda_num, pt.curve()->a());
   Value prime_sqr =
       builder.create<BigInt::MulOp>(loc, prime, prime); // Adding a prime^2 to enforce positivity
   Value lambda_check_rhs = builder.create<BigInt::AddOp>(loc, prime_sqr, prime_sqr);
@@ -357,9 +352,7 @@ AffinePt sub(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
 
 // Test functions
 
-void makeECAddTest(mlir::OpBuilder builder,
-                   mlir::Location loc,
-                   size_t bits) {
+void makeECAddTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);
@@ -378,9 +371,7 @@ void makeECAddTest(mlir::OpBuilder builder,
   result.validate_equal(builder, loc, expected);
 }
 
-void makeECDoubleTest(mlir::OpBuilder builder,
-                      mlir::Location loc,
-                      size_t bits) {
+void makeECDoubleTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 2, true);
@@ -395,9 +386,7 @@ void makeECDoubleTest(mlir::OpBuilder builder,
   result.validate_equal(builder, loc, expected);
 }
 
-void makeECMultiplyTest(mlir::OpBuilder builder,
-                        mlir::Location loc,
-                        size_t bits) {
+void makeECMultiplyTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   // This test is only valid for curves whose order is of bitwidth no more than the prime's bitwidth
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
@@ -415,9 +404,7 @@ void makeECMultiplyTest(mlir::OpBuilder builder,
   result.validate_equal(builder, loc, expected);
 }
 
-void makeECNegateTest(mlir::OpBuilder builder,
-                      mlir::Location loc,
-                      size_t bits) {
+void makeECNegateTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 2, true);
@@ -432,9 +419,7 @@ void makeECNegateTest(mlir::OpBuilder builder,
   result.validate_equal(builder, loc, expected);
 }
 
-void makeECSubtractTest(mlir::OpBuilder builder,
-                        mlir::Location loc,
-                        size_t bits) {
+void makeECSubtractTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);
@@ -452,9 +437,7 @@ void makeECSubtractTest(mlir::OpBuilder builder,
   result.validate_equal(builder, loc, expected);
 }
 
-void makeECValidatePointsEqualTest(mlir::OpBuilder builder,
-                                   mlir::Location loc,
-                                   size_t bits) {
+void makeECValidatePointsEqualTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);
@@ -468,9 +451,7 @@ void makeECValidatePointsEqualTest(mlir::OpBuilder builder,
   lhs.validate_equal(builder, loc, rhs);
 }
 
-void makeECValidatePointOnCurveTest(mlir::OpBuilder builder,
-                                    mlir::Location loc,
-                                    size_t bits) {
+void makeECValidatePointOnCurveTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto prime = builder.create<BigInt::DefOp>(loc, bits, 2, true, bits - 1);
@@ -482,9 +463,7 @@ void makeECValidatePointOnCurveTest(mlir::OpBuilder builder,
 }
 
 // The "Freely" test functions run the op without checking the output
-void makeECAddFreelyTest(mlir::OpBuilder builder,
-                         mlir::Location loc,
-                         size_t bits) {
+void makeECAddFreelyTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);
@@ -501,9 +480,7 @@ void makeECAddFreelyTest(mlir::OpBuilder builder,
   result.validate_equal(builder, loc, result);
 }
 
-void makeECDoubleFreelyTest(mlir::OpBuilder builder,
-                            mlir::Location loc,
-                            size_t bits) {
+void makeECDoubleFreelyTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto prime = builder.create<BigInt::DefOp>(loc, bits, 2, true, bits - 1);
@@ -516,9 +493,7 @@ void makeECDoubleFreelyTest(mlir::OpBuilder builder,
   result.validate_equal(builder, loc, result);
 }
 
-void makeECMultiplyFreelyTest(mlir::OpBuilder builder,
-                              mlir::Location loc,
-                              size_t bits) {
+void makeECMultiplyFreelyTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   // This test is only valid for curves whose order is of bitwidth no more than the prime's bitwidth
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
@@ -534,9 +509,7 @@ void makeECMultiplyFreelyTest(mlir::OpBuilder builder,
   result.validate_equal(builder, loc, result);
 }
 
-void makeECNegateFreelyTest(mlir::OpBuilder builder,
-                            mlir::Location loc,
-                            size_t bits) {
+void makeECNegateFreelyTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto prime = builder.create<BigInt::DefOp>(loc, bits, 2, true, bits - 1);
@@ -549,9 +522,7 @@ void makeECNegateFreelyTest(mlir::OpBuilder builder,
   result.validate_equal(builder, loc, result);
 }
 
-void makeECSubtractFreelyTest(mlir::OpBuilder builder,
-                              mlir::Location loc,
-                              size_t bits) {
+void makeECSubtractFreelyTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);
@@ -568,10 +539,7 @@ void makeECSubtractFreelyTest(mlir::OpBuilder builder,
 }
 
 // Perf Test function
-void makeRepeatedECAddTest(mlir::OpBuilder builder,
-                           mlir::Location loc,
-                           size_t bits,
-                           size_t reps) {
+void makeRepeatedECAddTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits, size_t reps) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);

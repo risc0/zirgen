@@ -418,7 +418,7 @@ void genModPow65537(mlir::Location loc, mlir::OpBuilder& builder) {
 }
 
 void genECDouble(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) {
-  assert(bitwidth % 128 == 0);  // Bitwidth must be an even number of 128-bit chunks
+  assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
   size_t chunkwidth = bitwidth / 128;
 
   auto pt_x = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, 0);
@@ -426,8 +426,7 @@ void genECDouble(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) 
   auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0, bitwidth - 1);
   auto a = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, chunkwidth);
   auto b = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 2 * chunkwidth);
-  auto curve =
-      std::make_shared<BigInt::EC::WeierstrassCurve>(prime, a, b);
+  auto curve = std::make_shared<BigInt::EC::WeierstrassCurve>(prime, a, b);
   auto pt = BigInt::EC::AffinePt(pt_x, pt_y, curve);
   auto doubled = BigInt::EC::doub(builder, loc, pt);
   builder.create<BigInt::StoreOp>(loc, doubled.x(), 13, 0);
@@ -435,7 +434,7 @@ void genECDouble(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) 
 }
 
 void genECAdd(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) {
-  assert(bitwidth % 128 == 0);  // Bitwidth must be an even number of 128-bit chunks
+  assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
   size_t chunkwidth = bitwidth / 128;
   auto p_x = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, 0);
   auto p_y = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, chunkwidth);
@@ -444,8 +443,7 @@ void genECAdd(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) {
   auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 0, bitwidth - 1);
   auto a = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, chunkwidth);
   auto b = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 2 * chunkwidth);
-  auto curve =
-      std::make_shared<BigInt::EC::WeierstrassCurve>(prime, a, b);
+  auto curve = std::make_shared<BigInt::EC::WeierstrassCurve>(prime, a, b);
   auto lhs = BigInt::EC::AffinePt(p_x, p_y, curve);
   auto rhs = BigInt::EC::AffinePt(q_x, q_y, curve);
   auto result = BigInt::EC::add(builder, loc, lhs, rhs);
@@ -479,10 +477,10 @@ int main(int argc, char* argv[]) {
     genModPow65537(loc, builder);
     break;
   case Program::EC_Double:
-    genECDouble(loc, builder, 256);  // TODO: Selectable bitwidth
+    genECDouble(loc, builder, 256); // TODO: Selectable bitwidth
     break;
   case Program::EC_Add:
-    genECAdd(loc, builder, 256);  // TODO: Selectable bitwidth
+    genECAdd(loc, builder, 256); // TODO: Selectable bitwidth
     break;
   }
 
