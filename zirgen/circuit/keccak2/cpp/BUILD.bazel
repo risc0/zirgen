@@ -7,13 +7,13 @@ package(
 cc_library(
     name = "run",
     srcs = [
-        #"run.cpp",
+        "run.cpp",
         "trace.cpp",
         "wrap_dsl.cpp",
         "//zirgen/circuit/keccak2:cppinc",
     ],
     hdrs = [
-        #"run.h",
+        "run.h",
         "trace.h",
         "wrap_dsl.h",
     ],
@@ -21,4 +21,10 @@ cc_library(
         "//risc0/core",
         "//risc0/fp",
     ],
+)
+
+cc_binary(
+    name = "test",
+    srcs = ["main.cpp"],
+    deps = [":run"],
 )

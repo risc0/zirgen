@@ -1,0 +1,30 @@
+// RUN: zirgen -I %S --test %s
+
+import bits;
+
+// Determine if val is zero or not
+component IsZero(val: Val) {
+  // Nondeterministically 'guess' the result
+  isZero := NondetReg(Isz(val));
+
+  // Compute the inverse (for non-zero values), for zero values, Inv returns 0
+  inv := NondetReg(Inv(val));
+
+  // Assert that the result is a bit
+  AssertBit(isZero);
+  // If isZero is 0 (i.e. nonzero) then val must have an inverse
+  val * inv = 1 - isZero;
+  // If isZero is 1, then val must be zero
+  isZero * val = 0;
+  // If isZero is 1, then inv must be zero
+  isZero * inv = 0;
+  // Make the reuslt Return 'isZero'
+  isZero
+}
+
+test IsZeroTest {
+  IsZero(0) = 1;
+  IsZero(1) = 0;
+  IsZero(2) = 0;
+}
+

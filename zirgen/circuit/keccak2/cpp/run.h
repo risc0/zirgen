@@ -4,10 +4,12 @@
 
 #include <string>
 
-#include "zirgen/circuit/rv32im/v2/emu/trace.h"
+#include "zirgen/circuit/keccak2/cpp/trace.h"
+#include "zirgen/circuit/keccak2/cpp/wrap_dsl.h"
 
-namespace zirgen::rv32im_v2 {
+namespace zirgen::keccak2 {
 
-ExecutionTrace runSegment(const Segment& segment);
+using KeccakState = std::array<uint64_t, 25>;
+ExecutionTrace runSegment(const std::vector<KeccakState>& inputs);
 
 } // namespace zirgen::rv32im_v2

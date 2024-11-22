@@ -1,5 +1,5 @@
 
-
+import is_zero;
 import keccak;
 import sha2;
 
@@ -7,6 +7,7 @@ component TopState(bits: Array<Val, 800>, kflat: Array<Val, 100>, sflat: Array<V
   bits := for i : 0..800 {
     Reg(bits[i])
   };
+  Log("Top State Top 16 bits = %x", Pack<16, 16>(for i : 0..16 { bits[i] })[0]); 
   kflat := for i : 0..100 {
     Reg(kflat[i])
   };
@@ -63,6 +64,7 @@ component ExpandThetaB(b: Array<Val, 800>) {
 
 // 5 cycles for 1 round of Keccak (ThetaP1, 2x Pi-Rho-ThetaP2, 2x Iota-Chi)
 component KeccakRound0(s0: TopState, s1: TopState) {
+  Log("KeccakRound0");
   a := ExpandKeccak([s0.bits, s1.bits]);
   b := ThetaP1(a);
   top := TopState(FlattenThetaB(b), s1.kflat, s1.sflat);
@@ -75,12 +77,14 @@ component KeccakRound0(s0: TopState, s1: TopState) {
 }
 
 component KeccakRound12<IDX: Val>(sb: TopState, s0: TopState, s1: TopState, back1: TopState) {
+  Log("KeccakRound12");
   a := ExpandKeccak([s0.bits, s1.bits]);
   b := ExpandThetaB(sb.bits);
   TopState(FlattenKeccak(Pi(Rho(ThetaP2(a, b))))[IDX], back1.kflat, back1.sflat)
 }
 
 component KeccakRound34<IDX: Val>(s0: TopState, s1: TopState, back1: TopState, round: Val) {
+  Log("KeccakRound34", round);
   a := ExpandKeccak([s0.bits, s1.bits]);
   TopState(FlattenKeccak(Iota(Chi(a), round))[IDX], back1.kflat, back1.sflat)
 }
@@ -149,6 +153,7 @@ component LoadWin(kf: Array<Val, 100>, round: Val, block: Val) {
 }
 
 component ShaCycle(back1: TopState, back2: TopState, round: Val, block: Val) {
+  Log("ShaCycle", block, round);
   // Extract SHA state
   stateIn := LoadShaState(back1, back2);
   oneHot := OneHot<8>(round);
@@ -180,17 +185,9 @@ component ShaCycle(back1: TopState, back2: TopState, round: Val, block: Val) {
   topState
 }
 
+extern IsFirstCycle(): Val;
 extern GetPreimage(idx: Val): Val;
-
-component ReadCycle(stateIn: TopState) {
-  load := for i : 0..100 { NondetReg(GetPreimage(i)) };
-  bits := for i : 0..800 { 0 };  // TODO: load from sflat
-  stateOut := TopState(bits, load, stateIn.sflat);
-  for i : 0..100 {
-    AliasLayout!(stateOut.kflat[i], load[i]);
-  };
-  stateOut
-}
+extern NextPreimage(): Val;
 
 /*
 - Init cycle (sets up)
@@ -203,15 +200,30 @@ component ReadCycle(stateIn: TopState) {
 - 8 * 4 sha cycles (mixes kflat + zeros into SHA state)
 */
 
-/*
-component ExpandCycle(stateIn: TopState) {
-  // Expand from kflat -> bits
-  bits := for i : 0..800 {
-    
-  
+component CycleTypeInit() { 0 }
+component CycleTypeRead() { 1 }
+component CycleTypeExpand() { 2 }
+component CycleTypeWrite() { 3 }
+component CycleTypeKeccakRound0() { 4 }
+component CycleTypeKeccakRound1() { 5 }
+component CycleTypeKeccakRound2() { 6 }
+component CycleTypeKeccakRound3() { 7 }
+component CycleTypeKeccakRound4() { 8 }
+component CycleTypeSha() { 9 }
+component CycleTypeShutdown() { 10 }
 
-component WriteCycle(stateIn: TopState) {
-  // Set 
+// TODO
+component InitCycle() {
+  Log("InitCycle");
+  load := for i : 0..100 { 0 };
+  bits := for i : 0..800 { 0 };
+  sflat := for i : 0..16 { 0 };
+  TopState(bits, load, sflat)
+}
+
+// TODO
+component ReadCycle(stateIn: TopState) {
+  Log("ReadCycle");
   load := for i : 0..100 { NondetReg(GetPreimage(i)) };
   bits := for i : 0..800 { 0 };  // TODO: load from sflat
   stateOut := TopState(bits, load, stateIn.sflat);
@@ -220,25 +232,132 @@ component WriteCycle(stateIn: TopState) {
   };
   stateOut
 }
-*/
 
-extern GetCycleType(): Val;
-extern GetRound(): Val;
-extern GetBlock(): Val;
+// TODO
+component ExpandCycle(back1: TopState, back2: TopState, subType: Val) {
+  Log("ExpandCycle");
+  load := for i : 0..100 { 0 };
+  bits := for i : 0..800 { 0 };
+  sflat := for i : 0..16 { 0 };
+  TopState(bits, load, sflat)
+}
+
+// TODO
+component WriteCycle(stateIn: TopState) {
+  Log("WriteCycle");
+  load := for i : 0..100 { 0 };
+  bits := for i : 0..800 { 0 };
+  sflat := for i : 0..16 { 0 };
+  TopState(bits, load, sflat)
+}
+
+// TODO
+component ShutdownCycle(stateIn: TopState) {
+  Log("ShutdownCycle");
+  load := for i : 0..100 { 0 };
+  bits := for i : 0..800 { 0 };
+  sflat := for i : 0..16 { 0 };
+  TopState(bits, load, sflat)
+}
+
+component ControlState(cycleType: Val, subType: Val, block: Val, round: Val) {
+  cycleType := Reg(cycleType);
+  subType := Reg(subType);
+  block := Reg(block);
+  round := Reg(round);
+}
+
+component KeccackNextRound(prev: ControlState) {
+  isLast := IsZero(prev.round - 23);
+  if (isLast) {
+    ControlState(CycleTypeWrite(), 0, 0, 0)
+  } else {
+    ControlState(CycleTypeKeccakRound0(), 0, 0, prev.round + 1)
+  }
+}
+
+component ShaNext(prev: ControlState) {
+  /*
+  // We have 1 of 5 exits:
+  1) prev.round < 7, next round
+  2) prev.round == 7, prev.block < 3, next block
+  3) prev.round == 7, prev.block == 3, subType == 0, expand
+  4) prev.round == 7, prev.block == 3, subType == 1, nondetDone() == 0, read
+  4) prev.round == 7, prev.block == 3, subType == 1, nondetDone() == 1, shutdown
+  */
+  isLastRound := IsZero(prev.round - 7);
+  isLastBlock := IsZero(prev.block - 3);
+  doNextRound := 1 - isLastRound;
+  doNextBlock := Reg(isLastRound * (1 - isLastBlock));
+  doExpand := Reg(isLastRound * isLastBlock * (1 - prev.subType));
+  doFinal := Reg(isLastRound * isLastBlock * prev.subType);
+  [doNextRound, doNextBlock, doExpand, doFinal] -> (
+    ControlState(CycleTypeSha(), prev.subType, prev.block, prev.round + 1),
+    ControlState(CycleTypeSha(), prev.subType, prev.block + 1, 0),
+    ControlState(CycleTypeExpand(), 0, 0, 0),
+    {
+      more := NondetReg(NextPreimage());
+      AssertBit(more);
+      if (more) {
+        ControlState(CycleTypeRead(), 0, 0, 0)
+      } else {
+        ControlState(CycleTypeShutdown(), 0, 0, 0)
+      }
+   }
+  )
+}
+
+component ComputeCurrentStep(prevMux: Array<Val, 11>, prev: ControlState) {
+  prevMux -> (
+    ControlState(CycleTypeRead(), 0, 0, 0),  // Init -> Read
+    ControlState(CycleTypeSha(), 0, 0, 0),  // Read -> SHA:0
+    if (prev.subType) {
+      ControlState(CycleTypeKeccakRound0(), 0, 0, 0)  // Expand1 -> Round0
+    } else {
+      ControlState(CycleTypeExpand(), 1, 0, 0)  // Expand0 -> Expand1
+    },
+    ControlState(CycleTypeSha(), 1, 0, 0),  // Write -> SHA
+    ControlState(CycleTypeKeccakRound1(), 0, 0, prev.round),
+    ControlState(CycleTypeKeccakRound2(), 0, 0, prev.round),
+    ControlState(CycleTypeKeccakRound3(), 0, 0, prev.round),
+    ControlState(CycleTypeKeccakRound4(), 0, 0, prev.round),
+    KeccackNextRound(prev),
+    ShaNext(prev),
+    ControlState(CycleTypeShutdown(), 0, 0, 0)
+  )
+}
+
+// Annoyingly back directly on OneHot doesn't work
+component WrapOneHot(oneHot: OneHot<11>) {
+  for i : 0..11 { Reg(oneHot.bits[i]) }
+}
 
 component Top() {
-  cycleType := NondetReg(GetCycleType());
-  round := NondetReg(GetRound());
-  block := NondetReg(GetBlock());
-  cycleMux := OneHot<7>(cycleType);
+  isFirst := NondetReg(IsFirstCycle());
+  cycleMux : WrapOneHot;
+  controlState : ControlState;
+  controlState := if (isFirst) {
+    ControlState(CycleTypeInit(), 0, 0, 0)
+  } else {
+    ComputeCurrentStep(cycleMux@1, controlState@1)
+  };
+  oneHot := OneHot<11>(controlState.cycleType);
+  cycleMux := WrapOneHot(oneHot);
+  for i : 0..11 {
+    AliasLayout!(oneHot[i], cycleMux[i]);
+  };
   curState: TopState;
   curState := cycleMux -> (
+    InitCycle(),
     ReadCycle(curState@1),
+    ExpandCycle(curState@1, curState@2, controlState.subType),
+    WriteCycle(curState@1),
     KeccakRound0(curState@2, curState@1),
-    KeccakRound12<0>(curState@3, curState@2, curState@1, curState@1),
-    KeccakRound12<1>(curState@4, curState@3, curState@2, curState@1),
-    KeccakRound34<0>(curState@2, curState@1, curState@1, round),
-    KeccakRound34<1>(curState@3, curState@2, curState@1, round),
-    ShaCycle(curState@1, curState@2, round, block)
+    KeccakRound12<0>(curState@1, curState@3, curState@2, curState@1),
+    KeccakRound12<1>(curState@2, curState@4, curState@3, curState@1),
+    KeccakRound34<0>(curState@2, curState@1, curState@1, controlState.round),
+    KeccakRound34<1>(curState@3, curState@2, curState@1, controlState.round),
+    ShaCycle(curState@1, curState@2, controlState.round, controlState.block),
+    ShutdownCycle(curState@1)
   );
 }

@@ -212,7 +212,7 @@ auto reduce(std::array<T1, N> elems, T2 start, const BoundLayout<T3>& b, F f) {
 // All the extern handling
 #define INVOKE_EXTERN(ctx, name, ...) extern_##name(ctx, ##__VA_ARGS__)
 
-Val extern_isFirstCycle_0(ExecContext& ctx) {
+Val extern_isFirstCycle(ExecContext& ctx) {
   return ctx.cycle == 0;
 }
 
@@ -222,30 +222,22 @@ Val extern_getCycle(ExecContext& ctx) {
 
 void extern_log(ExecContext& ctx, const std::string& message, std::vector<Val> vals) {
   std::cout << "LOG: '" << message << "':";
+  std::cout << std::hex;
   for (size_t i = 0; i < vals.size(); i++) {
     std::cout << " " << vals[i].asUInt32();
   }
-  std::cout << "\n";
+  std::cout << std::dec << "\n";
 }
 
 Val extern_getPreimage(ExecContext& ctx, Val idx) {
-  // TODO: Actually load from somewhere
-  return idx;
+  uint32_t idxLow = idx.asUInt32() % 4;
+  uint32_t idxHigh = idx.asUInt32() / 4;
+  uint32_t data = ctx.stepHandler.getPreimage()[idxHigh] >> (16 * idxLow);
+  return data;
 }
 
-Val extern_getCycleType(ExecContext& ctx) {
-  // TODO: Actually load from somewhere
-  return 0;
-}
-
-Val extern_getRound(ExecContext& ctx) {
-  // TODO: Actually load from somewhere
-  return 0;
-}
-
-Val extern_getBlock(ExecContext& ctx) {
-  // TODO: Actually load from somewhere
-  return 0;
+Val extern_nextPreimage(ExecContext& ctx) {
+  return ctx.stepHandler.nextPreimage();
 }
 
 #if defined(__clang__)
