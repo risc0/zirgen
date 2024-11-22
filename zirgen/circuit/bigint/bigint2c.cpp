@@ -42,6 +42,7 @@ enum class Program {
   ModPow_65537,
   EC_Double,
   EC_Add,
+  ModMul,
 };
 } // namespace
 
@@ -50,7 +51,8 @@ static cl::opt<enum Program>
             cl::desc("The program to compile"),
             cl::values(clEnumValN(Program::ModPow_65537, "modpow_65537", "ModPow_65537"),
                        clEnumValN(Program::EC_Double, "ec_double", "EC_Double"),
-                       clEnumValN(Program::EC_Add, "ec_add", "EC_Add")),
+                       clEnumValN(Program::EC_Add, "ec_add", "EC_Add"),
+                       clEnumValN(Program::ModMul, "modmul", "ModMul")),  // TODO: Don't hardcode bitwidth
             cl::Required);
 
 const APInt secp256k1_prime = APInt::getAllOnes(256) - APInt::getOneBitSet(256, 32) -
@@ -417,6 +419,15 @@ void genModPow65537(mlir::Location loc, mlir::OpBuilder& builder) {
   builder.create<BigInt::StoreOp>(loc, x, 13, 0);
 }
 
+void genModMul(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) {
+  auto lhs = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, 0);
+  auto rhs = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0);
+  auto modulus = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 0);
+  auto prod = builder.create<BigInt::MulOp>(loc, lhs, rhs);
+  auto result = builder.create<BigInt::ReduceOp>(loc, prod, modulus);
+  builder.create<BigInt::StoreOp>(loc, result, 14, 0);
+}
+
 void genECDouble(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) {
   assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
   size_t chunkwidth = bitwidth / 128;
@@ -482,6 +493,8 @@ int main(int argc, char* argv[]) {
   case Program::EC_Add:
     genECAdd(loc, builder, 256); // TODO: Selectable bitwidth
     break;
+  case Program::ModMul:
+    genModMul(loc, builder, 256); // TODO: Selectable bitwidth
   }
 
   builder.create<func::ReturnOp>(loc);
