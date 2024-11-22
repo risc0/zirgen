@@ -287,7 +287,11 @@ std::array<Val, 5> extern_getMemoryTxn(ExecContext& ctx, Val addrElem) {
   //        txn.addr,
   //        txn.word);
 
-  assert(txn.cycle == ctx.cycle);
+  if (txn.cycle != ctx.cycle) {
+    printf("txn.cycle: %zu, ctx.cycle: %zu\n", txn.cycle, ctx.cycle);
+    throw std::runtime_error("txn cycle mismatch");
+  }
+
   if (txn.addr != addr) {
     printf("txn.addr: 0x%08x, addr: 0x%08x\n", txn.addr, addr);
     throw std::runtime_error("memory peek not in preflight");
@@ -438,9 +442,15 @@ const char* risc0_circuit_rv32im_v2_cpu_witgen(uint32_t mode,
   try {
     switch (mode) {
     case kStepModeParallel: {
-      auto begin = poolstl::iota_iter<uint32_t>(0);
-      auto end = poolstl::iota_iter<uint32_t>(lastCycle);
-      std::for_each(poolstl::par, begin, end, [&](uint32_t cycle) {
+      auto begin1 = poolstl::iota_iter<uint32_t>(0);
+      auto end1 = poolstl::iota_iter<uint32_t>(preflight->tableSplitCycle);
+      std::for_each(poolstl::par, begin1, end1, [&](uint32_t cycle) {
+        stepExec(*execTrace, *preflight, tables, globalContext, cycle);
+      });
+
+      auto begin2 = poolstl::iota_iter<uint32_t>(preflight->tableSplitCycle);
+      auto end2 = poolstl::iota_iter<uint32_t>(lastCycle);
+      std::for_each(poolstl::par, begin2, end2, [&](uint32_t cycle) {
         stepExec(*execTrace, *preflight, tables, globalContext, cycle);
       });
     } break;
@@ -449,12 +459,17 @@ const char* risc0_circuit_rv32im_v2_cpu_witgen(uint32_t mode,
         stepExec(*execTrace, *preflight, tables, globalContext, cycle);
       }
       break;
-    case kStepModeSeqReverse:
-      for (size_t i = 0; i < lastCycle; i++) {
-        size_t cycle = lastCycle - i - 1;
-        stepExec(*execTrace, *preflight, tables, globalContext, cycle);
+    case kStepModeSeqReverse: {
+      size_t split = preflight->tableSplitCycle;
+      for (size_t i = split; i-- > 0;) {
+        // printf("stepExec: %zu\n", i);
+        stepExec(*execTrace, *preflight, tables, globalContext, i);
       }
-      break;
+      for (size_t i = lastCycle; i-- > split;) {
+        // printf("stepExec: %zu\n", i);
+        stepExec(*execTrace, *preflight, tables, globalContext, i);
+      }
+    } break;
     }
   } catch (const std::exception& err) {
     return strdup(err.what());

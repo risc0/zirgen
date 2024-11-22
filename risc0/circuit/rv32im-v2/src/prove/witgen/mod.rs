@@ -21,7 +21,7 @@ use risc0_zkp::{
     hal::Hal,
 };
 
-use self::poseidon2::Poseidon2State;
+use self::{poseidon2::Poseidon2State, preflight::Back};
 use super::hal::{CircuitWitnessGenerator, StepMode, WitnessBuffer};
 use crate::{
     execute::{
@@ -103,28 +103,25 @@ impl<H: Hal> WitnessGenerator<H> {
 
         let data = scope!(
             "alloc(data)",
-            WitnessBuffer {
-                buf: hal.alloc_elem_init("data", cycles * REG_COUNT_DATA, BabyBearElem::INVALID),
-                rows: cycles,
-                cols: REG_COUNT_DATA,
-                checked_reads: true,
-            }
+            WitnessBuffer::new("data", hal, cycles, REG_COUNT_DATA, true)
         );
 
-        let mut injector = Injector::new(REG_COUNT_DATA);
-
         // Set stateful columns from 'top'
+        let mut injector = Injector::new(cycles, REG_COUNT_DATA);
         for (row, back) in trace.backs.iter().enumerate() {
             let cycle = &trace.cycles[row];
-            // tracing::trace!("[{i}] pc: {:#010x}, state: {}", cycle.pc, cycle.state);
+            // tracing::trace!("[{row}] pc: {:#010x}, state: {}", cycle.pc, cycle.state);
             match back {
-                preflight::Back::None => {}
-                preflight::Back::Ecall(s0, s1, s2) => {
-                    injector.set(row, LAYOUT_TOP.inst_result.arm8.s0._super.offset, *s0);
-                    injector.set(row, LAYOUT_TOP.inst_result.arm8.s1._super.offset, *s1);
-                    injector.set(row, LAYOUT_TOP.inst_result.arm8.s2._super.offset, *s2);
+                Back::None => {}
+                Back::Ecall(s0, s1, s2) => {
+                    const ECALL_S0: usize = LAYOUT_TOP.inst_result.arm8.s0._super.offset;
+                    const ECALL_S1: usize = LAYOUT_TOP.inst_result.arm8.s1._super.offset;
+                    const ECALL_S2: usize = LAYOUT_TOP.inst_result.arm8.s2._super.offset;
+                    injector.set(row, ECALL_S0, *s0);
+                    injector.set(row, ECALL_S1, *s1);
+                    injector.set(row, ECALL_S2, *s2);
                 }
-                preflight::Back::Poseidon2(p2_state) => {
+                Back::Poseidon2(p2_state) => {
                     for (col, value) in zip(Poseidon2State::offsets(), p2_state.as_array()) {
                         injector.set(row, col, value);
                     }
@@ -156,6 +153,7 @@ impl<H: Hal> WitnessGenerator<H> {
     }
 }
 
+#[derive(Debug)]
 struct Injector {
     cols: usize,
     offsets: Vec<u32>,
@@ -164,28 +162,26 @@ struct Injector {
 }
 
 impl Injector {
-    pub fn new(cols: usize) -> Self {
+    fn new(rows: usize, cols: usize) -> Self {
+        let mut index = Vec::with_capacity(rows + 1);
+        index.push(0);
         Self {
             cols,
             offsets: vec![],
             values: vec![],
-            index: vec![],
+            index,
         }
     }
 
-    pub fn set_cycle(&mut self, row: usize, cycle: &RawPreflightCycle) {
-        self.set(row, LAYOUT_TOP.next_pc_low._super.offset, cycle.pc & 0xffff);
-        self.set(
-            row,
-            LAYOUT_TOP.next_pc_high._super.offset + 1,
-            cycle.pc >> 16,
-        );
-        self.set(row, LAYOUT_TOP.next_state_0._super.offset, cycle.state);
-        self.set(
-            row,
-            LAYOUT_TOP.next_machine_mode._super.offset,
-            cycle.machine_mode as u32,
-        );
+    fn set_cycle(&mut self, row: usize, cycle: &RawPreflightCycle) {
+        const NEXT_PC_LOW: usize = LAYOUT_TOP.next_pc_low._super.offset;
+        const NEXT_PC_HIGH: usize = LAYOUT_TOP.next_pc_high._super.offset;
+        const NEXT_STATE: usize = LAYOUT_TOP.next_state_0._super.offset;
+        const MACHINE_MODE: usize = LAYOUT_TOP.next_machine_mode._super.offset;
+        self.set(row, NEXT_PC_LOW, cycle.pc & 0xffff);
+        self.set(row, NEXT_PC_HIGH, cycle.pc >> 16);
+        self.set(row, NEXT_STATE, cycle.state);
+        self.set(row, MACHINE_MODE, cycle.machine_mode as u32);
         self.index.push(self.offsets.len() as u32);
     }
 

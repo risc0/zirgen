@@ -34,6 +34,17 @@ impl<H> WitnessBuffer<H>
 where
     H: Hal<Field = BabyBear, Elem = BabyBearElem, ExtElem = BabyBearExtElem>,
 {
+    pub fn new(name: &'static str, hal: &H, rows: usize, cols: usize, checked_reads: bool) -> Self {
+        let buf = hal.alloc_elem_init(name, rows * cols, BabyBearElem::INVALID);
+        Self {
+            buf,
+            rows,
+            cols,
+            checked_reads,
+        }
+    }
+
+    #[cfg(test)]
     pub fn to_vec(&self) -> Vec<BabyBearElem> {
         self.buf.to_vec()
     }

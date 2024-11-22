@@ -285,7 +285,7 @@ impl Poseidon2State {
                 let word = ctx.load_u32(addr)?;
                 let cell = self.inner[i];
                 if word != cell {
-                    tracing::debug!(
+                    tracing::warn!(
                         "buf_in_addr: {:?}, buf_out_addr: {buf_out_addr:?}, cell: {i}",
                         WordAddr(self.buf_in_addr)
                     );
@@ -412,7 +412,7 @@ fn sbox2(x: u32) -> u32 {
 }
 
 pub fn read_start(ctx: &mut Preflight) -> Result<()> {
-    tracing::trace!("read_start");
+    // tracing::trace!("read_start");
     let p2 = Poseidon2State::new_start(0);
     ctx.on_poseidon2_cycle(STATE_POSEIDON_ENTRY, &p2);
     Ok(())
@@ -431,14 +431,14 @@ pub fn read_page(ctx: &mut Preflight, page_idx: u32) -> Result<()> {
 }
 
 pub fn read_done(ctx: &mut Preflight) -> Result<()> {
-    tracing::trace!("read_done");
+    // tracing::trace!("read_done");
     let p2 = Poseidon2State::new_done(MERKLE_TREE_START_ADDR.0, STATE_RESUME, 2);
     ctx.on_poseidon2_cycle(STATE_POSEIDON_PAGING, &p2);
     Ok(())
 }
 
 pub fn write_start(ctx: &mut Preflight) -> Result<()> {
-    tracing::trace!("write_start");
+    // tracing::trace!("write_start");
     let p2 = Poseidon2State::new_start(3);
     ctx.on_poseidon2_cycle(STATE_POSEIDON_ENTRY, &p2);
     Ok(())
@@ -457,7 +457,7 @@ pub fn write_page(ctx: &mut Preflight, page_idx: u32) -> Result<()> {
 }
 
 pub fn write_done(ctx: &mut Preflight) -> Result<()> {
-    tracing::trace!("write_done");
+    // tracing::trace!("write_done");
     let p2 = Poseidon2State::new_done(MERKLE_TREE_END_ADDR.0, STATE_STORE_ROOT, 5);
     ctx.on_poseidon2_cycle(STATE_POSEIDON_PAGING, &p2);
     Ok(())
@@ -486,7 +486,7 @@ impl Checksum {
             *power = cur;
             cur *= *nonce;
         }
-        tracing::trace!("powers: {powers:?}");
+        // tracing::trace!("powers: {powers:?}");
 
         Self {
             powers,

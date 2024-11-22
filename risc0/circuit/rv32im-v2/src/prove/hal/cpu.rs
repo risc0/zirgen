@@ -30,17 +30,6 @@ impl CpuCircuitHal {
     }
 }
 
-impl From<&WitnessBuffer<CpuHal>> for RawBuffer {
-    fn from(buf: &WitnessBuffer<CpuHal>) -> Self {
-        Self {
-            buf: buf.buf.as_slice().as_ptr(),
-            rows: buf.rows,
-            cols: buf.cols,
-            checked_reads: buf.checked_reads,
-        }
-    }
-}
-
 impl CircuitWitnessGenerator<CpuHal> for CpuCircuitHal {
     fn generate_witness(
         &self,

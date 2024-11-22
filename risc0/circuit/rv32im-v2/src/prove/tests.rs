@@ -16,7 +16,7 @@ use test_log::test;
 use super::{hal::StepMode, segment_prover};
 use crate::{
     execute::{image::MemoryImage2, testutil, DEFAULT_SEGMENT_LIMIT_PO2},
-    prove::witgen::WitnessGenerator,
+    prove::{witgen::WitnessGenerator, REG_COUNT_DATA},
 };
 
 fn fwd_rev_ab_test(program: Program) {
@@ -71,7 +71,14 @@ fn fwd_rev_ab_test(program: Program) {
             nonce,
         )
         .unwrap();
-        assert!(fwd_witgen.data.to_vec() == rev_witgen.data.to_vec());
+        let cycles = 1 << segment.po2;
+        let fwd_vec = fwd_witgen.data.to_vec();
+        let rev_vec = rev_witgen.data.to_vec();
+        for row in 0..cycles {
+            let fwd_row = &fwd_vec[row * REG_COUNT_DATA..row * REG_COUNT_DATA + REG_COUNT_DATA];
+            let rev_row = &rev_vec[row * REG_COUNT_DATA..row * REG_COUNT_DATA + REG_COUNT_DATA];
+            assert_eq!(fwd_row, rev_row, "cycle: {row}");
+        }
     }
 }
 

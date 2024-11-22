@@ -83,15 +83,6 @@ fn get_digest_addr(idx: u32) -> WordAddr {
     MERKLE_TREE_START_ADDR + DIGEST_WORDS as u32 * (2 * MEMORY_PAGES as u32 - idx)
 }
 
-// macro_rules! track_cycles {
-//     ($self:ident, $tag:expr, $body:block) => {
-//         let __start = $self.trace.cycles.len();
-//         $body
-//         let __end = $self.trace.cycles.len();
-//         tracing::trace!("{}: {}", format!($tag), __end - __start);
-//     };
-// }
-
 impl<'a> Preflight<'a> {
     fn new(segment: &'a Segment, nonce: BabyBearExtElem) -> Self {
         tracing::debug!("po2: {}", segment.po2);
@@ -129,15 +120,11 @@ impl<'a> Preflight<'a> {
         let activity = self.pager.loaded_pages();
         poseidon2::read_start(self)?;
         for node_idx in activity.nodes {
-            // track_cycles!(self, "read_node: {node_idx:#010x}", {
             poseidon2::read_node(self, node_idx)?;
-            // });
         }
         self.machine_mode = 1;
         for page_idx in activity.pages {
-            // track_cycles!(self, "read_page: {page_idx:#010x}", {
             poseidon2::read_page(self, page_idx)?;
-            // });
         }
         self.machine_mode = 2;
         poseidon2::read_done(self)?;
@@ -161,15 +148,11 @@ impl<'a> Preflight<'a> {
         self.pager.commit()?;
         poseidon2::write_start(self)?;
         for &page_idx in activity.pages.iter().rev() {
-            // track_cycles!(self, "write_page", {
             poseidon2::write_page(self, page_idx)?;
-            // });
         }
         self.machine_mode = 4;
         for &node_idx in activity.nodes.iter().rev() {
-            // track_cycles!(self, "write_node", {
             poseidon2::write_node(self, node_idx)?;
-            // });
         }
         self.machine_mode = 5;
         poseidon2::write_done(self)?;
@@ -291,7 +274,7 @@ impl<'a> Preflight<'a> {
             paging_idx,
             diff_count: 0,
         };
-        tracing::trace!("{cycle:?}");
+        // tracing::trace!("{cycle:?}");
         self.trace.cycles.push(cycle);
         self.trace.backs.push(back);
         self.txn_idx = self.trace.txns.len() as u32;
