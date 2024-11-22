@@ -313,6 +313,20 @@ LogicalResult LayoutType::verify(function_ref<InFlightDiagnostic()> emitError,
   return success();
 }
 
+LogicalResult LayoutArrayType::verify(function_ref<InFlightDiagnostic()> emitError,
+                                      mlir::Type element,
+                                      unsigned size) {
+  if (!size)
+    return emitError() << "Layout arrays may not be empty";
+  return success();
+}
+LogicalResult
+ArrayType::verify(function_ref<InFlightDiagnostic()> emitError, mlir::Type element, unsigned size) {
+  if (!size)
+    return emitError() << "Arrays may not be empty";
+  return success();
+}
+
 void ArrayType::emitTypeDefinition(zirgen::codegen::CodegenEmitter& cg) const {
   cg.emitArrayDef(*this, getElement(), getSize());
 }

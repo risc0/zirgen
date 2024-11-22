@@ -16,7 +16,7 @@
 
 #include <cstdio>
 
-extern __constant__ FpExt poly_mix[692];
+extern __constant__ FpExt poly_mix[608];
 
 /*__global__ void eval_check(Fp* check,
                            const Fp* ctrl,

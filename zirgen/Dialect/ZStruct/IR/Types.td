@@ -83,6 +83,7 @@ def ArrayType : ZStructType<"Array", "array", [
   let extraClassDeclaration = [{
     mlir::Value materialize(mlir::Location loc, llvm::ArrayRef<mlir::Value> elements, mlir::OpBuilder& builder);
   }];
+  let genVerifyDecl = 1;
 }
 
 def LayoutArrayType : ZStructType<"LayoutArray", "layout_array", [
@@ -96,6 +97,7 @@ def LayoutArrayType : ZStructType<"LayoutArray", "layout_array", [
       "unsigned": $size
   );
   let assemblyFormat = "`<`$element `,` $size `>`";
+  let genVerifyDecl = 1;
 }
 
 def Ref : ZStructType<"Ref", "ref", [

@@ -66,6 +66,7 @@ public:
       : loc(loc), builder(builder), typeName(typeName) {
     layoutBuilder = std::make_unique<LayoutBuilder>(builder, typeName);
     valBuilder = std::make_unique<StructBuilder>(builder, typeName);
+    assert(typeName);
   }
 
   // Start building a component inside the given parent component.  If
@@ -86,7 +87,7 @@ public:
   // used; otherwise an anonymous name is used.
   ComponentBuilder(Location loc, ComponentBuilder* parent, Value outValue)
       : loc(loc), builder(parent->builder), parent(parent) {
-    memberNameInParent = getResultName(outValue);
+    memberNameInParent = parent->getResultName(outValue);
     push();
   }
 
@@ -118,7 +119,7 @@ public:
   }
   Value addLayoutMember(Location loc, StringAttr name, Type type) {
     assert(layout());
-    if (!name)
+    if (!name || name.strref().empty())
       name = builder.getStringAttr("_" + std::to_string(subIndex++));
     return layout()->addMember(loc, name, type);
   }
@@ -149,7 +150,7 @@ public:
       // when we only have the layout.  TODO: Implement proper
       // aliasing so we can refer to members by either the provided name or by @super.
       name = builder.getStringAttr("@super");
-    } else if (!name) {
+    } else if (!name || name.strref().empty()) {
       name = builder.getStringAttr("_" + std::to_string(subIndex++));
     }
     return name;
@@ -177,7 +178,7 @@ public:
 private:
   void push() {
     assert(parent);
-    if (!memberNameInParent) {
+    if (!memberNameInParent || memberNameInParent.strref().empty()) {
       memberNameInParent = builder.getStringAttr("_" + std::to_string(parent->subIndex++));
     }
 
@@ -1120,7 +1121,6 @@ void LoweringImpl::gen(ReduceOp reduce, ComponentBuilder& cb) {
   auto arrayType = cast<ArrayType>(array.getType());
   auto elemType = arrayType.getElement();
   if (!Zhlt::isCoercibleTo(elemType, rhsType)) {
-    llvm::errs() << "elem type: " << elemType << " rhs type: " << rhsType << "\n";
     reduce.emitError() << "this reduce expression's array's elements must be coercible to `"
                        << getTypeId(rhsType) << "`";
     return;
@@ -1210,7 +1210,8 @@ void LoweringImpl::gen(SwitchOp sw, ComponentBuilder& cb) {
     OpBuilder::InsertionGuard insertionGuard(builder);
     std::unique_ptr<Region> armRegion = std::make_unique<Region>(regionAnchor);
     builder.createBlock(armRegion.get());
-    auto armContext = std::make_unique<ComponentBuilder>(armLoc, &cb, "arm" + std::to_string(i));
+    auto armContext =
+        std::make_unique<ComponentBuilder>(armLoc, &muxContext, "arm" + std::to_string(i));
     gen(sw.getCases()[i], *armContext);
 
     Type armLayoutType = armContext->getLayoutTypeSoFar();
@@ -1243,9 +1244,9 @@ void LoweringImpl::gen(SwitchOp sw, ComponentBuilder& cb) {
       members.push_back({name, arrayType});
     }
     std::string memberName = cb.getResultName(sw.getOut()).str();
-    std::string typeName = "@Arguments$" + cb.getTypeName().str() + "$" + memberName;
+    std::string typeName = "@Arguments$" + muxContext.getTypeName().str();
     auto hoistedArgumentsType = LayoutType::get(ctx, typeName, members);
-    std::string name = "@arguments$" + memberName;
+    std::string name = "@arguments$" + muxContext.getTypeName().str();
     Value hoistedArguments = cb.addLayoutMember(sw->getLoc(), name, hoistedArgumentsType);
 
     // Build a table of lookups of all the hoisted arguments
@@ -1482,7 +1483,7 @@ void LoweringImpl::gen(ArrayOp array, ComponentBuilder& cb) {
   auto arrayOp = builder.create<ZStruct::ArrayOp>(array.getLoc(), elements);
   valueMapping[array.getOut()] = arrayOp;
 
-  if (llvm::all_of(layouts, [](Value v) { return v; })) {
+  if (false && llvm::all_of(layouts, [](Value v) { return v; })) {
     Type layoutElemType =
         Zhlt::getLeastCommonSuper(ValueRange(layouts).getTypes(), /*isLayout=*/true);
     auto arrayLayout =

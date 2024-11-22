@@ -1,12 +1,11 @@
 set_field!(BabyBear);
 define_buffer_list! {
-all: [accum,code,data,global,mix,test,],
-rows: [accum,code,data,test,],
+all: [accum,code,data,global,mix,],
+rows: [accum,code,data,],
 taps: [accum,code,data,],
 globals: [global,mix,],}
 define_tap_buffer! {accum, /*count=*/4, /*groupId=*/0}
 define_tap_buffer! {code, /*count=*/1, /*groupId=*/1}
-define_tap_buffer! {data, /*count=*/198, /*groupId=*/2}
+define_tap_buffer! {data, /*count=*/181, /*groupId=*/2}
 define_global_buffer! {global, /*count=*/16}
-define_global_buffer! {mix, /*count=*/40}
-define_buffer! {test, /*count=*/199}
+define_global_buffer! {mix, /*count=*/24}

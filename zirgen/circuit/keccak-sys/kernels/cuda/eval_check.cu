@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-__constant__ FpExt poly_mix[692];
+__constant__ FpExt poly_mix[608];
 
 extern __device__ FpExt keccak_poly_fp(uint32_t idx,
                                        uint32_t size,
