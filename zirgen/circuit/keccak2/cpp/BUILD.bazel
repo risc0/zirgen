@@ -26,5 +26,5 @@ cc_library(
 cc_binary(
     name = "test",
     srcs = ["main.cpp"],
-    deps = [":run"],
+    deps = [":run", "//zirgen/compiler/zkp"],
 )

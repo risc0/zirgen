@@ -112,6 +112,7 @@ component DoShaStep(in: ShaState, k: Array<Val, 2>, doLoad: Val, win: Array<Val,
   comp := ComputeAE(in.a, in.e, w, k);
   a := CarryAndExpand(comp.rawA);
   e := CarryAndExpand(comp.rawE);
+  Log("A, E, W = ", Pack<32, 16>(a)[0], Pack<32, 16>(e)[0], Pack<32, 16>(w)[0]);
   newState := ShaState(PushFront<4>(a, in.a), PushFront<4>(e, in.e), PushFront<16>(w, in.w));
 }
 
@@ -130,7 +131,7 @@ component LoadShaState(back1: TopState, back2: TopState) {
 
 component ExtractBits(steps: Array<DoShaStep, 8>, i: Val) {
     [InRange(0, i, 8), InRange(8, i, 16), InRange(16, i, 24), InRange(24, i, 25)] ->
-      (steps[i].w, steps[i - 8].a, steps[i - 16].e, for j : 0..32 {0})
+      (steps[i].a, steps[i - 8].e, steps[i - 16].w, for j : 0..32 {0})
 }
 
 component LoadWin(kf: Array<Val, 100>, round: Val, block: Val) {
@@ -177,9 +178,67 @@ component ShaCycle(back1: TopState, back2: TopState, round: Val, block: Val) {
   topState := TopState(bits, back1.kflat, back1.sflat);
   for i : 0..8 {
     for j : 0..32 {
-      AliasLayout!(steps[i].w[j], topState.bits[i*32 + j]);
-      AliasLayout!(steps[i].a[j], topState.bits[256 + i*32 + j]);
-      AliasLayout!(steps[i].e[j], topState.bits[512 + i*32 + j]);
+      AliasLayout!(steps[i].a[j], topState.bits[0 + i*32 + j]);
+      AliasLayout!(steps[i].e[j], topState.bits[256 + i*32 + j]);
+      AliasLayout!(steps[i].w[j], topState.bits[512 + i*32 + j]);
+    }
+  };
+  topState
+}
+
+component ExtractBits2(a: Array<Array<Val, 32>, 4>, e: Array<Array<Val, 32>, 4>, i: Val) {
+  [
+    InRange(0, i, 4), 
+    InRange(4, i, 8), 
+    InRange(8, i, 12),
+    InRange(12, i, 16),
+    InRange(16, i, 25)
+  ] -> (
+    for j : 0..32 {0},
+    a[i - 4],
+    for j : 0..32 {0},
+    e[i - 12],
+    for j : 0..32 {0}
+  )
+}
+
+component ShaNextBlockCycle(back1: TopState) {
+  Log("ShaNextBlockCycle");
+  // Extract current a + e values in packed format
+  cur_a := for i : 0..4 { Pack32(for j : 0..32 { back1.bits[128 + i*32 + j] })};
+  cur_e := for i : 0..4 { Pack32(for j : 0..32 { back1.bits[384 + i*32 + j] })};
+  // Get the same from the store sflat state
+  prev_a := for i : 0..4 { for j : 0..2 { back1.sflat[i*2 + j] }};
+  prev_e := for i : 0..4 { for j : 0..2 { back1.sflat[8 + i*2 + j] }};
+  // Add + store
+  tot_a := for i : 0..4 { CarryAndExpand(Add2(cur_a[i], prev_a[i])) };
+  tot_e := for i : 0..4 { CarryAndExpand(Add2(cur_e[i], prev_e[i])) };
+  Log("cur_a[0] = ", cur_a[0][0]);
+  Log("prev_a[0] = ", prev_a[0][0]);
+  Log("tot_a[0] = ", Pack32(tot_a[0])[0]);
+  // Expand into 'bits'
+  bits := for x : 0..800 {
+    j := x & 31;
+    i := (x - j) / 32 + 0;
+    ExtractBits2(tot_a, tot_e, i)[j]
+  };
+  // Write back out
+  newFlat := for x : 0..16 {
+    j := x & 1;
+    i := (x - j) / 2 + 0;
+    if (InRange(0, i, 4)) {
+      Pack32(tot_a[i])[j]
+    } else {
+      Pack32(tot_e[i - 4])[j]
+    }
+  };
+  // TODO: update sflat
+  topState := TopState(bits, back1.kflat, newFlat);
+  // Now alias
+  for i : 0..4 {
+    for j : 0..32 {
+      AliasLayout!(topState.bits[(4 + i)*32 + j], tot_a[i][j]);
+      AliasLayout!(topState.bits[(12 + i)*32 + j], tot_e[i][j]);
     }
   };
   topState
@@ -210,45 +269,75 @@ component CycleTypeKeccakRound2() { 6 }
 component CycleTypeKeccakRound3() { 7 }
 component CycleTypeKeccakRound4() { 8 }
 component CycleTypeSha() { 9 }
-component CycleTypeShutdown() { 10 }
+component CycleTypeShaNextBlock() { 10 }
+component CycleTypeShutdown() { 11 }
 
-// TODO
 component InitCycle() {
   Log("InitCycle");
-  load := for i : 0..100 { 0 };
+  ia := InitA();
+  ie := InitE();
+  sflat := [
+    ia[3][0], ia[3][1], ia[2][0], ia[2][1], ia[1][0], ia[1][1], ia[0][0], ia[0][1],
+    ie[3][0], ie[3][1], ie[2][0], ie[2][1], ie[1][0], ie[1][1], ie[0][0], ie[0][1]
+  ];
   bits := for i : 0..800 { 0 };
-  sflat := for i : 0..16 { 0 };
-  TopState(bits, load, sflat)
+  kflat := for i : 0..100 { 0 };
+  state := TopState(bits, kflat, sflat);
+  state
 }
 
 // TODO
 component ReadCycle(stateIn: TopState) {
-  Log("ReadCycle");
   load := for i : 0..100 { NondetReg(GetPreimage(i)) };
-  bits := for i : 0..800 { 0 };  // TODO: load from sflat
+  pf := stateIn.sflat;
+  Log("ReadCycle", pf[0], pf[8]);
+  initWords := [
+    0, 0, 0, 0, 0, 0, 0, 0, 
+    pf[0], pf[1], pf[2], pf[3], pf[4], pf[5], pf[6], pf[7],
+    0, 0, 0, 0, 0, 0, 0, 0, 
+    pf[8], pf[9], pf[10], pf[11], pf[12], pf[13], pf[14], pf[15],
+    0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0];
+  bits := UnpackReg<800, 16>(initWords);
   stateOut := TopState(bits, load, stateIn.sflat);
   for i : 0..100 {
     AliasLayout!(stateOut.kflat[i], load[i]);
   };
+  for i : 0..800 {
+    AliasLayout!(stateOut.bits[i], bits[i]);
+  };
   stateOut
 }
 
-// TODO
 component ExpandCycle(back1: TopState, back2: TopState, subType: Val) {
   Log("ExpandCycle");
-  load := for i : 0..100 { 0 };
-  bits := for i : 0..800 { 0 };
-  sflat := for i : 0..16 { 0 };
-  TopState(bits, load, sflat)
+  bits := UnpackReg<800, 16>(
+    if (subType) {
+      for i : 0..50 { back1.kflat[i] }
+    } else {
+      for i : 0..50 { back2.kflat[i + 50] }
+    }
+  );
+  state := TopState(bits, back1.kflat, back1.sflat);
+  for i : 0..800 {
+    AliasLayout!(state.bits[i], bits[i]);
+  };
+  state
 }
 
-// TODO
-component WriteCycle(stateIn: TopState) {
+component WriteCycle(back1: TopState, back2: TopState) {
   Log("WriteCycle");
-  load := for i : 0..100 { 0 };
-  bits := for i : 0..800 { 0 };
-  sflat := for i : 0..16 { 0 };
-  TopState(bits, load, sflat)
+  kflat := for x : 0..100 {
+    j := x % 50;
+    i := (x - j) / 2 + 0;
+    if (i) {
+      Pack<16,16>(for k : 0..16 { back2.bits[j * 16+ k] })[0]
+    } else {
+      Pack<16,16>(for k : 0..16 { back1.bits[j * 16 + k] })[0]
+    }
+  };
+  TopState(back1.bits, kflat, back1.sflat)
 }
 
 // TODO
@@ -276,23 +365,21 @@ component KeccackNextRound(prev: ControlState) {
   }
 }
 
-component ShaNext(prev: ControlState) {
-  /*
-  // We have 1 of 5 exits:
-  1) prev.round < 7, next round
-  2) prev.round == 7, prev.block < 3, next block
-  3) prev.round == 7, prev.block == 3, subType == 0, expand
-  4) prev.round == 7, prev.block == 3, subType == 1, nondetDone() == 0, read
-  4) prev.round == 7, prev.block == 3, subType == 1, nondetDone() == 1, shutdown
-  */
-  isLastRound := IsZero(prev.round - 7);
-  isLastBlock := IsZero(prev.block - 3);
-  doNextRound := 1 - isLastRound;
-  doNextBlock := Reg(isLastRound * (1 - isLastBlock));
-  doExpand := Reg(isLastRound * isLastBlock * (1 - prev.subType));
-  doFinal := Reg(isLastRound * isLastBlock * prev.subType);
-  [doNextRound, doNextBlock, doExpand, doFinal] -> (
-    ControlState(CycleTypeSha(), prev.subType, prev.block, prev.round + 1),
+component ShaNextRound(prev: ControlState) {
+  isLast := IsZero(prev.round - 7);
+  if (isLast) {
+    ControlState(CycleTypeShaNextBlock(), prev.subType, prev.block, 0)
+  } else {
+    ControlState(CycleTypeSha(), prev.subType, prev.block, prev.round + 1)
+  }
+}
+
+component ShaNextBlock(prev: ControlState) {
+  isLast := IsZero(prev.block - 3);
+  isNormal := 1 - isLast;
+  isSub0 := Reg(isLast * (1 - prev.subType));
+  isSub1 := 1 - isNormal - isSub0;
+  [isNormal, isSub0, isSub1] -> (
     ControlState(CycleTypeSha(), prev.subType, prev.block + 1, 0),
     ControlState(CycleTypeExpand(), 0, 0, 0),
     {
@@ -303,11 +390,11 @@ component ShaNext(prev: ControlState) {
       } else {
         ControlState(CycleTypeShutdown(), 0, 0, 0)
       }
-   }
+    } 
   )
 }
 
-component ComputeCurrentStep(prevMux: Array<Val, 11>, prev: ControlState) {
+component ComputeCurrentStep(prevMux: Array<Val, 12>, prev: ControlState) {
   prevMux -> (
     ControlState(CycleTypeRead(), 0, 0, 0),  // Init -> Read
     ControlState(CycleTypeSha(), 0, 0, 0),  // Read -> SHA:0
@@ -322,14 +409,15 @@ component ComputeCurrentStep(prevMux: Array<Val, 11>, prev: ControlState) {
     ControlState(CycleTypeKeccakRound3(), 0, 0, prev.round),
     ControlState(CycleTypeKeccakRound4(), 0, 0, prev.round),
     KeccackNextRound(prev),
-    ShaNext(prev),
+    ShaNextRound(prev),
+    ShaNextBlock(prev),
     ControlState(CycleTypeShutdown(), 0, 0, 0)
   )
 }
 
 // Annoyingly back directly on OneHot doesn't work
-component WrapOneHot(oneHot: OneHot<11>) {
-  for i : 0..11 { Reg(oneHot.bits[i]) }
+component WrapOneHot(oneHot: OneHot<12>) {
+  for i : 0..12 { Reg(oneHot.bits[i]) }
 }
 
 component Top() {
@@ -341,9 +429,9 @@ component Top() {
   } else {
     ComputeCurrentStep(cycleMux@1, controlState@1)
   };
-  oneHot := OneHot<11>(controlState.cycleType);
+  oneHot := OneHot<12>(controlState.cycleType);
   cycleMux := WrapOneHot(oneHot);
-  for i : 0..11 {
+  for i : 0..12 {
     AliasLayout!(oneHot[i], cycleMux[i]);
   };
   curState: TopState;
@@ -351,13 +439,14 @@ component Top() {
     InitCycle(),
     ReadCycle(curState@1),
     ExpandCycle(curState@1, curState@2, controlState.subType),
-    WriteCycle(curState@1),
+    WriteCycle(curState@1, curState@2),
     KeccakRound0(curState@2, curState@1),
     KeccakRound12<0>(curState@1, curState@3, curState@2, curState@1),
     KeccakRound12<1>(curState@2, curState@4, curState@3, curState@1),
     KeccakRound34<0>(curState@2, curState@1, curState@1, controlState.round),
     KeccakRound34<1>(curState@3, curState@2, curState@1, controlState.round),
     ShaCycle(curState@1, curState@2, controlState.round, controlState.block),
+    ShaNextBlockCycle(curState@1),
     ShutdownCycle(curState@1)
   );
 }

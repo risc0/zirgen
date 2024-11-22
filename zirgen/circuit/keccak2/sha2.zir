@@ -61,10 +61,13 @@ component ComputeW(ow : Array<Array<Val, 32>, 16>) {
   rawW
 }
 
+// component PX(x: Array<Val, 32>) { Pack<32, 16>(x)[0] }
+
 // Given old A/E, new W, and k, produce new A/E
 component ComputeAE(oa: Array<Array<Val, 32>, 4>, oe: Array<Array<Val, 32>, 4>, w: Array<Val, 32>, k: Array<Val, 2>) {
   a := oa[0]; b := oa[1]; c := oa[2]; d := oa[3];
   e := oe[0]; f := oe[1]; g := oe[2]; h := oe[3];
+  // Log("----", PX(a), PX(b), PX(c), PX(d), PX(e), PX(f), PX(g), PX(h));
   s0 := XorU32(RotateRight<32>(a, 2), XorU32(RotateRight<32>(a, 13), RotateRight<32>(a, 22)));
   s1 := XorU32(RotateRight<32>(e, 6), XorU32(RotateRight<32>(e, 11), RotateRight<32>(e, 25)));
   stage1 := Add2(Pack32(w), Add2(k, Add2(Pack32(h), Add2(Pack32(ChU32(e, f, g)), Pack32(s1)))));
