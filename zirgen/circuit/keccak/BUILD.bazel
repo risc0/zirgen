@@ -46,3 +46,11 @@ build_circuit(
         "--validity-split-count=5",
     ],
 )
+
+filegroup(
+    name = "circuit_and_zkr",
+    srcs = [
+        ":keccak",
+        "//zirgen/circuit/predicates:keccak_zkr",
+    ],
+)
