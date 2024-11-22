@@ -28,7 +28,7 @@ risc0-zkvm-platform = { workspace = true, features = ["unstable"] }
 tracing = { version = "0.1", default-features = false, features = [
   "attributes",
 ] }
-zip = { version = "2.0", default-features = false, features = ["deflate"] }
+zip = { version = "2.2", default-features = false, features = ["deflate"] }
 
 [target.'cfg(not(target_os = "zkvm"))'.dependencies]
 bytemuck = "1.12"
