@@ -54,7 +54,7 @@ LogicalResult LoadOp::inferReturnTypes(MLIRContext* ctx,
                                 /*coeffs=*/coeffsWidth,
                                 /*maxPos=*/(1 << kBitsPerCoeff) - 1,
                                 /*maxNeg=*/0,
-                                /*minBits=*/0));
+                                /*minBits=*/adaptor.getMinBits()));
   return success();
 }
 

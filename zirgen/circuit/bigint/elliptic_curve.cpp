@@ -19,22 +19,21 @@ namespace zirgen::BigInt::EC {
 void WeierstrassCurve::validate_contains(OpBuilder builder,
                                          Location loc,
                                          const AffinePt& pt) const {
-  auto prime = prime_as_bigint(builder, loc);
   Value y_sqr = builder.create<BigInt::MulOp>(loc, pt.y(), pt.y());
 
   Value x_cube = builder.create<BigInt::MulOp>(loc, pt.x(), pt.x());
-  x_cube = builder.create<BigInt::ReduceOp>(loc, x_cube, prime);
+  x_cube = builder.create<BigInt::ReduceOp>(loc, x_cube, prime());
   x_cube = builder.create<BigInt::MulOp>(loc, pt.x(), x_cube);
 
-  Value ax = builder.create<BigInt::MulOp>(loc, a_as_bigint(builder, loc), pt.x());
+  Value ax = builder.create<BigInt::MulOp>(loc, a(), pt.x());
 
   Value weierstrass_rhs = builder.create<BigInt::AddOp>(loc, x_cube, ax);
-  weierstrass_rhs = builder.create<BigInt::AddOp>(loc, weierstrass_rhs, b_as_bigint(builder, loc));
+  weierstrass_rhs = builder.create<BigInt::AddOp>(loc, weierstrass_rhs, b());
 
   Value diff = builder.create<BigInt::SubOp>(loc, weierstrass_rhs, y_sqr);
   diff = builder.create<BigInt::AddOp>(
-      loc, diff, builder.create<BigInt::MulOp>(loc, prime, prime)); // Ensure `diff` nonnegative
-  diff = builder.create<BigInt::ReduceOp>(loc, diff, prime);
+      loc, diff, builder.create<BigInt::MulOp>(loc, prime(), prime())); // Ensure `diff` nonnegative
+  diff = builder.create<BigInt::ReduceOp>(loc, diff, prime());
   builder.create<BigInt::EqualZeroOp>(loc, diff);
 }
 
@@ -65,7 +64,7 @@ bool AffinePt::on_same_curve_as(const AffinePt& other) const {
 AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffinePt& rhs) {
   // This assumes `pt` is actually on the curve
   // This assumption isn't checked here, so other code must ensure it's met
-  // Also, this can fail for: A + A (doesn't use doubling algorithm) and A + (-A) (can't write 0)
+  // Also, this will fail for: A + A (doesn't use doubling algorithm) and A + (-A) (can't write 0)
   // Trying to calculate either of those cases will result in an EQZ failure
   // Formulas (all mod `prime`):
   //   lambda = (yQ - yP) / (xQ - xP)
@@ -74,7 +73,7 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   //       yR = -(lambda * xR + nu)
 
   assert(lhs.on_same_curve_as(rhs));
-  auto prime = lhs.curve()->prime_as_bigint(builder, loc);
+  auto prime = lhs.curve()->prime();
 
   // Construct the constant 1
   mlir::Type oneType = builder.getIntegerType(8);
@@ -234,10 +233,8 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt) 
       auto yMerged = builder.create<BigInt::AddOp>(loc, yIfAdd, yIfNotAdd);
       // The reduces keep the coeff size small enough, but aren't otherwise needed for correctness;
       // could maybe eek out a bit of perf with lower-level nondets
-      auto newX = builder.create<BigInt::ReduceOp>(
-          loc, xMerged, result.curve()->prime_as_bigint(builder, loc));
-      auto newY = builder.create<BigInt::ReduceOp>(
-          loc, yMerged, result.curve()->prime_as_bigint(builder, loc));
+      auto newX = builder.create<BigInt::ReduceOp>(loc, xMerged, result.curve()->prime());
+      auto newY = builder.create<BigInt::ReduceOp>(loc, yMerged, result.curve()->prime());
 
       result = AffinePt(newX, newY, result.curve());
     }
@@ -254,17 +251,15 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt) 
   auto xIfNotSub = builder.create<BigInt::MulOp>(loc, result.x(), dont_subtract_pt);
   auto yIfNotSub = builder.create<BigInt::MulOp>(loc, result.y(), dont_subtract_pt);
   Value xFinal = builder.create<BigInt::AddOp>(loc, xIfSub, xIfNotSub);
-  xFinal =
-      builder.create<BigInt::ReduceOp>(loc, xFinal, result.curve()->prime_as_bigint(builder, loc));
+  xFinal = builder.create<BigInt::ReduceOp>(loc, xFinal, result.curve()->prime());
   Value yFinal = builder.create<BigInt::AddOp>(loc, yIfSub, yIfNotSub);
-  yFinal =
-      builder.create<BigInt::ReduceOp>(loc, yFinal, result.curve()->prime_as_bigint(builder, loc));
+  yFinal = builder.create<BigInt::ReduceOp>(loc, yFinal, result.curve()->prime());
 
   return AffinePt(xFinal, yFinal, result.curve());
 }
 
 AffinePt neg(OpBuilder builder, Location loc, const AffinePt& pt) {
-  Value yR = builder.create<BigInt::SubOp>(loc, pt.curve()->prime_as_bigint(builder, loc), pt.y());
+  Value yR = builder.create<BigInt::SubOp>(loc, pt.curve()->prime(), pt.y());
   return AffinePt(pt.x(), yR, pt.curve());
 }
 
@@ -285,13 +280,12 @@ AffinePt doub(OpBuilder builder, Location loc, const AffinePt& pt) {
   //                    k_y * prime + y_out = prime^2 + prime - lambda * x_out - y_in + lambda *
   //                    x_in
 
-  auto prime = pt.curve()->prime_as_bigint(builder, loc);
+  auto prime = pt.curve()->prime();
 
   Value x_sqr = builder.create<BigInt::MulOp>(loc, pt.x(), pt.x());
   Value lambda_num = builder.create<BigInt::AddOp>(loc, x_sqr, x_sqr);
   lambda_num = builder.create<BigInt::AddOp>(loc, lambda_num, x_sqr);
-  lambda_num =
-      builder.create<BigInt::AddOp>(loc, lambda_num, pt.curve()->a_as_bigint(builder, loc));
+  lambda_num = builder.create<BigInt::AddOp>(loc, lambda_num, pt.curve()->a());
   Value prime_sqr =
       builder.create<BigInt::MulOp>(loc, prime, prime); // Adding a prime^2 to enforce positivity
   Value lambda_check_rhs = builder.create<BigInt::AddOp>(loc, prime_sqr, prime_sqr);
@@ -358,18 +352,16 @@ AffinePt sub(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
 
 // Test functions
 
-void makeECAddTest(mlir::OpBuilder builder,
-                   mlir::Location loc,
-                   size_t bits,
-                   APInt prime,
-                   APInt curve_a,
-                   APInt curve_b) {
+void makeECAddTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto yQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 4, true);
   auto yR = builder.create<BigInt::DefOp>(loc, bits, 5, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 6, true, bits - 1);
+  auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 7, true);
+  auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 8, true);
 
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt lhs(xP, yP, curve);
@@ -379,16 +371,14 @@ void makeECAddTest(mlir::OpBuilder builder,
   result.validate_equal(builder, loc, expected);
 }
 
-void makeECDoubleTest(mlir::OpBuilder builder,
-                      mlir::Location loc,
-                      size_t bits,
-                      APInt prime,
-                      APInt curve_a,
-                      APInt curve_b) {
+void makeECDoubleTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto yR = builder.create<BigInt::DefOp>(loc, bits, 3, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 4, true, bits - 1);
+  auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 5, true);
+  auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 6, true);
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt inp(xP, yP, curve);
   AffinePt expected(xR, yR, curve);
@@ -396,18 +386,16 @@ void makeECDoubleTest(mlir::OpBuilder builder,
   result.validate_equal(builder, loc, expected);
 }
 
-void makeECMultiplyTest(mlir::OpBuilder builder,
-                        mlir::Location loc,
-                        size_t bits,
-                        APInt prime,
-                        APInt curve_a,
-                        APInt curve_b) {
+void makeECMultiplyTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   // This test is only valid for curves whose order is of bitwidth no more than the prime's bitwidth
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto scale = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 3, true);
   auto yR = builder.create<BigInt::DefOp>(loc, bits, 4, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 5, true, bits - 1);
+  auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 6, true);
+  auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 7, true);
 
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt inp(xP, yP, curve);
@@ -416,16 +404,14 @@ void makeECMultiplyTest(mlir::OpBuilder builder,
   result.validate_equal(builder, loc, expected);
 }
 
-void makeECNegateTest(mlir::OpBuilder builder,
-                      mlir::Location loc,
-                      size_t bits,
-                      APInt prime,
-                      APInt curve_a,
-                      APInt curve_b) {
+void makeECNegateTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto yR = builder.create<BigInt::DefOp>(loc, bits, 3, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 4, true, bits - 1);
+  auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 5, true);
+  auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 6, true);
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt inp(xP, yP, curve);
   AffinePt expected(xR, yR, curve);
@@ -433,18 +419,16 @@ void makeECNegateTest(mlir::OpBuilder builder,
   result.validate_equal(builder, loc, expected);
 }
 
-void makeECSubtractTest(mlir::OpBuilder builder,
-                        mlir::Location loc,
-                        size_t bits,
-                        APInt prime,
-                        APInt curve_a,
-                        APInt curve_b) {
+void makeECSubtractTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto yQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 4, true);
   auto yR = builder.create<BigInt::DefOp>(loc, bits, 5, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 4, true, bits - 1);
+  auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 5, true);
+  auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 6, true);
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt lhs(xP, yP, curve);
   AffinePt rhs(xQ, yQ, curve);
@@ -453,46 +437,40 @@ void makeECSubtractTest(mlir::OpBuilder builder,
   result.validate_equal(builder, loc, expected);
 }
 
-void makeECValidatePointsEqualTest(mlir::OpBuilder builder,
-                                   mlir::Location loc,
-                                   size_t bits,
-                                   APInt prime,
-                                   APInt curve_a,
-                                   APInt curve_b) {
+void makeECValidatePointsEqualTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto yQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 4, true, bits - 1);
+  auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 5, true);
+  auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 6, true);
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt lhs(xP, yP, curve);
   AffinePt rhs(xQ, yQ, curve);
   lhs.validate_equal(builder, loc, rhs);
 }
 
-void makeECValidatePointOnCurveTest(mlir::OpBuilder builder,
-                                    mlir::Location loc,
-                                    size_t bits,
-                                    APInt prime,
-                                    APInt curve_a,
-                                    APInt curve_b) {
+void makeECValidatePointOnCurveTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 2, true, bits - 1);
+  auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 3, true);
+  auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 4, true);
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt pt(xP, yP, curve);
   pt.validate_on_curve(builder, loc);
 }
 
 // The "Freely" test functions run the op without checking the output
-void makeECAddFreelyTest(mlir::OpBuilder builder,
-                         mlir::Location loc,
-                         size_t bits,
-                         APInt prime,
-                         APInt curve_a,
-                         APInt curve_b) {
+void makeECAddFreelyTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto yQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 4, true, bits - 1);
+  auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 5, true);
+  auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 6, true);
 
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt lhs(xP, yP, curve);
@@ -502,14 +480,12 @@ void makeECAddFreelyTest(mlir::OpBuilder builder,
   result.validate_equal(builder, loc, result);
 }
 
-void makeECDoubleFreelyTest(mlir::OpBuilder builder,
-                            mlir::Location loc,
-                            size_t bits,
-                            APInt prime,
-                            APInt curve_a,
-                            APInt curve_b) {
+void makeECDoubleFreelyTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 2, true, bits - 1);
+  auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 3, true);
+  auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 4, true);
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt inp(xP, yP, curve);
   auto result = doub(builder, loc, inp);
@@ -517,16 +493,14 @@ void makeECDoubleFreelyTest(mlir::OpBuilder builder,
   result.validate_equal(builder, loc, result);
 }
 
-void makeECMultiplyFreelyTest(mlir::OpBuilder builder,
-                              mlir::Location loc,
-                              size_t bits,
-                              APInt prime,
-                              APInt curve_a,
-                              APInt curve_b) {
+void makeECMultiplyFreelyTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   // This test is only valid for curves whose order is of bitwidth no more than the prime's bitwidth
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto scale = builder.create<BigInt::DefOp>(loc, bits, 2, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 3, true, bits - 1);
+  auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 4, true);
+  auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 5, true);
 
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt inp(xP, yP, curve);
@@ -535,14 +509,12 @@ void makeECMultiplyFreelyTest(mlir::OpBuilder builder,
   result.validate_equal(builder, loc, result);
 }
 
-void makeECNegateFreelyTest(mlir::OpBuilder builder,
-                            mlir::Location loc,
-                            size_t bits,
-                            APInt prime,
-                            APInt curve_a,
-                            APInt curve_b) {
+void makeECNegateFreelyTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 2, true, bits - 1);
+  auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 3, true);
+  auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 4, true);
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt inp(xP, yP, curve);
   auto result = neg(builder, loc, inp);
@@ -550,16 +522,14 @@ void makeECNegateFreelyTest(mlir::OpBuilder builder,
   result.validate_equal(builder, loc, result);
 }
 
-void makeECSubtractFreelyTest(mlir::OpBuilder builder,
-                              mlir::Location loc,
-                              size_t bits,
-                              APInt prime,
-                              APInt curve_a,
-                              APInt curve_b) {
+void makeECSubtractFreelyTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto yQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 4, true, bits - 1);
+  auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 5, true);
+  auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 6, true);
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt lhs(xP, yP, curve);
   AffinePt rhs(xQ, yQ, curve);
@@ -569,19 +539,16 @@ void makeECSubtractFreelyTest(mlir::OpBuilder builder,
 }
 
 // Perf Test function
-void makeRepeatedECAddTest(mlir::OpBuilder builder,
-                           mlir::Location loc,
-                           size_t bits,
-                           size_t reps,
-                           APInt prime,
-                           APInt curve_a,
-                           APInt curve_b) {
+void makeRepeatedECAddTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits, size_t reps) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xQ = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto yQ = builder.create<BigInt::DefOp>(loc, bits, 3, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 4, true);
   auto yR = builder.create<BigInt::DefOp>(loc, bits, 5, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 6, true, bits - 1);
+  auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 7, true);
+  auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 8, true);
 
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt lhs(xP, yP, curve);
@@ -599,14 +566,14 @@ void makeRepeatedECAddTest(mlir::OpBuilder builder,
 void makeRepeatedECDoubleTest(mlir::OpBuilder builder,
                               mlir::Location loc,
                               size_t bits,
-                              size_t reps,
-                              APInt prime,
-                              APInt curve_a,
-                              APInt curve_b) {
+                              size_t reps) {
   auto xP = builder.create<BigInt::DefOp>(loc, bits, 0, true);
   auto yP = builder.create<BigInt::DefOp>(loc, bits, 1, true);
   auto xR = builder.create<BigInt::DefOp>(loc, bits, 2, true);
   auto yR = builder.create<BigInt::DefOp>(loc, bits, 3, true);
+  auto prime = builder.create<BigInt::DefOp>(loc, bits, 4, true, bits - 1);
+  auto curve_a = builder.create<BigInt::DefOp>(loc, bits, 5, true);
+  auto curve_b = builder.create<BigInt::DefOp>(loc, bits, 6, true);
 
   auto curve = std::make_shared<WeierstrassCurve>(prime, curve_a, curve_b);
   AffinePt inp(xP, yP, curve);
