@@ -33,7 +33,7 @@ pub mod circuit {
     type Val = BabyBearElem;
     type ExtVal = BabyBearExtElem;
 
-    include! {"types.inc.rs"}
+    include! {"types.rs.inc"}
     // include! {"defs.rs.inc"}
-    include! {"layout.inc.rs"}
+    include! {"layout.rs.inc"}
 }

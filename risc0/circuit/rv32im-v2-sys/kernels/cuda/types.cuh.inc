@@ -952,10 +952,10 @@ struct ControlUserECALLLayout {
   MemoryWriteLayout _1;
   MemoryReadLayout loadInst;
   U16RegLayout _0;
+  NondetRegLayout safeMode;
   MemoryReadLayout dispatchIdx;
   MemoryReadLayout newPcAddr;
   AddrDecomposeBitsLayout pcAddr;
-  NondetRegLayout safeMode;
 };
 struct Control0Arm2Layout {
   ControlUserECALLLayout _super;
@@ -1003,10 +1003,10 @@ struct Control0Arm2Layout {
 };
 struct ControlMRETLayout {
   NormalizeU32Layout pcAdd;
+  NondetRegLayout safeMode;
   MemoryReadLayout loadInst;
   MemoryReadLayout pc;
   AddrDecomposeBitsLayout pcAddr;
-  NondetRegLayout safeMode;
 };
 struct Control0Arm3Layout {
   ControlMRETLayout _super;

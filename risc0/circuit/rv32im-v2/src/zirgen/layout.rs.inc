@@ -13031,12 +13031,6 @@ pub const LAYOUT__854: &PoseidonPaging_SuperLayout = &PoseidonPaging_SuperLayout
 };
 pub const LAYOUT__856: &NondetRegLayout6LayoutArray = &[
     &NondetRegLayout {
-        _super: &Reg { offset: 182 },
-    },
-    &NondetRegLayout {
-        _super: &Reg { offset: 183 },
-    },
-    &NondetRegLayout {
         _super: &Reg { offset: 184 },
     },
     &NondetRegLayout {
@@ -13047,6 +13041,12 @@ pub const LAYOUT__856: &NondetRegLayout6LayoutArray = &[
     },
     &NondetRegLayout {
         _super: &Reg { offset: 187 },
+    },
+    &NondetRegLayout {
+        _super: &Reg { offset: 188 },
+    },
+    &NondetRegLayout {
+        _super: &Reg { offset: 189 },
     },
 ];
 pub const LAYOUT__855: &OneHot_6_Layout = &OneHot_6_Layout {
@@ -13110,17 +13110,17 @@ pub const LAYOUT__866: &_Arguments_PoseidonPaging__1Layout = &_Arguments_Poseido
 };
 pub const LAYOUT__853: &PoseidonPagingLayout = &PoseidonPagingLayout {
     _super: LAYOUT__854,
+    cur_idx: &NondetRegLayout {
+        _super: &Reg { offset: 182 },
+    },
+    cur_mode: &NondetRegLayout {
+        _super: &Reg { offset: 183 },
+    },
     mode_split: LAYOUT__855,
     _2: LAYOUT__857,
     _0: LAYOUT__863,
     _arguments__1: LAYOUT__866,
     _3: &NondetRegLayout {
-        _super: &Reg { offset: 188 },
-    },
-    cur_idx: &NondetRegLayout {
-        _super: &Reg { offset: 189 },
-    },
-    cur_mode: &NondetRegLayout {
         _super: &Reg { offset: 190 },
     },
 };

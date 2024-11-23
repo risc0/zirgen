@@ -750,7 +750,7 @@ FpExt top_12(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, 
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:11) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :45:28) at callsite( FinalizeMisc ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :23:27) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :40:16) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x344 = x10 - x118;
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:11) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :45:28) at callsite( FinalizeMisc ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :23:27) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :40:16) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[497] = x344;
+  arg0[496] = x344;
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :45:28) at callsite( FinalizeMisc ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :23:27) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :40:16) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x345 = x118 * x344;
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :45:28) at callsite( FinalizeMisc ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :23:27) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :40:16) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -784,7 +784,7 @@ FpExt top_12(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, 
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:11) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :51:29) at callsite( FinalizeMisc ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :23:27) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :40:16) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x356 = x10 - x121;
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:11) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :51:29) at callsite( FinalizeMisc ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :23:27) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :40:16) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[500] = x356;
+  arg0[499] = x356;
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :51:29) at callsite( FinalizeMisc ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :23:27) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :40:16) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x357 = x121 * x356;
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :51:29) at callsite( FinalizeMisc ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :23:27) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :40:16) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -2440,7 +2440,7 @@ FpExt top_12(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, 
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadReg ( zirgen/circuit/rv32im/v2/dsl/inst.zir :35:14) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :11:18) at callsite( Misc2 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :59:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :72:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x1144 = x104 - x10;
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadReg ( zirgen/circuit/rv32im/v2/dsl/inst.zir :35:14) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :11:18) at callsite( Misc2 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :59:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :72:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[483] = x1144;
+  arg0[482] = x1144;
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadReg ( zirgen/circuit/rv32im/v2/dsl/inst.zir :35:14) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :11:18) at callsite( Misc2 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :59:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :72:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x1145 = x1142 + x1144 * poly_mix[57];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadReg ( zirgen/circuit/rv32im/v2/dsl/inst.zir :35:14) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :11:18) at callsite( Misc2 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :59:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :72:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -2555,9 +2555,11 @@ FpExt top_12(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, 
   FpExt x1200 = x1199 + x35 * poly_mix[8];
   // loc(callsite( Misc2 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :60:38) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :72:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
   FpExt x1201 = x1200 + x36 * poly_mix[9];
+  // loc(callsite( Misc2 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :60:38) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :72:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
+  FpExt x1202 = x1201 + x37 * poly_mix[10];
   // loc(unknown)
-  auto x1202 = top_11(cycle, steps, poly_mix, x1201, x1191, arg4, arg0, x919, arg7, arg8, arg9, arg10, arg11, arg12, arg13);
-  return x1202;
+  auto x1203 = top_11(cycle, steps, poly_mix, x1191, x1202, arg4, arg0, x919, arg7, arg8, arg9, arg10, arg11, arg12, arg13);
+  return x1203;
 }
 FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, FpExt arg2, FpExt arg3, FpExt arg4, FpExt arg5, FpExt* arg6, FpExt arg7, Fp* arg8, Fp* arg9, Fp* arg10, Fp* arg11) {
   size_t mask = steps - 1;
@@ -3032,11 +3034,11 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( ECallTerminate ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :44:16) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :160:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
   FpExt x234 = arg3 + x233 * poly_mix[0];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :112:18) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x235 = arg0[270];
+  auto x235 = arg0[269];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ECallTerminate ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :45:20) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :160:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x236 = x234 + x235 * poly_mix[1];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :112:18) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x237 = arg0[271];
+  auto x237 = arg0[270];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ECallTerminate ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :45:20) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :160:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x238 = x236 + x237 * poly_mix[2];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ECallTerminate ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :45:20) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :160:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
@@ -3048,11 +3050,11 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ECallTerminate ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :45:20) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :160:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x242 = x240 + x241 * poly_mix[5];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :113:10) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x243 = arg0[272];
+  auto x243 = arg0[271];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ECallTerminate ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :45:20) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :160:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x244 = x242 + x243 * poly_mix[6];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :113:10) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x245 = arg0[273];
+  auto x245 = arg0[272];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ECallTerminate ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :45:20) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :160:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x246 = x244 + x245 * poly_mix[7];
   // loc(callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :36:14) at callsite( GetSignU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :126:34) at callsite( CmpLessThan ( zirgen/circuit/rv32im/v2/dsl/u32.zir :136:20) at callsite( OpSLT ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :112:22) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :36:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
@@ -3174,7 +3176,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ECallHostReadSetup ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :70:21) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :161:24) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x305 = x304 + x265 * poly_mix[18];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :112:18) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x306 = arg0[289];
+  auto x306 = arg0[288];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ECallHostReadSetup ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :71:21) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :161:24) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x307 = x305 + x306 * poly_mix[19];
   // loc(callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :36:14) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :44:25) at callsite( FinalizeMisc ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :23:27) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :40:16) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
@@ -3562,7 +3564,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( OneHot ( zirgen/circuit/rv32im/v2/dsl/one_hot.zir :11:32) at callsite( DecomposeLow2 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :59:24) at callsite( ECallHostReadWords ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :129:32) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :164:24) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x499 = x81 * x25;
   // loc(callsite(unknown at callsite( OneHot ( zirgen/circuit/rv32im/v2/dsl/one_hot.zir :11:32) at callsite( DecomposeLow2 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :59:24) at callsite( ECallHostReadWords ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :129:32) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :164:24) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[615] = x499;
+  arg0[614] = x499;
   // loc(callsite(unknown at callsite( OneHot ( zirgen/circuit/rv32im/v2/dsl/one_hot.zir :11:32) at callsite( DecomposeLow2 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :59:24) at callsite( ECallHostReadWords ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :129:32) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :164:24) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x500 = x80 * x33;
   // loc(callsite(unknown at callsite( OneHot ( zirgen/circuit/rv32im/v2/dsl/one_hot.zir :11:4) at callsite( DecomposeLow2 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :59:24) at callsite( ECallHostReadWords ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :129:32) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :164:24) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
@@ -3856,7 +3858,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :158:38) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
   auto x645 = x644 + x637;
   // loc(callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :158:38) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  arg0[694] = x645;
+  arg0[693] = x645;
   // loc(callsite(unknown at callsite( ECallHostReadSetup ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :84:19) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :161:24) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
   auto x646 = x56 * x15;
   // loc(callsite(unknown at callsite( ECallHostReadSetup ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :84:26) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :161:24) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
@@ -3944,7 +3946,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :36:14) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :44:25) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :173:25) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
   auto x688 = x110 - x34;
   // loc(callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :36:14) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :44:25) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :173:25) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  arg0[495] = x688;
+  arg0[494] = x688;
   // loc(callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :36:14) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :44:25) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :173:25) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
   FpExt x689 = x683 + x688 * poly_mix[264];
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( ToBits ( zirgen/circuit/rv32im/v2/dsl/po2.zir :31:31) at callsite( BitwiseAndU16 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :146:24) at callsite( BitwiseAnd ( zirgen/circuit/rv32im/v2/dsl/u32.zir :155:53) at callsite( BitwiseXor ( zirgen/circuit/rv32im/v2/dsl/u32.zir :164:24) at callsite( OpXOR ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :97:37) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :33:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))))
@@ -4000,7 +4002,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :14:13) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :131:20) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x715 = x116 * x714;
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :14:13) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :131:20) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[494] = x715;
+  arg0[493] = x715;
   // loc(callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:20) at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :14:13) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :131:20) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x716 = arg3 + x715 * poly_mix[0];
   // loc(callsite(unknown at callsite( ControlResume ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :33:31) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :178:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
@@ -4022,13 +4024,13 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :34:19) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x725 = x32 - x87;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :34:19) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[417] = x725;
+  arg0[416] = x725;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :34:19) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x726 = arg3 + x725 * poly_mix[0];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :35:20) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x727 = x32 - x59;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :35:20) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[418] = x727;
+  arg0[417] = x727;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :35:20) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x728 = x726 + x727 * poly_mix[1];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :36:21) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
@@ -4046,7 +4048,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :39:21) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x735 = x34 - x41;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :39:21) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[496] = x735;
+  arg0[495] = x735;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :39:21) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x736 = x734 + x735 * poly_mix[5];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :41:20) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
@@ -4056,19 +4058,19 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :42:19) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x739 = x32 - x61;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :42:19) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[413] = x739;
+  arg0[412] = x739;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :42:19) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x740 = x738 + x739 * poly_mix[7];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :43:20) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x741 = x32 - x42;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :43:20) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[420] = x741;
+  arg0[419] = x741;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :43:20) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x742 = x740 + x741 * poly_mix[8];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :44:16) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x743 = x32 - x65;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :44:16) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[421] = x743;
+  arg0[420] = x743;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :44:16) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x744 = x742 + x743 * poly_mix[9];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :45:15) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
@@ -4078,145 +4080,145 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x747 = x32 - x49;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[422] = x747;
+  arg0[421] = x747;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x748 = x746 + x747 * poly_mix[11];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x749 = x32 - x120;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[423] = x749;
+  arg0[422] = x749;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x750 = x748 + x749 * poly_mix[12];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x751 = x32 - x121;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[424] = x751;
+  arg0[423] = x751;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x752 = x750 + x751 * poly_mix[13];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x753 = x32 - x122;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[425] = x753;
+  arg0[424] = x753;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x754 = x752 + x753 * poly_mix[14];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x755 = x32 - x88;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[426] = x755;
+  arg0[425] = x755;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x756 = x754 + x755 * poly_mix[15];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x757 = x32 - x51;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[427] = x757;
+  arg0[426] = x757;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x758 = x756 + x757 * poly_mix[16];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x759 = x32 - x53;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[428] = x759;
+  arg0[427] = x759;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x760 = x758 + x759 * poly_mix[17];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x761 = x32 - x91;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[429] = x761;
+  arg0[428] = x761;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x762 = x760 + x761 * poly_mix[18];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x763 = x32 - x123;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[430] = x763;
+  arg0[429] = x763;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x764 = x762 + x763 * poly_mix[19];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x765 = x32 - x89;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[431] = x765;
+  arg0[430] = x765;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x766 = x764 + x765 * poly_mix[20];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x767 = x32 - x50;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[432] = x767;
+  arg0[431] = x767;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x768 = x766 + x767 * poly_mix[21];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x769 = x32 - x124;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[433] = x769;
+  arg0[432] = x769;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x770 = x768 + x769 * poly_mix[22];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x771 = x32 - x125;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[434] = x771;
+  arg0[433] = x771;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x772 = x770 + x771 * poly_mix[23];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x773 = x32 - x126;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[435] = x773;
+  arg0[434] = x773;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x774 = x772 + x773 * poly_mix[24];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x775 = x32 - x90;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[436] = x775;
+  arg0[435] = x775;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x776 = x774 + x775 * poly_mix[25];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x777 = x32 - x39;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[437] = x777;
+  arg0[436] = x777;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x778 = x776 + x777 * poly_mix[26];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x779 = x32 - x56;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[438] = x779;
+  arg0[437] = x779;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x780 = x778 + x779 * poly_mix[27];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x781 = x32 - x92;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[439] = x781;
+  arg0[438] = x781;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x782 = x780 + x781 * poly_mix[28];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x783 = x32 - x127;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[440] = x783;
+  arg0[439] = x783;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x784 = x782 + x783 * poly_mix[29];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x785 = x32 - x46;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[441] = x785;
+  arg0[440] = x785;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x786 = x784 + x785 * poly_mix[30];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x787 = x32 - x63;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[442] = x787;
+  arg0[441] = x787;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x788 = x786 + x787 * poly_mix[31];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x789 = x32 - x47;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[443] = x789;
+  arg0[442] = x789;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x790 = x788 + x789 * poly_mix[32];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x791 = x32 - x64;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[444] = x791;
+  arg0[443] = x791;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x792 = x790 + x791 * poly_mix[33];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x793 = x32 - x40;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[445] = x793;
+  arg0[444] = x793;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x794 = x792 + x793 * poly_mix[34];
   // loc(callsite(unknown at callsite( ExtReg ( <preamble> :10:24) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :48:20) at callsite( PoseidonPagingEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :119:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :133:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -4268,13 +4270,13 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadAddr ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :78:24) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :84:25) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x816 = x68 - x26;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadAddr ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :78:24) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :84:25) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[477] = x816;
+  arg0[476] = x816;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadAddr ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :78:24) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :84:25) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x817 = arg3 + x816 * poly_mix[0];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadAddr ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :78:24) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :84:25) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x818 = x35 - x34;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadAddr ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :78:24) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :84:25) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[478] = x818;
+  arg0[477] = x818;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadAddr ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :78:24) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :84:25) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x819 = x817 + x818 * poly_mix[1];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadAddr ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :78:24) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :84:25) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -4460,7 +4462,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:11) at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :14:13) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :90:26) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x893 = x34 - x137;
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:11) at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :14:13) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :90:26) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[455] = x893;
+  arg0[454] = x893;
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :14:13) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :90:26) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x894 = x137 * x893;
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :14:13) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :90:26) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -4480,7 +4482,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :20:4) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :90:26) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x901 = x137 * x138;
   // loc(callsite(unknown at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :20:4) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :90:26) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[456] = x901;
+  arg0[455] = x901;
   // loc(callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :20:17) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :90:26) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x902 = x900 + x901 * poly_mix[39];
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:11) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :94:26) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -4488,7 +4490,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :94:26) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x904 = x139 * x903;
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :94:26) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[492] = x904;
+  arg0[491] = x904;
   // loc(callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:20) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :94:26) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x905 = x902 + x904 * poly_mix[40];
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:11) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :95:28) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -4496,7 +4498,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :95:28) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x907 = x140 * x906;
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :95:28) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[493] = x907;
+  arg0[492] = x907;
   // loc(callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:20) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :95:28) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x908 = x905 + x907 * poly_mix[41];
   // loc(callsite(unknown at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :96:24) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
@@ -4570,7 +4572,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :39:21) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :105:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x942 = x32 - x41;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :39:21) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :105:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[419] = x942;
+  arg0[418] = x942;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :39:21) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :105:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x943 = x941 + x942 * poly_mix[52];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :41:20) at callsite( PoseidonEcall ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :105:17) at callsite( PoseidonEntry ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :135:19) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :449:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
@@ -4706,7 +4708,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x1009 = x44 - x173;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[502] = x1009;
+  arg0[501] = x1009;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x1010 = x821 + x1009 * poly_mix[4];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
@@ -4722,7 +4724,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :141:18) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x1016 = x1015 + x36;
   // loc(callsite(unknown at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :141:18) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  arg0[446] = x1016;
+  arg0[445] = x1016;
   // loc(callsite(unknown at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:27) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
   auto x1017 = x173 + x34;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
@@ -4736,7 +4738,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x1022 = x72 - x1017;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[503] = x1022;
+  arg0[502] = x1022;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x1023 = x1021 + x1022 * poly_mix[13];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
@@ -4752,7 +4754,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :141:18) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x1029 = x1028 + x74;
   // loc(callsite(unknown at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :141:18) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  arg0[447] = x1029;
+  arg0[446] = x1029;
   // loc(callsite(unknown at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:27) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
   auto x1030 = x173 + x25;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
@@ -4766,7 +4768,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x1035 = x77 - x1030;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[504] = x1035;
+  arg0[503] = x1035;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x1036 = x1034 + x1035 * poly_mix[22];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
@@ -4782,7 +4784,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :141:18) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x1042 = x1041 + x78;
   // loc(callsite(unknown at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :141:18) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  arg0[448] = x1042;
+  arg0[447] = x1042;
   // loc(callsite(unknown at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:27) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
   auto x1043 = x173 + x33;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
@@ -4796,7 +4798,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x1048 = x95 - x1043;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[505] = x1048;
+  arg0[504] = x1048;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x1049 = x1047 + x1048 * poly_mix[31];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
@@ -4812,7 +4814,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :141:18) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x1055 = x1054 + x143;
   // loc(callsite(unknown at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :141:18) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  arg0[449] = x1055;
+  arg0[448] = x1055;
   // loc(callsite(unknown at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:27) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
   auto x1056 = x173 + x23;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
@@ -4832,7 +4834,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x1063 = x174 - x1056;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[506] = x1063;
+  arg0[505] = x1063;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x1064 = x1062 + x1063 * poly_mix[40];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
@@ -4868,7 +4870,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :141:18) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x1075 = x1074 + x176;
   // loc(callsite(unknown at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :141:18) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  arg0[450] = x1075;
+  arg0[449] = x1075;
   // loc(callsite(unknown at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:27) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
   auto x1076 = x173 + x2;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
@@ -4888,7 +4890,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x1083 = x181 - x1076;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[507] = x1083;
+  arg0[506] = x1083;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x1084 = x1082 + x1083 * poly_mix[49];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( DecodeInst ( zirgen/circuit/rv32im/v2/dsl/inst.zir :28:27) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :9:25) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
@@ -4916,7 +4918,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :141:18) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x1095 = x1094 + x183;
   // loc(callsite(unknown at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :141:18) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  arg0[451] = x1095;
+  arg0[450] = x1095;
   // loc(callsite(unknown at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:27) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
   auto x1096 = x173 + x1;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
@@ -4936,35 +4938,35 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x1103 = x184 - x1096;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[508] = x1103;
+  arg0[507] = x1103;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x1104 = x1102 + x1103 * poly_mix[58];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x1105 = x185 - x186;
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[395] = x1105;
+  arg0[394] = x1105;
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x1106 = x1104 + x1105 * poly_mix[59];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x1107 = x187 - x188;
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[396] = x1107;
+  arg0[395] = x1107;
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x1108 = x1106 + x1107 * poly_mix[60];
   // loc(callsite(unknown at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x1109 = x134 - x189;
   // loc(callsite(unknown at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[399] = x1109;
+  arg0[398] = x1109;
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x1110 = x157 - x34;
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[397] = x1110;
+  arg0[396] = x1110;
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x1111 = x1108 + x1110 * poly_mix[61];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x1112 = x190 - x1109;
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[398] = x1112;
+  arg0[397] = x1112;
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x1113 = x1111 + x1112 * poly_mix[62];
   // loc(callsite(unknown at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :141:11) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
@@ -4972,19 +4974,19 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :141:18) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x1115 = x1114 + x186;
   // loc(callsite(unknown at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :141:18) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  arg0[452] = x1115;
+  arg0[451] = x1115;
   // loc(callsite(unknown at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:27) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
   auto x1116 = x173 + x0;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x1117 = x153 - x26;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[400] = x1117;
+  arg0[399] = x1117;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x1118 = x1113 + x1117 * poly_mix[63];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x1119 = x154 - x34;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[401] = x1119;
+  arg0[400] = x1119;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x1120 = x1118 + x1119 * poly_mix[64];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
@@ -4994,35 +4996,35 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x1123 = x191 - x1116;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[509] = x1123;
+  arg0[508] = x1123;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x1124 = x1122 + x1123 * poly_mix[67];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x1125 = x192 - x193;
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[402] = x1125;
+  arg0[401] = x1125;
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x1126 = x1124 + x1125 * poly_mix[68];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x1127 = x194 - x195;
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[403] = x1127;
+  arg0[402] = x1127;
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x1128 = x1126 + x1127 * poly_mix[69];
   // loc(callsite(unknown at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x1129 = x134 - x196;
   // loc(callsite(unknown at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[406] = x1129;
+  arg0[405] = x1129;
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x1130 = x158 - x34;
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[404] = x1130;
+  arg0[403] = x1130;
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x1131 = x1128 + x1130 * poly_mix[70];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x1132 = x197 - x1129;
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[405] = x1132;
+  arg0[404] = x1132;
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :140:24) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x1133 = x1131 + x1132 * poly_mix[71];
   // loc(callsite(unknown at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :141:11) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
@@ -5030,47 +5032,47 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :141:18) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x1135 = x1134 + x193;
   // loc(callsite(unknown at callsite( ReadElem ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :141:18) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :147:14) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  arg0[454] = x1135;
+  arg0[453] = x1135;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :34:19) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x1136 = x198 - x87;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :34:19) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  arg0[407] = x1136;
+  arg0[406] = x1136;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :34:19) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x1137 = x1133 + x1136 * poly_mix[72];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :35:20) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x1138 = x173 - x59;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :35:20) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  arg0[408] = x1138;
+  arg0[407] = x1138;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :35:20) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x1139 = x1137 + x1138 * poly_mix[73];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :36:21) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x1140 = x199 - x118;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :36:21) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  arg0[409] = x1140;
+  arg0[408] = x1140;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :36:21) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x1141 = x1139 + x1140 * poly_mix[74];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :37:17) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x1142 = x200 - x145;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :37:17) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  arg0[410] = x1142;
+  arg0[409] = x1142;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :37:17) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x1143 = x1141 + x1142 * poly_mix[75];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :38:19) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x1144 = x201 - x146;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :38:19) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  arg0[411] = x1144;
+  arg0[410] = x1144;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :38:19) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x1145 = x1143 + x1144 * poly_mix[76];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :39:21) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x1146 = x202 - x41;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :39:21) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  arg0[412] = x1146;
+  arg0[411] = x1146;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :39:21) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x1147 = x1145 + x1146 * poly_mix[77];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :41:20) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x1148 = x3 - x62;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :41:20) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  arg0[416] = x1148;
+  arg0[415] = x1148;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :41:20) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x1149 = x1147 + x1148 * poly_mix[78];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :42:19) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
@@ -5078,19 +5080,19 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :43:20) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x1151 = x203 - x42;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :43:20) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  arg0[619] = x1151;
+  arg0[618] = x1151;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :43:20) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x1152 = x1150 + x1151 * poly_mix[80];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :44:16) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x1153 = x204 - x65;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :44:16) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  arg0[414] = x1153;
+  arg0[413] = x1153;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :44:16) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x1154 = x1152 + x1153 * poly_mix[81];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :45:15) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x1155 = x205 - x119;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :45:15) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  arg0[415] = x1155;
+  arg0[414] = x1155;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :45:15) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x1156 = x1154 + x1155 * poly_mix[82];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
@@ -5218,7 +5220,7 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( OneHot ( zirgen/circuit/rv32im/v2/dsl/one_hot.zir :7:39) at callsite( PoseidonLoadIn ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :233:13) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :451:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x1217 = x144 * x1216;
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( OneHot ( zirgen/circuit/rv32im/v2/dsl/one_hot.zir :7:39) at callsite( PoseidonLoadIn ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :233:13) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :451:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[491] = x1217;
+  arg0[490] = x1217;
   // loc(callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:20) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( OneHot ( zirgen/circuit/rv32im/v2/dsl/one_hot.zir :7:39) at callsite( PoseidonLoadIn ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :233:13) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :451:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x1218 = arg3 + x1217 * poly_mix[0];
   // loc(callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:20) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( OneHot ( zirgen/circuit/rv32im/v2/dsl/one_hot.zir :7:39) at callsite( PoseidonLoadIn ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :233:13) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :451:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
@@ -5261,13 +5263,9 @@ FpExt top_7(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   auto x1233 = x203 + x2;
   // loc(callsite(unknown at callsite( PoseidonLoadInShort ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :178:28) at callsite( PoseidonLoadIn ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :234:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :451:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   arg0[391] = x1233;
-  // loc(callsite(unknown at callsite( PoseidonLoadInShort ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :178:28) at callsite( PoseidonLoadIn ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :234:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :451:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x1234 = x203 + x1;
-  // loc(callsite(unknown at callsite( PoseidonLoadInShort ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :178:28) at callsite( PoseidonLoadIn ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :234:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :451:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  arg0[394] = x1234;
   // loc(unknown)
-  auto x1235 = top_6(cycle, steps, poly_mix, arg0, arg3, x821, arg6, x1228, x1208, arg7, x728, x707, arg8, arg9, arg10, arg11);
-  return x1235;
+  auto x1234 = top_6(cycle, steps, poly_mix, arg0, arg3, x821, arg6, x1228, x1208, arg7, x728, x707, arg8, arg9, arg10, arg11);
+  return x1234;
 }
 FpExt top_2(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, FpExt* arg2, FpExt arg3, FpExt arg4, FpExt arg5, FpExt arg6, Fp* arg7, Fp* arg8, Fp* arg9) {
   size_t mask = steps - 1;
@@ -5493,69 +5491,69 @@ FpExt top_2(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   auto x109 = arg7[14 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( Reg ( <preamble> :4:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :88:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
   auto x110 = arg7[15 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x111 = arg9[7];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x112 = arg9[6];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x113 = arg9[5];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x114 = arg9[4];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x115 = arg9[11];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x116 = arg9[10];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x117 = arg9[9];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x118 = arg9[8];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x119 = arg9[15];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x120 = arg9[14];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x121 = arg9[13];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x122 = arg9[12];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x123 = arg9[19];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x124 = arg9[18];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x125 = arg9[17];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x126 = arg9[16];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x127 = arg9[23];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x128 = arg9[22];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x129 = arg9[21];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x130 = arg9[20];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x131 = arg9[27];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x132 = arg9[26];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x133 = arg9[25];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x134 = arg9[24];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :84:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :84:46 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x135 = arg9[31];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :84:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :84:46 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x136 = arg9[30];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :84:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :84:46 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x137 = arg9[29];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :84:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :84:46 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x138 = arg9[28];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :93:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :93:55 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x139 = arg8[75 * steps + ((cycle - kInvRate * 1) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :93:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :93:55 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x140 = arg8[74 * steps + ((cycle - kInvRate * 1) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :93:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :93:55 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x141 = arg8[73 * steps + ((cycle - kInvRate * 1) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :93:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :93:55 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x142 = arg8[72 * steps + ((cycle - kInvRate * 1) & mask)];
   // loc(callsite(unknown at callsite( ArgU16 ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :29:20) at callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :35:17) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :50:26) at callsite( FinalizeMisc ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :22:30) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :40:16) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x143 = arg7[53 * steps + ((cycle - kInvRate * 0) & mask)];
@@ -5563,23 +5561,23 @@ FpExt top_2(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   auto x144 = arg7[52 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( ArgU16 ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :28:22) at callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :35:17) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :44:25) at callsite( FinalizeMisc ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :23:27) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :40:16) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x145 = arg7[56 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x146 = arg8[3 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x147 = arg8[2 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x148 = arg8[1 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x149 = arg8[0 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :48:24) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
   auto x150 = arg7[0 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x151 = arg8[7 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x152 = arg8[6 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x153 = arg8[5 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x154 = arg8[4 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( MemoryArg ( zirgen/circuit/rv32im/v2/dsl/mem.zir :27:22) at callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :67:23) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :97:18) at callsite( WriteRd ( zirgen/circuit/rv32im/v2/dsl/inst.zir :43:15) at callsite( Mul0 ( zirgen/circuit/rv32im/v2/dsl/inst_mul.zir :33:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :73:10) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x155 = arg7[142 * steps + ((cycle - kInvRate * 0) & mask)];
@@ -5587,13 +5585,13 @@ FpExt top_2(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   auto x156 = arg7[145 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( ArgU16 ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :28:22) at callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :35:17) at callsite( U16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :42:23) at callsite( AddrDecompose ( zirgen/circuit/rv32im/v2/dsl/u32.zir :65:23) at callsite( DecodeInst ( zirgen/circuit/rv32im/v2/dsl/inst.zir :24:28) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :9:25) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))))
   auto x157 = arg7[144 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x158 = arg8[11 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x159 = arg8[10 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x160 = arg8[9 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x161 = arg8[8 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( ArgU16 ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :29:20) at callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :35:17) at callsite( AddrDecompose ( zirgen/circuit/rv32im/v2/dsl/u32.zir :69:25) at callsite( DecodeInst ( zirgen/circuit/rv32im/v2/dsl/inst.zir :24:28) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :9:25) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))
   auto x162 = arg7[149 * steps + ((cycle - kInvRate * 0) & mask)];
@@ -5611,13 +5609,13 @@ FpExt top_2(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   auto x168 = arg7[157 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( MemoryArg ( zirgen/circuit/rv32im/v2/dsl/mem.zir :25:22) at callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :68:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( DecodeInst ( zirgen/circuit/rv32im/v2/dsl/inst.zir :28:27) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :9:25) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))
   auto x169 = arg7[155 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x170 = arg8[15 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x171 = arg8[14 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x172 = arg8[13 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x173 = arg8[12 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( CycleArg ( zirgen/circuit/rv32im/v2/dsl/mem.zir :55:22) at callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :60:19) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( DecodeInst ( zirgen/circuit/rv32im/v2/dsl/inst.zir :28:27) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :9:25) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))))
   auto x174 = arg7[159 * steps + ((cycle - kInvRate * 0) & mask)];
@@ -5635,13 +5633,13 @@ FpExt top_2(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   auto x180 = arg7[167 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( MemoryArg ( zirgen/circuit/rv32im/v2/dsl/mem.zir :25:22) at callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :68:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadReg ( zirgen/circuit/rv32im/v2/dsl/inst.zir :35:14) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :10:18) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))
   auto x181 = arg7[165 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x182 = arg8[19 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x183 = arg8[18 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x184 = arg8[17 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x185 = arg8[16 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( CycleArg ( zirgen/circuit/rv32im/v2/dsl/mem.zir :55:22) at callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :60:19) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadReg ( zirgen/circuit/rv32im/v2/dsl/inst.zir :35:14) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :10:18) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))))
   auto x186 = arg7[169 * steps + ((cycle - kInvRate * 0) & mask)];
@@ -5657,13 +5655,13 @@ FpExt top_2(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   auto x191 = arg7[178 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( MemoryArg ( zirgen/circuit/rv32im/v2/dsl/mem.zir :25:22) at callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :68:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadReg ( zirgen/circuit/rv32im/v2/dsl/inst.zir :35:14) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :11:18) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))
   auto x192 = arg7[176 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x193 = arg8[23 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x194 = arg8[22 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x195 = arg8[21 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x196 = arg8[20 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( CycleArg ( zirgen/circuit/rv32im/v2/dsl/mem.zir :55:22) at callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :60:19) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadReg ( zirgen/circuit/rv32im/v2/dsl/inst.zir :35:14) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :11:18) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))))
   auto x197 = arg7[180 * steps + ((cycle - kInvRate * 0) & mask)];
@@ -5671,134 +5669,134 @@ FpExt top_2(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   auto x198 = arg7[27 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( CycleArg ( zirgen/circuit/rv32im/v2/dsl/mem.zir :54:22) at callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :60:19) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ReadReg ( zirgen/circuit/rv32im/v2/dsl/inst.zir :35:14) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :11:18) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))))
   auto x199 = arg7[179 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x200 = arg8[27 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x201 = arg8[26 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x202 = arg8[25 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x203 = arg8[24 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x204 = arg8[31 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x205 = arg8[30 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x206 = arg8[29 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x207 = arg8[28 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x208 = arg0[658];
+  auto x208 = arg0[657];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x209 = x208 * x18;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :13:11) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x210 = arg0[659];
+  auto x210 = arg0[658];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x211 = x210 + x209;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x212 = arg0[660];
+  auto x212 = arg0[659];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x213 = x212 * x19;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x214 = x210 + x213;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x215 = arg0[661];
+  auto x215 = arg0[660];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x216 = x215 * x20;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x217 = x210 + x216;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x218 = arg0[662];
+  auto x218 = arg0[661];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x219 = x218 * x21;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x220 = x210 + x219;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x221 = arg0[663];
+  auto x221 = arg0[662];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x222 = x221 * x22;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x223 = x210 + x222;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x224 = arg0[664];
+  auto x224 = arg0[663];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x225 = x224 * x23;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x226 = x210 + x225;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x227 = arg0[665];
+  auto x227 = arg0[664];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x228 = x227 * x24;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x229 = x210 + x228;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x230 = arg0[666];
+  auto x230 = arg0[665];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x231 = x230 * x25;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x232 = x210 + x231;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x233 = arg0[667];
+  auto x233 = arg0[666];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x234 = x233 * x26;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x235 = x210 + x234;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x236 = arg0[668];
+  auto x236 = arg0[667];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x237 = x236 * x27;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x238 = x210 + x237;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x239 = arg0[669];
+  auto x239 = arg0[668];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x240 = x239 * x28;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x241 = x210 + x240;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x242 = arg0[670];
+  auto x242 = arg0[669];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x243 = x242 * x29;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x244 = x210 + x243;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x245 = arg0[671];
+  auto x245 = arg0[670];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x246 = x245 * x30;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x247 = x210 + x246;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x248 = arg0[672];
+  auto x248 = arg0[671];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x249 = x248 * x31;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x250 = x210 + x249;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x251 = arg0[673];
+  auto x251 = arg0[672];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x252 = x251 * x32;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x253 = x210 + x252;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x254 = arg0[674];
+  auto x254 = arg0[673];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x255 = x254 * x33;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x256 = x210 + x255;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x257 = arg0[675];
+  auto x257 = arg0[674];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x258 = x257 * x34;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x259 = x210 + x258;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x260 = arg0[676];
+  auto x260 = arg0[675];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x261 = x260 * x35;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x262 = x210 + x261;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x263 = arg0[677];
+  auto x263 = arg0[676];
   // loc(callsite(unknown at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :31:13) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x264 = x263 + x36;
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :25:17) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -5810,7 +5808,7 @@ FpExt top_2(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :25:16) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x268 = arg1 + x267 * poly_mix[32];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:15) at callsite( DoExtRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :103:39) at callsite( DoExtRoundByIdx ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :122:14) at callsite( PoseidonExtRound ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :252:32) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :468:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x269 = arg0[678];
+  auto x269 = arg0[677];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:23) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x270 = x269 * x264;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:14) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -5818,23 +5816,23 @@ FpExt top_2(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:14) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x272 = x268 + x271 * poly_mix[33];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x273 = arg0[679];
+  auto x273 = arg0[678];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :13:11) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x274 = x38 + x273;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x275 = arg0[680];
+  auto x275 = arg0[679];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :13:11) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x276 = x274 + x275;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x277 = arg0[681];
+  auto x277 = arg0[680];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :13:11) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x278 = x276 + x277;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x279 = arg0[682];
+  auto x279 = arg0[681];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :13:11) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x280 = x278 + x279;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x281 = arg0[683];
+  auto x281 = arg0[682];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :13:11) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x282 = x280 + x281;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :13:11) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -5980,7 +5978,7 @@ FpExt top_2(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :25:16) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x353 = x272 + x352 * poly_mix[34];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:15) at callsite( DoExtRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :103:39) at callsite( DoExtRoundByIdx ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :122:14) at callsite( PoseidonExtRound ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :252:32) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :468:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x354 = arg0[684];
+  auto x354 = arg0[683];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:23) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x355 = x354 * x349;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:14) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -6140,7 +6138,7 @@ FpExt top_2(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :25:16) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x433 = x357 + x432 * poly_mix[36];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:15) at callsite( DoExtRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :103:39) at callsite( DoExtRoundByIdx ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :122:14) at callsite( PoseidonExtRound ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :252:32) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :468:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x434 = arg0[685];
+  auto x434 = arg0[684];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:23) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x435 = x434 * x429;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:14) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -6300,7 +6298,7 @@ FpExt top_2(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :25:16) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x513 = x437 + x512 * poly_mix[38];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:15) at callsite( DoExtRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :103:39) at callsite( DoExtRoundByIdx ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :122:14) at callsite( PoseidonExtRound ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :252:32) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :468:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x514 = arg0[686];
+  auto x514 = arg0[685];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:23) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x515 = x514 * x509;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:14) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -6460,7 +6458,7 @@ FpExt top_2(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :25:16) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x593 = x517 + x592 * poly_mix[40];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:15) at callsite( DoExtRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :103:39) at callsite( DoExtRoundByIdx ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :122:14) at callsite( PoseidonExtRound ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :252:32) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :468:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x594 = arg0[687];
+  auto x594 = arg0[686];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:23) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x595 = x594 * x589;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:14) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -6610,31 +6608,31 @@ FpExt top_2(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x668 = x620 + x667;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :34:19) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x669 = arg0[407];
+  auto x669 = arg0[406];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :34:19) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :258:17) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x670 = x597 + x669 * poly_mix[42];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :35:20) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x671 = arg0[408];
+  auto x671 = arg0[407];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :35:20) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :258:17) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x672 = x670 + x671 * poly_mix[43];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :36:21) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x673 = arg0[409];
+  auto x673 = arg0[408];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :36:21) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :258:17) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x674 = x672 + x673 * poly_mix[44];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :37:17) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x675 = arg0[410];
+  auto x675 = arg0[409];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :37:17) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :258:17) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x676 = x674 + x675 * poly_mix[45];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :38:19) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x677 = arg0[411];
+  auto x677 = arg0[410];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :38:19) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :258:17) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x678 = x676 + x677 * poly_mix[46];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :39:21) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x679 = arg0[412];
+  auto x679 = arg0[411];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :39:21) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :258:17) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x680 = x678 + x679 * poly_mix[47];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :41:20) at callsite( PoseidonLoadInShort ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :194:17) at callsite( PoseidonLoadIn ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :234:25) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :451:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  auto x681 = arg0[688];
+  auto x681 = arg0[687];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :41:20) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :258:17) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x682 = x680 + x681 * poly_mix[48];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :42:19) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :258:17) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
@@ -6642,15 +6640,15 @@ FpExt top_2(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :42:19) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :258:17) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x684 = x682 + x683 * poly_mix[49];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :43:20) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x685 = arg0[619];
+  auto x685 = arg0[618];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :43:20) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :258:17) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x686 = x684 + x685 * poly_mix[50];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :44:16) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x687 = arg0[414];
+  auto x687 = arg0[413];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :44:16) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :258:17) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x688 = x686 + x687 * poly_mix[51];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :45:15) at callsite( PoseidonLoadState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :156:17) at callsite( Poseidon0 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :450:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :79:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x689 = arg0[415];
+  auto x689 = arg0[414];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :45:15) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :258:17) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x690 = x688 + x689 * poly_mix[52];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( PoseidonState ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :47:32) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :258:17) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
@@ -6802,13 +6800,13 @@ FpExt top_2(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
   auto x764 = x93 * x74;
   // loc(callsite(unknown at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :142:14) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x765 = arg0[689];
+  auto x765 = arg0[688];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :144:6) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
   auto x766 = x765 * x759;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
   auto x767 = x766 * x94;
-  // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:11) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :82:24) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x768 = arg0[690];
+  // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:11) at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :14:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
+  auto x768 = arg0[689];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
   auto x769 = x766 * x768;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
@@ -6876,7 +6874,7 @@ FpExt top_2(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
   auto x801 = x102 * x74;
   // loc(callsite( Mul0 ( zirgen/circuit/rv32im/v2/dsl/inst_mul.zir :23:37) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :73:10) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  auto x802 = arg0[691];
+  auto x802 = arg0[690];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
   auto x803 = x800 + x802;
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
@@ -6935,8 +6933,8 @@ FpExt top_2(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   auto x830 = x73 * x5;
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
   auto x831 = x105 * x4;
-  // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:11) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :82:24) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x832 = arg0[692];
+  // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:11) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :81:24) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
+  auto x832 = arg0[691];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
   auto x833 = x832 * x7;
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
@@ -6978,13 +6976,13 @@ FpExt top_2(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
   auto x852 = x851 + x845;
   // loc(callsite(unknown at callsite( OneHot ( zirgen/circuit/rv32im/v2/dsl/one_hot.zir :11:32) at callsite( InstInput ( zirgen/circuit/rv32im/v2/dsl/inst.zir :15:29) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :66:27) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x853 = arg0[693];
+  auto x853 = arg0[692];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
   auto x854 = x852 + x853;
   // loc(callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :69:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))
   auto x855 = x854 * x95;
   // loc(callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :158:38) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  auto x856 = arg0[694];
+  auto x856 = arg0[693];
   // loc(callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :69:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))
   auto x857 = x856 * x96;
   // loc(callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :69:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))
@@ -7099,659 +7097,659 @@ FpExt top_2(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   auto x912 = x905 - x110;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :88:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
   FpExt x913 = x911 + x912 * poly_mix[399];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x914 = x111 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x915 = x914 + x112;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x916 = x915 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x917 = x916 + x113;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x918 = x917 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x919 = x918 + x114;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[8] = x919;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x920 = x115 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x921 = x920 + x116;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x922 = x921 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x923 = x922 + x117;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x924 = x923 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x925 = x924 + x118;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[13] = x925;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x926 = x119 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x927 = x926 + x120;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x928 = x927 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x929 = x928 + x121;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x930 = x929 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x931 = x930 + x122;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[14] = x931;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x932 = x123 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x933 = x932 + x124;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x934 = x933 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x935 = x934 + x125;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x936 = x935 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x937 = x936 + x126;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[15] = x937;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x938 = x127 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x939 = x938 + x128;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x940 = x939 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x941 = x940 + x129;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x942 = x941 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x943 = x942 + x130;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[16] = x943;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x944 = x131 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x945 = x944 + x132;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x946 = x945 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x947 = x946 + x133;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x948 = x947 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x949 = x948 + x134;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :47:44 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[19] = x949;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :84:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :84:46 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x950 = x135 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :84:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :84:46 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x951 = x950 + x136;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :84:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :84:46 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x952 = x951 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :84:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :84:46 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x953 = x952 + x137;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :84:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :84:46 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x954 = x953 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :84:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :84:46 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x955 = x954 + x138;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :84:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :84:46 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[9] = x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :93:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :93:55 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x956 = x139 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :93:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :93:55 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x957 = x956 + x140;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :93:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :93:55 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x958 = x957 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :93:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :93:55 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x959 = x958 + x141;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :93:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :93:55 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x960 = x959 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :93:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :93:55 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x961 = x960 + x142;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x962 = x919 * x71;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x963 = x962 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x964 = x919 * x143;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x965 = x964 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:45 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x966 = x963 * x965;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x967 = x963 * x144;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x968 = x70 * x965;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x969 = x919 * x80;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x970 = x969 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:45 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x971 = x966 * x970;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x972 = x966 * x145;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x973 = x968 * x970;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x974 = x967 * x970;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x975 = x146 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x976 = x975 + x147;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x977 = x976 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x978 = x977 + x148;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x979 = x978 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x980 = x979 + x149;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[92] = x980;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x981 = x980 - x961;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[26] = x981;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :178:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :178:46 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x982 = x981 * x971;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x983 = x982 - x973;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x984 = x983 - x974;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x985 = x984 - x972;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :182:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :182:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   FpExt x986 = arg6 + x985 * poly_mix[0];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x987 = x919 * x98;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x988 = x987 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x989 = x925 * x57;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x990 = x931 * x59;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[66] = x990;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x991 = x989 + x990;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x992 = x937 * x60;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[67] = x992;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x993 = x991 + x992;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x994 = x943 * x61;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[68] = x994;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x995 = x993 + x994;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x996 = x995 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:45 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x997 = x988 * x996;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x998 = x988 * x58;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x999 = x47 * x996;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1000 = x931 * x150;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[17] = x1000;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1001 = x989 + x1000;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1002 = x937 * x63;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[69] = x1002;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1003 = x1001 + x1002;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1004 = x943 * x64;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[70] = x1004;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1005 = x1003 + x1004;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1006 = x1005 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:45 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1007 = x997 * x1006;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1008 = x997 * x62;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1009 = x999 * x1006;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1010 = x998 * x1006;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1011 = x151 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1012 = x1011 + x152;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1013 = x1012 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1014 = x1013 + x153;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1015 = x1014 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1016 = x1015 + x154;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1017 = x1016 - x980;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[27] = x1017;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :178:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :178:46 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1018 = x1017 * x1007;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1019 = x1018 - x1009;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1020 = x1019 - x1010;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1021 = x1020 - x1008;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :182:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :182:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   FpExt x1022 = x986 + x1021 * poly_mix[1];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1023 = x949 * x66;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1024 = x1023 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[7] = x1024;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1025 = x949 * x150;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1026 = x1025 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[25] = x1026;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:45 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1027 = x1024 * x1026;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:45 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[10] = x1027;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1028 = x1024 * x155;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1029 = x65 * x1026;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[11] = x1029;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1030 = x919 * x156;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1031 = x1030 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:45 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1032 = x1027 * x1031;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1033 = x1027 * x157;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1034 = x1029 * x1031;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1035 = x1028 * x1031;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1036 = x158 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1037 = x1036 + x159;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1038 = x1037 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1039 = x1038 + x160;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1040 = x1039 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1041 = x1040 + x161;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1042 = x1041 - x1016;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[12] = x1042;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :178:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :178:46 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1043 = x1042 * x1032;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1044 = x1043 - x1034;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1045 = x1044 - x1035;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1046 = x1045 - x1033;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :182:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :182:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   FpExt x1047 = x1022 + x1046 * poly_mix[2];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1048 = x919 * x162;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1049 = x1048 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1050 = x925 * x163;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1051 = x931 * x164;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[83] = x1051;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1052 = x1050 + x1051;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1053 = x937 * x165;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[84] = x1053;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1054 = x1052 + x1053;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1055 = x943 * x84;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[85] = x1055;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1056 = x1054 + x1055;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1057 = x1056 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[29] = x1057;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:45 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1058 = x1049 * x1057;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1059 = x1049 * x166;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1060 = x167 * x1057;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1061 = x1050 + x1000;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1062 = x937 * x99;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[86] = x1062;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1063 = x1061 + x1062;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1064 = x943 * x168;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[87] = x1064;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1065 = x1063 + x1064;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1066 = x1065 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[30] = x1066;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:45 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1067 = x1058 * x1066;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1068 = x1058 * x169;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1069 = x1060 * x1066;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1070 = x1059 * x1066;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1071 = x170 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1072 = x1071 + x171;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1073 = x1072 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1074 = x1073 + x172;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1075 = x1074 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1076 = x1075 + x173;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1077 = x1076 - x1041;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[18] = x1077;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :178:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :178:46 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1078 = x1077 * x1067;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1079 = x1078 - x1069;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1080 = x1079 - x1070;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1081 = x1080 - x1068;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :182:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :182:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   FpExt x1082 = x1047 + x1081 * poly_mix[3];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1083 = x949 * x174;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1084 = x1083 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[31] = x1084;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1085 = x925 * x175;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1086 = x931 * x176;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1087 = x1085 + x1086;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1088 = x937 * x177;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1089 = x1087 + x1088;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1090 = x943 * x86;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1091 = x1089 + x1090;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1092 = x1091 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:45 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1093 = x1084 * x1092;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1094 = x1084 * x178;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1095 = x179 * x1092;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1096 = x1085 + x1000;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1097 = x937 * x100;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1098 = x1096 + x1097;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1099 = x943 * x180;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1100 = x1098 + x1099;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1101 = x1100 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:45 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1102 = x1093 * x1101;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1103 = x1093 * x181;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1104 = x1095 * x1101;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1105 = x1094 * x1101;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1106 = x182 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1107 = x1106 + x183;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1108 = x1107 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1109 = x1108 + x184;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1110 = x1109 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1111 = x1110 + x185;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1112 = x1111 - x1076;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[20] = x1112;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :178:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :178:46 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1113 = x1112 * x1102;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1114 = x1113 - x1104;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1115 = x1114 - x1105;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1116 = x1115 - x1103;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :182:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :182:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   FpExt x1117 = x1082 + x1116 * poly_mix[4];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1118 = x949 * x186;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1119 = x1118 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1120 = x925 * x92;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1121 = x931 * x187;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1122 = x1120 + x1121;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1123 = x937 * x94;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1124 = x1122 + x1123;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1125 = x943 * x188;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1126 = x1124 + x1125;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1127 = x1126 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:45 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1128 = x1119 * x1127;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1129 = x1119 * x105;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1130 = x189 * x1127;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1131 = x1120 + x1000;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1132 = x937 * x190;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1133 = x1131 + x1132;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1134 = x943 * x191;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :157:35 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1135 = x1133 + x1134;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1136 = x1135 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:45 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1137 = x1128 * x1136;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1138 = x1128 * x192;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1139 = x1130 * x1136;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1140 = x1129 * x1136;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1141 = x193 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1142 = x1141 + x194;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1143 = x1142 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1144 = x1143 + x195;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1145 = x1144 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1146 = x1145 + x196;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1147 = x1146 - x1111;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[21] = x1147;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :178:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :178:46 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1148 = x1147 * x1137;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1149 = x1148 - x1139;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1150 = x1149 - x1140;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1151 = x1150 - x1138;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :182:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :182:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   FpExt x1152 = x1117 + x1151 * poly_mix[5];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1153 = x949 * x197;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1154 = x1153 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1155 = x919 * x48;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1156 = x1155 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[22] = x1156;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:45 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1157 = x1154 * x1156;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1158 = x1154 * x198;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1159 = x199 * x1156;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1160 = x919 * x50;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1161 = x1160 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[23] = x1161;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:45 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1162 = x1157 * x1161;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1163 = x1157 * x49;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1164 = x1159 * x1161;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1165 = x1158 * x1161;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1166 = x200 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1167 = x1166 + x201;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1168 = x1167 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1169 = x1168 + x202;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1170 = x1169 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1171 = x1170 + x203;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[74] = x1171;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1172 = x1171 - x1146;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[24] = x1172;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :178:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :178:46 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1173 = x1172 * x1162;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1174 = x1173 - x1164;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1175 = x1174 - x1165;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1176 = x1175 - x1163;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :182:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :182:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   FpExt x1177 = x1152 + x1176 * poly_mix[6];
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1178 = x919 * x52;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1179 = x1178 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1180 = x919 * x54;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1181 = x1180 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:45 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1182 = x1179 * x1181;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1183 = x1179 * x53;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1184 = x51 * x1181;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :146:36 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1185 = x919 * x56;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :238:47 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1186 = x1185 + x955;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :217:45 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1187 = x1182 * x1186;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1188 = x1182 * x55;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :219:33 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[5] = x1188;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1189 = x1184 * x1186;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :223:37 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1190 = x1183 * x1186;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1191 = x204 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1192 = x1191 + x205;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1193 = x1192 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1194 = x1193 + x206;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1195 = x1194 * x0;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1196 = x1195 + x207;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :190:50 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[6] = x1196;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1197 = x1196 - x1171;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :177:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[28] = x1197;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :178:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :178:46 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1198 = x1197 * x1187;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1199 = x1198 - x1189;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   auto x1200 = x1199 - x1190;
-  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:0 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:0 at unknown)))
+  // loc(callsite( zirgen/dsl/passes/GenerateAccum.cpp :180:42 at callsite( zirgen/dsl/passes/GenerateAccum.cpp :526:9 at unknown)))
   arg2[4] = x1200;
   // loc(unknown)
   auto x1201 = top_1(cycle, steps, poly_mix, arg2, x1177, x913, x1022, arg6, arg7, arg8, arg9);

@@ -2,5 +2,13 @@
   "rust-analyzer.linkedProjects": [
     "Cargo.toml",
     "zirgen/bootstrap/Cargo.toml"
-  ]
+  ],
+  "files.associations": {
+    "*.h.inc": "cpp",
+    "*.cpp.inc": "cpp",
+    "*.cu": "cuda",
+    "*.cuh.inc": "cuda",
+    "*.cu.inc": "cuda",
+    "*.rs.inc": "rust",
+  }
 }

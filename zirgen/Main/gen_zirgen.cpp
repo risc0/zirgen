@@ -296,10 +296,10 @@ int main(int argc, char* argv[]) {
 
   auto rustOpts = codegen::getRustCodegenOpts();
   CodegenEmitter rustCg(rustOpts, &context);
-  // emitDefs(rustCg, *typedModule, "defs.rs.inc");
-  // emitTypes(rustCg, *typedModule, "types.rs.inc");
+  emitDefs(rustCg, *typedModule, "defs.rs.inc");
+  emitTypes(rustCg, *typedModule, "types.rs.inc");
   emitOps<ZStruct::GlobalConstOp>(rustCg, *typedModule, "layout.rs.inc");
-  // emitOps<Zhlt::StepFuncOp>(rustCg, stepFuncs, "steps.rs.inc");
+  emitOps<Zhlt::StepFuncOp>(rustCg, stepFuncs, "steps.rs.inc");
 
   auto cppOpts = codegen::getCppCodegenOpts();
   CodegenEmitter cppCg(cppOpts, &context);

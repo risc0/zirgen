@@ -247,18 +247,18 @@ FpExt top_8(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   auto x101 = arg10[121 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :11:20) at callsite( OneHot ( zirgen/circuit/rv32im/v2/dsl/one_hot.zir :7:39) at callsite( InstInput ( zirgen/circuit/rv32im/v2/dsl/inst.zir :15:29) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :66:27) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x102 = arg10[20 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite(unknown at callsite( MemoryArg ( zirgen/circuit/rv32im/v2/dsl/mem.zir :29:25) at callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :67:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadReg ( zirgen/circuit/rv32im/v2/dsl/inst.zir :35:14) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :11:18) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))
-  auto x103 = arg10[175 * steps + ((cycle - kInvRate * 0) & mask)];
+  // loc(callsite(unknown at callsite( MemoryArg ( zirgen/circuit/rv32im/v2/dsl/mem.zir :26:21) at callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :67:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadReg ( zirgen/circuit/rv32im/v2/dsl/inst.zir :35:14) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :11:18) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))
+  auto x103 = arg10[171 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( MemoryArg ( zirgen/circuit/rv32im/v2/dsl/mem.zir :25:22) at callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :67:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadReg ( zirgen/circuit/rv32im/v2/dsl/inst.zir :35:14) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :11:18) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))
   auto x104 = arg10[172 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite(unknown at callsite( MemoryArg ( zirgen/circuit/rv32im/v2/dsl/mem.zir :26:21) at callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :67:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadReg ( zirgen/circuit/rv32im/v2/dsl/inst.zir :35:14) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :11:18) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))
-  auto x105 = arg10[171 * steps + ((cycle - kInvRate * 0) & mask)];
+  // loc(callsite(unknown at callsite( MemoryArg ( zirgen/circuit/rv32im/v2/dsl/mem.zir :27:22) at callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :67:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadReg ( zirgen/circuit/rv32im/v2/dsl/inst.zir :35:14) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :11:18) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))
+  auto x105 = arg10[173 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :11:20) at callsite( ToBits ( zirgen/circuit/rv32im/v2/dsl/po2.zir :31:31) at callsite( BitwiseAndU16 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :146:24) at callsite( BitwiseAnd ( zirgen/circuit/rv32im/v2/dsl/u32.zir :155:53) at callsite( BitwiseXor ( zirgen/circuit/rv32im/v2/dsl/u32.zir :164:24) at callsite( OpXOR ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :97:37) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :33:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))))
   auto x106 = arg10[124 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite(unknown at callsite( MemoryArg ( zirgen/circuit/rv32im/v2/dsl/mem.zir :27:22) at callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :67:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadReg ( zirgen/circuit/rv32im/v2/dsl/inst.zir :35:14) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :11:18) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))
-  auto x107 = arg10[173 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( MemoryArg ( zirgen/circuit/rv32im/v2/dsl/mem.zir :28:24) at callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :67:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadReg ( zirgen/circuit/rv32im/v2/dsl/inst.zir :35:14) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :11:18) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))
-  auto x108 = arg10[174 * steps + ((cycle - kInvRate * 0) & mask)];
+  auto x107 = arg10[174 * steps + ((cycle - kInvRate * 0) & mask)];
+  // loc(callsite(unknown at callsite( MemoryArg ( zirgen/circuit/rv32im/v2/dsl/mem.zir :29:25) at callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :67:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadReg ( zirgen/circuit/rv32im/v2/dsl/inst.zir :35:14) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :11:18) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))
+  auto x108 = arg10[175 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :11:20) at callsite( Decoder ( zirgen/circuit/rv32im/v2/dsl/decode.zir :15:25) at callsite( DecodeInst ( zirgen/circuit/rv32im/v2/dsl/inst.zir :30:11) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :9:25) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x109 = arg10[126 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( ArgU16 ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :29:20) at callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :35:17) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :44:25) at callsite( CmpLessThan ( zirgen/circuit/rv32im/v2/dsl/u32.zir :133:24) at callsite( OpSLT ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :112:22) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :36:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))
@@ -305,10 +305,10 @@ FpExt top_8(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   auto x130 = arg10[165 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :11:20) at callsite( OneHot ( zirgen/circuit/rv32im/v2/dsl/one_hot.zir :7:39) at callsite( InstInput ( zirgen/circuit/rv32im/v2/dsl/inst.zir :15:29) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :66:27) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x131 = arg10[21 * steps + ((cycle - kInvRate * 0) & mask)];
-  // loc(callsite(unknown at callsite( MemoryArg ( zirgen/circuit/rv32im/v2/dsl/mem.zir :28:24) at callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :68:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadReg ( zirgen/circuit/rv32im/v2/dsl/inst.zir :35:14) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :11:18) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))
-  auto x132 = arg10[177 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( MemoryArg ( zirgen/circuit/rv32im/v2/dsl/mem.zir :25:22) at callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :68:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadReg ( zirgen/circuit/rv32im/v2/dsl/inst.zir :35:14) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :11:18) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))
-  auto x133 = arg10[176 * steps + ((cycle - kInvRate * 0) & mask)];
+  auto x132 = arg10[176 * steps + ((cycle - kInvRate * 0) & mask)];
+  // loc(callsite(unknown at callsite( MemoryArg ( zirgen/circuit/rv32im/v2/dsl/mem.zir :28:24) at callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :68:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ReadReg ( zirgen/circuit/rv32im/v2/dsl/inst.zir :35:14) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :11:18) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))
+  auto x133 = arg10[177 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( NondetTwitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :48:20) at callsite( Decoder ( zirgen/circuit/rv32im/v2/dsl/decode.zir :19:28) at callsite( DecodeInst ( zirgen/circuit/rv32im/v2/dsl/inst.zir :30:11) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :9:25) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x134 = arg10[130 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( MemoryArg ( zirgen/circuit/rv32im/v2/dsl/mem.zir :28:24) at callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :68:23) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :97:18) at callsite( WriteRd ( zirgen/circuit/rv32im/v2/dsl/inst.zir :43:15) at callsite( FinalizeMisc ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :24:11) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :40:16) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))
@@ -717,30 +717,30 @@ FpExt top_8(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   auto x336 = x335 - x103;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :50:19) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
   FpExt x337 = arg4 + x336 * poly_mix[0];
-  // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :14:13) at callsite( ControlResume ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :33:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :178:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  auto x338 = arg0[268];
+  // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:11) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :81:24) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
+  auto x338 = x38 - x104;
+  // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:11) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :81:24) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
+  arg0[691] = x338;
+  // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :81:24) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
+  auto x339 = x104 * x338;
   // loc(callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:20) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :81:24) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x339 = x337 + x338 * poly_mix[1];
+  FpExt x340 = x337 + x339 * poly_mix[1];
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:11) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :82:24) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x340 = x38 - x104;
-  // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:11) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :82:24) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[692] = x340;
+  auto x341 = x38 - x105;
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :82:24) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x341 = x104 * x340;
+  auto x342 = x105 * x341;
   // loc(callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:20) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :82:24) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x342 = x339 + x341 * poly_mix[2];
+  FpExt x343 = x340 + x342 * poly_mix[2];
   // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :83:12) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x343 = x104 * x36;
+  auto x344 = x105 * x36;
   // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :83:19) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x344 = x343 + x105;
+  auto x345 = x344 + x104;
   // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :85:24) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x345 = x103 * x35;
-  // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :85:41) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x346 = x38 - x103;
+  auto x346 = x103 * x35;
   // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :85:49) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x347 = x346 * x34;
+  auto x347 = x300 * x34;
   // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :85:31) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x348 = x345 + x347;
+  auto x348 = x346 + x347;
   // loc(callsite(unknown at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :53:34) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
   auto x349 = arg0[112];
   // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :85:53) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
@@ -748,13 +748,15 @@ FpExt top_8(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( DecodeInst ( zirgen/circuit/rv32im/v2/dsl/inst.zir :28:27) at callsite( DivInput ( zirgen/circuit/rv32im/v2/dsl/inst_div.zir :10:25) at callsite( Div0 ( zirgen/circuit/rv32im/v2/dsl/inst_div.zir :22:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :74:10) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x351 = arg0[253];
   // loc(callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :36:14) at callsite( U16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :42:23) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :85:23) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x352 = x342 + x351 * poly_mix[3];
+  FpExt x352 = x343 + x351 * poly_mix[3];
   // loc(callsite( U16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :43:8) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :85:23) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x353 = x106 - x350;
   // loc(callsite( U16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :43:8) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :85:23) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x354 = x352 + x353 * poly_mix[4];
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:11) at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :14:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x355 = x38 - x107;
+  // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:11) at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :14:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
+  arg0[689] = x355;
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :14:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x356 = x107 * x355;
   // loc(callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:20) at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :14:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
@@ -776,13 +778,13 @@ FpExt top_8(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:19) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
   FpExt x365 = x364 + x107 * poly_mix[9];
   // loc(callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :36:14) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :44:25) at callsite( Mem1 ( zirgen/circuit/rv32im/v2/dsl/inst_mem.zir :78:26) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :76:10) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x366 = arg0[269];
+  auto x366 = arg0[268];
   // loc(callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :36:14) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :89:25) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x367 = x365 + x366 * poly_mix[10];
   // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :91:4) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x368 = x109 * x33;
   // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :91:12) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x369 = x368 + x344;
+  auto x369 = x368 + x345;
   // loc(callsite(unknown at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :52:33) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
   auto x370 = arg0[108];
   // loc(callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :91:21) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
@@ -794,13 +796,13 @@ FpExt top_8(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :93:23) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :51:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x374 = x373 + x109;
   // loc(callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :52:17) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x375 = x372 + x344 * poly_mix[12];
+  FpExt x375 = x372 + x345 * poly_mix[12];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :112:18) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x376 = arg0[270];
+  auto x376 = arg0[269];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :53:27) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x377 = x375 + x376 * poly_mix[13];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :112:18) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x378 = arg0[271];
+  auto x378 = arg0[270];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :53:27) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x379 = x377 + x378 * poly_mix[14];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :53:27) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
@@ -812,19 +814,19 @@ FpExt top_8(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :53:27) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x383 = x381 + x382 * poly_mix[17];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :113:10) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x384 = arg0[272];
+  auto x384 = arg0[271];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :53:27) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x385 = x383 + x384 * poly_mix[18];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :113:10) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x386 = arg0[273];
+  auto x386 = arg0[272];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :53:27) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x387 = x385 + x386 * poly_mix[19];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlResume ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :36:22) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :178:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  auto x388 = arg0[274];
+  auto x388 = arg0[273];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :53:27) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x389 = x387 + x388 * poly_mix[20];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlResume ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :36:22) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :178:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  auto x390 = arg0[275];
+  auto x390 = arg0[274];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :53:27) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x391 = x389 + x390 * poly_mix[21];
   // loc(callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :54:19) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
@@ -834,17 +836,17 @@ FpExt top_8(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :55:18) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
   FpExt x394 = x392 + x393 * poly_mix[23];
   // loc(callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :7:21) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x395 = arg0[276];
+  auto x395 = arg0[275];
   // loc(callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :56:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
   FpExt x396 = x394 + x395 * poly_mix[24];
   // loc(callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :57:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
   FpExt x397 = x396 + x335 * poly_mix[25];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :112:18) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x398 = arg0[277];
+  auto x398 = arg0[276];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :58:30) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x399 = x397 + x398 * poly_mix[26];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :112:18) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x400 = arg0[278];
+  auto x400 = arg0[277];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :58:30) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x401 = x399 + x400 * poly_mix[27];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :58:30) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
@@ -856,19 +858,19 @@ FpExt top_8(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :58:30) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x405 = x403 + x404 * poly_mix[30];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :113:10) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x406 = arg0[279];
+  auto x406 = arg0[278];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :58:30) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x407 = x405 + x406 * poly_mix[31];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :113:10) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x408 = arg0[280];
+  auto x408 = arg0[279];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :58:30) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x409 = x407 + x408 * poly_mix[32];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlResume ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :37:24) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :178:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  auto x410 = arg0[281];
+  auto x410 = arg0[280];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :58:30) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x411 = x409 + x410 * poly_mix[33];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlResume ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :37:24) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :178:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  auto x412 = arg0[282];
+  auto x412 = arg0[281];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :58:30) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x413 = x411 + x412 * poly_mix[34];
   // loc(callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :59:22) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
@@ -876,7 +878,7 @@ FpExt top_8(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :60:24) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
   auto x415 = x115 * x30;
   // loc(callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :36:14) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :50:26) at callsite( Mem1 ( zirgen/circuit/rv32im/v2/dsl/inst_mem.zir :78:26) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :76:10) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x416 = arg0[283];
+  auto x416 = arg0[282];
   // loc(callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :36:14) at callsite( U16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :42:23) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :60:10) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x417 = x414 + x416 * poly_mix[36];
   // loc(callsite( U16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :43:8) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :60:10) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
@@ -886,11 +888,11 @@ FpExt top_8(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :61:55) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
   auto x420 = x115 + x29;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :112:18) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x421 = arg0[284];
+  auto x421 = arg0[283];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :61:29) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x422 = x419 + x421 * poly_mix[38];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :112:18) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x423 = arg0[285];
+  auto x423 = arg0[284];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :61:29) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x424 = x422 + x423 * poly_mix[39];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :61:29) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
@@ -902,11 +904,11 @@ FpExt top_8(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :61:29) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x428 = x426 + x427 * poly_mix[42];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :113:10) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x429 = arg0[286];
+  auto x429 = arg0[285];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :61:29) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x430 = x428 + x429 * poly_mix[43];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :113:10) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x431 = arg0[287];
+  auto x431 = arg0[286];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :61:29) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x432 = x430 + x431 * poly_mix[44];
   // loc(callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :36:14) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :44:25) at callsite( Mul0 ( zirgen/circuit/rv32im/v2/dsl/inst_mul.zir :34:26) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :73:10) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
@@ -914,11 +916,11 @@ FpExt top_8(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :61:29) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x434 = x432 + x433 * poly_mix[45];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :98:13) at callsite( ControlResume ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :42:19) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :178:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  auto x435 = arg0[288];
+  auto x435 = arg0[287];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :61:29) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x436 = x434 + x435 * poly_mix[46];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :112:18) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x437 = arg0[289];
+  auto x437 = arg0[288];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :97:18) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :62:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x438 = x436 + x437 * poly_mix[47];
   // loc(callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :36:14) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :44:25) at callsite( FinalizeMisc ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :23:27) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :40:16) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
@@ -938,7 +940,7 @@ FpExt top_8(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :98:13) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :62:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x446 = x444 + x445 * poly_mix[52];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :98:13) at callsite( ControlResume ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :42:19) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :178:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  auto x447 = arg0[290];
+  auto x447 = arg0[289];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :98:13) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :62:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x448 = x446 + x447 * poly_mix[53];
   // loc(callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :99:22) at callsite( ControlUserECALL ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :62:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :179:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
@@ -1034,15 +1036,13 @@ FpExt top_8(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
   FpExt x494 = x334 + x131 * x493 * poly_mix[234];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :67:19) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x495 = x335 - x132;
+  auto x495 = x335 - x105;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :67:19) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
   FpExt x496 = arg4 + x495 * poly_mix[0];
   // loc(callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:20) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :81:24) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   FpExt x497 = x496 + x356 * poly_mix[1];
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:11) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :82:24) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x498 = x38 - x108;
-  // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:11) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :82:24) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[690] = x498;
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :82:24) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x499 = x108 * x498;
   // loc(callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:20) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :82:24) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
@@ -1052,41 +1052,41 @@ FpExt top_8(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :83:19) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   auto x502 = x501 + x107;
   // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :85:24) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x503 = x132 * x35;
-  // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :85:41) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x504 = x38 - x132;
+  auto x503 = x105 * x35;
   // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :85:49) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x505 = x504 * x34;
+  auto x504 = x341 * x34;
   // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :85:31) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x506 = x503 + x505;
+  auto x505 = x503 + x504;
   // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :85:53) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x507 = x506 - x349;
+  auto x506 = x505 - x349;
   // loc(callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :36:14) at callsite( U16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :42:23) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :85:23) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x508 = x500 + x351 * poly_mix[3];
+  FpExt x507 = x500 + x351 * poly_mix[3];
   // loc(callsite( U16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :43:8) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :85:23) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x509 = x106 - x507;
+  auto x508 = x106 - x506;
   // loc(callsite( U16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :43:8) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :85:23) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x510 = x508 + x509 * poly_mix[4];
+  FpExt x509 = x507 + x508 * poly_mix[4];
+  // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:11) at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :14:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
+  auto x510 = x38 - x132;
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :14:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x511 = x103 * x346;
+  auto x511 = x132 * x510;
   // loc(callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:20) at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :14:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x512 = x510 + x511 * poly_mix[5];
+  FpExt x512 = x509 + x511 * poly_mix[5];
   // loc(callsite(unknown at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :16:4) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x513 = x349 * x133;
   // loc(callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :16:14) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x514 = x513 - x346;
+  auto x514 = x513 - x510;
   // loc(callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :16:14) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x515 = x512 + x514 * poly_mix[6];
   // loc(callsite(unknown at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :18:4) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  auto x516 = x103 * x349;
+  auto x516 = x132 * x349;
   // loc(callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :18:17) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x517 = x515 + x516 * poly_mix[7];
   // loc(callsite(unknown at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :20:4) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  auto x518 = x103 * x133;
+  auto x518 = x132 * x133;
   // loc(callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :20:17) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x519 = x517 + x518 * poly_mix[8];
   // loc(callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:19) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x520 = x519 + x103 * poly_mix[9];
+  FpExt x520 = x519 + x132 * poly_mix[9];
   // loc(callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :36:14) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :89:25) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x521 = x520 + x366 * poly_mix[10];
   // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :91:12) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :68:32) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
@@ -1124,7 +1124,7 @@ FpExt top_8(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :73:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
   FpExt x538 = x537 + x395 * poly_mix[24];
   // loc(callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :74:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x539 = arg0[291];
+  auto x539 = arg0[290];
   // loc(callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :74:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
   FpExt x540 = x538 + x539 * poly_mix[25];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :75:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
@@ -1151,1465 +1151,1467 @@ FpExt top_8(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   auto x551 = x115 + x33;
   // loc(callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :36:14) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :44:25) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :76:26) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
   FpExt x552 = x550 + x416 * poly_mix[35];
+  // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :14:13) at callsite( ControlResume ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :33:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :178:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
+  auto x553 = arg0[291];
   // loc(callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:20) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :45:28) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :76:26) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x553 = x552 + x338 * poly_mix[36];
+  FpExt x554 = x552 + x553 * poly_mix[36];
   // loc(callsite(unknown at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :46:12) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :76:26) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x554 = x105 * x26;
+  auto x555 = x103 * x26;
   // loc(callsite(unknown at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :46:23) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :76:26) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x555 = x554 + x116;
+  auto x556 = x555 + x116;
   // loc(callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :46:10) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :76:26) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x556 = x551 - x555;
+  auto x557 = x551 - x556;
   // loc(callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :46:10) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :76:26) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x557 = x553 + x556 * poly_mix[37];
+  FpExt x558 = x554 + x557 * poly_mix[37];
   // loc(callsite(unknown at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :48:14) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :76:26) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x558 = x114 + x105;
+  auto x559 = x114 + x103;
   // loc(callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :36:14) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :50:26) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :76:26) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x559 = x73 - x38;
+  auto x560 = x73 - x38;
   // loc(callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :36:14) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :50:26) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :76:26) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x560 = x557 + x559 * poly_mix[38];
+  FpExt x561 = x558 + x560 * poly_mix[38];
   // loc(callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:20) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :51:29) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :76:26) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x561 = x560 + x341 * poly_mix[39];
+  FpExt x562 = x561 + x339 * poly_mix[39];
   // loc(callsite(unknown at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :52:11) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :76:26) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x562 = x104 * x26;
+  auto x563 = x104 * x26;
   // loc(callsite(unknown at callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :52:23) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :76:26) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x563 = x562 + x134;
+  auto x564 = x563 + x134;
   // loc(callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :52:9) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :76:26) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x564 = x558 - x563;
+  auto x565 = x559 - x564;
   // loc(callsite( NormalizeU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :52:9) at callsite( ControlMRET ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :76:26) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :180:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x565 = x561 + x564 * poly_mix[40];
+  FpExt x566 = x562 + x565 * poly_mix[40];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x566 = x565 + x135 * poly_mix[41];
+  FpExt x567 = x566 + x135 * poly_mix[41];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x567 = x566 + x136 * poly_mix[42];
+  FpExt x568 = x567 + x136 * poly_mix[42];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x568 = x567 + x137 * poly_mix[43];
+  FpExt x569 = x568 + x137 * poly_mix[43];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x569 = x568 + x138 * poly_mix[44];
+  FpExt x570 = x569 + x138 * poly_mix[44];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x570 = x569 + x121 * poly_mix[45];
+  FpExt x571 = x570 + x121 * poly_mix[45];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x571 = x570 + x122 * poly_mix[46];
+  FpExt x572 = x571 + x122 * poly_mix[46];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x572 = x571 + x123 * poly_mix[47];
+  FpExt x573 = x572 + x123 * poly_mix[47];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x573 = x572 + x124 * poly_mix[48];
+  FpExt x574 = x573 + x124 * poly_mix[48];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x574 = x573 + x125 * poly_mix[49];
+  FpExt x575 = x574 + x125 * poly_mix[49];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x575 = x574 + x126 * poly_mix[50];
+  FpExt x576 = x575 + x126 * poly_mix[50];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x576 = x575 + x127 * poly_mix[51];
+  FpExt x577 = x576 + x127 * poly_mix[51];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x577 = x576 + x128 * poly_mix[52];
+  FpExt x578 = x577 + x128 * poly_mix[52];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x578 = x577 + x139 * poly_mix[53];
+  FpExt x579 = x578 + x139 * poly_mix[53];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x579 = x578 + x140 * poly_mix[54];
+  FpExt x580 = x579 + x140 * poly_mix[54];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x580 = x579 + x129 * poly_mix[55];
+  FpExt x581 = x580 + x129 * poly_mix[55];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x581 = x580 + x130 * poly_mix[56];
+  FpExt x582 = x581 + x130 * poly_mix[56];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x582 = x581 + x56 * poly_mix[57];
+  FpExt x583 = x582 + x56 * poly_mix[57];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x583 = x582 + x64 * poly_mix[58];
+  FpExt x584 = x583 + x64 * poly_mix[58];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x584 = x583 + x74 * poly_mix[59];
+  FpExt x585 = x584 + x74 * poly_mix[59];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x585 = x584 + x75 * poly_mix[60];
+  FpExt x586 = x585 + x75 * poly_mix[60];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x586 = x585 + x76 * poly_mix[61];
+  FpExt x587 = x586 + x76 * poly_mix[61];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x587 = x586 + x77 * poly_mix[62];
+  FpExt x588 = x587 + x77 * poly_mix[62];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x588 = x587 + x78 * poly_mix[63];
+  FpExt x589 = x588 + x78 * poly_mix[63];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x589 = x588 + x79 * poly_mix[64];
+  FpExt x590 = x589 + x79 * poly_mix[64];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x590 = x589 + x80 * poly_mix[65];
+  FpExt x591 = x590 + x80 * poly_mix[65];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x591 = x590 + x81 * poly_mix[66];
+  FpExt x592 = x591 + x81 * poly_mix[66];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x592 = x591 + x82 * poly_mix[67];
+  FpExt x593 = x592 + x82 * poly_mix[67];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x593 = x592 + x83 * poly_mix[68];
+  FpExt x594 = x593 + x83 * poly_mix[68];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x594 = x593 + x84 * poly_mix[69];
+  FpExt x595 = x594 + x84 * poly_mix[69];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x595 = x594 + x85 * poly_mix[70];
+  FpExt x596 = x595 + x85 * poly_mix[70];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x596 = x595 + x86 * poly_mix[71];
+  FpExt x597 = x596 + x86 * poly_mix[71];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x597 = x596 + x87 * poly_mix[72];
+  FpExt x598 = x597 + x87 * poly_mix[72];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x598 = x597 + x88 * poly_mix[73];
+  FpExt x599 = x598 + x88 * poly_mix[73];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x599 = x598 + x89 * poly_mix[74];
+  FpExt x600 = x599 + x89 * poly_mix[74];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x600 = x599 + x90 * poly_mix[75];
+  FpExt x601 = x600 + x90 * poly_mix[75];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x601 = x600 + x91 * poly_mix[76];
+  FpExt x602 = x601 + x91 * poly_mix[76];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x602 = x601 + x92 * poly_mix[77];
+  FpExt x603 = x602 + x92 * poly_mix[77];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x603 = x602 + x93 * poly_mix[78];
+  FpExt x604 = x603 + x93 * poly_mix[78];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x604 = x603 + x94 * poly_mix[79];
+  FpExt x605 = x604 + x94 * poly_mix[79];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x605 = x604 + x95 * poly_mix[80];
+  FpExt x606 = x605 + x95 * poly_mix[80];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x606 = x605 + x96 * poly_mix[81];
+  FpExt x607 = x606 + x96 * poly_mix[81];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x607 = x606 + x97 * poly_mix[82];
+  FpExt x608 = x607 + x97 * poly_mix[82];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x608 = x607 + x98 * poly_mix[83];
+  FpExt x609 = x608 + x98 * poly_mix[83];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x609 = x608 + x99 * poly_mix[84];
+  FpExt x610 = x609 + x99 * poly_mix[84];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x610 = x609 + x100 * poly_mix[85];
+  FpExt x611 = x610 + x100 * poly_mix[85];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x611 = x610 + x101 * poly_mix[86];
+  FpExt x612 = x611 + x101 * poly_mix[86];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x612 = x494 + x141 * x611 * poly_mix[291];
+  FpExt x613 = x494 + x141 * x612 * poly_mix[291];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :81:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x613 = arg0[292];
+  auto x614 = arg0[292];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :81:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x614 = arg4 + x613 * poly_mix[0];
+  FpExt x615 = arg4 + x614 * poly_mix[0];
   // loc(callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:20) at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :14:13) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :83:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x615 = x614 + x341 * poly_mix[1];
+  FpExt x616 = x615 + x339 * poly_mix[1];
   // loc(callsite(unknown at callsite( ControlResume ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :33:31) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :178:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x616 = arg0[293];
+  auto x617 = arg0[293];
   // loc(callsite(unknown at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :16:4) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :83:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x617 = x616 * x107;
+  auto x618 = x617 * x105;
   // loc(callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :16:14) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :83:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x618 = x617 - x340;
+  auto x619 = x618 - x338;
   // loc(callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :16:14) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :83:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x619 = x615 + x618 * poly_mix[2];
+  FpExt x620 = x616 + x619 * poly_mix[2];
   // loc(callsite(unknown at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :16:4) at callsite( ControlResume ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :33:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :178:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x620 = arg0[294];
+  auto x621 = arg0[294];
   // loc(callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :18:17) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :83:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x621 = x619 + x620 * poly_mix[3];
+  FpExt x622 = x620 + x621 * poly_mix[3];
   // loc(callsite(unknown at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :20:4) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :83:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x622 = x104 * x107;
+  auto x623 = x104 * x105;
   // loc(callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :20:17) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :83:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x623 = x621 + x622 * poly_mix[4];
+  FpExt x624 = x622 + x623 * poly_mix[4];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x624 = x110 - x25;
+  auto x625 = x110 - x25;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x625 = arg5 + x624 * poly_mix[4];
+  FpExt x626 = arg5 + x625 * poly_mix[4];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x626 = x625 + x384 * poly_mix[5];
+  FpExt x627 = x626 + x384 * poly_mix[5];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x627 = x626 + x386 * poly_mix[6];
+  FpExt x628 = x627 + x386 * poly_mix[6];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x628 = x627 + x388 * poly_mix[7];
+  FpExt x629 = x628 + x388 * poly_mix[7];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x629 = x628 + x390 * poly_mix[8];
+  FpExt x630 = x629 + x390 * poly_mix[8];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x630 = x629 + x398 * poly_mix[9];
+  FpExt x631 = x630 + x398 * poly_mix[9];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x631 = x630 + x400 * poly_mix[10];
+  FpExt x632 = x631 + x400 * poly_mix[10];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x632 = x631 + x41 * poly_mix[11];
+  FpExt x633 = x632 + x41 * poly_mix[11];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :74:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x633 = x632 + x41 * poly_mix[12];
+  FpExt x634 = x633 + x41 * poly_mix[12];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x634 = x113 - x24;
+  auto x635 = x113 - x24;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x635 = x633 + x634 * poly_mix[13];
+  FpExt x636 = x634 + x635 * poly_mix[13];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x636 = x635 + x406 * poly_mix[14];
+  FpExt x637 = x636 + x406 * poly_mix[14];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x637 = x636 + x408 * poly_mix[15];
+  FpExt x638 = x637 + x408 * poly_mix[15];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x638 = x637 + x410 * poly_mix[16];
+  FpExt x639 = x638 + x410 * poly_mix[16];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x639 = x638 + x412 * poly_mix[17];
+  FpExt x640 = x639 + x412 * poly_mix[17];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x640 = x639 + x421 * poly_mix[18];
+  FpExt x641 = x640 + x421 * poly_mix[18];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x641 = x640 + x423 * poly_mix[19];
+  FpExt x642 = x641 + x423 * poly_mix[19];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x642 = x641 + x41 * poly_mix[20];
+  FpExt x643 = x642 + x41 * poly_mix[20];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :74:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x643 = x642 + x41 * poly_mix[21];
+  FpExt x644 = x643 + x41 * poly_mix[21];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x644 = x117 - x23;
+  auto x645 = x117 - x23;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x645 = x643 + x644 * poly_mix[22];
+  FpExt x646 = x644 + x645 * poly_mix[22];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x646 = x645 + x429 * poly_mix[23];
+  FpExt x647 = x646 + x429 * poly_mix[23];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x647 = x646 + x431 * poly_mix[24];
+  FpExt x648 = x647 + x431 * poly_mix[24];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x648 = x647 + x433 * poly_mix[25];
+  FpExt x649 = x648 + x433 * poly_mix[25];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x649 = x648 + x435 * poly_mix[26];
+  FpExt x650 = x649 + x435 * poly_mix[26];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x650 = x649 + x437 * poly_mix[27];
+  FpExt x651 = x650 + x437 * poly_mix[27];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x651 = x650 + x439 * poly_mix[28];
+  FpExt x652 = x651 + x439 * poly_mix[28];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x652 = x651 + x41 * poly_mix[29];
+  FpExt x653 = x652 + x41 * poly_mix[29];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :74:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x653 = x652 + x41 * poly_mix[30];
+  FpExt x654 = x653 + x41 * poly_mix[30];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x654 = x118 - x22;
+  auto x655 = x118 - x22;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x655 = x653 + x654 * poly_mix[31];
+  FpExt x656 = x654 + x655 * poly_mix[31];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :113:10) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x656 = arg0[295];
+  auto x657 = arg0[295];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x657 = x655 + x656 * poly_mix[32];
+  FpExt x658 = x656 + x657 * poly_mix[32];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :113:10) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x658 = arg0[296];
+  auto x659 = arg0[296];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x659 = x657 + x658 * poly_mix[33];
+  FpExt x660 = x658 + x659 * poly_mix[33];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x660 = x659 + x445 * poly_mix[34];
+  FpExt x661 = x660 + x445 * poly_mix[34];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x661 = x660 + x447 * poly_mix[35];
+  FpExt x662 = x661 + x447 * poly_mix[35];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :112:18) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x662 = arg0[297];
+  auto x663 = arg0[297];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x663 = x661 + x662 * poly_mix[36];
+  FpExt x664 = x662 + x663 * poly_mix[36];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( DecodeInst ( zirgen/circuit/rv32im/v2/dsl/inst.zir :28:27) at callsite( MemStoreInput ( zirgen/circuit/rv32im/v2/dsl/inst_mem.zir :20:25) at callsite( Mem1 ( zirgen/circuit/rv32im/v2/dsl/inst_mem.zir :66:26) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :76:10) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  auto x664 = arg0[298];
+  auto x665 = arg0[298];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x665 = x663 + x664 * poly_mix[37];
+  FpExt x666 = x664 + x665 * poly_mix[37];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x666 = x665 + x41 * poly_mix[38];
+  FpExt x667 = x666 + x41 * poly_mix[38];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :74:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x667 = x666 + x41 * poly_mix[39];
+  FpExt x668 = x667 + x41 * poly_mix[39];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x668 = x142 - x21;
+  auto x669 = x142 - x21;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x669 = x667 + x668 * poly_mix[40];
+  FpExt x670 = x668 + x669 * poly_mix[40];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( DecodeInst ( zirgen/circuit/rv32im/v2/dsl/inst.zir :28:27) at callsite( MemStoreInput ( zirgen/circuit/rv32im/v2/dsl/inst_mem.zir :20:25) at callsite( Mem1 ( zirgen/circuit/rv32im/v2/dsl/inst_mem.zir :66:26) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :76:10) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  auto x670 = arg0[299];
+  auto x671 = arg0[299];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x671 = x669 + x670 * poly_mix[41];
+  FpExt x672 = x670 + x671 * poly_mix[41];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( DecodeInst ( zirgen/circuit/rv32im/v2/dsl/inst.zir :28:27) at callsite( MemStoreInput ( zirgen/circuit/rv32im/v2/dsl/inst_mem.zir :20:25) at callsite( Mem1 ( zirgen/circuit/rv32im/v2/dsl/inst_mem.zir :66:26) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :76:10) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  auto x672 = arg0[300];
+  auto x673 = arg0[300];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x673 = x671 + x672 * poly_mix[42];
+  FpExt x674 = x672 + x673 * poly_mix[42];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x674 = x673 + x240 * poly_mix[43];
+  FpExt x675 = x674 + x240 * poly_mix[43];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x675 = x674 + x243 * poly_mix[44];
+  FpExt x676 = x675 + x243 * poly_mix[44];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x676 = x675 + x249 * poly_mix[45];
+  FpExt x677 = x676 + x249 * poly_mix[45];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x677 = x676 + x251 * poly_mix[46];
+  FpExt x678 = x677 + x251 * poly_mix[46];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x678 = x677 + x41 * poly_mix[47];
+  FpExt x679 = x678 + x41 * poly_mix[47];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :74:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x679 = x678 + x41 * poly_mix[48];
+  FpExt x680 = x679 + x41 * poly_mix[48];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x680 = x47 - x20;
+  auto x681 = x47 - x20;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x681 = x679 + x680 * poly_mix[49];
+  FpExt x682 = x680 + x681 * poly_mix[49];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ReadReg ( zirgen/circuit/rv32im/v2/dsl/inst.zir :35:14) at callsite( MemLoadInput ( zirgen/circuit/rv32im/v2/dsl/inst_mem.zir :11:18) at callsite( Mem0 ( zirgen/circuit/rv32im/v2/dsl/inst_mem.zir :49:25) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :75:10) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  auto x682 = arg0[301];
+  auto x683 = arg0[301];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x683 = x681 + x682 * poly_mix[50];
+  FpExt x684 = x682 + x683 * poly_mix[50];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ReadReg ( zirgen/circuit/rv32im/v2/dsl/inst.zir :35:14) at callsite( MemLoadInput ( zirgen/circuit/rv32im/v2/dsl/inst_mem.zir :11:18) at callsite( Mem0 ( zirgen/circuit/rv32im/v2/dsl/inst_mem.zir :49:25) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :75:10) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  auto x684 = arg0[302];
+  auto x685 = arg0[302];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x685 = x683 + x684 * poly_mix[51];
+  FpExt x686 = x684 + x685 * poly_mix[51];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x686 = x685 + x257 * poly_mix[52];
+  FpExt x687 = x686 + x257 * poly_mix[52];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x687 = x686 + x260 * poly_mix[53];
+  FpExt x688 = x687 + x260 * poly_mix[53];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x688 = x687 + x266 * poly_mix[54];
+  FpExt x689 = x688 + x266 * poly_mix[54];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x689 = x688 + x268 * poly_mix[55];
+  FpExt x690 = x689 + x268 * poly_mix[55];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x690 = x689 + x41 * poly_mix[56];
+  FpExt x691 = x690 + x41 * poly_mix[56];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :74:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x691 = x690 + x41 * poly_mix[57];
+  FpExt x692 = x691 + x41 * poly_mix[57];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x692 = x53 - x19;
+  auto x693 = x53 - x19;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x693 = x691 + x692 * poly_mix[58];
+  FpExt x694 = x692 + x693 * poly_mix[58];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :113:10) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x694 = arg0[303];
+  auto x695 = arg0[303];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x695 = x693 + x694 * poly_mix[59];
+  FpExt x696 = x694 + x695 * poly_mix[59];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :113:10) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x696 = arg0[304];
+  auto x697 = arg0[304];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x697 = x695 + x696 * poly_mix[60];
+  FpExt x698 = x696 + x697 * poly_mix[60];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x698 = x697 + x275 * poly_mix[61];
+  FpExt x699 = x698 + x275 * poly_mix[61];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x699 = x698 + x277 * poly_mix[62];
+  FpExt x700 = x699 + x277 * poly_mix[62];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x700 = x699 + x283 * poly_mix[63];
+  FpExt x701 = x700 + x283 * poly_mix[63];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x701 = x700 + x285 * poly_mix[64];
+  FpExt x702 = x701 + x285 * poly_mix[64];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x702 = x701 + x41 * poly_mix[65];
+  FpExt x703 = x702 + x41 * poly_mix[65];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :74:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x703 = x702 + x41 * poly_mix[66];
+  FpExt x704 = x703 + x41 * poly_mix[66];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x704 = x62 - x18;
+  auto x705 = x62 - x18;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x705 = x703 + x704 * poly_mix[67];
+  FpExt x706 = x704 + x705 * poly_mix[67];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :113:10) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x706 = arg0[305];
+  auto x707 = arg0[305];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x707 = x705 + x706 * poly_mix[68];
+  FpExt x708 = x706 + x707 * poly_mix[68];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :113:10) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x708 = arg0[306];
+  auto x709 = arg0[306];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x709 = x707 + x708 * poly_mix[69];
+  FpExt x710 = x708 + x709 * poly_mix[69];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x710 = x709 + x292 * poly_mix[70];
+  FpExt x711 = x710 + x292 * poly_mix[70];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :89:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x711 = x710 + x294 * poly_mix[71];
+  FpExt x712 = x711 + x294 * poly_mix[71];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x712 = x112 - x143;
+  auto x713 = x112 - x143;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x713 = x711 + x712 * poly_mix[72];
+  FpExt x714 = x712 + x713 * poly_mix[72];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x714 = x111 - x144;
+  auto x715 = x111 - x144;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x715 = x713 + x714 * poly_mix[73];
+  FpExt x716 = x714 + x715 * poly_mix[73];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x716 = x115 - x145;
+  auto x717 = x115 - x145;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x717 = x715 + x716 * poly_mix[74];
+  FpExt x718 = x716 + x717 * poly_mix[74];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x718 = x114 - x146;
+  auto x719 = x114 - x146;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x719 = x717 + x718 * poly_mix[75];
+  FpExt x720 = x718 + x719 * poly_mix[75];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x720 = x147 - x148;
+  auto x721 = x147 - x148;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x721 = x719 + x720 * poly_mix[76];
+  FpExt x722 = x720 + x721 * poly_mix[76];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x722 = x149 - x150;
+  auto x723 = x149 - x150;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x723 = x721 + x722 * poly_mix[77];
+  FpExt x724 = x722 + x723 * poly_mix[77];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x724 = x119 - x151;
+  auto x725 = x119 - x151;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x725 = x723 + x724 * poly_mix[78];
+  FpExt x726 = x724 + x725 * poly_mix[78];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x726 = x120 - x152;
+  auto x727 = x120 - x152;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x727 = x725 + x726 * poly_mix[79];
+  FpExt x728 = x726 + x727 * poly_mix[79];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x728 = x43 - x153;
+  auto x729 = x43 - x153;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x729 = x727 + x728 * poly_mix[80];
+  FpExt x730 = x728 + x729 * poly_mix[80];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x730 = x45 - x154;
+  auto x731 = x45 - x154;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x731 = x729 + x730 * poly_mix[81];
+  FpExt x732 = x730 + x731 * poly_mix[81];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x732 = x49 - x155;
+  auto x733 = x49 - x155;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x733 = x731 + x732 * poly_mix[82];
+  FpExt x734 = x732 + x733 * poly_mix[82];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x734 = x51 - x156;
+  auto x735 = x51 - x156;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x735 = x733 + x734 * poly_mix[83];
+  FpExt x736 = x734 + x735 * poly_mix[83];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x736 = x58 - x157;
+  auto x737 = x58 - x157;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x737 = x735 + x736 * poly_mix[84];
+  FpExt x738 = x736 + x737 * poly_mix[84];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x738 = x60 - x158;
+  auto x739 = x60 - x158;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x739 = x737 + x738 * poly_mix[85];
+  FpExt x740 = x738 + x739 * poly_mix[85];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x740 = x66 - x159;
+  auto x741 = x66 - x159;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x741 = x739 + x740 * poly_mix[86];
+  FpExt x742 = x740 + x741 * poly_mix[86];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x742 = x68 - x160;
+  auto x743 = x68 - x160;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :88:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x743 = x741 + x742 * poly_mix[87];
+  FpExt x744 = x742 + x743 * poly_mix[87];
   // loc(callsite(unknown at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :91:10) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x744 = x38 - x161;
+  auto x745 = x38 - x161;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :92:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x745 = x41 - x162;
+  auto x746 = x41 - x162;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :92:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x746 = arg4 + x745 * poly_mix[0];
+  FpExt x747 = arg4 + x746 * poly_mix[0];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :93:26) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x747 = x41 - x163;
+  auto x748 = x41 - x163;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :93:26) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x748 = x746 + x747 * poly_mix[1];
+  FpExt x749 = x747 + x748 * poly_mix[1];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :94:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x749 = x41 - x164;
+  auto x750 = x41 - x164;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :94:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x750 = x748 + x749 * poly_mix[2];
+  FpExt x751 = x749 + x750 * poly_mix[2];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :95:26) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x751 = x41 - x165;
+  auto x752 = x41 - x165;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :95:26) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x752 = x750 + x751 * poly_mix[3];
+  FpExt x753 = x751 + x752 * poly_mix[3];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :91:6) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x753 = x743 + x744 * x752 * poly_mix[88];
+  FpExt x754 = x744 + x745 * x753 * poly_mix[88];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x754 = x623 + x104 * x753 * poly_mix[5];
+  FpExt x755 = x624 + x104 * x754 * poly_mix[5];
   // loc(callsite(unknown at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :56:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  auto x755 = arg0[254];
+  auto x756 = arg0[254];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :107:18) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x756 = x755 - x105;
+  auto x757 = x756 - x103;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :107:18) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x757 = arg4 + x756 * poly_mix[0];
+  FpExt x758 = arg4 + x757 * poly_mix[0];
   // loc(callsite(unknown at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :108:7) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x758 = x105 - x17;
+  auto x759 = x103 - x17;
   // loc(callsite(unknown at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :108:33) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x759 = x105 - x33;
+  auto x760 = x103 - x33;
   // loc(callsite(unknown at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :108:28) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x760 = x758 * x759;
+  auto x761 = x759 * x760;
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :108:57) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x761 = x757 + x760 * poly_mix[1];
+  FpExt x762 = x758 + x761 * poly_mix[1];
   // loc(callsite(unknown at callsite( Div ( <preamble> :19:5) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :111:54) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x762 = x758 * x16;
+  auto x763 = x759 * x16;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :111:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x763 = x762 - x161;
+  auto x764 = x763 - x161;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :111:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x764 = x761 + x763 * poly_mix[2];
+  FpExt x765 = x762 + x764 * poly_mix[2];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :97:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :113:17) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x765 = x764 + x376 * poly_mix[3];
+  FpExt x766 = x765 + x376 * poly_mix[3];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :97:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :113:17) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x766 = x765 + x378 * poly_mix[4];
+  FpExt x767 = x766 + x378 * poly_mix[4];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :97:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :113:17) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x767 = x766 + x41 * poly_mix[5];
+  FpExt x768 = x767 + x41 * poly_mix[5];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :74:16) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :97:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :113:17) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x768 = x767 + x41 * poly_mix[6];
+  FpExt x769 = x768 + x41 * poly_mix[6];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlResume ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :36:22) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :178:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x769 = arg0[307];
+  auto x770 = arg0[307];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :97:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :113:17) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x770 = x768 + x769 * poly_mix[7];
+  FpExt x771 = x769 + x770 * poly_mix[7];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :98:13) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :113:17) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x771 = x770 + x388 * poly_mix[8];
+  FpExt x772 = x771 + x388 * poly_mix[8];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :98:13) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :113:17) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x772 = x771 + x390 * poly_mix[9];
+  FpExt x773 = x772 + x390 * poly_mix[9];
   // loc(callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :99:22) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :113:17) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x773 = x112 - x370;
+  auto x774 = x112 - x370;
   // loc(callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :99:22) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :113:17) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x774 = x772 + x773 * poly_mix[10];
+  FpExt x775 = x773 + x774 * poly_mix[10];
   // loc(callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :100:23) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :113:17) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x775 = x111 - x349;
+  auto x776 = x111 - x349;
   // loc(callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :100:23) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :113:17) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x776 = x774 + x775 * poly_mix[11];
+  FpExt x777 = x775 + x776 * poly_mix[11];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :97:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :114:17) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x777 = x776 + x398 * poly_mix[12];
+  FpExt x778 = x777 + x398 * poly_mix[12];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :97:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :114:17) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x778 = x777 + x400 * poly_mix[13];
+  FpExt x779 = x778 + x400 * poly_mix[13];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :97:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :114:17) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x779 = x778 + x41 * poly_mix[14];
+  FpExt x780 = x779 + x41 * poly_mix[14];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :74:16) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :97:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :114:17) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x780 = x779 + x41 * poly_mix[15];
+  FpExt x781 = x780 + x41 * poly_mix[15];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( ControlResume ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :37:24) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :178:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x781 = arg0[308];
+  auto x782 = arg0[308];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :97:18) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :114:17) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x782 = x780 + x781 * poly_mix[16];
+  FpExt x783 = x781 + x782 * poly_mix[16];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :98:13) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :114:17) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x783 = x782 + x410 * poly_mix[17];
+  FpExt x784 = x783 + x410 * poly_mix[17];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :98:13) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :114:17) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x784 = x783 + x412 * poly_mix[18];
+  FpExt x785 = x784 + x412 * poly_mix[18];
   // loc(callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :99:22) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :114:17) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x785 = x115 - x335;
+  auto x786 = x115 - x335;
   // loc(callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :99:22) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :114:17) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x786 = x784 + x785 * poly_mix[19];
+  FpExt x787 = x785 + x786 * poly_mix[19];
   // loc(callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :100:23) at callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :114:17) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x787 = x786 + x114 * poly_mix[20];
+  FpExt x788 = x787 + x114 * poly_mix[20];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x788 = x787 + x135 * poly_mix[21];
+  FpExt x789 = x788 + x135 * poly_mix[21];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x789 = x788 + x136 * poly_mix[22];
+  FpExt x790 = x789 + x136 * poly_mix[22];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x790 = x789 + x137 * poly_mix[23];
+  FpExt x791 = x790 + x137 * poly_mix[23];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x791 = x790 + x138 * poly_mix[24];
+  FpExt x792 = x791 + x138 * poly_mix[24];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x792 = x791 + x121 * poly_mix[25];
+  FpExt x793 = x792 + x121 * poly_mix[25];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x793 = x792 + x122 * poly_mix[26];
+  FpExt x794 = x793 + x122 * poly_mix[26];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x794 = x793 + x123 * poly_mix[27];
+  FpExt x795 = x794 + x123 * poly_mix[27];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x795 = x794 + x124 * poly_mix[28];
+  FpExt x796 = x795 + x124 * poly_mix[28];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x796 = x795 + x125 * poly_mix[29];
+  FpExt x797 = x796 + x125 * poly_mix[29];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x797 = x796 + x126 * poly_mix[30];
+  FpExt x798 = x797 + x126 * poly_mix[30];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x798 = x797 + x127 * poly_mix[31];
+  FpExt x799 = x798 + x127 * poly_mix[31];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x799 = x798 + x128 * poly_mix[32];
+  FpExt x800 = x799 + x128 * poly_mix[32];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x800 = x799 + x139 * poly_mix[33];
+  FpExt x801 = x800 + x139 * poly_mix[33];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x801 = x800 + x140 * poly_mix[34];
+  FpExt x802 = x801 + x140 * poly_mix[34];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x802 = x801 + x129 * poly_mix[35];
+  FpExt x803 = x802 + x129 * poly_mix[35];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x803 = x802 + x130 * poly_mix[36];
+  FpExt x804 = x803 + x130 * poly_mix[36];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x804 = x803 + x56 * poly_mix[37];
+  FpExt x805 = x804 + x56 * poly_mix[37];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x805 = x804 + x64 * poly_mix[38];
+  FpExt x806 = x805 + x64 * poly_mix[38];
   // loc(callsite( ControlSuspend ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :84:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :181:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x806 = x754 + x340 * x805 * poly_mix[97];
+  FpExt x807 = x755 + x338 * x806 * poly_mix[97];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x807 = x806 + x70 * poly_mix[136];
+  FpExt x808 = x807 + x70 * poly_mix[136];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x808 = x807 + x71 * poly_mix[137];
+  FpExt x809 = x808 + x71 * poly_mix[137];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x809 = x808 + x72 * poly_mix[138];
+  FpExt x810 = x809 + x72 * poly_mix[138];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x810 = x809 + x73 * poly_mix[139];
+  FpExt x811 = x810 + x73 * poly_mix[139];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x811 = x810 + x74 * poly_mix[140];
+  FpExt x812 = x811 + x74 * poly_mix[140];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x812 = x811 + x75 * poly_mix[141];
+  FpExt x813 = x812 + x75 * poly_mix[141];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x813 = x812 + x76 * poly_mix[142];
+  FpExt x814 = x813 + x76 * poly_mix[142];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x814 = x813 + x77 * poly_mix[143];
+  FpExt x815 = x814 + x77 * poly_mix[143];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x815 = x814 + x78 * poly_mix[144];
+  FpExt x816 = x815 + x78 * poly_mix[144];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x816 = x815 + x79 * poly_mix[145];
+  FpExt x817 = x816 + x79 * poly_mix[145];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x817 = x816 + x80 * poly_mix[146];
+  FpExt x818 = x817 + x80 * poly_mix[146];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x818 = x817 + x81 * poly_mix[147];
+  FpExt x819 = x818 + x81 * poly_mix[147];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x819 = x818 + x82 * poly_mix[148];
+  FpExt x820 = x819 + x82 * poly_mix[148];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x820 = x819 + x83 * poly_mix[149];
+  FpExt x821 = x820 + x83 * poly_mix[149];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x821 = x820 + x84 * poly_mix[150];
+  FpExt x822 = x821 + x84 * poly_mix[150];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x822 = x821 + x85 * poly_mix[151];
+  FpExt x823 = x822 + x85 * poly_mix[151];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x823 = x822 + x86 * poly_mix[152];
+  FpExt x824 = x823 + x86 * poly_mix[152];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x824 = x823 + x87 * poly_mix[153];
+  FpExt x825 = x824 + x87 * poly_mix[153];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x825 = x824 + x88 * poly_mix[154];
+  FpExt x826 = x825 + x88 * poly_mix[154];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x826 = x825 + x89 * poly_mix[155];
+  FpExt x827 = x826 + x89 * poly_mix[155];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x827 = x826 + x90 * poly_mix[156];
+  FpExt x828 = x827 + x90 * poly_mix[156];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x828 = x827 + x91 * poly_mix[157];
+  FpExt x829 = x828 + x91 * poly_mix[157];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x829 = x828 + x92 * poly_mix[158];
+  FpExt x830 = x829 + x92 * poly_mix[158];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x830 = x829 + x93 * poly_mix[159];
+  FpExt x831 = x830 + x93 * poly_mix[159];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x831 = x830 + x94 * poly_mix[160];
+  FpExt x832 = x831 + x94 * poly_mix[160];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x832 = x831 + x95 * poly_mix[161];
+  FpExt x833 = x832 + x95 * poly_mix[161];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x833 = x832 + x96 * poly_mix[162];
+  FpExt x834 = x833 + x96 * poly_mix[162];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x834 = x833 + x97 * poly_mix[163];
+  FpExt x835 = x834 + x97 * poly_mix[163];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x835 = x834 + x98 * poly_mix[164];
+  FpExt x836 = x835 + x98 * poly_mix[164];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x836 = x835 + x99 * poly_mix[165];
+  FpExt x837 = x836 + x99 * poly_mix[165];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x837 = x836 + x100 * poly_mix[166];
+  FpExt x838 = x837 + x100 * poly_mix[166];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x838 = x837 + x101 * poly_mix[167];
+  FpExt x839 = x838 + x101 * poly_mix[167];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x839 = x612 + x166 * x838 * poly_mix[338];
+  FpExt x840 = x613 + x166 * x839 * poly_mix[338];
   // loc(callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :121:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x840 = arg0[309];
+  auto x841 = arg0[309];
   // loc(callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :121:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x841 = arg4 + x840 * poly_mix[0];
+  FpExt x842 = arg4 + x841 * poly_mix[0];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x842 = x841 + x376 * poly_mix[1];
+  FpExt x843 = x842 + x376 * poly_mix[1];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x843 = x842 + x378 * poly_mix[2];
+  FpExt x844 = x843 + x378 * poly_mix[2];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x844 = x843 + x41 * poly_mix[3];
+  FpExt x845 = x844 + x41 * poly_mix[3];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :74:16) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x845 = x844 + x41 * poly_mix[4];
+  FpExt x846 = x845 + x41 * poly_mix[4];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :112:18) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x846 = arg0[310];
+  auto x847 = arg0[310];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x847 = x845 + x846 * poly_mix[5];
+  FpExt x848 = x846 + x847 * poly_mix[5];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :121:13) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x848 = x847 + x388 * poly_mix[6];
+  FpExt x849 = x848 + x388 * poly_mix[6];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :121:13) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x849 = x848 + x390 * poly_mix[7];
+  FpExt x850 = x849 + x390 * poly_mix[7];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x850 = x849 + x398 * poly_mix[8];
+  FpExt x851 = x850 + x398 * poly_mix[8];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x851 = x850 + x400 * poly_mix[9];
+  FpExt x852 = x851 + x400 * poly_mix[9];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x852 = x851 + x41 * poly_mix[10];
+  FpExt x853 = x852 + x41 * poly_mix[10];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :74:16) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x853 = x852 + x41 * poly_mix[11];
+  FpExt x854 = x853 + x41 * poly_mix[11];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :112:18) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x854 = arg0[311];
+  auto x855 = arg0[311];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x855 = x853 + x854 * poly_mix[12];
+  FpExt x856 = x854 + x855 * poly_mix[12];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :121:13) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x856 = x855 + x410 * poly_mix[13];
+  FpExt x857 = x856 + x410 * poly_mix[13];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :121:13) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x857 = x856 + x412 * poly_mix[14];
+  FpExt x858 = x857 + x412 * poly_mix[14];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x858 = x857 + x421 * poly_mix[15];
+  FpExt x859 = x858 + x421 * poly_mix[15];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x859 = x858 + x423 * poly_mix[16];
+  FpExt x860 = x859 + x423 * poly_mix[16];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x860 = x859 + x41 * poly_mix[17];
+  FpExt x861 = x860 + x41 * poly_mix[17];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :74:16) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x861 = x860 + x41 * poly_mix[18];
+  FpExt x862 = x861 + x41 * poly_mix[18];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :112:18) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x862 = arg0[312];
+  auto x863 = arg0[312];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x863 = x861 + x862 * poly_mix[19];
+  FpExt x864 = x862 + x863 * poly_mix[19];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :121:13) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x864 = x863 + x433 * poly_mix[20];
+  FpExt x865 = x864 + x433 * poly_mix[20];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :121:13) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x865 = x864 + x435 * poly_mix[21];
+  FpExt x866 = x865 + x435 * poly_mix[21];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x866 = x865 + x437 * poly_mix[22];
+  FpExt x867 = x866 + x437 * poly_mix[22];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x867 = x866 + x439 * poly_mix[23];
+  FpExt x868 = x867 + x439 * poly_mix[23];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x868 = x867 + x41 * poly_mix[24];
+  FpExt x869 = x868 + x41 * poly_mix[24];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :74:16) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x869 = x868 + x41 * poly_mix[25];
+  FpExt x870 = x869 + x41 * poly_mix[25];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :112:18) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x870 = arg0[313];
+  auto x871 = arg0[313];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x871 = x869 + x870 * poly_mix[26];
+  FpExt x872 = x870 + x871 * poly_mix[26];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :121:13) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x872 = x871 + x445 * poly_mix[27];
+  FpExt x873 = x872 + x445 * poly_mix[27];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :121:13) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x873 = x872 + x447 * poly_mix[28];
+  FpExt x874 = x873 + x447 * poly_mix[28];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x874 = x873 + x662 * poly_mix[29];
+  FpExt x875 = x874 + x663 * poly_mix[29];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x875 = x874 + x664 * poly_mix[30];
+  FpExt x876 = x875 + x665 * poly_mix[30];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x876 = x875 + x41 * poly_mix[31];
+  FpExt x877 = x876 + x41 * poly_mix[31];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :74:16) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x877 = x876 + x41 * poly_mix[32];
+  FpExt x878 = x877 + x41 * poly_mix[32];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :112:18) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x878 = arg0[314];
+  auto x879 = arg0[314];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x879 = x877 + x878 * poly_mix[33];
+  FpExt x880 = x878 + x879 * poly_mix[33];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :121:13) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x880 = x879 + x240 * poly_mix[34];
+  FpExt x881 = x880 + x240 * poly_mix[34];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :121:13) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x881 = x880 + x243 * poly_mix[35];
+  FpExt x882 = x881 + x243 * poly_mix[35];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x882 = x881 + x249 * poly_mix[36];
+  FpExt x883 = x882 + x249 * poly_mix[36];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x883 = x882 + x251 * poly_mix[37];
+  FpExt x884 = x883 + x251 * poly_mix[37];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x884 = x883 + x41 * poly_mix[38];
+  FpExt x885 = x884 + x41 * poly_mix[38];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :74:16) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x885 = x884 + x41 * poly_mix[39];
+  FpExt x886 = x885 + x41 * poly_mix[39];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :112:18) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x886 = arg0[315];
+  auto x887 = arg0[315];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x887 = x885 + x886 * poly_mix[40];
+  FpExt x888 = x886 + x887 * poly_mix[40];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :121:13) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x888 = x887 + x257 * poly_mix[41];
+  FpExt x889 = x888 + x257 * poly_mix[41];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :121:13) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x889 = x888 + x260 * poly_mix[42];
+  FpExt x890 = x889 + x260 * poly_mix[42];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x890 = x889 + x266 * poly_mix[43];
+  FpExt x891 = x890 + x266 * poly_mix[43];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x891 = x890 + x268 * poly_mix[44];
+  FpExt x892 = x891 + x268 * poly_mix[44];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x892 = x891 + x41 * poly_mix[45];
+  FpExt x893 = x892 + x41 * poly_mix[45];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :74:16) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x893 = x892 + x41 * poly_mix[46];
+  FpExt x894 = x893 + x41 * poly_mix[46];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :112:18) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x894 = arg0[316];
+  auto x895 = arg0[316];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x895 = x893 + x894 * poly_mix[47];
+  FpExt x896 = x894 + x895 * poly_mix[47];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :121:13) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x896 = x895 + x275 * poly_mix[48];
+  FpExt x897 = x896 + x275 * poly_mix[48];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :121:13) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x897 = x896 + x277 * poly_mix[49];
+  FpExt x898 = x897 + x277 * poly_mix[49];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x898 = x897 + x283 * poly_mix[50];
+  FpExt x899 = x898 + x283 * poly_mix[50];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x899 = x898 + x285 * poly_mix[51];
+  FpExt x900 = x899 + x285 * poly_mix[51];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x900 = x899 + x41 * poly_mix[52];
+  FpExt x901 = x900 + x41 * poly_mix[52];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :74:16) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x901 = x900 + x41 * poly_mix[53];
+  FpExt x902 = x901 + x41 * poly_mix[53];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryPageIn ( zirgen/circuit/rv32im/v2/dsl/mem.zir :112:18) at callsite( ControlLoadRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :23:25) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :177:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x902 = arg0[317];
+  auto x903 = arg0[317];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :120:18) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x903 = x901 + x902 * poly_mix[54];
+  FpExt x904 = x902 + x903 * poly_mix[54];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :121:13) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x904 = x903 + x292 * poly_mix[55];
+  FpExt x905 = x904 + x292 * poly_mix[55];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryPageOut ( zirgen/circuit/rv32im/v2/dsl/mem.zir :121:13) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :124:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x905 = x904 + x294 * poly_mix[56];
+  FpExt x906 = x905 + x294 * poly_mix[56];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x906 = x167 - x168;
+  auto x907 = x167 - x168;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x907 = x905 + x906 * poly_mix[57];
+  FpExt x908 = x906 + x907 * poly_mix[57];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x908 = x169 - x170;
+  auto x909 = x169 - x170;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x909 = x907 + x908 * poly_mix[58];
+  FpExt x910 = x908 + x909 * poly_mix[58];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x910 = x171 - x172;
+  auto x911 = x171 - x172;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x911 = x909 + x910 * poly_mix[59];
+  FpExt x912 = x910 + x911 * poly_mix[59];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x912 = x173 - x174;
+  auto x913 = x173 - x174;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x913 = x911 + x912 * poly_mix[60];
+  FpExt x914 = x912 + x913 * poly_mix[60];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x914 = x175 - x176;
+  auto x915 = x175 - x176;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x915 = x913 + x914 * poly_mix[61];
+  FpExt x916 = x914 + x915 * poly_mix[61];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x916 = x177 - x178;
+  auto x917 = x177 - x178;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x917 = x915 + x916 * poly_mix[62];
+  FpExt x918 = x916 + x917 * poly_mix[62];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x918 = x179 - x180;
+  auto x919 = x179 - x180;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x919 = x917 + x918 * poly_mix[63];
+  FpExt x920 = x918 + x919 * poly_mix[63];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x920 = x181 - x182;
+  auto x921 = x181 - x182;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x921 = x919 + x920 * poly_mix[64];
+  FpExt x922 = x920 + x921 * poly_mix[64];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x922 = x183 - x184;
+  auto x923 = x183 - x184;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x923 = x921 + x922 * poly_mix[65];
+  FpExt x924 = x922 + x923 * poly_mix[65];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x924 = x185 - x186;
+  auto x925 = x185 - x186;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x925 = x923 + x924 * poly_mix[66];
+  FpExt x926 = x924 + x925 * poly_mix[66];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x926 = x187 - x188;
+  auto x927 = x187 - x188;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x927 = x925 + x926 * poly_mix[67];
+  FpExt x928 = x926 + x927 * poly_mix[67];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x928 = x189 - x190;
+  auto x929 = x189 - x190;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x929 = x927 + x928 * poly_mix[68];
+  FpExt x930 = x928 + x929 * poly_mix[68];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x930 = x191 - x192;
+  auto x931 = x191 - x192;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x931 = x929 + x930 * poly_mix[69];
+  FpExt x932 = x930 + x931 * poly_mix[69];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x932 = x193 - x194;
+  auto x933 = x193 - x194;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x933 = x931 + x932 * poly_mix[70];
+  FpExt x934 = x932 + x933 * poly_mix[70];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x934 = x195 - x196;
+  auto x935 = x195 - x196;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :8:16) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x935 = x933 + x934 * poly_mix[71];
+  FpExt x936 = x934 + x935 * poly_mix[71];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x936 = x197 - x198;
+  auto x937 = x197 - x198;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( DigestReg ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :9:17) at callsite( ControlStoreRoot ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :122:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :182:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x937 = x935 + x936 * poly_mix[72];
+  FpExt x938 = x936 + x937 * poly_mix[72];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x938 = x937 + x70 * poly_mix[73];
+  FpExt x939 = x938 + x70 * poly_mix[73];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x939 = x938 + x71 * poly_mix[74];
+  FpExt x940 = x939 + x71 * poly_mix[74];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x940 = x939 + x72 * poly_mix[75];
+  FpExt x941 = x940 + x72 * poly_mix[75];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x941 = x940 + x73 * poly_mix[76];
+  FpExt x942 = x941 + x73 * poly_mix[76];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x942 = x941 + x74 * poly_mix[77];
+  FpExt x943 = x942 + x74 * poly_mix[77];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x943 = x942 + x75 * poly_mix[78];
+  FpExt x944 = x943 + x75 * poly_mix[78];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x944 = x943 + x76 * poly_mix[79];
+  FpExt x945 = x944 + x76 * poly_mix[79];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x945 = x944 + x77 * poly_mix[80];
+  FpExt x946 = x945 + x77 * poly_mix[80];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x946 = x945 + x78 * poly_mix[81];
+  FpExt x947 = x946 + x78 * poly_mix[81];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x947 = x946 + x79 * poly_mix[82];
+  FpExt x948 = x947 + x79 * poly_mix[82];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x948 = x947 + x80 * poly_mix[83];
+  FpExt x949 = x948 + x80 * poly_mix[83];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x949 = x948 + x81 * poly_mix[84];
+  FpExt x950 = x949 + x81 * poly_mix[84];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x950 = x949 + x82 * poly_mix[85];
+  FpExt x951 = x950 + x82 * poly_mix[85];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x951 = x950 + x83 * poly_mix[86];
+  FpExt x952 = x951 + x83 * poly_mix[86];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x952 = x951 + x84 * poly_mix[87];
+  FpExt x953 = x952 + x84 * poly_mix[87];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x953 = x952 + x85 * poly_mix[88];
+  FpExt x954 = x953 + x85 * poly_mix[88];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x954 = x953 + x86 * poly_mix[89];
+  FpExt x955 = x954 + x86 * poly_mix[89];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x955 = x954 + x87 * poly_mix[90];
+  FpExt x956 = x955 + x87 * poly_mix[90];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x956 = x955 + x88 * poly_mix[91];
+  FpExt x957 = x956 + x88 * poly_mix[91];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x957 = x956 + x89 * poly_mix[92];
+  FpExt x958 = x957 + x89 * poly_mix[92];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x958 = x957 + x90 * poly_mix[93];
+  FpExt x959 = x958 + x90 * poly_mix[93];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x959 = x958 + x91 * poly_mix[94];
+  FpExt x960 = x959 + x91 * poly_mix[94];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x960 = x959 + x92 * poly_mix[95];
+  FpExt x961 = x960 + x92 * poly_mix[95];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x961 = x960 + x93 * poly_mix[96];
+  FpExt x962 = x961 + x93 * poly_mix[96];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x962 = x961 + x94 * poly_mix[97];
+  FpExt x963 = x962 + x94 * poly_mix[97];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x963 = x962 + x95 * poly_mix[98];
+  FpExt x964 = x963 + x95 * poly_mix[98];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x964 = x963 + x96 * poly_mix[99];
+  FpExt x965 = x964 + x96 * poly_mix[99];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x965 = x964 + x97 * poly_mix[100];
+  FpExt x966 = x965 + x97 * poly_mix[100];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x966 = x965 + x98 * poly_mix[101];
+  FpExt x967 = x966 + x98 * poly_mix[101];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x967 = x966 + x99 * poly_mix[102];
+  FpExt x968 = x967 + x99 * poly_mix[102];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x968 = x967 + x100 * poly_mix[103];
+  FpExt x969 = x968 + x100 * poly_mix[103];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x969 = x968 + x101 * poly_mix[104];
+  FpExt x970 = x969 + x101 * poly_mix[104];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x970 = x839 + x199 * x969 * poly_mix[361];
+  FpExt x971 = x840 + x199 * x970 * poly_mix[361];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :131:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x971 = arg0[318];
+  auto x972 = arg0[318];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :131:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x972 = arg4 + x971 * poly_mix[0];
+  FpExt x973 = arg4 + x972 * poly_mix[0];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :132:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x973 = x370 - x107;
+  auto x974 = x370 - x105;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :132:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x974 = x972 + x973 * poly_mix[1];
+  FpExt x975 = x973 + x974 * poly_mix[1];
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :133:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x975 = x335 - x108;
+  auto x976 = x335 - x107;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :133:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x976 = x974 + x975 * poly_mix[2];
+  FpExt x977 = x975 + x976 * poly_mix[2];
   // loc(callsite(unknown at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :138:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x977 = x107 + x38;
+  auto x978 = x105 + x38;
   // loc(callsite(unknown at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :138:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x978 = x107 + x36;
+  auto x979 = x105 + x36;
   // loc(callsite(unknown at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :138:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x979 = x107 + x15;
+  auto x980 = x105 + x15;
   // loc(callsite(unknown at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :138:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x980 = x107 + x33;
+  auto x981 = x105 + x33;
   // loc(callsite(unknown at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :138:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x981 = x107 + x14;
+  auto x982 = x105 + x14;
   // loc(callsite(unknown at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :138:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x982 = x107 + x13;
+  auto x983 = x105 + x13;
   // loc(callsite(unknown at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :138:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x983 = x107 + x12;
+  auto x984 = x105 + x12;
   // loc(callsite(unknown at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :138:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x984 = x107 + x11;
+  auto x985 = x105 + x11;
   // loc(callsite(unknown at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :138:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x985 = x107 + x10;
+  auto x986 = x105 + x10;
   // loc(callsite(unknown at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :138:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x986 = x107 + x9;
+  auto x987 = x105 + x9;
   // loc(callsite(unknown at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :138:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x987 = x107 + x8;
+  auto x988 = x105 + x8;
   // loc(callsite(unknown at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :138:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x988 = x107 + x7;
+  auto x989 = x105 + x7;
   // loc(callsite(unknown at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :138:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x989 = x107 + x6;
+  auto x990 = x105 + x6;
   // loc(callsite(unknown at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :138:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x990 = x107 + x5;
+  auto x991 = x105 + x5;
   // loc(callsite(unknown at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :138:15) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x991 = x107 + x4;
+  auto x992 = x105 + x4;
   // loc(callsite(unknown at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :142:14) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x992 = x107 + x3;
+  auto x993 = x105 + x3;
   // loc(callsite(unknown at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :142:14) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  arg0[689] = x992;
+  arg0[688] = x993;
   // loc(callsite(unknown at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :143:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x993 = x992 - x26;
+  auto x994 = x993 - x26;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x994 = x106 - x107;
+  auto x995 = x106 - x105;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x995 = arg4 + x994 * poly_mix[0];
+  FpExt x996 = arg4 + x995 * poly_mix[0];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x996 = x109 - x977;
+  auto x997 = x109 - x978;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x997 = x995 + x996 * poly_mix[1];
+  FpExt x998 = x996 + x997 * poly_mix[1];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x998 = x116 - x978;
+  auto x999 = x116 - x979;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x999 = x997 + x998 * poly_mix[2];
+  FpExt x1000 = x998 + x999 * poly_mix[2];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1000 = x134 - x979;
+  auto x1001 = x134 - x980;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1001 = x999 + x1000 * poly_mix[3];
+  FpExt x1002 = x1000 + x1001 * poly_mix[3];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1002 = x200 - x980;
+  auto x1003 = x200 - x981;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1003 = x1001 + x1002 * poly_mix[4];
+  FpExt x1004 = x1002 + x1003 * poly_mix[4];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1004 = x201 - x981;
+  auto x1005 = x201 - x982;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1005 = x1003 + x1004 * poly_mix[5];
+  FpExt x1006 = x1004 + x1005 * poly_mix[5];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1006 = x202 - x982;
+  auto x1007 = x202 - x983;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1007 = x1005 + x1006 * poly_mix[6];
+  FpExt x1008 = x1006 + x1007 * poly_mix[6];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1008 = x203 - x983;
+  auto x1009 = x203 - x984;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1009 = x1007 + x1008 * poly_mix[7];
+  FpExt x1010 = x1008 + x1009 * poly_mix[7];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1010 = x204 - x984;
+  auto x1011 = x204 - x985;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1011 = x1009 + x1010 * poly_mix[8];
+  FpExt x1012 = x1010 + x1011 * poly_mix[8];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1012 = x205 - x985;
+  auto x1013 = x205 - x986;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1013 = x1011 + x1012 * poly_mix[9];
+  FpExt x1014 = x1012 + x1013 * poly_mix[9];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1014 = x206 - x986;
+  auto x1015 = x206 - x987;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1015 = x1013 + x1014 * poly_mix[10];
+  FpExt x1016 = x1014 + x1015 * poly_mix[10];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1016 = x207 - x987;
+  auto x1017 = x207 - x988;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1017 = x1015 + x1016 * poly_mix[11];
+  FpExt x1018 = x1016 + x1017 * poly_mix[11];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1018 = x208 - x988;
+  auto x1019 = x208 - x989;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1019 = x1017 + x1018 * poly_mix[12];
+  FpExt x1020 = x1018 + x1019 * poly_mix[12];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1020 = x209 - x989;
+  auto x1021 = x209 - x990;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1021 = x1019 + x1020 * poly_mix[13];
+  FpExt x1022 = x1020 + x1021 * poly_mix[13];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1022 = x210 - x990;
+  auto x1023 = x210 - x991;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1023 = x1021 + x1022 * poly_mix[14];
+  FpExt x1024 = x1022 + x1023 * poly_mix[14];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1024 = x211 - x991;
+  auto x1025 = x211 - x992;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :140:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1025 = x1023 + x1024 * poly_mix[15];
+  FpExt x1026 = x1024 + x1025 * poly_mix[15];
   // loc(callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:20) at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :14:13) at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :143:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x1026 = x1025 + x338 * poly_mix[16];
+  FpExt x1027 = x1026 + x553 * poly_mix[16];
   // loc(callsite(unknown at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :16:4) at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :143:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x1027 = x993 * x104;
+  auto x1028 = x994 * x104;
   // loc(callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :16:14) at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :143:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x1028 = x1027 - x300;
+  auto x1029 = x1028 - x300;
   // loc(callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :16:14) at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :143:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x1029 = x1026 + x1028 * poly_mix[17];
+  FpExt x1030 = x1027 + x1029 * poly_mix[17];
   // loc(callsite(unknown at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :18:4) at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :143:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x1030 = x105 * x993;
+  auto x1031 = x103 * x994;
   // loc(callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :18:17) at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :143:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x1031 = x1029 + x1030 * poly_mix[18];
+  FpExt x1032 = x1030 + x1031 * poly_mix[18];
   // loc(callsite(unknown at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :20:4) at callsite( ControlResume ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :33:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :178:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x1032 = arg0[319];
+  auto x1033 = arg0[319];
   // loc(callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :20:17) at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :143:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x1033 = x1031 + x1032 * poly_mix[19];
+  FpExt x1034 = x1032 + x1033 * poly_mix[19];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1034 = x1033 + x86 * poly_mix[20];
+  FpExt x1035 = x1034 + x86 * poly_mix[20];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1035 = x1034 + x87 * poly_mix[21];
+  FpExt x1036 = x1035 + x87 * poly_mix[21];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1036 = x1035 + x88 * poly_mix[22];
+  FpExt x1037 = x1036 + x88 * poly_mix[22];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1037 = x1036 + x89 * poly_mix[23];
+  FpExt x1038 = x1037 + x89 * poly_mix[23];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1038 = x1037 + x90 * poly_mix[24];
+  FpExt x1039 = x1038 + x90 * poly_mix[24];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1039 = x1038 + x91 * poly_mix[25];
+  FpExt x1040 = x1039 + x91 * poly_mix[25];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1040 = x1039 + x92 * poly_mix[26];
+  FpExt x1041 = x1040 + x92 * poly_mix[26];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1041 = x1040 + x93 * poly_mix[27];
+  FpExt x1042 = x1041 + x93 * poly_mix[27];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1042 = x1041 + x94 * poly_mix[28];
+  FpExt x1043 = x1042 + x94 * poly_mix[28];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1043 = x1042 + x95 * poly_mix[29];
+  FpExt x1044 = x1043 + x95 * poly_mix[29];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1044 = x1043 + x96 * poly_mix[30];
+  FpExt x1045 = x1044 + x96 * poly_mix[30];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1045 = x1044 + x97 * poly_mix[31];
+  FpExt x1046 = x1045 + x97 * poly_mix[31];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1046 = x1045 + x98 * poly_mix[32];
+  FpExt x1047 = x1046 + x98 * poly_mix[32];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1047 = x1046 + x99 * poly_mix[33];
+  FpExt x1048 = x1047 + x99 * poly_mix[33];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1048 = x1047 + x100 * poly_mix[34];
+  FpExt x1049 = x1048 + x100 * poly_mix[34];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1049 = x1048 + x101 * poly_mix[35];
+  FpExt x1050 = x1049 + x101 * poly_mix[35];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1050 = x976 + x108 * x1049 * poly_mix[3];
+  FpExt x1051 = x977 + x107 * x1050 * poly_mix[3];
   // loc(callsite(unknown at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :157:21) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x1051 = x992 - x2;
+  auto x1052 = x993 - x2;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1052 = x212 - x107;
+  auto x1053 = x212 - x105;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1053 = arg4 + x1052 * poly_mix[0];
+  FpExt x1054 = arg4 + x1053 * poly_mix[0];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1054 = x213 - x977;
+  auto x1055 = x213 - x978;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1055 = x1053 + x1054 * poly_mix[1];
+  FpExt x1056 = x1054 + x1055 * poly_mix[1];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1056 = x214 - x978;
+  auto x1057 = x214 - x979;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1057 = x1055 + x1056 * poly_mix[2];
+  FpExt x1058 = x1056 + x1057 * poly_mix[2];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1058 = x215 - x979;
+  auto x1059 = x215 - x980;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1059 = x1057 + x1058 * poly_mix[3];
+  FpExt x1060 = x1058 + x1059 * poly_mix[3];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1060 = x216 - x980;
+  auto x1061 = x216 - x981;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1061 = x1059 + x1060 * poly_mix[4];
+  FpExt x1062 = x1060 + x1061 * poly_mix[4];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1062 = x217 - x981;
+  auto x1063 = x217 - x982;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1063 = x1061 + x1062 * poly_mix[5];
+  FpExt x1064 = x1062 + x1063 * poly_mix[5];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1064 = x218 - x982;
+  auto x1065 = x218 - x983;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1065 = x1063 + x1064 * poly_mix[6];
+  FpExt x1066 = x1064 + x1065 * poly_mix[6];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1066 = x219 - x983;
+  auto x1067 = x219 - x984;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1067 = x1065 + x1066 * poly_mix[7];
+  FpExt x1068 = x1066 + x1067 * poly_mix[7];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1068 = x220 - x984;
+  auto x1069 = x220 - x985;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1069 = x1067 + x1068 * poly_mix[8];
+  FpExt x1070 = x1068 + x1069 * poly_mix[8];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1070 = x221 - x985;
+  auto x1071 = x221 - x986;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1071 = x1069 + x1070 * poly_mix[9];
+  FpExt x1072 = x1070 + x1071 * poly_mix[9];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1072 = x222 - x986;
+  auto x1073 = x222 - x987;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1073 = x1071 + x1072 * poly_mix[10];
+  FpExt x1074 = x1072 + x1073 * poly_mix[10];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1074 = x223 - x987;
+  auto x1075 = x223 - x988;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1075 = x1073 + x1074 * poly_mix[11];
+  FpExt x1076 = x1074 + x1075 * poly_mix[11];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1076 = x224 - x988;
+  auto x1077 = x224 - x989;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1077 = x1075 + x1076 * poly_mix[12];
+  FpExt x1078 = x1076 + x1077 * poly_mix[12];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1078 = x225 - x989;
+  auto x1079 = x225 - x990;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1079 = x1077 + x1078 * poly_mix[13];
+  FpExt x1080 = x1078 + x1079 * poly_mix[13];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1080 = x226 - x990;
+  auto x1081 = x226 - x991;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1081 = x1079 + x1080 * poly_mix[14];
+  FpExt x1082 = x1080 + x1081 * poly_mix[14];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1082 = x227 - x991;
+  auto x1083 = x227 - x992;
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :154:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1083 = x1081 + x1082 * poly_mix[15];
+  FpExt x1084 = x1082 + x1083 * poly_mix[15];
   // loc(callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:20) at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :14:13) at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :157:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x1084 = x1083 + x338 * poly_mix[16];
+  FpExt x1085 = x1084 + x553 * poly_mix[16];
   // loc(callsite(unknown at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :16:4) at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :157:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x1085 = x1051 * x104;
+  auto x1086 = x1052 * x104;
   // loc(callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :16:14) at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :157:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x1086 = x1085 - x300;
+  auto x1087 = x1086 - x300;
   // loc(callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :16:14) at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :157:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x1087 = x1084 + x1086 * poly_mix[17];
+  FpExt x1088 = x1085 + x1087 * poly_mix[17];
   // loc(callsite(unknown at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :18:4) at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :157:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x1088 = x105 * x1051;
+  auto x1089 = x103 * x1052;
   // loc(callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :18:17) at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :157:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x1089 = x1087 + x1088 * poly_mix[18];
+  FpExt x1090 = x1088 + x1089 * poly_mix[18];
   // loc(callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :20:17) at callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :157:20) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x1090 = x1089 + x1032 * poly_mix[19];
+  FpExt x1091 = x1090 + x1033 * poly_mix[19];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1091 = x1090 + x70 * poly_mix[20];
+  FpExt x1092 = x1091 + x70 * poly_mix[20];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1092 = x1091 + x71 * poly_mix[21];
+  FpExt x1093 = x1092 + x71 * poly_mix[21];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1093 = x1092 + x72 * poly_mix[22];
+  FpExt x1094 = x1093 + x72 * poly_mix[22];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1094 = x1093 + x73 * poly_mix[23];
+  FpExt x1095 = x1094 + x73 * poly_mix[23];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1095 = x1094 + x74 * poly_mix[24];
+  FpExt x1096 = x1095 + x74 * poly_mix[24];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1096 = x1095 + x75 * poly_mix[25];
+  FpExt x1097 = x1096 + x75 * poly_mix[25];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1097 = x1096 + x76 * poly_mix[26];
+  FpExt x1098 = x1097 + x76 * poly_mix[26];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1098 = x1097 + x77 * poly_mix[27];
+  FpExt x1099 = x1098 + x77 * poly_mix[27];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1099 = x1098 + x78 * poly_mix[28];
+  FpExt x1100 = x1099 + x78 * poly_mix[28];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1100 = x1099 + x79 * poly_mix[29];
+  FpExt x1101 = x1100 + x79 * poly_mix[29];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1101 = x1100 + x80 * poly_mix[30];
+  FpExt x1102 = x1101 + x80 * poly_mix[30];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1102 = x1101 + x81 * poly_mix[31];
+  FpExt x1103 = x1102 + x81 * poly_mix[31];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1103 = x1102 + x82 * poly_mix[32];
+  FpExt x1104 = x1103 + x82 * poly_mix[32];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1104 = x1103 + x83 * poly_mix[33];
+  FpExt x1105 = x1104 + x83 * poly_mix[33];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1105 = x1104 + x84 * poly_mix[34];
+  FpExt x1106 = x1105 + x84 * poly_mix[34];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1106 = x1105 + x85 * poly_mix[35];
+  FpExt x1107 = x1106 + x85 * poly_mix[35];
   // loc(callsite( ControlTable ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :135:4) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :183:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1107 = x1050 + x498 * x1106 * poly_mix[39];
+  FpExt x1108 = x1051 + x355 * x1107 * poly_mix[39];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1108 = x1107 + x228 * poly_mix[75];
+  FpExt x1109 = x1108 + x228 * poly_mix[75];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1109 = x1108 + x229 * poly_mix[76];
+  FpExt x1110 = x1109 + x229 * poly_mix[76];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1110 = x1109 + x230 * poly_mix[77];
+  FpExt x1111 = x1110 + x230 * poly_mix[77];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1111 = x1110 + x231 * poly_mix[78];
+  FpExt x1112 = x1111 + x231 * poly_mix[78];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1112 = x1111 + x135 * poly_mix[79];
+  FpExt x1113 = x1112 + x135 * poly_mix[79];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1113 = x1112 + x136 * poly_mix[80];
+  FpExt x1114 = x1113 + x136 * poly_mix[80];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1114 = x1113 + x137 * poly_mix[81];
+  FpExt x1115 = x1114 + x137 * poly_mix[81];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1115 = x1114 + x138 * poly_mix[82];
+  FpExt x1116 = x1115 + x138 * poly_mix[82];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1116 = x1115 + x121 * poly_mix[83];
+  FpExt x1117 = x1116 + x121 * poly_mix[83];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1117 = x1116 + x122 * poly_mix[84];
+  FpExt x1118 = x1117 + x122 * poly_mix[84];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1118 = x1117 + x123 * poly_mix[85];
+  FpExt x1119 = x1118 + x123 * poly_mix[85];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1119 = x1118 + x124 * poly_mix[86];
+  FpExt x1120 = x1119 + x124 * poly_mix[86];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1120 = x1119 + x125 * poly_mix[87];
+  FpExt x1121 = x1120 + x125 * poly_mix[87];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1121 = x1120 + x126 * poly_mix[88];
+  FpExt x1122 = x1121 + x126 * poly_mix[88];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1122 = x1121 + x127 * poly_mix[89];
+  FpExt x1123 = x1122 + x127 * poly_mix[89];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1123 = x1122 + x128 * poly_mix[90];
+  FpExt x1124 = x1123 + x128 * poly_mix[90];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1124 = x1123 + x232 * poly_mix[91];
+  FpExt x1125 = x1124 + x232 * poly_mix[91];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1125 = x1124 + x233 * poly_mix[92];
+  FpExt x1126 = x1125 + x233 * poly_mix[92];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1126 = x1125 + x139 * poly_mix[93];
+  FpExt x1127 = x1126 + x139 * poly_mix[93];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1127 = x1126 + x140 * poly_mix[94];
+  FpExt x1128 = x1127 + x140 * poly_mix[94];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1128 = x1127 + x129 * poly_mix[95];
+  FpExt x1129 = x1128 + x129 * poly_mix[95];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1129 = x1128 + x130 * poly_mix[96];
+  FpExt x1130 = x1129 + x130 * poly_mix[96];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1130 = x1129 + x56 * poly_mix[97];
+  FpExt x1131 = x1130 + x56 * poly_mix[97];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1131 = x1130 + x64 * poly_mix[98];
+  FpExt x1132 = x1131 + x64 * poly_mix[98];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1132 = x970 + x234 * x1131 * poly_mix[374];
+  FpExt x1133 = x971 + x234 * x1132 * poly_mix[374];
   // loc(callsite( ControlDone ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :167:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :184:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1133 = arg0[320];
+  auto x1134 = arg0[320];
   // loc(callsite( ControlDone ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :167:16) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :184:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1134 = arg4 + x1133 * poly_mix[0];
+  FpExt x1135 = arg4 + x1134 * poly_mix[0];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1135 = x1134 + x228 * poly_mix[1];
+  FpExt x1136 = x1135 + x228 * poly_mix[1];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1136 = x1135 + x229 * poly_mix[2];
+  FpExt x1137 = x1136 + x229 * poly_mix[2];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1137 = x1136 + x230 * poly_mix[3];
+  FpExt x1138 = x1137 + x230 * poly_mix[3];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1138 = x1137 + x231 * poly_mix[4];
+  FpExt x1139 = x1138 + x231 * poly_mix[4];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1139 = x1138 + x135 * poly_mix[5];
+  FpExt x1140 = x1139 + x135 * poly_mix[5];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1140 = x1139 + x136 * poly_mix[6];
+  FpExt x1141 = x1140 + x136 * poly_mix[6];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1141 = x1140 + x137 * poly_mix[7];
+  FpExt x1142 = x1141 + x137 * poly_mix[7];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1142 = x1141 + x138 * poly_mix[8];
+  FpExt x1143 = x1142 + x138 * poly_mix[8];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1143 = x1142 + x121 * poly_mix[9];
+  FpExt x1144 = x1143 + x121 * poly_mix[9];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1144 = x1143 + x122 * poly_mix[10];
+  FpExt x1145 = x1144 + x122 * poly_mix[10];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1145 = x1144 + x123 * poly_mix[11];
+  FpExt x1146 = x1145 + x123 * poly_mix[11];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1146 = x1145 + x124 * poly_mix[12];
+  FpExt x1147 = x1146 + x124 * poly_mix[12];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1147 = x1146 + x125 * poly_mix[13];
+  FpExt x1148 = x1147 + x125 * poly_mix[13];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1148 = x1147 + x126 * poly_mix[14];
+  FpExt x1149 = x1148 + x126 * poly_mix[14];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1149 = x1148 + x127 * poly_mix[15];
+  FpExt x1150 = x1149 + x127 * poly_mix[15];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1150 = x1149 + x128 * poly_mix[16];
+  FpExt x1151 = x1150 + x128 * poly_mix[16];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1151 = x1150 + x232 * poly_mix[17];
+  FpExt x1152 = x1151 + x232 * poly_mix[17];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1152 = x1151 + x233 * poly_mix[18];
+  FpExt x1153 = x1152 + x233 * poly_mix[18];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1153 = x1152 + x139 * poly_mix[19];
+  FpExt x1154 = x1153 + x139 * poly_mix[19];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1154 = x1153 + x140 * poly_mix[20];
+  FpExt x1155 = x1154 + x140 * poly_mix[20];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1155 = x1154 + x129 * poly_mix[21];
+  FpExt x1156 = x1155 + x129 * poly_mix[21];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1156 = x1155 + x130 * poly_mix[22];
+  FpExt x1157 = x1156 + x130 * poly_mix[22];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1157 = x1156 + x56 * poly_mix[23];
+  FpExt x1158 = x1157 + x56 * poly_mix[23];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1158 = x1157 + x64 * poly_mix[24];
+  FpExt x1159 = x1158 + x64 * poly_mix[24];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1159 = x1158 + x70 * poly_mix[25];
+  FpExt x1160 = x1159 + x70 * poly_mix[25];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1160 = x1159 + x71 * poly_mix[26];
+  FpExt x1161 = x1160 + x71 * poly_mix[26];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1161 = x1160 + x72 * poly_mix[27];
+  FpExt x1162 = x1161 + x72 * poly_mix[27];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1162 = x1161 + x73 * poly_mix[28];
+  FpExt x1163 = x1162 + x73 * poly_mix[28];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1163 = x1162 + x74 * poly_mix[29];
+  FpExt x1164 = x1163 + x74 * poly_mix[29];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1164 = x1163 + x75 * poly_mix[30];
+  FpExt x1165 = x1164 + x75 * poly_mix[30];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1165 = x1164 + x76 * poly_mix[31];
+  FpExt x1166 = x1165 + x76 * poly_mix[31];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1166 = x1165 + x77 * poly_mix[32];
+  FpExt x1167 = x1166 + x77 * poly_mix[32];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1167 = x1166 + x78 * poly_mix[33];
+  FpExt x1168 = x1167 + x78 * poly_mix[33];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1168 = x1167 + x79 * poly_mix[34];
+  FpExt x1169 = x1168 + x79 * poly_mix[34];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1169 = x1168 + x80 * poly_mix[35];
+  FpExt x1170 = x1169 + x80 * poly_mix[35];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1170 = x1169 + x81 * poly_mix[36];
+  FpExt x1171 = x1170 + x81 * poly_mix[36];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1171 = x1170 + x82 * poly_mix[37];
+  FpExt x1172 = x1171 + x82 * poly_mix[37];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1172 = x1171 + x83 * poly_mix[38];
+  FpExt x1173 = x1172 + x83 * poly_mix[38];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1173 = x1172 + x84 * poly_mix[39];
+  FpExt x1174 = x1173 + x84 * poly_mix[39];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1174 = x1173 + x85 * poly_mix[40];
+  FpExt x1175 = x1174 + x85 * poly_mix[40];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1175 = x1174 + x86 * poly_mix[41];
+  FpExt x1176 = x1175 + x86 * poly_mix[41];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1176 = x1175 + x87 * poly_mix[42];
+  FpExt x1177 = x1176 + x87 * poly_mix[42];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1177 = x1176 + x88 * poly_mix[43];
+  FpExt x1178 = x1177 + x88 * poly_mix[43];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1178 = x1177 + x89 * poly_mix[44];
+  FpExt x1179 = x1178 + x89 * poly_mix[44];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1179 = x1178 + x90 * poly_mix[45];
+  FpExt x1180 = x1179 + x90 * poly_mix[45];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1180 = x1179 + x91 * poly_mix[46];
+  FpExt x1181 = x1180 + x91 * poly_mix[46];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1181 = x1180 + x92 * poly_mix[47];
+  FpExt x1182 = x1181 + x92 * poly_mix[47];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1182 = x1181 + x93 * poly_mix[48];
+  FpExt x1183 = x1182 + x93 * poly_mix[48];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1183 = x1182 + x94 * poly_mix[49];
+  FpExt x1184 = x1183 + x94 * poly_mix[49];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1184 = x1183 + x95 * poly_mix[50];
+  FpExt x1185 = x1184 + x95 * poly_mix[50];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1185 = x1184 + x96 * poly_mix[51];
+  FpExt x1186 = x1185 + x96 * poly_mix[51];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1186 = x1185 + x97 * poly_mix[52];
+  FpExt x1187 = x1186 + x97 * poly_mix[52];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1187 = x1186 + x98 * poly_mix[53];
+  FpExt x1188 = x1187 + x98 * poly_mix[53];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1188 = x1187 + x99 * poly_mix[54];
+  FpExt x1189 = x1188 + x99 * poly_mix[54];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1189 = x1188 + x100 * poly_mix[55];
+  FpExt x1190 = x1189 + x100 * poly_mix[55];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1190 = x1189 + x101 * poly_mix[56];
+  FpExt x1191 = x1190 + x101 * poly_mix[56];
   // loc(callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :176:28) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1191 = x1132 + x235 * x1190 * poly_mix[381];
+  FpExt x1192 = x1133 + x235 * x1191 * poly_mix[381];
   // loc(callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :69:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))
-  FpExt x1192 = arg6 + x236 * x1191 * poly_mix[392];
+  FpExt x1193 = arg6 + x236 * x1192 * poly_mix[392];
   // loc(callsite( ECallTerminate ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :44:16) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :160:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1193 = x755 - x10;
+  auto x1194 = x756 - x10;
   // loc(callsite( ECallTerminate ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :44:16) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :160:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  arg0[326] = x1193;
+  arg0[326] = x1194;
   // loc(callsite( ECallHostReadSetup ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :67:16) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :161:24) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1194 = x755 - x9;
+  auto x1195 = x756 - x9;
   // loc(callsite( ECallHostReadSetup ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :67:16) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :161:24) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  arg0[331] = x1194;
+  arg0[331] = x1195;
   // loc(callsite( ECallHostWrite ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :102:16) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :162:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1195 = x755 - x8;
+  auto x1196 = x756 - x8;
   // loc(callsite( ECallHostWrite ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :102:16) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :162:20) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  arg0[337] = x1195;
+  arg0[337] = x1196;
   // loc(callsite( ECallHostReadBytes ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :121:16) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :163:24) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1196 = x755 - x7;
+  auto x1197 = x756 - x7;
   // loc(callsite( ECallHostReadBytes ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :121:16) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :163:24) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  arg0[338] = x1196;
+  arg0[338] = x1197;
   // loc(callsite( ECallHostReadWords ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :127:16) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :164:24) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1197 = x755 - x6;
+  auto x1198 = x756 - x6;
   // loc(callsite( ECallHostReadWords ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :127:16) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :164:24) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  arg0[339] = x1197;
+  arg0[339] = x1198;
   // loc(callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :158:38) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  auto x1198 = x102 * x33;
+  auto x1199 = x102 * x33;
   // loc(callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :158:38) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  arg0[343] = x1198;
+  arg0[343] = x1199;
   // loc(callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :158:38) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  auto x1199 = x141 * x17;
+  auto x1200 = x141 * x17;
   // loc(callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :158:38) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  arg0[344] = x1199;
+  arg0[344] = x1200;
   // loc(callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :158:38) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  auto x1200 = x166 * x3;
+  auto x1201 = x166 * x3;
   // loc(callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :158:38) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  arg0[345] = x1200;
+  arg0[345] = x1201;
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( ToBits ( zirgen/circuit/rv32im/v2/dsl/po2.zir :31:31) at callsite( BitwiseAndU16 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :144:24) at callsite( BitwiseAnd ( zirgen/circuit/rv32im/v2/dsl/u32.zir :155:53) at callsite( BitwiseXor ( zirgen/circuit/rv32im/v2/dsl/u32.zir :164:24) at callsite( OpXOR ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :97:37) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :33:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))))
-  auto x1201 = arg0[61];
+  auto x1202 = arg0[61];
   // loc(callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:20) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :81:24) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x1202 = arg4 + x1201 * poly_mix[0];
+  FpExt x1203 = arg4 + x1202 * poly_mix[0];
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( ToBits ( zirgen/circuit/rv32im/v2/dsl/po2.zir :31:31) at callsite( BitwiseAndU16 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :144:24) at callsite( BitwiseAnd ( zirgen/circuit/rv32im/v2/dsl/u32.zir :155:53) at callsite( BitwiseXor ( zirgen/circuit/rv32im/v2/dsl/u32.zir :164:24) at callsite( OpXOR ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :97:37) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :33:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))))
-  auto x1203 = arg0[62];
+  auto x1204 = arg0[62];
   // loc(callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:20) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :82:24) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x1204 = x1202 + x1203 * poly_mix[1];
+  FpExt x1205 = x1203 + x1204 * poly_mix[1];
   // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :83:12) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x1205 = x214 * x36;
+  auto x1206 = x214 * x36;
   // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :83:12) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  arg0[616] = x1205;
+  arg0[615] = x1206;
   // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :83:19) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x1206 = x1205 + x88;
+  auto x1207 = x1206 + x88;
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( DecodeInst ( zirgen/circuit/rv32im/v2/dsl/inst.zir :28:27) at callsite( MulInput ( zirgen/circuit/rv32im/v2/dsl/inst_mul.zir :10:25) at callsite( Mul0 ( zirgen/circuit/rv32im/v2/dsl/inst_mul.zir :22:21) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :73:10) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x1207 = arg0[321];
+  auto x1208 = arg0[321];
   // loc(callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :36:14) at callsite( U16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :42:23) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :85:23) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x1208 = x1204 + x1207 * poly_mix[2];
+  FpExt x1209 = x1205 + x1208 * poly_mix[2];
   // loc(callsite(unknown at callsite( AddrDecompose ( zirgen/circuit/rv32im/v2/dsl/u32.zir :65:53) at callsite( DecodeInst ( zirgen/circuit/rv32im/v2/dsl/inst.zir :24:28) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :9:25) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :29:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  auto x1209 = arg0[119];
+  auto x1210 = arg0[119];
   // loc(callsite( U16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :43:8) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :85:23) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x1210 = x215 - x1209;
+  auto x1211 = x215 - x1210;
   // loc(callsite( U16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :43:8) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :85:23) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x1211 = x1208 + x1210 * poly_mix[3];
+  FpExt x1212 = x1209 + x1211 * poly_mix[3];
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( ToBits ( zirgen/circuit/rv32im/v2/dsl/po2.zir :31:31) at callsite( BitwiseAndU16 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :144:24) at callsite( BitwiseAnd ( zirgen/circuit/rv32im/v2/dsl/u32.zir :155:53) at callsite( BitwiseXor ( zirgen/circuit/rv32im/v2/dsl/u32.zir :164:24) at callsite( OpXOR ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :97:37) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :33:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))))
-  auto x1212 = arg0[65];
+  auto x1213 = arg0[65];
   // loc(callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:20) at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :14:13) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x1213 = x1211 + x1212 * poly_mix[4];
+  FpExt x1214 = x1212 + x1213 * poly_mix[4];
   // loc(callsite(unknown at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :16:4) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x1214 = x349 * x216;
+  auto x1215 = x349 * x216;
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:11) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( ToBits ( zirgen/circuit/rv32im/v2/dsl/po2.zir :31:31) at callsite( BitwiseAndU16 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :144:24) at callsite( BitwiseAnd ( zirgen/circuit/rv32im/v2/dsl/u32.zir :155:53) at callsite( BitwiseXor ( zirgen/circuit/rv32im/v2/dsl/u32.zir :164:24) at callsite( OpXOR ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :97:37) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :33:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))))
-  auto x1215 = arg0[322];
+  auto x1216 = arg0[322];
   // loc(callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :16:14) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x1216 = x1214 - x1215;
+  auto x1217 = x1215 - x1216;
   // loc(callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :16:14) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x1217 = x1213 + x1216 * poly_mix[5];
+  FpExt x1218 = x1214 + x1217 * poly_mix[5];
   // loc(callsite(unknown at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :18:4) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x1218 = x90 * x349;
+  auto x1219 = x90 * x349;
   // loc(callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :18:17) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x1219 = x1217 + x1218 * poly_mix[6];
+  FpExt x1220 = x1218 + x1219 * poly_mix[6];
   // loc(callsite(unknown at callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :20:4) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x1220 = x90 * x216;
+  auto x1221 = x90 * x216;
   // loc(callsite( IsZero ( zirgen/circuit/rv32im/v2/dsl/is_zero.zir :20:17) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:10) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x1221 = x1219 + x1220 * poly_mix[7];
+  FpExt x1222 = x1220 + x1221 * poly_mix[7];
   // loc(callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :87:19) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1222 = x1221 + x90 * poly_mix[8];
+  FpExt x1223 = x1222 + x90 * poly_mix[8];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( DecodeInst ( zirgen/circuit/rv32im/v2/dsl/inst.zir :28:27) at callsite( MiscInput ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :9:25) at callsite( Misc2 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :59:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :72:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x1223 = arg0[323];
+  auto x1224 = arg0[323];
   // loc(callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :36:14) at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :89:25) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  FpExt x1224 = x1222 + x1223 * poly_mix[9];
+  FpExt x1225 = x1223 + x1224 * poly_mix[9];
   // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :91:4) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x1225 = x217 * x33;
+  auto x1226 = x217 * x33;
   // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :91:12) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x1226 = x1225 + x1206;
+  auto x1227 = x1226 + x1207;
   // loc(callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :91:21) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  auto x1227 = x1226 - x370;
+  auto x1228 = x1227 - x370;
   // loc(callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :91:21) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1228 = x1224 + x1227 * poly_mix[10];
+  FpExt x1229 = x1225 + x1228 * poly_mix[10];
   // loc(callsite(unknown at callsite( AddrDecomposeBits ( zirgen/circuit/rv32im/v2/dsl/u32.zir :93:23) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :156:32) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))
-  auto x1229 = x373 + x217;
+  auto x1230 = x373 + x217;
   // loc(callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :157:17) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))
-  FpExt x1230 = x1228 + x1206 * poly_mix[11];
+  FpExt x1231 = x1229 + x1207 * poly_mix[11];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :26:27) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x1231 = x110 - x1229;
+  auto x1232 = x110 - x1230;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :26:27) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x1232 = arg5 + x1231 * poly_mix[4];
+  FpExt x1233 = arg5 + x1232 * poly_mix[4];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :26:27) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x1233 = x1232 + x384 * poly_mix[5];
+  FpExt x1234 = x1233 + x384 * poly_mix[5];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :26:27) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x1234 = x1233 + x386 * poly_mix[6];
+  FpExt x1235 = x1234 + x386 * poly_mix[6];
   // loc(callsite( NondetU16Reg ( zirgen/circuit/rv32im/v2/dsl/lookups.zir :36:14) at callsite( GetSignU32 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :126:34) at callsite( CmpLessThan ( zirgen/circuit/rv32im/v2/dsl/u32.zir :136:20) at callsite( OpSLT ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :112:22) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :36:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  auto x1235 = arg0[105];
+  auto x1236 = arg0[105];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :26:27) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x1236 = x1234 + x1235 * poly_mix[7];
+  FpExt x1237 = x1235 + x1236 * poly_mix[7];
   // loc(callsite(unknown at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( ControlResume ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :36:22) at callsite( Control0 ( zirgen/circuit/rv32im/v2/dsl/inst_control.zir :178:19) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :77:14) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  auto x1237 = arg0[324];
+  auto x1238 = arg0[324];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :26:27) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  auto x1238 = x113 - x1237;
+  auto x1239 = x113 - x1238;
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :26:27) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  arg0[327] = x1238;
+  arg0[327] = x1239;
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :26:27) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x1239 = x1236 + x1238 * poly_mix[8];
+  FpExt x1240 = x1237 + x1239 * poly_mix[8];
   // loc(callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :27:16) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1240 = x1239 + x395 * poly_mix[9];
+  FpExt x1241 = x1240 + x395 * poly_mix[9];
   // loc(callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :28:19) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1241 = x1240 + x111 * poly_mix[10];
+  FpExt x1242 = x1241 + x111 * poly_mix[10];
   // loc(callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :29:18) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1242 = x1241 + x393 * poly_mix[11];
+  FpExt x1243 = x1242 + x393 * poly_mix[11];
   // loc(callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :30:15) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1243 = x1242 + x539 * poly_mix[12];
+  FpExt x1244 = x1243 + x539 * poly_mix[12];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :31:30) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x1244 = x237 - x1;
+  auto x1245 = x237 - x1;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :31:30) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  arg0[328] = x1244;
+  arg0[328] = x1245;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :69:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :31:30) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x1245 = x1243 + x1244 * poly_mix[13];
+  FpExt x1246 = x1244 + x1245 * poly_mix[13];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :97:18) at callsite( WriteRd ( zirgen/circuit/rv32im/v2/dsl/inst.zir :43:15) at callsite( FinalizeMisc ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :24:11) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :40:16) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  auto x1246 = arg0[158];
+  auto x1247 = arg0[158];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :70:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :31:30) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x1247 = x1245 + x1246 * poly_mix[14];
+  FpExt x1248 = x1246 + x1247 * poly_mix[14];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :72:17) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :31:30) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x1248 = x1247 + x41 * poly_mix[15];
+  FpExt x1249 = x1248 + x41 * poly_mix[15];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :74:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :31:30) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x1249 = x1248 + x41 * poly_mix[16];
+  FpExt x1250 = x1249 + x41 * poly_mix[16];
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :31:30) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x1250 = x171 - x0;
+  auto x1251 = x171 - x0;
   // loc(callsite( MemoryIO ( zirgen/circuit/rv32im/v2/dsl/mem.zir :75:16) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :89:18) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :31:30) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x1251 = x1249 + x1250 * poly_mix[17];
+  FpExt x1252 = x1250 + x1251 * poly_mix[17];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :31:30) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x1252 = x231 - x135;
+  auto x1253 = x231 - x135;
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :31:30) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  arg0[329] = x1252;
+  arg0[329] = x1253;
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :79:22) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :31:30) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x1253 = x1251 + x1252 * poly_mix[18];
+  FpExt x1254 = x1252 + x1253 * poly_mix[18];
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :31:30) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  auto x1254 = x115 - x117;
+  auto x1255 = x115 - x117;
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :31:30) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  arg0[330] = x1254;
+  arg0[330] = x1255;
   // loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :31:30) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))
-  FpExt x1255 = x1253 + x1254 * poly_mix[19];
+  FpExt x1256 = x1254 + x1255 * poly_mix[19];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :98:13) at callsite( WriteRd ( zirgen/circuit/rv32im/v2/dsl/inst.zir :43:15) at callsite( FinalizeMisc ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :24:11) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :40:16) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x1256 = arg0[160];
+  auto x1257 = arg0[160];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :61:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :31:30) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x1257 = x1255 + x1256 * poly_mix[20];
+  FpExt x1258 = x1256 + x1257 * poly_mix[20];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryWrite ( zirgen/circuit/rv32im/v2/dsl/mem.zir :98:13) at callsite( WriteRd ( zirgen/circuit/rv32im/v2/dsl/inst.zir :43:15) at callsite( FinalizeMisc ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :24:11) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :40:16) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x1258 = arg0[161];
+  auto x1259 = arg0[161];
   // loc(callsite( IsCycle ( zirgen/circuit/rv32im/v2/dsl/mem.zir :62:14) at callsite( IsForward ( zirgen/circuit/rv32im/v2/dsl/mem.zir :84:11) at callsite( MemoryRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :91:13) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :31:30) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x1259 = x1257 + x1258 * poly_mix[21];
+  FpExt x1260 = x1258 + x1259 * poly_mix[21];
   // loc(callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :32:22) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))
-  FpExt x1260 = x1259 + x117 * poly_mix[22];
+  FpExt x1261 = x1260 + x117 * poly_mix[22];
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( ToBits ( zirgen/circuit/rv32im/v2/dsl/po2.zir :31:31) at callsite( BitwiseAndU16 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :144:24) at callsite( BitwiseAnd ( zirgen/circuit/rv32im/v2/dsl/u32.zir :155:24) at callsite( BitwiseXor ( zirgen/circuit/rv32im/v2/dsl/u32.zir :164:24) at callsite( OpXOR ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :97:37) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :33:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))))
-  auto x1261 = arg0[35];
+  auto x1262 = arg0[35];
   // loc(callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:20) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( OneHot ( zirgen/circuit/rv32im/v2/dsl/one_hot.zir :7:39) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :33:25) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x1262 = x1260 + x1261 * poly_mix[23];
+  FpExt x1263 = x1261 + x1262 * poly_mix[23];
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( ToBits ( zirgen/circuit/rv32im/v2/dsl/po2.zir :31:31) at callsite( BitwiseAndU16 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :144:24) at callsite( BitwiseAnd ( zirgen/circuit/rv32im/v2/dsl/u32.zir :155:24) at callsite( BitwiseXor ( zirgen/circuit/rv32im/v2/dsl/u32.zir :164:24) at callsite( OpXOR ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :97:37) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :33:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))))
-  auto x1263 = arg0[36];
+  auto x1264 = arg0[36];
   // loc(callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:20) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( OneHot ( zirgen/circuit/rv32im/v2/dsl/one_hot.zir :7:39) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :33:25) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x1264 = x1262 + x1263 * poly_mix[24];
+  FpExt x1265 = x1263 + x1264 * poly_mix[24];
   // loc(callsite(unknown at callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:4) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( ToBits ( zirgen/circuit/rv32im/v2/dsl/po2.zir :31:31) at callsite( BitwiseAndU16 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :144:24) at callsite( BitwiseAnd ( zirgen/circuit/rv32im/v2/dsl/u32.zir :155:24) at callsite( BitwiseXor ( zirgen/circuit/rv32im/v2/dsl/u32.zir :164:24) at callsite( OpXOR ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :97:37) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :33:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))))))
-  auto x1265 = arg0[37];
+  auto x1266 = arg0[37];
   // loc(callsite( AssertBit ( zirgen/circuit/rv32im/v2/dsl/bits.zir :6:20) at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13) at callsite( OneHot ( zirgen/circuit/rv32im/v2/dsl/one_hot.zir :7:39) at callsite( MachineECall ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :33:25) at callsite( ECall0 ( zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir :159:18) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :78:12) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
-  FpExt x1266 = x1264 + x1265 * poly_mix[25];
+  FpExt x1267 = x1265 + x1266 * poly_mix[25];
   // loc(unknown)
-  auto x1267 = top_7(cycle, steps, poly_mix, arg0, x1266, x1230, arg4, arg7, x1192, arg8, arg9, arg10, arg11, arg12, arg13);
-  return x1267;
+  auto x1268 = top_7(cycle, steps, poly_mix, arg0, x1267, x1231, arg4, arg7, x1193, arg8, arg9, arg10, arg11, arg12, arg13);
+  return x1268;
 }
 FpExt top_3(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, FpExt* arg2, FpExt arg3, FpExt arg4, FpExt arg5, FpExt arg6, Fp* arg7, Fp* arg8, Fp* arg9) {
   size_t mask = steps - 1;
@@ -2734,93 +2736,93 @@ FpExt top_3(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( NondetBitReg ( zirgen/circuit/rv32im/v2/dsl/bits.zir :11:20) at callsite( ToBits ( zirgen/circuit/rv32im/v2/dsl/po2.zir :31:31) at callsite( BitwiseAndU16 ( zirgen/circuit/rv32im/v2/dsl/u32.zir :144:24) at callsite( BitwiseAnd ( zirgen/circuit/rv32im/v2/dsl/u32.zir :155:53) at callsite( BitwiseXor ( zirgen/circuit/rv32im/v2/dsl/u32.zir :164:24) at callsite( OpXOR ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :97:37) at callsite( Misc0 ( zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :33:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :70:11) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))))
   auto x59 = arg7[96 * steps + ((cycle - kInvRate * 0) & mask)];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x60 = arg0[621];
+  auto x60 = arg0[620];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x61 = x60 * x21;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :13:11) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x62 = arg0[622];
+  auto x62 = arg0[621];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x63 = x62 + x61;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x64 = arg0[623];
+  auto x64 = arg0[622];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x65 = x64 * x22;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x66 = x62 + x65;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x67 = arg0[624];
+  auto x67 = arg0[623];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x68 = x67 * x23;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x69 = x62 + x68;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x70 = arg0[625];
+  auto x70 = arg0[624];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x71 = x70 * x24;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x72 = x62 + x71;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x73 = arg0[626];
+  auto x73 = arg0[625];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x74 = x73 * x25;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x75 = x62 + x74;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x76 = arg0[627];
+  auto x76 = arg0[626];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x77 = x76 * x26;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x78 = x62 + x77;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x79 = arg0[628];
+  auto x79 = arg0[627];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x80 = x79 * x27;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x81 = x62 + x80;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x82 = arg0[629];
+  auto x82 = arg0[628];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x83 = x82 * x28;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x84 = x62 + x83;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x85 = arg0[630];
+  auto x85 = arg0[629];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x86 = x85 * x29;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x87 = x62 + x86;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x88 = arg0[631];
+  auto x88 = arg0[630];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x89 = x88 * x30;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x90 = x62 + x89;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x91 = arg0[632];
+  auto x91 = arg0[631];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x92 = x91 * x31;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x93 = x62 + x92;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x94 = arg0[633];
+  auto x94 = arg0[632];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x95 = x94 * x32;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x96 = x62 + x95;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x97 = arg0[634];
+  auto x97 = arg0[633];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x98 = x97 * x33;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x99 = x62 + x98;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x100 = arg0[635];
+  auto x100 = arg0[634];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x101 = x100 * x34;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x102 = x62 + x101;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x103 = arg0[636];
+  auto x103 = arg0[635];
   // loc(callsite(unknown at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :31:13) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x104 = x103 + x35;
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :25:17) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -2832,7 +2834,7 @@ FpExt top_3(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :25:16) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x108 = arg1 + x107 * poly_mix[8];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:15) at callsite( DoExtRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :103:39) at callsite( DoExtRoundByIdx ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :122:14) at callsite( PoseidonExtRound ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :252:32) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :468:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x109 = arg0[637];
+  auto x109 = arg0[636];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:23) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x110 = x109 * x104;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:14) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -2840,39 +2842,39 @@ FpExt top_3(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:14) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x112 = x108 + x111 * poly_mix[9];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x113 = arg0[638];
+  auto x113 = arg0[637];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :13:11) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x114 = x37 + x113;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x115 = arg0[639];
+  auto x115 = arg0[638];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :13:11) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x116 = x114 + x115;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x117 = arg0[640];
+  auto x117 = arg0[639];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :13:11) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x118 = x116 + x117;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x119 = arg0[641];
+  auto x119 = arg0[640];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :13:11) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x120 = x118 + x119;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x121 = arg0[642];
+  auto x121 = arg0[641];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :13:11) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x122 = x120 + x121;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x123 = arg0[643];
+  auto x123 = arg0[642];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :13:11) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x124 = x122 + x123;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x125 = arg0[644];
+  auto x125 = arg0[643];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :13:11) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x126 = x124 + x125;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x127 = arg0[645];
+  auto x127 = arg0[644];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :13:11) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x128 = x126 + x127;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x129 = arg0[646];
+  auto x129 = arg0[645];
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :13:11) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x130 = x128 + x129;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :13:11) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -3010,7 +3012,7 @@ FpExt top_3(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :25:16) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x197 = x112 + x196 * poly_mix[10];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:15) at callsite( DoExtRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :103:39) at callsite( DoExtRoundByIdx ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :122:14) at callsite( PoseidonExtRound ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :252:32) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :468:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x198 = arg0[647];
+  auto x198 = arg0[646];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:23) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x199 = x198 * x193;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:14) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -3170,7 +3172,7 @@ FpExt top_3(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :25:16) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x277 = x201 + x276 * poly_mix[12];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:15) at callsite( DoExtRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :103:39) at callsite( DoExtRoundByIdx ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :122:14) at callsite( PoseidonExtRound ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :252:32) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :468:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x278 = arg0[648];
+  auto x278 = arg0[647];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:23) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x279 = x278 * x273;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:14) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -3330,7 +3332,7 @@ FpExt top_3(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :25:16) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x357 = x281 + x356 * poly_mix[14];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:15) at callsite( DoExtRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :103:39) at callsite( DoExtRoundByIdx ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :122:14) at callsite( PoseidonExtRound ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :252:32) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :468:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x358 = arg0[649];
+  auto x358 = arg0[648];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:23) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x359 = x358 * x353;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:14) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -3490,7 +3492,7 @@ FpExt top_3(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :25:16) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x437 = x361 + x436 * poly_mix[16];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:15) at callsite( DoExtRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :103:39) at callsite( DoExtRoundByIdx ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :122:14) at callsite( PoseidonExtRound ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :252:32) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :468:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x438 = arg0[650];
+  auto x438 = arg0[649];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:23) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x439 = x438 * x433;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:14) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -3650,7 +3652,7 @@ FpExt top_3(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :25:16) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x517 = x441 + x516 * poly_mix[18];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:15) at callsite( DoExtRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :103:39) at callsite( DoExtRoundByIdx ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :122:14) at callsite( PoseidonExtRound ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :252:32) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :468:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x518 = arg0[651];
+  auto x518 = arg0[650];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:23) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x519 = x518 * x513;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:14) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -3810,7 +3812,7 @@ FpExt top_3(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :25:16) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x597 = x521 + x596 * poly_mix[20];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:15) at callsite( DoExtRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :103:39) at callsite( DoExtRoundByIdx ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :122:14) at callsite( PoseidonExtRound ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :252:32) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :468:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x598 = arg0[652];
+  auto x598 = arg0[651];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:23) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x599 = x598 * x593;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:14) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -3970,7 +3972,7 @@ FpExt top_3(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :25:16) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x677 = x601 + x676 * poly_mix[22];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:15) at callsite( DoExtRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :103:39) at callsite( DoExtRoundByIdx ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :122:14) at callsite( PoseidonExtRound ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :252:32) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :468:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x678 = arg0[653];
+  auto x678 = arg0[652];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:23) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x679 = x678 * x673;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:14) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -4130,7 +4132,7 @@ FpExt top_3(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :25:16) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x757 = x681 + x756 * poly_mix[24];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:15) at callsite( DoExtRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :103:39) at callsite( DoExtRoundByIdx ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :122:14) at callsite( PoseidonExtRound ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :252:32) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :468:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x758 = arg0[654];
+  auto x758 = arg0[653];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:23) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x759 = x758 * x753;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:14) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -4290,7 +4292,7 @@ FpExt top_3(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :25:16) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x837 = x761 + x836 * poly_mix[26];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:15) at callsite( DoExtRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :103:39) at callsite( DoExtRoundByIdx ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :122:14) at callsite( PoseidonExtRound ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :252:32) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :468:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x838 = arg0[655];
+  auto x838 = arg0[654];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:23) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x839 = x838 * x833;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:14) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -4450,7 +4452,7 @@ FpExt top_3(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :25:16) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x917 = x841 + x916 * poly_mix[28];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:15) at callsite( DoExtRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :103:39) at callsite( DoExtRoundByIdx ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :122:14) at callsite( PoseidonExtRound ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :252:32) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :468:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x918 = arg0[656];
+  auto x918 = arg0[655];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:23) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x919 = x918 * x913;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:14) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -4532,109 +4534,109 @@ FpExt top_3(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x958 = x944 + x957;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[658] = x958;
+  arg0[657] = x958;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x959 = x880 * x13;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x960 = x944 + x959;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[660] = x960;
+  arg0[659] = x960;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x961 = x882 * x12;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x962 = x944 + x961;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[661] = x962;
+  arg0[660] = x962;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x963 = x884 * x11;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x964 = x944 + x963;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[662] = x964;
+  arg0[661] = x964;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x965 = x886 * x21;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x966 = x944 + x965;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[663] = x966;
+  arg0[662] = x966;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x967 = x888 * x22;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x968 = x944 + x967;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[664] = x968;
+  arg0[663] = x968;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x969 = x890 * x23;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x970 = x944 + x969;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[665] = x970;
+  arg0[664] = x970;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x971 = x892 * x24;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x972 = x944 + x971;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[666] = x972;
+  arg0[665] = x972;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x973 = x894 * x25;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x974 = x944 + x973;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[667] = x974;
+  arg0[666] = x974;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x975 = x896 * x26;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x976 = x944 + x975;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[668] = x976;
+  arg0[667] = x976;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x977 = x898 * x27;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x978 = x944 + x977;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[669] = x978;
+  arg0[668] = x978;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x979 = x900 * x28;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x980 = x944 + x979;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[670] = x980;
+  arg0[669] = x980;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x981 = x902 * x29;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x982 = x944 + x981;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[671] = x982;
+  arg0[670] = x982;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x983 = x904 * x30;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x984 = x944 + x983;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[672] = x984;
+  arg0[671] = x984;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x985 = x906 * x31;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x986 = x944 + x985;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[673] = x986;
+  arg0[672] = x986;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x987 = x908 * x32;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x988 = x944 + x987;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[674] = x988;
+  arg0[673] = x988;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x989 = x910 * x33;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x990 = x944 + x989;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[675] = x990;
+  arg0[674] = x990;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x991 = x912 * x34;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x992 = x944 + x991;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[676] = x992;
+  arg0[675] = x992;
   // loc(callsite(unknown at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :31:13) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown))))))))
   auto x993 = x946 + x0;
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :25:17) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -4646,7 +4648,7 @@ FpExt top_3(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :25:16) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   FpExt x997 = x921 + x996 * poly_mix[30];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:15) at callsite( DoExtRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :103:39) at callsite( DoExtRoundByIdx ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :122:14) at callsite( PoseidonExtRound ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :252:32) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :468:22) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  auto x998 = arg0[657];
+  auto x998 = arg0[656];
   // loc(callsite(unknown at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:23) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x999 = x998 * x993;
   // loc(callsite( Reg ( <preamble> :5:7) at callsite( SBox ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :26:14) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :32:16) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
@@ -4700,43 +4702,43 @@ FpExt top_3(size_t cycle, size_t steps, FpExt* poly_mix, Fp* arg0, FpExt arg1, F
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :13:11) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x1024 = x1023 + x992;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :13:11) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[659] = x1024;
+  arg0[658] = x1024;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x1025 = x59 * x20;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x1026 = x1024 + x1025;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[677] = x1026;
+  arg0[676] = x1026;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x1027 = x948 * x19;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x1028 = x1024 + x1027;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[679] = x1028;
+  arg0[678] = x1028;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x1029 = x950 * x18;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x1030 = x1024 + x1029;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[680] = x1030;
+  arg0[679] = x1030;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x1031 = x952 * x17;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x1032 = x1024 + x1031;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[681] = x1032;
+  arg0[680] = x1032;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x1033 = x954 * x16;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x1034 = x1024 + x1033;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[682] = x1034;
+  arg0[681] = x1034;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:44) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x1035 = x956 * x15;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
   auto x1036 = x1024 + x1035;
   // loc(callsite(unknown at callsite( MultiplyByMInt ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :14:20) at callsite( DoIntRound ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :34:18) at callsite( DoIntRounds ( zirgen/circuit/rv32im/v2/dsl/poseidon2.zir :38:4) at callsite( PoseidonIntRounds ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :257:28) at callsite( Poseidon1 ( zirgen/circuit/rv32im/v2/dsl/inst_p2.zir :469:23) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :80:15) at callsite( Top ( zirgen/circuit/rv32im/v2/dsl/top.zir :27:2) at unknown)))))))))
-  arg0[683] = x1036;
+  arg0[682] = x1036;
   // loc(unknown)
   auto x1037 = top_2(cycle, steps, poly_mix, arg0, x1001, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
   return x1037;

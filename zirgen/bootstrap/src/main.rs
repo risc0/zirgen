@@ -123,51 +123,6 @@ mod edsl {
     ];
 }
 
-mod zirgen {
-    pub const RUST_OUTPUTS: &[&str] = &[
-        "taps.rs",
-        "info.rs",
-        "poly_ext.rs",
-        "defs.rs.inc",
-        "types.rs.inc",
-        "layout.rs.inc",
-        "steps.rs.inc",
-    ];
-
-    pub const SYS_OUTPUTS: &[&str] = &[
-        "defs.cpp.inc",
-        "types.h.inc",
-        "layout.cpp.inc",
-        "steps.cpp.inc",
-    ];
-
-    pub const CPP_OUTPUTS: &[&str] = &[
-        "defs.cpp.inc",
-        "types.h.inc",
-        "layout.cpp.inc",
-        "steps.cpp.inc",
-        "rust_poly_fp_0.cpp",
-        "rust_poly_fp_1.cpp",
-        "rust_poly_fp_2.cpp",
-        "rust_poly_fp_3.cpp",
-        "rust_poly_fp_4.cpp",
-    ];
-
-    pub const CUDA_OUTPUTS: &[&str] = &[
-        "defs.cu.inc",
-        "eval_check_0.cu",
-        "eval_check_1.cu",
-        "eval_check_2.cu",
-        "eval_check_3.cu",
-        "eval_check_4.cu",
-        "layout.cu.inc",
-        "steps.cu.inc",
-        "types.cuh.inc",
-    ];
-
-    pub const METAL_OUTPUTS: &[&str] = &[];
-}
-
 const RECURSION_ZKR_ZIP: &str = "recursion_zkr.zip";
 
 #[derive(Clone, Debug, ValueEnum)]
@@ -424,18 +379,31 @@ impl Args {
 
     fn recursion(&self) {
         self.build_all_circuits();
-
         self.copy_edsl_style("recursion", "zirgen/circuit/recursion")
     }
 
     fn rv32im(&self) {
         self.build_all_circuits();
-
         self.copy_edsl_style("rv32im", "zirgen/circuit/rv32im/v1/edsl")
     }
 
     fn rv32im_v2(&self) {
-        self.copy_zirgen_style("rv32im-v2", "zirgen/circuit/rv32im/v2/dsl")
+        // self.build_all_circuits();
+        // self.copy_zirgen_style("rv32im-v2", "zirgen/circuit/rv32im/v2/dsl")
+        self.install_from_bazel(
+            "//zirgen/circuit/rv32im/v2/dsl:codegen",
+            self.output_or("risc0/circuit/rv32im-v2"),
+            &[
+                Rule::copy("*.cpp", "kernels/cxx").base_suffix("-sys"),
+                Rule::copy("*.cpp.inc", "kernels/cxx").base_suffix("-sys"),
+                Rule::copy("*.h.inc", "kernels/cxx").base_suffix("-sys"),
+                Rule::copy("*.cu", "kernels/cuda").base_suffix("-sys"),
+                Rule::copy("*.cu.inc", "kernels/cuda").base_suffix("-sys"),
+                Rule::copy("*.cuh.inc", "kernels/cuda").base_suffix("-sys"),
+                Rule::copy("*.rs", "src/zirgen"),
+                Rule::copy("*.rs.inc", "src/zirgen"),
+            ],
+        );
     }
 
     fn keccak(&self) {
@@ -463,23 +431,23 @@ impl Args {
         cargo_fmt_circuit("calculator", &self.output, &None);
     }
 
-    fn copy_zirgen_style(&self, circuit: &str, src_dir: &str) {
-        let root = std::env::current_dir().unwrap().join("risc0");
-        let src = Path::new(src_dir);
-        let rust = Some(root.join("circuit").join(circuit));
-        let kernels = root
-            .join("circuit")
-            .join(String::from(circuit) + "-sys")
-            .join("kernels");
-        let kernels = Some(kernels);
+    // fn copy_zirgen_style(&self, circuit: &str, src_dir: &str) {
+    //     let root = std::env::current_dir().unwrap().join("risc0");
+    //     let src = Path::new(src_dir);
+    //     let rust = Some(root.join("circuit").join(circuit));
+    //     let kernels = root
+    //         .join("circuit")
+    //         .join(String::from(circuit) + "-sys")
+    //         .join("kernels");
+    //     let kernels = Some(kernels);
 
-        copy_group(circuit, &src, &rust, zirgen::RUST_OUTPUTS, "src", "");
-        copy_group(circuit, &src, &kernels, zirgen::CPP_OUTPUTS, "cxx", "");
-        copy_group(circuit, &src, &kernels, zirgen::CUDA_OUTPUTS, "cuda", "");
-        copy_group(circuit, &src, &kernels, zirgen::METAL_OUTPUTS, "metal", "");
+    //     copy_group(circuit, &src, &rust, zirgen::RUST_OUTPUTS, "src", "");
+    //     copy_group(circuit, &src, &kernels, zirgen::CPP_OUTPUTS, "cxx", "");
+    //     copy_group(circuit, &src, &kernels, zirgen::CUDA_OUTPUTS, "cuda", "");
+    //     copy_group(circuit, &src, &kernels, zirgen::METAL_OUTPUTS, "metal", "");
 
-        cargo_fmt_circuit(circuit, &rust, &None);
-    }
+    //     cargo_fmt_circuit(circuit, &rust, &None);
+    // }
 
     fn copy_edsl_style(&self, circuit: &str, src_dir: &str) {
         let risc0_root = self.output.as_ref().expect("--output is required");
