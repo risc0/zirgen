@@ -19,7 +19,7 @@ component Top() {}
 ```
 
 Next, we need to tell Bazel about our new circuit, and tell it how to build our
-project. Create a `Build.bazel` file in the same directory as our new circuit
+project. Create a `BUILD.bazel` file in the same directory as our new circuit
 source file, with these contents:
 
 ```
