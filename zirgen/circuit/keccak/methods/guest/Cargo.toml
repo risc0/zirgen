@@ -7,7 +7,7 @@ edition = "2021"
 
 [workspace.dependencies.risc0-zkvm]
 git = "https://github.com/risc0/risc0.git"
-rev = "3c20ddcb2f5a707115d1cea896fb375818d798cf"
+rev = "21db33e8982d776cffaaf213e387dfaba3527347"
 default-features = false
 
 [dependencies]
