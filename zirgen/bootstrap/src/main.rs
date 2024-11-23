@@ -14,11 +14,83 @@
 
 use std::{
     io,
+    io::{BufRead, BufReader},
     path::{Path, PathBuf},
-    process::{exit, Command},
+    process::{exit, Command, Stdio},
 };
 
 use clap::{Parser, ValueEnum};
+use glob::Pattern;
+
+#[derive(Debug)]
+struct Rule<'a> {
+    pattern: &'a str,
+    dest_dir: &'a str,
+    remove_prefix: &'a str,
+    base_suffix: &'a str,
+}
+
+impl<'a> Rule<'a> {
+    const fn copy(pattern: &'a str, dest_dir: &'a str) -> Self {
+        Self {
+            pattern,
+            dest_dir,
+            remove_prefix: "",
+            base_suffix: "",
+        }
+    }
+
+    const fn remove_prefix(self, remove_prefix: &'a str) -> Self {
+        Self {
+            remove_prefix,
+            ..self
+        }
+    }
+
+    const fn base_suffix(self, base_suffix: &'a str) -> Self {
+        Self {
+            base_suffix,
+            ..self
+        }
+    }
+
+    fn apply_to(&self, src_file: impl AsRef<Path>, dest_base: impl AsRef<Path>) -> bool {
+        let src_file = src_file.as_ref().to_path_buf();
+        let mut dest_base = dest_base.as_ref().to_path_buf();
+
+        let src_fn = src_file
+            .file_name()
+            .expect("Empty filename?")
+            .to_str()
+            .unwrap();
+
+        if !Pattern::new(self.pattern).unwrap().matches(src_fn) {
+            return false;
+        }
+        if !self.base_suffix.is_empty() {
+            dest_base.set_file_name(
+                [
+                    dest_base.file_name().unwrap().to_str().unwrap(),
+                    self.base_suffix,
+                ]
+                .join(""),
+            )
+        }
+        let dest_fn;
+        if src_fn.starts_with(self.remove_prefix) {
+            dest_fn = &src_fn[self.remove_prefix.len()..]
+        } else {
+            dest_fn = &src_fn
+        }
+        copy(
+            &src_file,
+            &dest_base.join(self.dest_dir).join(Path::new(dest_fn)),
+        );
+        true
+    }
+}
+
+type Rules<'a> = &'a [Rule<'a>];
 
 mod edsl {
     pub const RUST_OUTPUTS: &[&str] = &["poly_ext.rs", "taps.rs", "info.rs", "layout.rs.inc"];
@@ -97,19 +169,6 @@ mod zirgen {
 }
 
 const RECURSION_ZKR_ZIP: &str = "recursion_zkr.zip";
-
-const CALCULATOR_RUST_OUTPUTS: &[&str] = &[
-    "taps.rs",
-    "info.rs",
-    "poly_ext.rs",
-    "defs.rs.inc",
-    "types.rs.inc",
-    "layout.rs.inc",
-    "steps.rs.inc",
-    "validity.rs.inc",
-];
-
-const KECCAK_ZKR_ZIP: &str = "keccak_zkr.zip";
 
 #[derive(Clone, Debug, ValueEnum)]
 enum Circuit {
@@ -242,6 +301,87 @@ fn cargo_fmt(manifest: &Path) {
 }
 
 impl Args {
+    fn output_or(&self, alternative: &str) -> PathBuf {
+        self.output.clone().unwrap_or(PathBuf::from(alternative))
+    }
+
+    fn build_all_circuits(&self) {
+        // Build the circuits using bazel(isk).
+        // TODO: Migrate to install_from_bazel which builds just what's necessary.
+
+        let bazel_args = ["build", "--config", bazel_config(), "//zirgen/circuit"];
+
+        let status = Command::new("bazelisk").args(bazel_args).status();
+        let status = match status {
+            Ok(stat) => stat,
+            Err(err) => match err.kind() {
+                std::io::ErrorKind::NotFound => {
+                    Command::new("bazel").args(bazel_args).status().unwrap()
+                }
+                _ => panic!("{}", err.to_string()),
+            },
+        };
+        if !status.success() {
+            exit(status.code().unwrap());
+        }
+    }
+
+    fn install_from_bazel(
+        &self,
+        build_target: &str,
+        dest_base: impl AsRef<Path>,
+        install_rules: Rules,
+    ) {
+        let dest_base = dest_base.as_ref();
+
+        let bazel_args = ["build", "--config", bazel_config(), build_target];
+
+        let mut child = Command::new("bazelisk")
+            .args(bazel_args)
+            .stdout(Stdio::inherit())
+            .stderr(Stdio::piped())
+            .spawn()
+            .expect("Unable to run bazelisk");
+        let child_out = BufReader::new(child.stderr.take().unwrap());
+
+        let mut rules_used: Vec<bool> = Vec::new();
+        rules_used.resize(install_rules.len(), false);
+
+        for line in child_out.lines() {
+            let line = line.unwrap();
+            eprintln!("{line}");
+            if !line.starts_with("  bazel-bin/") {
+                continue;
+            }
+
+            let path = PathBuf::from(&line[2..]);
+
+            let mut found_rule = false;
+            for (idx, rule) in install_rules.iter().enumerate() {
+                if rule.apply_to(&path, dest_base) {
+                    found_rule = true;
+                    rules_used[idx] = true;
+                }
+            }
+            if !found_rule {
+                eprintln!("WARNING: Could not find rule to apply to {path:?}");
+            }
+        }
+
+        let status = child.wait().expect("Unable to wait for bazel");
+
+        if !status.success() {
+            eprintln!("Bazel did not return success.");
+            exit(status.code().unwrap());
+        }
+
+        for (used, rule) in rules_used.iter().zip(install_rules) {
+            if !used {
+                eprintln!("WARNING: Rule matched no files: {rule:?}");
+            }
+        }
+    }
+
     fn run(&self) {
         match self.circuit {
             Circuit::Bigint2 => self.bigint2(),
@@ -257,17 +397,22 @@ impl Args {
     }
 
     fn fib(&self) {
-        let circuit = "fib";
-        let src_path = Path::new("zirgen/circuit/fib");
-        let out = &self.output;
-        copy_group(circuit, &src_path, out, edsl::CPP_OUTPUTS, "cxx", "rust_");
-        copy_group(circuit, &src_path, out, edsl::RUST_OUTPUTS, "src", "");
-        copy_group(circuit, &src_path, out, edsl::CUDA_OUTPUTS, "kernels", "");
-        copy_group(circuit, &src_path, out, edsl::METAL_OUTPUTS, "kernels", "");
-        cargo_fmt_circuit(circuit, &self.output, &None);
+        self.install_from_bazel(
+            "//zirgen/circuit/fib",
+            self.output_or("zirgen/circuit/fib"),
+            &[
+                Rule::copy("*.cpp", "cxx").remove_prefix("rust_"),
+                Rule::copy("*.rs", "src"),
+                Rule::copy("*.cu", "kernels"),
+                Rule::copy("*.metal", "kernels"),
+            ],
+        );
+        cargo_fmt_circuit("fib", &self.output, &None);
     }
 
     fn predicates(&self) {
+        self.build_all_circuits();
+
         let bazel_bin = get_bazel_bin();
         let risc0_root = self.output.as_ref().expect("--output is required");
         let risc0_root = risc0_root.join("risc0");
@@ -278,10 +423,14 @@ impl Args {
     }
 
     fn recursion(&self) {
+        self.build_all_circuits();
+
         self.copy_edsl_style("recursion", "zirgen/circuit/recursion")
     }
 
     fn rv32im(&self) {
+        self.build_all_circuits();
+
         self.copy_edsl_style("rv32im", "zirgen/circuit/rv32im/v1/edsl")
     }
 
@@ -290,55 +439,28 @@ impl Args {
     }
 
     fn keccak(&self) {
-        let bazel_bin = get_bazel_bin();
-        let circuit = "keccak";
-        let src_path = Path::new("zirgen/circuit/keccak");
-        let sys_root = Path::new("zirgen/circuit/keccak-sys").to_path_buf();
-        let hal_root = Some(sys_root.join("kernels"));
-        let zkr_src_path = bazel_bin.join("zirgen/circuit/predicates");
-        let zkr_tgt_path = self
-            .output
-            .clone()
-            .unwrap_or(Path::new("zirgen/circuit/keccak/src/prove").to_path_buf());
-
-        copy_group(
-            circuit,
-            &src_path,
-            &self.output,
-            zirgen::RUST_OUTPUTS,
-            "src",
-            "",
+        self.install_from_bazel(
+            "//zirgen/circuit/keccak:circuit_and_zkr",
+            self.output_or("zirgen/circuit/keccak"),
+            &[
+                Rule::copy("*.cpp", "cxx").base_suffix("-sys"),
+                Rule::copy("*.cpp.inc", "cxx").base_suffix("-sys"),
+                Rule::copy("*.h.inc", "cxx").base_suffix("-sys"),
+                Rule::copy("*.cu", "kernels/cuda").base_suffix("-sys"),
+                Rule::copy("*.rs", "src"),
+                Rule::copy("*.rs.inc", "src"),
+                Rule::copy("keccak_zkr.zip", "src/prove"),
+            ],
         );
-        copy_group(
-            circuit,
-            &src_path,
-            &Some(sys_root),
-            zirgen::SYS_OUTPUTS,
-            "cxx",
-            "",
-        );
-        copy_group(
-            circuit,
-            &src_path,
-            &hal_root,
-            zirgen::CUDA_OUTPUTS,
-            "cuda",
-            "",
-        );
-        copy_file(&zkr_src_path, &zkr_tgt_path, KECCAK_ZKR_ZIP);
-        cargo_fmt_circuit(circuit, &self.output, &None);
     }
 
     fn calculator(&self) {
-        let out = self.output.clone().or(Some(
-            Path::new("zirgen/dsl/examples/calculator").to_path_buf(),
-        ));
-        let circuit = "calculator";
-        let src_path = Path::new("zirgen/dsl/examples/calculator/");
-
-        copy_group(circuit, &src_path, &out, CALCULATOR_RUST_OUTPUTS, "", "");
-        copy_group(circuit, &src_path, &out, zirgen::SYS_OUTPUTS, "", "");
-        cargo_fmt_circuit(circuit, &self.output, &None);
+        self.install_from_bazel(
+            "//zirgen/dsl/examples/calculator",
+            self.output_or("zirgen/dsl/examples/calculator"),
+            &[Rule::copy("*.inc", ""), Rule::copy("*.rs", "")],
+        );
+        cargo_fmt_circuit("calculator", &self.output, &None);
     }
 
     fn copy_zirgen_style(&self, circuit: &str, src_dir: &str) {
@@ -381,6 +503,8 @@ impl Args {
     }
 
     fn stark_verify(&self) {
+        self.build_all_circuits();
+
         let bazel_bin = get_bazel_bin();
         let risc0_root = self.output.as_ref().expect("--output is required");
         let inc_path = Path::new("zirgen/circuit/verify/circom/include");
@@ -395,6 +519,8 @@ impl Args {
     }
 
     fn bigint2(&self) {
+        self.build_all_circuits();
+
         let risc0_root = self.output.as_ref().expect("--output is required");
         let risc0_root = risc0_root.join("risc0");
         let bazel_bin = get_bazel_bin();
@@ -425,23 +551,6 @@ fn bazel_config() -> &'static str {
 fn main() {
     env_logger::init();
     let args = Args::parse();
-
-    let bazel_args = ["build", "--config", bazel_config(), "//zirgen/circuit"];
-
-    // Build the circuits using bazel(isk).
-    let status = Command::new("bazelisk").args(bazel_args).status();
-    let status = match status {
-        Ok(stat) => stat,
-        Err(err) => match err.kind() {
-            std::io::ErrorKind::NotFound => {
-                Command::new("bazel").args(bazel_args).status().unwrap()
-            }
-            _ => panic!("{}", err.to_string()),
-        },
-    };
-    if !status.success() {
-        exit(status.code().unwrap());
-    }
 
     args.run();
 }

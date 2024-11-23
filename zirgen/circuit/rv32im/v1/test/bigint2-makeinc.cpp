@@ -412,15 +412,23 @@ int main(int argc, char* argv[]) {
   auto func = builder.create<func::FuncOp>(loc, "foo", funcType);
   builder.setInsertionPointToStart(func.addEntryBlock());
 
-  auto curve =
-      std::make_shared<BigInt::EC::WeierstrassCurve>(secp256k1_prime, secp256k1_a, secp256k1_b);
+  mlir::Type int256Type = builder.getIntegerType(256);
+  auto primeAttr = builder.getIntegerAttr(int256Type, secp256k1_prime);
+  auto prime = builder.create<BigInt::ConstOp>(loc, primeAttr);
+  mlir::Type int8Type = builder.getIntegerType(8);
+  auto aAttr = builder.getIntegerAttr(int8Type, secp256k1_a);
+  auto a = builder.create<BigInt::ConstOp>(loc, aAttr);
+  auto bAttr = builder.getIntegerAttr(int8Type, secp256k1_b);
+  auto b = builder.create<BigInt::ConstOp>(loc, bAttr);
+
+  auto curve = std::make_shared<BigInt::EC::WeierstrassCurve>(prime, a, b);
 
   auto a_x = builder.create<BigInt::LoadOp>(loc, 256, 11, 0);
   auto a_y = builder.create<BigInt::LoadOp>(loc, 256, 11, 2);
-  auto a = BigInt::EC::AffinePt(a_x, a_y, curve);
-  auto c = BigInt::EC::doub(builder, loc, a);
-  builder.create<BigInt::StoreOp>(loc, c.x(), 12, 0);
-  builder.create<BigInt::StoreOp>(loc, c.y(), 12, 2);
+  auto pt = BigInt::EC::AffinePt(a_x, a_y, curve);
+  auto doubled = BigInt::EC::doub(builder, loc, pt);
+  builder.create<BigInt::StoreOp>(loc, doubled.x(), 12, 0);
+  builder.create<BigInt::StoreOp>(loc, doubled.y(), 12, 2);
   builder.create<func::ReturnOp>(loc);
 
   // Remove reduce
