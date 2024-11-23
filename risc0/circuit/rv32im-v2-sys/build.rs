@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::env;
+use std::{env, path::Path};
 
 use risc0_build_kernel::{KernelBuild, KernelType};
 
@@ -25,6 +25,7 @@ fn main() {
 }
 
 fn build_cpu_kernels() {
+    rerun_if_changed("kernels/cxx");
     KernelBuild::new(KernelType::Cpp)
         .files(glob::glob("kernels/cxx/*.cpp").unwrap().map(|x| x.unwrap()))
         .deps(glob::glob("kernels/cxx/*.h").unwrap().map(|x| x.unwrap()))
@@ -61,4 +62,8 @@ fn build_cuda_kernels() {
         .include(env::var("DEP_RISC0_SYS_CUDA_ROOT").unwrap())
         .include(env::var("DEP_SPPARK_ROOT").unwrap())
         .compile("risc0_rv32im_v2_cuda");
+}
+
+fn rerun_if_changed<P: AsRef<Path>>(path: P) {
+    println!("cargo:rerun-if-changed={}", path.as_ref().display());
 }

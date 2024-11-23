@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use derive_more::Debug;
-use risc0_core::field::baby_bear::BabyBearElem;
+use risc0_core::field::baby_bear::{BabyBearElem, BabyBearExtElem};
 
 #[derive(Clone, Debug, PartialEq)]
 #[repr(C)]
@@ -61,16 +61,37 @@ pub struct RawBuffer {
 }
 
 #[repr(C)]
-pub struct RawExecutionTrace {
+pub struct RawExecutionBuffers {
     pub global: RawBuffer,
     pub data: RawBuffer,
+}
+
+#[repr(C)]
+pub struct RawAccumulatorBuffers {
+    pub data: RawBuffer,
+    pub accum: RawBuffer,
+    pub mix: RawBuffer,
 }
 
 extern "C" {
     pub fn risc0_circuit_rv32im_v2_cpu_witgen(
         mode: u32,
-        exec_trace: *const RawExecutionTrace,
+        buffers: *const RawExecutionBuffers,
         preflight: *const RawPreflightTrace,
         cycles: u32,
+    ) -> *const std::os::raw::c_char;
+
+    pub fn risc0_circuit_rv32im_v2_cpu_accum(
+        buffers: *const RawAccumulatorBuffers,
+        preflight: *const RawPreflightTrace,
+        cycles: u32,
+    ) -> *const std::os::raw::c_char;
+
+    pub fn risc0_circuit_rv32im_v2_cpu_poly_fp(
+        cycle: usize,
+        steps: usize,
+        poly_mixs: *const BabyBearExtElem,
+        args_ptr: *const *const BabyBearElem,
+        result: *mut BabyBearExtElem,
     ) -> *const std::os::raw::c_char;
 }

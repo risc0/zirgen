@@ -23,10 +23,12 @@ derive_more = { version = "1.0", features = [
   "add_assign",
   "debug",
 ], optional = true }
+paste = { version = "1.0", optional = true }
 rand = { version = "0.8", optional = true }
 rayon = { version = "1.5", optional = true }
 risc0-circuit-rv32im-v2-sys = { workspace = true, optional = true }
 risc0-sys = { workspace = true, optional = true }
+risc0-zirgen-dsl = { workspace = true, optional = true }
 
 [dev-dependencies]
 test-log = { version = "0.2", default-features = false, features = ["trace"] }
@@ -42,10 +44,12 @@ default = ["prove"]
 execute = ["dep:bytemuck", "dep:derive_more", "std"]
 prove = [
   "dep:cfg-if",
+  "dep:paste",
   "dep:rand",
   "dep:rayon",
   "dep:risc0-circuit-rv32im-v2-sys",
   "dep:risc0-sys",
+  "dep:risc0-zirgen-dsl",
   "execute",
   "risc0-core/perf",
   "risc0-zkp/prove",

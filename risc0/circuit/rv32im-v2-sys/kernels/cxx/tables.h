@@ -16,51 +16,36 @@
 
 #include "fp.h"
 
-#include <iostream>
-#include <map>
+#include <array>
+#include <atomic>
+#include <cstdint>
+#include <cstdio>
+#include <stdexcept>
 
 namespace risc0 {
 
-struct MemTxnKey {
-  uint32_t addr;
-  uint32_t cycle;
-  uint32_t data;
-
-  bool operator<(const MemTxnKey& rhs) const {
-    if (addr != rhs.addr) {
-      return addr < rhs.addr;
-    }
-    if (cycle != rhs.cycle) {
-      return cycle < rhs.cycle;
-    }
-    return data < rhs.data;
-  }
-};
-
 struct LookupTables {
-  std::map<uint32_t, Fp> tableU8;
-  std::map<uint32_t, Fp> tableU16;
-  std::map<MemTxnKey, Fp> tableMem;
-  std::map<Fp, Fp> tableCycle;
+  std::array<std::atomic<uint32_t>, 1 << 8> tableU8;
+  std::array<std::atomic<uint32_t>, 1 << 16> tableU16;
 
   void lookupDelta(Fp table, Fp index, Fp count) {
     uint32_t tableU32 = table.asUInt32();
     if (tableU32 == 0) {
-      tableCycle[index] += count;
+      // tableCycle[index] += count;
       return;
     }
     if (tableU32 != 8 && tableU32 != 16) {
       throw std::runtime_error("Invalid lookup table");
     }
     if (index.asUInt32() >= (1 << tableU32)) {
-      std::cerr << "LOOKUP ERROR: table = " << table.asUInt32() << ", index = " << index.asUInt32()
-                << "\n";
+      printf("LOOKUP ERROR: table = %u, index = %u\n", table.asUInt32(), index.asUInt32());
       throw std::runtime_error("u8/16 table error");
     }
+    // printf("table = %u, index = %u\n", table.asUInt32(), index.asUInt32());
     if (tableU32 == 8) {
-      tableU8[index.asUInt32()] += count;
+      tableU8[index.asUInt32()] += count.asUInt32();
     } else {
-      tableU16[index.asUInt32()] += count;
+      tableU16[index.asUInt32()] += count.asUInt32();
     }
   }
 
@@ -70,42 +55,9 @@ struct LookupTables {
       throw std::runtime_error("Invalid lookup table");
     }
     if (tableU32 == 8) {
-      return tableU8[index.asUInt32()];
+      return Fp(tableU8[index.asUInt32()]);
     } else {
-      return tableU16[index.asUInt32()];
-    }
-  }
-
-  void memoryDelta(uint32_t addr, uint32_t cycle, uint32_t data, Fp count) {
-    tableMem[{addr, cycle, data}] += count;
-  }
-
-  void check() {
-    for (const auto& kvp : tableU8) {
-      if (kvp.second != 0) {
-        std::cerr << "U8 entry " << kvp.first << ": " << kvp.second.asUInt32() << "\n";
-        throw std::runtime_error("Table not zero");
-      }
-    }
-    for (const auto& kvp : tableU16) {
-      if (kvp.second != 0) {
-        std::cerr << "U16 entry " << kvp.first << ": " << kvp.second.asUInt32() << "\n";
-        throw std::runtime_error("Table not zero");
-      }
-    }
-    for (const auto& kvp : tableMem) {
-      if (kvp.second != 0) {
-        std::cerr << "Nonzero memory entry: (" << kvp.first.addr << ", " << kvp.first.cycle << ", "
-                  << kvp.first.data << ") = " << kvp.second.asUInt32() << "\n";
-        throw std::runtime_error("Table not zero");
-      }
-    }
-    for (const auto& kvp : tableCycle) {
-      if (kvp.second != 0) {
-        std::cerr << "Cycle entry " << kvp.first.asUInt32() << ": " << kvp.second.asUInt32()
-                  << "\n";
-        throw std::runtime_error("Table not zero");
-      }
+      return Fp(tableU16[index.asUInt32()]);
     }
   }
 };

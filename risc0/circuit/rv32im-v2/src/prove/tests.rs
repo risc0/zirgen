@@ -16,7 +16,8 @@ use test_log::test;
 use super::{hal::StepMode, segment_prover};
 use crate::{
     execute::{image::MemoryImage2, testutil, DEFAULT_SEGMENT_LIMIT_PO2},
-    prove::{witgen::WitnessGenerator, REG_COUNT_DATA},
+    prove::witgen::WitnessGenerator,
+    zirgen::circuit::REGCOUNT_DATA,
 };
 
 fn fwd_rev_ab_test(program: Program) {
@@ -75,8 +76,8 @@ fn fwd_rev_ab_test(program: Program) {
         let fwd_vec = fwd_witgen.data.to_vec();
         let rev_vec = rev_witgen.data.to_vec();
         for row in 0..cycles {
-            let fwd_row = &fwd_vec[row * REG_COUNT_DATA..row * REG_COUNT_DATA + REG_COUNT_DATA];
-            let rev_row = &rev_vec[row * REG_COUNT_DATA..row * REG_COUNT_DATA + REG_COUNT_DATA];
+            let fwd_row = &fwd_vec[row * REGCOUNT_DATA..row * REGCOUNT_DATA + REGCOUNT_DATA];
+            let rev_row = &rev_vec[row * REGCOUNT_DATA..row * REGCOUNT_DATA + REGCOUNT_DATA];
             assert_eq!(fwd_row, rev_row, "cycle: {row}");
         }
     }
@@ -99,12 +100,8 @@ fn basic() {
     let segment = segments.first().unwrap();
 
     let prover = segment_prover().unwrap();
-    // let seal = prover.prove_segment(segment).unwrap();
-
-    // let suite = Sha256HashSuite::new_suite();
-    // let hal = CpuHal::new(suite.clone());
-    // let checker = ControlCheck::new(&hal, segment.po2);
-    // risc0_zkp::verify::verify(&CIRCUIT, &suite, &seal, |x, y| checker.check_ctrl(x, y)).unwrap();
+    let seal = prover.prove(segment).unwrap();
+    prover.verify(&seal).unwrap();
 }
 
 #[test]

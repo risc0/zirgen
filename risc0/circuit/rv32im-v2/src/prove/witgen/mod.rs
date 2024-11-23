@@ -10,6 +10,7 @@ mod tests;
 use std::iter::zip;
 
 use anyhow::Result;
+use preflight::PreflightTrace;
 use risc0_circuit_rv32im_v2_sys::RawPreflightCycle;
 use risc0_core::scope;
 use risc0_zkp::{
@@ -22,21 +23,22 @@ use risc0_zkp::{
 };
 
 use self::{poseidon2::Poseidon2State, preflight::Back};
-use super::hal::{CircuitWitnessGenerator, StepMode, WitnessBuffer};
+use super::hal::{CircuitWitnessGenerator, MetaBuffer, StepMode};
 use crate::{
     execute::{
         addr::WordAddr,
         platform::{LOOKUP_TABLE_CYCLES, MERKLE_TREE_END_ADDR},
         segment::Segment,
     },
-    prove::{REG_COUNT_DATA, REG_COUNT_GLOBAL},
-    zirgen::circuit::{LAYOUT_GLOBAL, LAYOUT_TOP},
+    zirgen::circuit::{LAYOUT_GLOBAL, LAYOUT_TOP, REGCOUNT_CODE, REGCOUNT_DATA, REGCOUNT_GLOBAL},
 };
 
 pub(crate) struct WitnessGenerator<H: Hal> {
     pub cycles: usize,
-    pub global: WitnessBuffer<H>,
-    pub data: WitnessBuffer<H>,
+    pub global: MetaBuffer<H>,
+    pub code: MetaBuffer<H>,
+    pub data: MetaBuffer<H>,
+    pub trace: PreflightTrace,
 }
 
 impl<H: Hal> WitnessGenerator<H> {
@@ -70,7 +72,7 @@ impl<H: Hal> WitnessGenerator<H> {
         assert!(cycles <= 1 << segment.po2, "cycles <= 1 << segment.po2");
         let cycles = 1 << segment.po2;
 
-        let mut global = vec![BabyBearElem::INVALID; REG_COUNT_GLOBAL];
+        let mut global = vec![BabyBearElem::INVALID; REGCOUNT_GLOBAL];
 
         for i in 0..DIGEST_WORDS {
             // state in
@@ -94,20 +96,22 @@ impl<H: Hal> WitnessGenerator<H> {
         // is_terminate
         global[LAYOUT_GLOBAL.is_terminate._super.offset] = 1u32.into();
 
-        let global = WitnessBuffer {
+        let global = MetaBuffer {
             buf: hal.copy_from_elem("global", &global),
             rows: 1,
-            cols: REG_COUNT_GLOBAL,
+            cols: REGCOUNT_GLOBAL,
             checked_reads: true,
         };
 
+        let code = MetaBuffer::new("code", hal, cycles, REGCOUNT_CODE, false);
+
         let data = scope!(
             "alloc(data)",
-            WitnessBuffer::new("data", hal, cycles, REG_COUNT_DATA, true)
+            MetaBuffer::new("data", hal, cycles, REGCOUNT_DATA, true)
         );
 
         // Set stateful columns from 'top'
-        let mut injector = Injector::new(cycles, REG_COUNT_DATA);
+        let mut injector = Injector::new(cycles, REGCOUNT_DATA);
         for (row, back) in trace.backs.iter().enumerate() {
             let cycle = &trace.cycles[row];
             // tracing::trace!("[{row}] pc: {:#010x}, state: {}", cycle.pc, cycle.state);
@@ -137,18 +141,21 @@ impl<H: Hal> WitnessGenerator<H> {
             &injector.values,
         );
 
-        circuit_hal.generate_witness(mode, &trace, trace.cycles.len(), &global, &data)?;
+        circuit_hal.generate_witness(mode, &trace, &global, &data)?;
 
         // Zero out 'invalid' entries in data and output.
         scope!("zeroize", {
             hal.eltwise_zeroize_elem(&global.buf);
+            hal.eltwise_zeroize_elem(&code.buf);
             hal.eltwise_zeroize_elem(&data.buf);
         });
 
         Ok(Self {
             cycles,
             global,
+            code,
             data,
+            trace,
         })
     }
 }

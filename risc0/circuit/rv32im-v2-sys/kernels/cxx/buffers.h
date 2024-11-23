@@ -56,9 +56,4 @@ struct Buffer {
   Fp getGlobal(size_t col) { return get(0, col); }
 };
 
-struct ExecutionTrace {
-  Buffer global;
-  Buffer data;
-};
-
 } // namespace risc0

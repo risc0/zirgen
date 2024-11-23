@@ -12,28 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub mod info;
-// pub mod poly_ext;
-pub mod taps;
+use risc0_zkp::{
+    adapter::{CircuitCoreDef, TapsProvider},
+    field::baby_bear::BabyBear,
+    taps::TapSet,
+};
 
-use super::CircuitImpl;
+pub(crate) mod info;
+pub(crate) mod poly_ext;
+pub(crate) mod taps;
 
-#[allow(unused_parens)]
-#[allow(unused_assignments)]
-#[allow(unused_variables)]
-#[allow(dead_code)]
+pub(crate) struct CircuitImpl;
+
+#[allow(unused)]
 #[allow(non_camel_case_types)]
 #[allow(non_snake_case)]
-pub mod circuit {
-    use risc0_zkp::{
-        field::baby_bear::{BabyBearElem, BabyBearExtElem},
-        layout::Reg,
-    };
-
-    type Val = BabyBearElem;
-    type ExtVal = BabyBearExtElem;
+pub(crate) mod circuit {
+    risc0_zirgen_dsl::zirgen_preamble! {}
 
     include! {"types.rs.inc"}
-    // include! {"defs.rs.inc"}
+    include! {"defs.rs.inc"}
     include! {"layout.rs.inc"}
+}
+
+impl CircuitCoreDef<BabyBear> for CircuitImpl {}
+
+impl TapsProvider for CircuitImpl {
+    fn get_taps(&self) -> &'static TapSet<'static> {
+        self::taps::TAPSET
+    }
 }

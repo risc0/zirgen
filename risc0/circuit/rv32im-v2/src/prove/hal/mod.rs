@@ -10,27 +10,39 @@ use anyhow::Result;
 use rand::thread_rng;
 use risc0_core::scope;
 use risc0_zkp::{
+    adapter::{CircuitInfo as _, PROOF_SYSTEM_INFO},
     field::{
         baby_bear::{BabyBear, BabyBearElem, BabyBearExtElem},
         Elem as _,
     },
-    hal::{Buffer, CircuitHal, Hal},
+    hal::{AccumPreflight, Buffer, CircuitHal, Hal},
+    prove::Prover,
 };
 
 use super::{
     witgen::{preflight::PreflightTrace, WitnessGenerator},
     Seal, SegmentProver,
 };
-use crate::execute::segment::Segment;
+use crate::{
+    execute::segment::Segment,
+    zirgen::{
+        circuit::{
+            REGCOUNT_ACCUM, REGCOUNT_MIX, REGISTER_GROUP_ACCUM, REGISTER_GROUP_CODE,
+            REGISTER_GROUP_DATA,
+        },
+        taps::TAPSET,
+        CircuitImpl,
+    },
+};
 
-pub(crate) struct WitnessBuffer<H: Hal> {
+pub(crate) struct MetaBuffer<H: Hal> {
     pub buf: H::Buffer<H::Elem>,
     pub rows: usize,
     pub cols: usize,
     pub checked_reads: bool,
 }
 
-impl<H> WitnessBuffer<H>
+impl<H> MetaBuffer<H>
 where
     H: Hal<Field = BabyBear, Elem = BabyBearElem, ExtElem = BabyBearExtElem>,
 {
@@ -60,14 +72,22 @@ pub(crate) enum StepMode {
 }
 
 pub(crate) trait CircuitWitnessGenerator<H: Hal> {
-    #[allow(clippy::too_many_arguments)]
     fn generate_witness(
         &self,
         mode: StepMode,
         preflight: &PreflightTrace,
-        steps: usize,
-        global: &WitnessBuffer<H>,
-        data: &WitnessBuffer<H>,
+        global: &MetaBuffer<H>,
+        data: &MetaBuffer<H>,
+    ) -> Result<()>;
+}
+
+pub(crate) trait CircuitAccumulator<H: Hal> {
+    fn step_accum(
+        &self,
+        preflight: &PreflightTrace,
+        data: &MetaBuffer<H>,
+        accum: &MetaBuffer<H>,
+        mix: &MetaBuffer<H>,
     ) -> Result<()>;
 }
 
@@ -93,108 +113,100 @@ where
 impl<H, C> SegmentProver for SegmentProverImpl<H, C>
 where
     H: Hal<Field = BabyBear, Elem = BabyBearElem, ExtElem = BabyBearExtElem>,
-    C: CircuitHal<H> + CircuitWitnessGenerator<H>,
+    C: CircuitHal<H> + CircuitWitnessGenerator<H> + CircuitAccumulator<H>,
 {
-    fn prove_segment(&self, segment: &Segment) -> Result<Seal> {
-        scope!("prove_segment");
+    fn prove(&self, segment: &Segment) -> Result<Seal> {
+        scope!("prove");
 
         let mut rng = thread_rng();
         let nonce = BabyBearExtElem::random(&mut rng);
 
-        let _witgen = WitnessGenerator::new(
+        let witgen = WitnessGenerator::new(
             self.hal.as_ref(),
             self.circuit_hal.as_ref(),
             segment,
             StepMode::Parallel,
             nonce,
         )?;
-        // let steps = witgen.steps;
 
-        // Ok(scope!("prove", {
-        //     let mut prover = Prover::new(self.hal.as_ref(), CIRCUIT.get_taps());
-        //     let hashfn = &self.hal.get_hash_suite().hashfn;
+        let code = &witgen.code.buf;
+        let data = &witgen.data.buf;
+        let global = &witgen.global.buf;
 
-        //     let mix = scope!("main", {
-        //         // At the start of the protocol, seed the Fiat-Shamir transcript with context information
-        //         // about the proof system and circuit.
-        //         prover
-        //             .iop()
-        //             .commit(&hashfn.hash_elem_slice(&PROOF_SYSTEM_INFO.encode()));
-        //         prover
-        //             .iop()
-        //             .commit(&hashfn.hash_elem_slice(&CircuitImpl::CIRCUIT_INFO.encode()));
+        Ok(scope!("prove", {
+            tracing::debug!("prove");
 
-        //         // Concat io (i.e. globals) and po2 into a vector.
-        //         let mut io_po2 = vec![BabyBearElem::ZERO; io.len() + 1];
-        //         witgen.io.view_mut(|view| {
-        //             for (i, elem) in view.iter_mut().enumerate() {
-        //                 *elem = elem.valid_or_zero();
-        //                 io_po2[i] = *elem;
-        //             }
-        //             io_po2[io.len()] = BabyBearElem::new_raw(segment.po2 as u32);
-        //         });
+            let mut prover = Prover::new(self.hal.as_ref(), TAPSET);
+            let hashfn = &self.hal.get_hash_suite().hashfn;
 
-        //         let io_po2_digest = hashfn.hash_elem_slice(&io_po2);
-        //         prover.iop().commit(&io_po2_digest);
-        //         prover.iop().write_field_elem_slice(io_po2.as_slice());
-        //         prover.set_po2(segment.po2);
+            let mix = scope!("main", {
+                // At the start of the protocol, seed the Fiat-Shamir transcript with context information
+                // about the proof system and circuit.
+                prover
+                    .iop()
+                    .commit(&hashfn.hash_elem_slice(&PROOF_SYSTEM_INFO.encode()));
+                prover
+                    .iop()
+                    .commit(&hashfn.hash_elem_slice(&CircuitImpl::CIRCUIT_INFO.encode()));
 
-        //         prover.commit_group(REGISTER_GROUP_CTRL, &witgen.ctrl);
-        //         prover.commit_group(REGISTER_GROUP_DATA, &witgen.data);
+                // Concat globals and po2 into a vector.
+                let global_len = global.size();
+                let mut header = vec![BabyBearElem::ZERO; global_len + 1];
+                global.view_mut(|view| {
+                    for (i, elem) in view.iter_mut().enumerate() {
+                        *elem = elem.valid_or_zero();
+                        header[i] = *elem;
+                    }
+                    header[global_len] = BabyBearElem::new_raw(segment.po2 as u32);
+                });
 
-        //         // Make the mixing values
-        //         let mix: Vec<_> = scope!(
-        //             "mix",
-        //             (0..CircuitImpl::MIX_SIZE)
-        //                 .map(|_| prover.iop().random_elem())
-        //                 .collect()
-        //         );
+                let header_digest = hashfn.hash_elem_slice(&header);
+                prover.iop().commit(&header_digest);
+                prover.iop().write_field_elem_slice(header.as_slice());
+                prover.set_po2(segment.po2 as usize);
 
-        //         let mix = scope!("copy(mix)", self.hal.copy_from_elem("mix", mix.as_slice()));
+                prover.commit_group(REGISTER_GROUP_CODE, code);
+                prover.commit_group(REGISTER_GROUP_DATA, data);
 
-        //         let accum = scope!(
-        //             "alloc(accum)",
-        //             self.hal.alloc_elem_init(
-        //                 "accum",
-        //                 steps * CIRCUIT.accum_size(),
-        //                 BabyBearElem::INVALID,
-        //             )
-        //         );
+                // Make the mixing values
+                let mix: Vec<_> = scope!(
+                    "mix",
+                    (0..CircuitImpl::MIX_SIZE)
+                        .map(|_| prover.iop().random_elem())
+                        .collect()
+                );
 
-        //         // Add random noise to end of accum
-        //         scope!("noise(accum)", {
-        //             let mut rng = thread_rng();
-        //             let noise =
-        //                 vec![BabyBearElem::random(&mut rng); ZK_CYCLES * CIRCUIT.accum_size()];
-        //             self.hal.eltwise_copy_elem_slice(
-        //                 &accum,
-        //                 &noise,
-        //                 CIRCUIT.accum_size(), // from_rows
-        //                 ZK_CYCLES,            // from_cols
-        //                 0,                    // from_offset
-        //                 ZK_CYCLES,            // from_stride
-        //                 steps - ZK_CYCLES,    // into_offset
-        //                 steps,                // into_stride
-        //             );
-        //         });
+                let mix = MetaBuffer {
+                    buf: self.hal.copy_from_elem("mix", mix.as_slice()),
+                    rows: 1,
+                    cols: REGCOUNT_MIX,
+                    checked_reads: true,
+                };
 
-        //         self.circuit_hal.accumulate(
-        //             &witgen.ctrl,
-        //             &witgen.io,
-        //             &witgen.data,
-        //             &mix,
-        //             &accum,
-        //             steps,
-        //         );
+                let accum = scope!(
+                    "alloc(accum)",
+                    MetaBuffer::new(
+                        "accum",
+                        self.hal.as_ref(),
+                        witgen.cycles,
+                        REGCOUNT_ACCUM,
+                        true
+                    )
+                );
 
-        //         prover.commit_group(REGISTER_GROUP_ACCUM, &accum);
+                self.circuit_hal
+                    .step_accum(&witgen.trace, &witgen.data, &accum, &mix)?;
 
-        //         mix
-        //     });
+                scope!("zeroize(accum)", {
+                    self.hal.eltwise_zeroize_elem(&accum.buf);
+                });
 
-        //     prover.finalize(&[&mix, &witgen.io], self.circuit_hal.as_ref())
-        // }))
+                prover.commit_group(REGISTER_GROUP_ACCUM, &accum.buf);
 
-        todo!()
+                mix
+            });
+
+            prover.finalize(&[&mix.buf, global], self.circuit_hal.as_ref())
+        }))
     }
 }
