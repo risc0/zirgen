@@ -388,8 +388,6 @@ impl Args {
     }
 
     fn rv32im_v2(&self) {
-        // self.build_all_circuits();
-        // self.copy_zirgen_style("rv32im-v2", "zirgen/circuit/rv32im/v2/dsl")
         self.install_from_bazel(
             "//zirgen/circuit/rv32im/v2/dsl:codegen",
             self.output_or("risc0/circuit/rv32im-v2"),
@@ -430,24 +428,6 @@ impl Args {
         );
         cargo_fmt_circuit("calculator", &self.output, &None);
     }
-
-    // fn copy_zirgen_style(&self, circuit: &str, src_dir: &str) {
-    //     let root = std::env::current_dir().unwrap().join("risc0");
-    //     let src = Path::new(src_dir);
-    //     let rust = Some(root.join("circuit").join(circuit));
-    //     let kernels = root
-    //         .join("circuit")
-    //         .join(String::from(circuit) + "-sys")
-    //         .join("kernels");
-    //     let kernels = Some(kernels);
-
-    //     copy_group(circuit, &src, &rust, zirgen::RUST_OUTPUTS, "src", "");
-    //     copy_group(circuit, &src, &kernels, zirgen::CPP_OUTPUTS, "cxx", "");
-    //     copy_group(circuit, &src, &kernels, zirgen::CUDA_OUTPUTS, "cuda", "");
-    //     copy_group(circuit, &src, &kernels, zirgen::METAL_OUTPUTS, "metal", "");
-
-    //     cargo_fmt_circuit(circuit, &rust, &None);
-    // }
 
     fn copy_edsl_style(&self, circuit: &str, src_dir: &str) {
         let risc0_root = self.output.as_ref().expect("--output is required");
