@@ -387,6 +387,7 @@ void Module::setPhases(mlir::func::FuncOp funcOp, llvm::ArrayRef<std::string> ph
     steps.push_back(builder.getAttr<mlir::StringAttr>(phase));
   }
   setModuleAttr(funcOp, builder.getAttr<StepsAttr>(steps));
+  setModuleAttr(funcOp, builder.getAttr<CircuitNameAttr>(funcOp.getName()));
 }
 
 void Module::setProtocolInfo(ProtocolInfo info) {

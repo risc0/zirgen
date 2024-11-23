@@ -1,6 +1,8 @@
 DEFAULT_OUTS = [
     "eval_check.cu",
+    "eval_check.cuh",
     "eval_check.metal",
+    "eval_check.h",
     "impl.h",
     "info.rs",
     "poly_edsl.cpp",

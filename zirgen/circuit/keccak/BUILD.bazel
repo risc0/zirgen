@@ -32,6 +32,7 @@ KECCAK_OUTS = ZIRGEN_OUTS + [
     "eval_check_2.cu",
     "eval_check_3.cu",
     "eval_check_4.cu",
+    "eval_check.cuh",
 ]
 
 build_circuit(

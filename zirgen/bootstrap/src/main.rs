@@ -402,6 +402,7 @@ impl Args {
                 Rule::copy("*.cpp.inc", "cxx").base_suffix("-sys"),
                 Rule::copy("*.h.inc", "cxx").base_suffix("-sys"),
                 Rule::copy("*.cu", "kernels/cuda").base_suffix("-sys"),
+                Rule::copy("*.cuh", "kernels/cuda").base_suffix("-sys"),
                 Rule::copy("*.rs", "src"),
                 Rule::copy("*.rs.inc", "src"),
                 Rule::copy("keccak_zkr.zip", "src/prove"),

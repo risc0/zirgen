@@ -257,6 +257,8 @@ int main(int argc, char* argv[]) {
     circuitName = inputFilename;
   circuitName.consume_back(".zir");
 
+  setModuleAttr(*typedModule, zirgen::Zll::CircuitNameAttr::get(&context, circuitName));
+
   emitPoly(*typedModule, circuitName);
 
   pm.clear();

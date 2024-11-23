@@ -14,18 +14,20 @@
 
 #include "cuda.h"
 #include "supra/fp.h"
+#include "eval_check.cuh"
 
-#include "kernels.h"
+namespace risc0::circuit::keccak {
+extern __global__ void eval_check(Fp* check,
+                                  const Fp* ctrl,
+                                  const Fp* data,
+                                  const Fp* accum,
+                                  const Fp* mix,
+                                  const Fp* out,
+                                  const Fp rou,
+                                  uint32_t po2,
+                                  uint32_t domain);
 
-extern __global__ void keccak_eval_check(Fp* check,
-                                         const Fp* ctrl,
-                                         const Fp* data,
-                                         const Fp* accum,
-                                         const Fp* mix,
-                                         const Fp* out,
-                                         const Fp rou,
-                                         uint32_t po2,
-                                         uint32_t domain);
+} // namespace risc0::circuit::keccak
 
 extern "C" {
 
@@ -44,8 +46,8 @@ const char* risc0_circuit_keccak_cuda_eval_check(Fp* check,
 
     CudaStream stream;
     auto cfg = getSimpleConfig(domain);
-    cudaMemcpyToSymbol(poly_mix, poly_mix_pows, sizeof(poly_mix));
-    keccak_eval_check<<<cfg.grid, cfg.block, 0, stream>>>(
+    cudaMemcpyToSymbol(risc0::circuit::keccak::poly_mix, poly_mix_pows, sizeof(risc0::circuit::keccak::poly_mix));
+    risc0::circuit::keccak::eval_check<<<cfg.grid, cfg.block, 0, stream>>>(
         check, ctrl, data, accum, mix, out, rou, po2, domain);
     CUDA_OK(cudaStreamSynchronize(stream));
   } catch (const std::runtime_error& err) {

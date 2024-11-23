@@ -210,7 +210,8 @@ public:
     createCppStreamEmitter(*ofs)->emitHeader(func);
   }
 
-  void emitEvalCheck(const std::string& suffix, func::FuncOp func) {
+  void
+  emitEvalCheck(const std::string& suffix, const std::string& headerSuffix, func::FuncOp func) {
     if (codegenCLOptions->validitySplitCount > 1) {
       for (size_t i : llvm::seq(size_t(codegenCLOptions->validitySplitCount))) {
         auto ofs = openOutputFile("eval_check_" + std::to_string(i) + suffix);
@@ -221,6 +222,9 @@ public:
       auto ofs = openOutputFile("eval_check" + suffix);
       createGpuStreamEmitter(*ofs, suffix)->emitPoly(func, /*split part=*/0, /*num splits=*/1);
     }
+
+    auto ofs = openOutputFile("eval_check" + headerSuffix);
+    createGpuStreamEmitter(*ofs, suffix)->emitPoly(func, 0, 0, /*declsOnly=*/true);
   }
 
   void emitAllLayouts(mlir::ModuleOp op) {
@@ -300,8 +304,8 @@ void emitCode(ModuleOp module, const EmitCodeOptions& opts) {
     emitter.emitPolyExtFunc(func);
     emitter.emitTaps(func);
     emitter.emitInfo(func);
-    emitter.emitEvalCheck(".cu", func);
-    emitter.emitEvalCheck(".metal", func);
+    emitter.emitEvalCheck(".cu", ".cuh", func);
+    emitter.emitEvalCheck(".metal", ".h", func);
     emitter.emitPolyEdslFunc(func);
     emitter.emitHeader(func);
     emitter.emitTapsCpp(func);
@@ -344,7 +348,7 @@ void emitCodeZirgenPoly(ModuleOp module, StringRef outputDir) {
       return;
 
     emitter.emitPolyFunc("poly_fp", func);
-    emitter.emitEvalCheck(".cu", func);
+    emitter.emitEvalCheck(".cu", ".cuh", func);
   });
 }
 
