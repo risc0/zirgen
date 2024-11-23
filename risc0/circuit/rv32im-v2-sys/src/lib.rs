@@ -61,13 +61,13 @@ pub struct RawBuffer {
 }
 
 #[repr(C)]
-pub struct RawExecutionBuffers {
+pub struct RawExecBuffers {
     pub global: RawBuffer,
     pub data: RawBuffer,
 }
 
 #[repr(C)]
-pub struct RawAccumulatorBuffers {
+pub struct RawAccumBuffers {
     pub data: RawBuffer,
     pub accum: RawBuffer,
     pub mix: RawBuffer,
@@ -76,13 +76,13 @@ pub struct RawAccumulatorBuffers {
 extern "C" {
     pub fn risc0_circuit_rv32im_v2_cpu_witgen(
         mode: u32,
-        buffers: *const RawExecutionBuffers,
+        buffers: *const RawExecBuffers,
         preflight: *const RawPreflightTrace,
         cycles: u32,
     ) -> *const std::os::raw::c_char;
 
     pub fn risc0_circuit_rv32im_v2_cpu_accum(
-        buffers: *const RawAccumulatorBuffers,
+        buffers: *const RawAccumBuffers,
         preflight: *const RawPreflightTrace,
         cycles: u32,
     ) -> *const std::os::raw::c_char;

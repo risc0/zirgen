@@ -8,7 +8,7 @@ use anyhow::Result;
 use rayon::prelude::*;
 use risc0_circuit_rv32im_v2_sys::{
     risc0_circuit_rv32im_v2_cpu_accum, risc0_circuit_rv32im_v2_cpu_poly_fp,
-    risc0_circuit_rv32im_v2_cpu_witgen, RawAccumulatorBuffers, RawBuffer, RawExecutionBuffers,
+    risc0_circuit_rv32im_v2_cpu_witgen, RawAccumBuffers, RawBuffer, RawExecBuffers,
     RawPreflightTrace,
 };
 use risc0_core::scope;
@@ -59,7 +59,7 @@ impl CircuitWitnessGenerator<CpuHal> for CpuCircuitHal {
         tracing::debug!("witgen: {cycles}");
         let global_buf = global.buf.as_slice();
         let data_buf = data.buf.as_slice();
-        let buffers = RawExecutionBuffers {
+        let buffers = RawExecBuffers {
             global: RawBuffer {
                 buf: global_buf.as_ptr(),
                 rows: global.rows,
@@ -98,7 +98,7 @@ impl CircuitAccumulator<CpuHal> for CpuCircuitHal {
         let data_buf = data.buf.as_slice();
         let accum_buf = accum.buf.as_slice();
         let mix_buf = mix.buf.as_slice();
-        let buffers = RawAccumulatorBuffers {
+        let buffers = RawAccumBuffers {
             data: RawBuffer {
                 buf: data_buf.as_ptr(),
                 rows: data.rows,

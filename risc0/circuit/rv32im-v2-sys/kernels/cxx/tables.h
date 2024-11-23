@@ -25,11 +25,12 @@
 namespace risc0 {
 
 struct LookupTables {
-  std::array<std::atomic<uint32_t>, 1 << 8> tableU8;
-  std::array<std::atomic<uint32_t>, 1 << 16> tableU16;
+  std::array<Fp, 1 << 8> tableU8;
+  std::array<Fp, 1 << 16> tableU16;
 
   void lookupDelta(Fp table, Fp index, Fp count) {
     uint32_t tableU32 = table.asUInt32();
+    uint32_t indexU32 = index.asUInt32();
     if (tableU32 == 0) {
       // tableCycle[index] += count;
       return;
@@ -37,15 +38,15 @@ struct LookupTables {
     if (tableU32 != 8 && tableU32 != 16) {
       throw std::runtime_error("Invalid lookup table");
     }
-    if (index.asUInt32() >= (1 << tableU32)) {
-      printf("LOOKUP ERROR: table = %u, index = %u\n", table.asUInt32(), index.asUInt32());
+    if (indexU32 >= (1 << tableU32)) {
+      printf("LOOKUP ERROR: table = %u, index = %u\n", tableU32, indexU32);
       throw std::runtime_error("u8/16 table error");
     }
-    // printf("table = %u, index = %u\n", table.asUInt32(), index.asUInt32());
+    // printf("table = %u, index = %u\n", tableU32, indexU32);
     if (tableU32 == 8) {
-      tableU8[index.asUInt32()] += count.asUInt32();
+      tableU8[indexU32] += count;
     } else {
-      tableU16[index.asUInt32()] += count.asUInt32();
+      tableU16[indexU32] += count;
     }
   }
 
@@ -54,10 +55,11 @@ struct LookupTables {
     if (tableU32 != 8 && tableU32 != 16) {
       throw std::runtime_error("Invalid lookup table");
     }
+    uint32_t indexU32 = index.asUInt32();
     if (tableU32 == 8) {
-      return Fp(tableU8[index.asUInt32()]);
+      return tableU8[indexU32];
     } else {
-      return Fp(tableU16[index.asUInt32()]);
+      return tableU16[indexU32];
     }
   }
 };

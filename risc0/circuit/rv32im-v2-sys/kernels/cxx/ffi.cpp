@@ -32,19 +32,15 @@
 
 namespace risc0 {
 
-struct ExecutorBuffers {
+struct ExecBuffers {
   Buffer global;
   Buffer data;
 };
 
-struct AccumulatorBuffers {
+struct AccumBuffers {
   Buffer data;
   Buffer accum;
   Buffer mix;
-};
-
-struct GlobalContext {
-  size_t txnIdx = 0;
 };
 
 std::array<uint32_t, 2> divide_rv32im(uint32_t numer, uint32_t denom, uint32_t signType) {
@@ -101,11 +97,10 @@ constexpr size_t EXT_SIZE = sizeof(ExtVal::elems) / sizeof(Val);
 static_assert(EXT_SIZE == 4);
 
 struct ExecContext {
-  ExecContext(PreflightTrace& preflight, LookupTables& tables, GlobalContext& global, size_t cycle)
-      : preflight(preflight), tables(tables), global(global), cycle(cycle) {}
+  ExecContext(PreflightTrace& preflight, LookupTables& tables, size_t cycle)
+      : preflight(preflight), tables(tables), cycle(cycle) {}
   PreflightTrace& preflight;
   LookupTables& tables;
-  GlobalContext& global;
   size_t cycle;
 };
 
@@ -312,13 +307,21 @@ std::array<Val, 5> extern_getMemoryTxn(ExecContext& ctx, Val addrElem) {
 }
 
 void extern_lookupDelta(ExecContext& ctx, Val table, Val index, Val count) {
-  // printf("lookupDelta\n");
+  // printf("lookupDelta(table: %u, index: %u, count: %u, P: %u)\n",
+  //        table.asUInt32(),
+  //        index.asUInt32(),
+  //        count.asUInt32(),
+  //        Fp::P);
   ctx.tables.lookupDelta(table, index, count);
 }
 
 Val extern_lookupCurrent(ExecContext& ctx, Val table, Val index) {
-  // printf("lookupCurrent\n");
-  return ctx.tables.lookupCurrent(table, index);
+  Val ret = ctx.tables.lookupCurrent(table, index);
+  // printf("lookupCurrent(table: %u, index: %u): %u\n",
+  //        table.asUInt32(),
+  //        index.asUInt32(),
+  //        ret.asUInt32());
+  return ret;
 }
 
 void extern_memoryDelta(
@@ -420,23 +423,18 @@ std::array<Val, 2> extern_nextPagingIdx(ExecContext& ctx) {
 
 } // namespace impl
 
-void stepExec(ExecutorBuffers& buffers,
-              PreflightTrace& preflight,
-              LookupTables& tables,
-              GlobalContext& globalContext,
-              size_t cycle) {
-  impl::ExecContext ctx(preflight, tables, globalContext, cycle);
+void stepExec(ExecBuffers& buffers, PreflightTrace& preflight, LookupTables& tables, size_t cycle) {
+  impl::ExecContext ctx(preflight, tables, cycle);
   impl::MutableBufObj data(ctx, buffers.data);
   impl::GlobalBufObj global(ctx, buffers.global);
   step_Top(ctx, &data, &global);
 }
 
-void stepAccum(AccumulatorBuffers& buffers,
+void stepAccum(AccumBuffers& buffers,
                PreflightTrace& preflight,
                LookupTables& tables,
-               GlobalContext& globalContext,
                size_t cycle) {
-  impl::ExecContext ctx(preflight, tables, globalContext, cycle);
+  impl::ExecContext ctx(preflight, tables, cycle);
   impl::MutableBufObj data(ctx, buffers.data);
   impl::MutableBufObj accum(ctx, buffers.accum);
   impl::GlobalBufObj mix(ctx, buffers.mix);
@@ -454,10 +452,9 @@ extern "C" {
 using namespace risc0;
 
 const char* risc0_circuit_rv32im_v2_cpu_witgen(uint32_t mode,
-                                               ExecutorBuffers* buffers,
+                                               ExecBuffers* buffers,
                                                PreflightTrace* preflight,
                                                uint32_t lastCycle) {
-  GlobalContext globalContext;
   LookupTables tables;
   size_t split = preflight->tableSplitCycle;
   try {
@@ -466,28 +463,28 @@ const char* risc0_circuit_rv32im_v2_cpu_witgen(uint32_t mode,
       auto begin1 = poolstl::iota_iter<uint32_t>(0);
       auto end1 = poolstl::iota_iter<uint32_t>(split);
       std::for_each(poolstl::par, begin1, end1, [&](uint32_t cycle) {
-        stepExec(*buffers, *preflight, tables, globalContext, cycle);
+        stepExec(*buffers, *preflight, tables, cycle);
       });
 
       auto begin2 = poolstl::iota_iter<uint32_t>(split);
       auto end2 = poolstl::iota_iter<uint32_t>(lastCycle);
       std::for_each(poolstl::par, begin2, end2, [&](uint32_t cycle) {
-        stepExec(*buffers, *preflight, tables, globalContext, cycle);
+        stepExec(*buffers, *preflight, tables, cycle);
       });
     } break;
     case kStepModeSeqForward:
       for (size_t cycle = 0; cycle < lastCycle; cycle++) {
-        stepExec(*buffers, *preflight, tables, globalContext, cycle);
+        stepExec(*buffers, *preflight, tables, cycle);
       }
       break;
     case kStepModeSeqReverse: {
       for (size_t i = split; i-- > 0;) {
         // printf("stepExec: %zu\n", i);
-        stepExec(*buffers, *preflight, tables, globalContext, i);
+        stepExec(*buffers, *preflight, tables, i);
       }
       for (size_t i = lastCycle; i-- > split;) {
         // printf("stepExec: %zu\n", i);
-        stepExec(*buffers, *preflight, tables, globalContext, i);
+        stepExec(*buffers, *preflight, tables, i);
       }
     } break;
     }
@@ -497,14 +494,13 @@ const char* risc0_circuit_rv32im_v2_cpu_witgen(uint32_t mode,
   return nullptr;
 }
 
-const char* risc0_circuit_rv32im_v2_cpu_accum(AccumulatorBuffers* buffers,
+const char* risc0_circuit_rv32im_v2_cpu_accum(AccumBuffers* buffers,
                                               PreflightTrace* preflight,
                                               uint32_t lastCycle) {
   try {
-    GlobalContext globalContext;
     LookupTables tables;
     for (size_t cycle = 0; cycle < lastCycle; cycle++) {
-      stepAccum(*buffers, *preflight, tables, globalContext, cycle);
+      stepAccum(*buffers, *preflight, tables, cycle);
     }
   } catch (const std::exception& err) {
     return strdup(err.what());

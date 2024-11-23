@@ -23,7 +23,7 @@ use crate::{
 fn fwd_rev_ab_test(program: Program) {
     let image = MemoryImage2::new(program);
 
-    let result = testutil::execute(
+    let session = testutil::execute(
         image,
         DEFAULT_SEGMENT_LIMIT_PO2,
         testutil::DEFAULT_SESSION_LIMIT,
@@ -54,7 +54,7 @@ fn fwd_rev_ab_test(program: Program) {
     let mut rng = thread_rng();
     let nonce = BabyBearExtElem::random(&mut rng);
 
-    let segments = result.segments;
+    let segments = session.segments;
     for segment in segments {
         let fwd_witgen = WitnessGenerator::new(
             hal.as_ref(),
