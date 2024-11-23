@@ -99,7 +99,6 @@ struct RsaSpec {
 struct ECSpec {
   llvm::StringLiteral name;
   size_t numBits;
-  zirgen::BigInt::EC::WeierstrassCurve curve;
 };
 
 const RsaSpec kRsaSpecs[] = {
@@ -140,10 +139,11 @@ const APInt
 
 const ECSpec kECSpecs[] = {
     // rz8test -- an in-house 8-bit testing curve; nowhere near big enough to be secure
-    {"rz8test", 8, {rz8test_prime, rz8test_a, rz8test_b}},
+    // TODO: Does 8-bit work right now?
+    {"rz8test", 8},
 
     // secp256k1
-    {"secp256k1", 256, {secp256k1_prime, secp256k1_a, secp256k1_b}},
+    {"secp256k1", 256},
 };
 
 } // namespace
