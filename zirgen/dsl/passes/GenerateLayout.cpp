@@ -230,7 +230,6 @@ private:
     memo[abstract] = attr;
     return attr;
   }
-  // Before removal of shared ptr: # sample duration : 165980.249 ms
 
   // Name of buffer to allocate registers in
   StringAttr bufferName;
