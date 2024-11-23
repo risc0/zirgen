@@ -288,7 +288,7 @@ std::array<Val, 5> extern_getMemoryTxn(ExecContext& ctx, Val addrElem) {
   //        txn.word);
 
   if (txn.cycle != ctx.cycle) {
-    printf("txn.cycle: %zu, ctx.cycle: %zu\n", txn.cycle, ctx.cycle);
+    printf("txn.cycle: %u, ctx.cycle: %zu\n", txn.cycle, ctx.cycle);
     throw std::runtime_error("txn cycle mismatch");
   }
 
