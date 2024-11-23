@@ -159,7 +159,7 @@ def CircuitNameAttr : ZllAttr<"CircuitName", "circuit_name"> {
   let summary = "Name of the circuit.  Normally associated with the module operation; use Zll::lookupModuleAttr to access.";
   let parameters = (ins
       StringRefParameter<"name">:$name,
-      StringRefParameter<"Base C++ namespace for circuits", "\"risc0::circuit\"">:$baseCppNamespace
+      StringRefParameter<"Base C++ namespace for circuits">:$baseCppNamespace
   );
   let skipDefaultBuilders = 1;
   let builders = [
