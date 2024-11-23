@@ -101,10 +101,9 @@ impl<'a, E: Elem> BufferRow<'a, E> {
                         !old_val.is_valid() || old_val == val,
                         "Old value: {old_val:?}, New value: {val:?}, offset: {offset}"
                     );
-
-                    tracing::trace!("Store {val:?} to offset {offset}");
-                    self.buf.set(ctx.offset_this_cycle(offset, 0), val)
                 }
+                tracing::trace!("Store {val:?} to offset {offset}");
+                self.buf.set(ctx.offset_this_cycle(offset, 0), val)
             }
         }
     }

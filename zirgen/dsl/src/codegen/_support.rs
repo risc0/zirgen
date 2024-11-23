@@ -17,9 +17,10 @@
 use std::array::from_fn;
 
 use crate::{BoundLayout, BufferRow, CycleContext};
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use risc0_core::field::{Elem, ExtElem, Field};
 use risc0_zkp::adapter::MixState;
+use std::backtrace::Backtrace;
 
 pub type Index = usize;
 pub type TapGroupName = &'static str;
@@ -74,7 +75,7 @@ pub fn eqz(v: impl Elem) -> Result<()> {
     if v.to_u32_words().into_iter().all(|v| v == 0) {
         Ok(())
     } else {
-        anyhow::bail!("Eqz failed: {:?}", v)
+        Err(anyhow!("Eqz failed: {:?}", v).context(Backtrace::force_capture()))
     }
 }
 

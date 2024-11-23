@@ -25,6 +25,7 @@ use risc0_zkvm::{
     get_prover_server, ExecutorEnv, KeccakCoprocessorCallback, ProveKeccakRequest,
     ProveKeccakResponse, ProveZkrRequest, ProverOpts,
 };
+use test_log::test;
 
 use crate::prove::keccak_prover;
 
