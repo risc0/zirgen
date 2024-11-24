@@ -2459,7 +2459,6 @@ dependencies = [
  "risc0-circuit-rv32im-v2-sys",
  "risc0-core",
  "risc0-sys",
- "risc0-zirgen-dsl",
  "risc0-zkp",
  "serde",
  "test-log",

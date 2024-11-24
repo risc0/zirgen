@@ -165,7 +165,7 @@ impl CircuitHal<CpuHal> for CpuCircuitHal {
         let check = unsafe { std::slice::from_raw_parts(check.as_ptr(), check.len()) };
         let poly_mix_pows = poly_mix_pows.as_slice();
 
-        let args: &[&[BabyBearElem]] = &[accum, code, data, out, mix];
+        let args: &[&[BabyBearElem]] = &[accum, data, out, mix];
 
         (0..domain).into_par_iter().for_each(|cycle| {
             let args: Vec<*const BabyBearElem> = args.iter().map(|x| (*x).as_ptr()).collect();
