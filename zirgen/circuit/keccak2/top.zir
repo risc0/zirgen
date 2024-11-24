@@ -34,7 +34,7 @@ component TopState(bits: Array<Val, 800>, kflat: Array<Val, 100>, sflat: Array<V
   bits := for i : 0..800 {
     Reg(bits[i])
   };
-  // Log("Top State Top 16 bits = %x", Pack<16, 16>(for i : 0..16 { bits[i] })[0]); 
+  // Log("Top State Top 16 bits = %x", Pack<16, 16>(for i : 0..16 { bits[i] })[0]);
   kflat := for i : 0..100 {
     Reg(kflat[i])
   };
@@ -116,10 +116,10 @@ component KeccakRound34<IDX: Val>(s0: TopState, s1: TopState, back1: TopState, r
   TopState(FlattenKeccak(Iota(Chi(a), round))[IDX], back1.kflat, back1.sflat)
 }
 
-// Get K in groups of 8 
+// Get K in groups of 8
 component GetK8(oneHot: OneHot<8>) {
   table := TableK();
-  for i : 0..8 { 
+  for i : 0..8 {
     for j : 0..2 {
       reduce for r : 0..8 { oneHot[r] * table[r*8 + i][j] } init 0 with Add
     }
@@ -146,7 +146,7 @@ component DoShaStep(in: ShaState, k: Array<Val, 2>, doLoad: Val, win: Array<Val,
 component LoadShaState(back1: TopState, back2: TopState) {
   a := for i : 0..4 { for j : 0..32 { back1.bits[256 - (i + 1)*32 + j] }};
   e := for i : 0..4 { for j : 0..32 { back1.bits[512 - (i + 1)*32 + j] }};
-  w := for i : 0..16 { 
+  w := for i : 0..16 {
     if (InRange(0, i, 8)) {
       for j : 0..32 { back1.bits[768 - (i + 1)*32 + j] }
     } else {
@@ -215,8 +215,8 @@ component ShaCycle(back1: TopState, back2: TopState, round: Val, block: Val) {
 
 component ExtractBits2(a: Array<Array<Val, 32>, 4>, e: Array<Array<Val, 32>, 4>, i: Val) {
   [
-    InRange(0, i, 4), 
-    InRange(4, i, 8), 
+    InRange(0, i, 4),
+    InRange(4, i, 8),
     InRange(8, i, 12),
     InRange(12, i, 16),
     InRange(16, i, 25)
@@ -347,13 +347,13 @@ component ExpandCycle(back1: TopState, subType: Val) {
       for x : 0..50 {
         j := x & 1;
         i := (x - j) / 2 + 0;
-        back1.kflat[4*i + 2 + j] 
+        back1.kflat[4*i + 2 + j]
       }
     } else {
       for x : 0..50 {
         j := x & 1;
         i := (x - j) / 2 + 0;
-        back1.kflat[4*i + j] 
+        back1.kflat[4*i + j]
       }
     }
   );
@@ -374,7 +374,7 @@ component WriteCycle(back1: TopState, back2: TopState) {
       Pack<16,16>(for k : 0..16 { back2.bits[i * 32 + 16 + k] })[0],
       Pack<16,16>(for k : 0..16 { back1.bits[i * 32 + k] })[0],
       Pack<16,16>(for k : 0..16 { back1.bits[i * 32 + 16 + k] })[0]
-    ) 
+    )
   };
   bits := SFlatToBits(back1.sflat);
   TopState(bits, kflat, back1.sflat)
@@ -431,7 +431,7 @@ component ShaNextBlock(prev: ControlState) {
       } else {
         ControlState(CycleTypeShutdown(), 0, 0, 0)
       }
-    } 
+    }
   )
 }
 

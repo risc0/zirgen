@@ -16,7 +16,7 @@ component ThetaP1(a: Array<Array<Array<Val, 64>, 5>, 5>) {
 
 // Computes part 2 of theta, results are not by register
 component ThetaP2(a: Array<Array<Array<Val, 64>, 5>, 5>, c: Array<Array<Val, 64>, 5>) {
-  d := for j : 0..5 { 
+  d := for j : 0..5 {
     for k : 0..64 {
       jm1 := if (Isz(j)) { 4 } else { j - 1 };
       jp1 := if (Isz(j-4)) { 0 } else { j + 1 };
@@ -147,7 +147,7 @@ component TestDoRound(a: Array<Array<Array<Val, 64>, 5>, 5>, round: Val) {
 }
 
 component PrintState(in: Array<Array<Array<Val, 64>, 5>, 5>) {
-  for i : 0..5 {  
+  for i : 0..5 {
     for j : 0..5 {
       p := Pack<64, 16>(in[i][j]);
       Log("%x, %x, %x, %x", p[0], p[1], p[2], p[3])

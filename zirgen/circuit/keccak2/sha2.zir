@@ -12,8 +12,8 @@ component XorU32(a: Array<Val, 32>, b: Array<Val, 32>) {
 
 component MajU32(a: Array<Val, 32>, b: Array<Val, 32>, c: Array<Val, 32>) {
   for i : 0..32 {
-    a[i] * b[i] * (1 - c[i]) + 
-    a[i] * (1 - b[i]) * c[i] + 
+    a[i] * b[i] * (1 - c[i]) +
+    a[i] * (1 - b[i]) * c[i] +
     (1 - a[i]) * b[i] * c[i] +
     a[i] * b[i] * c[i]
   }
@@ -41,7 +41,7 @@ component CarryAndExpand(in: Array<Val, 2>) {
   lowCarry := CarryExtract(in[0]);
   highCarry := CarryExtract(in[1] + lowCarry.carry);
   out := UnpackReg<32, 16>([lowCarry.out, highCarry.out]);
-  out  
+  out
 }
 
 component PushFront<SIZE: Val>(in: Array<Val, 32>, lst: Array<Array<Val, 32>, SIZE>) {
@@ -75,23 +75,23 @@ component ComputeAE(oa: Array<Array<Val, 32>, 4>, oe: Array<Array<Val, 32>, 4>, 
   rawE := Add2(stage1, Pack32(d));
 }
 
-component TableK() { 
+component TableK() {
   [
-   [0x2f98, 0x428a], [0x4491, 0x7137], [0xfbcf, 0xb5c0], [0xdba5, 0xe9b5], 
+   [0x2f98, 0x428a], [0x4491, 0x7137], [0xfbcf, 0xb5c0], [0xdba5, 0xe9b5],
    [0xc25b, 0x3956], [0x11f1, 0x59f1], [0x82a4, 0x923f], [0x5ed5, 0xab1c],
-   [0xaa98, 0xd807], [0x5b01, 0x1283], [0x85be, 0x2431], [0x7dc3, 0x550c], 
+   [0xaa98, 0xd807], [0x5b01, 0x1283], [0x85be, 0x2431], [0x7dc3, 0x550c],
    [0x5d74, 0x72be], [0xb1fe, 0x80de], [0x06a7, 0x9bdc], [0xf174, 0xc19b],
-   [0x69c1, 0xe49b], [0x4786, 0xefbe], [0x9dc6, 0x0fc1], [0xa1cc, 0x240c], 
+   [0x69c1, 0xe49b], [0x4786, 0xefbe], [0x9dc6, 0x0fc1], [0xa1cc, 0x240c],
    [0x2c6f, 0x2de9], [0x84aa, 0x4a74], [0xa9dc, 0x5cb0], [0x88da, 0x76f9],
-   [0x5152, 0x983e], [0xc66d, 0xa831], [0x27c8, 0xb003], [0x7fc7, 0xbf59], 
+   [0x5152, 0x983e], [0xc66d, 0xa831], [0x27c8, 0xb003], [0x7fc7, 0xbf59],
    [0x0bf3, 0xc6e0], [0x9147, 0xd5a7], [0x6351, 0x06ca], [0x2967, 0x1429],
-   [0x0a85, 0x27b7], [0x2138, 0x2e1b], [0x6dfc, 0x4d2c], [0x0d13, 0x5338], 
+   [0x0a85, 0x27b7], [0x2138, 0x2e1b], [0x6dfc, 0x4d2c], [0x0d13, 0x5338],
    [0x7354, 0x650a], [0x0abb, 0x766a], [0xc92e, 0x81c2], [0x2c85, 0x9272],
-   [0xe8a1, 0xa2bf], [0x664b, 0xa81a], [0x8b70, 0xc24b], [0x51a3, 0xc76c], 
+   [0xe8a1, 0xa2bf], [0x664b, 0xa81a], [0x8b70, 0xc24b], [0x51a3, 0xc76c],
    [0xe819, 0xd192], [0x0624, 0xd699], [0x3585, 0xf40e], [0xa070, 0x106a],
-   [0xc116, 0x19a4], [0x6c08, 0x1e37], [0x774c, 0x2748], [0xbcb5, 0x34b0], 
+   [0xc116, 0x19a4], [0x6c08, 0x1e37], [0x774c, 0x2748], [0xbcb5, 0x34b0],
    [0x0cb3, 0x391c], [0xaa4a, 0x4ed8], [0xca4f, 0x5b9c], [0x6ff3, 0x682e],
-   [0x82ee, 0x748f], [0x636f, 0x78a5], [0x7814, 0x84c8], [0x0208, 0x8cc7], 
+   [0x82ee, 0x748f], [0x636f, 0x78a5], [0x7814, 0x84c8], [0x0208, 0x8cc7],
    [0xfffa, 0x90be], [0x6ceb, 0xa450], [0xa3f7, 0xbef9], [0x78f2, 0xc671]
   ]
 }
@@ -155,47 +155,3 @@ test TestVector {
   afterLoads := reduce 0..16 init initState with DoTestStepLoad;
   finalState := reduce 0..48 init afterLoads with DoTestStepMix;
 }
-
-  
-/*
-component ExtractReg(steps: Array<StepAE, 8>, w: Array<Array<NondetReg, 32>, 16>, lame: Array<Val, 32>, i: Val) {
-    [InRange(0, i, 8), InRange(8, i, 16), InRange(16, i, 24), InRange(24, i, 25)] ->
-      (w[i], steps[i - 8].regA, steps[i - 16].regE, lame)
-}
-
-component LoadStep() {
-  w := for i : 0..16 {
-    for j : 0..32 {
-      NondetReg(0)
-    }
-  };
-  initA := [ExpandU32([0, 1]), ExpandU32([0, 1]), ExpandU32([0, 1]), ExpandU32([0, 1])];
-  initE := [ExpandU32([0, 1]), ExpandU32([0, 1]), ExpandU32([0, 1]), ExpandU32([0, 1])];
-  step0 := StepAE(initA, initE, w[0], [0, 1]);
-  step1 := StepAE(step0.nextA, step0.nextE, w[1], [0, 1]);
-  step2 := StepAE(step1.nextA, step1.nextE, w[2], [0, 1]);
-  step3 := StepAE(step2.nextA, step2.nextE, w[3], [0, 1]);
-  step4 := StepAE(step3.nextA, step3.nextE, w[4], [0, 1]);
-  step5 := StepAE(step4.nextA, step4.nextE, w[5], [0, 1]);
-  step6 := StepAE(step5.nextA, step5.nextE, w[6], [0, 1]);
-  step7 := StepAE(step6.nextA, step6.nextE, w[7], [0, 1]);
-  steps := [step0, step1, step2, step3, step4, step5, step6, step7];
-  lame := for i : 0..32 { 0 };
-  regs := for i : 0..25 { ExtractReg(steps, w, lame, i) };
-  flat := for b : 0..800 {
-    j := b & 31;
-    i := (b - j) * 1950351361; // 1/32
-    regs[i][j]
-  };
-  topState := TopState(flat);
-  for i : 0..8 {
-    for j : 0..32 { 
-      AliasLayout!(w[i][j], topState.bits[i*32 + j]); 
-      AliasLayout!(steps[i].regA[j], topState.bits[256 + i*32 + j]); 
-      AliasLayout!(steps[i].regE[j], topState.bits[512 + i*32 + j]); 
-    }
-  };
-  topState
-}
-*/
-
