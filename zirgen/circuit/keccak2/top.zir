@@ -3,6 +3,33 @@ import is_zero;
 import keccak;
 import sha2;
 
+// Format on intermediate state:
+//
+// bits
+// --------
+// All 'bitwise' things are in 'little endian' order
+// For init, and shutdown, bits are empty (zeros)
+// For Keccak cycles, we have:
+//   Keccak cycle 0: Output of ThetaP1, 5x64 bits
+//   Keccak cycles 1, 3: Keccak state, low bits, 5x5x32
+//   Keccak cycles 2, 4: Keccak state, high bits, 5x5x32
+//   The same 2 cycle state is also used by 'Expand'
+// For all other cycle types, bits are 'SHA' state, which consist of:
+//   256 bits of 'a' state, 256 bits of 'e' state, 256 bits of 'w' state
+//   Order is (reg x round x 32 bits)
+//   Rounds go from older to newer
+//
+// kflat
+// -------
+// The 'flat' version of Keccak state is packed into 16 bits
+// Order is 5x5x4, where the 4 16-bit parts of the 64 bit number
+// are in 'little endian' order.
+//
+// sflat
+// ------
+// The 8 words (a, b, c, ..., h) in order, 16 bit packed, little endian
+
+// Make a 'top state' with the 3 elements are per above
 component TopState(bits: Array<Val, 800>, kflat: Array<Val, 100>, sflat: Array<Val, 16>) {
   bits := for i : 0..800 {
     Reg(bits[i])
@@ -16,7 +43,7 @@ component TopState(bits: Array<Val, 800>, kflat: Array<Val, 100>, sflat: Array<V
   };
 }
 
-// Convert state to 2 arrays of 800 bit each
+// Convert state to 2 arrays of 800 bit each (split on word)
 component FlattenKeccak(a: Array<Array<Array<Val, 64>, 5>, 5>) {
   for kh : 0..2 {
     for y : 0..800 {
@@ -108,11 +135,11 @@ component ShaState(a: Array<Array<Val, 32>, 4>, e: Array<Array<Val, 32>, 4>, w: 
 component DoShaStep(in: ShaState, k: Array<Val, 2>, doLoad: Val, win: Array<Val, 2>) {
   rawW := ComputeW(in.w);
   pickW := for i : 0..2 { doLoad * win[i] + (1 - doLoad) * rawW[i] };
+  Log("  w = ", pickW[0], pickW[1]);
   w := CarryAndExpand(pickW);
   comp := ComputeAE(in.a, in.e, w, k);
   a := CarryAndExpand(comp.rawA);
   e := CarryAndExpand(comp.rawE);
-  Log("A, E, W = ", Pack<32, 16>(a)[0], Pack<32, 16>(e)[0], Pack<32, 16>(w)[0]);
   newState := ShaState(PushFront<4>(a, in.a), PushFront<4>(e, in.e), PushFront<16>(w, in.w));
 }
 
@@ -195,9 +222,9 @@ component ExtractBits2(a: Array<Array<Val, 32>, 4>, e: Array<Array<Val, 32>, 4>,
     InRange(16, i, 25)
   ] -> (
     for j : 0..32 {0},
-    a[i - 4],
+    a[3 - (i - 4)],
     for j : 0..32 {0},
-    e[i - 12],
+    e[3 - (i - 12)],
     for j : 0..32 {0}
   )
 }
@@ -205,17 +232,19 @@ component ExtractBits2(a: Array<Array<Val, 32>, 4>, e: Array<Array<Val, 32>, 4>,
 component ShaNextBlockCycle(back1: TopState) {
   Log("ShaNextBlockCycle");
   // Extract current a + e values in packed format
-  cur_a := for i : 0..4 { Pack32(for j : 0..32 { back1.bits[128 + i*32 + j] })};
-  cur_e := for i : 0..4 { Pack32(for j : 0..32 { back1.bits[384 + i*32 + j] })};
+  cur_a := for i : 0..4 { Pack32(for j : 0..32 { back1.bits[256 - (i + 1)*32 + j] })};
+  cur_e := for i : 0..4 { Pack32(for j : 0..32 { back1.bits[512 - (i + 1)*32 + j] })};
   // Get the same from the store sflat state
   prev_a := for i : 0..4 { for j : 0..2 { back1.sflat[i*2 + j] }};
   prev_e := for i : 0..4 { for j : 0..2 { back1.sflat[8 + i*2 + j] }};
   // Add + store
   tot_a := for i : 0..4 { CarryAndExpand(Add2(cur_a[i], prev_a[i])) };
   tot_e := for i : 0..4 { CarryAndExpand(Add2(cur_e[i], prev_e[i])) };
-  Log("cur_a[0] = ", cur_a[0][0]);
-  Log("prev_a[0] = ", prev_a[0][0]);
-  Log("tot_a[0] = ", Pack32(tot_a[0])[0]);
+  Log("cur_a = ", cur_a[0][0]);
+  Log("cur_b = ", cur_a[1][0]);
+  Log("cur_c = ", cur_a[2][0]);
+  Log("cur_d = ", cur_a[3][0]);
+  Log("prev_a = ", prev_a[0][0]);
   // Expand into 'bits'
   bits := for x : 0..800 {
     j := x & 31;
@@ -232,13 +261,15 @@ component ShaNextBlockCycle(back1: TopState) {
       Pack32(tot_e[i - 4])[j]
     }
   };
-  // TODO: update sflat
   topState := TopState(bits, back1.kflat, newFlat);
+  for i : 0..16 {
+    Log("  -- %x", newFlat[i]);
+  };
   // Now alias
   for i : 0..4 {
     for j : 0..32 {
-      AliasLayout!(topState.bits[(4 + i)*32 + j], tot_a[i][j]);
-      AliasLayout!(topState.bits[(12 + i)*32 + j], tot_e[i][j]);
+      AliasLayout!(topState.bits[(7 - i)*32 + j], tot_a[i][j]);
+      AliasLayout!(topState.bits[(15 - i)*32 + j], tot_e[i][j]);
     }
   };
   topState
@@ -277,8 +308,8 @@ component InitCycle() {
   ia := InitA();
   ie := InitE();
   sflat := [
-    ia[3][0], ia[3][1], ia[2][0], ia[2][1], ia[1][0], ia[1][1], ia[0][0], ia[0][1],
-    ie[3][0], ie[3][1], ie[2][0], ie[2][1], ie[1][0], ie[1][1], ie[0][0], ie[0][1]
+    ia[0][0], ia[0][1], ia[1][0], ia[1][1], ia[2][0], ia[2][1], ia[3][0], ia[3][1],
+    ie[0][0], ie[0][1], ie[1][0], ie[1][1], ie[2][0], ie[2][1], ie[3][0], ie[3][1]
   ];
   bits := for i : 0..800 { 0 };
   kflat := for i : 0..100 { 0 };
@@ -286,20 +317,22 @@ component InitCycle() {
   state
 }
 
-// TODO
+component SFlatToBits(f: Array<Val, 16>) {
+  expWords := [
+    0, 0, 0, 0, 0, 0, 0, 0,
+    f[6], f[7], f[4], f[5], f[2], f[3], f[0], f[1],
+    0, 0, 0, 0, 0, 0, 0, 0,
+    f[14], f[15], f[12], f[13], f[10], f[11], f[8], f[9],
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0];
+  UnpackReg<800, 16>(expWords)
+}
+
 component ReadCycle(stateIn: TopState) {
   load := for i : 0..100 { NondetReg(GetPreimage(i)) };
-  pf := stateIn.sflat;
-  Log("ReadCycle", pf[0], pf[8]);
-  initWords := [
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    pf[0], pf[1], pf[2], pf[3], pf[4], pf[5], pf[6], pf[7],
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    pf[8], pf[9], pf[10], pf[11], pf[12], pf[13], pf[14], pf[15],
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0];
-  bits := UnpackReg<800, 16>(initWords);
+  Log("ReadCycle");
+  bits := SFlatToBits(stateIn.sflat);
   stateOut := TopState(bits, load, stateIn.sflat);
   for i : 0..100 {
     AliasLayout!(stateOut.kflat[i], load[i]);
@@ -310,13 +343,21 @@ component ReadCycle(stateIn: TopState) {
   stateOut
 }
 
-component ExpandCycle(back1: TopState, back2: TopState, subType: Val) {
+component ExpandCycle(back1: TopState, subType: Val) {
   Log("ExpandCycle");
   bits := UnpackReg<800, 16>(
     if (subType) {
-      for i : 0..50 { back1.kflat[i] }
+      for x : 0..50 {
+        j := x & 1;
+        i := (x - j) / 2 + 0;
+        back1.kflat[4*i + 2 + j] 
+      }
     } else {
-      for i : 0..50 { back2.kflat[i + 50] }
+      for x : 0..50 {
+        j := x & 1;
+        i := (x - j) / 2 + 0;
+        back1.kflat[4*i + j] 
+      }
     }
   );
   state := TopState(bits, back1.kflat, back1.sflat);
@@ -329,15 +370,17 @@ component ExpandCycle(back1: TopState, back2: TopState, subType: Val) {
 component WriteCycle(back1: TopState, back2: TopState) {
   Log("WriteCycle");
   kflat := for x : 0..100 {
-    j := x % 50;
-    i := (x - j) / 2 + 0;
-    if (i) {
-      Pack<16,16>(for k : 0..16 { back2.bits[j * 16+ k] })[0]
-    } else {
-      Pack<16,16>(for k : 0..16 { back1.bits[j * 16 + k] })[0]
-    }
+    j := x & 3;
+    i := (x - j) / 4 + 0;
+    [Isz(j), Isz(j - 1), Isz(j - 2), Isz(j - 3)] -> (
+      Pack<16,16>(for k : 0..16 { back2.bits[i * 32 + k] })[0],
+      Pack<16,16>(for k : 0..16 { back2.bits[i * 32 + 16 + k] })[0],
+      Pack<16,16>(for k : 0..16 { back1.bits[i * 32 + k] })[0],
+      Pack<16,16>(for k : 0..16 { back1.bits[i * 32 + 16 + k] })[0]
+    ) 
   };
-  TopState(back1.bits, kflat, back1.sflat)
+  bits := SFlatToBits(back1.sflat);
+  TopState(bits, kflat, back1.sflat)
 }
 
 // TODO
@@ -397,7 +440,7 @@ component ShaNextBlock(prev: ControlState) {
 component ComputeCurrentStep(prevMux: Array<Val, 12>, prev: ControlState) {
   prevMux -> (
     ControlState(CycleTypeRead(), 0, 0, 0),  // Init -> Read
-    ControlState(CycleTypeSha(), 0, 0, 0),  // Read -> SHA:0
+    ControlState(CycleTypeSha(), 0, 0, 0),  // Read -> SHA
     if (prev.subType) {
       ControlState(CycleTypeKeccakRound0(), 0, 0, 0)  // Expand1 -> Round0
     } else {
@@ -438,7 +481,7 @@ component Top() {
   curState := cycleMux -> (
     InitCycle(),
     ReadCycle(curState@1),
-    ExpandCycle(curState@1, curState@2, controlState.subType),
+    ExpandCycle(curState@1, controlState.subType),
     WriteCycle(curState@1, curState@2),
     KeccakRound0(curState@2, curState@1),
     KeccakRound12<0>(curState@1, curState@3, curState@2, curState@1),

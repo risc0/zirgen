@@ -232,7 +232,7 @@ void extern_log(ExecContext& ctx, const std::string& message, std::vector<Val> v
 Val extern_getPreimage(ExecContext& ctx, Val idx) {
   uint32_t idxLow = idx.asUInt32() % 4;
   uint32_t idxHigh = idx.asUInt32() / 4;
-  uint32_t data = ctx.stepHandler.getPreimage()[idxHigh] >> (16 * idxLow);
+  uint32_t data = (ctx.stepHandler.getPreimage()[idxHigh] >> (16 * idxLow)) & 0xffff;
   return data;
 }
 
