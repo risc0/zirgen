@@ -1901,13 +1901,13 @@ struct _Arguments_PoseidonPaging__1Layout {
 };
 struct PoseidonPagingLayout {
   PoseidonPaging_SuperLayout _super;
-  NondetRegLayout curIdx;
-  NondetRegLayout curMode;
   OneHot_6_Layout modeSplit;
   PoseidonPaging__0Layout _2;
   IsU24Layout _0;
   _Arguments_PoseidonPaging__1Layout _arguments__1;
   NondetRegLayout _3;
+  NondetRegLayout curIdx;
+  NondetRegLayout curMode;
 };
 struct Poseidon0Arm6Layout {
   PoseidonPagingLayout _super;

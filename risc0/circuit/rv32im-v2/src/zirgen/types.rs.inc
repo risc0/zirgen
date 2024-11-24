@@ -5536,13 +5536,13 @@ impl risc0_zkp::layout::Component for _Arguments_PoseidonPaging__1Layout {
 }
 pub struct PoseidonPagingLayout {
     pub _super: &'static PoseidonPaging_SuperLayout,
-    pub cur_idx: &'static NondetRegLayout,
-    pub cur_mode: &'static NondetRegLayout,
     pub mode_split: &'static OneHot_6_Layout,
     pub _2: &'static PoseidonPaging__0Layout,
     pub _0: &'static IsU24Layout,
     pub _arguments__1: &'static _Arguments_PoseidonPaging__1Layout,
     pub _3: &'static NondetRegLayout,
+    pub cur_idx: &'static NondetRegLayout,
+    pub cur_mode: &'static NondetRegLayout,
 }
 impl risc0_zkp::layout::Component for PoseidonPagingLayout {
     fn ty_name(&self) -> &'static str {
@@ -5551,13 +5551,13 @@ impl risc0_zkp::layout::Component for PoseidonPagingLayout {
     #[allow(unused_variables)]
     fn walk<V: risc0_zkp::layout::Visitor>(&self, v: &mut V) -> core::fmt::Result {
         v.visit_component("_super", self._super)?;
-        v.visit_component("cur_idx", self.cur_idx)?;
-        v.visit_component("cur_mode", self.cur_mode)?;
         v.visit_component("mode_split", self.mode_split)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_arguments__1", self._arguments__1)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("cur_idx", self.cur_idx)?;
+        v.visit_component("cur_mode", self.cur_mode)?;
         Ok(())
     }
 }

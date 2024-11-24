@@ -44,16 +44,8 @@ zirgen_build(
 # )
 
 OUTS = ZIRGEN_OUTS + [
-    "rust_poly_fp_0.cpp",
-    "rust_poly_fp_1.cpp",
-    "rust_poly_fp_2.cpp",
-    "rust_poly_fp_3.cpp",
-    "rust_poly_fp_4.cpp",
-    "eval_check_0.cu",
-    "eval_check_1.cu",
-    "eval_check_2.cu",
-    "eval_check_3.cu",
-    "eval_check_4.cu",
+    "rust_poly_fp.cpp",
+    "eval_check.cu",
 ]
 
 build_circuit(
@@ -65,6 +57,5 @@ build_circuit(
         "zirgen/circuit/rv32im/v2/dsl/top.zir",
         "-I",
         "zirgen/circuit/rv32im/v2/dsl",
-        "--validity-split-count=5",
     ],
 )

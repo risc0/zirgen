@@ -12,7 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::{env, path::Path};
+use std::{
+    env,
+    path::{Path, PathBuf},
+};
 
 use risc0_build_kernel::{KernelBuild, KernelType};
 
@@ -27,38 +30,19 @@ fn main() {
 fn build_cpu_kernels() {
     rerun_if_changed("kernels/cxx");
     KernelBuild::new(KernelType::Cpp)
-        .files(glob::glob("kernels/cxx/*.cpp").unwrap().map(|x| x.unwrap()))
-        .deps(glob::glob("kernels/cxx/*.h").unwrap().map(|x| x.unwrap()))
-        .deps(
-            glob::glob("kernels/cxx/*.cpp.inc")
-                .unwrap()
-                .map(|x| x.unwrap()),
-        )
+        .files(glob_paths("kernels/cxx/*.cpp"))
+        .deps(glob_paths("kernels/cxx/*.h"))
+        .deps(glob_paths("kernels/cxx/*.cpp.inc"))
         .include(env::var("DEP_RISC0_SYS_CXX_ROOT").unwrap())
         .compile("risc0_rv32im_v2_cpu");
 }
 
 fn build_cuda_kernels() {
+    rerun_if_changed("kernels/cuda");
     KernelBuild::new(KernelType::Cuda)
-        .files([
-            "kernels/cuda/eval_check_0.cu",
-            "kernels/cuda/eval_check_1.cu",
-            "kernels/cuda/eval_check_2.cu",
-            "kernels/cuda/eval_check_3.cu",
-            "kernels/cuda/eval_check_4.cu",
-            "kernels/cuda/eval_check.cu",
-            "kernels/cuda/ffi.cu",
-            "kernels/cuda/ffi_supra.cu",
-        ])
-        .deps([
-            // "kernels/cuda/context.h",
-            "kernels/cuda/defs.cu.inc",
-            // "kernels/cuda/extern.h",
-            "kernels/cuda/kernels.h",
-            "kernels/cuda/layout.cu.inc",
-            "kernels/cuda/steps.cu.inc",
-            "kernels/cuda/types.cu.inc",
-        ])
+        .files(glob_paths("kernels/cuda/*.cu"))
+        .deps(glob_paths("kernels/cuda/*.h"))
+        .deps(glob_paths("kernels/cuda/*.cu.inc"))
         .include(env::var("DEP_RISC0_SYS_CUDA_ROOT").unwrap())
         .include(env::var("DEP_SPPARK_ROOT").unwrap())
         .compile("risc0_rv32im_v2_cuda");
@@ -66,4 +50,8 @@ fn build_cuda_kernels() {
 
 fn rerun_if_changed<P: AsRef<Path>>(path: P) {
     println!("cargo:rerun-if-changed={}", path.as_ref().display());
+}
+
+fn glob_paths(pattern: &str) -> Vec<PathBuf> {
+    glob::glob(pattern).unwrap().map(|x| x.unwrap()).collect()
 }
