@@ -63,6 +63,10 @@ namespace zirgen {
 namespace dsl {
 namespace {
 
+using Ptr = const LayoutDAG*;
+// Result: for each abstract type, things I need to 'prealloc'
+using PreallocsResult = DenseMap<Ptr, SmallVector<Ptr>>;
+
 // For components that are aliased into multiple locations, finds the most
 // specific parent element and records it.  Then, when generating concrete
 // layout, we can 'preallocate' any such decendents.  Note, we need to give
@@ -70,16 +74,13 @@ namespace {
 // rather than only use maps, since otherwise pointers cause non-deterministic
 // ordering.
 class FindPreallocs {
-  using Ptr = std::shared_ptr<LayoutDAG>;
-  using Vec = std::vector<uint32_t>;
-  using MapToVec = std::map<uint32_t, Vec>;
-  // Result: for each abstract type, things I need to 'prealloc'
-  using Result = std::map<Ptr, std::vector<Ptr>>;
+  using Vec = SmallVector<uint32_t>;
+  using MapToVec = llvm::MapVector<uint32_t, Vec>;
 
 public:
-  Result run(const std::shared_ptr<LayoutDAG>& abstract) {
+  PreallocsResult run(Ptr abstract) {
     Vec prefix;
-    computeSharedPrefixes(abstract, prefix, Ptr());
+    computeSharedPrefixes(abstract, prefix, nullptr);
     for (const auto& kvp : prefixes) {
       // Check if final value matches key, in which case there is a unique parent
       if (kvp.first == kvp.second.back()) {
@@ -94,10 +95,10 @@ public:
 private:
   // Give ID's to each entry
   std::vector<Ptr> idToPtr;
-  std::map<Ptr, uint32_t> ptrToId;
+  DenseMap<Ptr, uint32_t> ptrToId;
   // For an entry, what is the longest unique prefix
   MapToVec prefixes;
-  Result ret;
+  PreallocsResult ret;
 
   static Vec sharedPrefix(const Vec& lhs, const Vec& rhs) {
     if (lhs.size() == 0) { // Handle initialization case
@@ -129,25 +130,25 @@ private:
     prefix.push_back(id);
     prefixes[id] = sharedPrefix(prefixes[id], prefix);
     // Descend for recursive types
-    if (const auto* arr = std::get_if<AbstractArray>(abstract.get())) {
+    if (const auto* arr = std::get_if<AbstractArray>(abstract)) {
       for (auto element : arr->elements) {
-        computeSharedPrefixes(element, prefix, arm);
+        computeSharedPrefixes(element.get(), prefix, arm);
       }
-    } else if (const auto* str = std::get_if<AbstractStructure>(abstract.get())) {
+    } else if (const auto* str = std::get_if<AbstractStructure>(abstract)) {
       auto kind = str->type.getKind();
       bool isMux = (kind == LayoutKind::Mux || kind == LayoutKind::MajorMux);
       for (auto field : str->fields) {
         if (isMux && field.first == "@super" && arm) {
-          ret[arm].push_back(field.second);
+          ret[arm].push_back(field.second.get());
         }
         if (isMux && StringRef(field.first.str()).starts_with("arm")) {
-          computeSharedPrefixes(field.second, prefix, field.second);
+          computeSharedPrefixes(field.second.get(), prefix, field.second.get());
         } else {
-          computeSharedPrefixes(field.second, prefix, arm);
+          computeSharedPrefixes(field.second.get(), prefix, arm);
         }
       }
-    } else if (const auto* ref = std::get_if<std::shared_ptr<LayoutDAG>>(abstract.get())) {
-      computeSharedPrefixes(*ref, prefix, arm);
+    } else if (const auto* ref = std::get_if<std::shared_ptr<LayoutDAG>>(abstract)) {
+      computeSharedPrefixes(ref->get(), prefix, arm);
     }
     // Pop from path
     prefix.pop_back();
@@ -167,23 +168,20 @@ struct LayoutGenerator {
     Memo memo;
     auto layout = solver.lookupState<LayoutDAGAnalysis::Element>(component.getLayout());
     FindPreallocs findPreallocs;
-    Preallocs preallocs = findPreallocs.run(layout->getValue().get());
+    PreallocsResult preallocs = findPreallocs.run(layout->getValue().get().get());
     size_t allocator = 0;
-    return materialize(layout->getValue().get(), memo, allocator, preallocs);
+    return materialize(layout->getValue().get().get(), memo, allocator, preallocs);
   }
 
 private:
   // A memo of previously generated abstract layouts
-  using Preallocs = std::map<std::shared_ptr<LayoutDAG>, std::vector<std::shared_ptr<LayoutDAG>>>;
-  using Memo = DenseMap<LayoutDAG*, Attribute>;
+  using Memo = DenseMap<Ptr, Attribute>;
 
   // Materialize a concrete layout attribute from an abstract layout
-  Attribute materialize(const std::shared_ptr<LayoutDAG>& abstract,
-                        Memo& memo,
-                        size_t& allocator,
-                        const Preallocs& preallocs) {
-    if (memo.contains(abstract.get())) {
-      return memo.at(abstract.get());
+  Attribute
+  materialize(Ptr abstract, Memo& memo, size_t& allocator, const PreallocsResult& preallocs) {
+    if (auto memoized = memo.lookup(abstract)) {
+      return memoized;
     }
     auto it = preallocs.find(abstract);
     if (it != preallocs.end()) {
@@ -194,41 +192,42 @@ private:
     }
 
     Attribute attr;
-    if (const auto* reg = std::get_if<AbstractRegister>(abstract.get())) {
+    if (const auto* reg = std::get_if<AbstractRegister>(abstract)) {
       // Allocate multiple columns for extension field elements
       size_t index = allocator;
       allocator += reg->type.getElement().getFieldK();
       attr = RefAttr::get(reg->type.getContext(), index, reg->type);
-    } else if (const auto* arr = std::get_if<AbstractArray>(abstract.get())) {
+    } else if (const auto* arr = std::get_if<AbstractArray>(abstract)) {
       SmallVector<Attribute, 4> elements;
       for (auto element : arr->elements) {
-        elements.push_back(materialize(element, memo, allocator, preallocs));
+        elements.push_back(materialize(element.get(), memo, allocator, preallocs));
       }
       attr = ArrayAttr::get(arr->type.getContext(), elements);
-    } else if (const auto* str = std::get_if<AbstractStructure>(abstract.get())) {
+    } else if (const auto* str = std::get_if<AbstractStructure>(abstract)) {
       SmallVector<NamedAttribute> fields;
       if (str->type.getKind() == LayoutKind::Mux || str->type.getKind() == LayoutKind::MajorMux) {
         size_t finalAllocator = allocator;
         for (auto field : str->fields) {
           size_t armAllocator = allocator;
           fields.emplace_back(field.first,
-                              materialize(field.second, memo, armAllocator, preallocs));
+                              materialize(field.second.get(), memo, armAllocator, preallocs));
           finalAllocator = std::max(finalAllocator, armAllocator);
         }
         allocator = finalAllocator;
       } else {
         for (auto field : str->fields) {
-          fields.emplace_back(field.first, materialize(field.second, memo, allocator, preallocs));
+          fields.emplace_back(field.first,
+                              materialize(field.second.get(), memo, allocator, preallocs));
         }
       }
       auto members = DictionaryAttr::get(str->type.getContext(), fields);
       attr = StructAttr::get(str->type.getContext(), members, str->type);
-    } else if (const auto* ref = std::get_if<std::shared_ptr<LayoutDAG>>(abstract.get())) {
-      attr = materialize(*ref, memo, allocator, preallocs);
+    } else if (const auto* ref = std::get_if<std::shared_ptr<LayoutDAG>>(abstract)) {
+      attr = materialize(ref->get(), memo, allocator, preallocs);
     } else {
       llvm_unreachable("bad variant");
     }
-    memo[abstract.get()] = attr;
+    memo[abstract] = attr;
     return attr;
   }
 
