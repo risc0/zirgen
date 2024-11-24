@@ -64,4 +64,4 @@ struct ExecutionTrace {
   GlobalTraceGroup mix;
 };
 
-} // namespace zirgen::rv32im_v2
+} // namespace zirgen::keccak2

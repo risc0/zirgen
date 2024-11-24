@@ -19,9 +19,8 @@ struct StepHandler {
     idx++;
     return idx < inputs.size();
   }
-  const std::array<uint64_t, 25>& getPreimage() {
-    return inputs[idx];
-  }
+  const std::array<uint64_t, 25>& getPreimage() { return inputs[idx]; }
+
 private:
   std::vector<KeccakState> inputs;
   size_t idx = 0;
@@ -30,4 +29,4 @@ private:
 CircuitParams getDslParams();
 void DslStep(StepHandler& stepHandler, ExecutionTrace& trace, size_t cycle);
 
-} // namespace zirgen::rv32im_v2
+} // namespace zirgen::keccak2

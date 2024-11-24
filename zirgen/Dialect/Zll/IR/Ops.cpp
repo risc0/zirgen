@@ -191,10 +191,9 @@ OpFoldResult BitAndOp::fold(FoldAdaptor adaptor) {
 
 OpFoldResult ModOp::fold(FoldAdaptor adaptor) {
   ExtensionField f = getExtensionField(getOut().getType());
-  return tryFold2(
-      adaptor.getLhs(), adaptor.getRhs(), [f](ArrayRef<uint64_t> lhs, ArrayRef<uint64_t> rhs) {
-        return f.Mod(lhs, rhs);
-      });
+  return tryFold2(adaptor.getLhs(),
+                  adaptor.getRhs(),
+                  [f](ArrayRef<uint64_t> lhs, ArrayRef<uint64_t> rhs) { return f.Mod(lhs, rhs); });
 }
 
 OpFoldResult InRangeOp::fold(FoldAdaptor adaptor) {
@@ -435,9 +434,9 @@ LogicalResult BitAndOp::evaluate(Interpreter& interp,
 }
 
 LogicalResult ModOp::evaluate(Interpreter& interp,
-                                 llvm::ArrayRef<zirgen::Zll::InterpVal*> outs,
-                                 EvalAdaptor& adaptor,
-                                 ExtensionField& field) {
+                              llvm::ArrayRef<zirgen::Zll::InterpVal*> outs,
+                              EvalAdaptor& adaptor,
+                              ExtensionField& field) {
   outs[0]->setVal(field.Mod(adaptor.getLhs()->getVal(), adaptor.getRhs()->getVal()));
   return success();
 }
@@ -1044,9 +1043,9 @@ LogicalResult BitAndOp::inferReturnTypes(MLIRContext* ctx,
 }
 
 LogicalResult ModOp::inferReturnTypes(MLIRContext* ctx,
-                                         std::optional<Location> loc,
-                                         Adaptor adaptor,
-                                         SmallVectorImpl<Type>& out) {
+                                      std::optional<Location> loc,
+                                      Adaptor adaptor,
+                                      SmallVectorImpl<Type>& out) {
   return inferTypes(ctx, adaptor.getOperands(), out);
 }
 

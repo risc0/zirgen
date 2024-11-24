@@ -9,7 +9,7 @@
 #include "risc0/core/util.h"
 #include "zirgen/circuit/keccak2/cpp/run.h"
 
-namespace zirgen::keccak2{
+namespace zirgen::keccak2 {
 
 ExecutionTrace runSegment(const std::vector<KeccakState>& inputs) {
   size_t cycles = 200;
@@ -23,4 +23,4 @@ ExecutionTrace runSegment(const std::vector<KeccakState>& inputs) {
   return trace;
 }
 
-} // namespace zirgen::rv32im_v2
+} // namespace zirgen::keccak2

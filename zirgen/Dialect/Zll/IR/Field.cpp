@@ -172,7 +172,7 @@ ExtensionField::FieldResult ExtensionField::BitAnd(ExtensionField::FieldArg a,
 }
 
 ExtensionField::FieldResult ExtensionField::Mod(ExtensionField::FieldArg a,
-                                                   ExtensionField::FieldArg b) const {
+                                                ExtensionField::FieldArg b) const {
   ExtensionField::FieldResult c(degree);
   for (size_t i = 0; i < degree; i++) {
     c[i] = a[i] % b[i];

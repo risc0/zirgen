@@ -15,10 +15,9 @@
 #include <gtest/gtest.h>
 
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
+#include "zirgen/circuit/recursion/encode.h"
 #include "zirgen/circuit/verify/verify.h"
 #include "zirgen/circuit/verify/wrap_zirgen.h"
-#include "zirgen/circuit/recursion/encode.h"
-
 
 using namespace zirgen;
 using namespace zirgen::verify;
@@ -52,17 +51,18 @@ TEST(verify_zirgen, calculator) {
                                     "zirgen/dsl/examples/calculator/validity.ir");
 
   for (size_t i = 0; i < circuit->get_taps().groups.size(); i++) {
-    llvm::errs() << "Tap size " << i << " size = " << circuit->get_taps().groups[i].regs.size() << "\n";
+    llvm::errs() << "Tap size " << i << " size = " << circuit->get_taps().groups[i].regs.size()
+                 << "\n";
   }
 
   // Compile the verifiers
   module.addFunc<1>(
       "verify", {ioparg()}, [&](ReadIopVal iop) { zirgen::verify::verify(iop, 18, *circuit); });
   module.optimize();
-  //module.dump();
+  // module.dump();
 
   // Encode to recursion circuit
-  module.getModule().walk([&](mlir::func::FuncOp func) { 
+  module.getModule().walk([&](mlir::func::FuncOp func) {
     llvm::errs() << "Found a func\n";
     llvm::DenseMap<mlir::Value, uint64_t> toId;
     zirgen::recursion::EncodeStats stats;

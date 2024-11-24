@@ -76,4 +76,4 @@ ExecutionTrace::ExecutionTrace(size_t rows, const CircuitParams& params)
     , accum(rows, params.accumCols)
     , mix(params.mixCols) {}
 
-} // namespace zirgen::rv32im_v2
+} // namespace zirgen::keccak2

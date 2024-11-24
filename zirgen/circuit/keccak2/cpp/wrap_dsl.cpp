@@ -267,4 +267,4 @@ void DslStep(StepHandler& stepHandler, ExecutionTrace& trace, size_t cycle) {
   step_Top(ctx, &data, &global);
 }
 
-} // namespace zirgen::rv32im_v2
+} // namespace zirgen::keccak2
