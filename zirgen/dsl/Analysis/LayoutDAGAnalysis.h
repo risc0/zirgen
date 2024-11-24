@@ -128,7 +128,6 @@ private:
   void visitOp(ZStruct::AliasLayoutOp op);
   void visitOp(ZStruct::LookupOp op);
   void visitOp(ZStruct::SubscriptOp op);
-  void visitOp(ZStruct::ArrayOp op);
   void visitOp(Zhlt::CheckLayoutFuncOp op);
 };
 

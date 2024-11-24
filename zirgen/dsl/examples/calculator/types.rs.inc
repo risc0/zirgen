@@ -79,15 +79,14 @@ impl risc0_zkp::layout::Component for _globalLayout {
     }
 }
 #[derive(Copy, Clone, Debug)]
-pub struct NondetRegStruct<'a> {
+pub struct NondetRegStruct {
     pub _super: Val,
-    pub _layout: BoundLayout<'a, NondetRegLayout, Val>,
 }
 pub type Val2Array = [Val; 2];
-pub type NondetRegStruct2Array<'a> = [NondetRegStruct<'a>; 2];
+pub type NondetRegStruct2Array = [NondetRegStruct; 2];
 #[derive(Copy, Clone, Debug)]
-pub struct OneHotStruct<'a> {
-    pub _super: NondetRegStruct2Array<'a>,
+pub struct OneHotStruct {
+    pub _super: NondetRegStruct2Array,
 }
 #[derive(Copy, Clone, Debug)]
 pub struct TopStruct {}

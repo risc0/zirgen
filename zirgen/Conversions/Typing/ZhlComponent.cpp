@@ -66,7 +66,6 @@ public:
       : loc(loc), builder(builder), typeName(typeName) {
     layoutBuilder = std::make_unique<LayoutBuilder>(builder, typeName);
     valBuilder = std::make_unique<StructBuilder>(builder, typeName);
-    assert(typeName);
   }
 
   // Start building a component inside the given parent component.  If
@@ -270,6 +269,9 @@ private:
   /// as arrays of values from which we can extract `@layout` fields.
   void genAliasLayout(Location loc, Value left, Value right);
 
+  /// Alias the layouts of two arrays.  If convertLeftValue is true,
+  /// `left` is an ArrayType of `Value` objects; their layout will
+  /// need to be extracted from the `@layout` member.
   void genAliasLayoutArray(
       Location loc, Value left, bool convertLeftValue, Value right, bool convertRightValue);
 
@@ -1187,17 +1189,8 @@ void LoweringImpl::gen(SwitchOp sw, ComponentBuilder& cb) {
         LayoutArrayType::get(ctx, Zhlt::getNondetRegLayoutType(ctx), size);
     Value saveArray = muxContext.addLayoutMember(sw.getLoc(), "@selector", selectorSaveType);
     // Alias them to the actual selectors
-    Value selectorArray = layoutMapping.lookup(sw.getSelector());
-    while (!selectorArray.getType().isa<LayoutArrayType>()) {
-      selectorArray = builder.create<ZStruct::LookupOp>(sw.getLoc(), selectorArray, "@super");
-    }
-    for (size_t i = 0; i < size; i++) {
-      Value index = builder.create<arith::ConstantOp>(sw->getLoc(), builder.getIndexAttr(i));
-      Value saveElem = builder.create<ZStruct::SubscriptOp>(sw->getLoc(), saveArray, index);
-      Value selectorElem = builder.create<ZStruct::SubscriptOp>(sw->getLoc(), selectorArray, index);
-      Value selectorReg = coerceTo(selectorElem, Zhlt::getNondetRegLayoutType(ctx));
-      builder.create<ZStruct::AliasLayoutOp>(sw.getLoc(), selectorReg, saveElem);
-    }
+    Value selectorArray = asAliasableLayout(sw.getSelector());
+    genAliasLayout(sw.getLoc(), saveArray, selectorArray);
   }
 
   // Create components for each arm
@@ -1483,7 +1476,7 @@ void LoweringImpl::gen(ArrayOp array, ComponentBuilder& cb) {
   auto arrayOp = builder.create<ZStruct::ArrayOp>(array.getLoc(), elements);
   valueMapping[array.getOut()] = arrayOp;
 
-  if (false && llvm::all_of(layouts, [](Value v) { return v; })) {
+  if (llvm::all_of(layouts, [](Value v) { return v; })) {
     Type layoutElemType =
         Zhlt::getLeastCommonSuper(ValueRange(layouts).getTypes(), /*isLayout=*/true);
     auto arrayLayout =

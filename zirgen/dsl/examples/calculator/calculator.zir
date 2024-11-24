@@ -25,17 +25,6 @@ component SetGlobalResult(val: Val) {
   result
 }
 
-component Foo(r: NondetReg) {
-  x := r;
-}
-component BackOneFoo(r: Foo) {
-  BackOne(r.x)
-}
-
-component BackOne(r: NondetReg) {
-  r@1
-}
-
 component Top() {
   op := NondetReg(GetValFromUser());
   arg1 := NondetReg(GetValFromUser());
@@ -48,8 +37,6 @@ component Top() {
     Reg(arg1 - arg2)
   );
   Log("op = %u, arg1 = %u arg2 = %u result = %u expected = %u", op, arg1, arg2, result, expected);
-  prevArg1 := BackOneFoo(Foo(arg1));
-  prevArg1 = arg1@1;
   result = expected;
   SetGlobalResult(5);
   OutputToUser(result);

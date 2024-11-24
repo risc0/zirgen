@@ -157,7 +157,7 @@ private:
                          mlir::Type ty,
                          llvm::ArrayRef<CodegenIdent<IdentKind::Field>> names,
                          llvm::ArrayRef<mlir::Type> types,
-                         bool layoutConst = false);
+                         bool layout);
   void emitValueWithReferenceIfNeeded(CodegenEmitter& cg, CodegenValue value);
   bool typeNeedsLifetime(mlir::Type ty);
 };
@@ -231,6 +231,13 @@ struct CppLanguageSyntax : public LanguageSyntax {
                      mlir::Type ty,
                      llvm::ArrayRef<CodegenIdent<IdentKind::Field>> fields,
                      llvm::ArrayRef<mlir::Type> types) override;
+
+private:
+  void emitStructDefImpl(CodegenEmitter& cg,
+                         mlir::Type ty,
+                         llvm::ArrayRef<CodegenIdent<IdentKind::Field>> names,
+                         llvm::ArrayRef<mlir::Type> types,
+                         bool layout);
 };
 
 struct CudaLanguageSyntax : public CppLanguageSyntax {

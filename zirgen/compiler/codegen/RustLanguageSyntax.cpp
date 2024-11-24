@@ -47,9 +47,9 @@ void RustLanguageSyntax::emitStructDefImpl(CodegenEmitter& cg,
                                            mlir::Type ty,
                                            llvm::ArrayRef<CodegenIdent<IdentKind::Field>> names,
                                            llvm::ArrayRef<mlir::Type> types,
-                                           bool layoutConst) {
+                                           bool layout) {
   cg << "pub struct " << cg.getTypeName(ty);
-  if (!layoutConst && typeNeedsLifetime(ty)) {
+  if (!layout && typeNeedsLifetime(ty)) {
     cg << "<'a>";
   }
 
@@ -58,14 +58,14 @@ void RustLanguageSyntax::emitStructDefImpl(CodegenEmitter& cg,
   for (size_t i = 0; i != names.size(); i++) {
     Type subTy = types[i];
     cg << "  pub " << names[i] << ": ";
-    if (subTy.hasTrait<CodegenLayoutTypeTrait>() && !layoutConst) {
+    if (subTy.hasTrait<CodegenLayoutTypeTrait>() && !layout) {
       cg << "BoundLayout<'a, " << cg.getTypeName(types[i]) << ", Val>,";
     } else if (subTy.hasTrait<CodegenLayoutTypeTrait>() ||
                subTy.hasTrait<CodegenOnlyPassByReferenceTypeTrait>()) {
       cg << "&'static " << cg.getTypeName(types[i]) << ",\n";
     } else {
       cg << cg.getTypeName(types[i]);
-      if (typeNeedsLifetime(types[i]) && !layoutConst)
+      if (typeNeedsLifetime(types[i]) && !layout)
         cg << "<'a>";
       cg << ",\n";
     }
@@ -300,7 +300,7 @@ void RustLanguageSyntax::emitStructDef(CodegenEmitter& cg,
                                        llvm::ArrayRef<CodegenIdent<IdentKind::Field>> names,
                                        llvm::ArrayRef<mlir::Type> types) {
   cg << "#[derive(Copy,Clone,Debug)]\n";
-  emitStructDefImpl(cg, ty, names, types);
+  emitStructDefImpl(cg, ty, names, types, /*layout=*/false);
 }
 
 void RustLanguageSyntax::emitStructConstruct(CodegenEmitter& cg,
@@ -409,12 +409,6 @@ void RustLanguageSyntax::emitLayoutDef(CodegenEmitter& cg,
   cg << "  fn walk<V: risc0_zkp::layout::Visitor>(&self, v: &mut V) -> core::fmt::Result {\n";
   for (size_t i = 0; i != names.size(); ++i) {
     cg << "    v.visit_component(\"" << names[i] << "\", ";
-    Type ty = types[i];
-    if (false && !ty.hasTrait<CodegenOnlyPassByReferenceTypeTrait>()) {
-      // visit_component always requires a reference, so add one
-      // if it's not already a reference type.
-      cg << "&";
-    }
     cg << "self." << names[i] << ")?;\n";
   }
   cg << "    Ok(())\n";

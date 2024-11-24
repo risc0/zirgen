@@ -153,11 +153,13 @@ impl risc0_zkp::layout::Component for ConcatZeros_5__11_Layout {
         Ok(())
     }
 }
+pub type NondetRegLayout2LayoutArray = [&'static NondetRegLayout; 2];
 pub struct Xor5wordsMinor0Layout {
     pub _super: &'static RetTupleLayout,
     pub r: &'static Xor5wordsResult_0_Layout,
     pub result: &'static NondetRegLayout,
     pub _0: &'static NondetRegLayout,
+    pub _1: &'static NondetRegLayout2LayoutArray,
     pub withr_d: &'static Concatenate_22__2_Layout,
     pub aux_regs: &'static ConcatZeros_5__11_Layout,
 }
@@ -171,6 +173,7 @@ impl risc0_zkp::layout::Component for Xor5wordsMinor0Layout {
         v.visit_component("r", self.r)?;
         v.visit_component("result", self.result)?;
         v.visit_component("_0", self._0)?;
+        v.visit_component("_1", self._1)?;
         v.visit_component("withr_d", self.withr_d)?;
         v.visit_component("aux_regs", self.aux_regs)?;
         Ok(())
@@ -465,6 +468,7 @@ impl risc0_zkp::layout::Component for ConcatZeros_12__12_Layout {
         Ok(())
     }
 }
+pub type NondetRegLayout3LayoutArray = [&'static NondetRegLayout; 3];
 pub struct Xor5wordsM3impl_0_Layout {
     pub _super: &'static Xor5wordsM3impl_0__SuperLayout,
     pub inp_a: &'static RGZ_22_Layout,
@@ -473,6 +477,7 @@ pub struct Xor5wordsM3impl_0_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub rs: &'static NondetRegLayout3LayoutArray,
     pub tmp_1: &'static NondetRegLayout9LayoutArray,
     pub tmp_2: &'static Concatenate_9__3_Layout,
     pub inp_d: &'static ConcatZeros_12__12_Layout,
@@ -490,6 +495,7 @@ impl risc0_zkp::layout::Component for Xor5wordsM3impl_0_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("rs", self.rs)?;
         v.visit_component("tmp_1", self.tmp_1)?;
         v.visit_component("tmp_2", self.tmp_2)?;
         v.visit_component("inp_d", self.inp_d)?;
@@ -582,6 +588,7 @@ pub struct Xor5wordsM3impl_1_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub rs: &'static NondetRegLayout3LayoutArray,
     pub tmp_1: &'static NondetRegLayout12LayoutArray,
     pub tmp_2: &'static Concatenate_12__3_Layout,
     pub inp_d: &'static ConcatZeros_15__9_Layout,
@@ -599,6 +606,7 @@ impl risc0_zkp::layout::Component for Xor5wordsM3impl_1_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("rs", self.rs)?;
         v.visit_component("tmp_1", self.tmp_1)?;
         v.visit_component("tmp_2", self.tmp_2)?;
         v.visit_component("inp_d", self.inp_d)?;
@@ -691,6 +699,7 @@ pub struct Xor5wordsM3impl_2_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub rs: &'static NondetRegLayout3LayoutArray,
     pub tmp_1: &'static NondetRegLayout15LayoutArray,
     pub tmp_2: &'static Concatenate_15__3_Layout,
     pub inp_d: &'static ConcatZeros_18__6_Layout,
@@ -708,6 +717,7 @@ impl risc0_zkp::layout::Component for Xor5wordsM3impl_2_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("rs", self.rs)?;
         v.visit_component("tmp_1", self.tmp_1)?;
         v.visit_component("tmp_2", self.tmp_2)?;
         v.visit_component("inp_d", self.inp_d)?;
@@ -786,6 +796,7 @@ pub struct Xor5wordsM3impl_3_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub rs: &'static NondetRegLayout3LayoutArray,
     pub tmp_1: &'static NondetRegLayout18LayoutArray,
     pub tmp_2: &'static Concatenate_18__3_Layout,
     pub inp_d: &'static ConcatZeros_21__3_Layout,
@@ -803,6 +814,7 @@ impl risc0_zkp::layout::Component for Xor5wordsM3impl_3_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("rs", self.rs)?;
         v.visit_component("tmp_1", self.tmp_1)?;
         v.visit_component("tmp_2", self.tmp_2)?;
         v.visit_component("inp_d", self.inp_d)?;
@@ -894,6 +906,7 @@ pub struct Xor5wordsM3impl_4_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub rs: &'static NondetRegLayout3LayoutArray,
     pub tmp_1: &'static NondetRegLayout21LayoutArray,
     pub tmp_2: &'static Concatenate_21__3_Layout,
     pub inp_d: &'static ConcatZeros_24__0_Layout,
@@ -911,6 +924,7 @@ impl risc0_zkp::layout::Component for Xor5wordsM3impl_4_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("rs", self.rs)?;
         v.visit_component("tmp_1", self.tmp_1)?;
         v.visit_component("tmp_2", self.tmp_2)?;
         v.visit_component("inp_d", self.inp_d)?;
@@ -1091,6 +1105,7 @@ pub struct RhoMinor1_0__0_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
 }
@@ -1107,6 +1122,7 @@ impl risc0_zkp::layout::Component for RhoMinor1_0__0_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         Ok(())
@@ -1124,6 +1140,7 @@ pub struct RhoMinor2_0__0_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
     pub padded_p2: &'static ConcatZeros_21__1_Layout,
@@ -1146,6 +1163,7 @@ impl risc0_zkp::layout::Component for RhoMinor2_0__0_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         v.visit_component("padded_p2", self.padded_p2)?;
@@ -1257,6 +1275,7 @@ pub struct RhoMinor1_2__0_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
 }
@@ -1273,6 +1292,7 @@ impl risc0_zkp::layout::Component for RhoMinor1_2__0_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         Ok(())
@@ -1290,6 +1310,7 @@ pub struct RhoMinor2_2__0_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
     pub padded_p2: &'static ConcatZeros_21__1_Layout,
@@ -1312,6 +1333,7 @@ impl risc0_zkp::layout::Component for RhoMinor2_2__0_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         v.visit_component("padded_p2", self.padded_p2)?;
@@ -1423,6 +1445,7 @@ pub struct RhoMinor1_4__0_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
 }
@@ -1439,6 +1462,7 @@ impl risc0_zkp::layout::Component for RhoMinor1_4__0_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         Ok(())
@@ -1498,7 +1522,6 @@ impl risc0_zkp::layout::Component for RGZ_24_Layout {
         Ok(())
     }
 }
-pub type NondetRegLayout3LayoutArray = [&'static NondetRegLayout; 3];
 pub struct RhoMinor3_0__SuperArm0_SuperLayout {
     pub _super: &'static RetTupleLayout,
     pub _1: &'static NondetRegLayout3LayoutArray,
@@ -1544,6 +1567,7 @@ impl risc0_zkp::layout::Component for RhoMinor3_0__SuperArm0_SuperLayout {
         Ok(())
     }
 }
+pub type NondetRegLayout8LayoutArray = [&'static NondetRegLayout; 8];
 pub type NondetRegLayout14LayoutArray = [&'static NondetRegLayout; 14];
 pub struct Concatenate_8__14_Layout {
     pub _super: &'static NondetRegLayout22LayoutArray,
@@ -1567,6 +1591,7 @@ pub struct RhoMinor3_0__SuperArm1_SuperArm0_SuperLayout {
     pub _4: &'static NondetRegLayout,
     pub _5: &'static NondetRegLayout,
     pub _6: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout7LayoutArray,
     pub _8: &'static NondetRegLayout15LayoutArray,
     pub a: &'static Concatenate_15__7_Layout,
     pub _9: &'static NondetRegLayout,
@@ -1577,6 +1602,7 @@ pub struct RhoMinor3_0__SuperArm1_SuperArm0_SuperLayout {
     pub _14: &'static NondetRegLayout,
     pub _15: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub rs2: &'static NondetRegLayout8LayoutArray,
     pub _18: &'static NondetRegLayout14LayoutArray,
     pub b: &'static Concatenate_8__14_Layout,
     pub _19: &'static RGZ_22_Layout,
@@ -1598,6 +1624,7 @@ impl risc0_zkp::layout::Component for RhoMinor3_0__SuperArm1_SuperArm0_SuperLayo
         v.visit_component("_4", self._4)?;
         v.visit_component("_5", self._5)?;
         v.visit_component("_6", self._6)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_8", self._8)?;
         v.visit_component("a", self.a)?;
         v.visit_component("_9", self._9)?;
@@ -1608,6 +1635,7 @@ impl risc0_zkp::layout::Component for RhoMinor3_0__SuperArm1_SuperArm0_SuperLayo
         v.visit_component("_14", self._14)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("rs2", self.rs2)?;
         v.visit_component("_18", self._18)?;
         v.visit_component("b", self.b)?;
         v.visit_component("_19", self._19)?;
@@ -1617,7 +1645,6 @@ impl risc0_zkp::layout::Component for RhoMinor3_0__SuperArm1_SuperArm0_SuperLayo
         Ok(())
     }
 }
-pub type NondetRegLayout8LayoutArray = [&'static NondetRegLayout; 8];
 pub struct Concatenate_1__21_Layout {
     pub _super: &'static NondetRegLayout22LayoutArray,
 }
@@ -1648,6 +1675,7 @@ pub struct RhoMinor3_0__SuperArm1_SuperArm1_SuperArm0_SuperLayout {
     pub _11: &'static NondetRegLayout,
     pub _12: &'static NondetRegLayout,
     pub _13: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout14LayoutArray,
     pub _15: &'static NondetRegLayout8LayoutArray,
     pub b: &'static Concatenate_8__14_Layout,
     pub rs2: &'static NondetRegLayout1LayoutArray,
@@ -1679,6 +1707,7 @@ impl risc0_zkp::layout::Component for RhoMinor3_0__SuperArm1_SuperArm1_SuperArm0
         v.visit_component("_11", self._11)?;
         v.visit_component("_12", self._12)?;
         v.visit_component("_13", self._13)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("b", self.b)?;
         v.visit_component("rs2", self.rs2)?;
@@ -1734,15 +1763,17 @@ pub struct RhoMinor3_0__SuperArm1_SuperArm1_SuperArm1_SuperArm0_SuperLayout {
     pub _12: &'static NondetRegLayout,
     pub _13: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout15LayoutArray,
     pub _15: &'static NondetRegLayout,
+    pub _16: &'static NondetRegLayout1LayoutArray,
     pub c1: &'static Concatenate_1__15_Layout,
-    pub _17: &'static NondetRegLayout6LayoutArray,
+    pub _18: &'static NondetRegLayout6LayoutArray,
     pub c: &'static Concatenate_16__6_Layout,
-    pub _18: &'static RGZ_22_Layout,
     pub _19: &'static RGZ_22_Layout,
-    pub _20: &'static RGZ_24_Layout,
-    pub _21: &'static DummyBLayout,
+    pub _20: &'static RGZ_22_Layout,
+    pub _21: &'static RGZ_24_Layout,
     pub _22: &'static DummyBLayout,
+    pub _23: &'static DummyBLayout,
 }
 impl risc0_zkp::layout::Component
     for RhoMinor3_0__SuperArm1_SuperArm1_SuperArm1_SuperArm0_SuperLayout
@@ -1768,15 +1799,17 @@ impl risc0_zkp::layout::Component
         v.visit_component("_12", self._12)?;
         v.visit_component("_13", self._13)?;
         v.visit_component("_14", self._14)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_15", self._15)?;
+        v.visit_component("_16", self._16)?;
         v.visit_component("c1", self.c1)?;
-        v.visit_component("_17", self._17)?;
-        v.visit_component("c", self.c)?;
         v.visit_component("_18", self._18)?;
+        v.visit_component("c", self.c)?;
         v.visit_component("_19", self._19)?;
         v.visit_component("_20", self._20)?;
         v.visit_component("_21", self._21)?;
         v.visit_component("_22", self._22)?;
+        v.visit_component("_23", self._23)?;
         Ok(())
     }
 }
@@ -1804,6 +1837,7 @@ pub struct RhoMinor3_0__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _19: &'static NondetRegLayout,
     pub _20: &'static NondetRegLayout,
     pub _21: &'static NondetRegLayout,
+    pub a: &'static NondetRegLayout22LayoutArray,
     pub _22: &'static NondetRegLayout,
     pub _23: &'static NondetRegLayout,
     pub _24: &'static NondetRegLayout,
@@ -1826,6 +1860,7 @@ pub struct RhoMinor3_0__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _41: &'static NondetRegLayout,
     pub _42: &'static NondetRegLayout,
     pub _43: &'static NondetRegLayout,
+    pub b: &'static NondetRegLayout22LayoutArray,
     pub _44: &'static NondetRegLayout,
     pub _45: &'static NondetRegLayout,
     pub _46: &'static NondetRegLayout,
@@ -1848,6 +1883,7 @@ pub struct RhoMinor3_0__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _63: &'static NondetRegLayout,
     pub _64: &'static NondetRegLayout,
     pub _65: &'static NondetRegLayout,
+    pub c: &'static NondetRegLayout22LayoutArray,
     pub _66: &'static NondetRegLayout,
     pub _67: &'static NondetRegLayout,
     pub _68: &'static NondetRegLayout,
@@ -1872,6 +1908,7 @@ pub struct RhoMinor3_0__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _87: &'static NondetRegLayout,
     pub _88: &'static NondetRegLayout,
     pub _89: &'static NondetRegLayout,
+    pub d: &'static NondetRegLayout24LayoutArray,
     pub _90: &'static DummyBLayout,
     pub _91: &'static DummyBLayout,
 }
@@ -1906,6 +1943,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_19", self._19)?;
         v.visit_component("_20", self._20)?;
         v.visit_component("_21", self._21)?;
+        v.visit_component("a", self.a)?;
         v.visit_component("_22", self._22)?;
         v.visit_component("_23", self._23)?;
         v.visit_component("_24", self._24)?;
@@ -1928,6 +1966,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_41", self._41)?;
         v.visit_component("_42", self._42)?;
         v.visit_component("_43", self._43)?;
+        v.visit_component("b", self.b)?;
         v.visit_component("_44", self._44)?;
         v.visit_component("_45", self._45)?;
         v.visit_component("_46", self._46)?;
@@ -1950,6 +1989,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_63", self._63)?;
         v.visit_component("_64", self._64)?;
         v.visit_component("_65", self._65)?;
+        v.visit_component("c", self.c)?;
         v.visit_component("_66", self._66)?;
         v.visit_component("_67", self._67)?;
         v.visit_component("_68", self._68)?;
@@ -1974,6 +2014,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_87", self._87)?;
         v.visit_component("_88", self._88)?;
         v.visit_component("_89", self._89)?;
+        v.visit_component("d", self.d)?;
         v.visit_component("_90", self._90)?;
         v.visit_component("_91", self._91)?;
         Ok(())
@@ -2225,6 +2266,7 @@ pub struct RhoMinor1_0__1_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
 }
@@ -2241,6 +2283,7 @@ impl risc0_zkp::layout::Component for RhoMinor1_0__1_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         Ok(())
@@ -2258,6 +2301,7 @@ pub struct RhoMinor2_0__1_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
     pub padded_p2: &'static ConcatZeros_21__1_Layout,
@@ -2280,6 +2324,7 @@ impl risc0_zkp::layout::Component for RhoMinor2_0__1_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         v.visit_component("padded_p2", self.padded_p2)?;
@@ -2391,6 +2436,7 @@ pub struct RhoMinor1_2__1_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
 }
@@ -2407,6 +2453,7 @@ impl risc0_zkp::layout::Component for RhoMinor1_2__1_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         Ok(())
@@ -2424,6 +2471,7 @@ pub struct RhoMinor2_2__1_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
     pub padded_p2: &'static ConcatZeros_21__1_Layout,
@@ -2446,6 +2494,7 @@ impl risc0_zkp::layout::Component for RhoMinor2_2__1_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         v.visit_component("padded_p2", self.padded_p2)?;
@@ -2557,6 +2606,7 @@ pub struct RhoMinor1_4__1_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
 }
@@ -2573,6 +2623,7 @@ impl risc0_zkp::layout::Component for RhoMinor1_4__1_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         Ok(())
@@ -2632,6 +2683,7 @@ pub struct RhoMinor3_1__SuperArm1_SuperArm0_SuperLayout {
     pub _4: &'static NondetRegLayout,
     pub _5: &'static NondetRegLayout,
     pub _6: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout7LayoutArray,
     pub _8: &'static NondetRegLayout15LayoutArray,
     pub a: &'static Concatenate_15__7_Layout,
     pub _9: &'static NondetRegLayout,
@@ -2642,6 +2694,7 @@ pub struct RhoMinor3_1__SuperArm1_SuperArm0_SuperLayout {
     pub _14: &'static NondetRegLayout,
     pub _15: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub rs2: &'static NondetRegLayout8LayoutArray,
     pub _18: &'static NondetRegLayout14LayoutArray,
     pub b: &'static Concatenate_8__14_Layout,
     pub _19: &'static RGZ_22_Layout,
@@ -2663,6 +2716,7 @@ impl risc0_zkp::layout::Component for RhoMinor3_1__SuperArm1_SuperArm0_SuperLayo
         v.visit_component("_4", self._4)?;
         v.visit_component("_5", self._5)?;
         v.visit_component("_6", self._6)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_8", self._8)?;
         v.visit_component("a", self.a)?;
         v.visit_component("_9", self._9)?;
@@ -2673,6 +2727,7 @@ impl risc0_zkp::layout::Component for RhoMinor3_1__SuperArm1_SuperArm0_SuperLayo
         v.visit_component("_14", self._14)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("rs2", self.rs2)?;
         v.visit_component("_18", self._18)?;
         v.visit_component("b", self.b)?;
         v.visit_component("_19", self._19)?;
@@ -2698,6 +2753,7 @@ pub struct RhoMinor3_1__SuperArm1_SuperArm1_SuperArm0_SuperLayout {
     pub _11: &'static NondetRegLayout,
     pub _12: &'static NondetRegLayout,
     pub _13: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout14LayoutArray,
     pub _15: &'static NondetRegLayout8LayoutArray,
     pub b: &'static Concatenate_8__14_Layout,
     pub rs2: &'static NondetRegLayout1LayoutArray,
@@ -2729,6 +2785,7 @@ impl risc0_zkp::layout::Component for RhoMinor3_1__SuperArm1_SuperArm1_SuperArm0
         v.visit_component("_11", self._11)?;
         v.visit_component("_12", self._12)?;
         v.visit_component("_13", self._13)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("b", self.b)?;
         v.visit_component("rs2", self.rs2)?;
@@ -2758,15 +2815,17 @@ pub struct RhoMinor3_1__SuperArm1_SuperArm1_SuperArm1_SuperArm0_SuperLayout {
     pub _12: &'static NondetRegLayout,
     pub _13: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout15LayoutArray,
     pub _15: &'static NondetRegLayout,
+    pub _16: &'static NondetRegLayout1LayoutArray,
     pub c1: &'static Concatenate_1__15_Layout,
-    pub _17: &'static NondetRegLayout6LayoutArray,
+    pub _18: &'static NondetRegLayout6LayoutArray,
     pub c: &'static Concatenate_16__6_Layout,
-    pub _18: &'static RGZ_22_Layout,
     pub _19: &'static RGZ_22_Layout,
-    pub _20: &'static RGZ_24_Layout,
-    pub _21: &'static DummyBLayout,
+    pub _20: &'static RGZ_22_Layout,
+    pub _21: &'static RGZ_24_Layout,
     pub _22: &'static DummyBLayout,
+    pub _23: &'static DummyBLayout,
 }
 impl risc0_zkp::layout::Component
     for RhoMinor3_1__SuperArm1_SuperArm1_SuperArm1_SuperArm0_SuperLayout
@@ -2792,15 +2851,17 @@ impl risc0_zkp::layout::Component
         v.visit_component("_12", self._12)?;
         v.visit_component("_13", self._13)?;
         v.visit_component("_14", self._14)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_15", self._15)?;
+        v.visit_component("_16", self._16)?;
         v.visit_component("c1", self.c1)?;
-        v.visit_component("_17", self._17)?;
-        v.visit_component("c", self.c)?;
         v.visit_component("_18", self._18)?;
+        v.visit_component("c", self.c)?;
         v.visit_component("_19", self._19)?;
         v.visit_component("_20", self._20)?;
         v.visit_component("_21", self._21)?;
         v.visit_component("_22", self._22)?;
+        v.visit_component("_23", self._23)?;
         Ok(())
     }
 }
@@ -2828,6 +2889,7 @@ pub struct RhoMinor3_1__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _19: &'static NondetRegLayout,
     pub _20: &'static NondetRegLayout,
     pub _21: &'static NondetRegLayout,
+    pub a: &'static NondetRegLayout22LayoutArray,
     pub _22: &'static NondetRegLayout,
     pub _23: &'static NondetRegLayout,
     pub _24: &'static NondetRegLayout,
@@ -2850,6 +2912,7 @@ pub struct RhoMinor3_1__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _41: &'static NondetRegLayout,
     pub _42: &'static NondetRegLayout,
     pub _43: &'static NondetRegLayout,
+    pub b: &'static NondetRegLayout22LayoutArray,
     pub _44: &'static NondetRegLayout,
     pub _45: &'static NondetRegLayout,
     pub _46: &'static NondetRegLayout,
@@ -2872,6 +2935,7 @@ pub struct RhoMinor3_1__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _63: &'static NondetRegLayout,
     pub _64: &'static NondetRegLayout,
     pub _65: &'static NondetRegLayout,
+    pub c: &'static NondetRegLayout22LayoutArray,
     pub _66: &'static NondetRegLayout,
     pub _67: &'static NondetRegLayout,
     pub _68: &'static NondetRegLayout,
@@ -2896,6 +2960,7 @@ pub struct RhoMinor3_1__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _87: &'static NondetRegLayout,
     pub _88: &'static NondetRegLayout,
     pub _89: &'static NondetRegLayout,
+    pub d: &'static NondetRegLayout24LayoutArray,
     pub _90: &'static DummyBLayout,
     pub _91: &'static DummyBLayout,
 }
@@ -2930,6 +2995,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_19", self._19)?;
         v.visit_component("_20", self._20)?;
         v.visit_component("_21", self._21)?;
+        v.visit_component("a", self.a)?;
         v.visit_component("_22", self._22)?;
         v.visit_component("_23", self._23)?;
         v.visit_component("_24", self._24)?;
@@ -2952,6 +3018,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_41", self._41)?;
         v.visit_component("_42", self._42)?;
         v.visit_component("_43", self._43)?;
+        v.visit_component("b", self.b)?;
         v.visit_component("_44", self._44)?;
         v.visit_component("_45", self._45)?;
         v.visit_component("_46", self._46)?;
@@ -2974,6 +3041,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_63", self._63)?;
         v.visit_component("_64", self._64)?;
         v.visit_component("_65", self._65)?;
+        v.visit_component("c", self.c)?;
         v.visit_component("_66", self._66)?;
         v.visit_component("_67", self._67)?;
         v.visit_component("_68", self._68)?;
@@ -2998,6 +3066,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_87", self._87)?;
         v.visit_component("_88", self._88)?;
         v.visit_component("_89", self._89)?;
+        v.visit_component("d", self.d)?;
         v.visit_component("_90", self._90)?;
         v.visit_component("_91", self._91)?;
         Ok(())
@@ -3223,6 +3292,7 @@ pub struct RhoMinor1_0__2_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
 }
@@ -3239,6 +3309,7 @@ impl risc0_zkp::layout::Component for RhoMinor1_0__2_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         Ok(())
@@ -3256,6 +3327,7 @@ pub struct RhoMinor2_0__2_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
     pub padded_p2: &'static ConcatZeros_21__1_Layout,
@@ -3278,6 +3350,7 @@ impl risc0_zkp::layout::Component for RhoMinor2_0__2_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         v.visit_component("padded_p2", self.padded_p2)?;
@@ -3389,6 +3462,7 @@ pub struct RhoMinor1_2__2_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
 }
@@ -3405,6 +3479,7 @@ impl risc0_zkp::layout::Component for RhoMinor1_2__2_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         Ok(())
@@ -3422,6 +3497,7 @@ pub struct RhoMinor2_2__2_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
     pub padded_p2: &'static ConcatZeros_21__1_Layout,
@@ -3444,6 +3520,7 @@ impl risc0_zkp::layout::Component for RhoMinor2_2__2_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         v.visit_component("padded_p2", self.padded_p2)?;
@@ -3555,6 +3632,7 @@ pub struct RhoMinor1_4__2_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
 }
@@ -3571,6 +3649,7 @@ impl risc0_zkp::layout::Component for RhoMinor1_4__2_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         Ok(())
@@ -3630,6 +3709,7 @@ pub struct RhoMinor3_2__SuperArm1_SuperArm0_SuperLayout {
     pub _4: &'static NondetRegLayout,
     pub _5: &'static NondetRegLayout,
     pub _6: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout7LayoutArray,
     pub _8: &'static NondetRegLayout15LayoutArray,
     pub a: &'static Concatenate_15__7_Layout,
     pub _9: &'static NondetRegLayout,
@@ -3640,6 +3720,7 @@ pub struct RhoMinor3_2__SuperArm1_SuperArm0_SuperLayout {
     pub _14: &'static NondetRegLayout,
     pub _15: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub rs2: &'static NondetRegLayout8LayoutArray,
     pub _18: &'static NondetRegLayout14LayoutArray,
     pub b: &'static Concatenate_8__14_Layout,
     pub _19: &'static RGZ_22_Layout,
@@ -3661,6 +3742,7 @@ impl risc0_zkp::layout::Component for RhoMinor3_2__SuperArm1_SuperArm0_SuperLayo
         v.visit_component("_4", self._4)?;
         v.visit_component("_5", self._5)?;
         v.visit_component("_6", self._6)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_8", self._8)?;
         v.visit_component("a", self.a)?;
         v.visit_component("_9", self._9)?;
@@ -3671,6 +3753,7 @@ impl risc0_zkp::layout::Component for RhoMinor3_2__SuperArm1_SuperArm0_SuperLayo
         v.visit_component("_14", self._14)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("rs2", self.rs2)?;
         v.visit_component("_18", self._18)?;
         v.visit_component("b", self.b)?;
         v.visit_component("_19", self._19)?;
@@ -3696,6 +3779,7 @@ pub struct RhoMinor3_2__SuperArm1_SuperArm1_SuperArm0_SuperLayout {
     pub _11: &'static NondetRegLayout,
     pub _12: &'static NondetRegLayout,
     pub _13: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout14LayoutArray,
     pub _15: &'static NondetRegLayout8LayoutArray,
     pub b: &'static Concatenate_8__14_Layout,
     pub rs2: &'static NondetRegLayout1LayoutArray,
@@ -3727,6 +3811,7 @@ impl risc0_zkp::layout::Component for RhoMinor3_2__SuperArm1_SuperArm1_SuperArm0
         v.visit_component("_11", self._11)?;
         v.visit_component("_12", self._12)?;
         v.visit_component("_13", self._13)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("b", self.b)?;
         v.visit_component("rs2", self.rs2)?;
@@ -3756,15 +3841,17 @@ pub struct RhoMinor3_2__SuperArm1_SuperArm1_SuperArm1_SuperArm0_SuperLayout {
     pub _12: &'static NondetRegLayout,
     pub _13: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout15LayoutArray,
     pub _15: &'static NondetRegLayout,
+    pub _16: &'static NondetRegLayout1LayoutArray,
     pub c1: &'static Concatenate_1__15_Layout,
-    pub _17: &'static NondetRegLayout6LayoutArray,
+    pub _18: &'static NondetRegLayout6LayoutArray,
     pub c: &'static Concatenate_16__6_Layout,
-    pub _18: &'static RGZ_22_Layout,
     pub _19: &'static RGZ_22_Layout,
-    pub _20: &'static RGZ_24_Layout,
-    pub _21: &'static DummyBLayout,
+    pub _20: &'static RGZ_22_Layout,
+    pub _21: &'static RGZ_24_Layout,
     pub _22: &'static DummyBLayout,
+    pub _23: &'static DummyBLayout,
 }
 impl risc0_zkp::layout::Component
     for RhoMinor3_2__SuperArm1_SuperArm1_SuperArm1_SuperArm0_SuperLayout
@@ -3790,15 +3877,17 @@ impl risc0_zkp::layout::Component
         v.visit_component("_12", self._12)?;
         v.visit_component("_13", self._13)?;
         v.visit_component("_14", self._14)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_15", self._15)?;
+        v.visit_component("_16", self._16)?;
         v.visit_component("c1", self.c1)?;
-        v.visit_component("_17", self._17)?;
-        v.visit_component("c", self.c)?;
         v.visit_component("_18", self._18)?;
+        v.visit_component("c", self.c)?;
         v.visit_component("_19", self._19)?;
         v.visit_component("_20", self._20)?;
         v.visit_component("_21", self._21)?;
         v.visit_component("_22", self._22)?;
+        v.visit_component("_23", self._23)?;
         Ok(())
     }
 }
@@ -3826,6 +3915,7 @@ pub struct RhoMinor3_2__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _19: &'static NondetRegLayout,
     pub _20: &'static NondetRegLayout,
     pub _21: &'static NondetRegLayout,
+    pub a: &'static NondetRegLayout22LayoutArray,
     pub _22: &'static NondetRegLayout,
     pub _23: &'static NondetRegLayout,
     pub _24: &'static NondetRegLayout,
@@ -3848,6 +3938,7 @@ pub struct RhoMinor3_2__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _41: &'static NondetRegLayout,
     pub _42: &'static NondetRegLayout,
     pub _43: &'static NondetRegLayout,
+    pub b: &'static NondetRegLayout22LayoutArray,
     pub _44: &'static NondetRegLayout,
     pub _45: &'static NondetRegLayout,
     pub _46: &'static NondetRegLayout,
@@ -3870,6 +3961,7 @@ pub struct RhoMinor3_2__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _63: &'static NondetRegLayout,
     pub _64: &'static NondetRegLayout,
     pub _65: &'static NondetRegLayout,
+    pub c: &'static NondetRegLayout22LayoutArray,
     pub _66: &'static NondetRegLayout,
     pub _67: &'static NondetRegLayout,
     pub _68: &'static NondetRegLayout,
@@ -3894,6 +3986,7 @@ pub struct RhoMinor3_2__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _87: &'static NondetRegLayout,
     pub _88: &'static NondetRegLayout,
     pub _89: &'static NondetRegLayout,
+    pub d: &'static NondetRegLayout24LayoutArray,
     pub _90: &'static DummyBLayout,
     pub _91: &'static DummyBLayout,
 }
@@ -3928,6 +4021,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_19", self._19)?;
         v.visit_component("_20", self._20)?;
         v.visit_component("_21", self._21)?;
+        v.visit_component("a", self.a)?;
         v.visit_component("_22", self._22)?;
         v.visit_component("_23", self._23)?;
         v.visit_component("_24", self._24)?;
@@ -3950,6 +4044,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_41", self._41)?;
         v.visit_component("_42", self._42)?;
         v.visit_component("_43", self._43)?;
+        v.visit_component("b", self.b)?;
         v.visit_component("_44", self._44)?;
         v.visit_component("_45", self._45)?;
         v.visit_component("_46", self._46)?;
@@ -3972,6 +4067,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_63", self._63)?;
         v.visit_component("_64", self._64)?;
         v.visit_component("_65", self._65)?;
+        v.visit_component("c", self.c)?;
         v.visit_component("_66", self._66)?;
         v.visit_component("_67", self._67)?;
         v.visit_component("_68", self._68)?;
@@ -3996,6 +4092,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_87", self._87)?;
         v.visit_component("_88", self._88)?;
         v.visit_component("_89", self._89)?;
+        v.visit_component("d", self.d)?;
         v.visit_component("_90", self._90)?;
         v.visit_component("_91", self._91)?;
         Ok(())
@@ -4221,6 +4318,7 @@ pub struct RhoMinor1_0__3_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
 }
@@ -4237,6 +4335,7 @@ impl risc0_zkp::layout::Component for RhoMinor1_0__3_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         Ok(())
@@ -4254,6 +4353,7 @@ pub struct RhoMinor2_0__3_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
     pub padded_p2: &'static ConcatZeros_21__1_Layout,
@@ -4276,6 +4376,7 @@ impl risc0_zkp::layout::Component for RhoMinor2_0__3_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         v.visit_component("padded_p2", self.padded_p2)?;
@@ -4387,6 +4488,7 @@ pub struct RhoMinor1_2__3_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
 }
@@ -4403,6 +4505,7 @@ impl risc0_zkp::layout::Component for RhoMinor1_2__3_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         Ok(())
@@ -4420,6 +4523,7 @@ pub struct RhoMinor2_2__3_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
     pub padded_p2: &'static ConcatZeros_21__1_Layout,
@@ -4442,6 +4546,7 @@ impl risc0_zkp::layout::Component for RhoMinor2_2__3_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         v.visit_component("padded_p2", self.padded_p2)?;
@@ -4553,6 +4658,7 @@ pub struct RhoMinor1_4__3_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
 }
@@ -4569,6 +4675,7 @@ impl risc0_zkp::layout::Component for RhoMinor1_4__3_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         Ok(())
@@ -4628,6 +4735,7 @@ pub struct RhoMinor3_3__SuperArm1_SuperArm0_SuperLayout {
     pub _4: &'static NondetRegLayout,
     pub _5: &'static NondetRegLayout,
     pub _6: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout7LayoutArray,
     pub _8: &'static NondetRegLayout15LayoutArray,
     pub a: &'static Concatenate_15__7_Layout,
     pub _9: &'static NondetRegLayout,
@@ -4638,6 +4746,7 @@ pub struct RhoMinor3_3__SuperArm1_SuperArm0_SuperLayout {
     pub _14: &'static NondetRegLayout,
     pub _15: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub rs2: &'static NondetRegLayout8LayoutArray,
     pub _18: &'static NondetRegLayout14LayoutArray,
     pub b: &'static Concatenate_8__14_Layout,
     pub _19: &'static RGZ_22_Layout,
@@ -4659,6 +4768,7 @@ impl risc0_zkp::layout::Component for RhoMinor3_3__SuperArm1_SuperArm0_SuperLayo
         v.visit_component("_4", self._4)?;
         v.visit_component("_5", self._5)?;
         v.visit_component("_6", self._6)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_8", self._8)?;
         v.visit_component("a", self.a)?;
         v.visit_component("_9", self._9)?;
@@ -4669,6 +4779,7 @@ impl risc0_zkp::layout::Component for RhoMinor3_3__SuperArm1_SuperArm0_SuperLayo
         v.visit_component("_14", self._14)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("rs2", self.rs2)?;
         v.visit_component("_18", self._18)?;
         v.visit_component("b", self.b)?;
         v.visit_component("_19", self._19)?;
@@ -4694,6 +4805,7 @@ pub struct RhoMinor3_3__SuperArm1_SuperArm1_SuperArm0_SuperLayout {
     pub _11: &'static NondetRegLayout,
     pub _12: &'static NondetRegLayout,
     pub _13: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout14LayoutArray,
     pub _15: &'static NondetRegLayout8LayoutArray,
     pub b: &'static Concatenate_8__14_Layout,
     pub rs2: &'static NondetRegLayout1LayoutArray,
@@ -4725,6 +4837,7 @@ impl risc0_zkp::layout::Component for RhoMinor3_3__SuperArm1_SuperArm1_SuperArm0
         v.visit_component("_11", self._11)?;
         v.visit_component("_12", self._12)?;
         v.visit_component("_13", self._13)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("b", self.b)?;
         v.visit_component("rs2", self.rs2)?;
@@ -4754,15 +4867,17 @@ pub struct RhoMinor3_3__SuperArm1_SuperArm1_SuperArm1_SuperArm0_SuperLayout {
     pub _12: &'static NondetRegLayout,
     pub _13: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout15LayoutArray,
     pub _15: &'static NondetRegLayout,
+    pub _16: &'static NondetRegLayout1LayoutArray,
     pub c1: &'static Concatenate_1__15_Layout,
-    pub _17: &'static NondetRegLayout6LayoutArray,
+    pub _18: &'static NondetRegLayout6LayoutArray,
     pub c: &'static Concatenate_16__6_Layout,
-    pub _18: &'static RGZ_22_Layout,
     pub _19: &'static RGZ_22_Layout,
-    pub _20: &'static RGZ_24_Layout,
-    pub _21: &'static DummyBLayout,
+    pub _20: &'static RGZ_22_Layout,
+    pub _21: &'static RGZ_24_Layout,
     pub _22: &'static DummyBLayout,
+    pub _23: &'static DummyBLayout,
 }
 impl risc0_zkp::layout::Component
     for RhoMinor3_3__SuperArm1_SuperArm1_SuperArm1_SuperArm0_SuperLayout
@@ -4788,15 +4903,17 @@ impl risc0_zkp::layout::Component
         v.visit_component("_12", self._12)?;
         v.visit_component("_13", self._13)?;
         v.visit_component("_14", self._14)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_15", self._15)?;
+        v.visit_component("_16", self._16)?;
         v.visit_component("c1", self.c1)?;
-        v.visit_component("_17", self._17)?;
-        v.visit_component("c", self.c)?;
         v.visit_component("_18", self._18)?;
+        v.visit_component("c", self.c)?;
         v.visit_component("_19", self._19)?;
         v.visit_component("_20", self._20)?;
         v.visit_component("_21", self._21)?;
         v.visit_component("_22", self._22)?;
+        v.visit_component("_23", self._23)?;
         Ok(())
     }
 }
@@ -4824,6 +4941,7 @@ pub struct RhoMinor3_3__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _19: &'static NondetRegLayout,
     pub _20: &'static NondetRegLayout,
     pub _21: &'static NondetRegLayout,
+    pub a: &'static NondetRegLayout22LayoutArray,
     pub _22: &'static NondetRegLayout,
     pub _23: &'static NondetRegLayout,
     pub _24: &'static NondetRegLayout,
@@ -4846,6 +4964,7 @@ pub struct RhoMinor3_3__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _41: &'static NondetRegLayout,
     pub _42: &'static NondetRegLayout,
     pub _43: &'static NondetRegLayout,
+    pub b: &'static NondetRegLayout22LayoutArray,
     pub _44: &'static NondetRegLayout,
     pub _45: &'static NondetRegLayout,
     pub _46: &'static NondetRegLayout,
@@ -4868,6 +4987,7 @@ pub struct RhoMinor3_3__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _63: &'static NondetRegLayout,
     pub _64: &'static NondetRegLayout,
     pub _65: &'static NondetRegLayout,
+    pub c: &'static NondetRegLayout22LayoutArray,
     pub _66: &'static NondetRegLayout,
     pub _67: &'static NondetRegLayout,
     pub _68: &'static NondetRegLayout,
@@ -4892,6 +5012,7 @@ pub struct RhoMinor3_3__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _87: &'static NondetRegLayout,
     pub _88: &'static NondetRegLayout,
     pub _89: &'static NondetRegLayout,
+    pub d: &'static NondetRegLayout24LayoutArray,
     pub _90: &'static DummyBLayout,
     pub _91: &'static DummyBLayout,
 }
@@ -4926,6 +5047,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_19", self._19)?;
         v.visit_component("_20", self._20)?;
         v.visit_component("_21", self._21)?;
+        v.visit_component("a", self.a)?;
         v.visit_component("_22", self._22)?;
         v.visit_component("_23", self._23)?;
         v.visit_component("_24", self._24)?;
@@ -4948,6 +5070,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_41", self._41)?;
         v.visit_component("_42", self._42)?;
         v.visit_component("_43", self._43)?;
+        v.visit_component("b", self.b)?;
         v.visit_component("_44", self._44)?;
         v.visit_component("_45", self._45)?;
         v.visit_component("_46", self._46)?;
@@ -4970,6 +5093,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_63", self._63)?;
         v.visit_component("_64", self._64)?;
         v.visit_component("_65", self._65)?;
+        v.visit_component("c", self.c)?;
         v.visit_component("_66", self._66)?;
         v.visit_component("_67", self._67)?;
         v.visit_component("_68", self._68)?;
@@ -4994,6 +5118,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_87", self._87)?;
         v.visit_component("_88", self._88)?;
         v.visit_component("_89", self._89)?;
+        v.visit_component("d", self.d)?;
         v.visit_component("_90", self._90)?;
         v.visit_component("_91", self._91)?;
         Ok(())
@@ -5219,6 +5344,7 @@ pub struct RhoMinor1_0__4_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
 }
@@ -5235,6 +5361,7 @@ impl risc0_zkp::layout::Component for RhoMinor1_0__4_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         Ok(())
@@ -5252,6 +5379,7 @@ pub struct RhoMinor2_0__4_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
     pub padded_p2: &'static ConcatZeros_21__1_Layout,
@@ -5274,6 +5402,7 @@ impl risc0_zkp::layout::Component for RhoMinor2_0__4_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         v.visit_component("padded_p2", self.padded_p2)?;
@@ -5385,6 +5514,7 @@ pub struct RhoMinor1_2__4_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
 }
@@ -5401,6 +5531,7 @@ impl risc0_zkp::layout::Component for RhoMinor1_2__4_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         Ok(())
@@ -5418,6 +5549,7 @@ pub struct RhoMinor2_2__4_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
     pub padded_p2: &'static ConcatZeros_21__1_Layout,
@@ -5440,6 +5572,7 @@ impl risc0_zkp::layout::Component for RhoMinor2_2__4_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         v.visit_component("padded_p2", self.padded_p2)?;
@@ -5551,6 +5684,7 @@ pub struct RhoMinor1_4__4_Layout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout3LayoutArray,
     pub withrs_d: &'static Concatenate_21__3_Layout,
     pub padded_xy2: &'static ConcatZeros_21__1_Layout,
 }
@@ -5567,6 +5701,7 @@ impl risc0_zkp::layout::Component for RhoMinor1_4__4_Layout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("padded_xy2", self.padded_xy2)?;
         Ok(())
@@ -5626,6 +5761,7 @@ pub struct RhoMinor3_4__SuperArm1_SuperArm0_SuperLayout {
     pub _4: &'static NondetRegLayout,
     pub _5: &'static NondetRegLayout,
     pub _6: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout7LayoutArray,
     pub _8: &'static NondetRegLayout15LayoutArray,
     pub a: &'static Concatenate_15__7_Layout,
     pub _9: &'static NondetRegLayout,
@@ -5636,6 +5772,7 @@ pub struct RhoMinor3_4__SuperArm1_SuperArm0_SuperLayout {
     pub _14: &'static NondetRegLayout,
     pub _15: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub rs2: &'static NondetRegLayout8LayoutArray,
     pub _18: &'static NondetRegLayout14LayoutArray,
     pub b: &'static Concatenate_8__14_Layout,
     pub _19: &'static RGZ_22_Layout,
@@ -5657,6 +5794,7 @@ impl risc0_zkp::layout::Component for RhoMinor3_4__SuperArm1_SuperArm0_SuperLayo
         v.visit_component("_4", self._4)?;
         v.visit_component("_5", self._5)?;
         v.visit_component("_6", self._6)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_8", self._8)?;
         v.visit_component("a", self.a)?;
         v.visit_component("_9", self._9)?;
@@ -5667,6 +5805,7 @@ impl risc0_zkp::layout::Component for RhoMinor3_4__SuperArm1_SuperArm0_SuperLayo
         v.visit_component("_14", self._14)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("rs2", self.rs2)?;
         v.visit_component("_18", self._18)?;
         v.visit_component("b", self.b)?;
         v.visit_component("_19", self._19)?;
@@ -5692,6 +5831,7 @@ pub struct RhoMinor3_4__SuperArm1_SuperArm1_SuperArm0_SuperLayout {
     pub _11: &'static NondetRegLayout,
     pub _12: &'static NondetRegLayout,
     pub _13: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout14LayoutArray,
     pub _15: &'static NondetRegLayout8LayoutArray,
     pub b: &'static Concatenate_8__14_Layout,
     pub rs2: &'static NondetRegLayout1LayoutArray,
@@ -5723,6 +5863,7 @@ impl risc0_zkp::layout::Component for RhoMinor3_4__SuperArm1_SuperArm1_SuperArm0
         v.visit_component("_11", self._11)?;
         v.visit_component("_12", self._12)?;
         v.visit_component("_13", self._13)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("b", self.b)?;
         v.visit_component("rs2", self.rs2)?;
@@ -5752,15 +5893,17 @@ pub struct RhoMinor3_4__SuperArm1_SuperArm1_SuperArm1_SuperArm0_SuperLayout {
     pub _12: &'static NondetRegLayout,
     pub _13: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout15LayoutArray,
     pub _15: &'static NondetRegLayout,
+    pub _16: &'static NondetRegLayout1LayoutArray,
     pub c1: &'static Concatenate_1__15_Layout,
-    pub _17: &'static NondetRegLayout6LayoutArray,
+    pub _18: &'static NondetRegLayout6LayoutArray,
     pub c: &'static Concatenate_16__6_Layout,
-    pub _18: &'static RGZ_22_Layout,
     pub _19: &'static RGZ_22_Layout,
-    pub _20: &'static RGZ_24_Layout,
-    pub _21: &'static DummyBLayout,
+    pub _20: &'static RGZ_22_Layout,
+    pub _21: &'static RGZ_24_Layout,
     pub _22: &'static DummyBLayout,
+    pub _23: &'static DummyBLayout,
 }
 impl risc0_zkp::layout::Component
     for RhoMinor3_4__SuperArm1_SuperArm1_SuperArm1_SuperArm0_SuperLayout
@@ -5786,15 +5929,17 @@ impl risc0_zkp::layout::Component
         v.visit_component("_12", self._12)?;
         v.visit_component("_13", self._13)?;
         v.visit_component("_14", self._14)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_15", self._15)?;
+        v.visit_component("_16", self._16)?;
         v.visit_component("c1", self.c1)?;
-        v.visit_component("_17", self._17)?;
-        v.visit_component("c", self.c)?;
         v.visit_component("_18", self._18)?;
+        v.visit_component("c", self.c)?;
         v.visit_component("_19", self._19)?;
         v.visit_component("_20", self._20)?;
         v.visit_component("_21", self._21)?;
         v.visit_component("_22", self._22)?;
+        v.visit_component("_23", self._23)?;
         Ok(())
     }
 }
@@ -5822,6 +5967,7 @@ pub struct RhoMinor3_4__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _19: &'static NondetRegLayout,
     pub _20: &'static NondetRegLayout,
     pub _21: &'static NondetRegLayout,
+    pub a: &'static NondetRegLayout22LayoutArray,
     pub _22: &'static NondetRegLayout,
     pub _23: &'static NondetRegLayout,
     pub _24: &'static NondetRegLayout,
@@ -5844,6 +5990,7 @@ pub struct RhoMinor3_4__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _41: &'static NondetRegLayout,
     pub _42: &'static NondetRegLayout,
     pub _43: &'static NondetRegLayout,
+    pub b: &'static NondetRegLayout22LayoutArray,
     pub _44: &'static NondetRegLayout,
     pub _45: &'static NondetRegLayout,
     pub _46: &'static NondetRegLayout,
@@ -5866,6 +6013,7 @@ pub struct RhoMinor3_4__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _63: &'static NondetRegLayout,
     pub _64: &'static NondetRegLayout,
     pub _65: &'static NondetRegLayout,
+    pub c: &'static NondetRegLayout22LayoutArray,
     pub _66: &'static NondetRegLayout,
     pub _67: &'static NondetRegLayout,
     pub _68: &'static NondetRegLayout,
@@ -5890,6 +6038,7 @@ pub struct RhoMinor3_4__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _87: &'static NondetRegLayout,
     pub _88: &'static NondetRegLayout,
     pub _89: &'static NondetRegLayout,
+    pub d: &'static NondetRegLayout24LayoutArray,
     pub _90: &'static DummyBLayout,
     pub _91: &'static DummyBLayout,
 }
@@ -5924,6 +6073,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_19", self._19)?;
         v.visit_component("_20", self._20)?;
         v.visit_component("_21", self._21)?;
+        v.visit_component("a", self.a)?;
         v.visit_component("_22", self._22)?;
         v.visit_component("_23", self._23)?;
         v.visit_component("_24", self._24)?;
@@ -5946,6 +6096,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_41", self._41)?;
         v.visit_component("_42", self._42)?;
         v.visit_component("_43", self._43)?;
+        v.visit_component("b", self.b)?;
         v.visit_component("_44", self._44)?;
         v.visit_component("_45", self._45)?;
         v.visit_component("_46", self._46)?;
@@ -5968,6 +6119,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_63", self._63)?;
         v.visit_component("_64", self._64)?;
         v.visit_component("_65", self._65)?;
+        v.visit_component("c", self.c)?;
         v.visit_component("_66", self._66)?;
         v.visit_component("_67", self._67)?;
         v.visit_component("_68", self._68)?;
@@ -5992,6 +6144,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_87", self._87)?;
         v.visit_component("_88", self._88)?;
         v.visit_component("_89", self._89)?;
+        v.visit_component("d", self.d)?;
         v.visit_component("_90", self._90)?;
         v.visit_component("_91", self._91)?;
         Ok(())
@@ -6123,6 +6276,7 @@ pub struct ChiMinor0_0__0_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -6143,6 +6297,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_0__0_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -6190,6 +6345,7 @@ pub struct ChiMinor1_0__0__SuperArm1_SuperLayout {
     pub res3n: &'static NondetRegLayout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub _2: &'static NondetRegLayout3LayoutArray,
     pub withr_d: &'static Concatenate_21__3_Layout,
     pub e: &'static ConcatZeros_21__1_Layout,
     pub f: &'static ConcatZeros_21__1_Layout,
@@ -6207,6 +6363,7 @@ impl risc0_zkp::layout::Component for ChiMinor1_0__0__SuperArm1_SuperLayout {
         v.visit_component("res3n", self.res3n)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("_2", self._2)?;
         v.visit_component("withr_d", self.withr_d)?;
         v.visit_component("e", self.e)?;
         v.visit_component("f", self.f)?;
@@ -6271,6 +6428,7 @@ pub struct ChiMinor0_1__0_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -6291,6 +6449,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_1__0_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -6308,6 +6467,7 @@ pub struct ChiMinor0_2__0_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -6328,6 +6488,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_2__0_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -6362,6 +6523,7 @@ pub struct ChiMinor1_2__0__SuperArm1_SuperLayout {
     pub res3n: &'static NondetRegLayout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub _2: &'static NondetRegLayout3LayoutArray,
     pub withr_d: &'static Concatenate_21__3_Layout,
     pub e: &'static ConcatZeros_21__1_Layout,
     pub f: &'static ConcatZeros_21__1_Layout,
@@ -6379,6 +6541,7 @@ impl risc0_zkp::layout::Component for ChiMinor1_2__0__SuperArm1_SuperLayout {
         v.visit_component("res3n", self.res3n)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("_2", self._2)?;
         v.visit_component("withr_d", self.withr_d)?;
         v.visit_component("e", self.e)?;
         v.visit_component("f", self.f)?;
@@ -6443,6 +6606,7 @@ pub struct ChiMinor0_3__0_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -6463,6 +6627,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_3__0_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -6480,6 +6645,7 @@ pub struct ChiMinor0_4__0_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -6500,6 +6666,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_4__0_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -6534,6 +6701,7 @@ pub struct ChiMinor1_4__0__SuperArm1_SuperLayout {
     pub res3n: &'static NondetRegLayout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub _2: &'static NondetRegLayout3LayoutArray,
     pub withr_d: &'static Concatenate_21__3_Layout,
     pub e: &'static ConcatZeros_21__1_Layout,
     pub f: &'static ConcatZeros_21__1_Layout,
@@ -6551,6 +6719,7 @@ impl risc0_zkp::layout::Component for ChiMinor1_4__0__SuperArm1_SuperLayout {
         v.visit_component("res3n", self.res3n)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("_2", self._2)?;
         v.visit_component("withr_d", self.withr_d)?;
         v.visit_component("e", self.e)?;
         v.visit_component("f", self.f)?;
@@ -6629,6 +6798,7 @@ pub struct ChiMinor2_0__SuperArm0_SuperLayout {
     pub _19: &'static NondetRegLayout,
     pub _20: &'static NondetRegLayout,
     pub _21: &'static NondetRegLayout,
+    pub a: &'static NondetRegLayout22LayoutArray,
     pub _22: &'static RGZ_22_Layout,
     pub _23: &'static RGZ_22_Layout,
     pub _24: &'static RGZ_24_Layout,
@@ -6664,6 +6834,7 @@ impl risc0_zkp::layout::Component for ChiMinor2_0__SuperArm0_SuperLayout {
         v.visit_component("_19", self._19)?;
         v.visit_component("_20", self._20)?;
         v.visit_component("_21", self._21)?;
+        v.visit_component("a", self.a)?;
         v.visit_component("_22", self._22)?;
         v.visit_component("_23", self._23)?;
         v.visit_component("_24", self._24)?;
@@ -6681,6 +6852,7 @@ pub struct ChiMinor2_0__SuperArm1_SuperArm0_SuperLayout {
     pub _4: &'static NondetRegLayout,
     pub _5: &'static NondetRegLayout,
     pub _6: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout7LayoutArray,
     pub _8: &'static NondetRegLayout15LayoutArray,
     pub a: &'static Concatenate_15__7_Layout,
     pub _9: &'static NondetRegLayout,
@@ -6691,6 +6863,7 @@ pub struct ChiMinor2_0__SuperArm1_SuperArm0_SuperLayout {
     pub _14: &'static NondetRegLayout,
     pub _15: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub rs2: &'static NondetRegLayout8LayoutArray,
     pub _18: &'static NondetRegLayout14LayoutArray,
     pub b: &'static Concatenate_8__14_Layout,
     pub _19: &'static RGZ_22_Layout,
@@ -6712,6 +6885,7 @@ impl risc0_zkp::layout::Component for ChiMinor2_0__SuperArm1_SuperArm0_SuperLayo
         v.visit_component("_4", self._4)?;
         v.visit_component("_5", self._5)?;
         v.visit_component("_6", self._6)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_8", self._8)?;
         v.visit_component("a", self.a)?;
         v.visit_component("_9", self._9)?;
@@ -6722,6 +6896,7 @@ impl risc0_zkp::layout::Component for ChiMinor2_0__SuperArm1_SuperArm0_SuperLayo
         v.visit_component("_14", self._14)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("rs2", self.rs2)?;
         v.visit_component("_18", self._18)?;
         v.visit_component("b", self.b)?;
         v.visit_component("_19", self._19)?;
@@ -6747,9 +6922,11 @@ pub struct ChiMinor2_0__SuperArm1_SuperArm1_SuperArm0_SuperLayout {
     pub _11: &'static NondetRegLayout,
     pub _12: &'static NondetRegLayout,
     pub _13: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout14LayoutArray,
     pub _15: &'static NondetRegLayout8LayoutArray,
     pub b: &'static Concatenate_8__14_Layout,
     pub _16: &'static NondetRegLayout,
+    pub rs2: &'static NondetRegLayout1LayoutArray,
     pub _18: &'static NondetRegLayout21LayoutArray,
     pub c: &'static Concatenate_1__21_Layout,
     pub _19: &'static RGZ_22_Layout,
@@ -6778,9 +6955,11 @@ impl risc0_zkp::layout::Component for ChiMinor2_0__SuperArm1_SuperArm1_SuperArm0
         v.visit_component("_11", self._11)?;
         v.visit_component("_12", self._12)?;
         v.visit_component("_13", self._13)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("b", self.b)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("rs2", self.rs2)?;
         v.visit_component("_18", self._18)?;
         v.visit_component("c", self.c)?;
         v.visit_component("_19", self._19)?;
@@ -6807,6 +6986,7 @@ pub struct ChiMinor2_0__SuperArm1_SuperArm1_SuperArm1_SuperArm0_SuperLayout {
     pub _12: &'static NondetRegLayout,
     pub _13: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout15LayoutArray,
     pub c1: &'static Concatenate_1__15_Layout,
     pub _16: &'static NondetRegLayout6LayoutArray,
     pub c: &'static Concatenate_16__6_Layout,
@@ -6840,6 +7020,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_12", self._12)?;
         v.visit_component("_13", self._13)?;
         v.visit_component("_14", self._14)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("c1", self.c1)?;
         v.visit_component("_16", self._16)?;
         v.visit_component("c", self.c)?;
@@ -6877,7 +7058,6 @@ impl risc0_zkp::layout::Component for ConcatZeros_9__13_Layout {
         Ok(())
     }
 }
-pub type NondetRegLayout2LayoutArray = [&'static NondetRegLayout; 2];
 pub struct ChiMinor2_0__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _super: &'static RetTupleLayout,
     pub _0: &'static NondetRegLayout,
@@ -6886,6 +7066,7 @@ pub struct ChiMinor2_0__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _3: &'static NondetRegLayout,
     pub _4: &'static NondetRegLayout,
     pub _5: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout6LayoutArray,
     pub _7: &'static NondetRegLayout16LayoutArray,
     pub c: &'static Concatenate_16__6_Layout,
     pub _8: &'static NondetRegLayout,
@@ -6897,6 +7078,7 @@ pub struct ChiMinor2_0__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _14: &'static NondetRegLayout,
     pub _15: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub rs2: &'static NondetRegLayout9LayoutArray,
     pub unpack_round: &'static OneHotU_24_Layout,
     pub rnd_1: &'static NondetRegLayout2LayoutArray,
     pub rnd_2: &'static NondetRegLayout22LayoutArray,
@@ -6921,6 +7103,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_3", self._3)?;
         v.visit_component("_4", self._4)?;
         v.visit_component("_5", self._5)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_7", self._7)?;
         v.visit_component("c", self.c)?;
         v.visit_component("_8", self._8)?;
@@ -6932,6 +7115,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_14", self._14)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("rs2", self.rs2)?;
         v.visit_component("unpack_round", self.unpack_round)?;
         v.visit_component("rnd_1", self.rnd_1)?;
         v.visit_component("rnd_2", self.rnd_2)?;
@@ -7034,8 +7218,10 @@ pub struct IotaXorRcLayout {
     pub _3: &'static NondetRegLayout,
     pub _5: &'static NondetRegLayout,
     pub _7: &'static NondetRegLayout,
+    pub a00: &'static NondetRegLayout3LayoutArray,
     pub _9: &'static NondetRegLayout19LayoutArray,
     pub a: &'static Concatenate_3__19_Layout,
+    pub d_suffix: &'static NondetRegLayout2LayoutArray,
     pub _11: &'static NondetRegLayout9LayoutArray,
     pub d_tmp: &'static ConcatZeros_9__13_Layout,
     pub d: &'static Concatenate_22__2_Layout,
@@ -7056,8 +7242,10 @@ impl risc0_zkp::layout::Component for IotaXorRcLayout {
         v.visit_component("_3", self._3)?;
         v.visit_component("_5", self._5)?;
         v.visit_component("_7", self._7)?;
+        v.visit_component("a00", self.a00)?;
         v.visit_component("_9", self._9)?;
         v.visit_component("a", self.a)?;
+        v.visit_component("d_suffix", self.d_suffix)?;
         v.visit_component("_11", self._11)?;
         v.visit_component("d_tmp", self.d_tmp)?;
         v.visit_component("d", self.d)?;
@@ -7153,6 +7341,7 @@ pub struct ChiMinor0_0__1_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -7173,6 +7362,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_0__1_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -7207,6 +7397,7 @@ pub struct ChiMinor1_0__1__SuperArm1_SuperLayout {
     pub res3n: &'static NondetRegLayout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub _2: &'static NondetRegLayout3LayoutArray,
     pub withr_d: &'static Concatenate_21__3_Layout,
     pub e: &'static ConcatZeros_21__1_Layout,
     pub f: &'static ConcatZeros_21__1_Layout,
@@ -7224,6 +7415,7 @@ impl risc0_zkp::layout::Component for ChiMinor1_0__1__SuperArm1_SuperLayout {
         v.visit_component("res3n", self.res3n)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("_2", self._2)?;
         v.visit_component("withr_d", self.withr_d)?;
         v.visit_component("e", self.e)?;
         v.visit_component("f", self.f)?;
@@ -7288,6 +7480,7 @@ pub struct ChiMinor0_1__1_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -7308,6 +7501,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_1__1_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -7325,6 +7519,7 @@ pub struct ChiMinor0_2__1_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -7345,6 +7540,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_2__1_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -7379,6 +7575,7 @@ pub struct ChiMinor1_2__1__SuperArm1_SuperLayout {
     pub res3n: &'static NondetRegLayout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub _2: &'static NondetRegLayout3LayoutArray,
     pub withr_d: &'static Concatenate_21__3_Layout,
     pub e: &'static ConcatZeros_21__1_Layout,
     pub f: &'static ConcatZeros_21__1_Layout,
@@ -7396,6 +7593,7 @@ impl risc0_zkp::layout::Component for ChiMinor1_2__1__SuperArm1_SuperLayout {
         v.visit_component("res3n", self.res3n)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("_2", self._2)?;
         v.visit_component("withr_d", self.withr_d)?;
         v.visit_component("e", self.e)?;
         v.visit_component("f", self.f)?;
@@ -7460,6 +7658,7 @@ pub struct ChiMinor0_3__1_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -7480,6 +7679,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_3__1_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -7497,6 +7697,7 @@ pub struct ChiMinor0_4__1_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -7517,6 +7718,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_4__1_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -7551,6 +7753,7 @@ pub struct ChiMinor1_4__1__SuperArm1_SuperLayout {
     pub res3n: &'static NondetRegLayout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub _2: &'static NondetRegLayout3LayoutArray,
     pub withr_d: &'static Concatenate_21__3_Layout,
     pub e: &'static ConcatZeros_21__1_Layout,
     pub f: &'static ConcatZeros_21__1_Layout,
@@ -7568,6 +7771,7 @@ impl risc0_zkp::layout::Component for ChiMinor1_4__1__SuperArm1_SuperLayout {
         v.visit_component("res3n", self.res3n)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("_2", self._2)?;
         v.visit_component("withr_d", self.withr_d)?;
         v.visit_component("e", self.e)?;
         v.visit_component("f", self.f)?;
@@ -7646,6 +7850,7 @@ pub struct ChiMinor2_1__SuperArm0_SuperLayout {
     pub _19: &'static NondetRegLayout,
     pub _20: &'static NondetRegLayout,
     pub _21: &'static NondetRegLayout,
+    pub a: &'static NondetRegLayout22LayoutArray,
     pub _22: &'static RGZ_22_Layout,
     pub _23: &'static RGZ_22_Layout,
     pub _24: &'static RGZ_24_Layout,
@@ -7681,6 +7886,7 @@ impl risc0_zkp::layout::Component for ChiMinor2_1__SuperArm0_SuperLayout {
         v.visit_component("_19", self._19)?;
         v.visit_component("_20", self._20)?;
         v.visit_component("_21", self._21)?;
+        v.visit_component("a", self.a)?;
         v.visit_component("_22", self._22)?;
         v.visit_component("_23", self._23)?;
         v.visit_component("_24", self._24)?;
@@ -7698,6 +7904,7 @@ pub struct ChiMinor2_1__SuperArm1_SuperArm0_SuperLayout {
     pub _4: &'static NondetRegLayout,
     pub _5: &'static NondetRegLayout,
     pub _6: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout7LayoutArray,
     pub _8: &'static NondetRegLayout15LayoutArray,
     pub a: &'static Concatenate_15__7_Layout,
     pub _9: &'static NondetRegLayout,
@@ -7708,6 +7915,7 @@ pub struct ChiMinor2_1__SuperArm1_SuperArm0_SuperLayout {
     pub _14: &'static NondetRegLayout,
     pub _15: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub rs2: &'static NondetRegLayout8LayoutArray,
     pub _18: &'static NondetRegLayout14LayoutArray,
     pub b: &'static Concatenate_8__14_Layout,
     pub _19: &'static RGZ_22_Layout,
@@ -7729,6 +7937,7 @@ impl risc0_zkp::layout::Component for ChiMinor2_1__SuperArm1_SuperArm0_SuperLayo
         v.visit_component("_4", self._4)?;
         v.visit_component("_5", self._5)?;
         v.visit_component("_6", self._6)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_8", self._8)?;
         v.visit_component("a", self.a)?;
         v.visit_component("_9", self._9)?;
@@ -7739,6 +7948,7 @@ impl risc0_zkp::layout::Component for ChiMinor2_1__SuperArm1_SuperArm0_SuperLayo
         v.visit_component("_14", self._14)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("rs2", self.rs2)?;
         v.visit_component("_18", self._18)?;
         v.visit_component("b", self.b)?;
         v.visit_component("_19", self._19)?;
@@ -7764,9 +7974,11 @@ pub struct ChiMinor2_1__SuperArm1_SuperArm1_SuperArm0_SuperLayout {
     pub _11: &'static NondetRegLayout,
     pub _12: &'static NondetRegLayout,
     pub _13: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout14LayoutArray,
     pub _15: &'static NondetRegLayout8LayoutArray,
     pub b: &'static Concatenate_8__14_Layout,
     pub _16: &'static NondetRegLayout,
+    pub rs2: &'static NondetRegLayout1LayoutArray,
     pub _18: &'static NondetRegLayout21LayoutArray,
     pub c: &'static Concatenate_1__21_Layout,
     pub _19: &'static RGZ_22_Layout,
@@ -7795,9 +8007,11 @@ impl risc0_zkp::layout::Component for ChiMinor2_1__SuperArm1_SuperArm1_SuperArm0
         v.visit_component("_11", self._11)?;
         v.visit_component("_12", self._12)?;
         v.visit_component("_13", self._13)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("b", self.b)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("rs2", self.rs2)?;
         v.visit_component("_18", self._18)?;
         v.visit_component("c", self.c)?;
         v.visit_component("_19", self._19)?;
@@ -7824,6 +8038,7 @@ pub struct ChiMinor2_1__SuperArm1_SuperArm1_SuperArm1_SuperArm0_SuperLayout {
     pub _12: &'static NondetRegLayout,
     pub _13: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout15LayoutArray,
     pub c1: &'static Concatenate_1__15_Layout,
     pub _16: &'static NondetRegLayout6LayoutArray,
     pub c: &'static Concatenate_16__6_Layout,
@@ -7857,6 +8072,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_12", self._12)?;
         v.visit_component("_13", self._13)?;
         v.visit_component("_14", self._14)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("c1", self.c1)?;
         v.visit_component("_16", self._16)?;
         v.visit_component("c", self.c)?;
@@ -7876,6 +8092,7 @@ pub struct ChiMinor2_1__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _3: &'static NondetRegLayout,
     pub _4: &'static NondetRegLayout,
     pub _5: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout6LayoutArray,
     pub _7: &'static NondetRegLayout16LayoutArray,
     pub c: &'static Concatenate_16__6_Layout,
     pub _8: &'static NondetRegLayout,
@@ -7887,6 +8104,7 @@ pub struct ChiMinor2_1__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _14: &'static NondetRegLayout,
     pub _15: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub rs2: &'static NondetRegLayout9LayoutArray,
     pub unpack_round: &'static OneHotU_24_Layout,
     pub rnd_1: &'static NondetRegLayout2LayoutArray,
     pub rnd_2: &'static NondetRegLayout22LayoutArray,
@@ -7911,6 +8129,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_3", self._3)?;
         v.visit_component("_4", self._4)?;
         v.visit_component("_5", self._5)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_7", self._7)?;
         v.visit_component("c", self.c)?;
         v.visit_component("_8", self._8)?;
@@ -7922,6 +8141,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_14", self._14)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("rs2", self.rs2)?;
         v.visit_component("unpack_round", self.unpack_round)?;
         v.visit_component("rnd_1", self.rnd_1)?;
         v.visit_component("rnd_2", self.rnd_2)?;
@@ -8061,6 +8281,7 @@ pub struct ChiMinor0_0__2_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -8081,6 +8302,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_0__2_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -8115,6 +8337,7 @@ pub struct ChiMinor1_0__2__SuperArm1_SuperLayout {
     pub res3n: &'static NondetRegLayout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub _2: &'static NondetRegLayout3LayoutArray,
     pub withr_d: &'static Concatenate_21__3_Layout,
     pub e: &'static ConcatZeros_21__1_Layout,
     pub f: &'static ConcatZeros_21__1_Layout,
@@ -8132,6 +8355,7 @@ impl risc0_zkp::layout::Component for ChiMinor1_0__2__SuperArm1_SuperLayout {
         v.visit_component("res3n", self.res3n)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("_2", self._2)?;
         v.visit_component("withr_d", self.withr_d)?;
         v.visit_component("e", self.e)?;
         v.visit_component("f", self.f)?;
@@ -8196,6 +8420,7 @@ pub struct ChiMinor0_1__2_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -8216,6 +8441,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_1__2_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -8233,6 +8459,7 @@ pub struct ChiMinor0_2__2_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -8253,6 +8480,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_2__2_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -8287,6 +8515,7 @@ pub struct ChiMinor1_2__2__SuperArm1_SuperLayout {
     pub res3n: &'static NondetRegLayout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub _2: &'static NondetRegLayout3LayoutArray,
     pub withr_d: &'static Concatenate_21__3_Layout,
     pub e: &'static ConcatZeros_21__1_Layout,
     pub f: &'static ConcatZeros_21__1_Layout,
@@ -8304,6 +8533,7 @@ impl risc0_zkp::layout::Component for ChiMinor1_2__2__SuperArm1_SuperLayout {
         v.visit_component("res3n", self.res3n)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("_2", self._2)?;
         v.visit_component("withr_d", self.withr_d)?;
         v.visit_component("e", self.e)?;
         v.visit_component("f", self.f)?;
@@ -8368,6 +8598,7 @@ pub struct ChiMinor0_3__2_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -8388,6 +8619,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_3__2_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -8405,6 +8637,7 @@ pub struct ChiMinor0_4__2_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -8425,6 +8658,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_4__2_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -8459,6 +8693,7 @@ pub struct ChiMinor1_4__2__SuperArm1_SuperLayout {
     pub res3n: &'static NondetRegLayout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub _2: &'static NondetRegLayout3LayoutArray,
     pub withr_d: &'static Concatenate_21__3_Layout,
     pub e: &'static ConcatZeros_21__1_Layout,
     pub f: &'static ConcatZeros_21__1_Layout,
@@ -8476,6 +8711,7 @@ impl risc0_zkp::layout::Component for ChiMinor1_4__2__SuperArm1_SuperLayout {
         v.visit_component("res3n", self.res3n)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("_2", self._2)?;
         v.visit_component("withr_d", self.withr_d)?;
         v.visit_component("e", self.e)?;
         v.visit_component("f", self.f)?;
@@ -8554,6 +8790,7 @@ pub struct ChiMinor2_2__SuperArm0_SuperLayout {
     pub _19: &'static NondetRegLayout,
     pub _20: &'static NondetRegLayout,
     pub _21: &'static NondetRegLayout,
+    pub a: &'static NondetRegLayout22LayoutArray,
     pub _22: &'static RGZ_22_Layout,
     pub _23: &'static RGZ_22_Layout,
     pub _24: &'static RGZ_24_Layout,
@@ -8589,6 +8826,7 @@ impl risc0_zkp::layout::Component for ChiMinor2_2__SuperArm0_SuperLayout {
         v.visit_component("_19", self._19)?;
         v.visit_component("_20", self._20)?;
         v.visit_component("_21", self._21)?;
+        v.visit_component("a", self.a)?;
         v.visit_component("_22", self._22)?;
         v.visit_component("_23", self._23)?;
         v.visit_component("_24", self._24)?;
@@ -8606,6 +8844,7 @@ pub struct ChiMinor2_2__SuperArm1_SuperArm0_SuperLayout {
     pub _4: &'static NondetRegLayout,
     pub _5: &'static NondetRegLayout,
     pub _6: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout7LayoutArray,
     pub _8: &'static NondetRegLayout15LayoutArray,
     pub a: &'static Concatenate_15__7_Layout,
     pub _9: &'static NondetRegLayout,
@@ -8616,6 +8855,7 @@ pub struct ChiMinor2_2__SuperArm1_SuperArm0_SuperLayout {
     pub _14: &'static NondetRegLayout,
     pub _15: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub rs2: &'static NondetRegLayout8LayoutArray,
     pub _18: &'static NondetRegLayout14LayoutArray,
     pub b: &'static Concatenate_8__14_Layout,
     pub _19: &'static RGZ_22_Layout,
@@ -8637,6 +8877,7 @@ impl risc0_zkp::layout::Component for ChiMinor2_2__SuperArm1_SuperArm0_SuperLayo
         v.visit_component("_4", self._4)?;
         v.visit_component("_5", self._5)?;
         v.visit_component("_6", self._6)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_8", self._8)?;
         v.visit_component("a", self.a)?;
         v.visit_component("_9", self._9)?;
@@ -8647,6 +8888,7 @@ impl risc0_zkp::layout::Component for ChiMinor2_2__SuperArm1_SuperArm0_SuperLayo
         v.visit_component("_14", self._14)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("rs2", self.rs2)?;
         v.visit_component("_18", self._18)?;
         v.visit_component("b", self.b)?;
         v.visit_component("_19", self._19)?;
@@ -8672,9 +8914,11 @@ pub struct ChiMinor2_2__SuperArm1_SuperArm1_SuperArm0_SuperLayout {
     pub _11: &'static NondetRegLayout,
     pub _12: &'static NondetRegLayout,
     pub _13: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout14LayoutArray,
     pub _15: &'static NondetRegLayout8LayoutArray,
     pub b: &'static Concatenate_8__14_Layout,
     pub _16: &'static NondetRegLayout,
+    pub rs2: &'static NondetRegLayout1LayoutArray,
     pub _18: &'static NondetRegLayout21LayoutArray,
     pub c: &'static Concatenate_1__21_Layout,
     pub _19: &'static RGZ_22_Layout,
@@ -8703,9 +8947,11 @@ impl risc0_zkp::layout::Component for ChiMinor2_2__SuperArm1_SuperArm1_SuperArm0
         v.visit_component("_11", self._11)?;
         v.visit_component("_12", self._12)?;
         v.visit_component("_13", self._13)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("b", self.b)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("rs2", self.rs2)?;
         v.visit_component("_18", self._18)?;
         v.visit_component("c", self.c)?;
         v.visit_component("_19", self._19)?;
@@ -8732,6 +8978,7 @@ pub struct ChiMinor2_2__SuperArm1_SuperArm1_SuperArm1_SuperArm0_SuperLayout {
     pub _12: &'static NondetRegLayout,
     pub _13: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout15LayoutArray,
     pub c1: &'static Concatenate_1__15_Layout,
     pub _16: &'static NondetRegLayout6LayoutArray,
     pub c: &'static Concatenate_16__6_Layout,
@@ -8765,6 +9012,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_12", self._12)?;
         v.visit_component("_13", self._13)?;
         v.visit_component("_14", self._14)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("c1", self.c1)?;
         v.visit_component("_16", self._16)?;
         v.visit_component("c", self.c)?;
@@ -8784,6 +9032,7 @@ pub struct ChiMinor2_2__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _3: &'static NondetRegLayout,
     pub _4: &'static NondetRegLayout,
     pub _5: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout6LayoutArray,
     pub _7: &'static NondetRegLayout16LayoutArray,
     pub c: &'static Concatenate_16__6_Layout,
     pub _8: &'static NondetRegLayout,
@@ -8795,6 +9044,7 @@ pub struct ChiMinor2_2__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _14: &'static NondetRegLayout,
     pub _15: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub rs2: &'static NondetRegLayout9LayoutArray,
     pub unpack_round: &'static OneHotU_24_Layout,
     pub rnd_1: &'static NondetRegLayout2LayoutArray,
     pub rnd_2: &'static NondetRegLayout22LayoutArray,
@@ -8819,6 +9069,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_3", self._3)?;
         v.visit_component("_4", self._4)?;
         v.visit_component("_5", self._5)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_7", self._7)?;
         v.visit_component("c", self.c)?;
         v.visit_component("_8", self._8)?;
@@ -8830,6 +9081,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_14", self._14)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("rs2", self.rs2)?;
         v.visit_component("unpack_round", self.unpack_round)?;
         v.visit_component("rnd_1", self.rnd_1)?;
         v.visit_component("rnd_2", self.rnd_2)?;
@@ -8969,6 +9221,7 @@ pub struct ChiMinor0_0__3_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -8989,6 +9242,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_0__3_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -9023,6 +9277,7 @@ pub struct ChiMinor1_0__3__SuperArm1_SuperLayout {
     pub res3n: &'static NondetRegLayout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub _2: &'static NondetRegLayout3LayoutArray,
     pub withr_d: &'static Concatenate_21__3_Layout,
     pub e: &'static ConcatZeros_21__1_Layout,
     pub f: &'static ConcatZeros_21__1_Layout,
@@ -9040,6 +9295,7 @@ impl risc0_zkp::layout::Component for ChiMinor1_0__3__SuperArm1_SuperLayout {
         v.visit_component("res3n", self.res3n)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("_2", self._2)?;
         v.visit_component("withr_d", self.withr_d)?;
         v.visit_component("e", self.e)?;
         v.visit_component("f", self.f)?;
@@ -9104,6 +9360,7 @@ pub struct ChiMinor0_1__3_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -9124,6 +9381,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_1__3_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -9141,6 +9399,7 @@ pub struct ChiMinor0_2__3_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -9161,6 +9420,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_2__3_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -9195,6 +9455,7 @@ pub struct ChiMinor1_2__3__SuperArm1_SuperLayout {
     pub res3n: &'static NondetRegLayout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub _2: &'static NondetRegLayout3LayoutArray,
     pub withr_d: &'static Concatenate_21__3_Layout,
     pub e: &'static ConcatZeros_21__1_Layout,
     pub f: &'static ConcatZeros_21__1_Layout,
@@ -9212,6 +9473,7 @@ impl risc0_zkp::layout::Component for ChiMinor1_2__3__SuperArm1_SuperLayout {
         v.visit_component("res3n", self.res3n)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("_2", self._2)?;
         v.visit_component("withr_d", self.withr_d)?;
         v.visit_component("e", self.e)?;
         v.visit_component("f", self.f)?;
@@ -9276,6 +9538,7 @@ pub struct ChiMinor0_3__3_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -9296,6 +9559,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_3__3_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -9313,6 +9577,7 @@ pub struct ChiMinor0_4__3_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -9333,6 +9598,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_4__3_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -9367,6 +9633,7 @@ pub struct ChiMinor1_4__3__SuperArm1_SuperLayout {
     pub res3n: &'static NondetRegLayout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub _2: &'static NondetRegLayout3LayoutArray,
     pub withr_d: &'static Concatenate_21__3_Layout,
     pub e: &'static ConcatZeros_21__1_Layout,
     pub f: &'static ConcatZeros_21__1_Layout,
@@ -9384,6 +9651,7 @@ impl risc0_zkp::layout::Component for ChiMinor1_4__3__SuperArm1_SuperLayout {
         v.visit_component("res3n", self.res3n)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("_2", self._2)?;
         v.visit_component("withr_d", self.withr_d)?;
         v.visit_component("e", self.e)?;
         v.visit_component("f", self.f)?;
@@ -9462,6 +9730,7 @@ pub struct ChiMinor2_3__SuperArm0_SuperLayout {
     pub _19: &'static NondetRegLayout,
     pub _20: &'static NondetRegLayout,
     pub _21: &'static NondetRegLayout,
+    pub a: &'static NondetRegLayout22LayoutArray,
     pub _22: &'static RGZ_22_Layout,
     pub _23: &'static RGZ_22_Layout,
     pub _24: &'static RGZ_24_Layout,
@@ -9497,6 +9766,7 @@ impl risc0_zkp::layout::Component for ChiMinor2_3__SuperArm0_SuperLayout {
         v.visit_component("_19", self._19)?;
         v.visit_component("_20", self._20)?;
         v.visit_component("_21", self._21)?;
+        v.visit_component("a", self.a)?;
         v.visit_component("_22", self._22)?;
         v.visit_component("_23", self._23)?;
         v.visit_component("_24", self._24)?;
@@ -9514,6 +9784,7 @@ pub struct ChiMinor2_3__SuperArm1_SuperArm0_SuperLayout {
     pub _4: &'static NondetRegLayout,
     pub _5: &'static NondetRegLayout,
     pub _6: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout7LayoutArray,
     pub _8: &'static NondetRegLayout15LayoutArray,
     pub a: &'static Concatenate_15__7_Layout,
     pub _9: &'static NondetRegLayout,
@@ -9524,6 +9795,7 @@ pub struct ChiMinor2_3__SuperArm1_SuperArm0_SuperLayout {
     pub _14: &'static NondetRegLayout,
     pub _15: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub rs2: &'static NondetRegLayout8LayoutArray,
     pub _18: &'static NondetRegLayout14LayoutArray,
     pub b: &'static Concatenate_8__14_Layout,
     pub _19: &'static RGZ_22_Layout,
@@ -9545,6 +9817,7 @@ impl risc0_zkp::layout::Component for ChiMinor2_3__SuperArm1_SuperArm0_SuperLayo
         v.visit_component("_4", self._4)?;
         v.visit_component("_5", self._5)?;
         v.visit_component("_6", self._6)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_8", self._8)?;
         v.visit_component("a", self.a)?;
         v.visit_component("_9", self._9)?;
@@ -9555,6 +9828,7 @@ impl risc0_zkp::layout::Component for ChiMinor2_3__SuperArm1_SuperArm0_SuperLayo
         v.visit_component("_14", self._14)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("rs2", self.rs2)?;
         v.visit_component("_18", self._18)?;
         v.visit_component("b", self.b)?;
         v.visit_component("_19", self._19)?;
@@ -9580,9 +9854,11 @@ pub struct ChiMinor2_3__SuperArm1_SuperArm1_SuperArm0_SuperLayout {
     pub _11: &'static NondetRegLayout,
     pub _12: &'static NondetRegLayout,
     pub _13: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout14LayoutArray,
     pub _15: &'static NondetRegLayout8LayoutArray,
     pub b: &'static Concatenate_8__14_Layout,
     pub _16: &'static NondetRegLayout,
+    pub rs2: &'static NondetRegLayout1LayoutArray,
     pub _18: &'static NondetRegLayout21LayoutArray,
     pub c: &'static Concatenate_1__21_Layout,
     pub _19: &'static RGZ_22_Layout,
@@ -9611,9 +9887,11 @@ impl risc0_zkp::layout::Component for ChiMinor2_3__SuperArm1_SuperArm1_SuperArm0
         v.visit_component("_11", self._11)?;
         v.visit_component("_12", self._12)?;
         v.visit_component("_13", self._13)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("b", self.b)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("rs2", self.rs2)?;
         v.visit_component("_18", self._18)?;
         v.visit_component("c", self.c)?;
         v.visit_component("_19", self._19)?;
@@ -9640,6 +9918,7 @@ pub struct ChiMinor2_3__SuperArm1_SuperArm1_SuperArm1_SuperArm0_SuperLayout {
     pub _12: &'static NondetRegLayout,
     pub _13: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout15LayoutArray,
     pub c1: &'static Concatenate_1__15_Layout,
     pub _16: &'static NondetRegLayout6LayoutArray,
     pub c: &'static Concatenate_16__6_Layout,
@@ -9673,6 +9952,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_12", self._12)?;
         v.visit_component("_13", self._13)?;
         v.visit_component("_14", self._14)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("c1", self.c1)?;
         v.visit_component("_16", self._16)?;
         v.visit_component("c", self.c)?;
@@ -9692,6 +9972,7 @@ pub struct ChiMinor2_3__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _3: &'static NondetRegLayout,
     pub _4: &'static NondetRegLayout,
     pub _5: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout6LayoutArray,
     pub _7: &'static NondetRegLayout16LayoutArray,
     pub c: &'static Concatenate_16__6_Layout,
     pub _8: &'static NondetRegLayout,
@@ -9703,6 +9984,7 @@ pub struct ChiMinor2_3__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _14: &'static NondetRegLayout,
     pub _15: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub rs2: &'static NondetRegLayout9LayoutArray,
     pub unpack_round: &'static OneHotU_24_Layout,
     pub rnd_1: &'static NondetRegLayout2LayoutArray,
     pub rnd_2: &'static NondetRegLayout22LayoutArray,
@@ -9727,6 +10009,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_3", self._3)?;
         v.visit_component("_4", self._4)?;
         v.visit_component("_5", self._5)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_7", self._7)?;
         v.visit_component("c", self.c)?;
         v.visit_component("_8", self._8)?;
@@ -9738,6 +10021,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_14", self._14)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("rs2", self.rs2)?;
         v.visit_component("unpack_round", self.unpack_round)?;
         v.visit_component("rnd_1", self.rnd_1)?;
         v.visit_component("rnd_2", self.rnd_2)?;
@@ -9877,6 +10161,7 @@ pub struct ChiMinor0_0__4_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -9897,6 +10182,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_0__4_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -9931,6 +10217,7 @@ pub struct ChiMinor1_0__4__SuperArm1_SuperLayout {
     pub res3n: &'static NondetRegLayout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub _2: &'static NondetRegLayout3LayoutArray,
     pub withr_d: &'static Concatenate_21__3_Layout,
     pub e: &'static ConcatZeros_21__1_Layout,
     pub f: &'static ConcatZeros_21__1_Layout,
@@ -9948,6 +10235,7 @@ impl risc0_zkp::layout::Component for ChiMinor1_0__4__SuperArm1_SuperLayout {
         v.visit_component("res3n", self.res3n)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("_2", self._2)?;
         v.visit_component("withr_d", self.withr_d)?;
         v.visit_component("e", self.e)?;
         v.visit_component("f", self.f)?;
@@ -10012,6 +10300,7 @@ pub struct ChiMinor0_1__4_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -10032,6 +10321,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_1__4_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -10049,6 +10339,7 @@ pub struct ChiMinor0_2__4_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -10069,6 +10360,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_2__4_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -10103,6 +10395,7 @@ pub struct ChiMinor1_2__4__SuperArm1_SuperLayout {
     pub res3n: &'static NondetRegLayout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub _2: &'static NondetRegLayout3LayoutArray,
     pub withr_d: &'static Concatenate_21__3_Layout,
     pub e: &'static ConcatZeros_21__1_Layout,
     pub f: &'static ConcatZeros_21__1_Layout,
@@ -10120,6 +10413,7 @@ impl risc0_zkp::layout::Component for ChiMinor1_2__4__SuperArm1_SuperLayout {
         v.visit_component("res3n", self.res3n)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("_2", self._2)?;
         v.visit_component("withr_d", self.withr_d)?;
         v.visit_component("e", self.e)?;
         v.visit_component("f", self.f)?;
@@ -10184,6 +10478,7 @@ pub struct ChiMinor0_3__4_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -10204,6 +10499,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_3__4_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -10221,6 +10517,7 @@ pub struct ChiMinor0_4__4_Layout {
     pub unpack_1x: &'static ToBitsU_21_Layout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub result: &'static NondetRegLayout2LayoutArray,
     pub withrs_d: &'static Concatenate_22__2_Layout,
     pub a: &'static ConcatZeros_21__1_Layout,
     pub c: &'static ConcatZeros_21__1_Layout,
@@ -10241,6 +10538,7 @@ impl risc0_zkp::layout::Component for ChiMinor0_4__4_Layout {
         v.visit_component("unpack_1x", self.unpack_1x)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("result", self.result)?;
         v.visit_component("withrs_d", self.withrs_d)?;
         v.visit_component("a", self.a)?;
         v.visit_component("c", self.c)?;
@@ -10275,6 +10573,7 @@ pub struct ChiMinor1_4__4__SuperArm1_SuperLayout {
     pub res3n: &'static NondetRegLayout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub _2: &'static NondetRegLayout3LayoutArray,
     pub withr_d: &'static Concatenate_21__3_Layout,
     pub e: &'static ConcatZeros_21__1_Layout,
     pub f: &'static ConcatZeros_21__1_Layout,
@@ -10292,6 +10591,7 @@ impl risc0_zkp::layout::Component for ChiMinor1_4__4__SuperArm1_SuperLayout {
         v.visit_component("res3n", self.res3n)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("_2", self._2)?;
         v.visit_component("withr_d", self.withr_d)?;
         v.visit_component("e", self.e)?;
         v.visit_component("f", self.f)?;
@@ -10370,6 +10670,7 @@ pub struct ChiMinor2_4__SuperArm0_SuperLayout {
     pub _19: &'static NondetRegLayout,
     pub _20: &'static NondetRegLayout,
     pub _21: &'static NondetRegLayout,
+    pub a: &'static NondetRegLayout22LayoutArray,
     pub _22: &'static RGZ_22_Layout,
     pub _23: &'static RGZ_22_Layout,
     pub _24: &'static RGZ_24_Layout,
@@ -10405,6 +10706,7 @@ impl risc0_zkp::layout::Component for ChiMinor2_4__SuperArm0_SuperLayout {
         v.visit_component("_19", self._19)?;
         v.visit_component("_20", self._20)?;
         v.visit_component("_21", self._21)?;
+        v.visit_component("a", self.a)?;
         v.visit_component("_22", self._22)?;
         v.visit_component("_23", self._23)?;
         v.visit_component("_24", self._24)?;
@@ -10422,6 +10724,7 @@ pub struct ChiMinor2_4__SuperArm1_SuperArm0_SuperLayout {
     pub _4: &'static NondetRegLayout,
     pub _5: &'static NondetRegLayout,
     pub _6: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout7LayoutArray,
     pub _8: &'static NondetRegLayout15LayoutArray,
     pub a: &'static Concatenate_15__7_Layout,
     pub _9: &'static NondetRegLayout,
@@ -10432,6 +10735,7 @@ pub struct ChiMinor2_4__SuperArm1_SuperArm0_SuperLayout {
     pub _14: &'static NondetRegLayout,
     pub _15: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub rs2: &'static NondetRegLayout8LayoutArray,
     pub _18: &'static NondetRegLayout14LayoutArray,
     pub b: &'static Concatenate_8__14_Layout,
     pub _19: &'static RGZ_22_Layout,
@@ -10453,6 +10757,7 @@ impl risc0_zkp::layout::Component for ChiMinor2_4__SuperArm1_SuperArm0_SuperLayo
         v.visit_component("_4", self._4)?;
         v.visit_component("_5", self._5)?;
         v.visit_component("_6", self._6)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_8", self._8)?;
         v.visit_component("a", self.a)?;
         v.visit_component("_9", self._9)?;
@@ -10463,6 +10768,7 @@ impl risc0_zkp::layout::Component for ChiMinor2_4__SuperArm1_SuperArm0_SuperLayo
         v.visit_component("_14", self._14)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("rs2", self.rs2)?;
         v.visit_component("_18", self._18)?;
         v.visit_component("b", self.b)?;
         v.visit_component("_19", self._19)?;
@@ -10488,9 +10794,11 @@ pub struct ChiMinor2_4__SuperArm1_SuperArm1_SuperArm0_SuperLayout {
     pub _11: &'static NondetRegLayout,
     pub _12: &'static NondetRegLayout,
     pub _13: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout14LayoutArray,
     pub _15: &'static NondetRegLayout8LayoutArray,
     pub b: &'static Concatenate_8__14_Layout,
     pub _16: &'static NondetRegLayout,
+    pub rs2: &'static NondetRegLayout1LayoutArray,
     pub _18: &'static NondetRegLayout21LayoutArray,
     pub c: &'static Concatenate_1__21_Layout,
     pub _19: &'static RGZ_22_Layout,
@@ -10519,9 +10827,11 @@ impl risc0_zkp::layout::Component for ChiMinor2_4__SuperArm1_SuperArm1_SuperArm0
         v.visit_component("_11", self._11)?;
         v.visit_component("_12", self._12)?;
         v.visit_component("_13", self._13)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("b", self.b)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("rs2", self.rs2)?;
         v.visit_component("_18", self._18)?;
         v.visit_component("c", self.c)?;
         v.visit_component("_19", self._19)?;
@@ -10548,6 +10858,7 @@ pub struct ChiMinor2_4__SuperArm1_SuperArm1_SuperArm1_SuperArm0_SuperLayout {
     pub _12: &'static NondetRegLayout,
     pub _13: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout15LayoutArray,
     pub c1: &'static Concatenate_1__15_Layout,
     pub _16: &'static NondetRegLayout6LayoutArray,
     pub c: &'static Concatenate_16__6_Layout,
@@ -10581,6 +10892,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_12", self._12)?;
         v.visit_component("_13", self._13)?;
         v.visit_component("_14", self._14)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("c1", self.c1)?;
         v.visit_component("_16", self._16)?;
         v.visit_component("c", self.c)?;
@@ -10600,6 +10912,7 @@ pub struct ChiMinor2_4__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _3: &'static NondetRegLayout,
     pub _4: &'static NondetRegLayout,
     pub _5: &'static NondetRegLayout,
+    pub rs1: &'static NondetRegLayout6LayoutArray,
     pub _7: &'static NondetRegLayout16LayoutArray,
     pub c: &'static Concatenate_16__6_Layout,
     pub _8: &'static NondetRegLayout,
@@ -10611,6 +10924,7 @@ pub struct ChiMinor2_4__SuperArm1_SuperArm1_SuperArm1_SuperArm1_SuperLayout {
     pub _14: &'static NondetRegLayout,
     pub _15: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub rs2: &'static NondetRegLayout9LayoutArray,
     pub unpack_round: &'static OneHotU_24_Layout,
     pub rnd_1: &'static NondetRegLayout2LayoutArray,
     pub rnd_2: &'static NondetRegLayout22LayoutArray,
@@ -10635,6 +10949,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_3", self._3)?;
         v.visit_component("_4", self._4)?;
         v.visit_component("_5", self._5)?;
+        v.visit_component("rs1", self.rs1)?;
         v.visit_component("_7", self._7)?;
         v.visit_component("c", self.c)?;
         v.visit_component("_8", self._8)?;
@@ -10646,6 +10961,7 @@ impl risc0_zkp::layout::Component
         v.visit_component("_14", self._14)?;
         v.visit_component("_15", self._15)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("rs2", self.rs2)?;
         v.visit_component("unpack_round", self.unpack_round)?;
         v.visit_component("rnd_1", self.rnd_1)?;
         v.visit_component("rnd_2", self.rnd_2)?;
@@ -10788,6 +11104,7 @@ impl risc0_zkp::layout::Component for ToBitsU_16_Layout {
         Ok(())
     }
 }
+pub type NondetRegLayout4LayoutArray = [&'static NondetRegLayout; 4];
 pub struct ConcatElem_11_Layout {
     pub _super: &'static NondetRegLayout12LayoutArray,
 }
@@ -10865,6 +11182,7 @@ pub struct AbsorbWord_0__0_Layout {
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _4: &'static WriteMemoryLayout,
@@ -10875,6 +11193,7 @@ pub struct AbsorbWord_0__0_Layout {
     pub _12: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub results: &'static NondetRegLayout3LayoutArray,
     pub withr34: &'static Concatenate_21__3_Layout,
     pub padded_e: &'static ConcatZeros_21__1_Layout,
     pub padded_f: &'static ConcatZeros_21__1_Layout,
@@ -10899,6 +11218,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_0__0_Layout {
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_4", self._4)?;
@@ -10909,6 +11229,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_0__0_Layout {
         v.visit_component("_12", self._12)?;
         v.visit_component("_14", self._14)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("results", self.results)?;
         v.visit_component("withr34", self.withr34)?;
         v.visit_component("padded_e", self.padded_e)?;
         v.visit_component("padded_f", self.padded_f)?;
@@ -10930,6 +11251,7 @@ pub struct AbsorbWord_1__0_Layout {
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _4: &'static WriteMemoryLayout,
@@ -10940,6 +11262,7 @@ pub struct AbsorbWord_1__0_Layout {
     pub _12: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub results: &'static NondetRegLayout3LayoutArray,
     pub withr34: &'static Concatenate_21__3_Layout,
     pub padded_e: &'static ConcatZeros_21__1_Layout,
     pub padded_f: &'static ConcatZeros_21__1_Layout,
@@ -10964,6 +11287,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_1__0_Layout {
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_4", self._4)?;
@@ -10974,6 +11298,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_1__0_Layout {
         v.visit_component("_12", self._12)?;
         v.visit_component("_14", self._14)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("results", self.results)?;
         v.visit_component("withr34", self.withr34)?;
         v.visit_component("padded_e", self.padded_e)?;
         v.visit_component("padded_f", self.padded_f)?;
@@ -10995,6 +11320,7 @@ pub struct AbsorbWord_2__0_Layout {
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _4: &'static WriteMemoryLayout,
@@ -11005,6 +11331,7 @@ pub struct AbsorbWord_2__0_Layout {
     pub _12: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub results: &'static NondetRegLayout3LayoutArray,
     pub withr34: &'static Concatenate_21__3_Layout,
     pub padded_e: &'static ConcatZeros_21__1_Layout,
     pub padded_f: &'static ConcatZeros_21__1_Layout,
@@ -11029,6 +11356,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_2__0_Layout {
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_4", self._4)?;
@@ -11039,6 +11367,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_2__0_Layout {
         v.visit_component("_12", self._12)?;
         v.visit_component("_14", self._14)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("results", self.results)?;
         v.visit_component("withr34", self.withr34)?;
         v.visit_component("padded_e", self.padded_e)?;
         v.visit_component("padded_f", self.padded_f)?;
@@ -11060,6 +11389,7 @@ pub struct AbsorbWord_3__0_Layout {
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _4: &'static WriteMemoryLayout,
@@ -11070,6 +11400,7 @@ pub struct AbsorbWord_3__0_Layout {
     pub _12: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub results: &'static NondetRegLayout3LayoutArray,
     pub withr34: &'static Concatenate_21__3_Layout,
     pub padded_e: &'static ConcatZeros_21__1_Layout,
     pub padded_f: &'static ConcatZeros_21__1_Layout,
@@ -11094,6 +11425,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_3__0_Layout {
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_4", self._4)?;
@@ -11104,6 +11436,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_3__0_Layout {
         v.visit_component("_12", self._12)?;
         v.visit_component("_14", self._14)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("results", self.results)?;
         v.visit_component("withr34", self.withr34)?;
         v.visit_component("padded_e", self.padded_e)?;
         v.visit_component("padded_f", self.padded_f)?;
@@ -11125,6 +11458,7 @@ pub struct AbsorbWord_4__0_Layout {
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _4: &'static WriteMemoryLayout,
@@ -11135,6 +11469,7 @@ pub struct AbsorbWord_4__0_Layout {
     pub _12: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub results: &'static NondetRegLayout3LayoutArray,
     pub withr34: &'static Concatenate_21__3_Layout,
     pub padded_e: &'static ConcatZeros_21__1_Layout,
     pub padded_f: &'static ConcatZeros_21__1_Layout,
@@ -11159,6 +11494,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_4__0_Layout {
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_4", self._4)?;
@@ -11169,6 +11505,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_4__0_Layout {
         v.visit_component("_12", self._12)?;
         v.visit_component("_14", self._14)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("results", self.results)?;
         v.visit_component("withr34", self.withr34)?;
         v.visit_component("padded_e", self.padded_e)?;
         v.visit_component("padded_f", self.padded_f)?;
@@ -11190,6 +11527,7 @@ pub struct AbsorbWord_0__1_Layout {
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _4: &'static WriteMemoryLayout,
@@ -11200,6 +11538,7 @@ pub struct AbsorbWord_0__1_Layout {
     pub _12: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub results: &'static NondetRegLayout3LayoutArray,
     pub withr34: &'static Concatenate_21__3_Layout,
     pub padded_e: &'static ConcatZeros_21__1_Layout,
     pub padded_f: &'static ConcatZeros_21__1_Layout,
@@ -11224,6 +11563,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_0__1_Layout {
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_4", self._4)?;
@@ -11234,6 +11574,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_0__1_Layout {
         v.visit_component("_12", self._12)?;
         v.visit_component("_14", self._14)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("results", self.results)?;
         v.visit_component("withr34", self.withr34)?;
         v.visit_component("padded_e", self.padded_e)?;
         v.visit_component("padded_f", self.padded_f)?;
@@ -11255,6 +11596,7 @@ pub struct AbsorbWord_1__1_Layout {
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _4: &'static WriteMemoryLayout,
@@ -11265,6 +11607,7 @@ pub struct AbsorbWord_1__1_Layout {
     pub _12: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub results: &'static NondetRegLayout3LayoutArray,
     pub withr34: &'static Concatenate_21__3_Layout,
     pub padded_e: &'static ConcatZeros_21__1_Layout,
     pub padded_f: &'static ConcatZeros_21__1_Layout,
@@ -11289,6 +11632,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_1__1_Layout {
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_4", self._4)?;
@@ -11299,6 +11643,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_1__1_Layout {
         v.visit_component("_12", self._12)?;
         v.visit_component("_14", self._14)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("results", self.results)?;
         v.visit_component("withr34", self.withr34)?;
         v.visit_component("padded_e", self.padded_e)?;
         v.visit_component("padded_f", self.padded_f)?;
@@ -11320,6 +11665,7 @@ pub struct AbsorbWord_2__1_Layout {
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _4: &'static WriteMemoryLayout,
@@ -11330,6 +11676,7 @@ pub struct AbsorbWord_2__1_Layout {
     pub _12: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub results: &'static NondetRegLayout3LayoutArray,
     pub withr34: &'static Concatenate_21__3_Layout,
     pub padded_e: &'static ConcatZeros_21__1_Layout,
     pub padded_f: &'static ConcatZeros_21__1_Layout,
@@ -11354,6 +11701,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_2__1_Layout {
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_4", self._4)?;
@@ -11364,6 +11712,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_2__1_Layout {
         v.visit_component("_12", self._12)?;
         v.visit_component("_14", self._14)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("results", self.results)?;
         v.visit_component("withr34", self.withr34)?;
         v.visit_component("padded_e", self.padded_e)?;
         v.visit_component("padded_f", self.padded_f)?;
@@ -11385,6 +11734,7 @@ pub struct AbsorbWord_3__1_Layout {
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _4: &'static WriteMemoryLayout,
@@ -11395,6 +11745,7 @@ pub struct AbsorbWord_3__1_Layout {
     pub _12: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub results: &'static NondetRegLayout3LayoutArray,
     pub withr34: &'static Concatenate_21__3_Layout,
     pub padded_e: &'static ConcatZeros_21__1_Layout,
     pub padded_f: &'static ConcatZeros_21__1_Layout,
@@ -11419,6 +11770,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_3__1_Layout {
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_4", self._4)?;
@@ -11429,6 +11781,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_3__1_Layout {
         v.visit_component("_12", self._12)?;
         v.visit_component("_14", self._14)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("results", self.results)?;
         v.visit_component("withr34", self.withr34)?;
         v.visit_component("padded_e", self.padded_e)?;
         v.visit_component("padded_f", self.padded_f)?;
@@ -11473,6 +11826,7 @@ pub struct AbsorbCopy1Layout {
     pub _19: &'static NondetRegLayout,
     pub _20: &'static NondetRegLayout,
     pub _21: &'static NondetRegLayout,
+    pub a: &'static NondetRegLayout22LayoutArray,
     pub _22: &'static NondetRegLayout,
     pub _23: &'static NondetRegLayout,
     pub _24: &'static NondetRegLayout,
@@ -11495,6 +11849,7 @@ pub struct AbsorbCopy1Layout {
     pub _41: &'static NondetRegLayout,
     pub _42: &'static NondetRegLayout,
     pub _43: &'static NondetRegLayout,
+    pub b: &'static NondetRegLayout22LayoutArray,
     pub _44: &'static RGZ_22_Layout,
     pub _45: &'static RGZ_24_Layout,
     pub _46: &'static DummyBLayout,
@@ -11530,6 +11885,7 @@ impl risc0_zkp::layout::Component for AbsorbCopy1Layout {
         v.visit_component("_19", self._19)?;
         v.visit_component("_20", self._20)?;
         v.visit_component("_21", self._21)?;
+        v.visit_component("a", self.a)?;
         v.visit_component("_22", self._22)?;
         v.visit_component("_23", self._23)?;
         v.visit_component("_24", self._24)?;
@@ -11552,6 +11908,7 @@ impl risc0_zkp::layout::Component for AbsorbCopy1Layout {
         v.visit_component("_41", self._41)?;
         v.visit_component("_42", self._42)?;
         v.visit_component("_43", self._43)?;
+        v.visit_component("b", self.b)?;
         v.visit_component("_44", self._44)?;
         v.visit_component("_45", self._45)?;
         v.visit_component("_46", self._46)?;
@@ -11672,6 +12029,7 @@ pub struct AbsorbWord_4__1_Layout {
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _4: &'static WriteMemoryLayout,
@@ -11682,6 +12040,7 @@ pub struct AbsorbWord_4__1_Layout {
     pub _12: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub results: &'static NondetRegLayout3LayoutArray,
     pub withr34: &'static Concatenate_21__3_Layout,
     pub padded_e: &'static ConcatZeros_21__1_Layout,
     pub padded_f: &'static ConcatZeros_21__1_Layout,
@@ -11706,6 +12065,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_4__1_Layout {
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_4", self._4)?;
@@ -11716,6 +12076,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_4__1_Layout {
         v.visit_component("_12", self._12)?;
         v.visit_component("_14", self._14)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("results", self.results)?;
         v.visit_component("withr34", self.withr34)?;
         v.visit_component("padded_e", self.padded_e)?;
         v.visit_component("padded_f", self.padded_f)?;
@@ -11737,6 +12098,7 @@ pub struct AbsorbWord_0__2_Layout {
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _4: &'static WriteMemoryLayout,
@@ -11747,6 +12109,7 @@ pub struct AbsorbWord_0__2_Layout {
     pub _12: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub results: &'static NondetRegLayout3LayoutArray,
     pub withr34: &'static Concatenate_21__3_Layout,
     pub padded_e: &'static ConcatZeros_21__1_Layout,
     pub padded_f: &'static ConcatZeros_21__1_Layout,
@@ -11771,6 +12134,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_0__2_Layout {
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_4", self._4)?;
@@ -11781,6 +12145,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_0__2_Layout {
         v.visit_component("_12", self._12)?;
         v.visit_component("_14", self._14)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("results", self.results)?;
         v.visit_component("withr34", self.withr34)?;
         v.visit_component("padded_e", self.padded_e)?;
         v.visit_component("padded_f", self.padded_f)?;
@@ -11802,6 +12167,7 @@ pub struct AbsorbWord_1__2_Layout {
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _4: &'static WriteMemoryLayout,
@@ -11812,6 +12178,7 @@ pub struct AbsorbWord_1__2_Layout {
     pub _12: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub results: &'static NondetRegLayout3LayoutArray,
     pub withr34: &'static Concatenate_21__3_Layout,
     pub padded_e: &'static ConcatZeros_21__1_Layout,
     pub padded_f: &'static ConcatZeros_21__1_Layout,
@@ -11836,6 +12203,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_1__2_Layout {
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_4", self._4)?;
@@ -11846,6 +12214,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_1__2_Layout {
         v.visit_component("_12", self._12)?;
         v.visit_component("_14", self._14)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("results", self.results)?;
         v.visit_component("withr34", self.withr34)?;
         v.visit_component("padded_e", self.padded_e)?;
         v.visit_component("padded_f", self.padded_f)?;
@@ -11867,6 +12236,7 @@ pub struct AbsorbWord_2__2_Layout {
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _4: &'static WriteMemoryLayout,
@@ -11877,6 +12247,7 @@ pub struct AbsorbWord_2__2_Layout {
     pub _12: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub results: &'static NondetRegLayout3LayoutArray,
     pub withr34: &'static Concatenate_21__3_Layout,
     pub padded_e: &'static ConcatZeros_21__1_Layout,
     pub padded_f: &'static ConcatZeros_21__1_Layout,
@@ -11901,6 +12272,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_2__2_Layout {
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_4", self._4)?;
@@ -11911,6 +12283,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_2__2_Layout {
         v.visit_component("_12", self._12)?;
         v.visit_component("_14", self._14)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("results", self.results)?;
         v.visit_component("withr34", self.withr34)?;
         v.visit_component("padded_e", self.padded_e)?;
         v.visit_component("padded_f", self.padded_f)?;
@@ -11932,6 +12305,7 @@ pub struct AbsorbWord_3__2_Layout {
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _4: &'static WriteMemoryLayout,
@@ -11942,6 +12316,7 @@ pub struct AbsorbWord_3__2_Layout {
     pub _12: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub results: &'static NondetRegLayout3LayoutArray,
     pub withr34: &'static Concatenate_21__3_Layout,
     pub padded_e: &'static ConcatZeros_21__1_Layout,
     pub padded_f: &'static ConcatZeros_21__1_Layout,
@@ -11966,6 +12341,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_3__2_Layout {
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_4", self._4)?;
@@ -11976,6 +12352,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_3__2_Layout {
         v.visit_component("_12", self._12)?;
         v.visit_component("_14", self._14)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("results", self.results)?;
         v.visit_component("withr34", self.withr34)?;
         v.visit_component("padded_e", self.padded_e)?;
         v.visit_component("padded_f", self.padded_f)?;
@@ -11997,6 +12374,7 @@ pub struct AbsorbWord_4__2_Layout {
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _4: &'static WriteMemoryLayout,
@@ -12007,6 +12385,7 @@ pub struct AbsorbWord_4__2_Layout {
     pub _12: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub results: &'static NondetRegLayout3LayoutArray,
     pub withr34: &'static Concatenate_21__3_Layout,
     pub padded_e: &'static ConcatZeros_21__1_Layout,
     pub padded_f: &'static ConcatZeros_21__1_Layout,
@@ -12031,6 +12410,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_4__2_Layout {
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_4", self._4)?;
@@ -12041,6 +12421,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_4__2_Layout {
         v.visit_component("_12", self._12)?;
         v.visit_component("_14", self._14)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("results", self.results)?;
         v.visit_component("withr34", self.withr34)?;
         v.visit_component("padded_e", self.padded_e)?;
         v.visit_component("padded_f", self.padded_f)?;
@@ -12062,6 +12443,7 @@ pub struct AbsorbWord_0__3_Layout {
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _4: &'static WriteMemoryLayout,
@@ -12072,6 +12454,7 @@ pub struct AbsorbWord_0__3_Layout {
     pub _12: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub results: &'static NondetRegLayout3LayoutArray,
     pub withr34: &'static Concatenate_21__3_Layout,
     pub padded_e: &'static ConcatZeros_21__1_Layout,
     pub padded_f: &'static ConcatZeros_21__1_Layout,
@@ -12096,6 +12479,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_0__3_Layout {
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_4", self._4)?;
@@ -12106,6 +12490,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_0__3_Layout {
         v.visit_component("_12", self._12)?;
         v.visit_component("_14", self._14)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("results", self.results)?;
         v.visit_component("withr34", self.withr34)?;
         v.visit_component("padded_e", self.padded_e)?;
         v.visit_component("padded_f", self.padded_f)?;
@@ -12127,6 +12512,7 @@ pub struct AbsorbWord_1__3_Layout {
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _4: &'static WriteMemoryLayout,
@@ -12137,6 +12523,7 @@ pub struct AbsorbWord_1__3_Layout {
     pub _12: &'static NondetRegLayout,
     pub _14: &'static NondetRegLayout,
     pub _16: &'static NondetRegLayout,
+    pub results: &'static NondetRegLayout3LayoutArray,
     pub withr34: &'static Concatenate_21__3_Layout,
     pub padded_e: &'static ConcatZeros_21__1_Layout,
     pub padded_f: &'static ConcatZeros_21__1_Layout,
@@ -12161,6 +12548,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_1__3_Layout {
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_4", self._4)?;
@@ -12171,6 +12559,7 @@ impl risc0_zkp::layout::Component for AbsorbWord_1__3_Layout {
         v.visit_component("_12", self._12)?;
         v.visit_component("_14", self._14)?;
         v.visit_component("_16", self._16)?;
+        v.visit_component("results", self.results)?;
         v.visit_component("withr34", self.withr34)?;
         v.visit_component("padded_e", self.padded_e)?;
         v.visit_component("padded_f", self.padded_f)?;
@@ -12202,6 +12591,7 @@ pub struct AbsorbCopy2Layout {
     pub _19: &'static NondetRegLayout,
     pub _20: &'static NondetRegLayout,
     pub _21: &'static NondetRegLayout,
+    pub b: &'static NondetRegLayout22LayoutArray,
     pub _22: &'static NondetRegLayout,
     pub _23: &'static NondetRegLayout,
     pub _24: &'static NondetRegLayout,
@@ -12224,6 +12614,7 @@ pub struct AbsorbCopy2Layout {
     pub _41: &'static NondetRegLayout,
     pub _42: &'static NondetRegLayout,
     pub _43: &'static NondetRegLayout,
+    pub c: &'static NondetRegLayout22LayoutArray,
     pub _44: &'static RGZ_22_Layout,
     pub _45: &'static RGZ_24_Layout,
     pub _46: &'static DummyBLayout,
@@ -12259,6 +12650,7 @@ impl risc0_zkp::layout::Component for AbsorbCopy2Layout {
         v.visit_component("_19", self._19)?;
         v.visit_component("_20", self._20)?;
         v.visit_component("_21", self._21)?;
+        v.visit_component("b", self.b)?;
         v.visit_component("_22", self._22)?;
         v.visit_component("_23", self._23)?;
         v.visit_component("_24", self._24)?;
@@ -12281,6 +12673,7 @@ impl risc0_zkp::layout::Component for AbsorbCopy2Layout {
         v.visit_component("_41", self._41)?;
         v.visit_component("_42", self._42)?;
         v.visit_component("_43", self._43)?;
+        v.visit_component("c", self.c)?;
         v.visit_component("_44", self._44)?;
         v.visit_component("_45", self._45)?;
         v.visit_component("_46", self._46)?;
@@ -12451,7 +12844,6 @@ impl risc0_zkp::layout::Component for ToBitsU_30_Layout {
         Ok(())
     }
 }
-pub type NondetRegLayout4LayoutArray = [&'static NondetRegLayout; 4];
 pub type NondetRegLayout13LayoutArray = [&'static NondetRegLayout; 13];
 pub struct Concatenate_9__4_Layout {
     pub _super: &'static NondetRegLayout13LayoutArray,
@@ -12505,12 +12897,12 @@ impl risc0_zkp::layout::Component for ConcatZeros_3__21_Layout {
         Ok(())
     }
 }
-pub struct _ArgumentsMemPaddingSha256__9Layout {
+pub struct _ArgumentsMemPaddingSha256__10Layout {
     pub use_once_memory_element: &'static UseOnceMemoryElementLayout1LayoutArray,
 }
-impl risc0_zkp::layout::Component for _ArgumentsMemPaddingSha256__9Layout {
+impl risc0_zkp::layout::Component for _ArgumentsMemPaddingSha256__10Layout {
     fn ty_name(&self) -> &'static str {
-        "_ArgumentsMemPaddingSha256__9Layout"
+        "_ArgumentsMemPaddingSha256__10Layout"
     }
     #[allow(unused_variables)]
     fn walk<V: risc0_zkp::layout::Visitor>(&self, v: &mut V) -> core::fmt::Result {
@@ -12518,12 +12910,12 @@ impl risc0_zkp::layout::Component for _ArgumentsMemPaddingSha256__9Layout {
         Ok(())
     }
 }
-pub struct MemPaddingSha256__9Arm0_SuperLayout {
+pub struct MemPaddingSha256__10Arm0_SuperLayout {
     pub _0: &'static WriteMemoryLayout,
 }
-impl risc0_zkp::layout::Component for MemPaddingSha256__9Arm0_SuperLayout {
+impl risc0_zkp::layout::Component for MemPaddingSha256__10Arm0_SuperLayout {
     fn ty_name(&self) -> &'static str {
-        "MemPaddingSha256__9Arm0_SuperLayout"
+        "MemPaddingSha256__10Arm0_SuperLayout"
     }
     #[allow(unused_variables)]
     fn walk<V: risc0_zkp::layout::Visitor>(&self, v: &mut V) -> core::fmt::Result {
@@ -12531,12 +12923,12 @@ impl risc0_zkp::layout::Component for MemPaddingSha256__9Arm0_SuperLayout {
         Ok(())
     }
 }
-pub struct MemPaddingSha256__9Arm1Layout {
+pub struct MemPaddingSha256__10Arm1Layout {
     pub _extra0: &'static UseOnceMemoryElementLayout,
 }
-impl risc0_zkp::layout::Component for MemPaddingSha256__9Arm1Layout {
+impl risc0_zkp::layout::Component for MemPaddingSha256__10Arm1Layout {
     fn ty_name(&self) -> &'static str {
-        "MemPaddingSha256__9Arm1Layout"
+        "MemPaddingSha256__10Arm1Layout"
     }
     #[allow(unused_variables)]
     fn walk<V: risc0_zkp::layout::Visitor>(&self, v: &mut V) -> core::fmt::Result {
@@ -12544,13 +12936,13 @@ impl risc0_zkp::layout::Component for MemPaddingSha256__9Arm1Layout {
         Ok(())
     }
 }
-pub struct MemPaddingSha256__9Layout {
-    pub arm0: &'static MemPaddingSha256__9Arm0_SuperLayout,
-    pub arm1: &'static MemPaddingSha256__9Arm1Layout,
+pub struct MemPaddingSha256__10Layout {
+    pub arm0: &'static MemPaddingSha256__10Arm0_SuperLayout,
+    pub arm1: &'static MemPaddingSha256__10Arm1Layout,
 }
-impl risc0_zkp::layout::Component for MemPaddingSha256__9Layout {
+impl risc0_zkp::layout::Component for MemPaddingSha256__10Layout {
     fn ty_name(&self) -> &'static str {
-        "MemPaddingSha256__9Layout"
+        "MemPaddingSha256__10Layout"
     }
     #[allow(unused_variables)]
     fn walk<V: risc0_zkp::layout::Visitor>(&self, v: &mut V) -> core::fmt::Result {
@@ -12559,12 +12951,12 @@ impl risc0_zkp::layout::Component for MemPaddingSha256__9Layout {
         Ok(())
     }
 }
-pub struct _ArgumentsMemPaddingSha256__12Layout {
+pub struct _ArgumentsMemPaddingSha256__13Layout {
     pub use_once_memory_element: &'static UseOnceMemoryElementLayout1LayoutArray,
 }
-impl risc0_zkp::layout::Component for _ArgumentsMemPaddingSha256__12Layout {
+impl risc0_zkp::layout::Component for _ArgumentsMemPaddingSha256__13Layout {
     fn ty_name(&self) -> &'static str {
-        "_ArgumentsMemPaddingSha256__12Layout"
+        "_ArgumentsMemPaddingSha256__13Layout"
     }
     #[allow(unused_variables)]
     fn walk<V: risc0_zkp::layout::Visitor>(&self, v: &mut V) -> core::fmt::Result {
@@ -12572,12 +12964,12 @@ impl risc0_zkp::layout::Component for _ArgumentsMemPaddingSha256__12Layout {
         Ok(())
     }
 }
-pub struct MemPaddingSha256__12Arm0Layout {
+pub struct MemPaddingSha256__13Arm0Layout {
     pub _extra0: &'static UseOnceMemoryElementLayout,
 }
-impl risc0_zkp::layout::Component for MemPaddingSha256__12Arm0Layout {
+impl risc0_zkp::layout::Component for MemPaddingSha256__13Arm0Layout {
     fn ty_name(&self) -> &'static str {
-        "MemPaddingSha256__12Arm0Layout"
+        "MemPaddingSha256__13Arm0Layout"
     }
     #[allow(unused_variables)]
     fn walk<V: risc0_zkp::layout::Visitor>(&self, v: &mut V) -> core::fmt::Result {
@@ -12585,12 +12977,12 @@ impl risc0_zkp::layout::Component for MemPaddingSha256__12Arm0Layout {
         Ok(())
     }
 }
-pub struct MemPaddingSha256__12Arm1_SuperLayout {
+pub struct MemPaddingSha256__13Arm1_SuperLayout {
     pub _0: &'static WriteMemoryLayout,
 }
-impl risc0_zkp::layout::Component for MemPaddingSha256__12Arm1_SuperLayout {
+impl risc0_zkp::layout::Component for MemPaddingSha256__13Arm1_SuperLayout {
     fn ty_name(&self) -> &'static str {
-        "MemPaddingSha256__12Arm1_SuperLayout"
+        "MemPaddingSha256__13Arm1_SuperLayout"
     }
     #[allow(unused_variables)]
     fn walk<V: risc0_zkp::layout::Visitor>(&self, v: &mut V) -> core::fmt::Result {
@@ -12598,13 +12990,13 @@ impl risc0_zkp::layout::Component for MemPaddingSha256__12Arm1_SuperLayout {
         Ok(())
     }
 }
-pub struct MemPaddingSha256__12Layout {
-    pub arm0: &'static MemPaddingSha256__12Arm0Layout,
-    pub arm1: &'static MemPaddingSha256__12Arm1_SuperLayout,
+pub struct MemPaddingSha256__13Layout {
+    pub arm0: &'static MemPaddingSha256__13Arm0Layout,
+    pub arm1: &'static MemPaddingSha256__13Arm1_SuperLayout,
 }
-impl risc0_zkp::layout::Component for MemPaddingSha256__12Layout {
+impl risc0_zkp::layout::Component for MemPaddingSha256__13Layout {
     fn ty_name(&self) -> &'static str {
-        "MemPaddingSha256__12Layout"
+        "MemPaddingSha256__13Layout"
     }
     #[allow(unused_variables)]
     fn walk<V: risc0_zkp::layout::Visitor>(&self, v: &mut V) -> core::fmt::Result {
@@ -12627,14 +13019,16 @@ pub struct MemPaddingSha256Layout {
     pub zdigest: &'static NondetRegLayout4LayoutArray,
     pub _6: &'static NondetRegLayout,
     pub _7: &'static NondetRegLayout,
+    pub vdigest: &'static NondetRegLayout4LayoutArray,
     pub b_tmp2: &'static Concatenate_9__4_Layout,
     pub b_tmp3: &'static ConcatZeros_13__6_Layout,
     pub b: &'static Concatenate_19__3_Layout,
+    pub _9: &'static NondetRegLayout3LayoutArray,
     pub d: &'static ConcatZeros_3__21_Layout,
-    pub _arguments_mem_padding_sha256__9: &'static _ArgumentsMemPaddingSha256__9Layout,
-    pub _11: &'static MemPaddingSha256__9Layout,
-    pub _arguments_mem_padding_sha256__12: &'static _ArgumentsMemPaddingSha256__12Layout,
-    pub _14: &'static MemPaddingSha256__12Layout,
+    pub _arguments_mem_padding_sha256__10: &'static _ArgumentsMemPaddingSha256__10Layout,
+    pub _12: &'static MemPaddingSha256__10Layout,
+    pub _arguments_mem_padding_sha256__13: &'static _ArgumentsMemPaddingSha256__13Layout,
+    pub _15: &'static MemPaddingSha256__13Layout,
 }
 impl risc0_zkp::layout::Component for MemPaddingSha256Layout {
     fn ty_name(&self) -> &'static str {
@@ -12655,20 +13049,22 @@ impl risc0_zkp::layout::Component for MemPaddingSha256Layout {
         v.visit_component("zdigest", self.zdigest)?;
         v.visit_component("_6", self._6)?;
         v.visit_component("_7", self._7)?;
+        v.visit_component("vdigest", self.vdigest)?;
         v.visit_component("b_tmp2", self.b_tmp2)?;
         v.visit_component("b_tmp3", self.b_tmp3)?;
         v.visit_component("b", self.b)?;
+        v.visit_component("_9", self._9)?;
         v.visit_component("d", self.d)?;
         v.visit_component(
-            "_arguments_mem_padding_sha256__9",
-            self._arguments_mem_padding_sha256__9,
+            "_arguments_mem_padding_sha256__10",
+            self._arguments_mem_padding_sha256__10,
         )?;
-        v.visit_component("_11", self._11)?;
+        v.visit_component("_12", self._12)?;
         v.visit_component(
-            "_arguments_mem_padding_sha256__12",
-            self._arguments_mem_padding_sha256__12,
+            "_arguments_mem_padding_sha256__13",
+            self._arguments_mem_padding_sha256__13,
         )?;
-        v.visit_component("_14", self._14)?;
+        v.visit_component("_15", self._15)?;
         Ok(())
     }
 }
@@ -13281,6 +13677,7 @@ pub struct Sha256fini_5_Layout {
     pub prod: &'static NondetRegLayout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub d_suffix: &'static NondetRegLayout3LayoutArray,
     pub _2: &'static DummySLayout,
     pub d: &'static Concatenate_21__3_Layout,
     pub _3: &'static DummySLayout,
@@ -13303,6 +13700,7 @@ impl risc0_zkp::layout::Component for Sha256fini_5_Layout {
         v.visit_component("prod", self.prod)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("d_suffix", self.d_suffix)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("d", self.d)?;
         v.visit_component("_3", self._3)?;
@@ -13373,6 +13771,7 @@ pub struct Sha256fini_6_Layout {
     pub prod: &'static NondetRegLayout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub d_suffix: &'static NondetRegLayout3LayoutArray,
     pub _2: &'static DummySLayout,
     pub d: &'static Concatenate_21__3_Layout,
     pub _3: &'static DummySLayout,
@@ -13395,6 +13794,7 @@ impl risc0_zkp::layout::Component for Sha256fini_6_Layout {
         v.visit_component("prod", self.prod)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("d_suffix", self.d_suffix)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("d", self.d)?;
         v.visit_component("_3", self._3)?;
@@ -13465,6 +13865,7 @@ pub struct Sha256fini_7_Layout {
     pub prod: &'static NondetRegLayout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub d_suffix: &'static NondetRegLayout3LayoutArray,
     pub _2: &'static DummySLayout,
     pub d: &'static Concatenate_21__3_Layout,
     pub _3: &'static DummySLayout,
@@ -13487,6 +13888,7 @@ impl risc0_zkp::layout::Component for Sha256fini_7_Layout {
         v.visit_component("prod", self.prod)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("d_suffix", self.d_suffix)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("d", self.d)?;
         v.visit_component("_3", self._3)?;
@@ -13557,6 +13959,7 @@ pub struct Sha256fini_8_Layout {
     pub prod: &'static NondetRegLayout,
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
+    pub d_suffix: &'static NondetRegLayout3LayoutArray,
     pub _2: &'static DummySLayout,
     pub d: &'static Concatenate_21__3_Layout,
     pub _3: &'static DummySLayout,
@@ -13579,6 +13982,7 @@ impl risc0_zkp::layout::Component for Sha256fini_8_Layout {
         v.visit_component("prod", self.prod)?;
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
+        v.visit_component("d_suffix", self.d_suffix)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("d", self.d)?;
         v.visit_component("_3", self._3)?;
@@ -13716,6 +14120,7 @@ pub struct EqualWord_0_Layout {
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _4: &'static WriteMemoryLayout,
@@ -13747,6 +14152,7 @@ impl risc0_zkp::layout::Component for EqualWord_0_Layout {
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_4", self._4)?;
@@ -13790,6 +14196,7 @@ pub struct EqualWord_1_Layout {
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _4: &'static WriteMemoryLayout,
@@ -13821,6 +14228,7 @@ impl risc0_zkp::layout::Component for EqualWord_1_Layout {
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_4", self._4)?;
@@ -13864,6 +14272,7 @@ pub struct EqualWord_2_Layout {
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _4: &'static WriteMemoryLayout,
@@ -13895,6 +14304,7 @@ impl risc0_zkp::layout::Component for EqualWord_2_Layout {
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_4", self._4)?;
@@ -13938,6 +14348,7 @@ pub struct EqualWord_3_Layout {
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _4: &'static WriteMemoryLayout,
@@ -13969,6 +14380,7 @@ impl risc0_zkp::layout::Component for EqualWord_3_Layout {
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_4", self._4)?;
@@ -14140,6 +14552,7 @@ pub struct ParseNextBlockLayout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _3: &'static WriteMemoryLayout,
@@ -14148,10 +14561,12 @@ pub struct ParseNextBlockLayout {
     pub _5: &'static NondetRegLayout,
     pub _6: &'static NondetRegLayout,
     pub _7: &'static NondetRegLayout,
+    pub digest2: &'static NondetRegLayout4LayoutArray,
     pub nskip: &'static NondetRegLayout,
     pub unpack_nskip: &'static ToBitsU_3_Layout,
     pub dz: &'static NondetRegLayout11LayoutArray,
     pub d1: &'static Concatenate_11__3_Layout,
+    pub _8: &'static NondetRegLayout6LayoutArray,
     pub d2: &'static Concatenate_14__6_Layout,
     pub d: &'static Concatenate_20__4_Layout,
     pub _arguments_parse_next_block__super: &'static _ArgumentsParseNextBlock_SuperLayout,
@@ -14172,6 +14587,7 @@ impl risc0_zkp::layout::Component for ParseNextBlockLayout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_3", self._3)?;
@@ -14180,10 +14596,12 @@ impl risc0_zkp::layout::Component for ParseNextBlockLayout {
         v.visit_component("_5", self._5)?;
         v.visit_component("_6", self._6)?;
         v.visit_component("_7", self._7)?;
+        v.visit_component("digest2", self.digest2)?;
         v.visit_component("nskip", self.nskip)?;
         v.visit_component("unpack_nskip", self.unpack_nskip)?;
         v.visit_component("dz", self.dz)?;
         v.visit_component("d1", self.d1)?;
+        v.visit_component("_8", self._8)?;
         v.visit_component("d2", self.d2)?;
         v.visit_component("d", self.d)?;
         v.visit_component(
@@ -14200,6 +14618,7 @@ pub struct ExtraMajor_SuperArm5_SuperLayout {
     pub _0: &'static NondetRegLayout,
     pub _1: &'static NondetRegLayout,
     pub _2: &'static NondetRegLayout,
+    pub digest: &'static NondetRegLayout4LayoutArray,
     pub auxtmp1: &'static ConcatElem_11_Layout,
     pub auxr: &'static Concatenate_12__4_Layout,
     pub _3: &'static WriteMemoryLayout,
@@ -14222,6 +14641,7 @@ impl risc0_zkp::layout::Component for ExtraMajor_SuperArm5_SuperLayout {
         v.visit_component("_0", self._0)?;
         v.visit_component("_1", self._1)?;
         v.visit_component("_2", self._2)?;
+        v.visit_component("digest", self.digest)?;
         v.visit_component("auxtmp1", self.auxtmp1)?;
         v.visit_component("auxr", self.auxr)?;
         v.visit_component("_3", self._3)?;
@@ -16793,6 +17213,7 @@ pub struct Sha256mix_0__0_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_0__0_Layout {
@@ -16813,6 +17234,7 @@ impl risc0_zkp::layout::Component for Sha256mix_0__0_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -16864,6 +17286,7 @@ pub struct Sha256mix_0__1_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_0__1_Layout {
@@ -16884,6 +17307,7 @@ impl risc0_zkp::layout::Component for Sha256mix_0__1_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -16935,6 +17359,7 @@ pub struct Sha256mix_0__2_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_0__2_Layout {
@@ -16955,6 +17380,7 @@ impl risc0_zkp::layout::Component for Sha256mix_0__2_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -17006,6 +17432,7 @@ pub struct Sha256mix_0__3_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_0__3_Layout {
@@ -17026,6 +17453,7 @@ impl risc0_zkp::layout::Component for Sha256mix_0__3_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -17077,6 +17505,7 @@ pub struct Sha256mix_0__4_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_0__4_Layout {
@@ -17097,6 +17526,7 @@ impl risc0_zkp::layout::Component for Sha256mix_0__4_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -17148,6 +17578,7 @@ pub struct Sha256mix_0__5_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_0__5_Layout {
@@ -17168,6 +17599,7 @@ impl risc0_zkp::layout::Component for Sha256mix_0__5_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -17219,6 +17651,7 @@ pub struct Sha256mix_0__6_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_0__6_Layout {
@@ -17239,6 +17672,7 @@ impl risc0_zkp::layout::Component for Sha256mix_0__6_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -17290,6 +17724,7 @@ pub struct Sha256mix_0__7_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_0__7_Layout {
@@ -17310,6 +17745,7 @@ impl risc0_zkp::layout::Component for Sha256mix_0__7_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -17361,6 +17797,7 @@ pub struct Sha256mix_0__8_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_0__8_Layout {
@@ -17381,6 +17818,7 @@ impl risc0_zkp::layout::Component for Sha256mix_0__8_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -17432,6 +17870,7 @@ pub struct Sha256mix_0__9_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_0__9_Layout {
@@ -17452,6 +17891,7 @@ impl risc0_zkp::layout::Component for Sha256mix_0__9_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -17503,6 +17943,7 @@ pub struct Sha256mix_0__10_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_0__10_Layout {
@@ -17523,6 +17964,7 @@ impl risc0_zkp::layout::Component for Sha256mix_0__10_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -17574,6 +18016,7 @@ pub struct Sha256mix_0__11_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_0__11_Layout {
@@ -17594,6 +18037,7 @@ impl risc0_zkp::layout::Component for Sha256mix_0__11_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -17645,6 +18089,7 @@ pub struct Sha256mix_0__12_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_0__12_Layout {
@@ -17665,6 +18110,7 @@ impl risc0_zkp::layout::Component for Sha256mix_0__12_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -17716,6 +18162,7 @@ pub struct Sha256mix_0__13_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_0__13_Layout {
@@ -17736,6 +18183,7 @@ impl risc0_zkp::layout::Component for Sha256mix_0__13_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -17787,6 +18235,7 @@ pub struct Sha256mix_0__14_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_0__14_Layout {
@@ -17807,6 +18256,7 @@ impl risc0_zkp::layout::Component for Sha256mix_0__14_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -17858,6 +18308,7 @@ pub struct Sha256mix_0__15_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_0__15_Layout {
@@ -17878,6 +18329,7 @@ impl risc0_zkp::layout::Component for Sha256mix_0__15_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -17989,6 +18441,7 @@ pub struct Sha256mix_1__0_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_1__0_Layout {
@@ -18009,6 +18462,7 @@ impl risc0_zkp::layout::Component for Sha256mix_1__0_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -18060,6 +18514,7 @@ pub struct Sha256mix_1__1_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_1__1_Layout {
@@ -18080,6 +18535,7 @@ impl risc0_zkp::layout::Component for Sha256mix_1__1_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -18131,6 +18587,7 @@ pub struct Sha256mix_1__2_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_1__2_Layout {
@@ -18151,6 +18608,7 @@ impl risc0_zkp::layout::Component for Sha256mix_1__2_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -18202,6 +18660,7 @@ pub struct Sha256mix_1__3_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_1__3_Layout {
@@ -18222,6 +18681,7 @@ impl risc0_zkp::layout::Component for Sha256mix_1__3_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -18273,6 +18733,7 @@ pub struct Sha256mix_1__4_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_1__4_Layout {
@@ -18293,6 +18754,7 @@ impl risc0_zkp::layout::Component for Sha256mix_1__4_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -18344,6 +18806,7 @@ pub struct Sha256mix_1__5_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_1__5_Layout {
@@ -18364,6 +18827,7 @@ impl risc0_zkp::layout::Component for Sha256mix_1__5_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -18415,6 +18879,7 @@ pub struct Sha256mix_1__6_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_1__6_Layout {
@@ -18435,6 +18900,7 @@ impl risc0_zkp::layout::Component for Sha256mix_1__6_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -18486,6 +18952,7 @@ pub struct Sha256mix_1__7_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_1__7_Layout {
@@ -18506,6 +18973,7 @@ impl risc0_zkp::layout::Component for Sha256mix_1__7_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -18557,6 +19025,7 @@ pub struct Sha256mix_1__8_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_1__8_Layout {
@@ -18577,6 +19046,7 @@ impl risc0_zkp::layout::Component for Sha256mix_1__8_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -18628,6 +19098,7 @@ pub struct Sha256mix_1__9_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_1__9_Layout {
@@ -18648,6 +19119,7 @@ impl risc0_zkp::layout::Component for Sha256mix_1__9_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -18699,6 +19171,7 @@ pub struct Sha256mix_1__10_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_1__10_Layout {
@@ -18719,6 +19192,7 @@ impl risc0_zkp::layout::Component for Sha256mix_1__10_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -18770,6 +19244,7 @@ pub struct Sha256mix_1__11_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_1__11_Layout {
@@ -18790,6 +19265,7 @@ impl risc0_zkp::layout::Component for Sha256mix_1__11_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -18841,6 +19317,7 @@ pub struct Sha256mix_1__12_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_1__12_Layout {
@@ -18861,6 +19338,7 @@ impl risc0_zkp::layout::Component for Sha256mix_1__12_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -18912,6 +19390,7 @@ pub struct Sha256mix_1__13_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_1__13_Layout {
@@ -18932,6 +19411,7 @@ impl risc0_zkp::layout::Component for Sha256mix_1__13_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -18983,6 +19463,7 @@ pub struct Sha256mix_1__14_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_1__14_Layout {
@@ -19003,6 +19484,7 @@ impl risc0_zkp::layout::Component for Sha256mix_1__14_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -19054,6 +19536,7 @@ pub struct Sha256mix_1__15_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_1__15_Layout {
@@ -19074,6 +19557,7 @@ impl risc0_zkp::layout::Component for Sha256mix_1__15_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -19185,6 +19669,7 @@ pub struct Sha256mix_2__0_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_2__0_Layout {
@@ -19205,6 +19690,7 @@ impl risc0_zkp::layout::Component for Sha256mix_2__0_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -19256,6 +19742,7 @@ pub struct Sha256mix_2__1_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_2__1_Layout {
@@ -19276,6 +19763,7 @@ impl risc0_zkp::layout::Component for Sha256mix_2__1_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -19327,6 +19815,7 @@ pub struct Sha256mix_2__2_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_2__2_Layout {
@@ -19347,6 +19836,7 @@ impl risc0_zkp::layout::Component for Sha256mix_2__2_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -19398,6 +19888,7 @@ pub struct Sha256mix_2__3_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_2__3_Layout {
@@ -19418,6 +19909,7 @@ impl risc0_zkp::layout::Component for Sha256mix_2__3_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -19469,6 +19961,7 @@ pub struct Sha256mix_2__4_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_2__4_Layout {
@@ -19489,6 +19982,7 @@ impl risc0_zkp::layout::Component for Sha256mix_2__4_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -19540,6 +20034,7 @@ pub struct Sha256mix_2__5_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_2__5_Layout {
@@ -19560,6 +20055,7 @@ impl risc0_zkp::layout::Component for Sha256mix_2__5_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -19611,6 +20107,7 @@ pub struct Sha256mix_2__6_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_2__6_Layout {
@@ -19631,6 +20128,7 @@ impl risc0_zkp::layout::Component for Sha256mix_2__6_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -19682,6 +20180,7 @@ pub struct Sha256mix_2__7_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_2__7_Layout {
@@ -19702,6 +20201,7 @@ impl risc0_zkp::layout::Component for Sha256mix_2__7_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -19753,6 +20253,7 @@ pub struct Sha256mix_2__8_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_2__8_Layout {
@@ -19773,6 +20274,7 @@ impl risc0_zkp::layout::Component for Sha256mix_2__8_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -19824,6 +20326,7 @@ pub struct Sha256mix_2__9_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_2__9_Layout {
@@ -19844,6 +20347,7 @@ impl risc0_zkp::layout::Component for Sha256mix_2__9_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -19895,6 +20399,7 @@ pub struct Sha256mix_2__10_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_2__10_Layout {
@@ -19915,6 +20420,7 @@ impl risc0_zkp::layout::Component for Sha256mix_2__10_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -19966,6 +20472,7 @@ pub struct Sha256mix_2__11_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_2__11_Layout {
@@ -19986,6 +20493,7 @@ impl risc0_zkp::layout::Component for Sha256mix_2__11_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -20037,6 +20545,7 @@ pub struct Sha256mix_2__12_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_2__12_Layout {
@@ -20057,6 +20566,7 @@ impl risc0_zkp::layout::Component for Sha256mix_2__12_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -20108,6 +20618,7 @@ pub struct Sha256mix_2__13_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_2__13_Layout {
@@ -20128,6 +20639,7 @@ impl risc0_zkp::layout::Component for Sha256mix_2__13_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -20179,6 +20691,7 @@ pub struct Sha256mix_2__14_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_2__14_Layout {
@@ -20199,6 +20712,7 @@ impl risc0_zkp::layout::Component for Sha256mix_2__14_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
@@ -20250,6 +20764,7 @@ pub struct Sha256mix_2__15_Layout {
     pub tmpd: &'static ConcatZeros_7__15_Layout,
     pub _2: &'static NondetRegLayout,
     pub _3: &'static NondetRegLayout,
+    pub _4: &'static NondetRegLayout2LayoutArray,
     pub d: &'static Concatenate_22__2_Layout,
 }
 impl risc0_zkp::layout::Component for Sha256mix_2__15_Layout {
@@ -20270,6 +20785,7 @@ impl risc0_zkp::layout::Component for Sha256mix_2__15_Layout {
         v.visit_component("tmpd", self.tmpd)?;
         v.visit_component("_2", self._2)?;
         v.visit_component("_3", self._3)?;
+        v.visit_component("_4", self._4)?;
         v.visit_component("d", self.d)?;
         Ok(())
     }
