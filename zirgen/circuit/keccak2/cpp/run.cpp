@@ -14,11 +14,6 @@ namespace zirgen::keccak2{
 ExecutionTrace runSegment(const std::vector<KeccakState>& inputs) {
   size_t cycles = 200;
   ExecutionTrace trace(cycles, getDslParams());
-  // Set globals:
-  for (size_t i = 0; i < 8; i++) {
-    // State in
-    // trace.global.set(37 + 2 * i, rootIn.words[i] & 0xffff);
-  }
   StepHandler ctx(inputs);
   for (size_t i = 0; i < cycles; i++) {
     std::cout << "Running cycle " << i << "\n";

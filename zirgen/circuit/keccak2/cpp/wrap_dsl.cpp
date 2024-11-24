@@ -263,8 +263,8 @@ CircuitParams getDslParams() {
 void DslStep(StepHandler& stepHandler, ExecutionTrace& trace, size_t cycle) {
   impl::ExecContext ctx(stepHandler, trace, cycle);
   impl::MutableBufObj data(ctx, trace.data);
-  //impl::GlobalBufObj global(ctx, trace.global);
-  step_Top(ctx, &data/*, &global*/);
+  impl::GlobalBufObj global(ctx, trace.global);
+  step_Top(ctx, &data, &global);
 }
 
 } // namespace zirgen::rv32im_v2

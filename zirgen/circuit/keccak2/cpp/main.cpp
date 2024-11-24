@@ -114,5 +114,14 @@ int main() {
 
   std::vector<KeccakState> inputs;
   inputs.push_back(state);
-  runSegment(inputs);
+  auto trace = runSegment(inputs);
+  zirgen::Digest compare;
+  for (size_t i = 0; i < 8; i++) {
+    uint32_t elem = trace.global.get(2*i).asUInt32() | (trace.global.get(2*i + 1).asUInt32() << 16);
+    compare.words[i] = elem;
+  }
+  std::cout << "From circuit: " << compare << "\n";
+  if (compare != digest) {
+    throw std::runtime_error("Mismatch!\n");
+  }
 }

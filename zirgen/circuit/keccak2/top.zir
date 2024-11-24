@@ -34,7 +34,7 @@ component TopState(bits: Array<Val, 800>, kflat: Array<Val, 100>, sflat: Array<V
   bits := for i : 0..800 {
     Reg(bits[i])
   };
-  Log("Top State Top 16 bits = %x", Pack<16, 16>(for i : 0..16 { bits[i] })[0]); 
+  // Log("Top State Top 16 bits = %x", Pack<16, 16>(for i : 0..16 { bits[i] })[0]); 
   kflat := for i : 0..100 {
     Reg(kflat[i])
   };
@@ -135,7 +135,7 @@ component ShaState(a: Array<Array<Val, 32>, 4>, e: Array<Array<Val, 32>, 4>, w: 
 component DoShaStep(in: ShaState, k: Array<Val, 2>, doLoad: Val, win: Array<Val, 2>) {
   rawW := ComputeW(in.w);
   pickW := for i : 0..2 { doLoad * win[i] + (1 - doLoad) * rawW[i] };
-  Log("  w = ", pickW[0], pickW[1]);
+  // Log("  w = ", pickW[0], pickW[1]);
   w := CarryAndExpand(pickW);
   comp := ComputeAE(in.a, in.e, w, k);
   a := CarryAndExpand(comp.rawA);
@@ -240,11 +240,6 @@ component ShaNextBlockCycle(back1: TopState) {
   // Add + store
   tot_a := for i : 0..4 { CarryAndExpand(Add2(cur_a[i], prev_a[i])) };
   tot_e := for i : 0..4 { CarryAndExpand(Add2(cur_e[i], prev_e[i])) };
-  Log("cur_a = ", cur_a[0][0]);
-  Log("cur_b = ", cur_a[1][0]);
-  Log("cur_c = ", cur_a[2][0]);
-  Log("cur_d = ", cur_a[3][0]);
-  Log("prev_a = ", prev_a[0][0]);
   // Expand into 'bits'
   bits := for x : 0..800 {
     j := x & 31;
@@ -262,9 +257,11 @@ component ShaNextBlockCycle(back1: TopState) {
     }
   };
   topState := TopState(bits, back1.kflat, newFlat);
+  /*
   for i : 0..16 {
     Log("  -- %x", newFlat[i]);
   };
+  */
   // Now alias
   for i : 0..4 {
     for j : 0..32 {
@@ -290,7 +287,7 @@ extern NextPreimage(): Val;
 - 8 * 4 sha cycles (mixes kflat + zeros into SHA state)
 */
 
-component CycleTypeInit() { 0 }
+component CycleTypeShutdown() { 0 }
 component CycleTypeRead() { 1 }
 component CycleTypeExpand() { 2 }
 component CycleTypeWrite() { 3 }
@@ -301,7 +298,7 @@ component CycleTypeKeccakRound3() { 7 }
 component CycleTypeKeccakRound4() { 8 }
 component CycleTypeSha() { 9 }
 component CycleTypeShaNextBlock() { 10 }
-component CycleTypeShutdown() { 11 }
+component CycleTypeInit() { 11 }
 
 component InitCycle() {
   Log("InitCycle");
@@ -383,13 +380,14 @@ component WriteCycle(back1: TopState, back2: TopState) {
   TopState(bits, kflat, back1.sflat)
 }
 
-// TODO
+component DigestReg(values: Array<Val, 16>) {
+  values := for v : values { Reg(v) };
+}
+
 component ShutdownCycle(stateIn: TopState) {
   Log("ShutdownCycle");
-  load := for i : 0..100 { 0 };
-  bits := for i : 0..800 { 0 };
-  sflat := for i : 0..16 { 0 };
-  TopState(bits, load, sflat)
+  global finalDigest := DigestReg(stateIn.sflat);
+  TopState(stateIn.bits, stateIn.kflat, stateIn.sflat)
 }
 
 component ControlState(cycleType: Val, subType: Val, block: Val, round: Val) {
@@ -439,7 +437,7 @@ component ShaNextBlock(prev: ControlState) {
 
 component ComputeCurrentStep(prevMux: Array<Val, 12>, prev: ControlState) {
   prevMux -> (
-    ControlState(CycleTypeRead(), 0, 0, 0),  // Init -> Read
+    ControlState(CycleTypeShutdown(), 0, 0, 0),
     ControlState(CycleTypeSha(), 0, 0, 0),  // Read -> SHA
     if (prev.subType) {
       ControlState(CycleTypeKeccakRound0(), 0, 0, 0)  // Expand1 -> Round0
@@ -454,7 +452,7 @@ component ComputeCurrentStep(prevMux: Array<Val, 12>, prev: ControlState) {
     KeccackNextRound(prev),
     ShaNextRound(prev),
     ShaNextBlock(prev),
-    ControlState(CycleTypeShutdown(), 0, 0, 0)
+    ControlState(CycleTypeRead(), 0, 0, 0)  // Init -> Read
   )
 }
 
@@ -464,10 +462,13 @@ component WrapOneHot(oneHot: OneHot<12>) {
 }
 
 component Top() {
+  global finalDigest: DigestReg;
+
   isFirst := NondetReg(IsFirstCycle());
   cycleMux : WrapOneHot;
   controlState : ControlState;
   controlState := if (isFirst) {
+    controlState@1.cycleType = CycleTypeShutdown();
     ControlState(CycleTypeInit(), 0, 0, 0)
   } else {
     ComputeCurrentStep(cycleMux@1, controlState@1)
@@ -479,7 +480,7 @@ component Top() {
   };
   curState: TopState;
   curState := cycleMux -> (
-    InitCycle(),
+    ShutdownCycle(curState@1),
     ReadCycle(curState@1),
     ExpandCycle(curState@1, controlState.subType),
     WriteCycle(curState@1, curState@2),
@@ -490,6 +491,6 @@ component Top() {
     KeccakRound34<1>(curState@3, curState@2, curState@1, controlState.round),
     ShaCycle(curState@1, curState@2, controlState.round, controlState.block),
     ShaNextBlockCycle(curState@1),
-    ShutdownCycle(curState@1)
+    InitCycle()
   );
 }
