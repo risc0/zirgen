@@ -800,7 +800,7 @@ struct GenerateValidityTapsPass : public GenerateValidityTapsBase<GenerateValidi
       auto func = builder.create<Zhlt::ValidityTapsFuncOp>(
           regsFunc.getLoc(),
           "validity_taps",
-          builder.getFunctionType({/*taps=*/builder.getType<BufferType>(Zhlt::getValExtType(ctx),
+          builder.getFunctionType({/*taps=*/builder.getType<BufferType>(Zhlt::getExtValType(ctx),
                                                                         taps.size(),
                                                                         Zll::BufferKind::Constant),
                                    builder.getType<PolyMixType>()},
@@ -812,7 +812,7 @@ struct GenerateValidityTapsPass : public GenerateValidityTapsBase<GenerateValidi
 
       // This AttrTypeReplacer extends all field elements to extension
       // field elements, whether they be in types or attributes.
-      size_t extSize = Zhlt::getValExtType(ctx).getFieldK();
+      size_t extSize = Zhlt::getExtValType(ctx).getFieldK();
       AttrTypeReplacer extendFieldTypes;
       // Leave layout types alone; they will be discarded in the final
       // output after all the tap locations have been evaluated.
@@ -822,7 +822,7 @@ struct GenerateValidityTapsPass : public GenerateValidityTapsBase<GenerateValidi
           [&](RefType t) { return std::make_pair(t, WalkResult::skip()); });
       extendFieldTypes.addReplacement(
           [&](BufferType t) { return std::make_pair(t, WalkResult::skip()); });
-      extendFieldTypes.addReplacement([&](ValType t) { return Zhlt::getValExtType(ctx); });
+      extendFieldTypes.addReplacement([&](ValType t) { return Zhlt::getExtValType(ctx); });
       extendFieldTypes.addReplacement([&](PolynomialAttr attr) {
         SmallVector<uint64_t> elems = llvm::to_vector(attr.asArrayRef());
         elems.resize(extSize, 0);

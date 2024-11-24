@@ -27,6 +27,11 @@ KECCAK_OUTS = ZIRGEN_OUTS + [
     "rust_poly_fp_2.cpp",
     "rust_poly_fp_3.cpp",
     "rust_poly_fp_4.cpp",
+    "eval_check_0.cu",
+    "eval_check_1.cu",
+    "eval_check_2.cu",
+    "eval_check_3.cu",
+    "eval_check_4.cu",
 ]
 
 build_circuit(
@@ -39,5 +44,13 @@ build_circuit(
         "-I",
         "zirgen/circuit/keccak",
         "--validity-split-count=5",
+    ],
+)
+
+filegroup(
+    name = "circuit_and_zkr",
+    srcs = [
+        ":keccak",
+        "//zirgen/circuit/predicates:keccak_zkr",
     ],
 )

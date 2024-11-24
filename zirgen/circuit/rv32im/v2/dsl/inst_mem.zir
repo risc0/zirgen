@@ -1,0 +1,162 @@
+// RUN: true
+
+import inst;
+import mult;
+import po2;
+
+component MemLoadInput(cycle: Reg, inst_input: InstInput) {
+  inst_input.state = StateDecode();
+  ii := inst_input;
+  decoded := DecodeInst(cycle, ii);
+  rs1 := ReadReg(cycle, ii, decoded.rs1);
+  addr_u32 := NormalizeU32(AddU32(rs1, decoded.immI));
+  addr := AddrDecomposeBits(addr_u32, ii.mode);
+  data := MemoryRead(cycle, addr.addr);
+}
+
+component MemStoreInput(cycle: Reg, inst_input: InstInput) {
+  inst_input.state = StateDecode();
+  ii := inst_input;
+  decoded := DecodeInst(cycle, ii);
+  rs1 := ReadReg(cycle, ii, decoded.rs1);
+  rs2 := ReadReg(cycle, ii, decoded.rs2);
+  addr_u32 := NormalizeU32(AddU32(rs1, decoded.immS));
+  addr := AddrDecomposeBits(addr_u32, ii.mode);
+  data := MemoryRead(cycle, addr.addr);
+}
+
+component MemStoreFinalize(cycle: Reg, input: MemStoreInput, new_val: ValU32) {
+  MemoryWrite(cycle, input.addr.addr, new_val);
+}
+
+component SplitWord(word: Val) {
+  byte0 := NondetU8Reg(word & 0xff);
+  byte1 := NondetU8Reg((word & 0xff00) / 0x100);
+  word = byte1 * 0x100 + byte0;
+}
+
+component IllegalLoadOp(input: MemLoadInput) {
+  0 = 1;
+  ValU32(0, 0)
+}
+
+component IllegalStoreOp(input: MemStoreInput) {
+  0 = 1;
+  ValU32(0, 0)
+}
+
+component Mem0(cycle: Reg, inst_input: InstInput) {
+  input := MemLoadInput(cycle, inst_input);
+  output := inst_input.minor_onehot -> (
+    OpLB(input),
+    OpLH(input),
+    OpLW(input),
+    OpLBU(input),
+    OpLHU(input),
+    IllegalLoadOp(input),
+    IllegalLoadOp(input),
+    IllegalLoadOp(input)
+  );
+  WriteRd(cycle, input.ii, input.decoded, 1, output);
+  pc_add := NormalizeU32(AddU32(inst_input.pc_u32, ConstU32<4>()));
+  InstOutput(pc_add, StateDecode(), inst_input.mode)
+}
+
+component Mem1(cycle: Reg, inst_input: InstInput) {
+  input := MemStoreInput(cycle, inst_input);
+  output := inst_input.minor_onehot -> (
+    OpSB(input),
+    OpSH(input),
+    OpSW(input),
+    IllegalStoreOp(input),
+    IllegalStoreOp(input),
+    IllegalStoreOp(input),
+    IllegalStoreOp(input),
+    IllegalStoreOp(input)
+  );
+  MemStoreFinalize(cycle, input, output);
+  pc_add := NormalizeU32(AddU32(inst_input.pc_u32, ConstU32<4>()));
+  InstOutput(pc_add, StateDecode(), inst_input.mode)
+}
+
+component OpLB(input: MemLoadInput) {
+  VerifyOpcodeF3(input.decoded, 0x03, 0x0);
+  low16 := input.addr.low1 * input.data.high + (1 - input.addr.low1) * input.data.low;
+  bytes := SplitWord(low16);
+  low8 := input.addr.low0 * bytes.byte1 + (1 - input.addr.low0) * bytes.byte0;
+  highBit := NondetBitReg((low8 & 0x80) / 0x80);
+  low7x2 := NondetU8Reg((low8 & 0x7f) * 2);
+  low8 = highBit * 0x80 + low7x2 / 2;
+  ValU32(low8 + 0xff00 * highBit, 0xffff * highBit)
+}
+
+component OpLH(input: MemLoadInput) {
+  VerifyOpcodeF3(input.decoded, 0x03, 0x1);
+  input.addr.low0 = 0;
+  low16 := input.addr.low1 * input.data.high + (1 - input.addr.low1) * input.data.low;
+  highBit := NondetBitReg((low16 & 0x8000) / 0x8000);
+  low15x2 := NondetU8Reg((low16 & 0x7fff) * 2);
+  low16 = highBit * 0x8000 + low15x2 / 2;
+  ValU32(low16, 0xffff * highBit)
+}
+
+component OpLW(input: MemLoadInput) {
+  VerifyOpcodeF3(input.decoded, 0x03, 0x2);
+  input.addr.low0 = 0;
+  input.addr.low1 = 0;
+  input.data
+}
+
+component OpLBU(input: MemLoadInput) {
+  VerifyOpcodeF3(input.decoded, 0x03, 0x4);
+  low16 := input.addr.low1 * input.data.high + (1 - input.addr.low1) * input.data.low;
+  bytes := SplitWord(low16);
+  low8 := input.addr.low0 * bytes.byte1 + (1 - input.addr.low0) * bytes.byte0;
+  ValU32(low8, 0)
+}
+
+component OpLHU(input: MemLoadInput) {
+  VerifyOpcodeF3(input.decoded, 0x03, 0x5);
+  input.addr.low0 = 0;
+  low16 := input.addr.low1 * input.data.high + (1 - input.addr.low1) * input.data.low;
+  ValU32(low16, 0)
+}
+
+component OpSB(input: MemStoreInput) {
+  VerifyOpcodeF3(input.decoded, 0x23, 0x0);
+  low16 := input.addr.low1 * input.data.high + (1 - input.addr.low1) * input.data.low;
+  orig_bytes := SplitWord(low16);
+  new_bytes := SplitWord(input.rs2.low);
+  new_byte := new_bytes.byte0;
+  b0 := input.addr.low0;
+  b1 := input.addr.low1;
+  new_word :=
+    b0 * orig_bytes.byte0 + (1 - b0) * new_byte +
+    256 * ((1 - b0) * orig_bytes.byte1 +  b0 * new_byte);
+  old := input.data;
+  ValU32(
+    b1 * old.low + (1 - b1) * new_word,
+    (1 - b1) * old.high + b1 * new_word
+  )
+}
+
+component OpSH(input: MemStoreInput) {
+  VerifyOpcodeF3(input.decoded, 0x23, 0x1);
+  input.addr.low0 = 0;
+  b1 := input.addr.low1;
+  old := input.data;
+  new_word := input.rs2.low;
+  ValU32(
+    b1 * old.low + (1 - b1) * new_word,
+    (1 - b1) * old.high + b1 * new_word
+  )
+}
+
+component OpSW(input: MemStoreInput) {
+  VerifyOpcodeF3(input.decoded, 0x23, 0x2);
+  input.addr.low0 = 0;
+  input.addr.low1 = 0;
+  input.rs2
+}
+
+

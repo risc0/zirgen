@@ -1,0 +1,134 @@
+// RUN: true
+
+import inst;
+import mult;
+import po2;
+
+component DivInput(cycle: Reg, inst_input: InstInput) {
+  inst_input.state = StateDecode();
+  ii := inst_input;
+  decoded := DecodeInst(cycle, ii);
+  rs1 := ReadReg(cycle, ii, decoded.rs1);
+  rs2 := ReadReg(cycle, ii, decoded.rs2);
+  ii
+}
+
+component IllegalDivOp(input: DivInput) {
+  0 = 1;
+  ValU32(0, 0)
+}
+
+component Div0(cycle: Reg, inst_input: InstInput) {
+  input := DivInput(cycle, inst_input);
+  mul_output := input.minor_onehot -> (
+    OpSRL(input),
+    OpSRA(input),
+    OpSRLI(input),
+    OpSRAI(input),
+    OpDIV(input),
+    OpDIVU(input),
+    OpREM(input),
+    OpREMU(input)
+  );
+  WriteRd(cycle, input.ii, input.decoded, 1, mul_output);
+  pc_add := NormalizeU32(AddU32(inst_input.pc_u32, ConstU32<4>()));
+  InstOutput(pc_add, StateDecode(), inst_input.mode)
+}
+
+component DivideReturn(quot: ValU32, rem: ValU32) {
+  quot := quot;
+  rem := rem;
+}
+
+extern Divide(numer: ValU32, denom: ValU32, sign_type: Val) : DivideReturn;
+
+component DoDiv(numer: ValU32, denom: ValU32, signed: Val, ones_comp: Val) {
+  // Guess the answer
+  guess := Divide(numer, denom, signed + 2 * ones_comp);
+  // The quotient gets pulled into bytes during multiply anyway, so
+  // no need to verify it is make of U16s
+  quot_low := NondetReg(guess.quot.low);
+  quot_high:= NondetReg(guess.quot.high);
+  quot := ValU32(quot_low, quot_high);
+  // The remainder however needs to be constrained
+  rem_low := NondetU16Reg(guess.rem.low);
+  rem_high:= NondetU16Reg(guess.rem.high);
+  rem := ValU32(rem_low, rem_high);
+  // Either all signed, or nothing signed
+  settings := MultiplySettings(signed, signed, signed);
+  // Do the acuumulate
+  mul := MultiplyAccumulate(quot, denom, rem, settings);
+  // Check the main result (numer = quot * denom + rem
+  AssertEqU32(mul.outLow, numer);
+  // The top bits should all be 0 or all be 1
+  topBitType := NondetBitReg(1 - Isz(mul.outHigh.low));
+  AssertEqU32(mul.outHigh, ValU32(0xffff * topBitType, 0xffff * topBitType));
+  DivideReturn(quot, rem)
+}
+
+component TopBit(x: ValU32) {
+  top_bit:= NondetBitReg((x.high & 0x8000) / 0x8000);
+  rest := NondetU16Reg((x.high - top_bit * 0x8000) * 2);
+  x.high = rest / 2 + top_bit * 0x8000;
+  top_bit
+}
+
+component FlipU16(doFlip: Val, x: Val) {
+  doFlip * (0xffff - x) + (1 - doFlip) * x
+}
+
+component FlipU32(doFlip: Val, x: ValU32) {
+  ValU32(FlipU16(doFlip, x.low), FlipU16(doFlip, x.high))
+}
+
+component OpSRL(input: DivInput) {
+  VerifyOpcodeF3F7(input.decoded, 0x33, 0x5, 0x00);
+  shift_mul := DynPo2(input.rs2.low);
+  DoDiv(input.rs1, shift_mul, 0, 0).quot
+}
+
+component OpSRA(input: DivInput) {
+  VerifyOpcodeF3F7(input.decoded, 0x33, 0x5, 0x20);
+  shift_mul := DynPo2(input.rs2.low);
+  flip := TopBit(input.rs1);
+  quotRaw := DoDiv(FlipU32(flip, input.rs1), shift_mul, 0, 1).quot;
+  FlipU32(flip, quotRaw)
+}
+
+component OpSRLI(input: DivInput) {
+  VerifyOpcodeF3F7(input.decoded, 0x13, 0x5, 0x00);
+  shift_mul := DynPo2(input.decoded.rs2);
+  DoDiv(input.rs1, shift_mul, 0, 0).quot
+}
+
+component OpSRAI(input: DivInput) {
+  VerifyOpcodeF3F7(input.decoded, 0x13, 0x5, 0x20);
+  shift_mul := DynPo2(input.decoded.rs2);
+  flip := TopBit(input.rs1);
+  quotRaw := DoDiv(FlipU32(flip, input.rs1), shift_mul, 0, 1).quot;
+  FlipU32(flip, quotRaw)
+}
+
+component OpDIV(input: DivInput) {
+  VerifyOpcodeF3F7(input.decoded, 0x33, 0x4, 0x01);
+  DoDiv(input.rs1, input.rs2, 1, 0).quot
+}
+
+component OpDIVU(input: DivInput) {
+  VerifyOpcodeF3F7(input.decoded, 0x33, 0x5, 0x01);
+  DoDiv(input.rs1, input.rs2, 0, 0).quot
+}
+
+component OpREM(input: DivInput) {
+  VerifyOpcodeF3F7(input.decoded, 0x33, 0x6, 0x01);
+  DoDiv(input.rs1, input.rs2, 1, 0).rem
+}
+
+component OpREMU(input: DivInput) {
+  VerifyOpcodeF3F7(input.decoded, 0x33, 0x7, 0x01);
+  DoDiv(input.rs1, input.rs2, 0, 0).rem
+}
+
+
+
+

@@ -22,10 +22,12 @@ ZStruct::StructType getTypeType(MLIRContext* ctx);
 ZStruct::StructType getComponentType(MLIRContext* ctx);
 ZStruct::LayoutType getEmptyLayoutType(MLIRContext* ctx);
 Zll::ValType getValType(MLIRContext* ctx);
-Zll::ValType getValExtType(MLIRContext* ctx);
+Zll::ValType getExtValType(MLIRContext* ctx);
 Zll::StringType getStringType(MLIRContext* ctx);
 ZStruct::StructType getNondetRegType(MLIRContext* ctx);
+ZStruct::StructType getNondetExtRegType(MLIRContext* ctx);
 ZStruct::LayoutType getNondetRegLayoutType(MLIRContext* ctx);
+ZStruct::LayoutType getNondetExtRegLayoutType(MLIRContext* ctx);
 ZStruct::RefType getRefType(MLIRContext* ctx);
 ZStruct::RefType getExtRefType(MLIRContext* ctx);
 

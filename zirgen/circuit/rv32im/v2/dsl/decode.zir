@@ -1,0 +1,85 @@
+// RUN: zirgen -I %S --test %s
+
+import bits;
+import u32;
+
+// Decode an instruction
+// Largely done by starting at: https://github.com/jameslzhu/riscv-card/blob/master/riscv-card.pdf
+
+component Decoder(inst: ValU32) {
+
+  // Retain a local copy of the instruction
+  inst := inst;
+
+  // Nondetermistically decompose the instruction into twits & bits
+  _f7_6 := NondetBitReg((inst.high & 0x8000) / 0x8000);
+  _f7_45 := NondetTwitReg((inst.high & 0x6000) / 0x2000);
+  _f7_23 := NondetTwitReg((inst.high & 0x1800) / 0x0800);
+  _f7_01 := NondetTwitReg((inst.high & 0x0600) / 0x0200);
+  _rs2_34 := NondetTwitReg((inst.high & 0x0180) / 0x0080);
+  _rs2_12 := NondetTwitReg((inst.high & 0x0060) / 0x0020);
+  _rs2_0 := NondetBitReg((inst.high & 0x0010) / 0x0010);
+  _rs1_34 := NondetTwitReg((inst.high & 0x000C) / 0x0004);
+  _rs1_12 := NondetTwitReg((inst.high & 0x0003) / 0x0001);
+  _rs1_0 := NondetBitReg((inst.low & 0x8000) / 0x8000);
+  _f3_2 := NondetBitReg((inst.low & 0x4000) / 0x4000);
+  _f3_01 := NondetTwitReg((inst.low & 0x3000) / 0x1000);
+  _rd_34 := NondetTwitReg((inst.low & 0x0C00) / 0x0400);
+  _rd_12 := NondetTwitReg((inst.low & 0x0300) / 0x0100);
+  _rd_0 := NondetTwitReg((inst.low & 0x0080) / 0x0080);
+
+  // The opcode is special and is unconstrained.
+  // This implies the for the decoding to be fully correct, some later
+  // mechanism must in fact constrain the opcode.
+  opcode := NondetReg(inst.low & 0x7f);
+
+  // Verify the components do in fact compose into the instructions
+  inst.high = _f7_6   * 0x8000 + 
+              _f7_45  * 0x2000 + 
+              _f7_23  * 0x0800 +
+              _f7_01  * 0x0200 +
+              _rs2_34 * 0x0080 +
+              _rs2_12 * 0x0020 + 
+              _rs2_0  * 0x0010 +
+              _rs1_34 * 0x0004 +
+              _rs1_12 * 0x0001;
+  inst.low = _rs1_0 * 0x8000 +
+             _f3_2  * 0x4000 +
+             _f3_01 * 0x1000 +
+             _rd_34 * 0x0400 +
+             _rd_12 * 0x0100 +
+             _rd_0  * 0x0080 +
+             opcode;
+
+  // Compute the 'user visible' values
+  rs1 := _rs1_34 * 8 + _rs1_12 * 2 + _rs1_0;
+  rs2 := _rs2_34 * 8 + _rs2_12 * 2 + _rs2_0;
+  rd := _rd_34 * 8 + _rd_12 * 2 + _rd_0;
+  func7low := _f7_45 * 16  + _f7_23 * 4 + _f7_01;
+  func7 := _f7_6 * 64 + func7low;
+  func3 := _f3_2 * 4 + _f3_01;
+
+  immSign := _f7_6;
+
+  // Compute immediate value for different cases
+  immR := ValU32(0, 0);
+  immI := ValU32(immSign * 0xf000 + func7 * 32 + rs2, immSign * 0xffff);
+  immS := ValU32(immSign * 0xf000 + func7 * 32 + rd, immSign * 0xffff);
+  immB := ValU32(immSign * 0xf000 + _rd_0 * 0x800 + func7low * 32 + _rd_34 * 8 + _rd_12 * 2, immSign * 0xffff);
+  immU := ValU32(_rs1_0 * 0x8000 + _f3_2 * 0x4000 + _f3_01 * 0x1000, inst.high);
+  immJ := ValU32(
+     _rs1_0 * 0x8000 + func3 * 0x1000 + _rs2_0 * 0x800 + func7low * 32 + _rs2_34 * 8 + _rs2_12 * 2,
+     immSign * 0xfff0 + _rs1_34 * 0x0004 + _rs1_12 * 0x0001);
+} 
+
+import asm;
+test {
+  decode := Decoder(AsmSUB(17, 11, 3));
+  decode.opcode = 0x33;
+  decode.func3 = 0;
+  decode.func7 = 0x20;
+  decode.rd = 17;
+  decode.rs1 = 11;
+  decode.rs2 = 3;
+} 
+  

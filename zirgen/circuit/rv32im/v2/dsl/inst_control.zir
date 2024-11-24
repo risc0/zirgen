@@ -1,0 +1,186 @@
+// RUN: true
+
+import inst;
+import consts;
+
+component DigestReg(values: Array<ValU32, 8>) {
+  values := for v : values { 
+    low := Reg(v.low); 
+    high := Reg(v.high); 
+  };
+}
+
+component IllegalControl() {
+  0 = 1;
+  InstOutput(ValU32(0, 0), 0, 0)
+}
+
+component ControlLoadRoot(cycle: Reg, input: InstInput) {
+  global stateIn : DigestReg;
+  input.state = StateLoadRoot();
+  // Verify page in
+  for i : 0..8 {
+    mem := MemoryPageIn(cycle, RootWord() + i);
+    stateIn.values[i].low = mem.low;
+    stateIn.values[i].high = mem.high;
+  };
+  InstOutput(ValU32(0, 0), StatePoseidonEntry(), 0)
+}
+
+component ControlResume(cycle: Reg, ii: InstInput) {
+  ii.state = StateResume();
+  // We use PC zero state to determine if we in cycle 1 or 2 of suspend
+  pcZero := IsZero(ii.pc_u32.low + ii.pc_u32.high);
+  if (pcZero) {
+    // In step 1
+    pc := MemoryRead(cycle, SuspendPcWord());
+    mode := MemoryRead(cycle, SuspendModeWord());
+    InstOutput(pc, StateResume(), mode.low)
+  } else {
+    global input : DigestReg;
+    for i : 0..8 { 
+      MemoryWrite(cycle, InputWord() + i, 
+        ValU32(input.values[i].low, input.values[i].high));
+    };
+    InstOutput(ii.pc_u32, StateDecode(), ii.mode)
+  }
+}
+
+component ControlUserECALL(cycle: Reg, input: InstInput) {
+  safeMode := Reg(input.mode);
+  pc_addr := AddrDecomposeBits(input.pc_u32, safeMode);
+  pc_addr.low2 = 0;
+  load_inst := MemoryRead(cycle, pc_addr);
+  load_inst.high = 0x0000;
+  load_inst.low = 0x0073;
+  input.state = StateDecode();
+  input.mode = 0;
+  dispatch_idx := MemoryRead(cycle, UserRegBase() + RegA7());
+  dispatch_idx.high = 0;
+  U16Reg(dispatch_idx.low * 128);
+  new_pc_addr := MemoryRead(cycle, EcallDispatchWord() + dispatch_idx.low);
+  MemoryWrite(cycle, MepcWord(), input.pc_u32);
+  InstOutput(new_pc_addr, StateDecode(), 1)
+}
+
+component ControlMRET(cycle: Reg, input: InstInput) {
+  safeMode := Reg(input.mode);
+  pc_addr := AddrDecomposeBits(input.pc_u32, safeMode);
+  pc_addr.low2 = 0;
+  load_inst := MemoryRead(cycle, pc_addr);
+  load_inst.high = 0x3020;
+  load_inst.low = 0x0073;
+  input.state = StateDecode();
+  input.mode = 1;
+  pc := MemoryRead(cycle, MepcWord());
+  pc_add := NormalizeU32(AddU32(pc, ConstU32<4>()));
+  InstOutput(pc_add, StateDecode(), 0)
+}
+
+component ControlSuspend(cycle: Reg, input: InstInput) {
+  input.state = StateSuspend();
+  // We use PC zero state to determine if we in cycle 1 or 2 of suspend
+  pcZero := IsZero(input.pc_u32.low + input.pc_u32.high);
+  if (pcZero) {
+    // In step 2
+    global isTerminate: Reg;
+    // Write from memory if terminating, or zeros if suspending
+    global output := DigestReg(
+      for i : 0..8 { MemoryRead(cycle, OutputWord() + i) }
+    );
+    if (1 - isTerminate) {
+      global termA0low := Reg(0);
+      global termA0high := Reg(0);
+      global termA1low := Reg(0);
+      global termA1high := Reg(0);
+    } else {
+      // Do nothing
+      // TODO: Apparently if we don't have this clause, the compiler generates
+      // a mux where the 'else' case fails at runtime.
+    };
+  
+    // Begin page out
+    InstOutput(ValU32(0, 0), StatePoseidonEntry(), 3)
+  } else {
+    // In step 1
+    // Must either enter nondeterministically from decode or via ecall
+    state := Reg(input.state);  // Registerize because state is degree 2
+    (state - StateDecode()) * (state - StateSuspend()) = 0;
+    // Write to the global
+    // If state == StateDecode, this is zero, otherwise it's one
+    global isTerminate := Reg((state - StateDecode()) / (StateSuspend() - StateDecode()));
+    // Write PC + original mode
+    MemoryWrite(cycle, SuspendPcWord(), input.pc_u32);
+    MemoryWrite(cycle, SuspendModeWord(), ValU32(input.mode, 0));
+    // Go to cycle 2 (i.e. write root
+    InstOutput(ValU32(0, 0), StateSuspend(), input.mode)
+  }
+}
+
+component ControlStoreRoot(cycle: Reg, input: InstInput) {
+  input.state = StateStoreRoot();
+  global stateOut := DigestReg(
+    for i : 0..8 {
+      MemoryPageOut(cycle, RootWord() + i)
+    }
+  );
+  InstOutput(ValU32(0, 0), StateControlTable(), 0)
+}
+
+component ControlTable(cycle: Reg, input: InstInput) {
+  input.state = StateControlTable();
+  entry := Reg(input.pc_u32.low);
+  mode := Reg(input.mode);
+  Log("mode/entry = ", mode, entry);
+  if (mode) {
+    // 16 bit table
+    for i : 0..16 {
+      idx := entry + i;
+      arg := ArgU16(-LookupCurrent(16, idx), idx);
+      arg.val = idx;
+    };
+    next := entry + 16;
+    done := IsZero(next - 65536);
+    if (done) {
+      InstOutput(ValU32(0, 0), StateControlDone(), 0)
+    } else {
+      InstOutput(ValU32(next, 0), StateControlTable(), 1)
+    }
+  } else {
+    // 8 bit table
+    for i : 0..16 {
+      idx := entry + i;
+      arg := ArgU8(-LookupCurrent(8, idx), idx);
+      arg.val = idx;
+    };
+    next := entry + 16;
+    done := IsZero(next - 256);
+    if (done) {
+      InstOutput(ValU32(0, 0), StateControlTable(), 1)
+    } else {
+      InstOutput(ValU32(next, 0), StateControlTable(), 0)
+    }
+  }
+}
+
+component ControlDone(cycle: Reg, input: InstInput) {
+  input.state = StateControlDone();
+  InstOutput(ValU32(0, 0), StateControlDone(), 0)
+}
+
+component Control0(cycle: Reg, inst_input: InstInput) {
+  // Cancel out 'cycle' table entries
+  arg := CycleArg(-GetDiffCount(cycle), cycle);
+  AliasLayout!(arg.cycle, cycle);
+  arg.cycle = cycle;
+  inst_input.minor_onehot -> (
+    ControlLoadRoot(cycle, inst_input),
+    ControlResume(cycle, inst_input),
+    ControlUserECALL(cycle, inst_input),
+    ControlMRET(cycle, inst_input),
+    ControlSuspend(cycle, inst_input),
+    ControlStoreRoot(cycle, inst_input),
+    ControlTable(cycle, inst_input),
+    ControlDone(cycle, inst_input)
+  )
+}

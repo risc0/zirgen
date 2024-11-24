@@ -1,0 +1,482 @@
+// RUN: true
+
+import consts;
+import inst;
+import poly;
+import poseidon2;
+
+component PoseidonOpDef(
+  hasState: Val,
+  stateAddr: Val, 
+  bufOutAddr: Val, 
+  isElem: Val, 
+  checkOut: Val,
+  loadTxType: Val
+) {
+  hasState := hasState;
+  stateAddr := stateAddr;
+  bufOutAddr := bufOutAddr;
+  isElem := isElem;
+  checkOut := checkOut;
+  loadTxType := loadTxType;
+}
+
+component PoseidonState(
+  opDef: PoseidonOpDef,
+  nextState: Val,
+  subState: Val,
+  bufInAddr: Val,
+  count: Val,
+  mode: Val,
+  inner: Array<Val, 24>,
+  zcheck: ExtVal)
+{
+  hasState := Reg(opDef.hasState);
+  stateAddr := Reg(opDef.stateAddr);
+  bufOutAddr := Reg(opDef.bufOutAddr);
+  isElem := Reg(opDef.isElem);
+  checkOut := Reg(opDef.checkOut);
+  loadTxType := Reg(opDef.loadTxType);
+
+  nextState := Reg(nextState);
+  subState := Reg(subState);
+  bufInAddr := Reg(bufInAddr);
+  count := Reg(count);
+  mode := Reg(mode);
+
+  inner := for v : inner { Reg(v) };
+  zcheck := ExtReg(zcheck);
+}
+
+component PoseidonInvalid() {
+  0 = 1;
+  opDef := PoseidonOpDef(
+    /*hasState=*/0,
+    /*stateAddr=*/0,
+    /*bufOutAddr=*/0,
+    /*isElem=*/0,
+    /*checkOut=*/0,
+    /*loadTxType=*/0
+  );
+  PoseidonState(
+    opDef,
+    /*nextState=*/0,
+    /*subState=*/0,
+    /*bufInAddr=*/0,
+    /*count=*/0,
+    /*mode=*/0,
+    for i : 0..24 { 0 },
+    MakeExt(0))
+}
+component GetDef(state: PoseidonState) {
+  PoseidonOpDef(state.hasState, state.stateAddr, state.bufOutAddr, state.isElem, state.checkOut, state.loadTxType)
+}
+
+// We do a dumb interpretation of addresses, assuming the kernel has already
+// sanitized them.
+component ReadAddr(cycle: Reg, reg: Val) {
+  addr32 := MemoryRead(cycle, MachineRegBase() + reg);
+  addr32.high * 0x4000 + addr32.low / 4
+}
+
+component PoseidonEcall(cycle: Reg, mode: Val) {
+  // Load values from registers
+  stateAddr := ReadAddr(cycle, RegA0());
+  bufInAddr := ReadAddr(cycle, RegA1());
+  bufOutAddr := ReadAddr(cycle, RegA2());
+  bitsAndCount := MemoryRead(cycle, MachineRegBase() + RegA3());
+
+  // Check is state is NULL
+  hasState := 1 - IsZero(stateAddr);
+
+  // Decompose bitsAndCount
+  count := bitsAndCount.low;
+  isElem := NondetBitReg((bitsAndCount.high & 0x8000) / 0x8000);
+  checkOut := NondetBitReg((bitsAndCount.high & 0x4000) / 0x4000);
+  bitsAndCount.high = isElem * 0x8000 + checkOut * 0x4000;
+
+  opDef := PoseidonOpDef(hasState, stateAddr, bufOutAddr, isElem, checkOut, /*loadTxType=*/TxKindRead());
+  countZero := IsZero(count);
+  nextState :=
+    countZero * StateDecode() +
+    (1 - countZero) * hasState * StatePoseidonLoadState() +
+    (1 - countZero) * (1 - hasState) * StatePoseidonLoadIn();
+
+  PoseidonState(opDef, nextState, 0, bufInAddr, count, mode, for i : 0..24 { 0 }, MakeExt(0))
+}
+
+component PoseidonPagingEntry(cycle: Reg, mode: Val) {
+  // Mode should be 0 or 3, convert to 0 / 1
+  isWrite := mode / 3;
+  opDef := PoseidonOpDef(
+    /*hasState=*/0,
+    /*stateAddr=*/0,
+    /*bufOutAddr=*/(isWrite * 0x40000000 + (1 - isWrite) * 0x44000000),
+    /*isElem=*/1,
+    /*checkOut=*/1,
+    /*loadTxType=*/TxKindPageIn()
+  );
+  PoseidonState(
+    opDef,
+    /*nextState=*/StatePoseidonPaging(),
+    /*subState=*/0,
+    /*bufInAddr=*/0,
+    /*count=*/0,
+    /*mode=*/mode,
+    for i : 0..24 { 0 },
+    MakeExt(0))
+}
+
+component PoseidonEntry(cycle: Reg, pc: ValU32, mode: Val) {
+  pcZero := IsZero(pc.low + pc.high);
+  if (pcZero) {
+    PoseidonPagingEntry(cycle, mode)
+  } else {
+    PoseidonEcall(cycle, mode)
+  }
+}
+
+component ReadElem(cycle: Reg, addr: Val) {
+  elem32 := MemoryRead(cycle, addr);
+  elem32.high * 0x10000 + elem32.low
+}
+
+component PoseidonLoadState(cycle: Reg, prev: PoseidonState) {
+  // We load state as baby bear values.  If the u32's are out of range, they will wrap
+  loadList := for i : 0..8 {
+    ReadElem(cycle, prev.stateAddr + i)
+  };
+  valList := for i : 0..24 {
+    if (InRange(16, i, 24)) {
+      loadList[i - 16]
+    } else {
+      0
+    }
+  };
+  PoseidonState(GetDef(prev), StatePoseidonLoadIn(), 0, prev.bufInAddr, prev.count, prev.mode, valList, MakeExt(0))
+}
+
+component ShiftPoly(data: Array<GetData, 8>, in: ExtVal) {
+  global rng: ExtReg;
+  flatDiffs := for i : 0..16 {
+    if (i & 1) {
+      idx := Val((i - 1)/2);
+      data[idx].diffHigh
+    } else {
+      idx := Val(i/2);
+      data[idx].diffLow
+    }
+  };
+  poly := PolyEval<16>(flatDiffs, rng);
+  ExtAdd(ExtMul(in, Pow<16>(rng)), poly)
+}
+
+component PoseidonLoadInShort(cycle: Reg, prev: PoseidonState) {
+  Log("txnType", prev.loadTxType);
+  txType := OneHot<3>(prev.loadTxType);
+  loadList := for i : 0..8 {
+    MemoryGet(cycle, prev.bufInAddr + i, txType)
+  };
+  zcheck := ShiftPoly(loadList, prev.zcheck);
+  valList := for i : 0..24 {
+    if (InRange(0, i, 16)) {
+      if (i & 1) {
+        idx := Val((i - 1)/2);
+        loadList[idx].high
+      } else {
+        idx := Val(i/2);
+        loadList[idx].low
+      }
+    } else {
+      prev.inner[i]
+    }
+  };
+  PoseidonState(GetDef(prev), StatePoseidonExtRound(), 0, prev.bufInAddr + 8, prev.count, prev.mode, MultiplyByMExt(valList), zcheck)
+}
+
+component PoseidonLoadInLow(cycle: Reg, prev: PoseidonState) {
+  Log("txnType", prev.loadTxType);
+  txType := OneHot<3>(prev.loadTxType);
+  loadList := for i : 0..8 {
+    MemoryGet(cycle, prev.bufInAddr + i, txType)
+  };
+  zcheck := ShiftPoly(loadList, prev.zcheck);
+  valList := for i : 0..24 {
+    if (InRange(0, i, 8)) {
+      0x10000 * loadList[i].high + loadList[i].low
+    } else {
+      prev.inner[i]
+    }
+  };
+  PoseidonState(GetDef(prev), StatePoseidonLoadIn(), 1, prev.bufInAddr + 8, prev.count, prev.mode, valList, zcheck)
+}
+
+component PoseidonLoadInHigh(cycle: Reg, prev: PoseidonState) {
+  Log("txnType", prev.loadTxType);
+  txType := OneHot<3>(prev.loadTxType);
+  loadList := for i : 0..8 {
+    MemoryGet(cycle, prev.bufInAddr + i, txType)
+  };
+  valList := for i : 0..24 {
+    if (InRange(8, i, 16)) {
+      0x10000 * loadList[i - 8].high + loadList[i - 8].low
+    } else {
+      prev.inner[i]
+    }
+  };
+  zcheck := ShiftPoly(loadList, prev.zcheck);
+  PoseidonState(GetDef(prev), StatePoseidonExtRound(), 0, prev.bufInAddr + 8, prev.count, prev.mode, MultiplyByMExt(valList), zcheck)
+}
+
+component PoseidonLoadIn(cycle: Reg, prev: PoseidonState) {
+  option := prev.isElem + prev.subState;
+  OneHot<3>(option) -> (
+    PoseidonLoadInShort(cycle, prev),
+    PoseidonLoadInLow(cycle, prev),
+    PoseidonLoadInHigh(cycle, prev)
+  )
+}
+
+component PoseidonExtRound(prev: PoseidonState) {
+  isRound3 := IsZero(prev.subState - 3);
+  isRound7 := IsZero(prev.subState  - 7);
+  decCount := prev.count - 1;
+  lastBlock := IsZero(decCount);
+  newCount := prev.count - isRound7;
+  nextState :=
+    isRound3 * StatePoseidonIntRounds() +
+    (1 - isRound3 - isRound7) * StatePoseidonExtRound() +
+    isRound7 * (1 - lastBlock) * StatePoseidonLoadIn() +
+    isRound7 * lastBlock * StatePoseidonDoOut();
+  nextSubState := (1 - isRound3 - isRound7) * (prev.subState + 1);
+  nextInner := DoExtRoundByIdx(prev.inner, prev.subState);
+  PoseidonState(GetDef(prev), nextState, nextSubState, prev.bufInAddr, newCount, prev.mode, nextInner, prev.zcheck)
+}
+
+component PoseidonIntRounds(prev: PoseidonState) {
+  nextInner := DoIntRounds(prev.inner);
+  PoseidonState(GetDef(prev), StatePoseidonExtRound(), 4, prev.bufInAddr, prev.count, prev.mode, nextInner, prev.zcheck)
+}
+
+component PoseidonCheckOut(cycle: Reg, prev: PoseidonState) {
+  for i : 0..8 {
+    val := prev.inner[i];
+    goal := ReadElem(cycle, prev.bufOutAddr + i);
+    goal = val;
+  };
+  isNormal := IsZero(prev.loadTxType - TxKindRead());
+  outState := isNormal * StateDecode() + (1 - isNormal) * StatePoseidonPaging();
+  nextState := prev.hasState * StatePoseidonStoreState() + (1 -  prev.hasState) * outState;
+  // We should always have at least one non-zero 'diff' value in a poseidon block
+  // For page in, diff is cycle diff (i.e. at least one additional txn)
+  // For page out, diff is value diff (i.e. at least one modified value)
+  // For normal read, diff is always 1
+  extInv := NondetExtReg(ExtInv(prev.zcheck));
+  EqzExt(ExtSub(ExtMul(extInv, prev.zcheck), MakeExt(1)));
+  PoseidonState(GetDef(prev), nextState, 0, 0, 0, prev.mode, prev.inner, MakeExt(0))
+}
+
+component PoseidonStoreOut(cycle: Reg, prev: PoseidonState) {
+  for i : 0..8 {
+    val := prev.inner[i];
+    low := NondetU16Reg(val & 0xffff);
+    high := U16Reg((val - low) / 65536);
+    MemoryWrite(cycle, prev.bufOutAddr + i, ValU32(low, high));
+  };
+  isNormal := IsZero(prev.loadTxType - TxKindRead());
+  outState := isNormal * StateDecode() + (1 - isNormal) * StatePoseidonPaging();
+  nextState := 
+    prev.hasState * StatePoseidonStoreState() + 
+    (1 -  prev.hasState) * outState;
+  extInv := NondetExtReg(ExtInv(prev.zcheck));
+  PoseidonState(GetDef(prev), nextState, 0, 0, 0, prev.mode, prev.inner, MakeExt(0))
+}
+
+component PoseidonDoOut(cycle: Reg, prev: PoseidonState) {
+  if (prev.checkOut) { PoseidonCheckOut(cycle, prev) } else { PoseidonStoreOut(cycle, prev) }
+}
+
+component PoseidonStoreState(cycle: Reg, prev: PoseidonState) {
+  for i : 0..8 {
+    val := prev.inner[16 + i];
+    low := NondetU16Reg(val & 0xffff);
+    high := U16Reg((val - low) / 65536);
+    MemoryWrite(cycle, prev.stateAddr+ i, ValU32(low, high));
+  };
+  PoseidonState(GetDef(prev), StateDecode(), 0, 0, 0, prev.mode, prev.inner, MakeExt(0))
+}
+
+component PagingReturn(idx: Val, mode: Val) {
+  idx := idx;
+  mode := mode;
+}
+
+extern nextPagingIdx(): PagingReturn;
+
+component NodeAddrToIdx(addr: Val) { (0x44000000 - addr) / 8 }
+component NodeIdxToAddr(idx: Val) { 0x44000000 - idx * 8 }
+
+component IsU24(x: Val) {
+  low16 := NondetU16Reg(x & 0xffff);
+  U8Reg((x - low16) / 0x10000);
+}
+
+component PoseidonPagingLoadNode(cycle: Reg, idx: Val) {
+  opDef := PoseidonOpDef(
+    /*hasState=*/0,
+    /*stateAddr=*/0,
+    /*bufOutAddr=*/NodeIdxToAddr(idx),
+    /*isElem=*/1,
+    /*checkOut=*/1,
+    /*loadTxType=*/TxKindPageIn()
+  );
+  PoseidonState(
+    opDef,
+    /*nextState=*/StatePoseidonLoadIn(),
+    /*subState=*/0,
+    /*bufInAddr=*/NodeIdxToAddr(idx*2 + 1),
+    /*count=*/1,
+    /*mode=*/0,
+    for i : 0..24 { 0 },
+    MakeExt(0)
+  )
+}
+
+component PoseidonPagingLoadPage(cycle: Reg, idx: Val) {
+  page := (idx - 4 * 1024 * 1024);
+  opDef := PoseidonOpDef(
+    /*hasState=*/0,
+    /*stateAddr=*/0,
+    /*bufOutAddr=*/NodeIdxToAddr(idx),
+    /*isElem=*/0,
+    /*checkOut=*/1,
+    /*loadTxType=*/TxKindPageIn()
+  );
+  PoseidonState(
+    opDef,
+    /*nextState=*/StatePoseidonLoadIn(),
+    /*subState=*/0,
+    /*bufInAddr=*/page*256,
+    /*count=*/32,
+    /*mode=*/1,
+    for i : 0..24 { 0 },
+    MakeExt(0)
+  )
+}
+
+component PoseidonPagingLoadDone() {
+  opDef := PoseidonOpDef(0, 0, /*bufOutAddr=*/0x40000000, 0, 0, 0);
+  PoseidonState(opDef, /*nextState=*/StateResume(), 0, 0, 0, /*mode=*/2, for i : 0..24 { 0 }, MakeExt(0))
+}
+
+component PoseidonPagingStoreNode(cycle: Reg, idx: Val) {
+  opDef := PoseidonOpDef(
+    /*hasState=*/0,
+    /*stateAddr=*/0,
+    /*bufOutAddr=*/NodeIdxToAddr(idx),
+    /*isElem=*/1,
+    /*checkOut=*/0,
+    /*loadTxType=*/TxKindPageOut()
+  );
+  PoseidonState(
+    opDef,
+    /*nextState=*/StatePoseidonLoadIn(),
+    /*subState=*/0,
+    /*bufInAddr=*/NodeIdxToAddr(idx*2 + 1),
+    /*count=*/1,
+    /*mode=*/4,
+    for i : 0..24 { 0 },
+    MakeExt(0)
+  )
+}
+
+component PoseidonPagingStorePage(cycle: Reg, idx: Val) {
+  page := (idx - 4 * 1024 * 1024);
+  opDef := PoseidonOpDef(
+    /*hasState=*/0,
+    /*stateAddr=*/0,
+    /*bufOutAddr=*/NodeIdxToAddr(idx),
+    /*isElem=*/0,
+    /*checkOut=*/0,
+    /*loadTxType=*/TxKindPageOut()
+  );
+  PoseidonState(
+    opDef,
+    /*nextState=*/StatePoseidonLoadIn(),
+    /*subState=*/0,
+    /*bufInAddr=*/page*256,
+    /*count=*/32,
+    /*mode=*/3,
+    for i : 0..24 { 0 },
+    MakeExt(0)
+  )
+}
+
+component PoseidonPagingStoreDone() {
+  opDef := PoseidonOpDef(0, 0, /*bufOutAddr=*/0x44000000, 0, 0, 0);
+  PoseidonState(opDef, /*nextState=*/StateStoreRoot(), 0, 0, 0, /*mode=*/5, for i : 0..24 { 0 }, MakeExt(0))
+}
+
+component PoseidonPaging(cycle: Reg, mode: Val, prev: PoseidonState) {
+  prevIdx := NodeAddrToIdx(prev.bufOutAddr);
+  pageInfo := nextPagingIdx();
+  curIdx := NondetReg(pageInfo.idx);
+  curMode := NondetReg(pageInfo.mode);
+  modeSplit := OneHot<6>(curMode);
+  isLoad := modeSplit.bits[0] + modeSplit.bits[1] + modeSplit.bits[2];
+  IsU24(curIdx);
+  if (isLoad) {
+    IsU24(curIdx - (prevIdx + 1));
+  } else {
+    IsU24(prevIdx - 1 - curIdx);
+  };
+  // Mode can only go up by 0 or 1 (reg since mode is deg 2)
+  BitReg(curMode - mode);
+  modeSplit -> (
+    PoseidonPagingLoadNode(cycle, curIdx),
+    PoseidonPagingLoadPage(cycle, curIdx),
+    PoseidonPagingLoadDone(),
+    PoseidonPagingStorePage(cycle, curIdx),
+    PoseidonPagingStoreNode(cycle, curIdx),
+    PoseidonPagingStoreDone()
+  )
+}
+
+component Poseidon0(cycle:Reg, inst_input: InstInput) {
+  state : PoseidonState;
+  // Cancel out 'cycle' table entries
+  state := inst_input.minor_onehot -> (
+    PoseidonEntry(cycle, inst_input.pc_u32, inst_input.mode),
+    PoseidonLoadState(cycle, state@1),
+    PoseidonLoadIn(cycle, state@1),
+    PoseidonInvalid(),
+    PoseidonInvalid(),
+    PoseidonDoOut(cycle, state@1),
+    PoseidonPaging(cycle, inst_input.mode,state@1),
+    PoseidonStoreState(cycle, state@1)
+  );
+  arg := CycleArg(-GetDiffCount(cycle), cycle);
+  AliasLayout!(arg.cycle, cycle);
+  arg.cycle = cycle;
+  InstOutput(inst_input.pc_u32, state.nextState, state.mode)
+}
+
+component Poseidon1(cycle:Reg, inst_input: InstInput) {
+  state : PoseidonState;
+  // Cancel out 'cycle' table entries
+  state := inst_input.minor_onehot -> (
+    PoseidonExtRound(state@1),
+    PoseidonIntRounds(state@1),
+    PoseidonInvalid(),
+    PoseidonInvalid(),
+    PoseidonInvalid(),
+    PoseidonInvalid(),
+    PoseidonInvalid(),
+    PoseidonInvalid()
+  );
+  arg := CycleArg(-GetDiffCount(cycle), cycle);
+  AliasLayout!(arg.cycle, cycle);
+  arg.cycle = cycle;
+  InstOutput(inst_input.pc_u32, state.nextState, state.mode)
+}
+

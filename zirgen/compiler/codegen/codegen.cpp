@@ -44,10 +44,10 @@ void addCppSyntax(CodegenOptions& opts) {
     auto elems = polyAttr.asArrayRef();
     if (elems.size() == 1) {
       cg << "Val(" << elems[0] << ")";
-    } else {
-      cg << "Val" << elems.size() << "{";
+    } else if (elems.size() == 4) {
+      cg << "ExtVal(";
       cg.interleaveComma(elems);
-      cg << "}";
+      cg << ")";
     }
   });
 }
@@ -211,8 +211,16 @@ public:
   }
 
   void emitEvalCheck(const std::string& suffix, func::FuncOp func) {
-    auto ofs = openOutputFile("eval_check" + suffix);
-    createGpuStreamEmitter(*ofs, suffix)->emitPoly(func);
+    if (codegenCLOptions->validitySplitCount > 1) {
+      for (size_t i : llvm::seq(size_t(codegenCLOptions->validitySplitCount))) {
+        auto ofs = openOutputFile("eval_check_" + std::to_string(i) + suffix);
+        createGpuStreamEmitter(*ofs, suffix)
+            ->emitPoly(func, i, size_t(codegenCLOptions->validitySplitCount));
+      }
+    } else {
+      auto ofs = openOutputFile("eval_check" + suffix);
+      createGpuStreamEmitter(*ofs, suffix)->emitPoly(func, /*split part=*/0, /*num splits=*/1);
+    }
   }
 
   void emitAllLayouts(mlir::ModuleOp op) {
@@ -336,6 +344,7 @@ void emitCodeZirgenPoly(ModuleOp module, StringRef outputDir) {
       return;
 
     emitter.emitPolyFunc("poly_fp", func);
+    emitter.emitEvalCheck(".cu", func);
   });
 }
 

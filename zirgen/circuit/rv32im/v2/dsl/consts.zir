@@ -1,0 +1,51 @@
+// RUN: true
+
+component ToMontgomery() { 268435454 }
+component FromMontgomery() { 943718400 }
+
+component MachineRegBase() { 0x3fffc000 }
+component UserRegBase() { 0x3fffc020 }
+component SafeWriteWord() { 0x3fffc040 }
+component MepcWord() { 0x3fffc080 }
+component SuspendPcWord() { 0x3fffc084 }
+component SuspendModeWord() { 0x3fffc085 }
+component OutputWord() { 0x3fffc090 }
+component InputWord() { 0x3fffc098 }
+component EcallDispatchWord() { 0x3fffc400 }
+component TrapDispatchWord() { 0x3fffc800 }
+component RootWord() { 0x43fffff8 }
+
+component StateLoadRoot() { 0 }
+component StateResume() { 1 }
+component StateSuspend() { 4 }
+component StateStoreRoot() { 5 }
+component StateControlTable() { 6 }
+component StateControlDone() { 7 }
+
+component StateTerminate() { 9 }
+component StateHostReadSetup() { 10 }
+component StateHostWrite() { 11 }
+component StateHostReadBytes() { 12 }
+component StateHostReadWords() { 13 }
+
+component StatePoseidonEntry() { 16 }
+component StatePoseidonEcall() { 16 }
+component StatePoseidonLoadState() { 17 }
+component StatePoseidonLoadIn() { 18 }
+component StatePoseidonDoOut() { 21 }
+component StatePoseidonPaging() { 22 }
+component StatePoseidonStoreState() { 23 }
+
+component StatePoseidonExtRound() { 24 }
+component StatePoseidonIntRounds() { 25 }
+
+component StateDecode() { 32 }
+
+component RegA0() { 10 }
+component RegA1() { 11 }
+component RegA2() { 12 }
+component RegA3() { 13 }
+
+component RegA7() { 17 }
+
+
