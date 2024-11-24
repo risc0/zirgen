@@ -1,3 +1,4 @@
+// RUN: zirgen -I %S --test %s
 
 import arr;
 import bits;

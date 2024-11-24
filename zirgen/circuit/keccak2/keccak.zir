@@ -1,3 +1,4 @@
+// RUN: zirgen -I %S --test %s
 
 import bits;
 import one_hot;
@@ -195,11 +196,11 @@ test TestIota {
   output := Iota(input, 3);
   PrintState(output);
 }
-*/
 
 test Permute {
   input := for i : 0..5 { for j : 0..5 { for k : 0..64 { 0 } } };
   output := reduce 0..4 init input with TestDoRound;
   PrintState(output);
 }
+*/
 

@@ -1,3 +1,4 @@
+// RUN: zirgen -I %S --test %s
 // Bit packing and unpacking logic
 
 import bits;

@@ -1,5 +1,5 @@
 // Special handling for xoring 5 values via arithmetization tricks
-// RUN: zirgen --test %s
+// RUN: zirgen  -I %S --test %s
 
 import bits;
 
