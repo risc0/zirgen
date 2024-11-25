@@ -2240,15 +2240,9 @@ pub const TAPSET: &TapSet = &TapSet::<'static> {
             skip: 1,
         },
     ],
-    combo_taps: &[
-         0,  0,  1, 
-    ],
-    combo_begin: &[
-         0,  1,  3, 
-    ],
-    group_begin: &[
-         0,  80,  81,  317, 
-    ],
+    combo_taps: &[0, 0, 1],
+    combo_begin: &[0, 1, 3],
+    group_begin: &[0, 80, 81, 317],
     combos_count: 2,
     reg_count: 269,
     tot_combo_backs: 3,
