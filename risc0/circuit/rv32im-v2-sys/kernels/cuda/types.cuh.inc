@@ -12,6 +12,19 @@ using NondetRegLayout11LayoutArray = NondetRegLayout[11];
 struct OneHot_11_Layout {
   NondetRegLayout11LayoutArray _super;
 };
+struct ArgU16Layout {
+  NondetRegLayout count;
+  NondetRegLayout val;
+};
+struct NondetU16RegLayout {
+  ArgU16Layout arg;
+};
+struct NormalizeU32Layout {
+  NondetU16RegLayout low16;
+  NondetRegLayout lowCarry;
+  NondetU16RegLayout high16;
+  NondetRegLayout highCarry;
+};
 struct MemoryArgLayout {
   NondetRegLayout count;
   NondetRegLayout addr;
@@ -42,140 +55,14 @@ struct IsZeroLayout {
   NondetRegLayout inv;
 };
 struct WriteRdLayout {
-  MemoryWriteLayout _0;
   IsZeroLayout isRd0;
   NondetRegLayout writeAddr;
-};
-struct ArgU16Layout {
-  NondetRegLayout count;
-  NondetRegLayout val;
-};
-struct NondetU16RegLayout {
-  ArgU16Layout arg;
-};
-struct NormalizeU32Layout {
-  NondetU16RegLayout low16;
-  NondetU16RegLayout high16;
-  NondetRegLayout lowCarry;
-  NondetRegLayout highCarry;
+  MemoryWriteLayout _0;
 };
 struct FinalizeMiscLayout {
-  WriteRdLayout _0;
   NormalizeU32Layout writeData;
   NormalizeU32Layout pcNorm;
-};
-struct Misc0Arm0Layout {
-  ArgU16Layout _extra0;
-  ArgU16Layout _extra1;
-  ArgU16Layout _extra2;
-  ArgU16Layout _extra3;
-  ArgU16Layout _extra4;
-};
-struct Misc0Arm1Layout {
-  ArgU16Layout _extra0;
-  ArgU16Layout _extra1;
-  ArgU16Layout _extra2;
-  ArgU16Layout _extra3;
-  ArgU16Layout _extra4;
-};
-using NondetRegLayout16LayoutArray = NondetRegLayout[16];
-struct ToBits_16_Layout {
-  NondetRegLayout16LayoutArray _super;
-};
-struct BitwiseAndU16Layout {
-  ToBits_16_Layout bitsX;
-  ToBits_16_Layout bitsY;
-};
-struct BitwiseAndLayout {
-  BitwiseAndU16Layout _0;
-  BitwiseAndU16Layout _1;
-};
-struct BitwiseXorLayout {
-  BitwiseAndLayout andXy;
-};
-struct OpXORLayout {
-  BitwiseXorLayout _0;
-};
-struct Misc0Arm2Layout {
-  OpXORLayout _super;
-  ArgU16Layout _extra0;
-  ArgU16Layout _extra1;
-  ArgU16Layout _extra2;
-  ArgU16Layout _extra3;
-  ArgU16Layout _extra4;
-};
-struct BitwiseOrLayout {
-  BitwiseAndLayout andXy;
-};
-struct OpORLayout {
-  BitwiseOrLayout _0;
-};
-struct Misc0Arm3Layout {
-  OpORLayout _super;
-  ArgU16Layout _extra0;
-  ArgU16Layout _extra1;
-  ArgU16Layout _extra2;
-  ArgU16Layout _extra3;
-  ArgU16Layout _extra4;
-};
-struct OpANDLayout {
-  BitwiseAndLayout _0;
-};
-struct Misc0Arm4Layout {
-  OpANDLayout _super;
-  ArgU16Layout _extra0;
-  ArgU16Layout _extra1;
-  ArgU16Layout _extra2;
-  ArgU16Layout _extra3;
-  ArgU16Layout _extra4;
-};
-struct GetSignU32Layout {
-  NondetRegLayout _super;
-  NondetU16RegLayout restTimesTwo;
-};
-struct CmpLessThanLayout {
-  NormalizeU32Layout diff;
-  GetSignU32Layout s1;
-  GetSignU32Layout s2;
-  GetSignU32Layout s3;
-  NondetRegLayout overflow;
-  NondetRegLayout isLessThan;
-};
-struct OpSLTLayout {
-  CmpLessThanLayout cmp;
-};
-struct CmpLessThanUnsignedLayout {
-  NormalizeU32Layout diff;
-};
-struct OpSLTULayout {
-  CmpLessThanUnsignedLayout cmp;
-};
-struct Misc0Arm6Layout {
-  OpSLTULayout _super;
-  ArgU16Layout _extra0;
-  ArgU16Layout _extra1;
-  ArgU16Layout _extra2;
-};
-struct Misc0Arm7Layout {
-  ArgU16Layout _extra0;
-  ArgU16Layout _extra1;
-  ArgU16Layout _extra2;
-  ArgU16Layout _extra3;
-  ArgU16Layout _extra4;
-};
-struct Misc0MiscOutputLayout {
-  Misc0Arm0Layout arm0;
-  Misc0Arm1Layout arm1;
-  Misc0Arm2Layout arm2;
-  Misc0Arm3Layout arm3;
-  Misc0Arm4Layout arm4;
-  OpSLTLayout arm5;
-  Misc0Arm6Layout arm6;
-  Misc0Arm7Layout arm7;
-};
-using ArgU16Layout5LayoutArray = ArgU16Layout[5];
-struct _Arguments_Misc0MiscOutputLayout {
-  ArgU16Layout5LayoutArray argU16;
+  WriteRdLayout _0;
 };
 struct DecoderLayout {
   NondetRegLayout _f7_6;
@@ -223,16 +110,132 @@ struct MiscInputLayout {
   ReadRegLayout rs1;
   ReadRegLayout rs2;
 };
+using ArgU16Layout5LayoutArray = ArgU16Layout[5];
+struct _Arguments_Misc0MiscOutputLayout {
+  ArgU16Layout5LayoutArray argU16;
+};
+struct Misc0MiscOutputArm0Layout {
+  ArgU16Layout _extra0;
+  ArgU16Layout _extra1;
+  ArgU16Layout _extra2;
+  ArgU16Layout _extra3;
+  ArgU16Layout _extra4;
+};
+struct Misc0MiscOutputArm1Layout {
+  ArgU16Layout _extra0;
+  ArgU16Layout _extra1;
+  ArgU16Layout _extra2;
+  ArgU16Layout _extra3;
+  ArgU16Layout _extra4;
+};
+using NondetRegLayout16LayoutArray = NondetRegLayout[16];
+struct ToBits_16_Layout {
+  NondetRegLayout16LayoutArray _super;
+};
+struct BitwiseAndU16Layout {
+  ToBits_16_Layout bitsX;
+  ToBits_16_Layout bitsY;
+};
+struct BitwiseAndLayout {
+  BitwiseAndU16Layout _0;
+  BitwiseAndU16Layout _1;
+};
+struct BitwiseXorLayout {
+  BitwiseAndLayout andXy;
+};
+struct OpXORLayout {
+  BitwiseXorLayout _0;
+};
+struct Misc0MiscOutputArm2Layout {
+  OpXORLayout _super;
+  ArgU16Layout _extra0;
+  ArgU16Layout _extra1;
+  ArgU16Layout _extra2;
+  ArgU16Layout _extra3;
+  ArgU16Layout _extra4;
+};
+struct BitwiseOrLayout {
+  BitwiseAndLayout andXy;
+};
+struct OpORLayout {
+  BitwiseOrLayout _0;
+};
+struct Misc0MiscOutputArm3Layout {
+  OpORLayout _super;
+  ArgU16Layout _extra0;
+  ArgU16Layout _extra1;
+  ArgU16Layout _extra2;
+  ArgU16Layout _extra3;
+  ArgU16Layout _extra4;
+};
+struct OpANDLayout {
+  BitwiseAndLayout _0;
+};
+struct Misc0MiscOutputArm4Layout {
+  OpANDLayout _super;
+  ArgU16Layout _extra0;
+  ArgU16Layout _extra1;
+  ArgU16Layout _extra2;
+  ArgU16Layout _extra3;
+  ArgU16Layout _extra4;
+};
+struct GetSignU32Layout {
+  NondetRegLayout _super;
+  NondetU16RegLayout restTimesTwo;
+};
+struct CmpLessThanLayout {
+  NormalizeU32Layout diff;
+  GetSignU32Layout s1;
+  GetSignU32Layout s2;
+  GetSignU32Layout s3;
+  NondetRegLayout overflow;
+  NondetRegLayout isLessThan;
+};
+struct OpSLTLayout {
+  CmpLessThanLayout cmp;
+};
+struct CmpLessThanUnsignedLayout {
+  NormalizeU32Layout diff;
+};
+struct OpSLTULayout {
+  CmpLessThanUnsignedLayout cmp;
+};
+struct Misc0MiscOutputArm6Layout {
+  OpSLTULayout _super;
+  ArgU16Layout _extra0;
+  ArgU16Layout _extra1;
+  ArgU16Layout _extra2;
+};
+struct Misc0MiscOutputArm7Layout {
+  ArgU16Layout _extra0;
+  ArgU16Layout _extra1;
+  ArgU16Layout _extra2;
+  ArgU16Layout _extra3;
+  ArgU16Layout _extra4;
+};
+struct Misc0MiscOutputLayout {
+  Misc0MiscOutputArm0Layout arm0;
+  Misc0MiscOutputArm1Layout arm1;
+  Misc0MiscOutputArm2Layout arm2;
+  Misc0MiscOutputArm3Layout arm3;
+  Misc0MiscOutputArm4Layout arm4;
+  OpSLTLayout arm5;
+  Misc0MiscOutputArm6Layout arm6;
+  Misc0MiscOutputArm7Layout arm7;
+};
 struct Misc0Layout {
   FinalizeMiscLayout _super;
-  Misc0MiscOutputLayout miscOutput;
-  _Arguments_Misc0MiscOutputLayout _argumentsMiscOutput;
   MiscInputLayout input;
+  _Arguments_Misc0MiscOutputLayout _arguments_Misc0MiscOutput;
+  Misc0MiscOutputLayout miscOutput;
+};
+struct _Arguments_Misc1MiscOutputLayout {
+  ArgU16Layout5LayoutArray argU16;
 };
 struct OpXORILayout {
   BitwiseXorLayout _0;
 };
-struct Misc1Arm0Layout {
+struct Misc1MiscOutputArm0Layout {
   OpXORILayout _super;
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
@@ -243,7 +246,7 @@ struct Misc1Arm0Layout {
 struct OpORILayout {
   BitwiseOrLayout _0;
 };
-struct Misc1Arm1Layout {
+struct Misc1MiscOutputArm1Layout {
   OpORILayout _super;
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
@@ -254,7 +257,7 @@ struct Misc1Arm1Layout {
 struct OpANDILayout {
   BitwiseAndLayout _0;
 };
-struct Misc1Arm2Layout {
+struct Misc1MiscOutputArm2Layout {
   OpANDILayout _super;
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
@@ -268,7 +271,7 @@ struct OpSLTILayout {
 struct OpSLTIULayout {
   CmpLessThanUnsignedLayout cmp;
 };
-struct Misc1Arm4Layout {
+struct Misc1MiscOutputArm4Layout {
   OpSLTIULayout _super;
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
@@ -282,7 +285,7 @@ struct CmpEqualLayout {
 struct OpBEQLayout {
   CmpEqualLayout cmp;
 };
-struct Misc1Arm5Layout {
+struct Misc1MiscOutputArm5Layout {
   OpBEQLayout _super;
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
@@ -293,7 +296,7 @@ struct Misc1Arm5Layout {
 struct OpBNELayout {
   CmpEqualLayout cmp;
 };
-struct Misc1Arm6Layout {
+struct Misc1MiscOutputArm6Layout {
   OpBNELayout _super;
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
@@ -305,23 +308,23 @@ struct OpBLTLayout {
   CmpLessThanLayout cmp;
 };
 struct Misc1MiscOutputLayout {
-  Misc1Arm0Layout arm0;
-  Misc1Arm1Layout arm1;
-  Misc1Arm2Layout arm2;
+  Misc1MiscOutputArm0Layout arm0;
+  Misc1MiscOutputArm1Layout arm1;
+  Misc1MiscOutputArm2Layout arm2;
   OpSLTILayout arm3;
-  Misc1Arm4Layout arm4;
-  Misc1Arm5Layout arm5;
-  Misc1Arm6Layout arm6;
+  Misc1MiscOutputArm4Layout arm4;
+  Misc1MiscOutputArm5Layout arm5;
+  Misc1MiscOutputArm6Layout arm6;
   OpBLTLayout arm7;
-};
-struct _Arguments_Misc1MiscOutputLayout {
-  ArgU16Layout5LayoutArray argU16;
 };
 struct Misc1Layout {
   FinalizeMiscLayout _super;
-  Misc1MiscOutputLayout miscOutput;
-  _Arguments_Misc1MiscOutputLayout _argumentsMiscOutput;
   MiscInputLayout input;
+  _Arguments_Misc1MiscOutputLayout _arguments_Misc1MiscOutput;
+  Misc1MiscOutputLayout miscOutput;
+};
+struct _Arguments_Misc2MiscOutputLayout {
+  ArgU16Layout5LayoutArray argU16;
 };
 struct OpBGELayout {
   CmpLessThanLayout cmp;
@@ -329,7 +332,7 @@ struct OpBGELayout {
 struct OpBLTULayout {
   CmpLessThanUnsignedLayout cmp;
 };
-struct Misc2Arm1Layout {
+struct Misc2MiscOutputArm1Layout {
   OpBLTULayout _super;
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
@@ -338,41 +341,41 @@ struct Misc2Arm1Layout {
 struct OpBGEULayout {
   CmpLessThanUnsignedLayout cmp;
 };
-struct Misc2Arm2Layout {
+struct Misc2MiscOutputArm2Layout {
   OpBGEULayout _super;
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
   ArgU16Layout _extra2;
 };
-struct Misc2Arm3Layout {
+struct Misc2MiscOutputArm3Layout {
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
   ArgU16Layout _extra2;
   ArgU16Layout _extra3;
   ArgU16Layout _extra4;
 };
-struct Misc2Arm4Layout {
+struct Misc2MiscOutputArm4Layout {
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
   ArgU16Layout _extra2;
   ArgU16Layout _extra3;
   ArgU16Layout _extra4;
 };
-struct Misc2Arm5Layout {
+struct Misc2MiscOutputArm5Layout {
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
   ArgU16Layout _extra2;
   ArgU16Layout _extra3;
   ArgU16Layout _extra4;
 };
-struct Misc2Arm6Layout {
+struct Misc2MiscOutputArm6Layout {
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
   ArgU16Layout _extra2;
   ArgU16Layout _extra3;
   ArgU16Layout _extra4;
 };
-struct Misc2Arm7Layout {
+struct Misc2MiscOutputArm7Layout {
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
   ArgU16Layout _extra2;
@@ -381,31 +384,45 @@ struct Misc2Arm7Layout {
 };
 struct Misc2MiscOutputLayout {
   OpBGELayout arm0;
-  Misc2Arm1Layout arm1;
-  Misc2Arm2Layout arm2;
-  Misc2Arm3Layout arm3;
-  Misc2Arm4Layout arm4;
-  Misc2Arm5Layout arm5;
-  Misc2Arm6Layout arm6;
-  Misc2Arm7Layout arm7;
-};
-struct _Arguments_Misc2MiscOutputLayout {
-  ArgU16Layout5LayoutArray argU16;
+  Misc2MiscOutputArm1Layout arm1;
+  Misc2MiscOutputArm2Layout arm2;
+  Misc2MiscOutputArm3Layout arm3;
+  Misc2MiscOutputArm4Layout arm4;
+  Misc2MiscOutputArm5Layout arm5;
+  Misc2MiscOutputArm6Layout arm6;
+  Misc2MiscOutputArm7Layout arm7;
 };
 struct Misc2Layout {
   FinalizeMiscLayout _super;
-  Misc2MiscOutputLayout miscOutput;
-  _Arguments_Misc2MiscOutputLayout _argumentsMiscOutput;
   MiscInputLayout input;
+  _Arguments_Misc2MiscOutputLayout _arguments_Misc2MiscOutput;
+  Misc2MiscOutputLayout miscOutput;
 };
 struct MulInputLayout {
   DecodeInstLayout decoded;
   ReadRegLayout rs1;
   ReadRegLayout rs2;
 };
+using ArgU16Layout6LayoutArray = ArgU16Layout[6];
 struct ArgU8Layout {
   NondetRegLayout count;
   NondetRegLayout val;
+};
+using ArgU8Layout13LayoutArray = ArgU8Layout[13];
+struct _Arguments_Mul0MulOutputLayout {
+  ArgU16Layout6LayoutArray argU16;
+  ArgU8Layout13LayoutArray argU8;
+};
+using NondetRegLayout5LayoutArray = NondetRegLayout[5];
+struct ToBits_5_Layout {
+  NondetRegLayout5LayoutArray _super;
+};
+struct DynPo2Layout {
+  ToBits_5_Layout low5;
+  NondetU16RegLayout checkU16;
+  NondetRegLayout b3;
+  NondetRegLayout low;
+  NondetRegLayout high;
 };
 struct NondetU8RegLayout {
   ArgU8Layout arg;
@@ -441,55 +458,49 @@ struct MultiplyAccumulateLayout {
 struct DoMulLayout {
   MultiplyAccumulateLayout mul;
 };
-using NondetRegLayout5LayoutArray = NondetRegLayout[5];
-struct ToBits_5_Layout {
-  NondetRegLayout5LayoutArray _super;
-};
-struct DynPo2Layout {
-  ToBits_5_Layout low5;
-  NondetU16RegLayout checkU16;
-  NondetRegLayout b3;
-  NondetRegLayout low;
-  NondetRegLayout high;
-};
 struct OpSLLLayout {
-  DoMulLayout _0;
   DynPo2Layout shiftMul;
+  DoMulLayout _0;
 };
 struct OpSLLILayout {
-  DoMulLayout _0;
   DynPo2Layout shiftMul;
+  DoMulLayout _0;
 };
 struct OpMULLayout {
   DoMulLayout _0;
 };
-struct Mul0Arm2Layout {
+struct Mul0MulOutputArm2Layout {
   OpMULLayout _super;
   ArgU16Layout _extra0;
 };
 struct OpMULHLayout {
   DoMulLayout _0;
 };
-struct Mul0Arm3Layout {
+struct Mul0MulOutputArm3Layout {
   OpMULHLayout _super;
   ArgU16Layout _extra0;
 };
 struct OpMULHSULayout {
   DoMulLayout _0;
 };
-struct Mul0Arm4Layout {
+struct Mul0MulOutputArm4Layout {
   OpMULHSULayout _super;
   ArgU16Layout _extra0;
 };
 struct OpMULHULayout {
   DoMulLayout _0;
 };
-struct Mul0Arm5Layout {
+struct Mul0MulOutputArm5Layout {
   OpMULHULayout _super;
   ArgU16Layout _extra0;
 };
-struct Mul0Arm6Layout {
+struct Mul0MulOutputArm6Layout {
   ArgU16Layout _extra0;
+  ArgU16Layout _extra1;
+  ArgU16Layout _extra2;
+  ArgU16Layout _extra3;
+  ArgU16Layout _extra4;
+  ArgU16Layout _extra5;
   ArgU8Layout _extra6;
   ArgU8Layout _extra7;
   ArgU8Layout _extra8;
@@ -503,14 +514,14 @@ struct Mul0Arm6Layout {
   ArgU8Layout _extra16;
   ArgU8Layout _extra17;
   ArgU8Layout _extra18;
-  ArgU16Layout _extra1;
-  ArgU16Layout _extra2;
-  ArgU16Layout _extra3;
-  ArgU16Layout _extra4;
-  ArgU16Layout _extra5;
 };
-struct Mul0Arm7Layout {
+struct Mul0MulOutputArm7Layout {
   ArgU16Layout _extra0;
+  ArgU16Layout _extra1;
+  ArgU16Layout _extra2;
+  ArgU16Layout _extra3;
+  ArgU16Layout _extra4;
+  ArgU16Layout _extra5;
   ArgU8Layout _extra6;
   ArgU8Layout _extra7;
   ArgU8Layout _extra8;
@@ -524,34 +535,33 @@ struct Mul0Arm7Layout {
   ArgU8Layout _extra16;
   ArgU8Layout _extra17;
   ArgU8Layout _extra18;
-  ArgU16Layout _extra1;
-  ArgU16Layout _extra2;
-  ArgU16Layout _extra3;
-  ArgU16Layout _extra4;
-  ArgU16Layout _extra5;
 };
 struct Mul0MulOutputLayout {
   OpSLLLayout arm0;
   OpSLLILayout arm1;
-  Mul0Arm2Layout arm2;
-  Mul0Arm3Layout arm3;
-  Mul0Arm4Layout arm4;
-  Mul0Arm5Layout arm5;
-  Mul0Arm6Layout arm6;
-  Mul0Arm7Layout arm7;
-};
-using ArgU16Layout6LayoutArray = ArgU16Layout[6];
-using ArgU8Layout13LayoutArray = ArgU8Layout[13];
-struct _Arguments_Mul0MulOutputLayout {
-  ArgU16Layout6LayoutArray argU16;
-  ArgU8Layout13LayoutArray argU8;
+  Mul0MulOutputArm2Layout arm2;
+  Mul0MulOutputArm3Layout arm3;
+  Mul0MulOutputArm4Layout arm4;
+  Mul0MulOutputArm5Layout arm5;
+  Mul0MulOutputArm6Layout arm6;
+  Mul0MulOutputArm7Layout arm7;
 };
 struct Mul0Layout {
   MulInputLayout input;
+  _Arguments_Mul0MulOutputLayout _arguments_Mul0MulOutput;
   Mul0MulOutputLayout mulOutput;
   WriteRdLayout _0;
-  _Arguments_Mul0MulOutputLayout _argumentsMulOutput;
   NormalizeU32Layout pcAdd;
+};
+struct DivInputLayout {
+  DecodeInstLayout decoded;
+  ReadRegLayout rs1;
+  ReadRegLayout rs2;
+};
+using ArgU16Layout9LayoutArray = ArgU16Layout[9];
+struct _Arguments_Div0MulOutputLayout {
+  ArgU16Layout9LayoutArray argU16;
+  ArgU8Layout13LayoutArray argU8;
 };
 struct DoDivLayout {
   NondetRegLayout quotLow;
@@ -562,10 +572,10 @@ struct DoDivLayout {
   NondetRegLayout topBitType;
 };
 struct OpSRLLayout {
-  DoDivLayout _0;
   DynPo2Layout shiftMul;
+  DoDivLayout _0;
 };
-struct Div0Arm0Layout {
+struct Div0MulOutputArm0Layout {
   OpSRLLayout _super;
   ArgU16Layout _extra0;
 };
@@ -574,27 +584,27 @@ struct TopBitLayout {
   NondetU16RegLayout rest;
 };
 struct OpSRALayout {
-  DoDivLayout _0;
   DynPo2Layout shiftMul;
   TopBitLayout flip;
+  DoDivLayout _0;
 };
 struct OpSRLILayout {
-  DoDivLayout _0;
   DynPo2Layout shiftMul;
+  DoDivLayout _0;
 };
-struct Div0Arm2Layout {
+struct Div0MulOutputArm2Layout {
   OpSRLILayout _super;
   ArgU16Layout _extra0;
 };
 struct OpSRAILayout {
-  DoDivLayout _0;
   DynPo2Layout shiftMul;
   TopBitLayout flip;
+  DoDivLayout _0;
 };
 struct OpDIVLayout {
   DoDivLayout _0;
 };
-struct Div0Arm4Layout {
+struct Div0MulOutputArm4Layout {
   OpDIVLayout _super;
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
@@ -602,7 +612,7 @@ struct Div0Arm4Layout {
 struct OpDIVULayout {
   DoDivLayout _0;
 };
-struct Div0Arm5Layout {
+struct Div0MulOutputArm5Layout {
   OpDIVULayout _super;
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
@@ -610,7 +620,7 @@ struct Div0Arm5Layout {
 struct OpREMLayout {
   DoDivLayout _0;
 };
-struct Div0Arm6Layout {
+struct Div0MulOutputArm6Layout {
   OpREMLayout _super;
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
@@ -618,36 +628,26 @@ struct Div0Arm6Layout {
 struct OpREMULayout {
   DoDivLayout _0;
 };
-struct Div0Arm7Layout {
+struct Div0MulOutputArm7Layout {
   OpREMULayout _super;
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
 };
 struct Div0MulOutputLayout {
-  Div0Arm0Layout arm0;
+  Div0MulOutputArm0Layout arm0;
   OpSRALayout arm1;
-  Div0Arm2Layout arm2;
+  Div0MulOutputArm2Layout arm2;
   OpSRAILayout arm3;
-  Div0Arm4Layout arm4;
-  Div0Arm5Layout arm5;
-  Div0Arm6Layout arm6;
-  Div0Arm7Layout arm7;
-};
-struct DivInputLayout {
-  DecodeInstLayout decoded;
-  ReadRegLayout rs1;
-  ReadRegLayout rs2;
-};
-using ArgU16Layout9LayoutArray = ArgU16Layout[9];
-struct _Arguments_Div0MulOutputLayout {
-  ArgU8Layout13LayoutArray argU8;
-  ArgU16Layout9LayoutArray argU16;
+  Div0MulOutputArm4Layout arm4;
+  Div0MulOutputArm5Layout arm5;
+  Div0MulOutputArm6Layout arm6;
+  Div0MulOutputArm7Layout arm7;
 };
 struct Div0Layout {
-  Div0MulOutputLayout mulOutput;
   DivInputLayout input;
+  _Arguments_Div0MulOutputLayout _arguments_Div0MulOutput;
+  Div0MulOutputLayout mulOutput;
   WriteRdLayout _0;
-  _Arguments_Div0MulOutputLayout _argumentsMulOutput;
   NormalizeU32Layout pcAdd;
 };
 struct AddrDecomposeBitsLayout {
@@ -660,9 +660,13 @@ struct AddrDecomposeBitsLayout {
 struct MemLoadInputLayout {
   DecodeInstLayout decoded;
   ReadRegLayout rs1;
-  MemoryReadLayout data;
-  AddrDecomposeBitsLayout addr;
   NormalizeU32Layout addrU32;
+  AddrDecomposeBitsLayout addr;
+  MemoryReadLayout data;
+};
+using ArgU8Layout3LayoutArray = ArgU8Layout[3];
+struct _Arguments_Mem0OutputLayout {
+  ArgU8Layout3LayoutArray argU8;
 };
 struct SplitWordLayout {
   NondetU8RegLayout byte0;
@@ -670,19 +674,19 @@ struct SplitWordLayout {
 };
 struct OpLBLayout {
   SplitWordLayout bytes;
-  NondetU8RegLayout low7x2;
   NondetRegLayout highBit;
+  NondetU8RegLayout low7x2;
 };
 struct OpLHLayout {
-  NondetU8RegLayout low15x2;
   NondetRegLayout highBit;
+  NondetU8RegLayout low15x2;
 };
-struct Mem0Arm1Layout {
+struct Mem0OutputArm1Layout {
   OpLHLayout _super;
   ArgU8Layout _extra0;
   ArgU8Layout _extra1;
 };
-struct Mem0Arm2Layout {
+struct Mem0OutputArm2Layout {
   ArgU8Layout _extra0;
   ArgU8Layout _extra1;
   ArgU8Layout _extra2;
@@ -690,103 +694,100 @@ struct Mem0Arm2Layout {
 struct OpLBULayout {
   SplitWordLayout bytes;
 };
-struct Mem0Arm3Layout {
+struct Mem0OutputArm3Layout {
   OpLBULayout _super;
   ArgU8Layout _extra0;
 };
-struct Mem0Arm4Layout {
+struct Mem0OutputArm4Layout {
   ArgU8Layout _extra0;
   ArgU8Layout _extra1;
   ArgU8Layout _extra2;
 };
-struct Mem0Arm5Layout {
+struct Mem0OutputArm5Layout {
   ArgU8Layout _extra0;
   ArgU8Layout _extra1;
   ArgU8Layout _extra2;
 };
-struct Mem0Arm6Layout {
+struct Mem0OutputArm6Layout {
   ArgU8Layout _extra0;
   ArgU8Layout _extra1;
   ArgU8Layout _extra2;
 };
-struct Mem0Arm7Layout {
+struct Mem0OutputArm7Layout {
   ArgU8Layout _extra0;
   ArgU8Layout _extra1;
   ArgU8Layout _extra2;
 };
 struct Mem0OutputLayout {
   OpLBLayout arm0;
-  Mem0Arm1Layout arm1;
-  Mem0Arm2Layout arm2;
-  Mem0Arm3Layout arm3;
-  Mem0Arm4Layout arm4;
-  Mem0Arm5Layout arm5;
-  Mem0Arm6Layout arm6;
-  Mem0Arm7Layout arm7;
-};
-using ArgU8Layout3LayoutArray = ArgU8Layout[3];
-struct _Arguments_Mem0OutputLayout {
-  ArgU8Layout3LayoutArray argU8;
+  Mem0OutputArm1Layout arm1;
+  Mem0OutputArm2Layout arm2;
+  Mem0OutputArm3Layout arm3;
+  Mem0OutputArm4Layout arm4;
+  Mem0OutputArm5Layout arm5;
+  Mem0OutputArm6Layout arm6;
+  Mem0OutputArm7Layout arm7;
 };
 struct Mem0Layout {
   MemLoadInputLayout input;
-  WriteRdLayout _0;
+  _Arguments_Mem0OutputLayout _arguments_Mem0Output;
   Mem0OutputLayout output;
-  _Arguments_Mem0OutputLayout _argumentsOutput;
+  WriteRdLayout _0;
   NormalizeU32Layout pcAdd;
 };
 struct MemStoreInputLayout {
   DecodeInstLayout decoded;
   ReadRegLayout rs1;
   ReadRegLayout rs2;
-  MemoryReadLayout data;
-  AddrDecomposeBitsLayout addr;
   NormalizeU32Layout addrU32;
+  AddrDecomposeBitsLayout addr;
+  MemoryReadLayout data;
 };
-struct MemStoreFinalizeLayout {
-  MemoryWriteLayout _0;
+using ArgU8Layout4LayoutArray = ArgU8Layout[4];
+struct _Arguments_Mem1OutputLayout {
+  ArgU8Layout4LayoutArray argU8;
 };
 struct OpSBLayout {
   SplitWordLayout origBytes;
   SplitWordLayout newBytes;
 };
-struct Mem1Arm1Layout {
+struct Mem1OutputArm1Layout {
   ArgU8Layout _extra0;
   ArgU8Layout _extra1;
   ArgU8Layout _extra2;
   ArgU8Layout _extra3;
 };
-struct Mem1Arm2Layout {
+struct Mem1OutputArm2Layout {
   ArgU8Layout _extra0;
   ArgU8Layout _extra1;
   ArgU8Layout _extra2;
   ArgU8Layout _extra3;
 };
-struct Mem1Arm3Layout {
+struct Mem1OutputArm3Layout {
   ArgU8Layout _extra0;
   ArgU8Layout _extra1;
   ArgU8Layout _extra2;
   ArgU8Layout _extra3;
 };
-struct Mem1Arm4Layout {
+struct Mem1OutputArm4Layout {
   ArgU8Layout _extra0;
   ArgU8Layout _extra1;
   ArgU8Layout _extra2;
   ArgU8Layout _extra3;
 };
-struct Mem1Arm5Layout {
+struct Mem1OutputArm5Layout {
   ArgU8Layout _extra0;
   ArgU8Layout _extra1;
   ArgU8Layout _extra2;
   ArgU8Layout _extra3;
 };
-struct Mem1Arm6Layout {
+struct Mem1OutputArm6Layout {
   ArgU8Layout _extra0;
   ArgU8Layout _extra1;
   ArgU8Layout _extra2;
   ArgU8Layout _extra3;
 };
-struct Mem1Arm7Layout {
+struct Mem1OutputArm7Layout {
   ArgU8Layout _extra0;
   ArgU8Layout _extra1;
   ArgU8Layout _extra2;
@@ -794,23 +795,22 @@ struct Mem1Arm7Layout {
 };
 struct Mem1OutputLayout {
   OpSBLayout arm0;
-  Mem1Arm1Layout arm1;
-  Mem1Arm2Layout arm2;
-  Mem1Arm3Layout arm3;
-  Mem1Arm4Layout arm4;
-  Mem1Arm5Layout arm5;
-  Mem1Arm6Layout arm6;
-  Mem1Arm7Layout arm7;
+  Mem1OutputArm1Layout arm1;
+  Mem1OutputArm2Layout arm2;
+  Mem1OutputArm3Layout arm3;
+  Mem1OutputArm4Layout arm4;
+  Mem1OutputArm5Layout arm5;
+  Mem1OutputArm6Layout arm6;
+  Mem1OutputArm7Layout arm7;
 };
-using ArgU8Layout4LayoutArray = ArgU8Layout[4];
-struct _Arguments_Mem1OutputLayout {
-  ArgU8Layout4LayoutArray argU8;
+struct MemStoreFinalizeLayout {
+  MemoryWriteLayout _0;
 };
 struct Mem1Layout {
   MemStoreInputLayout input;
-  MemStoreFinalizeLayout _0;
+  _Arguments_Mem1OutputLayout _arguments_Mem1Output;
   Mem1OutputLayout output;
-  _Arguments_Mem1OutputLayout _argumentsOutput;
+  MemStoreFinalizeLayout _0;
   NormalizeU32Layout pcAdd;
 };
 struct MemoryPageInLayout {
@@ -821,10 +821,34 @@ struct ControlLoadRoot__0_SuperLayout {
 };
 using ControlLoadRoot__0_SuperLayout8LayoutArray = ControlLoadRoot__0_SuperLayout[8];
 struct ControlLoadRootLayout {
-  ControlLoadRoot__0_SuperLayout8LayoutArray _0;
+  ControlLoadRoot__0_SuperLayout8LayoutArray _1;
 };
-struct Control0Arm0Layout {
+struct Control0_SuperArm0Layout {
   ControlLoadRootLayout _super;
+  CycleArgLayout _extra0;
+  CycleArgLayout _extra1;
+  CycleArgLayout _extra2;
+  CycleArgLayout _extra3;
+  CycleArgLayout _extra4;
+  CycleArgLayout _extra5;
+  CycleArgLayout _extra6;
+  CycleArgLayout _extra7;
+  ArgU16Layout _extra8;
+  ArgU16Layout _extra9;
+  ArgU16Layout _extra10;
+  ArgU16Layout _extra11;
+  ArgU16Layout _extra12;
+  ArgU16Layout _extra13;
+  ArgU16Layout _extra14;
+  ArgU16Layout _extra15;
+  ArgU16Layout _extra16;
+  ArgU16Layout _extra17;
+  ArgU16Layout _extra18;
+  ArgU16Layout _extra19;
+  ArgU16Layout _extra20;
+  ArgU16Layout _extra21;
+  ArgU16Layout _extra22;
+  ArgU16Layout _extra23;
   ArgU8Layout _extra24;
   ArgU8Layout _extra25;
   ArgU8Layout _extra26;
@@ -841,37 +865,13 @@ struct Control0Arm0Layout {
   ArgU8Layout _extra37;
   ArgU8Layout _extra38;
   ArgU8Layout _extra39;
-  ArgU16Layout _extra8;
-  ArgU16Layout _extra9;
-  ArgU16Layout _extra10;
-  ArgU16Layout _extra11;
-  ArgU16Layout _extra12;
-  ArgU16Layout _extra13;
-  ArgU16Layout _extra14;
-  ArgU16Layout _extra15;
-  ArgU16Layout _extra16;
-  ArgU16Layout _extra17;
-  ArgU16Layout _extra18;
-  ArgU16Layout _extra19;
-  ArgU16Layout _extra20;
-  CycleArgLayout _extra0;
-  CycleArgLayout _extra1;
-  CycleArgLayout _extra2;
-  CycleArgLayout _extra3;
-  ArgU16Layout _extra21;
-  ArgU16Layout _extra22;
-  ArgU16Layout _extra23;
-  CycleArgLayout _extra4;
-  CycleArgLayout _extra5;
-  CycleArgLayout _extra6;
-  CycleArgLayout _extra7;
 };
-struct ControlResumeArm0_SuperLayout {
+struct ControlResume_SuperArm0_SuperLayout {
   MemoryReadLayout pc;
   MemoryReadLayout mode;
 };
-struct ControlResumeArm0Layout {
-  ControlResumeArm0_SuperLayout _super;
+struct ControlResume_SuperArm0Layout {
+  ControlResume_SuperArm0_SuperLayout _super;
   MemoryArgLayout _extra0;
   MemoryArgLayout _extra1;
   MemoryArgLayout _extra2;
@@ -891,16 +891,16 @@ struct ControlResumeArm0Layout {
   CycleArgLayout _extra16;
   CycleArgLayout _extra17;
 };
-struct ControlResumeArm1_Super__0_SuperLayout {
+struct ControlResume_SuperArm1_Super__0_SuperLayout {
   MemoryWriteLayout _0;
 };
-using ControlResumeArm1_Super__0_SuperLayout8LayoutArray = ControlResumeArm1_Super__0_SuperLayout[8];
-struct ControlResumeArm1_SuperLayout {
-  ControlResumeArm1_Super__0_SuperLayout8LayoutArray _0;
+using ControlResume_SuperArm1_Super__0_SuperLayout8LayoutArray = ControlResume_SuperArm1_Super__0_SuperLayout[8];
+struct ControlResume_SuperArm1_SuperLayout {
+  ControlResume_SuperArm1_Super__0_SuperLayout8LayoutArray _1;
 };
 struct ControlResume_SuperLayout {
-  ControlResumeArm0Layout arm0;
-  ControlResumeArm1_SuperLayout arm1;
+  ControlResume_SuperArm0Layout arm0;
+  ControlResume_SuperArm1_SuperLayout arm1;
 };
 using MemoryArgLayout16LayoutArray = MemoryArgLayout[16];
 using CycleArgLayout8LayoutArray = CycleArgLayout[8];
@@ -911,26 +911,10 @@ struct _Arguments_ControlResume_SuperLayout {
 struct ControlResumeLayout {
   ControlResume_SuperLayout _super;
   IsZeroLayout pcZero;
-  _Arguments_ControlResume_SuperLayout _arguments_Super;
+  _Arguments_ControlResume_SuperLayout _arguments_ControlResume_Super;
 };
-struct Control0Arm1Layout {
+struct Control0_SuperArm1Layout {
   ControlResumeLayout _super;
-  ArgU8Layout _extra16;
-  ArgU8Layout _extra17;
-  ArgU8Layout _extra18;
-  ArgU8Layout _extra19;
-  ArgU8Layout _extra20;
-  ArgU8Layout _extra21;
-  ArgU8Layout _extra22;
-  ArgU8Layout _extra23;
-  ArgU8Layout _extra24;
-  ArgU8Layout _extra25;
-  ArgU8Layout _extra26;
-  ArgU8Layout _extra27;
-  ArgU8Layout _extra28;
-  ArgU8Layout _extra29;
-  ArgU8Layout _extra30;
-  ArgU8Layout _extra31;
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
   ArgU16Layout _extra2;
@@ -947,18 +931,59 @@ struct Control0Arm1Layout {
   ArgU16Layout _extra13;
   ArgU16Layout _extra14;
   ArgU16Layout _extra15;
+  ArgU8Layout _extra16;
+  ArgU8Layout _extra17;
+  ArgU8Layout _extra18;
+  ArgU8Layout _extra19;
+  ArgU8Layout _extra20;
+  ArgU8Layout _extra21;
+  ArgU8Layout _extra22;
+  ArgU8Layout _extra23;
+  ArgU8Layout _extra24;
+  ArgU8Layout _extra25;
+  ArgU8Layout _extra26;
+  ArgU8Layout _extra27;
+  ArgU8Layout _extra28;
+  ArgU8Layout _extra29;
+  ArgU8Layout _extra30;
+  ArgU8Layout _extra31;
 };
 struct ControlUserECALLLayout {
-  MemoryWriteLayout _1;
-  MemoryReadLayout loadInst;
-  U16RegLayout _0;
   NondetRegLayout safeMode;
-  MemoryReadLayout dispatchIdx;
-  MemoryReadLayout newPcAddr;
   AddrDecomposeBitsLayout pcAddr;
+  MemoryReadLayout loadInst;
+  MemoryReadLayout dispatchIdx;
+  U16RegLayout _0;
+  MemoryReadLayout newPcAddr;
+  MemoryWriteLayout _1;
 };
-struct Control0Arm2Layout {
+struct Control0_SuperArm2Layout {
   ControlUserECALLLayout _super;
+  MemoryArgLayout _extra0;
+  MemoryArgLayout _extra1;
+  MemoryArgLayout _extra2;
+  MemoryArgLayout _extra3;
+  MemoryArgLayout _extra4;
+  MemoryArgLayout _extra5;
+  MemoryArgLayout _extra6;
+  MemoryArgLayout _extra7;
+  CycleArgLayout _extra8;
+  CycleArgLayout _extra9;
+  CycleArgLayout _extra10;
+  CycleArgLayout _extra11;
+  ArgU16Layout _extra12;
+  ArgU16Layout _extra13;
+  ArgU16Layout _extra14;
+  ArgU16Layout _extra15;
+  ArgU16Layout _extra16;
+  ArgU16Layout _extra17;
+  ArgU16Layout _extra18;
+  ArgU16Layout _extra19;
+  ArgU16Layout _extra20;
+  ArgU16Layout _extra21;
+  ArgU16Layout _extra22;
+  ArgU16Layout _extra23;
+  ArgU16Layout _extra24;
   ArgU8Layout _extra25;
   ArgU8Layout _extra26;
   ArgU8Layout _extra27;
@@ -975,23 +1000,16 @@ struct Control0Arm2Layout {
   ArgU8Layout _extra38;
   ArgU8Layout _extra39;
   ArgU8Layout _extra40;
-  ArgU16Layout _extra12;
-  ArgU16Layout _extra13;
-  ArgU16Layout _extra14;
-  ArgU16Layout _extra15;
-  ArgU16Layout _extra16;
-  ArgU16Layout _extra17;
-  ArgU16Layout _extra18;
-  ArgU16Layout _extra19;
-  ArgU16Layout _extra20;
-  ArgU16Layout _extra21;
-  ArgU16Layout _extra22;
-  ArgU16Layout _extra23;
-  ArgU16Layout _extra24;
-  CycleArgLayout _extra8;
-  CycleArgLayout _extra9;
-  CycleArgLayout _extra10;
-  CycleArgLayout _extra11;
+};
+struct ControlMRETLayout {
+  NondetRegLayout safeMode;
+  AddrDecomposeBitsLayout pcAddr;
+  MemoryReadLayout loadInst;
+  MemoryReadLayout pc;
+  NormalizeU32Layout pcAdd;
+};
+struct Control0_SuperArm3Layout {
+  ControlMRETLayout _super;
   MemoryArgLayout _extra0;
   MemoryArgLayout _extra1;
   MemoryArgLayout _extra2;
@@ -1000,16 +1018,28 @@ struct Control0Arm2Layout {
   MemoryArgLayout _extra5;
   MemoryArgLayout _extra6;
   MemoryArgLayout _extra7;
-};
-struct ControlMRETLayout {
-  NormalizeU32Layout pcAdd;
-  NondetRegLayout safeMode;
-  MemoryReadLayout loadInst;
-  MemoryReadLayout pc;
-  AddrDecomposeBitsLayout pcAddr;
-};
-struct Control0Arm3Layout {
-  ControlMRETLayout _super;
+  MemoryArgLayout _extra8;
+  MemoryArgLayout _extra9;
+  MemoryArgLayout _extra10;
+  MemoryArgLayout _extra11;
+  CycleArgLayout _extra12;
+  CycleArgLayout _extra13;
+  CycleArgLayout _extra14;
+  CycleArgLayout _extra15;
+  CycleArgLayout _extra16;
+  CycleArgLayout _extra17;
+  ArgU16Layout _extra18;
+  ArgU16Layout _extra19;
+  ArgU16Layout _extra20;
+  ArgU16Layout _extra21;
+  ArgU16Layout _extra22;
+  ArgU16Layout _extra23;
+  ArgU16Layout _extra24;
+  ArgU16Layout _extra25;
+  ArgU16Layout _extra26;
+  ArgU16Layout _extra27;
+  ArgU16Layout _extra28;
+  ArgU16Layout _extra29;
   ArgU8Layout _extra30;
   ArgU8Layout _extra31;
   ArgU8Layout _extra32;
@@ -1026,48 +1056,18 @@ struct Control0Arm3Layout {
   ArgU8Layout _extra43;
   ArgU8Layout _extra44;
   ArgU8Layout _extra45;
-  ArgU16Layout _extra18;
-  ArgU16Layout _extra19;
-  ArgU16Layout _extra20;
-  ArgU16Layout _extra21;
-  ArgU16Layout _extra22;
-  ArgU16Layout _extra23;
-  ArgU16Layout _extra24;
-  ArgU16Layout _extra25;
-  ArgU16Layout _extra26;
-  ArgU16Layout _extra27;
-  ArgU16Layout _extra28;
-  ArgU16Layout _extra29;
-  CycleArgLayout _extra12;
-  CycleArgLayout _extra13;
-  CycleArgLayout _extra14;
-  CycleArgLayout _extra15;
-  MemoryArgLayout _extra0;
-  MemoryArgLayout _extra1;
-  MemoryArgLayout _extra2;
-  MemoryArgLayout _extra3;
-  MemoryArgLayout _extra4;
-  MemoryArgLayout _extra5;
-  MemoryArgLayout _extra6;
-  MemoryArgLayout _extra7;
-  CycleArgLayout _extra16;
-  CycleArgLayout _extra17;
-  MemoryArgLayout _extra8;
-  MemoryArgLayout _extra9;
-  MemoryArgLayout _extra10;
-  MemoryArgLayout _extra11;
 };
 using MemoryReadLayout8LayoutArray = MemoryReadLayout[8];
-struct ControlSuspendArm0_SuperLayout {
-  MemoryReadLayout8LayoutArray _0;
+struct ControlSuspend_SuperArm0_SuperLayout {
+  MemoryReadLayout8LayoutArray _1;
 };
-struct ControlSuspendArm1_SuperLayout {
+struct ControlSuspend_SuperArm1_SuperLayout {
+  NondetRegLayout state;
   MemoryWriteLayout _0;
   MemoryWriteLayout _1;
-  NondetRegLayout state;
 };
-struct ControlSuspendArm1Layout {
-  ControlSuspendArm1_SuperLayout _super;
+struct ControlSuspend_SuperArm1Layout {
+  ControlSuspend_SuperArm1_SuperLayout _super;
   MemoryArgLayout _extra0;
   MemoryArgLayout _extra1;
   MemoryArgLayout _extra2;
@@ -1088,8 +1088,8 @@ struct ControlSuspendArm1Layout {
   CycleArgLayout _extra17;
 };
 struct ControlSuspend_SuperLayout {
-  ControlSuspendArm0_SuperLayout arm0;
-  ControlSuspendArm1Layout arm1;
+  ControlSuspend_SuperArm0_SuperLayout arm0;
+  ControlSuspend_SuperArm1Layout arm1;
 };
 struct _Arguments_ControlSuspend_SuperLayout {
   MemoryArgLayout16LayoutArray memoryArg;
@@ -1098,26 +1098,10 @@ struct _Arguments_ControlSuspend_SuperLayout {
 struct ControlSuspendLayout {
   ControlSuspend_SuperLayout _super;
   IsZeroLayout pcZero;
-  _Arguments_ControlSuspend_SuperLayout _arguments_Super;
+  _Arguments_ControlSuspend_SuperLayout _arguments_ControlSuspend_Super;
 };
-struct Control0Arm4Layout {
+struct Control0_SuperArm4Layout {
   ControlSuspendLayout _super;
-  ArgU8Layout _extra16;
-  ArgU8Layout _extra17;
-  ArgU8Layout _extra18;
-  ArgU8Layout _extra19;
-  ArgU8Layout _extra20;
-  ArgU8Layout _extra21;
-  ArgU8Layout _extra22;
-  ArgU8Layout _extra23;
-  ArgU8Layout _extra24;
-  ArgU8Layout _extra25;
-  ArgU8Layout _extra26;
-  ArgU8Layout _extra27;
-  ArgU8Layout _extra28;
-  ArgU8Layout _extra29;
-  ArgU8Layout _extra30;
-  ArgU8Layout _extra31;
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
   ArgU16Layout _extra2;
@@ -1134,6 +1118,22 @@ struct Control0Arm4Layout {
   ArgU16Layout _extra13;
   ArgU16Layout _extra14;
   ArgU16Layout _extra15;
+  ArgU8Layout _extra16;
+  ArgU8Layout _extra17;
+  ArgU8Layout _extra18;
+  ArgU8Layout _extra19;
+  ArgU8Layout _extra20;
+  ArgU8Layout _extra21;
+  ArgU8Layout _extra22;
+  ArgU8Layout _extra23;
+  ArgU8Layout _extra24;
+  ArgU8Layout _extra25;
+  ArgU8Layout _extra26;
+  ArgU8Layout _extra27;
+  ArgU8Layout _extra28;
+  ArgU8Layout _extra29;
+  ArgU8Layout _extra30;
+  ArgU8Layout _extra31;
 };
 struct MemoryPageOutLayout {
   MemoryIOLayout io;
@@ -1141,26 +1141,10 @@ struct MemoryPageOutLayout {
 };
 using MemoryPageOutLayout8LayoutArray = MemoryPageOutLayout[8];
 struct ControlStoreRootLayout {
-  MemoryPageOutLayout8LayoutArray _0;
+  MemoryPageOutLayout8LayoutArray _1;
 };
-struct Control0Arm5Layout {
+struct Control0_SuperArm5Layout {
   ControlStoreRootLayout _super;
-  ArgU8Layout _extra16;
-  ArgU8Layout _extra17;
-  ArgU8Layout _extra18;
-  ArgU8Layout _extra19;
-  ArgU8Layout _extra20;
-  ArgU8Layout _extra21;
-  ArgU8Layout _extra22;
-  ArgU8Layout _extra23;
-  ArgU8Layout _extra24;
-  ArgU8Layout _extra25;
-  ArgU8Layout _extra26;
-  ArgU8Layout _extra27;
-  ArgU8Layout _extra28;
-  ArgU8Layout _extra29;
-  ArgU8Layout _extra30;
-  ArgU8Layout _extra31;
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
   ArgU16Layout _extra2;
@@ -1177,17 +1161,33 @@ struct Control0Arm5Layout {
   ArgU16Layout _extra13;
   ArgU16Layout _extra14;
   ArgU16Layout _extra15;
+  ArgU8Layout _extra16;
+  ArgU8Layout _extra17;
+  ArgU8Layout _extra18;
+  ArgU8Layout _extra19;
+  ArgU8Layout _extra20;
+  ArgU8Layout _extra21;
+  ArgU8Layout _extra22;
+  ArgU8Layout _extra23;
+  ArgU8Layout _extra24;
+  ArgU8Layout _extra25;
+  ArgU8Layout _extra26;
+  ArgU8Layout _extra27;
+  ArgU8Layout _extra28;
+  ArgU8Layout _extra29;
+  ArgU8Layout _extra30;
+  ArgU8Layout _extra31;
 };
-struct ControlTableArm0_Super__0_SuperLayout {
+struct ControlTable_SuperArm0_Super__0_SuperLayout {
   ArgU16Layout arg;
 };
-using ControlTableArm0_Super__0_SuperLayout16LayoutArray = ControlTableArm0_Super__0_SuperLayout[16];
-struct ControlTableArm0_SuperLayout {
+using ControlTable_SuperArm0_Super__0_SuperLayout16LayoutArray = ControlTable_SuperArm0_Super__0_SuperLayout[16];
+struct ControlTable_SuperArm0_SuperLayout {
+  ControlTable_SuperArm0_Super__0_SuperLayout16LayoutArray _1;
   IsZeroLayout done;
-  ControlTableArm0_Super__0_SuperLayout16LayoutArray _0;
 };
-struct ControlTableArm0Layout {
-  ControlTableArm0_SuperLayout _super;
+struct ControlTable_SuperArm0Layout {
+  ControlTable_SuperArm0_SuperLayout _super;
   ArgU8Layout _extra0;
   ArgU8Layout _extra1;
   ArgU8Layout _extra2;
@@ -1205,16 +1205,16 @@ struct ControlTableArm0Layout {
   ArgU8Layout _extra14;
   ArgU8Layout _extra15;
 };
-struct ControlTableArm1_Super__0_SuperLayout {
+struct ControlTable_SuperArm1_Super__0_SuperLayout {
   ArgU8Layout arg;
 };
-using ControlTableArm1_Super__0_SuperLayout16LayoutArray = ControlTableArm1_Super__0_SuperLayout[16];
-struct ControlTableArm1_SuperLayout {
+using ControlTable_SuperArm1_Super__0_SuperLayout16LayoutArray = ControlTable_SuperArm1_Super__0_SuperLayout[16];
+struct ControlTable_SuperArm1_SuperLayout {
+  ControlTable_SuperArm1_Super__0_SuperLayout16LayoutArray _1;
   IsZeroLayout done;
-  ControlTableArm1_Super__0_SuperLayout16LayoutArray _0;
 };
-struct ControlTableArm1Layout {
-  ControlTableArm1_SuperLayout _super;
+struct ControlTable_SuperArm1Layout {
+  ControlTable_SuperArm1_SuperLayout _super;
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
   ArgU16Layout _extra2;
@@ -1233,8 +1233,8 @@ struct ControlTableArm1Layout {
   ArgU16Layout _extra15;
 };
 struct ControlTable_SuperLayout {
-  ControlTableArm0Layout arm0;
-  ControlTableArm1Layout arm1;
+  ControlTable_SuperArm0Layout arm0;
+  ControlTable_SuperArm1Layout arm1;
 };
 using ArgU16Layout16LayoutArray = ArgU16Layout[16];
 using ArgU8Layout16LayoutArray = ArgU8Layout[16];
@@ -1244,16 +1244,12 @@ struct _Arguments_ControlTable_SuperLayout {
 };
 struct ControlTableLayout {
   ControlTable_SuperLayout _super;
-  _Arguments_ControlTable_SuperLayout _arguments_Super;
   NondetRegLayout entry;
   NondetRegLayout mode;
+  _Arguments_ControlTable_SuperLayout _arguments_ControlTable_Super;
 };
-struct Control0Arm6Layout {
+struct Control0_SuperArm6Layout {
   ControlTableLayout _super;
-  CycleArgLayout _extra16;
-  CycleArgLayout _extra17;
-  CycleArgLayout _extra18;
-  CycleArgLayout _extra19;
   MemoryArgLayout _extra0;
   MemoryArgLayout _extra1;
   MemoryArgLayout _extra2;
@@ -1262,20 +1258,64 @@ struct Control0Arm6Layout {
   MemoryArgLayout _extra5;
   MemoryArgLayout _extra6;
   MemoryArgLayout _extra7;
-  CycleArgLayout _extra20;
-  CycleArgLayout _extra21;
   MemoryArgLayout _extra8;
   MemoryArgLayout _extra9;
   MemoryArgLayout _extra10;
   MemoryArgLayout _extra11;
-  CycleArgLayout _extra22;
-  CycleArgLayout _extra23;
   MemoryArgLayout _extra12;
   MemoryArgLayout _extra13;
   MemoryArgLayout _extra14;
   MemoryArgLayout _extra15;
+  CycleArgLayout _extra16;
+  CycleArgLayout _extra17;
+  CycleArgLayout _extra18;
+  CycleArgLayout _extra19;
+  CycleArgLayout _extra20;
+  CycleArgLayout _extra21;
+  CycleArgLayout _extra22;
+  CycleArgLayout _extra23;
 };
-struct Control0Arm7Layout {
+struct Control0_SuperArm7Layout {
+  MemoryArgLayout _extra0;
+  MemoryArgLayout _extra1;
+  MemoryArgLayout _extra2;
+  MemoryArgLayout _extra3;
+  MemoryArgLayout _extra4;
+  MemoryArgLayout _extra5;
+  MemoryArgLayout _extra6;
+  MemoryArgLayout _extra7;
+  MemoryArgLayout _extra8;
+  MemoryArgLayout _extra9;
+  MemoryArgLayout _extra10;
+  MemoryArgLayout _extra11;
+  MemoryArgLayout _extra12;
+  MemoryArgLayout _extra13;
+  MemoryArgLayout _extra14;
+  MemoryArgLayout _extra15;
+  CycleArgLayout _extra16;
+  CycleArgLayout _extra17;
+  CycleArgLayout _extra18;
+  CycleArgLayout _extra19;
+  CycleArgLayout _extra20;
+  CycleArgLayout _extra21;
+  CycleArgLayout _extra22;
+  CycleArgLayout _extra23;
+  ArgU16Layout _extra24;
+  ArgU16Layout _extra25;
+  ArgU16Layout _extra26;
+  ArgU16Layout _extra27;
+  ArgU16Layout _extra28;
+  ArgU16Layout _extra29;
+  ArgU16Layout _extra30;
+  ArgU16Layout _extra31;
+  ArgU16Layout _extra32;
+  ArgU16Layout _extra33;
+  ArgU16Layout _extra34;
+  ArgU16Layout _extra35;
+  ArgU16Layout _extra36;
+  ArgU16Layout _extra37;
+  ArgU16Layout _extra38;
+  ArgU16Layout _extra39;
   ArgU8Layout _extra40;
   ArgU8Layout _extra41;
   ArgU8Layout _extra42;
@@ -1292,56 +1332,16 @@ struct Control0Arm7Layout {
   ArgU8Layout _extra53;
   ArgU8Layout _extra54;
   ArgU8Layout _extra55;
-  ArgU16Layout _extra24;
-  ArgU16Layout _extra25;
-  ArgU16Layout _extra26;
-  ArgU16Layout _extra27;
-  ArgU16Layout _extra28;
-  ArgU16Layout _extra29;
-  ArgU16Layout _extra30;
-  ArgU16Layout _extra31;
-  ArgU16Layout _extra32;
-  ArgU16Layout _extra33;
-  ArgU16Layout _extra34;
-  ArgU16Layout _extra35;
-  ArgU16Layout _extra36;
-  CycleArgLayout _extra16;
-  CycleArgLayout _extra17;
-  CycleArgLayout _extra18;
-  CycleArgLayout _extra19;
-  ArgU16Layout _extra37;
-  ArgU16Layout _extra38;
-  ArgU16Layout _extra39;
-  MemoryArgLayout _extra0;
-  MemoryArgLayout _extra1;
-  MemoryArgLayout _extra2;
-  MemoryArgLayout _extra3;
-  MemoryArgLayout _extra4;
-  MemoryArgLayout _extra5;
-  MemoryArgLayout _extra6;
-  MemoryArgLayout _extra7;
-  CycleArgLayout _extra20;
-  CycleArgLayout _extra21;
-  MemoryArgLayout _extra8;
-  MemoryArgLayout _extra9;
-  MemoryArgLayout _extra10;
-  MemoryArgLayout _extra11;
-  CycleArgLayout _extra22;
-  CycleArgLayout _extra23;
-  MemoryArgLayout _extra12;
-  MemoryArgLayout _extra13;
-  MemoryArgLayout _extra14;
-  MemoryArgLayout _extra15;
 };
 struct Control0_SuperLayout {
-  Control0Arm0Layout arm0;
-  Control0Arm1Layout arm1;
-  Control0Arm2Layout arm2;
-  Control0Arm3Layout arm3;
-  Control0Arm4Layout arm4;
-  Control0Arm5Layout arm5;
-  Control0Arm6Layout arm6;
-  Control0Arm7Layout arm7;
+  Control0_SuperArm0Layout arm0;
+  Control0_SuperArm1Layout arm1;
+  Control0_SuperArm2Layout arm2;
+  Control0_SuperArm3Layout arm3;
+  Control0_SuperArm4Layout arm4;
+  Control0_SuperArm5Layout arm5;
+  Control0_SuperArm6Layout arm6;
+  Control0_SuperArm7Layout arm7;
 };
 struct _Arguments_Control0_SuperLayout {
   MemoryArgLayout16LayoutArray memoryArg;
@@ -1352,7 +1352,15 @@ struct _Arguments_Control0_SuperLayout {
 struct Control0Layout {
   Control0_SuperLayout _super;
   CycleArgLayout arg;
-  _Arguments_Control0_SuperLayout _arguments_Super;
+  _Arguments_Control0_SuperLayout _arguments_Control0_Super;
+};
+using MemoryArgLayout8LayoutArray = MemoryArgLayout[8];
+using CycleArgLayout4LayoutArray = CycleArgLayout[4];
+using ArgU16Layout2LayoutArray = ArgU16Layout[2];
+struct _Arguments_ECall0OutputLayout {
+  MemoryArgLayout8LayoutArray memoryArg;
+  CycleArgLayout4LayoutArray cycleArg;
+  ArgU16Layout2LayoutArray argU16;
 };
 using NondetRegLayout4LayoutArray = NondetRegLayout[4];
 struct OneHot_4_Layout {
@@ -1363,74 +1371,74 @@ struct MachineECallLayout {
   MemoryReadLayout dispatchIdx;
   OneHot_4_Layout dispatch;
 };
-struct ECall0Arm0Layout {
+struct ECall0OutputArm0Layout {
   MachineECallLayout _super;
-  ArgU16Layout _extra6;
-  ArgU16Layout _extra7;
   MemoryArgLayout _extra0;
   MemoryArgLayout _extra1;
   MemoryArgLayout _extra2;
   MemoryArgLayout _extra3;
   CycleArgLayout _extra4;
   CycleArgLayout _extra5;
+  ArgU16Layout _extra6;
+  ArgU16Layout _extra7;
 };
 struct ECallTerminateLayout {
   MemoryReadLayout a0;
   MemoryReadLayout a1;
 };
-struct ECall0Arm1Layout {
+struct ECall0OutputArm1Layout {
   ECallTerminateLayout _super;
-  ArgU16Layout _extra6;
-  ArgU16Layout _extra7;
   MemoryArgLayout _extra0;
   MemoryArgLayout _extra1;
   MemoryArgLayout _extra2;
   MemoryArgLayout _extra3;
   CycleArgLayout _extra4;
   CycleArgLayout _extra5;
+  ArgU16Layout _extra6;
+  ArgU16Layout _extra7;
 };
 struct DecomposeLow2Layout {
+  NondetRegLayout high;
+  NondetRegLayout low2;
   OneHot_4_Layout low2Hot;
   IsZeroLayout highZero;
   NondetRegLayout isZero;
-  NondetRegLayout high;
-  NondetRegLayout low2;
 };
 struct ECallHostReadSetupLayout {
-  MemoryWriteLayout _0;
   MemoryReadLayout fd;
   MemoryReadLayout ptr;
   MemoryReadLayout len;
-  U16RegLayout diff;
   NondetU16RegLayout newLen;
+  U16RegLayout diff;
+  MemoryWriteLayout _0;
   DecomposeLow2Layout ptrDecomp;
   DecomposeLow2Layout lenDecomp;
   NondetRegLayout len123;
   NondetRegLayout uneven;
 };
 struct ECallHostWriteLayout {
-  MemoryWriteLayout _0;
   MemoryReadLayout fd;
   MemoryReadLayout ptr;
   MemoryReadLayout len;
-  U16RegLayout diff;
   NondetU16RegLayout newLen;
+  U16RegLayout diff;
+  MemoryWriteLayout _0;
 };
-struct ECall0Arm4Layout {
-  ArgU16Layout _extra12;
-  ArgU16Layout _extra13;
+struct ECall0OutputArm4Layout {
   MemoryArgLayout _extra0;
   MemoryArgLayout _extra1;
   MemoryArgLayout _extra2;
   MemoryArgLayout _extra3;
-  CycleArgLayout _extra8;
-  CycleArgLayout _extra9;
   MemoryArgLayout _extra4;
   MemoryArgLayout _extra5;
   MemoryArgLayout _extra6;
   MemoryArgLayout _extra7;
+  CycleArgLayout _extra8;
+  CycleArgLayout _extra9;
   CycleArgLayout _extra10;
   CycleArgLayout _extra11;
+  ArgU16Layout _extra12;
+  ArgU16Layout _extra13;
 };
 struct MemoryWriteUnconstrainedLayout {
   MemoryIOLayout io;
@@ -1443,76 +1451,68 @@ struct ECallHostReadWords__0_SuperLayout {
 using ECallHostReadWords__0_SuperLayout4LayoutArray = ECallHostReadWords__0_SuperLayout[4];
 struct ECallHostReadWordsLayout {
   DecomposeLow2Layout lenDecomp;
-  IsZeroLayout lenZero;
   DecomposeLow2Layout wordsDecomp;
-  ECallHostReadWords__0_SuperLayout4LayoutArray _0;
+  ECallHostReadWords__0_SuperLayout4LayoutArray _1;
+  IsZeroLayout lenZero;
 };
-struct ECall0Arm5Layout {
+struct ECall0OutputArm5Layout {
   ECallHostReadWordsLayout _super;
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
 };
-struct ECall0Arm6Layout {
-  ArgU16Layout _extra12;
-  ArgU16Layout _extra13;
+struct ECall0OutputArm6Layout {
   MemoryArgLayout _extra0;
   MemoryArgLayout _extra1;
   MemoryArgLayout _extra2;
   MemoryArgLayout _extra3;
-  CycleArgLayout _extra8;
-  CycleArgLayout _extra9;
   MemoryArgLayout _extra4;
   MemoryArgLayout _extra5;
   MemoryArgLayout _extra6;
   MemoryArgLayout _extra7;
+  CycleArgLayout _extra8;
+  CycleArgLayout _extra9;
   CycleArgLayout _extra10;
   CycleArgLayout _extra11;
+  ArgU16Layout _extra12;
+  ArgU16Layout _extra13;
 };
-struct ECall0Arm7Layout {
-  ArgU16Layout _extra12;
-  ArgU16Layout _extra13;
+struct ECall0OutputArm7Layout {
   MemoryArgLayout _extra0;
   MemoryArgLayout _extra1;
   MemoryArgLayout _extra2;
   MemoryArgLayout _extra3;
-  CycleArgLayout _extra8;
-  CycleArgLayout _extra9;
   MemoryArgLayout _extra4;
   MemoryArgLayout _extra5;
   MemoryArgLayout _extra6;
   MemoryArgLayout _extra7;
+  CycleArgLayout _extra8;
+  CycleArgLayout _extra9;
   CycleArgLayout _extra10;
   CycleArgLayout _extra11;
+  ArgU16Layout _extra12;
+  ArgU16Layout _extra13;
 };
 struct ECall0OutputLayout {
-  ECall0Arm0Layout arm0;
-  ECall0Arm1Layout arm1;
+  ECall0OutputArm0Layout arm0;
+  ECall0OutputArm1Layout arm1;
   ECallHostReadSetupLayout arm2;
   ECallHostWriteLayout arm3;
-  ECall0Arm4Layout arm4;
-  ECall0Arm5Layout arm5;
-  ECall0Arm6Layout arm6;
-  ECall0Arm7Layout arm7;
-};
-using MemoryArgLayout8LayoutArray = MemoryArgLayout[8];
-using CycleArgLayout4LayoutArray = CycleArgLayout[4];
-using ArgU16Layout2LayoutArray = ArgU16Layout[2];
-struct _Arguments_ECall0OutputLayout {
-  MemoryArgLayout8LayoutArray memoryArg;
-  CycleArgLayout4LayoutArray cycleArg;
-  ArgU16Layout2LayoutArray argU16;
+  ECall0OutputArm4Layout arm4;
+  ECall0OutputArm5Layout arm5;
+  ECall0OutputArm6Layout arm6;
+  ECall0OutputArm7Layout arm7;
 };
 struct ECall0Layout {
-  ECall0OutputLayout output;
-  _Arguments_ECall0OutputLayout _argumentsOutput;
-  AddrDecomposeBitsLayout pcAddr;
-  IsZeroLayout isDecode;
   NondetRegLayout s0;
-  NormalizeU32Layout addPC;
-  CycleArgLayout arg;
-  IsZeroLayout isP2Entry;
   NondetRegLayout s1;
   NondetRegLayout s2;
+  AddrDecomposeBitsLayout pcAddr;
+  _Arguments_ECall0OutputLayout _arguments_ECall0Output;
+  ECall0OutputLayout output;
+  IsZeroLayout isDecode;
+  IsZeroLayout isP2Entry;
+  NormalizeU32Layout addPC;
+  CycleArgLayout arg;
 };
 using NondetRegLayout24LayoutArray = NondetRegLayout[24];
 struct NondetExtRegLayout {
@@ -1520,7 +1520,6 @@ struct NondetExtRegLayout {
 };
 struct PoseidonStateLayout {
   NondetRegLayout hasState;
-  NondetRegLayout24LayoutArray inner;
   NondetRegLayout stateAddr;
   NondetRegLayout bufOutAddr;
   NondetRegLayout isElem;
@@ -1531,9 +1530,17 @@ struct PoseidonStateLayout {
   NondetRegLayout bufInAddr;
   NondetRegLayout count;
   NondetRegLayout mode;
+  NondetRegLayout24LayoutArray inner;
   NondetExtRegLayout zcheck;
 };
-struct PoseidonEntryArm0Layout {
+using ArgU8Layout2LayoutArray = ArgU8Layout[2];
+struct _Arguments_Poseidon0StateLayout {
+  MemoryArgLayout16LayoutArray memoryArg;
+  CycleArgLayout8LayoutArray cycleArg;
+  ArgU16Layout16LayoutArray argU16;
+  ArgU8Layout2LayoutArray argU8;
+};
+struct PoseidonEntry_SuperArm0Layout {
   PoseidonStateLayout _super;
   MemoryArgLayout _extra0;
   MemoryArgLayout _extra1;
@@ -1558,13 +1565,13 @@ struct PoseidonEcallLayout {
   ReadAddrLayout bufOutAddr;
   MemoryReadLayout bitsAndCount;
   IsZeroLayout _0;
-  IsZeroLayout countZero;
   NondetRegLayout isElem;
   NondetRegLayout checkOut;
+  IsZeroLayout countZero;
 };
 struct PoseidonEntry_SuperLayout {
   PoseidonStateLayout _super;
-  PoseidonEntryArm0Layout arm0;
+  PoseidonEntry_SuperArm0Layout arm0;
   PoseidonEcallLayout arm1;
 };
 struct _Arguments_PoseidonEntry_SuperLayout {
@@ -1573,13 +1580,23 @@ struct _Arguments_PoseidonEntry_SuperLayout {
 };
 struct PoseidonEntryLayout {
   PoseidonEntry_SuperLayout _super;
-  _Arguments_PoseidonEntry_SuperLayout _arguments_Super;
   IsZeroLayout pcZero;
+  _Arguments_PoseidonEntry_SuperLayout _arguments_PoseidonEntry_Super;
 };
-struct Poseidon0Arm0Layout {
+struct Poseidon0StateArm0Layout {
   PoseidonEntryLayout _super;
-  ArgU8Layout _extra28;
-  ArgU8Layout _extra29;
+  MemoryArgLayout _extra0;
+  MemoryArgLayout _extra1;
+  MemoryArgLayout _extra2;
+  MemoryArgLayout _extra3;
+  MemoryArgLayout _extra4;
+  MemoryArgLayout _extra5;
+  MemoryArgLayout _extra6;
+  MemoryArgLayout _extra7;
+  CycleArgLayout _extra8;
+  CycleArgLayout _extra9;
+  CycleArgLayout _extra10;
+  CycleArgLayout _extra11;
   ArgU16Layout _extra12;
   ArgU16Layout _extra13;
   ArgU16Layout _extra14;
@@ -1596,18 +1613,8 @@ struct Poseidon0Arm0Layout {
   ArgU16Layout _extra25;
   ArgU16Layout _extra26;
   ArgU16Layout _extra27;
-  MemoryArgLayout _extra0;
-  MemoryArgLayout _extra1;
-  MemoryArgLayout _extra2;
-  MemoryArgLayout _extra3;
-  MemoryArgLayout _extra4;
-  MemoryArgLayout _extra5;
-  MemoryArgLayout _extra6;
-  MemoryArgLayout _extra7;
-  CycleArgLayout _extra8;
-  CycleArgLayout _extra9;
-  CycleArgLayout _extra10;
-  CycleArgLayout _extra11;
+  ArgU8Layout _extra28;
+  ArgU8Layout _extra29;
 };
 struct ReadElemLayout {
   MemoryReadLayout elem32;
@@ -1617,10 +1624,8 @@ struct PoseidonLoadStateLayout {
   PoseidonStateLayout _super;
   ReadElemLayout8LayoutArray loadList;
 };
-struct Poseidon0Arm1Layout {
+struct Poseidon0StateArm1Layout {
   PoseidonLoadStateLayout _super;
-  ArgU8Layout _extra16;
-  ArgU8Layout _extra17;
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
   ArgU16Layout _extra2;
@@ -1637,18 +1642,20 @@ struct Poseidon0Arm1Layout {
   ArgU16Layout _extra13;
   ArgU16Layout _extra14;
   ArgU16Layout _extra15;
+  ArgU8Layout _extra16;
+  ArgU8Layout _extra17;
 };
 using NondetRegLayout3LayoutArray = NondetRegLayout[3];
 struct OneHot_3_Layout {
   NondetRegLayout3LayoutArray _super;
 };
-struct MemoryGetArm1Layout {
+struct MemoryGet_SuperArm1Layout {
   MemoryPageInLayout _super;
   CycleArgLayout _extra0;
 };
 struct MemoryGet_SuperLayout {
   MemoryReadLayout arm0;
-  MemoryGetArm1Layout arm1;
+  MemoryGet_SuperArm1Layout arm1;
   MemoryPageOutLayout arm2;
 };
 using MemoryArgLayout2LayoutArray = MemoryArgLayout[2];
@@ -1659,7 +1666,7 @@ struct _Arguments_MemoryGet_SuperLayout {
 };
 struct MemoryGetLayout {
   MemoryGet_SuperLayout _super;
-  _Arguments_MemoryGet_SuperLayout _arguments_Super;
+  _Arguments_MemoryGet_SuperLayout _arguments_MemoryGet_Super;
 };
 using MemoryGetLayout8LayoutArray = MemoryGetLayout[8];
 struct PoseidonLoadInShortLayout {
@@ -1690,12 +1697,10 @@ struct _Arguments_PoseidonLoadIn_SuperLayout {
 struct PoseidonLoadInLayout {
   PoseidonLoadIn_SuperLayout _super;
   OneHot_3_Layout _0;
-  _Arguments_PoseidonLoadIn_SuperLayout _arguments_Super;
+  _Arguments_PoseidonLoadIn_SuperLayout _arguments_PoseidonLoadIn_Super;
 };
-struct Poseidon0Arm2Layout {
+struct Poseidon0StateArm2Layout {
   PoseidonLoadInLayout _super;
-  ArgU8Layout _extra16;
-  ArgU8Layout _extra17;
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
   ArgU16Layout _extra2;
@@ -1712,11 +1717,35 @@ struct Poseidon0Arm2Layout {
   ArgU16Layout _extra13;
   ArgU16Layout _extra14;
   ArgU16Layout _extra15;
+  ArgU8Layout _extra16;
+  ArgU8Layout _extra17;
 };
-struct Poseidon0Arm3Layout {
+struct Poseidon0StateArm3Layout {
   PoseidonStateLayout _super;
-  ArgU8Layout _extra40;
-  ArgU8Layout _extra41;
+  MemoryArgLayout _extra0;
+  MemoryArgLayout _extra1;
+  MemoryArgLayout _extra2;
+  MemoryArgLayout _extra3;
+  MemoryArgLayout _extra4;
+  MemoryArgLayout _extra5;
+  MemoryArgLayout _extra6;
+  MemoryArgLayout _extra7;
+  MemoryArgLayout _extra8;
+  MemoryArgLayout _extra9;
+  MemoryArgLayout _extra10;
+  MemoryArgLayout _extra11;
+  MemoryArgLayout _extra12;
+  MemoryArgLayout _extra13;
+  MemoryArgLayout _extra14;
+  MemoryArgLayout _extra15;
+  CycleArgLayout _extra16;
+  CycleArgLayout _extra17;
+  CycleArgLayout _extra18;
+  CycleArgLayout _extra19;
+  CycleArgLayout _extra20;
+  CycleArgLayout _extra21;
+  CycleArgLayout _extra22;
+  CycleArgLayout _extra23;
   ArgU16Layout _extra24;
   ArgU16Layout _extra25;
   ArgU16Layout _extra26;
@@ -1733,6 +1762,11 @@ struct Poseidon0Arm3Layout {
   ArgU16Layout _extra37;
   ArgU16Layout _extra38;
   ArgU16Layout _extra39;
+  ArgU8Layout _extra40;
+  ArgU8Layout _extra41;
+};
+struct Poseidon0StateArm4Layout {
+  PoseidonStateLayout _super;
   MemoryArgLayout _extra0;
   MemoryArgLayout _extra1;
   MemoryArgLayout _extra2;
@@ -1741,10 +1775,6 @@ struct Poseidon0Arm3Layout {
   MemoryArgLayout _extra5;
   MemoryArgLayout _extra6;
   MemoryArgLayout _extra7;
-  CycleArgLayout _extra16;
-  CycleArgLayout _extra17;
-  CycleArgLayout _extra18;
-  CycleArgLayout _extra19;
   MemoryArgLayout _extra8;
   MemoryArgLayout _extra9;
   MemoryArgLayout _extra10;
@@ -1753,15 +1783,14 @@ struct Poseidon0Arm3Layout {
   MemoryArgLayout _extra13;
   MemoryArgLayout _extra14;
   MemoryArgLayout _extra15;
+  CycleArgLayout _extra16;
+  CycleArgLayout _extra17;
+  CycleArgLayout _extra18;
+  CycleArgLayout _extra19;
   CycleArgLayout _extra20;
   CycleArgLayout _extra21;
   CycleArgLayout _extra22;
   CycleArgLayout _extra23;
-};
-struct Poseidon0Arm4Layout {
-  PoseidonStateLayout _super;
-  ArgU8Layout _extra40;
-  ArgU8Layout _extra41;
   ArgU16Layout _extra24;
   ArgU16Layout _extra25;
   ArgU16Layout _extra26;
@@ -1778,30 +1807,8 @@ struct Poseidon0Arm4Layout {
   ArgU16Layout _extra37;
   ArgU16Layout _extra38;
   ArgU16Layout _extra39;
-  MemoryArgLayout _extra0;
-  MemoryArgLayout _extra1;
-  MemoryArgLayout _extra2;
-  MemoryArgLayout _extra3;
-  MemoryArgLayout _extra4;
-  MemoryArgLayout _extra5;
-  MemoryArgLayout _extra6;
-  MemoryArgLayout _extra7;
-  CycleArgLayout _extra16;
-  CycleArgLayout _extra17;
-  CycleArgLayout _extra18;
-  CycleArgLayout _extra19;
-  MemoryArgLayout _extra8;
-  MemoryArgLayout _extra9;
-  MemoryArgLayout _extra10;
-  MemoryArgLayout _extra11;
-  MemoryArgLayout _extra12;
-  MemoryArgLayout _extra13;
-  MemoryArgLayout _extra14;
-  MemoryArgLayout _extra15;
-  CycleArgLayout _extra20;
-  CycleArgLayout _extra21;
-  CycleArgLayout _extra22;
-  CycleArgLayout _extra23;
+  ArgU8Layout _extra40;
+  ArgU8Layout _extra41;
 };
 struct PoseidonCheckOut__0_SuperLayout {
   ReadElemLayout goal;
@@ -1809,11 +1816,11 @@ struct PoseidonCheckOut__0_SuperLayout {
 using PoseidonCheckOut__0_SuperLayout8LayoutArray = PoseidonCheckOut__0_SuperLayout[8];
 struct PoseidonCheckOutLayout {
   PoseidonStateLayout _super;
+  PoseidonCheckOut__0_SuperLayout8LayoutArray _1;
   IsZeroLayout isNormal;
   NondetExtRegLayout extInv;
-  PoseidonCheckOut__0_SuperLayout8LayoutArray _0;
 };
-struct PoseidonDoOutArm0Layout {
+struct PoseidonDoOut_SuperArm0Layout {
   PoseidonCheckOutLayout _super;
   ArgU16Layout _extra0;
   ArgU16Layout _extra1;
@@ -1833,20 +1840,20 @@ struct PoseidonDoOutArm0Layout {
   ArgU16Layout _extra15;
 };
 struct PoseidonStoreOut__0_SuperLayout {
-  MemoryWriteLayout _0;
-  U16RegLayout high;
   NondetU16RegLayout low;
+  U16RegLayout high;
+  MemoryWriteLayout _0;
 };
 using PoseidonStoreOut__0_SuperLayout8LayoutArray = PoseidonStoreOut__0_SuperLayout[8];
 struct PoseidonStoreOutLayout {
   PoseidonStateLayout _super;
+  PoseidonStoreOut__0_SuperLayout8LayoutArray _1;
   IsZeroLayout isNormal;
   NondetExtRegLayout extInv;
-  PoseidonStoreOut__0_SuperLayout8LayoutArray _0;
 };
 struct PoseidonDoOut_SuperLayout {
   PoseidonStateLayout _super;
-  PoseidonDoOutArm0Layout arm0;
+  PoseidonDoOut_SuperArm0Layout arm0;
   PoseidonStoreOutLayout arm1;
 };
 struct _Arguments_PoseidonDoOut_SuperLayout {
@@ -1856,9 +1863,9 @@ struct _Arguments_PoseidonDoOut_SuperLayout {
 };
 struct PoseidonDoOutLayout {
   PoseidonDoOut_SuperLayout _super;
-  _Arguments_PoseidonDoOut_SuperLayout _arguments_Super;
+  _Arguments_PoseidonDoOut_SuperLayout _arguments_PoseidonDoOut_Super;
 };
-struct Poseidon0Arm5Layout {
+struct Poseidon0StateArm5Layout {
   PoseidonDoOutLayout _super;
   ArgU8Layout _extra0;
   ArgU8Layout _extra1;
@@ -1883,34 +1890,58 @@ struct IsU24Layout {
   NondetU16RegLayout low16;
   U8RegLayout _0;
 };
-struct PoseidonPagingArm0_SuperLayout {
-  IsU24Layout _0;
-};
-struct PoseidonPagingArm1_SuperLayout {
-  IsU24Layout _0;
-};
-struct PoseidonPaging__0Layout {
-  PoseidonPagingArm0_SuperLayout arm0;
-  PoseidonPagingArm1_SuperLayout arm1;
-};
 using ArgU16Layout1LayoutArray = ArgU16Layout[1];
 using ArgU8Layout1LayoutArray = ArgU8Layout[1];
 struct _Arguments_PoseidonPaging__1Layout {
   ArgU16Layout1LayoutArray argU16;
   ArgU8Layout1LayoutArray argU8;
 };
+struct PoseidonPaging__1Arm0_SuperLayout {
+  IsU24Layout _0;
+};
+struct PoseidonPaging__1Arm1_SuperLayout {
+  IsU24Layout _0;
+};
+struct PoseidonPaging__1Layout {
+  PoseidonPaging__1Arm0_SuperLayout arm0;
+  PoseidonPaging__1Arm1_SuperLayout arm1;
+};
 struct PoseidonPagingLayout {
   PoseidonPaging_SuperLayout _super;
-  OneHot_6_Layout modeSplit;
-  PoseidonPaging__0Layout _2;
-  IsU24Layout _0;
-  _Arguments_PoseidonPaging__1Layout _arguments__1;
-  NondetRegLayout _3;
   NondetRegLayout curIdx;
   NondetRegLayout curMode;
+  OneHot_6_Layout modeSplit;
+  IsU24Layout _0;
+  _Arguments_PoseidonPaging__1Layout _arguments_PoseidonPaging__1;
+  PoseidonPaging__1Layout _3;
+  NondetRegLayout _4;
 };
-struct Poseidon0Arm6Layout {
+struct Poseidon0StateArm6Layout {
   PoseidonPagingLayout _super;
+  MemoryArgLayout _extra0;
+  MemoryArgLayout _extra1;
+  MemoryArgLayout _extra2;
+  MemoryArgLayout _extra3;
+  MemoryArgLayout _extra4;
+  MemoryArgLayout _extra5;
+  MemoryArgLayout _extra6;
+  MemoryArgLayout _extra7;
+  MemoryArgLayout _extra8;
+  MemoryArgLayout _extra9;
+  MemoryArgLayout _extra10;
+  MemoryArgLayout _extra11;
+  MemoryArgLayout _extra12;
+  MemoryArgLayout _extra13;
+  MemoryArgLayout _extra14;
+  MemoryArgLayout _extra15;
+  CycleArgLayout _extra16;
+  CycleArgLayout _extra17;
+  CycleArgLayout _extra18;
+  CycleArgLayout _extra19;
+  CycleArgLayout _extra20;
+  CycleArgLayout _extra21;
+  CycleArgLayout _extra22;
+  CycleArgLayout _extra23;
   ArgU16Layout _extra24;
   ArgU16Layout _extra25;
   ArgU16Layout _extra26;
@@ -1925,68 +1956,38 @@ struct Poseidon0Arm6Layout {
   ArgU16Layout _extra35;
   ArgU16Layout _extra36;
   ArgU16Layout _extra37;
-  MemoryArgLayout _extra0;
-  MemoryArgLayout _extra1;
-  MemoryArgLayout _extra2;
-  MemoryArgLayout _extra3;
-  MemoryArgLayout _extra4;
-  MemoryArgLayout _extra5;
-  MemoryArgLayout _extra6;
-  MemoryArgLayout _extra7;
-  CycleArgLayout _extra16;
-  CycleArgLayout _extra17;
-  CycleArgLayout _extra18;
-  CycleArgLayout _extra19;
-  MemoryArgLayout _extra8;
-  MemoryArgLayout _extra9;
-  MemoryArgLayout _extra10;
-  MemoryArgLayout _extra11;
-  MemoryArgLayout _extra12;
-  MemoryArgLayout _extra13;
-  MemoryArgLayout _extra14;
-  MemoryArgLayout _extra15;
-  CycleArgLayout _extra20;
-  CycleArgLayout _extra21;
-  CycleArgLayout _extra22;
-  CycleArgLayout _extra23;
 };
 struct PoseidonStoreState__0_SuperLayout {
-  MemoryWriteLayout _0;
-  U16RegLayout high;
   NondetU16RegLayout low;
+  U16RegLayout high;
+  MemoryWriteLayout _0;
 };
 using PoseidonStoreState__0_SuperLayout8LayoutArray = PoseidonStoreState__0_SuperLayout[8];
 struct PoseidonStoreStateLayout {
   PoseidonStateLayout _super;
-  PoseidonStoreState__0_SuperLayout8LayoutArray _0;
+  PoseidonStoreState__0_SuperLayout8LayoutArray _1;
 };
-struct Poseidon0Arm7Layout {
+struct Poseidon0StateArm7Layout {
   PoseidonStoreStateLayout _super;
   ArgU8Layout _extra0;
   ArgU8Layout _extra1;
 };
 struct Poseidon0StateLayout {
   PoseidonStateLayout _super;
-  Poseidon0Arm0Layout arm0;
-  Poseidon0Arm1Layout arm1;
-  Poseidon0Arm2Layout arm2;
-  Poseidon0Arm3Layout arm3;
-  Poseidon0Arm4Layout arm4;
-  Poseidon0Arm5Layout arm5;
-  Poseidon0Arm6Layout arm6;
-  Poseidon0Arm7Layout arm7;
-};
-using ArgU8Layout2LayoutArray = ArgU8Layout[2];
-struct _Arguments_Poseidon0StateLayout {
-  MemoryArgLayout16LayoutArray memoryArg;
-  CycleArgLayout8LayoutArray cycleArg;
-  ArgU16Layout16LayoutArray argU16;
-  ArgU8Layout2LayoutArray argU8;
+  Poseidon0StateArm0Layout arm0;
+  Poseidon0StateArm1Layout arm1;
+  Poseidon0StateArm2Layout arm2;
+  Poseidon0StateArm3Layout arm3;
+  Poseidon0StateArm4Layout arm4;
+  Poseidon0StateArm5Layout arm5;
+  Poseidon0StateArm6Layout arm6;
+  Poseidon0StateArm7Layout arm7;
 };
 struct Poseidon0Layout {
-  Poseidon0StateLayout state;
+  PoseidonStateLayout state;
+  _Arguments_Poseidon0StateLayout _arguments_Poseidon0State;
+  Poseidon0StateLayout stateRedef;
   CycleArgLayout arg;
-  _Arguments_Poseidon0StateLayout _argumentsState;
 };
 struct SBoxLayout {
   NondetRegLayout _super;
@@ -1994,7 +1995,7 @@ struct SBoxLayout {
 };
 using SBoxLayout24LayoutArray = SBoxLayout[24];
 struct DoExtRoundLayout {
-  SBoxLayout24LayoutArray _0;
+  SBoxLayout24LayoutArray _1;
 };
 struct DoExtRoundByIdxLayout {
   DoExtRoundLayout _super;
@@ -2002,10 +2003,10 @@ struct DoExtRoundByIdxLayout {
 };
 struct PoseidonExtRoundLayout {
   PoseidonStateLayout _super;
-  DoExtRoundByIdxLayout nextInner;
   IsZeroLayout isRound3;
   IsZeroLayout isRound7;
   IsZeroLayout lastBlock;
+  DoExtRoundByIdxLayout nextInner;
 };
 struct DoIntRoundLayout {
   SBoxLayout sbox;
@@ -2030,7 +2031,8 @@ struct Poseidon1StateLayout {
   PoseidonStateLayout arm7;
 };
 struct Poseidon1Layout {
-  Poseidon1StateLayout state;
+  PoseidonStateLayout state;
+  Poseidon1StateLayout stateRedef;
   CycleArgLayout arg;
 };
 struct TopInstResultLayout {
@@ -2119,6 +2121,9 @@ struct NondetRegStruct {
 struct NondetExtRegStruct {
   ExtVal _super;
 };
+struct RegStruct {
+  NondetRegStruct _super;
+};
 struct BitRegStruct {
 };
 struct NondetFakeTwitRegStruct {
@@ -2169,13 +2174,13 @@ struct AddrDecomposeBitsStruct {
   Val addr;
 };
 struct CmpEqualStruct {
-  NondetRegStruct isEqual;
+  RegStruct isEqual;
 };
 struct CmpLessThanUnsignedStruct {
   Val isLessThan;
 };
 struct CmpLessThanStruct {
-  NondetRegStruct isLessThan;
+  RegStruct isLessThan;
 };
 using NondetRegStruct16Array = NondetRegStruct[16];
 struct ToBits_16_Struct {
@@ -2322,8 +2327,8 @@ struct SplitWordStruct {
   NondetRegStruct byte1;
 };
 struct DigestRegValues_SuperStruct {
-  NondetRegStruct low;
-  NondetRegStruct high;
+  RegStruct low;
+  RegStruct high;
 };
 using DigestRegValues_SuperStruct8Array = DigestRegValues_SuperStruct[8];
 struct DigestRegStruct {
@@ -2333,18 +2338,18 @@ using ValU32Struct8Array = ValU32Struct[8];
 struct ControlLoadRoot__0Struct {
 };
 using ControlLoadRoot__0Struct8Array = ControlLoadRoot__0Struct[8];
-struct ControlResumeArm1_Super__0Struct {
+struct ControlResume_SuperArm1_Super__0Struct {
 };
-using ControlResumeArm1_Super__0Struct8Array = ControlResumeArm1_Super__0Struct[8];
+using ControlResume_SuperArm1_Super__0Struct8Array = ControlResume_SuperArm1_Super__0Struct[8];
 struct ComponentStruct {
 };
 using GetDataStruct8Array = GetDataStruct[8];
-struct ControlTableArm0_Super__0Struct {
+struct ControlTable_SuperArm0_Super__0Struct {
 };
-struct ControlTableArm1_Super__0Struct {
+struct ControlTable_SuperArm1_Super__0Struct {
 };
-using ControlTableArm0_Super__0Struct16Array = ControlTableArm0_Super__0Struct[16];
-using ControlTableArm1_Super__0Struct16Array = ControlTableArm1_Super__0Struct[16];
+using ControlTable_SuperArm0_Super__0Struct16Array = ControlTable_SuperArm0_Super__0Struct[16];
+using ControlTable_SuperArm1_Super__0Struct16Array = ControlTable_SuperArm1_Super__0Struct[16];
 using Val4Array = Val[4];
 using NondetRegStruct4Array = NondetRegStruct[4];
 struct OneHot_4_Struct {
@@ -2361,7 +2366,7 @@ struct DecomposeLow2Struct {
   NondetRegStruct low2;
   OneHot_4_Struct low2Hot;
   NondetRegStruct highZero;
-  NondetRegStruct isZero;
+  RegStruct isZero;
   Val low2Nonzero;
 };
 struct ECallHostReadWords__0Struct {
@@ -2382,7 +2387,7 @@ using DoIntRounds__0_SuperStruct21Array = DoIntRounds__0_SuperStruct[21];
 struct DoIntRoundsStruct {
   Val24Array _super;
 };
-using NondetRegStruct24Array = NondetRegStruct[24];
+using RegStruct24Array = RegStruct[24];
 struct MultiplyByMExt_Super_SuperStruct {
   Val _super;
 };
@@ -2391,18 +2396,18 @@ struct MultiplyByMExtStruct {
   MultiplyByMExt_Super_SuperStruct24Array _super;
 };
 struct PoseidonStateStruct {
-  NondetRegStruct hasState;
-  NondetRegStruct stateAddr;
-  NondetRegStruct bufOutAddr;
-  NondetRegStruct isElem;
-  NondetRegStruct checkOut;
-  NondetRegStruct loadTxType;
-  NondetRegStruct nextState;
-  NondetRegStruct subState;
-  NondetRegStruct bufInAddr;
-  NondetRegStruct count;
-  NondetRegStruct mode;
-  NondetRegStruct24Array inner;
+  RegStruct hasState;
+  RegStruct stateAddr;
+  RegStruct bufOutAddr;
+  RegStruct isElem;
+  RegStruct checkOut;
+  RegStruct loadTxType;
+  RegStruct nextState;
+  RegStruct subState;
+  RegStruct bufInAddr;
+  RegStruct count;
+  RegStruct mode;
+  RegStruct24Array inner;
   NondetExtRegStruct zcheck;
 };
 struct PoseidonOpDefStruct {

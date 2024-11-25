@@ -46,6 +46,7 @@ zirgen_build(
 OUTS = ZIRGEN_OUTS + [
     "rust_poly_fp.cpp",
     "eval_check.cu",
+    "eval_check.cuh",
 ]
 
 build_circuit(

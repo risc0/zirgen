@@ -397,6 +397,7 @@ impl Args {
                 Rule::copy("*.h.inc", "kernels/cxx").base_suffix("-sys"),
                 Rule::copy("*.cu", "kernels/cuda").base_suffix("-sys"),
                 Rule::copy("*.cu.inc", "kernels/cuda").base_suffix("-sys"),
+                Rule::copy("*.cuh", "kernels/cuda").base_suffix("-sys"),
                 Rule::copy("*.cuh.inc", "kernels/cuda").base_suffix("-sys"),
                 Rule::copy("*.rs", "src/zirgen"),
                 Rule::copy("*.rs.inc", "src/zirgen"),

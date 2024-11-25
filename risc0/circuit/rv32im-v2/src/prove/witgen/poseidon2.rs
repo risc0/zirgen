@@ -30,7 +30,7 @@ use crate::{
 
 use super::{node_idx_to_addr, preflight::Preflight};
 
-const P2_STATE_LAYOUT: &PoseidonStateLayout = LAYOUT_TOP.inst_result.arm9.state._super;
+const P2_STATE_LAYOUT: &PoseidonStateLayout = LAYOUT_TOP.inst_result.arm9.state;
 
 const BABY_BEAR_P_U32: u32 = baby_bear::P;
 const BABY_BEAR_P_U64: u64 = baby_bear::P as u64;
