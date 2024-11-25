@@ -43,7 +43,8 @@ public:
 class GpuStreamEmitter {
 public:
   virtual ~GpuStreamEmitter() = default;
-  virtual void emitPoly(mlir::func::FuncOp func, size_t idx, size_t nsplit) = 0;
+  virtual void
+  emitPoly(mlir::func::FuncOp func, size_t idx, size_t nsplit, bool declsOnly = false) = 0;
   virtual void emitStepFunc(const std::string& name, mlir::func::FuncOp func) = 0;
 };
 
@@ -149,9 +150,16 @@ private:
                      llvm::ArrayRef<mlir::Type> types) override;
 
   llvm::StringSet<> itemsMacros;
+  llvm::DenseMap<mlir::Type, bool> typesNeedLifetime;
 
 private:
+  void emitStructDefImpl(CodegenEmitter& cg,
+                         mlir::Type ty,
+                         llvm::ArrayRef<CodegenIdent<IdentKind::Field>> names,
+                         llvm::ArrayRef<mlir::Type> types,
+                         bool layout);
   void emitValueWithReferenceIfNeeded(CodegenEmitter& cg, CodegenValue value);
+  bool typeNeedsLifetime(mlir::Type ty);
 };
 
 struct CppLanguageSyntax : public LanguageSyntax {
@@ -223,6 +231,13 @@ struct CppLanguageSyntax : public LanguageSyntax {
                      mlir::Type ty,
                      llvm::ArrayRef<CodegenIdent<IdentKind::Field>> fields,
                      llvm::ArrayRef<mlir::Type> types) override;
+
+private:
+  void emitStructDefImpl(CodegenEmitter& cg,
+                         mlir::Type ty,
+                         llvm::ArrayRef<CodegenIdent<IdentKind::Field>> names,
+                         llvm::ArrayRef<mlir::Type> types,
+                         bool layout);
 };
 
 struct CudaLanguageSyntax : public CppLanguageSyntax {

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "mlir/Dialect/Arith/IR/Arith.h"
 #include "mlir/IR/IRMapping.h"
 #include "mlir/IR/PatternMatch.h"
 
@@ -88,6 +89,23 @@ struct OnlyUnmuxed : public RewritePatternSuper<WrappedPattern>::Type {
 
 private:
   WrappedPattern wrapped;
+};
+
+// Replace a "Back" inside an execution function to call the back
+// function.  Assumes it's within an "exec" or "check" function.
+struct BackToCall : public OpRewritePattern<Zhlt::BackOp> {
+  using OpRewritePattern::OpRewritePattern;
+
+  LogicalResult matchAndRewrite(Zhlt::BackOp op, PatternRewriter& rewriter) const final {
+    // TODO: unify distance types and just call op.getDistanceAttr().
+    auto distance = rewriter.create<mlir::arith::ConstantOp>(
+        op->getLoc(), rewriter.getIndexAttr(op.getDistance().getZExtValue()));
+    auto callee = SymbolTable::lookupNearestSymbolFrom<Zhlt::ComponentOp>(op, op.getCalleeAttr());
+    auto callOp = rewriter.create<Zhlt::BackCallOp>(
+        op->getLoc(), callee.getSymName(), callee.getOutType(), distance, op.getLayout());
+    rewriter.replaceOp(op, callOp);
+    return success();
+  }
 };
 
 } // namespace zirgen

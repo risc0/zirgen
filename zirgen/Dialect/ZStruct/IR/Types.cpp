@@ -190,9 +190,16 @@ bool isRecordType(mlir::Type container) {
           if (t.getId() == "NondetReg") {
             // Regs can contain a "@wrapped" referring to a register, which is otherwise disallowed.
             return mlir::WalkResult::skip();
-          } else {
-            return mlir::WalkResult::advance();
           }
+
+          for (auto field : t.getFields()) {
+            if (field.name == "@layout")
+              continue;
+            if (!isRecordType(field.type))
+              return mlir::WalkResult::interrupt();
+          }
+
+          return mlir::WalkResult::skip();
         })
         .Default([&](auto) { return mlir::WalkResult::interrupt(); });
   });
@@ -243,10 +250,6 @@ CodegenIdent<IdentKind::Type>
 LayoutArrayType::getTypeName(zirgen::codegen::CodegenEmitter& cg) const {
   auto elemName = cg.getTypeName(getElement());
   return cg.getStringAttr((elemName.strref() + std::to_string(getSize()) + "LayoutArray").str());
-}
-
-Value LayoutArrayType::materialize(Location loc, ArrayRef<Value> elements, OpBuilder& builder) {
-  return builder.create<LayoutArrayOp>(loc, elements);
 }
 
 CodegenIdent<IdentKind::Type> LayoutType::getTypeName(zirgen::codegen::CodegenEmitter& cg) const {
@@ -307,6 +310,20 @@ LogicalResult LayoutType::verify(function_ref<InFlightDiagnostic()> emitError,
       return emitError() << "invalid field type in layout: " << field.type;
   }
 
+  return success();
+}
+
+LogicalResult LayoutArrayType::verify(function_ref<InFlightDiagnostic()> emitError,
+                                      mlir::Type element,
+                                      unsigned size) {
+  if (!size)
+    return emitError() << "Layout arrays may not be empty";
+  return success();
+}
+LogicalResult
+ArrayType::verify(function_ref<InFlightDiagnostic()> emitError, mlir::Type element, unsigned size) {
+  if (!size)
+    return emitError() << "Arrays may not be empty";
   return success();
 }
 

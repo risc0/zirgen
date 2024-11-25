@@ -16,7 +16,7 @@
 mod control_id;
 #[cfg(feature = "make_control_ids")]
 pub mod zkr;
-#[cfg(feature = "prove")]
+#[cfg(all(feature = "prove", not(feature = "make_control_ids")))]
 mod zkr;
 
 #[cfg(feature = "prove")]

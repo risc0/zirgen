@@ -18,7 +18,7 @@ use anyhow::{anyhow, Result};
 use keccak_circuit::{CircuitField, ExtVal, Val, REGISTER_GROUP_ACCUM, REGISTER_GROUP_DATA};
 use rayon::{iter::IntoParallelIterator, prelude::*};
 use risc0_core::scope;
-use risc0_zirgen_dsl::{CycleContext, CycleRow, GlobalRow};
+use risc0_zirgen_dsl::{BufferRow, CycleContext};
 use risc0_zkp::{
     adapter::PolyFp,
     core::{hash::poseidon2::Poseidon2HashSuite, log2_ceil},
@@ -173,10 +173,10 @@ impl keccak_circuit::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
         let elems_per_word = &RefCell::new(0);
         let input_elems: &RefCell<VecDeque<Val>> = &RefCell::new(Default::default());
 
-        let data = &data.as_slice_sync();
-        let data = CycleRow { buf: data };
+        let data = data.as_slice_sync();
+        let data = BufferRow::cycle(&data);
         let global = global.as_slice_sync();
-        let global = GlobalRow { buf: &global };
+        let global = BufferRow::global(&global);
 
         for cycle in 0..tot_cycles {
             tracing::trace!("exec {cycle}/{tot_cycles}");
@@ -189,7 +189,7 @@ impl keccak_circuit::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
                 input_elems,
             };
 
-            keccak_circuit::step_top(&exec_context, &data, &global)?;
+            keccak_circuit::step_top(&exec_context, data, global)?;
         }
         tracing::trace!("exec complete");
 
@@ -210,15 +210,14 @@ impl keccak_circuit::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
         let input = &RefCell::default();
         let input_elems = &RefCell::default();
 
-        let data = &data.as_slice_sync();
-        let data = CycleRow { buf: data };
+        let data = data.as_slice_sync();
+        let data = BufferRow::cycle(&data);
         let mix = mix.as_slice_sync();
-        let mix = GlobalRow { buf: &mix };
-
+        let mix = BufferRow::global(&mix);
+        let accum = accum.as_slice_sync();
+        let accum = BufferRow::cycle(&accum);
         for cycle in 0..tot_cycles {
             tracing::trace!("accum {cycle}/{tot_cycles}");
-            let accum = &accum.as_slice_sync();
-            let accum = CycleRow { buf: accum };
             let exec_context = CpuExecContext {
                 mem,
                 cycle,
@@ -227,7 +226,7 @@ impl keccak_circuit::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
                 input,
                 input_elems,
             };
-            keccak_circuit::step_top_accum(&exec_context, &accum, &data, &mix)?;
+            keccak_circuit::step_top_accum(&exec_context, accum, data, mix)?;
         }
         Ok(())
     }

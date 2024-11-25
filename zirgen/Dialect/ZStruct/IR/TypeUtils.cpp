@@ -46,6 +46,7 @@ StringType getStringType(MLIRContext* ctx) {
 StructType getNondetRegType(MLIRContext* ctx) {
   SmallVector<ZStruct::FieldInfo> members;
   members.push_back({StringAttr::get(ctx, "@super"), getValType(ctx)});
+  members.push_back({StringAttr::get(ctx, "@layout"), getNondetRegLayoutType(ctx)});
   return StructType::get(ctx, "NondetReg", members);
 }
 
