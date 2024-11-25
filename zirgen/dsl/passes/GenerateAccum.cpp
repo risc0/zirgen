@@ -632,9 +632,12 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
   }
 
 private:
-  LayoutType getRandomnessLayoutTypeFor(LayoutType type, bool isRoot) {
+  Type getRandomnessLayoutTypeFor(LayoutType type, bool isRoot) {
     MLIRContext* ctx = &getContext();
-    RefType extType = Zhlt::getExtRefType(ctx);
+
+    if (type == Zhlt::getNondetRegLayoutType(ctx)) {
+      return Zhlt::getExtRefType(ctx);
+    }
 
     // Add global randomness for all non-count members of type
     auto fields = type.getFields();
@@ -643,12 +646,10 @@ private:
 
     SmallVector<ZStruct::FieldInfo> members;
     for (auto field : fields) {
-      if (field.type == Zhlt::getNondetRegLayoutType(ctx)) {
-        members.push_back({field.name, extType});
-      } else if (auto fieldType = dyn_cast<LayoutType>(field.type)) {
+      if (auto fieldType = dyn_cast<LayoutType>(field.type)) {
         members.push_back({field.name, getRandomnessLayoutTypeFor(fieldType, false)});
       } else if (auto fieldType = dyn_cast<LayoutArrayType>(field.type)) {
-        LayoutType elementType =
+        Type elementType =
             getRandomnessLayoutTypeFor(cast<LayoutType>(fieldType.getElement()), false);
         members.push_back(
             {field.name, LayoutArrayType::get(ctx, elementType, fieldType.getSize())});

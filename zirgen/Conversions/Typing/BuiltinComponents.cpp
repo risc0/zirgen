@@ -124,22 +124,22 @@ template <typename OpT> void Builtins::makeUnaryExtValOp(StringRef name) {
 void Builtins::genNondetReg() {
   auto returnType = Zhlt::getNondetRegType(builder.getContext());
   auto refType = Zhlt::getNondetRegLayoutType(builder.getContext());
-  makeBuiltin("NondetReg",
-              /*valueType=*/returnType,
-              /*constructParams=*/{valType},
-              /*layout=*/refType,
-              [&](ValueRange args) {
-                Value val = args[0];
-                Value ref = builder.create<ZStruct::LookupOp>(loc, args[1], "@super");
-                builder.create<ZStruct::StoreOp>(loc, ref, val);
-                Value zero = builder.create<arith::ConstantOp>(
-                    loc, builder.getIndexType(), builder.getIndexAttr(0));
-                mlir::Value loaded =
-                    builder.create<ZStruct::LoadOp>(loc, valType, ref, /*distance=*/zero);
-                mlir::Value packed = builder.create<ZStruct::PackOp>(
-                    loc, Zhlt::getNondetRegType(ctx), /*members=*/ValueRange{loaded});
-                builder.create<Zhlt::ReturnOp>(loc, packed);
-              });
+  makeBuiltin(
+      "NondetReg",
+      /*valueType=*/returnType,
+      /*constructParams=*/{valType},
+      /*layout=*/refType,
+      [&](ValueRange args) {
+        Value val = args[0];
+        Value ref = builder.create<ZStruct::LookupOp>(loc, args[1], "@super");
+        builder.create<ZStruct::StoreOp>(loc, ref, val);
+        Value zero =
+            builder.create<arith::ConstantOp>(loc, builder.getIndexType(), builder.getIndexAttr(0));
+        mlir::Value loaded = builder.create<ZStruct::LoadOp>(loc, valType, ref, /*distance=*/zero);
+        mlir::Value packed = builder.create<ZStruct::PackOp>(
+            loc, Zhlt::getNondetRegType(ctx), /*members=*/ValueRange{loaded, /*layout=*/args[1]});
+        builder.create<Zhlt::ReturnOp>(loc, packed);
+      });
 }
 
 void Builtins::genNondetExtReg() {

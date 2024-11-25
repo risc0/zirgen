@@ -66,8 +66,7 @@ macro_rules! zirgen_preamble {
         use risc0_zkp::field::Elem;
         use $crate::codegen::_support::*;
         use $crate::codegen::taps::{make_taps, Tap};
-        use $crate::{BoundLayout, BufferRow, BufferSpec, Buffers};
-        use $crate::{CycleContext, CycleRow, GlobalRow};
+        use $crate::{BoundLayout, BufferRow, BufferSpec, Buffers, CycleContext};
 
         // Explicitly instantiate calls that cause rustc to be very slow
         // when processing large generated code.
@@ -85,10 +84,9 @@ macro_rules! zirgen_preamble {
         fn and_cond_ext(x: MixState, cond: ExtVal, inner: MixState) -> Result<MixState> {
             and_cond_generic::<CircuitField, ExtVal>(x, cond, inner)
         }
-
-        fn alias_layout<Layout: PartialEq, B: BufferRow>(
-            x: BoundLayout<Layout, B>,
-            y: BoundLayout<Layout, B>,
+        fn alias_layout<Layout: PartialEq, E: Elem>(
+            x: BoundLayout<Layout, E>,
+            y: BoundLayout<Layout, E>,
         ) -> Result<()> {
             if x == y {
                 Ok(())

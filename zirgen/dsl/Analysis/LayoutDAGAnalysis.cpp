@@ -169,9 +169,8 @@ LayoutDAG::Ptr LayoutDAG::clone(Ptr layout) {
 // LayoutDAGAnalysis
 
 void LayoutDAGAnalysis::visitOperation(Operation* op) {
-  TypeSwitch<Operation*>(op)
-      .Case<AliasLayoutOp, LookupOp, SubscriptOp, LayoutArrayOp, CheckLayoutFuncOp>(
-          [&](auto op) { visitOp(op); });
+  TypeSwitch<Operation*>(op).Case<AliasLayoutOp, LookupOp, SubscriptOp, CheckLayoutFuncOp>(
+      [&](auto op) { visitOp(op); });
 }
 
 void LayoutDAGAnalysis::visitOp(AliasLayoutOp op) {
@@ -216,20 +215,6 @@ void LayoutDAGAnalysis::visitOp(SubscriptOp op) {
       propagateIfChanged(lattice, lattice->join(sublayout));
     }
   }
-}
-
-void LayoutDAGAnalysis::visitOp(LayoutArrayOp op) {
-  // [[ [a, ..., z] ]] := [[[ a ]], ..., [[ z ]]]
-  SmallVector<LayoutDAG::Ptr> elements;
-  for (Value element : op.getElements()) {
-    auto subLattice = getOrCreateFor<Element>(op.getOut(), element)->getValue();
-    if (!subLattice.isDefined())
-      return;
-    elements.push_back(subLattice.get());
-  }
-  auto updated = std::make_shared<LayoutDAG>(AbstractArray{op.getResult().getType(), elements});
-  auto* lattice = getOrCreate<Element>(op.getOut());
-  propagateIfChanged(lattice, lattice->join(updated));
 }
 
 void LayoutDAGAnalysis::visitOp(CheckLayoutFuncOp op) {

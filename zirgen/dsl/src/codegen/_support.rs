@@ -17,9 +17,10 @@
 use std::array::from_fn;
 
 use crate::{BoundLayout, BufferRow, CycleContext};
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use risc0_core::field::{Elem, ExtElem, Field};
 use risc0_zkp::adapter::MixState;
+use std::backtrace::Backtrace;
 
 pub type Index = usize;
 pub type TapGroupName = &'static str;
@@ -61,10 +62,10 @@ where
     })
 }
 
-pub fn layout_map<B: BufferRow, Layout, NewLayout>(
-    layout: BoundLayout<Layout, B>,
+pub fn layout_map<E: Elem, Layout, NewLayout>(
+    layout: BoundLayout<Layout, E>,
     f: impl Fn(&'static Layout) -> &'static NewLayout,
-) -> BoundLayout<NewLayout, B>
+) -> BoundLayout<NewLayout, E>
 where
 {
     layout.map(f)
@@ -74,7 +75,7 @@ pub fn eqz(v: impl Elem) -> Result<()> {
     if v.to_u32_words().into_iter().all(|v| v == 0) {
         Ok(())
     } else {
-        anyhow::bail!("Eqz failed: {:?}", v)
+        Err(anyhow!("Eqz failed: {:?}", v).context(Backtrace::force_capture()))
     }
 }
 
@@ -106,15 +107,14 @@ where
         })
 }
 
-pub fn map_layout<T, Layout, U, F, RowType, const N: usize>(
+pub fn map_layout<'a, T, Layout, U, F, E: Elem, const N: usize>(
     arr: [T; N],
-    layouts: &BoundLayout<[&'static Layout; N], RowType>,
+    layouts: BoundLayout<'a, [&'static Layout; N], E>,
     mut f: F,
 ) -> Result<[U; N]>
 where
     T: Copy,
-    F: FnMut(T, &BoundLayout<Layout, RowType>) -> Result<U>,
-    RowType: BufferRow,
+    F: FnMut(T, BoundLayout<'a, Layout, E>) -> Result<U>,
 {
     // Unfortunately, we have to convert from an Array to an Iterator to collect
     // the sequence of results into a result of a sequence. When we convert back,
@@ -122,7 +122,7 @@ where
     // to unwrap with an unreachable error handler.
     // Once it is stable, this function's implementation can be replaced with:
     // try_from_fn(|i| f(&arr[i], &layouts[i]))
-    let mapped: [Result<U>; N] = from_fn(|i| f(arr[i], &layouts.map(|layout| layout[i])));
+    let mapped: [Result<U>; N] = from_fn(|i| f(arr[i], layouts.map(|layout| layout[i])));
     mapped
         .into_iter()
         .collect::<Result<Vec<U>>>()
@@ -145,16 +145,15 @@ where
     Ok(output)
 }
 
-pub fn reduce_layout<T, Layout, U, F, RowType, const N: usize>(
+pub fn reduce_layout<T, Layout, U, F, E: Elem, const N: usize>(
     arr: [T; N],
     init: U,
-    layouts: &BoundLayout<[&'static Layout; N], RowType>,
+    layouts: BoundLayout<[&'static Layout; N], E>,
     mut f: F,
 ) -> Result<U>
 where
     T: Copy,
-    F: FnMut(U, T, BoundLayout<Layout, RowType>) -> Result<U>,
-    RowType: BufferRow,
+    F: FnMut(U, T, BoundLayout<Layout, E>) -> Result<U>,
 {
     let mut output = init;
     for (element, layout) in arr.iter().zip(layouts.layout().iter()) {
@@ -231,20 +230,20 @@ pub fn to_usize<E: Usizable>(elem: E) -> usize {
     elem.as_usize()
 }
 
-pub fn get<B: BufferRow>(
+pub fn get<E: Elem>(
     ctx: &impl CycleContext,
-    buf: &B,
+    buf: BufferRow<E>,
     offset: usize,
     back: usize,
-) -> Result<B::ValType> {
+) -> Result<E> {
     Ok(buf.load(ctx, offset, back))
 }
 
-pub fn set<Val>(
+pub fn set<E: Elem>(
     ctx: &impl CycleContext,
-    buf: &impl BufferRow<ValType = Val>,
+    buf: BufferRow<E>,
     offset: usize,
-    val: Val,
+    val: E,
 ) -> Result<()> {
     buf.store(ctx, offset, val);
     Ok(())
@@ -261,11 +260,11 @@ impl CycleContext for GlobalCycleContext {
     }
 }
 
-pub fn get_global<B: BufferRow>(buf: &B, offset: usize) -> Result<B::ValType> {
+pub fn get_global<E: Elem>(buf: BufferRow<E>, offset: usize) -> Result<E> {
     Ok(buf.load(&GlobalCycleContext, offset, 0))
 }
 
-pub fn set_global<Val>(buf: &impl BufferRow<ValType = Val>, offset: usize, val: Val) -> Result<()> {
+pub fn set_global<E: Elem>(buf: BufferRow<E>, offset: usize, val: E) -> Result<()> {
     buf.store(&GlobalCycleContext, offset, val);
     Ok(())
 }

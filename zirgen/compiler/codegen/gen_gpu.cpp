@@ -133,8 +133,11 @@ public:
                 ofs);
   }
 
-  void emitPoly(mlir::func::FuncOp func, size_t splitIndex, size_t splitCount) override {
+  void
+  emitPoly(mlir::func::FuncOp func, size_t splitIndex, size_t splitCount, bool declsOnly) override {
     MixPowAnalysis mixPows(func);
+
+    auto circuitName = lookupModuleAttr<CircuitNameAttr>(func);
 
     mustache tmpl;
     bool isRecursion = func.getName() == "recursion";
@@ -183,7 +186,7 @@ public:
 
       funcProtos.push_back(object{{"args", args}, {"fn", calledFunc.getName().str()}});
 
-      if ((curSplitIndex++ % splitCount) != splitIndex)
+      if (declsOnly || (curSplitIndex++ % splitCount) != splitIndex)
         continue;
 
       list lines;
@@ -216,7 +219,7 @@ public:
 
     funcProtos.push_back(object{{"args", mainArgs}, {"fn", "poly_fp"}});
 
-    if ((curSplitIndex++ % splitCount) == splitIndex) {
+    if (!declsOnly && (curSplitIndex++ % splitCount) == splitIndex) {
       list lines;
       for (Operation& op : func.front().without_terminator()) {
         emitOp(&op, ctx, lines, mixPows);
@@ -226,15 +229,25 @@ public:
 
       funcs.push_back(object{{"args", mainArgs}, {"fn", "poly_fp"}, {"block", lines}});
     }
-
-    tmpl.render(
-        object{
-            {"decls", funcProtos},
-            {"funcs", funcs},
-            {"name", func.getName().str()},
-            {"num_mix_powers", std::to_string(mixPows.getPowersNeeded().size())},
-        },
-        ofs);
+    if (declsOnly) {
+      tmpl.render(
+          object{
+              {"decls", object{{"declFuncs", funcProtos}}},
+              {"num_mix_powers", std::to_string(mixPows.getPowersNeeded().size())},
+              {"cppNamespace", circuitName.getCppNamespace()},
+          },
+          ofs);
+    } else {
+      tmpl.render(
+          object{
+              {"defs", object{}},
+              {"funcs", funcs},
+              {"name", func.getName().str()},
+              {"num_mix_powers", std::to_string(mixPows.getPowersNeeded().size())},
+              {"cppNamespace", circuitName.getCppNamespace()},
+          },
+          ofs);
+    }
   }
 
 private:
