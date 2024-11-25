@@ -400,7 +400,7 @@ std::vector<uint32_t> polySplit(mlir::func::FuncOp func) {
 }
 
 void genModPow65537(mlir::Location loc, mlir::OpBuilder& builder) {
-  const size_t bits = 3072;
+  const size_t bits = 4096;
   // Check if (S^e = M (mod N)), where e = 65537
   auto S = builder.create<BigInt::LoadOp>(loc, bits, 11, 0);
   auto N = builder.create<BigInt::LoadOp>(loc, bits, 12, 0);
