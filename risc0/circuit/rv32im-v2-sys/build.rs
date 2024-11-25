@@ -43,6 +43,7 @@ fn build_cuda_kernels() {
         .files(glob_paths("kernels/cuda/*.cu"))
         .deps(glob_paths("kernels/cuda/*.h"))
         .deps(glob_paths("kernels/cuda/*.cu.inc"))
+        .deps(glob_paths("kernels/cuda/*.cuh.inc"))
         .include(env::var("DEP_RISC0_SYS_CUDA_ROOT").unwrap())
         .include(env::var("DEP_SPPARK_ROOT").unwrap())
         .compile("risc0_rv32im_v2_cuda");
