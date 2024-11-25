@@ -15941,7 +15941,7 @@ __device__ FpExt poly_fp(uint32_t idx,
   Fp x30(1);
   Fp x31[632];
 
-  Fp x32[88];
+  FpExt x32[88];
 
   Fp x33 = data[16 * size + ((idx - INV_RATE * 0) & mask)];
   Fp x34 = data[0 * size + ((idx - INV_RATE * 0) & mask)];
