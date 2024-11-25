@@ -20,6 +20,7 @@ pub mod cuda;
 mod tests;
 #[cfg(test)]
 pub mod testutil;
+#[cfg(not(feature = "make_control_ids"))]
 pub mod zkr;
 
 use std::{collections::VecDeque, rc::Rc};

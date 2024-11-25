@@ -2,7 +2,8 @@
 // RUN: zirgen-translate --function=add_with_0 -rust-codegen %s | FileCheck %s --check-prefixes=CHECK,RUST-CHECK
 
 func.func @add_with_0(%arg : !zll.val<BabyBear>) -> !zll.val<BabyBear> {
-  // RUST-CHECK-LABEL: fn add_with_0(arg0: Val) -> Result<Val> {
+  // RUST-CHECK-LABEL: fn add_with_0
+  // RUST-CHEC-SAME: (arg0: Val) -> Result<Val> {
   // CPP-CHECK-LABEL: Val addWith_0(Val arg0) {
   %0 = zll.const 0
   %1 = zll.add %0:<BabyBear>, %arg:<BabyBear>
@@ -14,8 +15,8 @@ func.func @add_with_0(%arg : !zll.val<BabyBear>) -> !zll.val<BabyBear> {
     // RUST-CHECK: if is_true(x1) {
     %three = zll.const 3
     zll.eqz %three : <BabyBear>
-    // CPP-CHECK: EQZ(Val(3), "Dialect/Zll/IR/test/emit-codegen.mlir:16")
-    // RUST-CHECK: eqz!(Val::new(3), "Dialect/Zll/IR/test/emit-codegen.mlir:16")
+    // CPP-CHECK: EQZ(Val(3), "Dialect/Zll/IR/test/emit-codegen.mlir:17")
+    // RUST-CHECK: eqz!(Val::new(3), "Dialect/Zll/IR/test/emit-codegen.mlir:17")
   }
   // CHECK: }
   return %2: !zll.val<BabyBear>

@@ -274,4 +274,8 @@ TapsAttr TapsAttr::sortAndPad(SmallVector<TapAttr> taps, BuffersAttr buffers) {
   return TapsAttr::get(ctx, taps);
 }
 
+std::string CircuitNameAttr::getCppNamespace() {
+  return (getBaseCppNamespace() + "::" + getName()).str();
+}
+
 } // namespace zirgen::Zll

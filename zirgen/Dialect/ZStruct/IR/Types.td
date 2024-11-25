@@ -36,7 +36,6 @@ def StructType : ZStructType<"Struct", "struct", [
 
 def LayoutType : ZStructType<"Layout", "layout", [
     DeclareTypeInterfaceMethods<CodegenTypeInterface, ["emitTypeDefinition", "getTypeName", "emitLiteral"]>,
-    CodegenOnlyPassByReferenceType,
     CodegenLayoutType
   ]> {
   let summary = "Layout type, representing registers for a component to write to.";
@@ -84,6 +83,7 @@ def ArrayType : ZStructType<"Array", "array", [
   let extraClassDeclaration = [{
     mlir::Value materialize(mlir::Location loc, llvm::ArrayRef<mlir::Value> elements, mlir::OpBuilder& builder);
   }];
+  let genVerifyDecl = 1;
 }
 
 def LayoutArrayType : ZStructType<"LayoutArray", "layout_array", [
@@ -97,14 +97,11 @@ def LayoutArrayType : ZStructType<"LayoutArray", "layout_array", [
       "unsigned": $size
   );
   let assemblyFormat = "`<`$element `,` $size `>`";
-  let extraClassDeclaration = [{
-    mlir::Value materialize(mlir::Location loc, llvm::ArrayRef<mlir::Value> elements, mlir::OpBuilder& builder);
-  }];
+  let genVerifyDecl = 1;
 }
 
 def Ref : ZStructType<"Ref", "ref", [
     DeclareTypeInterfaceMethods<CodegenTypeInterface, ["getTypeName"]>,
-    CodegenOnlyPassByReferenceType,
     CodegenLayoutType
   ]> {
   let summary = "reference to a register";

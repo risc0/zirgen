@@ -1,19 +1,11 @@
 // RUN: zirgen --test %s --test-cycles=5 2>&1 | FileCheck %s --check-prefix=EXEC
-// RUN: zirgen %s --emit=layouttype | FileCheck %s --check-prefix=LAYOUT
+// RUN: zirgen %s --emit=stats | FileCheck %s --check-prefix=LAYOUT
 
 extern IsFirstCycle() : Val;
 
-// LAYOUT-LABEL: Component: Top
-// LAYOUT-NEXT: 5 registers
+// LAYOUT: "data"
+// LAYOUT-NEXT: - size: 5
 
-// LAYOUT: first
-// LAYOUT-NEXT: NondetReg
-// LAYOUT-NEXT: 1
-
-// LAYOUT: arr
-// LAYOUT-NEXT: NondetReg[4]
-// LAYOUT-NEXT: 4
-// LAYOUT-LABEL: Component:
 component Top() {
   first := NondetReg(IsFirstCycle());
 

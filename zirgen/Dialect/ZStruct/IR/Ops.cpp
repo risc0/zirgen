@@ -145,10 +145,6 @@ OpFoldResult SubscriptOp::fold(FoldAdaptor adaptor) {
     }
   }
 
-  if (auto layoutArrayOp = getBase().getDefiningOp<LayoutArrayOp>()) {
-    return layoutArrayOp.getElements()[index];
-  }
-
   if (Attribute base = derefConst(*this, adaptor.getBase())) {
     if (auto arrayAttr = llvm::dyn_cast_if_present<mlir::ArrayAttr>(adaptor.getBase())) {
       if (index < arrayAttr.getValue().size()) {
@@ -697,27 +693,6 @@ LogicalResult ArrayOp::inferReturnTypes(MLIRContext* ctx,
   // The array elements are already the same type thanks to SameTypeOperands
   Type elemType = adaptor.getElements().front().getType();
   out.push_back(ArrayType::get(ctx, elemType, adaptor.getElements().size()));
-  return success();
-}
-
-OpFoldResult LayoutArrayOp::fold(FoldAdaptor adaptor) {
-  return ArrayAttr::get(getContext(), adaptor.getElements());
-}
-
-void LayoutArrayOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
-  cg.emitArrayConstruct(getType(),
-                        getType().getElement(),
-                        llvm::to_vector_of<CodegenValue>(llvm::map_range(
-                            getElements(), [&](auto elem) { return CodegenValue(elem).owned(); })));
-}
-
-LogicalResult LayoutArrayOp::inferReturnTypes(MLIRContext* ctx,
-                                              std::optional<Location>,
-                                              Adaptor adaptor,
-                                              llvm::SmallVectorImpl<Type>& out) {
-  // The array elements are already the same type thanks to SameTypeOperands
-  Type elemType = adaptor.getElements().front().getType();
-  out.push_back(LayoutArrayType::get(ctx, elemType, adaptor.getElements().size()));
   return success();
 }
 

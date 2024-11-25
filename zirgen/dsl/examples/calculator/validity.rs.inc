@@ -1,7 +1,7 @@
-pub fn calculator(
+pub fn calculator<'a>(
     ctx: &ValidityCtx,
-    data0: &impl BufferRow<ValType = Val>,
-    global1: &impl BufferRow<ValType = Val>,
+    data0: BufferRow<Val>,
+    global1: BufferRow<Val>,
 ) -> Result<MixState> {
     let x2: MixState = trivial_constraint()?;
     // Top(zirgen/dsl/examples/calculator/calculator.zir:30)

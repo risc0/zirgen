@@ -80,11 +80,6 @@ public:
   /// layout lookup to pass to the subcomponent.
   mlir::Value addMember(Location loc, StringRef memberName, mlir::Type type);
 
-  /// Removes the given member name from this layout.  originalMemmber
-  /// must match the value previously returned from addMember. Caller
-  /// will need to remove any operations associated with it.
-  void removeMember(Value originalMember, StringRef memberName);
-
   void setKind(ZStruct::LayoutKind kind) { this->kind = kind; }
 
   bool empty() { return members.empty(); }
@@ -116,7 +111,7 @@ private:
 Type getLeastCommonSuper(TypeRange components, bool isLayout = false);
 
 /// True iff the super chain of src contains dst.
-bool isCoercibleTo(Type src, Type dst);
+bool isCoercibleTo(Type src, Type dst, bool isLayout = false);
 
 /// Coerces the given value to the given type. The type must be in the super
 /// chain of value.

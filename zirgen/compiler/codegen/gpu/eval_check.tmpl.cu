@@ -2,22 +2,35 @@
 
 #include "supra/fp.h"
 
+{{#defs}}
+#include "eval_check.cuh"
+{{/defs}}
+
 #include <cstdint>
 
+namespace {{cppNamespace}} {
+
 {{#decls}}
+
+{{#declFuncs}}
 extern __device__ FpExt {{fn}}(uint32_t idx, uint32_t size{{args}});
-{{/decls}}
+{{/declFuncs}}
 
 constexpr size_t INV_RATE = 4;
-extern __constant__ FpExt poly_mix[{{num_mix_powers}}];
+constexpr size_t kNumPolyMixPows = {{num_mix_powers}};
+extern __constant__ FpExt poly_mix[kNumPolyMixPows];
+
+{{/decls}}
 
 {{#funcs}}
 __device__ FpExt {{fn}}(uint32_t idx,
-                         uint32_t size
-                         {{args}}) {
+                        uint32_t size
+                        {{args}}) {
   uint32_t mask = size - 1;
 {{#block}}
   {{.}}
 {{/block}}
 }
 {{/funcs}}
+
+}  // namespace {{cppNamespace}}

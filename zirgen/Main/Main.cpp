@@ -62,10 +62,10 @@ void addAccumAndGlobalPasses(mlir::PassManager& pm) {
 }
 
 void addTypingPasses(mlir::PassManager& pm) {
+  pm.addPass(zirgen::dsl::createGenerateBackPass());
   pm.addPass(zirgen::dsl::createGenerateCheckLayoutPass());
   pm.addPass(zirgen::dsl::createGenerateLayoutPass());
   pm.addPass(zirgen::Zhlt::createStripAliasLayoutOpsPass());
-  pm.addPass(zirgen::dsl::createGenerateBackPass());
   pm.addPass(mlir::createCSEPass());
   pm.addPass(zirgen::dsl::createGenerateExecPass());
   pm.addPass(mlir::createSymbolPrivatizePass({}));

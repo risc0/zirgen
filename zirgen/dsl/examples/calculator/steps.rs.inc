@@ -1,52 +1,52 @@
-pub fn back_nondet_reg(
-    ctx: &ExecContext,
+pub fn back_nondet_reg<'a>(
+    ctx: &'a ExecContext,
     distance0: Index,
-    layout1: &BoundLayout<NondetRegLayout, impl BufferRow<ValType = Val>>,
+    layout1: BoundLayout<'a, NondetRegLayout, Val>,
 ) -> Result<NondetRegStruct> {
     let x2: NondetRegStruct = NondetRegStruct {
-        _super: (&layout1.map(|c| c._super)).load(ctx, distance0),
+        _super: (layout1.map(|c| c._super)).load(ctx, distance0),
     };
     return Ok(x2);
 }
-pub fn exec_nondet_reg(
-    ctx: &ExecContext,
+pub fn exec_nondet_reg<'a>(
+    ctx: &'a ExecContext,
     arg0: Val,
-    layout1: &BoundLayout<NondetRegLayout, impl BufferRow<ValType = Val>>,
+    layout1: BoundLayout<'a, NondetRegLayout, Val>,
 ) -> Result<NondetRegStruct> {
-    let x2: &BoundLayout<Reg, _> = (&layout1.map(|c| c._super));
+    let x2: BoundLayout<Reg, _> = (layout1.map(|c| c._super));
     x2.store(ctx, arg0);
     return Ok(NondetRegStruct {
         _super: x2.load(ctx, 0),
     });
 }
-pub fn back_reg(
-    ctx: &ExecContext,
+pub fn back_reg<'a>(
+    ctx: &'a ExecContext,
     distance0: Index,
-    layout1: &BoundLayout<NondetRegLayout, impl BufferRow<ValType = Val>>,
+    layout1: BoundLayout<'a, NondetRegLayout, Val>,
 ) -> Result<NondetRegStruct> {
     // Reg(<preamble>:4)
     let x2: NondetRegStruct = back_nondet_reg(ctx, distance0, layout1)?;
     return Ok(x2);
 }
-pub fn exec_reg(
-    ctx: &ExecContext,
+pub fn exec_reg<'a>(
+    ctx: &'a ExecContext,
     arg0: Val,
-    layout1: &BoundLayout<NondetRegLayout, impl BufferRow<ValType = Val>>,
+    layout1: BoundLayout<'a, NondetRegLayout, Val>,
 ) -> Result<NondetRegStruct> {
     let x2: NondetRegStruct = exec_nondet_reg(ctx, arg0, layout1)?;
     // Reg(<preamble>:5)
     eqz!((arg0 - x2._super), "Reg(<preamble>:5)");
     return Ok(x2);
 }
-pub fn exec_one_hot(
-    ctx: &ExecContext,
+pub fn exec_one_hot<'a>(
+    ctx: &'a ExecContext,
     arg0: Val,
-    layout1: &BoundLayout<OneHotLayout, impl BufferRow<ValType = Val>>,
+    layout1: BoundLayout<'a, OneHotLayout, Val>,
 ) -> Result<OneHotStruct> {
     // OneHot(zirgen/dsl/examples/calculator/calculator.zir:13)
     let x2: NondetRegStruct2Array = map_layout(
         [Val::new(0), Val::new(1)],
-        (&layout1.map(|c| c._super)),
+        (layout1.map(|c| c._super)),
         |x3, x4| {
             let x5: NondetRegStruct = exec_nondet_reg(ctx, isz((x3 - arg0))?, x4)?;
             return Ok(x5);
@@ -75,35 +75,35 @@ pub fn exec_one_hot(
     );
     return Ok(OneHotStruct { _super: x2 });
 }
-pub fn exec_top(
-    ctx: &ExecContext,
-    layout0: &BoundLayout<TopLayout, impl BufferRow<ValType = Val>>,
-    global1: &impl BufferRow<ValType = Val>,
+pub fn exec_top<'a>(
+    ctx: &'a ExecContext,
+    layout0: BoundLayout<'a, TopLayout, Val>,
+    global1: BufferRow<Val>,
 ) -> Result<TopStruct> {
     // Top(zirgen/dsl/examples/calculator/calculator.zir:33)
-    let x2: &BoundLayout<TopResultLayout, _> = (&layout0.map(|c| c.result));
+    let x2: BoundLayout<TopResultLayout, _> = (layout0.map(|c| c.result));
     // GetValFromUser(zirgen/dsl/examples/calculator/calculator.zir:5)
     // Top(zirgen/dsl/examples/calculator/calculator.zir:29)
     let x3: Val = invoke_extern!(ctx, get_val_from_user);
-    let x4: NondetRegStruct = exec_nondet_reg(ctx, x3, (&layout0.map(|c| c.op)))?;
+    let x4: NondetRegStruct = exec_nondet_reg(ctx, x3, (layout0.map(|c| c.op)))?;
     // GetValFromUser(zirgen/dsl/examples/calculator/calculator.zir:5)
     // Top(zirgen/dsl/examples/calculator/calculator.zir:30)
     let x5: Val = invoke_extern!(ctx, get_val_from_user);
-    let x6: NondetRegStruct = exec_nondet_reg(ctx, x5, (&layout0.map(|c| c.arg1)))?;
+    let x6: NondetRegStruct = exec_nondet_reg(ctx, x5, (layout0.map(|c| c.arg1)))?;
     // GetValFromUser(zirgen/dsl/examples/calculator/calculator.zir:5)
     // Top(zirgen/dsl/examples/calculator/calculator.zir:31)
     let x7: Val = invoke_extern!(ctx, get_val_from_user);
-    let x8: NondetRegStruct = exec_nondet_reg(ctx, x7, (&layout0.map(|c| c.arg2)))?;
+    let x8: NondetRegStruct = exec_nondet_reg(ctx, x7, (layout0.map(|c| c.arg2)))?;
     // GetValFromUser(zirgen/dsl/examples/calculator/calculator.zir:5)
     // Top(zirgen/dsl/examples/calculator/calculator.zir:32)
     let x9: Val = invoke_extern!(ctx, get_val_from_user);
-    let x10: NondetRegStruct = exec_nondet_reg(ctx, x9, (&layout0.map(|c| c.expected)))?;
+    let x10: NondetRegStruct = exec_nondet_reg(ctx, x9, (layout0.map(|c| c.expected)))?;
     // Top(zirgen/dsl/examples/calculator/calculator.zir:29)
     let x11: Val = x4._super;
     // Top(zirgen/dsl/examples/calculator/calculator.zir:33)
-    let x12: OneHotStruct = exec_one_hot(ctx, x11, (&layout0.map(|c| c._0)))?;
+    let x12: OneHotStruct = exec_one_hot(ctx, x11, (layout0.map(|c| c._0)))?;
     let x13: NondetRegStruct2Array = x12._super;
-    let x14: &BoundLayout<NondetRegLayout, _> = (&x2.map(|c| c._super));
+    let x14: BoundLayout<NondetRegLayout, _> = (x2.map(|c| c._super));
     // Top(zirgen/dsl/examples/calculator/calculator.zir:30)
     let x15: Val = x6._super;
     // Top(zirgen/dsl/examples/calculator/calculator.zir:31)
@@ -111,11 +111,11 @@ pub fn exec_top(
     let x17: NondetRegStruct;
     if is_true(x13[to_usize(Val::new(0))]._super) {
         // Top(zirgen/dsl/examples/calculator/calculator.zir:35)
-        let x18: NondetRegStruct = exec_reg(ctx, (x15 + x16), (&x2.map(|c| c.arm0)))?;
+        let x18: NondetRegStruct = exec_reg(ctx, (x15 + x16), (x2.map(|c| c.arm0)))?;
         x17 = x18;
     } else if is_true(x13[to_usize(Val::new(1))]._super) {
         // Top(zirgen/dsl/examples/calculator/calculator.zir:37)
-        let x19: NondetRegStruct = exec_reg(ctx, (x15 - x16), (&x2.map(|c| c.arm1)))?;
+        let x19: NondetRegStruct = exec_reg(ctx, (x15 - x16), (x2.map(|c| c.arm1)))?;
         x17 = x19;
     } else {
         bail!("Reached unreachable mux arm")
@@ -123,7 +123,7 @@ pub fn exec_top(
     let x20: NondetRegStruct = back_reg(ctx, 0, x14)?;
     // Top(zirgen/dsl/examples/calculator/calculator.zir:32)
     let x21: Val = x10._super;
-    // Log(<preamble>:16)
+    // Log(<preamble>:22)
     // Top(zirgen/dsl/examples/calculator/calculator.zir:39)
     invoke_extern!(
         ctx,
@@ -140,9 +140,9 @@ pub fn exec_top(
     );
     // SetGlobalResult(zirgen/dsl/examples/calculator/calculator.zir:23)
     // Top(zirgen/dsl/examples/calculator/calculator.zir:41)
-    let x23: &BoundLayout<_globalLayout, _> = bind_layout!(LAYOUT_GLOBAL, global1);
+    let x23: BoundLayout<_globalLayout, _> = bind_layout!(LAYOUT_GLOBAL, global1);
     // SetGlobalResult(zirgen/dsl/examples/calculator/calculator.zir:24)
-    let x24: NondetRegStruct = exec_reg(ctx, Val::new(5), (&x23.map(|c| c.result)))?;
+    let x24: NondetRegStruct = exec_reg(ctx, Val::new(5), (x23.map(|c| c.result)))?;
     // Top(zirgen/dsl/examples/calculator/calculator.zir:33)
     let x25: NondetRegStruct = back_reg(ctx, 0, x14)?;
     // OutputToUser(zirgen/dsl/examples/calculator/calculator.zir:6)
@@ -150,13 +150,13 @@ pub fn exec_top(
     invoke_extern!(ctx, output_to_user, x25._super);
     return Ok(TopStruct {});
 }
-pub fn step_top(
-    ctx: &ExecContext,
-    data0: &impl BufferRow<ValType = Val>,
-    global1: &impl BufferRow<ValType = Val>,
+pub fn step_top<'a>(
+    ctx: &'a ExecContext,
+    data0: BufferRow<Val>,
+    global1: BufferRow<Val>,
 ) -> Result<()> {
     // Top(zirgen/dsl/examples/calculator/calculator.zir:28)
-    let x2: &BoundLayout<TopLayout, _> = bind_layout!(LAYOUT_TOP, data0);
+    let x2: BoundLayout<TopLayout, _> = bind_layout!(LAYOUT_TOP, data0);
     let x3: TopStruct = exec_top(ctx, x2, global1)?;
     return Ok(());
 }

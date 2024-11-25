@@ -49,7 +49,7 @@ fn build_cuda_kernels() {
             "kernels/cuda/eval_check.cu",
             "kernels/cuda/ffi_supra.cu",
         ])
-        .deps(["kernels/cuda/kernels.h"])
+        .deps(["kernels/cuda/eval_check.cuh"])
         .include(env::var("DEP_RISC0_SYS_CUDA_ROOT").unwrap())
         .include(env::var("DEP_SPPARK_ROOT").unwrap())
         .compile("risc0_keccak_cuda");
