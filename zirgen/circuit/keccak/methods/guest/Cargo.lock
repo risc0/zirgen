@@ -887,7 +887,7 @@ dependencies = [
 [[package]]
 name = "risc0-binfmt"
 version = "1.2.0-alpha.1"
-source = "git+https://github.com/risc0/risc0.git?rev=21db33e8982d776cffaaf213e387dfaba3527347#21db33e8982d776cffaaf213e387dfaba3527347"
+source = "git+https://github.com/risc0/risc0.git?rev=115da4f83079152753b8736f0f7175bd2d151519#115da4f83079152753b8736f0f7175bd2d151519"
 dependencies = [
  "anyhow",
  "borsh",
@@ -932,7 +932,7 @@ dependencies = [
 [[package]]
 name = "risc0-circuit-recursion"
 version = "1.2.0-alpha.1"
-source = "git+https://github.com/risc0/risc0.git?rev=21db33e8982d776cffaaf213e387dfaba3527347#21db33e8982d776cffaaf213e387dfaba3527347"
+source = "git+https://github.com/risc0/risc0.git?rev=115da4f83079152753b8736f0f7175bd2d151519#115da4f83079152753b8736f0f7175bd2d151519"
 dependencies = [
  "anyhow",
  "bytemuck",
@@ -946,7 +946,7 @@ dependencies = [
 [[package]]
 name = "risc0-circuit-rv32im"
 version = "1.2.0-alpha.1"
-source = "git+https://github.com/risc0/risc0.git?rev=21db33e8982d776cffaaf213e387dfaba3527347#21db33e8982d776cffaaf213e387dfaba3527347"
+source = "git+https://github.com/risc0/risc0.git?rev=115da4f83079152753b8736f0f7175bd2d151519#115da4f83079152753b8736f0f7175bd2d151519"
 dependencies = [
  "anyhow",
  "metal",
@@ -961,7 +961,7 @@ dependencies = [
 [[package]]
 name = "risc0-core"
 version = "1.2.0-alpha.1"
-source = "git+https://github.com/risc0/risc0.git?rev=21db33e8982d776cffaaf213e387dfaba3527347#21db33e8982d776cffaaf213e387dfaba3527347"
+source = "git+https://github.com/risc0/risc0.git?rev=115da4f83079152753b8736f0f7175bd2d151519#115da4f83079152753b8736f0f7175bd2d151519"
 dependencies = [
  "bytemuck",
  "rand_core",
@@ -970,7 +970,7 @@ dependencies = [
 [[package]]
 name = "risc0-groth16"
 version = "1.2.0-alpha.1"
-source = "git+https://github.com/risc0/risc0.git?rev=21db33e8982d776cffaaf213e387dfaba3527347#21db33e8982d776cffaaf213e387dfaba3527347"
+source = "git+https://github.com/risc0/risc0.git?rev=115da4f83079152753b8736f0f7175bd2d151519#115da4f83079152753b8736f0f7175bd2d151519"
 dependencies = [
  "anyhow",
  "ark-bn254",
@@ -990,7 +990,7 @@ dependencies = [
 [[package]]
 name = "risc0-zkp"
 version = "1.2.0-alpha.1"
-source = "git+https://github.com/risc0/risc0.git?rev=21db33e8982d776cffaaf213e387dfaba3527347#21db33e8982d776cffaaf213e387dfaba3527347"
+source = "git+https://github.com/risc0/risc0.git?rev=115da4f83079152753b8736f0f7175bd2d151519#115da4f83079152753b8736f0f7175bd2d151519"
 dependencies = [
  "anyhow",
  "blake2",
@@ -1013,7 +1013,7 @@ dependencies = [
 [[package]]
 name = "risc0-zkvm"
 version = "1.2.0-alpha.1"
-source = "git+https://github.com/risc0/risc0.git?rev=21db33e8982d776cffaaf213e387dfaba3527347#21db33e8982d776cffaaf213e387dfaba3527347"
+source = "git+https://github.com/risc0/risc0.git?rev=115da4f83079152753b8736f0f7175bd2d151519#115da4f83079152753b8736f0f7175bd2d151519"
 dependencies = [
  "anyhow",
  "borsh",
@@ -1039,7 +1039,7 @@ dependencies = [
 [[package]]
 name = "risc0-zkvm-platform"
 version = "1.2.0-alpha.1"
-source = "git+https://github.com/risc0/risc0.git?rev=21db33e8982d776cffaaf213e387dfaba3527347#21db33e8982d776cffaaf213e387dfaba3527347"
+source = "git+https://github.com/risc0/risc0.git?rev=115da4f83079152753b8736f0f7175bd2d151519#115da4f83079152753b8736f0f7175bd2d151519"
 dependencies = [
  "bytemuck",
  "getrandom",
