@@ -1,14 +1,14 @@
 struct NondetRegLayout {
   Reg _super;
 };
-using NondetRegLayout8LayoutArray = NondetRegLayout[8];
+using NondetRegLayout8LayoutArray = cuda::std::array<NondetRegLayout,8>;
 struct OneHot_8_Layout {
   NondetRegLayout8LayoutArray _super;
 };
 struct InstInputLayout {
   OneHot_8_Layout minorOnehot;
 };
-using NondetRegLayout11LayoutArray = NondetRegLayout[11];
+using NondetRegLayout11LayoutArray = cuda::std::array<NondetRegLayout,11>;
 struct OneHot_11_Layout {
   NondetRegLayout11LayoutArray _super;
 };
@@ -110,7 +110,7 @@ struct MiscInputLayout {
   ReadRegLayout rs1;
   ReadRegLayout rs2;
 };
-using ArgU16Layout5LayoutArray = ArgU16Layout[5];
+using ArgU16Layout5LayoutArray = cuda::std::array<ArgU16Layout,5>;
 struct _Arguments_Misc0MiscOutputLayout {
   ArgU16Layout5LayoutArray argU16;
 };
@@ -128,7 +128,7 @@ struct Misc0MiscOutputArm1Layout {
   ArgU16Layout _extra3;
   ArgU16Layout _extra4;
 };
-using NondetRegLayout16LayoutArray = NondetRegLayout[16];
+using NondetRegLayout16LayoutArray = cuda::std::array<NondetRegLayout,16>;
 struct ToBits_16_Layout {
   NondetRegLayout16LayoutArray _super;
 };
@@ -403,17 +403,17 @@ struct MulInputLayout {
   ReadRegLayout rs1;
   ReadRegLayout rs2;
 };
-using ArgU16Layout6LayoutArray = ArgU16Layout[6];
+using ArgU16Layout6LayoutArray = cuda::std::array<ArgU16Layout,6>;
 struct ArgU8Layout {
   NondetRegLayout count;
   NondetRegLayout val;
 };
-using ArgU8Layout13LayoutArray = ArgU8Layout[13];
+using ArgU8Layout13LayoutArray = cuda::std::array<ArgU8Layout,13>;
 struct _Arguments_Mul0MulOutputLayout {
   ArgU16Layout6LayoutArray argU16;
   ArgU8Layout13LayoutArray argU8;
 };
-using NondetRegLayout5LayoutArray = NondetRegLayout[5];
+using NondetRegLayout5LayoutArray = cuda::std::array<NondetRegLayout,5>;
 struct ToBits_5_Layout {
   NondetRegLayout5LayoutArray _super;
 };
@@ -558,7 +558,7 @@ struct DivInputLayout {
   ReadRegLayout rs1;
   ReadRegLayout rs2;
 };
-using ArgU16Layout9LayoutArray = ArgU16Layout[9];
+using ArgU16Layout9LayoutArray = cuda::std::array<ArgU16Layout,9>;
 struct _Arguments_Div0MulOutputLayout {
   ArgU16Layout9LayoutArray argU16;
   ArgU8Layout13LayoutArray argU8;
@@ -664,7 +664,7 @@ struct MemLoadInputLayout {
   AddrDecomposeBitsLayout addr;
   MemoryReadLayout data;
 };
-using ArgU8Layout3LayoutArray = ArgU8Layout[3];
+using ArgU8Layout3LayoutArray = cuda::std::array<ArgU8Layout,3>;
 struct _Arguments_Mem0OutputLayout {
   ArgU8Layout3LayoutArray argU8;
 };
@@ -743,7 +743,7 @@ struct MemStoreInputLayout {
   AddrDecomposeBitsLayout addr;
   MemoryReadLayout data;
 };
-using ArgU8Layout4LayoutArray = ArgU8Layout[4];
+using ArgU8Layout4LayoutArray = cuda::std::array<ArgU8Layout,4>;
 struct _Arguments_Mem1OutputLayout {
   ArgU8Layout4LayoutArray argU8;
 };
@@ -819,7 +819,7 @@ struct MemoryPageInLayout {
 struct ControlLoadRoot__0_SuperLayout {
   MemoryPageInLayout mem;
 };
-using ControlLoadRoot__0_SuperLayout8LayoutArray = ControlLoadRoot__0_SuperLayout[8];
+using ControlLoadRoot__0_SuperLayout8LayoutArray = cuda::std::array<ControlLoadRoot__0_SuperLayout,8>;
 struct ControlLoadRootLayout {
   ControlLoadRoot__0_SuperLayout8LayoutArray _1;
 };
@@ -894,7 +894,7 @@ struct ControlResume_SuperArm0Layout {
 struct ControlResume_SuperArm1_Super__0_SuperLayout {
   MemoryWriteLayout _0;
 };
-using ControlResume_SuperArm1_Super__0_SuperLayout8LayoutArray = ControlResume_SuperArm1_Super__0_SuperLayout[8];
+using ControlResume_SuperArm1_Super__0_SuperLayout8LayoutArray = cuda::std::array<ControlResume_SuperArm1_Super__0_SuperLayout,8>;
 struct ControlResume_SuperArm1_SuperLayout {
   ControlResume_SuperArm1_Super__0_SuperLayout8LayoutArray _1;
 };
@@ -902,8 +902,8 @@ struct ControlResume_SuperLayout {
   ControlResume_SuperArm0Layout arm0;
   ControlResume_SuperArm1_SuperLayout arm1;
 };
-using MemoryArgLayout16LayoutArray = MemoryArgLayout[16];
-using CycleArgLayout8LayoutArray = CycleArgLayout[8];
+using MemoryArgLayout16LayoutArray = cuda::std::array<MemoryArgLayout,16>;
+using CycleArgLayout8LayoutArray = cuda::std::array<CycleArgLayout,8>;
 struct _Arguments_ControlResume_SuperLayout {
   MemoryArgLayout16LayoutArray memoryArg;
   CycleArgLayout8LayoutArray cycleArg;
@@ -1057,7 +1057,7 @@ struct Control0_SuperArm3Layout {
   ArgU8Layout _extra44;
   ArgU8Layout _extra45;
 };
-using MemoryReadLayout8LayoutArray = MemoryReadLayout[8];
+using MemoryReadLayout8LayoutArray = cuda::std::array<MemoryReadLayout,8>;
 struct ControlSuspend_SuperArm0_SuperLayout {
   MemoryReadLayout8LayoutArray _1;
 };
@@ -1139,7 +1139,7 @@ struct MemoryPageOutLayout {
   MemoryIOLayout io;
   IsForwardLayout _0;
 };
-using MemoryPageOutLayout8LayoutArray = MemoryPageOutLayout[8];
+using MemoryPageOutLayout8LayoutArray = cuda::std::array<MemoryPageOutLayout,8>;
 struct ControlStoreRootLayout {
   MemoryPageOutLayout8LayoutArray _1;
 };
@@ -1181,7 +1181,7 @@ struct Control0_SuperArm5Layout {
 struct ControlTable_SuperArm0_Super__0_SuperLayout {
   ArgU16Layout arg;
 };
-using ControlTable_SuperArm0_Super__0_SuperLayout16LayoutArray = ControlTable_SuperArm0_Super__0_SuperLayout[16];
+using ControlTable_SuperArm0_Super__0_SuperLayout16LayoutArray = cuda::std::array<ControlTable_SuperArm0_Super__0_SuperLayout,16>;
 struct ControlTable_SuperArm0_SuperLayout {
   ControlTable_SuperArm0_Super__0_SuperLayout16LayoutArray _1;
   IsZeroLayout done;
@@ -1208,7 +1208,7 @@ struct ControlTable_SuperArm0Layout {
 struct ControlTable_SuperArm1_Super__0_SuperLayout {
   ArgU8Layout arg;
 };
-using ControlTable_SuperArm1_Super__0_SuperLayout16LayoutArray = ControlTable_SuperArm1_Super__0_SuperLayout[16];
+using ControlTable_SuperArm1_Super__0_SuperLayout16LayoutArray = cuda::std::array<ControlTable_SuperArm1_Super__0_SuperLayout,16>;
 struct ControlTable_SuperArm1_SuperLayout {
   ControlTable_SuperArm1_Super__0_SuperLayout16LayoutArray _1;
   IsZeroLayout done;
@@ -1236,8 +1236,8 @@ struct ControlTable_SuperLayout {
   ControlTable_SuperArm0Layout arm0;
   ControlTable_SuperArm1Layout arm1;
 };
-using ArgU16Layout16LayoutArray = ArgU16Layout[16];
-using ArgU8Layout16LayoutArray = ArgU8Layout[16];
+using ArgU16Layout16LayoutArray = cuda::std::array<ArgU16Layout,16>;
+using ArgU8Layout16LayoutArray = cuda::std::array<ArgU8Layout,16>;
 struct _Arguments_ControlTable_SuperLayout {
   ArgU16Layout16LayoutArray argU16;
   ArgU8Layout16LayoutArray argU8;
@@ -1354,15 +1354,15 @@ struct Control0Layout {
   CycleArgLayout arg;
   _Arguments_Control0_SuperLayout _arguments_Control0_Super;
 };
-using MemoryArgLayout8LayoutArray = MemoryArgLayout[8];
-using CycleArgLayout4LayoutArray = CycleArgLayout[4];
-using ArgU16Layout2LayoutArray = ArgU16Layout[2];
+using MemoryArgLayout8LayoutArray = cuda::std::array<MemoryArgLayout,8>;
+using CycleArgLayout4LayoutArray = cuda::std::array<CycleArgLayout,4>;
+using ArgU16Layout2LayoutArray = cuda::std::array<ArgU16Layout,2>;
 struct _Arguments_ECall0OutputLayout {
   MemoryArgLayout8LayoutArray memoryArg;
   CycleArgLayout4LayoutArray cycleArg;
   ArgU16Layout2LayoutArray argU16;
 };
-using NondetRegLayout4LayoutArray = NondetRegLayout[4];
+using NondetRegLayout4LayoutArray = cuda::std::array<NondetRegLayout,4>;
 struct OneHot_4_Layout {
   NondetRegLayout4LayoutArray _super;
 };
@@ -1448,7 +1448,7 @@ struct ECallHostReadWords__0_SuperLayout {
   NondetRegLayout addr;
   MemoryWriteUnconstrainedLayout _0;
 };
-using ECallHostReadWords__0_SuperLayout4LayoutArray = ECallHostReadWords__0_SuperLayout[4];
+using ECallHostReadWords__0_SuperLayout4LayoutArray = cuda::std::array<ECallHostReadWords__0_SuperLayout,4>;
 struct ECallHostReadWordsLayout {
   DecomposeLow2Layout lenDecomp;
   DecomposeLow2Layout wordsDecomp;
@@ -1514,7 +1514,7 @@ struct ECall0Layout {
   NormalizeU32Layout addPC;
   CycleArgLayout arg;
 };
-using NondetRegLayout24LayoutArray = NondetRegLayout[24];
+using NondetRegLayout24LayoutArray = cuda::std::array<NondetRegLayout,24>;
 struct NondetExtRegLayout {
   Reg _super;
 };
@@ -1533,7 +1533,7 @@ struct PoseidonStateLayout {
   NondetRegLayout24LayoutArray inner;
   NondetExtRegLayout zcheck;
 };
-using ArgU8Layout2LayoutArray = ArgU8Layout[2];
+using ArgU8Layout2LayoutArray = cuda::std::array<ArgU8Layout,2>;
 struct _Arguments_Poseidon0StateLayout {
   MemoryArgLayout16LayoutArray memoryArg;
   CycleArgLayout8LayoutArray cycleArg;
@@ -1619,7 +1619,7 @@ struct Poseidon0StateArm0Layout {
 struct ReadElemLayout {
   MemoryReadLayout elem32;
 };
-using ReadElemLayout8LayoutArray = ReadElemLayout[8];
+using ReadElemLayout8LayoutArray = cuda::std::array<ReadElemLayout,8>;
 struct PoseidonLoadStateLayout {
   PoseidonStateLayout _super;
   ReadElemLayout8LayoutArray loadList;
@@ -1645,7 +1645,7 @@ struct Poseidon0StateArm1Layout {
   ArgU8Layout _extra16;
   ArgU8Layout _extra17;
 };
-using NondetRegLayout3LayoutArray = NondetRegLayout[3];
+using NondetRegLayout3LayoutArray = cuda::std::array<NondetRegLayout,3>;
 struct OneHot_3_Layout {
   NondetRegLayout3LayoutArray _super;
 };
@@ -1658,8 +1658,8 @@ struct MemoryGet_SuperLayout {
   MemoryGet_SuperArm1Layout arm1;
   MemoryPageOutLayout arm2;
 };
-using MemoryArgLayout2LayoutArray = MemoryArgLayout[2];
-using CycleArgLayout1LayoutArray = CycleArgLayout[1];
+using MemoryArgLayout2LayoutArray = cuda::std::array<MemoryArgLayout,2>;
+using CycleArgLayout1LayoutArray = cuda::std::array<CycleArgLayout,1>;
 struct _Arguments_MemoryGet_SuperLayout {
   MemoryArgLayout2LayoutArray memoryArg;
   CycleArgLayout1LayoutArray cycleArg;
@@ -1668,7 +1668,7 @@ struct MemoryGetLayout {
   MemoryGet_SuperLayout _super;
   _Arguments_MemoryGet_SuperLayout _arguments_MemoryGet_Super;
 };
-using MemoryGetLayout8LayoutArray = MemoryGetLayout[8];
+using MemoryGetLayout8LayoutArray = cuda::std::array<MemoryGetLayout,8>;
 struct PoseidonLoadInShortLayout {
   PoseidonStateLayout _super;
   OneHot_3_Layout txType;
@@ -1813,7 +1813,7 @@ struct Poseidon0StateArm4Layout {
 struct PoseidonCheckOut__0_SuperLayout {
   ReadElemLayout goal;
 };
-using PoseidonCheckOut__0_SuperLayout8LayoutArray = PoseidonCheckOut__0_SuperLayout[8];
+using PoseidonCheckOut__0_SuperLayout8LayoutArray = cuda::std::array<PoseidonCheckOut__0_SuperLayout,8>;
 struct PoseidonCheckOutLayout {
   PoseidonStateLayout _super;
   PoseidonCheckOut__0_SuperLayout8LayoutArray _1;
@@ -1844,7 +1844,7 @@ struct PoseidonStoreOut__0_SuperLayout {
   U16RegLayout high;
   MemoryWriteLayout _0;
 };
-using PoseidonStoreOut__0_SuperLayout8LayoutArray = PoseidonStoreOut__0_SuperLayout[8];
+using PoseidonStoreOut__0_SuperLayout8LayoutArray = cuda::std::array<PoseidonStoreOut__0_SuperLayout,8>;
 struct PoseidonStoreOutLayout {
   PoseidonStateLayout _super;
   PoseidonStoreOut__0_SuperLayout8LayoutArray _1;
@@ -1879,7 +1879,7 @@ struct PoseidonPaging_SuperLayout {
   PoseidonStateLayout arm4;
   PoseidonStateLayout arm5;
 };
-using NondetRegLayout6LayoutArray = NondetRegLayout[6];
+using NondetRegLayout6LayoutArray = cuda::std::array<NondetRegLayout,6>;
 struct OneHot_6_Layout {
   NondetRegLayout6LayoutArray _super;
 };
@@ -1890,8 +1890,8 @@ struct IsU24Layout {
   NondetU16RegLayout low16;
   U8RegLayout _0;
 };
-using ArgU16Layout1LayoutArray = ArgU16Layout[1];
-using ArgU8Layout1LayoutArray = ArgU8Layout[1];
+using ArgU16Layout1LayoutArray = cuda::std::array<ArgU16Layout,1>;
+using ArgU8Layout1LayoutArray = cuda::std::array<ArgU8Layout,1>;
 struct _Arguments_PoseidonPaging__1Layout {
   ArgU16Layout1LayoutArray argU16;
   ArgU8Layout1LayoutArray argU8;
@@ -1962,7 +1962,7 @@ struct PoseidonStoreState__0_SuperLayout {
   U16RegLayout high;
   MemoryWriteLayout _0;
 };
-using PoseidonStoreState__0_SuperLayout8LayoutArray = PoseidonStoreState__0_SuperLayout[8];
+using PoseidonStoreState__0_SuperLayout8LayoutArray = cuda::std::array<PoseidonStoreState__0_SuperLayout,8>;
 struct PoseidonStoreStateLayout {
   PoseidonStateLayout _super;
   PoseidonStoreState__0_SuperLayout8LayoutArray _1;
@@ -1993,7 +1993,7 @@ struct SBoxLayout {
   NondetRegLayout _super;
   NondetRegLayout cubed;
 };
-using SBoxLayout24LayoutArray = SBoxLayout[24];
+using SBoxLayout24LayoutArray = cuda::std::array<SBoxLayout,24>;
 struct DoExtRoundLayout {
   SBoxLayout24LayoutArray _1;
 };
@@ -2011,7 +2011,7 @@ struct PoseidonExtRoundLayout {
 struct DoIntRoundLayout {
   SBoxLayout sbox;
 };
-using DoIntRoundLayout21LayoutArray = DoIntRoundLayout[21];
+using DoIntRoundLayout21LayoutArray = cuda::std::array<DoIntRoundLayout,21>;
 struct DoIntRoundsLayout {
   DoIntRoundLayout21LayoutArray _super;
 };
@@ -2067,7 +2067,7 @@ struct DigestRegValues_SuperLayout {
   NondetRegLayout low;
   NondetRegLayout high;
 };
-using DigestRegValues_SuperLayout8LayoutArray = DigestRegValues_SuperLayout[8];
+using DigestRegValues_SuperLayout8LayoutArray = cuda::std::array<DigestRegValues_SuperLayout,8>;
 struct DigestRegLayout {
   DigestRegValues_SuperLayout8LayoutArray values;
 };
@@ -2093,7 +2093,7 @@ struct _accumLayout {
   Arg_CycleArgLayout cycleArg;
   Reg _offset;
 };
-using Reg19LayoutArray = Reg[19];
+using Reg19LayoutArray = cuda::std::array<Reg,19>;
 struct LayoutAccumLayout {
   Reg19LayoutArray columns;
 };
@@ -2144,9 +2144,9 @@ struct ArgU16Struct {
 struct U16RegStruct {
   Val _super;
 };
-using Val5Array = Val[5];
-using Val16Array = Val[16];
-using NondetRegStruct5Array = NondetRegStruct[5];
+using Val5Array = cuda::std::array<Val,5>;
+using Val16Array = cuda::std::array<Val,16>;
+using NondetRegStruct5Array = cuda::std::array<NondetRegStruct,5>;
 struct ToBits_5_Struct {
   NondetRegStruct5Array _super;
 };
@@ -2182,7 +2182,7 @@ struct CmpLessThanUnsignedStruct {
 struct CmpLessThanStruct {
   RegStruct isLessThan;
 };
-using NondetRegStruct16Array = NondetRegStruct[16];
+using NondetRegStruct16Array = cuda::std::array<NondetRegStruct,16>;
 struct ToBits_16_Struct {
   NondetRegStruct16Array _super;
 };
@@ -2230,13 +2230,13 @@ struct MemoryWriteStruct {
 };
 struct MemoryWriteUnconstrainedStruct {
 };
-using Val3Array = Val[3];
-using NondetRegStruct3Array = NondetRegStruct[3];
+using Val3Array = cuda::std::array<Val,3>;
+using NondetRegStruct3Array = cuda::std::array<NondetRegStruct,3>;
 struct OneHot_3_Struct {
   NondetRegStruct3Array _super;
 };
-using Val8Array = Val[8];
-using NondetRegStruct8Array = NondetRegStruct[8];
+using Val8Array = cuda::std::array<Val,8>;
+using NondetRegStruct8Array = cuda::std::array<NondetRegStruct,8>;
 struct OneHot_8_Struct {
   NondetRegStruct8Array _super;
   NondetRegStruct8Array bits;
@@ -2330,28 +2330,28 @@ struct DigestRegValues_SuperStruct {
   RegStruct low;
   RegStruct high;
 };
-using DigestRegValues_SuperStruct8Array = DigestRegValues_SuperStruct[8];
+using DigestRegValues_SuperStruct8Array = cuda::std::array<DigestRegValues_SuperStruct,8>;
 struct DigestRegStruct {
   DigestRegValues_SuperStruct8Array values;
 };
-using ValU32Struct8Array = ValU32Struct[8];
+using ValU32Struct8Array = cuda::std::array<ValU32Struct,8>;
 struct ControlLoadRoot__0Struct {
 };
-using ControlLoadRoot__0Struct8Array = ControlLoadRoot__0Struct[8];
+using ControlLoadRoot__0Struct8Array = cuda::std::array<ControlLoadRoot__0Struct,8>;
 struct ControlResume_SuperArm1_Super__0Struct {
 };
-using ControlResume_SuperArm1_Super__0Struct8Array = ControlResume_SuperArm1_Super__0Struct[8];
+using ControlResume_SuperArm1_Super__0Struct8Array = cuda::std::array<ControlResume_SuperArm1_Super__0Struct,8>;
 struct ComponentStruct {
 };
-using GetDataStruct8Array = GetDataStruct[8];
+using GetDataStruct8Array = cuda::std::array<GetDataStruct,8>;
 struct ControlTable_SuperArm0_Super__0Struct {
 };
 struct ControlTable_SuperArm1_Super__0Struct {
 };
-using ControlTable_SuperArm0_Super__0Struct16Array = ControlTable_SuperArm0_Super__0Struct[16];
-using ControlTable_SuperArm1_Super__0Struct16Array = ControlTable_SuperArm1_Super__0Struct[16];
-using Val4Array = Val[4];
-using NondetRegStruct4Array = NondetRegStruct[4];
+using ControlTable_SuperArm0_Super__0Struct16Array = cuda::std::array<ControlTable_SuperArm0_Super__0Struct,16>;
+using ControlTable_SuperArm1_Super__0Struct16Array = cuda::std::array<ControlTable_SuperArm1_Super__0Struct,16>;
+using Val4Array = cuda::std::array<Val,4>;
+using NondetRegStruct4Array = cuda::std::array<NondetRegStruct,4>;
 struct OneHot_4_Struct {
   NondetRegStruct4Array _super;
 };
@@ -2371,27 +2371,27 @@ struct DecomposeLow2Struct {
 };
 struct ECallHostReadWords__0Struct {
 };
-using ECallHostReadWords__0Struct4Array = ECallHostReadWords__0Struct[4];
-using Val24Array = Val[24];
+using ECallHostReadWords__0Struct4Array = cuda::std::array<ECallHostReadWords__0Struct,4>;
+using Val24Array = cuda::std::array<Val,24>;
 struct MultiplyByMInt_Super_SuperStruct {
   Val _super;
 };
-using MultiplyByMInt_Super_SuperStruct24Array = MultiplyByMInt_Super_SuperStruct[24];
+using MultiplyByMInt_Super_SuperStruct24Array = cuda::std::array<MultiplyByMInt_Super_SuperStruct,24>;
 struct MultiplyByMIntStruct {
   MultiplyByMInt_Super_SuperStruct24Array _super;
 };
 struct DoIntRounds__0_SuperStruct {
   Val _super;
 };
-using DoIntRounds__0_SuperStruct21Array = DoIntRounds__0_SuperStruct[21];
+using DoIntRounds__0_SuperStruct21Array = cuda::std::array<DoIntRounds__0_SuperStruct,21>;
 struct DoIntRoundsStruct {
   Val24Array _super;
 };
-using RegStruct24Array = RegStruct[24];
+using RegStruct24Array = cuda::std::array<RegStruct,24>;
 struct MultiplyByMExt_Super_SuperStruct {
   Val _super;
 };
-using MultiplyByMExt_Super_SuperStruct24Array = MultiplyByMExt_Super_SuperStruct[24];
+using MultiplyByMExt_Super_SuperStruct24Array = cuda::std::array<MultiplyByMExt_Super_SuperStruct,24>;
 struct MultiplyByMExtStruct {
   MultiplyByMExt_Super_SuperStruct24Array _super;
 };
@@ -2424,26 +2424,26 @@ struct ReadAddrStruct {
 struct ReadElemStruct {
   Val _super;
 };
-using ReadElemStruct8Array = ReadElemStruct[8];
+using ReadElemStruct8Array = cuda::std::array<ReadElemStruct,8>;
 struct PoseidonCheckOut__0Struct {
 };
-using PoseidonCheckOut__0Struct8Array = PoseidonCheckOut__0Struct[8];
+using PoseidonCheckOut__0Struct8Array = cuda::std::array<PoseidonCheckOut__0Struct,8>;
 struct PoseidonStoreOut__0Struct {
 };
-using PoseidonStoreOut__0Struct8Array = PoseidonStoreOut__0Struct[8];
+using PoseidonStoreOut__0Struct8Array = cuda::std::array<PoseidonStoreOut__0Struct,8>;
 struct PoseidonStoreState__0Struct {
 };
-using PoseidonStoreState__0Struct8Array = PoseidonStoreState__0Struct[8];
+using PoseidonStoreState__0Struct8Array = cuda::std::array<PoseidonStoreState__0Struct,8>;
 struct IsU24Struct {
 };
-using Val6Array = Val[6];
-using NondetRegStruct6Array = NondetRegStruct[6];
+using Val6Array = cuda::std::array<Val,6>;
+using NondetRegStruct6Array = cuda::std::array<NondetRegStruct,6>;
 struct OneHot_6_Struct {
   NondetRegStruct6Array _super;
   NondetRegStruct6Array bits;
 };
-using Val11Array = Val[11];
-using NondetRegStruct11Array = NondetRegStruct[11];
+using Val11Array = cuda::std::array<Val,11>;
+using NondetRegStruct11Array = cuda::std::array<NondetRegStruct,11>;
 struct OneHot_11_Struct {
   NondetRegStruct11Array _super;
 };
