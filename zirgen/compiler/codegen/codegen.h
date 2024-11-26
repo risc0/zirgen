@@ -250,6 +250,12 @@ struct CudaLanguageSyntax : public CppLanguageSyntax {
                           mlir::Type ty,
                           mlir::Type elemType,
                           llvm::ArrayRef<CodegenValue> values) override;
+  void emitFuncDefinition(CodegenEmitter& cg,
+                          CodegenIdent<IdentKind::Func> funcName,
+                          llvm::ArrayRef<std::string> contextArgs,
+                          llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
+                          mlir::FunctionType funcType,
+                          mlir::Region* body) override;
 };
 
 // Returns codegen options for emitting specific language variants,

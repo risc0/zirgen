@@ -1,47 +1,63 @@
-NondetRegStruct back_NondetReg(Index distance0, BoundLayout<NondetRegLayout> layout1) {
+__device__ NondetRegStruct back_NondetReg(ExecContext& ctx,
+                                          Index distance0,
+                                          BoundLayout<NondetRegLayout> layout1) {
   NondetRegStruct x2 = NondetRegStruct{._super = LOAD(LAYOUT_LOOKUP(layout1, _super), distance0)};
   return x2;
 }
-NondetRegStruct exec_NondetReg(Val arg0, BoundLayout<NondetRegLayout> layout1) {
+__device__ NondetRegStruct exec_NondetReg(ExecContext& ctx,
+                                          Val arg0,
+                                          BoundLayout<NondetRegLayout> layout1) {
   BoundLayout<Reg> x2 = LAYOUT_LOOKUP(layout1, _super);
   STORE(x2, arg0);
   return NondetRegStruct{._super = LOAD(x2, 0)};
 }
-NondetExtRegStruct back_NondetExtReg(Index distance0, BoundLayout<NondetExtRegLayout> layout1) {
+__device__ NondetExtRegStruct back_NondetExtReg(ExecContext& ctx,
+                                                Index distance0,
+                                                BoundLayout<NondetExtRegLayout> layout1) {
   NondetExtRegStruct x2 =
       NondetExtRegStruct{._super = LOAD_EXT(LAYOUT_LOOKUP(layout1, _super), distance0)};
   return x2;
 }
-NondetExtRegStruct exec_NondetExtReg(ExtVal arg0, BoundLayout<NondetExtRegLayout> layout1) {
+__device__ NondetExtRegStruct exec_NondetExtReg(ExecContext& ctx,
+                                                ExtVal arg0,
+                                                BoundLayout<NondetExtRegLayout> layout1) {
   BoundLayout<Reg> x2 = LAYOUT_LOOKUP(layout1, _super);
   STORE_EXT(x2, arg0);
   return NondetExtRegStruct{._super = LOAD_EXT(x2, 0)};
 }
-RegStruct back_Reg(Index distance0, BoundLayout<NondetRegLayout> layout1) {
+__device__ RegStruct back_Reg(ExecContext& ctx,
+                              Index distance0,
+                              BoundLayout<NondetRegLayout> layout1) {
   // Reg(<preamble>:4)
-  NondetRegStruct x2 = back_NondetReg(distance0, layout1);
+  NondetRegStruct x2 = back_NondetReg(ctx, distance0, layout1);
   return RegStruct{._super = x2};
 }
-RegStruct exec_Reg(Val arg0, BoundLayout<NondetRegLayout> layout1) {
-  NondetRegStruct x2 = exec_NondetReg(arg0, layout1);
+__device__ RegStruct exec_Reg(ExecContext& ctx, Val arg0, BoundLayout<NondetRegLayout> layout1) {
+  NondetRegStruct x2 = exec_NondetReg(ctx, arg0, layout1);
   // Reg(<preamble>:5)
   EQZ((arg0 - x2._super), "Reg(<preamble>:5)");
   return RegStruct{._super = x2};
 }
-NondetExtRegStruct back_ExtReg(Index distance0, BoundLayout<NondetExtRegLayout> layout1) {
+__device__ NondetExtRegStruct back_ExtReg(ExecContext& ctx,
+                                          Index distance0,
+                                          BoundLayout<NondetExtRegLayout> layout1) {
   // ExtReg(<preamble>:10)
-  NondetExtRegStruct x2 = back_NondetExtReg(distance0, layout1);
+  NondetExtRegStruct x2 = back_NondetExtReg(ctx, distance0, layout1);
   return x2;
 }
-NondetExtRegStruct exec_ExtReg(ExtVal arg0, BoundLayout<NondetExtRegLayout> layout1) {
-  NondetExtRegStruct x2 = exec_NondetExtReg(arg0, layout1);
+__device__ NondetExtRegStruct exec_ExtReg(ExecContext& ctx,
+                                          ExtVal arg0,
+                                          BoundLayout<NondetExtRegLayout> layout1) {
+  NondetExtRegStruct x2 = exec_NondetExtReg(ctx, arg0, layout1);
   // ExtReg(<preamble>:11)
   EQZ((x2._super - arg0), "loc(callsite(unknown at  ExtReg ( <preamble> :11:11)))");
   return x2;
 }
-NondetRegStruct exec_NondetBitReg(Val arg0, BoundLayout<NondetRegLayout> layout1) {
+__device__ NondetRegStruct exec_NondetBitReg(ExecContext& ctx,
+                                             Val arg0,
+                                             BoundLayout<NondetRegLayout> layout1) {
   // NondetBitReg(zirgen/circuit/rv32im/v2/dsl/bits.zir:11)
-  NondetRegStruct x2 = exec_NondetReg(arg0, layout1);
+  NondetRegStruct x2 = exec_NondetReg(ctx, arg0, layout1);
   Val x3 = x2._super;
   // AssertBit(zirgen/circuit/rv32im/v2/dsl/bits.zir:6)
   // NondetBitReg(zirgen/circuit/rv32im/v2/dsl/bits.zir:12)
@@ -50,16 +66,20 @@ NondetRegStruct exec_NondetBitReg(Val arg0, BoundLayout<NondetRegLayout> layout1
       "zirgen/circuit/rv32im/v2/dsl/bits.zir :12:13)))");
   return x2;
 }
-BitRegStruct exec_BitReg(Val arg0, BoundLayout<NondetRegLayout> layout1) {
+__device__ BitRegStruct exec_BitReg(ExecContext& ctx,
+                                    Val arg0,
+                                    BoundLayout<NondetRegLayout> layout1) {
   // BitReg(zirgen/circuit/rv32im/v2/dsl/bits.zir:17)
-  NondetRegStruct x2 = exec_NondetBitReg(arg0, layout1);
+  NondetRegStruct x2 = exec_NondetBitReg(ctx, arg0, layout1);
   // BitReg(zirgen/circuit/rv32im/v2/dsl/bits.zir:18)
   EQZ((arg0 - x2._super), "BitReg(zirgen/circuit/rv32im/v2/dsl/bits.zir:18)");
   return BitRegStruct{};
 }
-NondetRegStruct exec_NondetTwitReg(Val arg0, BoundLayout<NondetRegLayout> layout1) {
+__device__ NondetRegStruct exec_NondetTwitReg(ExecContext& ctx,
+                                              Val arg0,
+                                              BoundLayout<NondetRegLayout> layout1) {
   // NondetTwitReg(zirgen/circuit/rv32im/v2/dsl/bits.zir:48)
-  NondetRegStruct x2 = exec_NondetReg(arg0, layout1);
+  NondetRegStruct x2 = exec_NondetReg(ctx, arg0, layout1);
   Val x3 = x2._super;
   // AssertTwit(zirgen/circuit/rv32im/v2/dsl/bits.zir:35)
   // NondetTwitReg(zirgen/circuit/rv32im/v2/dsl/bits.zir:49)
@@ -69,29 +89,33 @@ NondetRegStruct exec_NondetTwitReg(Val arg0, BoundLayout<NondetRegLayout> layout
       "( zirgen/circuit/rv32im/v2/dsl/bits.zir :49:14)))");
   return x2;
 }
-NondetFakeTwitRegStruct exec_NondetFakeTwitReg(Val arg0,
-                                               BoundLayout<NondetFakeTwitRegLayout> layout1) {
+__device__ NondetFakeTwitRegStruct
+exec_NondetFakeTwitReg(ExecContext& ctx, Val arg0, BoundLayout<NondetFakeTwitRegLayout> layout1) {
   // NondetFakeTwitReg(zirgen/circuit/rv32im/v2/dsl/bits.zir:55)
-  NondetRegStruct x2 = exec_NondetBitReg(bitAnd(arg0, Val(1)), LAYOUT_LOOKUP(layout1, reg0));
+  NondetRegStruct x2 = exec_NondetBitReg(ctx, bitAnd(arg0, Val(1)), LAYOUT_LOOKUP(layout1, reg0));
   // NondetFakeTwitReg(zirgen/circuit/rv32im/v2/dsl/bits.zir:56)
-  NondetRegStruct x3 =
-      exec_NondetBitReg((bitAnd(arg0, Val(2)) * Val(1006632961)), LAYOUT_LOOKUP(layout1, reg1));
+  NondetRegStruct x3 = exec_NondetBitReg(
+      ctx, (bitAnd(arg0, Val(2)) * Val(1006632961)), LAYOUT_LOOKUP(layout1, reg1));
   // NondetFakeTwitReg(zirgen/circuit/rv32im/v2/dsl/bits.zir:57)
   Val x4 = ((x3._super * Val(2)) + x2._super);
   return NondetFakeTwitRegStruct{._super = x4};
 }
-FakeTwitRegStruct exec_FakeTwitReg(Val arg0, BoundLayout<NondetFakeTwitRegLayout> layout1) {
+__device__ FakeTwitRegStruct exec_FakeTwitReg(ExecContext& ctx,
+                                              Val arg0,
+                                              BoundLayout<NondetFakeTwitRegLayout> layout1) {
   // FakeTwitReg(zirgen/circuit/rv32im/v2/dsl/bits.zir:67)
-  NondetFakeTwitRegStruct x2 = exec_NondetFakeTwitReg(arg0, layout1);
+  NondetFakeTwitRegStruct x2 = exec_NondetFakeTwitReg(ctx, arg0, layout1);
   // FakeTwitReg(zirgen/circuit/rv32im/v2/dsl/bits.zir:68)
   EQZ((arg0 - x2._super), "FakeTwitReg(zirgen/circuit/rv32im/v2/dsl/bits.zir:68)");
   return FakeTwitRegStruct{};
 }
-NondetRegStruct exec_IsZero(Val arg0, BoundLayout<IsZeroLayout> layout1) {
+__device__ NondetRegStruct exec_IsZero(ExecContext& ctx,
+                                       Val arg0,
+                                       BoundLayout<IsZeroLayout> layout1) {
   // IsZero(zirgen/circuit/rv32im/v2/dsl/is_zero.zir:8)
-  NondetRegStruct x2 = exec_NondetReg(isz(arg0), LAYOUT_LOOKUP(layout1, _super));
+  NondetRegStruct x2 = exec_NondetReg(ctx, isz(arg0), LAYOUT_LOOKUP(layout1, _super));
   // IsZero(zirgen/circuit/rv32im/v2/dsl/is_zero.zir:11)
-  NondetRegStruct x3 = exec_NondetReg(inv_0(arg0), LAYOUT_LOOKUP(layout1, inv));
+  NondetRegStruct x3 = exec_NondetReg(ctx, inv_0(arg0), LAYOUT_LOOKUP(layout1, inv));
   // IsZero(zirgen/circuit/rv32im/v2/dsl/is_zero.zir:8)
   Val x4 = x2._super;
   // AssertBit(zirgen/circuit/rv32im/v2/dsl/bits.zir:6)
@@ -110,125 +134,138 @@ NondetRegStruct exec_IsZero(Val arg0, BoundLayout<IsZeroLayout> layout1) {
   EQZ((x4 * x6), "IsZero(zirgen/circuit/rv32im/v2/dsl/is_zero.zir:20)");
   return x2;
 }
-ArgU8Struct exec_ArgU8(Val arg0, Val arg1, BoundLayout<ArgU8Layout> layout2) {
+__device__ ArgU8Struct exec_ArgU8(ExecContext& ctx,
+                                  Val arg0,
+                                  Val arg1,
+                                  BoundLayout<ArgU8Layout> layout2) {
   // ArgU8(zirgen/circuit/rv32im/v2/dsl/lookups.zir:8)
-  NondetRegStruct x3 = exec_NondetReg(arg0, LAYOUT_LOOKUP(layout2, count));
+  NondetRegStruct x3 = exec_NondetReg(ctx, arg0, LAYOUT_LOOKUP(layout2, count));
   // ArgU8(zirgen/circuit/rv32im/v2/dsl/lookups.zir:9)
-  NondetRegStruct x4 = exec_NondetReg(arg1, LAYOUT_LOOKUP(layout2, val));
+  NondetRegStruct x4 = exec_NondetReg(ctx, arg1, LAYOUT_LOOKUP(layout2, val));
   // LookupDelta(zirgen/circuit/rv32im/v2/dsl/lookups.zir:4)
   // ArgU8(zirgen/circuit/rv32im/v2/dsl/lookups.zir:10)
   INVOKE_EXTERN(ctx, lookupDelta, Val(8), x4._super, x3._super);
   return ArgU8Struct{.count = x3, .val = x4};
 }
-NondetRegStruct exec_NondetU8Reg(Val arg0, BoundLayout<NondetU8RegLayout> layout1) {
+__device__ NondetRegStruct exec_NondetU8Reg(ExecContext& ctx,
+                                            Val arg0,
+                                            BoundLayout<NondetU8RegLayout> layout1) {
   // NondetU8Reg(zirgen/circuit/rv32im/v2/dsl/lookups.zir:15)
-  ArgU8Struct x2 = exec_ArgU8(Val(1), arg0, LAYOUT_LOOKUP(layout1, arg));
+  ArgU8Struct x2 = exec_ArgU8(ctx, Val(1), arg0, LAYOUT_LOOKUP(layout1, arg));
   // NondetU8Reg(zirgen/circuit/rv32im/v2/dsl/lookups.zir:16)
   Val x3 = (x2.count._super - Val(1));
   EQZ(x3, "NondetU8Reg(zirgen/circuit/rv32im/v2/dsl/lookups.zir:16)");
   return x2.val;
 }
-U8RegStruct exec_U8Reg(Val arg0, BoundLayout<U8RegLayout> layout1) {
+__device__ U8RegStruct exec_U8Reg(ExecContext& ctx, Val arg0, BoundLayout<U8RegLayout> layout1) {
   // U8Reg(zirgen/circuit/rv32im/v2/dsl/lookups.zir:22)
-  NondetRegStruct x2 = exec_NondetU8Reg(arg0, LAYOUT_LOOKUP(layout1, ret));
+  NondetRegStruct x2 = exec_NondetU8Reg(ctx, arg0, LAYOUT_LOOKUP(layout1, ret));
   // U8Reg(zirgen/circuit/rv32im/v2/dsl/lookups.zir:23)
   EQZ((x2._super - arg0), "U8Reg(zirgen/circuit/rv32im/v2/dsl/lookups.zir:23)");
   return U8RegStruct{};
 }
-ArgU16Struct exec_ArgU16(Val arg0, Val arg1, BoundLayout<ArgU16Layout> layout2) {
+__device__ ArgU16Struct exec_ArgU16(ExecContext& ctx,
+                                    Val arg0,
+                                    Val arg1,
+                                    BoundLayout<ArgU16Layout> layout2) {
   // ArgU16(zirgen/circuit/rv32im/v2/dsl/lookups.zir:28)
-  NondetRegStruct x3 = exec_NondetReg(arg0, LAYOUT_LOOKUP(layout2, count));
+  NondetRegStruct x3 = exec_NondetReg(ctx, arg0, LAYOUT_LOOKUP(layout2, count));
   // ArgU16(zirgen/circuit/rv32im/v2/dsl/lookups.zir:29)
-  NondetRegStruct x4 = exec_NondetReg(arg1, LAYOUT_LOOKUP(layout2, val));
+  NondetRegStruct x4 = exec_NondetReg(ctx, arg1, LAYOUT_LOOKUP(layout2, val));
   // LookupDelta(zirgen/circuit/rv32im/v2/dsl/lookups.zir:4)
   // ArgU16(zirgen/circuit/rv32im/v2/dsl/lookups.zir:30)
   INVOKE_EXTERN(ctx, lookupDelta, Val(16), x4._super, x3._super);
   return ArgU16Struct{.count = x3, .val = x4};
 }
-NondetRegStruct exec_NondetU16Reg(Val arg0, BoundLayout<NondetU16RegLayout> layout1) {
+__device__ NondetRegStruct exec_NondetU16Reg(ExecContext& ctx,
+                                             Val arg0,
+                                             BoundLayout<NondetU16RegLayout> layout1) {
   // NondetU16Reg(zirgen/circuit/rv32im/v2/dsl/lookups.zir:35)
-  ArgU16Struct x2 = exec_ArgU16(Val(1), arg0, LAYOUT_LOOKUP(layout1, arg));
+  ArgU16Struct x2 = exec_ArgU16(ctx, Val(1), arg0, LAYOUT_LOOKUP(layout1, arg));
   // NondetU16Reg(zirgen/circuit/rv32im/v2/dsl/lookups.zir:36)
   Val x3 = (x2.count._super - Val(1));
   EQZ(x3, "NondetU16Reg(zirgen/circuit/rv32im/v2/dsl/lookups.zir:36)");
   return x2.val;
 }
-U16RegStruct exec_U16Reg(Val arg0, BoundLayout<U16RegLayout> layout1) {
+__device__ U16RegStruct exec_U16Reg(ExecContext& ctx, Val arg0, BoundLayout<U16RegLayout> layout1) {
   // U16Reg(zirgen/circuit/rv32im/v2/dsl/lookups.zir:42)
-  NondetRegStruct x2 = exec_NondetU16Reg(arg0, LAYOUT_LOOKUP(layout1, ret));
+  NondetRegStruct x2 = exec_NondetU16Reg(ctx, arg0, LAYOUT_LOOKUP(layout1, ret));
   // U16Reg(zirgen/circuit/rv32im/v2/dsl/lookups.zir:43)
   EQZ((x2._super - arg0), "U16Reg(zirgen/circuit/rv32im/v2/dsl/lookups.zir:43)");
   return U16RegStruct{._super = arg0};
 }
-ToBits_5_Struct exec_ToBits_5_(Val arg0, BoundLayout<ToBits_5_Layout> layout1) {
+__device__ ToBits_5_Struct exec_ToBits_5_(ExecContext& ctx,
+                                          Val arg0,
+                                          BoundLayout<ToBits_5_Layout> layout1) {
   // ToBits(zirgen/circuit/rv32im/v2/dsl/po2.zir:31)
   NondetRegStruct5Array x2 =
-      map({Val(0), Val(1), Val(2), Val(3), Val(4)},
+      map(Val5Array{Val(0), Val(1), Val(2), Val(3), Val(4)},
           LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val5Array::value_type x3,
-                            BoundLayout<NondetRegLayout5LayoutArray::value_type> x4) {
+          ([&](Val5Array::value_type x3, BoundLayout<NondetRegLayout5LayoutArray::value_type> x4) {
             // Div(<preamble>:16)
-            Val x5 = inv_0({Val(1),
-                            Val(2),
-                            Val(4),
-                            Val(8),
-                            Val(16),
-                            Val(32),
-                            Val(64),
-                            Val(128),
-                            Val(256),
-                            Val(512),
-                            Val(1024),
-                            Val(2048),
-                            Val(4096),
-                            Val(8192),
-                            Val(16384),
-                            Val(32768)}[to_size_t(x3)]);
+            Val x5 = inv_0(Val16Array{Val(1),
+                                      Val(2),
+                                      Val(4),
+                                      Val(8),
+                                      Val(16),
+                                      Val(32),
+                                      Val(64),
+                                      Val(128),
+                                      Val(256),
+                                      Val(512),
+                                      Val(1024),
+                                      Val(2048),
+                                      Val(4096),
+                                      Val(8192),
+                                      Val(16384),
+                                      Val(32768)}[to_size_t(x3)]);
             // Div(<preamble>:17)
-            EQZ(((x5 * {Val(1),
-                        Val(2),
-                        Val(4),
-                        Val(8),
-                        Val(16),
-                        Val(32),
-                        Val(64),
-                        Val(128),
-                        Val(256),
-                        Val(512),
-                        Val(1024),
-                        Val(2048),
-                        Val(4096),
-                        Val(8192),
-                        Val(16384),
-                        Val(32768)}[to_size_t(x3)]) -
+            EQZ(((x5 * Val16Array{Val(1),
+                                  Val(2),
+                                  Val(4),
+                                  Val(8),
+                                  Val(16),
+                                  Val(32),
+                                  Val(64),
+                                  Val(128),
+                                  Val(256),
+                                  Val(512),
+                                  Val(1024),
+                                  Val(2048),
+                                  Val(4096),
+                                  Val(8192),
+                                  Val(16384),
+                                  Val(32768)}[to_size_t(x3)]) -
                  Val(1)),
                 "loc(callsite( Div ( <preamble> :17:22) at  ToBits ( "
                 "zirgen/circuit/rv32im/v2/dsl/po2.zir :31:43)))");
-            NondetRegStruct x6 = exec_NondetBitReg((x5 * bitAnd(arg0,
-                                                                {Val(1),
-                                                                 Val(2),
-                                                                 Val(4),
-                                                                 Val(8),
-                                                                 Val(16),
-                                                                 Val(32),
-                                                                 Val(64),
-                                                                 Val(128),
-                                                                 Val(256),
-                                                                 Val(512),
-                                                                 Val(1024),
-                                                                 Val(2048),
-                                                                 Val(4096),
-                                                                 Val(8192),
-                                                                 Val(16384),
-                                                                 Val(32768)}[to_size_t(x3)])),
-                                                   x4);
+            NondetRegStruct x6 =
+                exec_NondetBitReg(ctx,
+                                  (x5 * bitAnd(arg0,
+                                               Val16Array{Val(1),
+                                                          Val(2),
+                                                          Val(4),
+                                                          Val(8),
+                                                          Val(16),
+                                                          Val(32),
+                                                          Val(64),
+                                                          Val(128),
+                                                          Val(256),
+                                                          Val(512),
+                                                          Val(1024),
+                                                          Val(2048),
+                                                          Val(4096),
+                                                          Val(8192),
+                                                          Val(16384),
+                                                          Val(32768)}[to_size_t(x3)])),
+                                  x4);
             return x6;
           }));
   return ToBits_5_Struct{._super = x2};
 }
-ValU32Struct exec_DynPo2(Val arg0, BoundLayout<DynPo2Layout> layout1) {
+__device__ ValU32Struct exec_DynPo2(ExecContext& ctx, Val arg0, BoundLayout<DynPo2Layout> layout1) {
   // DynPo2(zirgen/circuit/rv32im/v2/dsl/po2.zir:44)
-  ToBits_5_Struct x2 = exec_ToBits_5_(arg0, LAYOUT_LOOKUP(layout1, low5));
+  ToBits_5_Struct x2 = exec_ToBits_5_(ctx, arg0, LAYOUT_LOOKUP(layout1, low5));
   NondetRegStruct5Array x3 = x2._super;
   Val x4 = x3[0]._super;
   Val x5 = x3[1]._super;
@@ -241,7 +278,7 @@ ValU32Struct exec_DynPo2(Val arg0, BoundLayout<DynPo2Layout> layout1) {
   Val x10 = (x9 + (x8 * Val(16)));
   // DynPo2(zirgen/circuit/rv32im/v2/dsl/po2.zir:46)
   NondetRegStruct x11 =
-      exec_NondetU16Reg(((arg0 - x10) * Val(1950351361)), LAYOUT_LOOKUP(layout1, checkU16));
+      exec_NondetU16Reg(ctx, ((arg0 - x10) * Val(1950351361)), LAYOUT_LOOKUP(layout1, checkU16));
   // DynPo2(zirgen/circuit/rv32im/v2/dsl/po2.zir:47)
   Val x12 = ((x11._super * Val(32)) + x10);
   EQZ((x12 - arg0), "DynPo2(zirgen/circuit/rv32im/v2/dsl/po2.zir:47)");
@@ -254,7 +291,7 @@ ValU32Struct exec_DynPo2(Val arg0, BoundLayout<DynPo2Layout> layout1) {
   // DynPo2(zirgen/circuit/rv32im/v2/dsl/po2.zir:50)
   Val x16 = ((Val(1) - x6) * x15);
   Val x17 = (((x6 * x15) * Val(16)) + x16);
-  RegStruct x18 = exec_Reg(x17, LAYOUT_LOOKUP(layout1, b3));
+  RegStruct x18 = exec_Reg(ctx, x17, LAYOUT_LOOKUP(layout1, b3));
   Val x19 = x18._super._super;
   // CondMul(zirgen/circuit/rv32im/v2/dsl/po2.zir:39)
   // DynPo2(zirgen/circuit/rv32im/v2/dsl/po2.zir:51)
@@ -262,23 +299,25 @@ ValU32Struct exec_DynPo2(Val arg0, BoundLayout<DynPo2Layout> layout1) {
   Val x21 = (((x7 * x19) * Val(256)) + x20);
   // DynPo2(zirgen/circuit/rv32im/v2/dsl/po2.zir:52)
   Val x22 = ((Val(1) - x8) * x21);
-  RegStruct x23 = exec_Reg(x22, LAYOUT_LOOKUP(layout1, low));
+  RegStruct x23 = exec_Reg(ctx, x22, LAYOUT_LOOKUP(layout1, low));
   // DynPo2(zirgen/circuit/rv32im/v2/dsl/po2.zir:53)
-  RegStruct x24 = exec_Reg((x8 * x21), LAYOUT_LOOKUP(layout1, high));
+  RegStruct x24 = exec_Reg(ctx, (x8 * x21), LAYOUT_LOOKUP(layout1, high));
   // ValU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:10)
   // DynPo2(zirgen/circuit/rv32im/v2/dsl/po2.zir:54)
   ValU32Struct x25 = ValU32Struct{.low = x23._super._super, .high = x24._super._super};
   return x25;
 }
-NormalizeU32Struct exec_NormalizeU32(DenormedValU32Struct arg0,
-                                     BoundLayout<NormalizeU32Layout> layout1) {
+__device__ NormalizeU32Struct exec_NormalizeU32(ExecContext& ctx,
+                                                DenormedValU32Struct arg0,
+                                                BoundLayout<NormalizeU32Layout> layout1) {
   // NormalizeU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:42)
   Val x2 = arg0.low;
   // NormalizeU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:44)
-  NondetRegStruct x3 = exec_NondetU16Reg(bitAnd(x2, Val(65535)), LAYOUT_LOOKUP(layout1, low16));
+  NondetRegStruct x3 =
+      exec_NondetU16Reg(ctx, bitAnd(x2, Val(65535)), LAYOUT_LOOKUP(layout1, low16));
   // NormalizeU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:45)
-  NondetRegStruct x4 = exec_NondetBitReg((bitAnd(x2, Val(65536)) * Val(2013235201)),
-                                         LAYOUT_LOOKUP(layout1, lowCarry));
+  NondetRegStruct x4 = exec_NondetBitReg(
+      ctx, (bitAnd(x2, Val(65536)) * Val(2013235201)), LAYOUT_LOOKUP(layout1, lowCarry));
   Val x5 = x4._super;
   // NormalizeU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:44)
   Val x6 = x3._super;
@@ -287,10 +326,11 @@ NormalizeU32Struct exec_NormalizeU32(DenormedValU32Struct arg0,
   // NormalizeU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:48)
   Val x7 = (arg0.high + x5);
   // NormalizeU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:50)
-  NondetRegStruct x8 = exec_NondetU16Reg(bitAnd(x7, Val(65535)), LAYOUT_LOOKUP(layout1, high16));
+  NondetRegStruct x8 =
+      exec_NondetU16Reg(ctx, bitAnd(x7, Val(65535)), LAYOUT_LOOKUP(layout1, high16));
   // NormalizeU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:51)
-  NondetRegStruct x9 = exec_NondetBitReg((bitAnd(x7, Val(65536)) * Val(2013235201)),
-                                         LAYOUT_LOOKUP(layout1, highCarry));
+  NondetRegStruct x9 = exec_NondetBitReg(
+      ctx, (bitAnd(x7, Val(65536)) * Val(2013235201)), LAYOUT_LOOKUP(layout1, highCarry));
   // NormalizeU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:50)
   Val x10 = x8._super;
   // NormalizeU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:52)
@@ -298,27 +338,29 @@ NormalizeU32Struct exec_NormalizeU32(DenormedValU32Struct arg0,
   EQZ((x7 - x11), "NormalizeU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:52)");
   return NormalizeU32Struct{._super = ValU32Struct{.low = x6, .high = x10}, .carry = x9};
 }
-AddrDecomposeStruct
-exec_AddrDecompose(ValU32Struct arg0, Val arg1, BoundLayout<AddrDecomposeLayout> layout2) {
+__device__ AddrDecomposeStruct exec_AddrDecompose(ExecContext& ctx,
+                                                  ValU32Struct arg0,
+                                                  Val arg1,
+                                                  BoundLayout<AddrDecomposeLayout> layout2) {
   // AddrDecompose(zirgen/circuit/rv32im/v2/dsl/u32.zir:61)
   Val x3 = arg0.low;
   // AddrDecompose(zirgen/circuit/rv32im/v2/dsl/u32.zir:63)
-  NondetRegStruct x4 = exec_NondetTwitReg(bitAnd(x3, Val(3)), LAYOUT_LOOKUP(layout2, low2));
+  NondetRegStruct x4 = exec_NondetTwitReg(ctx, bitAnd(x3, Val(3)), LAYOUT_LOOKUP(layout2, low2));
   // AddrDecompose(zirgen/circuit/rv32im/v2/dsl/u32.zir:65)
   Val x5 = ((Val(1) - arg1) * Val(49151));
   // AddrDecompose(zirgen/circuit/rv32im/v2/dsl/u32.zir:61)
   Val x6 = arg0.high;
   // AddrDecompose(zirgen/circuit/rv32im/v2/dsl/u32.zir:65)
   Val x7 = (((arg1 * Val(65535)) + x5) - x6);
-  U16RegStruct x8 = exec_U16Reg(x7, LAYOUT_LOOKUP(layout2, upperDiff));
+  U16RegStruct x8 = exec_U16Reg(ctx, x7, LAYOUT_LOOKUP(layout2, upperDiff));
   // AddrDecompose(zirgen/circuit/rv32im/v2/dsl/u32.zir:67)
-  NondetRegStruct x9 = exec_IsZero(x6, LAYOUT_LOOKUP(layout2, _0));
+  NondetRegStruct x9 = exec_IsZero(ctx, x6, LAYOUT_LOOKUP(layout2, _0));
   EQZ(x9._super, "AddrDecompose(zirgen/circuit/rv32im/v2/dsl/u32.zir:67)");
   // AddrDecompose(zirgen/circuit/rv32im/v2/dsl/u32.zir:63)
   Val x10 = x4._super;
   // AddrDecompose(zirgen/circuit/rv32im/v2/dsl/u32.zir:69)
   NondetRegStruct x11 =
-      exec_NondetU16Reg(((x3 - x10) * Val(1509949441)), LAYOUT_LOOKUP(layout2, med14));
+      exec_NondetU16Reg(ctx, ((x3 - x10) * Val(1509949441)), LAYOUT_LOOKUP(layout2, med14));
   Val x12 = x11._super;
   // AddrDecompose(zirgen/circuit/rv32im/v2/dsl/u32.zir:71)
   Val x13 = (((x12 * Val(4)) + x10) - x3);
@@ -327,15 +369,15 @@ exec_AddrDecompose(ValU32Struct arg0, Val arg1, BoundLayout<AddrDecomposeLayout>
   AddrDecomposeStruct x14 = AddrDecomposeStruct{._super = ((x6 * Val(16384)) + x12), .low2 = x4};
   return x14;
 }
-AddrDecomposeBitsStruct
-exec_AddrDecomposeBits(ValU32Struct arg0, Val arg1, BoundLayout<AddrDecomposeBitsLayout> layout2) {
+__device__ AddrDecomposeBitsStruct exec_AddrDecomposeBits(
+    ExecContext& ctx, ValU32Struct arg0, Val arg1, BoundLayout<AddrDecomposeBitsLayout> layout2) {
   // AddrDecomposeBits(zirgen/circuit/rv32im/v2/dsl/u32.zir:79)
   Val x3 = arg0.low;
   // AddrDecomposeBits(zirgen/circuit/rv32im/v2/dsl/u32.zir:81)
-  NondetRegStruct x4 = exec_NondetBitReg(bitAnd(x3, Val(1)), LAYOUT_LOOKUP(layout2, low0));
+  NondetRegStruct x4 = exec_NondetBitReg(ctx, bitAnd(x3, Val(1)), LAYOUT_LOOKUP(layout2, low0));
   // AddrDecomposeBits(zirgen/circuit/rv32im/v2/dsl/u32.zir:82)
   NondetRegStruct x5 =
-      exec_NondetBitReg((bitAnd(x3, Val(2)) * Val(1006632961)), LAYOUT_LOOKUP(layout2, low1));
+      exec_NondetBitReg(ctx, (bitAnd(x3, Val(2)) * Val(1006632961)), LAYOUT_LOOKUP(layout2, low1));
   // AddrDecomposeBits(zirgen/circuit/rv32im/v2/dsl/u32.zir:83)
   Val x6 = ((x5._super * Val(2)) + x4._super);
   // AddrDecomposeBits(zirgen/circuit/rv32im/v2/dsl/u32.zir:85)
@@ -344,13 +386,13 @@ exec_AddrDecomposeBits(ValU32Struct arg0, Val arg1, BoundLayout<AddrDecomposeBit
   Val x8 = arg0.high;
   // AddrDecomposeBits(zirgen/circuit/rv32im/v2/dsl/u32.zir:85)
   Val x9 = (((arg1 * Val(65535)) + x7) - x8);
-  U16RegStruct x10 = exec_U16Reg(x9, LAYOUT_LOOKUP(layout2, upperDiff));
+  U16RegStruct x10 = exec_U16Reg(ctx, x9, LAYOUT_LOOKUP(layout2, upperDiff));
   // AddrDecomposeBits(zirgen/circuit/rv32im/v2/dsl/u32.zir:87)
-  NondetRegStruct x11 = exec_IsZero(x8, LAYOUT_LOOKUP(layout2, _0));
+  NondetRegStruct x11 = exec_IsZero(ctx, x8, LAYOUT_LOOKUP(layout2, _0));
   EQZ(x11._super, "AddrDecomposeBits(zirgen/circuit/rv32im/v2/dsl/u32.zir:87)");
   // AddrDecomposeBits(zirgen/circuit/rv32im/v2/dsl/u32.zir:89)
   NondetRegStruct x12 =
-      exec_NondetU16Reg(((x3 - x6) * Val(1509949441)), LAYOUT_LOOKUP(layout2, med14));
+      exec_NondetU16Reg(ctx, ((x3 - x6) * Val(1509949441)), LAYOUT_LOOKUP(layout2, med14));
   Val x13 = x12._super;
   // AddrDecomposeBits(zirgen/circuit/rv32im/v2/dsl/u32.zir:91)
   Val x14 = (((x13 * Val(4)) + x6) - x3);
@@ -359,57 +401,65 @@ exec_AddrDecomposeBits(ValU32Struct arg0, Val arg1, BoundLayout<AddrDecomposeBit
   Val x15 = ((x8 * Val(16384)) + x13);
   return AddrDecomposeBitsStruct{._super = x15, .low0 = x4, .low1 = x5, .low2 = x6, .addr = x15};
 }
-CmpEqualStruct
-exec_CmpEqual(ValU32Struct arg0, ValU32Struct arg1, BoundLayout<CmpEqualLayout> layout2) {
+__device__ CmpEqualStruct exec_CmpEqual(ExecContext& ctx,
+                                        ValU32Struct arg0,
+                                        ValU32Struct arg1,
+                                        BoundLayout<CmpEqualLayout> layout2) {
   // CmpEqual(zirgen/circuit/rv32im/v2/dsl/u32.zir:112)
-  NondetRegStruct x3 = exec_IsZero((arg0.low - arg1.low), LAYOUT_LOOKUP(layout2, lowSame));
+  NondetRegStruct x3 = exec_IsZero(ctx, (arg0.low - arg1.low), LAYOUT_LOOKUP(layout2, lowSame));
   // CmpEqual(zirgen/circuit/rv32im/v2/dsl/u32.zir:113)
-  NondetRegStruct x4 = exec_IsZero((arg0.high - arg1.high), LAYOUT_LOOKUP(layout2, highSame));
+  NondetRegStruct x4 = exec_IsZero(ctx, (arg0.high - arg1.high), LAYOUT_LOOKUP(layout2, highSame));
   // CmpEqual(zirgen/circuit/rv32im/v2/dsl/u32.zir:114)
-  RegStruct x5 = exec_Reg((x3._super * x4._super), LAYOUT_LOOKUP(layout2, isEqual));
+  RegStruct x5 = exec_Reg(ctx, (x3._super * x4._super), LAYOUT_LOOKUP(layout2, isEqual));
   return CmpEqualStruct{.isEqual = x5};
 }
-CmpLessThanUnsignedStruct exec_CmpLessThanUnsigned(ValU32Struct arg0,
-                                                   ValU32Struct arg1,
-                                                   BoundLayout<CmpLessThanUnsignedLayout> layout2) {
+__device__ CmpLessThanUnsignedStruct
+exec_CmpLessThanUnsigned(ExecContext& ctx,
+                         ValU32Struct arg0,
+                         ValU32Struct arg1,
+                         BoundLayout<CmpLessThanUnsignedLayout> layout2) {
   // SubU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:33)
   // CmpLessThanUnsigned(zirgen/circuit/rv32im/v2/dsl/u32.zir:119)
   Val x3 = ((arg0.low + Val(65536)) - arg1.low);
   Val x4 = ((arg0.high + Val(65535)) - arg1.high);
-  NormalizeU32Struct x5 =
-      exec_NormalizeU32(DenormedValU32Struct{.low = x3, .high = x4}, LAYOUT_LOOKUP(layout2, diff));
+  NormalizeU32Struct x5 = exec_NormalizeU32(
+      ctx, DenormedValU32Struct{.low = x3, .high = x4}, LAYOUT_LOOKUP(layout2, diff));
   // CmpLessThanUnsigned(zirgen/circuit/rv32im/v2/dsl/u32.zir:120)
   Val x6 = (Val(1) - x5.carry._super);
   return CmpLessThanUnsignedStruct{.isLessThan = x6};
 }
-NondetRegStruct exec_GetSignU32(ValU32Struct arg0, BoundLayout<GetSignU32Layout> layout1) {
+__device__ NondetRegStruct exec_GetSignU32(ExecContext& ctx,
+                                           ValU32Struct arg0,
+                                           BoundLayout<GetSignU32Layout> layout1) {
   // GetSignU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:124)
   Val x2 = arg0.high;
   // GetSignU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:125)
-  NondetRegStruct x3 =
-      exec_NondetBitReg((bitAnd(x2, Val(32768)) * Val(2013204481)), LAYOUT_LOOKUP(layout1, _super));
+  NondetRegStruct x3 = exec_NondetBitReg(
+      ctx, (bitAnd(x2, Val(32768)) * Val(2013204481)), LAYOUT_LOOKUP(layout1, _super));
   // GetSignU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:126)
-  NondetRegStruct x4 =
-      exec_NondetU16Reg((bitAnd(x2, Val(32767)) * Val(2)), LAYOUT_LOOKUP(layout1, restTimesTwo));
+  NondetRegStruct x4 = exec_NondetU16Reg(
+      ctx, (bitAnd(x2, Val(32767)) * Val(2)), LAYOUT_LOOKUP(layout1, restTimesTwo));
   // GetSignU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:127)
   Val x5 = ((x3._super * Val(32768)) + (x4._super * Val(1006632961)));
   EQZ((x2 - x5), "GetSignU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:127)");
   return x3;
 }
-CmpLessThanStruct
-exec_CmpLessThan(ValU32Struct arg0, ValU32Struct arg1, BoundLayout<CmpLessThanLayout> layout2) {
+__device__ CmpLessThanStruct exec_CmpLessThan(ExecContext& ctx,
+                                              ValU32Struct arg0,
+                                              ValU32Struct arg1,
+                                              BoundLayout<CmpLessThanLayout> layout2) {
   // SubU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:33)
   // CmpLessThan(zirgen/circuit/rv32im/v2/dsl/u32.zir:133)
   Val x3 = ((arg0.low + Val(65536)) - arg1.low);
   Val x4 = ((arg0.high + Val(65535)) - arg1.high);
-  NormalizeU32Struct x5 =
-      exec_NormalizeU32(DenormedValU32Struct{.low = x3, .high = x4}, LAYOUT_LOOKUP(layout2, diff));
+  NormalizeU32Struct x5 = exec_NormalizeU32(
+      ctx, DenormedValU32Struct{.low = x3, .high = x4}, LAYOUT_LOOKUP(layout2, diff));
   // CmpLessThan(zirgen/circuit/rv32im/v2/dsl/u32.zir:134)
-  NondetRegStruct x6 = exec_GetSignU32(arg0, LAYOUT_LOOKUP(layout2, s1));
+  NondetRegStruct x6 = exec_GetSignU32(ctx, arg0, LAYOUT_LOOKUP(layout2, s1));
   // CmpLessThan(zirgen/circuit/rv32im/v2/dsl/u32.zir:135)
-  NondetRegStruct x7 = exec_GetSignU32(arg1, LAYOUT_LOOKUP(layout2, s2));
+  NondetRegStruct x7 = exec_GetSignU32(ctx, arg1, LAYOUT_LOOKUP(layout2, s2));
   // CmpLessThan(zirgen/circuit/rv32im/v2/dsl/u32.zir:136)
-  NondetRegStruct x8 = exec_GetSignU32(x5._super, LAYOUT_LOOKUP(layout2, s3));
+  NondetRegStruct x8 = exec_GetSignU32(ctx, x5._super, LAYOUT_LOOKUP(layout2, s3));
   // CmpLessThan(zirgen/circuit/rv32im/v2/dsl/u32.zir:135)
   Val x9 = x7._super;
   // CmpLessThan(zirgen/circuit/rv32im/v2/dsl/u32.zir:134)
@@ -419,98 +469,102 @@ exec_CmpLessThan(ValU32Struct arg0, ValU32Struct arg1, BoundLayout<CmpLessThanLa
   // CmpLessThan(zirgen/circuit/rv32im/v2/dsl/u32.zir:138)
   Val x12 = ((x10 * (Val(1) - x9)) * (Val(1) - x11));
   Val x13 = ((Val(1) - x10) * x9);
-  RegStruct x14 = exec_Reg((x12 + (x13 * x11)), LAYOUT_LOOKUP(layout2, overflow));
+  RegStruct x14 = exec_Reg(ctx, (x12 + (x13 * x11)), LAYOUT_LOOKUP(layout2, overflow));
   Val x15 = x14._super._super;
   // CmpLessThan(zirgen/circuit/rv32im/v2/dsl/u32.zir:140)
   Val x16 = ((x15 + x11) - ((x15 * Val(2)) * x11));
-  RegStruct x17 = exec_Reg(x16, LAYOUT_LOOKUP(layout2, isLessThan));
+  RegStruct x17 = exec_Reg(ctx, x16, LAYOUT_LOOKUP(layout2, isLessThan));
   return CmpLessThanStruct{.isLessThan = x17};
 }
-ToBits_16_Struct exec_ToBits_16_(Val arg0, BoundLayout<ToBits_16_Layout> layout1) {
+__device__ ToBits_16_Struct exec_ToBits_16_(ExecContext& ctx,
+                                            Val arg0,
+                                            BoundLayout<ToBits_16_Layout> layout1) {
   // ToBits(zirgen/circuit/rv32im/v2/dsl/po2.zir:31)
-  NondetRegStruct16Array x2 =
-      map({Val(0),
-           Val(1),
-           Val(2),
-           Val(3),
-           Val(4),
-           Val(5),
-           Val(6),
-           Val(7),
-           Val(8),
-           Val(9),
-           Val(10),
-           Val(11),
-           Val(12),
-           Val(13),
-           Val(14),
-           Val(15)},
-          LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val16Array::value_type x3,
-                            BoundLayout<NondetRegLayout16LayoutArray::value_type> x4) {
-            // Div(<preamble>:16)
-            Val x5 = inv_0({Val(1),
-                            Val(2),
-                            Val(4),
-                            Val(8),
-                            Val(16),
-                            Val(32),
-                            Val(64),
-                            Val(128),
-                            Val(256),
-                            Val(512),
-                            Val(1024),
-                            Val(2048),
-                            Val(4096),
-                            Val(8192),
-                            Val(16384),
-                            Val(32768)}[to_size_t(x3)]);
-            // Div(<preamble>:17)
-            EQZ(((x5 * {Val(1),
-                        Val(2),
-                        Val(4),
-                        Val(8),
-                        Val(16),
-                        Val(32),
-                        Val(64),
-                        Val(128),
-                        Val(256),
-                        Val(512),
-                        Val(1024),
-                        Val(2048),
-                        Val(4096),
-                        Val(8192),
-                        Val(16384),
-                        Val(32768)}[to_size_t(x3)]) -
-                 Val(1)),
-                "loc(callsite( Div ( <preamble> :17:22) at  ToBits ( "
-                "zirgen/circuit/rv32im/v2/dsl/po2.zir :31:43)))");
-            NondetRegStruct x6 = exec_NondetBitReg((x5 * bitAnd(arg0,
-                                                                {Val(1),
-                                                                 Val(2),
-                                                                 Val(4),
-                                                                 Val(8),
-                                                                 Val(16),
-                                                                 Val(32),
-                                                                 Val(64),
-                                                                 Val(128),
-                                                                 Val(256),
-                                                                 Val(512),
-                                                                 Val(1024),
-                                                                 Val(2048),
-                                                                 Val(4096),
-                                                                 Val(8192),
-                                                                 Val(16384),
-                                                                 Val(32768)}[to_size_t(x3)])),
-                                                   x4);
-            return x6;
-          }));
+  NondetRegStruct16Array x2 = map(
+      Val16Array{Val(0),
+                 Val(1),
+                 Val(2),
+                 Val(3),
+                 Val(4),
+                 Val(5),
+                 Val(6),
+                 Val(7),
+                 Val(8),
+                 Val(9),
+                 Val(10),
+                 Val(11),
+                 Val(12),
+                 Val(13),
+                 Val(14),
+                 Val(15)},
+      LAYOUT_LOOKUP(layout1, _super),
+      ([&](Val16Array::value_type x3, BoundLayout<NondetRegLayout16LayoutArray::value_type> x4) {
+        // Div(<preamble>:16)
+        Val x5 = inv_0(Val16Array{Val(1),
+                                  Val(2),
+                                  Val(4),
+                                  Val(8),
+                                  Val(16),
+                                  Val(32),
+                                  Val(64),
+                                  Val(128),
+                                  Val(256),
+                                  Val(512),
+                                  Val(1024),
+                                  Val(2048),
+                                  Val(4096),
+                                  Val(8192),
+                                  Val(16384),
+                                  Val(32768)}[to_size_t(x3)]);
+        // Div(<preamble>:17)
+        EQZ(((x5 * Val16Array{Val(1),
+                              Val(2),
+                              Val(4),
+                              Val(8),
+                              Val(16),
+                              Val(32),
+                              Val(64),
+                              Val(128),
+                              Val(256),
+                              Val(512),
+                              Val(1024),
+                              Val(2048),
+                              Val(4096),
+                              Val(8192),
+                              Val(16384),
+                              Val(32768)}[to_size_t(x3)]) -
+             Val(1)),
+            "loc(callsite( Div ( <preamble> :17:22) at  ToBits ( "
+            "zirgen/circuit/rv32im/v2/dsl/po2.zir :31:43)))");
+        NondetRegStruct x6 = exec_NondetBitReg(ctx,
+                                               (x5 * bitAnd(arg0,
+                                                            Val16Array{Val(1),
+                                                                       Val(2),
+                                                                       Val(4),
+                                                                       Val(8),
+                                                                       Val(16),
+                                                                       Val(32),
+                                                                       Val(64),
+                                                                       Val(128),
+                                                                       Val(256),
+                                                                       Val(512),
+                                                                       Val(1024),
+                                                                       Val(2048),
+                                                                       Val(4096),
+                                                                       Val(8192),
+                                                                       Val(16384),
+                                                                       Val(32768)}[to_size_t(x3)])),
+                                               x4);
+        return x6;
+      }));
   return ToBits_16_Struct{._super = x2};
 }
-FromBits_16_Struct
-exec_BitwiseAndU16(Val arg0, Val arg1, BoundLayout<BitwiseAndU16Layout> layout2) {
+__device__ FromBits_16_Struct exec_BitwiseAndU16(ExecContext& ctx,
+                                                 Val arg0,
+                                                 Val arg1,
+                                                 BoundLayout<BitwiseAndU16Layout> layout2) {
   // BitwiseAndU16(zirgen/circuit/rv32im/v2/dsl/u32.zir:144)
-  ToBits_16_Struct x3 = exec_ToBits_16_(arg0, LAYOUT_LOOKUP(layout2, bitsX));
+  ToBits_16_Struct x3 = exec_ToBits_16_(ctx, arg0, LAYOUT_LOOKUP(layout2, bitsX));
   NondetRegStruct16Array x4 = x3._super;
   Val x5 = x4[0]._super;
   Val x6 = x4[1]._super;
@@ -537,7 +591,7 @@ exec_BitwiseAndU16(Val arg0, Val arg1, BoundLayout<BitwiseAndU16Layout> layout2)
   Val x25 = (((x24 + (x18 * Val(8192))) + (x19 * Val(16384))) + (x20 * Val(32768)));
   EQZ((arg0 - x25), "BitwiseAndU16(zirgen/circuit/rv32im/v2/dsl/u32.zir:145)");
   // BitwiseAndU16(zirgen/circuit/rv32im/v2/dsl/u32.zir:146)
-  ToBits_16_Struct x26 = exec_ToBits_16_(arg1, LAYOUT_LOOKUP(layout2, bitsY));
+  ToBits_16_Struct x26 = exec_ToBits_16_(ctx, arg1, LAYOUT_LOOKUP(layout2, bitsY));
   NondetRegStruct16Array x27 = x26._super;
   Val x28 = x27[0]._super;
   Val x29 = x27[1]._super;
@@ -575,82 +629,91 @@ exec_BitwiseAndU16(Val arg0, Val arg1, BoundLayout<BitwiseAndU16Layout> layout2)
   Val x56 = ((x55 + ((x19 * x42) * Val(16384))) + ((x20 * x43) * Val(32768)));
   return FromBits_16_Struct{._super = x56};
 }
-ValU32Struct
-exec_BitwiseAnd(ValU32Struct arg0, ValU32Struct arg1, BoundLayout<BitwiseAndLayout> layout2) {
+__device__ ValU32Struct exec_BitwiseAnd(ExecContext& ctx,
+                                        ValU32Struct arg0,
+                                        ValU32Struct arg1,
+                                        BoundLayout<BitwiseAndLayout> layout2) {
   // BitwiseAnd(zirgen/circuit/rv32im/v2/dsl/u32.zir:155)
-  FromBits_16_Struct x3 = exec_BitwiseAndU16(arg0.low, arg1.low, LAYOUT_LOOKUP(layout2, _0));
-  FromBits_16_Struct x4 = exec_BitwiseAndU16(arg0.high, arg1.high, LAYOUT_LOOKUP(layout2, _1));
+  FromBits_16_Struct x3 = exec_BitwiseAndU16(ctx, arg0.low, arg1.low, LAYOUT_LOOKUP(layout2, _0));
+  FromBits_16_Struct x4 = exec_BitwiseAndU16(ctx, arg0.high, arg1.high, LAYOUT_LOOKUP(layout2, _1));
   return ValU32Struct{.low = x3._super, .high = x4._super};
 }
-ValU32Struct
-exec_BitwiseOr(ValU32Struct arg0, ValU32Struct arg1, BoundLayout<BitwiseOrLayout> layout2) {
+__device__ ValU32Struct exec_BitwiseOr(ExecContext& ctx,
+                                       ValU32Struct arg0,
+                                       ValU32Struct arg1,
+                                       BoundLayout<BitwiseOrLayout> layout2) {
   // BitwiseOr(zirgen/circuit/rv32im/v2/dsl/u32.zir:159)
-  ValU32Struct x3 = exec_BitwiseAnd(arg0, arg1, LAYOUT_LOOKUP(layout2, andXy));
+  ValU32Struct x3 = exec_BitwiseAnd(ctx, arg0, arg1, LAYOUT_LOOKUP(layout2, andXy));
   // BitwiseOr(zirgen/circuit/rv32im/v2/dsl/u32.zir:160)
   Val x4 = ((arg0.low + arg1.low) - x3.low);
   Val x5 = ((arg0.high + arg1.high) - x3.high);
   return ValU32Struct{.low = x4, .high = x5};
 }
-ValU32Struct
-exec_BitwiseXor(ValU32Struct arg0, ValU32Struct arg1, BoundLayout<BitwiseXorLayout> layout2) {
+__device__ ValU32Struct exec_BitwiseXor(ExecContext& ctx,
+                                        ValU32Struct arg0,
+                                        ValU32Struct arg1,
+                                        BoundLayout<BitwiseXorLayout> layout2) {
   // BitwiseXor(zirgen/circuit/rv32im/v2/dsl/u32.zir:164)
-  ValU32Struct x3 = exec_BitwiseAnd(arg0, arg1, LAYOUT_LOOKUP(layout2, andXy));
+  ValU32Struct x3 = exec_BitwiseAnd(ctx, arg0, arg1, LAYOUT_LOOKUP(layout2, andXy));
   // BitwiseXor(zirgen/circuit/rv32im/v2/dsl/u32.zir:165)
   Val x4 = ((arg0.low + arg1.low) - (x3.low * Val(2)));
   Val x5 = ((arg0.high + arg1.high) - (x3.high * Val(2)));
   return ValU32Struct{.low = x4, .high = x5};
 }
-DecoderStruct exec_Decoder(ValU32Struct arg0, BoundLayout<DecoderLayout> layout1) {
+__device__ DecoderStruct exec_Decoder(ExecContext& ctx,
+                                      ValU32Struct arg0,
+                                      BoundLayout<DecoderLayout> layout1) {
   // Decoder(zirgen/circuit/rv32im/v2/dsl/decode.zir:9)
   Val x2 = arg0.high;
   // Decoder(zirgen/circuit/rv32im/v2/dsl/decode.zir:15)
-  NondetRegStruct x3 =
-      exec_NondetBitReg((bitAnd(x2, Val(32768)) * Val(2013204481)), LAYOUT_LOOKUP(layout1, _f7_6));
+  NondetRegStruct x3 = exec_NondetBitReg(
+      ctx, (bitAnd(x2, Val(32768)) * Val(2013204481)), LAYOUT_LOOKUP(layout1, _f7_6));
   // Decoder(zirgen/circuit/rv32im/v2/dsl/decode.zir:16)
-  NondetRegStruct x4 = exec_NondetTwitReg((bitAnd(x2, Val(24576)) * Val(2013020161)),
-                                          LAYOUT_LOOKUP(layout1, _f7_45));
+  NondetRegStruct x4 = exec_NondetTwitReg(
+      ctx, (bitAnd(x2, Val(24576)) * Val(2013020161)), LAYOUT_LOOKUP(layout1, _f7_45));
   // Decoder(zirgen/circuit/rv32im/v2/dsl/decode.zir:17)
-  NondetRegStruct x5 =
-      exec_NondetTwitReg((bitAnd(x2, Val(6144)) * Val(2012282881)), LAYOUT_LOOKUP(layout1, _f7_23));
+  NondetRegStruct x5 = exec_NondetTwitReg(
+      ctx, (bitAnd(x2, Val(6144)) * Val(2012282881)), LAYOUT_LOOKUP(layout1, _f7_23));
   // Decoder(zirgen/circuit/rv32im/v2/dsl/decode.zir:18)
-  NondetRegStruct x6 =
-      exec_NondetTwitReg((bitAnd(x2, Val(1536)) * Val(2009333761)), LAYOUT_LOOKUP(layout1, _f7_01));
+  NondetRegStruct x6 = exec_NondetTwitReg(
+      ctx, (bitAnd(x2, Val(1536)) * Val(2009333761)), LAYOUT_LOOKUP(layout1, _f7_01));
   // Decoder(zirgen/circuit/rv32im/v2/dsl/decode.zir:19)
-  NondetRegStruct x7 =
-      exec_NondetTwitReg((bitAnd(x2, Val(384)) * Val(1997537281)), LAYOUT_LOOKUP(layout1, _rs2_34));
+  NondetRegStruct x7 = exec_NondetTwitReg(
+      ctx, (bitAnd(x2, Val(384)) * Val(1997537281)), LAYOUT_LOOKUP(layout1, _rs2_34));
   // Decoder(zirgen/circuit/rv32im/v2/dsl/decode.zir:20)
-  NondetRegStruct x8 =
-      exec_NondetTwitReg((bitAnd(x2, Val(96)) * Val(1950351361)), LAYOUT_LOOKUP(layout1, _rs2_12));
+  NondetRegStruct x8 = exec_NondetTwitReg(
+      ctx, (bitAnd(x2, Val(96)) * Val(1950351361)), LAYOUT_LOOKUP(layout1, _rs2_12));
   // Decoder(zirgen/circuit/rv32im/v2/dsl/decode.zir:21)
-  NondetRegStruct x9 =
-      exec_NondetBitReg((bitAnd(x2, Val(16)) * Val(1887436801)), LAYOUT_LOOKUP(layout1, _rs2_0));
+  NondetRegStruct x9 = exec_NondetBitReg(
+      ctx, (bitAnd(x2, Val(16)) * Val(1887436801)), LAYOUT_LOOKUP(layout1, _rs2_0));
   // Decoder(zirgen/circuit/rv32im/v2/dsl/decode.zir:22)
-  NondetRegStruct x10 =
-      exec_NondetTwitReg((bitAnd(x2, Val(12)) * Val(1509949441)), LAYOUT_LOOKUP(layout1, _rs1_34));
+  NondetRegStruct x10 = exec_NondetTwitReg(
+      ctx, (bitAnd(x2, Val(12)) * Val(1509949441)), LAYOUT_LOOKUP(layout1, _rs1_34));
   // Decoder(zirgen/circuit/rv32im/v2/dsl/decode.zir:23)
-  NondetRegStruct x11 = exec_NondetTwitReg(bitAnd(x2, Val(3)), LAYOUT_LOOKUP(layout1, _rs1_12));
+  NondetRegStruct x11 =
+      exec_NondetTwitReg(ctx, bitAnd(x2, Val(3)), LAYOUT_LOOKUP(layout1, _rs1_12));
   // Decoder(zirgen/circuit/rv32im/v2/dsl/decode.zir:9)
   Val x12 = arg0.low;
   // Decoder(zirgen/circuit/rv32im/v2/dsl/decode.zir:24)
-  NondetRegStruct x13 = exec_NondetBitReg((bitAnd(x12, Val(32768)) * Val(2013204481)),
-                                          LAYOUT_LOOKUP(layout1, _rs1_0));
+  NondetRegStruct x13 = exec_NondetBitReg(
+      ctx, (bitAnd(x12, Val(32768)) * Val(2013204481)), LAYOUT_LOOKUP(layout1, _rs1_0));
   // Decoder(zirgen/circuit/rv32im/v2/dsl/decode.zir:25)
-  NondetRegStruct x14 =
-      exec_NondetBitReg((bitAnd(x12, Val(16384)) * Val(2013143041)), LAYOUT_LOOKUP(layout1, _f3_2));
+  NondetRegStruct x14 = exec_NondetBitReg(
+      ctx, (bitAnd(x12, Val(16384)) * Val(2013143041)), LAYOUT_LOOKUP(layout1, _f3_2));
   // Decoder(zirgen/circuit/rv32im/v2/dsl/decode.zir:26)
-  NondetRegStruct x15 = exec_NondetTwitReg((bitAnd(x12, Val(12288)) * Val(2012774401)),
-                                           LAYOUT_LOOKUP(layout1, _f3_01));
+  NondetRegStruct x15 = exec_NondetTwitReg(
+      ctx, (bitAnd(x12, Val(12288)) * Val(2012774401)), LAYOUT_LOOKUP(layout1, _f3_01));
   // Decoder(zirgen/circuit/rv32im/v2/dsl/decode.zir:27)
-  NondetRegStruct x16 = exec_NondetTwitReg((bitAnd(x12, Val(3072)) * Val(2011299841)),
-                                           LAYOUT_LOOKUP(layout1, _rd_34));
+  NondetRegStruct x16 = exec_NondetTwitReg(
+      ctx, (bitAnd(x12, Val(3072)) * Val(2011299841)), LAYOUT_LOOKUP(layout1, _rd_34));
   // Decoder(zirgen/circuit/rv32im/v2/dsl/decode.zir:28)
-  NondetRegStruct x17 =
-      exec_NondetTwitReg((bitAnd(x12, Val(768)) * Val(2005401601)), LAYOUT_LOOKUP(layout1, _rd_12));
+  NondetRegStruct x17 = exec_NondetTwitReg(
+      ctx, (bitAnd(x12, Val(768)) * Val(2005401601)), LAYOUT_LOOKUP(layout1, _rd_12));
   // Decoder(zirgen/circuit/rv32im/v2/dsl/decode.zir:29)
-  NondetRegStruct x18 =
-      exec_NondetTwitReg((bitAnd(x12, Val(128)) * Val(1997537281)), LAYOUT_LOOKUP(layout1, _rd_0));
+  NondetRegStruct x18 = exec_NondetTwitReg(
+      ctx, (bitAnd(x12, Val(128)) * Val(1997537281)), LAYOUT_LOOKUP(layout1, _rd_0));
   // Decoder(zirgen/circuit/rv32im/v2/dsl/decode.zir:34)
-  NondetRegStruct x19 = exec_NondetReg(bitAnd(x12, Val(127)), LAYOUT_LOOKUP(layout1, opcode));
+  NondetRegStruct x19 = exec_NondetReg(ctx, bitAnd(x12, Val(127)), LAYOUT_LOOKUP(layout1, opcode));
   // Decoder(zirgen/circuit/rv32im/v2/dsl/decode.zir:15)
   Val x20 = x3._super;
   // Decoder(zirgen/circuit/rv32im/v2/dsl/decode.zir:16)
@@ -741,36 +804,45 @@ DecoderStruct exec_Decoder(ValU32Struct arg0, BoundLayout<DecoderLayout> layout1
                        .immU = ValU32Struct{.low = x37, .high = x2},
                        .immJ = x59};
 }
-MemoryArgStruct exec_MemoryArg(
-    Val arg0, Val arg1, Val arg2, ValU32Struct arg3, BoundLayout<MemoryArgLayout> layout4) {
+__device__ MemoryArgStruct exec_MemoryArg(ExecContext& ctx,
+                                          Val arg0,
+                                          Val arg1,
+                                          Val arg2,
+                                          ValU32Struct arg3,
+                                          BoundLayout<MemoryArgLayout> layout4) {
   // MemoryArg(zirgen/circuit/rv32im/v2/dsl/mem.zir:25)
-  NondetRegStruct x5 = exec_NondetReg(arg0, LAYOUT_LOOKUP(layout4, count));
+  NondetRegStruct x5 = exec_NondetReg(ctx, arg0, LAYOUT_LOOKUP(layout4, count));
   // MemoryArg(zirgen/circuit/rv32im/v2/dsl/mem.zir:26)
-  NondetRegStruct x6 = exec_NondetReg(arg1, LAYOUT_LOOKUP(layout4, addr));
+  NondetRegStruct x6 = exec_NondetReg(ctx, arg1, LAYOUT_LOOKUP(layout4, addr));
   // MemoryArg(zirgen/circuit/rv32im/v2/dsl/mem.zir:27)
-  NondetRegStruct x7 = exec_NondetReg(arg2, LAYOUT_LOOKUP(layout4, cycle));
+  NondetRegStruct x7 = exec_NondetReg(ctx, arg2, LAYOUT_LOOKUP(layout4, cycle));
   // MemoryArg(zirgen/circuit/rv32im/v2/dsl/mem.zir:28)
-  NondetRegStruct x8 = exec_NondetReg(arg3.low, LAYOUT_LOOKUP(layout4, dataLow));
+  NondetRegStruct x8 = exec_NondetReg(ctx, arg3.low, LAYOUT_LOOKUP(layout4, dataLow));
   // MemoryArg(zirgen/circuit/rv32im/v2/dsl/mem.zir:29)
-  NondetRegStruct x9 = exec_NondetReg(arg3.high, LAYOUT_LOOKUP(layout4, dataHigh));
+  NondetRegStruct x9 = exec_NondetReg(ctx, arg3.high, LAYOUT_LOOKUP(layout4, dataHigh));
   // MemoryDelta(zirgen/circuit/rv32im/v2/dsl/mem.zir:21)
   // MemoryArg(zirgen/circuit/rv32im/v2/dsl/mem.zir:30)
   INVOKE_EXTERN(ctx, memoryDelta, x6._super, x7._super, x8._super, x9._super, x5._super);
   return MemoryArgStruct{.count = x5, .addr = x6, .cycle = x7, .dataLow = x8, .dataHigh = x9};
 }
-CycleArgStruct exec_CycleArg(Val arg0, Val arg1, BoundLayout<CycleArgLayout> layout2) {
+__device__ CycleArgStruct exec_CycleArg(ExecContext& ctx,
+                                        Val arg0,
+                                        Val arg1,
+                                        BoundLayout<CycleArgLayout> layout2) {
   // CycleArg(zirgen/circuit/rv32im/v2/dsl/mem.zir:54)
-  NondetRegStruct x3 = exec_NondetReg(arg0, LAYOUT_LOOKUP(layout2, count));
+  NondetRegStruct x3 = exec_NondetReg(ctx, arg0, LAYOUT_LOOKUP(layout2, count));
   // CycleArg(zirgen/circuit/rv32im/v2/dsl/mem.zir:55)
-  NondetRegStruct x4 = exec_NondetReg(arg1, LAYOUT_LOOKUP(layout2, cycle));
+  NondetRegStruct x4 = exec_NondetReg(ctx, arg1, LAYOUT_LOOKUP(layout2, cycle));
   // LookupDelta(zirgen/circuit/rv32im/v2/dsl/lookups.zir:4)
   // CycleArg(zirgen/circuit/rv32im/v2/dsl/mem.zir:56)
   INVOKE_EXTERN(ctx, lookupDelta, Val(0), x4._super, x3._super);
   return CycleArgStruct{.count = x3, .cycle = x4};
 }
-IsCycleStruct exec_IsCycle(Val arg0, BoundLayout<IsCycleLayout> layout1) {
+__device__ IsCycleStruct exec_IsCycle(ExecContext& ctx,
+                                      Val arg0,
+                                      BoundLayout<IsCycleLayout> layout1) {
   // IsCycle(zirgen/circuit/rv32im/v2/dsl/mem.zir:60)
-  CycleArgStruct x2 = exec_CycleArg(Val(1), arg0, LAYOUT_LOOKUP(layout1, arg));
+  CycleArgStruct x2 = exec_CycleArg(ctx, Val(1), arg0, LAYOUT_LOOKUP(layout1, arg));
   // IsCycle(zirgen/circuit/rv32im/v2/dsl/mem.zir:61)
   Val x3 = (x2.count._super - Val(1));
   EQZ(x3, "IsCycle(zirgen/circuit/rv32im/v2/dsl/mem.zir:61)");
@@ -779,12 +851,16 @@ IsCycleStruct exec_IsCycle(Val arg0, BoundLayout<IsCycleLayout> layout1) {
   EQZ(x4, "IsCycle(zirgen/circuit/rv32im/v2/dsl/mem.zir:62)");
   return IsCycleStruct{};
 }
-MemoryIOStruct exec_MemoryIO(RegStruct arg0, Val arg1, BoundLayout<MemoryIOLayout> layout2) {
+__device__ MemoryIOStruct exec_MemoryIO(ExecContext& ctx,
+                                        RegStruct arg0,
+                                        Val arg1,
+                                        BoundLayout<MemoryIOLayout> layout2) {
   // GetMemoryTxn(zirgen/circuit/rv32im/v2/dsl/mem.zir:51)
   // MemoryIO(zirgen/circuit/rv32im/v2/dsl/mem.zir:66)
   auto [x3, x4, x5, x6, x7] = INVOKE_EXTERN(ctx, getMemoryTxn, arg1);
   // MemoryIO(zirgen/circuit/rv32im/v2/dsl/mem.zir:67)
-  MemoryArgStruct x8 = exec_MemoryArg(Val(2013265920),
+  MemoryArgStruct x8 = exec_MemoryArg(ctx,
+                                      Val(2013265920),
                                       arg1,
                                       x3,
                                       ValU32Struct{.low = x4, .high = x5},
@@ -793,7 +869,7 @@ MemoryIOStruct exec_MemoryIO(RegStruct arg0, Val arg1, BoundLayout<MemoryIOLayou
   Val x9 = arg0._super._super;
   // MemoryIO(zirgen/circuit/rv32im/v2/dsl/mem.zir:68)
   MemoryArgStruct x10 = exec_MemoryArg(
-      Val(1), arg1, x9, ValU32Struct{.low = x6, .high = x7}, LAYOUT_LOOKUP(layout2, newTxn));
+      ctx, Val(1), arg1, x9, ValU32Struct{.low = x6, .high = x7}, LAYOUT_LOOKUP(layout2, newTxn));
   // MemoryIO(zirgen/circuit/rv32im/v2/dsl/mem.zir:69)
   Val x11 = (x8.count._super - Val(2013265920));
   EQZ(x11, "MemoryIO(zirgen/circuit/rv32im/v2/dsl/mem.zir:69)");
@@ -812,17 +888,22 @@ MemoryIOStruct exec_MemoryIO(RegStruct arg0, Val arg1, BoundLayout<MemoryIOLayou
   EQZ((x14 - arg1), "MemoryIO(zirgen/circuit/rv32im/v2/dsl/mem.zir:75)");
   return MemoryIOStruct{.oldTxn = x8, .newTxn = x10};
 }
-IsForwardStruct exec_IsForward(MemoryIOStruct arg0, BoundLayout<IsForwardLayout> layout1) {
+__device__ IsForwardStruct exec_IsForward(ExecContext& ctx,
+                                          MemoryIOStruct arg0,
+                                          BoundLayout<IsForwardLayout> layout1) {
   // IsForward(zirgen/circuit/rv32im/v2/dsl/mem.zir:83)
   Val x2 = arg0.newTxn.cycle._super;
   Val x3 = arg0.oldTxn.cycle._super;
   // IsForward(zirgen/circuit/rv32im/v2/dsl/mem.zir:84)
-  IsCycleStruct x4 = exec_IsCycle((x2 - x3), LAYOUT_LOOKUP(layout1, _0));
+  IsCycleStruct x4 = exec_IsCycle(ctx, (x2 - x3), LAYOUT_LOOKUP(layout1, _0));
   return IsForwardStruct{};
 }
-GetDataStruct exec_MemoryRead(RegStruct arg0, Val arg1, BoundLayout<MemoryReadLayout> layout2) {
+__device__ GetDataStruct exec_MemoryRead(ExecContext& ctx,
+                                         RegStruct arg0,
+                                         Val arg1,
+                                         BoundLayout<MemoryReadLayout> layout2) {
   // MemoryRead(zirgen/circuit/rv32im/v2/dsl/mem.zir:89)
-  MemoryIOStruct x3 = exec_MemoryIO(arg0, arg1, LAYOUT_LOOKUP(layout2, io));
+  MemoryIOStruct x3 = exec_MemoryIO(ctx, arg0, arg1, LAYOUT_LOOKUP(layout2, io));
   // IsRead(zirgen/circuit/rv32im/v2/dsl/mem.zir:78)
   // MemoryRead(zirgen/circuit/rv32im/v2/dsl/mem.zir:90)
   MemoryArgStruct x4 = x3.oldTxn;
@@ -841,18 +922,19 @@ GetDataStruct exec_MemoryRead(RegStruct arg0, Val arg1, BoundLayout<MemoryReadLa
       "loc(callsite( IsRead ( zirgen/circuit/rv32im/v2/dsl/mem.zir :80:23) at  MemoryRead ( "
       "zirgen/circuit/rv32im/v2/dsl/mem.zir :90:10)))");
   // MemoryRead(zirgen/circuit/rv32im/v2/dsl/mem.zir:91)
-  IsForwardStruct x10 = exec_IsForward(x3, LAYOUT_LOOKUP(layout2, _0));
+  IsForwardStruct x10 = exec_IsForward(ctx, x3, LAYOUT_LOOKUP(layout2, _0));
   return GetDataStruct{
       ._super = ValU32Struct{.low = x6, .high = x8}, .diffLow = Val(0), .diffHigh = Val(1)};
 }
-MemoryWriteStruct exec_MemoryWrite(RegStruct arg0,
-                                   Val arg1,
-                                   ValU32Struct arg2,
-                                   BoundLayout<MemoryWriteLayout> layout3) {
+__device__ MemoryWriteStruct exec_MemoryWrite(ExecContext& ctx,
+                                              RegStruct arg0,
+                                              Val arg1,
+                                              ValU32Struct arg2,
+                                              BoundLayout<MemoryWriteLayout> layout3) {
   // MemoryWrite(zirgen/circuit/rv32im/v2/dsl/mem.zir:97)
-  MemoryIOStruct x4 = exec_MemoryIO(arg0, arg1, LAYOUT_LOOKUP(layout3, io));
+  MemoryIOStruct x4 = exec_MemoryIO(ctx, arg0, arg1, LAYOUT_LOOKUP(layout3, io));
   // MemoryWrite(zirgen/circuit/rv32im/v2/dsl/mem.zir:98)
-  IsForwardStruct x5 = exec_IsForward(x4, LAYOUT_LOOKUP(layout3, _0));
+  IsForwardStruct x5 = exec_IsForward(ctx, x4, LAYOUT_LOOKUP(layout3, _0));
   // MemoryWrite(zirgen/circuit/rv32im/v2/dsl/mem.zir:97)
   MemoryArgStruct x6 = x4.newTxn;
   // MemoryWrite(zirgen/circuit/rv32im/v2/dsl/mem.zir:99)
@@ -863,17 +945,23 @@ MemoryWriteStruct exec_MemoryWrite(RegStruct arg0,
   EQZ(x8, "MemoryWrite(zirgen/circuit/rv32im/v2/dsl/mem.zir:100)");
   return MemoryWriteStruct{};
 }
-MemoryWriteUnconstrainedStruct exec_MemoryWriteUnconstrained(
-    RegStruct arg0, Val arg1, BoundLayout<MemoryWriteUnconstrainedLayout> layout2) {
+__device__ MemoryWriteUnconstrainedStruct
+exec_MemoryWriteUnconstrained(ExecContext& ctx,
+                              RegStruct arg0,
+                              Val arg1,
+                              BoundLayout<MemoryWriteUnconstrainedLayout> layout2) {
   // MemoryWriteUnconstrained(zirgen/circuit/rv32im/v2/dsl/mem.zir:105)
-  MemoryIOStruct x3 = exec_MemoryIO(arg0, arg1, LAYOUT_LOOKUP(layout2, io));
+  MemoryIOStruct x3 = exec_MemoryIO(ctx, arg0, arg1, LAYOUT_LOOKUP(layout2, io));
   // MemoryWriteUnconstrained(zirgen/circuit/rv32im/v2/dsl/mem.zir:106)
-  IsForwardStruct x4 = exec_IsForward(x3, LAYOUT_LOOKUP(layout2, _0));
+  IsForwardStruct x4 = exec_IsForward(ctx, x3, LAYOUT_LOOKUP(layout2, _0));
   return MemoryWriteUnconstrainedStruct{};
 }
-GetDataStruct exec_MemoryPageIn(RegStruct arg0, Val arg1, BoundLayout<MemoryPageInLayout> layout2) {
+__device__ GetDataStruct exec_MemoryPageIn(ExecContext& ctx,
+                                           RegStruct arg0,
+                                           Val arg1,
+                                           BoundLayout<MemoryPageInLayout> layout2) {
   // MemoryPageIn(zirgen/circuit/rv32im/v2/dsl/mem.zir:112)
-  MemoryIOStruct x3 = exec_MemoryIO(arg0, arg1, LAYOUT_LOOKUP(layout2, io));
+  MemoryIOStruct x3 = exec_MemoryIO(ctx, arg0, arg1, LAYOUT_LOOKUP(layout2, io));
   // IsRead(zirgen/circuit/rv32im/v2/dsl/mem.zir:78)
   // MemoryPageIn(zirgen/circuit/rv32im/v2/dsl/mem.zir:113)
   MemoryArgStruct x4 = x3.oldTxn;
@@ -896,12 +984,14 @@ GetDataStruct exec_MemoryPageIn(RegStruct arg0, Val arg1, BoundLayout<MemoryPage
   return GetDataStruct{
       ._super = ValU32Struct{.low = x6, .high = x8}, .diffLow = Val(0), .diffHigh = x10};
 }
-GetDataStruct
-exec_MemoryPageOut(RegStruct arg0, Val arg1, BoundLayout<MemoryPageOutLayout> layout2) {
+__device__ GetDataStruct exec_MemoryPageOut(ExecContext& ctx,
+                                            RegStruct arg0,
+                                            Val arg1,
+                                            BoundLayout<MemoryPageOutLayout> layout2) {
   // MemoryPageOut(zirgen/circuit/rv32im/v2/dsl/mem.zir:120)
-  MemoryIOStruct x3 = exec_MemoryIO(arg0, arg1, LAYOUT_LOOKUP(layout2, io));
+  MemoryIOStruct x3 = exec_MemoryIO(ctx, arg0, arg1, LAYOUT_LOOKUP(layout2, io));
   // MemoryPageOut(zirgen/circuit/rv32im/v2/dsl/mem.zir:121)
-  IsForwardStruct x4 = exec_IsForward(x3, LAYOUT_LOOKUP(layout2, _0));
+  IsForwardStruct x4 = exec_IsForward(ctx, x3, LAYOUT_LOOKUP(layout2, _0));
   // MemoryPageOut(zirgen/circuit/rv32im/v2/dsl/mem.zir:120)
   MemoryArgStruct x5 = x3.oldTxn;
   MemoryArgStruct x6 = x3.newTxn;
@@ -915,14 +1005,15 @@ exec_MemoryPageOut(RegStruct arg0, Val arg1, BoundLayout<MemoryPageOutLayout> la
   return GetDataStruct{
       ._super = ValU32Struct{.low = x7, .high = x9}, .diffLow = x8, .diffHigh = x10};
 }
-OneHot_3_Struct exec_OneHot_3_(Val arg0, BoundLayout<OneHot_3_Layout> layout1) {
+__device__ OneHot_3_Struct exec_OneHot_3_(ExecContext& ctx,
+                                          Val arg0,
+                                          BoundLayout<OneHot_3_Layout> layout1) {
   // OneHot(zirgen/circuit/rv32im/v2/dsl/one_hot.zir:7)
   NondetRegStruct3Array x2 =
-      map({Val(0), Val(1), Val(2)},
+      map(Val3Array{Val(0), Val(1), Val(2)},
           LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val3Array::value_type x3,
-                            BoundLayout<NondetRegLayout3LayoutArray::value_type> x4) {
-            NondetRegStruct x5 = exec_NondetBitReg(isz((x3 - arg0)), x4);
+          ([&](Val3Array::value_type x3, BoundLayout<NondetRegLayout3LayoutArray::value_type> x4) {
+            NondetRegStruct x5 = exec_NondetBitReg(ctx, isz((x3 - arg0)), x4);
             return x5;
           }));
   // OneHot(zirgen/circuit/rv32im/v2/dsl/one_hot.zir:9)
@@ -934,10 +1025,11 @@ OneHot_3_Struct exec_OneHot_3_(Val arg0, BoundLayout<OneHot_3_Layout> layout1) {
   EQZ(((x6 + (x8 * Val(2))) - arg0), "OneHot(zirgen/circuit/rv32im/v2/dsl/one_hot.zir:11)");
   return OneHot_3_Struct{._super = x2};
 }
-GetDataStruct exec_MemoryGet(RegStruct arg0,
-                             Val arg1,
-                             OneHot_3_Struct arg2,
-                             BoundLayout<MemoryGetLayout> layout3) {
+__device__ GetDataStruct exec_MemoryGet(ExecContext& ctx,
+                                        RegStruct arg0,
+                                        Val arg1,
+                                        OneHot_3_Struct arg2,
+                                        BoundLayout<MemoryGetLayout> layout3) {
   // MemoryGet(zirgen/circuit/rv32im/v2/dsl/mem.zir:128)
   BoundLayout<MemoryGet_SuperLayout> x4 = LAYOUT_LOOKUP(layout3, _super);
   // MemoryGet(zirgen/circuit/rv32im/v2/dsl/mem.zir:127)
@@ -948,32 +1040,33 @@ GetDataStruct exec_MemoryGet(RegStruct arg0,
   GetDataStruct x8;
   if (to_size_t(x5[0]._super)) {
     // MemoryGet(zirgen/circuit/rv32im/v2/dsl/mem.zir:129)
-    GetDataStruct x9 = exec_MemoryRead(arg0, arg1, LAYOUT_LOOKUP(x4, arm0));
+    GetDataStruct x9 = exec_MemoryRead(ctx, arg0, arg1, LAYOUT_LOOKUP(x4, arm0));
     x8 = x9;
   } else if (to_size_t(x5[1]._super)) {
     // MemoryGet(zirgen/circuit/rv32im/v2/dsl/mem.zir:130)
-    GetDataStruct x10 = exec_MemoryPageIn(arg0, arg1, LAYOUT_LOOKUP(x6, _super));
+    GetDataStruct x10 = exec_MemoryPageIn(ctx, arg0, arg1, LAYOUT_LOOKUP(x6, _super));
     // MemoryGet(zirgen/circuit/rv32im/v2/dsl/mem.zir:128)
     STORE(x7, Val(0));
     EQZ(LOAD(x7, 0), "MemoryGet(zirgen/circuit/rv32im/v2/dsl/mem.zir:128)");
     x8 = x10;
   } else if (to_size_t(x5[2]._super)) {
     // MemoryGet(zirgen/circuit/rv32im/v2/dsl/mem.zir:131)
-    GetDataStruct x11 = exec_MemoryPageOut(arg0, arg1, LAYOUT_LOOKUP(x4, arm2));
+    GetDataStruct x11 = exec_MemoryPageOut(ctx, arg0, arg1, LAYOUT_LOOKUP(x4, arm2));
     x8 = x11;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
   return x8;
 }
-OneHot_8_Struct exec_OneHot_8_(Val arg0, BoundLayout<OneHot_8_Layout> layout1) {
+__device__ OneHot_8_Struct exec_OneHot_8_(ExecContext& ctx,
+                                          Val arg0,
+                                          BoundLayout<OneHot_8_Layout> layout1) {
   // OneHot(zirgen/circuit/rv32im/v2/dsl/one_hot.zir:7)
   NondetRegStruct8Array x2 =
-      map({Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
+      map(Val8Array{Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
           LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val8Array::value_type x3,
-                            BoundLayout<NondetRegLayout8LayoutArray::value_type> x4) {
-            NondetRegStruct x5 = exec_NondetBitReg(isz((x3 - arg0)), x4);
+          ([&](Val8Array::value_type x3, BoundLayout<NondetRegLayout8LayoutArray::value_type> x4) {
+            NondetRegStruct x5 = exec_NondetBitReg(ctx, isz((x3 - arg0)), x4);
             return x5;
           }));
   // OneHot(zirgen/circuit/rv32im/v2/dsl/one_hot.zir:9)
@@ -994,61 +1087,68 @@ OneHot_8_Struct exec_OneHot_8_(Val arg0, BoundLayout<OneHot_8_Layout> layout1) {
   EQZ((x17 - arg0), "OneHot(zirgen/circuit/rv32im/v2/dsl/one_hot.zir:11)");
   return OneHot_8_Struct{._super = x2, .bits = x2};
 }
-InstInputStruct exec_InstInput(Val arg0,
-                               Val arg1,
-                               Val arg2,
-                               ValU32Struct arg3,
-                               Val arg4,
-                               Val arg5,
-                               BoundLayout<InstInputLayout> layout6) {
+__device__ InstInputStruct exec_InstInput(ExecContext& ctx,
+                                          Val arg0,
+                                          Val arg1,
+                                          Val arg2,
+                                          ValU32Struct arg3,
+                                          Val arg4,
+                                          Val arg5,
+                                          BoundLayout<InstInputLayout> layout6) {
   // InstInput(zirgen/circuit/rv32im/v2/dsl/inst.zir:15)
-  OneHot_8_Struct x7 = exec_OneHot_8_(arg2, LAYOUT_LOOKUP(layout6, minorOnehot));
+  OneHot_8_Struct x7 = exec_OneHot_8_(ctx, arg2, LAYOUT_LOOKUP(layout6, minorOnehot));
   return InstInputStruct{.pcU32 = arg3, .state = arg4, .mode = arg5, .minorOnehot = x7};
 }
-DecoderStruct
-exec_DecodeInst(RegStruct arg0, InstInputStruct arg1, BoundLayout<DecodeInstLayout> layout2) {
+__device__ DecoderStruct exec_DecodeInst(ExecContext& ctx,
+                                         RegStruct arg0,
+                                         InstInputStruct arg1,
+                                         BoundLayout<DecodeInstLayout> layout2) {
   // DecodeInst(zirgen/circuit/rv32im/v2/dsl/inst.zir:18)
   Val x3 = arg0._super._super;
   // GetDiffCount(zirgen/circuit/rv32im/v2/dsl/mem.zir:22)
   // DecodeInst(zirgen/circuit/rv32im/v2/dsl/inst.zir:20)
   Val x4 = INVOKE_EXTERN(ctx, getDiffCount, x3);
-  CycleArgStruct x5 = exec_CycleArg(neg_0(x4), x3, LAYOUT_LOOKUP(layout2, arg));
+  CycleArgStruct x5 = exec_CycleArg(ctx, neg_0(x4), x3, LAYOUT_LOOKUP(layout2, arg));
   // DecodeInst(zirgen/circuit/rv32im/v2/dsl/inst.zir:22)
   Val x6 = (x5.cycle._super - x3);
   EQZ(x6, "DecodeInst(zirgen/circuit/rv32im/v2/dsl/inst.zir:22)");
   // DecodeInst(zirgen/circuit/rv32im/v2/dsl/inst.zir:24)
   AddrDecomposeStruct x7 =
-      exec_AddrDecompose(arg1.pcU32, arg1.mode, LAYOUT_LOOKUP(layout2, pcAddr));
+      exec_AddrDecompose(ctx, arg1.pcU32, arg1.mode, LAYOUT_LOOKUP(layout2, pcAddr));
   // DecodeInst(zirgen/circuit/rv32im/v2/dsl/inst.zir:26)
   EQZ(x7.low2._super, "DecodeInst(zirgen/circuit/rv32im/v2/dsl/inst.zir:26)");
   // DecodeInst(zirgen/circuit/rv32im/v2/dsl/inst.zir:28)
-  GetDataStruct x8 = exec_MemoryRead(arg0, x7._super, LAYOUT_LOOKUP(layout2, loadInst));
+  GetDataStruct x8 = exec_MemoryRead(ctx, arg0, x7._super, LAYOUT_LOOKUP(layout2, loadInst));
   // DecodeInst(zirgen/circuit/rv32im/v2/dsl/inst.zir:30)
-  DecoderStruct x9 = exec_Decoder(x8._super, LAYOUT_LOOKUP(layout2, _super));
+  DecoderStruct x9 = exec_Decoder(ctx, x8._super, LAYOUT_LOOKUP(layout2, _super));
   return x9;
 }
-GetDataStruct
-exec_ReadReg(RegStruct arg0, InstInputStruct arg1, Val arg2, BoundLayout<ReadRegLayout> layout3) {
+__device__ GetDataStruct exec_ReadReg(ExecContext& ctx,
+                                      RegStruct arg0,
+                                      InstInputStruct arg1,
+                                      Val arg2,
+                                      BoundLayout<ReadRegLayout> layout3) {
   // ReadReg(zirgen/circuit/rv32im/v2/dsl/inst.zir:33)
   Val x4 = arg1.mode;
   // ReadReg(zirgen/circuit/rv32im/v2/dsl/inst.zir:34)
   Val x5 = ((Val(1) - x4) * Val(1073725472));
   Val x6 = (((x4 * Val(1073725440)) + x5) + arg2);
-  RegStruct x7 = exec_Reg(x6, LAYOUT_LOOKUP(layout3, addr));
+  RegStruct x7 = exec_Reg(ctx, x6, LAYOUT_LOOKUP(layout3, addr));
   // ReadReg(zirgen/circuit/rv32im/v2/dsl/inst.zir:35)
-  GetDataStruct x8 = exec_MemoryRead(arg0, x7._super._super, LAYOUT_LOOKUP(layout3, _super));
+  GetDataStruct x8 = exec_MemoryRead(ctx, arg0, x7._super._super, LAYOUT_LOOKUP(layout3, _super));
   return x8;
 }
-WriteRdStruct exec_WriteRd(RegStruct arg0,
-                           InstInputStruct arg1,
-                           DecoderStruct arg2,
-                           Val arg3,
-                           ValU32Struct arg4,
-                           BoundLayout<WriteRdLayout> layout5) {
+__device__ WriteRdStruct exec_WriteRd(ExecContext& ctx,
+                                      RegStruct arg0,
+                                      InstInputStruct arg1,
+                                      DecoderStruct arg2,
+                                      Val arg3,
+                                      ValU32Struct arg4,
+                                      BoundLayout<WriteRdLayout> layout5) {
   // WriteRd(zirgen/circuit/rv32im/v2/dsl/inst.zir:38)
   Val x6 = arg2.rd;
   // WriteRd(zirgen/circuit/rv32im/v2/dsl/inst.zir:39)
-  NondetRegStruct x7 = exec_IsZero(x6, LAYOUT_LOOKUP(layout5, isRd0));
+  NondetRegStruct x7 = exec_IsZero(ctx, x6, LAYOUT_LOOKUP(layout5, isRd0));
   // WriteRd(zirgen/circuit/rv32im/v2/dsl/inst.zir:40)
   Val x8 = ((Val(1) - x7._super) * arg3);
   // WriteRd(zirgen/circuit/rv32im/v2/dsl/inst.zir:38)
@@ -1057,33 +1157,36 @@ WriteRdStruct exec_WriteRd(RegStruct arg0,
   Val x10 = ((Val(1) - x9) * Val(1073725472));
   Val x11 = ((Val(1) - x8) * Val(64));
   Val x12 = (((x9 * Val(1073725440)) + x10) + x11);
-  RegStruct x13 = exec_Reg((x12 + (x8 * x6)), LAYOUT_LOOKUP(layout5, writeAddr));
+  RegStruct x13 = exec_Reg(ctx, (x12 + (x8 * x6)), LAYOUT_LOOKUP(layout5, writeAddr));
   // WriteRd(zirgen/circuit/rv32im/v2/dsl/inst.zir:43)
   MemoryWriteStruct x14 =
-      exec_MemoryWrite(arg0, x13._super._super, arg4, LAYOUT_LOOKUP(layout5, _0));
+      exec_MemoryWrite(ctx, arg0, x13._super._super, arg4, LAYOUT_LOOKUP(layout5, _0));
   return WriteRdStruct{};
 }
-ExpandU32Struct exec_ExpandU32(ValU32Struct arg0, Val arg1, BoundLayout<ExpandU32Layout> layout2) {
+__device__ ExpandU32Struct exec_ExpandU32(ExecContext& ctx,
+                                          ValU32Struct arg0,
+                                          Val arg1,
+                                          BoundLayout<ExpandU32Layout> layout2) {
   // ExpandU32(zirgen/circuit/rv32im/v2/dsl/mult.zir:49)
   Val x3 = arg0.low;
   // ExpandU32(zirgen/circuit/rv32im/v2/dsl/mult.zir:50)
-  NondetRegStruct x4 = exec_NondetU8Reg(bitAnd(x3, Val(255)), LAYOUT_LOOKUP(layout2, b0));
+  NondetRegStruct x4 = exec_NondetU8Reg(ctx, bitAnd(x3, Val(255)), LAYOUT_LOOKUP(layout2, b0));
   // ExpandU32(zirgen/circuit/rv32im/v2/dsl/mult.zir:51)
   NondetRegStruct x5 =
-      exec_NondetU8Reg((bitAnd(x3, Val(65280)) * Val(2005401601)), LAYOUT_LOOKUP(layout2, b1));
+      exec_NondetU8Reg(ctx, (bitAnd(x3, Val(65280)) * Val(2005401601)), LAYOUT_LOOKUP(layout2, b1));
   // ExpandU32(zirgen/circuit/rv32im/v2/dsl/mult.zir:49)
   Val x6 = arg0.high;
   // ExpandU32(zirgen/circuit/rv32im/v2/dsl/mult.zir:52)
-  NondetRegStruct x7 = exec_NondetU8Reg(bitAnd(x6, Val(255)), LAYOUT_LOOKUP(layout2, b2));
+  NondetRegStruct x7 = exec_NondetU8Reg(ctx, bitAnd(x6, Val(255)), LAYOUT_LOOKUP(layout2, b2));
   // ExpandU32(zirgen/circuit/rv32im/v2/dsl/mult.zir:53)
   NondetRegStruct x8 =
-      exec_NondetU8Reg((bitAnd(x6, Val(65280)) * Val(2005401601)), LAYOUT_LOOKUP(layout2, b3));
+      exec_NondetU8Reg(ctx, (bitAnd(x6, Val(65280)) * Val(2005401601)), LAYOUT_LOOKUP(layout2, b3));
   // ExpandU32(zirgen/circuit/rv32im/v2/dsl/mult.zir:59)
-  NondetRegStruct x9 = exec_NondetU8Reg((bitAnd(x6, Val(32512)) * Val(1997537281)),
-                                        LAYOUT_LOOKUP(layout2, b3Top7times2));
+  NondetRegStruct x9 = exec_NondetU8Reg(
+      ctx, (bitAnd(x6, Val(32512)) * Val(1997537281)), LAYOUT_LOOKUP(layout2, b3Top7times2));
   // ExpandU32(zirgen/circuit/rv32im/v2/dsl/mult.zir:60)
-  NondetRegStruct x10 =
-      exec_NondetBitReg((bitAnd(x6, Val(32768)) * Val(2013204481)), LAYOUT_LOOKUP(layout2, topBit));
+  NondetRegStruct x10 = exec_NondetBitReg(
+      ctx, (bitAnd(x6, Val(32768)) * Val(2013204481)), LAYOUT_LOOKUP(layout2, topBit));
   // ExpandU32(zirgen/circuit/rv32im/v2/dsl/mult.zir:62)
   Val x11 = (x4._super + (x5._super * Val(256)));
   EQZ((x3 - x11), "ExpandU32(zirgen/circuit/rv32im/v2/dsl/mult.zir:62)");
@@ -1099,15 +1202,18 @@ ExpandU32Struct exec_ExpandU32(ValU32Struct arg0, Val arg1, BoundLayout<ExpandU3
   EQZ(x15, "ExpandU32(zirgen/circuit/rv32im/v2/dsl/mult.zir:67)");
   return ExpandU32Struct{.b0 = x4, .b1 = x5, .b2 = x7, .b3 = x8, .neg = (x13 * arg1)};
 }
-SplitTotalStruct exec_SplitTotal(Val arg0, BoundLayout<SplitTotalLayout> layout1) {
+__device__ SplitTotalStruct exec_SplitTotal(ExecContext& ctx,
+                                            Val arg0,
+                                            BoundLayout<SplitTotalLayout> layout1) {
   // SplitTotal(zirgen/circuit/rv32im/v2/dsl/mult.zir:97)
-  NondetRegStruct x2 = exec_NondetU16Reg(bitAnd(arg0, Val(65535)), LAYOUT_LOOKUP(layout1, out));
+  NondetRegStruct x2 =
+      exec_NondetU16Reg(ctx, bitAnd(arg0, Val(65535)), LAYOUT_LOOKUP(layout1, out));
   // SplitTotal(zirgen/circuit/rv32im/v2/dsl/mult.zir:98)
-  NondetRegStruct x3 = exec_NondetU8Reg((bitAnd(arg0, Val(16711680)) * Val(2013235201)),
-                                        LAYOUT_LOOKUP(layout1, carryByte));
+  NondetRegStruct x3 = exec_NondetU8Reg(
+      ctx, (bitAnd(arg0, Val(16711680)) * Val(2013235201)), LAYOUT_LOOKUP(layout1, carryByte));
   // SplitTotal(zirgen/circuit/rv32im/v2/dsl/mult.zir:99)
   NondetFakeTwitRegStruct x4 = exec_NondetFakeTwitReg(
-      (bitAnd(arg0, Val(251658240)) * Val(2013265801)), LAYOUT_LOOKUP(layout1, carryExtra));
+      ctx, (bitAnd(arg0, Val(251658240)) * Val(2013265801)), LAYOUT_LOOKUP(layout1, carryExtra));
   Val x5 = x4._super;
   // SplitTotal(zirgen/circuit/rv32im/v2/dsl/mult.zir:98)
   Val x6 = x3._super;
@@ -1116,23 +1222,25 @@ SplitTotalStruct exec_SplitTotal(Val arg0, BoundLayout<SplitTotalLayout> layout1
   EQZ((arg0 - x7), "SplitTotal(zirgen/circuit/rv32im/v2/dsl/mult.zir:100)");
   return SplitTotalStruct{.out = x2, .carry = ((x5 * Val(256)) + x6)};
 }
-MultiplyAccumulateStruct exec_MultiplyAccumulate(ValU32Struct arg0,
-                                                 ValU32Struct arg1,
-                                                 ValU32Struct arg2,
-                                                 MultiplySettingsStruct arg3,
-                                                 BoundLayout<MultiplyAccumulateLayout> layout4) {
+__device__ MultiplyAccumulateStruct
+exec_MultiplyAccumulate(ExecContext& ctx,
+                        ValU32Struct arg0,
+                        ValU32Struct arg1,
+                        ValU32Struct arg2,
+                        MultiplySettingsStruct arg3,
+                        BoundLayout<MultiplyAccumulateLayout> layout4) {
   // MultiplyAccumulate(zirgen/circuit/rv32im/v2/dsl/mult.zir:115)
-  ExpandU32Struct x5 = exec_ExpandU32(arg0, arg3.aSigned, LAYOUT_LOOKUP(layout4, ax));
+  ExpandU32Struct x5 = exec_ExpandU32(ctx, arg0, arg3.aSigned, LAYOUT_LOOKUP(layout4, ax));
   // MultiplyAccumulate(zirgen/circuit/rv32im/v2/dsl/mult.zir:116)
-  ExpandU32Struct x6 = exec_ExpandU32(arg1, arg3.bSigned, LAYOUT_LOOKUP(layout4, bx));
+  ExpandU32Struct x6 = exec_ExpandU32(ctx, arg1, arg3.bSigned, LAYOUT_LOOKUP(layout4, bx));
   // MultiplyAccumulate(zirgen/circuit/rv32im/v2/dsl/mult.zir:113)
   Val x7 = arg2.high;
   // MultiplyAccumulate(zirgen/circuit/rv32im/v2/dsl/mult.zir:118)
-  NondetRegStruct x8 =
-      exec_NondetBitReg((bitAnd(x7, Val(32768)) * Val(2013204481)), LAYOUT_LOOKUP(layout4, cSign));
+  NondetRegStruct x8 = exec_NondetBitReg(
+      ctx, (bitAnd(x7, Val(32768)) * Val(2013204481)), LAYOUT_LOOKUP(layout4, cSign));
   // MultiplyAccumulate(zirgen/circuit/rv32im/v2/dsl/mult.zir:119)
-  NondetRegStruct x9 =
-      exec_NondetU16Reg((bitAnd(x7, Val(32767)) * Val(2)), LAYOUT_LOOKUP(layout4, cRestTimes2));
+  NondetRegStruct x9 = exec_NondetU16Reg(
+      ctx, (bitAnd(x7, Val(32767)) * Val(2)), LAYOUT_LOOKUP(layout4, cRestTimes2));
   // MultiplyAccumulate(zirgen/circuit/rv32im/v2/dsl/mult.zir:118)
   Val x10 = x8._super;
   // MultiplyAccumulate(zirgen/circuit/rv32im/v2/dsl/mult.zir:120)
@@ -1150,7 +1258,7 @@ MultiplyAccumulateStruct exec_MultiplyAccumulate(ValU32Struct arg0,
   // MultiplyAccumulate(zirgen/circuit/rv32im/v2/dsl/mult.zir:124)
   Val x17 = ((arg2.low + (x12 * x13)) + x16);
   // MultiplyAccumulate(zirgen/circuit/rv32im/v2/dsl/mult.zir:122)
-  SplitTotalStruct x18 = exec_SplitTotal(x17, LAYOUT_LOOKUP(layout4, s0));
+  SplitTotalStruct x18 = exec_SplitTotal(ctx, x17, LAYOUT_LOOKUP(layout4, s0));
   // MultiplyAccumulate(zirgen/circuit/rv32im/v2/dsl/mult.zir:116)
   Val x19 = x6.b2._super;
   // MultiplyAccumulate(zirgen/circuit/rv32im/v2/dsl/mult.zir:131)
@@ -1166,7 +1274,7 @@ MultiplyAccumulateStruct exec_MultiplyAccumulate(ValU32Struct arg0,
   // MultiplyAccumulate(zirgen/circuit/rv32im/v2/dsl/mult.zir:131)
   Val x25 = ((x20 + (x21 * x13)) + ((x23 + (x24 * x13)) * Val(256)));
   // MultiplyAccumulate(zirgen/circuit/rv32im/v2/dsl/mult.zir:128)
-  SplitTotalStruct x26 = exec_SplitTotal(x25, LAYOUT_LOOKUP(layout4, s1));
+  SplitTotalStruct x26 = exec_SplitTotal(ctx, x25, LAYOUT_LOOKUP(layout4, s1));
   // MultiplyAccumulate(zirgen/circuit/rv32im/v2/dsl/mult.zir:138)
   Val x27 = ((x10 * Val(65535)) * arg3.cSigned);
   Val x28 = ((x26.carry + x27) + Val(131072));
@@ -1181,18 +1289,19 @@ MultiplyAccumulateStruct exec_MultiplyAccumulate(ValU32Struct arg0,
   // MultiplyAccumulate(zirgen/circuit/rv32im/v2/dsl/mult.zir:141)
   Val x33 = (((x21 * x22) + (x24 * x19)) * Val(256));
   // MultiplyAccumulate(zirgen/circuit/rv32im/v2/dsl/mult.zir:136)
-  SplitTotalStruct x34 = exec_SplitTotal((x32 + x33), LAYOUT_LOOKUP(layout4, s2));
+  SplitTotalStruct x34 = exec_SplitTotal(ctx, (x32 + x33), LAYOUT_LOOKUP(layout4, s2));
   // MultiplyAccumulate(zirgen/circuit/rv32im/v2/dsl/mult.zir:147)
   Val x35 = ((x34.carry + x27) + Val(131070));
   // MultiplyAccumulate(zirgen/circuit/rv32im/v2/dsl/mult.zir:148)
   Val x36 = ((x35 - ((x21 + (x24 * Val(256))) * x29)) - ((x19 + (x22 * Val(256))) * x30));
   Val x37 = (x36 + (x24 * x22));
   // MultiplyAccumulate(zirgen/circuit/rv32im/v2/dsl/mult.zir:150)
-  NondetRegStruct x38 = exec_NondetU16Reg(bitAnd(x37, Val(65535)), LAYOUT_LOOKUP(layout4, s3Out));
+  NondetRegStruct x38 =
+      exec_NondetU16Reg(ctx, bitAnd(x37, Val(65535)), LAYOUT_LOOKUP(layout4, s3Out));
   Val x39 = x38._super;
   // MultiplyAccumulate(zirgen/circuit/rv32im/v2/dsl/mult.zir:151)
   FakeTwitRegStruct x40 =
-      exec_FakeTwitReg(((x37 - x39) * Val(2013235201)), LAYOUT_LOOKUP(layout4, s3Carry));
+      exec_FakeTwitReg(ctx, ((x37 - x39) * Val(2013235201)), LAYOUT_LOOKUP(layout4, s3Carry));
   // ValU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:10)
   // MultiplyAccumulate(zirgen/circuit/rv32im/v2/dsl/mult.zir:152)
   ValU32Struct x41 = ValU32Struct{.low = x18.out._super, .high = x26.out._super};
@@ -1200,20 +1309,26 @@ MultiplyAccumulateStruct exec_MultiplyAccumulate(ValU32Struct arg0,
   ValU32Struct x42 = ValU32Struct{.low = x34.out._super, .high = x39};
   return MultiplyAccumulateStruct{.outLow = x41, .outHigh = x42};
 }
-DivInputStruct
-exec_DivInput(RegStruct arg0, InstInputStruct arg1, BoundLayout<DivInputLayout> layout2) {
+__device__ DivInputStruct exec_DivInput(ExecContext& ctx,
+                                        RegStruct arg0,
+                                        InstInputStruct arg1,
+                                        BoundLayout<DivInputLayout> layout2) {
   // DivInput(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:8)
   EQZ((arg1.state - Val(32)), "DivInput(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:8)");
   // DivInput(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:10)
-  DecoderStruct x3 = exec_DecodeInst(arg0, arg1, LAYOUT_LOOKUP(layout2, decoded));
+  DecoderStruct x3 = exec_DecodeInst(ctx, arg0, arg1, LAYOUT_LOOKUP(layout2, decoded));
   // DivInput(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:11)
-  GetDataStruct x4 = exec_ReadReg(arg0, arg1, x3.rs1, LAYOUT_LOOKUP(layout2, rs1));
+  GetDataStruct x4 = exec_ReadReg(ctx, arg0, arg1, x3.rs1, LAYOUT_LOOKUP(layout2, rs1));
   // DivInput(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:12)
-  GetDataStruct x5 = exec_ReadReg(arg0, arg1, x3.rs2, LAYOUT_LOOKUP(layout2, rs2));
+  GetDataStruct x5 = exec_ReadReg(ctx, arg0, arg1, x3.rs2, LAYOUT_LOOKUP(layout2, rs2));
   return DivInputStruct{._super = arg1, .ii = arg1, .decoded = x3, .rs1 = x4, .rs2 = x5};
 }
-DoDivStruct exec_DoDiv(
-    ValU32Struct arg0, ValU32Struct arg1, Val arg2, Val arg3, BoundLayout<DoDivLayout> layout4) {
+__device__ DoDivStruct exec_DoDiv(ExecContext& ctx,
+                                  ValU32Struct arg0,
+                                  ValU32Struct arg1,
+                                  Val arg2,
+                                  Val arg3,
+                                  BoundLayout<DoDivLayout> layout4) {
   // Divide(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:43)
   // DoDiv(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:47)
   Val x5 = arg0.low;
@@ -1221,21 +1336,22 @@ DoDivStruct exec_DoDiv(
   auto [x7, x8, x9, x10] =
       INVOKE_EXTERN(ctx, divide, x5, x6, arg1.low, arg1.high, (arg2 + (arg3 * Val(2))));
   // DoDiv(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:50)
-  NondetRegStruct x11 = exec_NondetReg(x7, LAYOUT_LOOKUP(layout4, quotLow));
+  NondetRegStruct x11 = exec_NondetReg(ctx, x7, LAYOUT_LOOKUP(layout4, quotLow));
   // DoDiv(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:51)
-  NondetRegStruct x12 = exec_NondetReg(x8, LAYOUT_LOOKUP(layout4, quotHigh));
+  NondetRegStruct x12 = exec_NondetReg(ctx, x8, LAYOUT_LOOKUP(layout4, quotHigh));
   // ValU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:10)
   // DoDiv(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:52)
   ValU32Struct x13 = ValU32Struct{.low = x11._super, .high = x12._super};
   // DoDiv(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:54)
-  NondetRegStruct x14 = exec_NondetU16Reg(x9, LAYOUT_LOOKUP(layout4, remLow));
+  NondetRegStruct x14 = exec_NondetU16Reg(ctx, x9, LAYOUT_LOOKUP(layout4, remLow));
   // DoDiv(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:55)
-  NondetRegStruct x15 = exec_NondetU16Reg(x10, LAYOUT_LOOKUP(layout4, remHigh));
+  NondetRegStruct x15 = exec_NondetU16Reg(ctx, x10, LAYOUT_LOOKUP(layout4, remHigh));
   // ValU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:10)
   // DoDiv(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:56)
   ValU32Struct x16 = ValU32Struct{.low = x14._super, .high = x15._super};
   // DoDiv(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:60)
   MultiplyAccumulateStruct x17 = exec_MultiplyAccumulate(
+      ctx,
       x13,
       arg1,
       x16,
@@ -1255,7 +1371,8 @@ DoDivStruct exec_DoDiv(
   ValU32Struct x19 = x17.outHigh;
   Val x20 = x19.low;
   // DoDiv(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:64)
-  NondetRegStruct x21 = exec_NondetBitReg((Val(1) - isz(x20)), LAYOUT_LOOKUP(layout4, topBitType));
+  NondetRegStruct x21 =
+      exec_NondetBitReg(ctx, (Val(1) - isz(x20)), LAYOUT_LOOKUP(layout4, topBitType));
   // DoDiv(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:65)
   Val x22 = (x21._super * Val(65535));
   // AssertEqU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:106)
@@ -1268,7 +1385,9 @@ DoDivStruct exec_DoDiv(
       "zirgen/circuit/rv32im/v2/dsl/inst_div.zir :65:15)))");
   return DoDivStruct{.quot = x13, .rem = x16};
 }
-ValU32Struct exec_OpSRL(DivInputStruct arg0, BoundLayout<OpSRLLayout> layout1) {
+__device__ ValU32Struct exec_OpSRL(ExecContext& ctx,
+                                   DivInputStruct arg0,
+                                   BoundLayout<OpSRLLayout> layout1) {
   // OpSRL(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:84)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3F7(zirgen/circuit/rv32im/v2/dsl/inst.zir:62)
@@ -1288,26 +1407,30 @@ ValU32Struct exec_OpSRL(DivInputStruct arg0, BoundLayout<OpSRLLayout> layout1) {
   // OpSRL(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:84)
   Val x4 = arg0.rs2._super.low;
   // OpSRL(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:86)
-  ValU32Struct x5 = exec_DynPo2(x4, LAYOUT_LOOKUP(layout1, shiftMul));
+  ValU32Struct x5 = exec_DynPo2(ctx, x4, LAYOUT_LOOKUP(layout1, shiftMul));
   // OpSRL(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:87)
-  DoDivStruct x6 = exec_DoDiv(arg0.rs1._super, x5, Val(0), Val(0), LAYOUT_LOOKUP(layout1, _0));
+  DoDivStruct x6 = exec_DoDiv(ctx, arg0.rs1._super, x5, Val(0), Val(0), LAYOUT_LOOKUP(layout1, _0));
   return x6.quot;
 }
-NondetRegStruct exec_TopBit(ValU32Struct arg0, BoundLayout<TopBitLayout> layout1) {
+__device__ NondetRegStruct exec_TopBit(ExecContext& ctx,
+                                       ValU32Struct arg0,
+                                       BoundLayout<TopBitLayout> layout1) {
   // TopBit(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:69)
   Val x2 = arg0.high;
   // TopBit(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:70)
-  NondetRegStruct x3 =
-      exec_NondetBitReg((bitAnd(x2, Val(32768)) * Val(2013204481)), LAYOUT_LOOKUP(layout1, _super));
+  NondetRegStruct x3 = exec_NondetBitReg(
+      ctx, (bitAnd(x2, Val(32768)) * Val(2013204481)), LAYOUT_LOOKUP(layout1, _super));
   // TopBit(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:71)
   Val x4 = (x3._super * Val(32768));
-  NondetRegStruct x5 = exec_NondetU16Reg(((x2 - x4) * Val(2)), LAYOUT_LOOKUP(layout1, rest));
+  NondetRegStruct x5 = exec_NondetU16Reg(ctx, ((x2 - x4) * Val(2)), LAYOUT_LOOKUP(layout1, rest));
   // TopBit(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:72)
   Val x6 = ((x5._super * Val(1006632961)) + x4);
   EQZ((x2 - x6), "TopBit(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:72)");
   return x3;
 }
-ValU32Struct exec_OpSRA(DivInputStruct arg0, BoundLayout<OpSRALayout> layout1) {
+__device__ ValU32Struct exec_OpSRA(ExecContext& ctx,
+                                   DivInputStruct arg0,
+                                   BoundLayout<OpSRALayout> layout1) {
   // OpSRA(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:90)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3F7(zirgen/circuit/rv32im/v2/dsl/inst.zir:62)
@@ -1327,11 +1450,11 @@ ValU32Struct exec_OpSRA(DivInputStruct arg0, BoundLayout<OpSRALayout> layout1) {
   // OpSRA(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:90)
   Val x4 = arg0.rs2._super.low;
   // OpSRA(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:92)
-  ValU32Struct x5 = exec_DynPo2(x4, LAYOUT_LOOKUP(layout1, shiftMul));
+  ValU32Struct x5 = exec_DynPo2(ctx, x4, LAYOUT_LOOKUP(layout1, shiftMul));
   // OpSRA(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:90)
   ValU32Struct x6 = arg0.rs1._super;
   // OpSRA(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:93)
-  NondetRegStruct x7 = exec_TopBit(x6, LAYOUT_LOOKUP(layout1, flip));
+  NondetRegStruct x7 = exec_TopBit(ctx, x6, LAYOUT_LOOKUP(layout1, flip));
   Val x8 = x7._super;
   // FlipU32(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:80)
   // OpSRA(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:94)
@@ -1345,7 +1468,7 @@ ValU32Struct exec_OpSRA(DivInputStruct arg0, BoundLayout<OpSRALayout> layout1) {
   // FlipU32(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:81)
   ValU32Struct x12 = ValU32Struct{.low = ((x8 * (Val(65535) - x9)) + (x10 * x9)),
                                   .high = ((x8 * (Val(65535) - x11)) + (x10 * x11))};
-  DoDivStruct x13 = exec_DoDiv(x12, x5, Val(0), Val(1), LAYOUT_LOOKUP(layout1, _0));
+  DoDivStruct x13 = exec_DoDiv(ctx, x12, x5, Val(0), Val(1), LAYOUT_LOOKUP(layout1, _0));
   ValU32Struct x14 = x13.quot;
   // FlipU32(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:80)
   // OpSRA(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:95)
@@ -1357,7 +1480,9 @@ ValU32Struct exec_OpSRA(DivInputStruct arg0, BoundLayout<OpSRALayout> layout1) {
                                   .high = ((x8 * (Val(65535) - x16)) + (x10 * x16))};
   return x17;
 }
-ValU32Struct exec_OpSRLI(DivInputStruct arg0, BoundLayout<OpSRLILayout> layout1) {
+__device__ ValU32Struct exec_OpSRLI(ExecContext& ctx,
+                                    DivInputStruct arg0,
+                                    BoundLayout<OpSRLILayout> layout1) {
   // OpSRLI(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:98)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3F7(zirgen/circuit/rv32im/v2/dsl/inst.zir:62)
@@ -1375,12 +1500,14 @@ ValU32Struct exec_OpSRLI(DivInputStruct arg0, BoundLayout<OpSRLILayout> layout1)
       "loc(callsite( VerifyOpcodeF3F7 ( zirgen/circuit/rv32im/v2/dsl/inst.zir :64:18) at  OpSRLI ( "
       "zirgen/circuit/rv32im/v2/dsl/inst_div.zir :99:20)))");
   // OpSRLI(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:100)
-  ValU32Struct x4 = exec_DynPo2(x2.rs2, LAYOUT_LOOKUP(layout1, shiftMul));
+  ValU32Struct x4 = exec_DynPo2(ctx, x2.rs2, LAYOUT_LOOKUP(layout1, shiftMul));
   // OpSRLI(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:101)
-  DoDivStruct x5 = exec_DoDiv(arg0.rs1._super, x4, Val(0), Val(0), LAYOUT_LOOKUP(layout1, _0));
+  DoDivStruct x5 = exec_DoDiv(ctx, arg0.rs1._super, x4, Val(0), Val(0), LAYOUT_LOOKUP(layout1, _0));
   return x5.quot;
 }
-ValU32Struct exec_OpSRAI(DivInputStruct arg0, BoundLayout<OpSRAILayout> layout1) {
+__device__ ValU32Struct exec_OpSRAI(ExecContext& ctx,
+                                    DivInputStruct arg0,
+                                    BoundLayout<OpSRAILayout> layout1) {
   // OpSRAI(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:104)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3F7(zirgen/circuit/rv32im/v2/dsl/inst.zir:62)
@@ -1398,11 +1525,11 @@ ValU32Struct exec_OpSRAI(DivInputStruct arg0, BoundLayout<OpSRAILayout> layout1)
       "loc(callsite( VerifyOpcodeF3F7 ( zirgen/circuit/rv32im/v2/dsl/inst.zir :64:18) at  OpSRAI ( "
       "zirgen/circuit/rv32im/v2/dsl/inst_div.zir :105:20)))");
   // OpSRAI(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:106)
-  ValU32Struct x4 = exec_DynPo2(x2.rs2, LAYOUT_LOOKUP(layout1, shiftMul));
+  ValU32Struct x4 = exec_DynPo2(ctx, x2.rs2, LAYOUT_LOOKUP(layout1, shiftMul));
   // OpSRAI(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:104)
   ValU32Struct x5 = arg0.rs1._super;
   // OpSRAI(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:107)
-  NondetRegStruct x6 = exec_TopBit(x5, LAYOUT_LOOKUP(layout1, flip));
+  NondetRegStruct x6 = exec_TopBit(ctx, x5, LAYOUT_LOOKUP(layout1, flip));
   Val x7 = x6._super;
   // FlipU32(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:80)
   // OpSRAI(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:108)
@@ -1416,7 +1543,7 @@ ValU32Struct exec_OpSRAI(DivInputStruct arg0, BoundLayout<OpSRAILayout> layout1)
   // FlipU32(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:81)
   ValU32Struct x11 = ValU32Struct{.low = ((x7 * (Val(65535) - x8)) + (x9 * x8)),
                                   .high = ((x7 * (Val(65535) - x10)) + (x9 * x10))};
-  DoDivStruct x12 = exec_DoDiv(x11, x4, Val(0), Val(1), LAYOUT_LOOKUP(layout1, _0));
+  DoDivStruct x12 = exec_DoDiv(ctx, x11, x4, Val(0), Val(1), LAYOUT_LOOKUP(layout1, _0));
   ValU32Struct x13 = x12.quot;
   // FlipU32(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:80)
   // OpSRAI(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:109)
@@ -1428,7 +1555,9 @@ ValU32Struct exec_OpSRAI(DivInputStruct arg0, BoundLayout<OpSRAILayout> layout1)
                                   .high = ((x7 * (Val(65535) - x15)) + (x9 * x15))};
   return x16;
 }
-ValU32Struct exec_OpDIV(DivInputStruct arg0, BoundLayout<OpDIVLayout> layout1) {
+__device__ ValU32Struct exec_OpDIV(ExecContext& ctx,
+                                   DivInputStruct arg0,
+                                   BoundLayout<OpDIVLayout> layout1) {
   // OpDIV(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:112)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3F7(zirgen/circuit/rv32im/v2/dsl/inst.zir:62)
@@ -1447,10 +1576,12 @@ ValU32Struct exec_OpDIV(DivInputStruct arg0, BoundLayout<OpDIVLayout> layout1) {
       "zirgen/circuit/rv32im/v2/dsl/inst_div.zir :113:20)))");
   // OpDIV(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:114)
   DoDivStruct x4 =
-      exec_DoDiv(arg0.rs1._super, arg0.rs2._super, Val(1), Val(0), LAYOUT_LOOKUP(layout1, _0));
+      exec_DoDiv(ctx, arg0.rs1._super, arg0.rs2._super, Val(1), Val(0), LAYOUT_LOOKUP(layout1, _0));
   return x4.quot;
 }
-ValU32Struct exec_OpDIVU(DivInputStruct arg0, BoundLayout<OpDIVULayout> layout1) {
+__device__ ValU32Struct exec_OpDIVU(ExecContext& ctx,
+                                    DivInputStruct arg0,
+                                    BoundLayout<OpDIVULayout> layout1) {
   // OpDIVU(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:117)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3F7(zirgen/circuit/rv32im/v2/dsl/inst.zir:62)
@@ -1469,10 +1600,12 @@ ValU32Struct exec_OpDIVU(DivInputStruct arg0, BoundLayout<OpDIVULayout> layout1)
       "zirgen/circuit/rv32im/v2/dsl/inst_div.zir :118:20)))");
   // OpDIVU(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:119)
   DoDivStruct x4 =
-      exec_DoDiv(arg0.rs1._super, arg0.rs2._super, Val(0), Val(0), LAYOUT_LOOKUP(layout1, _0));
+      exec_DoDiv(ctx, arg0.rs1._super, arg0.rs2._super, Val(0), Val(0), LAYOUT_LOOKUP(layout1, _0));
   return x4.quot;
 }
-ValU32Struct exec_OpREM(DivInputStruct arg0, BoundLayout<OpREMLayout> layout1) {
+__device__ ValU32Struct exec_OpREM(ExecContext& ctx,
+                                   DivInputStruct arg0,
+                                   BoundLayout<OpREMLayout> layout1) {
   // OpREM(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:122)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3F7(zirgen/circuit/rv32im/v2/dsl/inst.zir:62)
@@ -1491,10 +1624,12 @@ ValU32Struct exec_OpREM(DivInputStruct arg0, BoundLayout<OpREMLayout> layout1) {
       "zirgen/circuit/rv32im/v2/dsl/inst_div.zir :123:20)))");
   // OpREM(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:124)
   DoDivStruct x4 =
-      exec_DoDiv(arg0.rs1._super, arg0.rs2._super, Val(1), Val(0), LAYOUT_LOOKUP(layout1, _0));
+      exec_DoDiv(ctx, arg0.rs1._super, arg0.rs2._super, Val(1), Val(0), LAYOUT_LOOKUP(layout1, _0));
   return x4.rem;
 }
-ValU32Struct exec_OpREMU(DivInputStruct arg0, BoundLayout<OpREMULayout> layout1) {
+__device__ ValU32Struct exec_OpREMU(ExecContext& ctx,
+                                    DivInputStruct arg0,
+                                    BoundLayout<OpREMULayout> layout1) {
   // OpREMU(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:127)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3F7(zirgen/circuit/rv32im/v2/dsl/inst.zir:62)
@@ -1513,14 +1648,17 @@ ValU32Struct exec_OpREMU(DivInputStruct arg0, BoundLayout<OpREMULayout> layout1)
       "zirgen/circuit/rv32im/v2/dsl/inst_div.zir :128:20)))");
   // OpREMU(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:129)
   DoDivStruct x4 =
-      exec_DoDiv(arg0.rs1._super, arg0.rs2._super, Val(0), Val(0), LAYOUT_LOOKUP(layout1, _0));
+      exec_DoDiv(ctx, arg0.rs1._super, arg0.rs2._super, Val(0), Val(0), LAYOUT_LOOKUP(layout1, _0));
   return x4.rem;
 }
-InstOutputStruct exec_Div0(RegStruct arg0, InstInputStruct arg1, BoundLayout<Div0Layout> layout2) {
+__device__ InstOutputStruct exec_Div0(ExecContext& ctx,
+                                      RegStruct arg0,
+                                      InstInputStruct arg1,
+                                      BoundLayout<Div0Layout> layout2) {
   // Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:23)
   BoundLayout<Div0MulOutputLayout> x3 = LAYOUT_LOOKUP(layout2, mulOutput);
   // Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:22)
-  DivInputStruct x4 = exec_DivInput(arg0, arg1, LAYOUT_LOOKUP(layout2, input));
+  DivInputStruct x4 = exec_DivInput(ctx, arg0, arg1, LAYOUT_LOOKUP(layout2, input));
   NondetRegStruct8Array x5 = x4._super.minorOnehot._super;
   // Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:23)
   BoundLayout<Div0MulOutputArm0Layout> x6 = LAYOUT_LOOKUP(x3, arm0);
@@ -1542,29 +1680,29 @@ InstOutputStruct exec_Div0(RegStruct arg0, InstInputStruct arg1, BoundLayout<Div
   ValU32Struct x22;
   if (to_size_t(x5[0]._super)) {
     // Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:24)
-    ValU32Struct x23 = exec_OpSRL(x4, LAYOUT_LOOKUP(x6, _super));
+    ValU32Struct x23 = exec_OpSRL(ctx, x4, LAYOUT_LOOKUP(x6, _super));
     // Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:23)
     STORE(x12, Val(0));
     EQZ(LOAD(x12, 0), "Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:23)");
     x22 = x23;
   } else if (to_size_t(x5[1]._super)) {
     // Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:25)
-    ValU32Struct x24 = exec_OpSRA(x4, LAYOUT_LOOKUP(x3, arm1));
+    ValU32Struct x24 = exec_OpSRA(ctx, x4, LAYOUT_LOOKUP(x3, arm1));
     x22 = x24;
   } else if (to_size_t(x5[2]._super)) {
     // Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:26)
-    ValU32Struct x25 = exec_OpSRLI(x4, LAYOUT_LOOKUP(x7, _super));
+    ValU32Struct x25 = exec_OpSRLI(ctx, x4, LAYOUT_LOOKUP(x7, _super));
     // Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:23)
     STORE(x13, Val(0));
     EQZ(LOAD(x13, 0), "Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:23)");
     x22 = x25;
   } else if (to_size_t(x5[3]._super)) {
     // Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:27)
-    ValU32Struct x26 = exec_OpSRAI(x4, LAYOUT_LOOKUP(x3, arm3));
+    ValU32Struct x26 = exec_OpSRAI(ctx, x4, LAYOUT_LOOKUP(x3, arm3));
     x22 = x26;
   } else if (to_size_t(x5[4]._super)) {
     // Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:28)
-    ValU32Struct x27 = exec_OpDIV(x4, LAYOUT_LOOKUP(x8, _super));
+    ValU32Struct x27 = exec_OpDIV(ctx, x4, LAYOUT_LOOKUP(x8, _super));
     // Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:23)
     STORE(x14, Val(0));
     EQZ(LOAD(x14, 0), "Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:23)");
@@ -1573,7 +1711,7 @@ InstOutputStruct exec_Div0(RegStruct arg0, InstInputStruct arg1, BoundLayout<Div
     x22 = x27;
   } else if (to_size_t(x5[5]._super)) {
     // Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:29)
-    ValU32Struct x28 = exec_OpDIVU(x4, LAYOUT_LOOKUP(x9, _super));
+    ValU32Struct x28 = exec_OpDIVU(ctx, x4, LAYOUT_LOOKUP(x9, _super));
     // Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:23)
     STORE(x16, Val(0));
     EQZ(LOAD(x16, 0), "Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:23)");
@@ -1582,7 +1720,7 @@ InstOutputStruct exec_Div0(RegStruct arg0, InstInputStruct arg1, BoundLayout<Div
     x22 = x28;
   } else if (to_size_t(x5[6]._super)) {
     // Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:30)
-    ValU32Struct x29 = exec_OpREM(x4, LAYOUT_LOOKUP(x10, _super));
+    ValU32Struct x29 = exec_OpREM(ctx, x4, LAYOUT_LOOKUP(x10, _super));
     // Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:23)
     STORE(x18, Val(0));
     EQZ(LOAD(x18, 0), "Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:23)");
@@ -1591,7 +1729,7 @@ InstOutputStruct exec_Div0(RegStruct arg0, InstInputStruct arg1, BoundLayout<Div
     x22 = x29;
   } else if (to_size_t(x5[7]._super)) {
     // Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:31)
-    ValU32Struct x30 = exec_OpREMU(x4, LAYOUT_LOOKUP(x11, _super));
+    ValU32Struct x30 = exec_OpREMU(ctx, x4, LAYOUT_LOOKUP(x11, _super));
     // Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:23)
     STORE(x20, Val(0));
     EQZ(LOAD(x20, 0), "Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:23)");
@@ -1603,44 +1741,49 @@ InstOutputStruct exec_Div0(RegStruct arg0, InstInputStruct arg1, BoundLayout<Div
   }
   // Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:33)
   WriteRdStruct x31 =
-      exec_WriteRd(arg0, x4.ii, x4.decoded, Val(1), x22, LAYOUT_LOOKUP(layout2, _0));
+      exec_WriteRd(ctx, arg0, x4.ii, x4.decoded, Val(1), x22, LAYOUT_LOOKUP(layout2, _0));
   // Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:21)
   ValU32Struct x32 = arg1.pcU32;
   // DenormedValU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:20)
   // AddU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:27)
   // Div0(zirgen/circuit/rv32im/v2/dsl/inst_div.zir:34)
   DenormedValU32Struct x33 = DenormedValU32Struct{.low = (x32.low + Val(4)), .high = x32.high};
-  NormalizeU32Struct x34 = exec_NormalizeU32(x33, LAYOUT_LOOKUP(layout2, pcAdd));
+  NormalizeU32Struct x34 = exec_NormalizeU32(ctx, x33, LAYOUT_LOOKUP(layout2, pcAdd));
   return InstOutputStruct{.newPc = x34._super, .newState = Val(32), .newMode = arg1.mode};
 }
-MiscInputStruct
-exec_MiscInput(RegStruct arg0, InstInputStruct arg1, BoundLayout<MiscInputLayout> layout2) {
+__device__ MiscInputStruct exec_MiscInput(ExecContext& ctx,
+                                          RegStruct arg0,
+                                          InstInputStruct arg1,
+                                          BoundLayout<MiscInputLayout> layout2) {
   // MiscInput(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:7)
   EQZ((arg1.state - Val(32)), "MiscInput(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:7)");
   // MiscInput(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:9)
-  DecoderStruct x3 = exec_DecodeInst(arg0, arg1, LAYOUT_LOOKUP(layout2, decoded));
+  DecoderStruct x3 = exec_DecodeInst(ctx, arg0, arg1, LAYOUT_LOOKUP(layout2, decoded));
   // MiscInput(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:10)
-  GetDataStruct x4 = exec_ReadReg(arg0, arg1, x3.rs1, LAYOUT_LOOKUP(layout2, rs1));
+  GetDataStruct x4 = exec_ReadReg(ctx, arg0, arg1, x3.rs1, LAYOUT_LOOKUP(layout2, rs1));
   // MiscInput(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:11)
-  GetDataStruct x5 = exec_ReadReg(arg0, arg1, x3.rs2, LAYOUT_LOOKUP(layout2, rs2));
+  GetDataStruct x5 = exec_ReadReg(ctx, arg0, arg1, x3.rs2, LAYOUT_LOOKUP(layout2, rs2));
   return MiscInputStruct{._super = arg1, .ii = arg1, .decoded = x3, .rs1 = x4, .rs2 = x5};
 }
-InstOutputStruct exec_FinalizeMisc(RegStruct arg0,
-                                   MiscInputStruct arg1,
-                                   MiscOutputStruct arg2,
-                                   BoundLayout<FinalizeMiscLayout> layout3) {
+__device__ InstOutputStruct exec_FinalizeMisc(ExecContext& ctx,
+                                              RegStruct arg0,
+                                              MiscInputStruct arg1,
+                                              MiscOutputStruct arg2,
+                                              BoundLayout<FinalizeMiscLayout> layout3) {
   // FinalizeMisc(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:22)
-  NormalizeU32Struct x4 = exec_NormalizeU32(arg2.toWrite, LAYOUT_LOOKUP(layout3, writeData));
+  NormalizeU32Struct x4 = exec_NormalizeU32(ctx, arg2.toWrite, LAYOUT_LOOKUP(layout3, writeData));
   // FinalizeMisc(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:23)
-  NormalizeU32Struct x5 = exec_NormalizeU32(arg2.newPc, LAYOUT_LOOKUP(layout3, pcNorm));
+  NormalizeU32Struct x5 = exec_NormalizeU32(ctx, arg2.newPc, LAYOUT_LOOKUP(layout3, pcNorm));
   // FinalizeMisc(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:21)
   InstInputStruct x6 = arg1.ii;
   // FinalizeMisc(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:24)
-  WriteRdStruct x7 =
-      exec_WriteRd(arg0, x6, arg1.decoded, arg2.doWrite, x4._super, LAYOUT_LOOKUP(layout3, _0));
+  WriteRdStruct x7 = exec_WriteRd(
+      ctx, arg0, x6, arg1.decoded, arg2.doWrite, x4._super, LAYOUT_LOOKUP(layout3, _0));
   return InstOutputStruct{.newPc = x5._super, .newState = Val(32), .newMode = x6.mode};
 }
-MiscOutputStruct exec_OpXOR(MiscInputStruct arg0, BoundLayout<OpXORLayout> layout1) {
+__device__ MiscOutputStruct exec_OpXOR(ExecContext& ctx,
+                                       MiscInputStruct arg0,
+                                       BoundLayout<OpXORLayout> layout1) {
   // OpXOR(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:95)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3F7(zirgen/circuit/rv32im/v2/dsl/inst.zir:62)
@@ -1658,7 +1801,8 @@ MiscOutputStruct exec_OpXOR(MiscInputStruct arg0, BoundLayout<OpXORLayout> layou
       "loc(callsite( VerifyOpcodeF3F7 ( zirgen/circuit/rv32im/v2/dsl/inst.zir :64:18) at  OpXOR ( "
       "zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :96:20)))");
   // OpXOR(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:97)
-  ValU32Struct x4 = exec_BitwiseXor(arg0.rs1._super, arg0.rs2._super, LAYOUT_LOOKUP(layout1, _0));
+  ValU32Struct x4 =
+      exec_BitwiseXor(ctx, arg0.rs1._super, arg0.rs2._super, LAYOUT_LOOKUP(layout1, _0));
   // SimpleOp(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:73)
   ValU32Struct x5 = arg0._super.pcU32;
   // DenormedValU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:20)
@@ -1673,7 +1817,9 @@ MiscOutputStruct exec_OpXOR(MiscInputStruct arg0, BoundLayout<OpXORLayout> layou
                        .newPc = x6};
   return x7;
 }
-MiscOutputStruct exec_OpOR(MiscInputStruct arg0, BoundLayout<OpORLayout> layout1) {
+__device__ MiscOutputStruct exec_OpOR(ExecContext& ctx,
+                                      MiscInputStruct arg0,
+                                      BoundLayout<OpORLayout> layout1) {
   // OpOR(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:100)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3F7(zirgen/circuit/rv32im/v2/dsl/inst.zir:62)
@@ -1691,7 +1837,8 @@ MiscOutputStruct exec_OpOR(MiscInputStruct arg0, BoundLayout<OpORLayout> layout1
       "loc(callsite( VerifyOpcodeF3F7 ( zirgen/circuit/rv32im/v2/dsl/inst.zir :64:18) at  OpOR ( "
       "zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :101:20)))");
   // OpOR(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:102)
-  ValU32Struct x4 = exec_BitwiseOr(arg0.rs1._super, arg0.rs2._super, LAYOUT_LOOKUP(layout1, _0));
+  ValU32Struct x4 =
+      exec_BitwiseOr(ctx, arg0.rs1._super, arg0.rs2._super, LAYOUT_LOOKUP(layout1, _0));
   // SimpleOp(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:73)
   ValU32Struct x5 = arg0._super.pcU32;
   // DenormedValU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:20)
@@ -1706,7 +1853,9 @@ MiscOutputStruct exec_OpOR(MiscInputStruct arg0, BoundLayout<OpORLayout> layout1
                        .newPc = x6};
   return x7;
 }
-MiscOutputStruct exec_OpAND(MiscInputStruct arg0, BoundLayout<OpANDLayout> layout1) {
+__device__ MiscOutputStruct exec_OpAND(ExecContext& ctx,
+                                       MiscInputStruct arg0,
+                                       BoundLayout<OpANDLayout> layout1) {
   // OpAND(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:105)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3F7(zirgen/circuit/rv32im/v2/dsl/inst.zir:62)
@@ -1724,7 +1873,8 @@ MiscOutputStruct exec_OpAND(MiscInputStruct arg0, BoundLayout<OpANDLayout> layou
       "loc(callsite( VerifyOpcodeF3F7 ( zirgen/circuit/rv32im/v2/dsl/inst.zir :64:18) at  OpAND ( "
       "zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :106:20)))");
   // OpAND(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:107)
-  ValU32Struct x4 = exec_BitwiseAnd(arg0.rs1._super, arg0.rs2._super, LAYOUT_LOOKUP(layout1, _0));
+  ValU32Struct x4 =
+      exec_BitwiseAnd(ctx, arg0.rs1._super, arg0.rs2._super, LAYOUT_LOOKUP(layout1, _0));
   // SimpleOp(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:73)
   ValU32Struct x5 = arg0._super.pcU32;
   // DenormedValU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:20)
@@ -1739,7 +1889,9 @@ MiscOutputStruct exec_OpAND(MiscInputStruct arg0, BoundLayout<OpANDLayout> layou
                        .newPc = x6};
   return x7;
 }
-MiscOutputStruct exec_OpSLT(MiscInputStruct arg0, BoundLayout<OpSLTLayout> layout1) {
+__device__ MiscOutputStruct exec_OpSLT(ExecContext& ctx,
+                                       MiscInputStruct arg0,
+                                       BoundLayout<OpSLTLayout> layout1) {
   // OpSLT(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:110)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3F7(zirgen/circuit/rv32im/v2/dsl/inst.zir:62)
@@ -1758,7 +1910,7 @@ MiscOutputStruct exec_OpSLT(MiscInputStruct arg0, BoundLayout<OpSLTLayout> layou
       "zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :111:20)))");
   // OpSLT(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:112)
   CmpLessThanStruct x4 =
-      exec_CmpLessThan(arg0.rs1._super, arg0.rs2._super, LAYOUT_LOOKUP(layout1, cmp));
+      exec_CmpLessThan(ctx, arg0.rs1._super, arg0.rs2._super, LAYOUT_LOOKUP(layout1, cmp));
   Val x5 = x4.isLessThan._super._super;
   // SimpleOp(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:73)
   // OpSLT(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:113)
@@ -1770,7 +1922,9 @@ MiscOutputStruct exec_OpSLT(MiscInputStruct arg0, BoundLayout<OpSLTLayout> layou
   return MiscOutputStruct{
       .doWrite = Val(1), .toWrite = DenormedValU32Struct{.low = x5, .high = Val(0)}, .newPc = x7};
 }
-MiscOutputStruct exec_OpSLTU(MiscInputStruct arg0, BoundLayout<OpSLTULayout> layout1) {
+__device__ MiscOutputStruct exec_OpSLTU(ExecContext& ctx,
+                                        MiscInputStruct arg0,
+                                        BoundLayout<OpSLTULayout> layout1) {
   // OpSLTU(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:116)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3F7(zirgen/circuit/rv32im/v2/dsl/inst.zir:62)
@@ -1789,7 +1943,7 @@ MiscOutputStruct exec_OpSLTU(MiscInputStruct arg0, BoundLayout<OpSLTULayout> lay
       "zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :117:20)))");
   // OpSLTU(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:118)
   CmpLessThanUnsignedStruct x4 =
-      exec_CmpLessThanUnsigned(arg0.rs1._super, arg0.rs2._super, LAYOUT_LOOKUP(layout1, cmp));
+      exec_CmpLessThanUnsigned(ctx, arg0.rs1._super, arg0.rs2._super, LAYOUT_LOOKUP(layout1, cmp));
   // SimpleOp(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:73)
   // OpSLTU(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:119)
   ValU32Struct x5 = arg0._super.pcU32;
@@ -1805,12 +1959,14 @@ MiscOutputStruct exec_OpSLTU(MiscInputStruct arg0, BoundLayout<OpSLTULayout> lay
                        .newPc = x6};
   return x7;
 }
-InstOutputStruct
-exec_Misc0(RegStruct arg0, InstInputStruct arg1, BoundLayout<Misc0Layout> layout2) {
+__device__ InstOutputStruct exec_Misc0(ExecContext& ctx,
+                                       RegStruct arg0,
+                                       InstInputStruct arg1,
+                                       BoundLayout<Misc0Layout> layout2) {
   // Misc0(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:30)
   BoundLayout<Misc0MiscOutputLayout> x3 = LAYOUT_LOOKUP(layout2, miscOutput);
   // Misc0(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:29)
-  MiscInputStruct x4 = exec_MiscInput(arg0, arg1, LAYOUT_LOOKUP(layout2, input));
+  MiscInputStruct x4 = exec_MiscInput(ctx, arg0, arg1, LAYOUT_LOOKUP(layout2, input));
   InstInputStruct x5 = x4._super;
   NondetRegStruct8Array x6 = x5.minorOnehot._super;
   // Misc0(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:30)
@@ -1968,7 +2124,7 @@ exec_Misc0(RegStruct arg0, InstInputStruct arg1, BoundLayout<Misc0Layout> layout
     x64 = MiscOutputStruct{.doWrite = Val(1), .toWrite = x33, .newPc = x26};
   } else if (to_size_t(x6[2]._super)) {
     // Misc0(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:33)
-    MiscOutputStruct x65 = exec_OpXOR(x4, LAYOUT_LOOKUP(x9, _super));
+    MiscOutputStruct x65 = exec_OpXOR(ctx, x4, LAYOUT_LOOKUP(x9, _super));
     // Misc0(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:30)
     STORE(x39, Val(0));
     EQZ(LOAD(x39, 0), "Misc0(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:30)");
@@ -1983,7 +2139,7 @@ exec_Misc0(RegStruct arg0, InstInputStruct arg1, BoundLayout<Misc0Layout> layout
     x64 = x65;
   } else if (to_size_t(x6[3]._super)) {
     // Misc0(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:34)
-    MiscOutputStruct x66 = exec_OpOR(x4, LAYOUT_LOOKUP(x10, _super));
+    MiscOutputStruct x66 = exec_OpOR(ctx, x4, LAYOUT_LOOKUP(x10, _super));
     // Misc0(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:30)
     STORE(x44, Val(0));
     EQZ(LOAD(x44, 0), "Misc0(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:30)");
@@ -1998,7 +2154,7 @@ exec_Misc0(RegStruct arg0, InstInputStruct arg1, BoundLayout<Misc0Layout> layout
     x64 = x66;
   } else if (to_size_t(x6[4]._super)) {
     // Misc0(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:35)
-    MiscOutputStruct x67 = exec_OpAND(x4, LAYOUT_LOOKUP(x11, _super));
+    MiscOutputStruct x67 = exec_OpAND(ctx, x4, LAYOUT_LOOKUP(x11, _super));
     // Misc0(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:30)
     STORE(x49, Val(0));
     EQZ(LOAD(x49, 0), "Misc0(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:30)");
@@ -2013,11 +2169,11 @@ exec_Misc0(RegStruct arg0, InstInputStruct arg1, BoundLayout<Misc0Layout> layout
     x64 = x67;
   } else if (to_size_t(x6[5]._super)) {
     // Misc0(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:36)
-    MiscOutputStruct x68 = exec_OpSLT(x4, LAYOUT_LOOKUP(x3, arm5));
+    MiscOutputStruct x68 = exec_OpSLT(ctx, x4, LAYOUT_LOOKUP(x3, arm5));
     x64 = x68;
   } else if (to_size_t(x6[6]._super)) {
     // Misc0(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:37)
-    MiscOutputStruct x69 = exec_OpSLTU(x4, LAYOUT_LOOKUP(x12, _super));
+    MiscOutputStruct x69 = exec_OpSLTU(ctx, x4, LAYOUT_LOOKUP(x12, _super));
     // Misc0(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:30)
     STORE(x54, Val(0));
     EQZ(LOAD(x54, 0), "Misc0(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:30)");
@@ -2055,10 +2211,12 @@ exec_Misc0(RegStruct arg0, InstInputStruct arg1, BoundLayout<Misc0Layout> layout
     assert(0 && "Reached unreachable mux arm");
   }
   // Misc0(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:40)
-  InstOutputStruct x70 = exec_FinalizeMisc(arg0, x4, x64, LAYOUT_LOOKUP(layout2, _super));
+  InstOutputStruct x70 = exec_FinalizeMisc(ctx, arg0, x4, x64, LAYOUT_LOOKUP(layout2, _super));
   return x70;
 }
-MiscOutputStruct exec_OpXORI(MiscInputStruct arg0, BoundLayout<OpXORILayout> layout1) {
+__device__ MiscOutputStruct exec_OpXORI(ExecContext& ctx,
+                                        MiscInputStruct arg0,
+                                        BoundLayout<OpXORILayout> layout1) {
   // OpXORI(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:127)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3(zirgen/circuit/rv32im/v2/dsl/inst.zir:57)
@@ -2072,7 +2230,7 @@ MiscOutputStruct exec_OpXORI(MiscInputStruct arg0, BoundLayout<OpXORILayout> lay
       "loc(callsite( VerifyOpcodeF3 ( zirgen/circuit/rv32im/v2/dsl/inst.zir :58:18) at  OpXORI ( "
       "zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :128:18)))");
   // OpXORI(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:129)
-  ValU32Struct x4 = exec_BitwiseXor(arg0.rs1._super, x2.immI, LAYOUT_LOOKUP(layout1, _0));
+  ValU32Struct x4 = exec_BitwiseXor(ctx, arg0.rs1._super, x2.immI, LAYOUT_LOOKUP(layout1, _0));
   // SimpleOp(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:73)
   ValU32Struct x5 = arg0._super.pcU32;
   // DenormedValU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:20)
@@ -2087,7 +2245,9 @@ MiscOutputStruct exec_OpXORI(MiscInputStruct arg0, BoundLayout<OpXORILayout> lay
                        .newPc = x6};
   return x7;
 }
-MiscOutputStruct exec_OpORI(MiscInputStruct arg0, BoundLayout<OpORILayout> layout1) {
+__device__ MiscOutputStruct exec_OpORI(ExecContext& ctx,
+                                       MiscInputStruct arg0,
+                                       BoundLayout<OpORILayout> layout1) {
   // OpORI(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:132)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3(zirgen/circuit/rv32im/v2/dsl/inst.zir:57)
@@ -2101,7 +2261,7 @@ MiscOutputStruct exec_OpORI(MiscInputStruct arg0, BoundLayout<OpORILayout> layou
       "loc(callsite( VerifyOpcodeF3 ( zirgen/circuit/rv32im/v2/dsl/inst.zir :58:18) at  OpORI ( "
       "zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :133:18)))");
   // OpORI(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:134)
-  ValU32Struct x4 = exec_BitwiseOr(arg0.rs1._super, x2.immI, LAYOUT_LOOKUP(layout1, _0));
+  ValU32Struct x4 = exec_BitwiseOr(ctx, arg0.rs1._super, x2.immI, LAYOUT_LOOKUP(layout1, _0));
   // SimpleOp(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:73)
   ValU32Struct x5 = arg0._super.pcU32;
   // DenormedValU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:20)
@@ -2116,7 +2276,9 @@ MiscOutputStruct exec_OpORI(MiscInputStruct arg0, BoundLayout<OpORILayout> layou
                        .newPc = x6};
   return x7;
 }
-MiscOutputStruct exec_OpANDI(MiscInputStruct arg0, BoundLayout<OpANDILayout> layout1) {
+__device__ MiscOutputStruct exec_OpANDI(ExecContext& ctx,
+                                        MiscInputStruct arg0,
+                                        BoundLayout<OpANDILayout> layout1) {
   // OpANDI(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:137)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3(zirgen/circuit/rv32im/v2/dsl/inst.zir:57)
@@ -2130,7 +2292,7 @@ MiscOutputStruct exec_OpANDI(MiscInputStruct arg0, BoundLayout<OpANDILayout> lay
       "loc(callsite( VerifyOpcodeF3 ( zirgen/circuit/rv32im/v2/dsl/inst.zir :58:18) at  OpANDI ( "
       "zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :138:18)))");
   // OpANDI(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:139)
-  ValU32Struct x4 = exec_BitwiseAnd(arg0.rs1._super, x2.immI, LAYOUT_LOOKUP(layout1, _0));
+  ValU32Struct x4 = exec_BitwiseAnd(ctx, arg0.rs1._super, x2.immI, LAYOUT_LOOKUP(layout1, _0));
   // SimpleOp(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:73)
   ValU32Struct x5 = arg0._super.pcU32;
   // DenormedValU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:20)
@@ -2145,7 +2307,9 @@ MiscOutputStruct exec_OpANDI(MiscInputStruct arg0, BoundLayout<OpANDILayout> lay
                        .newPc = x6};
   return x7;
 }
-MiscOutputStruct exec_OpSLTI(MiscInputStruct arg0, BoundLayout<OpSLTILayout> layout1) {
+__device__ MiscOutputStruct exec_OpSLTI(ExecContext& ctx,
+                                        MiscInputStruct arg0,
+                                        BoundLayout<OpSLTILayout> layout1) {
   // OpSLTI(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:142)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3(zirgen/circuit/rv32im/v2/dsl/inst.zir:57)
@@ -2159,7 +2323,8 @@ MiscOutputStruct exec_OpSLTI(MiscInputStruct arg0, BoundLayout<OpSLTILayout> lay
       "loc(callsite( VerifyOpcodeF3 ( zirgen/circuit/rv32im/v2/dsl/inst.zir :58:18) at  OpSLTI ( "
       "zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :143:18)))");
   // OpSLTI(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:144)
-  CmpLessThanStruct x4 = exec_CmpLessThan(arg0.rs1._super, x2.immI, LAYOUT_LOOKUP(layout1, cmp));
+  CmpLessThanStruct x4 =
+      exec_CmpLessThan(ctx, arg0.rs1._super, x2.immI, LAYOUT_LOOKUP(layout1, cmp));
   Val x5 = x4.isLessThan._super._super;
   // SimpleOp(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:73)
   // OpSLTI(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:145)
@@ -2171,7 +2336,9 @@ MiscOutputStruct exec_OpSLTI(MiscInputStruct arg0, BoundLayout<OpSLTILayout> lay
   return MiscOutputStruct{
       .doWrite = Val(1), .toWrite = DenormedValU32Struct{.low = x5, .high = Val(0)}, .newPc = x7};
 }
-MiscOutputStruct exec_OpSLTIU(MiscInputStruct arg0, BoundLayout<OpSLTIULayout> layout1) {
+__device__ MiscOutputStruct exec_OpSLTIU(ExecContext& ctx,
+                                         MiscInputStruct arg0,
+                                         BoundLayout<OpSLTIULayout> layout1) {
   // OpSLTIU(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:148)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3(zirgen/circuit/rv32im/v2/dsl/inst.zir:57)
@@ -2186,7 +2353,7 @@ MiscOutputStruct exec_OpSLTIU(MiscInputStruct arg0, BoundLayout<OpSLTIULayout> l
       "zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :149:18)))");
   // OpSLTIU(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:150)
   CmpLessThanUnsignedStruct x4 =
-      exec_CmpLessThanUnsigned(arg0.rs1._super, x2.immI, LAYOUT_LOOKUP(layout1, cmp));
+      exec_CmpLessThanUnsigned(ctx, arg0.rs1._super, x2.immI, LAYOUT_LOOKUP(layout1, cmp));
   // SimpleOp(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:73)
   // OpSLTIU(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:151)
   ValU32Struct x5 = arg0._super.pcU32;
@@ -2202,7 +2369,9 @@ MiscOutputStruct exec_OpSLTIU(MiscInputStruct arg0, BoundLayout<OpSLTIULayout> l
                        .newPc = x6};
   return x7;
 }
-MiscOutputStruct exec_OpBEQ(MiscInputStruct arg0, BoundLayout<OpBEQLayout> layout1) {
+__device__ MiscOutputStruct exec_OpBEQ(ExecContext& ctx,
+                                       MiscInputStruct arg0,
+                                       BoundLayout<OpBEQLayout> layout1) {
   // OpBEQ(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:154)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3(zirgen/circuit/rv32im/v2/dsl/inst.zir:57)
@@ -2216,7 +2385,8 @@ MiscOutputStruct exec_OpBEQ(MiscInputStruct arg0, BoundLayout<OpBEQLayout> layou
       "loc(callsite( VerifyOpcodeF3 ( zirgen/circuit/rv32im/v2/dsl/inst.zir :58:18) at  OpBEQ ( "
       "zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :155:18)))");
   // OpBEQ(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:156)
-  CmpEqualStruct x4 = exec_CmpEqual(arg0.rs1._super, arg0.rs2._super, LAYOUT_LOOKUP(layout1, cmp));
+  CmpEqualStruct x4 =
+      exec_CmpEqual(ctx, arg0.rs1._super, arg0.rs2._super, LAYOUT_LOOKUP(layout1, cmp));
   Val x5 = x4.isEqual._super._super;
   // CmpOp(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:78)
   // OpBEQ(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:157)
@@ -2242,7 +2412,9 @@ MiscOutputStruct exec_OpBEQ(MiscInputStruct arg0, BoundLayout<OpBEQLayout> layou
                        .newPc = x11};
   return x12;
 }
-MiscOutputStruct exec_OpBNE(MiscInputStruct arg0, BoundLayout<OpBNELayout> layout1) {
+__device__ MiscOutputStruct exec_OpBNE(ExecContext& ctx,
+                                       MiscInputStruct arg0,
+                                       BoundLayout<OpBNELayout> layout1) {
   // OpBNE(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:160)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3(zirgen/circuit/rv32im/v2/dsl/inst.zir:57)
@@ -2256,7 +2428,8 @@ MiscOutputStruct exec_OpBNE(MiscInputStruct arg0, BoundLayout<OpBNELayout> layou
       "loc(callsite( VerifyOpcodeF3 ( zirgen/circuit/rv32im/v2/dsl/inst.zir :58:18) at  OpBNE ( "
       "zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :161:18)))");
   // OpBNE(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:162)
-  CmpEqualStruct x4 = exec_CmpEqual(arg0.rs1._super, arg0.rs2._super, LAYOUT_LOOKUP(layout1, cmp));
+  CmpEqualStruct x4 =
+      exec_CmpEqual(ctx, arg0.rs1._super, arg0.rs2._super, LAYOUT_LOOKUP(layout1, cmp));
   Val x5 = x4.isEqual._super._super;
   // OpBNE(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:163)
   Val x6 = (Val(1) - x5);
@@ -2283,7 +2456,9 @@ MiscOutputStruct exec_OpBNE(MiscInputStruct arg0, BoundLayout<OpBNELayout> layou
                        .newPc = x12};
   return x13;
 }
-MiscOutputStruct exec_OpBLT(MiscInputStruct arg0, BoundLayout<OpBLTLayout> layout1) {
+__device__ MiscOutputStruct exec_OpBLT(ExecContext& ctx,
+                                       MiscInputStruct arg0,
+                                       BoundLayout<OpBLTLayout> layout1) {
   // OpBLT(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:166)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3(zirgen/circuit/rv32im/v2/dsl/inst.zir:57)
@@ -2298,7 +2473,7 @@ MiscOutputStruct exec_OpBLT(MiscInputStruct arg0, BoundLayout<OpBLTLayout> layou
       "zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :167:18)))");
   // OpBLT(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:168)
   CmpLessThanStruct x4 =
-      exec_CmpLessThan(arg0.rs1._super, arg0.rs2._super, LAYOUT_LOOKUP(layout1, cmp));
+      exec_CmpLessThan(ctx, arg0.rs1._super, arg0.rs2._super, LAYOUT_LOOKUP(layout1, cmp));
   Val x5 = x4.isLessThan._super._super;
   // CmpOp(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:78)
   // OpBLT(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:169)
@@ -2324,12 +2499,14 @@ MiscOutputStruct exec_OpBLT(MiscInputStruct arg0, BoundLayout<OpBLTLayout> layou
                        .newPc = x11};
   return x12;
 }
-InstOutputStruct
-exec_Misc1(RegStruct arg0, InstInputStruct arg1, BoundLayout<Misc1Layout> layout2) {
+__device__ InstOutputStruct exec_Misc1(ExecContext& ctx,
+                                       RegStruct arg0,
+                                       InstInputStruct arg1,
+                                       BoundLayout<Misc1Layout> layout2) {
   // Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:45)
   BoundLayout<Misc1MiscOutputLayout> x3 = LAYOUT_LOOKUP(layout2, miscOutput);
   // Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:44)
-  MiscInputStruct x4 = exec_MiscInput(arg0, arg1, LAYOUT_LOOKUP(layout2, input));
+  MiscInputStruct x4 = exec_MiscInput(ctx, arg0, arg1, LAYOUT_LOOKUP(layout2, input));
   NondetRegStruct8Array x5 = x4._super.minorOnehot._super;
   // Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:45)
   BoundLayout<Misc1MiscOutputArm0Layout> x6 = LAYOUT_LOOKUP(x3, arm0);
@@ -2369,7 +2546,7 @@ exec_Misc1(RegStruct arg0, InstInputStruct arg1, BoundLayout<Misc1Layout> layout
   MiscOutputStruct x40;
   if (to_size_t(x5[0]._super)) {
     // Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:46)
-    MiscOutputStruct x41 = exec_OpXORI(x4, LAYOUT_LOOKUP(x6, _super));
+    MiscOutputStruct x41 = exec_OpXORI(ctx, x4, LAYOUT_LOOKUP(x6, _super));
     // Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:45)
     STORE(x12, Val(0));
     EQZ(LOAD(x12, 0), "Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:45)");
@@ -2384,7 +2561,7 @@ exec_Misc1(RegStruct arg0, InstInputStruct arg1, BoundLayout<Misc1Layout> layout
     x40 = x41;
   } else if (to_size_t(x5[1]._super)) {
     // Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:47)
-    MiscOutputStruct x42 = exec_OpORI(x4, LAYOUT_LOOKUP(x7, _super));
+    MiscOutputStruct x42 = exec_OpORI(ctx, x4, LAYOUT_LOOKUP(x7, _super));
     // Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:45)
     STORE(x17, Val(0));
     EQZ(LOAD(x17, 0), "Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:45)");
@@ -2399,7 +2576,7 @@ exec_Misc1(RegStruct arg0, InstInputStruct arg1, BoundLayout<Misc1Layout> layout
     x40 = x42;
   } else if (to_size_t(x5[2]._super)) {
     // Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:48)
-    MiscOutputStruct x43 = exec_OpANDI(x4, LAYOUT_LOOKUP(x8, _super));
+    MiscOutputStruct x43 = exec_OpANDI(ctx, x4, LAYOUT_LOOKUP(x8, _super));
     // Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:45)
     STORE(x22, Val(0));
     EQZ(LOAD(x22, 0), "Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:45)");
@@ -2414,11 +2591,11 @@ exec_Misc1(RegStruct arg0, InstInputStruct arg1, BoundLayout<Misc1Layout> layout
     x40 = x43;
   } else if (to_size_t(x5[3]._super)) {
     // Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:49)
-    MiscOutputStruct x44 = exec_OpSLTI(x4, LAYOUT_LOOKUP(x3, arm3));
+    MiscOutputStruct x44 = exec_OpSLTI(ctx, x4, LAYOUT_LOOKUP(x3, arm3));
     x40 = x44;
   } else if (to_size_t(x5[4]._super)) {
     // Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:50)
-    MiscOutputStruct x45 = exec_OpSLTIU(x4, LAYOUT_LOOKUP(x9, _super));
+    MiscOutputStruct x45 = exec_OpSLTIU(ctx, x4, LAYOUT_LOOKUP(x9, _super));
     // Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:45)
     STORE(x27, Val(0));
     EQZ(LOAD(x27, 0), "Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:45)");
@@ -2429,7 +2606,7 @@ exec_Misc1(RegStruct arg0, InstInputStruct arg1, BoundLayout<Misc1Layout> layout
     x40 = x45;
   } else if (to_size_t(x5[5]._super)) {
     // Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:51)
-    MiscOutputStruct x46 = exec_OpBEQ(x4, LAYOUT_LOOKUP(x10, _super));
+    MiscOutputStruct x46 = exec_OpBEQ(ctx, x4, LAYOUT_LOOKUP(x10, _super));
     // Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:45)
     STORE(x30, Val(0));
     EQZ(LOAD(x30, 0), "Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:45)");
@@ -2444,7 +2621,7 @@ exec_Misc1(RegStruct arg0, InstInputStruct arg1, BoundLayout<Misc1Layout> layout
     x40 = x46;
   } else if (to_size_t(x5[6]._super)) {
     // Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:52)
-    MiscOutputStruct x47 = exec_OpBNE(x4, LAYOUT_LOOKUP(x11, _super));
+    MiscOutputStruct x47 = exec_OpBNE(ctx, x4, LAYOUT_LOOKUP(x11, _super));
     // Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:45)
     STORE(x35, Val(0));
     EQZ(LOAD(x35, 0), "Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:45)");
@@ -2459,16 +2636,18 @@ exec_Misc1(RegStruct arg0, InstInputStruct arg1, BoundLayout<Misc1Layout> layout
     x40 = x47;
   } else if (to_size_t(x5[7]._super)) {
     // Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:53)
-    MiscOutputStruct x48 = exec_OpBLT(x4, LAYOUT_LOOKUP(x3, arm7));
+    MiscOutputStruct x48 = exec_OpBLT(ctx, x4, LAYOUT_LOOKUP(x3, arm7));
     x40 = x48;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
   // Misc1(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:55)
-  InstOutputStruct x49 = exec_FinalizeMisc(arg0, x4, x40, LAYOUT_LOOKUP(layout2, _super));
+  InstOutputStruct x49 = exec_FinalizeMisc(ctx, arg0, x4, x40, LAYOUT_LOOKUP(layout2, _super));
   return x49;
 }
-MiscOutputStruct exec_OpBGE(MiscInputStruct arg0, BoundLayout<OpBGELayout> layout1) {
+__device__ MiscOutputStruct exec_OpBGE(ExecContext& ctx,
+                                       MiscInputStruct arg0,
+                                       BoundLayout<OpBGELayout> layout1) {
   // OpBGE(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:172)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3(zirgen/circuit/rv32im/v2/dsl/inst.zir:57)
@@ -2483,7 +2662,7 @@ MiscOutputStruct exec_OpBGE(MiscInputStruct arg0, BoundLayout<OpBGELayout> layou
       "zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :173:18)))");
   // OpBGE(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:174)
   CmpLessThanStruct x4 =
-      exec_CmpLessThan(arg0.rs1._super, arg0.rs2._super, LAYOUT_LOOKUP(layout1, cmp));
+      exec_CmpLessThan(ctx, arg0.rs1._super, arg0.rs2._super, LAYOUT_LOOKUP(layout1, cmp));
   Val x5 = x4.isLessThan._super._super;
   // OpBGE(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:175)
   Val x6 = (Val(1) - x5);
@@ -2510,7 +2689,9 @@ MiscOutputStruct exec_OpBGE(MiscInputStruct arg0, BoundLayout<OpBGELayout> layou
                        .newPc = x12};
   return x13;
 }
-MiscOutputStruct exec_OpBLTU(MiscInputStruct arg0, BoundLayout<OpBLTULayout> layout1) {
+__device__ MiscOutputStruct exec_OpBLTU(ExecContext& ctx,
+                                        MiscInputStruct arg0,
+                                        BoundLayout<OpBLTULayout> layout1) {
   // OpBLTU(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:178)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3(zirgen/circuit/rv32im/v2/dsl/inst.zir:57)
@@ -2525,7 +2706,7 @@ MiscOutputStruct exec_OpBLTU(MiscInputStruct arg0, BoundLayout<OpBLTULayout> lay
       "zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :179:18)))");
   // OpBLTU(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:180)
   CmpLessThanUnsignedStruct x4 =
-      exec_CmpLessThanUnsigned(arg0.rs1._super, arg0.rs2._super, LAYOUT_LOOKUP(layout1, cmp));
+      exec_CmpLessThanUnsigned(ctx, arg0.rs1._super, arg0.rs2._super, LAYOUT_LOOKUP(layout1, cmp));
   Val x5 = x4.isLessThan;
   // CmpOp(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:78)
   // OpBLTU(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:181)
@@ -2551,7 +2732,9 @@ MiscOutputStruct exec_OpBLTU(MiscInputStruct arg0, BoundLayout<OpBLTULayout> lay
                        .newPc = x11};
   return x12;
 }
-MiscOutputStruct exec_OpBGEU(MiscInputStruct arg0, BoundLayout<OpBGEULayout> layout1) {
+__device__ MiscOutputStruct exec_OpBGEU(ExecContext& ctx,
+                                        MiscInputStruct arg0,
+                                        BoundLayout<OpBGEULayout> layout1) {
   // OpBGEU(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:184)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3(zirgen/circuit/rv32im/v2/dsl/inst.zir:57)
@@ -2566,7 +2749,7 @@ MiscOutputStruct exec_OpBGEU(MiscInputStruct arg0, BoundLayout<OpBGEULayout> lay
       "zirgen/circuit/rv32im/v2/dsl/inst_misc.zir :185:18)))");
   // OpBGEU(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:186)
   CmpLessThanUnsignedStruct x4 =
-      exec_CmpLessThanUnsigned(arg0.rs1._super, arg0.rs2._super, LAYOUT_LOOKUP(layout1, cmp));
+      exec_CmpLessThanUnsigned(ctx, arg0.rs1._super, arg0.rs2._super, LAYOUT_LOOKUP(layout1, cmp));
   // OpBGEU(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:187)
   Val x5 = (Val(1) - x4.isLessThan);
   // CmpOp(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:78)
@@ -2592,12 +2775,14 @@ MiscOutputStruct exec_OpBGEU(MiscInputStruct arg0, BoundLayout<OpBGEULayout> lay
                        .newPc = x11};
   return x12;
 }
-InstOutputStruct
-exec_Misc2(RegStruct arg0, InstInputStruct arg1, BoundLayout<Misc2Layout> layout2) {
+__device__ InstOutputStruct exec_Misc2(ExecContext& ctx,
+                                       RegStruct arg0,
+                                       InstInputStruct arg1,
+                                       BoundLayout<Misc2Layout> layout2) {
   // Misc2(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:60)
   BoundLayout<Misc2MiscOutputLayout> x3 = LAYOUT_LOOKUP(layout2, miscOutput);
   // Misc2(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:59)
-  MiscInputStruct x4 = exec_MiscInput(arg0, arg1, LAYOUT_LOOKUP(layout2, input));
+  MiscInputStruct x4 = exec_MiscInput(ctx, arg0, arg1, LAYOUT_LOOKUP(layout2, input));
   InstInputStruct x5 = x4._super;
   NondetRegStruct8Array x6 = x5.minorOnehot._super;
   // Misc2(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:60)
@@ -2698,11 +2883,11 @@ exec_Misc2(RegStruct arg0, InstInputStruct arg1, BoundLayout<Misc2Layout> layout
   MiscOutputStruct x61;
   if (to_size_t(x6[0]._super)) {
     // Misc2(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:61)
-    MiscOutputStruct x62 = exec_OpBGE(x4, LAYOUT_LOOKUP(x3, arm0));
+    MiscOutputStruct x62 = exec_OpBGE(ctx, x4, LAYOUT_LOOKUP(x3, arm0));
     x61 = x62;
   } else if (to_size_t(x6[1]._super)) {
     // Misc2(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:62)
-    MiscOutputStruct x63 = exec_OpBLTU(x4, LAYOUT_LOOKUP(x7, _super));
+    MiscOutputStruct x63 = exec_OpBLTU(ctx, x4, LAYOUT_LOOKUP(x7, _super));
     // Misc2(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:60)
     STORE(x14, Val(0));
     EQZ(LOAD(x14, 0), "Misc2(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:60)");
@@ -2713,7 +2898,7 @@ exec_Misc2(RegStruct arg0, InstInputStruct arg1, BoundLayout<Misc2Layout> layout
     x61 = x63;
   } else if (to_size_t(x6[2]._super)) {
     // Misc2(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:63)
-    MiscOutputStruct x64 = exec_OpBGEU(x4, LAYOUT_LOOKUP(x8, _super));
+    MiscOutputStruct x64 = exec_OpBGEU(ctx, x4, LAYOUT_LOOKUP(x8, _super));
     // Misc2(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:60)
     STORE(x17, Val(0));
     EQZ(LOAD(x17, 0), "Misc2(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:60)");
@@ -2845,25 +3030,32 @@ exec_Misc2(RegStruct arg0, InstInputStruct arg1, BoundLayout<Misc2Layout> layout
     assert(0 && "Reached unreachable mux arm");
   }
   // Misc2(zirgen/circuit/rv32im/v2/dsl/inst_misc.zir:70)
-  InstOutputStruct x65 = exec_FinalizeMisc(arg0, x4, x61, LAYOUT_LOOKUP(layout2, _super));
+  InstOutputStruct x65 = exec_FinalizeMisc(ctx, arg0, x4, x61, LAYOUT_LOOKUP(layout2, _super));
   return x65;
 }
-MulInputStruct
-exec_MulInput(RegStruct arg0, InstInputStruct arg1, BoundLayout<MulInputLayout> layout2) {
+__device__ MulInputStruct exec_MulInput(ExecContext& ctx,
+                                        RegStruct arg0,
+                                        InstInputStruct arg1,
+                                        BoundLayout<MulInputLayout> layout2) {
   // MulInput(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:8)
   EQZ((arg1.state - Val(32)), "MulInput(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:8)");
   // MulInput(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:10)
-  DecoderStruct x3 = exec_DecodeInst(arg0, arg1, LAYOUT_LOOKUP(layout2, decoded));
+  DecoderStruct x3 = exec_DecodeInst(ctx, arg0, arg1, LAYOUT_LOOKUP(layout2, decoded));
   // MulInput(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:11)
-  GetDataStruct x4 = exec_ReadReg(arg0, arg1, x3.rs1, LAYOUT_LOOKUP(layout2, rs1));
+  GetDataStruct x4 = exec_ReadReg(ctx, arg0, arg1, x3.rs1, LAYOUT_LOOKUP(layout2, rs1));
   // MulInput(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:12)
-  GetDataStruct x5 = exec_ReadReg(arg0, arg1, x3.rs2, LAYOUT_LOOKUP(layout2, rs2));
+  GetDataStruct x5 = exec_ReadReg(ctx, arg0, arg1, x3.rs2, LAYOUT_LOOKUP(layout2, rs2));
   return MulInputStruct{._super = arg1, .ii = arg1, .decoded = x3, .rs1 = x4, .rs2 = x5};
 }
-DoMulStruct exec_DoMul(
-    ValU32Struct arg0, ValU32Struct arg1, Val arg2, Val arg3, BoundLayout<DoMulLayout> layout4) {
+__device__ DoMulStruct exec_DoMul(ExecContext& ctx,
+                                  ValU32Struct arg0,
+                                  ValU32Struct arg1,
+                                  Val arg2,
+                                  Val arg3,
+                                  BoundLayout<DoMulLayout> layout4) {
   // DoMul(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:40)
   MultiplyAccumulateStruct x5 = exec_MultiplyAccumulate(
+      ctx,
       arg0,
       arg1,
       ValU32Struct{.low = Val(0), .high = Val(0)},
@@ -2871,7 +3063,9 @@ DoMulStruct exec_DoMul(
       LAYOUT_LOOKUP(layout4, mul));
   return DoMulStruct{.low = x5.outLow, .high = x5.outHigh};
 }
-ValU32Struct exec_OpSLL(MulInputStruct arg0, BoundLayout<OpSLLLayout> layout1) {
+__device__ ValU32Struct exec_OpSLL(ExecContext& ctx,
+                                   MulInputStruct arg0,
+                                   BoundLayout<OpSLLLayout> layout1) {
   // OpSLL(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:45)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3F7(zirgen/circuit/rv32im/v2/dsl/inst.zir:62)
@@ -2891,12 +3085,14 @@ ValU32Struct exec_OpSLL(MulInputStruct arg0, BoundLayout<OpSLLLayout> layout1) {
   // OpSLL(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:45)
   Val x4 = arg0.rs2._super.low;
   // OpSLL(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:47)
-  ValU32Struct x5 = exec_DynPo2(x4, LAYOUT_LOOKUP(layout1, shiftMul));
+  ValU32Struct x5 = exec_DynPo2(ctx, x4, LAYOUT_LOOKUP(layout1, shiftMul));
   // OpSLL(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:48)
-  DoMulStruct x6 = exec_DoMul(arg0.rs1._super, x5, Val(0), Val(0), LAYOUT_LOOKUP(layout1, _0));
+  DoMulStruct x6 = exec_DoMul(ctx, arg0.rs1._super, x5, Val(0), Val(0), LAYOUT_LOOKUP(layout1, _0));
   return x6.low;
 }
-ValU32Struct exec_OpSLLI(MulInputStruct arg0, BoundLayout<OpSLLILayout> layout1) {
+__device__ ValU32Struct exec_OpSLLI(ExecContext& ctx,
+                                    MulInputStruct arg0,
+                                    BoundLayout<OpSLLILayout> layout1) {
   // OpSLLI(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:51)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3F7(zirgen/circuit/rv32im/v2/dsl/inst.zir:62)
@@ -2914,12 +3110,14 @@ ValU32Struct exec_OpSLLI(MulInputStruct arg0, BoundLayout<OpSLLILayout> layout1)
       "loc(callsite( VerifyOpcodeF3F7 ( zirgen/circuit/rv32im/v2/dsl/inst.zir :64:18) at  OpSLLI ( "
       "zirgen/circuit/rv32im/v2/dsl/inst_mul.zir :52:20)))");
   // OpSLLI(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:53)
-  ValU32Struct x4 = exec_DynPo2(x2.rs2, LAYOUT_LOOKUP(layout1, shiftMul));
+  ValU32Struct x4 = exec_DynPo2(ctx, x2.rs2, LAYOUT_LOOKUP(layout1, shiftMul));
   // OpSLLI(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:54)
-  DoMulStruct x5 = exec_DoMul(arg0.rs1._super, x4, Val(0), Val(0), LAYOUT_LOOKUP(layout1, _0));
+  DoMulStruct x5 = exec_DoMul(ctx, arg0.rs1._super, x4, Val(0), Val(0), LAYOUT_LOOKUP(layout1, _0));
   return x5.low;
 }
-ValU32Struct exec_OpMUL(MulInputStruct arg0, BoundLayout<OpMULLayout> layout1) {
+__device__ ValU32Struct exec_OpMUL(ExecContext& ctx,
+                                   MulInputStruct arg0,
+                                   BoundLayout<OpMULLayout> layout1) {
   // OpMUL(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:57)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3F7(zirgen/circuit/rv32im/v2/dsl/inst.zir:62)
@@ -2938,10 +3136,12 @@ ValU32Struct exec_OpMUL(MulInputStruct arg0, BoundLayout<OpMULLayout> layout1) {
       "zirgen/circuit/rv32im/v2/dsl/inst_mul.zir :58:20)))");
   // OpMUL(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:59)
   DoMulStruct x4 =
-      exec_DoMul(arg0.rs1._super, arg0.rs2._super, Val(0), Val(0), LAYOUT_LOOKUP(layout1, _0));
+      exec_DoMul(ctx, arg0.rs1._super, arg0.rs2._super, Val(0), Val(0), LAYOUT_LOOKUP(layout1, _0));
   return x4.low;
 }
-ValU32Struct exec_OpMULH(MulInputStruct arg0, BoundLayout<OpMULHLayout> layout1) {
+__device__ ValU32Struct exec_OpMULH(ExecContext& ctx,
+                                    MulInputStruct arg0,
+                                    BoundLayout<OpMULHLayout> layout1) {
   // OpMULH(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:62)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3F7(zirgen/circuit/rv32im/v2/dsl/inst.zir:62)
@@ -2960,10 +3160,12 @@ ValU32Struct exec_OpMULH(MulInputStruct arg0, BoundLayout<OpMULHLayout> layout1)
       "zirgen/circuit/rv32im/v2/dsl/inst_mul.zir :63:20)))");
   // OpMULH(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:64)
   DoMulStruct x4 =
-      exec_DoMul(arg0.rs1._super, arg0.rs2._super, Val(1), Val(1), LAYOUT_LOOKUP(layout1, _0));
+      exec_DoMul(ctx, arg0.rs1._super, arg0.rs2._super, Val(1), Val(1), LAYOUT_LOOKUP(layout1, _0));
   return x4.high;
 }
-ValU32Struct exec_OpMULHSU(MulInputStruct arg0, BoundLayout<OpMULHSULayout> layout1) {
+__device__ ValU32Struct exec_OpMULHSU(ExecContext& ctx,
+                                      MulInputStruct arg0,
+                                      BoundLayout<OpMULHSULayout> layout1) {
   // OpMULHSU(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:67)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3F7(zirgen/circuit/rv32im/v2/dsl/inst.zir:62)
@@ -2982,10 +3184,12 @@ ValU32Struct exec_OpMULHSU(MulInputStruct arg0, BoundLayout<OpMULHSULayout> layo
       "( zirgen/circuit/rv32im/v2/dsl/inst_mul.zir :68:20)))");
   // OpMULHSU(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:69)
   DoMulStruct x4 =
-      exec_DoMul(arg0.rs1._super, arg0.rs2._super, Val(1), Val(0), LAYOUT_LOOKUP(layout1, _0));
+      exec_DoMul(ctx, arg0.rs1._super, arg0.rs2._super, Val(1), Val(0), LAYOUT_LOOKUP(layout1, _0));
   return x4.high;
 }
-ValU32Struct exec_OpMULHU(MulInputStruct arg0, BoundLayout<OpMULHULayout> layout1) {
+__device__ ValU32Struct exec_OpMULHU(ExecContext& ctx,
+                                     MulInputStruct arg0,
+                                     BoundLayout<OpMULHULayout> layout1) {
   // OpMULHU(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:72)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3F7(zirgen/circuit/rv32im/v2/dsl/inst.zir:62)
@@ -3004,14 +3208,17 @@ ValU32Struct exec_OpMULHU(MulInputStruct arg0, BoundLayout<OpMULHULayout> layout
       "( zirgen/circuit/rv32im/v2/dsl/inst_mul.zir :73:20)))");
   // OpMULHU(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:74)
   DoMulStruct x4 =
-      exec_DoMul(arg0.rs1._super, arg0.rs2._super, Val(0), Val(0), LAYOUT_LOOKUP(layout1, _0));
+      exec_DoMul(ctx, arg0.rs1._super, arg0.rs2._super, Val(0), Val(0), LAYOUT_LOOKUP(layout1, _0));
   return x4.high;
 }
-InstOutputStruct exec_Mul0(RegStruct arg0, InstInputStruct arg1, BoundLayout<Mul0Layout> layout2) {
+__device__ InstOutputStruct exec_Mul0(ExecContext& ctx,
+                                      RegStruct arg0,
+                                      InstInputStruct arg1,
+                                      BoundLayout<Mul0Layout> layout2) {
   // Mul0(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:23)
   BoundLayout<Mul0MulOutputLayout> x3 = LAYOUT_LOOKUP(layout2, mulOutput);
   // Mul0(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:22)
-  MulInputStruct x4 = exec_MulInput(arg0, arg1, LAYOUT_LOOKUP(layout2, input));
+  MulInputStruct x4 = exec_MulInput(ctx, arg0, arg1, LAYOUT_LOOKUP(layout2, input));
   NondetRegStruct8Array x5 = x4._super.minorOnehot._super;
   // Mul0(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:23)
   BoundLayout<Mul0MulOutputArm2Layout> x6 = LAYOUT_LOOKUP(x3, arm2);
@@ -3070,36 +3277,36 @@ InstOutputStruct exec_Mul0(RegStruct arg0, InstInputStruct arg1, BoundLayout<Mul
   ValU32Struct x55;
   if (to_size_t(x5[0]._super)) {
     // Mul0(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:24)
-    ValU32Struct x56 = exec_OpSLL(x4, LAYOUT_LOOKUP(x3, arm0));
+    ValU32Struct x56 = exec_OpSLL(ctx, x4, LAYOUT_LOOKUP(x3, arm0));
     x55 = x56;
   } else if (to_size_t(x5[1]._super)) {
     // Mul0(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:25)
-    ValU32Struct x57 = exec_OpSLLI(x4, LAYOUT_LOOKUP(x3, arm1));
+    ValU32Struct x57 = exec_OpSLLI(ctx, x4, LAYOUT_LOOKUP(x3, arm1));
     x55 = x57;
   } else if (to_size_t(x5[2]._super)) {
     // Mul0(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:26)
-    ValU32Struct x58 = exec_OpMUL(x4, LAYOUT_LOOKUP(x6, _super));
+    ValU32Struct x58 = exec_OpMUL(ctx, x4, LAYOUT_LOOKUP(x6, _super));
     // Mul0(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:23)
     STORE(x12, Val(0));
     EQZ(LOAD(x12, 0), "Mul0(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:23)");
     x55 = x58;
   } else if (to_size_t(x5[3]._super)) {
     // Mul0(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:27)
-    ValU32Struct x59 = exec_OpMULH(x4, LAYOUT_LOOKUP(x7, _super));
+    ValU32Struct x59 = exec_OpMULH(ctx, x4, LAYOUT_LOOKUP(x7, _super));
     // Mul0(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:23)
     STORE(x13, Val(0));
     EQZ(LOAD(x13, 0), "Mul0(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:23)");
     x55 = x59;
   } else if (to_size_t(x5[4]._super)) {
     // Mul0(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:28)
-    ValU32Struct x60 = exec_OpMULHSU(x4, LAYOUT_LOOKUP(x8, _super));
+    ValU32Struct x60 = exec_OpMULHSU(ctx, x4, LAYOUT_LOOKUP(x8, _super));
     // Mul0(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:23)
     STORE(x14, Val(0));
     EQZ(LOAD(x14, 0), "Mul0(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:23)");
     x55 = x60;
   } else if (to_size_t(x5[5]._super)) {
     // Mul0(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:29)
-    ValU32Struct x61 = exec_OpMULHU(x4, LAYOUT_LOOKUP(x9, _super));
+    ValU32Struct x61 = exec_OpMULHU(ctx, x4, LAYOUT_LOOKUP(x9, _super));
     // Mul0(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:23)
     STORE(x15, Val(0));
     EQZ(LOAD(x15, 0), "Mul0(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:23)");
@@ -3201,24 +3408,26 @@ InstOutputStruct exec_Mul0(RegStruct arg0, InstInputStruct arg1, BoundLayout<Mul
   }
   // Mul0(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:33)
   WriteRdStruct x62 =
-      exec_WriteRd(arg0, x4.ii, x4.decoded, Val(1), x55, LAYOUT_LOOKUP(layout2, _0));
+      exec_WriteRd(ctx, arg0, x4.ii, x4.decoded, Val(1), x55, LAYOUT_LOOKUP(layout2, _0));
   // Mul0(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:21)
   ValU32Struct x63 = arg1.pcU32;
   // DenormedValU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:20)
   // AddU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:27)
   // Mul0(zirgen/circuit/rv32im/v2/dsl/inst_mul.zir:34)
   DenormedValU32Struct x64 = DenormedValU32Struct{.low = (x63.low + Val(4)), .high = x63.high};
-  NormalizeU32Struct x65 = exec_NormalizeU32(x64, LAYOUT_LOOKUP(layout2, pcAdd));
+  NormalizeU32Struct x65 = exec_NormalizeU32(ctx, x64, LAYOUT_LOOKUP(layout2, pcAdd));
   return InstOutputStruct{.newPc = x65._super, .newState = Val(32), .newMode = arg1.mode};
 }
-MemLoadInputStruct
-exec_MemLoadInput(RegStruct arg0, InstInputStruct arg1, BoundLayout<MemLoadInputLayout> layout2) {
+__device__ MemLoadInputStruct exec_MemLoadInput(ExecContext& ctx,
+                                                RegStruct arg0,
+                                                InstInputStruct arg1,
+                                                BoundLayout<MemLoadInputLayout> layout2) {
   // MemLoadInput(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:8)
   EQZ((arg1.state - Val(32)), "MemLoadInput(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:8)");
   // MemLoadInput(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:10)
-  DecoderStruct x3 = exec_DecodeInst(arg0, arg1, LAYOUT_LOOKUP(layout2, decoded));
+  DecoderStruct x3 = exec_DecodeInst(ctx, arg0, arg1, LAYOUT_LOOKUP(layout2, decoded));
   // MemLoadInput(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:11)
-  GetDataStruct x4 = exec_ReadReg(arg0, arg1, x3.rs1, LAYOUT_LOOKUP(layout2, rs1));
+  GetDataStruct x4 = exec_ReadReg(ctx, arg0, arg1, x3.rs1, LAYOUT_LOOKUP(layout2, rs1));
   // MemLoadInput(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:10)
   ValU32Struct x5 = x3.immI;
   // MemLoadInput(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:11)
@@ -3228,24 +3437,26 @@ exec_MemLoadInput(RegStruct arg0, InstInputStruct arg1, BoundLayout<MemLoadInput
   // MemLoadInput(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:12)
   DenormedValU32Struct x7 =
       DenormedValU32Struct{.low = (x6.low + x5.low), .high = (x6.high + x5.high)};
-  NormalizeU32Struct x8 = exec_NormalizeU32(x7, LAYOUT_LOOKUP(layout2, addrU32));
+  NormalizeU32Struct x8 = exec_NormalizeU32(ctx, x7, LAYOUT_LOOKUP(layout2, addrU32));
   // MemLoadInput(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:13)
   AddrDecomposeBitsStruct x9 =
-      exec_AddrDecomposeBits(x8._super, arg1.mode, LAYOUT_LOOKUP(layout2, addr));
+      exec_AddrDecomposeBits(ctx, x8._super, arg1.mode, LAYOUT_LOOKUP(layout2, addr));
   // MemLoadInput(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:14)
-  GetDataStruct x10 = exec_MemoryRead(arg0, x9.addr, LAYOUT_LOOKUP(layout2, data));
+  GetDataStruct x10 = exec_MemoryRead(ctx, arg0, x9.addr, LAYOUT_LOOKUP(layout2, data));
   return MemLoadInputStruct{.ii = arg1, .decoded = x3, .addr = x9, .data = x10};
 }
-MemStoreInputStruct
-exec_MemStoreInput(RegStruct arg0, InstInputStruct arg1, BoundLayout<MemStoreInputLayout> layout2) {
+__device__ MemStoreInputStruct exec_MemStoreInput(ExecContext& ctx,
+                                                  RegStruct arg0,
+                                                  InstInputStruct arg1,
+                                                  BoundLayout<MemStoreInputLayout> layout2) {
   // MemStoreInput(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:18)
   EQZ((arg1.state - Val(32)), "MemStoreInput(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:18)");
   // MemStoreInput(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:20)
-  DecoderStruct x3 = exec_DecodeInst(arg0, arg1, LAYOUT_LOOKUP(layout2, decoded));
+  DecoderStruct x3 = exec_DecodeInst(ctx, arg0, arg1, LAYOUT_LOOKUP(layout2, decoded));
   // MemStoreInput(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:21)
-  GetDataStruct x4 = exec_ReadReg(arg0, arg1, x3.rs1, LAYOUT_LOOKUP(layout2, rs1));
+  GetDataStruct x4 = exec_ReadReg(ctx, arg0, arg1, x3.rs1, LAYOUT_LOOKUP(layout2, rs1));
   // MemStoreInput(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:22)
-  GetDataStruct x5 = exec_ReadReg(arg0, arg1, x3.rs2, LAYOUT_LOOKUP(layout2, rs2));
+  GetDataStruct x5 = exec_ReadReg(ctx, arg0, arg1, x3.rs2, LAYOUT_LOOKUP(layout2, rs2));
   // MemStoreInput(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:20)
   ValU32Struct x6 = x3.immS;
   // MemStoreInput(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:21)
@@ -3255,34 +3466,41 @@ exec_MemStoreInput(RegStruct arg0, InstInputStruct arg1, BoundLayout<MemStoreInp
   // MemStoreInput(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:23)
   DenormedValU32Struct x8 =
       DenormedValU32Struct{.low = (x7.low + x6.low), .high = (x7.high + x6.high)};
-  NormalizeU32Struct x9 = exec_NormalizeU32(x8, LAYOUT_LOOKUP(layout2, addrU32));
+  NormalizeU32Struct x9 = exec_NormalizeU32(ctx, x8, LAYOUT_LOOKUP(layout2, addrU32));
   // MemStoreInput(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:24)
   AddrDecomposeBitsStruct x10 =
-      exec_AddrDecomposeBits(x9._super, arg1.mode, LAYOUT_LOOKUP(layout2, addr));
+      exec_AddrDecomposeBits(ctx, x9._super, arg1.mode, LAYOUT_LOOKUP(layout2, addr));
   // MemStoreInput(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:25)
-  GetDataStruct x11 = exec_MemoryRead(arg0, x10.addr, LAYOUT_LOOKUP(layout2, data));
+  GetDataStruct x11 = exec_MemoryRead(ctx, arg0, x10.addr, LAYOUT_LOOKUP(layout2, data));
   return MemStoreInputStruct{.decoded = x3, .rs2 = x5, .addr = x10, .data = x11};
 }
-MemStoreFinalizeStruct exec_MemStoreFinalize(RegStruct arg0,
-                                             MemStoreInputStruct arg1,
-                                             ValU32Struct arg2,
-                                             BoundLayout<MemStoreFinalizeLayout> layout3) {
+__device__ MemStoreFinalizeStruct
+exec_MemStoreFinalize(ExecContext& ctx,
+                      RegStruct arg0,
+                      MemStoreInputStruct arg1,
+                      ValU32Struct arg2,
+                      BoundLayout<MemStoreFinalizeLayout> layout3) {
   // MemStoreFinalize(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:29)
-  MemoryWriteStruct x4 = exec_MemoryWrite(arg0, arg1.addr.addr, arg2, LAYOUT_LOOKUP(layout3, _0));
+  MemoryWriteStruct x4 =
+      exec_MemoryWrite(ctx, arg0, arg1.addr.addr, arg2, LAYOUT_LOOKUP(layout3, _0));
   return MemStoreFinalizeStruct{};
 }
-SplitWordStruct exec_SplitWord(Val arg0, BoundLayout<SplitWordLayout> layout1) {
+__device__ SplitWordStruct exec_SplitWord(ExecContext& ctx,
+                                          Val arg0,
+                                          BoundLayout<SplitWordLayout> layout1) {
   // SplitWord(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:33)
-  NondetRegStruct x2 = exec_NondetU8Reg(bitAnd(arg0, Val(255)), LAYOUT_LOOKUP(layout1, byte0));
+  NondetRegStruct x2 = exec_NondetU8Reg(ctx, bitAnd(arg0, Val(255)), LAYOUT_LOOKUP(layout1, byte0));
   // SplitWord(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:34)
-  NondetRegStruct x3 =
-      exec_NondetU8Reg((bitAnd(arg0, Val(65280)) * Val(2005401601)), LAYOUT_LOOKUP(layout1, byte1));
+  NondetRegStruct x3 = exec_NondetU8Reg(
+      ctx, (bitAnd(arg0, Val(65280)) * Val(2005401601)), LAYOUT_LOOKUP(layout1, byte1));
   // SplitWord(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:35)
   Val x4 = ((x3._super * Val(256)) + x2._super);
   EQZ((arg0 - x4), "SplitWord(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:35)");
   return SplitWordStruct{.byte0 = x2, .byte1 = x3};
 }
-ValU32Struct exec_OpLB(MemLoadInputStruct arg0, BoundLayout<OpLBLayout> layout1) {
+__device__ ValU32Struct exec_OpLB(ExecContext& ctx,
+                                  MemLoadInputStruct arg0,
+                                  BoundLayout<OpLBLayout> layout1) {
   // OpLB(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:82)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3(zirgen/circuit/rv32im/v2/dsl/inst.zir:57)
@@ -3302,18 +3520,18 @@ ValU32Struct exec_OpLB(MemLoadInputStruct arg0, BoundLayout<OpLBLayout> layout1)
   // OpLB(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:84)
   Val x7 = ((Val(1) - x6) * x5.low);
   // OpLB(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:85)
-  SplitWordStruct x8 = exec_SplitWord(((x6 * x5.high) + x7), LAYOUT_LOOKUP(layout1, bytes));
+  SplitWordStruct x8 = exec_SplitWord(ctx, ((x6 * x5.high) + x7), LAYOUT_LOOKUP(layout1, bytes));
   // OpLB(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:82)
   Val x9 = x4.low0._super;
   // OpLB(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:86)
   Val x10 = ((Val(1) - x9) * x8.byte0._super);
   Val x11 = ((x9 * x8.byte1._super) + x10);
   // OpLB(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:87)
-  NondetRegStruct x12 =
-      exec_NondetBitReg((bitAnd(x11, Val(128)) * Val(1997537281)), LAYOUT_LOOKUP(layout1, highBit));
+  NondetRegStruct x12 = exec_NondetBitReg(
+      ctx, (bitAnd(x11, Val(128)) * Val(1997537281)), LAYOUT_LOOKUP(layout1, highBit));
   // OpLB(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:88)
   NondetRegStruct x13 =
-      exec_NondetU8Reg((bitAnd(x11, Val(127)) * Val(2)), LAYOUT_LOOKUP(layout1, low7x2));
+      exec_NondetU8Reg(ctx, (bitAnd(x11, Val(127)) * Val(2)), LAYOUT_LOOKUP(layout1, low7x2));
   // OpLB(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:87)
   Val x14 = x12._super;
   // OpLB(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:89)
@@ -3321,7 +3539,9 @@ ValU32Struct exec_OpLB(MemLoadInputStruct arg0, BoundLayout<OpLBLayout> layout1)
   EQZ((x11 - x15), "OpLB(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:89)");
   return ValU32Struct{.low = (x11 + (x14 * Val(65280))), .high = (x14 * Val(65535))};
 }
-ValU32Struct exec_OpLH(MemLoadInputStruct arg0, BoundLayout<OpLHLayout> layout1) {
+__device__ ValU32Struct exec_OpLH(ExecContext& ctx,
+                                  MemLoadInputStruct arg0,
+                                  BoundLayout<OpLHLayout> layout1) {
   // OpLH(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:93)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3(zirgen/circuit/rv32im/v2/dsl/inst.zir:57)
@@ -3345,11 +3565,11 @@ ValU32Struct exec_OpLH(MemLoadInputStruct arg0, BoundLayout<OpLHLayout> layout1)
   Val x7 = ((Val(1) - x6) * x5.low);
   Val x8 = ((x6 * x5.high) + x7);
   // OpLH(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:97)
-  NondetRegStruct x9 = exec_NondetBitReg((bitAnd(x8, Val(32768)) * Val(2013204481)),
-                                         LAYOUT_LOOKUP(layout1, highBit));
+  NondetRegStruct x9 = exec_NondetBitReg(
+      ctx, (bitAnd(x8, Val(32768)) * Val(2013204481)), LAYOUT_LOOKUP(layout1, highBit));
   // OpLH(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:98)
   NondetRegStruct x10 =
-      exec_NondetU8Reg((bitAnd(x8, Val(32767)) * Val(2)), LAYOUT_LOOKUP(layout1, low15x2));
+      exec_NondetU8Reg(ctx, (bitAnd(x8, Val(32767)) * Val(2)), LAYOUT_LOOKUP(layout1, low15x2));
   // OpLH(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:97)
   Val x11 = x9._super;
   // OpLH(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:99)
@@ -3357,7 +3577,9 @@ ValU32Struct exec_OpLH(MemLoadInputStruct arg0, BoundLayout<OpLHLayout> layout1)
   EQZ((x8 - x12), "OpLH(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:99)");
   return ValU32Struct{.low = x8, .high = (x11 * Val(65535))};
 }
-ValU32Struct exec_OpLBU(MemLoadInputStruct arg0, BoundLayout<OpLBULayout> layout1) {
+__device__ ValU32Struct exec_OpLBU(ExecContext& ctx,
+                                   MemLoadInputStruct arg0,
+                                   BoundLayout<OpLBULayout> layout1) {
   // OpLBU(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:110)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3(zirgen/circuit/rv32im/v2/dsl/inst.zir:57)
@@ -3377,7 +3599,7 @@ ValU32Struct exec_OpLBU(MemLoadInputStruct arg0, BoundLayout<OpLBULayout> layout
   // OpLBU(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:112)
   Val x7 = ((Val(1) - x6) * x5.low);
   // OpLBU(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:113)
-  SplitWordStruct x8 = exec_SplitWord(((x6 * x5.high) + x7), LAYOUT_LOOKUP(layout1, bytes));
+  SplitWordStruct x8 = exec_SplitWord(ctx, ((x6 * x5.high) + x7), LAYOUT_LOOKUP(layout1, bytes));
   // OpLBU(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:110)
   Val x9 = x4.low0._super;
   // OpLBU(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:114)
@@ -3387,11 +3609,14 @@ ValU32Struct exec_OpLBU(MemLoadInputStruct arg0, BoundLayout<OpLBULayout> layout
   ValU32Struct x11 = ValU32Struct{.low = ((x9 * x8.byte1._super) + x10), .high = Val(0)};
   return x11;
 }
-InstOutputStruct exec_Mem0(RegStruct arg0, InstInputStruct arg1, BoundLayout<Mem0Layout> layout2) {
+__device__ InstOutputStruct exec_Mem0(ExecContext& ctx,
+                                      RegStruct arg0,
+                                      InstInputStruct arg1,
+                                      BoundLayout<Mem0Layout> layout2) {
   // Mem0(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:50)
   BoundLayout<Mem0OutputLayout> x3 = LAYOUT_LOOKUP(layout2, output);
   // Mem0(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:49)
-  MemLoadInputStruct x4 = exec_MemLoadInput(arg0, arg1, LAYOUT_LOOKUP(layout2, input));
+  MemLoadInputStruct x4 = exec_MemLoadInput(ctx, arg0, arg1, LAYOUT_LOOKUP(layout2, input));
   // Mem0(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:48)
   NondetRegStruct8Array x5 = arg1.minorOnehot._super;
   // Mem0(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:50)
@@ -3449,11 +3674,11 @@ InstOutputStruct exec_Mem0(RegStruct arg0, InstInputStruct arg1, BoundLayout<Mem
   ValU32Struct x41;
   if (to_size_t(x5[0]._super)) {
     // Mem0(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:51)
-    ValU32Struct x42 = exec_OpLB(x4, LAYOUT_LOOKUP(x3, arm0));
+    ValU32Struct x42 = exec_OpLB(ctx, x4, LAYOUT_LOOKUP(x3, arm0));
     x41 = x42;
   } else if (to_size_t(x5[1]._super)) {
     // Mem0(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:52)
-    ValU32Struct x43 = exec_OpLH(x4, LAYOUT_LOOKUP(x6, _super));
+    ValU32Struct x43 = exec_OpLH(ctx, x4, LAYOUT_LOOKUP(x6, _super));
     // Mem0(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:50)
     STORE(x13, Val(0));
     EQZ(LOAD(x13, 0), "Mem0(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:50)");
@@ -3491,7 +3716,7 @@ InstOutputStruct exec_Mem0(RegStruct arg0, InstInputStruct arg1, BoundLayout<Mem
     x41 = x24;
   } else if (to_size_t(x5[3]._super)) {
     // Mem0(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:54)
-    ValU32Struct x44 = exec_OpLBU(x4, LAYOUT_LOOKUP(x8, _super));
+    ValU32Struct x44 = exec_OpLBU(ctx, x4, LAYOUT_LOOKUP(x8, _super));
     // Mem0(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:50)
     STORE(x25, Val(0));
     EQZ(LOAD(x25, 0), "Mem0(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:50)");
@@ -3567,17 +3792,19 @@ InstOutputStruct exec_Mem0(RegStruct arg0, InstInputStruct arg1, BoundLayout<Mem
     assert(0 && "Reached unreachable mux arm");
   }
   // Mem0(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:60)
-  WriteRdStruct x45 = exec_WriteRd(arg0, x4.ii, x15, Val(1), x41, LAYOUT_LOOKUP(layout2, _0));
+  WriteRdStruct x45 = exec_WriteRd(ctx, arg0, x4.ii, x15, Val(1), x41, LAYOUT_LOOKUP(layout2, _0));
   // Mem0(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:48)
   ValU32Struct x46 = arg1.pcU32;
   // DenormedValU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:20)
   // AddU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:27)
   // Mem0(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:61)
   DenormedValU32Struct x47 = DenormedValU32Struct{.low = (x46.low + Val(4)), .high = x46.high};
-  NormalizeU32Struct x48 = exec_NormalizeU32(x47, LAYOUT_LOOKUP(layout2, pcAdd));
+  NormalizeU32Struct x48 = exec_NormalizeU32(ctx, x47, LAYOUT_LOOKUP(layout2, pcAdd));
   return InstOutputStruct{.newPc = x48._super, .newState = Val(32), .newMode = arg1.mode};
 }
-ValU32Struct exec_OpSB(MemStoreInputStruct arg0, BoundLayout<OpSBLayout> layout1) {
+__device__ ValU32Struct exec_OpSB(ExecContext& ctx,
+                                  MemStoreInputStruct arg0,
+                                  BoundLayout<OpSBLayout> layout1) {
   // OpSB(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:125)
   DecoderStruct x2 = arg0.decoded;
   // VerifyOpcodeF3(zirgen/circuit/rv32im/v2/dsl/inst.zir:57)
@@ -3600,11 +3827,12 @@ ValU32Struct exec_OpSB(MemStoreInputStruct arg0, BoundLayout<OpSBLayout> layout1
   // OpSB(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:125)
   Val x9 = x5.low;
   // OpSB(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:128)
-  SplitWordStruct x10 = exec_SplitWord(((x7 * x6) + (x8 * x9)), LAYOUT_LOOKUP(layout1, origBytes));
+  SplitWordStruct x10 =
+      exec_SplitWord(ctx, ((x7 * x6) + (x8 * x9)), LAYOUT_LOOKUP(layout1, origBytes));
   // OpSB(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:125)
   Val x11 = arg0.rs2._super.low;
   // OpSB(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:129)
-  SplitWordStruct x12 = exec_SplitWord(x11, LAYOUT_LOOKUP(layout1, newBytes));
+  SplitWordStruct x12 = exec_SplitWord(ctx, x11, LAYOUT_LOOKUP(layout1, newBytes));
   // OpSB(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:125)
   Val x13 = x4.low0._super;
   // OpSB(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:134)
@@ -3621,11 +3849,14 @@ ValU32Struct exec_OpSB(MemStoreInputStruct arg0, BoundLayout<OpSBLayout> layout1
       ValU32Struct{.low = ((x7 * x9) + (x8 * x17)), .high = ((x8 * x6) + (x7 * x17))};
   return x18;
 }
-InstOutputStruct exec_Mem1(RegStruct arg0, InstInputStruct arg1, BoundLayout<Mem1Layout> layout2) {
+__device__ InstOutputStruct exec_Mem1(ExecContext& ctx,
+                                      RegStruct arg0,
+                                      InstInputStruct arg1,
+                                      BoundLayout<Mem1Layout> layout2) {
   // Mem1(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:67)
   BoundLayout<Mem1OutputLayout> x3 = LAYOUT_LOOKUP(layout2, output);
   // Mem1(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:66)
-  MemStoreInputStruct x4 = exec_MemStoreInput(arg0, arg1, LAYOUT_LOOKUP(layout2, input));
+  MemStoreInputStruct x4 = exec_MemStoreInput(ctx, arg0, arg1, LAYOUT_LOOKUP(layout2, input));
   // Mem1(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:65)
   NondetRegStruct8Array x5 = arg1.minorOnehot._super;
   // Mem1(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:67)
@@ -3694,7 +3925,7 @@ InstOutputStruct exec_Mem1(RegStruct arg0, InstInputStruct arg1, BoundLayout<Mem
   ValU32Struct x53;
   if (to_size_t(x5[0]._super)) {
     // Mem1(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:68)
-    ValU32Struct x54 = exec_OpSB(x4, LAYOUT_LOOKUP(x3, arm0));
+    ValU32Struct x54 = exec_OpSB(ctx, x4, LAYOUT_LOOKUP(x3, arm0));
     x53 = x54;
   } else if (to_size_t(x5[1]._super)) {
     // VerifyOpcodeF3(zirgen/circuit/rv32im/v2/dsl/inst.zir:57)
@@ -3838,50 +4069,56 @@ InstOutputStruct exec_Mem1(RegStruct arg0, InstInputStruct arg1, BoundLayout<Mem
     assert(0 && "Reached unreachable mux arm");
   }
   // Mem1(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:77)
-  MemStoreFinalizeStruct x55 = exec_MemStoreFinalize(arg0, x4, x53, LAYOUT_LOOKUP(layout2, _0));
+  MemStoreFinalizeStruct x55 =
+      exec_MemStoreFinalize(ctx, arg0, x4, x53, LAYOUT_LOOKUP(layout2, _0));
   // Mem1(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:65)
   ValU32Struct x56 = arg1.pcU32;
   // DenormedValU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:20)
   // AddU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:27)
   // Mem1(zirgen/circuit/rv32im/v2/dsl/inst_mem.zir:78)
   DenormedValU32Struct x57 = DenormedValU32Struct{.low = (x56.low + Val(4)), .high = x56.high};
-  NormalizeU32Struct x58 = exec_NormalizeU32(x57, LAYOUT_LOOKUP(layout2, pcAdd));
+  NormalizeU32Struct x58 = exec_NormalizeU32(ctx, x57, LAYOUT_LOOKUP(layout2, pcAdd));
   return InstOutputStruct{.newPc = x58._super, .newState = Val(32), .newMode = arg1.mode};
 }
-DigestRegStruct back_DigestReg(Index distance0, BoundLayout<DigestRegLayout> layout1) {
+__device__ DigestRegStruct back_DigestReg(ExecContext& ctx,
+                                          Index distance0,
+                                          BoundLayout<DigestRegLayout> layout1) {
   // DigestReg(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:7)
   DigestRegValues_SuperStruct8Array x2 =
-      map({Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
+      map(Val8Array{Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
           LAYOUT_LOOKUP(layout1, values),
-          std::function([&](Val8Array::value_type x3,
-                            BoundLayout<DigestRegValues_SuperLayout8LayoutArray::value_type> x4) {
+          ([&](Val8Array::value_type x3,
+               BoundLayout<DigestRegValues_SuperLayout8LayoutArray::value_type> x4) {
             // DigestReg(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:8)
-            RegStruct x5 = back_Reg(distance0, LAYOUT_LOOKUP(x4, low));
+            RegStruct x5 = back_Reg(ctx, distance0, LAYOUT_LOOKUP(x4, low));
             // DigestReg(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:9)
-            RegStruct x6 = back_Reg(distance0, LAYOUT_LOOKUP(x4, high));
+            RegStruct x6 = back_Reg(ctx, distance0, LAYOUT_LOOKUP(x4, high));
             return DigestRegValues_SuperStruct{.low = x5, .high = x6};
           }));
   return DigestRegStruct{.values = x2};
 }
-DigestRegStruct exec_DigestReg(ValU32Struct8Array arg0, BoundLayout<DigestRegLayout> layout1) {
+__device__ DigestRegStruct exec_DigestReg(ExecContext& ctx,
+                                          ValU32Struct8Array arg0,
+                                          BoundLayout<DigestRegLayout> layout1) {
   // DigestReg(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:7)
   DigestRegValues_SuperStruct8Array x2 =
       map(arg0,
           LAYOUT_LOOKUP(layout1, values),
-          std::function([&](ValU32Struct8Array::value_type x3,
-                            BoundLayout<DigestRegValues_SuperLayout8LayoutArray::value_type> x4) {
+          ([&](ValU32Struct8Array::value_type x3,
+               BoundLayout<DigestRegValues_SuperLayout8LayoutArray::value_type> x4) {
             // DigestReg(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:8)
-            RegStruct x5 = exec_Reg(x3.low, LAYOUT_LOOKUP(x4, low));
+            RegStruct x5 = exec_Reg(ctx, x3.low, LAYOUT_LOOKUP(x4, low));
             // DigestReg(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:9)
-            RegStruct x6 = exec_Reg(x3.high, LAYOUT_LOOKUP(x4, high));
+            RegStruct x6 = exec_Reg(ctx, x3.high, LAYOUT_LOOKUP(x4, high));
             return DigestRegValues_SuperStruct{.low = x5, .high = x6};
           }));
   return DigestRegStruct{.values = x2};
 }
-InstOutputStruct exec_ControlLoadRoot(RegStruct arg0,
-                                      InstInputStruct arg1,
-                                      BoundLayout<ControlLoadRootLayout> layout2,
-                                      GlobalBuf global3) {
+__device__ InstOutputStruct exec_ControlLoadRoot(ExecContext& ctx,
+                                                 RegStruct arg0,
+                                                 InstInputStruct arg1,
+                                                 BoundLayout<ControlLoadRootLayout> layout2,
+                                                 GlobalBuf global3) {
   // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:18)
   BoundLayout<_globalLayout> x4 = BIND_LAYOUT(kLayoutGlobal, global3);
   // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:19)
@@ -3889,39 +4126,41 @@ InstOutputStruct exec_ControlLoadRoot(RegStruct arg0,
   // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:20)
   EQZ(arg1.state, "ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:20)");
   // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:22)
-  ControlLoadRoot__0Struct8Array x6 = map(
-      {Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
-      LAYOUT_LOOKUP(layout2, _1),
-      std::function([&](Val8Array::value_type x7,
-                        BoundLayout<ControlLoadRoot__0_SuperLayout8LayoutArray::value_type> x8) {
-        // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:23)
-        GetDataStruct x9 = exec_MemoryPageIn(arg0, (x7 + Val(1140850680)), LAYOUT_LOOKUP(x8, mem));
-        // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:19)
-        DigestRegStruct x10 = back_DigestReg(0, x5);
-        RegStruct x11 = x10.values[to_size_t(x7)].low;
-        // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:23)
-        ValU32Struct x12 = x9._super;
-        // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:24)
-        Val x13 = (x11._super._super - x12.low);
-        EQZ(x13, "ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:24)");
-        // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:19)
-        DigestRegStruct x14 = back_DigestReg(0, x5);
-        RegStruct x15 = x14.values[to_size_t(x7)].high;
-        // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:25)
-        Val x16 = (x15._super._super - x12.high);
-        EQZ(x16, "ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:25)");
-        return ControlLoadRoot__0Struct{};
-      }));
+  ControlLoadRoot__0Struct8Array x6 =
+      map(Val8Array{Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
+          LAYOUT_LOOKUP(layout2, _1),
+          ([&](Val8Array::value_type x7,
+               BoundLayout<ControlLoadRoot__0_SuperLayout8LayoutArray::value_type> x8) {
+            // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:23)
+            GetDataStruct x9 =
+                exec_MemoryPageIn(ctx, arg0, (x7 + Val(1140850680)), LAYOUT_LOOKUP(x8, mem));
+            // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:19)
+            DigestRegStruct x10 = back_DigestReg(ctx, 0, x5);
+            RegStruct x11 = x10.values[to_size_t(x7)].low;
+            // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:23)
+            ValU32Struct x12 = x9._super;
+            // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:24)
+            Val x13 = (x11._super._super - x12.low);
+            EQZ(x13, "ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:24)");
+            // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:19)
+            DigestRegStruct x14 = back_DigestReg(ctx, 0, x5);
+            RegStruct x15 = x14.values[to_size_t(x7)].high;
+            // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:25)
+            Val x16 = (x15._super._super - x12.high);
+            EQZ(x16, "ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:25)");
+            return ControlLoadRoot__0Struct{};
+          }));
   // InstOutput(zirgen/circuit/rv32im/v2/dsl/inst.zir:46)
   // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:27)
   InstOutputStruct x17 = InstOutputStruct{
       .newPc = ValU32Struct{.low = Val(0), .high = Val(0)}, .newState = Val(16), .newMode = Val(0)};
   return x17;
 }
-InstOutputStruct exec_ControlResume(RegStruct arg0,
-                                    InstInputStruct arg1,
-                                    BoundLayout<ControlResumeLayout> layout2,
-                                    GlobalBuf global3) {
+__device__ InstOutputStruct exec_ControlResume(ExecContext& ctx,
+                                               RegStruct arg0,
+                                               InstInputStruct arg1,
+                                               BoundLayout<ControlResumeLayout> layout2,
+                                               GlobalBuf global3) {
   // ControlResume(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:30)
   BoundLayout<_globalLayout> x4 = BIND_LAYOUT(kLayoutGlobal, global3);
   // ControlResume(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:34)
@@ -3931,7 +4170,7 @@ InstOutputStruct exec_ControlResume(RegStruct arg0,
   // ControlResume(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:30)
   ValU32Struct x6 = arg1.pcU32;
   // ControlResume(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:33)
-  NondetRegStruct x7 = exec_IsZero((x6.low + x6.high), LAYOUT_LOOKUP(layout2, pcZero));
+  NondetRegStruct x7 = exec_IsZero(ctx, (x6.low + x6.high), LAYOUT_LOOKUP(layout2, pcZero));
   Val x8 = x7._super;
   // ControlResume(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:34)
   BoundLayout<ControlResume_SuperArm0Layout> x9 = LAYOUT_LOOKUP(x5, arm0);
@@ -3957,9 +4196,9 @@ InstOutputStruct exec_ControlResume(RegStruct arg0,
   InstOutputStruct x29;
   if (to_size_t(x8)) {
     // ControlResume(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:36)
-    GetDataStruct x30 = exec_MemoryRead(arg0, Val(1073725572), LAYOUT_LOOKUP(x10, pc));
+    GetDataStruct x30 = exec_MemoryRead(ctx, arg0, Val(1073725572), LAYOUT_LOOKUP(x10, pc));
     // ControlResume(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:37)
-    GetDataStruct x31 = exec_MemoryRead(arg0, Val(1073725573), LAYOUT_LOOKUP(x10, mode));
+    GetDataStruct x31 = exec_MemoryRead(ctx, arg0, Val(1073725573), LAYOUT_LOOKUP(x10, mode));
     // InstOutput(zirgen/circuit/rv32im/v2/dsl/inst.zir:46)
     // ControlResume(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:38)
     InstOutputStruct x32 =
@@ -4004,15 +4243,14 @@ InstOutputStruct exec_ControlResume(RegStruct arg0,
     x29 = x32;
   } else if (to_size_t((Val(1) - x8))) {
     // ControlResume(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:41)
-    ControlResume_SuperArm1_Super__0Struct8Array x33 = map(
-        {Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
-        LAYOUT_LOOKUP(LAYOUT_LOOKUP(x5, arm1), _1),
-        std::function(
-            [&](Val8Array::value_type x34,
-                BoundLayout<ControlResume_SuperArm1_Super__0_SuperLayout8LayoutArray::value_type>
-                    x35) {
+    ControlResume_SuperArm1_Super__0Struct8Array x33 =
+        map(Val8Array{Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
+            LAYOUT_LOOKUP(LAYOUT_LOOKUP(x5, arm1), _1),
+            ([&](Val8Array::value_type x34,
+                 BoundLayout<ControlResume_SuperArm1_Super__0_SuperLayout8LayoutArray::value_type>
+                     x35) {
               // ControlResume(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:40)
-              DigestRegStruct x36 = back_DigestReg(0, LAYOUT_LOOKUP(x4, input));
+              DigestRegStruct x36 = back_DigestReg(ctx, 0, LAYOUT_LOOKUP(x4, input));
               RegStruct x37 = x36.values[to_size_t(x34)].low;
               RegStruct x38 = x36.values[to_size_t(x34)].high;
               // ValU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:10)
@@ -4020,7 +4258,7 @@ InstOutputStruct exec_ControlResume(RegStruct arg0,
               ValU32Struct x39 = ValU32Struct{.low = x37._super._super, .high = x38._super._super};
               // ControlResume(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:42)
               MemoryWriteStruct x40 =
-                  exec_MemoryWrite(arg0, (x34 + Val(1073725592)), x39, LAYOUT_LOOKUP(x35, _0));
+                  exec_MemoryWrite(ctx, arg0, (x34 + Val(1073725592)), x39, LAYOUT_LOOKUP(x35, _0));
               return ControlResume_SuperArm1_Super__0Struct{};
             }));
     x29 = InstOutputStruct{.newPc = x6, .newState = Val(32), .newMode = arg1.mode};
@@ -4029,22 +4267,23 @@ InstOutputStruct exec_ControlResume(RegStruct arg0,
   }
   return x29;
 }
-InstOutputStruct exec_ControlUserECALL(RegStruct arg0,
-                                       InstInputStruct arg1,
-                                       BoundLayout<ControlUserECALLLayout> layout2) {
+__device__ InstOutputStruct exec_ControlUserECALL(ExecContext& ctx,
+                                                  RegStruct arg0,
+                                                  InstInputStruct arg1,
+                                                  BoundLayout<ControlUserECALLLayout> layout2) {
   // ControlUserECALL(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:49)
   Val x3 = arg1.mode;
   // ControlUserECALL(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:50)
-  RegStruct x4 = exec_Reg(x3, LAYOUT_LOOKUP(layout2, safeMode));
+  RegStruct x4 = exec_Reg(ctx, x3, LAYOUT_LOOKUP(layout2, safeMode));
   // ControlUserECALL(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:49)
   ValU32Struct x5 = arg1.pcU32;
   // ControlUserECALL(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:51)
   AddrDecomposeBitsStruct x6 =
-      exec_AddrDecomposeBits(x5, x4._super._super, LAYOUT_LOOKUP(layout2, pcAddr));
+      exec_AddrDecomposeBits(ctx, x5, x4._super._super, LAYOUT_LOOKUP(layout2, pcAddr));
   // ControlUserECALL(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:52)
   EQZ(x6.low2, "ControlUserECALL(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:52)");
   // ControlUserECALL(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:53)
-  GetDataStruct x7 = exec_MemoryRead(arg0, x6._super, LAYOUT_LOOKUP(layout2, loadInst));
+  GetDataStruct x7 = exec_MemoryRead(ctx, arg0, x6._super, LAYOUT_LOOKUP(layout2, loadInst));
   ValU32Struct x8 = x7._super;
   // ControlUserECALL(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:54)
   EQZ(x8.high, "ControlUserECALL(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:54)");
@@ -4055,34 +4294,38 @@ InstOutputStruct exec_ControlUserECALL(RegStruct arg0,
   // ControlUserECALL(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:57)
   EQZ(x3, "ControlUserECALL(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:57)");
   // ControlUserECALL(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:58)
-  GetDataStruct x9 = exec_MemoryRead(arg0, Val(1073725489), LAYOUT_LOOKUP(layout2, dispatchIdx));
+  GetDataStruct x9 =
+      exec_MemoryRead(ctx, arg0, Val(1073725489), LAYOUT_LOOKUP(layout2, dispatchIdx));
   ValU32Struct x10 = x9._super;
   // ControlUserECALL(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:59)
   EQZ(x10.high, "ControlUserECALL(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:59)");
   // ControlUserECALL(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:58)
   Val x11 = x10.low;
   // ControlUserECALL(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:60)
-  U16RegStruct x12 = exec_U16Reg((x11 * Val(128)), LAYOUT_LOOKUP(layout2, _0));
+  U16RegStruct x12 = exec_U16Reg(ctx, (x11 * Val(128)), LAYOUT_LOOKUP(layout2, _0));
   // ControlUserECALL(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:61)
   GetDataStruct x13 =
-      exec_MemoryRead(arg0, (x11 + Val(1073726464)), LAYOUT_LOOKUP(layout2, newPcAddr));
+      exec_MemoryRead(ctx, arg0, (x11 + Val(1073726464)), LAYOUT_LOOKUP(layout2, newPcAddr));
   // ControlUserECALL(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:62)
-  MemoryWriteStruct x14 = exec_MemoryWrite(arg0, Val(1073725568), x5, LAYOUT_LOOKUP(layout2, _1));
+  MemoryWriteStruct x14 =
+      exec_MemoryWrite(ctx, arg0, Val(1073725568), x5, LAYOUT_LOOKUP(layout2, _1));
   return InstOutputStruct{.newPc = x13._super, .newState = Val(32), .newMode = Val(1)};
 }
-InstOutputStruct
-exec_ControlMRET(RegStruct arg0, InstInputStruct arg1, BoundLayout<ControlMRETLayout> layout2) {
+__device__ InstOutputStruct exec_ControlMRET(ExecContext& ctx,
+                                             RegStruct arg0,
+                                             InstInputStruct arg1,
+                                             BoundLayout<ControlMRETLayout> layout2) {
   // ControlMRET(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:66)
   Val x3 = arg1.mode;
   // ControlMRET(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:67)
-  RegStruct x4 = exec_Reg(x3, LAYOUT_LOOKUP(layout2, safeMode));
+  RegStruct x4 = exec_Reg(ctx, x3, LAYOUT_LOOKUP(layout2, safeMode));
   // ControlMRET(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:68)
   AddrDecomposeBitsStruct x5 =
-      exec_AddrDecomposeBits(arg1.pcU32, x4._super._super, LAYOUT_LOOKUP(layout2, pcAddr));
+      exec_AddrDecomposeBits(ctx, arg1.pcU32, x4._super._super, LAYOUT_LOOKUP(layout2, pcAddr));
   // ControlMRET(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:69)
   EQZ(x5.low2, "ControlMRET(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:69)");
   // ControlMRET(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:70)
-  GetDataStruct x6 = exec_MemoryRead(arg0, x5._super, LAYOUT_LOOKUP(layout2, loadInst));
+  GetDataStruct x6 = exec_MemoryRead(ctx, arg0, x5._super, LAYOUT_LOOKUP(layout2, loadInst));
   ValU32Struct x7 = x6._super;
   // ControlMRET(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:71)
   EQZ((x7.high - Val(12320)), "ControlMRET(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:71)");
@@ -4093,19 +4336,20 @@ exec_ControlMRET(RegStruct arg0, InstInputStruct arg1, BoundLayout<ControlMRETLa
   // ControlMRET(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:74)
   EQZ((x3 - Val(1)), "ControlMRET(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:74)");
   // ControlMRET(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:75)
-  GetDataStruct x8 = exec_MemoryRead(arg0, Val(1073725568), LAYOUT_LOOKUP(layout2, pc));
+  GetDataStruct x8 = exec_MemoryRead(ctx, arg0, Val(1073725568), LAYOUT_LOOKUP(layout2, pc));
   ValU32Struct x9 = x8._super;
   // DenormedValU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:20)
   // AddU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:27)
   // ControlMRET(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:76)
   DenormedValU32Struct x10 = DenormedValU32Struct{.low = (x9.low + Val(4)), .high = x9.high};
-  NormalizeU32Struct x11 = exec_NormalizeU32(x10, LAYOUT_LOOKUP(layout2, pcAdd));
+  NormalizeU32Struct x11 = exec_NormalizeU32(ctx, x10, LAYOUT_LOOKUP(layout2, pcAdd));
   return InstOutputStruct{.newPc = x11._super, .newState = Val(32), .newMode = Val(0)};
 }
-InstOutputStruct exec_ControlSuspend(RegStruct arg0,
-                                     InstInputStruct arg1,
-                                     BoundLayout<ControlSuspendLayout> layout2,
-                                     GlobalBuf global3) {
+__device__ InstOutputStruct exec_ControlSuspend(ExecContext& ctx,
+                                                RegStruct arg0,
+                                                InstInputStruct arg1,
+                                                BoundLayout<ControlSuspendLayout> layout2,
+                                                GlobalBuf global3) {
   // ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:80)
   BoundLayout<_globalLayout> x4 = BIND_LAYOUT(kLayoutGlobal, global3);
   // ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:84)
@@ -4117,7 +4361,7 @@ InstOutputStruct exec_ControlSuspend(RegStruct arg0,
   // ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:80)
   ValU32Struct x7 = arg1.pcU32;
   // ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:83)
-  NondetRegStruct x8 = exec_IsZero((x7.low + x7.high), LAYOUT_LOOKUP(layout2, pcZero));
+  NondetRegStruct x8 = exec_IsZero(ctx, (x7.low + x7.high), LAYOUT_LOOKUP(layout2, pcZero));
   Val x9 = x8._super;
   // ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:84)
   BoundLayout<ControlSuspend_SuperArm1Layout> x10 = LAYOUT_LOOKUP(x5, arm1);
@@ -4154,42 +4398,41 @@ InstOutputStruct exec_ControlSuspend(RegStruct arg0,
   InstOutputStruct x34;
   if (to_size_t(x9)) {
     // ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:89)
-    GetDataStruct8Array x35 =
-        map({Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
-            LAYOUT_LOOKUP(LAYOUT_LOOKUP(x5, arm0), _1),
-            std::function([&](Val8Array::value_type x36,
-                              BoundLayout<MemoryReadLayout8LayoutArray::value_type> x37) {
-              GetDataStruct x38 = exec_MemoryRead(arg0, (x36 + Val(1073725584)), x37);
-              return x38;
-            }));
-    ValU32Struct8Array x39 = {x35[0]._super,
-                              x35[1]._super,
-                              x35[2]._super,
-                              x35[3]._super,
-                              x35[4]._super,
-                              x35[5]._super,
-                              x35[6]._super,
-                              x35[7]._super};
+    GetDataStruct8Array x35 = map(
+        Val8Array{Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
+        LAYOUT_LOOKUP(LAYOUT_LOOKUP(x5, arm0), _1),
+        ([&](Val8Array::value_type x36, BoundLayout<MemoryReadLayout8LayoutArray::value_type> x37) {
+          GetDataStruct x38 = exec_MemoryRead(ctx, arg0, (x36 + Val(1073725584)), x37);
+          return x38;
+        }));
+    ValU32Struct8Array x39 = ValU32Struct8Array{x35[0]._super,
+                                                x35[1]._super,
+                                                x35[2]._super,
+                                                x35[3]._super,
+                                                x35[4]._super,
+                                                x35[5]._super,
+                                                x35[6]._super,
+                                                x35[7]._super};
     // ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:88)
-    DigestRegStruct x40 = exec_DigestReg(x39, LAYOUT_LOOKUP(x4, output));
+    DigestRegStruct x40 = exec_DigestReg(ctx, x39, LAYOUT_LOOKUP(x4, output));
     // ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:86)
-    RegStruct x41 = back_Reg(0, x11);
+    RegStruct x41 = back_Reg(ctx, 0, x11);
     // ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:91)
     Val x42 = (Val(1) - x41._super._super);
     // ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:86)
-    RegStruct x43 = back_Reg(0, x11);
+    RegStruct x43 = back_Reg(ctx, 0, x11);
     // ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:91)
     Val x44 = (Val(1) - x43._super._super);
     ComponentStruct x45;
     if (to_size_t(x42)) {
       // ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:92)
-      RegStruct x46 = exec_Reg(Val(0), LAYOUT_LOOKUP(x4, termA0low));
+      RegStruct x46 = exec_Reg(ctx, Val(0), LAYOUT_LOOKUP(x4, termA0low));
       // ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:93)
-      RegStruct x47 = exec_Reg(Val(0), LAYOUT_LOOKUP(x4, termA0high));
+      RegStruct x47 = exec_Reg(ctx, Val(0), LAYOUT_LOOKUP(x4, termA0high));
       // ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:94)
-      RegStruct x48 = exec_Reg(Val(0), LAYOUT_LOOKUP(x4, termA1low));
+      RegStruct x48 = exec_Reg(ctx, Val(0), LAYOUT_LOOKUP(x4, termA1low));
       // ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:95)
-      RegStruct x49 = exec_Reg(Val(0), LAYOUT_LOOKUP(x4, termA1high));
+      RegStruct x49 = exec_Reg(ctx, Val(0), LAYOUT_LOOKUP(x4, termA1high));
       x45 = x12;
     } else if (to_size_t((Val(1) - x44))) {
       x45 = x12;
@@ -4199,19 +4442,23 @@ InstOutputStruct exec_ControlSuspend(RegStruct arg0,
     x34 = InstOutputStruct{.newPc = x13, .newState = Val(16), .newMode = Val(3)};
   } else if (to_size_t((Val(1) - x9))) {
     // ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:107)
-    RegStruct x50 = exec_Reg(x6, LAYOUT_LOOKUP(x14, state));
+    RegStruct x50 = exec_Reg(ctx, x6, LAYOUT_LOOKUP(x14, state));
     Val x51 = x50._super._super;
     // ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:108)
     Val x52 = (x51 - Val(32));
     EQZ((x52 * (x51 - Val(4))),
         "ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:108)");
     // ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:111)
-    RegStruct x53 = exec_Reg((x52 * Val(1797558858)), x11);
+    RegStruct x53 = exec_Reg(ctx, (x52 * Val(1797558858)), x11);
     // ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:113)
-    MemoryWriteStruct x54 = exec_MemoryWrite(arg0, Val(1073725572), x7, LAYOUT_LOOKUP(x14, _0));
+    MemoryWriteStruct x54 =
+        exec_MemoryWrite(ctx, arg0, Val(1073725572), x7, LAYOUT_LOOKUP(x14, _0));
     // ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:114)
-    MemoryWriteStruct x55 = exec_MemoryWrite(
-        arg0, Val(1073725573), ValU32Struct{.low = x15, .high = Val(0)}, LAYOUT_LOOKUP(x14, _1));
+    MemoryWriteStruct x55 = exec_MemoryWrite(ctx,
+                                             arg0,
+                                             Val(1073725573),
+                                             ValU32Struct{.low = x15, .high = Val(0)},
+                                             LAYOUT_LOOKUP(x14, _1));
     // ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:84)
     STORE(x16, Val(0));
     EQZ(LOAD(x16, 0), "ControlSuspend(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:84)");
@@ -4255,78 +4502,80 @@ InstOutputStruct exec_ControlSuspend(RegStruct arg0,
   }
   return x34;
 }
-InstOutputStruct exec_ControlStoreRoot(RegStruct arg0,
-                                       InstInputStruct arg1,
-                                       BoundLayout<ControlStoreRootLayout> layout2,
-                                       GlobalBuf global3) {
+__device__ InstOutputStruct exec_ControlStoreRoot(ExecContext& ctx,
+                                                  RegStruct arg0,
+                                                  InstInputStruct arg1,
+                                                  BoundLayout<ControlStoreRootLayout> layout2,
+                                                  GlobalBuf global3) {
   // ControlStoreRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:120)
   BoundLayout<_globalLayout> x4 = BIND_LAYOUT(kLayoutGlobal, global3);
   // ControlStoreRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:121)
   EQZ((arg1.state - Val(5)), "ControlStoreRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:121)");
   // ControlStoreRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:123)
-  GetDataStruct8Array x5 =
-      map({Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
-          LAYOUT_LOOKUP(layout2, _1),
-          std::function([&](Val8Array::value_type x6,
-                            BoundLayout<MemoryPageOutLayout8LayoutArray::value_type> x7) {
-            // ControlStoreRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:124)
-            GetDataStruct x8 = exec_MemoryPageOut(arg0, (x6 + Val(1140850680)), x7);
-            return x8;
-          }));
+  GetDataStruct8Array x5 = map(
+      Val8Array{Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
+      LAYOUT_LOOKUP(layout2, _1),
+      ([&](Val8Array::value_type x6, BoundLayout<MemoryPageOutLayout8LayoutArray::value_type> x7) {
+        // ControlStoreRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:124)
+        GetDataStruct x8 = exec_MemoryPageOut(ctx, arg0, (x6 + Val(1140850680)), x7);
+        return x8;
+      }));
   // ControlStoreRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:123)
-  ValU32Struct8Array x9 = {x5[0]._super,
-                           x5[1]._super,
-                           x5[2]._super,
-                           x5[3]._super,
-                           x5[4]._super,
-                           x5[5]._super,
-                           x5[6]._super,
-                           x5[7]._super};
+  ValU32Struct8Array x9 = ValU32Struct8Array{x5[0]._super,
+                                             x5[1]._super,
+                                             x5[2]._super,
+                                             x5[3]._super,
+                                             x5[4]._super,
+                                             x5[5]._super,
+                                             x5[6]._super,
+                                             x5[7]._super};
   // ControlStoreRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:122)
-  DigestRegStruct x10 = exec_DigestReg(x9, LAYOUT_LOOKUP(x4, stateOut));
+  DigestRegStruct x10 = exec_DigestReg(ctx, x9, LAYOUT_LOOKUP(x4, stateOut));
   // InstOutput(zirgen/circuit/rv32im/v2/dsl/inst.zir:46)
   // ControlStoreRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:127)
   InstOutputStruct x11 = InstOutputStruct{
       .newPc = ValU32Struct{.low = Val(0), .high = Val(0)}, .newState = Val(6), .newMode = Val(0)};
   return x11;
 }
-InstOutputStruct
-exec_ControlTable(RegStruct arg0, InstInputStruct arg1, BoundLayout<ControlTableLayout> layout2) {
+__device__ InstOutputStruct exec_ControlTable(ExecContext& ctx,
+                                              RegStruct arg0,
+                                              InstInputStruct arg1,
+                                              BoundLayout<ControlTableLayout> layout2) {
   // ControlTable(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:135)
   BoundLayout<ControlTable_SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
   // ControlTable(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:131)
   EQZ((arg1.state - Val(6)), "ControlTable(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:131)");
   // ControlTable(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:132)
-  RegStruct x4 = exec_Reg(arg1.pcU32.low, LAYOUT_LOOKUP(layout2, entry));
+  RegStruct x4 = exec_Reg(ctx, arg1.pcU32.low, LAYOUT_LOOKUP(layout2, entry));
   // ControlTable(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:133)
-  RegStruct x5 = exec_Reg(arg1.mode, LAYOUT_LOOKUP(layout2, mode));
+  RegStruct x5 = exec_Reg(ctx, arg1.mode, LAYOUT_LOOKUP(layout2, mode));
   Val x6 = x5._super._super;
   // ControlTable(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:132)
   Val x7 = x4._super._super;
   // Log(<preamble>:22)
   // ControlTable(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:134)
-  INVOKE_EXTERN(ctx, log, "mode/entry = ", {x6, x7});
+  INVOKE_EXTERN(ctx, log, "mode/entry = ", std::initializer_list<Val>{x6, x7});
   // ControlTable(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:135)
   BoundLayout<ControlTable_SuperArm0Layout> x8 = LAYOUT_LOOKUP(x3, arm0);
   BoundLayout<ControlTable_SuperArm1Layout> x9 = LAYOUT_LOOKUP(x3, arm1);
   BoundLayout<ControlTable_SuperArm0_SuperLayout> x10 = LAYOUT_LOOKUP(x8, _super);
   // ControlTable(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:137)
-  Val16Array x11 = {Val(0),
-                    Val(1),
-                    Val(2),
-                    Val(3),
-                    Val(4),
-                    Val(5),
-                    Val(6),
-                    Val(7),
-                    Val(8),
-                    Val(9),
-                    Val(10),
-                    Val(11),
-                    Val(12),
-                    Val(13),
-                    Val(14),
-                    Val(15)};
+  Val16Array x11 = Val16Array{Val(0),
+                              Val(1),
+                              Val(2),
+                              Val(3),
+                              Val(4),
+                              Val(5),
+                              Val(6),
+                              Val(7),
+                              Val(8),
+                              Val(9),
+                              Val(10),
+                              Val(11),
+                              Val(12),
+                              Val(13),
+                              Val(14),
+                              Val(15)};
   // ControlTable(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:142)
   Val x12 = (x7 + Val(16));
   // ValU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:10)
@@ -4373,26 +4622,25 @@ exec_ControlTable(RegStruct arg0, InstInputStruct arg1, BoundLayout<ControlTable
   InstOutputStruct x48;
   if (to_size_t(x6)) {
     // ControlTable(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:137)
-    ControlTable_SuperArm0_Super__0Struct16Array x49 = map(
-        x11,
-        LAYOUT_LOOKUP(x10, _1),
-        std::function(
-            [&](Val16Array::value_type x50,
-                BoundLayout<ControlTable_SuperArm0_Super__0_SuperLayout16LayoutArray::value_type>
-                    x51) {
+    ControlTable_SuperArm0_Super__0Struct16Array x49 =
+        map(x11,
+            LAYOUT_LOOKUP(x10, _1),
+            ([&](Val16Array::value_type x50,
+                 BoundLayout<ControlTable_SuperArm0_Super__0_SuperLayout16LayoutArray::value_type>
+                     x51) {
               // ControlTable(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:138)
               Val x52 = (x7 + x50);
               // LookupCurrent(zirgen/circuit/rv32im/v2/dsl/lookups.zir:5)
               // ControlTable(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:139)
               Val x53 = INVOKE_EXTERN(ctx, lookupCurrent, Val(16), x52);
-              ArgU16Struct x54 = exec_ArgU16(neg_0(x53), x52, LAYOUT_LOOKUP(x51, arg));
+              ArgU16Struct x54 = exec_ArgU16(ctx, neg_0(x53), x52, LAYOUT_LOOKUP(x51, arg));
               // ControlTable(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:140)
               Val x55 = (x54.val._super - x52);
               EQZ(x55, "ControlTable(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:140)");
               return ControlTable_SuperArm0_Super__0Struct{};
             }));
     // ControlTable(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:143)
-    NondetRegStruct x56 = exec_IsZero((x12 - Val(65536)), LAYOUT_LOOKUP(x10, done));
+    NondetRegStruct x56 = exec_IsZero(ctx, (x12 - Val(65536)), LAYOUT_LOOKUP(x10, done));
     Val x57 = x56._super;
     InstOutputStruct x58;
     if (to_size_t(x57)) {
@@ -4438,26 +4686,25 @@ exec_ControlTable(RegStruct arg0, InstInputStruct arg1, BoundLayout<ControlTable
     x48 = x58;
   } else if (to_size_t((Val(1) - x6))) {
     // ControlTable(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:151)
-    ControlTable_SuperArm1_Super__0Struct16Array x59 = map(
-        x11,
-        LAYOUT_LOOKUP(x31, _1),
-        std::function(
-            [&](Val16Array::value_type x60,
-                BoundLayout<ControlTable_SuperArm1_Super__0_SuperLayout16LayoutArray::value_type>
-                    x61) {
+    ControlTable_SuperArm1_Super__0Struct16Array x59 =
+        map(x11,
+            LAYOUT_LOOKUP(x31, _1),
+            ([&](Val16Array::value_type x60,
+                 BoundLayout<ControlTable_SuperArm1_Super__0_SuperLayout16LayoutArray::value_type>
+                     x61) {
               // ControlTable(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:152)
               Val x62 = (x7 + x60);
               // LookupCurrent(zirgen/circuit/rv32im/v2/dsl/lookups.zir:5)
               // ControlTable(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:153)
               Val x63 = INVOKE_EXTERN(ctx, lookupCurrent, Val(8), x62);
-              ArgU8Struct x64 = exec_ArgU8(neg_0(x63), x62, LAYOUT_LOOKUP(x61, arg));
+              ArgU8Struct x64 = exec_ArgU8(ctx, neg_0(x63), x62, LAYOUT_LOOKUP(x61, arg));
               // ControlTable(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:154)
               Val x65 = (x64.val._super - x62);
               EQZ(x65, "ControlTable(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:154)");
               return ControlTable_SuperArm1_Super__0Struct{};
             }));
     // ControlTable(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:157)
-    NondetRegStruct x66 = exec_IsZero((x12 - Val(256)), LAYOUT_LOOKUP(x31, done));
+    NondetRegStruct x66 = exec_IsZero(ctx, (x12 - Val(256)), LAYOUT_LOOKUP(x31, done));
     Val x67 = x66._super;
     InstOutputStruct x68;
     if (to_size_t(x67)) {
@@ -4506,10 +4753,11 @@ exec_ControlTable(RegStruct arg0, InstInputStruct arg1, BoundLayout<ControlTable
   }
   return x48;
 }
-InstOutputStruct exec_Control0(RegStruct arg0,
-                               InstInputStruct arg1,
-                               BoundLayout<Control0Layout> layout2,
-                               GlobalBuf global3) {
+__device__ InstOutputStruct exec_Control0(ExecContext& ctx,
+                                          RegStruct arg0,
+                                          InstInputStruct arg1,
+                                          BoundLayout<Control0Layout> layout2,
+                                          GlobalBuf global3) {
   // Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:176)
   BoundLayout<Control0_SuperLayout> x4 = LAYOUT_LOOKUP(layout2, _super);
   // Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:171)
@@ -4517,7 +4765,7 @@ InstOutputStruct exec_Control0(RegStruct arg0,
   // GetDiffCount(zirgen/circuit/rv32im/v2/dsl/mem.zir:22)
   // Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:173)
   Val x6 = INVOKE_EXTERN(ctx, getDiffCount, x5);
-  CycleArgStruct x7 = exec_CycleArg(neg_0(x6), x5, LAYOUT_LOOKUP(layout2, arg));
+  CycleArgStruct x7 = exec_CycleArg(ctx, neg_0(x6), x5, LAYOUT_LOOKUP(layout2, arg));
   // Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:175)
   Val x8 = (x7.cycle._super - x5);
   EQZ(x8, "Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:175)");
@@ -4844,7 +5092,8 @@ InstOutputStruct exec_Control0(RegStruct arg0,
   InstOutputStruct x322;
   if (to_size_t(x9[0]._super)) {
     // Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:177)
-    InstOutputStruct x323 = exec_ControlLoadRoot(arg0, arg1, LAYOUT_LOOKUP(x10, _super), global3);
+    InstOutputStruct x323 =
+        exec_ControlLoadRoot(ctx, arg0, arg1, LAYOUT_LOOKUP(x10, _super), global3);
     // Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:176)
     STORE(x18, Val(0));
     EQZ(LOAD(x18, 0), "Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:176)");
@@ -4929,7 +5178,8 @@ InstOutputStruct exec_Control0(RegStruct arg0,
     x322 = x323;
   } else if (to_size_t(x9[1]._super)) {
     // Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:178)
-    InstOutputStruct x324 = exec_ControlResume(arg0, arg1, LAYOUT_LOOKUP(x11, _super), global3);
+    InstOutputStruct x324 =
+        exec_ControlResume(ctx, arg0, arg1, LAYOUT_LOOKUP(x11, _super), global3);
     // Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:176)
     STORE(x58, Val(0));
     EQZ(LOAD(x58, 0), "Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:176)");
@@ -4998,7 +5248,7 @@ InstOutputStruct exec_Control0(RegStruct arg0,
     x322 = x324;
   } else if (to_size_t(x9[2]._super)) {
     // Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:179)
-    InstOutputStruct x325 = exec_ControlUserECALL(arg0, arg1, LAYOUT_LOOKUP(x12, _super));
+    InstOutputStruct x325 = exec_ControlUserECALL(ctx, arg0, arg1, LAYOUT_LOOKUP(x12, _super));
     // Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:176)
     STORE(x90, Val(0));
     EQZ(LOAD(x90, 0), "Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:176)");
@@ -5085,7 +5335,7 @@ InstOutputStruct exec_Control0(RegStruct arg0,
     x322 = x325;
   } else if (to_size_t(x9[3]._super)) {
     // Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:180)
-    InstOutputStruct x326 = exec_ControlMRET(arg0, arg1, LAYOUT_LOOKUP(x13, _super));
+    InstOutputStruct x326 = exec_ControlMRET(ctx, arg0, arg1, LAYOUT_LOOKUP(x13, _super));
     // Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:176)
     STORE(x131, Val(0));
     EQZ(LOAD(x131, 0), "Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:176)");
@@ -5182,7 +5432,8 @@ InstOutputStruct exec_Control0(RegStruct arg0,
     x322 = x326;
   } else if (to_size_t(x9[4]._super)) {
     // Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:181)
-    InstOutputStruct x327 = exec_ControlSuspend(arg0, arg1, LAYOUT_LOOKUP(x14, _super), global3);
+    InstOutputStruct x327 =
+        exec_ControlSuspend(ctx, arg0, arg1, LAYOUT_LOOKUP(x14, _super), global3);
     // Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:176)
     STORE(x177, Val(0));
     EQZ(LOAD(x177, 0), "Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:176)");
@@ -5251,7 +5502,8 @@ InstOutputStruct exec_Control0(RegStruct arg0,
     x322 = x327;
   } else if (to_size_t(x9[5]._super)) {
     // Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:182)
-    InstOutputStruct x328 = exec_ControlStoreRoot(arg0, arg1, LAYOUT_LOOKUP(x15, _super), global3);
+    InstOutputStruct x328 =
+        exec_ControlStoreRoot(ctx, arg0, arg1, LAYOUT_LOOKUP(x15, _super), global3);
     // Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:176)
     STORE(x209, Val(0));
     EQZ(LOAD(x209, 0), "Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:176)");
@@ -5320,7 +5572,7 @@ InstOutputStruct exec_Control0(RegStruct arg0,
     x322 = x328;
   } else if (to_size_t(x9[6]._super)) {
     // Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:183)
-    InstOutputStruct x329 = exec_ControlTable(arg0, arg1, LAYOUT_LOOKUP(x16, _super));
+    InstOutputStruct x329 = exec_ControlTable(ctx, arg0, arg1, LAYOUT_LOOKUP(x16, _super));
     // Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:176)
     STORE(x241, Val(0));
     EQZ(LOAD(x241, 0), "Control0(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:176)");
@@ -5496,14 +5748,15 @@ InstOutputStruct exec_Control0(RegStruct arg0,
   }
   return x322;
 }
-OneHot_4_Struct exec_OneHot_4_(Val arg0, BoundLayout<OneHot_4_Layout> layout1) {
+__device__ OneHot_4_Struct exec_OneHot_4_(ExecContext& ctx,
+                                          Val arg0,
+                                          BoundLayout<OneHot_4_Layout> layout1) {
   // OneHot(zirgen/circuit/rv32im/v2/dsl/one_hot.zir:7)
   NondetRegStruct4Array x2 =
-      map({Val(0), Val(1), Val(2), Val(3)},
+      map(Val4Array{Val(0), Val(1), Val(2), Val(3)},
           LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val4Array::value_type x3,
-                            BoundLayout<NondetRegLayout4LayoutArray::value_type> x4) {
-            NondetRegStruct x5 = exec_NondetBitReg(isz((x3 - arg0)), x4);
+          ([&](Val4Array::value_type x3, BoundLayout<NondetRegLayout4LayoutArray::value_type> x4) {
+            NondetRegStruct x5 = exec_NondetBitReg(ctx, isz((x3 - arg0)), x4);
             return x5;
           }));
   // OneHot(zirgen/circuit/rv32im/v2/dsl/one_hot.zir:9)
@@ -5518,12 +5771,13 @@ OneHot_4_Struct exec_OneHot_4_(Val arg0, BoundLayout<OneHot_4_Layout> layout1) {
   EQZ(x11, "OneHot(zirgen/circuit/rv32im/v2/dsl/one_hot.zir:11)");
   return OneHot_4_Struct{._super = x2};
 }
-ECallOutputStruct exec_MachineECall(RegStruct arg0,
-                                    InstInputStruct arg1,
-                                    Val arg2,
-                                    BoundLayout<MachineECallLayout> layout3) {
+__device__ ECallOutputStruct exec_MachineECall(ExecContext& ctx,
+                                               RegStruct arg0,
+                                               InstInputStruct arg1,
+                                               Val arg2,
+                                               BoundLayout<MachineECallLayout> layout3) {
   // MachineECall(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:26)
-  GetDataStruct x4 = exec_MemoryRead(arg0, arg2, LAYOUT_LOOKUP(layout3, loadInst));
+  GetDataStruct x4 = exec_MemoryRead(ctx, arg0, arg2, LAYOUT_LOOKUP(layout3, loadInst));
   // MachineECall(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:27)
   EQZ((arg1.state - Val(32)), "MachineECall(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:27)");
   // MachineECall(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:26)
@@ -5535,12 +5789,13 @@ ECallOutputStruct exec_MachineECall(RegStruct arg0,
   // MachineECall(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:30)
   EQZ((arg1.mode - Val(1)), "MachineECall(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:30)");
   // MachineECall(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:31)
-  GetDataStruct x6 = exec_MemoryRead(arg0, Val(1073725457), LAYOUT_LOOKUP(layout3, dispatchIdx));
+  GetDataStruct x6 =
+      exec_MemoryRead(ctx, arg0, Val(1073725457), LAYOUT_LOOKUP(layout3, dispatchIdx));
   ValU32Struct x7 = x6._super;
   // MachineECall(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:32)
   EQZ(x7.high, "MachineECall(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:32)");
   // MachineECall(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:33)
-  OneHot_4_Struct x8 = exec_OneHot_4_(x7.low, LAYOUT_LOOKUP(layout3, dispatch));
+  OneHot_4_Struct x8 = exec_OneHot_4_(ctx, x7.low, LAYOUT_LOOKUP(layout3, dispatch));
   NondetRegStruct4Array x9 = x8._super;
   Val x10;
   if (to_size_t(x9[0]._super)) {
@@ -5556,47 +5811,50 @@ ECallOutputStruct exec_MachineECall(RegStruct arg0,
   }
   return ECallOutputStruct{.state = x10, .s0 = Val(0), .s1 = Val(0), .s2 = Val(0)};
 }
-ECallOutputStruct exec_ECallTerminate(RegStruct arg0,
-                                      InstInputStruct arg1,
-                                      BoundLayout<ECallTerminateLayout> layout2,
-                                      GlobalBuf global3) {
+__device__ ECallOutputStruct exec_ECallTerminate(ExecContext& ctx,
+                                                 RegStruct arg0,
+                                                 InstInputStruct arg1,
+                                                 BoundLayout<ECallTerminateLayout> layout2,
+                                                 GlobalBuf global3) {
   // ECallTerminate(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:43)
   BoundLayout<_globalLayout> x4 = BIND_LAYOUT(kLayoutGlobal, global3);
   // ECallTerminate(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:44)
   EQZ((arg1.state - Val(9)), "ECallTerminate(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:44)");
   // ECallTerminate(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:45)
-  GetDataStruct x5 = exec_MemoryRead(arg0, Val(1073725482), LAYOUT_LOOKUP(layout2, a0));
+  GetDataStruct x5 = exec_MemoryRead(ctx, arg0, Val(1073725482), LAYOUT_LOOKUP(layout2, a0));
   // ECallTerminate(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:46)
-  GetDataStruct x6 = exec_MemoryRead(arg0, Val(1073725483), LAYOUT_LOOKUP(layout2, a1));
+  GetDataStruct x6 = exec_MemoryRead(ctx, arg0, Val(1073725483), LAYOUT_LOOKUP(layout2, a1));
   // ECallTerminate(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:45)
   ValU32Struct x7 = x5._super;
   // ECallTerminate(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:47)
-  RegStruct x8 = exec_Reg(x7.low, LAYOUT_LOOKUP(x4, termA0low));
+  RegStruct x8 = exec_Reg(ctx, x7.low, LAYOUT_LOOKUP(x4, termA0low));
   // ECallTerminate(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:48)
-  RegStruct x9 = exec_Reg(x7.high, LAYOUT_LOOKUP(x4, termA0high));
+  RegStruct x9 = exec_Reg(ctx, x7.high, LAYOUT_LOOKUP(x4, termA0high));
   // ECallTerminate(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:46)
   ValU32Struct x10 = x6._super;
   // ECallTerminate(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:49)
-  RegStruct x11 = exec_Reg(x10.low, LAYOUT_LOOKUP(x4, termA1low));
+  RegStruct x11 = exec_Reg(ctx, x10.low, LAYOUT_LOOKUP(x4, termA1low));
   // ECallTerminate(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:50)
-  RegStruct x12 = exec_Reg(x10.high, LAYOUT_LOOKUP(x4, termA1high));
+  RegStruct x12 = exec_Reg(ctx, x10.high, LAYOUT_LOOKUP(x4, termA1high));
   return ECallOutputStruct{.state = Val(4), .s0 = Val(0), .s1 = Val(0), .s2 = Val(0)};
 }
-DecomposeLow2Struct exec_DecomposeLow2(Val arg0, BoundLayout<DecomposeLow2Layout> layout1) {
+__device__ DecomposeLow2Struct exec_DecomposeLow2(ExecContext& ctx,
+                                                  Val arg0,
+                                                  BoundLayout<DecomposeLow2Layout> layout1) {
   // DecomposeLow2(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:57)
-  NondetRegStruct x2 =
-      exec_NondetReg((bitAnd(arg0, Val(65532)) * Val(1509949441)), LAYOUT_LOOKUP(layout1, high));
+  NondetRegStruct x2 = exec_NondetReg(
+      ctx, (bitAnd(arg0, Val(65532)) * Val(1509949441)), LAYOUT_LOOKUP(layout1, high));
   // DecomposeLow2(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:58)
-  NondetRegStruct x3 = exec_NondetReg(bitAnd(arg0, Val(3)), LAYOUT_LOOKUP(layout1, low2));
+  NondetRegStruct x3 = exec_NondetReg(ctx, bitAnd(arg0, Val(3)), LAYOUT_LOOKUP(layout1, low2));
   // DecomposeLow2(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:59)
-  OneHot_4_Struct x4 = exec_OneHot_4_(x3._super, LAYOUT_LOOKUP(layout1, low2Hot));
+  OneHot_4_Struct x4 = exec_OneHot_4_(ctx, x3._super, LAYOUT_LOOKUP(layout1, low2Hot));
   // DecomposeLow2(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:60)
-  NondetRegStruct x5 = exec_IsZero(x2._super, LAYOUT_LOOKUP(layout1, highZero));
+  NondetRegStruct x5 = exec_IsZero(ctx, x2._super, LAYOUT_LOOKUP(layout1, highZero));
   // DecomposeLow2(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:59)
   NondetRegStruct4Array x6 = x4._super;
   // DecomposeLow2(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:61)
   Val x7 = (x5._super * x6[0]._super);
-  RegStruct x8 = exec_Reg(x7, LAYOUT_LOOKUP(layout1, isZero));
+  RegStruct x8 = exec_Reg(ctx, x7, LAYOUT_LOOKUP(layout1, isZero));
   // DecomposeLow2(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:63)
   Val x9 = (x6[1]._super + x6[2]._super);
   return DecomposeLow2Struct{.high = x2,
@@ -5606,17 +5864,19 @@ DecomposeLow2Struct exec_DecomposeLow2(Val arg0, BoundLayout<DecomposeLow2Layout
                              .isZero = x8,
                              .low2Nonzero = (x9 + x6[3]._super)};
 }
-ECallOutputStruct exec_ECallHostReadSetup(RegStruct arg0,
-                                          InstInputStruct arg1,
-                                          BoundLayout<ECallHostReadSetupLayout> layout2) {
+__device__ ECallOutputStruct
+exec_ECallHostReadSetup(ExecContext& ctx,
+                        RegStruct arg0,
+                        InstInputStruct arg1,
+                        BoundLayout<ECallHostReadSetupLayout> layout2) {
   // ECallHostReadSetup(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:67)
   EQZ((arg1.state - Val(10)), "ECallHostReadSetup(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:67)");
   // ECallHostReadSetup(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:69)
-  GetDataStruct x3 = exec_MemoryRead(arg0, Val(1073725450), LAYOUT_LOOKUP(layout2, fd));
+  GetDataStruct x3 = exec_MemoryRead(ctx, arg0, Val(1073725450), LAYOUT_LOOKUP(layout2, fd));
   // ECallHostReadSetup(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:70)
-  GetDataStruct x4 = exec_MemoryRead(arg0, Val(1073725451), LAYOUT_LOOKUP(layout2, ptr));
+  GetDataStruct x4 = exec_MemoryRead(ctx, arg0, Val(1073725451), LAYOUT_LOOKUP(layout2, ptr));
   // ECallHostReadSetup(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:71)
-  GetDataStruct x5 = exec_MemoryRead(arg0, Val(1073725452), LAYOUT_LOOKUP(layout2, len));
+  GetDataStruct x5 = exec_MemoryRead(ctx, arg0, Val(1073725452), LAYOUT_LOOKUP(layout2, len));
   // ECallHostReadSetup(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:69)
   ValU32Struct x6 = x3._super;
   // ECallHostReadSetup(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:73)
@@ -5630,27 +5890,30 @@ ECallOutputStruct exec_ECallHostReadSetup(RegStruct arg0,
   // HostReadPrepare(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:8)
   // ECallHostReadSetup(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:77)
   Val x9 = INVOKE_EXTERN(ctx, hostReadPrepare, x6.low, x8);
-  NondetRegStruct x10 = exec_NondetU16Reg(x9, LAYOUT_LOOKUP(layout2, newLen));
+  NondetRegStruct x10 = exec_NondetU16Reg(ctx, x9, LAYOUT_LOOKUP(layout2, newLen));
   Val x11 = x10._super;
   // ECallHostReadSetup(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:79)
-  U16RegStruct x12 = exec_U16Reg((x8 - x11), LAYOUT_LOOKUP(layout2, diff));
+  U16RegStruct x12 = exec_U16Reg(ctx, (x8 - x11), LAYOUT_LOOKUP(layout2, diff));
   // ECallHostReadSetup(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:81)
-  MemoryWriteStruct x13 = exec_MemoryWrite(
-      arg0, Val(1073725450), ValU32Struct{.low = x11, .high = Val(0)}, LAYOUT_LOOKUP(layout2, _0));
+  MemoryWriteStruct x13 = exec_MemoryWrite(ctx,
+                                           arg0,
+                                           Val(1073725450),
+                                           ValU32Struct{.low = x11, .high = Val(0)},
+                                           LAYOUT_LOOKUP(layout2, _0));
   // ECallHostReadSetup(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:70)
   ValU32Struct x14 = x4._super;
   // ECallHostReadSetup(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:83)
-  DecomposeLow2Struct x15 = exec_DecomposeLow2(x14.low, LAYOUT_LOOKUP(layout2, ptrDecomp));
+  DecomposeLow2Struct x15 = exec_DecomposeLow2(ctx, x14.low, LAYOUT_LOOKUP(layout2, ptrDecomp));
   // ECallHostReadSetup(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:84)
   Val x16 = ((x14.high * Val(16384)) + x15.high._super);
   // ECallHostReadSetup(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:85)
-  DecomposeLow2Struct x17 = exec_DecomposeLow2(x11, LAYOUT_LOOKUP(layout2, lenDecomp));
+  DecomposeLow2Struct x17 = exec_DecomposeLow2(ctx, x11, LAYOUT_LOOKUP(layout2, lenDecomp));
   // ECallHostReadSetup(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:87)
   Val x18 = (x17.highZero._super * x17.low2Nonzero);
-  RegStruct x19 = exec_Reg(x18, LAYOUT_LOOKUP(layout2, len123));
+  RegStruct x19 = exec_Reg(ctx, x18, LAYOUT_LOOKUP(layout2, len123));
   // ECallHostReadSetup(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:89)
   Val x20 = (x19._super._super * x15.low2Nonzero);
-  RegStruct x21 = exec_Reg(x20, LAYOUT_LOOKUP(layout2, uneven));
+  RegStruct x21 = exec_Reg(ctx, x20, LAYOUT_LOOKUP(layout2, uneven));
   // ECallHostReadSetup(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:85)
   Val x22 = x17.isZero._super._super;
   // ECallHostReadSetup(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:95)
@@ -5664,17 +5927,18 @@ ECallOutputStruct exec_ECallHostReadSetup(RegStruct arg0,
                            .s1 = x15.low2._super,
                            .s2 = x11};
 }
-ECallOutputStruct exec_ECallHostWrite(RegStruct arg0,
-                                      InstInputStruct arg1,
-                                      BoundLayout<ECallHostWriteLayout> layout2) {
+__device__ ECallOutputStruct exec_ECallHostWrite(ExecContext& ctx,
+                                                 RegStruct arg0,
+                                                 InstInputStruct arg1,
+                                                 BoundLayout<ECallHostWriteLayout> layout2) {
   // ECallHostWrite(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:102)
   EQZ((arg1.state - Val(11)), "ECallHostWrite(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:102)");
   // ECallHostWrite(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:104)
-  GetDataStruct x3 = exec_MemoryRead(arg0, Val(1073725450), LAYOUT_LOOKUP(layout2, fd));
+  GetDataStruct x3 = exec_MemoryRead(ctx, arg0, Val(1073725450), LAYOUT_LOOKUP(layout2, fd));
   // ECallHostWrite(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:105)
-  GetDataStruct x4 = exec_MemoryRead(arg0, Val(1073725451), LAYOUT_LOOKUP(layout2, ptr));
+  GetDataStruct x4 = exec_MemoryRead(ctx, arg0, Val(1073725451), LAYOUT_LOOKUP(layout2, ptr));
   // ECallHostWrite(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:106)
-  GetDataStruct x5 = exec_MemoryRead(arg0, Val(1073725452), LAYOUT_LOOKUP(layout2, len));
+  GetDataStruct x5 = exec_MemoryRead(ctx, arg0, Val(1073725452), LAYOUT_LOOKUP(layout2, len));
   // ECallHostWrite(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:104)
   ValU32Struct x6 = x3._super;
   // ECallHostWrite(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:107)
@@ -5690,27 +5954,33 @@ ECallOutputStruct exec_ECallHostWrite(RegStruct arg0,
   // HostWrite(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:11)
   // ECallHostWrite(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:110)
   Val x10 = INVOKE_EXTERN(ctx, hostWrite, x6.low, x9.low, x9.high, x8);
-  NondetRegStruct x11 = exec_NondetU16Reg(x10, LAYOUT_LOOKUP(layout2, newLen));
+  NondetRegStruct x11 = exec_NondetU16Reg(ctx, x10, LAYOUT_LOOKUP(layout2, newLen));
   Val x12 = x11._super;
   // ECallHostWrite(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:112)
-  U16RegStruct x13 = exec_U16Reg((x8 - x12), LAYOUT_LOOKUP(layout2, diff));
+  U16RegStruct x13 = exec_U16Reg(ctx, (x8 - x12), LAYOUT_LOOKUP(layout2, diff));
   // ECallHostWrite(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:114)
-  MemoryWriteStruct x14 = exec_MemoryWrite(
-      arg0, Val(1073725450), ValU32Struct{.low = x12, .high = Val(0)}, LAYOUT_LOOKUP(layout2, _0));
+  MemoryWriteStruct x14 = exec_MemoryWrite(ctx,
+                                           arg0,
+                                           Val(1073725450),
+                                           ValU32Struct{.low = x12, .high = Val(0)},
+                                           LAYOUT_LOOKUP(layout2, _0));
   return ECallOutputStruct{.state = Val(32), .s0 = Val(0), .s1 = Val(0), .s2 = Val(0)};
 }
-ECallOutputStruct exec_ECallHostReadWords(RegStruct arg0,
-                                          InstInputStruct arg1,
-                                          Val arg2,
-                                          Val arg3,
-                                          BoundLayout<ECallHostReadWordsLayout> layout4) {
+__device__ ECallOutputStruct
+exec_ECallHostReadWords(ExecContext& ctx,
+                        RegStruct arg0,
+                        InstInputStruct arg1,
+                        Val arg2,
+                        Val arg3,
+                        BoundLayout<ECallHostReadWordsLayout> layout4) {
   // ECallHostReadWords(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:127)
   EQZ((arg1.state - Val(13)),
       "ECallHostReadWords(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:127)");
   // ECallHostReadWords(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:128)
-  DecomposeLow2Struct x5 = exec_DecomposeLow2(arg3, LAYOUT_LOOKUP(layout4, lenDecomp));
+  DecomposeLow2Struct x5 = exec_DecomposeLow2(ctx, arg3, LAYOUT_LOOKUP(layout4, lenDecomp));
   // ECallHostReadWords(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:129)
-  DecomposeLow2Struct x6 = exec_DecomposeLow2(x5.high._super, LAYOUT_LOOKUP(layout4, wordsDecomp));
+  DecomposeLow2Struct x6 =
+      exec_DecomposeLow2(ctx, x5.high._super, LAYOUT_LOOKUP(layout4, wordsDecomp));
   NondetRegStruct4Array x7 = x6.low2Hot._super;
   Val x8 = x6.highZero._super;
   // ECallHostReadWords(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:131)
@@ -5725,23 +5995,23 @@ ECallOutputStruct exec_ECallHostReadWords(RegStruct arg0,
   Val x13 = (((x9 + x10) + x11) + x12);
   // ECallHostReadWords(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:137)
   ECallHostReadWords__0Struct4Array x14 =
-      map({Val(0), Val(1), Val(2), Val(3)},
+      map(Val4Array{Val(0), Val(1), Val(2), Val(3)},
           LAYOUT_LOOKUP(layout4, _1),
-          std::function(
-              [&](Val4Array::value_type x15,
-                  BoundLayout<ECallHostReadWords__0_SuperLayout4LayoutArray::value_type> x16) {
-                // ECallHostReadWords(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:138)
-                Val x17 = ({x9, x10, x11, x12}[to_size_t(x15)] * (arg2 + x15));
-                Val x18 = (Val(1) - {x9, x10, x11, x12}[to_size_t(x15)]);
-                RegStruct x19 = exec_Reg((x17 + (x18 * Val(1073725504))), LAYOUT_LOOKUP(x16, addr));
-                // ECallHostReadWords(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:139)
-                MemoryWriteUnconstrainedStruct x20 =
-                    exec_MemoryWriteUnconstrained(arg0, x19._super._super, LAYOUT_LOOKUP(x16, _0));
-                return ECallHostReadWords__0Struct{};
-              }));
+          ([&](Val4Array::value_type x15,
+               BoundLayout<ECallHostReadWords__0_SuperLayout4LayoutArray::value_type> x16) {
+            // ECallHostReadWords(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:138)
+            Val x17 = (Val4Array{x9, x10, x11, x12}[to_size_t(x15)] * (arg2 + x15));
+            Val x18 = (Val(1) - Val4Array{x9, x10, x11, x12}[to_size_t(x15)]);
+            RegStruct x19 =
+                exec_Reg(ctx, (x17 + (x18 * Val(1073725504))), LAYOUT_LOOKUP(x16, addr));
+            // ECallHostReadWords(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:139)
+            MemoryWriteUnconstrainedStruct x20 =
+                exec_MemoryWriteUnconstrained(ctx, arg0, x19._super._super, LAYOUT_LOOKUP(x16, _0));
+            return ECallHostReadWords__0Struct{};
+          }));
   // ECallHostReadWords(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:141)
   Val x21 = (arg3 - (x13 * Val(4)));
-  NondetRegStruct x22 = exec_IsZero(x21, LAYOUT_LOOKUP(layout4, lenZero));
+  NondetRegStruct x22 = exec_IsZero(ctx, x21, LAYOUT_LOOKUP(layout4, lenZero));
   Val x23 = x22._super;
   // ECallHostReadWords(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:146)
   Val x24 = (Val(1) - x23);
@@ -5754,10 +6024,11 @@ ECallOutputStruct exec_ECallHostReadWords(RegStruct arg0,
                            .s1 = Val(0),
                            .s2 = x21};
 }
-InstOutputStruct exec_ECall0(RegStruct arg0,
-                             InstInputStruct arg1,
-                             BoundLayout<ECall0Layout> layout2,
-                             GlobalBuf global3) {
+__device__ InstOutputStruct exec_ECall0(ExecContext& ctx,
+                                        RegStruct arg0,
+                                        InstInputStruct arg1,
+                                        BoundLayout<ECall0Layout> layout2,
+                                        GlobalBuf global3) {
   // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:153)
   BoundLayout<NondetRegLayout> x4 = LAYOUT_LOOKUP(layout2, s0);
   // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:155)
@@ -5768,7 +6039,7 @@ InstOutputStruct exec_ECall0(RegStruct arg0,
   ValU32Struct x7 = arg1.pcU32;
   // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:156)
   AddrDecomposeBitsStruct x8 =
-      exec_AddrDecomposeBits(x7, arg1.mode, LAYOUT_LOOKUP(layout2, pcAddr));
+      exec_AddrDecomposeBits(ctx, x7, arg1.mode, LAYOUT_LOOKUP(layout2, pcAddr));
   // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:157)
   EQZ(x8.low2, "ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:157)");
   // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:152)
@@ -5849,7 +6120,8 @@ InstOutputStruct exec_ECall0(RegStruct arg0,
   ECallOutputStruct x77;
   if (to_size_t(x9[0]._super)) {
     // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:159)
-    ECallOutputStruct x78 = exec_MachineECall(arg0, arg1, x8._super, LAYOUT_LOOKUP(x10, _super));
+    ECallOutputStruct x78 =
+        exec_MachineECall(ctx, arg0, arg1, x8._super, LAYOUT_LOOKUP(x10, _super));
     // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:158)
     STORE(x16, Val(0));
     EQZ(LOAD(x16, 0), "ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:158)");
@@ -5870,7 +6142,8 @@ InstOutputStruct exec_ECall0(RegStruct arg0,
     x77 = x78;
   } else if (to_size_t(x9[1]._super)) {
     // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:160)
-    ECallOutputStruct x79 = exec_ECallTerminate(arg0, arg1, LAYOUT_LOOKUP(x11, _super), global3);
+    ECallOutputStruct x79 =
+        exec_ECallTerminate(ctx, arg0, arg1, LAYOUT_LOOKUP(x11, _super), global3);
     // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:158)
     STORE(x24, Val(0));
     EQZ(LOAD(x24, 0), "ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:158)");
@@ -5891,11 +6164,11 @@ InstOutputStruct exec_ECall0(RegStruct arg0,
     x77 = x79;
   } else if (to_size_t(x9[2]._super)) {
     // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:161)
-    ECallOutputStruct x80 = exec_ECallHostReadSetup(arg0, arg1, LAYOUT_LOOKUP(x6, arm2));
+    ECallOutputStruct x80 = exec_ECallHostReadSetup(ctx, arg0, arg1, LAYOUT_LOOKUP(x6, arm2));
     x77 = x80;
   } else if (to_size_t(x9[3]._super)) {
     // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:162)
-    ECallOutputStruct x81 = exec_ECallHostWrite(arg0, arg1, LAYOUT_LOOKUP(x6, arm3));
+    ECallOutputStruct x81 = exec_ECallHostWrite(ctx, arg0, arg1, LAYOUT_LOOKUP(x6, arm3));
     x77 = x81;
   } else if (to_size_t(x9[4]._super)) {
     // ECallHostReadBytes(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:121)
@@ -5939,10 +6212,10 @@ InstOutputStruct exec_ECall0(RegStruct arg0,
     x77 = ECallOutputStruct{.state = Val(16), .s0 = Val(0), .s1 = Val(0), .s2 = Val(0)};
   } else if (to_size_t(x9[5]._super)) {
     // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:164)
-    RegStruct x82 = back_Reg(1, x4);
-    RegStruct x83 = back_Reg(1, x5);
+    RegStruct x82 = back_Reg(ctx, 1, x4);
+    RegStruct x83 = back_Reg(ctx, 1, x5);
     ECallOutputStruct x84 = exec_ECallHostReadWords(
-        arg0, arg1, x82._super._super, x83._super._super, LAYOUT_LOOKUP(x13, _super));
+        ctx, arg0, arg1, x82._super._super, x83._super._super, LAYOUT_LOOKUP(x13, _super));
     // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:158)
     STORE(x46, Val(0));
     EQZ(LOAD(x46, 0), "ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:158)");
@@ -6025,46 +6298,48 @@ InstOutputStruct exec_ECall0(RegStruct arg0,
     assert(0 && "Reached unreachable mux arm");
   }
   // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:168)
-  RegStruct x85 = exec_Reg(x77.s0, x4);
+  RegStruct x85 = exec_Reg(ctx, x77.s0, x4);
   // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:169)
-  RegStruct x86 = exec_Reg(x77.s1, LAYOUT_LOOKUP(layout2, s1));
+  RegStruct x86 = exec_Reg(ctx, x77.s1, LAYOUT_LOOKUP(layout2, s1));
   // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:170)
-  RegStruct x87 = exec_Reg(x77.s2, x5);
+  RegStruct x87 = exec_Reg(ctx, x77.s2, x5);
   // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:158)
   Val x88 = x77.state;
   // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:171)
-  NondetRegStruct x89 = exec_IsZero((x88 - Val(32)), LAYOUT_LOOKUP(layout2, isDecode));
+  NondetRegStruct x89 = exec_IsZero(ctx, (x88 - Val(32)), LAYOUT_LOOKUP(layout2, isDecode));
   // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:172)
-  NondetRegStruct x90 = exec_IsZero((x88 - Val(16)), LAYOUT_LOOKUP(layout2, isP2Entry));
+  NondetRegStruct x90 = exec_IsZero(ctx, (x88 - Val(16)), LAYOUT_LOOKUP(layout2, isP2Entry));
   // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:173)
   Val x91 = ((x89._super + x90._super) * Val(4));
   // DenormedValU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:20)
   // AddU32(zirgen/circuit/rv32im/v2/dsl/u32.zir:27)
   DenormedValU32Struct x92 = DenormedValU32Struct{.low = (x7.low + x91), .high = x7.high};
-  NormalizeU32Struct x93 = exec_NormalizeU32(x92, LAYOUT_LOOKUP(layout2, addPC));
+  NormalizeU32Struct x93 = exec_NormalizeU32(ctx, x92, LAYOUT_LOOKUP(layout2, addPC));
   // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:152)
   Val x94 = arg0._super._super;
   // GetDiffCount(zirgen/circuit/rv32im/v2/dsl/mem.zir:22)
   // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:175)
   Val x95 = INVOKE_EXTERN(ctx, getDiffCount, x94);
-  CycleArgStruct x96 = exec_CycleArg(neg_0(x95), x94, LAYOUT_LOOKUP(layout2, arg));
+  CycleArgStruct x96 = exec_CycleArg(ctx, neg_0(x95), x94, LAYOUT_LOOKUP(layout2, arg));
   // ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:177)
   Val x97 = (x96.cycle._super - x94);
   EQZ(x97, "ECall0(zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir:177)");
   return InstOutputStruct{.newPc = x93._super, .newState = x88, .newMode = Val(1)};
 }
-RegStruct exec_SBox(Val arg0, BoundLayout<SBoxLayout> layout1) {
+__device__ RegStruct exec_SBox(ExecContext& ctx, Val arg0, BoundLayout<SBoxLayout> layout1) {
   // SBox(zirgen/circuit/rv32im/v2/dsl/poseidon2.zir:25)
-  RegStruct x2 = exec_Reg(((arg0 * arg0) * arg0), LAYOUT_LOOKUP(layout1, cubed));
+  RegStruct x2 = exec_Reg(ctx, ((arg0 * arg0) * arg0), LAYOUT_LOOKUP(layout1, cubed));
   Val x3 = x2._super._super;
   // SBox(zirgen/circuit/rv32im/v2/dsl/poseidon2.zir:26)
-  RegStruct x4 = exec_Reg(((x3 * x3) * arg0), LAYOUT_LOOKUP(layout1, _super));
+  RegStruct x4 = exec_Reg(ctx, ((x3 * x3) * arg0), LAYOUT_LOOKUP(layout1, _super));
   return x4;
 }
-MultiplyByMIntStruct
-exec_DoIntRound(Val24Array arg0, Val arg1, BoundLayout<DoIntRoundLayout> layout2) {
+__device__ MultiplyByMIntStruct exec_DoIntRound(ExecContext& ctx,
+                                                Val24Array arg0,
+                                                Val arg1,
+                                                BoundLayout<DoIntRoundLayout> layout2) {
   // DoIntRound(zirgen/circuit/rv32im/v2/dsl/poseidon2.zir:32)
-  RegStruct x3 = exec_SBox((arg0[0] + arg1), LAYOUT_LOOKUP(layout2, sbox));
+  RegStruct x3 = exec_SBox(ctx, (arg0[0] + arg1), LAYOUT_LOOKUP(layout2, sbox));
   Val x4 = x3._super._super;
   // MultiplyByMInt(zirgen/circuit/rv32im/v2/dsl/poseidon2.zir:13)
   // DoIntRound(zirgen/circuit/rv32im/v2/dsl/poseidon2.zir:34)
@@ -6077,7 +6352,7 @@ exec_DoIntRound(Val24Array arg0, Val arg1, BoundLayout<DoIntRoundLayout> layout2
   Val x11 = (((x10 + arg0[19]) + arg0[20]) + arg0[21]);
   Val x12 = ((x11 + arg0[22]) + arg0[23]);
   // MultiplyByMInt(zirgen/circuit/rv32im/v2/dsl/poseidon2.zir:14)
-  MultiplyByMInt_Super_SuperStruct24Array x13 = {
+  MultiplyByMInt_Super_SuperStruct24Array x13 = MultiplyByMInt_Super_SuperStruct24Array{
       MultiplyByMInt_Super_SuperStruct{._super = (x12 + (x4 * Val(1083257840)))},
       MultiplyByMInt_Super_SuperStruct{._super = (x12 + (arg0[1] * Val(375892129)))},
       MultiplyByMInt_Super_SuperStruct{._super = (x12 + (arg0[2] * Val(111593398)))},
@@ -6104,60 +6379,65 @@ exec_DoIntRound(Val24Array arg0, Val arg1, BoundLayout<DoIntRoundLayout> layout2
       MultiplyByMInt_Super_SuperStruct{._super = (x12 + (arg0[23] * Val(918610824)))}};
   return MultiplyByMIntStruct{._super = x13};
 }
-DoIntRoundsStruct exec_DoIntRounds(Val24Array arg0, BoundLayout<DoIntRoundsLayout> layout1) {
+__device__ DoIntRoundsStruct exec_DoIntRounds(ExecContext& ctx,
+                                              Val24Array arg0,
+                                              BoundLayout<DoIntRoundsLayout> layout1) {
   // DoIntRounds(zirgen/circuit/rv32im/v2/dsl/poseidon2.zir:38)
-  DoIntRounds__0_SuperStruct21Array x2 = {DoIntRounds__0_SuperStruct{._super = Val(497520322)},
-                                          DoIntRounds__0_SuperStruct{._super = Val(1930103076)},
-                                          DoIntRounds__0_SuperStruct{._super = Val(1052077299)},
-                                          DoIntRounds__0_SuperStruct{._super = Val(1540960371)},
-                                          DoIntRounds__0_SuperStruct{._super = Val(924863639)},
-                                          DoIntRounds__0_SuperStruct{._super = Val(1365519753)},
-                                          DoIntRounds__0_SuperStruct{._super = Val(1726563304)},
-                                          DoIntRounds__0_SuperStruct{._super = Val(440300254)},
-                                          DoIntRounds__0_SuperStruct{._super = Val(1891545577)},
-                                          DoIntRounds__0_SuperStruct{._super = Val(822033215)},
-                                          DoIntRounds__0_SuperStruct{._super = Val(1111544260)},
-                                          DoIntRounds__0_SuperStruct{._super = Val(308575117)},
-                                          DoIntRounds__0_SuperStruct{._super = Val(1708681573)},
-                                          DoIntRounds__0_SuperStruct{._super = Val(1240419708)},
-                                          DoIntRounds__0_SuperStruct{._super = Val(1199068823)},
-                                          DoIntRounds__0_SuperStruct{._super = Val(1186174623)},
-                                          DoIntRounds__0_SuperStruct{._super = Val(1551596046)},
-                                          DoIntRounds__0_SuperStruct{._super = Val(1886977120)},
-                                          DoIntRounds__0_SuperStruct{._super = Val(1327682690)},
-                                          DoIntRounds__0_SuperStruct{._super = Val(1210751726)},
-                                          DoIntRounds__0_SuperStruct{._super = Val(1810596765)}};
-  Val24Array x3 = reduce(
-      x2,
-      arg0,
-      LAYOUT_LOOKUP(layout1, _super),
-      std::function([&](Val24Array x4,
-                        DoIntRounds__0_SuperStruct21Array::value_type x5,
-                        BoundLayout<DoIntRoundLayout21LayoutArray::value_type> x6) {
-        MultiplyByMIntStruct x7 = exec_DoIntRound(x4, x5._super, x6);
-        MultiplyByMInt_Super_SuperStruct24Array x8 = x7._super;
-        Val24Array x9 = {x8[0]._super,  x8[1]._super,  x8[2]._super,  x8[3]._super,  x8[4]._super,
-                         x8[5]._super,  x8[6]._super,  x8[7]._super,  x8[8]._super,  x8[9]._super,
-                         x8[10]._super, x8[11]._super, x8[12]._super, x8[13]._super, x8[14]._super,
-                         x8[15]._super, x8[16]._super, x8[17]._super, x8[18]._super, x8[19]._super,
-                         x8[20]._super, x8[21]._super, x8[22]._super, x8[23]._super};
-        return x9;
-      }));
+  DoIntRounds__0_SuperStruct21Array x2 =
+      DoIntRounds__0_SuperStruct21Array{DoIntRounds__0_SuperStruct{._super = Val(497520322)},
+                                        DoIntRounds__0_SuperStruct{._super = Val(1930103076)},
+                                        DoIntRounds__0_SuperStruct{._super = Val(1052077299)},
+                                        DoIntRounds__0_SuperStruct{._super = Val(1540960371)},
+                                        DoIntRounds__0_SuperStruct{._super = Val(924863639)},
+                                        DoIntRounds__0_SuperStruct{._super = Val(1365519753)},
+                                        DoIntRounds__0_SuperStruct{._super = Val(1726563304)},
+                                        DoIntRounds__0_SuperStruct{._super = Val(440300254)},
+                                        DoIntRounds__0_SuperStruct{._super = Val(1891545577)},
+                                        DoIntRounds__0_SuperStruct{._super = Val(822033215)},
+                                        DoIntRounds__0_SuperStruct{._super = Val(1111544260)},
+                                        DoIntRounds__0_SuperStruct{._super = Val(308575117)},
+                                        DoIntRounds__0_SuperStruct{._super = Val(1708681573)},
+                                        DoIntRounds__0_SuperStruct{._super = Val(1240419708)},
+                                        DoIntRounds__0_SuperStruct{._super = Val(1199068823)},
+                                        DoIntRounds__0_SuperStruct{._super = Val(1186174623)},
+                                        DoIntRounds__0_SuperStruct{._super = Val(1551596046)},
+                                        DoIntRounds__0_SuperStruct{._super = Val(1886977120)},
+                                        DoIntRounds__0_SuperStruct{._super = Val(1327682690)},
+                                        DoIntRounds__0_SuperStruct{._super = Val(1210751726)},
+                                        DoIntRounds__0_SuperStruct{._super = Val(1810596765)}};
+  Val24Array x3 =
+      reduce(x2,
+             arg0,
+             LAYOUT_LOOKUP(layout1, _super),
+             ([&](Val24Array x4,
+                  DoIntRounds__0_SuperStruct21Array::value_type x5,
+                  BoundLayout<DoIntRoundLayout21LayoutArray::value_type> x6) {
+               MultiplyByMIntStruct x7 = exec_DoIntRound(ctx, x4, x5._super, x6);
+               MultiplyByMInt_Super_SuperStruct24Array x8 = x7._super;
+               Val24Array x9 = Val24Array{
+                   x8[0]._super,  x8[1]._super,  x8[2]._super,  x8[3]._super,  x8[4]._super,
+                   x8[5]._super,  x8[6]._super,  x8[7]._super,  x8[8]._super,  x8[9]._super,
+                   x8[10]._super, x8[11]._super, x8[12]._super, x8[13]._super, x8[14]._super,
+                   x8[15]._super, x8[16]._super, x8[17]._super, x8[18]._super, x8[19]._super,
+                   x8[20]._super, x8[21]._super, x8[22]._super, x8[23]._super};
+               return x9;
+             }));
   return DoIntRoundsStruct{._super = x3};
 }
-MultiplyByMExtStruct
-exec_DoExtRound(Val24Array arg0, Val24Array arg1, BoundLayout<DoExtRoundLayout> layout2) {
+__device__ MultiplyByMExtStruct exec_DoExtRound(ExecContext& ctx,
+                                                Val24Array arg0,
+                                                Val24Array arg1,
+                                                BoundLayout<DoExtRoundLayout> layout2) {
   // DoExtRound(zirgen/circuit/rv32im/v2/dsl/poseidon2.zir:103)
   RegStruct24Array x3 =
-      map({Val(0),  Val(1),  Val(2),  Val(3),  Val(4),  Val(5),  Val(6),  Val(7),
-           Val(8),  Val(9),  Val(10), Val(11), Val(12), Val(13), Val(14), Val(15),
-           Val(16), Val(17), Val(18), Val(19), Val(20), Val(21), Val(22), Val(23)},
+      map(Val24Array{Val(0),  Val(1),  Val(2),  Val(3),  Val(4),  Val(5),  Val(6),  Val(7),
+                     Val(8),  Val(9),  Val(10), Val(11), Val(12), Val(13), Val(14), Val(15),
+                     Val(16), Val(17), Val(18), Val(19), Val(20), Val(21), Val(22), Val(23)},
           LAYOUT_LOOKUP(layout2, _1),
-          std::function(
-              [&](Val24Array::value_type x4, BoundLayout<SBoxLayout24LayoutArray::value_type> x5) {
-                RegStruct x6 = exec_SBox((arg0[to_size_t(x4)] + arg1[to_size_t(x4)]), x5);
-                return x6;
-              }));
+          ([&](Val24Array::value_type x4, BoundLayout<SBoxLayout24LayoutArray::value_type> x5) {
+            RegStruct x6 = exec_SBox(ctx, (arg0[to_size_t(x4)] + arg1[to_size_t(x4)]), x5);
+            return x6;
+          }));
   Val x7 = x3[0]._super._super;
   Val x8 = x3[1]._super._super;
   Val x9 = x3[2]._super._super;
@@ -6290,7 +6570,7 @@ exec_DoExtRound(Val24Array arg0, Val24Array arg1, BoundLayout<DoExtRoundLayout> 
   Val x85 = ((x81 + x70) + x78);
   Val x86 = ((x82 + x67) + x75);
   // MultiplyByMExt(zirgen/circuit/rv32im/v2/dsl/poseidon2.zir:65)
-  MultiplyByMExt_Super_SuperStruct24Array x87 = {
+  MultiplyByMExt_Super_SuperStruct24Array x87 = MultiplyByMExt_Super_SuperStruct24Array{
       MultiplyByMExt_Super_SuperStruct{._super = (x37 + x83)},
       MultiplyByMExt_Super_SuperStruct{._super = (x36 + x84)},
       MultiplyByMExt_Super_SuperStruct{._super = (x38 + x85)},
@@ -6317,10 +6597,12 @@ exec_DoExtRound(Val24Array arg0, Val24Array arg1, BoundLayout<DoExtRoundLayout> 
       MultiplyByMExt_Super_SuperStruct{._super = (x75 + x86)}};
   return MultiplyByMExtStruct{._super = x87};
 }
-MultiplyByMExtStruct
-exec_DoExtRoundByIdx(Val24Array arg0, Val arg1, BoundLayout<DoExtRoundByIdxLayout> layout2) {
+__device__ MultiplyByMExtStruct exec_DoExtRoundByIdx(ExecContext& ctx,
+                                                     Val24Array arg0,
+                                                     Val arg1,
+                                                     BoundLayout<DoExtRoundByIdxLayout> layout2) {
   // DoExtRoundByIdx(zirgen/circuit/rv32im/v2/dsl/poseidon2.zir:115)
-  OneHot_8_Struct x3 = exec_OneHot_8_(arg1, LAYOUT_LOOKUP(layout2, idxHot));
+  OneHot_8_Struct x3 = exec_OneHot_8_(ctx, arg1, LAYOUT_LOOKUP(layout2, idxHot));
   NondetRegStruct8Array x4 = x3.bits;
   Val x5 = x4[0]._super;
   Val x6 = x4[1]._super;
@@ -6380,70 +6662,71 @@ exec_DoExtRoundByIdx(Val24Array arg0, Val arg1, BoundLayout<DoExtRoundByIdxLayou
   Val x58 = (((x34 + (x8 * Val(273790406))) + (x9 * Val(1470845646))) + (x10 * Val(1715719711)));
   Val x59 = (((x35 + (x8 * Val(1781980094))) + (x9 * Val(1792450386))) + (x10 * Val(755691969)));
   Val x60 = (((x36 + (x8 * Val(1291790245))) + (x9 * Val(1040977421))) + (x10 * Val(150307788)));
-  Val24Array x61 = {((x37 + (x11 * Val(1567618575))) + (x12 * Val(1206940496))),
-                    ((x38 + (x11 * Val(1663353317))) + (x12 * Val(1896271507))),
-                    ((x39 + (x11 * Val(1950429111))) + (x12 * Val(1003792297))),
-                    ((x40 + (x11 * Val(1891637550))) + (x12 * Val(738091882))),
-                    ((x41 + (x11 * Val(192082241))) + (x12 * Val(1124078057))),
-                    ((x42 + (x11 * Val(1080533265))) + (x12 * Val(1889898))),
-                    ((x43 + (x11 * Val(1463323727))) + (x12 * Val(813674331))),
-                    ((x44 + (x11 * Val(890243564))) + (x12 * Val(228520958))),
-                    ((x45 + (x11 * Val(158646617))) + (x12 * Val(1832911930))),
-                    ((x46 + (x11 * Val(1402624179))) + (x12 * Val(781141772))),
-                    ((x47 + (x11 * Val(59510015))) + (x12 * Val(459826664))),
-                    ((x48 + (x11 * Val(1198261138))) + (x12 * Val(202271745))),
-                    ((x49 + (x11 * Val(1065075039))) + (x12 * Val(1296144415))),
-                    ((x50 + (x11 * Val(1150410028))) + (x12 * Val(1111203133))),
-                    ((x51 + (x11 * Val(1293938517))) + (x12 * Val(1090783436))),
-                    ((x52 + (x11 * Val(76770019))) + (x12 * Val(641665156))),
-                    ((x53 + (x11 * Val(1478577620))) + (x12 * Val(1393671120))),
-                    ((x54 + (x11 * Val(1748789933))) + (x12 * Val(1303271640))),
-                    ((x55 + (x11 * Val(457372011))) + (x12 * Val(809508074))),
-                    ((x56 + (x11 * Val(1841795381))) + (x12 * Val(162506101))),
-                    ((x57 + (x11 * Val(760115692))) + (x12 * Val(1262312258))),
-                    ((x58 + (x11 * Val(1042892522))) + (x12 * Val(1672219447))),
-                    ((x59 + (x11 * Val(1507649755))) + (x12 * Val(1608891156))),
-                    ((x60 + (x11 * Val(1827572010))) + (x12 * Val(1380248020)))};
+  Val24Array x61 = Val24Array{((x37 + (x11 * Val(1567618575))) + (x12 * Val(1206940496))),
+                              ((x38 + (x11 * Val(1663353317))) + (x12 * Val(1896271507))),
+                              ((x39 + (x11 * Val(1950429111))) + (x12 * Val(1003792297))),
+                              ((x40 + (x11 * Val(1891637550))) + (x12 * Val(738091882))),
+                              ((x41 + (x11 * Val(192082241))) + (x12 * Val(1124078057))),
+                              ((x42 + (x11 * Val(1080533265))) + (x12 * Val(1889898))),
+                              ((x43 + (x11 * Val(1463323727))) + (x12 * Val(813674331))),
+                              ((x44 + (x11 * Val(890243564))) + (x12 * Val(228520958))),
+                              ((x45 + (x11 * Val(158646617))) + (x12 * Val(1832911930))),
+                              ((x46 + (x11 * Val(1402624179))) + (x12 * Val(781141772))),
+                              ((x47 + (x11 * Val(59510015))) + (x12 * Val(459826664))),
+                              ((x48 + (x11 * Val(1198261138))) + (x12 * Val(202271745))),
+                              ((x49 + (x11 * Val(1065075039))) + (x12 * Val(1296144415))),
+                              ((x50 + (x11 * Val(1150410028))) + (x12 * Val(1111203133))),
+                              ((x51 + (x11 * Val(1293938517))) + (x12 * Val(1090783436))),
+                              ((x52 + (x11 * Val(76770019))) + (x12 * Val(641665156))),
+                              ((x53 + (x11 * Val(1478577620))) + (x12 * Val(1393671120))),
+                              ((x54 + (x11 * Val(1748789933))) + (x12 * Val(1303271640))),
+                              ((x55 + (x11 * Val(457372011))) + (x12 * Val(809508074))),
+                              ((x56 + (x11 * Val(1841795381))) + (x12 * Val(162506101))),
+                              ((x57 + (x11 * Val(760115692))) + (x12 * Val(1262312258))),
+                              ((x58 + (x11 * Val(1042892522))) + (x12 * Val(1672219447))),
+                              ((x59 + (x11 * Val(1507649755))) + (x12 * Val(1608891156))),
+                              ((x60 + (x11 * Val(1827572010))) + (x12 * Val(1380248020)))};
   // DoExtRoundByIdx(zirgen/circuit/rv32im/v2/dsl/poseidon2.zir:122)
-  MultiplyByMExtStruct x62 = exec_DoExtRound(arg0, x61, LAYOUT_LOOKUP(layout2, _super));
+  MultiplyByMExtStruct x62 = exec_DoExtRound(ctx, arg0, x61, LAYOUT_LOOKUP(layout2, _super));
   return x62;
 }
-PoseidonStateStruct back_PoseidonState(Index distance0, BoundLayout<PoseidonStateLayout> layout1) {
+__device__ PoseidonStateStruct back_PoseidonState(ExecContext& ctx,
+                                                  Index distance0,
+                                                  BoundLayout<PoseidonStateLayout> layout1) {
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:34)
-  RegStruct x2 = back_Reg(distance0, LAYOUT_LOOKUP(layout1, hasState));
+  RegStruct x2 = back_Reg(ctx, distance0, LAYOUT_LOOKUP(layout1, hasState));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:35)
-  RegStruct x3 = back_Reg(distance0, LAYOUT_LOOKUP(layout1, stateAddr));
+  RegStruct x3 = back_Reg(ctx, distance0, LAYOUT_LOOKUP(layout1, stateAddr));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:36)
-  RegStruct x4 = back_Reg(distance0, LAYOUT_LOOKUP(layout1, bufOutAddr));
+  RegStruct x4 = back_Reg(ctx, distance0, LAYOUT_LOOKUP(layout1, bufOutAddr));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:37)
-  RegStruct x5 = back_Reg(distance0, LAYOUT_LOOKUP(layout1, isElem));
+  RegStruct x5 = back_Reg(ctx, distance0, LAYOUT_LOOKUP(layout1, isElem));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:38)
-  RegStruct x6 = back_Reg(distance0, LAYOUT_LOOKUP(layout1, checkOut));
+  RegStruct x6 = back_Reg(ctx, distance0, LAYOUT_LOOKUP(layout1, checkOut));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:39)
-  RegStruct x7 = back_Reg(distance0, LAYOUT_LOOKUP(layout1, loadTxType));
+  RegStruct x7 = back_Reg(ctx, distance0, LAYOUT_LOOKUP(layout1, loadTxType));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:41)
-  RegStruct x8 = back_Reg(distance0, LAYOUT_LOOKUP(layout1, nextState));
+  RegStruct x8 = back_Reg(ctx, distance0, LAYOUT_LOOKUP(layout1, nextState));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:42)
-  RegStruct x9 = back_Reg(distance0, LAYOUT_LOOKUP(layout1, subState));
+  RegStruct x9 = back_Reg(ctx, distance0, LAYOUT_LOOKUP(layout1, subState));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:43)
-  RegStruct x10 = back_Reg(distance0, LAYOUT_LOOKUP(layout1, bufInAddr));
+  RegStruct x10 = back_Reg(ctx, distance0, LAYOUT_LOOKUP(layout1, bufInAddr));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:44)
-  RegStruct x11 = back_Reg(distance0, LAYOUT_LOOKUP(layout1, count));
+  RegStruct x11 = back_Reg(ctx, distance0, LAYOUT_LOOKUP(layout1, count));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:45)
-  RegStruct x12 = back_Reg(distance0, LAYOUT_LOOKUP(layout1, mode));
+  RegStruct x12 = back_Reg(ctx, distance0, LAYOUT_LOOKUP(layout1, mode));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:47)
-  RegStruct24Array x13 =
-      map({Val(0),  Val(1),  Val(2),  Val(3),  Val(4),  Val(5),  Val(6),  Val(7),
-           Val(8),  Val(9),  Val(10), Val(11), Val(12), Val(13), Val(14), Val(15),
-           Val(16), Val(17), Val(18), Val(19), Val(20), Val(21), Val(22), Val(23)},
-          LAYOUT_LOOKUP(layout1, inner),
-          std::function([&](Val24Array::value_type x14,
-                            BoundLayout<NondetRegLayout24LayoutArray::value_type> x15) {
-            RegStruct x16 = back_Reg(distance0, x15);
-            return x16;
-          }));
+  RegStruct24Array x13 = map(
+      Val24Array{Val(0),  Val(1),  Val(2),  Val(3),  Val(4),  Val(5),  Val(6),  Val(7),
+                 Val(8),  Val(9),  Val(10), Val(11), Val(12), Val(13), Val(14), Val(15),
+                 Val(16), Val(17), Val(18), Val(19), Val(20), Val(21), Val(22), Val(23)},
+      LAYOUT_LOOKUP(layout1, inner),
+      ([&](Val24Array::value_type x14, BoundLayout<NondetRegLayout24LayoutArray::value_type> x15) {
+        RegStruct x16 = back_Reg(ctx, distance0, x15);
+        return x16;
+      }));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:48)
-  NondetExtRegStruct x17 = back_ExtReg(distance0, LAYOUT_LOOKUP(layout1, zcheck));
+  NondetExtRegStruct x17 = back_ExtReg(ctx, distance0, LAYOUT_LOOKUP(layout1, zcheck));
   return PoseidonStateStruct{.hasState = x2,
                              .stateAddr = x3,
                              .bufOutAddr = x4,
@@ -6458,48 +6741,48 @@ PoseidonStateStruct back_PoseidonState(Index distance0, BoundLayout<PoseidonStat
                              .inner = x13,
                              .zcheck = x17};
 }
-PoseidonStateStruct exec_PoseidonState(PoseidonOpDefStruct arg0,
-                                       Val arg1,
-                                       Val arg2,
-                                       Val arg3,
-                                       Val arg4,
-                                       Val arg5,
-                                       Val24Array arg6,
-                                       ExtVal arg7,
-                                       BoundLayout<PoseidonStateLayout> layout8) {
+__device__ PoseidonStateStruct exec_PoseidonState(ExecContext& ctx,
+                                                  PoseidonOpDefStruct arg0,
+                                                  Val arg1,
+                                                  Val arg2,
+                                                  Val arg3,
+                                                  Val arg4,
+                                                  Val arg5,
+                                                  Val24Array arg6,
+                                                  ExtVal arg7,
+                                                  BoundLayout<PoseidonStateLayout> layout8) {
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:34)
-  RegStruct x9 = exec_Reg(arg0.hasState, LAYOUT_LOOKUP(layout8, hasState));
+  RegStruct x9 = exec_Reg(ctx, arg0.hasState, LAYOUT_LOOKUP(layout8, hasState));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:35)
-  RegStruct x10 = exec_Reg(arg0.stateAddr, LAYOUT_LOOKUP(layout8, stateAddr));
+  RegStruct x10 = exec_Reg(ctx, arg0.stateAddr, LAYOUT_LOOKUP(layout8, stateAddr));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:36)
-  RegStruct x11 = exec_Reg(arg0.bufOutAddr, LAYOUT_LOOKUP(layout8, bufOutAddr));
+  RegStruct x11 = exec_Reg(ctx, arg0.bufOutAddr, LAYOUT_LOOKUP(layout8, bufOutAddr));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:37)
-  RegStruct x12 = exec_Reg(arg0.isElem, LAYOUT_LOOKUP(layout8, isElem));
+  RegStruct x12 = exec_Reg(ctx, arg0.isElem, LAYOUT_LOOKUP(layout8, isElem));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:38)
-  RegStruct x13 = exec_Reg(arg0.checkOut, LAYOUT_LOOKUP(layout8, checkOut));
+  RegStruct x13 = exec_Reg(ctx, arg0.checkOut, LAYOUT_LOOKUP(layout8, checkOut));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:39)
-  RegStruct x14 = exec_Reg(arg0.loadTxType, LAYOUT_LOOKUP(layout8, loadTxType));
+  RegStruct x14 = exec_Reg(ctx, arg0.loadTxType, LAYOUT_LOOKUP(layout8, loadTxType));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:41)
-  RegStruct x15 = exec_Reg(arg1, LAYOUT_LOOKUP(layout8, nextState));
+  RegStruct x15 = exec_Reg(ctx, arg1, LAYOUT_LOOKUP(layout8, nextState));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:42)
-  RegStruct x16 = exec_Reg(arg2, LAYOUT_LOOKUP(layout8, subState));
+  RegStruct x16 = exec_Reg(ctx, arg2, LAYOUT_LOOKUP(layout8, subState));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:43)
-  RegStruct x17 = exec_Reg(arg3, LAYOUT_LOOKUP(layout8, bufInAddr));
+  RegStruct x17 = exec_Reg(ctx, arg3, LAYOUT_LOOKUP(layout8, bufInAddr));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:44)
-  RegStruct x18 = exec_Reg(arg4, LAYOUT_LOOKUP(layout8, count));
+  RegStruct x18 = exec_Reg(ctx, arg4, LAYOUT_LOOKUP(layout8, count));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:45)
-  RegStruct x19 = exec_Reg(arg5, LAYOUT_LOOKUP(layout8, mode));
+  RegStruct x19 = exec_Reg(ctx, arg5, LAYOUT_LOOKUP(layout8, mode));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:47)
-  RegStruct24Array x20 =
-      map(arg6,
-          LAYOUT_LOOKUP(layout8, inner),
-          std::function([&](Val24Array::value_type x21,
-                            BoundLayout<NondetRegLayout24LayoutArray::value_type> x22) {
-            RegStruct x23 = exec_Reg(x21, x22);
-            return x23;
-          }));
+  RegStruct24Array x20 = map(
+      arg6,
+      LAYOUT_LOOKUP(layout8, inner),
+      ([&](Val24Array::value_type x21, BoundLayout<NondetRegLayout24LayoutArray::value_type> x22) {
+        RegStruct x23 = exec_Reg(ctx, x21, x22);
+        return x23;
+      }));
   // PoseidonState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:48)
-  NondetExtRegStruct x24 = exec_ExtReg(arg7, LAYOUT_LOOKUP(layout8, zcheck));
+  NondetExtRegStruct x24 = exec_ExtReg(ctx, arg7, LAYOUT_LOOKUP(layout8, zcheck));
   return PoseidonStateStruct{.hasState = x9,
                              .stateAddr = x10,
                              .bufOutAddr = x11,
@@ -6514,12 +6797,14 @@ PoseidonStateStruct exec_PoseidonState(PoseidonOpDefStruct arg0,
                              .inner = x20,
                              .zcheck = x24};
 }
-PoseidonStateStruct exec_PoseidonInvalid(BoundLayout<PoseidonStateLayout> layout0) {
+__device__ PoseidonStateStruct exec_PoseidonInvalid(ExecContext& ctx,
+                                                    BoundLayout<PoseidonStateLayout> layout0) {
   // PoseidonInvalid(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:52)
   EQZ(Val(2013265920), "PoseidonInvalid(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:52)");
   // PoseidonInvalid(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:61)
   PoseidonStateStruct x1 =
-      exec_PoseidonState(PoseidonOpDefStruct{.hasState = Val(0),
+      exec_PoseidonState(ctx,
+                         PoseidonOpDefStruct{.hasState = Val(0),
                                              .stateAddr = Val(0),
                                              .bufOutAddr = Val(0),
                                              .isElem = Val(0),
@@ -6530,47 +6815,53 @@ PoseidonStateStruct exec_PoseidonInvalid(BoundLayout<PoseidonStateLayout> layout
                          Val(0),
                          Val(0),
                          Val(0),
-                         {Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-                          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-                          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
+                         Val24Array{Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                                    Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                                    Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
                          ExtVal(0, 0, 0, 0),
                          layout0);
   return x1;
 }
-ReadAddrStruct exec_ReadAddr(RegStruct arg0, Val arg1, BoundLayout<ReadAddrLayout> layout2) {
+__device__ ReadAddrStruct exec_ReadAddr(ExecContext& ctx,
+                                        RegStruct arg0,
+                                        Val arg1,
+                                        BoundLayout<ReadAddrLayout> layout2) {
   // ReadAddr(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:78)
   GetDataStruct x3 =
-      exec_MemoryRead(arg0, (arg1 + Val(1073725440)), LAYOUT_LOOKUP(layout2, addr32));
+      exec_MemoryRead(ctx, arg0, (arg1 + Val(1073725440)), LAYOUT_LOOKUP(layout2, addr32));
   ValU32Struct x4 = x3._super;
   // ReadAddr(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:79)
   Val x5 = ((x4.high * Val(16384)) + (x4.low * Val(1509949441)));
   return ReadAddrStruct{._super = x5};
 }
-PoseidonStateStruct
-exec_PoseidonEcall(RegStruct arg0, Val arg1, BoundLayout<PoseidonEcallLayout> layout2) {
+__device__ PoseidonStateStruct exec_PoseidonEcall(ExecContext& ctx,
+                                                  RegStruct arg0,
+                                                  Val arg1,
+                                                  BoundLayout<PoseidonEcallLayout> layout2) {
   // PoseidonEcall(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:84)
-  ReadAddrStruct x3 = exec_ReadAddr(arg0, Val(10), LAYOUT_LOOKUP(layout2, stateAddr));
+  ReadAddrStruct x3 = exec_ReadAddr(ctx, arg0, Val(10), LAYOUT_LOOKUP(layout2, stateAddr));
   // PoseidonEcall(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:85)
-  ReadAddrStruct x4 = exec_ReadAddr(arg0, Val(11), LAYOUT_LOOKUP(layout2, bufInAddr));
+  ReadAddrStruct x4 = exec_ReadAddr(ctx, arg0, Val(11), LAYOUT_LOOKUP(layout2, bufInAddr));
   // PoseidonEcall(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:86)
-  ReadAddrStruct x5 = exec_ReadAddr(arg0, Val(12), LAYOUT_LOOKUP(layout2, bufOutAddr));
+  ReadAddrStruct x5 = exec_ReadAddr(ctx, arg0, Val(12), LAYOUT_LOOKUP(layout2, bufOutAddr));
   // PoseidonEcall(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:87)
-  GetDataStruct x6 = exec_MemoryRead(arg0, Val(1073725453), LAYOUT_LOOKUP(layout2, bitsAndCount));
+  GetDataStruct x6 =
+      exec_MemoryRead(ctx, arg0, Val(1073725453), LAYOUT_LOOKUP(layout2, bitsAndCount));
   // PoseidonEcall(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:84)
   Val x7 = x3._super;
   // PoseidonEcall(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:90)
-  NondetRegStruct x8 = exec_IsZero(x7, LAYOUT_LOOKUP(layout2, _0));
+  NondetRegStruct x8 = exec_IsZero(ctx, x7, LAYOUT_LOOKUP(layout2, _0));
   Val x9 = (Val(1) - x8._super);
   // PoseidonEcall(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:87)
   ValU32Struct x10 = x6._super;
   Val x11 = x10.low;
   Val x12 = x10.high;
   // PoseidonEcall(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:94)
-  NondetRegStruct x13 = exec_NondetBitReg((bitAnd(x12, Val(32768)) * Val(2013204481)),
-                                          LAYOUT_LOOKUP(layout2, isElem));
+  NondetRegStruct x13 = exec_NondetBitReg(
+      ctx, (bitAnd(x12, Val(32768)) * Val(2013204481)), LAYOUT_LOOKUP(layout2, isElem));
   // PoseidonEcall(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:95)
-  NondetRegStruct x14 = exec_NondetBitReg((bitAnd(x12, Val(16384)) * Val(2013143041)),
-                                          LAYOUT_LOOKUP(layout2, checkOut));
+  NondetRegStruct x14 = exec_NondetBitReg(
+      ctx, (bitAnd(x12, Val(16384)) * Val(2013143041)), LAYOUT_LOOKUP(layout2, checkOut));
   // PoseidonEcall(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:94)
   Val x15 = x13._super;
   // PoseidonEcall(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:95)
@@ -6579,7 +6870,7 @@ exec_PoseidonEcall(RegStruct arg0, Val arg1, BoundLayout<PoseidonEcallLayout> la
   EQZ((x12 - ((x15 * Val(32768)) + (x16 * Val(16384)))),
       "PoseidonEcall(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:96)");
   // PoseidonEcall(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:99)
-  NondetRegStruct x17 = exec_IsZero(x11, LAYOUT_LOOKUP(layout2, countZero));
+  NondetRegStruct x17 = exec_IsZero(ctx, x11, LAYOUT_LOOKUP(layout2, countZero));
   Val x18 = x17._super;
   // PoseidonEcall(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:102)
   Val x19 = (Val(1) - x18);
@@ -6587,7 +6878,8 @@ exec_PoseidonEcall(RegStruct arg0, Val arg1, BoundLayout<PoseidonEcallLayout> la
   Val x20 = ((x18 * Val(32)) + ((x19 * x9) * Val(17)));
   // PoseidonEcall(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:105)
   PoseidonStateStruct x21 =
-      exec_PoseidonState(PoseidonOpDefStruct{.hasState = x9,
+      exec_PoseidonState(ctx,
+                         PoseidonOpDefStruct{.hasState = x9,
                                              .stateAddr = x7,
                                              .bufOutAddr = x5._super,
                                              .isElem = x15,
@@ -6598,15 +6890,17 @@ exec_PoseidonEcall(RegStruct arg0, Val arg1, BoundLayout<PoseidonEcallLayout> la
                          x4._super,
                          x11,
                          arg1,
-                         {Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-                          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-                          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
+                         Val24Array{Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                                    Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                                    Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
                          ExtVal(0, 0, 0, 0),
                          LAYOUT_LOOKUP(layout2, _super));
   return x21;
 }
-PoseidonStateStruct
-exec_PoseidonPagingEntry(RegStruct arg0, Val arg1, BoundLayout<PoseidonStateLayout> layout2) {
+__device__ PoseidonStateStruct exec_PoseidonPagingEntry(ExecContext& ctx,
+                                                        RegStruct arg0,
+                                                        Val arg1,
+                                                        BoundLayout<PoseidonStateLayout> layout2) {
   // Div(<preamble>:19)
   // PoseidonPagingEntry(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:110)
   Val x3 = (arg1 * Val(1342177281));
@@ -6622,27 +6916,29 @@ exec_PoseidonPagingEntry(RegStruct arg0, Val arg1, BoundLayout<PoseidonStateLayo
                                                .loadTxType = Val(1)};
   // PoseidonPagingEntry(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:119)
   PoseidonStateStruct x6 =
-      exec_PoseidonState(x5,
+      exec_PoseidonState(ctx,
+                         x5,
                          Val(22),
                          Val(0),
                          Val(0),
                          Val(0),
                          arg1,
-                         {Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-                          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-                          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
+                         Val24Array{Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                                    Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                                    Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
                          ExtVal(0, 0, 0, 0),
                          layout2);
   return x6;
 }
-PoseidonStateStruct exec_PoseidonEntry(RegStruct arg0,
-                                       ValU32Struct arg1,
-                                       Val arg2,
-                                       BoundLayout<PoseidonEntryLayout> layout3) {
+__device__ PoseidonStateStruct exec_PoseidonEntry(ExecContext& ctx,
+                                                  RegStruct arg0,
+                                                  ValU32Struct arg1,
+                                                  Val arg2,
+                                                  BoundLayout<PoseidonEntryLayout> layout3) {
   // PoseidonEntry(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:132)
   BoundLayout<PoseidonEntry_SuperLayout> x4 = LAYOUT_LOOKUP(layout3, _super);
   // PoseidonEntry(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:131)
-  NondetRegStruct x5 = exec_IsZero((arg1.low + arg1.high), LAYOUT_LOOKUP(layout3, pcZero));
+  NondetRegStruct x5 = exec_IsZero(ctx, (arg1.low + arg1.high), LAYOUT_LOOKUP(layout3, pcZero));
   Val x6 = x5._super;
   // PoseidonEntry(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:132)
   BoundLayout<PoseidonEntry_SuperArm0Layout> x7 = LAYOUT_LOOKUP(x4, arm0);
@@ -6661,7 +6957,7 @@ PoseidonStateStruct exec_PoseidonEntry(RegStruct arg0,
   PoseidonStateStruct x20;
   if (to_size_t(x6)) {
     // PoseidonEntry(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:133)
-    PoseidonStateStruct x21 = exec_PoseidonPagingEntry(arg0, arg2, LAYOUT_LOOKUP(x7, _super));
+    PoseidonStateStruct x21 = exec_PoseidonPagingEntry(ctx, arg0, arg2, LAYOUT_LOOKUP(x7, _super));
     // PoseidonEntry(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:132)
     STORE(x8, Val(0));
     EQZ(LOAD(x8, 0), "PoseidonEntry(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:132)");
@@ -6690,36 +6986,40 @@ PoseidonStateStruct exec_PoseidonEntry(RegStruct arg0,
     x20 = x21;
   } else if (to_size_t((Val(1) - x6))) {
     // PoseidonEntry(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:135)
-    PoseidonStateStruct x22 = exec_PoseidonEcall(arg0, arg2, LAYOUT_LOOKUP(x4, arm1));
+    PoseidonStateStruct x22 = exec_PoseidonEcall(ctx, arg0, arg2, LAYOUT_LOOKUP(x4, arm1));
     x20 = x22;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
   // PoseidonEntry(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:132)
-  PoseidonStateStruct x23 = back_PoseidonState(0, LAYOUT_LOOKUP(x4, _super));
+  PoseidonStateStruct x23 = back_PoseidonState(ctx, 0, LAYOUT_LOOKUP(x4, _super));
   return x23;
 }
-ReadElemStruct exec_ReadElem(RegStruct arg0, Val arg1, BoundLayout<ReadElemLayout> layout2) {
+__device__ ReadElemStruct exec_ReadElem(ExecContext& ctx,
+                                        RegStruct arg0,
+                                        Val arg1,
+                                        BoundLayout<ReadElemLayout> layout2) {
   // ReadElem(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:140)
-  GetDataStruct x3 = exec_MemoryRead(arg0, arg1, LAYOUT_LOOKUP(layout2, elem32));
+  GetDataStruct x3 = exec_MemoryRead(ctx, arg0, arg1, LAYOUT_LOOKUP(layout2, elem32));
   ValU32Struct x4 = x3._super;
   // ReadElem(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:141)
   Val x5 = ((x4.high * Val(65536)) + x4.low);
   return ReadElemStruct{._super = x5};
 }
-PoseidonStateStruct exec_PoseidonLoadState(RegStruct arg0,
-                                           PoseidonStateStruct arg1,
-                                           BoundLayout<PoseidonLoadStateLayout> layout2) {
+__device__ PoseidonStateStruct
+exec_PoseidonLoadState(ExecContext& ctx,
+                       RegStruct arg0,
+                       PoseidonStateStruct arg1,
+                       BoundLayout<PoseidonLoadStateLayout> layout2) {
   // PoseidonLoadState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:144)
   Val x3 = arg1.stateAddr._super._super;
   // PoseidonLoadState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:146)
   ReadElemStruct8Array x4 =
-      map({Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
+      map(Val8Array{Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
           LAYOUT_LOOKUP(layout2, loadList),
-          std::function([&](Val8Array::value_type x5,
-                            BoundLayout<ReadElemLayout8LayoutArray::value_type> x6) {
+          ([&](Val8Array::value_type x5, BoundLayout<ReadElemLayout8LayoutArray::value_type> x6) {
             // PoseidonLoadState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:147)
-            ReadElemStruct x7 = exec_ReadElem(arg0, (x3 + x5), x6);
+            ReadElemStruct x7 = exec_ReadElem(ctx, arg0, (x3 + x5), x6);
             return x7;
           }));
   // GetDef(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:71)
@@ -6734,13 +7034,14 @@ PoseidonStateStruct exec_PoseidonLoadState(RegStruct arg0,
   Val x14 = arg1.count._super._super;
   Val x15 = arg1.mode._super._super;
   // PoseidonLoadState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:149)
-  Val24Array x16 = {Val(0),       Val(0),       Val(0),       Val(0),       Val(0),
-                    Val(0),       Val(0),       Val(0),       Val(0),       Val(0),
-                    Val(0),       Val(0),       Val(0),       Val(0),       Val(0),
-                    Val(0),       x4[0]._super, x4[1]._super, x4[2]._super, x4[3]._super,
-                    x4[4]._super, x4[5]._super, x4[6]._super, x4[7]._super};
+  Val24Array x16 = Val24Array{Val(0),       Val(0),       Val(0),       Val(0),       Val(0),
+                              Val(0),       Val(0),       Val(0),       Val(0),       Val(0),
+                              Val(0),       Val(0),       Val(0),       Val(0),       Val(0),
+                              Val(0),       x4[0]._super, x4[1]._super, x4[2]._super, x4[3]._super,
+                              x4[4]._super, x4[5]._super, x4[6]._super, x4[7]._super};
   // PoseidonLoadState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:156)
-  PoseidonStateStruct x17 = exec_PoseidonState(PoseidonOpDefStruct{.hasState = x8,
+  PoseidonStateStruct x17 = exec_PoseidonState(ctx,
+                                               PoseidonOpDefStruct{.hasState = x8,
                                                                    .stateAddr = x3,
                                                                    .bufOutAddr = x9,
                                                                    .isElem = x10,
@@ -6756,27 +7057,28 @@ PoseidonStateStruct exec_PoseidonLoadState(RegStruct arg0,
                                                LAYOUT_LOOKUP(layout2, _super));
   return x17;
 }
-PoseidonStateStruct exec_PoseidonLoadInShort(RegStruct arg0,
-                                             PoseidonStateStruct arg1,
-                                             BoundLayout<PoseidonLoadInShortLayout> layout2,
-                                             GlobalBuf global3) {
+__device__ PoseidonStateStruct
+exec_PoseidonLoadInShort(ExecContext& ctx,
+                         RegStruct arg0,
+                         PoseidonStateStruct arg1,
+                         BoundLayout<PoseidonLoadInShortLayout> layout2,
+                         GlobalBuf global3) {
   // PoseidonLoadInShort(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:174)
   Val x4 = arg1.loadTxType._super._super;
   // Log(<preamble>:22)
   // PoseidonLoadInShort(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:175)
-  INVOKE_EXTERN(ctx, log, "txnType", {x4});
+  INVOKE_EXTERN(ctx, log, "txnType", std::initializer_list<Val>{x4});
   // PoseidonLoadInShort(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:176)
-  OneHot_3_Struct x5 = exec_OneHot_3_(x4, LAYOUT_LOOKUP(layout2, txType));
+  OneHot_3_Struct x5 = exec_OneHot_3_(ctx, x4, LAYOUT_LOOKUP(layout2, txType));
   // PoseidonLoadInShort(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:174)
   Val x6 = arg1.bufInAddr._super._super;
   // PoseidonLoadInShort(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:177)
   GetDataStruct8Array x7 =
-      map({Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
+      map(Val8Array{Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
           LAYOUT_LOOKUP(layout2, loadList),
-          std::function([&](Val8Array::value_type x8,
-                            BoundLayout<MemoryGetLayout8LayoutArray::value_type> x9) {
+          ([&](Val8Array::value_type x8, BoundLayout<MemoryGetLayout8LayoutArray::value_type> x9) {
             // PoseidonLoadInShort(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:178)
-            GetDataStruct x10 = exec_MemoryGet(arg0, (x6 + x8), x5, x9);
+            GetDataStruct x10 = exec_MemoryGet(ctx, arg0, (x6 + x8), x5, x9);
             return x10;
           }));
   // ShiftPoly(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:159)
@@ -6784,7 +7086,7 @@ PoseidonStateStruct exec_PoseidonLoadInShort(RegStruct arg0,
   BoundLayout<_globalLayout> x11 = BIND_LAYOUT(kLayoutGlobal, global3);
   // ShiftPoly(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:160)
   BoundLayout<NondetExtRegLayout> x12 = LAYOUT_LOOKUP(x11, rng);
-  NondetExtRegStruct x13 = back_ExtReg(0, x12);
+  NondetExtRegStruct x13 = back_ExtReg(ctx, 0, x12);
   ExtVal x14 = x13._super;
   // PolyEvalStateReduce(zirgen/circuit/rv32im/v2/dsl/poly.zir:14)
   // PolyEval(zirgen/circuit/rv32im/v2/dsl/poly.zir:18)
@@ -6825,7 +7127,7 @@ PoseidonStateStruct exec_PoseidonLoadInShort(RegStruct arg0,
   ExtVal x48 = (x7[7].diffLow + ExtVal(0, 0, 0, 0));
   ExtVal x49 = (x7[7].diffHigh + ExtVal(0, 0, 0, 0));
   // ShiftPoly(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:160)
-  NondetExtRegStruct x50 = back_ExtReg(0, x12);
+  NondetExtRegStruct x50 = back_ExtReg(ctx, 0, x12);
   ExtVal x51 = x50._super;
   // Pow(zirgen/circuit/rv32im/v2/dsl/poly.zir:10)
   // ShiftPoly(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:171)
@@ -6982,6 +7284,7 @@ PoseidonStateStruct exec_PoseidonLoadInShort(RegStruct arg0,
   Val x145 = arg1.mode._super._super;
   // PoseidonLoadInShort(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:194)
   PoseidonStateStruct x146 = exec_PoseidonState(
+      ctx,
       PoseidonOpDefStruct{.hasState = x83,
                           .stateAddr = x84,
                           .bufOutAddr = x85,
@@ -6993,35 +7296,36 @@ PoseidonStateStruct exec_PoseidonLoadInShort(RegStruct arg0,
       (x6 + Val(8)),
       x144,
       x145,
-      {(x94 + x140),  (x93 + x141),  (x95 + x142),  (x92 + x143),  (x102 + x140), (x101 + x141),
-       (x103 + x142), (x100 + x143), (x110 + x140), (x109 + x141), (x111 + x142), (x108 + x143),
-       (x118 + x140), (x117 + x141), (x119 + x142), (x116 + x143), (x126 + x140), (x125 + x141),
-       (x127 + x142), (x124 + x143), (x134 + x140), (x133 + x141), (x135 + x142), (x132 + x143)},
+      Val24Array{(x94 + x140),  (x93 + x141),  (x95 + x142),  (x92 + x143),  (x102 + x140),
+                 (x101 + x141), (x103 + x142), (x100 + x143), (x110 + x140), (x109 + x141),
+                 (x111 + x142), (x108 + x143), (x118 + x140), (x117 + x141), (x119 + x142),
+                 (x116 + x143), (x126 + x140), (x125 + x141), (x127 + x142), (x124 + x143),
+                 (x134 + x140), (x133 + x141), (x135 + x142), (x132 + x143)},
       (x57 + ((x47 + (x48 * x45)) + (x49 * (x45 * x14)))),
       LAYOUT_LOOKUP(layout2, _super));
   return x146;
 }
-PoseidonStateStruct exec_PoseidonLoadInLow(RegStruct arg0,
-                                           PoseidonStateStruct arg1,
-                                           BoundLayout<PoseidonLoadInLowLayout> layout2,
-                                           GlobalBuf global3) {
+__device__ PoseidonStateStruct exec_PoseidonLoadInLow(ExecContext& ctx,
+                                                      RegStruct arg0,
+                                                      PoseidonStateStruct arg1,
+                                                      BoundLayout<PoseidonLoadInLowLayout> layout2,
+                                                      GlobalBuf global3) {
   // PoseidonLoadInLow(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:197)
   Val x4 = arg1.loadTxType._super._super;
   // Log(<preamble>:22)
   // PoseidonLoadInLow(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:198)
-  INVOKE_EXTERN(ctx, log, "txnType", {x4});
+  INVOKE_EXTERN(ctx, log, "txnType", std::initializer_list<Val>{x4});
   // PoseidonLoadInLow(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:199)
-  OneHot_3_Struct x5 = exec_OneHot_3_(x4, LAYOUT_LOOKUP(layout2, txType));
+  OneHot_3_Struct x5 = exec_OneHot_3_(ctx, x4, LAYOUT_LOOKUP(layout2, txType));
   // PoseidonLoadInLow(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:197)
   Val x6 = arg1.bufInAddr._super._super;
   // PoseidonLoadInLow(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:200)
   GetDataStruct8Array x7 =
-      map({Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
+      map(Val8Array{Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
           LAYOUT_LOOKUP(layout2, loadList),
-          std::function([&](Val8Array::value_type x8,
-                            BoundLayout<MemoryGetLayout8LayoutArray::value_type> x9) {
+          ([&](Val8Array::value_type x8, BoundLayout<MemoryGetLayout8LayoutArray::value_type> x9) {
             // PoseidonLoadInLow(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:201)
-            GetDataStruct x10 = exec_MemoryGet(arg0, (x6 + x8), x5, x9);
+            GetDataStruct x10 = exec_MemoryGet(ctx, arg0, (x6 + x8), x5, x9);
             return x10;
           }));
   // ShiftPoly(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:159)
@@ -7029,7 +7333,7 @@ PoseidonStateStruct exec_PoseidonLoadInLow(RegStruct arg0,
   BoundLayout<_globalLayout> x11 = BIND_LAYOUT(kLayoutGlobal, global3);
   // ShiftPoly(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:160)
   BoundLayout<NondetExtRegLayout> x12 = LAYOUT_LOOKUP(x11, rng);
-  NondetExtRegStruct x13 = back_ExtReg(0, x12);
+  NondetExtRegStruct x13 = back_ExtReg(ctx, 0, x12);
   ExtVal x14 = x13._super;
   // PolyEvalStateReduce(zirgen/circuit/rv32im/v2/dsl/poly.zir:14)
   // PolyEval(zirgen/circuit/rv32im/v2/dsl/poly.zir:18)
@@ -7070,7 +7374,7 @@ PoseidonStateStruct exec_PoseidonLoadInLow(RegStruct arg0,
   ExtVal x48 = (x7[7].diffLow + ExtVal(0, 0, 0, 0));
   ExtVal x49 = (x7[7].diffHigh + ExtVal(0, 0, 0, 0));
   // ShiftPoly(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:160)
-  NondetExtRegStruct x50 = back_ExtReg(0, x12);
+  NondetExtRegStruct x50 = back_ExtReg(ctx, 0, x12);
   ExtVal x51 = x50._super;
   // Pow(zirgen/circuit/rv32im/v2/dsl/poly.zir:10)
   // ShiftPoly(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:171)
@@ -7143,7 +7447,8 @@ PoseidonStateStruct exec_PoseidonLoadInLow(RegStruct arg0,
   Val x97 = arg1.mode._super._super;
   // PoseidonLoadInLow(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:211)
   PoseidonStateStruct x98 =
-      exec_PoseidonState(PoseidonOpDefStruct{.hasState = x91,
+      exec_PoseidonState(ctx,
+                         PoseidonOpDefStruct{.hasState = x91,
                                              .stateAddr = x92,
                                              .bufOutAddr = x93,
                                              .isElem = x94,
@@ -7154,33 +7459,34 @@ PoseidonStateStruct exec_PoseidonLoadInLow(RegStruct arg0,
                          (x6 + Val(8)),
                          x96,
                          x97,
-                         {x59, x61, x63, x65, x67, x69, x71, x73, x75, x76, x77, x78,
-                          x79, x80, x81, x82, x83, x84, x85, x86, x87, x88, x89, x90},
+                         Val24Array{x59, x61, x63, x65, x67, x69, x71, x73, x75, x76, x77, x78,
+                                    x79, x80, x81, x82, x83, x84, x85, x86, x87, x88, x89, x90},
                          (x57 + ((x47 + (x48 * x45)) + (x49 * (x45 * x14)))),
                          LAYOUT_LOOKUP(layout2, _super));
   return x98;
 }
-PoseidonStateStruct exec_PoseidonLoadInHigh(RegStruct arg0,
-                                            PoseidonStateStruct arg1,
-                                            BoundLayout<PoseidonLoadInHighLayout> layout2,
-                                            GlobalBuf global3) {
+__device__ PoseidonStateStruct
+exec_PoseidonLoadInHigh(ExecContext& ctx,
+                        RegStruct arg0,
+                        PoseidonStateStruct arg1,
+                        BoundLayout<PoseidonLoadInHighLayout> layout2,
+                        GlobalBuf global3) {
   // PoseidonLoadInHigh(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:214)
   Val x4 = arg1.loadTxType._super._super;
   // Log(<preamble>:22)
   // PoseidonLoadInHigh(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:215)
-  INVOKE_EXTERN(ctx, log, "txnType", {x4});
+  INVOKE_EXTERN(ctx, log, "txnType", std::initializer_list<Val>{x4});
   // PoseidonLoadInHigh(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:216)
-  OneHot_3_Struct x5 = exec_OneHot_3_(x4, LAYOUT_LOOKUP(layout2, txType));
+  OneHot_3_Struct x5 = exec_OneHot_3_(ctx, x4, LAYOUT_LOOKUP(layout2, txType));
   // PoseidonLoadInHigh(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:214)
   Val x6 = arg1.bufInAddr._super._super;
   // PoseidonLoadInHigh(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:217)
   GetDataStruct8Array x7 =
-      map({Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
+      map(Val8Array{Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
           LAYOUT_LOOKUP(layout2, loadList),
-          std::function([&](Val8Array::value_type x8,
-                            BoundLayout<MemoryGetLayout8LayoutArray::value_type> x9) {
+          ([&](Val8Array::value_type x8, BoundLayout<MemoryGetLayout8LayoutArray::value_type> x9) {
             // PoseidonLoadInHigh(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:218)
-            GetDataStruct x10 = exec_MemoryGet(arg0, (x6 + x8), x5, x9);
+            GetDataStruct x10 = exec_MemoryGet(ctx, arg0, (x6 + x8), x5, x9);
             return x10;
           }));
   // PoseidonLoadInHigh(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:214)
@@ -7240,7 +7546,7 @@ PoseidonStateStruct exec_PoseidonLoadInHigh(RegStruct arg0,
   BoundLayout<_globalLayout> x44 = BIND_LAYOUT(kLayoutGlobal, global3);
   // ShiftPoly(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:160)
   BoundLayout<NondetExtRegLayout> x45 = LAYOUT_LOOKUP(x44, rng);
-  NondetExtRegStruct x46 = back_ExtReg(0, x45);
+  NondetExtRegStruct x46 = back_ExtReg(ctx, 0, x45);
   ExtVal x47 = x46._super;
   // PolyEvalStateReduce(zirgen/circuit/rv32im/v2/dsl/poly.zir:14)
   // PolyEval(zirgen/circuit/rv32im/v2/dsl/poly.zir:18)
@@ -7281,7 +7587,7 @@ PoseidonStateStruct exec_PoseidonLoadInHigh(RegStruct arg0,
   ExtVal x81 = (x7[7].diffLow + ExtVal(0, 0, 0, 0));
   ExtVal x82 = (x7[7].diffHigh + ExtVal(0, 0, 0, 0));
   // ShiftPoly(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:160)
-  NondetExtRegStruct x83 = back_ExtReg(0, x45);
+  NondetExtRegStruct x83 = back_ExtReg(ctx, 0, x45);
   ExtVal x84 = x83._super;
   // Pow(zirgen/circuit/rv32im/v2/dsl/poly.zir:10)
   // ShiftPoly(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:171)
@@ -7410,6 +7716,7 @@ PoseidonStateStruct exec_PoseidonLoadInHigh(RegStruct arg0,
   Val x153 = arg1.mode._super._super;
   // PoseidonLoadInHigh(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:228)
   PoseidonStateStruct x154 = exec_PoseidonState(
+      ctx,
       PoseidonOpDefStruct{.hasState = x91,
                           .stateAddr = x92,
                           .bufOutAddr = x93,
@@ -7421,59 +7728,64 @@ PoseidonStateStruct exec_PoseidonLoadInHigh(RegStruct arg0,
       (x6 + Val(8)),
       x152,
       x153,
-      {(x102 + x148), (x101 + x149), (x103 + x150), (x100 + x151), (x110 + x148), (x109 + x149),
-       (x111 + x150), (x108 + x151), (x118 + x148), (x117 + x149), (x119 + x150), (x116 + x151),
-       (x126 + x148), (x125 + x149), (x127 + x150), (x124 + x151), (x134 + x148), (x133 + x149),
-       (x135 + x150), (x132 + x151), (x142 + x148), (x141 + x149), (x143 + x150), (x140 + x151)},
+      Val24Array{(x102 + x148), (x101 + x149), (x103 + x150), (x100 + x151), (x110 + x148),
+                 (x109 + x149), (x111 + x150), (x108 + x151), (x118 + x148), (x117 + x149),
+                 (x119 + x150), (x116 + x151), (x126 + x148), (x125 + x149), (x127 + x150),
+                 (x124 + x151), (x134 + x148), (x133 + x149), (x135 + x150), (x132 + x151),
+                 (x142 + x148), (x141 + x149), (x143 + x150), (x140 + x151)},
       (x90 + ((x80 + (x81 * x78)) + (x82 * (x78 * x47)))),
       LAYOUT_LOOKUP(layout2, _super));
   return x154;
 }
-PoseidonStateStruct exec_PoseidonLoadIn(RegStruct arg0,
-                                        PoseidonStateStruct arg1,
-                                        BoundLayout<PoseidonLoadInLayout> layout2,
-                                        GlobalBuf global3) {
+__device__ PoseidonStateStruct exec_PoseidonLoadIn(ExecContext& ctx,
+                                                   RegStruct arg0,
+                                                   PoseidonStateStruct arg1,
+                                                   BoundLayout<PoseidonLoadInLayout> layout2,
+                                                   GlobalBuf global3) {
   // PoseidonLoadIn(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:233)
   BoundLayout<PoseidonLoadIn_SuperLayout> x4 = LAYOUT_LOOKUP(layout2, _super);
   // PoseidonLoadIn(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:231)
   Val x5 = arg1.isElem._super._super;
   Val x6 = arg1.subState._super._super;
   // PoseidonLoadIn(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:233)
-  OneHot_3_Struct x7 = exec_OneHot_3_((x5 + x6), LAYOUT_LOOKUP(layout2, _0));
+  OneHot_3_Struct x7 = exec_OneHot_3_(ctx, (x5 + x6), LAYOUT_LOOKUP(layout2, _0));
   NondetRegStruct3Array x8 = x7._super;
   PoseidonStateStruct x9;
   if (to_size_t(x8[0]._super)) {
     // PoseidonLoadIn(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:234)
     PoseidonStateStruct x10 =
-        exec_PoseidonLoadInShort(arg0, arg1, LAYOUT_LOOKUP(x4, arm0), global3);
+        exec_PoseidonLoadInShort(ctx, arg0, arg1, LAYOUT_LOOKUP(x4, arm0), global3);
     x9 = x10;
   } else if (to_size_t(x8[1]._super)) {
     // PoseidonLoadIn(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:235)
-    PoseidonStateStruct x11 = exec_PoseidonLoadInLow(arg0, arg1, LAYOUT_LOOKUP(x4, arm1), global3);
+    PoseidonStateStruct x11 =
+        exec_PoseidonLoadInLow(ctx, arg0, arg1, LAYOUT_LOOKUP(x4, arm1), global3);
     x9 = x11;
   } else if (to_size_t(x8[2]._super)) {
     // PoseidonLoadIn(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:236)
-    PoseidonStateStruct x12 = exec_PoseidonLoadInHigh(arg0, arg1, LAYOUT_LOOKUP(x4, arm2), global3);
+    PoseidonStateStruct x12 =
+        exec_PoseidonLoadInHigh(ctx, arg0, arg1, LAYOUT_LOOKUP(x4, arm2), global3);
     x9 = x12;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
   // PoseidonLoadIn(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:233)
-  PoseidonStateStruct x13 = back_PoseidonState(0, LAYOUT_LOOKUP(x4, _super));
+  PoseidonStateStruct x13 = back_PoseidonState(ctx, 0, LAYOUT_LOOKUP(x4, _super));
   return x13;
 }
-PoseidonStateStruct exec_PoseidonExtRound(PoseidonStateStruct arg0,
-                                          BoundLayout<PoseidonExtRoundLayout> layout1) {
+__device__ PoseidonStateStruct exec_PoseidonExtRound(ExecContext& ctx,
+                                                     PoseidonStateStruct arg0,
+                                                     BoundLayout<PoseidonExtRoundLayout> layout1) {
   // PoseidonExtRound(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:240)
   Val x2 = arg0.subState._super._super;
   // PoseidonExtRound(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:241)
-  NondetRegStruct x3 = exec_IsZero((x2 - Val(3)), LAYOUT_LOOKUP(layout1, isRound3));
+  NondetRegStruct x3 = exec_IsZero(ctx, (x2 - Val(3)), LAYOUT_LOOKUP(layout1, isRound3));
   // PoseidonExtRound(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:242)
-  NondetRegStruct x4 = exec_IsZero((x2 - Val(7)), LAYOUT_LOOKUP(layout1, isRound7));
+  NondetRegStruct x4 = exec_IsZero(ctx, (x2 - Val(7)), LAYOUT_LOOKUP(layout1, isRound7));
   // PoseidonExtRound(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:240)
   Val x5 = arg0.count._super._super;
   // PoseidonExtRound(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:244)
-  NondetRegStruct x6 = exec_IsZero((x5 - Val(1)), LAYOUT_LOOKUP(layout1, lastBlock));
+  NondetRegStruct x6 = exec_IsZero(ctx, (x5 - Val(1)), LAYOUT_LOOKUP(layout1, lastBlock));
   // PoseidonExtRound(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:242)
   Val x7 = x4._super;
   // PoseidonExtRound(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:241)
@@ -7512,8 +7824,9 @@ PoseidonStateStruct exec_PoseidonExtRound(PoseidonStateStruct arg0,
   Val x36 = x12[23]._super._super;
   // PoseidonExtRound(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:252)
   MultiplyByMExtStruct x37 =
-      exec_DoExtRoundByIdx({x13, x14, x15, x16, x17, x18, x19, x20, x21, x22, x23, x24,
-                            x25, x26, x27, x28, x29, x30, x31, x32, x33, x34, x35, x36},
+      exec_DoExtRoundByIdx(ctx,
+                           Val24Array{x13, x14, x15, x16, x17, x18, x19, x20, x21, x22, x23, x24,
+                                      x25, x26, x27, x28, x29, x30, x31, x32, x33, x34, x35, x36},
                            x2,
                            LAYOUT_LOOKUP(layout1, nextInner));
   // GetDef(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:71)
@@ -7529,13 +7842,15 @@ PoseidonStateStruct exec_PoseidonExtRound(PoseidonStateStruct arg0,
   Val x45 = arg0.mode._super._super;
   // PoseidonExtRound(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:252)
   MultiplyByMExt_Super_SuperStruct24Array x46 = x37._super;
-  Val24Array x47 = {x46[0]._super,  x46[1]._super,  x46[2]._super,  x46[3]._super,  x46[4]._super,
-                    x46[5]._super,  x46[6]._super,  x46[7]._super,  x46[8]._super,  x46[9]._super,
-                    x46[10]._super, x46[11]._super, x46[12]._super, x46[13]._super, x46[14]._super,
-                    x46[15]._super, x46[16]._super, x46[17]._super, x46[18]._super, x46[19]._super,
-                    x46[20]._super, x46[21]._super, x46[22]._super, x46[23]._super};
+  Val24Array x47 =
+      Val24Array{x46[0]._super,  x46[1]._super,  x46[2]._super,  x46[3]._super,  x46[4]._super,
+                 x46[5]._super,  x46[6]._super,  x46[7]._super,  x46[8]._super,  x46[9]._super,
+                 x46[10]._super, x46[11]._super, x46[12]._super, x46[13]._super, x46[14]._super,
+                 x46[15]._super, x46[16]._super, x46[17]._super, x46[18]._super, x46[19]._super,
+                 x46[20]._super, x46[21]._super, x46[22]._super, x46[23]._super};
   // PoseidonExtRound(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:253)
-  PoseidonStateStruct x48 = exec_PoseidonState(PoseidonOpDefStruct{.hasState = x38,
+  PoseidonStateStruct x48 = exec_PoseidonState(ctx,
+                                               PoseidonOpDefStruct{.hasState = x38,
                                                                    .stateAddr = x39,
                                                                    .bufOutAddr = x40,
                                                                    .isElem = x41,
@@ -7551,8 +7866,8 @@ PoseidonStateStruct exec_PoseidonExtRound(PoseidonStateStruct arg0,
                                                LAYOUT_LOOKUP(layout1, _super));
   return x48;
 }
-PoseidonStateStruct exec_PoseidonIntRounds(PoseidonStateStruct arg0,
-                                           BoundLayout<PoseidonIntRoundsLayout> layout1) {
+__device__ PoseidonStateStruct exec_PoseidonIntRounds(
+    ExecContext& ctx, PoseidonStateStruct arg0, BoundLayout<PoseidonIntRoundsLayout> layout1) {
   // PoseidonIntRounds(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:256)
   RegStruct24Array x2 = arg0.inner;
   Val x3 = x2[0]._super._super;
@@ -7581,8 +7896,9 @@ PoseidonStateStruct exec_PoseidonIntRounds(PoseidonStateStruct arg0,
   Val x26 = x2[23]._super._super;
   // PoseidonIntRounds(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:257)
   DoIntRoundsStruct x27 =
-      exec_DoIntRounds({x3,  x4,  x5,  x6,  x7,  x8,  x9,  x10, x11, x12, x13, x14,
-                        x15, x16, x17, x18, x19, x20, x21, x22, x23, x24, x25, x26},
+      exec_DoIntRounds(ctx,
+                       Val24Array{x3,  x4,  x5,  x6,  x7,  x8,  x9,  x10, x11, x12, x13, x14,
+                                  x15, x16, x17, x18, x19, x20, x21, x22, x23, x24, x25, x26},
                        LAYOUT_LOOKUP(layout1, nextInner));
   // GetDef(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:71)
   // PoseidonIntRounds(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:258)
@@ -7597,7 +7913,8 @@ PoseidonStateStruct exec_PoseidonIntRounds(PoseidonStateStruct arg0,
   Val x35 = arg0.count._super._super;
   Val x36 = arg0.mode._super._super;
   // PoseidonIntRounds(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:258)
-  PoseidonStateStruct x37 = exec_PoseidonState(PoseidonOpDefStruct{.hasState = x28,
+  PoseidonStateStruct x37 = exec_PoseidonState(ctx,
+                                               PoseidonOpDefStruct{.hasState = x28,
                                                                    .stateAddr = x29,
                                                                    .bufOutAddr = x30,
                                                                    .isElem = x31,
@@ -7613,30 +7930,31 @@ PoseidonStateStruct exec_PoseidonIntRounds(PoseidonStateStruct arg0,
                                                LAYOUT_LOOKUP(layout1, _super));
   return x37;
 }
-PoseidonStateStruct exec_PoseidonCheckOut(RegStruct arg0,
-                                          PoseidonStateStruct arg1,
-                                          BoundLayout<PoseidonCheckOutLayout> layout2) {
+__device__ PoseidonStateStruct exec_PoseidonCheckOut(ExecContext& ctx,
+                                                     RegStruct arg0,
+                                                     PoseidonStateStruct arg1,
+                                                     BoundLayout<PoseidonCheckOutLayout> layout2) {
   // PoseidonCheckOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:261)
   RegStruct24Array x3 = arg1.inner;
   Val x4 = arg1.bufOutAddr._super._super;
   // PoseidonCheckOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:262)
-  PoseidonCheckOut__0Struct8Array x5 = map(
-      {Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
-      LAYOUT_LOOKUP(layout2, _1),
-      std::function([&](Val8Array::value_type x6,
-                        BoundLayout<PoseidonCheckOut__0_SuperLayout8LayoutArray::value_type> x7) {
-        // PoseidonCheckOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:264)
-        ReadElemStruct x8 = exec_ReadElem(arg0, (x4 + x6), LAYOUT_LOOKUP(x7, goal));
-        // PoseidonCheckOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:261)
-        Val x9 = x3[to_size_t(x6)]._super._super;
-        // PoseidonCheckOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:265)
-        EQZ((x8._super - x9), "PoseidonCheckOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:265)");
-        return PoseidonCheckOut__0Struct{};
-      }));
+  PoseidonCheckOut__0Struct8Array x5 =
+      map(Val8Array{Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
+          LAYOUT_LOOKUP(layout2, _1),
+          ([&](Val8Array::value_type x6,
+               BoundLayout<PoseidonCheckOut__0_SuperLayout8LayoutArray::value_type> x7) {
+            // PoseidonCheckOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:264)
+            ReadElemStruct x8 = exec_ReadElem(ctx, arg0, (x4 + x6), LAYOUT_LOOKUP(x7, goal));
+            // PoseidonCheckOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:261)
+            Val x9 = x3[to_size_t(x6)]._super._super;
+            // PoseidonCheckOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:265)
+            EQZ((x8._super - x9), "PoseidonCheckOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:265)");
+            return PoseidonCheckOut__0Struct{};
+          }));
   // PoseidonCheckOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:261)
   Val x10 = arg1.loadTxType._super._super;
   // PoseidonCheckOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:267)
-  NondetRegStruct x11 = exec_IsZero(x10, LAYOUT_LOOKUP(layout2, isNormal));
+  NondetRegStruct x11 = exec_IsZero(ctx, x10, LAYOUT_LOOKUP(layout2, isNormal));
   Val x12 = x11._super;
   // PoseidonCheckOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:268)
   Val x13 = ((Val(1) - x12) * Val(22));
@@ -7647,7 +7965,7 @@ PoseidonStateStruct exec_PoseidonCheckOut(RegStruct arg0,
   // PoseidonCheckOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:261)
   ExtVal x16 = arg1.zcheck._super;
   // PoseidonCheckOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:274)
-  NondetExtRegStruct x17 = exec_NondetExtReg(inv_0(x16), LAYOUT_LOOKUP(layout2, extInv));
+  NondetExtRegStruct x17 = exec_NondetExtReg(ctx, inv_0(x16), LAYOUT_LOOKUP(layout2, extInv));
   // PoseidonCheckOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:275)
   ExtVal x18 = ((x17._super * x16) - ExtVal(1, 0, 0, 0));
   EQZ(x18,
@@ -7686,7 +8004,8 @@ PoseidonStateStruct exec_PoseidonCheckOut(RegStruct arg0,
   Val x46 = x3[23]._super._super;
   // PoseidonCheckOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:276)
   PoseidonStateStruct x47 =
-      exec_PoseidonState(PoseidonOpDefStruct{.hasState = x14,
+      exec_PoseidonState(ctx,
+                         PoseidonOpDefStruct{.hasState = x14,
                                              .stateAddr = x19,
                                              .bufOutAddr = x4,
                                              .isElem = x20,
@@ -7697,40 +8016,46 @@ PoseidonStateStruct exec_PoseidonCheckOut(RegStruct arg0,
                          Val(0),
                          Val(0),
                          x22,
-                         {x23, x24, x25, x26, x27, x28, x29, x30, x31, x32, x33, x34,
-                          x35, x36, x37, x38, x39, x40, x41, x42, x43, x44, x45, x46},
+                         Val24Array{x23, x24, x25, x26, x27, x28, x29, x30, x31, x32, x33, x34,
+                                    x35, x36, x37, x38, x39, x40, x41, x42, x43, x44, x45, x46},
                          ExtVal(0, 0, 0, 0),
                          LAYOUT_LOOKUP(layout2, _super));
   return x47;
 }
-PoseidonStateStruct exec_PoseidonStoreOut(RegStruct arg0,
-                                          PoseidonStateStruct arg1,
-                                          BoundLayout<PoseidonStoreOutLayout> layout2) {
+__device__ PoseidonStateStruct exec_PoseidonStoreOut(ExecContext& ctx,
+                                                     RegStruct arg0,
+                                                     PoseidonStateStruct arg1,
+                                                     BoundLayout<PoseidonStoreOutLayout> layout2) {
   // PoseidonStoreOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:279)
   RegStruct24Array x3 = arg1.inner;
   Val x4 = arg1.bufOutAddr._super._super;
   // PoseidonStoreOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:280)
-  PoseidonStoreOut__0Struct8Array x5 = map(
-      {Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
-      LAYOUT_LOOKUP(layout2, _1),
-      std::function([&](Val8Array::value_type x6,
-                        BoundLayout<PoseidonStoreOut__0_SuperLayout8LayoutArray::value_type> x7) {
-        // PoseidonStoreOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:279)
-        Val x8 = x3[to_size_t(x6)]._super._super;
-        // PoseidonStoreOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:282)
-        NondetRegStruct x9 = exec_NondetU16Reg(bitAnd(x8, Val(65535)), LAYOUT_LOOKUP(x7, low));
-        Val x10 = x9._super;
-        // PoseidonStoreOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:283)
-        U16RegStruct x11 = exec_U16Reg(((x8 - x10) * Val(2013235201)), LAYOUT_LOOKUP(x7, high));
-        // PoseidonStoreOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:284)
-        MemoryWriteStruct x12 = exec_MemoryWrite(
-            arg0, (x4 + x6), ValU32Struct{.low = x10, .high = x11._super}, LAYOUT_LOOKUP(x7, _0));
-        return PoseidonStoreOut__0Struct{};
-      }));
+  PoseidonStoreOut__0Struct8Array x5 =
+      map(Val8Array{Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
+          LAYOUT_LOOKUP(layout2, _1),
+          ([&](Val8Array::value_type x6,
+               BoundLayout<PoseidonStoreOut__0_SuperLayout8LayoutArray::value_type> x7) {
+            // PoseidonStoreOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:279)
+            Val x8 = x3[to_size_t(x6)]._super._super;
+            // PoseidonStoreOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:282)
+            NondetRegStruct x9 =
+                exec_NondetU16Reg(ctx, bitAnd(x8, Val(65535)), LAYOUT_LOOKUP(x7, low));
+            Val x10 = x9._super;
+            // PoseidonStoreOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:283)
+            U16RegStruct x11 =
+                exec_U16Reg(ctx, ((x8 - x10) * Val(2013235201)), LAYOUT_LOOKUP(x7, high));
+            // PoseidonStoreOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:284)
+            MemoryWriteStruct x12 = exec_MemoryWrite(ctx,
+                                                     arg0,
+                                                     (x4 + x6),
+                                                     ValU32Struct{.low = x10, .high = x11._super},
+                                                     LAYOUT_LOOKUP(x7, _0));
+            return PoseidonStoreOut__0Struct{};
+          }));
   // PoseidonStoreOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:279)
   Val x13 = arg1.loadTxType._super._super;
   // PoseidonStoreOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:286)
-  NondetRegStruct x14 = exec_IsZero(x13, LAYOUT_LOOKUP(layout2, isNormal));
+  NondetRegStruct x14 = exec_IsZero(ctx, x13, LAYOUT_LOOKUP(layout2, isNormal));
   Val x15 = x14._super;
   // PoseidonStoreOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:287)
   Val x16 = ((Val(1) - x15) * Val(22));
@@ -7740,7 +8065,7 @@ PoseidonStateStruct exec_PoseidonStoreOut(RegStruct arg0,
   Val x18 = ((Val(1) - x17) * ((x15 * Val(32)) + x16));
   // PoseidonStoreOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:291)
   ExtVal x19 = inv_0(arg1.zcheck._super);
-  NondetExtRegStruct x20 = exec_NondetExtReg(x19, LAYOUT_LOOKUP(layout2, extInv));
+  NondetExtRegStruct x20 = exec_NondetExtReg(ctx, x19, LAYOUT_LOOKUP(layout2, extInv));
   // GetDef(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:71)
   // PoseidonStoreOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:292)
   Val x21 = arg1.stateAddr._super._super;
@@ -7774,7 +8099,8 @@ PoseidonStateStruct exec_PoseidonStoreOut(RegStruct arg0,
   Val x48 = x3[23]._super._super;
   // PoseidonStoreOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:292)
   PoseidonStateStruct x49 =
-      exec_PoseidonState(PoseidonOpDefStruct{.hasState = x17,
+      exec_PoseidonState(ctx,
+                         PoseidonOpDefStruct{.hasState = x17,
                                              .stateAddr = x21,
                                              .bufOutAddr = x4,
                                              .isElem = x22,
@@ -7785,15 +8111,16 @@ PoseidonStateStruct exec_PoseidonStoreOut(RegStruct arg0,
                          Val(0),
                          Val(0),
                          x24,
-                         {x25, x26, x27, x28, x29, x30, x31, x32, x33, x34, x35, x36,
-                          x37, x38, x39, x40, x41, x42, x43, x44, x45, x46, x47, x48},
+                         Val24Array{x25, x26, x27, x28, x29, x30, x31, x32, x33, x34, x35, x36,
+                                    x37, x38, x39, x40, x41, x42, x43, x44, x45, x46, x47, x48},
                          ExtVal(0, 0, 0, 0),
                          LAYOUT_LOOKUP(layout2, _super));
   return x49;
 }
-PoseidonStateStruct exec_PoseidonDoOut(RegStruct arg0,
-                                       PoseidonStateStruct arg1,
-                                       BoundLayout<PoseidonDoOutLayout> layout2) {
+__device__ PoseidonStateStruct exec_PoseidonDoOut(ExecContext& ctx,
+                                                  RegStruct arg0,
+                                                  PoseidonStateStruct arg1,
+                                                  BoundLayout<PoseidonDoOutLayout> layout2) {
   // PoseidonDoOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:296)
   BoundLayout<PoseidonDoOut_SuperLayout> x3 = LAYOUT_LOOKUP(layout2, _super);
   // PoseidonDoOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:295)
@@ -7818,7 +8145,7 @@ PoseidonStateStruct exec_PoseidonDoOut(RegStruct arg0,
   BoundLayout<Reg> x21 = LAYOUT_LOOKUP(LAYOUT_LOOKUP(LAYOUT_LOOKUP(x5, _extra15), count), _super);
   PoseidonStateStruct x22;
   if (to_size_t(x4)) {
-    PoseidonStateStruct x23 = exec_PoseidonCheckOut(arg0, arg1, LAYOUT_LOOKUP(x5, _super));
+    PoseidonStateStruct x23 = exec_PoseidonCheckOut(ctx, arg0, arg1, LAYOUT_LOOKUP(x5, _super));
     STORE(x6, Val(0));
     EQZ(LOAD(x6, 0), "PoseidonDoOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:296)");
     STORE(x7, Val(0));
@@ -7853,38 +8180,45 @@ PoseidonStateStruct exec_PoseidonDoOut(RegStruct arg0,
     EQZ(LOAD(x21, 0), "PoseidonDoOut(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:296)");
     x22 = x23;
   } else if (to_size_t((Val(1) - x4))) {
-    PoseidonStateStruct x24 = exec_PoseidonStoreOut(arg0, arg1, LAYOUT_LOOKUP(x3, arm1));
+    PoseidonStateStruct x24 = exec_PoseidonStoreOut(ctx, arg0, arg1, LAYOUT_LOOKUP(x3, arm1));
     x22 = x24;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
-  PoseidonStateStruct x25 = back_PoseidonState(0, LAYOUT_LOOKUP(x3, _super));
+  PoseidonStateStruct x25 = back_PoseidonState(ctx, 0, LAYOUT_LOOKUP(x3, _super));
   return x25;
 }
-PoseidonStateStruct exec_PoseidonStoreState(RegStruct arg0,
-                                            PoseidonStateStruct arg1,
-                                            BoundLayout<PoseidonStoreStateLayout> layout2) {
+__device__ PoseidonStateStruct
+exec_PoseidonStoreState(ExecContext& ctx,
+                        RegStruct arg0,
+                        PoseidonStateStruct arg1,
+                        BoundLayout<PoseidonStoreStateLayout> layout2) {
   // PoseidonStoreState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:299)
   RegStruct24Array x3 = arg1.inner;
   Val x4 = arg1.stateAddr._super._super;
   // PoseidonStoreState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:300)
-  PoseidonStoreState__0Struct8Array x5 = map(
-      {Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
-      LAYOUT_LOOKUP(layout2, _1),
-      std::function([&](Val8Array::value_type x6,
-                        BoundLayout<PoseidonStoreState__0_SuperLayout8LayoutArray::value_type> x7) {
-        // PoseidonStoreState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:299)
-        Val x8 = x3[to_size_t((x6 + Val(16)))]._super._super;
-        // PoseidonStoreState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:302)
-        NondetRegStruct x9 = exec_NondetU16Reg(bitAnd(x8, Val(65535)), LAYOUT_LOOKUP(x7, low));
-        Val x10 = x9._super;
-        // PoseidonStoreState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:303)
-        U16RegStruct x11 = exec_U16Reg(((x8 - x10) * Val(2013235201)), LAYOUT_LOOKUP(x7, high));
-        // PoseidonStoreState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:304)
-        MemoryWriteStruct x12 = exec_MemoryWrite(
-            arg0, (x4 + x6), ValU32Struct{.low = x10, .high = x11._super}, LAYOUT_LOOKUP(x7, _0));
-        return PoseidonStoreState__0Struct{};
-      }));
+  PoseidonStoreState__0Struct8Array x5 =
+      map(Val8Array{Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
+          LAYOUT_LOOKUP(layout2, _1),
+          ([&](Val8Array::value_type x6,
+               BoundLayout<PoseidonStoreState__0_SuperLayout8LayoutArray::value_type> x7) {
+            // PoseidonStoreState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:299)
+            Val x8 = x3[to_size_t((x6 + Val(16)))]._super._super;
+            // PoseidonStoreState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:302)
+            NondetRegStruct x9 =
+                exec_NondetU16Reg(ctx, bitAnd(x8, Val(65535)), LAYOUT_LOOKUP(x7, low));
+            Val x10 = x9._super;
+            // PoseidonStoreState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:303)
+            U16RegStruct x11 =
+                exec_U16Reg(ctx, ((x8 - x10) * Val(2013235201)), LAYOUT_LOOKUP(x7, high));
+            // PoseidonStoreState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:304)
+            MemoryWriteStruct x12 = exec_MemoryWrite(ctx,
+                                                     arg0,
+                                                     (x4 + x6),
+                                                     ValU32Struct{.low = x10, .high = x11._super},
+                                                     LAYOUT_LOOKUP(x7, _0));
+            return PoseidonStoreState__0Struct{};
+          }));
   // GetDef(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:71)
   // PoseidonStoreState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:306)
   Val x13 = arg1.hasState._super._super;
@@ -7920,7 +8254,8 @@ PoseidonStateStruct exec_PoseidonStoreState(RegStruct arg0,
   Val x42 = x3[23]._super._super;
   // PoseidonStoreState(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:306)
   PoseidonStateStruct x43 =
-      exec_PoseidonState(PoseidonOpDefStruct{.hasState = x13,
+      exec_PoseidonState(ctx,
+                         PoseidonOpDefStruct{.hasState = x13,
                                              .stateAddr = x4,
                                              .bufOutAddr = x14,
                                              .isElem = x15,
@@ -7931,21 +8266,23 @@ PoseidonStateStruct exec_PoseidonStoreState(RegStruct arg0,
                          Val(0),
                          Val(0),
                          x18,
-                         {x19, x20, x21, x22, x23, x24, x25, x26, x27, x28, x29, x30,
-                          x31, x32, x33, x34, x35, x36, x37, x38, x39, x40, x41, x42},
+                         Val24Array{x19, x20, x21, x22, x23, x24, x25, x26, x27, x28, x29, x30,
+                                    x31, x32, x33, x34, x35, x36, x37, x38, x39, x40, x41, x42},
                          ExtVal(0, 0, 0, 0),
                          LAYOUT_LOOKUP(layout2, _super));
   return x43;
 }
-IsU24Struct exec_IsU24(Val arg0, BoundLayout<IsU24Layout> layout1) {
+__device__ IsU24Struct exec_IsU24(ExecContext& ctx, Val arg0, BoundLayout<IsU24Layout> layout1) {
   // IsU24(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:320)
-  NondetRegStruct x2 = exec_NondetU16Reg(bitAnd(arg0, Val(65535)), LAYOUT_LOOKUP(layout1, low16));
+  NondetRegStruct x2 =
+      exec_NondetU16Reg(ctx, bitAnd(arg0, Val(65535)), LAYOUT_LOOKUP(layout1, low16));
   // IsU24(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:321)
-  U8RegStruct x3 = exec_U8Reg(((arg0 - x2._super) * Val(2013235201)), LAYOUT_LOOKUP(layout1, _0));
+  U8RegStruct x3 =
+      exec_U8Reg(ctx, ((arg0 - x2._super) * Val(2013235201)), LAYOUT_LOOKUP(layout1, _0));
   return IsU24Struct{};
 }
-PoseidonStateStruct
-exec_PoseidonPagingLoadNode(RegStruct arg0, Val arg1, BoundLayout<PoseidonStateLayout> layout2) {
+__device__ PoseidonStateStruct exec_PoseidonPagingLoadNode(
+    ExecContext& ctx, RegStruct arg0, Val arg1, BoundLayout<PoseidonStateLayout> layout2) {
   // PoseidonOpDef(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:8)
   // PoseidonPagingLoadNode(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:325)
   PoseidonOpDefStruct x3 = PoseidonOpDefStruct{.hasState = Val(0),
@@ -7959,21 +8296,22 @@ exec_PoseidonPagingLoadNode(RegStruct arg0, Val arg1, BoundLayout<PoseidonStateL
   Val x4 = (((arg1 * Val(2)) + Val(1)) * Val(8));
   // PoseidonPagingLoadNode(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:333)
   PoseidonStateStruct x5 =
-      exec_PoseidonState(x3,
+      exec_PoseidonState(ctx,
+                         x3,
                          Val(18),
                          Val(0),
                          (Val(1140850688) - x4),
                          Val(1),
                          Val(0),
-                         {Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-                          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-                          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
+                         Val24Array{Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                                    Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                                    Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
                          ExtVal(0, 0, 0, 0),
                          layout2);
   return x5;
 }
-PoseidonStateStruct
-exec_PoseidonPagingLoadPage(RegStruct arg0, Val arg1, BoundLayout<PoseidonStateLayout> layout2) {
+__device__ PoseidonStateStruct exec_PoseidonPagingLoadPage(
+    ExecContext& ctx, RegStruct arg0, Val arg1, BoundLayout<PoseidonStateLayout> layout2) {
   // PoseidonOpDef(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:8)
   // PoseidonPagingLoadPage(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:347)
   PoseidonOpDefStruct x3 = PoseidonOpDefStruct{.hasState = Val(0),
@@ -7984,23 +8322,26 @@ exec_PoseidonPagingLoadPage(RegStruct arg0, Val arg1, BoundLayout<PoseidonStateL
                                                .loadTxType = Val(1)};
   // PoseidonPagingLoadPage(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:355)
   PoseidonStateStruct x4 =
-      exec_PoseidonState(x3,
+      exec_PoseidonState(ctx,
+                         x3,
                          Val(18),
                          Val(0),
                          ((arg1 - Val(4194304)) * Val(256)),
                          Val(32),
                          Val(1),
-                         {Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-                          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-                          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
+                         Val24Array{Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                                    Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                                    Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
                          ExtVal(0, 0, 0, 0),
                          layout2);
   return x4;
 }
-PoseidonStateStruct exec_PoseidonPagingLoadDone(BoundLayout<PoseidonStateLayout> layout0) {
+__device__ PoseidonStateStruct
+exec_PoseidonPagingLoadDone(ExecContext& ctx, BoundLayout<PoseidonStateLayout> layout0) {
   // PoseidonPagingLoadDone(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:369)
   PoseidonStateStruct x1 =
-      exec_PoseidonState(PoseidonOpDefStruct{.hasState = Val(0),
+      exec_PoseidonState(ctx,
+                         PoseidonOpDefStruct{.hasState = Val(0),
                                              .stateAddr = Val(0),
                                              .bufOutAddr = Val(1073741824),
                                              .isElem = Val(0),
@@ -8011,15 +8352,15 @@ PoseidonStateStruct exec_PoseidonPagingLoadDone(BoundLayout<PoseidonStateLayout>
                          Val(0),
                          Val(0),
                          Val(2),
-                         {Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-                          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-                          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
+                         Val24Array{Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                                    Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                                    Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
                          ExtVal(0, 0, 0, 0),
                          layout0);
   return x1;
 }
-PoseidonStateStruct
-exec_PoseidonPagingStoreNode(RegStruct arg0, Val arg1, BoundLayout<PoseidonStateLayout> layout2) {
+__device__ PoseidonStateStruct exec_PoseidonPagingStoreNode(
+    ExecContext& ctx, RegStruct arg0, Val arg1, BoundLayout<PoseidonStateLayout> layout2) {
   // PoseidonOpDef(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:8)
   // PoseidonPagingStoreNode(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:373)
   PoseidonOpDefStruct x3 = PoseidonOpDefStruct{.hasState = Val(0),
@@ -8033,21 +8374,22 @@ exec_PoseidonPagingStoreNode(RegStruct arg0, Val arg1, BoundLayout<PoseidonState
   Val x4 = (((arg1 * Val(2)) + Val(1)) * Val(8));
   // PoseidonPagingStoreNode(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:381)
   PoseidonStateStruct x5 =
-      exec_PoseidonState(x3,
+      exec_PoseidonState(ctx,
+                         x3,
                          Val(18),
                          Val(0),
                          (Val(1140850688) - x4),
                          Val(1),
                          Val(4),
-                         {Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-                          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-                          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
+                         Val24Array{Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                                    Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                                    Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
                          ExtVal(0, 0, 0, 0),
                          layout2);
   return x5;
 }
-PoseidonStateStruct
-exec_PoseidonPagingStorePage(RegStruct arg0, Val arg1, BoundLayout<PoseidonStateLayout> layout2) {
+__device__ PoseidonStateStruct exec_PoseidonPagingStorePage(
+    ExecContext& ctx, RegStruct arg0, Val arg1, BoundLayout<PoseidonStateLayout> layout2) {
   // PoseidonOpDef(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:8)
   // PoseidonPagingStorePage(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:395)
   PoseidonOpDefStruct x3 = PoseidonOpDefStruct{.hasState = Val(0),
@@ -8058,23 +8400,26 @@ exec_PoseidonPagingStorePage(RegStruct arg0, Val arg1, BoundLayout<PoseidonState
                                                .loadTxType = Val(2)};
   // PoseidonPagingStorePage(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:403)
   PoseidonStateStruct x4 =
-      exec_PoseidonState(x3,
+      exec_PoseidonState(ctx,
+                         x3,
                          Val(18),
                          Val(0),
                          ((arg1 - Val(4194304)) * Val(256)),
                          Val(32),
                          Val(3),
-                         {Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-                          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-                          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
+                         Val24Array{Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                                    Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                                    Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
                          ExtVal(0, 0, 0, 0),
                          layout2);
   return x4;
 }
-PoseidonStateStruct exec_PoseidonPagingStoreDone(BoundLayout<PoseidonStateLayout> layout0) {
+__device__ PoseidonStateStruct
+exec_PoseidonPagingStoreDone(ExecContext& ctx, BoundLayout<PoseidonStateLayout> layout0) {
   // PoseidonPagingStoreDone(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:417)
   PoseidonStateStruct x1 =
-      exec_PoseidonState(PoseidonOpDefStruct{.hasState = Val(0),
+      exec_PoseidonState(ctx,
+                         PoseidonOpDefStruct{.hasState = Val(0),
                                              .stateAddr = Val(0),
                                              .bufOutAddr = Val(1140850688),
                                              .isElem = Val(0),
@@ -8085,21 +8430,22 @@ PoseidonStateStruct exec_PoseidonPagingStoreDone(BoundLayout<PoseidonStateLayout
                          Val(0),
                          Val(0),
                          Val(5),
-                         {Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-                          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-                          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
+                         Val24Array{Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                                    Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                                    Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
                          ExtVal(0, 0, 0, 0),
                          layout0);
   return x1;
 }
-OneHot_6_Struct exec_OneHot_6_(Val arg0, BoundLayout<OneHot_6_Layout> layout1) {
+__device__ OneHot_6_Struct exec_OneHot_6_(ExecContext& ctx,
+                                          Val arg0,
+                                          BoundLayout<OneHot_6_Layout> layout1) {
   // OneHot(zirgen/circuit/rv32im/v2/dsl/one_hot.zir:7)
   NondetRegStruct6Array x2 =
-      map({Val(0), Val(1), Val(2), Val(3), Val(4), Val(5)},
+      map(Val6Array{Val(0), Val(1), Val(2), Val(3), Val(4), Val(5)},
           LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val6Array::value_type x3,
-                            BoundLayout<NondetRegLayout6LayoutArray::value_type> x4) {
-            NondetRegStruct x5 = exec_NondetBitReg(isz((x3 - arg0)), x4);
+          ([&](Val6Array::value_type x3, BoundLayout<NondetRegLayout6LayoutArray::value_type> x4) {
+            NondetRegStruct x5 = exec_NondetBitReg(ctx, isz((x3 - arg0)), x4);
             return x5;
           }));
   // OneHot(zirgen/circuit/rv32im/v2/dsl/one_hot.zir:9)
@@ -8116,10 +8462,11 @@ OneHot_6_Struct exec_OneHot_6_(Val arg0, BoundLayout<OneHot_6_Layout> layout1) {
   EQZ(((x13 + (x12 * Val(5))) - arg0), "OneHot(zirgen/circuit/rv32im/v2/dsl/one_hot.zir:11)");
   return OneHot_6_Struct{._super = x2, .bits = x2};
 }
-PoseidonStateStruct exec_PoseidonPaging(RegStruct arg0,
-                                        Val arg1,
-                                        PoseidonStateStruct arg2,
-                                        BoundLayout<PoseidonPagingLayout> layout3) {
+__device__ PoseidonStateStruct exec_PoseidonPaging(ExecContext& ctx,
+                                                   RegStruct arg0,
+                                                   Val arg1,
+                                                   PoseidonStateStruct arg2,
+                                                   BoundLayout<PoseidonPagingLayout> layout3) {
   // PoseidonPaging(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:428)
   BoundLayout<PoseidonPaging__1Layout> x4 = LAYOUT_LOOKUP(layout3, _3);
   // PoseidonPaging(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:435)
@@ -8134,12 +8481,12 @@ PoseidonStateStruct exec_PoseidonPaging(RegStruct arg0,
   // PoseidonPaging(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:422)
   auto [x8, x9] = INVOKE_EXTERN(ctx, nextPagingIdx);
   // PoseidonPaging(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:423)
-  NondetRegStruct x10 = exec_NondetReg(x8, LAYOUT_LOOKUP(layout3, curIdx));
+  NondetRegStruct x10 = exec_NondetReg(ctx, x8, LAYOUT_LOOKUP(layout3, curIdx));
   // PoseidonPaging(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:424)
-  NondetRegStruct x11 = exec_NondetReg(x9, LAYOUT_LOOKUP(layout3, curMode));
+  NondetRegStruct x11 = exec_NondetReg(ctx, x9, LAYOUT_LOOKUP(layout3, curMode));
   Val x12 = x11._super;
   // PoseidonPaging(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:425)
-  OneHot_6_Struct x13 = exec_OneHot_6_(x12, LAYOUT_LOOKUP(layout3, modeSplit));
+  OneHot_6_Struct x13 = exec_OneHot_6_(ctx, x12, LAYOUT_LOOKUP(layout3, modeSplit));
   NondetRegStruct6Array x14 = x13.bits;
   // PoseidonPaging(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:426)
   Val x15 = (x14[0]._super + x14[1]._super);
@@ -8147,61 +8494,64 @@ PoseidonStateStruct exec_PoseidonPaging(RegStruct arg0,
   // PoseidonPaging(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:423)
   Val x17 = x10._super;
   // PoseidonPaging(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:427)
-  IsU24Struct x18 = exec_IsU24(x17, LAYOUT_LOOKUP(layout3, _0));
+  IsU24Struct x18 = exec_IsU24(ctx, x17, LAYOUT_LOOKUP(layout3, _0));
   // PoseidonPaging(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:428)
   ComponentStruct x19 = ComponentStruct{};
   ComponentStruct x20;
   if (to_size_t(x16)) {
     // PoseidonPaging(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:429)
-    IsU24Struct x21 = exec_IsU24((x17 - (x7 + Val(1))), LAYOUT_LOOKUP(LAYOUT_LOOKUP(x4, arm0), _0));
+    IsU24Struct x21 =
+        exec_IsU24(ctx, (x17 - (x7 + Val(1))), LAYOUT_LOOKUP(LAYOUT_LOOKUP(x4, arm0), _0));
     x20 = x19;
   } else if (to_size_t((Val(1) - x16))) {
     // PoseidonPaging(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:431)
-    IsU24Struct x22 = exec_IsU24(((x7 - Val(1)) - x17), LAYOUT_LOOKUP(LAYOUT_LOOKUP(x4, arm1), _0));
+    IsU24Struct x22 =
+        exec_IsU24(ctx, ((x7 - Val(1)) - x17), LAYOUT_LOOKUP(LAYOUT_LOOKUP(x4, arm1), _0));
     x20 = x19;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
   // PoseidonPaging(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:434)
-  BitRegStruct x23 = exec_BitReg((x12 - arg1), LAYOUT_LOOKUP(layout3, _4));
+  BitRegStruct x23 = exec_BitReg(ctx, (x12 - arg1), LAYOUT_LOOKUP(layout3, _4));
   // PoseidonPaging(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:425)
   NondetRegStruct6Array x24 = x13._super;
   PoseidonStateStruct x25;
   if (to_size_t(x24[0]._super)) {
     // PoseidonPaging(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:436)
-    PoseidonStateStruct x26 = exec_PoseidonPagingLoadNode(arg0, x17, LAYOUT_LOOKUP(x5, arm0));
+    PoseidonStateStruct x26 = exec_PoseidonPagingLoadNode(ctx, arg0, x17, LAYOUT_LOOKUP(x5, arm0));
     x25 = x26;
   } else if (to_size_t(x24[1]._super)) {
     // PoseidonPaging(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:437)
-    PoseidonStateStruct x27 = exec_PoseidonPagingLoadPage(arg0, x17, LAYOUT_LOOKUP(x5, arm1));
+    PoseidonStateStruct x27 = exec_PoseidonPagingLoadPage(ctx, arg0, x17, LAYOUT_LOOKUP(x5, arm1));
     x25 = x27;
   } else if (to_size_t(x24[2]._super)) {
     // PoseidonPaging(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:438)
-    PoseidonStateStruct x28 = exec_PoseidonPagingLoadDone(LAYOUT_LOOKUP(x5, arm2));
+    PoseidonStateStruct x28 = exec_PoseidonPagingLoadDone(ctx, LAYOUT_LOOKUP(x5, arm2));
     x25 = x28;
   } else if (to_size_t(x24[3]._super)) {
     // PoseidonPaging(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:439)
-    PoseidonStateStruct x29 = exec_PoseidonPagingStorePage(arg0, x17, LAYOUT_LOOKUP(x5, arm3));
+    PoseidonStateStruct x29 = exec_PoseidonPagingStorePage(ctx, arg0, x17, LAYOUT_LOOKUP(x5, arm3));
     x25 = x29;
   } else if (to_size_t(x24[4]._super)) {
     // PoseidonPaging(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:440)
-    PoseidonStateStruct x30 = exec_PoseidonPagingStoreNode(arg0, x17, LAYOUT_LOOKUP(x5, arm4));
+    PoseidonStateStruct x30 = exec_PoseidonPagingStoreNode(ctx, arg0, x17, LAYOUT_LOOKUP(x5, arm4));
     x25 = x30;
   } else if (to_size_t(x24[5]._super)) {
     // PoseidonPaging(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:441)
-    PoseidonStateStruct x31 = exec_PoseidonPagingStoreDone(LAYOUT_LOOKUP(x5, arm5));
+    PoseidonStateStruct x31 = exec_PoseidonPagingStoreDone(ctx, LAYOUT_LOOKUP(x5, arm5));
     x25 = x31;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
   // PoseidonPaging(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:435)
-  PoseidonStateStruct x32 = back_PoseidonState(0, LAYOUT_LOOKUP(x5, _super));
+  PoseidonStateStruct x32 = back_PoseidonState(ctx, 0, LAYOUT_LOOKUP(x5, _super));
   return x32;
 }
-InstOutputStruct exec_Poseidon0(RegStruct arg0,
-                                InstInputStruct arg1,
-                                BoundLayout<Poseidon0Layout> layout2,
-                                GlobalBuf global3) {
+__device__ InstOutputStruct exec_Poseidon0(ExecContext& ctx,
+                                           RegStruct arg0,
+                                           InstInputStruct arg1,
+                                           BoundLayout<Poseidon0Layout> layout2,
+                                           GlobalBuf global3) {
   // Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:446)
   BoundLayout<PoseidonStateLayout> x4 = LAYOUT_LOOKUP(layout2, state);
   // Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:448)
@@ -8416,7 +8766,7 @@ InstOutputStruct exec_Poseidon0(RegStruct arg0,
   PoseidonStateStruct x209;
   if (to_size_t(x6[0]._super)) {
     // Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:449)
-    PoseidonStateStruct x210 = exec_PoseidonEntry(arg0, x15, x16, LAYOUT_LOOKUP(x7, _super));
+    PoseidonStateStruct x210 = exec_PoseidonEntry(ctx, arg0, x15, x16, LAYOUT_LOOKUP(x7, _super));
     // Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:448)
     STORE(x17, Val(0));
     EQZ(LOAD(x17, 0), "Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:448)");
@@ -8481,8 +8831,8 @@ InstOutputStruct exec_Poseidon0(RegStruct arg0,
     x209 = x210;
   } else if (to_size_t(x6[1]._super)) {
     // Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:450)
-    PoseidonStateStruct x211 = back_PoseidonState(1, x4);
-    PoseidonStateStruct x212 = exec_PoseidonLoadState(arg0, x211, LAYOUT_LOOKUP(x8, _super));
+    PoseidonStateStruct x211 = back_PoseidonState(ctx, 1, x4);
+    PoseidonStateStruct x212 = exec_PoseidonLoadState(ctx, arg0, x211, LAYOUT_LOOKUP(x8, _super));
     // Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:448)
     STORE(x47, Val(0));
     EQZ(LOAD(x47, 0), "Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:448)");
@@ -8523,8 +8873,9 @@ InstOutputStruct exec_Poseidon0(RegStruct arg0,
     x209 = x212;
   } else if (to_size_t(x6[2]._super)) {
     // Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:451)
-    PoseidonStateStruct x213 = back_PoseidonState(1, x4);
-    PoseidonStateStruct x214 = exec_PoseidonLoadIn(arg0, x213, LAYOUT_LOOKUP(x9, _super), global3);
+    PoseidonStateStruct x213 = back_PoseidonState(ctx, 1, x4);
+    PoseidonStateStruct x214 =
+        exec_PoseidonLoadIn(ctx, arg0, x213, LAYOUT_LOOKUP(x9, _super), global3);
     // Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:448)
     STORE(x65, Val(0));
     EQZ(LOAD(x65, 0), "Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:448)");
@@ -8565,7 +8916,7 @@ InstOutputStruct exec_Poseidon0(RegStruct arg0,
     x209 = x214;
   } else if (to_size_t(x6[3]._super)) {
     // Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:452)
-    PoseidonStateStruct x215 = exec_PoseidonInvalid(LAYOUT_LOOKUP(x10, _super));
+    PoseidonStateStruct x215 = exec_PoseidonInvalid(ctx, LAYOUT_LOOKUP(x10, _super));
     // Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:448)
     STORE(x83, Val(0));
     EQZ(LOAD(x83, 0), "Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:448)");
@@ -8654,7 +9005,7 @@ InstOutputStruct exec_Poseidon0(RegStruct arg0,
     x209 = x215;
   } else if (to_size_t(x6[4]._super)) {
     // Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:453)
-    PoseidonStateStruct x216 = exec_PoseidonInvalid(LAYOUT_LOOKUP(x11, _super));
+    PoseidonStateStruct x216 = exec_PoseidonInvalid(ctx, LAYOUT_LOOKUP(x11, _super));
     // Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:448)
     STORE(x125, Val(0));
     EQZ(LOAD(x125, 0), "Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:448)");
@@ -8743,8 +9094,8 @@ InstOutputStruct exec_Poseidon0(RegStruct arg0,
     x209 = x216;
   } else if (to_size_t(x6[5]._super)) {
     // Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:454)
-    PoseidonStateStruct x217 = back_PoseidonState(1, x4);
-    PoseidonStateStruct x218 = exec_PoseidonDoOut(arg0, x217, LAYOUT_LOOKUP(x12, _super));
+    PoseidonStateStruct x217 = back_PoseidonState(ctx, 1, x4);
+    PoseidonStateStruct x218 = exec_PoseidonDoOut(ctx, arg0, x217, LAYOUT_LOOKUP(x12, _super));
     // Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:448)
     STORE(x167, Val(0));
     EQZ(LOAD(x167, 0), "Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:448)");
@@ -8753,8 +9104,9 @@ InstOutputStruct exec_Poseidon0(RegStruct arg0,
     x209 = x218;
   } else if (to_size_t(x6[6]._super)) {
     // Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:455)
-    PoseidonStateStruct x219 = back_PoseidonState(1, x4);
-    PoseidonStateStruct x220 = exec_PoseidonPaging(arg0, x16, x219, LAYOUT_LOOKUP(x13, _super));
+    PoseidonStateStruct x219 = back_PoseidonState(ctx, 1, x4);
+    PoseidonStateStruct x220 =
+        exec_PoseidonPaging(ctx, arg0, x16, x219, LAYOUT_LOOKUP(x13, _super));
     // Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:448)
     STORE(x169, Val(0));
     EQZ(LOAD(x169, 0), "Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:448)");
@@ -8835,8 +9187,8 @@ InstOutputStruct exec_Poseidon0(RegStruct arg0,
     x209 = x220;
   } else if (to_size_t(x6[7]._super)) {
     // Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:456)
-    PoseidonStateStruct x221 = back_PoseidonState(1, x4);
-    PoseidonStateStruct x222 = exec_PoseidonStoreState(arg0, x221, LAYOUT_LOOKUP(x14, _super));
+    PoseidonStateStruct x221 = back_PoseidonState(ctx, 1, x4);
+    PoseidonStateStruct x222 = exec_PoseidonStoreState(ctx, arg0, x221, LAYOUT_LOOKUP(x14, _super));
     // Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:448)
     STORE(x207, Val(0));
     EQZ(LOAD(x207, 0), "Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:448)");
@@ -8851,18 +9203,20 @@ InstOutputStruct exec_Poseidon0(RegStruct arg0,
   // GetDiffCount(zirgen/circuit/rv32im/v2/dsl/mem.zir:22)
   // Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:458)
   Val x224 = INVOKE_EXTERN(ctx, getDiffCount, x223);
-  CycleArgStruct x225 = exec_CycleArg(neg_0(x224), x223, LAYOUT_LOOKUP(layout2, arg));
+  CycleArgStruct x225 = exec_CycleArg(ctx, neg_0(x224), x223, LAYOUT_LOOKUP(layout2, arg));
   // Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:460)
   Val x226 = (x225.cycle._super - x223);
   EQZ(x226, "Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:460)");
   // Poseidon0(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:448)
-  PoseidonStateStruct x227 = back_PoseidonState(0, LAYOUT_LOOKUP(x5, _super));
+  PoseidonStateStruct x227 = back_PoseidonState(ctx, 0, LAYOUT_LOOKUP(x5, _super));
   Val x228 = x227.nextState._super._super;
   Val x229 = x227.mode._super._super;
   return InstOutputStruct{.newPc = x15, .newState = x228, .newMode = x229};
 }
-InstOutputStruct
-exec_Poseidon1(RegStruct arg0, InstInputStruct arg1, BoundLayout<Poseidon1Layout> layout2) {
+__device__ InstOutputStruct exec_Poseidon1(ExecContext& ctx,
+                                           RegStruct arg0,
+                                           InstInputStruct arg1,
+                                           BoundLayout<Poseidon1Layout> layout2) {
   // Poseidon1(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:465)
   BoundLayout<PoseidonStateLayout> x3 = LAYOUT_LOOKUP(layout2, state);
   // Poseidon1(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:467)
@@ -8872,37 +9226,37 @@ exec_Poseidon1(RegStruct arg0, InstInputStruct arg1, BoundLayout<Poseidon1Layout
   PoseidonStateStruct x6;
   if (to_size_t(x5[0]._super)) {
     // Poseidon1(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:468)
-    PoseidonStateStruct x7 = back_PoseidonState(1, x3);
-    PoseidonStateStruct x8 = exec_PoseidonExtRound(x7, LAYOUT_LOOKUP(x4, arm0));
+    PoseidonStateStruct x7 = back_PoseidonState(ctx, 1, x3);
+    PoseidonStateStruct x8 = exec_PoseidonExtRound(ctx, x7, LAYOUT_LOOKUP(x4, arm0));
     x6 = x8;
   } else if (to_size_t(x5[1]._super)) {
     // Poseidon1(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:469)
-    PoseidonStateStruct x9 = back_PoseidonState(1, x3);
-    PoseidonStateStruct x10 = exec_PoseidonIntRounds(x9, LAYOUT_LOOKUP(x4, arm1));
+    PoseidonStateStruct x9 = back_PoseidonState(ctx, 1, x3);
+    PoseidonStateStruct x10 = exec_PoseidonIntRounds(ctx, x9, LAYOUT_LOOKUP(x4, arm1));
     x6 = x10;
   } else if (to_size_t(x5[2]._super)) {
     // Poseidon1(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:470)
-    PoseidonStateStruct x11 = exec_PoseidonInvalid(LAYOUT_LOOKUP(x4, arm2));
+    PoseidonStateStruct x11 = exec_PoseidonInvalid(ctx, LAYOUT_LOOKUP(x4, arm2));
     x6 = x11;
   } else if (to_size_t(x5[3]._super)) {
     // Poseidon1(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:471)
-    PoseidonStateStruct x12 = exec_PoseidonInvalid(LAYOUT_LOOKUP(x4, arm3));
+    PoseidonStateStruct x12 = exec_PoseidonInvalid(ctx, LAYOUT_LOOKUP(x4, arm3));
     x6 = x12;
   } else if (to_size_t(x5[4]._super)) {
     // Poseidon1(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:472)
-    PoseidonStateStruct x13 = exec_PoseidonInvalid(LAYOUT_LOOKUP(x4, arm4));
+    PoseidonStateStruct x13 = exec_PoseidonInvalid(ctx, LAYOUT_LOOKUP(x4, arm4));
     x6 = x13;
   } else if (to_size_t(x5[5]._super)) {
     // Poseidon1(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:473)
-    PoseidonStateStruct x14 = exec_PoseidonInvalid(LAYOUT_LOOKUP(x4, arm5));
+    PoseidonStateStruct x14 = exec_PoseidonInvalid(ctx, LAYOUT_LOOKUP(x4, arm5));
     x6 = x14;
   } else if (to_size_t(x5[6]._super)) {
     // Poseidon1(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:474)
-    PoseidonStateStruct x15 = exec_PoseidonInvalid(LAYOUT_LOOKUP(x4, arm6));
+    PoseidonStateStruct x15 = exec_PoseidonInvalid(ctx, LAYOUT_LOOKUP(x4, arm6));
     x6 = x15;
   } else if (to_size_t(x5[7]._super)) {
     // Poseidon1(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:475)
-    PoseidonStateStruct x16 = exec_PoseidonInvalid(LAYOUT_LOOKUP(x4, arm7));
+    PoseidonStateStruct x16 = exec_PoseidonInvalid(ctx, LAYOUT_LOOKUP(x4, arm7));
     x6 = x16;
   } else {
     assert(0 && "Reached unreachable mux arm");
@@ -8912,26 +9266,28 @@ exec_Poseidon1(RegStruct arg0, InstInputStruct arg1, BoundLayout<Poseidon1Layout
   // GetDiffCount(zirgen/circuit/rv32im/v2/dsl/mem.zir:22)
   // Poseidon1(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:477)
   Val x18 = INVOKE_EXTERN(ctx, getDiffCount, x17);
-  CycleArgStruct x19 = exec_CycleArg(neg_0(x18), x17, LAYOUT_LOOKUP(layout2, arg));
+  CycleArgStruct x19 = exec_CycleArg(ctx, neg_0(x18), x17, LAYOUT_LOOKUP(layout2, arg));
   // Poseidon1(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:479)
   Val x20 = (x19.cycle._super - x17);
   EQZ(x20, "Poseidon1(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:479)");
   // Poseidon1(zirgen/circuit/rv32im/v2/dsl/inst_p2.zir:467)
-  PoseidonStateStruct x21 = back_PoseidonState(0, LAYOUT_LOOKUP(x4, _super));
+  PoseidonStateStruct x21 = back_PoseidonState(ctx, 0, LAYOUT_LOOKUP(x4, _super));
   Val x22 = x21.nextState._super._super;
   Val x23 = x21.mode._super._super;
   return InstOutputStruct{.newPc = arg1.pcU32, .newState = x22, .newMode = x23};
 }
-OneHot_11_Struct exec_OneHot_11_(Val arg0, BoundLayout<OneHot_11_Layout> layout1) {
+__device__ OneHot_11_Struct exec_OneHot_11_(ExecContext& ctx,
+                                            Val arg0,
+                                            BoundLayout<OneHot_11_Layout> layout1) {
   // OneHot(zirgen/circuit/rv32im/v2/dsl/one_hot.zir:7)
-  NondetRegStruct11Array x2 =
-      map({Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7), Val(8), Val(9), Val(10)},
-          LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val11Array::value_type x3,
-                            BoundLayout<NondetRegLayout11LayoutArray::value_type> x4) {
-            NondetRegStruct x5 = exec_NondetBitReg(isz((x3 - arg0)), x4);
-            return x5;
-          }));
+  NondetRegStruct11Array x2 = map(
+      Val11Array{
+          Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7), Val(8), Val(9), Val(10)},
+      LAYOUT_LOOKUP(layout1, _super),
+      ([&](Val11Array::value_type x3, BoundLayout<NondetRegLayout11LayoutArray::value_type> x4) {
+        NondetRegStruct x5 = exec_NondetBitReg(ctx, isz((x3 - arg0)), x4);
+        return x5;
+      }));
   // OneHot(zirgen/circuit/rv32im/v2/dsl/one_hot.zir:9)
   Val x6 = x2[1]._super;
   Val x7 = (x2[0]._super + x6);
@@ -8955,7 +9311,7 @@ OneHot_11_Struct exec_OneHot_11_(Val arg0, BoundLayout<OneHot_11_Layout> layout1
   EQZ((x22 - arg0), "OneHot(zirgen/circuit/rv32im/v2/dsl/one_hot.zir:11)");
   return OneHot_11_Struct{._super = x2};
 }
-TopStruct exec_Top(BoundLayout<TopLayout> layout0, GlobalBuf global1) {
+__device__ TopStruct exec_Top(ExecContext& ctx, BoundLayout<TopLayout> layout0, GlobalBuf global1) {
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:41)
   BoundLayout<NondetRegLayout> x2 = LAYOUT_LOOKUP(layout0, nextPcLow);
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:42)
@@ -8969,42 +9325,43 @@ TopStruct exec_Top(BoundLayout<TopLayout> layout0, GlobalBuf global1) {
   // IsFirstCycle(zirgen/circuit/rv32im/v2/dsl/top.zir:17)
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:47)
   Val x7 = INVOKE_EXTERN(ctx, isFirstCycle_0);
-  NondetRegStruct x8 = exec_NondetReg(x7, LAYOUT_LOOKUP(layout0, isFirstCycle));
+  NondetRegStruct x8 = exec_NondetReg(ctx, x7, LAYOUT_LOOKUP(layout0, isFirstCycle));
   // GetCycle(zirgen/circuit/rv32im/v2/dsl/top.zir:18)
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:48)
   Val x9 = INVOKE_EXTERN(ctx, getCycle);
-  NondetRegStruct x10 = exec_NondetReg(x9, LAYOUT_LOOKUP(layout0, cycleND));
+  NondetRegStruct x10 = exec_NondetReg(ctx, x9, LAYOUT_LOOKUP(layout0, cycleND));
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:49)
-  RegStruct x11 = exec_Reg(x10._super, LAYOUT_LOOKUP(layout0, cycle));
+  RegStruct x11 = exec_Reg(ctx, x10._super, LAYOUT_LOOKUP(layout0, cycle));
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:47)
   Val x12 = x8._super;
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:52)
   Val x13 = (Val(1) - x12);
-  RegStruct x14 = back_Reg(1, x2);
+  RegStruct x14 = back_Reg(ctx, 1, x2);
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:53)
-  RegStruct x15 = back_Reg(1, x3);
+  RegStruct x15 = back_Reg(ctx, 1, x3);
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:56)
-  RegStruct x16 = back_Reg(1, x4);
+  RegStruct x16 = back_Reg(ctx, 1, x4);
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:58)
-  RegStruct x17 = back_Reg(1, x5);
+  RegStruct x17 = back_Reg(ctx, 1, x5);
   // GetMajorMinor(zirgen/circuit/rv32im/v2/dsl/top.zir:25)
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:60)
   auto [x18, x19] = INVOKE_EXTERN(ctx, getMajorMinor);
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:62)
-  NondetRegStruct x20 = exec_NondetReg(x18, LAYOUT_LOOKUP(layout0, major));
+  NondetRegStruct x20 = exec_NondetReg(ctx, x18, LAYOUT_LOOKUP(layout0, major));
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:63)
-  NondetRegStruct x21 = exec_NondetReg(x19, LAYOUT_LOOKUP(layout0, minor));
+  NondetRegStruct x21 = exec_NondetReg(ctx, x19, LAYOUT_LOOKUP(layout0, minor));
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:62)
   Val x22 = x20._super;
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:63)
   Val x23 = x21._super;
   // Log(<preamble>:22)
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:64)
-  INVOKE_EXTERN(ctx, log, "Major/Minor = ", {x22, x23});
+  INVOKE_EXTERN(ctx, log, "Major/Minor = ", std::initializer_list<Val>{x22, x23});
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:49)
   Val x24 = x11._super._super;
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:66)
   InstInputStruct x25 = exec_InstInput(
+      ctx,
       x24,
       x22,
       x23,
@@ -9013,52 +9370,52 @@ TopStruct exec_Top(BoundLayout<TopLayout> layout0, GlobalBuf global1) {
       ((x13 * x17._super._super) + x12),
       LAYOUT_LOOKUP(layout0, instInput));
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:68)
-  OneHot_11_Struct x26 = exec_OneHot_11_(x22, LAYOUT_LOOKUP(layout0, majorOnehot));
+  OneHot_11_Struct x26 = exec_OneHot_11_(ctx, x22, LAYOUT_LOOKUP(layout0, majorOnehot));
   NondetRegStruct11Array x27 = x26._super;
   InstOutputStruct x28;
   if (to_size_t(x27[0]._super)) {
     // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:70)
-    InstOutputStruct x29 = exec_Misc0(x11, x25, LAYOUT_LOOKUP(x6, arm0));
+    InstOutputStruct x29 = exec_Misc0(ctx, x11, x25, LAYOUT_LOOKUP(x6, arm0));
     x28 = x29;
   } else if (to_size_t(x27[1]._super)) {
     // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:71)
-    InstOutputStruct x30 = exec_Misc1(x11, x25, LAYOUT_LOOKUP(x6, arm1));
+    InstOutputStruct x30 = exec_Misc1(ctx, x11, x25, LAYOUT_LOOKUP(x6, arm1));
     x28 = x30;
   } else if (to_size_t(x27[2]._super)) {
     // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:72)
-    InstOutputStruct x31 = exec_Misc2(x11, x25, LAYOUT_LOOKUP(x6, arm2));
+    InstOutputStruct x31 = exec_Misc2(ctx, x11, x25, LAYOUT_LOOKUP(x6, arm2));
     x28 = x31;
   } else if (to_size_t(x27[3]._super)) {
     // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:73)
-    InstOutputStruct x32 = exec_Mul0(x11, x25, LAYOUT_LOOKUP(x6, arm3));
+    InstOutputStruct x32 = exec_Mul0(ctx, x11, x25, LAYOUT_LOOKUP(x6, arm3));
     x28 = x32;
   } else if (to_size_t(x27[4]._super)) {
     // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:74)
-    InstOutputStruct x33 = exec_Div0(x11, x25, LAYOUT_LOOKUP(x6, arm4));
+    InstOutputStruct x33 = exec_Div0(ctx, x11, x25, LAYOUT_LOOKUP(x6, arm4));
     x28 = x33;
   } else if (to_size_t(x27[5]._super)) {
     // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:75)
-    InstOutputStruct x34 = exec_Mem0(x11, x25, LAYOUT_LOOKUP(x6, arm5));
+    InstOutputStruct x34 = exec_Mem0(ctx, x11, x25, LAYOUT_LOOKUP(x6, arm5));
     x28 = x34;
   } else if (to_size_t(x27[6]._super)) {
     // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:76)
-    InstOutputStruct x35 = exec_Mem1(x11, x25, LAYOUT_LOOKUP(x6, arm6));
+    InstOutputStruct x35 = exec_Mem1(ctx, x11, x25, LAYOUT_LOOKUP(x6, arm6));
     x28 = x35;
   } else if (to_size_t(x27[7]._super)) {
     // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:77)
-    InstOutputStruct x36 = exec_Control0(x11, x25, LAYOUT_LOOKUP(x6, arm7), global1);
+    InstOutputStruct x36 = exec_Control0(ctx, x11, x25, LAYOUT_LOOKUP(x6, arm7), global1);
     x28 = x36;
   } else if (to_size_t(x27[8]._super)) {
     // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:78)
-    InstOutputStruct x37 = exec_ECall0(x11, x25, LAYOUT_LOOKUP(x6, arm8), global1);
+    InstOutputStruct x37 = exec_ECall0(ctx, x11, x25, LAYOUT_LOOKUP(x6, arm8), global1);
     x28 = x37;
   } else if (to_size_t(x27[9]._super)) {
     // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:79)
-    InstOutputStruct x38 = exec_Poseidon0(x11, x25, LAYOUT_LOOKUP(x6, arm9), global1);
+    InstOutputStruct x38 = exec_Poseidon0(ctx, x11, x25, LAYOUT_LOOKUP(x6, arm9), global1);
     x28 = x38;
   } else if (to_size_t(x27[10]._super)) {
     // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:80)
-    InstOutputStruct x39 = exec_Poseidon1(x11, x25, LAYOUT_LOOKUP(x6, arm10));
+    InstOutputStruct x39 = exec_Poseidon1(ctx, x11, x25, LAYOUT_LOOKUP(x6, arm10));
     x28 = x39;
   } else {
     assert(0 && "Reached unreachable mux arm");
@@ -9071,28 +9428,31 @@ TopStruct exec_Top(BoundLayout<TopLayout> layout0, GlobalBuf global1) {
   Val x44 = x28.newMode;
   // Log(<preamble>:22)
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:84)
-  INVOKE_EXTERN(ctx,
-                log,
-                "Cycle, pc, state, mm",
-                {x24, ((x41 * Val(1509949441)) + (x42 * Val(16384))), x43, x44});
+  INVOKE_EXTERN(
+      ctx,
+      log,
+      "Cycle, pc, state, mm",
+      std::initializer_list<Val>{x24, ((x41 * Val(1509949441)) + (x42 * Val(16384))), x43, x44});
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:85)
-  RegStruct x45 = exec_Reg(x41, x2);
+  RegStruct x45 = exec_Reg(ctx, x41, x2);
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:86)
-  RegStruct x46 = exec_Reg(x42, x3);
+  RegStruct x46 = exec_Reg(ctx, x42, x3);
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:87)
-  RegStruct x47 = exec_Reg(x43, x4);
+  RegStruct x47 = exec_Reg(ctx, x43, x4);
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:88)
-  RegStruct x48 = exec_Reg(x44, x5);
+  RegStruct x48 = exec_Reg(ctx, x44, x5);
   return TopStruct{};
 }
-void step_Top(MutableBuf data0, GlobalBuf global1) {
+__device__ void step_Top(ExecContext& ctx, MutableBuf data0, GlobalBuf global1) {
   // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:27)
   BoundLayout<TopLayout> x2 = BIND_LAYOUT(kLayout_Top, data0);
-  TopStruct x3 = exec_Top(x2, global1);
+  TopStruct x3 = exec_Top(ctx, x2, global1);
   return;
 }
-ComponentStruct
-exec_TopAccum(BoundLayout<TopLayout> arg0, BoundLayout<LayoutAccumLayout> layout1, GlobalBuf mix2) {
+__device__ ComponentStruct exec_TopAccum(ExecContext& ctx,
+                                         BoundLayout<TopLayout> arg0,
+                                         BoundLayout<LayoutAccumLayout> layout1,
+                                         GlobalBuf mix2) {
   // zirgen/dsl/passes/GenerateAccum.cpp:526
   BoundLayout<_mixLayout> x3 = BIND_LAYOUT(kLayoutMix, mix2);
   // zirgen/dsl/passes/GenerateAccum.cpp:533
@@ -14001,10 +14361,11 @@ exec_TopAccum(BoundLayout<TopLayout> arg0, BoundLayout<LayoutAccumLayout> layout
   }
   return x51;
 }
-void step_TopAccum(MutableBuf accum0, MutableBuf data1, GlobalBuf mix2) {
+__device__ void
+step_TopAccum(ExecContext& ctx, MutableBuf accum0, MutableBuf data1, GlobalBuf mix2) {
   // zirgen/dsl/passes/GenerateAccum.cpp:526
   BoundLayout<TopLayout> x3 = BIND_LAYOUT(kLayout_Top, data1);
   BoundLayout<LayoutAccumLayout> x4 = BIND_LAYOUT(kLayout_TopAccum, accum0);
-  ComponentStruct x5 = exec_TopAccum(x3, x4, mix2);
+  ComponentStruct x5 = exec_TopAccum(ctx, x3, x4, mix2);
   return;
 }
