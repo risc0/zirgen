@@ -72,7 +72,11 @@ cc_test(
     deps = [":bibc_utils"],
 )
 
-# reduce
+cc_test(
+    name = "reduce",
+    srcs = ["reduce.cpp"],
+    deps = [":bibc_utils"],
+)
 
 # nondet_inv
 
