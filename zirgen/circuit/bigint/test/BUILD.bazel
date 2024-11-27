@@ -17,6 +17,7 @@ cc_library(
     ],
     deps = [
         "//risc0/core/test:gtest_main",
+        "//zirgen/circuit/bigint:lib",
         "//zirgen/Dialect/BigInt/Bytecode",
         "//zirgen/Dialect/BigInt/IR",
         "//zirgen/Dialect/BigInt/Transforms",
@@ -25,44 +26,31 @@ cc_library(
 
 cc_test(
     name = "const_add",
-    srcs = [
-        "const_add.cpp",
-    ],
-    deps = [
-        ":bibc_utils",
-        "//zirgen/circuit/bigint:lib",
-    ],
+    srcs = ["const_add.cpp"],
+    deps = [":bibc_utils"],
+)
+
+cc_test(
+    name = "const_add_alt",
+    srcs = ["const_add_alt.cpp"],
+    deps = [":bibc_utils"],
 )
 
 cc_test(
     name = "add",
-    srcs = [
-        "add.cpp",
-    ],
-    deps = [
-        ":bibc_utils",
-        "//zirgen/circuit/bigint:lib",
-    ],
+    srcs = ["add.cpp"],
+    deps = [":bibc_utils"],
 )
 
 cc_test(
     name = "mul",
-    srcs = [
-        "mul.cpp",
-    ],
-    deps = [
-        ":bibc_utils",
-        "//zirgen/circuit/bigint:lib",
-    ],
+    srcs = ["mul.cpp"],
+    deps = [":bibc_utils"],
 )
 
 cc_test(
     name = "rsa",
-    srcs = [
-        "rsa.cpp",
-    ],
-    deps = [
-        ":bibc_utils",
-        "//zirgen/circuit/bigint:lib",
-    ],
+    srcs = ["rsa.cpp"],
+    deps = [":bibc_utils"],
 )
+
