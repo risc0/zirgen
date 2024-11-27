@@ -9,6 +9,8 @@ glob_lit_tests()
 cc_test(
     name = "test",
     srcs = [
+        "bibc.cpp",
+        "bibc.h",
         "test.cpp",
     ],
     deps = [
