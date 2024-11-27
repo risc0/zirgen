@@ -380,7 +380,11 @@ component WriteCycle(back1: TopState, back2: TopState) {
     )
   };
   bits := SFlatToBits(back1.sflat);
-  TopState(bits, kflat, back1.sflat)
+  state := TopState(bits, kflat, back1.sflat);
+  for i : 0..800 {
+    AliasLayout!(state.bits[i], bits[i]);
+  };
+  state
 }
 
 component DigestReg(values: Array<Val, 16>) {
