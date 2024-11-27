@@ -6,18 +6,42 @@ load("//bazel/rules/lit:defs.bzl", "glob_lit_tests")
 
 glob_lit_tests()
 
-cc_test(
-    name = "test",
+cc_library(
+    name = "bibc_utils",
+    testonly = True,
     srcs = [
         "bibc.cpp",
+    ],
+    hdrs = [
         "bibc.h",
-        "test.cpp",
     ],
     deps = [
         "//risc0/core/test:gtest_main",
         "//zirgen/Dialect/BigInt/Bytecode",
         "//zirgen/Dialect/BigInt/IR",
         "//zirgen/Dialect/BigInt/Transforms",
+    ],
+)
+
+cc_test(
+    name = "test",
+    srcs = [
+        "rsa.cpp",
+        "test.cpp",
+    ],
+    deps = [
+        ":bibc_utils",
+        "//zirgen/circuit/bigint:lib",
+    ],
+)
+
+cc_test(
+    name = "rsa",
+    srcs = [
+        "rsa.cpp",
+    ],
+    deps = [
+        ":bibc_utils",
         "//zirgen/circuit/bigint:lib",
     ],
 )
