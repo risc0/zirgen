@@ -21,39 +21,6 @@
 using namespace zirgen;
 using namespace zirgen::BigInt::test;
 
-TEST_F(BibcTest, Add8) {
-  mlir::OpBuilder builder(ctx);
-  auto func = makeFunc("add_8", builder);
-  BigInt::makeAddTest(builder, func.getLoc(), 8);
-
-  auto inputs = apints({"1", "2", "3"});
-  ZType a, b;
-  AB(func, inputs, a, b);
-  EXPECT_EQ(a, b);
-}
-
-TEST_F(BibcTest, Add16) {
-  mlir::OpBuilder builder(ctx);
-  auto func = makeFunc("add_16", builder);
-  BigInt::makeAddTest(builder, func.getLoc(), 16);
-
-  auto inputs = apints({"1", "2", "3"});
-  ZType a, b;
-  AB(func, inputs, a, b);
-  EXPECT_EQ(a, b);
-}
-
-TEST_F(BibcTest, Add128) {
-  mlir::OpBuilder builder(ctx);
-  auto func = makeFunc("add_128", builder);
-  BigInt::makeAddTest(builder, func.getLoc(), 128);
-
-  auto inputs = apints({"1", "2", "3"});
-  ZType a, b;
-  AB(func, inputs, a, b);
-  EXPECT_EQ(a, b);
-}
-
 TEST_F(BibcTest, Mul8) {
   mlir::OpBuilder builder(ctx);
   auto func = makeFunc("mul_8", builder);
