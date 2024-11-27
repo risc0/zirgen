@@ -24,6 +24,17 @@ cc_library(
 )
 
 cc_test(
+    name = "const_add",
+    srcs = [
+        "const_add.cpp",
+    ],
+    deps = [
+        ":bibc_utils",
+        "//zirgen/circuit/bigint:lib",
+    ],
+)
+
+cc_test(
     name = "add",
     srcs = [
         "add.cpp",
