@@ -129,7 +129,7 @@ int main() {
   applyPreflight(trace, preflight);
   // Run backwords
   std::cout << "out.ctypeOneHot = " << getLayoutInfo().ctypeOneHot << "\n";
-  for (size_t i = cycles; i --> 0; ) {
+  for (size_t i = cycles; i-- > 0;) {
     StepHandler ctx(preflight, i);
     std::cout << "Running cycle " << i << "\n";
     DslStep(ctx, trace, i);

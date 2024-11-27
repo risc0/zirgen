@@ -30,7 +30,7 @@ struct PreflightTrace {
   // All the preimages
   std::vector<std::array<uint64_t, 25>> preimages;
   // Which 'preimage' each cycle is working on (to answer extern calls)
-  std::vector<uint32_t> curPreimage; 
+  std::vector<uint32_t> curPreimage;
   // Raw data for scattering
   std::vector<uint32_t> data;
   // Where to scatter it

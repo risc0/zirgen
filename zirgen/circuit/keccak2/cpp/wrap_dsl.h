@@ -24,7 +24,9 @@ namespace zirgen::keccak2 {
 struct StepHandler {
   StepHandler(const PreflightTrace& trace, size_t cycle) : trace(trace), cycle(cycle) {}
   bool nextPreimage() { return trace.curPreimage[cycle] != trace.preimages.size(); }
-  const std::array<uint64_t, 25>& getPreimage() { return trace.preimages[trace.curPreimage[cycle]]; }
+  const std::array<uint64_t, 25>& getPreimage() {
+    return trace.preimages[trace.curPreimage[cycle]];
+  }
 
 private:
   const PreflightTrace& trace;

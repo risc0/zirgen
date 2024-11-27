@@ -181,25 +181,27 @@ struct ControlState {
   uint8_t block;
   uint8_t round;
   uint32_t asWord() const {
-    return uint32_t(cycleType) | 
-      (uint32_t(subType) << 8) |
-      (uint32_t(block) << 16) |
-      (uint32_t(round) << 24);
+    return uint32_t(cycleType) | (uint32_t(subType) << 8) | (uint32_t(block) << 16) |
+           (uint32_t(round) << 24);
   }
-  static ControlState Shutdown() { return ControlState { 0, 0, 0, 0 }; }
-  static ControlState Read() { return ControlState { 1, 0, 0, 0 }; }
-  static ControlState Expand(uint8_t subtype) { return ControlState { 2, subtype, 0, 0 }; }
-  static ControlState Write() { return ControlState { 3, 0, 0, 0 }; }
-  static ControlState Keccak0(uint8_t round) { return ControlState { 4, 0, 0, round }; }
-  static ControlState Keccak1(uint8_t round) { return ControlState { 5, 0, 0, round }; }
-  static ControlState Keccak2(uint8_t round) { return ControlState { 6, 0, 0, round }; }
-  static ControlState Keccak3(uint8_t round) { return ControlState { 7, 0, 0, round }; }
-  static ControlState Keccak4(uint8_t round) { return ControlState { 8, 0, 0, round }; }
-  static ControlState ShaIn(uint8_t block, uint8_t round) { return ControlState { 9, 0, block, round }; }
-  static ControlState ShaOut(uint8_t block, uint8_t round) { return ControlState { 9, 1, block, round }; }
-  static ControlState ShaNextBlockIn(uint8_t block) { return ControlState { 10, 0, block, 0}; }
-  static ControlState ShaNextBlockOut(uint8_t block) { return ControlState { 10, 1, block, 0}; }
-  static ControlState Init() { return ControlState { 11, 0, 0, 0 }; }
+  static ControlState Shutdown() { return ControlState{0, 0, 0, 0}; }
+  static ControlState Read() { return ControlState{1, 0, 0, 0}; }
+  static ControlState Expand(uint8_t subtype) { return ControlState{2, subtype, 0, 0}; }
+  static ControlState Write() { return ControlState{3, 0, 0, 0}; }
+  static ControlState Keccak0(uint8_t round) { return ControlState{4, 0, 0, round}; }
+  static ControlState Keccak1(uint8_t round) { return ControlState{5, 0, 0, round}; }
+  static ControlState Keccak2(uint8_t round) { return ControlState{6, 0, 0, round}; }
+  static ControlState Keccak3(uint8_t round) { return ControlState{7, 0, 0, round}; }
+  static ControlState Keccak4(uint8_t round) { return ControlState{8, 0, 0, round}; }
+  static ControlState ShaIn(uint8_t block, uint8_t round) {
+    return ControlState{9, 0, block, round};
+  }
+  static ControlState ShaOut(uint8_t block, uint8_t round) {
+    return ControlState{9, 1, block, round};
+  }
+  static ControlState ShaNextBlockIn(uint8_t block) { return ControlState{10, 0, block, 0}; }
+  static ControlState ShaNextBlockOut(uint8_t block) { return ControlState{10, 1, block, 0}; }
+  static ControlState Init() { return ControlState{11, 0, 0, 0}; }
 };
 
 } // namespace
@@ -313,7 +315,8 @@ PreflightTrace preflightSegment(const std::vector<KeccakState>& inputs, size_t c
         addCycle(ControlState::ShaIn(block, i), writeShaInfo(infos[i]), kflatOffset, sflatOffset);
       }
       sflatOffset = writeShaState(currentSha);
-      addCycle(ControlState::ShaNextBlockIn(block), writeShaInfo(infos[8]), kflatOffset, sflatOffset);
+      addCycle(
+          ControlState::ShaNextBlockIn(block), writeShaInfo(infos[8]), kflatOffset, sflatOffset);
     }
     // Expand
     addCycle(ControlState::Expand(0), writeKeccak(kstate, false), kflatOffset, sflatOffset);
@@ -336,10 +339,11 @@ PreflightTrace preflightSegment(const std::vector<KeccakState>& inputs, size_t c
     for (size_t block = 0; block < 4; block++) {
       auto infos = compute_sha_infos(currentSha, data.data() + 16 * block);
       for (size_t i = 0; i < 8; i++) {
-        addCycle(ControlState::ShaOut(block, i),writeShaInfo(infos[i]), kflatOffset, sflatOffset);
+        addCycle(ControlState::ShaOut(block, i), writeShaInfo(infos[i]), kflatOffset, sflatOffset);
       }
       sflatOffset = writeShaState(currentSha);
-      addCycle(ControlState::ShaNextBlockOut(block), writeShaInfo(infos[8]), kflatOffset, sflatOffset);
+      addCycle(
+          ControlState::ShaNextBlockOut(block), writeShaInfo(infos[8]), kflatOffset, sflatOffset);
     }
   }
   // Do 'shudown' cycles until we are done
@@ -358,7 +362,8 @@ void applyPreflight(ExecutionTrace& exec, const PreflightTrace& preflight) {
       uint32_t word = preflight.data[info.dataOffset + (i / innerCount)];
       size_t j = i % innerCount;
       uint32_t val = (word >> (j * info.bitPerElem)) & mask;
-      // std::cout << "row = " << info.row << ", col = " << info.column + i << ", val = " << val << "\n";
+      // std::cout << "row = " << info.row << ", col = " << info.column + i << ", val = " << val <<
+      // "\n";
       exec.data.set(info.row, info.column + i, val);
     }
   }
