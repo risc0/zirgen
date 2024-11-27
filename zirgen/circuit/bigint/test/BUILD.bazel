@@ -6,7 +6,6 @@ load("//bazel/rules/lit:defs.bzl", "glob_lit_tests")
 
 glob_lit_tests()
 
-<<<<<<< HEAD
 cc_library(
     name = "bibc_utils",
     testonly = True,
@@ -91,20 +90,4 @@ cc_test(
     deps = [":bibc_utils"],
 )
 
-=======
-cc_test(
-    name = "test",
-    srcs = [
-        "bibc.cpp",
-        "bibc.h",
-        "test.cpp",
-    ],
-    deps = [
-        "//risc0/core/test:gtest_main",
-        "//zirgen/Dialect/BigInt/Bytecode",
-        "//zirgen/Dialect/BigInt/IR",
-        "//zirgen/Dialect/BigInt/Transforms",
-        "//zirgen/circuit/bigint:lib",
-    ],
-)
->>>>>>> 1ace379 (move bigint op tests over to more appropriate home directory)
+
