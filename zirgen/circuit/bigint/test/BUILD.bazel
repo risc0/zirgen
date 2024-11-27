@@ -95,6 +95,8 @@ cc_test(
 cc_test(
     name = "test",
     srcs = [
+        "bibc.cpp",
+        "bibc.h",
         "test.cpp",
     ],
     deps = [
