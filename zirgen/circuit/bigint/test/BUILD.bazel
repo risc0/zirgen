@@ -24,10 +24,20 @@ cc_library(
 )
 
 cc_test(
-    name = "test",
+    name = "add",
     srcs = [
-        "rsa.cpp",
-        "test.cpp",
+        "add.cpp",
+    ],
+    deps = [
+        ":bibc_utils",
+        "//zirgen/circuit/bigint:lib",
+    ],
+)
+
+cc_test(
+    name = "mul",
+    srcs = [
+        "mul.cpp",
     ],
     deps = [
         ":bibc_utils",
