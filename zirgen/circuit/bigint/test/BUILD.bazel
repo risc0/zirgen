@@ -78,7 +78,11 @@ cc_test(
     deps = [":bibc_utils"],
 )
 
-# nondet_inv
+cc_test(
+    name = "nondet_inv",
+    srcs = ["nondet_inv.cpp"],
+    deps = [":bibc_utils"],
+)
 
 cc_test(
     name = "rsa",
