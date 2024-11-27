@@ -37,6 +37,12 @@ cc_test(
 )
 
 cc_test(
+    name = "const_mul",
+    srcs = ["const_mul.cpp"],
+    deps = [":bibc_utils"],
+)
+
+cc_test(
     name = "add",
     srcs = ["add.cpp"],
     deps = [":bibc_utils"],
