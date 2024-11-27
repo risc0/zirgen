@@ -7,12 +7,14 @@ package(
 cc_library(
     name = "run",
     srcs = [
+        "preflight.cpp",
         "run.cpp",
         "trace.cpp",
         "wrap_dsl.cpp",
         "//zirgen/circuit/keccak2:cppinc",
     ],
     hdrs = [
+        "preflight.h",
         "run.h",
         "trace.h",
         "wrap_dsl.h",

@@ -261,12 +261,18 @@ Val extern_nextPreimage(ExecContext& ctx) {
 
 } // namespace impl
 
+LayoutInfo getLayoutInfo() {
+  LayoutInfo out;
+  out.bits = impl::kLayout_Top.curState._super.bits[0]._super.col;
+  out.kflat = impl::kLayout_Top.curState._super.kflat[0]._super.col;
+  out.sflat = impl::kLayout_Top.curState._super.sflat[0]._super.col;
+  return out;
+}
+
 CircuitParams getDslParams() {
   CircuitParams ret;
   ret.dataCols = impl::kRegCountData;
   ret.globalCols = impl::kRegCountGlobal;
-  ret.accumCols = impl::kRegCountAccum;
-  ret.mixCols = impl::kRegCountMix;
   return ret;
 }
 

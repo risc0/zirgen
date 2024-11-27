@@ -162,9 +162,10 @@ component ExtractBits(steps: Array<DoShaStep, 8>, i: Val) {
       (steps[i].a, steps[i - 8].e, steps[i - 16].w, for j : 0..32 {0})
 }
 
-component LoadWin(kf: Array<Val, 100>, round: Val, block: Val) {
+component LoadWin(kf: Array<Val, 100>, round: OneHot<8>, block: Val) {
   blockSelect := OneHot<4>(block);
-  [1 - round, round] -> (
+  other := reduce for i : 0..6 { round[2 + i] } init 0 with Add; 
+  [round[0], round[1], other] -> (
     blockSelect -> (
       for i : 0..8 { for j : 0..2 { kf[(i + 0) * 2 + j] }},
       for i : 0..8 { for j : 0..2 { kf[(i + 16) * 2 + j] }},
@@ -177,7 +178,8 @@ component LoadWin(kf: Array<Val, 100>, round: Val, block: Val) {
       for i : 0..8 { for j : 0..2 { kf[(i + 24) * 2 + j] }},
       for i : 0..8 { for j : 0..2 { kf[(i + 40) * 2 + j] }},
       for i : 0..8 { for j : 0..2 { 0 }}
-    )
+    ),
+    for i : 0..8 { for j : 0..2 { 0 }}
   )
 }
 
@@ -188,7 +190,7 @@ component ShaCycle(back1: TopState, back2: TopState, round: Val, block: Val) {
   oneHot := OneHot<8>(round);
   isLoad := Reg(oneHot -> (1, 1, 0, 0, 0, 0, 0, 0));
   localK := GetK8(oneHot);
-  win := LoadWin(back1.kflat, round, block);
+  win := LoadWin(back1.kflat, oneHot, block);
   step0 := DoShaStep(stateIn, localK[0], isLoad, win[0]);
   step1 := DoShaStep(step0.newState, localK[1], isLoad, win[1]);
   step2 := DoShaStep(step1.newState, localK[2], isLoad, win[2]);
@@ -388,7 +390,9 @@ component DigestReg(values: Array<Val, 16>) {
 component ShutdownCycle(stateIn: TopState) {
   Log("ShutdownCycle");
   global finalDigest := DigestReg(stateIn.sflat);
-  TopState(stateIn.bits, stateIn.kflat, stateIn.sflat)
+  bits := for x : 0..800 { 0 };
+  kflat := for x : 0..100 { 0 };
+  TopState(bits, kflat, stateIn.sflat)
 }
 
 component ControlState(cycleType: Val, subType: Val, block: Val, round: Val) {

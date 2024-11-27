@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "zirgen/circuit/keccak2/cpp/preflight.h"
 #include "zirgen/circuit/keccak2/cpp/run.h"
 #include "zirgen/compiler/zkp/sha256.h"
 
@@ -117,7 +118,9 @@ int main() {
 
   std::vector<KeccakState> inputs;
   inputs.push_back(state);
+  auto preflight = preflightSegment(inputs, 200);
   auto trace = runSegment(inputs);
+  applyPreflight(trace, preflight);
   zirgen::Digest compare;
   for (size_t i = 0; i < 8; i++) {
     uint32_t elem =

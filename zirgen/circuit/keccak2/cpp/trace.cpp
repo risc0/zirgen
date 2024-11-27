@@ -81,9 +81,6 @@ void GlobalTraceGroup::setUnsafe(bool val) {
 }
 
 ExecutionTrace::ExecutionTrace(size_t rows, const CircuitParams& params)
-    : data(rows, params.dataCols)
-    , global(params.globalCols)
-    , accum(rows, params.accumCols)
-    , mix(params.mixCols) {}
+    : data(rows, params.dataCols), global(params.globalCols) {}
 
 } // namespace zirgen::keccak2

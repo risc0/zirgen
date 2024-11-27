@@ -12,13 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <string>
+#pragma once
 
 #include "zirgen/circuit/keccak2/cpp/trace.h"
-#include "zirgen/circuit/keccak2/cpp/wrap_dsl.h"
 
 namespace zirgen::keccak2 {
 
-ExecutionTrace runSegment(const std::vector<KeccakState>& inputs);
+struct ScatterInfo {
+  uint32_t dataOffset; // Place to get the data from (as u32 words)
+  uint32_t row;        // Cycle # to write to
+  uint16_t column;     // Column number to start at
+  uint16_t count;      // Number of words to write
+  uint16_t bitPerElem; // How many bits per element
+};
+
+struct PreflightTrace {
+  // Raw data
+  std::vector<uint32_t> data;
+  // Scatter info
+  std::vector<ScatterInfo> scatter;
+};
+
+PreflightTrace preflightSegment(const std::vector<KeccakState>& inputs, size_t cycles);
+void applyPreflight(ExecutionTrace exec, const PreflightTrace& preflight);
 
 } // namespace zirgen::keccak2

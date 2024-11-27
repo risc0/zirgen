@@ -23,6 +23,7 @@ namespace zirgen::keccak2 {
 
 using Fp = risc0::Fp;
 using FpExt = risc0::FpExt;
+using KeccakState = std::array<uint64_t, 25>;
 
 class TraceGroup {
 public:
@@ -62,16 +63,12 @@ private:
 struct CircuitParams {
   size_t dataCols;
   size_t globalCols;
-  size_t accumCols;
-  size_t mixCols;
 };
 
 struct ExecutionTrace {
   ExecutionTrace(size_t rows, const CircuitParams& params);
   TraceGroup data;
   GlobalTraceGroup global;
-  TraceGroup accum;
-  GlobalTraceGroup mix;
 };
 
 } // namespace zirgen::keccak2
