@@ -60,7 +60,11 @@ cc_test(
     deps = [":bibc_utils"],
 )
 
-# sub
+cc_test(
+    name = "sub",
+    srcs = ["sub.cpp"],
+    deps = [":bibc_utils"],
+)
 
 cc_test(
     name = "mul",
