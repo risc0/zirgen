@@ -91,9 +91,6 @@ const METAL_OUTPUTS: &[&str] = &[
 
 const RECURSION_ZKR_ZIP: &str = "recursion_zkr.zip";
 
-const BIGINT_OUTPUTS: &[&str] = &["bigint.rs.inc"];
-const BIGINT_ZKR_ZIP: &str = "bigint_zkr.zip";
-
 #[derive(Clone, Debug, ValueEnum)]
 enum Circuit {
     Fib,
@@ -103,8 +100,6 @@ enum Circuit {
     Keccak,
     Calculator,
     Verify,
-    #[clap(name("bigint"))]
-    BigInt,
     #[clap(name("bigint2"))]
     BigInt2,
 }
@@ -446,7 +441,6 @@ impl Bootstrap {
             Circuit::Keccak => self.keccak(),
             Circuit::Calculator => self.calculator(),
             Circuit::Verify => self.stark_verify(),
-            Circuit::BigInt => self.bigint(),
             Circuit::BigInt2 => self.bigint2(),
         }
 
@@ -586,63 +580,6 @@ impl Bootstrap {
         self.copy_file(&src_path, &tgt_path, "stark_verify.circom");
         self.copy_file(&src_path, &rust_path, "seal_format.rs");
         cargo_fmt(&risc0_root.join("risc0/groth16/Cargo.toml"));
-    }
-
-    fn bigint(&self) {
-        self.build_all_circuits();
-
-        let circuit = "bigint";
-        let risc0_root = self.args.output.as_ref().expect("--output is required");
-        let risc0_root = risc0_root.join("risc0");
-        let bigint_crate_root = risc0_root.join("circuit/bigint");
-        let out = bigint_crate_root.join("src");
-
-        let bazel_bin = get_bazel_bin();
-        let src_path = bazel_bin.join("zirgen/circuit/bigint");
-
-        self.copy_file(&src_path, &out, BIGINT_ZKR_ZIP);
-        self.copy_group(
-            circuit,
-            &src_path,
-            &Some(out.clone()),
-            BIGINT_OUTPUTS,
-            "",
-            "",
-        );
-
-        // Generate control IDs
-
-        // Remove magic rust environment variables for the
-        // risczero-wip repositroy so we can use the risc0 repository
-        // settings.
-        let filtered_env: BTreeMap<String, String> = std::env::vars()
-            .filter(|&(ref k, _)| !k.starts_with("CARGO") && !k.starts_with("RUSTUP"))
-            .collect();
-
-        let output = Command::new("cargo")
-            .current_dir(&risc0_root)
-            .env_clear()
-            .envs(filtered_env)
-            .arg("run")
-            .arg("-p")
-            .arg("risc0-circuit-bigint")
-            .arg("-F")
-            .arg("make_control_ids")
-            .arg("--bin")
-            .arg("make_control_ids")
-            .output()
-            .unwrap();
-
-        if !output.status.success() {
-            panic!(
-                "Failed to generate bigint control_ids:\n{}",
-                String::from_utf8(output.stderr).unwrap()
-            );
-        }
-
-        std::fs::write(out.join("control_id.rs"), output.stdout).unwrap();
-
-        cargo_fmt_circuit(circuit, &Some(bigint_crate_root), &None);
     }
 
     fn bigint2(&self) {
