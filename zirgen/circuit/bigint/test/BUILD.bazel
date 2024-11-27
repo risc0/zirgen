@@ -54,7 +54,11 @@ cc_test(
     deps = [":bibc_utils"],
 )
 
-# const_twobyte
+cc_test(
+    name = "const_twobyte",
+    srcs = ["const_twobyte.cpp"],
+    deps = [":bibc_utils"],
+)
 
 # sub
 
