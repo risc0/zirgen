@@ -49,10 +49,24 @@ cc_test(
 )
 
 cc_test(
+    name = "const_one",
+    srcs = ["const_one.cpp"],
+    deps = [":bibc_utils"],
+)
+
+# const_twobyte
+
+# sub
+
+cc_test(
     name = "mul",
     srcs = ["mul.cpp"],
     deps = [":bibc_utils"],
 )
+
+# reduce
+
+# nondet_inv
 
 cc_test(
     name = "rsa",
