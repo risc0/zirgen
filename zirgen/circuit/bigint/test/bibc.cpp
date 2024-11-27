@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "mlir/Pass/PassManager.h"
 #include "zirgen/circuit/bigint/test/bibc.h"
+#include "mlir/Pass/PassManager.h"
 #include "zirgen/Dialect/BigInt/Bytecode/decode.h"
 #include "zirgen/Dialect/BigInt/Bytecode/encode.h"
 #include "zirgen/Dialect/BigInt/Bytecode/file.h"

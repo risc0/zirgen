@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "zirgen/circuit/bigint/op_tests.h"
 #include "zirgen/circuit/bigint/rsa.h"
+#include "zirgen/circuit/bigint/op_tests.h"
 #include "zirgen/circuit/bigint/test/bibc.h"
 
 #include <gtest/gtest.h>

@@ -13,8 +13,8 @@
 // limitations under the License.
 
 #include "mlir/Dialect/Func/IR/FuncOps.h"
-#include "mlir/IR/MLIRContext.h"
 #include "mlir/IR/BuiltinOps.h"
+#include "mlir/IR/MLIRContext.h"
 #include "llvm/ADT/APInt.h"
 #include <gtest/gtest.h>
 #include <vector>

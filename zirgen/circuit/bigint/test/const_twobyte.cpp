@@ -31,4 +31,3 @@ TEST_F(BibcTest, ConstTwoByte16) {
   AB(func, inputs, a, b);
   EXPECT_EQ(a, b);
 }
-
