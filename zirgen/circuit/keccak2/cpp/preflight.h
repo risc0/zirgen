@@ -27,13 +27,17 @@ struct ScatterInfo {
 };
 
 struct PreflightTrace {
-  // Raw data
+  // All the preimages
+  std::vector<std::array<uint64_t, 25>> preimages;
+  // Which 'preimage' each cycle is working on (to answer extern calls)
+  std::vector<uint32_t> curPreimage; 
+  // Raw data for scattering
   std::vector<uint32_t> data;
-  // Scatter info
+  // Where to scatter it
   std::vector<ScatterInfo> scatter;
 };
 
 PreflightTrace preflightSegment(const std::vector<KeccakState>& inputs, size_t cycles);
-void applyPreflight(ExecutionTrace exec, const PreflightTrace& preflight);
+void applyPreflight(ExecutionTrace& exec, const PreflightTrace& preflight);
 
 } // namespace zirgen::keccak2

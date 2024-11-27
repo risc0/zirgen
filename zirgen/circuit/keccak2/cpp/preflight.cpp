@@ -16,6 +16,7 @@
 #include "zirgen/circuit/keccak2/cpp/wrap_dsl.h"
 
 #include <array>
+#include <iostream>
 
 namespace zirgen::keccak2 {
 
@@ -174,24 +175,60 @@ std::vector<sha_info> compute_sha_infos(sha_state& state, const uint32_t* data) 
 sha_state sha_init = {
     0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19};
 
+struct ControlState {
+  uint8_t cycleType;
+  uint8_t subType;
+  uint8_t block;
+  uint8_t round;
+  uint32_t asWord() const {
+    return uint32_t(cycleType) | 
+      (uint32_t(subType) << 8) |
+      (uint32_t(block) << 16) |
+      (uint32_t(round) << 24);
+  }
+  static ControlState Shutdown() { return ControlState { 0, 0, 0, 0 }; }
+  static ControlState Read() { return ControlState { 1, 0, 0, 0 }; }
+  static ControlState Expand(uint8_t subtype) { return ControlState { 2, subtype, 0, 0 }; }
+  static ControlState Write() { return ControlState { 3, 0, 0, 0 }; }
+  static ControlState Keccak0(uint8_t round) { return ControlState { 4, 0, 0, round }; }
+  static ControlState Keccak1(uint8_t round) { return ControlState { 5, 0, 0, round }; }
+  static ControlState Keccak2(uint8_t round) { return ControlState { 6, 0, 0, round }; }
+  static ControlState Keccak3(uint8_t round) { return ControlState { 7, 0, 0, round }; }
+  static ControlState Keccak4(uint8_t round) { return ControlState { 8, 0, 0, round }; }
+  static ControlState ShaIn(uint8_t block, uint8_t round) { return ControlState { 9, 0, block, round }; }
+  static ControlState ShaOut(uint8_t block, uint8_t round) { return ControlState { 9, 1, block, round }; }
+  static ControlState ShaNextBlockIn(uint8_t block) { return ControlState { 10, 0, block, 0}; }
+  static ControlState ShaNextBlockOut(uint8_t block) { return ControlState { 10, 1, block, 0}; }
+  static ControlState Init() { return ControlState { 11, 0, 0, 0 }; }
+};
+
 } // namespace
 
 PreflightTrace preflightSegment(const std::vector<KeccakState>& inputs, size_t cycles) {
   auto li = getLayoutInfo();
   PreflightTrace ret;
+  ret.preimages = inputs;
+  uint32_t curPreimage = 0;
   uint32_t cycle = 0;
   auto addBits = [&](uint16_t col, uint32_t data, uint16_t len) {
     assert(len % 32 == 0);
-    ret.scatter.push_back({data, cycle, col, uint16_t(len / 32), 1});
+    ret.scatter.push_back({data, cycle, col, len, 1});
   };
   auto addShorts = [&](uint16_t col, uint32_t data, uint16_t len) {
     assert(len % 2 == 0);
-    ret.scatter.push_back({data, cycle, col, uint16_t(len / 2), 16});
+    ret.scatter.push_back({data, cycle, col, len, 16});
   };
-  auto addCycle = [&](uint32_t bits, uint32_t kflat, uint32_t sflat) {
+  auto addCycle = [&](const ControlState& cstate, uint32_t bits, uint32_t kflat, uint32_t sflat) {
+    uint32_t offset = ret.data.size();
+    ret.data.push_back(cstate.asWord());
+    ret.scatter.push_back({offset, cycle, uint16_t(li.control), 4, 8});
+    uint32_t onehot = 1 << cstate.cycleType;
+    ret.data.push_back(onehot);
+    ret.scatter.push_back({offset + 1, cycle, uint16_t(li.ctypeOneHot), 12, 1});
     addBits(li.bits, bits, 800);
     addShorts(li.kflat, kflat, 100);
     addShorts(li.sflat, sflat, 16);
+    ret.curPreimage.push_back(curPreimage);
     cycle++;
   };
   auto writeTheta = [&](const theta_b_t& theta) {
@@ -260,68 +297,69 @@ PreflightTrace preflightSegment(const std::vector<KeccakState>& inputs, size_t c
   sha_state currentSha = sha_init;
   size_t sflatOffset = writeShaState(currentSha);
   // Do an initial 'init' cycle
-  addCycle(zeroOffset, zeroOffset, sflatOffset);
+  addCycle(ControlState::Init(), zeroOffset, zeroOffset, sflatOffset);
   // Do each permutation
   for (size_t input = 0; input < inputs.size(); input++) {
     KeccakState kstate = inputs[input];
     std::vector<uint32_t> data;
     // Do 'read' cycle
     size_t kflatOffset = writeKFlat(data, kstate);
-    addCycle(writeShaInfo(sha_info(currentSha)), kflatOffset, sflatOffset);
+    addCycle(ControlState::Read(), writeShaInfo(sha_info(currentSha)), kflatOffset, sflatOffset);
+    curPreimage++;
     // Sha and write all for blocks
     for (size_t block = 0; block < 4; block++) {
       auto infos = compute_sha_infos(currentSha, data.data() + 16 * block);
       for (size_t i = 0; i < 8; i++) {
-        addCycle(writeShaInfo(infos[i]), kflatOffset, sflatOffset);
+        addCycle(ControlState::ShaIn(block, i), writeShaInfo(infos[i]), kflatOffset, sflatOffset);
       }
       sflatOffset = writeShaState(currentSha);
-      addCycle(writeShaInfo(infos[8]), kflatOffset, sflatOffset);
+      addCycle(ControlState::ShaNextBlockIn(block), writeShaInfo(infos[8]), kflatOffset, sflatOffset);
     }
     // Expand
-    addCycle(writeKeccak(kstate, false), kflatOffset, sflatOffset);
-    addCycle(writeKeccak(kstate, true), kflatOffset, sflatOffset);
+    addCycle(ControlState::Expand(0), writeKeccak(kstate, false), kflatOffset, sflatOffset);
+    addCycle(ControlState::Expand(1), writeKeccak(kstate, true), kflatOffset, sflatOffset);
     // Now do the Keccack cycles
     for (size_t round = 0; round < 24; round++) {
       auto theta = theta_p1(kstate);
-      addCycle(writeTheta(theta), kflatOffset, sflatOffset);
+      addCycle(ControlState::Keccak0(round), writeTheta(theta), kflatOffset, sflatOffset);
       theta_p2_rho_pi(kstate, theta);
-      addCycle(writeKeccak(kstate, false), kflatOffset, sflatOffset);
-      addCycle(writeKeccak(kstate, true), kflatOffset, sflatOffset);
+      addCycle(ControlState::Keccak1(round), writeKeccak(kstate, false), kflatOffset, sflatOffset);
+      addCycle(ControlState::Keccak2(round), writeKeccak(kstate, true), kflatOffset, sflatOffset);
       chi_iota(kstate, round);
-      addCycle(writeKeccak(kstate, false), kflatOffset, sflatOffset);
-      addCycle(writeKeccak(kstate, true), kflatOffset, sflatOffset);
+      addCycle(ControlState::Keccak3(round), writeKeccak(kstate, false), kflatOffset, sflatOffset);
+      addCycle(ControlState::Keccak4(round), writeKeccak(kstate, true), kflatOffset, sflatOffset);
     }
     // Do 'write' cycle
     kflatOffset = writeKFlat(data, kstate);
-    addCycle(writeShaInfo(sha_info(currentSha)), kflatOffset, sflatOffset);
+    addCycle(ControlState::Write(), writeShaInfo(sha_info(currentSha)), kflatOffset, sflatOffset);
     // Sha and write all for blocks
     for (size_t block = 0; block < 4; block++) {
       auto infos = compute_sha_infos(currentSha, data.data() + 16 * block);
       for (size_t i = 0; i < 8; i++) {
-        addCycle(writeShaInfo(infos[i]), kflatOffset, sflatOffset);
+        addCycle(ControlState::ShaOut(block, i),writeShaInfo(infos[i]), kflatOffset, sflatOffset);
       }
       sflatOffset = writeShaState(currentSha);
-      addCycle(writeShaInfo(infos[8]), kflatOffset, sflatOffset);
+      addCycle(ControlState::ShaNextBlockOut(block), writeShaInfo(infos[8]), kflatOffset, sflatOffset);
     }
   }
   // Do 'shudown' cycles until we are done
   while (cycle < cycles) {
-    addCycle(zeroOffset, zeroOffset, sflatOffset);
+    addCycle(ControlState::Shutdown(), zeroOffset, zeroOffset, sflatOffset);
   }
 
   return ret;
 }
 
-void applyPreflight(ExecutionTrace exec, const PreflightTrace& preflight) {
+void applyPreflight(ExecutionTrace& exec, const PreflightTrace& preflight) {
   for (const auto& info : preflight.scatter) {
     uint32_t innerCount = 32 / info.bitPerElem;
     uint32_t mask = (1 << (info.bitPerElem)) - 1;
     for (size_t i = 0; i < info.count; i++) {
-      uint32_t word = preflight.data[info.dataOffset + i];
-      for (size_t j = 0; j < innerCount; j++) {
-        exec.data.set(
-            info.row, info.column + i * innerCount + j, (word >> (j * info.bitPerElem)) & mask);
-      }
+      uint32_t word = preflight.data[info.dataOffset + (i / innerCount)];
+      size_t j = i % innerCount;
+      uint32_t val = (word >> (j * info.bitPerElem)) & mask;
+      // std::cout << "row = " << info.row << ", col = " << info.column + i << ", val = " << val << "\n";
+      exec.data.set(info.row, info.column + i, val);
     }
   }
 }

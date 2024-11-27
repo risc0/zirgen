@@ -15,29 +15,28 @@
 #pragma once
 
 #include "risc0/core/util.h"
-#include "zirgen/circuit/keccak2/cpp/trace.h"
+#include "zirgen/circuit/keccak2/cpp/preflight.h"
 
 #include <array>
 
 namespace zirgen::keccak2 {
 
 struct StepHandler {
-  StepHandler(const std::vector<KeccakState>& inputs) : inputs(inputs), idx(0) {}
-  bool nextPreimage() {
-    idx++;
-    return idx < inputs.size();
-  }
-  const std::array<uint64_t, 25>& getPreimage() { return inputs[idx]; }
+  StepHandler(const PreflightTrace& trace, size_t cycle) : trace(trace), cycle(cycle) {}
+  bool nextPreimage() { return trace.curPreimage[cycle] != trace.preimages.size(); }
+  const std::array<uint64_t, 25>& getPreimage() { return trace.preimages[trace.curPreimage[cycle]]; }
 
 private:
-  std::vector<KeccakState> inputs;
-  size_t idx = 0;
+  const PreflightTrace& trace;
+  size_t cycle;
 };
 
 struct LayoutInfo {
   uint32_t bits;
   uint32_t sflat;
   uint32_t kflat;
+  uint32_t control;
+  uint32_t ctypeOneHot;
 };
 
 LayoutInfo getLayoutInfo();

@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "zirgen/circuit/keccak2/cpp/preflight.h"
-#include "zirgen/circuit/keccak2/cpp/run.h"
+#include "zirgen/circuit/keccak2/cpp/wrap_dsl.h"
 #include "zirgen/compiler/zkp/sha256.h"
 
 /* The below implementation (up till the end of keccackf) is taken from:
@@ -105,6 +104,7 @@ void DoTransaction(zirgen::Digest& digest, zirgen::keccak2::KeccakState state) {
 }
 
 int main() {
+  // Make an example
   using namespace zirgen::keccak2;
   KeccakState state;
   uint64_t pows = 987654321;
@@ -113,14 +113,29 @@ int main() {
     pows *= 123456789;
   }
 
+  // Compute what the circuit should say
   zirgen::Digest digest = zirgen::impl::initState();
   DoTransaction(digest, state);
 
+  // Now run the circuit
+  size_t cycles = 200;
   std::vector<KeccakState> inputs;
   inputs.push_back(state);
-  auto preflight = preflightSegment(inputs, 200);
-  auto trace = runSegment(inputs);
+  // Do the preflight
+  auto preflight = preflightSegment(inputs, cycles);
+  // Make the execution trace
+  auto trace = ExecutionTrace(cycles, getDslParams());
+  // Apply the preflight (i.e. scatter)
   applyPreflight(trace, preflight);
+  // Run backwords
+  std::cout << "out.ctypeOneHot = " << getLayoutInfo().ctypeOneHot << "\n";
+  for (size_t i = cycles; i --> 0; ) {
+    StepHandler ctx(preflight, i);
+    std::cout << "Running cycle " << i << "\n";
+    DslStep(ctx, trace, i);
+  }
+
+  // Make sure the results match
   zirgen::Digest compare;
   for (size_t i = 0; i < 8; i++) {
     uint32_t elem =

@@ -266,6 +266,8 @@ LayoutInfo getLayoutInfo() {
   out.bits = impl::kLayout_Top.curState._super.bits[0]._super.col;
   out.kflat = impl::kLayout_Top.curState._super.kflat[0]._super.col;
   out.sflat = impl::kLayout_Top.curState._super.sflat[0]._super.col;
+  out.control = impl::kLayout_Top.controlState._super.cycleType._super.col;
+  out.ctypeOneHot = impl::kLayout_Top.cycleMux._super[0]._super.col;
   return out;
 }
 
