@@ -9,12 +9,10 @@ cc_library(
     name = "lib",
     srcs = [
         "elliptic_curve.cpp",
-        "op_tests.cpp",
         "rsa.cpp",
     ],
     hdrs = [
         "elliptic_curve.h",
-        "op_tests.h",
         "rsa.h",
         "//zirgen/circuit/recursion",
         "//zirgen/circuit/rv32im/v1/edsl:rv32im",
