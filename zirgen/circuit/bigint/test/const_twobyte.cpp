@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "zirgen/circuit/bigint/op_tests.h"
-#include "zirgen/circuit/bigint/rsa.h"
+#include "zirgen/Dialect/BigInt/IR/BigInt.h"
 #include "zirgen/circuit/bigint/test/bibc.h"
 
 #include <gtest/gtest.h>
@@ -21,10 +20,23 @@
 using namespace zirgen;
 using namespace zirgen::BigInt::test;
 
+namespace {
+
+void makeConstTwoByteTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
+  auto expected = builder.create<BigInt::DefOp>(loc, bits, 0, true);
+  mlir::Type twobyteType = builder.getIntegerType(16, false);     // unsigned 16 bit
+  auto twobyteAttr = builder.getIntegerAttr(twobyteType, 0x1234); // value 0x1234
+  auto twobyte = builder.create<BigInt::ConstOp>(loc, twobyteAttr);
+  auto diff = builder.create<BigInt::SubOp>(loc, twobyte, expected);
+  builder.create<BigInt::EqualZeroOp>(loc, diff);
+}
+
+} // namespace
+
 TEST_F(BibcTest, ConstTwoByte16) {
   mlir::OpBuilder builder(ctx);
   auto func = makeFunc("const_twobyte_16", builder);
-  BigInt::makeConstTwoByteTest(builder, func.getLoc(), 16);
+  makeConstTwoByteTest(builder, func.getLoc(), 16);
 
   auto inputs = apints({"1234"});
   ZType a, b;

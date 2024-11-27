@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "zirgen/circuit/bigint/op_tests.h"
-#include "zirgen/circuit/bigint/rsa.h"
+#include "zirgen/Dialect/BigInt/IR/BigInt.h"
 #include "zirgen/circuit/bigint/test/bibc.h"
 
 #include <gtest/gtest.h>
@@ -21,10 +20,24 @@
 using namespace zirgen;
 using namespace zirgen::BigInt::test;
 
+namespace {
+
+void makeMulTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
+  auto lhs = builder.create<BigInt::DefOp>(loc, bits, 0, true);
+  auto rhs = builder.create<BigInt::DefOp>(loc, bits, 1, true);
+  auto expected = builder.create<BigInt::DefOp>(loc, 2 * bits, 2, true);
+
+  auto result = builder.create<BigInt::MulOp>(loc, lhs, rhs);
+  auto diff = builder.create<BigInt::SubOp>(loc, result, expected);
+  builder.create<BigInt::EqualZeroOp>(loc, diff);
+}
+
+} // namespace
+
 TEST_F(BibcTest, Mul8) {
   mlir::OpBuilder builder(ctx);
   auto func = makeFunc("mul_8", builder);
-  BigInt::makeMulTest(builder, func.getLoc(), 8);
+  makeMulTest(builder, func.getLoc(), 8);
 
   auto inputs = apints({"5", "7", "23"});
   ZType a, b;
@@ -35,7 +48,7 @@ TEST_F(BibcTest, Mul8) {
 TEST_F(BibcTest, Mul16) {
   mlir::OpBuilder builder(ctx);
   auto func = makeFunc("mul_16", builder);
-  BigInt::makeMulTest(builder, func.getLoc(), 16);
+  makeMulTest(builder, func.getLoc(), 16);
 
   auto inputs = apints({"5", "7", "23"});
   ZType a, b;
@@ -46,7 +59,7 @@ TEST_F(BibcTest, Mul16) {
 TEST_F(BibcTest, Mul128) {
   mlir::OpBuilder builder(ctx);
   auto func = makeFunc("mul_128", builder);
-  BigInt::makeMulTest(builder, func.getLoc(), 128);
+  makeMulTest(builder, func.getLoc(), 128);
 
   auto inputs = apints({"5", "7", "23"});
   ZType a, b;

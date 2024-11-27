@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "zirgen/circuit/bigint/op_tests.h"
-#include "zirgen/circuit/bigint/rsa.h"
+#include "zirgen/Dialect/BigInt/IR/BigInt.h"
 #include "zirgen/circuit/bigint/test/bibc.h"
 
 #include <gtest/gtest.h>
@@ -21,10 +20,23 @@
 using namespace zirgen;
 using namespace zirgen::BigInt::test;
 
+namespace {
+
+void makeConstOneTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
+  auto expected = builder.create<BigInt::DefOp>(loc, bits, 0, true);
+  mlir::Type oneType = builder.getIntegerType(8, false); // unsigned 8 bit
+  auto oneAttr = builder.getIntegerAttr(oneType, 1);     // value 1
+  auto one = builder.create<BigInt::ConstOp>(loc, oneAttr);
+  auto diff = builder.create<BigInt::SubOp>(loc, one, expected);
+  builder.create<BigInt::EqualZeroOp>(loc, diff);
+}
+
+} // namespace
+
 TEST_F(BibcTest, ConstOne8) {
   mlir::OpBuilder builder(ctx);
   auto func = makeFunc("const_one_8", builder);
-  BigInt::makeConstOneTest(builder, func.getLoc(), 8);
+  makeConstOneTest(builder, func.getLoc(), 8);
 
   auto inputs = apints({"1"});
   ZType a, b;
