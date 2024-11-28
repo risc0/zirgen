@@ -1,0 +1,31 @@
+load("@zirgen//bazel/rules/lit:defs.bzl", "glob_lit_tests")
+load("@zirgen//bazel/rules/zirgen:dsl-defs.bzl", "zirgen_build", "zirgen_genfiles")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "imports",
+    srcs = glob(["*.zir"]),
+)
+
+glob_lit_tests(
+    data = [
+        ":imports",
+    ],
+    size_override = {"top.zir": "medium"},
+    test_file_exts = ["zir"],
+)
+
+zirgen_build(
+    name = "cppinc",
+    out = "keccak.cpp.inc",
+    data = [":imports"],
+    opts = [
+        "--emit=cpp",
+        "--validity=false",
+    ],
+    zir_file = ":top.zir",
+)
+
