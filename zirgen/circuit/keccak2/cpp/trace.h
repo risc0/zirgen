@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <array>
 #include <vector>
 
 #include "risc0/fp/fp.h"

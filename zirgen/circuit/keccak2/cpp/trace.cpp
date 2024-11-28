@@ -14,7 +14,6 @@
 
 #include "zirgen/circuit/keccak2/cpp/trace.h"
 
-#include <array>
 #include <iostream>
 
 namespace zirgen::keccak2 {
