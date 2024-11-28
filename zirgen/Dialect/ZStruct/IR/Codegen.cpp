@@ -29,7 +29,7 @@ void addRustSyntax(codegen::CodegenOptions& opts) {
 
   opts.addOpSyntax<LookupOp>([](codegen::CodegenEmitter& cg, LookupOp op) {
     if (llvm::isa<LayoutType>(op.getBase().getType())) {
-      cg << "(&" << op.getBase() << ".map(|c| c."
+      cg << "(" << op.getBase() << ".map(|c| c."
          << codegen::CodegenIdent<codegen::IdentKind::Field>(op.getMemberAttr()) << "))";
     } else {
       cg << op.getBase() << "."
@@ -39,7 +39,7 @@ void addRustSyntax(codegen::CodegenOptions& opts) {
 
   opts.addOpSyntax<SubscriptOp>([](codegen::CodegenEmitter& cg, SubscriptOp op) {
     if (llvm::isa<LayoutArrayType>(op.getBase().getType())) {
-      cg << "(&" << op.getBase() << ".map(|c| c[to_usize(" << op.getIndex() << ")]))";
+      cg << "(" << op.getBase() << ".map(|c| c[to_usize(" << op.getIndex() << ")]))";
     } else {
       cg << op.getBase() << "[to_usize(" << op.getIndex() << ")]";
     }

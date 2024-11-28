@@ -22,7 +22,7 @@ using namespace mlir;
 LogicalResult UnrollMaps::matchAndRewrite(MapOp op, PatternRewriter& rewriter) const {
   Value in = op.getArray();
   auto inType = mlir::cast<ZStruct::ArrayLikeTypeInterface>(in.getType());
-  auto outType = mlir::cast<ZStruct::ArrayLikeTypeInterface>(op.getOut().getType());
+  auto outType = mlir::cast<ZStruct::ArrayType>(op.getOut().getType());
 
   llvm::SmallVector<Value, 8> mapped;
 

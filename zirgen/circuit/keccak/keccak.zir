@@ -106,15 +106,13 @@ component OneHotU<N: Val>(v: Val) {
 component vConcatenate<N: Val, M: Val>(a: Array<Val, N>, b: Array<Val, M>) {
   for i : 0..(N + M) {
     low := InRange(0, i, N);
-    low*a[i] + (1-low)*b[i-N]
-    //[low, 1-low] -> (a[i], b[i-N])
+    [low, 1-low] -> (a[i], b[i-N])
   }
 }
 component Concatenate<N: Val, M: Val>(a: Array<NondetReg, N>, b: Array<NondetReg, M>) {
   result := for i : 0..(N + M) {
     low := InRange(0, i, N);
-    NondetReg(low*a[i] + (1-low)*b[i-N])
-    //NondetReg([low, 1-low] -> (a[i], b[i-N]))
+      NondetReg([low, 1-low] -> (a[i], b[i-N]))
   };
   for i : 0..N { AliasLayout!(a[i], result[i]); };
   for i : N..M+N { AliasLayout!(b[i-N], result[i]); };
@@ -123,7 +121,7 @@ component Concatenate<N: Val, M: Val>(a: Array<NondetReg, N>, b: Array<NondetReg
 component ConcatZeros<N: Val, M: Val>(a: Array<NondetReg, N>) {
   result := for i : 0..(N + M) {
     low := InRange(0, i, N);
-    NondetReg(low*a[i] /* + (1-low)*0 */ )
+    NondetReg([low, 1-low] -> (low*a[i], 0) )
   };
   for i : 0..N { AliasLayout!(a[i], result[i]); };
   result
@@ -131,8 +129,7 @@ component ConcatZeros<N: Val, M: Val>(a: Array<NondetReg, N>) {
 component ConcatElem<N: Val>(a: Array<NondetReg, N>, b: NondetReg) {
   result := for i : 0..(N + 1) {
     low := InRange(0, i, N);
-    NondetReg(low*a[i] + (1-low)*b)
-    //NondetReg([low, 1-low] -> (a[i], b))
+    NondetReg([low, 1-low] -> (a[i], b))
   };
   for i : 0..N { AliasLayout!(a[i], result[i]); };
   AliasLayout!(b, result[N]);
@@ -311,20 +308,17 @@ component RotLeft3impl<A: Val, B: Val, C: Val, S: Val>
   (a: Array<NondetReg, A>, b: Array<NondetReg, B>, c: Array<NondetReg, C>) {
   ra := for i : 0..A {
     wraparound := InRange(0,i,S);
-    NondetReg(wraparound*c[C-S+i] + (1-wraparound)*a[i-S])};
-    //NondetReg([wraparound,1-wraparound] -> (c[C-S+i],a[i-S]))};
+    NondetReg([wraparound,1-wraparound] -> (c[C-S+i],a[i-S]))};
   for i : 0..S { AliasLayout!(c[C-S+i], ra[i]); };
   for i : S..A { AliasLayout!(a[i-S], ra[i]); };
   rb := for i : 0..B {
     wraparound := InRange(0,i,S);
-    NondetReg(wraparound*a[A-S+i] + (1-wraparound)*b[i-S])};
-    //NondetReg([wraparound,1-wraparound] -> (a[A-S+i],b[i-S]))};
+    NondetReg([wraparound,1-wraparound] -> (a[A-S+i],b[i-S]))};
   for i : 0..S { AliasLayout!(a[A-S+i], rb[i]); };
   for i : S..B { AliasLayout!(b[i-S], rb[i]); };
   rc := for i : 0..C {
     wraparound := InRange(0,i,S);
-    NondetReg(wraparound*b[B-S+i] + (1-wraparound)*c[i-S])};
-    //NondetReg([wraparound,1-wraparound] -> (b[B-S+i],c[i-S]))};
+    NondetReg([wraparound,1-wraparound] -> (b[B-S+i],c[i-S]))};
   for i : 0..S { AliasLayout!(b[B-S+i], rc[i]); };
   for i : S..C { AliasLayout!(c[i-S], rc[i]); };
 }
@@ -346,16 +340,13 @@ component vRotLeft3impl<A: Val, B: Val, C: Val, S: Val>
   (a: Array<Val, A>, b: Array<Val, B>, c: Array<Val, C>) {
   ra := for i : 0..A {
     wraparound := InRange(0,i,S);
-    wraparound*c[C-S+i] + (1-wraparound)*a[i-S]};
-    //[wraparound,1-wraparound] -> (c[C-S+i],a[i-S])};
+    [wraparound,1-wraparound] -> (c[C-S+i],a[i-S])};
   rb := for i : 0..B {
     wraparound := InRange(0,i,S);
-    wraparound*a[A-S+i] + (1-wraparound)*b[i-S]};
-    //[wraparound,1-wraparound] -> (a[A-S+i],b[i-S])};
+    [wraparound,1-wraparound] -> (a[A-S+i],b[i-S])};
   rc := for i : 0..C {
     wraparound := InRange(0,i,S);
-    wraparound*b[B-S+i] + (1-wraparound)*c[i-S]};
-    //[wraparound,1-wraparound] -> (b[B-S+i],c[i-S])};
+    [wraparound,1-wraparound] -> (b[B-S+i],c[i-S])};
 }
 component vRotLeft3<A: Val, B: Val, C: Val, S1: Val, S2: Val, S3: Val>
   (a: Array<Val, A>, b: Array<Val, B>, c: Array<Val, C>) {

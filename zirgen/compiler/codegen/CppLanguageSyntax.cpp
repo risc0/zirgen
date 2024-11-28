@@ -184,10 +184,25 @@ void CppLanguageSyntax::emitStructDef(CodegenEmitter& cg,
                                       mlir::Type ty,
                                       llvm::ArrayRef<CodegenIdent<IdentKind::Field>> names,
                                       llvm::ArrayRef<mlir::Type> types) {
+  emitStructDefImpl(cg, ty, names, types, /*layout=*/false);
+}
+
+void CppLanguageSyntax::emitStructDefImpl(CodegenEmitter& cg,
+                                          mlir::Type ty,
+                                          llvm::ArrayRef<CodegenIdent<IdentKind::Field>> names,
+                                          llvm::ArrayRef<mlir::Type> types,
+                                          bool layout) {
   cg << "struct " << cg.getTypeName(ty) << " {\n";
   assert(names.size() == types.size());
   for (size_t i = 0; i != names.size(); i++) {
-    cg << "  " << cg.getTypeName(types[i]) << " " << names[i] << ";\n";
+    cg << "  ";
+    Type subTy = types[i];
+    if (subTy.hasTrait<CodegenLayoutTypeTrait>() && !layout) {
+      cg << "BoundLayout<" << cg.getTypeName(types[i]) << ">";
+    } else {
+      cg << cg.getTypeName(types[i]);
+    }
+    cg << " " << names[i] << ";\n";
   }
   cg << "};\n";
 }
@@ -267,7 +282,7 @@ void CppLanguageSyntax::emitLayoutDef(CodegenEmitter& cg,
                                       llvm::ArrayRef<CodegenIdent<IdentKind::Field>> names,
                                       llvm::ArrayRef<mlir::Type> types) {
   // In C++, layouts are just regular structures.
-  emitStructDef(cg, ty, names, types);
+  emitStructDefImpl(cg, ty, names, types, /*layout=*/true);
 }
 
 // ----------------------------------------------------------------------

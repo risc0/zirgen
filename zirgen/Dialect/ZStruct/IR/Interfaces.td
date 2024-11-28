@@ -31,9 +31,7 @@ def ArrayLikeTypeInterface : TypeInterface<"ArrayLikeTypeInterface"> {
     InterfaceMethod<"Get the type of elements in this array",
       "mlir::Type", "getElement", (ins), "">,
     InterfaceMethod<"Get the number of elements in this array",
-      "unsigned", "getSize", (ins), "">,
-    InterfaceMethod<"Materialize the array from a list of elements",
-      "mlir::Value", "materialize", (ins "mlir::Location":$loc, "llvm::ArrayRef<mlir::Value>":$values, "mlir::OpBuilder&":$builder)>
+      "unsigned", "getSize", (ins), "">
   ];
 }
 
