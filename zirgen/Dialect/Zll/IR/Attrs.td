@@ -155,4 +155,26 @@ def StepsAttr : ZllAttr<"Steps", "steps"> {
   let assemblyFormat = [{ $steps }];
 }
 
+def CircuitNameAttr : ZllAttr<"CircuitName", "circuit_name"> {
+  let summary = "Name of the circuit.  Normally associated with the module operation; use Zll::lookupModuleAttr to access.";
+  let parameters = (ins
+      StringRefParameter<"name">:$name,
+      StringRefParameter<"Base C++ namespace for circuits">:$baseCppNamespace
+  );
+  let skipDefaultBuilders = 1;
+  let builders = [
+    AttrBuilder<(ins CArg<"llvm::StringRef", "">:$name,
+                     CArg<"llvm::StringRef", "\"risc0::circuit\"">:$baseCppNamespace), [{
+      return Base::get($_ctxt, name, baseCppNamespace);
+    }]>
+  ];
+
+  code extraClassDeclaration = [{
+    static constexpr llvm::StringLiteral lookupModuleAttrName() { return "zll.circuit_name"; }
+    std::string getCppNamespace();
+  }];
+
+  let assemblyFormat = [{ $baseCppNamespace `:` $name }];
+}
+
 #endif // ZIRGEN_IR_ATTRS

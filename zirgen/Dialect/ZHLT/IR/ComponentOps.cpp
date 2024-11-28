@@ -59,7 +59,6 @@ mlir::LogicalResult CheckLayoutFuncOp::verifyRegions() {
                   Zhlt::ReturnOp,
                   ZStruct::LookupOp,
                   ZStruct::SubscriptOp,
-                  ZStruct::LayoutArrayOp,
                   ZStruct::AliasLayoutOp,
                   arith::ConstantOp>(op))
       return success();

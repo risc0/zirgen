@@ -12,18 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#pragma once
+#include "zirgen/circuit/bigint/op_tests.h"
+#include "zirgen/circuit/bigint/rsa.h"
+#include "zirgen/circuit/bigint/test/bibc.h"
 
-#include <cstdio>
+#include <gtest/gtest.h>
 
-extern __constant__ FpExt poly_mix[483];
+using namespace zirgen;
+using namespace zirgen::BigInt::test;
 
-/*__global__ void eval_check(Fp* check,
-                           const Fp* ctrl,
-                           const Fp* data,
-                           const Fp* accum,
-                           const Fp* mix,
-                           const Fp* out,
-                           const Fp rou,
-                           uint32_t po2,
-                           uint32_t domain);*/
+TEST_F(BibcTest, ConstMul8) {
+  mlir::OpBuilder builder(ctx);
+  auto func = makeFunc("const_mul_8", builder);
+  BigInt::makeConstMulTest(builder, func.getLoc(), 8);
+
+  auto inputs = apints({"2", "A864"});
+  ZType a, b;
+  AB(func, inputs, a, b);
+  EXPECT_EQ(a, b);
+}

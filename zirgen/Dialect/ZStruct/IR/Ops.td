@@ -136,20 +136,10 @@ def ArrayOp: ZStructOp<"array", [Pure, SameTypeOperands, InferTypeOpAdaptor, Dec
   let hasFolder = 1;
 }
 
-def LayoutArrayOp: ZStructOp<"layout_array", [Pure, SameTypeOperands, InferTypeOpAdaptor, DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
-  let summary = "Create an array from a list of values";
-  let arguments = (ins Variadic<IsLayoutType>:$elements);
-  let results = (outs LayoutArrayType:$out);
-  let assemblyFormat = [{
-    `[` $elements `:` type($elements) `]` attr-dict
-  }];
-  let hasFolder = 1;
-}
-
 def MapOp : ZStructOp<"map", [DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
   let summary = "Apply function to elements of array";
   let arguments = (ins ArrayLikeTypeInterface:$array, Optional<LayoutArrayType>:$layout);
-  let results = (outs ArrayLikeTypeInterface:$out);
+  let results = (outs ArrayType:$out);
   let regions = (region SizedRegion<1>:$body);
   let assemblyFormat = [{
     $array `:` type($array) ( `,` $layout^  `:` type($layout) )? `->` type($out) $body attr-dict

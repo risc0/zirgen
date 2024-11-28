@@ -114,12 +114,12 @@ Type getLeastCommonSuper(TypeRange components, bool isLayout) {
   }
 }
 
-bool isCoercibleTo(Type src, Type dst) {
+bool isCoercibleTo(Type src, Type dst, bool isLayout) {
   if (auto variadic = dyn_cast<VariadicType>(dst)) {
     dst = variadic.getElement();
   }
   while (src != dst) {
-    Type newSrc = getSuperType(src);
+    Type newSrc = getSuperType(src, isLayout);
     if (!newSrc)
       break;
     src = newSrc;
@@ -127,22 +127,23 @@ bool isCoercibleTo(Type src, Type dst) {
   if (src == dst)
     return true;
 
-  if (llvm::isa<ArrayType, LayoutArrayType>(src)) {
-
+  if (auto srcArrayType = llvm::dyn_cast<ArrayLikeTypeInterface>(src)) {
     // Attempt to coerce arrays
     while (dst) {
-      Type newDst = getSuperType(dst);
+      Type newDst = getSuperType(dst, isLayout);
       if (!newDst)
         break;
       dst = newDst;
     }
 
-    return TypeSwitch<Type, bool>(src).Case<ArrayType, LayoutArrayType>([&](auto srcArrayType) {
-      auto dstArrayType = llvm::cast<decltype(srcArrayType)>(dst);
-      if (srcArrayType.getSize() != dstArrayType.getSize())
-        return false;
-      return isCoercibleTo(srcArrayType, dstArrayType);
-    });
+    auto dstArrayType = llvm::cast<ArrayLikeTypeInterface>(dst);
+    if (srcArrayType.getSize() != dstArrayType.getSize())
+      return false;
+
+    if (llvm::isa<LayoutArrayType>(srcArrayType) || llvm::isa<ArrayType>(dstArrayType)) {
+      // Cannot construct LayoutArrays at runtime.
+      return isCoercibleTo(srcArrayType.getElement(), dstArrayType.getElement(), isLayout);
+    }
   }
 
   return false;
@@ -245,7 +246,7 @@ ArrayLikeTypeInterface getCoercibleArrayType(Type type) {
     }
     type = getSuperType(type);
   }
-  return ArrayType();
+  return ArrayLikeTypeInterface();
 }
 
 Value coerceToArray(Value value, OpBuilder& builder) {
@@ -262,6 +263,14 @@ Value coerceToArray(Value value, OpBuilder& builder) {
         emitError(loc) << "component struct must inherit from `Component`";
         return castedStruct;
       }
+    } else if (isa<LayoutType>(casted.getType())) {
+      auto castedStruct = cast<TypedValue<LayoutType>>(casted);
+      casted = coerceStructToSuper<LayoutType>(castedStruct, builder);
+      if (!casted) {
+        auto loc = value.getLoc();
+        emitError(loc) << "component struct must inherit from `Component`";
+        return castedStruct;
+      }
     } else if (UnionType ut = dyn_cast<UnionType>(casted.getType())) {
       // We require the super component to always be aligned to the beginning of
       // the component in its ultimate value representation. Because of this,the
@@ -269,7 +278,7 @@ Value coerceToArray(Value value, OpBuilder& builder) {
       // it makes no difference which arm we use to access the common super.
       // Without loss of generality, choose the first one.
       casted = builder.create<ZStruct::LookupOp>(value.getLoc(), casted, ut.getFields()[0].name);
-    } else if (isa<ArrayType>(casted.getType())) {
+    } else if (isa<ArrayLikeTypeInterface>(casted.getType())) {
       return casted;
     } else {
       // If not a structural type, supertype is Component.
@@ -304,6 +313,9 @@ mlir::Value LayoutBuilder::addMember(Location loc, StringRef memberName, mlir::T
     return Value();
 
   for (auto member : members) {
+    if (member.name == memberName) {
+      llvm::errs() << "Duplicate name: " << memberName << "\n";
+    }
     assert(member.name != memberName && "adding layout member with duplicate name");
   }
   StringAttr memberNameAttr = builder.getStringAttr(memberName);
@@ -319,13 +331,6 @@ mlir::Value LayoutBuilder::addMember(Location loc, StringRef memberName, mlir::T
   builder.setInsertionPoint(layoutPlaceholder);
   auto lookupOp = builder.create<LookupOp>(loc, type, layoutPlaceholder, memberName);
   return lookupOp;
-}
-
-void LayoutBuilder::removeMember(Value originalMember, StringRef memberName) {
-  auto originalLookup = originalMember.getDefiningOp<LookupOp>();
-  assert(originalLookup && originalLookup.getBase() == layoutPlaceholder &&
-         "expandLayoutMember attempting to expand layoutMember on different LoweringContext");
-  llvm::erase_if(members, [memberName](auto member) -> bool { return member.name == memberName; });
 }
 
 LayoutType LayoutBuilder::getType() {

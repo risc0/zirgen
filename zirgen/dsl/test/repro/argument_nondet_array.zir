@@ -1,0 +1,34 @@
+// RUN: zirgen %s --emit=zhlt | FileCheck %s
+
+// This test covers a regression where NondetReg arrays inside of an argument
+// component caused a crash at compile time when generating the mix layout for
+// that argument.
+
+// CHECK: !zstruct.layout<arg$UseOnceMemoryElement, <
+// CHECK-SAME: index: !zstruct.ref<<BabyBear ext>>
+// CHECK-SAME: _0: !zstruct.ref<<BabyBear ext>>
+// CHECK-SAME: _1: !zstruct.ref<<BabyBear ext>>
+// CHECK-SAME: _2: !zstruct.ref<<BabyBear ext>>
+// CHECK-SAME: _3: !zstruct.ref<<BabyBear ext>>
+// CHECK-SAME: digest: !zstruct.layout_array<!zstruct.ref<<BabyBear ext>>, 4>
+
+component MemDigest(elems: Array<Val, 4>) {
+  elems
+}
+
+argument UseOnceMemoryElement(c: Val, i: Val, d: Array<Val, 4>) {
+  count := NondetReg(c);
+  index := NondetReg(i);
+  digest := [NondetReg(d[0]), NondetReg(d[1]), NondetReg(d[2]), NondetReg(d[3])];
+}
+
+extern IsFirstCycle() : Val;
+
+component Top() {
+  first := NondetReg(IsFirstCycle());
+  not_first := Reg(1 - first);
+  [first, not_first] ->! (
+    UseOnceMemoryElement(1, 1, [1, 1, 1, 1]),
+    UseOnceMemoryElement(-1, 1, [1, 1, 1, 1])
+  );
+}

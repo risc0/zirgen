@@ -51,6 +51,7 @@ struct GenerateCheckLayoutPass : public GenerateCheckLayoutBase<GenerateCheckLay
     patterns.insert<EraseOp<ZStruct::StoreOp>>(ctx);
     patterns.insert<EraseOp<Zll::ExternOp>>(ctx);
     patterns.insert<EraseOp<Zll::EqualZeroOp>>(ctx);
+    patterns.insert<BackToCall>(ctx);
     patterns.insert<InlineCalls>(ctx);
     patterns.insert<ZStruct::SplitSwitchArms>(ctx);
     patterns.insert<DeconditionalizeIfOp>(ctx);

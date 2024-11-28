@@ -16,7 +16,7 @@ use super::calc_circuit;
 use anyhow::Result;
 use calc_circuit::{CircuitField, ExtVal, Val, REGISTER_GROUP_DATA};
 use core::cell::RefCell;
-use risc0_zirgen_dsl::{CycleContext, CycleRow, GlobalRow};
+use risc0_zirgen_dsl::{BufferRow, CycleContext};
 use risc0_zkp::{
     core::log2_ceil,
     field::{Elem, ExtElem, RootsOfUnity},
@@ -103,9 +103,9 @@ impl calc_circuit::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
         global: &CpuBuffer<Val>,
     ) -> Result<()> {
         let data = &data.as_slice_sync();
-        let data = CycleRow { buf: data };
-        let global = global.as_slice_sync();
-        let global = GlobalRow { buf: &global };
+        let data = BufferRow::cycle(data);
+        let global = &global.as_slice_sync();
+        let global = BufferRow::global(&global);
 
         let mut exec_context = CpuExecContext {
             cycle: 0,
@@ -117,7 +117,7 @@ impl calc_circuit::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
             exec_context.cycle = cycle;
             tracing::trace!("exec {cycle}/{tot_cycles}");
 
-            calc_circuit::step_top(&exec_context, &data, &global)?;
+            calc_circuit::step_top(&exec_context, data, global)?;
         }
         tracing::trace!("exec complete");
 
@@ -161,10 +161,10 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
         const EXP_PO2: usize = log2_ceil(INV_RATE);
         let domain = steps * INV_RATE;
 
-        let data = groups[REGISTER_GROUP_DATA].as_slice_sync();
-        let data = CycleRow { buf: &data };
-        let global = globals[GLOBAL_OUT].as_slice_sync();
-        let global = GlobalRow { buf: &global };
+        let data = &groups[REGISTER_GROUP_DATA].as_slice_sync();
+        let data = BufferRow::cycle(data);
+        let global = &globals[GLOBAL_OUT].as_slice_sync();
+        let global = BufferRow::global(global);
         let check = orig_check.as_slice_sync();
 
         // TODO: modularize this
@@ -175,8 +175,8 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
                     domain,
                     poly_mix,
                 },
-                &data,
-                &global,
+                data,
+                global,
             )
             .unwrap();
             let x = Val::ROU_FWD[po2 + EXP_PO2].pow(cycle);

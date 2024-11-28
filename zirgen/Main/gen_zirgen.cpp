@@ -219,7 +219,7 @@ int main(int argc, char* argv[]) {
   }
   pm.enableVerifier(true);
   zirgen::addAccumAndGlobalPasses(pm);
-  pm.addPass(zirgen::ZStruct::createOptimizeLayoutPass());
+  //  pm.addPass(zirgen::ZStruct::createOptimizeLayoutPass());
   pm.addPass(zirgen::dsl::createFieldDCEPass());
   pm.addPass(mlir::createCanonicalizerPass());
   pm.addPass(mlir::createCSEPass());
@@ -256,6 +256,8 @@ int main(int argc, char* argv[]) {
   if (circuitName.empty())
     circuitName = inputFilename;
   circuitName.consume_back(".zir");
+
+  setModuleAttr(*typedModule, zirgen::Zll::CircuitNameAttr::get(&context, circuitName));
 
   emitPoly(*typedModule, circuitName);
 
