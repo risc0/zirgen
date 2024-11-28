@@ -40,10 +40,10 @@ fn build_cpu_kernels() {
 fn build_cuda_kernels() {
     rerun_if_changed("kernels/cuda");
     KernelBuild::new(KernelType::Cuda)
+        .flag("-std=c++17")
+        .flag("-diag-suppress=550")
         .files(glob_paths("kernels/cuda/*.cu"))
-        .deps(glob_paths("kernels/cuda/*.h"))
-        .deps(glob_paths("kernels/cuda/*.cu.inc"))
-        .deps(glob_paths("kernels/cuda/*.cuh.inc"))
+        .deps(["kernels/cuda"])
         .include(env::var("DEP_RISC0_SYS_CUDA_ROOT").unwrap())
         .include(env::var("DEP_SPPARK_ROOT").unwrap())
         .compile("risc0_rv32im_v2_cuda");

@@ -385,7 +385,7 @@ __device__ Val extern_hostReadPrepare(ExecContext& ctx, Val fp, Val len) {
   printf("hostReadPrepare\n");
   assert(false && "extern_hostReadPrepare");
   // return ctx.stepHandler.readPrepare(fp.asUInt32(), len.asUInt32());
-  // return 0;
+  return 0;
 }
 
 __device__ Val
@@ -396,7 +396,7 @@ extern_hostWrite(ExecContext& ctx, Val fdVal, Val addrLow, Val addrHigh, Val len
   // uint32_t addr = addrLow.asUInt32() | (addrHigh.asUInt32() << 16);
   // uint32_t len = lenVal.asUInt32();
   // return ctx.stepHandler.write(fd, addr, len);
-  // return 0;
+  return 0;
 }
 
 __device__ cuda::std::array<Val, 2> extern_nextPagingIdx(ExecContext& ctx) {
