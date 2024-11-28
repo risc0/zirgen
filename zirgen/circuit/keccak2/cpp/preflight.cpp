@@ -16,7 +16,7 @@
 #include "zirgen/circuit/keccak2/cpp/wrap_dsl.h"
 
 #include <array>
-#include <assert>
+#include <cassert>
 #include <iostream>
 
 namespace zirgen::keccak2 {
