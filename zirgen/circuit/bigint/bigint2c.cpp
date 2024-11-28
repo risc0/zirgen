@@ -462,6 +462,66 @@ void genECAdd(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) {
   builder.create<BigInt::StoreOp>(loc, result.y(), 14, chunkwidth);
 }
 
+void genModAdd(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) {
+  // TODO: Examine what happens on bitwidths not a multiple of 8, of 32, of 128
+  auto lhs = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, 0);
+  auto rhs = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0);
+  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 0, bitwidth - 1);
+  auto result = BigInt::field::modAdd(builder, loc, lhs, rhs, prime);
+  builder.create<BigInt::StoreOp>(loc, result, 14, 0);
+}
+
+void genModInv(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) {
+  // TODO: Examine what happens on bitwidths not a multiple of 8, of 32, of 128
+  auto inp = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, 0);
+  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0, bitwidth - 1);
+  auto result = BigInt::field::modInv(builder, loc, inp, prime);
+  builder.create<BigInt::StoreOp>(loc, result, 13, 0);
+}
+
+void genModMul(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) {
+  // TODO: Examine what happens on bitwidths not a multiple of 8, of 32, of 128
+  auto lhs = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, 0);
+  auto rhs = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0);
+  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 0, bitwidth - 1);
+  auto result = BigInt::field::modMul(builder, loc, lhs, rhs, prime);
+  builder.create<BigInt::StoreOp>(loc, result, 14, 0);
+}
+
+void genModSub(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) {
+  // TODO: Examine what happens on bitwidths not a multiple of 8, of 32, of 128
+  auto lhs = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, 0);
+  auto rhs = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0);
+  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 0, bitwidth - 1);
+  auto result = BigInt::field::modSub(builder, loc, lhs, rhs, prime);
+  builder.create<BigInt::StoreOp>(loc, result, 14, 0);
+}
+
+void genExtFieldAdd(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth, size_t degree) {
+  // TODO: will need to handle bitwidth slightly smaller than data chunks
+  assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
+  size_t chunkwidth = bitwidth / 128;
+  llvm::SmallVector<Value, 2> lhs(degree);
+  llvm::SmallVector<Value, 2> rhs(degree);
+  auto lhs = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, 0);
+  auto rhs = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0);
+  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 0, bitwidth - 1);
+  auto result = BigInt::field::modSub(builder, loc, lhs, rhs, prime);
+  builder.create<BigInt::StoreOp>(loc, result, 14, 0);
+}
+
+
+
+// Extension fields we use are most commonly degree 2
+// TODO: ^ Hence the use of 2 in the SmallVectors ... but is this true?
+Value extAdd(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime);
+Value extMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime, llvm::SmallVector<Value, 2> monic_irred_poly);
+Value extSub(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime);
+
+
+
+
+
 int main(int argc, char* argv[]) {
   llvm::InitLLVM y(argc, argv);
   mlir::registerAsmPrinterCLOptions();
