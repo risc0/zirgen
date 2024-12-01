@@ -57,10 +57,11 @@ impl CircuitWitnessGenerator<CpuHal<CircuitField>> for CpuCircuitHal {
         data: &MetaBuffer<CpuHal<CircuitField>>,
     ) -> Result<()> {
         scope!("cpu_witgen");
-        // let cycles = preflight.cycles.len();
+
         let cycles = preflight.preimage_idxs.len();
         assert_eq!(cycles, data.rows);
-        // tracing::debug!("witgen: {cycles}");
+        tracing::debug!("witgen: {cycles}");
+
         let global_buf = global.buf.as_slice();
         let data_buf = data.buf.as_slice();
         let buffers = RawExecBuffers {

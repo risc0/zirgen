@@ -50,10 +50,6 @@ struct Buffer {
     // printf("get(row: %zu, col: %zu) -> 0x%08x\n", row, col, ret.asUInt32());
     return ret;
   }
-
-  void setGlobal(size_t col, Fp val) { set(0, col, val); }
-
-  Fp getGlobal(size_t col) { return get(0, col); }
 };
 
 } // namespace risc0

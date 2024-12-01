@@ -100,30 +100,20 @@ where
         scope!("prove");
 
         let cycles: usize = 1 << po2;
+        let preflight = PreflightTrace::new(inputs, cycles);
 
-        // let trace = segment.preflight(nonce)?;
-        let mut global = vec![H::Elem::INVALID; REGCOUNT_GLOBAL];
-        let global = MetaBuffer {
-            buf: self.hal.copy_from_elem("global", &global),
-            rows: 1,
-            cols: REGCOUNT_GLOBAL,
-            checked_reads: true,
-        };
-
+        let global = MetaBuffer::new("global", self.hal.as_ref(), 1, REGCOUNT_GLOBAL, true);
         let code = MetaBuffer::new("code", self.hal.as_ref(), cycles, REGCOUNT_CODE, false);
         let data = scope!(
             "alloc(data)",
             MetaBuffer::new("data", self.hal.as_ref(), cycles, REGCOUNT_DATA, true)
         );
 
-        let preflight = PreflightTrace::new(inputs, cycles);
-
         self.circuit_hal
             .generate_witness(StepMode::Parallel, &preflight, &global, &data)?;
 
         // Zero out 'invalid' entries in data and output.
         scope!("zeroize", {
-            self.hal.eltwise_zeroize_elem(&global.buf);
             self.hal.eltwise_zeroize_elem(&code.buf);
             self.hal.eltwise_zeroize_elem(&data.buf);
         });
