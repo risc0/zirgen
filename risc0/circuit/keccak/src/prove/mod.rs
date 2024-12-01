@@ -103,7 +103,7 @@ where
         let preflight = PreflightTrace::new(inputs, cycles);
 
         let global = MetaBuffer::new("global", self.hal.as_ref(), 1, REGCOUNT_GLOBAL, true);
-        let code = MetaBuffer::new("code", self.hal.as_ref(), cycles, REGCOUNT_CODE, false);
+        let code = MetaBuffer::new("code", self.hal.as_ref(), cycles, REGCOUNT_CODE, true);
         let data = scope!(
             "alloc(data)",
             MetaBuffer::new("data", self.hal.as_ref(), cycles, REGCOUNT_DATA, true)
@@ -132,6 +132,14 @@ where
 
         // Concat io (i.e. globals) and po2 into a vector.
         global.buf.view(|slice| {
+            let mut digest = Digest::ZERO;
+            for (i, word) in digest.as_mut_words().iter_mut().enumerate() {
+                let low: u32 = slice[i * 2].into();
+                let high: u32 = slice[i * 2 + 1].into();
+                *word = low | high << 16;
+            }
+            tracing::debug!("final digest: {digest}");
+
             let header: Vec<_> = slice
                 .iter()
                 .chain(Elem::from_u32_slice(&[po2 as u32]))
@@ -152,6 +160,7 @@ where
         let mix = self.hal.copy_from_elem("mix", mix.as_slice());
 
         tracing::debug!("REGCOUNT_ACCUM: {REGCOUNT_ACCUM}");
+        tracing::debug!("REGCOUNT_DATA: {REGCOUNT_DATA}");
         tracing::debug!("REGCOUNT_CODE: {REGCOUNT_CODE}");
         tracing::debug!("REGCOUNT_MIX: {REGCOUNT_MIX}");
         tracing::debug!("REGCOUNT_GLOBAL: {REGCOUNT_GLOBAL}");

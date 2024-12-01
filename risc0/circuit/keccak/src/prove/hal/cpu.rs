@@ -24,10 +24,7 @@ use risc0_core::scope;
 use risc0_sys::ffi_wrap;
 use risc0_zkp::{
     core::{hash::poseidon2::Poseidon2HashSuite, log2_ceil},
-    field::{
-        baby_bear::{BabyBearElem, BabyBearExtElem},
-        map_pow, Elem, ExtElem, RootsOfUnity,
-    },
+    field::{map_pow, Elem as _, ExtElem as _, RootsOfUnity as _},
     hal::{
         cpu::{CpuBuffer, CpuHal},
         AccumPreflight, CircuitHal,
@@ -141,11 +138,9 @@ impl CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
         let out = unsafe { std::slice::from_raw_parts(out.as_ptr(), out.len()) };
         let poly_mix_pows = poly_mix_pows.as_slice();
 
-        let args: &[&[BabyBearElem]] = &[data, out];
-
         (0..domain).into_par_iter().for_each(|cycle| {
-            let args: Vec<*const BabyBearElem> = args.iter().map(|x| (*x).as_ptr()).collect();
-            let mut tot = BabyBearExtElem::ZERO;
+            let args = &[data.as_ptr(), out.as_ptr()];
+            let mut tot = ExtVal::ZERO;
             unsafe {
                 risc0_circuit_keccak_cpu_poly_fp(
                     cycle,
@@ -155,17 +150,16 @@ impl CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
                     &mut tot,
                 )
             };
-            let x = BabyBearElem::ROU_FWD[po2 + EXP_PO2].pow(cycle);
+            let x = Val::ROU_FWD[po2 + EXP_PO2].pow(cycle);
             // TODO: what is this magic number 3?
-            let y = (BabyBearElem::new(3) * x).pow(1 << po2);
-            let ret = tot * (y - BabyBearElem::new(1)).inv();
+            let y = (Val::new(3) * x).pow(1 << po2);
+            let ret = tot * (y - Val::new(1)).inv();
 
             // SAFETY: This conversion is to make the check slice mutable, which should be
             // safe because each thread access will not overlap with each other.
-            let check = unsafe {
-                std::slice::from_raw_parts_mut(check.as_ptr() as *mut BabyBearElem, check.len())
-            };
-            for i in 0..BabyBearExtElem::EXT_SIZE {
+            let check =
+                unsafe { std::slice::from_raw_parts_mut(check.as_ptr() as *mut Val, check.len()) };
+            for i in 0..ExtVal::EXT_SIZE {
                 check[i * domain + cycle] = ret.elems()[i];
             }
         });

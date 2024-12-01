@@ -234,6 +234,7 @@ impl Bootstrap {
         );
         true
     }
+
     fn copy_group(
         &self,
         circuit: &str,

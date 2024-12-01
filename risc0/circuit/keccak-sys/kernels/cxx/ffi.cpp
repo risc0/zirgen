@@ -44,12 +44,6 @@ struct PreflightTrace {
 
   // Which 'preimage' each cycle is working on (to answer extern calls)
   uint32_t* curPreimage;
-
-  //   // Raw data for scattering
-  //   std::vector<uint32_t> data;
-
-  //   // Where to scatter it
-  //   std::vector<ScatterInfo> scatter;
 };
 
 namespace impl {
