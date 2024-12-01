@@ -37,6 +37,7 @@ fn build_cpu_kernels() {
 
 fn build_cuda_kernels() {
     KernelBuild::new(KernelType::Cuda)
+        .flag("-std=c++17")
         .files(glob_paths("kernels/cuda/*.cu"))
         .deps(["kernels/cuda"])
         .include(env::var("DEP_RISC0_SYS_CUDA_ROOT").unwrap())

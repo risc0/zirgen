@@ -30,7 +30,7 @@ fn main() {
     let mut pows = 987654321_u64;
     for part in state.as_mut_slice() {
         *part = pows;
-        pows *= 123456789;
+        pows = pows.wrapping_mul(123456789);
     }
 
     let inputs = vec![state];
