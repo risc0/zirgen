@@ -73,8 +73,8 @@ exec_ThetaP1(ExecContext& ctx, Val64Array5Array5Array arg0, BoundLayout<ThetaP1L
   ThetaP1_Super_SuperStruct5Array x2 =
       map(Val5Array{Val(0), Val(1), Val(2), Val(3), Val(4)},
           LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val5Array::value_type x3,
-                            BoundLayout<ThetaP1_Super_SuperLayout5LayoutArray::value_type> x4) {
+          ([&](Val5Array::value_type x3,
+               BoundLayout<ThetaP1_Super_SuperLayout5LayoutArray::value_type> x4) {
             // ThetaP1(zirgen/circuit/keccak2/keccak.zir:12)
             ThetaP1_Super_Super_SuperStruct64Array x5 = map(
                 Val64Array{Val(0),  Val(1),  Val(2),  Val(3),  Val(4),  Val(5),  Val(6),  Val(7),
@@ -86,8 +86,8 @@ exec_ThetaP1(ExecContext& ctx, Val64Array5Array5Array arg0, BoundLayout<ThetaP1L
                            Val(48), Val(49), Val(50), Val(51), Val(52), Val(53), Val(54), Val(55),
                            Val(56), Val(57), Val(58), Val(59), Val(60), Val(61), Val(62), Val(63)},
                 LAYOUT_LOOKUP(x4, _super),
-                std::function([&](Val64Array::value_type x6,
-                                  BoundLayout<NondetRegLayout64LayoutArray::value_type> x7) {
+                ([&](Val64Array::value_type x6,
+                     BoundLayout<NondetRegLayout64LayoutArray::value_type> x7) {
                   // ThetaP1(zirgen/circuit/keccak2/keccak.zir:13)
                   Val5Array x8 = Val5Array{arg0[0][to_size_t(x3)][to_size_t(x6)],
                                            arg0[1][to_size_t(x3)][to_size_t(x6)],
@@ -104,16 +104,15 @@ exec_ThetaP1(ExecContext& ctx, Val64Array5Array5Array arg0, BoundLayout<ThetaP1L
 OneHot_24_Struct
 exec_OneHot_24_(ExecContext& ctx, Val arg0, BoundLayout<OneHot_24_Layout> layout1) {
   // OneHot(zirgen/circuit/keccak2/one_hot.zir:7)
-  NondetRegStruct24Array x2 =
-      map(Val24Array{Val(0),  Val(1),  Val(2),  Val(3),  Val(4),  Val(5),  Val(6),  Val(7),
-                     Val(8),  Val(9),  Val(10), Val(11), Val(12), Val(13), Val(14), Val(15),
-                     Val(16), Val(17), Val(18), Val(19), Val(20), Val(21), Val(22), Val(23)},
-          LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val24Array::value_type x3,
-                            BoundLayout<NondetRegLayout24LayoutArray::value_type> x4) {
-            NondetRegStruct x5 = exec_NondetBitReg(ctx, isz((x3 - arg0)), x4);
-            return x5;
-          }));
+  NondetRegStruct24Array x2 = map(
+      Val24Array{Val(0),  Val(1),  Val(2),  Val(3),  Val(4),  Val(5),  Val(6),  Val(7),
+                 Val(8),  Val(9),  Val(10), Val(11), Val(12), Val(13), Val(14), Val(15),
+                 Val(16), Val(17), Val(18), Val(19), Val(20), Val(21), Val(22), Val(23)},
+      LAYOUT_LOOKUP(layout1, _super),
+      ([&](Val24Array::value_type x3, BoundLayout<NondetRegLayout24LayoutArray::value_type> x4) {
+        NondetRegStruct x5 = exec_NondetBitReg(ctx, isz((x3 - arg0)), x4);
+        return x5;
+      }));
   // OneHot(zirgen/circuit/keccak2/one_hot.zir:9)
   Val x6 = x2[1]._super;
   Val x7 = (x2[0]._super + x6);
@@ -776,52 +775,51 @@ UnpackReg_32__16_Struct exec_UnpackReg_32__16_(ExecContext& ctx,
   Val x32 = (bitAnd(arg0[1], Val(16384)) * Val(2013143041));
   Val x33 = (bitAnd(arg0[1], Val(32768)) * Val(2013204481));
   // UnpackReg(zirgen/circuit/keccak2/pack.zir:48)
-  UnpackReg_32__16__SuperStruct32Array x34 =
-      map(Val32Array{Val(0),  Val(1),  Val(2),  Val(3),  Val(4),  Val(5),  Val(6),  Val(7),
-                     Val(8),  Val(9),  Val(10), Val(11), Val(12), Val(13), Val(14), Val(15),
-                     Val(16), Val(17), Val(18), Val(19), Val(20), Val(21), Val(22), Val(23),
-                     Val(24), Val(25), Val(26), Val(27), Val(28), Val(29), Val(30), Val(31)},
-          LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val32Array::value_type x35,
-                            BoundLayout<NondetRegLayout32LayoutArray::value_type> x36) {
-            // UnpackReg(zirgen/circuit/keccak2/pack.zir:47)
-            Val x37 = DivStruct32Array{x2,
-                                       DivStruct{._super = x3},
-                                       DivStruct{._super = x4},
-                                       DivStruct{._super = x5},
-                                       DivStruct{._super = x6},
-                                       DivStruct{._super = x7},
-                                       DivStruct{._super = x8},
-                                       DivStruct{._super = x9},
-                                       DivStruct{._super = x10},
-                                       DivStruct{._super = x11},
-                                       DivStruct{._super = x12},
-                                       DivStruct{._super = x13},
-                                       DivStruct{._super = x14},
-                                       DivStruct{._super = x15},
-                                       DivStruct{._super = x16},
-                                       DivStruct{._super = x17},
-                                       x18,
-                                       DivStruct{._super = x19},
-                                       DivStruct{._super = x20},
-                                       DivStruct{._super = x21},
-                                       DivStruct{._super = x22},
-                                       DivStruct{._super = x23},
-                                       DivStruct{._super = x24},
-                                       DivStruct{._super = x25},
-                                       DivStruct{._super = x26},
-                                       DivStruct{._super = x27},
-                                       DivStruct{._super = x28},
-                                       DivStruct{._super = x29},
-                                       DivStruct{._super = x30},
-                                       DivStruct{._super = x31},
-                                       DivStruct{._super = x32},
-                                       DivStruct{._super = x33}}[to_size_t(x35)]
-                          ._super;
-            // UnpackReg(zirgen/circuit/keccak2/pack.zir:48)
-            NondetRegStruct x38 = exec_NondetBitReg(ctx, x37, x36);
-            return UnpackReg_32__16__SuperStruct{._super = x38};
-          }));
+  UnpackReg_32__16__SuperStruct32Array x34 = map(
+      Val32Array{Val(0),  Val(1),  Val(2),  Val(3),  Val(4),  Val(5),  Val(6),  Val(7),
+                 Val(8),  Val(9),  Val(10), Val(11), Val(12), Val(13), Val(14), Val(15),
+                 Val(16), Val(17), Val(18), Val(19), Val(20), Val(21), Val(22), Val(23),
+                 Val(24), Val(25), Val(26), Val(27), Val(28), Val(29), Val(30), Val(31)},
+      LAYOUT_LOOKUP(layout1, _super),
+      ([&](Val32Array::value_type x35, BoundLayout<NondetRegLayout32LayoutArray::value_type> x36) {
+        // UnpackReg(zirgen/circuit/keccak2/pack.zir:47)
+        Val x37 = DivStruct32Array{x2,
+                                   DivStruct{._super = x3},
+                                   DivStruct{._super = x4},
+                                   DivStruct{._super = x5},
+                                   DivStruct{._super = x6},
+                                   DivStruct{._super = x7},
+                                   DivStruct{._super = x8},
+                                   DivStruct{._super = x9},
+                                   DivStruct{._super = x10},
+                                   DivStruct{._super = x11},
+                                   DivStruct{._super = x12},
+                                   DivStruct{._super = x13},
+                                   DivStruct{._super = x14},
+                                   DivStruct{._super = x15},
+                                   DivStruct{._super = x16},
+                                   DivStruct{._super = x17},
+                                   x18,
+                                   DivStruct{._super = x19},
+                                   DivStruct{._super = x20},
+                                   DivStruct{._super = x21},
+                                   DivStruct{._super = x22},
+                                   DivStruct{._super = x23},
+                                   DivStruct{._super = x24},
+                                   DivStruct{._super = x25},
+                                   DivStruct{._super = x26},
+                                   DivStruct{._super = x27},
+                                   DivStruct{._super = x28},
+                                   DivStruct{._super = x29},
+                                   DivStruct{._super = x30},
+                                   DivStruct{._super = x31},
+                                   DivStruct{._super = x32},
+                                   DivStruct{._super = x33}}[to_size_t(x35)]
+                      ._super;
+        // UnpackReg(zirgen/circuit/keccak2/pack.zir:48)
+        NondetRegStruct x38 = exec_NondetBitReg(ctx, x37, x36);
+        return UnpackReg_32__16__SuperStruct{._super = x38};
+      }));
   Val x39 = x34[0]._super._super;
   Val x40 = x34[1]._super._super;
   Val x41 = x34[2]._super._super;
@@ -982,8 +980,7 @@ back_TopState(ExecContext& ctx, Index distance0, BoundLayout<TopStateLayout> lay
           Val(783), Val(784), Val(785), Val(786), Val(787), Val(788), Val(789), Val(790), Val(791),
           Val(792), Val(793), Val(794), Val(795), Val(796), Val(797), Val(798), Val(799)},
       LAYOUT_LOOKUP(layout1, bits),
-      std::function([&](Val800Array::value_type x3,
-                        BoundLayout<NondetRegLayout800LayoutArray::value_type> x4) {
+      ([&](Val800Array::value_type x3, BoundLayout<NondetRegLayout800LayoutArray::value_type> x4) {
         // TopState(zirgen/circuit/keccak2/top.zir:36)
         NondetRegStruct x5 = back_Reg(ctx, distance0, x4);
         return TopStateBitsStruct{._super = x5};
@@ -1002,37 +999,35 @@ back_TopState(ExecContext& ctx, Index distance0, BoundLayout<TopStateLayout> lay
           Val(80), Val(81), Val(82), Val(83), Val(84), Val(85), Val(86), Val(87), Val(88), Val(89),
           Val(90), Val(91), Val(92), Val(93), Val(94), Val(95), Val(96), Val(97), Val(98), Val(99)},
       LAYOUT_LOOKUP(layout1, kflat),
-      std::function([&](Val100Array::value_type x7,
-                        BoundLayout<NondetRegLayout100LayoutArray::value_type> x8) {
+      ([&](Val100Array::value_type x7, BoundLayout<NondetRegLayout100LayoutArray::value_type> x8) {
         // TopState(zirgen/circuit/keccak2/top.zir:40)
         NondetRegStruct x9 = back_Reg(ctx, distance0, x8);
         return TopStateKflatStruct{._super = x9};
       }));
   // TopState(zirgen/circuit/keccak2/top.zir:42)
-  NondetRegStruct16Array x10 =
-      map(Val16Array{Val(0),
-                     Val(1),
-                     Val(2),
-                     Val(3),
-                     Val(4),
-                     Val(5),
-                     Val(6),
-                     Val(7),
-                     Val(8),
-                     Val(9),
-                     Val(10),
-                     Val(11),
-                     Val(12),
-                     Val(13),
-                     Val(14),
-                     Val(15)},
-          LAYOUT_LOOKUP(layout1, sflat),
-          std::function([&](Val16Array::value_type x11,
-                            BoundLayout<NondetRegLayout16LayoutArray::value_type> x12) {
-            // TopState(zirgen/circuit/keccak2/top.zir:43)
-            NondetRegStruct x13 = back_Reg(ctx, distance0, x12);
-            return x13;
-          }));
+  NondetRegStruct16Array x10 = map(
+      Val16Array{Val(0),
+                 Val(1),
+                 Val(2),
+                 Val(3),
+                 Val(4),
+                 Val(5),
+                 Val(6),
+                 Val(7),
+                 Val(8),
+                 Val(9),
+                 Val(10),
+                 Val(11),
+                 Val(12),
+                 Val(13),
+                 Val(14),
+                 Val(15)},
+      LAYOUT_LOOKUP(layout1, sflat),
+      ([&](Val16Array::value_type x11, BoundLayout<NondetRegLayout16LayoutArray::value_type> x12) {
+        // TopState(zirgen/circuit/keccak2/top.zir:43)
+        NondetRegStruct x13 = back_Reg(ctx, distance0, x12);
+        return x13;
+      }));
   return TopStateStruct{.bits = x2, .kflat = x6, .sflat = x10};
 }
 TopStateStruct exec_TopState(ExecContext& ctx,
@@ -1133,8 +1128,7 @@ TopStateStruct exec_TopState(ExecContext& ctx,
           Val(783), Val(784), Val(785), Val(786), Val(787), Val(788), Val(789), Val(790), Val(791),
           Val(792), Val(793), Val(794), Val(795), Val(796), Val(797), Val(798), Val(799)},
       LAYOUT_LOOKUP(layout3, bits),
-      std::function([&](Val800Array::value_type x5,
-                        BoundLayout<NondetRegLayout800LayoutArray::value_type> x6) {
+      ([&](Val800Array::value_type x5, BoundLayout<NondetRegLayout800LayoutArray::value_type> x6) {
         // TopState(zirgen/circuit/keccak2/top.zir:36)
         NondetRegStruct x7 = exec_Reg(ctx, arg0[to_size_t(x5)], x6);
         return TopStateBitsStruct{._super = x7};
@@ -1153,37 +1147,35 @@ TopStateStruct exec_TopState(ExecContext& ctx,
           Val(80), Val(81), Val(82), Val(83), Val(84), Val(85), Val(86), Val(87), Val(88), Val(89),
           Val(90), Val(91), Val(92), Val(93), Val(94), Val(95), Val(96), Val(97), Val(98), Val(99)},
       LAYOUT_LOOKUP(layout3, kflat),
-      std::function([&](Val100Array::value_type x9,
-                        BoundLayout<NondetRegLayout100LayoutArray::value_type> x10) {
+      ([&](Val100Array::value_type x9, BoundLayout<NondetRegLayout100LayoutArray::value_type> x10) {
         // TopState(zirgen/circuit/keccak2/top.zir:40)
         NondetRegStruct x11 = exec_Reg(ctx, arg1[to_size_t(x9)], x10);
         return TopStateKflatStruct{._super = x11};
       }));
   // TopState(zirgen/circuit/keccak2/top.zir:42)
-  NondetRegStruct16Array x12 =
-      map(Val16Array{Val(0),
-                     Val(1),
-                     Val(2),
-                     Val(3),
-                     Val(4),
-                     Val(5),
-                     Val(6),
-                     Val(7),
-                     Val(8),
-                     Val(9),
-                     Val(10),
-                     Val(11),
-                     Val(12),
-                     Val(13),
-                     Val(14),
-                     Val(15)},
-          LAYOUT_LOOKUP(layout3, sflat),
-          std::function([&](Val16Array::value_type x13,
-                            BoundLayout<NondetRegLayout16LayoutArray::value_type> x14) {
-            // TopState(zirgen/circuit/keccak2/top.zir:43)
-            NondetRegStruct x15 = exec_Reg(ctx, arg2[to_size_t(x13)], x14);
-            return x15;
-          }));
+  NondetRegStruct16Array x12 = map(
+      Val16Array{Val(0),
+                 Val(1),
+                 Val(2),
+                 Val(3),
+                 Val(4),
+                 Val(5),
+                 Val(6),
+                 Val(7),
+                 Val(8),
+                 Val(9),
+                 Val(10),
+                 Val(11),
+                 Val(12),
+                 Val(13),
+                 Val(14),
+                 Val(15)},
+      LAYOUT_LOOKUP(layout3, sflat),
+      ([&](Val16Array::value_type x13, BoundLayout<NondetRegLayout16LayoutArray::value_type> x14) {
+        // TopState(zirgen/circuit/keccak2/top.zir:43)
+        NondetRegStruct x15 = exec_Reg(ctx, arg2[to_size_t(x13)], x14);
+        return x15;
+      }));
   return TopStateStruct{.bits = x4, .kflat = x8, .sflat = x12};
 }
 TopStateStruct exec_KeccakRound0(ExecContext& ctx,
@@ -3489,8 +3481,7 @@ OneHot_8_Struct exec_OneHot_8_(ExecContext& ctx, Val arg0, BoundLayout<OneHot_8_
   NondetRegStruct8Array x2 =
       map(Val8Array{Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
           LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val8Array::value_type x3,
-                            BoundLayout<NondetRegLayout8LayoutArray::value_type> x4) {
+          ([&](Val8Array::value_type x3, BoundLayout<NondetRegLayout8LayoutArray::value_type> x4) {
             NondetRegStruct x5 = exec_NondetBitReg(ctx, isz((x3 - arg0)), x4);
             return x5;
           }));
@@ -4927,8 +4918,7 @@ OneHot_4_Struct exec_OneHot_4_(ExecContext& ctx, Val arg0, BoundLayout<OneHot_4_
   NondetRegStruct4Array x2 =
       map(Val4Array{Val(0), Val(1), Val(2), Val(3)},
           LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val4Array::value_type x3,
-                            BoundLayout<NondetRegLayout4LayoutArray::value_type> x4) {
+          ([&](Val4Array::value_type x3, BoundLayout<NondetRegLayout4LayoutArray::value_type> x4) {
             NondetRegStruct x5 = exec_NondetBitReg(ctx, isz((x3 - arg0)), x4);
             return x5;
           }));
@@ -7465,8 +7455,8 @@ TopStateStruct exec_ShaNextBlockCycle(ExecContext& ctx,
   UnpackReg_32__16_Struct4Array x357 =
       map(x2,
           LAYOUT_LOOKUP(layout1, totA),
-          std::function([&](Val4Array::value_type x358,
-                            BoundLayout<CarryAndExpandLayout4LayoutArray::value_type> x359) {
+          ([&](Val4Array::value_type x358,
+               BoundLayout<CarryAndExpandLayout4LayoutArray::value_type> x359) {
             // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:238)
             Pack_32__16__Super_SuperStruct2Array x360 =
                 Pack_32__16_Struct4Array{x46, x89, x132, x175}[to_size_t(x358)]._super;
@@ -7485,8 +7475,8 @@ TopStateStruct exec_ShaNextBlockCycle(ExecContext& ctx,
   UnpackReg_32__16_Struct4Array x365 =
       map(x2,
           LAYOUT_LOOKUP(layout1, totE),
-          std::function([&](Val4Array::value_type x366,
-                            BoundLayout<CarryAndExpandLayout4LayoutArray::value_type> x367) {
+          ([&](Val4Array::value_type x366,
+               BoundLayout<CarryAndExpandLayout4LayoutArray::value_type> x367) {
             // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:239)
             Pack_32__16__Super_SuperStruct2Array x368 =
                 Pack_32__16_Struct4Array{x218, x261, x304, x347}[to_size_t(x366)]._super;
@@ -9165,8 +9155,8 @@ UnpackReg_800__16_Struct exec_UnpackReg_800__16_(ExecContext& ctx,
           Val(783), Val(784), Val(785), Val(786), Val(787), Val(788), Val(789), Val(790), Val(791),
           Val(792), Val(793), Val(794), Val(795), Val(796), Val(797), Val(798), Val(799)},
       LAYOUT_LOOKUP(layout1, _super),
-      std::function([&](Val800Array::value_type x803,
-                        BoundLayout<NondetRegLayout800LayoutArray::value_type> x804) {
+      ([&](Val800Array::value_type x803,
+           BoundLayout<NondetRegLayout800LayoutArray::value_type> x804) {
         // UnpackReg(zirgen/circuit/keccak2/pack.zir:47)
         Val x805 = DivStruct800Array{x2,
                                      DivStruct{._super = x3},
@@ -11209,8 +11199,7 @@ exec_ReadCycle(ExecContext& ctx, TopStateStruct arg0, BoundLayout<ReadCycleLayou
           Val(80), Val(81), Val(82), Val(83), Val(84), Val(85), Val(86), Val(87), Val(88), Val(89),
           Val(90), Val(91), Val(92), Val(93), Val(94), Val(95), Val(96), Val(97), Val(98), Val(99)},
       LAYOUT_LOOKUP(layout1, load),
-      std::function([&](Val100Array::value_type x3,
-                        BoundLayout<NondetRegLayout100LayoutArray::value_type> x4) {
+      ([&](Val100Array::value_type x3, BoundLayout<NondetRegLayout100LayoutArray::value_type> x4) {
         // GetPreimage(zirgen/circuit/keccak2/top.zir:279)
         Val x5 = INVOKE_EXTERN(ctx, getPreimage, x3);
         NondetRegStruct x6 = exec_NondetReg(ctx, x5, x4);
@@ -16502,14 +16491,13 @@ TopStateStruct exec_WriteCycle(ExecContext& ctx,
 DigestRegStruct
 exec_DigestReg(ExecContext& ctx, Val16Array arg0, BoundLayout<DigestRegLayout> layout1) {
   // DigestReg(zirgen/circuit/keccak2/top.zir:391)
-  DigestRegValuesStruct16Array x2 =
-      map(arg0,
-          LAYOUT_LOOKUP(layout1, values),
-          std::function([&](Val16Array::value_type x3,
-                            BoundLayout<NondetRegLayout16LayoutArray::value_type> x4) {
-            NondetRegStruct x5 = exec_Reg(ctx, x3, x4);
-            return DigestRegValuesStruct{};
-          }));
+  DigestRegValuesStruct16Array x2 = map(
+      arg0,
+      LAYOUT_LOOKUP(layout1, values),
+      ([&](Val16Array::value_type x3, BoundLayout<NondetRegLayout16LayoutArray::value_type> x4) {
+        NondetRegStruct x5 = exec_Reg(ctx, x3, x4);
+        return DigestRegValuesStruct{};
+      }));
   return DigestRegStruct{};
 }
 TopStateStruct exec_ShutdownCycle(ExecContext& ctx,
@@ -16878,25 +16866,24 @@ ControlStateStruct exec_ComputeCurrentStep(ExecContext& ctx,
 OneHot_12_Struct
 exec_OneHot_12_(ExecContext& ctx, Val arg0, BoundLayout<OneHot_12_Layout> layout1) {
   // OneHot(zirgen/circuit/keccak2/one_hot.zir:7)
-  OneHot_12__SuperStruct12Array x2 =
-      map(Val12Array{Val(0),
-                     Val(1),
-                     Val(2),
-                     Val(3),
-                     Val(4),
-                     Val(5),
-                     Val(6),
-                     Val(7),
-                     Val(8),
-                     Val(9),
-                     Val(10),
-                     Val(11)},
-          LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val12Array::value_type x3,
-                            BoundLayout<NondetRegLayout12LayoutArray::value_type> x4) {
-            NondetRegStruct x5 = exec_NondetBitReg(ctx, isz((x3 - arg0)), x4);
-            return OneHot_12__SuperStruct{._super = x5};
-          }));
+  OneHot_12__SuperStruct12Array x2 = map(
+      Val12Array{Val(0),
+                 Val(1),
+                 Val(2),
+                 Val(3),
+                 Val(4),
+                 Val(5),
+                 Val(6),
+                 Val(7),
+                 Val(8),
+                 Val(9),
+                 Val(10),
+                 Val(11)},
+      LAYOUT_LOOKUP(layout1, _super),
+      ([&](Val12Array::value_type x3, BoundLayout<NondetRegLayout12LayoutArray::value_type> x4) {
+        NondetRegStruct x5 = exec_NondetBitReg(ctx, isz((x3 - arg0)), x4);
+        return OneHot_12__SuperStruct{._super = x5};
+      }));
   // OneHot(zirgen/circuit/keccak2/one_hot.zir:9)
   Val x6 = x2[0]._super._super;
   Val x7 = x2[1]._super._super;
@@ -16925,51 +16912,49 @@ exec_OneHot_12_(ExecContext& ctx, Val arg0, BoundLayout<OneHot_12_Layout> layout
 WrapOneHotStruct
 back_WrapOneHot(ExecContext& ctx, Index distance0, BoundLayout<WrapOneHotLayout> layout1) {
   // WrapOneHot(zirgen/circuit/keccak2/top.zir:470)
-  WrapOneHot_SuperStruct12Array x2 =
-      map(Val12Array{Val(0),
-                     Val(1),
-                     Val(2),
-                     Val(3),
-                     Val(4),
-                     Val(5),
-                     Val(6),
-                     Val(7),
-                     Val(8),
-                     Val(9),
-                     Val(10),
-                     Val(11)},
-          LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val12Array::value_type x3,
-                            BoundLayout<NondetRegLayout12LayoutArray::value_type> x4) {
-            NondetRegStruct x5 = back_Reg(ctx, distance0, x4);
-            return WrapOneHot_SuperStruct{._super = x5};
-          }));
+  WrapOneHot_SuperStruct12Array x2 = map(
+      Val12Array{Val(0),
+                 Val(1),
+                 Val(2),
+                 Val(3),
+                 Val(4),
+                 Val(5),
+                 Val(6),
+                 Val(7),
+                 Val(8),
+                 Val(9),
+                 Val(10),
+                 Val(11)},
+      LAYOUT_LOOKUP(layout1, _super),
+      ([&](Val12Array::value_type x3, BoundLayout<NondetRegLayout12LayoutArray::value_type> x4) {
+        NondetRegStruct x5 = back_Reg(ctx, distance0, x4);
+        return WrapOneHot_SuperStruct{._super = x5};
+      }));
   return WrapOneHotStruct{._super = x2};
 }
 WrapOneHotStruct
 exec_WrapOneHot(ExecContext& ctx, OneHot_12_Struct arg0, BoundLayout<WrapOneHotLayout> layout1) {
-  WrapOneHot_SuperStruct12Array x2 =
-      map(Val12Array{Val(0),
-                     Val(1),
-                     Val(2),
-                     Val(3),
-                     Val(4),
-                     Val(5),
-                     Val(6),
-                     Val(7),
-                     Val(8),
-                     Val(9),
-                     Val(10),
-                     Val(11)},
-          LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val12Array::value_type x3,
-                            BoundLayout<NondetRegLayout12LayoutArray::value_type> x4) {
-            // WrapOneHot(zirgen/circuit/keccak2/top.zir:469)
-            NondetRegStruct x5 = arg0.bits[to_size_t(x3)]._super;
-            // WrapOneHot(zirgen/circuit/keccak2/top.zir:470)
-            NondetRegStruct x6 = exec_Reg(ctx, x5._super, x4);
-            return WrapOneHot_SuperStruct{._super = x6};
-          }));
+  WrapOneHot_SuperStruct12Array x2 = map(
+      Val12Array{Val(0),
+                 Val(1),
+                 Val(2),
+                 Val(3),
+                 Val(4),
+                 Val(5),
+                 Val(6),
+                 Val(7),
+                 Val(8),
+                 Val(9),
+                 Val(10),
+                 Val(11)},
+      LAYOUT_LOOKUP(layout1, _super),
+      ([&](Val12Array::value_type x3, BoundLayout<NondetRegLayout12LayoutArray::value_type> x4) {
+        // WrapOneHot(zirgen/circuit/keccak2/top.zir:469)
+        NondetRegStruct x5 = arg0.bits[to_size_t(x3)]._super;
+        // WrapOneHot(zirgen/circuit/keccak2/top.zir:470)
+        NondetRegStruct x6 = exec_Reg(ctx, x5._super, x4);
+        return WrapOneHot_SuperStruct{._super = x6};
+      }));
   return WrapOneHotStruct{._super = x2};
 }
 TopStateStruct exec_KeccakRound12_0_(ExecContext& ctx,

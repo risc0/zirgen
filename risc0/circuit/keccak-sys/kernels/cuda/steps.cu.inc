@@ -1,26 +1,36 @@
-NondetRegStruct back_NondetReg(Index distance0, BoundLayout<NondetRegLayout> layout1) {
+__device__ NondetRegStruct back_NondetReg(ExecContext& ctx,
+                                          Index distance0,
+                                          BoundLayout<NondetRegLayout> layout1) {
   NondetRegStruct x2 = NondetRegStruct{._super = LOAD(LAYOUT_LOOKUP(layout1, _super), distance0)};
   return x2;
 }
-NondetRegStruct exec_NondetReg(Val arg0, BoundLayout<NondetRegLayout> layout1) {
+__device__ NondetRegStruct exec_NondetReg(ExecContext& ctx,
+                                          Val arg0,
+                                          BoundLayout<NondetRegLayout> layout1) {
   BoundLayout<Reg> x2 = LAYOUT_LOOKUP(layout1, _super);
   STORE(x2, arg0);
   return NondetRegStruct{._super = LOAD(x2, 0)};
 }
-NondetRegStruct back_Reg(Index distance0, BoundLayout<NondetRegLayout> layout1) {
+__device__ NondetRegStruct back_Reg(ExecContext& ctx,
+                                    Index distance0,
+                                    BoundLayout<NondetRegLayout> layout1) {
   // Reg(<preamble>:4)
-  NondetRegStruct x2 = back_NondetReg(distance0, layout1);
+  NondetRegStruct x2 = back_NondetReg(ctx, distance0, layout1);
   return x2;
 }
-NondetRegStruct exec_Reg(Val arg0, BoundLayout<NondetRegLayout> layout1) {
-  NondetRegStruct x2 = exec_NondetReg(arg0, layout1);
+__device__ NondetRegStruct exec_Reg(ExecContext& ctx,
+                                    Val arg0,
+                                    BoundLayout<NondetRegLayout> layout1) {
+  NondetRegStruct x2 = exec_NondetReg(ctx, arg0, layout1);
   // Reg(<preamble>:5)
   EQZ((arg0 - x2._super), "Reg(<preamble>:5)");
   return x2;
 }
-NondetRegStruct exec_NondetBitReg(Val arg0, BoundLayout<NondetRegLayout> layout1) {
+__device__ NondetRegStruct exec_NondetBitReg(ExecContext& ctx,
+                                             Val arg0,
+                                             BoundLayout<NondetRegLayout> layout1) {
   // NondetBitReg(zirgen/circuit/keccak2/bits.zir:11)
-  NondetRegStruct x2 = exec_NondetReg(arg0, layout1);
+  NondetRegStruct x2 = exec_NondetReg(ctx, arg0, layout1);
   Val x3 = x2._super;
   // AssertBit(zirgen/circuit/keccak2/bits.zir:6)
   // NondetBitReg(zirgen/circuit/keccak2/bits.zir:12)
@@ -29,11 +39,13 @@ NondetRegStruct exec_NondetBitReg(Val arg0, BoundLayout<NondetRegLayout> layout1
       "zirgen/circuit/keccak2/bits.zir :12:13)))");
   return x2;
 }
-NondetRegStruct exec_IsZero(Val arg0, BoundLayout<IsZeroLayout> layout1) {
+__device__ NondetRegStruct exec_IsZero(ExecContext& ctx,
+                                       Val arg0,
+                                       BoundLayout<IsZeroLayout> layout1) {
   // IsZero(zirgen/circuit/keccak2/is_zero.zir:8)
-  NondetRegStruct x2 = exec_NondetReg(isz(arg0), LAYOUT_LOOKUP(layout1, _super));
+  NondetRegStruct x2 = exec_NondetReg(ctx, isz(arg0), LAYOUT_LOOKUP(layout1, _super));
   // IsZero(zirgen/circuit/keccak2/is_zero.zir:11)
-  NondetRegStruct x3 = exec_NondetReg(inv_0(arg0), LAYOUT_LOOKUP(layout1, inv));
+  NondetRegStruct x3 = exec_NondetReg(ctx, inv_0(arg0), LAYOUT_LOOKUP(layout1, inv));
   // IsZero(zirgen/circuit/keccak2/is_zero.zir:8)
   Val x4 = x2._super;
   // AssertBit(zirgen/circuit/keccak2/bits.zir:6)
@@ -52,12 +64,14 @@ NondetRegStruct exec_IsZero(Val arg0, BoundLayout<IsZeroLayout> layout1) {
   EQZ((x4 * x6), "IsZero(zirgen/circuit/keccak2/is_zero.zir:20)");
   return x2;
 }
-NondetRegStruct exec_Xor5(Val5Array arg0, BoundLayout<NondetRegLayout> layout1) {
+__device__ NondetRegStruct exec_Xor5(ExecContext& ctx,
+                                     Val5Array arg0,
+                                     BoundLayout<NondetRegLayout> layout1) {
   // Xor5(zirgen/circuit/keccak2/xor5.zir:7)
   Val x2 = ((arg0[0] + arg0[1]) + arg0[2]);
   Val x3 = ((x2 + arg0[3]) + arg0[4]);
   // Xor5(zirgen/circuit/keccak2/xor5.zir:8)
-  NondetRegStruct x4 = exec_NondetBitReg(bitAnd(x3, Val(1)), layout1);
+  NondetRegStruct x4 = exec_NondetBitReg(ctx, bitAnd(x3, Val(1)), layout1);
   // Xor5(zirgen/circuit/keccak2/xor5.zir:9)
   Val x5 = (x3 - x4._super);
   // Xor5(zirgen/circuit/keccak2/xor5.zir:10)
@@ -65,51 +79,54 @@ NondetRegStruct exec_Xor5(Val5Array arg0, BoundLayout<NondetRegLayout> layout1) 
   EQZ(x6, "Xor5(zirgen/circuit/keccak2/xor5.zir:10)");
   return x4;
 }
-ThetaP1Struct exec_ThetaP1(Val64Array5Array5Array arg0, BoundLayout<ThetaP1Layout> layout1) {
+__device__ ThetaP1Struct exec_ThetaP1(ExecContext& ctx,
+                                      Val64Array5Array5Array arg0,
+                                      BoundLayout<ThetaP1Layout> layout1) {
   // ThetaP1(zirgen/circuit/keccak2/keccak.zir:11)
   ThetaP1_Super_SuperStruct5Array x2 =
-      map({Val(0), Val(1), Val(2), Val(3), Val(4)},
+      map(Val5Array{Val(0), Val(1), Val(2), Val(3), Val(4)},
           LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val5Array::value_type x3,
-                            BoundLayout<ThetaP1_Super_SuperLayout5LayoutArray::value_type> x4) {
+          ([&](Val5Array::value_type x3,
+               BoundLayout<ThetaP1_Super_SuperLayout5LayoutArray::value_type> x4) {
             // ThetaP1(zirgen/circuit/keccak2/keccak.zir:12)
-            ThetaP1_Super_Super_SuperStruct64Array x5 =
-                map({Val(0),  Val(1),  Val(2),  Val(3),  Val(4),  Val(5),  Val(6),  Val(7),
-                     Val(8),  Val(9),  Val(10), Val(11), Val(12), Val(13), Val(14), Val(15),
-                     Val(16), Val(17), Val(18), Val(19), Val(20), Val(21), Val(22), Val(23),
-                     Val(24), Val(25), Val(26), Val(27), Val(28), Val(29), Val(30), Val(31),
-                     Val(32), Val(33), Val(34), Val(35), Val(36), Val(37), Val(38), Val(39),
-                     Val(40), Val(41), Val(42), Val(43), Val(44), Val(45), Val(46), Val(47),
-                     Val(48), Val(49), Val(50), Val(51), Val(52), Val(53), Val(54), Val(55),
-                     Val(56), Val(57), Val(58), Val(59), Val(60), Val(61), Val(62), Val(63)},
-                    LAYOUT_LOOKUP(x4, _super),
-                    std::function([&](Val64Array::value_type x6,
-                                      BoundLayout<NondetRegLayout64LayoutArray::value_type> x7) {
-                      // ThetaP1(zirgen/circuit/keccak2/keccak.zir:13)
-                      Val5Array x8 = {arg0[0][to_size_t(x3)][to_size_t(x6)],
-                                      arg0[1][to_size_t(x3)][to_size_t(x6)],
-                                      arg0[2][to_size_t(x3)][to_size_t(x6)],
-                                      arg0[3][to_size_t(x3)][to_size_t(x6)],
-                                      arg0[4][to_size_t(x3)][to_size_t(x6)]};
-                      NondetRegStruct x9 = exec_Xor5(x8, x7);
-                      return ThetaP1_Super_Super_SuperStruct{._super = x9};
-                    }));
+            ThetaP1_Super_Super_SuperStruct64Array x5 = map(
+                Val64Array{Val(0),  Val(1),  Val(2),  Val(3),  Val(4),  Val(5),  Val(6),  Val(7),
+                           Val(8),  Val(9),  Val(10), Val(11), Val(12), Val(13), Val(14), Val(15),
+                           Val(16), Val(17), Val(18), Val(19), Val(20), Val(21), Val(22), Val(23),
+                           Val(24), Val(25), Val(26), Val(27), Val(28), Val(29), Val(30), Val(31),
+                           Val(32), Val(33), Val(34), Val(35), Val(36), Val(37), Val(38), Val(39),
+                           Val(40), Val(41), Val(42), Val(43), Val(44), Val(45), Val(46), Val(47),
+                           Val(48), Val(49), Val(50), Val(51), Val(52), Val(53), Val(54), Val(55),
+                           Val(56), Val(57), Val(58), Val(59), Val(60), Val(61), Val(62), Val(63)},
+                LAYOUT_LOOKUP(x4, _super),
+                ([&](Val64Array::value_type x6,
+                     BoundLayout<NondetRegLayout64LayoutArray::value_type> x7) {
+                  // ThetaP1(zirgen/circuit/keccak2/keccak.zir:13)
+                  Val5Array x8 = Val5Array{arg0[0][to_size_t(x3)][to_size_t(x6)],
+                                           arg0[1][to_size_t(x3)][to_size_t(x6)],
+                                           arg0[2][to_size_t(x3)][to_size_t(x6)],
+                                           arg0[3][to_size_t(x3)][to_size_t(x6)],
+                                           arg0[4][to_size_t(x3)][to_size_t(x6)]};
+                  NondetRegStruct x9 = exec_Xor5(ctx, x8, x7);
+                  return ThetaP1_Super_Super_SuperStruct{._super = x9};
+                }));
             return ThetaP1_Super_SuperStruct{._super = x5};
           }));
   return ThetaP1Struct{._super = x2};
 }
-OneHot_24_Struct exec_OneHot_24_(Val arg0, BoundLayout<OneHot_24_Layout> layout1) {
+__device__ OneHot_24_Struct exec_OneHot_24_(ExecContext& ctx,
+                                            Val arg0,
+                                            BoundLayout<OneHot_24_Layout> layout1) {
   // OneHot(zirgen/circuit/keccak2/one_hot.zir:7)
-  NondetRegStruct24Array x2 =
-      map({Val(0),  Val(1),  Val(2),  Val(3),  Val(4),  Val(5),  Val(6),  Val(7),
-           Val(8),  Val(9),  Val(10), Val(11), Val(12), Val(13), Val(14), Val(15),
-           Val(16), Val(17), Val(18), Val(19), Val(20), Val(21), Val(22), Val(23)},
-          LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val24Array::value_type x3,
-                            BoundLayout<NondetRegLayout24LayoutArray::value_type> x4) {
-            NondetRegStruct x5 = exec_NondetBitReg(isz((x3 - arg0)), x4);
-            return x5;
-          }));
+  NondetRegStruct24Array x2 = map(
+      Val24Array{Val(0),  Val(1),  Val(2),  Val(3),  Val(4),  Val(5),  Val(6),  Val(7),
+                 Val(8),  Val(9),  Val(10), Val(11), Val(12), Val(13), Val(14), Val(15),
+                 Val(16), Val(17), Val(18), Val(19), Val(20), Val(21), Val(22), Val(23)},
+      LAYOUT_LOOKUP(layout1, _super),
+      ([&](Val24Array::value_type x3, BoundLayout<NondetRegLayout24LayoutArray::value_type> x4) {
+        NondetRegStruct x5 = exec_NondetBitReg(ctx, isz((x3 - arg0)), x4);
+        return x5;
+      }));
   // OneHot(zirgen/circuit/keccak2/one_hot.zir:9)
   Val x6 = x2[1]._super;
   Val x7 = (x2[0]._super + x6);
@@ -154,9 +171,11 @@ OneHot_24_Struct exec_OneHot_24_(Val arg0, BoundLayout<OneHot_24_Layout> layout1
   EQZ(((x43 + (x36 * Val(23))) - arg0), "OneHot(zirgen/circuit/keccak2/one_hot.zir:11)");
   return OneHot_24_Struct{._super = x2};
 }
-RoundToArrayStruct exec_RoundToArray(Val arg0, BoundLayout<RoundToArrayLayout> layout1) {
+__device__ RoundToArrayStruct exec_RoundToArray(ExecContext& ctx,
+                                                Val arg0,
+                                                BoundLayout<RoundToArrayLayout> layout1) {
   // RoundToArray(zirgen/circuit/keccak2/keccak.zir:114)
-  OneHot_24_Struct x2 = exec_OneHot_24_(arg0, LAYOUT_LOOKUP(layout1, split));
+  OneHot_24_Struct x2 = exec_OneHot_24_(ctx, arg0, LAYOUT_LOOKUP(layout1, split));
   NondetRegStruct24Array x3 = x2._super;
   Val x4 = x3[4]._super;
   Val x5 = x3[5]._super;
@@ -220,76 +239,79 @@ RoundToArrayStruct exec_RoundToArray(Val arg0, BoundLayout<RoundToArrayLayout> l
   Val x52 = (((x51 + x22) + x37) + x24);
   Val x53 = (((x52 + x13) + x38) + x32);
   // RoundToArray(zirgen/circuit/keccak2/keccak.zir:115)
-  RoundToArray_Super_SuperStruct64Array x54 = {
-      RoundToArray_Super_SuperStruct{._super = (x18 + x14)},
-      x29,
-      x30,
-      RoundToArray_Super_SuperStruct{._super = x36},
-      x30,
-      x30,
-      x30,
-      RoundToArray_Super_SuperStruct{._super = x41},
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      RoundToArray_Super_SuperStruct{._super = (x46 + x32)},
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      RoundToArray_Super_SuperStruct{._super = x49},
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      x30,
-      RoundToArray_Super_SuperStruct{._super = x53}};
+  RoundToArray_Super_SuperStruct64Array x54 =
+      RoundToArray_Super_SuperStruct64Array{RoundToArray_Super_SuperStruct{._super = (x18 + x14)},
+                                            x29,
+                                            x30,
+                                            RoundToArray_Super_SuperStruct{._super = x36},
+                                            x30,
+                                            x30,
+                                            x30,
+                                            RoundToArray_Super_SuperStruct{._super = x41},
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            RoundToArray_Super_SuperStruct{._super = (x46 + x32)},
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            RoundToArray_Super_SuperStruct{._super = x49},
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            x30,
+                                            RoundToArray_Super_SuperStruct{._super = x53}};
   return RoundToArrayStruct{._super = x54};
 }
-IotaStruct exec_Iota(Val64Array5Array5Array arg0, Val arg1, BoundLayout<IotaLayout> layout2) {
+__device__ IotaStruct exec_Iota(ExecContext& ctx,
+                                Val64Array5Array5Array arg0,
+                                Val arg1,
+                                BoundLayout<IotaLayout> layout2) {
   // Iota(zirgen/circuit/keccak2/keccak.zir:121)
-  RoundToArrayStruct x3 = exec_RoundToArray(arg1, LAYOUT_LOOKUP(layout2, iotaArray));
+  RoundToArrayStruct x3 = exec_RoundToArray(ctx, arg1, LAYOUT_LOOKUP(layout2, iotaArray));
   RoundToArray_Super_SuperStruct64Array x4 = x3._super;
   Val x5 = x4[0]._super;
   // BitXor(zirgen/circuit/keccak2/bits.zir:32)
@@ -611,38 +633,38 @@ IotaStruct exec_Iota(Val64Array5Array5Array arg0, Val arg1, BoundLayout<IotaLayo
   // Iota(zirgen/circuit/keccak2/keccak.zir:125)
   Val x132 = ((x131 * Val(2)) * arg0[0][0][63]);
   // Iota(zirgen/circuit/keccak2/keccak.zir:124)
-  Val64Array x133 = {((x5 + arg0[0][0][0]) - x6),      ((x7 + arg0[0][0][1]) - x8),
-                     ((x9 + arg0[0][0][2]) - x10),     ((x11 + arg0[0][0][3]) - x12),
-                     ((x13 + arg0[0][0][4]) - x14),    ((x15 + arg0[0][0][5]) - x16),
-                     ((x17 + arg0[0][0][6]) - x18),    ((x19 + arg0[0][0][7]) - x20),
-                     ((x21 + arg0[0][0][8]) - x22),    ((x23 + arg0[0][0][9]) - x24),
-                     ((x25 + arg0[0][0][10]) - x26),   ((x27 + arg0[0][0][11]) - x28),
-                     ((x29 + arg0[0][0][12]) - x30),   ((x31 + arg0[0][0][13]) - x32),
-                     ((x33 + arg0[0][0][14]) - x34),   ((x35 + arg0[0][0][15]) - x36),
-                     ((x37 + arg0[0][0][16]) - x38),   ((x39 + arg0[0][0][17]) - x40),
-                     ((x41 + arg0[0][0][18]) - x42),   ((x43 + arg0[0][0][19]) - x44),
-                     ((x45 + arg0[0][0][20]) - x46),   ((x47 + arg0[0][0][21]) - x48),
-                     ((x49 + arg0[0][0][22]) - x50),   ((x51 + arg0[0][0][23]) - x52),
-                     ((x53 + arg0[0][0][24]) - x54),   ((x55 + arg0[0][0][25]) - x56),
-                     ((x57 + arg0[0][0][26]) - x58),   ((x59 + arg0[0][0][27]) - x60),
-                     ((x61 + arg0[0][0][28]) - x62),   ((x63 + arg0[0][0][29]) - x64),
-                     ((x65 + arg0[0][0][30]) - x66),   ((x67 + arg0[0][0][31]) - x68),
-                     ((x69 + arg0[0][0][32]) - x70),   ((x71 + arg0[0][0][33]) - x72),
-                     ((x73 + arg0[0][0][34]) - x74),   ((x75 + arg0[0][0][35]) - x76),
-                     ((x77 + arg0[0][0][36]) - x78),   ((x79 + arg0[0][0][37]) - x80),
-                     ((x81 + arg0[0][0][38]) - x82),   ((x83 + arg0[0][0][39]) - x84),
-                     ((x85 + arg0[0][0][40]) - x86),   ((x87 + arg0[0][0][41]) - x88),
-                     ((x89 + arg0[0][0][42]) - x90),   ((x91 + arg0[0][0][43]) - x92),
-                     ((x93 + arg0[0][0][44]) - x94),   ((x95 + arg0[0][0][45]) - x96),
-                     ((x97 + arg0[0][0][46]) - x98),   ((x99 + arg0[0][0][47]) - x100),
-                     ((x101 + arg0[0][0][48]) - x102), ((x103 + arg0[0][0][49]) - x104),
-                     ((x105 + arg0[0][0][50]) - x106), ((x107 + arg0[0][0][51]) - x108),
-                     ((x109 + arg0[0][0][52]) - x110), ((x111 + arg0[0][0][53]) - x112),
-                     ((x113 + arg0[0][0][54]) - x114), ((x115 + arg0[0][0][55]) - x116),
-                     ((x117 + arg0[0][0][56]) - x118), ((x119 + arg0[0][0][57]) - x120),
-                     ((x121 + arg0[0][0][58]) - x122), ((x123 + arg0[0][0][59]) - x124),
-                     ((x125 + arg0[0][0][60]) - x126), ((x127 + arg0[0][0][61]) - x128),
-                     ((x129 + arg0[0][0][62]) - x130), ((x131 + arg0[0][0][63]) - x132)};
+  Val64Array x133 = Val64Array{((x5 + arg0[0][0][0]) - x6),      ((x7 + arg0[0][0][1]) - x8),
+                               ((x9 + arg0[0][0][2]) - x10),     ((x11 + arg0[0][0][3]) - x12),
+                               ((x13 + arg0[0][0][4]) - x14),    ((x15 + arg0[0][0][5]) - x16),
+                               ((x17 + arg0[0][0][6]) - x18),    ((x19 + arg0[0][0][7]) - x20),
+                               ((x21 + arg0[0][0][8]) - x22),    ((x23 + arg0[0][0][9]) - x24),
+                               ((x25 + arg0[0][0][10]) - x26),   ((x27 + arg0[0][0][11]) - x28),
+                               ((x29 + arg0[0][0][12]) - x30),   ((x31 + arg0[0][0][13]) - x32),
+                               ((x33 + arg0[0][0][14]) - x34),   ((x35 + arg0[0][0][15]) - x36),
+                               ((x37 + arg0[0][0][16]) - x38),   ((x39 + arg0[0][0][17]) - x40),
+                               ((x41 + arg0[0][0][18]) - x42),   ((x43 + arg0[0][0][19]) - x44),
+                               ((x45 + arg0[0][0][20]) - x46),   ((x47 + arg0[0][0][21]) - x48),
+                               ((x49 + arg0[0][0][22]) - x50),   ((x51 + arg0[0][0][23]) - x52),
+                               ((x53 + arg0[0][0][24]) - x54),   ((x55 + arg0[0][0][25]) - x56),
+                               ((x57 + arg0[0][0][26]) - x58),   ((x59 + arg0[0][0][27]) - x60),
+                               ((x61 + arg0[0][0][28]) - x62),   ((x63 + arg0[0][0][29]) - x64),
+                               ((x65 + arg0[0][0][30]) - x66),   ((x67 + arg0[0][0][31]) - x68),
+                               ((x69 + arg0[0][0][32]) - x70),   ((x71 + arg0[0][0][33]) - x72),
+                               ((x73 + arg0[0][0][34]) - x74),   ((x75 + arg0[0][0][35]) - x76),
+                               ((x77 + arg0[0][0][36]) - x78),   ((x79 + arg0[0][0][37]) - x80),
+                               ((x81 + arg0[0][0][38]) - x82),   ((x83 + arg0[0][0][39]) - x84),
+                               ((x85 + arg0[0][0][40]) - x86),   ((x87 + arg0[0][0][41]) - x88),
+                               ((x89 + arg0[0][0][42]) - x90),   ((x91 + arg0[0][0][43]) - x92),
+                               ((x93 + arg0[0][0][44]) - x94),   ((x95 + arg0[0][0][45]) - x96),
+                               ((x97 + arg0[0][0][46]) - x98),   ((x99 + arg0[0][0][47]) - x100),
+                               ((x101 + arg0[0][0][48]) - x102), ((x103 + arg0[0][0][49]) - x104),
+                               ((x105 + arg0[0][0][50]) - x106), ((x107 + arg0[0][0][51]) - x108),
+                               ((x109 + arg0[0][0][52]) - x110), ((x111 + arg0[0][0][53]) - x112),
+                               ((x113 + arg0[0][0][54]) - x114), ((x115 + arg0[0][0][55]) - x116),
+                               ((x117 + arg0[0][0][56]) - x118), ((x119 + arg0[0][0][57]) - x120),
+                               ((x121 + arg0[0][0][58]) - x122), ((x123 + arg0[0][0][59]) - x124),
+                               ((x125 + arg0[0][0][60]) - x126), ((x127 + arg0[0][0][61]) - x128),
+                               ((x129 + arg0[0][0][62]) - x130), ((x131 + arg0[0][0][63]) - x132)};
   // Iota(zirgen/circuit/keccak2/keccak.zir:123)
   Iota_Super_Super_Super_SuperStruct x134 =
       Iota_Super_Super_Super_SuperStruct{._super = arg0[0][1]};
@@ -654,7 +676,8 @@ IotaStruct exec_Iota(Val64Array5Array5Array arg0, Val arg1, BoundLayout<IotaLayo
       Iota_Super_Super_Super_SuperStruct{._super = arg0[0][4]};
   // Iota(zirgen/circuit/keccak2/keccak.zir:122)
   Iota_Super_SuperStruct x138 = Iota_Super_SuperStruct{
-      ._super = {Iota_Super_Super_Super_SuperStruct{._super = x133}, x134, x135, x136, x137}};
+      ._super = Iota_Super_Super_Super_SuperStruct5Array{
+          Iota_Super_Super_Super_SuperStruct{._super = x133}, x134, x135, x136, x137}};
   // Iota(zirgen/circuit/keccak2/keccak.zir:123)
   Iota_Super_Super_Super_SuperStruct x139 =
       Iota_Super_Super_Super_SuperStruct{._super = arg0[1][0]};
@@ -696,30 +719,38 @@ IotaStruct exec_Iota(Val64Array5Array5Array arg0, Val arg1, BoundLayout<IotaLayo
       Iota_Super_Super_Super_SuperStruct{._super = arg0[4][3]};
   Iota_Super_Super_Super_SuperStruct x158 =
       Iota_Super_Super_Super_SuperStruct{._super = arg0[4][4]};
-  return IotaStruct{._super = {x138,
-                               Iota_Super_SuperStruct{._super = {x139, x140, x141, x142, x143}},
-                               Iota_Super_SuperStruct{._super = {x144, x145, x146, x147, x148}},
-                               Iota_Super_SuperStruct{._super = {x149, x150, x151, x152, x153}},
-                               Iota_Super_SuperStruct{._super = {x154, x155, x156, x157, x158}}}};
+  return IotaStruct{
+      ._super = Iota_Super_SuperStruct5Array{
+          x138,
+          Iota_Super_SuperStruct{
+              ._super = Iota_Super_Super_Super_SuperStruct5Array{x139, x140, x141, x142, x143}},
+          Iota_Super_SuperStruct{
+              ._super = Iota_Super_Super_Super_SuperStruct5Array{x144, x145, x146, x147, x148}},
+          Iota_Super_SuperStruct{
+              ._super = Iota_Super_Super_Super_SuperStruct5Array{x149, x150, x151, x152, x153}},
+          Iota_Super_SuperStruct{
+              ._super = Iota_Super_Super_Super_SuperStruct5Array{x154, x155, x156, x157, x158}}}};
 }
-CarryExtractStruct exec_CarryExtract(Val arg0, BoundLayout<CarryExtractLayout> layout1) {
+__device__ CarryExtractStruct exec_CarryExtract(ExecContext& ctx,
+                                                Val arg0,
+                                                BoundLayout<CarryExtractLayout> layout1) {
   // Div(<preamble>:19)
   // CarryExtract(zirgen/circuit/keccak2/sha2.zir:34)
   Val x2 = (bitAnd(arg0, Val(983040)) * Val(2013235201));
-  NondetRegStruct x3 = exec_NondetBitReg(bitAnd(x2, Val(1)), LAYOUT_LOOKUP(layout1, bit0));
+  NondetRegStruct x3 = exec_NondetBitReg(ctx, bitAnd(x2, Val(1)), LAYOUT_LOOKUP(layout1, bit0));
   // CarryExtract(zirgen/circuit/keccak2/sha2.zir:35)
   NondetRegStruct x4 =
-      exec_NondetBitReg((bitAnd(x2, Val(2)) * Val(1006632961)), LAYOUT_LOOKUP(layout1, bit1));
+      exec_NondetBitReg(ctx, (bitAnd(x2, Val(2)) * Val(1006632961)), LAYOUT_LOOKUP(layout1, bit1));
   // CarryExtract(zirgen/circuit/keccak2/sha2.zir:36)
   NondetRegStruct x5 =
-      exec_NondetBitReg((bitAnd(x2, Val(4)) * Val(1509949441)), LAYOUT_LOOKUP(layout1, bit2));
+      exec_NondetBitReg(ctx, (bitAnd(x2, Val(4)) * Val(1509949441)), LAYOUT_LOOKUP(layout1, bit2));
   // CarryExtract(zirgen/circuit/keccak2/sha2.zir:37)
   Val x6 = ((x5._super * Val(4)) + (x4._super * Val(2)));
   Val x7 = (x6 + x3._super);
   return CarryExtractStruct{.carry = x7, .out = (arg0 - (x7 * Val(65536)))};
 }
-UnpackReg_32__16_Struct exec_UnpackReg_32__16_(Val2Array arg0,
-                                               BoundLayout<UnpackReg_32__16_Layout> layout1) {
+__device__ UnpackReg_32__16_Struct exec_UnpackReg_32__16_(
+    ExecContext& ctx, Val2Array arg0, BoundLayout<UnpackReg_32__16_Layout> layout1) {
   // Div(<preamble>:15)
   // UnpackNondet(zirgen/circuit/keccak2/pack.zir:42)
   // UnpackReg(zirgen/circuit/keccak2/pack.zir:47)
@@ -759,52 +790,51 @@ UnpackReg_32__16_Struct exec_UnpackReg_32__16_(Val2Array arg0,
   Val x32 = (bitAnd(arg0[1], Val(16384)) * Val(2013143041));
   Val x33 = (bitAnd(arg0[1], Val(32768)) * Val(2013204481));
   // UnpackReg(zirgen/circuit/keccak2/pack.zir:48)
-  UnpackReg_32__16__SuperStruct32Array x34 =
-      map({Val(0),  Val(1),  Val(2),  Val(3),  Val(4),  Val(5),  Val(6),  Val(7),
-           Val(8),  Val(9),  Val(10), Val(11), Val(12), Val(13), Val(14), Val(15),
-           Val(16), Val(17), Val(18), Val(19), Val(20), Val(21), Val(22), Val(23),
-           Val(24), Val(25), Val(26), Val(27), Val(28), Val(29), Val(30), Val(31)},
-          LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val32Array::value_type x35,
-                            BoundLayout<NondetRegLayout32LayoutArray::value_type> x36) {
-            // UnpackReg(zirgen/circuit/keccak2/pack.zir:47)
-            Val x37 = {x2,
-                       DivStruct{._super = x3},
-                       DivStruct{._super = x4},
-                       DivStruct{._super = x5},
-                       DivStruct{._super = x6},
-                       DivStruct{._super = x7},
-                       DivStruct{._super = x8},
-                       DivStruct{._super = x9},
-                       DivStruct{._super = x10},
-                       DivStruct{._super = x11},
-                       DivStruct{._super = x12},
-                       DivStruct{._super = x13},
-                       DivStruct{._super = x14},
-                       DivStruct{._super = x15},
-                       DivStruct{._super = x16},
-                       DivStruct{._super = x17},
-                       x18,
-                       DivStruct{._super = x19},
-                       DivStruct{._super = x20},
-                       DivStruct{._super = x21},
-                       DivStruct{._super = x22},
-                       DivStruct{._super = x23},
-                       DivStruct{._super = x24},
-                       DivStruct{._super = x25},
-                       DivStruct{._super = x26},
-                       DivStruct{._super = x27},
-                       DivStruct{._super = x28},
-                       DivStruct{._super = x29},
-                       DivStruct{._super = x30},
-                       DivStruct{._super = x31},
-                       DivStruct{._super = x32},
-                       DivStruct{._super = x33}}[to_size_t(x35)]
-                          ._super;
-            // UnpackReg(zirgen/circuit/keccak2/pack.zir:48)
-            NondetRegStruct x38 = exec_NondetBitReg(x37, x36);
-            return UnpackReg_32__16__SuperStruct{._super = x38};
-          }));
+  UnpackReg_32__16__SuperStruct32Array x34 = map(
+      Val32Array{Val(0),  Val(1),  Val(2),  Val(3),  Val(4),  Val(5),  Val(6),  Val(7),
+                 Val(8),  Val(9),  Val(10), Val(11), Val(12), Val(13), Val(14), Val(15),
+                 Val(16), Val(17), Val(18), Val(19), Val(20), Val(21), Val(22), Val(23),
+                 Val(24), Val(25), Val(26), Val(27), Val(28), Val(29), Val(30), Val(31)},
+      LAYOUT_LOOKUP(layout1, _super),
+      ([&](Val32Array::value_type x35, BoundLayout<NondetRegLayout32LayoutArray::value_type> x36) {
+        // UnpackReg(zirgen/circuit/keccak2/pack.zir:47)
+        Val x37 = DivStruct32Array{x2,
+                                   DivStruct{._super = x3},
+                                   DivStruct{._super = x4},
+                                   DivStruct{._super = x5},
+                                   DivStruct{._super = x6},
+                                   DivStruct{._super = x7},
+                                   DivStruct{._super = x8},
+                                   DivStruct{._super = x9},
+                                   DivStruct{._super = x10},
+                                   DivStruct{._super = x11},
+                                   DivStruct{._super = x12},
+                                   DivStruct{._super = x13},
+                                   DivStruct{._super = x14},
+                                   DivStruct{._super = x15},
+                                   DivStruct{._super = x16},
+                                   DivStruct{._super = x17},
+                                   x18,
+                                   DivStruct{._super = x19},
+                                   DivStruct{._super = x20},
+                                   DivStruct{._super = x21},
+                                   DivStruct{._super = x22},
+                                   DivStruct{._super = x23},
+                                   DivStruct{._super = x24},
+                                   DivStruct{._super = x25},
+                                   DivStruct{._super = x26},
+                                   DivStruct{._super = x27},
+                                   DivStruct{._super = x28},
+                                   DivStruct{._super = x29},
+                                   DivStruct{._super = x30},
+                                   DivStruct{._super = x31},
+                                   DivStruct{._super = x32},
+                                   DivStruct{._super = x33}}[to_size_t(x35)]
+                      ._super;
+        // UnpackReg(zirgen/circuit/keccak2/pack.zir:48)
+        NondetRegStruct x38 = exec_NondetBitReg(ctx, x37, x36);
+        return UnpackReg_32__16__SuperStruct{._super = x38};
+      }));
   Val x39 = x34[0]._super._super;
   Val x40 = x34[1]._super._super;
   Val x41 = x34[2]._super._super;
@@ -858,317 +888,320 @@ UnpackReg_32__16_Struct exec_UnpackReg_32__16_(Val2Array arg0,
       "zirgen/circuit/keccak2/pack.zir :49:14)))");
   return UnpackReg_32__16_Struct{._super = x34};
 }
-UnpackReg_32__16_Struct exec_CarryAndExpand(Val2Array arg0,
-                                            BoundLayout<CarryAndExpandLayout> layout1) {
+__device__ UnpackReg_32__16_Struct exec_CarryAndExpand(ExecContext& ctx,
+                                                       Val2Array arg0,
+                                                       BoundLayout<CarryAndExpandLayout> layout1) {
   // CarryAndExpand(zirgen/circuit/keccak2/sha2.zir:42)
-  CarryExtractStruct x2 = exec_CarryExtract(arg0[0], LAYOUT_LOOKUP(layout1, lowCarry));
+  CarryExtractStruct x2 = exec_CarryExtract(ctx, arg0[0], LAYOUT_LOOKUP(layout1, lowCarry));
   // CarryAndExpand(zirgen/circuit/keccak2/sha2.zir:43)
   CarryExtractStruct x3 =
-      exec_CarryExtract((arg0[1] + x2.carry), LAYOUT_LOOKUP(layout1, highCarry));
+      exec_CarryExtract(ctx, (arg0[1] + x2.carry), LAYOUT_LOOKUP(layout1, highCarry));
   // CarryAndExpand(zirgen/circuit/keccak2/sha2.zir:44)
   UnpackReg_32__16_Struct x4 =
-      exec_UnpackReg_32__16_({x2.out, x3.out}, LAYOUT_LOOKUP(layout1, _super));
+      exec_UnpackReg_32__16_(ctx, Val2Array{x2.out, x3.out}, LAYOUT_LOOKUP(layout1, _super));
   return x4;
 }
-TopStateStruct back_TopState(Index distance0, BoundLayout<TopStateLayout> layout1) {
+__device__ TopStateStruct back_TopState(ExecContext& ctx,
+                                        Index distance0,
+                                        BoundLayout<TopStateLayout> layout1) {
   // TopState(zirgen/circuit/keccak2/top.zir:35)
-  TopStateBitsStruct800Array x2 =
-      map({Val(0),   Val(1),   Val(2),   Val(3),   Val(4),   Val(5),   Val(6),   Val(7),   Val(8),
-           Val(9),   Val(10),  Val(11),  Val(12),  Val(13),  Val(14),  Val(15),  Val(16),  Val(17),
-           Val(18),  Val(19),  Val(20),  Val(21),  Val(22),  Val(23),  Val(24),  Val(25),  Val(26),
-           Val(27),  Val(28),  Val(29),  Val(30),  Val(31),  Val(32),  Val(33),  Val(34),  Val(35),
-           Val(36),  Val(37),  Val(38),  Val(39),  Val(40),  Val(41),  Val(42),  Val(43),  Val(44),
-           Val(45),  Val(46),  Val(47),  Val(48),  Val(49),  Val(50),  Val(51),  Val(52),  Val(53),
-           Val(54),  Val(55),  Val(56),  Val(57),  Val(58),  Val(59),  Val(60),  Val(61),  Val(62),
-           Val(63),  Val(64),  Val(65),  Val(66),  Val(67),  Val(68),  Val(69),  Val(70),  Val(71),
-           Val(72),  Val(73),  Val(74),  Val(75),  Val(76),  Val(77),  Val(78),  Val(79),  Val(80),
-           Val(81),  Val(82),  Val(83),  Val(84),  Val(85),  Val(86),  Val(87),  Val(88),  Val(89),
-           Val(90),  Val(91),  Val(92),  Val(93),  Val(94),  Val(95),  Val(96),  Val(97),  Val(98),
-           Val(99),  Val(100), Val(101), Val(102), Val(103), Val(104), Val(105), Val(106), Val(107),
-           Val(108), Val(109), Val(110), Val(111), Val(112), Val(113), Val(114), Val(115), Val(116),
-           Val(117), Val(118), Val(119), Val(120), Val(121), Val(122), Val(123), Val(124), Val(125),
-           Val(126), Val(127), Val(128), Val(129), Val(130), Val(131), Val(132), Val(133), Val(134),
-           Val(135), Val(136), Val(137), Val(138), Val(139), Val(140), Val(141), Val(142), Val(143),
-           Val(144), Val(145), Val(146), Val(147), Val(148), Val(149), Val(150), Val(151), Val(152),
-           Val(153), Val(154), Val(155), Val(156), Val(157), Val(158), Val(159), Val(160), Val(161),
-           Val(162), Val(163), Val(164), Val(165), Val(166), Val(167), Val(168), Val(169), Val(170),
-           Val(171), Val(172), Val(173), Val(174), Val(175), Val(176), Val(177), Val(178), Val(179),
-           Val(180), Val(181), Val(182), Val(183), Val(184), Val(185), Val(186), Val(187), Val(188),
-           Val(189), Val(190), Val(191), Val(192), Val(193), Val(194), Val(195), Val(196), Val(197),
-           Val(198), Val(199), Val(200), Val(201), Val(202), Val(203), Val(204), Val(205), Val(206),
-           Val(207), Val(208), Val(209), Val(210), Val(211), Val(212), Val(213), Val(214), Val(215),
-           Val(216), Val(217), Val(218), Val(219), Val(220), Val(221), Val(222), Val(223), Val(224),
-           Val(225), Val(226), Val(227), Val(228), Val(229), Val(230), Val(231), Val(232), Val(233),
-           Val(234), Val(235), Val(236), Val(237), Val(238), Val(239), Val(240), Val(241), Val(242),
-           Val(243), Val(244), Val(245), Val(246), Val(247), Val(248), Val(249), Val(250), Val(251),
-           Val(252), Val(253), Val(254), Val(255), Val(256), Val(257), Val(258), Val(259), Val(260),
-           Val(261), Val(262), Val(263), Val(264), Val(265), Val(266), Val(267), Val(268), Val(269),
-           Val(270), Val(271), Val(272), Val(273), Val(274), Val(275), Val(276), Val(277), Val(278),
-           Val(279), Val(280), Val(281), Val(282), Val(283), Val(284), Val(285), Val(286), Val(287),
-           Val(288), Val(289), Val(290), Val(291), Val(292), Val(293), Val(294), Val(295), Val(296),
-           Val(297), Val(298), Val(299), Val(300), Val(301), Val(302), Val(303), Val(304), Val(305),
-           Val(306), Val(307), Val(308), Val(309), Val(310), Val(311), Val(312), Val(313), Val(314),
-           Val(315), Val(316), Val(317), Val(318), Val(319), Val(320), Val(321), Val(322), Val(323),
-           Val(324), Val(325), Val(326), Val(327), Val(328), Val(329), Val(330), Val(331), Val(332),
-           Val(333), Val(334), Val(335), Val(336), Val(337), Val(338), Val(339), Val(340), Val(341),
-           Val(342), Val(343), Val(344), Val(345), Val(346), Val(347), Val(348), Val(349), Val(350),
-           Val(351), Val(352), Val(353), Val(354), Val(355), Val(356), Val(357), Val(358), Val(359),
-           Val(360), Val(361), Val(362), Val(363), Val(364), Val(365), Val(366), Val(367), Val(368),
-           Val(369), Val(370), Val(371), Val(372), Val(373), Val(374), Val(375), Val(376), Val(377),
-           Val(378), Val(379), Val(380), Val(381), Val(382), Val(383), Val(384), Val(385), Val(386),
-           Val(387), Val(388), Val(389), Val(390), Val(391), Val(392), Val(393), Val(394), Val(395),
-           Val(396), Val(397), Val(398), Val(399), Val(400), Val(401), Val(402), Val(403), Val(404),
-           Val(405), Val(406), Val(407), Val(408), Val(409), Val(410), Val(411), Val(412), Val(413),
-           Val(414), Val(415), Val(416), Val(417), Val(418), Val(419), Val(420), Val(421), Val(422),
-           Val(423), Val(424), Val(425), Val(426), Val(427), Val(428), Val(429), Val(430), Val(431),
-           Val(432), Val(433), Val(434), Val(435), Val(436), Val(437), Val(438), Val(439), Val(440),
-           Val(441), Val(442), Val(443), Val(444), Val(445), Val(446), Val(447), Val(448), Val(449),
-           Val(450), Val(451), Val(452), Val(453), Val(454), Val(455), Val(456), Val(457), Val(458),
-           Val(459), Val(460), Val(461), Val(462), Val(463), Val(464), Val(465), Val(466), Val(467),
-           Val(468), Val(469), Val(470), Val(471), Val(472), Val(473), Val(474), Val(475), Val(476),
-           Val(477), Val(478), Val(479), Val(480), Val(481), Val(482), Val(483), Val(484), Val(485),
-           Val(486), Val(487), Val(488), Val(489), Val(490), Val(491), Val(492), Val(493), Val(494),
-           Val(495), Val(496), Val(497), Val(498), Val(499), Val(500), Val(501), Val(502), Val(503),
-           Val(504), Val(505), Val(506), Val(507), Val(508), Val(509), Val(510), Val(511), Val(512),
-           Val(513), Val(514), Val(515), Val(516), Val(517), Val(518), Val(519), Val(520), Val(521),
-           Val(522), Val(523), Val(524), Val(525), Val(526), Val(527), Val(528), Val(529), Val(530),
-           Val(531), Val(532), Val(533), Val(534), Val(535), Val(536), Val(537), Val(538), Val(539),
-           Val(540), Val(541), Val(542), Val(543), Val(544), Val(545), Val(546), Val(547), Val(548),
-           Val(549), Val(550), Val(551), Val(552), Val(553), Val(554), Val(555), Val(556), Val(557),
-           Val(558), Val(559), Val(560), Val(561), Val(562), Val(563), Val(564), Val(565), Val(566),
-           Val(567), Val(568), Val(569), Val(570), Val(571), Val(572), Val(573), Val(574), Val(575),
-           Val(576), Val(577), Val(578), Val(579), Val(580), Val(581), Val(582), Val(583), Val(584),
-           Val(585), Val(586), Val(587), Val(588), Val(589), Val(590), Val(591), Val(592), Val(593),
-           Val(594), Val(595), Val(596), Val(597), Val(598), Val(599), Val(600), Val(601), Val(602),
-           Val(603), Val(604), Val(605), Val(606), Val(607), Val(608), Val(609), Val(610), Val(611),
-           Val(612), Val(613), Val(614), Val(615), Val(616), Val(617), Val(618), Val(619), Val(620),
-           Val(621), Val(622), Val(623), Val(624), Val(625), Val(626), Val(627), Val(628), Val(629),
-           Val(630), Val(631), Val(632), Val(633), Val(634), Val(635), Val(636), Val(637), Val(638),
-           Val(639), Val(640), Val(641), Val(642), Val(643), Val(644), Val(645), Val(646), Val(647),
-           Val(648), Val(649), Val(650), Val(651), Val(652), Val(653), Val(654), Val(655), Val(656),
-           Val(657), Val(658), Val(659), Val(660), Val(661), Val(662), Val(663), Val(664), Val(665),
-           Val(666), Val(667), Val(668), Val(669), Val(670), Val(671), Val(672), Val(673), Val(674),
-           Val(675), Val(676), Val(677), Val(678), Val(679), Val(680), Val(681), Val(682), Val(683),
-           Val(684), Val(685), Val(686), Val(687), Val(688), Val(689), Val(690), Val(691), Val(692),
-           Val(693), Val(694), Val(695), Val(696), Val(697), Val(698), Val(699), Val(700), Val(701),
-           Val(702), Val(703), Val(704), Val(705), Val(706), Val(707), Val(708), Val(709), Val(710),
-           Val(711), Val(712), Val(713), Val(714), Val(715), Val(716), Val(717), Val(718), Val(719),
-           Val(720), Val(721), Val(722), Val(723), Val(724), Val(725), Val(726), Val(727), Val(728),
-           Val(729), Val(730), Val(731), Val(732), Val(733), Val(734), Val(735), Val(736), Val(737),
-           Val(738), Val(739), Val(740), Val(741), Val(742), Val(743), Val(744), Val(745), Val(746),
-           Val(747), Val(748), Val(749), Val(750), Val(751), Val(752), Val(753), Val(754), Val(755),
-           Val(756), Val(757), Val(758), Val(759), Val(760), Val(761), Val(762), Val(763), Val(764),
-           Val(765), Val(766), Val(767), Val(768), Val(769), Val(770), Val(771), Val(772), Val(773),
-           Val(774), Val(775), Val(776), Val(777), Val(778), Val(779), Val(780), Val(781), Val(782),
-           Val(783), Val(784), Val(785), Val(786), Val(787), Val(788), Val(789), Val(790), Val(791),
-           Val(792), Val(793), Val(794), Val(795), Val(796), Val(797), Val(798), Val(799)},
-          LAYOUT_LOOKUP(layout1, bits),
-          std::function([&](Val800Array::value_type x3,
-                            BoundLayout<NondetRegLayout800LayoutArray::value_type> x4) {
-            // TopState(zirgen/circuit/keccak2/top.zir:36)
-            NondetRegStruct x5 = back_Reg(distance0, x4);
-            return TopStateBitsStruct{._super = x5};
-          }));
+  TopStateBitsStruct800Array x2 = map(
+      Val800Array{
+          Val(0),   Val(1),   Val(2),   Val(3),   Val(4),   Val(5),   Val(6),   Val(7),   Val(8),
+          Val(9),   Val(10),  Val(11),  Val(12),  Val(13),  Val(14),  Val(15),  Val(16),  Val(17),
+          Val(18),  Val(19),  Val(20),  Val(21),  Val(22),  Val(23),  Val(24),  Val(25),  Val(26),
+          Val(27),  Val(28),  Val(29),  Val(30),  Val(31),  Val(32),  Val(33),  Val(34),  Val(35),
+          Val(36),  Val(37),  Val(38),  Val(39),  Val(40),  Val(41),  Val(42),  Val(43),  Val(44),
+          Val(45),  Val(46),  Val(47),  Val(48),  Val(49),  Val(50),  Val(51),  Val(52),  Val(53),
+          Val(54),  Val(55),  Val(56),  Val(57),  Val(58),  Val(59),  Val(60),  Val(61),  Val(62),
+          Val(63),  Val(64),  Val(65),  Val(66),  Val(67),  Val(68),  Val(69),  Val(70),  Val(71),
+          Val(72),  Val(73),  Val(74),  Val(75),  Val(76),  Val(77),  Val(78),  Val(79),  Val(80),
+          Val(81),  Val(82),  Val(83),  Val(84),  Val(85),  Val(86),  Val(87),  Val(88),  Val(89),
+          Val(90),  Val(91),  Val(92),  Val(93),  Val(94),  Val(95),  Val(96),  Val(97),  Val(98),
+          Val(99),  Val(100), Val(101), Val(102), Val(103), Val(104), Val(105), Val(106), Val(107),
+          Val(108), Val(109), Val(110), Val(111), Val(112), Val(113), Val(114), Val(115), Val(116),
+          Val(117), Val(118), Val(119), Val(120), Val(121), Val(122), Val(123), Val(124), Val(125),
+          Val(126), Val(127), Val(128), Val(129), Val(130), Val(131), Val(132), Val(133), Val(134),
+          Val(135), Val(136), Val(137), Val(138), Val(139), Val(140), Val(141), Val(142), Val(143),
+          Val(144), Val(145), Val(146), Val(147), Val(148), Val(149), Val(150), Val(151), Val(152),
+          Val(153), Val(154), Val(155), Val(156), Val(157), Val(158), Val(159), Val(160), Val(161),
+          Val(162), Val(163), Val(164), Val(165), Val(166), Val(167), Val(168), Val(169), Val(170),
+          Val(171), Val(172), Val(173), Val(174), Val(175), Val(176), Val(177), Val(178), Val(179),
+          Val(180), Val(181), Val(182), Val(183), Val(184), Val(185), Val(186), Val(187), Val(188),
+          Val(189), Val(190), Val(191), Val(192), Val(193), Val(194), Val(195), Val(196), Val(197),
+          Val(198), Val(199), Val(200), Val(201), Val(202), Val(203), Val(204), Val(205), Val(206),
+          Val(207), Val(208), Val(209), Val(210), Val(211), Val(212), Val(213), Val(214), Val(215),
+          Val(216), Val(217), Val(218), Val(219), Val(220), Val(221), Val(222), Val(223), Val(224),
+          Val(225), Val(226), Val(227), Val(228), Val(229), Val(230), Val(231), Val(232), Val(233),
+          Val(234), Val(235), Val(236), Val(237), Val(238), Val(239), Val(240), Val(241), Val(242),
+          Val(243), Val(244), Val(245), Val(246), Val(247), Val(248), Val(249), Val(250), Val(251),
+          Val(252), Val(253), Val(254), Val(255), Val(256), Val(257), Val(258), Val(259), Val(260),
+          Val(261), Val(262), Val(263), Val(264), Val(265), Val(266), Val(267), Val(268), Val(269),
+          Val(270), Val(271), Val(272), Val(273), Val(274), Val(275), Val(276), Val(277), Val(278),
+          Val(279), Val(280), Val(281), Val(282), Val(283), Val(284), Val(285), Val(286), Val(287),
+          Val(288), Val(289), Val(290), Val(291), Val(292), Val(293), Val(294), Val(295), Val(296),
+          Val(297), Val(298), Val(299), Val(300), Val(301), Val(302), Val(303), Val(304), Val(305),
+          Val(306), Val(307), Val(308), Val(309), Val(310), Val(311), Val(312), Val(313), Val(314),
+          Val(315), Val(316), Val(317), Val(318), Val(319), Val(320), Val(321), Val(322), Val(323),
+          Val(324), Val(325), Val(326), Val(327), Val(328), Val(329), Val(330), Val(331), Val(332),
+          Val(333), Val(334), Val(335), Val(336), Val(337), Val(338), Val(339), Val(340), Val(341),
+          Val(342), Val(343), Val(344), Val(345), Val(346), Val(347), Val(348), Val(349), Val(350),
+          Val(351), Val(352), Val(353), Val(354), Val(355), Val(356), Val(357), Val(358), Val(359),
+          Val(360), Val(361), Val(362), Val(363), Val(364), Val(365), Val(366), Val(367), Val(368),
+          Val(369), Val(370), Val(371), Val(372), Val(373), Val(374), Val(375), Val(376), Val(377),
+          Val(378), Val(379), Val(380), Val(381), Val(382), Val(383), Val(384), Val(385), Val(386),
+          Val(387), Val(388), Val(389), Val(390), Val(391), Val(392), Val(393), Val(394), Val(395),
+          Val(396), Val(397), Val(398), Val(399), Val(400), Val(401), Val(402), Val(403), Val(404),
+          Val(405), Val(406), Val(407), Val(408), Val(409), Val(410), Val(411), Val(412), Val(413),
+          Val(414), Val(415), Val(416), Val(417), Val(418), Val(419), Val(420), Val(421), Val(422),
+          Val(423), Val(424), Val(425), Val(426), Val(427), Val(428), Val(429), Val(430), Val(431),
+          Val(432), Val(433), Val(434), Val(435), Val(436), Val(437), Val(438), Val(439), Val(440),
+          Val(441), Val(442), Val(443), Val(444), Val(445), Val(446), Val(447), Val(448), Val(449),
+          Val(450), Val(451), Val(452), Val(453), Val(454), Val(455), Val(456), Val(457), Val(458),
+          Val(459), Val(460), Val(461), Val(462), Val(463), Val(464), Val(465), Val(466), Val(467),
+          Val(468), Val(469), Val(470), Val(471), Val(472), Val(473), Val(474), Val(475), Val(476),
+          Val(477), Val(478), Val(479), Val(480), Val(481), Val(482), Val(483), Val(484), Val(485),
+          Val(486), Val(487), Val(488), Val(489), Val(490), Val(491), Val(492), Val(493), Val(494),
+          Val(495), Val(496), Val(497), Val(498), Val(499), Val(500), Val(501), Val(502), Val(503),
+          Val(504), Val(505), Val(506), Val(507), Val(508), Val(509), Val(510), Val(511), Val(512),
+          Val(513), Val(514), Val(515), Val(516), Val(517), Val(518), Val(519), Val(520), Val(521),
+          Val(522), Val(523), Val(524), Val(525), Val(526), Val(527), Val(528), Val(529), Val(530),
+          Val(531), Val(532), Val(533), Val(534), Val(535), Val(536), Val(537), Val(538), Val(539),
+          Val(540), Val(541), Val(542), Val(543), Val(544), Val(545), Val(546), Val(547), Val(548),
+          Val(549), Val(550), Val(551), Val(552), Val(553), Val(554), Val(555), Val(556), Val(557),
+          Val(558), Val(559), Val(560), Val(561), Val(562), Val(563), Val(564), Val(565), Val(566),
+          Val(567), Val(568), Val(569), Val(570), Val(571), Val(572), Val(573), Val(574), Val(575),
+          Val(576), Val(577), Val(578), Val(579), Val(580), Val(581), Val(582), Val(583), Val(584),
+          Val(585), Val(586), Val(587), Val(588), Val(589), Val(590), Val(591), Val(592), Val(593),
+          Val(594), Val(595), Val(596), Val(597), Val(598), Val(599), Val(600), Val(601), Val(602),
+          Val(603), Val(604), Val(605), Val(606), Val(607), Val(608), Val(609), Val(610), Val(611),
+          Val(612), Val(613), Val(614), Val(615), Val(616), Val(617), Val(618), Val(619), Val(620),
+          Val(621), Val(622), Val(623), Val(624), Val(625), Val(626), Val(627), Val(628), Val(629),
+          Val(630), Val(631), Val(632), Val(633), Val(634), Val(635), Val(636), Val(637), Val(638),
+          Val(639), Val(640), Val(641), Val(642), Val(643), Val(644), Val(645), Val(646), Val(647),
+          Val(648), Val(649), Val(650), Val(651), Val(652), Val(653), Val(654), Val(655), Val(656),
+          Val(657), Val(658), Val(659), Val(660), Val(661), Val(662), Val(663), Val(664), Val(665),
+          Val(666), Val(667), Val(668), Val(669), Val(670), Val(671), Val(672), Val(673), Val(674),
+          Val(675), Val(676), Val(677), Val(678), Val(679), Val(680), Val(681), Val(682), Val(683),
+          Val(684), Val(685), Val(686), Val(687), Val(688), Val(689), Val(690), Val(691), Val(692),
+          Val(693), Val(694), Val(695), Val(696), Val(697), Val(698), Val(699), Val(700), Val(701),
+          Val(702), Val(703), Val(704), Val(705), Val(706), Val(707), Val(708), Val(709), Val(710),
+          Val(711), Val(712), Val(713), Val(714), Val(715), Val(716), Val(717), Val(718), Val(719),
+          Val(720), Val(721), Val(722), Val(723), Val(724), Val(725), Val(726), Val(727), Val(728),
+          Val(729), Val(730), Val(731), Val(732), Val(733), Val(734), Val(735), Val(736), Val(737),
+          Val(738), Val(739), Val(740), Val(741), Val(742), Val(743), Val(744), Val(745), Val(746),
+          Val(747), Val(748), Val(749), Val(750), Val(751), Val(752), Val(753), Val(754), Val(755),
+          Val(756), Val(757), Val(758), Val(759), Val(760), Val(761), Val(762), Val(763), Val(764),
+          Val(765), Val(766), Val(767), Val(768), Val(769), Val(770), Val(771), Val(772), Val(773),
+          Val(774), Val(775), Val(776), Val(777), Val(778), Val(779), Val(780), Val(781), Val(782),
+          Val(783), Val(784), Val(785), Val(786), Val(787), Val(788), Val(789), Val(790), Val(791),
+          Val(792), Val(793), Val(794), Val(795), Val(796), Val(797), Val(798), Val(799)},
+      LAYOUT_LOOKUP(layout1, bits),
+      ([&](Val800Array::value_type x3, BoundLayout<NondetRegLayout800LayoutArray::value_type> x4) {
+        // TopState(zirgen/circuit/keccak2/top.zir:36)
+        NondetRegStruct x5 = back_Reg(ctx, distance0, x4);
+        return TopStateBitsStruct{._super = x5};
+      }));
   // TopState(zirgen/circuit/keccak2/top.zir:39)
   TopStateKflatStruct100Array x6 = map(
-      {Val(0),  Val(1),  Val(2),  Val(3),  Val(4),  Val(5),  Val(6),  Val(7),  Val(8),  Val(9),
-       Val(10), Val(11), Val(12), Val(13), Val(14), Val(15), Val(16), Val(17), Val(18), Val(19),
-       Val(20), Val(21), Val(22), Val(23), Val(24), Val(25), Val(26), Val(27), Val(28), Val(29),
-       Val(30), Val(31), Val(32), Val(33), Val(34), Val(35), Val(36), Val(37), Val(38), Val(39),
-       Val(40), Val(41), Val(42), Val(43), Val(44), Val(45), Val(46), Val(47), Val(48), Val(49),
-       Val(50), Val(51), Val(52), Val(53), Val(54), Val(55), Val(56), Val(57), Val(58), Val(59),
-       Val(60), Val(61), Val(62), Val(63), Val(64), Val(65), Val(66), Val(67), Val(68), Val(69),
-       Val(70), Val(71), Val(72), Val(73), Val(74), Val(75), Val(76), Val(77), Val(78), Val(79),
-       Val(80), Val(81), Val(82), Val(83), Val(84), Val(85), Val(86), Val(87), Val(88), Val(89),
-       Val(90), Val(91), Val(92), Val(93), Val(94), Val(95), Val(96), Val(97), Val(98), Val(99)},
+      Val100Array{
+          Val(0),  Val(1),  Val(2),  Val(3),  Val(4),  Val(5),  Val(6),  Val(7),  Val(8),  Val(9),
+          Val(10), Val(11), Val(12), Val(13), Val(14), Val(15), Val(16), Val(17), Val(18), Val(19),
+          Val(20), Val(21), Val(22), Val(23), Val(24), Val(25), Val(26), Val(27), Val(28), Val(29),
+          Val(30), Val(31), Val(32), Val(33), Val(34), Val(35), Val(36), Val(37), Val(38), Val(39),
+          Val(40), Val(41), Val(42), Val(43), Val(44), Val(45), Val(46), Val(47), Val(48), Val(49),
+          Val(50), Val(51), Val(52), Val(53), Val(54), Val(55), Val(56), Val(57), Val(58), Val(59),
+          Val(60), Val(61), Val(62), Val(63), Val(64), Val(65), Val(66), Val(67), Val(68), Val(69),
+          Val(70), Val(71), Val(72), Val(73), Val(74), Val(75), Val(76), Val(77), Val(78), Val(79),
+          Val(80), Val(81), Val(82), Val(83), Val(84), Val(85), Val(86), Val(87), Val(88), Val(89),
+          Val(90), Val(91), Val(92), Val(93), Val(94), Val(95), Val(96), Val(97), Val(98), Val(99)},
       LAYOUT_LOOKUP(layout1, kflat),
-      std::function([&](Val100Array::value_type x7,
-                        BoundLayout<NondetRegLayout100LayoutArray::value_type> x8) {
+      ([&](Val100Array::value_type x7, BoundLayout<NondetRegLayout100LayoutArray::value_type> x8) {
         // TopState(zirgen/circuit/keccak2/top.zir:40)
-        NondetRegStruct x9 = back_Reg(distance0, x8);
+        NondetRegStruct x9 = back_Reg(ctx, distance0, x8);
         return TopStateKflatStruct{._super = x9};
       }));
   // TopState(zirgen/circuit/keccak2/top.zir:42)
-  NondetRegStruct16Array x10 =
-      map({Val(0),
-           Val(1),
-           Val(2),
-           Val(3),
-           Val(4),
-           Val(5),
-           Val(6),
-           Val(7),
-           Val(8),
-           Val(9),
-           Val(10),
-           Val(11),
-           Val(12),
-           Val(13),
-           Val(14),
-           Val(15)},
-          LAYOUT_LOOKUP(layout1, sflat),
-          std::function([&](Val16Array::value_type x11,
-                            BoundLayout<NondetRegLayout16LayoutArray::value_type> x12) {
-            // TopState(zirgen/circuit/keccak2/top.zir:43)
-            NondetRegStruct x13 = back_Reg(distance0, x12);
-            return x13;
-          }));
+  NondetRegStruct16Array x10 = map(
+      Val16Array{Val(0),
+                 Val(1),
+                 Val(2),
+                 Val(3),
+                 Val(4),
+                 Val(5),
+                 Val(6),
+                 Val(7),
+                 Val(8),
+                 Val(9),
+                 Val(10),
+                 Val(11),
+                 Val(12),
+                 Val(13),
+                 Val(14),
+                 Val(15)},
+      LAYOUT_LOOKUP(layout1, sflat),
+      ([&](Val16Array::value_type x11, BoundLayout<NondetRegLayout16LayoutArray::value_type> x12) {
+        // TopState(zirgen/circuit/keccak2/top.zir:43)
+        NondetRegStruct x13 = back_Reg(ctx, distance0, x12);
+        return x13;
+      }));
   return TopStateStruct{.bits = x2, .kflat = x6, .sflat = x10};
 }
-TopStateStruct exec_TopState(Val800Array arg0,
-                             Val100Array arg1,
-                             Val16Array arg2,
-                             BoundLayout<TopStateLayout> layout3) {
+__device__ TopStateStruct exec_TopState(ExecContext& ctx,
+                                        Val800Array arg0,
+                                        Val100Array arg1,
+                                        Val16Array arg2,
+                                        BoundLayout<TopStateLayout> layout3) {
   // TopState(zirgen/circuit/keccak2/top.zir:35)
-  TopStateBitsStruct800Array x4 =
-      map({Val(0),   Val(1),   Val(2),   Val(3),   Val(4),   Val(5),   Val(6),   Val(7),   Val(8),
-           Val(9),   Val(10),  Val(11),  Val(12),  Val(13),  Val(14),  Val(15),  Val(16),  Val(17),
-           Val(18),  Val(19),  Val(20),  Val(21),  Val(22),  Val(23),  Val(24),  Val(25),  Val(26),
-           Val(27),  Val(28),  Val(29),  Val(30),  Val(31),  Val(32),  Val(33),  Val(34),  Val(35),
-           Val(36),  Val(37),  Val(38),  Val(39),  Val(40),  Val(41),  Val(42),  Val(43),  Val(44),
-           Val(45),  Val(46),  Val(47),  Val(48),  Val(49),  Val(50),  Val(51),  Val(52),  Val(53),
-           Val(54),  Val(55),  Val(56),  Val(57),  Val(58),  Val(59),  Val(60),  Val(61),  Val(62),
-           Val(63),  Val(64),  Val(65),  Val(66),  Val(67),  Val(68),  Val(69),  Val(70),  Val(71),
-           Val(72),  Val(73),  Val(74),  Val(75),  Val(76),  Val(77),  Val(78),  Val(79),  Val(80),
-           Val(81),  Val(82),  Val(83),  Val(84),  Val(85),  Val(86),  Val(87),  Val(88),  Val(89),
-           Val(90),  Val(91),  Val(92),  Val(93),  Val(94),  Val(95),  Val(96),  Val(97),  Val(98),
-           Val(99),  Val(100), Val(101), Val(102), Val(103), Val(104), Val(105), Val(106), Val(107),
-           Val(108), Val(109), Val(110), Val(111), Val(112), Val(113), Val(114), Val(115), Val(116),
-           Val(117), Val(118), Val(119), Val(120), Val(121), Val(122), Val(123), Val(124), Val(125),
-           Val(126), Val(127), Val(128), Val(129), Val(130), Val(131), Val(132), Val(133), Val(134),
-           Val(135), Val(136), Val(137), Val(138), Val(139), Val(140), Val(141), Val(142), Val(143),
-           Val(144), Val(145), Val(146), Val(147), Val(148), Val(149), Val(150), Val(151), Val(152),
-           Val(153), Val(154), Val(155), Val(156), Val(157), Val(158), Val(159), Val(160), Val(161),
-           Val(162), Val(163), Val(164), Val(165), Val(166), Val(167), Val(168), Val(169), Val(170),
-           Val(171), Val(172), Val(173), Val(174), Val(175), Val(176), Val(177), Val(178), Val(179),
-           Val(180), Val(181), Val(182), Val(183), Val(184), Val(185), Val(186), Val(187), Val(188),
-           Val(189), Val(190), Val(191), Val(192), Val(193), Val(194), Val(195), Val(196), Val(197),
-           Val(198), Val(199), Val(200), Val(201), Val(202), Val(203), Val(204), Val(205), Val(206),
-           Val(207), Val(208), Val(209), Val(210), Val(211), Val(212), Val(213), Val(214), Val(215),
-           Val(216), Val(217), Val(218), Val(219), Val(220), Val(221), Val(222), Val(223), Val(224),
-           Val(225), Val(226), Val(227), Val(228), Val(229), Val(230), Val(231), Val(232), Val(233),
-           Val(234), Val(235), Val(236), Val(237), Val(238), Val(239), Val(240), Val(241), Val(242),
-           Val(243), Val(244), Val(245), Val(246), Val(247), Val(248), Val(249), Val(250), Val(251),
-           Val(252), Val(253), Val(254), Val(255), Val(256), Val(257), Val(258), Val(259), Val(260),
-           Val(261), Val(262), Val(263), Val(264), Val(265), Val(266), Val(267), Val(268), Val(269),
-           Val(270), Val(271), Val(272), Val(273), Val(274), Val(275), Val(276), Val(277), Val(278),
-           Val(279), Val(280), Val(281), Val(282), Val(283), Val(284), Val(285), Val(286), Val(287),
-           Val(288), Val(289), Val(290), Val(291), Val(292), Val(293), Val(294), Val(295), Val(296),
-           Val(297), Val(298), Val(299), Val(300), Val(301), Val(302), Val(303), Val(304), Val(305),
-           Val(306), Val(307), Val(308), Val(309), Val(310), Val(311), Val(312), Val(313), Val(314),
-           Val(315), Val(316), Val(317), Val(318), Val(319), Val(320), Val(321), Val(322), Val(323),
-           Val(324), Val(325), Val(326), Val(327), Val(328), Val(329), Val(330), Val(331), Val(332),
-           Val(333), Val(334), Val(335), Val(336), Val(337), Val(338), Val(339), Val(340), Val(341),
-           Val(342), Val(343), Val(344), Val(345), Val(346), Val(347), Val(348), Val(349), Val(350),
-           Val(351), Val(352), Val(353), Val(354), Val(355), Val(356), Val(357), Val(358), Val(359),
-           Val(360), Val(361), Val(362), Val(363), Val(364), Val(365), Val(366), Val(367), Val(368),
-           Val(369), Val(370), Val(371), Val(372), Val(373), Val(374), Val(375), Val(376), Val(377),
-           Val(378), Val(379), Val(380), Val(381), Val(382), Val(383), Val(384), Val(385), Val(386),
-           Val(387), Val(388), Val(389), Val(390), Val(391), Val(392), Val(393), Val(394), Val(395),
-           Val(396), Val(397), Val(398), Val(399), Val(400), Val(401), Val(402), Val(403), Val(404),
-           Val(405), Val(406), Val(407), Val(408), Val(409), Val(410), Val(411), Val(412), Val(413),
-           Val(414), Val(415), Val(416), Val(417), Val(418), Val(419), Val(420), Val(421), Val(422),
-           Val(423), Val(424), Val(425), Val(426), Val(427), Val(428), Val(429), Val(430), Val(431),
-           Val(432), Val(433), Val(434), Val(435), Val(436), Val(437), Val(438), Val(439), Val(440),
-           Val(441), Val(442), Val(443), Val(444), Val(445), Val(446), Val(447), Val(448), Val(449),
-           Val(450), Val(451), Val(452), Val(453), Val(454), Val(455), Val(456), Val(457), Val(458),
-           Val(459), Val(460), Val(461), Val(462), Val(463), Val(464), Val(465), Val(466), Val(467),
-           Val(468), Val(469), Val(470), Val(471), Val(472), Val(473), Val(474), Val(475), Val(476),
-           Val(477), Val(478), Val(479), Val(480), Val(481), Val(482), Val(483), Val(484), Val(485),
-           Val(486), Val(487), Val(488), Val(489), Val(490), Val(491), Val(492), Val(493), Val(494),
-           Val(495), Val(496), Val(497), Val(498), Val(499), Val(500), Val(501), Val(502), Val(503),
-           Val(504), Val(505), Val(506), Val(507), Val(508), Val(509), Val(510), Val(511), Val(512),
-           Val(513), Val(514), Val(515), Val(516), Val(517), Val(518), Val(519), Val(520), Val(521),
-           Val(522), Val(523), Val(524), Val(525), Val(526), Val(527), Val(528), Val(529), Val(530),
-           Val(531), Val(532), Val(533), Val(534), Val(535), Val(536), Val(537), Val(538), Val(539),
-           Val(540), Val(541), Val(542), Val(543), Val(544), Val(545), Val(546), Val(547), Val(548),
-           Val(549), Val(550), Val(551), Val(552), Val(553), Val(554), Val(555), Val(556), Val(557),
-           Val(558), Val(559), Val(560), Val(561), Val(562), Val(563), Val(564), Val(565), Val(566),
-           Val(567), Val(568), Val(569), Val(570), Val(571), Val(572), Val(573), Val(574), Val(575),
-           Val(576), Val(577), Val(578), Val(579), Val(580), Val(581), Val(582), Val(583), Val(584),
-           Val(585), Val(586), Val(587), Val(588), Val(589), Val(590), Val(591), Val(592), Val(593),
-           Val(594), Val(595), Val(596), Val(597), Val(598), Val(599), Val(600), Val(601), Val(602),
-           Val(603), Val(604), Val(605), Val(606), Val(607), Val(608), Val(609), Val(610), Val(611),
-           Val(612), Val(613), Val(614), Val(615), Val(616), Val(617), Val(618), Val(619), Val(620),
-           Val(621), Val(622), Val(623), Val(624), Val(625), Val(626), Val(627), Val(628), Val(629),
-           Val(630), Val(631), Val(632), Val(633), Val(634), Val(635), Val(636), Val(637), Val(638),
-           Val(639), Val(640), Val(641), Val(642), Val(643), Val(644), Val(645), Val(646), Val(647),
-           Val(648), Val(649), Val(650), Val(651), Val(652), Val(653), Val(654), Val(655), Val(656),
-           Val(657), Val(658), Val(659), Val(660), Val(661), Val(662), Val(663), Val(664), Val(665),
-           Val(666), Val(667), Val(668), Val(669), Val(670), Val(671), Val(672), Val(673), Val(674),
-           Val(675), Val(676), Val(677), Val(678), Val(679), Val(680), Val(681), Val(682), Val(683),
-           Val(684), Val(685), Val(686), Val(687), Val(688), Val(689), Val(690), Val(691), Val(692),
-           Val(693), Val(694), Val(695), Val(696), Val(697), Val(698), Val(699), Val(700), Val(701),
-           Val(702), Val(703), Val(704), Val(705), Val(706), Val(707), Val(708), Val(709), Val(710),
-           Val(711), Val(712), Val(713), Val(714), Val(715), Val(716), Val(717), Val(718), Val(719),
-           Val(720), Val(721), Val(722), Val(723), Val(724), Val(725), Val(726), Val(727), Val(728),
-           Val(729), Val(730), Val(731), Val(732), Val(733), Val(734), Val(735), Val(736), Val(737),
-           Val(738), Val(739), Val(740), Val(741), Val(742), Val(743), Val(744), Val(745), Val(746),
-           Val(747), Val(748), Val(749), Val(750), Val(751), Val(752), Val(753), Val(754), Val(755),
-           Val(756), Val(757), Val(758), Val(759), Val(760), Val(761), Val(762), Val(763), Val(764),
-           Val(765), Val(766), Val(767), Val(768), Val(769), Val(770), Val(771), Val(772), Val(773),
-           Val(774), Val(775), Val(776), Val(777), Val(778), Val(779), Val(780), Val(781), Val(782),
-           Val(783), Val(784), Val(785), Val(786), Val(787), Val(788), Val(789), Val(790), Val(791),
-           Val(792), Val(793), Val(794), Val(795), Val(796), Val(797), Val(798), Val(799)},
-          LAYOUT_LOOKUP(layout3, bits),
-          std::function([&](Val800Array::value_type x5,
-                            BoundLayout<NondetRegLayout800LayoutArray::value_type> x6) {
-            // TopState(zirgen/circuit/keccak2/top.zir:36)
-            NondetRegStruct x7 = exec_Reg(arg0[to_size_t(x5)], x6);
-            return TopStateBitsStruct{._super = x7};
-          }));
+  TopStateBitsStruct800Array x4 = map(
+      Val800Array{
+          Val(0),   Val(1),   Val(2),   Val(3),   Val(4),   Val(5),   Val(6),   Val(7),   Val(8),
+          Val(9),   Val(10),  Val(11),  Val(12),  Val(13),  Val(14),  Val(15),  Val(16),  Val(17),
+          Val(18),  Val(19),  Val(20),  Val(21),  Val(22),  Val(23),  Val(24),  Val(25),  Val(26),
+          Val(27),  Val(28),  Val(29),  Val(30),  Val(31),  Val(32),  Val(33),  Val(34),  Val(35),
+          Val(36),  Val(37),  Val(38),  Val(39),  Val(40),  Val(41),  Val(42),  Val(43),  Val(44),
+          Val(45),  Val(46),  Val(47),  Val(48),  Val(49),  Val(50),  Val(51),  Val(52),  Val(53),
+          Val(54),  Val(55),  Val(56),  Val(57),  Val(58),  Val(59),  Val(60),  Val(61),  Val(62),
+          Val(63),  Val(64),  Val(65),  Val(66),  Val(67),  Val(68),  Val(69),  Val(70),  Val(71),
+          Val(72),  Val(73),  Val(74),  Val(75),  Val(76),  Val(77),  Val(78),  Val(79),  Val(80),
+          Val(81),  Val(82),  Val(83),  Val(84),  Val(85),  Val(86),  Val(87),  Val(88),  Val(89),
+          Val(90),  Val(91),  Val(92),  Val(93),  Val(94),  Val(95),  Val(96),  Val(97),  Val(98),
+          Val(99),  Val(100), Val(101), Val(102), Val(103), Val(104), Val(105), Val(106), Val(107),
+          Val(108), Val(109), Val(110), Val(111), Val(112), Val(113), Val(114), Val(115), Val(116),
+          Val(117), Val(118), Val(119), Val(120), Val(121), Val(122), Val(123), Val(124), Val(125),
+          Val(126), Val(127), Val(128), Val(129), Val(130), Val(131), Val(132), Val(133), Val(134),
+          Val(135), Val(136), Val(137), Val(138), Val(139), Val(140), Val(141), Val(142), Val(143),
+          Val(144), Val(145), Val(146), Val(147), Val(148), Val(149), Val(150), Val(151), Val(152),
+          Val(153), Val(154), Val(155), Val(156), Val(157), Val(158), Val(159), Val(160), Val(161),
+          Val(162), Val(163), Val(164), Val(165), Val(166), Val(167), Val(168), Val(169), Val(170),
+          Val(171), Val(172), Val(173), Val(174), Val(175), Val(176), Val(177), Val(178), Val(179),
+          Val(180), Val(181), Val(182), Val(183), Val(184), Val(185), Val(186), Val(187), Val(188),
+          Val(189), Val(190), Val(191), Val(192), Val(193), Val(194), Val(195), Val(196), Val(197),
+          Val(198), Val(199), Val(200), Val(201), Val(202), Val(203), Val(204), Val(205), Val(206),
+          Val(207), Val(208), Val(209), Val(210), Val(211), Val(212), Val(213), Val(214), Val(215),
+          Val(216), Val(217), Val(218), Val(219), Val(220), Val(221), Val(222), Val(223), Val(224),
+          Val(225), Val(226), Val(227), Val(228), Val(229), Val(230), Val(231), Val(232), Val(233),
+          Val(234), Val(235), Val(236), Val(237), Val(238), Val(239), Val(240), Val(241), Val(242),
+          Val(243), Val(244), Val(245), Val(246), Val(247), Val(248), Val(249), Val(250), Val(251),
+          Val(252), Val(253), Val(254), Val(255), Val(256), Val(257), Val(258), Val(259), Val(260),
+          Val(261), Val(262), Val(263), Val(264), Val(265), Val(266), Val(267), Val(268), Val(269),
+          Val(270), Val(271), Val(272), Val(273), Val(274), Val(275), Val(276), Val(277), Val(278),
+          Val(279), Val(280), Val(281), Val(282), Val(283), Val(284), Val(285), Val(286), Val(287),
+          Val(288), Val(289), Val(290), Val(291), Val(292), Val(293), Val(294), Val(295), Val(296),
+          Val(297), Val(298), Val(299), Val(300), Val(301), Val(302), Val(303), Val(304), Val(305),
+          Val(306), Val(307), Val(308), Val(309), Val(310), Val(311), Val(312), Val(313), Val(314),
+          Val(315), Val(316), Val(317), Val(318), Val(319), Val(320), Val(321), Val(322), Val(323),
+          Val(324), Val(325), Val(326), Val(327), Val(328), Val(329), Val(330), Val(331), Val(332),
+          Val(333), Val(334), Val(335), Val(336), Val(337), Val(338), Val(339), Val(340), Val(341),
+          Val(342), Val(343), Val(344), Val(345), Val(346), Val(347), Val(348), Val(349), Val(350),
+          Val(351), Val(352), Val(353), Val(354), Val(355), Val(356), Val(357), Val(358), Val(359),
+          Val(360), Val(361), Val(362), Val(363), Val(364), Val(365), Val(366), Val(367), Val(368),
+          Val(369), Val(370), Val(371), Val(372), Val(373), Val(374), Val(375), Val(376), Val(377),
+          Val(378), Val(379), Val(380), Val(381), Val(382), Val(383), Val(384), Val(385), Val(386),
+          Val(387), Val(388), Val(389), Val(390), Val(391), Val(392), Val(393), Val(394), Val(395),
+          Val(396), Val(397), Val(398), Val(399), Val(400), Val(401), Val(402), Val(403), Val(404),
+          Val(405), Val(406), Val(407), Val(408), Val(409), Val(410), Val(411), Val(412), Val(413),
+          Val(414), Val(415), Val(416), Val(417), Val(418), Val(419), Val(420), Val(421), Val(422),
+          Val(423), Val(424), Val(425), Val(426), Val(427), Val(428), Val(429), Val(430), Val(431),
+          Val(432), Val(433), Val(434), Val(435), Val(436), Val(437), Val(438), Val(439), Val(440),
+          Val(441), Val(442), Val(443), Val(444), Val(445), Val(446), Val(447), Val(448), Val(449),
+          Val(450), Val(451), Val(452), Val(453), Val(454), Val(455), Val(456), Val(457), Val(458),
+          Val(459), Val(460), Val(461), Val(462), Val(463), Val(464), Val(465), Val(466), Val(467),
+          Val(468), Val(469), Val(470), Val(471), Val(472), Val(473), Val(474), Val(475), Val(476),
+          Val(477), Val(478), Val(479), Val(480), Val(481), Val(482), Val(483), Val(484), Val(485),
+          Val(486), Val(487), Val(488), Val(489), Val(490), Val(491), Val(492), Val(493), Val(494),
+          Val(495), Val(496), Val(497), Val(498), Val(499), Val(500), Val(501), Val(502), Val(503),
+          Val(504), Val(505), Val(506), Val(507), Val(508), Val(509), Val(510), Val(511), Val(512),
+          Val(513), Val(514), Val(515), Val(516), Val(517), Val(518), Val(519), Val(520), Val(521),
+          Val(522), Val(523), Val(524), Val(525), Val(526), Val(527), Val(528), Val(529), Val(530),
+          Val(531), Val(532), Val(533), Val(534), Val(535), Val(536), Val(537), Val(538), Val(539),
+          Val(540), Val(541), Val(542), Val(543), Val(544), Val(545), Val(546), Val(547), Val(548),
+          Val(549), Val(550), Val(551), Val(552), Val(553), Val(554), Val(555), Val(556), Val(557),
+          Val(558), Val(559), Val(560), Val(561), Val(562), Val(563), Val(564), Val(565), Val(566),
+          Val(567), Val(568), Val(569), Val(570), Val(571), Val(572), Val(573), Val(574), Val(575),
+          Val(576), Val(577), Val(578), Val(579), Val(580), Val(581), Val(582), Val(583), Val(584),
+          Val(585), Val(586), Val(587), Val(588), Val(589), Val(590), Val(591), Val(592), Val(593),
+          Val(594), Val(595), Val(596), Val(597), Val(598), Val(599), Val(600), Val(601), Val(602),
+          Val(603), Val(604), Val(605), Val(606), Val(607), Val(608), Val(609), Val(610), Val(611),
+          Val(612), Val(613), Val(614), Val(615), Val(616), Val(617), Val(618), Val(619), Val(620),
+          Val(621), Val(622), Val(623), Val(624), Val(625), Val(626), Val(627), Val(628), Val(629),
+          Val(630), Val(631), Val(632), Val(633), Val(634), Val(635), Val(636), Val(637), Val(638),
+          Val(639), Val(640), Val(641), Val(642), Val(643), Val(644), Val(645), Val(646), Val(647),
+          Val(648), Val(649), Val(650), Val(651), Val(652), Val(653), Val(654), Val(655), Val(656),
+          Val(657), Val(658), Val(659), Val(660), Val(661), Val(662), Val(663), Val(664), Val(665),
+          Val(666), Val(667), Val(668), Val(669), Val(670), Val(671), Val(672), Val(673), Val(674),
+          Val(675), Val(676), Val(677), Val(678), Val(679), Val(680), Val(681), Val(682), Val(683),
+          Val(684), Val(685), Val(686), Val(687), Val(688), Val(689), Val(690), Val(691), Val(692),
+          Val(693), Val(694), Val(695), Val(696), Val(697), Val(698), Val(699), Val(700), Val(701),
+          Val(702), Val(703), Val(704), Val(705), Val(706), Val(707), Val(708), Val(709), Val(710),
+          Val(711), Val(712), Val(713), Val(714), Val(715), Val(716), Val(717), Val(718), Val(719),
+          Val(720), Val(721), Val(722), Val(723), Val(724), Val(725), Val(726), Val(727), Val(728),
+          Val(729), Val(730), Val(731), Val(732), Val(733), Val(734), Val(735), Val(736), Val(737),
+          Val(738), Val(739), Val(740), Val(741), Val(742), Val(743), Val(744), Val(745), Val(746),
+          Val(747), Val(748), Val(749), Val(750), Val(751), Val(752), Val(753), Val(754), Val(755),
+          Val(756), Val(757), Val(758), Val(759), Val(760), Val(761), Val(762), Val(763), Val(764),
+          Val(765), Val(766), Val(767), Val(768), Val(769), Val(770), Val(771), Val(772), Val(773),
+          Val(774), Val(775), Val(776), Val(777), Val(778), Val(779), Val(780), Val(781), Val(782),
+          Val(783), Val(784), Val(785), Val(786), Val(787), Val(788), Val(789), Val(790), Val(791),
+          Val(792), Val(793), Val(794), Val(795), Val(796), Val(797), Val(798), Val(799)},
+      LAYOUT_LOOKUP(layout3, bits),
+      ([&](Val800Array::value_type x5, BoundLayout<NondetRegLayout800LayoutArray::value_type> x6) {
+        // TopState(zirgen/circuit/keccak2/top.zir:36)
+        NondetRegStruct x7 = exec_Reg(ctx, arg0[to_size_t(x5)], x6);
+        return TopStateBitsStruct{._super = x7};
+      }));
   // TopState(zirgen/circuit/keccak2/top.zir:39)
   TopStateKflatStruct100Array x8 = map(
-      {Val(0),  Val(1),  Val(2),  Val(3),  Val(4),  Val(5),  Val(6),  Val(7),  Val(8),  Val(9),
-       Val(10), Val(11), Val(12), Val(13), Val(14), Val(15), Val(16), Val(17), Val(18), Val(19),
-       Val(20), Val(21), Val(22), Val(23), Val(24), Val(25), Val(26), Val(27), Val(28), Val(29),
-       Val(30), Val(31), Val(32), Val(33), Val(34), Val(35), Val(36), Val(37), Val(38), Val(39),
-       Val(40), Val(41), Val(42), Val(43), Val(44), Val(45), Val(46), Val(47), Val(48), Val(49),
-       Val(50), Val(51), Val(52), Val(53), Val(54), Val(55), Val(56), Val(57), Val(58), Val(59),
-       Val(60), Val(61), Val(62), Val(63), Val(64), Val(65), Val(66), Val(67), Val(68), Val(69),
-       Val(70), Val(71), Val(72), Val(73), Val(74), Val(75), Val(76), Val(77), Val(78), Val(79),
-       Val(80), Val(81), Val(82), Val(83), Val(84), Val(85), Val(86), Val(87), Val(88), Val(89),
-       Val(90), Val(91), Val(92), Val(93), Val(94), Val(95), Val(96), Val(97), Val(98), Val(99)},
+      Val100Array{
+          Val(0),  Val(1),  Val(2),  Val(3),  Val(4),  Val(5),  Val(6),  Val(7),  Val(8),  Val(9),
+          Val(10), Val(11), Val(12), Val(13), Val(14), Val(15), Val(16), Val(17), Val(18), Val(19),
+          Val(20), Val(21), Val(22), Val(23), Val(24), Val(25), Val(26), Val(27), Val(28), Val(29),
+          Val(30), Val(31), Val(32), Val(33), Val(34), Val(35), Val(36), Val(37), Val(38), Val(39),
+          Val(40), Val(41), Val(42), Val(43), Val(44), Val(45), Val(46), Val(47), Val(48), Val(49),
+          Val(50), Val(51), Val(52), Val(53), Val(54), Val(55), Val(56), Val(57), Val(58), Val(59),
+          Val(60), Val(61), Val(62), Val(63), Val(64), Val(65), Val(66), Val(67), Val(68), Val(69),
+          Val(70), Val(71), Val(72), Val(73), Val(74), Val(75), Val(76), Val(77), Val(78), Val(79),
+          Val(80), Val(81), Val(82), Val(83), Val(84), Val(85), Val(86), Val(87), Val(88), Val(89),
+          Val(90), Val(91), Val(92), Val(93), Val(94), Val(95), Val(96), Val(97), Val(98), Val(99)},
       LAYOUT_LOOKUP(layout3, kflat),
-      std::function([&](Val100Array::value_type x9,
-                        BoundLayout<NondetRegLayout100LayoutArray::value_type> x10) {
+      ([&](Val100Array::value_type x9, BoundLayout<NondetRegLayout100LayoutArray::value_type> x10) {
         // TopState(zirgen/circuit/keccak2/top.zir:40)
-        NondetRegStruct x11 = exec_Reg(arg1[to_size_t(x9)], x10);
+        NondetRegStruct x11 = exec_Reg(ctx, arg1[to_size_t(x9)], x10);
         return TopStateKflatStruct{._super = x11};
       }));
   // TopState(zirgen/circuit/keccak2/top.zir:42)
-  NondetRegStruct16Array x12 =
-      map({Val(0),
-           Val(1),
-           Val(2),
-           Val(3),
-           Val(4),
-           Val(5),
-           Val(6),
-           Val(7),
-           Val(8),
-           Val(9),
-           Val(10),
-           Val(11),
-           Val(12),
-           Val(13),
-           Val(14),
-           Val(15)},
-          LAYOUT_LOOKUP(layout3, sflat),
-          std::function([&](Val16Array::value_type x13,
-                            BoundLayout<NondetRegLayout16LayoutArray::value_type> x14) {
-            // TopState(zirgen/circuit/keccak2/top.zir:43)
-            NondetRegStruct x15 = exec_Reg(arg2[to_size_t(x13)], x14);
-            return x15;
-          }));
+  NondetRegStruct16Array x12 = map(
+      Val16Array{Val(0),
+                 Val(1),
+                 Val(2),
+                 Val(3),
+                 Val(4),
+                 Val(5),
+                 Val(6),
+                 Val(7),
+                 Val(8),
+                 Val(9),
+                 Val(10),
+                 Val(11),
+                 Val(12),
+                 Val(13),
+                 Val(14),
+                 Val(15)},
+      LAYOUT_LOOKUP(layout3, sflat),
+      ([&](Val16Array::value_type x13, BoundLayout<NondetRegLayout16LayoutArray::value_type> x14) {
+        // TopState(zirgen/circuit/keccak2/top.zir:43)
+        NondetRegStruct x15 = exec_Reg(ctx, arg2[to_size_t(x13)], x14);
+        return x15;
+      }));
   return TopStateStruct{.bits = x4, .kflat = x8, .sflat = x12};
 }
-TopStateStruct exec_KeccakRound0(TopStateStruct arg0,
-                                 TopStateStruct arg1,
-                                 BoundLayout<KeccakRound0Layout> layout2) {
+__device__ TopStateStruct exec_KeccakRound0(ExecContext& ctx,
+                                            TopStateStruct arg0,
+                                            TopStateStruct arg1,
+                                            BoundLayout<KeccakRound0Layout> layout2) {
   // Log(<preamble>:22)
   // KeccakRound0(zirgen/circuit/keccak2/top.zir:95)
-  INVOKE_EXTERN(ctx, log, "KeccakRound0", {});
+  INVOKE_EXTERN(ctx, log, "KeccakRound0", std::initializer_list<Val>{});
   // KeccakRound0(zirgen/circuit/keccak2/top.zir:94)
   TopStateBitsStruct800Array x3 = arg0.bits;
   TopStateBitsStruct800Array x4 = arg1.bits;
@@ -2773,134 +2806,158 @@ TopStateStruct exec_KeccakRound0(TopStateStruct arg0,
   Val x1602 = x4[797]._super._super;
   Val x1603 = x4[798]._super._super;
   Val x1604 = x4[799]._super._super;
-  Val64Array5Array5Array x1605 = {
-      {{x5,   x6,   x7,   x8,   x9,   x10,  x11,  x12,  x13,  x14,  x15,  x16,  x17,
-        x18,  x19,  x20,  x21,  x22,  x23,  x24,  x25,  x26,  x27,  x28,  x29,  x30,
-        x31,  x32,  x33,  x34,  x35,  x36,  x805, x806, x807, x808, x809, x810, x811,
-        x812, x813, x814, x815, x816, x817, x818, x819, x820, x821, x822, x823, x824,
-        x825, x826, x827, x828, x829, x830, x831, x832, x833, x834, x835, x836},
-       {x37,  x38,  x39,  x40,  x41,  x42,  x43,  x44,  x45,  x46,  x47,  x48,  x49,
-        x50,  x51,  x52,  x53,  x54,  x55,  x56,  x57,  x58,  x59,  x60,  x61,  x62,
-        x63,  x64,  x65,  x66,  x67,  x68,  x837, x838, x839, x840, x841, x842, x843,
-        x844, x845, x846, x847, x848, x849, x850, x851, x852, x853, x854, x855, x856,
-        x857, x858, x859, x860, x861, x862, x863, x864, x865, x866, x867, x868},
-       {x69,  x70,  x71,  x72,  x73,  x74,  x75,  x76,  x77,  x78,  x79,  x80,  x81,
-        x82,  x83,  x84,  x85,  x86,  x87,  x88,  x89,  x90,  x91,  x92,  x93,  x94,
-        x95,  x96,  x97,  x98,  x99,  x100, x869, x870, x871, x872, x873, x874, x875,
-        x876, x877, x878, x879, x880, x881, x882, x883, x884, x885, x886, x887, x888,
-        x889, x890, x891, x892, x893, x894, x895, x896, x897, x898, x899, x900},
-       {x101, x102, x103, x104, x105, x106, x107, x108, x109, x110, x111, x112, x113,
-        x114, x115, x116, x117, x118, x119, x120, x121, x122, x123, x124, x125, x126,
-        x127, x128, x129, x130, x131, x132, x901, x902, x903, x904, x905, x906, x907,
-        x908, x909, x910, x911, x912, x913, x914, x915, x916, x917, x918, x919, x920,
-        x921, x922, x923, x924, x925, x926, x927, x928, x929, x930, x931, x932},
-       {x133, x134, x135, x136, x137, x138, x139, x140, x141, x142, x143, x144, x145,
-        x146, x147, x148, x149, x150, x151, x152, x153, x154, x155, x156, x157, x158,
-        x159, x160, x161, x162, x163, x164, x933, x934, x935, x936, x937, x938, x939,
-        x940, x941, x942, x943, x944, x945, x946, x947, x948, x949, x950, x951, x952,
-        x953, x954, x955, x956, x957, x958, x959, x960, x961, x962, x963, x964}},
-      {{x165, x166, x167, x168, x169, x170, x171, x172, x173, x174, x175, x176, x177,
-        x178, x179, x180, x181, x182, x183, x184, x185, x186, x187, x188, x189, x190,
-        x191, x192, x193, x194, x195, x196, x965, x966, x967, x968, x969, x970, x971,
-        x972, x973, x974, x975, x976, x977, x978, x979, x980, x981, x982, x983, x984,
-        x985, x986, x987, x988, x989, x990, x991, x992, x993, x994, x995, x996},
-       {x197,  x198,  x199,  x200,  x201,  x202,  x203,  x204,  x205,  x206,  x207,  x208,  x209,
-        x210,  x211,  x212,  x213,  x214,  x215,  x216,  x217,  x218,  x219,  x220,  x221,  x222,
-        x223,  x224,  x225,  x226,  x227,  x228,  x997,  x998,  x999,  x1000, x1001, x1002, x1003,
-        x1004, x1005, x1006, x1007, x1008, x1009, x1010, x1011, x1012, x1013, x1014, x1015, x1016,
-        x1017, x1018, x1019, x1020, x1021, x1022, x1023, x1024, x1025, x1026, x1027, x1028},
-       {x229,  x230,  x231,  x232,  x233,  x234,  x235,  x236,  x237,  x238,  x239,  x240,  x241,
-        x242,  x243,  x244,  x245,  x246,  x247,  x248,  x249,  x250,  x251,  x252,  x253,  x254,
-        x255,  x256,  x257,  x258,  x259,  x260,  x1029, x1030, x1031, x1032, x1033, x1034, x1035,
-        x1036, x1037, x1038, x1039, x1040, x1041, x1042, x1043, x1044, x1045, x1046, x1047, x1048,
-        x1049, x1050, x1051, x1052, x1053, x1054, x1055, x1056, x1057, x1058, x1059, x1060},
-       {x261,  x262,  x263,  x264,  x265,  x266,  x267,  x268,  x269,  x270,  x271,  x272,  x273,
-        x274,  x275,  x276,  x277,  x278,  x279,  x280,  x281,  x282,  x283,  x284,  x285,  x286,
-        x287,  x288,  x289,  x290,  x291,  x292,  x1061, x1062, x1063, x1064, x1065, x1066, x1067,
-        x1068, x1069, x1070, x1071, x1072, x1073, x1074, x1075, x1076, x1077, x1078, x1079, x1080,
-        x1081, x1082, x1083, x1084, x1085, x1086, x1087, x1088, x1089, x1090, x1091, x1092},
-       {x293,  x294,  x295,  x296,  x297,  x298,  x299,  x300,  x301,  x302,  x303,  x304,  x305,
-        x306,  x307,  x308,  x309,  x310,  x311,  x312,  x313,  x314,  x315,  x316,  x317,  x318,
-        x319,  x320,  x321,  x322,  x323,  x324,  x1093, x1094, x1095, x1096, x1097, x1098, x1099,
-        x1100, x1101, x1102, x1103, x1104, x1105, x1106, x1107, x1108, x1109, x1110, x1111, x1112,
-        x1113, x1114, x1115, x1116, x1117, x1118, x1119, x1120, x1121, x1122, x1123, x1124}},
-      {{x325,  x326,  x327,  x328,  x329,  x330,  x331,  x332,  x333,  x334,  x335,  x336,  x337,
-        x338,  x339,  x340,  x341,  x342,  x343,  x344,  x345,  x346,  x347,  x348,  x349,  x350,
-        x351,  x352,  x353,  x354,  x355,  x356,  x1125, x1126, x1127, x1128, x1129, x1130, x1131,
-        x1132, x1133, x1134, x1135, x1136, x1137, x1138, x1139, x1140, x1141, x1142, x1143, x1144,
-        x1145, x1146, x1147, x1148, x1149, x1150, x1151, x1152, x1153, x1154, x1155, x1156},
-       {x357,  x358,  x359,  x360,  x361,  x362,  x363,  x364,  x365,  x366,  x367,  x368,  x369,
-        x370,  x371,  x372,  x373,  x374,  x375,  x376,  x377,  x378,  x379,  x380,  x381,  x382,
-        x383,  x384,  x385,  x386,  x387,  x388,  x1157, x1158, x1159, x1160, x1161, x1162, x1163,
-        x1164, x1165, x1166, x1167, x1168, x1169, x1170, x1171, x1172, x1173, x1174, x1175, x1176,
-        x1177, x1178, x1179, x1180, x1181, x1182, x1183, x1184, x1185, x1186, x1187, x1188},
-       {x389,  x390,  x391,  x392,  x393,  x394,  x395,  x396,  x397,  x398,  x399,  x400,  x401,
-        x402,  x403,  x404,  x405,  x406,  x407,  x408,  x409,  x410,  x411,  x412,  x413,  x414,
-        x415,  x416,  x417,  x418,  x419,  x420,  x1189, x1190, x1191, x1192, x1193, x1194, x1195,
-        x1196, x1197, x1198, x1199, x1200, x1201, x1202, x1203, x1204, x1205, x1206, x1207, x1208,
-        x1209, x1210, x1211, x1212, x1213, x1214, x1215, x1216, x1217, x1218, x1219, x1220},
-       {x421,  x422,  x423,  x424,  x425,  x426,  x427,  x428,  x429,  x430,  x431,  x432,  x433,
-        x434,  x435,  x436,  x437,  x438,  x439,  x440,  x441,  x442,  x443,  x444,  x445,  x446,
-        x447,  x448,  x449,  x450,  x451,  x452,  x1221, x1222, x1223, x1224, x1225, x1226, x1227,
-        x1228, x1229, x1230, x1231, x1232, x1233, x1234, x1235, x1236, x1237, x1238, x1239, x1240,
-        x1241, x1242, x1243, x1244, x1245, x1246, x1247, x1248, x1249, x1250, x1251, x1252},
-       {x453,  x454,  x455,  x456,  x457,  x458,  x459,  x460,  x461,  x462,  x463,  x464,  x465,
-        x466,  x467,  x468,  x469,  x470,  x471,  x472,  x473,  x474,  x475,  x476,  x477,  x478,
-        x479,  x480,  x481,  x482,  x483,  x484,  x1253, x1254, x1255, x1256, x1257, x1258, x1259,
-        x1260, x1261, x1262, x1263, x1264, x1265, x1266, x1267, x1268, x1269, x1270, x1271, x1272,
-        x1273, x1274, x1275, x1276, x1277, x1278, x1279, x1280, x1281, x1282, x1283, x1284}},
-      {{x485,  x486,  x487,  x488,  x489,  x490,  x491,  x492,  x493,  x494,  x495,  x496,  x497,
-        x498,  x499,  x500,  x501,  x502,  x503,  x504,  x505,  x506,  x507,  x508,  x509,  x510,
-        x511,  x512,  x513,  x514,  x515,  x516,  x1285, x1286, x1287, x1288, x1289, x1290, x1291,
-        x1292, x1293, x1294, x1295, x1296, x1297, x1298, x1299, x1300, x1301, x1302, x1303, x1304,
-        x1305, x1306, x1307, x1308, x1309, x1310, x1311, x1312, x1313, x1314, x1315, x1316},
-       {x517,  x518,  x519,  x520,  x521,  x522,  x523,  x524,  x525,  x526,  x527,  x528,  x529,
-        x530,  x531,  x532,  x533,  x534,  x535,  x536,  x537,  x538,  x539,  x540,  x541,  x542,
-        x543,  x544,  x545,  x546,  x547,  x548,  x1317, x1318, x1319, x1320, x1321, x1322, x1323,
-        x1324, x1325, x1326, x1327, x1328, x1329, x1330, x1331, x1332, x1333, x1334, x1335, x1336,
-        x1337, x1338, x1339, x1340, x1341, x1342, x1343, x1344, x1345, x1346, x1347, x1348},
-       {x549,  x550,  x551,  x552,  x553,  x554,  x555,  x556,  x557,  x558,  x559,  x560,  x561,
-        x562,  x563,  x564,  x565,  x566,  x567,  x568,  x569,  x570,  x571,  x572,  x573,  x574,
-        x575,  x576,  x577,  x578,  x579,  x580,  x1349, x1350, x1351, x1352, x1353, x1354, x1355,
-        x1356, x1357, x1358, x1359, x1360, x1361, x1362, x1363, x1364, x1365, x1366, x1367, x1368,
-        x1369, x1370, x1371, x1372, x1373, x1374, x1375, x1376, x1377, x1378, x1379, x1380},
-       {x581,  x582,  x583,  x584,  x585,  x586,  x587,  x588,  x589,  x590,  x591,  x592,  x593,
-        x594,  x595,  x596,  x597,  x598,  x599,  x600,  x601,  x602,  x603,  x604,  x605,  x606,
-        x607,  x608,  x609,  x610,  x611,  x612,  x1381, x1382, x1383, x1384, x1385, x1386, x1387,
-        x1388, x1389, x1390, x1391, x1392, x1393, x1394, x1395, x1396, x1397, x1398, x1399, x1400,
-        x1401, x1402, x1403, x1404, x1405, x1406, x1407, x1408, x1409, x1410, x1411, x1412},
-       {x613,  x614,  x615,  x616,  x617,  x618,  x619,  x620,  x621,  x622,  x623,  x624,  x625,
-        x626,  x627,  x628,  x629,  x630,  x631,  x632,  x633,  x634,  x635,  x636,  x637,  x638,
-        x639,  x640,  x641,  x642,  x643,  x644,  x1413, x1414, x1415, x1416, x1417, x1418, x1419,
-        x1420, x1421, x1422, x1423, x1424, x1425, x1426, x1427, x1428, x1429, x1430, x1431, x1432,
-        x1433, x1434, x1435, x1436, x1437, x1438, x1439, x1440, x1441, x1442, x1443, x1444}},
-      {{x645,  x646,  x647,  x648,  x649,  x650,  x651,  x652,  x653,  x654,  x655,  x656,  x657,
-        x658,  x659,  x660,  x661,  x662,  x663,  x664,  x665,  x666,  x667,  x668,  x669,  x670,
-        x671,  x672,  x673,  x674,  x675,  x676,  x1445, x1446, x1447, x1448, x1449, x1450, x1451,
-        x1452, x1453, x1454, x1455, x1456, x1457, x1458, x1459, x1460, x1461, x1462, x1463, x1464,
-        x1465, x1466, x1467, x1468, x1469, x1470, x1471, x1472, x1473, x1474, x1475, x1476},
-       {x677,  x678,  x679,  x680,  x681,  x682,  x683,  x684,  x685,  x686,  x687,  x688,  x689,
-        x690,  x691,  x692,  x693,  x694,  x695,  x696,  x697,  x698,  x699,  x700,  x701,  x702,
-        x703,  x704,  x705,  x706,  x707,  x708,  x1477, x1478, x1479, x1480, x1481, x1482, x1483,
-        x1484, x1485, x1486, x1487, x1488, x1489, x1490, x1491, x1492, x1493, x1494, x1495, x1496,
-        x1497, x1498, x1499, x1500, x1501, x1502, x1503, x1504, x1505, x1506, x1507, x1508},
-       {x709,  x710,  x711,  x712,  x713,  x714,  x715,  x716,  x717,  x718,  x719,  x720,  x721,
-        x722,  x723,  x724,  x725,  x726,  x727,  x728,  x729,  x730,  x731,  x732,  x733,  x734,
-        x735,  x736,  x737,  x738,  x739,  x740,  x1509, x1510, x1511, x1512, x1513, x1514, x1515,
-        x1516, x1517, x1518, x1519, x1520, x1521, x1522, x1523, x1524, x1525, x1526, x1527, x1528,
-        x1529, x1530, x1531, x1532, x1533, x1534, x1535, x1536, x1537, x1538, x1539, x1540},
-       {x741,  x742,  x743,  x744,  x745,  x746,  x747,  x748,  x749,  x750,  x751,  x752,  x753,
-        x754,  x755,  x756,  x757,  x758,  x759,  x760,  x761,  x762,  x763,  x764,  x765,  x766,
-        x767,  x768,  x769,  x770,  x771,  x772,  x1541, x1542, x1543, x1544, x1545, x1546, x1547,
-        x1548, x1549, x1550, x1551, x1552, x1553, x1554, x1555, x1556, x1557, x1558, x1559, x1560,
-        x1561, x1562, x1563, x1564, x1565, x1566, x1567, x1568, x1569, x1570, x1571, x1572},
-       {x773,  x774,  x775,  x776,  x777,  x778,  x779,  x780,  x781,  x782,  x783,  x784,  x785,
-        x786,  x787,  x788,  x789,  x790,  x791,  x792,  x793,  x794,  x795,  x796,  x797,  x798,
-        x799,  x800,  x801,  x802,  x803,  x804,  x1573, x1574, x1575, x1576, x1577, x1578, x1579,
-        x1580, x1581, x1582, x1583, x1584, x1585, x1586, x1587, x1588, x1589, x1590, x1591, x1592,
-        x1593, x1594, x1595, x1596, x1597, x1598, x1599, x1600, x1601, x1602, x1603, x1604}}};
+  Val64Array5Array5Array x1605 = Val64Array5Array5Array{
+      Val64Array5Array{
+          Val64Array{x5,   x6,   x7,   x8,   x9,   x10,  x11,  x12,  x13,  x14,  x15,  x16,  x17,
+                     x18,  x19,  x20,  x21,  x22,  x23,  x24,  x25,  x26,  x27,  x28,  x29,  x30,
+                     x31,  x32,  x33,  x34,  x35,  x36,  x805, x806, x807, x808, x809, x810, x811,
+                     x812, x813, x814, x815, x816, x817, x818, x819, x820, x821, x822, x823, x824,
+                     x825, x826, x827, x828, x829, x830, x831, x832, x833, x834, x835, x836},
+          Val64Array{x37,  x38,  x39,  x40,  x41,  x42,  x43,  x44,  x45,  x46,  x47,  x48,  x49,
+                     x50,  x51,  x52,  x53,  x54,  x55,  x56,  x57,  x58,  x59,  x60,  x61,  x62,
+                     x63,  x64,  x65,  x66,  x67,  x68,  x837, x838, x839, x840, x841, x842, x843,
+                     x844, x845, x846, x847, x848, x849, x850, x851, x852, x853, x854, x855, x856,
+                     x857, x858, x859, x860, x861, x862, x863, x864, x865, x866, x867, x868},
+          Val64Array{x69,  x70,  x71,  x72,  x73,  x74,  x75,  x76,  x77,  x78,  x79,  x80,  x81,
+                     x82,  x83,  x84,  x85,  x86,  x87,  x88,  x89,  x90,  x91,  x92,  x93,  x94,
+                     x95,  x96,  x97,  x98,  x99,  x100, x869, x870, x871, x872, x873, x874, x875,
+                     x876, x877, x878, x879, x880, x881, x882, x883, x884, x885, x886, x887, x888,
+                     x889, x890, x891, x892, x893, x894, x895, x896, x897, x898, x899, x900},
+          Val64Array{x101, x102, x103, x104, x105, x106, x107, x108, x109, x110, x111, x112, x113,
+                     x114, x115, x116, x117, x118, x119, x120, x121, x122, x123, x124, x125, x126,
+                     x127, x128, x129, x130, x131, x132, x901, x902, x903, x904, x905, x906, x907,
+                     x908, x909, x910, x911, x912, x913, x914, x915, x916, x917, x918, x919, x920,
+                     x921, x922, x923, x924, x925, x926, x927, x928, x929, x930, x931, x932},
+          Val64Array{x133, x134, x135, x136, x137, x138, x139, x140, x141, x142, x143, x144, x145,
+                     x146, x147, x148, x149, x150, x151, x152, x153, x154, x155, x156, x157, x158,
+                     x159, x160, x161, x162, x163, x164, x933, x934, x935, x936, x937, x938, x939,
+                     x940, x941, x942, x943, x944, x945, x946, x947, x948, x949, x950, x951, x952,
+                     x953, x954, x955, x956, x957, x958, x959, x960, x961, x962, x963, x964}},
+      Val64Array5Array{
+          Val64Array{x165, x166, x167, x168, x169, x170, x171, x172, x173, x174, x175, x176, x177,
+                     x178, x179, x180, x181, x182, x183, x184, x185, x186, x187, x188, x189, x190,
+                     x191, x192, x193, x194, x195, x196, x965, x966, x967, x968, x969, x970, x971,
+                     x972, x973, x974, x975, x976, x977, x978, x979, x980, x981, x982, x983, x984,
+                     x985, x986, x987, x988, x989, x990, x991, x992, x993, x994, x995, x996},
+          Val64Array{x197,  x198,  x199,  x200,  x201,  x202,  x203,  x204,  x205,  x206,  x207,
+                     x208,  x209,  x210,  x211,  x212,  x213,  x214,  x215,  x216,  x217,  x218,
+                     x219,  x220,  x221,  x222,  x223,  x224,  x225,  x226,  x227,  x228,  x997,
+                     x998,  x999,  x1000, x1001, x1002, x1003, x1004, x1005, x1006, x1007, x1008,
+                     x1009, x1010, x1011, x1012, x1013, x1014, x1015, x1016, x1017, x1018, x1019,
+                     x1020, x1021, x1022, x1023, x1024, x1025, x1026, x1027, x1028},
+          Val64Array{x229,  x230,  x231,  x232,  x233,  x234,  x235,  x236,  x237,  x238,  x239,
+                     x240,  x241,  x242,  x243,  x244,  x245,  x246,  x247,  x248,  x249,  x250,
+                     x251,  x252,  x253,  x254,  x255,  x256,  x257,  x258,  x259,  x260,  x1029,
+                     x1030, x1031, x1032, x1033, x1034, x1035, x1036, x1037, x1038, x1039, x1040,
+                     x1041, x1042, x1043, x1044, x1045, x1046, x1047, x1048, x1049, x1050, x1051,
+                     x1052, x1053, x1054, x1055, x1056, x1057, x1058, x1059, x1060},
+          Val64Array{x261,  x262,  x263,  x264,  x265,  x266,  x267,  x268,  x269,  x270,  x271,
+                     x272,  x273,  x274,  x275,  x276,  x277,  x278,  x279,  x280,  x281,  x282,
+                     x283,  x284,  x285,  x286,  x287,  x288,  x289,  x290,  x291,  x292,  x1061,
+                     x1062, x1063, x1064, x1065, x1066, x1067, x1068, x1069, x1070, x1071, x1072,
+                     x1073, x1074, x1075, x1076, x1077, x1078, x1079, x1080, x1081, x1082, x1083,
+                     x1084, x1085, x1086, x1087, x1088, x1089, x1090, x1091, x1092},
+          Val64Array{x293,  x294,  x295,  x296,  x297,  x298,  x299,  x300,  x301,  x302,  x303,
+                     x304,  x305,  x306,  x307,  x308,  x309,  x310,  x311,  x312,  x313,  x314,
+                     x315,  x316,  x317,  x318,  x319,  x320,  x321,  x322,  x323,  x324,  x1093,
+                     x1094, x1095, x1096, x1097, x1098, x1099, x1100, x1101, x1102, x1103, x1104,
+                     x1105, x1106, x1107, x1108, x1109, x1110, x1111, x1112, x1113, x1114, x1115,
+                     x1116, x1117, x1118, x1119, x1120, x1121, x1122, x1123, x1124}},
+      Val64Array5Array{
+          Val64Array{x325,  x326,  x327,  x328,  x329,  x330,  x331,  x332,  x333,  x334,  x335,
+                     x336,  x337,  x338,  x339,  x340,  x341,  x342,  x343,  x344,  x345,  x346,
+                     x347,  x348,  x349,  x350,  x351,  x352,  x353,  x354,  x355,  x356,  x1125,
+                     x1126, x1127, x1128, x1129, x1130, x1131, x1132, x1133, x1134, x1135, x1136,
+                     x1137, x1138, x1139, x1140, x1141, x1142, x1143, x1144, x1145, x1146, x1147,
+                     x1148, x1149, x1150, x1151, x1152, x1153, x1154, x1155, x1156},
+          Val64Array{x357,  x358,  x359,  x360,  x361,  x362,  x363,  x364,  x365,  x366,  x367,
+                     x368,  x369,  x370,  x371,  x372,  x373,  x374,  x375,  x376,  x377,  x378,
+                     x379,  x380,  x381,  x382,  x383,  x384,  x385,  x386,  x387,  x388,  x1157,
+                     x1158, x1159, x1160, x1161, x1162, x1163, x1164, x1165, x1166, x1167, x1168,
+                     x1169, x1170, x1171, x1172, x1173, x1174, x1175, x1176, x1177, x1178, x1179,
+                     x1180, x1181, x1182, x1183, x1184, x1185, x1186, x1187, x1188},
+          Val64Array{x389,  x390,  x391,  x392,  x393,  x394,  x395,  x396,  x397,  x398,  x399,
+                     x400,  x401,  x402,  x403,  x404,  x405,  x406,  x407,  x408,  x409,  x410,
+                     x411,  x412,  x413,  x414,  x415,  x416,  x417,  x418,  x419,  x420,  x1189,
+                     x1190, x1191, x1192, x1193, x1194, x1195, x1196, x1197, x1198, x1199, x1200,
+                     x1201, x1202, x1203, x1204, x1205, x1206, x1207, x1208, x1209, x1210, x1211,
+                     x1212, x1213, x1214, x1215, x1216, x1217, x1218, x1219, x1220},
+          Val64Array{x421,  x422,  x423,  x424,  x425,  x426,  x427,  x428,  x429,  x430,  x431,
+                     x432,  x433,  x434,  x435,  x436,  x437,  x438,  x439,  x440,  x441,  x442,
+                     x443,  x444,  x445,  x446,  x447,  x448,  x449,  x450,  x451,  x452,  x1221,
+                     x1222, x1223, x1224, x1225, x1226, x1227, x1228, x1229, x1230, x1231, x1232,
+                     x1233, x1234, x1235, x1236, x1237, x1238, x1239, x1240, x1241, x1242, x1243,
+                     x1244, x1245, x1246, x1247, x1248, x1249, x1250, x1251, x1252},
+          Val64Array{x453,  x454,  x455,  x456,  x457,  x458,  x459,  x460,  x461,  x462,  x463,
+                     x464,  x465,  x466,  x467,  x468,  x469,  x470,  x471,  x472,  x473,  x474,
+                     x475,  x476,  x477,  x478,  x479,  x480,  x481,  x482,  x483,  x484,  x1253,
+                     x1254, x1255, x1256, x1257, x1258, x1259, x1260, x1261, x1262, x1263, x1264,
+                     x1265, x1266, x1267, x1268, x1269, x1270, x1271, x1272, x1273, x1274, x1275,
+                     x1276, x1277, x1278, x1279, x1280, x1281, x1282, x1283, x1284}},
+      Val64Array5Array{
+          Val64Array{x485,  x486,  x487,  x488,  x489,  x490,  x491,  x492,  x493,  x494,  x495,
+                     x496,  x497,  x498,  x499,  x500,  x501,  x502,  x503,  x504,  x505,  x506,
+                     x507,  x508,  x509,  x510,  x511,  x512,  x513,  x514,  x515,  x516,  x1285,
+                     x1286, x1287, x1288, x1289, x1290, x1291, x1292, x1293, x1294, x1295, x1296,
+                     x1297, x1298, x1299, x1300, x1301, x1302, x1303, x1304, x1305, x1306, x1307,
+                     x1308, x1309, x1310, x1311, x1312, x1313, x1314, x1315, x1316},
+          Val64Array{x517,  x518,  x519,  x520,  x521,  x522,  x523,  x524,  x525,  x526,  x527,
+                     x528,  x529,  x530,  x531,  x532,  x533,  x534,  x535,  x536,  x537,  x538,
+                     x539,  x540,  x541,  x542,  x543,  x544,  x545,  x546,  x547,  x548,  x1317,
+                     x1318, x1319, x1320, x1321, x1322, x1323, x1324, x1325, x1326, x1327, x1328,
+                     x1329, x1330, x1331, x1332, x1333, x1334, x1335, x1336, x1337, x1338, x1339,
+                     x1340, x1341, x1342, x1343, x1344, x1345, x1346, x1347, x1348},
+          Val64Array{x549,  x550,  x551,  x552,  x553,  x554,  x555,  x556,  x557,  x558,  x559,
+                     x560,  x561,  x562,  x563,  x564,  x565,  x566,  x567,  x568,  x569,  x570,
+                     x571,  x572,  x573,  x574,  x575,  x576,  x577,  x578,  x579,  x580,  x1349,
+                     x1350, x1351, x1352, x1353, x1354, x1355, x1356, x1357, x1358, x1359, x1360,
+                     x1361, x1362, x1363, x1364, x1365, x1366, x1367, x1368, x1369, x1370, x1371,
+                     x1372, x1373, x1374, x1375, x1376, x1377, x1378, x1379, x1380},
+          Val64Array{x581,  x582,  x583,  x584,  x585,  x586,  x587,  x588,  x589,  x590,  x591,
+                     x592,  x593,  x594,  x595,  x596,  x597,  x598,  x599,  x600,  x601,  x602,
+                     x603,  x604,  x605,  x606,  x607,  x608,  x609,  x610,  x611,  x612,  x1381,
+                     x1382, x1383, x1384, x1385, x1386, x1387, x1388, x1389, x1390, x1391, x1392,
+                     x1393, x1394, x1395, x1396, x1397, x1398, x1399, x1400, x1401, x1402, x1403,
+                     x1404, x1405, x1406, x1407, x1408, x1409, x1410, x1411, x1412},
+          Val64Array{x613,  x614,  x615,  x616,  x617,  x618,  x619,  x620,  x621,  x622,  x623,
+                     x624,  x625,  x626,  x627,  x628,  x629,  x630,  x631,  x632,  x633,  x634,
+                     x635,  x636,  x637,  x638,  x639,  x640,  x641,  x642,  x643,  x644,  x1413,
+                     x1414, x1415, x1416, x1417, x1418, x1419, x1420, x1421, x1422, x1423, x1424,
+                     x1425, x1426, x1427, x1428, x1429, x1430, x1431, x1432, x1433, x1434, x1435,
+                     x1436, x1437, x1438, x1439, x1440, x1441, x1442, x1443, x1444}},
+      Val64Array5Array{
+          Val64Array{x645,  x646,  x647,  x648,  x649,  x650,  x651,  x652,  x653,  x654,  x655,
+                     x656,  x657,  x658,  x659,  x660,  x661,  x662,  x663,  x664,  x665,  x666,
+                     x667,  x668,  x669,  x670,  x671,  x672,  x673,  x674,  x675,  x676,  x1445,
+                     x1446, x1447, x1448, x1449, x1450, x1451, x1452, x1453, x1454, x1455, x1456,
+                     x1457, x1458, x1459, x1460, x1461, x1462, x1463, x1464, x1465, x1466, x1467,
+                     x1468, x1469, x1470, x1471, x1472, x1473, x1474, x1475, x1476},
+          Val64Array{x677,  x678,  x679,  x680,  x681,  x682,  x683,  x684,  x685,  x686,  x687,
+                     x688,  x689,  x690,  x691,  x692,  x693,  x694,  x695,  x696,  x697,  x698,
+                     x699,  x700,  x701,  x702,  x703,  x704,  x705,  x706,  x707,  x708,  x1477,
+                     x1478, x1479, x1480, x1481, x1482, x1483, x1484, x1485, x1486, x1487, x1488,
+                     x1489, x1490, x1491, x1492, x1493, x1494, x1495, x1496, x1497, x1498, x1499,
+                     x1500, x1501, x1502, x1503, x1504, x1505, x1506, x1507, x1508},
+          Val64Array{x709,  x710,  x711,  x712,  x713,  x714,  x715,  x716,  x717,  x718,  x719,
+                     x720,  x721,  x722,  x723,  x724,  x725,  x726,  x727,  x728,  x729,  x730,
+                     x731,  x732,  x733,  x734,  x735,  x736,  x737,  x738,  x739,  x740,  x1509,
+                     x1510, x1511, x1512, x1513, x1514, x1515, x1516, x1517, x1518, x1519, x1520,
+                     x1521, x1522, x1523, x1524, x1525, x1526, x1527, x1528, x1529, x1530, x1531,
+                     x1532, x1533, x1534, x1535, x1536, x1537, x1538, x1539, x1540},
+          Val64Array{x741,  x742,  x743,  x744,  x745,  x746,  x747,  x748,  x749,  x750,  x751,
+                     x752,  x753,  x754,  x755,  x756,  x757,  x758,  x759,  x760,  x761,  x762,
+                     x763,  x764,  x765,  x766,  x767,  x768,  x769,  x770,  x771,  x772,  x1541,
+                     x1542, x1543, x1544, x1545, x1546, x1547, x1548, x1549, x1550, x1551, x1552,
+                     x1553, x1554, x1555, x1556, x1557, x1558, x1559, x1560, x1561, x1562, x1563,
+                     x1564, x1565, x1566, x1567, x1568, x1569, x1570, x1571, x1572},
+          Val64Array{x773,  x774,  x775,  x776,  x777,  x778,  x779,  x780,  x781,  x782,  x783,
+                     x784,  x785,  x786,  x787,  x788,  x789,  x790,  x791,  x792,  x793,  x794,
+                     x795,  x796,  x797,  x798,  x799,  x800,  x801,  x802,  x803,  x804,  x1573,
+                     x1574, x1575, x1576, x1577, x1578, x1579, x1580, x1581, x1582, x1583, x1584,
+                     x1585, x1586, x1587, x1588, x1589, x1590, x1591, x1592, x1593, x1594, x1595,
+                     x1596, x1597, x1598, x1599, x1600, x1601, x1602, x1603, x1604}}};
   // KeccakRound0(zirgen/circuit/keccak2/top.zir:97)
-  ThetaP1Struct x1606 = exec_ThetaP1(x1605, LAYOUT_LOOKUP(layout2, b));
+  ThetaP1Struct x1606 = exec_ThetaP1(ctx, x1605, LAYOUT_LOOKUP(layout2, b));
   ThetaP1_Super_SuperStruct5Array x1607 = x1606._super;
   ThetaP1_Super_Super_SuperStruct64Array x1608 = x1607[0]._super;
   Val x1609 = x1608[0]._super._super;
@@ -3330,117 +3387,121 @@ TopStateStruct exec_KeccakRound0(TopStateStruct arg0,
   Val x2032 = x1933[97]._super._super;
   Val x2033 = x1933[98]._super._super;
   Val x2034 = x1933[99]._super._super;
-  Val16Array x2035 = {x1934[0]._super,
-                      x1934[1]._super,
-                      x1934[2]._super,
-                      x1934[3]._super,
-                      x1934[4]._super,
-                      x1934[5]._super,
-                      x1934[6]._super,
-                      x1934[7]._super,
-                      x1934[8]._super,
-                      x1934[9]._super,
-                      x1934[10]._super,
-                      x1934[11]._super,
-                      x1934[12]._super,
-                      x1934[13]._super,
-                      x1934[14]._super,
-                      x1934[15]._super};
+  Val16Array x2035 = Val16Array{x1934[0]._super,
+                                x1934[1]._super,
+                                x1934[2]._super,
+                                x1934[3]._super,
+                                x1934[4]._super,
+                                x1934[5]._super,
+                                x1934[6]._super,
+                                x1934[7]._super,
+                                x1934[8]._super,
+                                x1934[9]._super,
+                                x1934[10]._super,
+                                x1934[11]._super,
+                                x1934[12]._super,
+                                x1934[13]._super,
+                                x1934[14]._super,
+                                x1934[15]._super};
   // KeccakRound0(zirgen/circuit/keccak2/top.zir:98)
   TopStateStruct x2036 = exec_TopState(
-      {x1609,  x1610,  x1611,  x1612,  x1613,  x1614,  x1615,  x1616,  x1617,  x1618,  x1619,
-       x1620,  x1621,  x1622,  x1623,  x1624,  x1625,  x1626,  x1627,  x1628,  x1629,  x1630,
-       x1631,  x1632,  x1633,  x1634,  x1635,  x1636,  x1637,  x1638,  x1639,  x1640,  x1641,
-       x1642,  x1643,  x1644,  x1645,  x1646,  x1647,  x1648,  x1649,  x1650,  x1651,  x1652,
-       x1653,  x1654,  x1655,  x1656,  x1657,  x1658,  x1659,  x1660,  x1661,  x1662,  x1663,
-       x1664,  x1665,  x1666,  x1667,  x1668,  x1669,  x1670,  x1671,  x1672,  x1674,  x1675,
-       x1676,  x1677,  x1678,  x1679,  x1680,  x1681,  x1682,  x1683,  x1684,  x1685,  x1686,
-       x1687,  x1688,  x1689,  x1690,  x1691,  x1692,  x1693,  x1694,  x1695,  x1696,  x1697,
-       x1698,  x1699,  x1700,  x1701,  x1702,  x1703,  x1704,  x1705,  x1706,  x1707,  x1708,
-       x1709,  x1710,  x1711,  x1712,  x1713,  x1714,  x1715,  x1716,  x1717,  x1718,  x1719,
-       x1720,  x1721,  x1722,  x1723,  x1724,  x1725,  x1726,  x1727,  x1728,  x1729,  x1730,
-       x1731,  x1732,  x1733,  x1734,  x1735,  x1736,  x1737,  x1739,  x1740,  x1741,  x1742,
-       x1743,  x1744,  x1745,  x1746,  x1747,  x1748,  x1749,  x1750,  x1751,  x1752,  x1753,
-       x1754,  x1755,  x1756,  x1757,  x1758,  x1759,  x1760,  x1761,  x1762,  x1763,  x1764,
-       x1765,  x1766,  x1767,  x1768,  x1769,  x1770,  x1771,  x1772,  x1773,  x1774,  x1775,
-       x1776,  x1777,  x1778,  x1779,  x1780,  x1781,  x1782,  x1783,  x1784,  x1785,  x1786,
-       x1787,  x1788,  x1789,  x1790,  x1791,  x1792,  x1793,  x1794,  x1795,  x1796,  x1797,
-       x1798,  x1799,  x1800,  x1801,  x1802,  x1804,  x1805,  x1806,  x1807,  x1808,  x1809,
-       x1810,  x1811,  x1812,  x1813,  x1814,  x1815,  x1816,  x1817,  x1818,  x1819,  x1820,
-       x1821,  x1822,  x1823,  x1824,  x1825,  x1826,  x1827,  x1828,  x1829,  x1830,  x1831,
-       x1832,  x1833,  x1834,  x1835,  x1836,  x1837,  x1838,  x1839,  x1840,  x1841,  x1842,
-       x1843,  x1844,  x1845,  x1846,  x1847,  x1848,  x1849,  x1850,  x1851,  x1852,  x1853,
-       x1854,  x1855,  x1856,  x1857,  x1858,  x1859,  x1860,  x1861,  x1862,  x1863,  x1864,
-       x1865,  x1866,  x1867,  x1869,  x1870,  x1871,  x1872,  x1873,  x1874,  x1875,  x1876,
-       x1877,  x1878,  x1879,  x1880,  x1881,  x1882,  x1883,  x1884,  x1885,  x1886,  x1887,
-       x1888,  x1889,  x1890,  x1891,  x1892,  x1893,  x1894,  x1895,  x1896,  x1897,  x1898,
-       x1899,  x1900,  x1901,  x1902,  x1903,  x1904,  x1905,  x1906,  x1907,  x1908,  x1909,
-       x1910,  x1911,  x1912,  x1913,  x1914,  x1915,  x1916,  x1917,  x1918,  x1919,  x1920,
-       x1921,  x1922,  x1923,  x1924,  x1925,  x1926,  x1927,  x1928,  x1929,  x1930,  x1931,
-       x1932,  Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
-      {x1935, x1936, x1937, x1938, x1939, x1940, x1941, x1942, x1943, x1944, x1945, x1946, x1947,
-       x1948, x1949, x1950, x1951, x1952, x1953, x1954, x1955, x1956, x1957, x1958, x1959, x1960,
-       x1961, x1962, x1963, x1964, x1965, x1966, x1967, x1968, x1969, x1970, x1971, x1972, x1973,
-       x1974, x1975, x1976, x1977, x1978, x1979, x1980, x1981, x1982, x1983, x1984, x1985, x1986,
-       x1987, x1988, x1989, x1990, x1991, x1992, x1993, x1994, x1995, x1996, x1997, x1998, x1999,
-       x2000, x2001, x2002, x2003, x2004, x2005, x2006, x2007, x2008, x2009, x2010, x2011, x2012,
-       x2013, x2014, x2015, x2016, x2017, x2018, x2019, x2020, x2021, x2022, x2023, x2024, x2025,
-       x2026, x2027, x2028, x2029, x2030, x2031, x2032, x2033, x2034},
+      ctx,
+      Val800Array{
+          x1609,  x1610,  x1611,  x1612,  x1613,  x1614,  x1615,  x1616,  x1617,  x1618,  x1619,
+          x1620,  x1621,  x1622,  x1623,  x1624,  x1625,  x1626,  x1627,  x1628,  x1629,  x1630,
+          x1631,  x1632,  x1633,  x1634,  x1635,  x1636,  x1637,  x1638,  x1639,  x1640,  x1641,
+          x1642,  x1643,  x1644,  x1645,  x1646,  x1647,  x1648,  x1649,  x1650,  x1651,  x1652,
+          x1653,  x1654,  x1655,  x1656,  x1657,  x1658,  x1659,  x1660,  x1661,  x1662,  x1663,
+          x1664,  x1665,  x1666,  x1667,  x1668,  x1669,  x1670,  x1671,  x1672,  x1674,  x1675,
+          x1676,  x1677,  x1678,  x1679,  x1680,  x1681,  x1682,  x1683,  x1684,  x1685,  x1686,
+          x1687,  x1688,  x1689,  x1690,  x1691,  x1692,  x1693,  x1694,  x1695,  x1696,  x1697,
+          x1698,  x1699,  x1700,  x1701,  x1702,  x1703,  x1704,  x1705,  x1706,  x1707,  x1708,
+          x1709,  x1710,  x1711,  x1712,  x1713,  x1714,  x1715,  x1716,  x1717,  x1718,  x1719,
+          x1720,  x1721,  x1722,  x1723,  x1724,  x1725,  x1726,  x1727,  x1728,  x1729,  x1730,
+          x1731,  x1732,  x1733,  x1734,  x1735,  x1736,  x1737,  x1739,  x1740,  x1741,  x1742,
+          x1743,  x1744,  x1745,  x1746,  x1747,  x1748,  x1749,  x1750,  x1751,  x1752,  x1753,
+          x1754,  x1755,  x1756,  x1757,  x1758,  x1759,  x1760,  x1761,  x1762,  x1763,  x1764,
+          x1765,  x1766,  x1767,  x1768,  x1769,  x1770,  x1771,  x1772,  x1773,  x1774,  x1775,
+          x1776,  x1777,  x1778,  x1779,  x1780,  x1781,  x1782,  x1783,  x1784,  x1785,  x1786,
+          x1787,  x1788,  x1789,  x1790,  x1791,  x1792,  x1793,  x1794,  x1795,  x1796,  x1797,
+          x1798,  x1799,  x1800,  x1801,  x1802,  x1804,  x1805,  x1806,  x1807,  x1808,  x1809,
+          x1810,  x1811,  x1812,  x1813,  x1814,  x1815,  x1816,  x1817,  x1818,  x1819,  x1820,
+          x1821,  x1822,  x1823,  x1824,  x1825,  x1826,  x1827,  x1828,  x1829,  x1830,  x1831,
+          x1832,  x1833,  x1834,  x1835,  x1836,  x1837,  x1838,  x1839,  x1840,  x1841,  x1842,
+          x1843,  x1844,  x1845,  x1846,  x1847,  x1848,  x1849,  x1850,  x1851,  x1852,  x1853,
+          x1854,  x1855,  x1856,  x1857,  x1858,  x1859,  x1860,  x1861,  x1862,  x1863,  x1864,
+          x1865,  x1866,  x1867,  x1869,  x1870,  x1871,  x1872,  x1873,  x1874,  x1875,  x1876,
+          x1877,  x1878,  x1879,  x1880,  x1881,  x1882,  x1883,  x1884,  x1885,  x1886,  x1887,
+          x1888,  x1889,  x1890,  x1891,  x1892,  x1893,  x1894,  x1895,  x1896,  x1897,  x1898,
+          x1899,  x1900,  x1901,  x1902,  x1903,  x1904,  x1905,  x1906,  x1907,  x1908,  x1909,
+          x1910,  x1911,  x1912,  x1913,  x1914,  x1915,  x1916,  x1917,  x1918,  x1919,  x1920,
+          x1921,  x1922,  x1923,  x1924,  x1925,  x1926,  x1927,  x1928,  x1929,  x1930,  x1931,
+          x1932,  Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
+      Val100Array{
+          x1935, x1936, x1937, x1938, x1939, x1940, x1941, x1942, x1943, x1944, x1945, x1946, x1947,
+          x1948, x1949, x1950, x1951, x1952, x1953, x1954, x1955, x1956, x1957, x1958, x1959, x1960,
+          x1961, x1962, x1963, x1964, x1965, x1966, x1967, x1968, x1969, x1970, x1971, x1972, x1973,
+          x1974, x1975, x1976, x1977, x1978, x1979, x1980, x1981, x1982, x1983, x1984, x1985, x1986,
+          x1987, x1988, x1989, x1990, x1991, x1992, x1993, x1994, x1995, x1996, x1997, x1998, x1999,
+          x2000, x2001, x2002, x2003, x2004, x2005, x2006, x2007, x2008, x2009, x2010, x2011, x2012,
+          x2013, x2014, x2015, x2016, x2017, x2018, x2019, x2020, x2021, x2022, x2023, x2024, x2025,
+          x2026, x2027, x2028, x2029, x2030, x2031, x2032, x2033, x2034},
       x2035,
       LAYOUT_LOOKUP(layout2, _super));
   return x2036;
 }
-OneHot_8_Struct exec_OneHot_8_(Val arg0, BoundLayout<OneHot_8_Layout> layout1) {
+__device__ OneHot_8_Struct exec_OneHot_8_(ExecContext& ctx,
+                                          Val arg0,
+                                          BoundLayout<OneHot_8_Layout> layout1) {
   // OneHot(zirgen/circuit/keccak2/one_hot.zir:7)
   NondetRegStruct8Array x2 =
-      map({Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
+      map(Val8Array{Val(0), Val(1), Val(2), Val(3), Val(4), Val(5), Val(6), Val(7)},
           LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val8Array::value_type x3,
-                            BoundLayout<NondetRegLayout8LayoutArray::value_type> x4) {
-            NondetRegStruct x5 = exec_NondetBitReg(isz((x3 - arg0)), x4);
+          ([&](Val8Array::value_type x3, BoundLayout<NondetRegLayout8LayoutArray::value_type> x4) {
+            NondetRegStruct x5 = exec_NondetBitReg(ctx, isz((x3 - arg0)), x4);
             return x5;
           }));
   // OneHot(zirgen/circuit/keccak2/one_hot.zir:9)
@@ -3461,11 +3522,12 @@ OneHot_8_Struct exec_OneHot_8_(Val arg0, BoundLayout<OneHot_8_Layout> layout1) {
   EQZ((x17 - arg0), "OneHot(zirgen/circuit/keccak2/one_hot.zir:11)");
   return OneHot_8_Struct{._super = x2};
 }
-DoShaStepStruct exec_DoShaStep(ShaStateStruct arg0,
-                               Val2Array arg1,
-                               Val arg2,
-                               Val2Array arg3,
-                               BoundLayout<DoShaStepLayout> layout4) {
+__device__ DoShaStepStruct exec_DoShaStep(ExecContext& ctx,
+                                          ShaStateStruct arg0,
+                                          Val2Array arg1,
+                                          Val arg2,
+                                          Val2Array arg3,
+                                          BoundLayout<DoShaStepLayout> layout4) {
   // DoShaStep(zirgen/circuit/keccak2/top.zir:136)
   Val32Array16Array x5 = arg0.w;
   // BitXor(zirgen/circuit/keccak2/bits.zir:32)
@@ -3831,10 +3893,10 @@ DoShaStepStruct exec_DoShaStep(ShaStateStruct arg0,
   Val x349 = (((x307 + x301) + x302) + ((x347 + x341) + x342));
   // DoShaStep(zirgen/circuit/keccak2/top.zir:138)
   Val x350 = (Val(1) - arg2);
-  Val2Array x351 = {((arg2 * arg3[0]) + (x350 * (x243 + (x259 + x348)))),
-                    ((arg2 * arg3[1]) + (x350 * (x251 + (x267 + x349))))};
+  Val2Array x351 = Val2Array{((arg2 * arg3[0]) + (x350 * (x243 + (x259 + x348)))),
+                             ((arg2 * arg3[1]) + (x350 * (x251 + (x267 + x349))))};
   // DoShaStep(zirgen/circuit/keccak2/top.zir:140)
-  UnpackReg_32__16_Struct x352 = exec_CarryAndExpand(x351, LAYOUT_LOOKUP(layout4, w));
+  UnpackReg_32__16_Struct x352 = exec_CarryAndExpand(ctx, x351, LAYOUT_LOOKUP(layout4, w));
   // DoShaStep(zirgen/circuit/keccak2/top.zir:136)
   Val32Array4Array x353 = arg0.a;
   Val32Array4Array x354 = arg0.e;
@@ -4755,12 +4817,15 @@ DoShaStepStruct exec_DoShaStep(ShaStateStruct arg0,
   Val x1088 = (((x1087 + x1077) + x1078) + x1079);
   Val x1089 = (((x1088 + x1080) + x1081) + x1082);
   // DoShaStep(zirgen/circuit/keccak2/top.zir:142)
-  UnpackReg_32__16_Struct x1090 = exec_CarryAndExpand(
-      {(x792 + (x1025 + x1041)), (x793 + (x1033 + x1049))}, LAYOUT_LOOKUP(layout4, a));
+  UnpackReg_32__16_Struct x1090 =
+      exec_CarryAndExpand(ctx,
+                          Val2Array{(x792 + (x1025 + x1041)), (x793 + (x1033 + x1049))},
+                          LAYOUT_LOOKUP(layout4, a));
   // DoShaStep(zirgen/circuit/keccak2/top.zir:143)
-  UnpackReg_32__16_Struct x1091 =
-      exec_CarryAndExpand({(x792 + ((x1069 + x1063) + x1064)), (x793 + ((x1089 + x1083) + x1084))},
-                          LAYOUT_LOOKUP(layout4, e));
+  UnpackReg_32__16_Struct x1091 = exec_CarryAndExpand(
+      ctx,
+      Val2Array{(x792 + ((x1069 + x1063) + x1064)), (x793 + ((x1089 + x1083) + x1084))},
+      LAYOUT_LOOKUP(layout4, e));
   // DoShaStep(zirgen/circuit/keccak2/top.zir:142)
   UnpackReg_32__16__SuperStruct32Array x1092 = x1090._super;
   Val x1093 = x1092[0]._super._super;
@@ -4832,46 +4897,50 @@ DoShaStepStruct exec_DoShaStep(ShaStateStruct arg0,
   // ShaState(zirgen/circuit/keccak2/top.zir:130)
   // DoShaStep(zirgen/circuit/keccak2/top.zir:144)
   ShaStateStruct x1158 = ShaStateStruct{
-      .a = {{x1093, x1094, x1095, x1096, x1097, x1098, x1099, x1100, x1101, x1102, x1103,
-             x1104, x1105, x1106, x1107, x1108, x1109, x1110, x1111, x1112, x1113, x1114,
-             x1115, x1116, x1117, x1118, x1119, x1120, x1121, x1122, x1123, x1124},
-            x353[0],
-            x353[1],
-            x353[2]},
-      .e = {{x1126, x1127, x1128, x1129, x1130, x1131, x1132, x1133, x1134, x1135, x1136,
-             x1137, x1138, x1139, x1140, x1141, x1142, x1143, x1144, x1145, x1146, x1147,
-             x1148, x1149, x1150, x1151, x1152, x1153, x1154, x1155, x1156, x1157},
-            x354[0],
-            x354[1],
-            x354[2]},
-      .w = {{x356, x357, x358, x359, x360, x361, x362, x363, x364, x365, x366,
-             x367, x368, x369, x370, x371, x372, x373, x374, x375, x376, x377,
-             x378, x379, x380, x381, x382, x383, x384, x385, x386, x387},
-            x5[0],
-            x5[1],
-            x5[2],
-            x5[3],
-            x5[4],
-            x5[5],
-            x5[6],
-            x5[7],
-            x5[8],
-            x5[9],
-            x5[10],
-            x5[11],
-            x5[12],
-            x5[13],
-            x5[14]}};
+      .a = Val32Array4Array{Val32Array{x1093, x1094, x1095, x1096, x1097, x1098, x1099, x1100,
+                                       x1101, x1102, x1103, x1104, x1105, x1106, x1107, x1108,
+                                       x1109, x1110, x1111, x1112, x1113, x1114, x1115, x1116,
+                                       x1117, x1118, x1119, x1120, x1121, x1122, x1123, x1124},
+                            x353[0],
+                            x353[1],
+                            x353[2]},
+      .e = Val32Array4Array{Val32Array{x1126, x1127, x1128, x1129, x1130, x1131, x1132, x1133,
+                                       x1134, x1135, x1136, x1137, x1138, x1139, x1140, x1141,
+                                       x1142, x1143, x1144, x1145, x1146, x1147, x1148, x1149,
+                                       x1150, x1151, x1152, x1153, x1154, x1155, x1156, x1157},
+                            x354[0],
+                            x354[1],
+                            x354[2]},
+      .w = Val32Array16Array{Val32Array{x356, x357, x358, x359, x360, x361, x362, x363,
+                                        x364, x365, x366, x367, x368, x369, x370, x371,
+                                        x372, x373, x374, x375, x376, x377, x378, x379,
+                                        x380, x381, x382, x383, x384, x385, x386, x387},
+                             x5[0],
+                             x5[1],
+                             x5[2],
+                             x5[3],
+                             x5[4],
+                             x5[5],
+                             x5[6],
+                             x5[7],
+                             x5[8],
+                             x5[9],
+                             x5[10],
+                             x5[11],
+                             x5[12],
+                             x5[13],
+                             x5[14]}};
   return DoShaStepStruct{.w = x352, .a = x1090, .e = x1091, .newState = x1158};
 }
-OneHot_4_Struct exec_OneHot_4_(Val arg0, BoundLayout<OneHot_4_Layout> layout1) {
+__device__ OneHot_4_Struct exec_OneHot_4_(ExecContext& ctx,
+                                          Val arg0,
+                                          BoundLayout<OneHot_4_Layout> layout1) {
   // OneHot(zirgen/circuit/keccak2/one_hot.zir:7)
   NondetRegStruct4Array x2 =
-      map({Val(0), Val(1), Val(2), Val(3)},
+      map(Val4Array{Val(0), Val(1), Val(2), Val(3)},
           LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val4Array::value_type x3,
-                            BoundLayout<NondetRegLayout4LayoutArray::value_type> x4) {
-            NondetRegStruct x5 = exec_NondetBitReg(isz((x3 - arg0)), x4);
+          ([&](Val4Array::value_type x3, BoundLayout<NondetRegLayout4LayoutArray::value_type> x4) {
+            NondetRegStruct x5 = exec_NondetBitReg(ctx, isz((x3 - arg0)), x4);
             return x5;
           }));
   // OneHot(zirgen/circuit/keccak2/one_hot.zir:9)
@@ -4886,10 +4955,13 @@ OneHot_4_Struct exec_OneHot_4_(Val arg0, BoundLayout<OneHot_4_Layout> layout1) {
   EQZ(x11, "OneHot(zirgen/circuit/keccak2/one_hot.zir:11)");
   return OneHot_4_Struct{._super = x2};
 }
-LoadWinStruct
-exec_LoadWin(Val100Array arg0, OneHot_8_Struct arg1, Val arg2, BoundLayout<LoadWinLayout> layout3) {
+__device__ LoadWinStruct exec_LoadWin(ExecContext& ctx,
+                                      Val100Array arg0,
+                                      OneHot_8_Struct arg1,
+                                      Val arg2,
+                                      BoundLayout<LoadWinLayout> layout3) {
   // LoadWin(zirgen/circuit/keccak2/top.zir:166)
-  OneHot_4_Struct x4 = exec_OneHot_4_(arg2, LAYOUT_LOOKUP(layout3, blockSelect));
+  OneHot_4_Struct x4 = exec_OneHot_4_(ctx, arg2, LAYOUT_LOOKUP(layout3, blockSelect));
   // LoadWin(zirgen/circuit/keccak2/top.zir:165)
   NondetRegStruct8Array x5 = arg1._super;
   // LoadWin(zirgen/circuit/keccak2/top.zir:167)
@@ -4899,47 +4971,53 @@ exec_LoadWin(Val100Array arg0, OneHot_8_Struct arg1, Val arg2, BoundLayout<LoadW
   // LoadWin(zirgen/circuit/keccak2/top.zir:166)
   NondetRegStruct4Array x9 = x4._super;
   // LoadWin(zirgen/circuit/keccak2/top.zir:173)
-  Val2Array x10 = {Val(0), Val(0)};
+  Val2Array x10 = Val2Array{Val(0), Val(0)};
   // LoadWin(zirgen/circuit/keccak2/top.zir:176)
-  Val2Array8Array x11 = {x10, x10, x10, x10, x10, x10, x10, x10};
+  Val2Array8Array x11 = Val2Array8Array{x10, x10, x10, x10, x10, x10, x10, x10};
   Val2Array8Array x12;
   if (to_size_t(x5[0]._super)) {
     Val2Array8Array x13;
     if (to_size_t(x9[0]._super)) {
       // LoadWin(zirgen/circuit/keccak2/top.zir:169)
-      Val2Array8Array x14 = {{arg0[0], arg0[1]},
-                             {arg0[2], arg0[3]},
-                             {arg0[4], arg0[5]},
-                             {arg0[6], arg0[7]},
-                             {arg0[8], arg0[9]},
-                             {arg0[10], arg0[11]},
-                             {arg0[12], arg0[13]},
-                             {arg0[14], arg0[15]}};
+      Val2Array8Array x14 = Val2Array8Array{Val2Array{arg0[0], arg0[1]},
+                                            Val2Array{arg0[2], arg0[3]},
+                                            Val2Array{arg0[4], arg0[5]},
+                                            Val2Array{arg0[6], arg0[7]},
+                                            Val2Array{arg0[8], arg0[9]},
+                                            Val2Array{arg0[10], arg0[11]},
+                                            Val2Array{arg0[12], arg0[13]},
+                                            Val2Array{arg0[14], arg0[15]}};
       x13 = x14;
     } else if (to_size_t(x9[1]._super)) {
-      Val2Array8Array x15 = {{arg0[32], arg0[33]},
-                             {arg0[34], arg0[35]},
-                             {arg0[36], arg0[37]},
-                             {arg0[38], arg0[39]},
-                             {arg0[40], arg0[41]},
-                             {arg0[42], arg0[43]},
-                             {arg0[44], arg0[45]},
-                             {arg0[46], arg0[47]}};
+      Val2Array8Array x15 = Val2Array8Array{Val2Array{arg0[32], arg0[33]},
+                                            Val2Array{arg0[34], arg0[35]},
+                                            Val2Array{arg0[36], arg0[37]},
+                                            Val2Array{arg0[38], arg0[39]},
+                                            Val2Array{arg0[40], arg0[41]},
+                                            Val2Array{arg0[42], arg0[43]},
+                                            Val2Array{arg0[44], arg0[45]},
+                                            Val2Array{arg0[46], arg0[47]}};
       x13 = x15;
     } else if (to_size_t(x9[2]._super)) {
-      Val2Array8Array x16 = {{arg0[64], arg0[65]},
-                             {arg0[66], arg0[67]},
-                             {arg0[68], arg0[69]},
-                             {arg0[70], arg0[71]},
-                             {arg0[72], arg0[73]},
-                             {arg0[74], arg0[75]},
-                             {arg0[76], arg0[77]},
-                             {arg0[78], arg0[79]}};
+      Val2Array8Array x16 = Val2Array8Array{Val2Array{arg0[64], arg0[65]},
+                                            Val2Array{arg0[66], arg0[67]},
+                                            Val2Array{arg0[68], arg0[69]},
+                                            Val2Array{arg0[70], arg0[71]},
+                                            Val2Array{arg0[72], arg0[73]},
+                                            Val2Array{arg0[74], arg0[75]},
+                                            Val2Array{arg0[76], arg0[77]},
+                                            Val2Array{arg0[78], arg0[79]}};
       x13 = x16;
     } else if (to_size_t(x9[3]._super)) {
       // LoadWin(zirgen/circuit/keccak2/top.zir:173)
-      Val2Array8Array x17 = {
-          {arg0[96], arg0[97]}, {arg0[98], arg0[99]}, x10, x10, x10, x10, x10, x10};
+      Val2Array8Array x17 = Val2Array8Array{Val2Array{arg0[96], arg0[97]},
+                                            Val2Array{arg0[98], arg0[99]},
+                                            x10,
+                                            x10,
+                                            x10,
+                                            x10,
+                                            x10,
+                                            x10};
       x13 = x17;
     } else {
       assert(0 && "Reached unreachable mux arm");
@@ -4949,34 +5027,34 @@ exec_LoadWin(Val100Array arg0, OneHot_8_Struct arg1, Val arg2, BoundLayout<LoadW
     Val2Array8Array x18;
     if (to_size_t(x9[0]._super)) {
       // LoadWin(zirgen/circuit/keccak2/top.zir:176)
-      Val2Array8Array x19 = {{arg0[16], arg0[17]},
-                             {arg0[18], arg0[19]},
-                             {arg0[20], arg0[21]},
-                             {arg0[22], arg0[23]},
-                             {arg0[24], arg0[25]},
-                             {arg0[26], arg0[27]},
-                             {arg0[28], arg0[29]},
-                             {arg0[30], arg0[31]}};
+      Val2Array8Array x19 = Val2Array8Array{Val2Array{arg0[16], arg0[17]},
+                                            Val2Array{arg0[18], arg0[19]},
+                                            Val2Array{arg0[20], arg0[21]},
+                                            Val2Array{arg0[22], arg0[23]},
+                                            Val2Array{arg0[24], arg0[25]},
+                                            Val2Array{arg0[26], arg0[27]},
+                                            Val2Array{arg0[28], arg0[29]},
+                                            Val2Array{arg0[30], arg0[31]}};
       x18 = x19;
     } else if (to_size_t(x9[1]._super)) {
-      Val2Array8Array x20 = {{arg0[48], arg0[49]},
-                             {arg0[50], arg0[51]},
-                             {arg0[52], arg0[53]},
-                             {arg0[54], arg0[55]},
-                             {arg0[56], arg0[57]},
-                             {arg0[58], arg0[59]},
-                             {arg0[60], arg0[61]},
-                             {arg0[62], arg0[63]}};
+      Val2Array8Array x20 = Val2Array8Array{Val2Array{arg0[48], arg0[49]},
+                                            Val2Array{arg0[50], arg0[51]},
+                                            Val2Array{arg0[52], arg0[53]},
+                                            Val2Array{arg0[54], arg0[55]},
+                                            Val2Array{arg0[56], arg0[57]},
+                                            Val2Array{arg0[58], arg0[59]},
+                                            Val2Array{arg0[60], arg0[61]},
+                                            Val2Array{arg0[62], arg0[63]}};
       x18 = x20;
     } else if (to_size_t(x9[2]._super)) {
-      Val2Array8Array x21 = {{arg0[80], arg0[81]},
-                             {arg0[82], arg0[83]},
-                             {arg0[84], arg0[85]},
-                             {arg0[86], arg0[87]},
-                             {arg0[88], arg0[89]},
-                             {arg0[90], arg0[91]},
-                             {arg0[92], arg0[93]},
-                             {arg0[94], arg0[95]}};
+      Val2Array8Array x21 = Val2Array8Array{Val2Array{arg0[80], arg0[81]},
+                                            Val2Array{arg0[82], arg0[83]},
+                                            Val2Array{arg0[84], arg0[85]},
+                                            Val2Array{arg0[86], arg0[87]},
+                                            Val2Array{arg0[88], arg0[89]},
+                                            Val2Array{arg0[90], arg0[91]},
+                                            Val2Array{arg0[92], arg0[93]},
+                                            Val2Array{arg0[94], arg0[95]}};
       x18 = x21;
     } else if (to_size_t(x9[3]._super)) {
       x18 = x11;
@@ -4991,14 +5069,15 @@ exec_LoadWin(Val100Array arg0, OneHot_8_Struct arg1, Val arg2, BoundLayout<LoadW
   }
   return LoadWinStruct{._super = x12};
 }
-TopStateStruct exec_ShaCycle(TopStateStruct arg0,
-                             TopStateStruct arg1,
-                             Val arg2,
-                             Val arg3,
-                             BoundLayout<ShaCycleLayout> layout4) {
+__device__ TopStateStruct exec_ShaCycle(ExecContext& ctx,
+                                        TopStateStruct arg0,
+                                        TopStateStruct arg1,
+                                        Val arg2,
+                                        Val arg3,
+                                        BoundLayout<ShaCycleLayout> layout4) {
   // Log(<preamble>:22)
   // ShaCycle(zirgen/circuit/keccak2/top.zir:187)
-  INVOKE_EXTERN(ctx, log, "ShaCycle", {arg3, arg2});
+  INVOKE_EXTERN(ctx, log, "ShaCycle", std::initializer_list<Val>{arg3, arg2});
   // LoadShaState(zirgen/circuit/keccak2/top.zir:147)
   // ShaCycle(zirgen/circuit/keccak2/top.zir:189)
   TopStateBitsStruct800Array x5 = arg0.bits;
@@ -5777,77 +5856,84 @@ TopStateStruct exec_ShaCycle(TopStateStruct arg0,
   // ShaState(zirgen/circuit/keccak2/top.zir:130)
   // LoadShaState(zirgen/circuit/keccak2/top.zir:157)
   ShaStateStruct x775 = ShaStateStruct{
-      .a = {{x7,  x8,  x9,  x10, x11, x12, x13, x14, x15, x16, x17, x18, x19, x20, x21, x22,
-             x23, x24, x25, x26, x27, x28, x29, x30, x31, x32, x33, x34, x35, x36, x37, x38},
-            {x39, x40, x41, x42, x43, x44, x45, x46, x47, x48, x49, x50, x51, x52, x53, x54,
-             x55, x56, x57, x58, x59, x60, x61, x62, x63, x64, x65, x66, x67, x68, x69, x70},
-            {x71, x72, x73, x74, x75, x76, x77, x78, x79, x80, x81, x82, x83, x84,  x85,  x86,
-             x87, x88, x89, x90, x91, x92, x93, x94, x95, x96, x97, x98, x99, x100, x101, x102},
-            {x103, x104, x105, x106, x107, x108, x109, x110, x111, x112, x113,
-             x114, x115, x116, x117, x118, x119, x120, x121, x122, x123, x124,
-             x125, x126, x127, x128, x129, x130, x131, x132, x133, x134}},
-      .e = {{x135, x136, x137, x138, x139, x140, x141, x142, x143, x144, x145,
-             x146, x147, x148, x149, x150, x151, x152, x153, x154, x155, x156,
-             x157, x158, x159, x160, x161, x162, x163, x164, x165, x166},
-            {x167, x168, x169, x170, x171, x172, x173, x174, x175, x176, x177,
-             x178, x179, x180, x181, x182, x183, x184, x185, x186, x187, x188,
-             x189, x190, x191, x192, x193, x194, x195, x196, x197, x198},
-            {x199, x200, x201, x202, x203, x204, x205, x206, x207, x208, x209,
-             x210, x211, x212, x213, x214, x215, x216, x217, x218, x219, x220,
-             x221, x222, x223, x224, x225, x226, x227, x228, x229, x230},
-            {x231, x232, x233, x234, x235, x236, x237, x238, x239, x240, x241,
-             x242, x243, x244, x245, x246, x247, x248, x249, x250, x251, x252,
-             x253, x254, x255, x256, x257, x258, x259, x260, x261, x262}},
-      .w = {{x263, x264, x265, x266, x267, x268, x269, x270, x271, x272, x273,
-             x274, x275, x276, x277, x278, x279, x280, x281, x282, x283, x284,
-             x285, x286, x287, x288, x289, x290, x291, x292, x293, x294},
-            {x295, x296, x297, x298, x299, x300, x301, x302, x303, x304, x305,
-             x306, x307, x308, x309, x310, x311, x312, x313, x314, x315, x316,
-             x317, x318, x319, x320, x321, x322, x323, x324, x325, x326},
-            {x327, x328, x329, x330, x331, x332, x333, x334, x335, x336, x337,
-             x338, x339, x340, x341, x342, x343, x344, x345, x346, x347, x348,
-             x349, x350, x351, x352, x353, x354, x355, x356, x357, x358},
-            {x359, x360, x361, x362, x363, x364, x365, x366, x367, x368, x369,
-             x370, x371, x372, x373, x374, x375, x376, x377, x378, x379, x380,
-             x381, x382, x383, x384, x385, x386, x387, x388, x389, x390},
-            {x391, x392, x393, x394, x395, x396, x397, x398, x399, x400, x401,
-             x402, x403, x404, x405, x406, x407, x408, x409, x410, x411, x412,
-             x413, x414, x415, x416, x417, x418, x419, x420, x421, x422},
-            {x423, x424, x425, x426, x427, x428, x429, x430, x431, x432, x433,
-             x434, x435, x436, x437, x438, x439, x440, x441, x442, x443, x444,
-             x445, x446, x447, x448, x449, x450, x451, x452, x453, x454},
-            {x455, x456, x457, x458, x459, x460, x461, x462, x463, x464, x465,
-             x466, x467, x468, x469, x470, x471, x472, x473, x474, x475, x476,
-             x477, x478, x479, x480, x481, x482, x483, x484, x485, x486},
-            {x487, x488, x489, x490, x491, x492, x493, x494, x495, x496, x497,
-             x498, x499, x500, x501, x502, x503, x504, x505, x506, x507, x508,
-             x509, x510, x511, x512, x513, x514, x515, x516, x517, x518},
-            {x519, x520, x521, x522, x523, x524, x525, x526, x527, x528, x529,
-             x530, x531, x532, x533, x534, x535, x536, x537, x538, x539, x540,
-             x541, x542, x543, x544, x545, x546, x547, x548, x549, x550},
-            {x551, x552, x553, x554, x555, x556, x557, x558, x559, x560, x561,
-             x562, x563, x564, x565, x566, x567, x568, x569, x570, x571, x572,
-             x573, x574, x575, x576, x577, x578, x579, x580, x581, x582},
-            {x583, x584, x585, x586, x587, x588, x589, x590, x591, x592, x593,
-             x594, x595, x596, x597, x598, x599, x600, x601, x602, x603, x604,
-             x605, x606, x607, x608, x609, x610, x611, x612, x613, x614},
-            {x615, x616, x617, x618, x619, x620, x621, x622, x623, x624, x625,
-             x626, x627, x628, x629, x630, x631, x632, x633, x634, x635, x636,
-             x637, x638, x639, x640, x641, x642, x643, x644, x645, x646},
-            {x647, x648, x649, x650, x651, x652, x653, x654, x655, x656, x657,
-             x658, x659, x660, x661, x662, x663, x664, x665, x666, x667, x668,
-             x669, x670, x671, x672, x673, x674, x675, x676, x677, x678},
-            {x679, x680, x681, x682, x683, x684, x685, x686, x687, x688, x689,
-             x690, x691, x692, x693, x694, x695, x696, x697, x698, x699, x700,
-             x701, x702, x703, x704, x705, x706, x707, x708, x709, x710},
-            {x711, x712, x713, x714, x715, x716, x717, x718, x719, x720, x721,
-             x722, x723, x724, x725, x726, x727, x728, x729, x730, x731, x732,
-             x733, x734, x735, x736, x737, x738, x739, x740, x741, x742},
-            {x743, x744, x745, x746, x747, x748, x749, x750, x751, x752, x753,
-             x754, x755, x756, x757, x758, x759, x760, x761, x762, x763, x764,
-             x765, x766, x767, x768, x769, x770, x771, x772, x773, x774}}};
+      .a = Val32Array4Array{Val32Array{x7,  x8,  x9,  x10, x11, x12, x13, x14, x15, x16, x17,
+                                       x18, x19, x20, x21, x22, x23, x24, x25, x26, x27, x28,
+                                       x29, x30, x31, x32, x33, x34, x35, x36, x37, x38},
+                            Val32Array{x39, x40, x41, x42, x43, x44, x45, x46, x47, x48, x49,
+                                       x50, x51, x52, x53, x54, x55, x56, x57, x58, x59, x60,
+                                       x61, x62, x63, x64, x65, x66, x67, x68, x69, x70},
+                            Val32Array{x71, x72, x73, x74, x75, x76, x77, x78,  x79,  x80, x81,
+                                       x82, x83, x84, x85, x86, x87, x88, x89,  x90,  x91, x92,
+                                       x93, x94, x95, x96, x97, x98, x99, x100, x101, x102},
+                            Val32Array{x103, x104, x105, x106, x107, x108, x109, x110,
+                                       x111, x112, x113, x114, x115, x116, x117, x118,
+                                       x119, x120, x121, x122, x123, x124, x125, x126,
+                                       x127, x128, x129, x130, x131, x132, x133, x134}},
+      .e =
+          Val32Array4Array{
+              Val32Array{x135, x136, x137, x138, x139, x140, x141, x142, x143, x144, x145,
+                         x146, x147, x148, x149, x150, x151, x152, x153, x154, x155, x156,
+                         x157, x158, x159, x160, x161, x162, x163, x164, x165, x166},
+              Val32Array{x167, x168, x169, x170, x171, x172, x173, x174, x175, x176, x177,
+                         x178, x179, x180, x181, x182, x183, x184, x185, x186, x187, x188,
+                         x189, x190, x191, x192, x193, x194, x195, x196, x197, x198},
+              Val32Array{x199, x200, x201, x202, x203, x204, x205, x206, x207, x208, x209,
+                         x210, x211, x212, x213, x214, x215, x216, x217, x218, x219, x220,
+                         x221, x222, x223, x224, x225, x226, x227, x228, x229, x230},
+              Val32Array{x231, x232, x233, x234, x235, x236, x237, x238, x239, x240, x241,
+                         x242, x243, x244, x245, x246, x247, x248, x249, x250, x251, x252,
+                         x253, x254, x255, x256, x257, x258, x259, x260, x261, x262}},
+      .w = Val32Array16Array{
+          Val32Array{x263, x264, x265, x266, x267, x268, x269, x270, x271, x272, x273,
+                     x274, x275, x276, x277, x278, x279, x280, x281, x282, x283, x284,
+                     x285, x286, x287, x288, x289, x290, x291, x292, x293, x294},
+          Val32Array{x295, x296, x297, x298, x299, x300, x301, x302, x303, x304, x305,
+                     x306, x307, x308, x309, x310, x311, x312, x313, x314, x315, x316,
+                     x317, x318, x319, x320, x321, x322, x323, x324, x325, x326},
+          Val32Array{x327, x328, x329, x330, x331, x332, x333, x334, x335, x336, x337,
+                     x338, x339, x340, x341, x342, x343, x344, x345, x346, x347, x348,
+                     x349, x350, x351, x352, x353, x354, x355, x356, x357, x358},
+          Val32Array{x359, x360, x361, x362, x363, x364, x365, x366, x367, x368, x369,
+                     x370, x371, x372, x373, x374, x375, x376, x377, x378, x379, x380,
+                     x381, x382, x383, x384, x385, x386, x387, x388, x389, x390},
+          Val32Array{x391, x392, x393, x394, x395, x396, x397, x398, x399, x400, x401,
+                     x402, x403, x404, x405, x406, x407, x408, x409, x410, x411, x412,
+                     x413, x414, x415, x416, x417, x418, x419, x420, x421, x422},
+          Val32Array{x423, x424, x425, x426, x427, x428, x429, x430, x431, x432, x433,
+                     x434, x435, x436, x437, x438, x439, x440, x441, x442, x443, x444,
+                     x445, x446, x447, x448, x449, x450, x451, x452, x453, x454},
+          Val32Array{x455, x456, x457, x458, x459, x460, x461, x462, x463, x464, x465,
+                     x466, x467, x468, x469, x470, x471, x472, x473, x474, x475, x476,
+                     x477, x478, x479, x480, x481, x482, x483, x484, x485, x486},
+          Val32Array{x487, x488, x489, x490, x491, x492, x493, x494, x495, x496, x497,
+                     x498, x499, x500, x501, x502, x503, x504, x505, x506, x507, x508,
+                     x509, x510, x511, x512, x513, x514, x515, x516, x517, x518},
+          Val32Array{x519, x520, x521, x522, x523, x524, x525, x526, x527, x528, x529,
+                     x530, x531, x532, x533, x534, x535, x536, x537, x538, x539, x540,
+                     x541, x542, x543, x544, x545, x546, x547, x548, x549, x550},
+          Val32Array{x551, x552, x553, x554, x555, x556, x557, x558, x559, x560, x561,
+                     x562, x563, x564, x565, x566, x567, x568, x569, x570, x571, x572,
+                     x573, x574, x575, x576, x577, x578, x579, x580, x581, x582},
+          Val32Array{x583, x584, x585, x586, x587, x588, x589, x590, x591, x592, x593,
+                     x594, x595, x596, x597, x598, x599, x600, x601, x602, x603, x604,
+                     x605, x606, x607, x608, x609, x610, x611, x612, x613, x614},
+          Val32Array{x615, x616, x617, x618, x619, x620, x621, x622, x623, x624, x625,
+                     x626, x627, x628, x629, x630, x631, x632, x633, x634, x635, x636,
+                     x637, x638, x639, x640, x641, x642, x643, x644, x645, x646},
+          Val32Array{x647, x648, x649, x650, x651, x652, x653, x654, x655, x656, x657,
+                     x658, x659, x660, x661, x662, x663, x664, x665, x666, x667, x668,
+                     x669, x670, x671, x672, x673, x674, x675, x676, x677, x678},
+          Val32Array{x679, x680, x681, x682, x683, x684, x685, x686, x687, x688, x689,
+                     x690, x691, x692, x693, x694, x695, x696, x697, x698, x699, x700,
+                     x701, x702, x703, x704, x705, x706, x707, x708, x709, x710},
+          Val32Array{x711, x712, x713, x714, x715, x716, x717, x718, x719, x720, x721,
+                     x722, x723, x724, x725, x726, x727, x728, x729, x730, x731, x732,
+                     x733, x734, x735, x736, x737, x738, x739, x740, x741, x742},
+          Val32Array{x743, x744, x745, x746, x747, x748, x749, x750, x751, x752, x753,
+                     x754, x755, x756, x757, x758, x759, x760, x761, x762, x763, x764,
+                     x765, x766, x767, x768, x769, x770, x771, x772, x773, x774}}};
   // ShaCycle(zirgen/circuit/keccak2/top.zir:190)
-  OneHot_8_Struct x776 = exec_OneHot_8_(arg2, LAYOUT_LOOKUP(layout4, oneHot));
+  OneHot_8_Struct x776 = exec_OneHot_8_(ctx, arg2, LAYOUT_LOOKUP(layout4, oneHot));
   NondetRegStruct8Array x777 = x776._super;
   Val x778 = x777[0]._super;
   Val x779 = x777[1]._super;
@@ -5878,7 +5964,7 @@ TopStateStruct exec_ShaCycle(TopStateStruct arg0,
     assert(0 && "Reached unreachable mux arm");
   }
   // ShaCycle(zirgen/circuit/keccak2/top.zir:191)
-  NondetRegStruct x787 = exec_Reg(x786, LAYOUT_LOOKUP(layout4, isLoad));
+  NondetRegStruct x787 = exec_Reg(ctx, x786, LAYOUT_LOOKUP(layout4, isLoad));
   // GetK8(zirgen/circuit/keccak2/top.zir:125)
   // ShaCycle(zirgen/circuit/keccak2/top.zir:192)
   Val x788 = (((x778 * Val(12184)) + (x779 * Val(43672))) + (x780 * Val(27073)));
@@ -6015,66 +6101,67 @@ TopStateStruct exec_ShaCycle(TopStateStruct arg0,
   Val x918 = x820[97]._super._super;
   Val x919 = x820[98]._super._super;
   Val x920 = x820[99]._super._super;
-  Val100Array x921 = {x821, x822, x823, x824, x825, x826, x827, x828, x829, x830, x831, x832, x833,
-                      x834, x835, x836, x837, x838, x839, x840, x841, x842, x843, x844, x845, x846,
-                      x847, x848, x849, x850, x851, x852, x853, x854, x855, x856, x857, x858, x859,
-                      x860, x861, x862, x863, x864, x865, x866, x867, x868, x869, x870, x871, x872,
-                      x873, x874, x875, x876, x877, x878, x879, x880, x881, x882, x883, x884, x885,
-                      x886, x887, x888, x889, x890, x891, x892, x893, x894, x895, x896, x897, x898,
-                      x899, x900, x901, x902, x903, x904, x905, x906, x907, x908, x909, x910, x911,
-                      x912, x913, x914, x915, x916, x917, x918, x919, x920};
+  Val100Array x921 = Val100Array{
+      x821, x822, x823, x824, x825, x826, x827, x828, x829, x830, x831, x832, x833, x834, x835,
+      x836, x837, x838, x839, x840, x841, x842, x843, x844, x845, x846, x847, x848, x849, x850,
+      x851, x852, x853, x854, x855, x856, x857, x858, x859, x860, x861, x862, x863, x864, x865,
+      x866, x867, x868, x869, x870, x871, x872, x873, x874, x875, x876, x877, x878, x879, x880,
+      x881, x882, x883, x884, x885, x886, x887, x888, x889, x890, x891, x892, x893, x894, x895,
+      x896, x897, x898, x899, x900, x901, x902, x903, x904, x905, x906, x907, x908, x909, x910,
+      x911, x912, x913, x914, x915, x916, x917, x918, x919, x920};
   // ShaCycle(zirgen/circuit/keccak2/top.zir:193)
-  LoadWinStruct x922 = exec_LoadWin(x921, x776, arg3, LAYOUT_LOOKUP(layout4, win));
+  LoadWinStruct x922 = exec_LoadWin(ctx, x921, x776, arg3, LAYOUT_LOOKUP(layout4, win));
   Val2Array8Array x923 = x922._super;
   // ShaCycle(zirgen/circuit/keccak2/top.zir:192)
-  Val2Array x924 = {((x789 + (x784 * Val(49430))) + (x785 * Val(33518))),
-                    ((x791 + (x784 * Val(6564))) + (x785 * Val(29839)))};
+  Val2Array x924 = Val2Array{((x789 + (x784 * Val(49430))) + (x785 * Val(33518))),
+                             ((x791 + (x784 * Val(6564))) + (x785 * Val(29839)))};
   // ShaCycle(zirgen/circuit/keccak2/top.zir:191)
   Val x925 = x787._super;
   // ShaCycle(zirgen/circuit/keccak2/top.zir:194)
-  DoShaStepStruct x926 = exec_DoShaStep(x775, x924, x925, x923[0], LAYOUT_LOOKUP(layout4, step0));
+  DoShaStepStruct x926 =
+      exec_DoShaStep(ctx, x775, x924, x925, x923[0], LAYOUT_LOOKUP(layout4, step0));
   // ShaCycle(zirgen/circuit/keccak2/top.zir:192)
-  Val2Array x927 = {((x793 + (x784 * Val(27656))) + (x785 * Val(25455))),
-                    ((x795 + (x784 * Val(7735))) + (x785 * Val(30885)))};
+  Val2Array x927 = Val2Array{((x793 + (x784 * Val(27656))) + (x785 * Val(25455))),
+                             ((x795 + (x784 * Val(7735))) + (x785 * Val(30885)))};
   // ShaCycle(zirgen/circuit/keccak2/top.zir:195)
   DoShaStepStruct x928 =
-      exec_DoShaStep(x926.newState, x927, x925, x923[1], LAYOUT_LOOKUP(layout4, step1));
+      exec_DoShaStep(ctx, x926.newState, x927, x925, x923[1], LAYOUT_LOOKUP(layout4, step1));
   // ShaCycle(zirgen/circuit/keccak2/top.zir:192)
-  Val2Array x929 = {((x797 + (x784 * Val(30540))) + (x785 * Val(30740))),
-                    ((x799 + (x784 * Val(10056))) + (x785 * Val(33992)))};
+  Val2Array x929 = Val2Array{((x797 + (x784 * Val(30540))) + (x785 * Val(30740))),
+                             ((x799 + (x784 * Val(10056))) + (x785 * Val(33992)))};
   // ShaCycle(zirgen/circuit/keccak2/top.zir:196)
   DoShaStepStruct x930 =
-      exec_DoShaStep(x928.newState, x929, x925, x923[2], LAYOUT_LOOKUP(layout4, step2));
+      exec_DoShaStep(ctx, x928.newState, x929, x925, x923[2], LAYOUT_LOOKUP(layout4, step2));
   // ShaCycle(zirgen/circuit/keccak2/top.zir:192)
-  Val2Array x931 = {((x801 + (x784 * Val(48309))) + (x785 * Val(520))),
-                    ((x803 + (x784 * Val(13488))) + (x785 * Val(36039)))};
+  Val2Array x931 = Val2Array{((x801 + (x784 * Val(48309))) + (x785 * Val(520))),
+                             ((x803 + (x784 * Val(13488))) + (x785 * Val(36039)))};
   // ShaCycle(zirgen/circuit/keccak2/top.zir:197)
   DoShaStepStruct x932 =
-      exec_DoShaStep(x930.newState, x931, x925, x923[3], LAYOUT_LOOKUP(layout4, step3));
+      exec_DoShaStep(ctx, x930.newState, x931, x925, x923[3], LAYOUT_LOOKUP(layout4, step3));
   // ShaCycle(zirgen/circuit/keccak2/top.zir:192)
-  Val2Array x933 = {((x805 + (x784 * Val(3251))) + (x785 * Val(65530))),
-                    ((x807 + (x784 * Val(14620))) + (x785 * Val(37054)))};
+  Val2Array x933 = Val2Array{((x805 + (x784 * Val(3251))) + (x785 * Val(65530))),
+                             ((x807 + (x784 * Val(14620))) + (x785 * Val(37054)))};
   // ShaCycle(zirgen/circuit/keccak2/top.zir:198)
   DoShaStepStruct x934 =
-      exec_DoShaStep(x932.newState, x933, x925, x923[4], LAYOUT_LOOKUP(layout4, step4));
+      exec_DoShaStep(ctx, x932.newState, x933, x925, x923[4], LAYOUT_LOOKUP(layout4, step4));
   // ShaCycle(zirgen/circuit/keccak2/top.zir:192)
-  Val2Array x935 = {((x809 + (x784 * Val(43594))) + (x785 * Val(27883))),
-                    ((x811 + (x784 * Val(20184))) + (x785 * Val(42064)))};
+  Val2Array x935 = Val2Array{((x809 + (x784 * Val(43594))) + (x785 * Val(27883))),
+                             ((x811 + (x784 * Val(20184))) + (x785 * Val(42064)))};
   // ShaCycle(zirgen/circuit/keccak2/top.zir:199)
   DoShaStepStruct x936 =
-      exec_DoShaStep(x934.newState, x935, x925, x923[5], LAYOUT_LOOKUP(layout4, step5));
+      exec_DoShaStep(ctx, x934.newState, x935, x925, x923[5], LAYOUT_LOOKUP(layout4, step5));
   // ShaCycle(zirgen/circuit/keccak2/top.zir:192)
-  Val2Array x937 = {((x813 + (x784 * Val(51791))) + (x785 * Val(41975))),
-                    ((x815 + (x784 * Val(23452))) + (x785 * Val(48889)))};
+  Val2Array x937 = Val2Array{((x813 + (x784 * Val(51791))) + (x785 * Val(41975))),
+                             ((x815 + (x784 * Val(23452))) + (x785 * Val(48889)))};
   // ShaCycle(zirgen/circuit/keccak2/top.zir:200)
   DoShaStepStruct x938 =
-      exec_DoShaStep(x936.newState, x937, x925, x923[6], LAYOUT_LOOKUP(layout4, step6));
+      exec_DoShaStep(ctx, x936.newState, x937, x925, x923[6], LAYOUT_LOOKUP(layout4, step6));
   // ShaCycle(zirgen/circuit/keccak2/top.zir:192)
-  Val2Array x939 = {((x817 + (x784 * Val(28659))) + (x785 * Val(30962))),
-                    ((x819 + (x784 * Val(26670))) + (x785 * Val(50801)))};
+  Val2Array x939 = Val2Array{((x817 + (x784 * Val(28659))) + (x785 * Val(30962))),
+                             ((x819 + (x784 * Val(26670))) + (x785 * Val(50801)))};
   // ShaCycle(zirgen/circuit/keccak2/top.zir:201)
   DoShaStepStruct x940 =
-      exec_DoShaStep(x938.newState, x939, x925, x923[7], LAYOUT_LOOKUP(layout4, step7));
+      exec_DoShaStep(ctx, x938.newState, x939, x925, x923[7], LAYOUT_LOOKUP(layout4, step7));
   // ExtractBits(zirgen/circuit/keccak2/top.zir:161)
   // ShaCycle(zirgen/circuit/keccak2/top.zir:206)
   UnpackReg_32__16__SuperStruct32Array x941 = x926.a._super;
@@ -6871,109 +6958,112 @@ TopStateStruct exec_ShaCycle(TopStateStruct arg0,
   Val x1732 = x1700[31]._super._super;
   // ShaCycle(zirgen/circuit/keccak2/top.zir:186)
   NondetRegStruct16Array x1733 = arg0.sflat;
-  Val16Array x1734 = {x1733[0]._super,
-                      x1733[1]._super,
-                      x1733[2]._super,
-                      x1733[3]._super,
-                      x1733[4]._super,
-                      x1733[5]._super,
-                      x1733[6]._super,
-                      x1733[7]._super,
-                      x1733[8]._super,
-                      x1733[9]._super,
-                      x1733[10]._super,
-                      x1733[11]._super,
-                      x1733[12]._super,
-                      x1733[13]._super,
-                      x1733[14]._super,
-                      x1733[15]._super};
+  Val16Array x1734 = Val16Array{x1733[0]._super,
+                                x1733[1]._super,
+                                x1733[2]._super,
+                                x1733[3]._super,
+                                x1733[4]._super,
+                                x1733[5]._super,
+                                x1733[6]._super,
+                                x1733[7]._super,
+                                x1733[8]._super,
+                                x1733[9]._super,
+                                x1733[10]._super,
+                                x1733[11]._super,
+                                x1733[12]._super,
+                                x1733[13]._super,
+                                x1733[14]._super,
+                                x1733[15]._super};
   // ShaCycle(zirgen/circuit/keccak2/top.zir:208)
   TopStateStruct x1735 = exec_TopState(
-      {x942,   x943,   x944,   x945,   x946,   x947,   x948,   x949,   x950,   x951,   x952,
-       x953,   x954,   x955,   x956,   x957,   x958,   x959,   x960,   x961,   x962,   x963,
-       x964,   x965,   x966,   x967,   x968,   x969,   x970,   x971,   x972,   x973,   x975,
-       x976,   x977,   x978,   x979,   x980,   x981,   x982,   x983,   x984,   x985,   x986,
-       x987,   x988,   x989,   x990,   x991,   x992,   x993,   x994,   x995,   x996,   x997,
-       x998,   x999,   x1000,  x1001,  x1002,  x1003,  x1004,  x1005,  x1006,  x1008,  x1009,
-       x1010,  x1011,  x1012,  x1013,  x1014,  x1015,  x1016,  x1017,  x1018,  x1019,  x1020,
-       x1021,  x1022,  x1023,  x1024,  x1025,  x1026,  x1027,  x1028,  x1029,  x1030,  x1031,
-       x1032,  x1033,  x1034,  x1035,  x1036,  x1037,  x1038,  x1039,  x1041,  x1042,  x1043,
-       x1044,  x1045,  x1046,  x1047,  x1048,  x1049,  x1050,  x1051,  x1052,  x1053,  x1054,
-       x1055,  x1056,  x1057,  x1058,  x1059,  x1060,  x1061,  x1062,  x1063,  x1064,  x1065,
-       x1066,  x1067,  x1068,  x1069,  x1070,  x1071,  x1072,  x1074,  x1075,  x1076,  x1077,
-       x1078,  x1079,  x1080,  x1081,  x1082,  x1083,  x1084,  x1085,  x1086,  x1087,  x1088,
-       x1089,  x1090,  x1091,  x1092,  x1093,  x1094,  x1095,  x1096,  x1097,  x1098,  x1099,
-       x1100,  x1101,  x1102,  x1103,  x1104,  x1105,  x1107,  x1108,  x1109,  x1110,  x1111,
-       x1112,  x1113,  x1114,  x1115,  x1116,  x1117,  x1118,  x1119,  x1120,  x1121,  x1122,
-       x1123,  x1124,  x1125,  x1126,  x1127,  x1128,  x1129,  x1130,  x1131,  x1132,  x1133,
-       x1134,  x1135,  x1136,  x1137,  x1138,  x1140,  x1141,  x1142,  x1143,  x1144,  x1145,
-       x1146,  x1147,  x1148,  x1149,  x1150,  x1151,  x1152,  x1153,  x1154,  x1155,  x1156,
-       x1157,  x1158,  x1159,  x1160,  x1161,  x1162,  x1163,  x1164,  x1165,  x1166,  x1167,
-       x1168,  x1169,  x1170,  x1171,  x1173,  x1174,  x1175,  x1176,  x1177,  x1178,  x1179,
-       x1180,  x1181,  x1182,  x1183,  x1184,  x1185,  x1186,  x1187,  x1188,  x1189,  x1190,
-       x1191,  x1192,  x1193,  x1194,  x1195,  x1196,  x1197,  x1198,  x1199,  x1200,  x1201,
-       x1202,  x1203,  x1204,  x1206,  x1207,  x1208,  x1209,  x1210,  x1211,  x1212,  x1213,
-       x1214,  x1215,  x1216,  x1217,  x1218,  x1219,  x1220,  x1221,  x1222,  x1223,  x1224,
-       x1225,  x1226,  x1227,  x1228,  x1229,  x1230,  x1231,  x1232,  x1233,  x1234,  x1235,
-       x1236,  x1237,  x1239,  x1240,  x1241,  x1242,  x1243,  x1244,  x1245,  x1246,  x1247,
-       x1248,  x1249,  x1250,  x1251,  x1252,  x1253,  x1254,  x1255,  x1256,  x1257,  x1258,
-       x1259,  x1260,  x1261,  x1262,  x1263,  x1264,  x1265,  x1266,  x1267,  x1268,  x1269,
-       x1270,  x1272,  x1273,  x1274,  x1275,  x1276,  x1277,  x1278,  x1279,  x1280,  x1281,
-       x1282,  x1283,  x1284,  x1285,  x1286,  x1287,  x1288,  x1289,  x1290,  x1291,  x1292,
-       x1293,  x1294,  x1295,  x1296,  x1297,  x1298,  x1299,  x1300,  x1301,  x1302,  x1303,
-       x1305,  x1306,  x1307,  x1308,  x1309,  x1310,  x1311,  x1312,  x1313,  x1314,  x1315,
-       x1316,  x1317,  x1318,  x1319,  x1320,  x1321,  x1322,  x1323,  x1324,  x1325,  x1326,
-       x1327,  x1328,  x1329,  x1330,  x1331,  x1332,  x1333,  x1334,  x1335,  x1336,  x1338,
-       x1339,  x1340,  x1341,  x1342,  x1343,  x1344,  x1345,  x1346,  x1347,  x1348,  x1349,
-       x1350,  x1351,  x1352,  x1353,  x1354,  x1355,  x1356,  x1357,  x1358,  x1359,  x1360,
-       x1361,  x1362,  x1363,  x1364,  x1365,  x1366,  x1367,  x1368,  x1369,  x1371,  x1372,
-       x1373,  x1374,  x1375,  x1376,  x1377,  x1378,  x1379,  x1380,  x1381,  x1382,  x1383,
-       x1384,  x1385,  x1386,  x1387,  x1388,  x1389,  x1390,  x1391,  x1392,  x1393,  x1394,
-       x1395,  x1396,  x1397,  x1398,  x1399,  x1400,  x1401,  x1402,  x1404,  x1405,  x1406,
-       x1407,  x1408,  x1409,  x1410,  x1411,  x1412,  x1413,  x1414,  x1415,  x1416,  x1417,
-       x1418,  x1419,  x1420,  x1421,  x1422,  x1423,  x1424,  x1425,  x1426,  x1427,  x1428,
-       x1429,  x1430,  x1431,  x1432,  x1433,  x1434,  x1435,  x1437,  x1438,  x1439,  x1440,
-       x1441,  x1442,  x1443,  x1444,  x1445,  x1446,  x1447,  x1448,  x1449,  x1450,  x1451,
-       x1452,  x1453,  x1454,  x1455,  x1456,  x1457,  x1458,  x1459,  x1460,  x1461,  x1462,
-       x1463,  x1464,  x1465,  x1466,  x1467,  x1468,  x1470,  x1471,  x1472,  x1473,  x1474,
-       x1475,  x1476,  x1477,  x1478,  x1479,  x1480,  x1481,  x1482,  x1483,  x1484,  x1485,
-       x1486,  x1487,  x1488,  x1489,  x1490,  x1491,  x1492,  x1493,  x1494,  x1495,  x1496,
-       x1497,  x1498,  x1499,  x1500,  x1501,  x1503,  x1504,  x1505,  x1506,  x1507,  x1508,
-       x1509,  x1510,  x1511,  x1512,  x1513,  x1514,  x1515,  x1516,  x1517,  x1518,  x1519,
-       x1520,  x1521,  x1522,  x1523,  x1524,  x1525,  x1526,  x1527,  x1528,  x1529,  x1530,
-       x1531,  x1532,  x1533,  x1534,  x1536,  x1537,  x1538,  x1539,  x1540,  x1541,  x1542,
-       x1543,  x1544,  x1545,  x1546,  x1547,  x1548,  x1549,  x1550,  x1551,  x1552,  x1553,
-       x1554,  x1555,  x1556,  x1557,  x1558,  x1559,  x1560,  x1561,  x1562,  x1563,  x1564,
-       x1565,  x1566,  x1567,  x1569,  x1570,  x1571,  x1572,  x1573,  x1574,  x1575,  x1576,
-       x1577,  x1578,  x1579,  x1580,  x1581,  x1582,  x1583,  x1584,  x1585,  x1586,  x1587,
-       x1588,  x1589,  x1590,  x1591,  x1592,  x1593,  x1594,  x1595,  x1596,  x1597,  x1598,
-       x1599,  x1600,  x1602,  x1603,  x1604,  x1605,  x1606,  x1607,  x1608,  x1609,  x1610,
-       x1611,  x1612,  x1613,  x1614,  x1615,  x1616,  x1617,  x1618,  x1619,  x1620,  x1621,
-       x1622,  x1623,  x1624,  x1625,  x1626,  x1627,  x1628,  x1629,  x1630,  x1631,  x1632,
-       x1633,  x1635,  x1636,  x1637,  x1638,  x1639,  x1640,  x1641,  x1642,  x1643,  x1644,
-       x1645,  x1646,  x1647,  x1648,  x1649,  x1650,  x1651,  x1652,  x1653,  x1654,  x1655,
-       x1656,  x1657,  x1658,  x1659,  x1660,  x1661,  x1662,  x1663,  x1664,  x1665,  x1666,
-       x1668,  x1669,  x1670,  x1671,  x1672,  x1673,  x1674,  x1675,  x1676,  x1677,  x1678,
-       x1679,  x1680,  x1681,  x1682,  x1683,  x1684,  x1685,  x1686,  x1687,  x1688,  x1689,
-       x1690,  x1691,  x1692,  x1693,  x1694,  x1695,  x1696,  x1697,  x1698,  x1699,  x1701,
-       x1702,  x1703,  x1704,  x1705,  x1706,  x1707,  x1708,  x1709,  x1710,  x1711,  x1712,
-       x1713,  x1714,  x1715,  x1716,  x1717,  x1718,  x1719,  x1720,  x1721,  x1722,  x1723,
-       x1724,  x1725,  x1726,  x1727,  x1728,  x1729,  x1730,  x1731,  x1732,  Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
+      ctx,
+      Val800Array{
+          x942,   x943,   x944,   x945,   x946,   x947,   x948,   x949,   x950,   x951,   x952,
+          x953,   x954,   x955,   x956,   x957,   x958,   x959,   x960,   x961,   x962,   x963,
+          x964,   x965,   x966,   x967,   x968,   x969,   x970,   x971,   x972,   x973,   x975,
+          x976,   x977,   x978,   x979,   x980,   x981,   x982,   x983,   x984,   x985,   x986,
+          x987,   x988,   x989,   x990,   x991,   x992,   x993,   x994,   x995,   x996,   x997,
+          x998,   x999,   x1000,  x1001,  x1002,  x1003,  x1004,  x1005,  x1006,  x1008,  x1009,
+          x1010,  x1011,  x1012,  x1013,  x1014,  x1015,  x1016,  x1017,  x1018,  x1019,  x1020,
+          x1021,  x1022,  x1023,  x1024,  x1025,  x1026,  x1027,  x1028,  x1029,  x1030,  x1031,
+          x1032,  x1033,  x1034,  x1035,  x1036,  x1037,  x1038,  x1039,  x1041,  x1042,  x1043,
+          x1044,  x1045,  x1046,  x1047,  x1048,  x1049,  x1050,  x1051,  x1052,  x1053,  x1054,
+          x1055,  x1056,  x1057,  x1058,  x1059,  x1060,  x1061,  x1062,  x1063,  x1064,  x1065,
+          x1066,  x1067,  x1068,  x1069,  x1070,  x1071,  x1072,  x1074,  x1075,  x1076,  x1077,
+          x1078,  x1079,  x1080,  x1081,  x1082,  x1083,  x1084,  x1085,  x1086,  x1087,  x1088,
+          x1089,  x1090,  x1091,  x1092,  x1093,  x1094,  x1095,  x1096,  x1097,  x1098,  x1099,
+          x1100,  x1101,  x1102,  x1103,  x1104,  x1105,  x1107,  x1108,  x1109,  x1110,  x1111,
+          x1112,  x1113,  x1114,  x1115,  x1116,  x1117,  x1118,  x1119,  x1120,  x1121,  x1122,
+          x1123,  x1124,  x1125,  x1126,  x1127,  x1128,  x1129,  x1130,  x1131,  x1132,  x1133,
+          x1134,  x1135,  x1136,  x1137,  x1138,  x1140,  x1141,  x1142,  x1143,  x1144,  x1145,
+          x1146,  x1147,  x1148,  x1149,  x1150,  x1151,  x1152,  x1153,  x1154,  x1155,  x1156,
+          x1157,  x1158,  x1159,  x1160,  x1161,  x1162,  x1163,  x1164,  x1165,  x1166,  x1167,
+          x1168,  x1169,  x1170,  x1171,  x1173,  x1174,  x1175,  x1176,  x1177,  x1178,  x1179,
+          x1180,  x1181,  x1182,  x1183,  x1184,  x1185,  x1186,  x1187,  x1188,  x1189,  x1190,
+          x1191,  x1192,  x1193,  x1194,  x1195,  x1196,  x1197,  x1198,  x1199,  x1200,  x1201,
+          x1202,  x1203,  x1204,  x1206,  x1207,  x1208,  x1209,  x1210,  x1211,  x1212,  x1213,
+          x1214,  x1215,  x1216,  x1217,  x1218,  x1219,  x1220,  x1221,  x1222,  x1223,  x1224,
+          x1225,  x1226,  x1227,  x1228,  x1229,  x1230,  x1231,  x1232,  x1233,  x1234,  x1235,
+          x1236,  x1237,  x1239,  x1240,  x1241,  x1242,  x1243,  x1244,  x1245,  x1246,  x1247,
+          x1248,  x1249,  x1250,  x1251,  x1252,  x1253,  x1254,  x1255,  x1256,  x1257,  x1258,
+          x1259,  x1260,  x1261,  x1262,  x1263,  x1264,  x1265,  x1266,  x1267,  x1268,  x1269,
+          x1270,  x1272,  x1273,  x1274,  x1275,  x1276,  x1277,  x1278,  x1279,  x1280,  x1281,
+          x1282,  x1283,  x1284,  x1285,  x1286,  x1287,  x1288,  x1289,  x1290,  x1291,  x1292,
+          x1293,  x1294,  x1295,  x1296,  x1297,  x1298,  x1299,  x1300,  x1301,  x1302,  x1303,
+          x1305,  x1306,  x1307,  x1308,  x1309,  x1310,  x1311,  x1312,  x1313,  x1314,  x1315,
+          x1316,  x1317,  x1318,  x1319,  x1320,  x1321,  x1322,  x1323,  x1324,  x1325,  x1326,
+          x1327,  x1328,  x1329,  x1330,  x1331,  x1332,  x1333,  x1334,  x1335,  x1336,  x1338,
+          x1339,  x1340,  x1341,  x1342,  x1343,  x1344,  x1345,  x1346,  x1347,  x1348,  x1349,
+          x1350,  x1351,  x1352,  x1353,  x1354,  x1355,  x1356,  x1357,  x1358,  x1359,  x1360,
+          x1361,  x1362,  x1363,  x1364,  x1365,  x1366,  x1367,  x1368,  x1369,  x1371,  x1372,
+          x1373,  x1374,  x1375,  x1376,  x1377,  x1378,  x1379,  x1380,  x1381,  x1382,  x1383,
+          x1384,  x1385,  x1386,  x1387,  x1388,  x1389,  x1390,  x1391,  x1392,  x1393,  x1394,
+          x1395,  x1396,  x1397,  x1398,  x1399,  x1400,  x1401,  x1402,  x1404,  x1405,  x1406,
+          x1407,  x1408,  x1409,  x1410,  x1411,  x1412,  x1413,  x1414,  x1415,  x1416,  x1417,
+          x1418,  x1419,  x1420,  x1421,  x1422,  x1423,  x1424,  x1425,  x1426,  x1427,  x1428,
+          x1429,  x1430,  x1431,  x1432,  x1433,  x1434,  x1435,  x1437,  x1438,  x1439,  x1440,
+          x1441,  x1442,  x1443,  x1444,  x1445,  x1446,  x1447,  x1448,  x1449,  x1450,  x1451,
+          x1452,  x1453,  x1454,  x1455,  x1456,  x1457,  x1458,  x1459,  x1460,  x1461,  x1462,
+          x1463,  x1464,  x1465,  x1466,  x1467,  x1468,  x1470,  x1471,  x1472,  x1473,  x1474,
+          x1475,  x1476,  x1477,  x1478,  x1479,  x1480,  x1481,  x1482,  x1483,  x1484,  x1485,
+          x1486,  x1487,  x1488,  x1489,  x1490,  x1491,  x1492,  x1493,  x1494,  x1495,  x1496,
+          x1497,  x1498,  x1499,  x1500,  x1501,  x1503,  x1504,  x1505,  x1506,  x1507,  x1508,
+          x1509,  x1510,  x1511,  x1512,  x1513,  x1514,  x1515,  x1516,  x1517,  x1518,  x1519,
+          x1520,  x1521,  x1522,  x1523,  x1524,  x1525,  x1526,  x1527,  x1528,  x1529,  x1530,
+          x1531,  x1532,  x1533,  x1534,  x1536,  x1537,  x1538,  x1539,  x1540,  x1541,  x1542,
+          x1543,  x1544,  x1545,  x1546,  x1547,  x1548,  x1549,  x1550,  x1551,  x1552,  x1553,
+          x1554,  x1555,  x1556,  x1557,  x1558,  x1559,  x1560,  x1561,  x1562,  x1563,  x1564,
+          x1565,  x1566,  x1567,  x1569,  x1570,  x1571,  x1572,  x1573,  x1574,  x1575,  x1576,
+          x1577,  x1578,  x1579,  x1580,  x1581,  x1582,  x1583,  x1584,  x1585,  x1586,  x1587,
+          x1588,  x1589,  x1590,  x1591,  x1592,  x1593,  x1594,  x1595,  x1596,  x1597,  x1598,
+          x1599,  x1600,  x1602,  x1603,  x1604,  x1605,  x1606,  x1607,  x1608,  x1609,  x1610,
+          x1611,  x1612,  x1613,  x1614,  x1615,  x1616,  x1617,  x1618,  x1619,  x1620,  x1621,
+          x1622,  x1623,  x1624,  x1625,  x1626,  x1627,  x1628,  x1629,  x1630,  x1631,  x1632,
+          x1633,  x1635,  x1636,  x1637,  x1638,  x1639,  x1640,  x1641,  x1642,  x1643,  x1644,
+          x1645,  x1646,  x1647,  x1648,  x1649,  x1650,  x1651,  x1652,  x1653,  x1654,  x1655,
+          x1656,  x1657,  x1658,  x1659,  x1660,  x1661,  x1662,  x1663,  x1664,  x1665,  x1666,
+          x1668,  x1669,  x1670,  x1671,  x1672,  x1673,  x1674,  x1675,  x1676,  x1677,  x1678,
+          x1679,  x1680,  x1681,  x1682,  x1683,  x1684,  x1685,  x1686,  x1687,  x1688,  x1689,
+          x1690,  x1691,  x1692,  x1693,  x1694,  x1695,  x1696,  x1697,  x1698,  x1699,  x1701,
+          x1702,  x1703,  x1704,  x1705,  x1706,  x1707,  x1708,  x1709,  x1710,  x1711,  x1712,
+          x1713,  x1714,  x1715,  x1716,  x1717,  x1718,  x1719,  x1720,  x1721,  x1722,  x1723,
+          x1724,  x1725,  x1726,  x1727,  x1728,  x1729,  x1730,  x1731,  x1732,  Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
       x921,
       x1734,
       LAYOUT_LOOKUP(layout4, _super));
   return x1735;
 }
-TopStateStruct exec_ShaNextBlockCycle(TopStateStruct arg0,
-                                      BoundLayout<ShaNextBlockCycleLayout> layout1) {
+__device__ TopStateStruct exec_ShaNextBlockCycle(ExecContext& ctx,
+                                                 TopStateStruct arg0,
+                                                 BoundLayout<ShaNextBlockCycleLayout> layout1) {
   // Log(<preamble>:22)
   // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:236)
-  INVOKE_EXTERN(ctx, log, "ShaNextBlockCycle", {});
+  INVOKE_EXTERN(ctx, log, "ShaNextBlockCycle", std::initializer_list<Val>{});
   // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:238)
-  Val4Array x2 = {Val(0), Val(1), Val(2), Val(3)};
+  Val4Array x2 = Val4Array{Val(0), Val(1), Val(2), Val(3)};
   // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:235)
   TopStateBitsStruct800Array x3 = arg0.bits;
   // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:238)
@@ -7022,9 +7112,9 @@ TopStateStruct exec_ShaNextBlockCycle(TopStateStruct arg0,
   Val x44 = (((x43 + (x30 * Val(1024))) + (x31 * Val(2048))) + (x32 * Val(4096)));
   Val x45 = (((x44 + (x33 * Val(8192))) + (x34 * Val(16384))) + (x35 * Val(32768)));
   // Pack(zirgen/circuit/keccak2/pack.zir:29)
-  Pack_32__16_Struct x46 =
-      Pack_32__16_Struct{._super = {Pack_32__16__Super_SuperStruct{._super = x40},
-                                    Pack_32__16__Super_SuperStruct{._super = x45}}};
+  Pack_32__16_Struct x46 = Pack_32__16_Struct{._super = Pack_32__16__Super_SuperStruct2Array{
+                                                  Pack_32__16__Super_SuperStruct{._super = x40},
+                                                  Pack_32__16__Super_SuperStruct{._super = x45}}};
   Val x47 = x3[192]._super._super;
   Val x48 = x3[193]._super._super;
   Val x49 = x3[194]._super._super;
@@ -7070,9 +7160,9 @@ TopStateStruct exec_ShaNextBlockCycle(TopStateStruct arg0,
   Val x87 = (((x86 + (x73 * Val(1024))) + (x74 * Val(2048))) + (x75 * Val(4096)));
   Val x88 = (((x87 + (x76 * Val(8192))) + (x77 * Val(16384))) + (x78 * Val(32768)));
   // Pack(zirgen/circuit/keccak2/pack.zir:29)
-  Pack_32__16_Struct x89 =
-      Pack_32__16_Struct{._super = {Pack_32__16__Super_SuperStruct{._super = x83},
-                                    Pack_32__16__Super_SuperStruct{._super = x88}}};
+  Pack_32__16_Struct x89 = Pack_32__16_Struct{._super = Pack_32__16__Super_SuperStruct2Array{
+                                                  Pack_32__16__Super_SuperStruct{._super = x83},
+                                                  Pack_32__16__Super_SuperStruct{._super = x88}}};
   Val x90 = x3[160]._super._super;
   Val x91 = x3[161]._super._super;
   Val x92 = x3[162]._super._super;
@@ -7118,9 +7208,9 @@ TopStateStruct exec_ShaNextBlockCycle(TopStateStruct arg0,
   Val x130 = (((x129 + (x116 * Val(1024))) + (x117 * Val(2048))) + (x118 * Val(4096)));
   Val x131 = (((x130 + (x119 * Val(8192))) + (x120 * Val(16384))) + (x121 * Val(32768)));
   // Pack(zirgen/circuit/keccak2/pack.zir:29)
-  Pack_32__16_Struct x132 =
-      Pack_32__16_Struct{._super = {Pack_32__16__Super_SuperStruct{._super = x126},
-                                    Pack_32__16__Super_SuperStruct{._super = x131}}};
+  Pack_32__16_Struct x132 = Pack_32__16_Struct{._super = Pack_32__16__Super_SuperStruct2Array{
+                                                   Pack_32__16__Super_SuperStruct{._super = x126},
+                                                   Pack_32__16__Super_SuperStruct{._super = x131}}};
   Val x133 = x3[128]._super._super;
   Val x134 = x3[129]._super._super;
   Val x135 = x3[130]._super._super;
@@ -7166,9 +7256,9 @@ TopStateStruct exec_ShaNextBlockCycle(TopStateStruct arg0,
   Val x173 = (((x172 + (x159 * Val(1024))) + (x160 * Val(2048))) + (x161 * Val(4096)));
   Val x174 = (((x173 + (x162 * Val(8192))) + (x163 * Val(16384))) + (x164 * Val(32768)));
   // Pack(zirgen/circuit/keccak2/pack.zir:29)
-  Pack_32__16_Struct x175 =
-      Pack_32__16_Struct{._super = {Pack_32__16__Super_SuperStruct{._super = x169},
-                                    Pack_32__16__Super_SuperStruct{._super = x174}}};
+  Pack_32__16_Struct x175 = Pack_32__16_Struct{._super = Pack_32__16__Super_SuperStruct2Array{
+                                                   Pack_32__16__Super_SuperStruct{._super = x169},
+                                                   Pack_32__16__Super_SuperStruct{._super = x174}}};
   // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:239)
   Val x176 = x3[480]._super._super;
   Val x177 = x3[481]._super._super;
@@ -7215,9 +7305,9 @@ TopStateStruct exec_ShaNextBlockCycle(TopStateStruct arg0,
   Val x216 = (((x215 + (x202 * Val(1024))) + (x203 * Val(2048))) + (x204 * Val(4096)));
   Val x217 = (((x216 + (x205 * Val(8192))) + (x206 * Val(16384))) + (x207 * Val(32768)));
   // Pack(zirgen/circuit/keccak2/pack.zir:29)
-  Pack_32__16_Struct x218 =
-      Pack_32__16_Struct{._super = {Pack_32__16__Super_SuperStruct{._super = x212},
-                                    Pack_32__16__Super_SuperStruct{._super = x217}}};
+  Pack_32__16_Struct x218 = Pack_32__16_Struct{._super = Pack_32__16__Super_SuperStruct2Array{
+                                                   Pack_32__16__Super_SuperStruct{._super = x212},
+                                                   Pack_32__16__Super_SuperStruct{._super = x217}}};
   Val x219 = x3[448]._super._super;
   Val x220 = x3[449]._super._super;
   Val x221 = x3[450]._super._super;
@@ -7263,9 +7353,9 @@ TopStateStruct exec_ShaNextBlockCycle(TopStateStruct arg0,
   Val x259 = (((x258 + (x245 * Val(1024))) + (x246 * Val(2048))) + (x247 * Val(4096)));
   Val x260 = (((x259 + (x248 * Val(8192))) + (x249 * Val(16384))) + (x250 * Val(32768)));
   // Pack(zirgen/circuit/keccak2/pack.zir:29)
-  Pack_32__16_Struct x261 =
-      Pack_32__16_Struct{._super = {Pack_32__16__Super_SuperStruct{._super = x255},
-                                    Pack_32__16__Super_SuperStruct{._super = x260}}};
+  Pack_32__16_Struct x261 = Pack_32__16_Struct{._super = Pack_32__16__Super_SuperStruct2Array{
+                                                   Pack_32__16__Super_SuperStruct{._super = x255},
+                                                   Pack_32__16__Super_SuperStruct{._super = x260}}};
   Val x262 = x3[416]._super._super;
   Val x263 = x3[417]._super._super;
   Val x264 = x3[418]._super._super;
@@ -7311,9 +7401,9 @@ TopStateStruct exec_ShaNextBlockCycle(TopStateStruct arg0,
   Val x302 = (((x301 + (x288 * Val(1024))) + (x289 * Val(2048))) + (x290 * Val(4096)));
   Val x303 = (((x302 + (x291 * Val(8192))) + (x292 * Val(16384))) + (x293 * Val(32768)));
   // Pack(zirgen/circuit/keccak2/pack.zir:29)
-  Pack_32__16_Struct x304 =
-      Pack_32__16_Struct{._super = {Pack_32__16__Super_SuperStruct{._super = x298},
-                                    Pack_32__16__Super_SuperStruct{._super = x303}}};
+  Pack_32__16_Struct x304 = Pack_32__16_Struct{._super = Pack_32__16__Super_SuperStruct2Array{
+                                                   Pack_32__16__Super_SuperStruct{._super = x298},
+                                                   Pack_32__16__Super_SuperStruct{._super = x303}}};
   Val x305 = x3[384]._super._super;
   Val x306 = x3[385]._super._super;
   Val x307 = x3[386]._super._super;
@@ -7359,62 +7449,67 @@ TopStateStruct exec_ShaNextBlockCycle(TopStateStruct arg0,
   Val x345 = (((x344 + (x331 * Val(1024))) + (x332 * Val(2048))) + (x333 * Val(4096)));
   Val x346 = (((x345 + (x334 * Val(8192))) + (x335 * Val(16384))) + (x336 * Val(32768)));
   // Pack(zirgen/circuit/keccak2/pack.zir:29)
-  Pack_32__16_Struct x347 =
-      Pack_32__16_Struct{._super = {Pack_32__16__Super_SuperStruct{._super = x341},
-                                    Pack_32__16__Super_SuperStruct{._super = x346}}};
+  Pack_32__16_Struct x347 = Pack_32__16_Struct{._super = Pack_32__16__Super_SuperStruct2Array{
+                                                   Pack_32__16__Super_SuperStruct{._super = x341},
+                                                   Pack_32__16__Super_SuperStruct{._super = x346}}};
   // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:235)
   NondetRegStruct16Array x348 = arg0.sflat;
   // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:241)
   ShaNextBlockCyclePrevA_SuperStruct x349 =
-      ShaNextBlockCyclePrevA_SuperStruct{._super = {x348[0], x348[1]}};
+      ShaNextBlockCyclePrevA_SuperStruct{._super = NondetRegStruct2Array{x348[0], x348[1]}};
   ShaNextBlockCyclePrevA_SuperStruct x350 =
-      ShaNextBlockCyclePrevA_SuperStruct{._super = {x348[2], x348[3]}};
+      ShaNextBlockCyclePrevA_SuperStruct{._super = NondetRegStruct2Array{x348[2], x348[3]}};
   ShaNextBlockCyclePrevA_SuperStruct x351 =
-      ShaNextBlockCyclePrevA_SuperStruct{._super = {x348[4], x348[5]}};
+      ShaNextBlockCyclePrevA_SuperStruct{._super = NondetRegStruct2Array{x348[4], x348[5]}};
   ShaNextBlockCyclePrevA_SuperStruct x352 =
-      ShaNextBlockCyclePrevA_SuperStruct{._super = {x348[6], x348[7]}};
+      ShaNextBlockCyclePrevA_SuperStruct{._super = NondetRegStruct2Array{x348[6], x348[7]}};
   // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:242)
   ShaNextBlockCyclePrevE_SuperStruct x353 =
-      ShaNextBlockCyclePrevE_SuperStruct{._super = {x348[8], x348[9]}};
+      ShaNextBlockCyclePrevE_SuperStruct{._super = NondetRegStruct2Array{x348[8], x348[9]}};
   ShaNextBlockCyclePrevE_SuperStruct x354 =
-      ShaNextBlockCyclePrevE_SuperStruct{._super = {x348[10], x348[11]}};
+      ShaNextBlockCyclePrevE_SuperStruct{._super = NondetRegStruct2Array{x348[10], x348[11]}};
   ShaNextBlockCyclePrevE_SuperStruct x355 =
-      ShaNextBlockCyclePrevE_SuperStruct{._super = {x348[12], x348[13]}};
+      ShaNextBlockCyclePrevE_SuperStruct{._super = NondetRegStruct2Array{x348[12], x348[13]}};
   ShaNextBlockCyclePrevE_SuperStruct x356 =
-      ShaNextBlockCyclePrevE_SuperStruct{._super = {x348[14], x348[15]}};
+      ShaNextBlockCyclePrevE_SuperStruct{._super = NondetRegStruct2Array{x348[14], x348[15]}};
   // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:244)
-  UnpackReg_32__16_Struct4Array x357 = map(
-      x2,
-      LAYOUT_LOOKUP(layout1, totA),
-      std::function([&](Val4Array::value_type x358,
-                        BoundLayout<CarryAndExpandLayout4LayoutArray::value_type> x359) {
-        // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:238)
-        Pack_32__16__Super_SuperStruct2Array x360 = {x46, x89, x132, x175}[to_size_t(x358)]._super;
-        // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:241)
-        NondetRegStruct2Array x361 = {x349, x350, x351, x352}[to_size_t(x358)]._super;
-        // Add2(zirgen/circuit/keccak2/sha2.zir:30)
-        // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:244)
-        Val x362 = (x360[0]._super + x361[0]._super);
-        Val x363 = (x360[1]._super + x361[1]._super);
-        UnpackReg_32__16_Struct x364 = exec_CarryAndExpand({x362, x363}, x359);
-        return x364;
-      }));
+  UnpackReg_32__16_Struct4Array x357 =
+      map(x2,
+          LAYOUT_LOOKUP(layout1, totA),
+          ([&](Val4Array::value_type x358,
+               BoundLayout<CarryAndExpandLayout4LayoutArray::value_type> x359) {
+            // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:238)
+            Pack_32__16__Super_SuperStruct2Array x360 =
+                Pack_32__16_Struct4Array{x46, x89, x132, x175}[to_size_t(x358)]._super;
+            // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:241)
+            NondetRegStruct2Array x361 =
+                ShaNextBlockCyclePrevA_SuperStruct4Array{x349, x350, x351, x352}[to_size_t(x358)]
+                    ._super;
+            // Add2(zirgen/circuit/keccak2/sha2.zir:30)
+            // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:244)
+            Val x362 = (x360[0]._super + x361[0]._super);
+            Val x363 = (x360[1]._super + x361[1]._super);
+            UnpackReg_32__16_Struct x364 = exec_CarryAndExpand(ctx, Val2Array{x362, x363}, x359);
+            return x364;
+          }));
   // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:245)
   UnpackReg_32__16_Struct4Array x365 =
       map(x2,
           LAYOUT_LOOKUP(layout1, totE),
-          std::function([&](Val4Array::value_type x366,
-                            BoundLayout<CarryAndExpandLayout4LayoutArray::value_type> x367) {
+          ([&](Val4Array::value_type x366,
+               BoundLayout<CarryAndExpandLayout4LayoutArray::value_type> x367) {
             // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:239)
-            Pack_32__16__Super_SuperStruct2Array x368 = {x218, x261, x304, x347}[to_size_t(x366)]
-                                                            ._super;
+            Pack_32__16__Super_SuperStruct2Array x368 =
+                Pack_32__16_Struct4Array{x218, x261, x304, x347}[to_size_t(x366)]._super;
             // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:242)
-            NondetRegStruct2Array x369 = {x353, x354, x355, x356}[to_size_t(x366)]._super;
+            NondetRegStruct2Array x369 =
+                ShaNextBlockCyclePrevE_SuperStruct4Array{x353, x354, x355, x356}[to_size_t(x366)]
+                    ._super;
             // Add2(zirgen/circuit/keccak2/sha2.zir:30)
             // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:245)
             Val x370 = (x368[0]._super + x369[0]._super);
             Val x371 = (x368[1]._super + x369[1]._super);
-            UnpackReg_32__16_Struct x372 = exec_CarryAndExpand({x370, x371}, x367);
+            UnpackReg_32__16_Struct x372 = exec_CarryAndExpand(ctx, Val2Array{x370, x371}, x367);
             return x372;
           }));
   // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:244)
@@ -7871,215 +7966,220 @@ TopStateStruct exec_ShaNextBlockCycle(TopStateStruct arg0,
   Val x817 = x717[99]._super._super;
   // ShaNextBlockCycle(zirgen/circuit/keccak2/top.zir:262)
   TopStateStruct x818 = exec_TopState(
-      {Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), x374,   x375,   x376,   x377,
-       x378,   x379,   x380,   x381,   x382,   x383,   x384,   x385,   x386,   x387,   x388,
-       x389,   x390,   x391,   x392,   x393,   x394,   x395,   x396,   x397,   x398,   x399,
-       x400,   x401,   x402,   x403,   x404,   x405,   x407,   x408,   x409,   x410,   x411,
-       x412,   x413,   x414,   x415,   x416,   x417,   x418,   x419,   x420,   x421,   x422,
-       x423,   x424,   x425,   x426,   x427,   x428,   x429,   x430,   x431,   x432,   x433,
-       x434,   x435,   x436,   x437,   x438,   x440,   x441,   x442,   x443,   x444,   x445,
-       x446,   x447,   x448,   x449,   x450,   x451,   x452,   x453,   x454,   x455,   x456,
-       x457,   x458,   x459,   x460,   x461,   x462,   x463,   x464,   x465,   x466,   x467,
-       x468,   x469,   x470,   x471,   x473,   x474,   x475,   x476,   x477,   x478,   x479,
-       x480,   x481,   x482,   x483,   x484,   x485,   x486,   x487,   x488,   x489,   x490,
-       x491,   x492,   x493,   x494,   x495,   x496,   x497,   x498,   x499,   x500,   x501,
-       x502,   x503,   x504,   Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), x506,
-       x507,   x508,   x509,   x510,   x511,   x512,   x513,   x514,   x515,   x516,   x517,
-       x518,   x519,   x520,   x521,   x522,   x523,   x524,   x525,   x526,   x527,   x528,
-       x529,   x530,   x531,   x532,   x533,   x534,   x535,   x536,   x537,   x539,   x540,
-       x541,   x542,   x543,   x544,   x545,   x546,   x547,   x548,   x549,   x550,   x551,
-       x552,   x553,   x554,   x555,   x556,   x557,   x558,   x559,   x560,   x561,   x562,
-       x563,   x564,   x565,   x566,   x567,   x568,   x569,   x570,   x572,   x573,   x574,
-       x575,   x576,   x577,   x578,   x579,   x580,   x581,   x582,   x583,   x584,   x585,
-       x586,   x587,   x588,   x589,   x590,   x591,   x592,   x593,   x594,   x595,   x596,
-       x597,   x598,   x599,   x600,   x601,   x602,   x603,   x605,   x606,   x607,   x608,
-       x609,   x610,   x611,   x612,   x613,   x614,   x615,   x616,   x617,   x618,   x619,
-       x620,   x621,   x622,   x623,   x624,   x625,   x626,   x627,   x628,   x629,   x630,
-       x631,   x632,   x633,   x634,   x635,   x636,   Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
-      {x718, x719, x720, x721, x722, x723, x724, x725, x726, x727, x728, x729, x730, x731, x732,
-       x733, x734, x735, x736, x737, x738, x739, x740, x741, x742, x743, x744, x745, x746, x747,
-       x748, x749, x750, x751, x752, x753, x754, x755, x756, x757, x758, x759, x760, x761, x762,
-       x763, x764, x765, x766, x767, x768, x769, x770, x771, x772, x773, x774, x775, x776, x777,
-       x778, x779, x780, x781, x782, x783, x784, x785, x786, x787, x788, x789, x790, x791, x792,
-       x793, x794, x795, x796, x797, x798, x799, x800, x801, x802, x803, x804, x805, x806, x807,
-       x808, x809, x810, x811, x812, x813, x814, x815, x816, x817},
-      {x641,
-       x646,
-       x651,
-       x656,
-       x661,
-       x666,
-       x671,
-       x676,
-       x681,
-       x686,
-       x691,
-       x696,
-       x701,
-       x706,
-       x711,
-       x716},
+      ctx,
+      Val800Array{
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), x374,   x375,   x376,   x377,
+          x378,   x379,   x380,   x381,   x382,   x383,   x384,   x385,   x386,   x387,   x388,
+          x389,   x390,   x391,   x392,   x393,   x394,   x395,   x396,   x397,   x398,   x399,
+          x400,   x401,   x402,   x403,   x404,   x405,   x407,   x408,   x409,   x410,   x411,
+          x412,   x413,   x414,   x415,   x416,   x417,   x418,   x419,   x420,   x421,   x422,
+          x423,   x424,   x425,   x426,   x427,   x428,   x429,   x430,   x431,   x432,   x433,
+          x434,   x435,   x436,   x437,   x438,   x440,   x441,   x442,   x443,   x444,   x445,
+          x446,   x447,   x448,   x449,   x450,   x451,   x452,   x453,   x454,   x455,   x456,
+          x457,   x458,   x459,   x460,   x461,   x462,   x463,   x464,   x465,   x466,   x467,
+          x468,   x469,   x470,   x471,   x473,   x474,   x475,   x476,   x477,   x478,   x479,
+          x480,   x481,   x482,   x483,   x484,   x485,   x486,   x487,   x488,   x489,   x490,
+          x491,   x492,   x493,   x494,   x495,   x496,   x497,   x498,   x499,   x500,   x501,
+          x502,   x503,   x504,   Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), x506,
+          x507,   x508,   x509,   x510,   x511,   x512,   x513,   x514,   x515,   x516,   x517,
+          x518,   x519,   x520,   x521,   x522,   x523,   x524,   x525,   x526,   x527,   x528,
+          x529,   x530,   x531,   x532,   x533,   x534,   x535,   x536,   x537,   x539,   x540,
+          x541,   x542,   x543,   x544,   x545,   x546,   x547,   x548,   x549,   x550,   x551,
+          x552,   x553,   x554,   x555,   x556,   x557,   x558,   x559,   x560,   x561,   x562,
+          x563,   x564,   x565,   x566,   x567,   x568,   x569,   x570,   x572,   x573,   x574,
+          x575,   x576,   x577,   x578,   x579,   x580,   x581,   x582,   x583,   x584,   x585,
+          x586,   x587,   x588,   x589,   x590,   x591,   x592,   x593,   x594,   x595,   x596,
+          x597,   x598,   x599,   x600,   x601,   x602,   x603,   x605,   x606,   x607,   x608,
+          x609,   x610,   x611,   x612,   x613,   x614,   x615,   x616,   x617,   x618,   x619,
+          x620,   x621,   x622,   x623,   x624,   x625,   x626,   x627,   x628,   x629,   x630,
+          x631,   x632,   x633,   x634,   x635,   x636,   Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
+      Val100Array{x718, x719, x720, x721, x722, x723, x724, x725, x726, x727, x728, x729, x730,
+                  x731, x732, x733, x734, x735, x736, x737, x738, x739, x740, x741, x742, x743,
+                  x744, x745, x746, x747, x748, x749, x750, x751, x752, x753, x754, x755, x756,
+                  x757, x758, x759, x760, x761, x762, x763, x764, x765, x766, x767, x768, x769,
+                  x770, x771, x772, x773, x774, x775, x776, x777, x778, x779, x780, x781, x782,
+                  x783, x784, x785, x786, x787, x788, x789, x790, x791, x792, x793, x794, x795,
+                  x796, x797, x798, x799, x800, x801, x802, x803, x804, x805, x806, x807, x808,
+                  x809, x810, x811, x812, x813, x814, x815, x816, x817},
+      Val16Array{x641,
+                 x646,
+                 x651,
+                 x656,
+                 x661,
+                 x666,
+                 x671,
+                 x676,
+                 x681,
+                 x686,
+                 x691,
+                 x696,
+                 x701,
+                 x706,
+                 x711,
+                 x716},
       LAYOUT_LOOKUP(layout1, _super));
   return x818;
 }
-TopStateStruct exec_InitCycle(BoundLayout<TopStateLayout> layout0) {
+__device__ TopStateStruct exec_InitCycle(ExecContext& ctx, BoundLayout<TopStateLayout> layout0) {
   // Log(<preamble>:22)
   // InitCycle(zirgen/circuit/keccak2/top.zir:307)
-  INVOKE_EXTERN(ctx, log, "InitCycle", {});
+  INVOKE_EXTERN(ctx, log, "InitCycle", std::initializer_list<Val>{});
   // InitCycle(zirgen/circuit/keccak2/top.zir:316)
   TopStateStruct x1 = exec_TopState(
-      {Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
-      {Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
-      {Val(58983),
-       Val(27145),
-       Val(44677),
-       Val(47975),
-       Val(62322),
-       Val(15470),
-       Val(62778),
-       Val(42319),
-       Val(21119),
-       Val(20750),
-       Val(26764),
-       Val(39685),
-       Val(55723),
-       Val(8067),
-       Val(52505),
-       Val(23520)},
+      ctx,
+      Val800Array{
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
+      Val100Array{Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                  Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                  Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                  Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                  Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                  Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                  Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                  Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                  Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                  Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
+      Val16Array{Val(58983),
+                 Val(27145),
+                 Val(44677),
+                 Val(47975),
+                 Val(62322),
+                 Val(15470),
+                 Val(62778),
+                 Val(42319),
+                 Val(21119),
+                 Val(20750),
+                 Val(26764),
+                 Val(39685),
+                 Val(55723),
+                 Val(8067),
+                 Val(52505),
+                 Val(23520)},
       layout0);
   return x1;
 }
-UnpackReg_800__16_Struct exec_UnpackReg_800__16_(Val50Array arg0,
-                                                 BoundLayout<UnpackReg_800__16_Layout> layout1) {
+__device__ UnpackReg_800__16_Struct exec_UnpackReg_800__16_(
+    ExecContext& ctx, Val50Array arg0, BoundLayout<UnpackReg_800__16_Layout> layout1) {
   // Div(<preamble>:15)
   // UnpackNondet(zirgen/circuit/keccak2/pack.zir:42)
   // UnpackReg(zirgen/circuit/keccak2/pack.zir:47)
@@ -8983,905 +9083,906 @@ UnpackReg_800__16_Struct exec_UnpackReg_800__16_(Val50Array arg0,
   Val x800 = (bitAnd(arg0[49], Val(16384)) * Val(2013143041));
   Val x801 = (bitAnd(arg0[49], Val(32768)) * Val(2013204481));
   // UnpackReg(zirgen/circuit/keccak2/pack.zir:48)
-  UnpackReg_800__16__SuperStruct800Array x802 =
-      map({Val(0),   Val(1),   Val(2),   Val(3),   Val(4),   Val(5),   Val(6),   Val(7),   Val(8),
-           Val(9),   Val(10),  Val(11),  Val(12),  Val(13),  Val(14),  Val(15),  Val(16),  Val(17),
-           Val(18),  Val(19),  Val(20),  Val(21),  Val(22),  Val(23),  Val(24),  Val(25),  Val(26),
-           Val(27),  Val(28),  Val(29),  Val(30),  Val(31),  Val(32),  Val(33),  Val(34),  Val(35),
-           Val(36),  Val(37),  Val(38),  Val(39),  Val(40),  Val(41),  Val(42),  Val(43),  Val(44),
-           Val(45),  Val(46),  Val(47),  Val(48),  Val(49),  Val(50),  Val(51),  Val(52),  Val(53),
-           Val(54),  Val(55),  Val(56),  Val(57),  Val(58),  Val(59),  Val(60),  Val(61),  Val(62),
-           Val(63),  Val(64),  Val(65),  Val(66),  Val(67),  Val(68),  Val(69),  Val(70),  Val(71),
-           Val(72),  Val(73),  Val(74),  Val(75),  Val(76),  Val(77),  Val(78),  Val(79),  Val(80),
-           Val(81),  Val(82),  Val(83),  Val(84),  Val(85),  Val(86),  Val(87),  Val(88),  Val(89),
-           Val(90),  Val(91),  Val(92),  Val(93),  Val(94),  Val(95),  Val(96),  Val(97),  Val(98),
-           Val(99),  Val(100), Val(101), Val(102), Val(103), Val(104), Val(105), Val(106), Val(107),
-           Val(108), Val(109), Val(110), Val(111), Val(112), Val(113), Val(114), Val(115), Val(116),
-           Val(117), Val(118), Val(119), Val(120), Val(121), Val(122), Val(123), Val(124), Val(125),
-           Val(126), Val(127), Val(128), Val(129), Val(130), Val(131), Val(132), Val(133), Val(134),
-           Val(135), Val(136), Val(137), Val(138), Val(139), Val(140), Val(141), Val(142), Val(143),
-           Val(144), Val(145), Val(146), Val(147), Val(148), Val(149), Val(150), Val(151), Val(152),
-           Val(153), Val(154), Val(155), Val(156), Val(157), Val(158), Val(159), Val(160), Val(161),
-           Val(162), Val(163), Val(164), Val(165), Val(166), Val(167), Val(168), Val(169), Val(170),
-           Val(171), Val(172), Val(173), Val(174), Val(175), Val(176), Val(177), Val(178), Val(179),
-           Val(180), Val(181), Val(182), Val(183), Val(184), Val(185), Val(186), Val(187), Val(188),
-           Val(189), Val(190), Val(191), Val(192), Val(193), Val(194), Val(195), Val(196), Val(197),
-           Val(198), Val(199), Val(200), Val(201), Val(202), Val(203), Val(204), Val(205), Val(206),
-           Val(207), Val(208), Val(209), Val(210), Val(211), Val(212), Val(213), Val(214), Val(215),
-           Val(216), Val(217), Val(218), Val(219), Val(220), Val(221), Val(222), Val(223), Val(224),
-           Val(225), Val(226), Val(227), Val(228), Val(229), Val(230), Val(231), Val(232), Val(233),
-           Val(234), Val(235), Val(236), Val(237), Val(238), Val(239), Val(240), Val(241), Val(242),
-           Val(243), Val(244), Val(245), Val(246), Val(247), Val(248), Val(249), Val(250), Val(251),
-           Val(252), Val(253), Val(254), Val(255), Val(256), Val(257), Val(258), Val(259), Val(260),
-           Val(261), Val(262), Val(263), Val(264), Val(265), Val(266), Val(267), Val(268), Val(269),
-           Val(270), Val(271), Val(272), Val(273), Val(274), Val(275), Val(276), Val(277), Val(278),
-           Val(279), Val(280), Val(281), Val(282), Val(283), Val(284), Val(285), Val(286), Val(287),
-           Val(288), Val(289), Val(290), Val(291), Val(292), Val(293), Val(294), Val(295), Val(296),
-           Val(297), Val(298), Val(299), Val(300), Val(301), Val(302), Val(303), Val(304), Val(305),
-           Val(306), Val(307), Val(308), Val(309), Val(310), Val(311), Val(312), Val(313), Val(314),
-           Val(315), Val(316), Val(317), Val(318), Val(319), Val(320), Val(321), Val(322), Val(323),
-           Val(324), Val(325), Val(326), Val(327), Val(328), Val(329), Val(330), Val(331), Val(332),
-           Val(333), Val(334), Val(335), Val(336), Val(337), Val(338), Val(339), Val(340), Val(341),
-           Val(342), Val(343), Val(344), Val(345), Val(346), Val(347), Val(348), Val(349), Val(350),
-           Val(351), Val(352), Val(353), Val(354), Val(355), Val(356), Val(357), Val(358), Val(359),
-           Val(360), Val(361), Val(362), Val(363), Val(364), Val(365), Val(366), Val(367), Val(368),
-           Val(369), Val(370), Val(371), Val(372), Val(373), Val(374), Val(375), Val(376), Val(377),
-           Val(378), Val(379), Val(380), Val(381), Val(382), Val(383), Val(384), Val(385), Val(386),
-           Val(387), Val(388), Val(389), Val(390), Val(391), Val(392), Val(393), Val(394), Val(395),
-           Val(396), Val(397), Val(398), Val(399), Val(400), Val(401), Val(402), Val(403), Val(404),
-           Val(405), Val(406), Val(407), Val(408), Val(409), Val(410), Val(411), Val(412), Val(413),
-           Val(414), Val(415), Val(416), Val(417), Val(418), Val(419), Val(420), Val(421), Val(422),
-           Val(423), Val(424), Val(425), Val(426), Val(427), Val(428), Val(429), Val(430), Val(431),
-           Val(432), Val(433), Val(434), Val(435), Val(436), Val(437), Val(438), Val(439), Val(440),
-           Val(441), Val(442), Val(443), Val(444), Val(445), Val(446), Val(447), Val(448), Val(449),
-           Val(450), Val(451), Val(452), Val(453), Val(454), Val(455), Val(456), Val(457), Val(458),
-           Val(459), Val(460), Val(461), Val(462), Val(463), Val(464), Val(465), Val(466), Val(467),
-           Val(468), Val(469), Val(470), Val(471), Val(472), Val(473), Val(474), Val(475), Val(476),
-           Val(477), Val(478), Val(479), Val(480), Val(481), Val(482), Val(483), Val(484), Val(485),
-           Val(486), Val(487), Val(488), Val(489), Val(490), Val(491), Val(492), Val(493), Val(494),
-           Val(495), Val(496), Val(497), Val(498), Val(499), Val(500), Val(501), Val(502), Val(503),
-           Val(504), Val(505), Val(506), Val(507), Val(508), Val(509), Val(510), Val(511), Val(512),
-           Val(513), Val(514), Val(515), Val(516), Val(517), Val(518), Val(519), Val(520), Val(521),
-           Val(522), Val(523), Val(524), Val(525), Val(526), Val(527), Val(528), Val(529), Val(530),
-           Val(531), Val(532), Val(533), Val(534), Val(535), Val(536), Val(537), Val(538), Val(539),
-           Val(540), Val(541), Val(542), Val(543), Val(544), Val(545), Val(546), Val(547), Val(548),
-           Val(549), Val(550), Val(551), Val(552), Val(553), Val(554), Val(555), Val(556), Val(557),
-           Val(558), Val(559), Val(560), Val(561), Val(562), Val(563), Val(564), Val(565), Val(566),
-           Val(567), Val(568), Val(569), Val(570), Val(571), Val(572), Val(573), Val(574), Val(575),
-           Val(576), Val(577), Val(578), Val(579), Val(580), Val(581), Val(582), Val(583), Val(584),
-           Val(585), Val(586), Val(587), Val(588), Val(589), Val(590), Val(591), Val(592), Val(593),
-           Val(594), Val(595), Val(596), Val(597), Val(598), Val(599), Val(600), Val(601), Val(602),
-           Val(603), Val(604), Val(605), Val(606), Val(607), Val(608), Val(609), Val(610), Val(611),
-           Val(612), Val(613), Val(614), Val(615), Val(616), Val(617), Val(618), Val(619), Val(620),
-           Val(621), Val(622), Val(623), Val(624), Val(625), Val(626), Val(627), Val(628), Val(629),
-           Val(630), Val(631), Val(632), Val(633), Val(634), Val(635), Val(636), Val(637), Val(638),
-           Val(639), Val(640), Val(641), Val(642), Val(643), Val(644), Val(645), Val(646), Val(647),
-           Val(648), Val(649), Val(650), Val(651), Val(652), Val(653), Val(654), Val(655), Val(656),
-           Val(657), Val(658), Val(659), Val(660), Val(661), Val(662), Val(663), Val(664), Val(665),
-           Val(666), Val(667), Val(668), Val(669), Val(670), Val(671), Val(672), Val(673), Val(674),
-           Val(675), Val(676), Val(677), Val(678), Val(679), Val(680), Val(681), Val(682), Val(683),
-           Val(684), Val(685), Val(686), Val(687), Val(688), Val(689), Val(690), Val(691), Val(692),
-           Val(693), Val(694), Val(695), Val(696), Val(697), Val(698), Val(699), Val(700), Val(701),
-           Val(702), Val(703), Val(704), Val(705), Val(706), Val(707), Val(708), Val(709), Val(710),
-           Val(711), Val(712), Val(713), Val(714), Val(715), Val(716), Val(717), Val(718), Val(719),
-           Val(720), Val(721), Val(722), Val(723), Val(724), Val(725), Val(726), Val(727), Val(728),
-           Val(729), Val(730), Val(731), Val(732), Val(733), Val(734), Val(735), Val(736), Val(737),
-           Val(738), Val(739), Val(740), Val(741), Val(742), Val(743), Val(744), Val(745), Val(746),
-           Val(747), Val(748), Val(749), Val(750), Val(751), Val(752), Val(753), Val(754), Val(755),
-           Val(756), Val(757), Val(758), Val(759), Val(760), Val(761), Val(762), Val(763), Val(764),
-           Val(765), Val(766), Val(767), Val(768), Val(769), Val(770), Val(771), Val(772), Val(773),
-           Val(774), Val(775), Val(776), Val(777), Val(778), Val(779), Val(780), Val(781), Val(782),
-           Val(783), Val(784), Val(785), Val(786), Val(787), Val(788), Val(789), Val(790), Val(791),
-           Val(792), Val(793), Val(794), Val(795), Val(796), Val(797), Val(798), Val(799)},
-          LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val800Array::value_type x803,
-                            BoundLayout<NondetRegLayout800LayoutArray::value_type> x804) {
-            // UnpackReg(zirgen/circuit/keccak2/pack.zir:47)
-            Val x805 = {x2,
-                        DivStruct{._super = x3},
-                        DivStruct{._super = x4},
-                        DivStruct{._super = x5},
-                        DivStruct{._super = x6},
-                        DivStruct{._super = x7},
-                        DivStruct{._super = x8},
-                        DivStruct{._super = x9},
-                        DivStruct{._super = x10},
-                        DivStruct{._super = x11},
-                        DivStruct{._super = x12},
-                        DivStruct{._super = x13},
-                        DivStruct{._super = x14},
-                        DivStruct{._super = x15},
-                        DivStruct{._super = x16},
-                        DivStruct{._super = x17},
-                        x18,
-                        DivStruct{._super = x19},
-                        DivStruct{._super = x20},
-                        DivStruct{._super = x21},
-                        DivStruct{._super = x22},
-                        DivStruct{._super = x23},
-                        DivStruct{._super = x24},
-                        DivStruct{._super = x25},
-                        DivStruct{._super = x26},
-                        DivStruct{._super = x27},
-                        DivStruct{._super = x28},
-                        DivStruct{._super = x29},
-                        DivStruct{._super = x30},
-                        DivStruct{._super = x31},
-                        DivStruct{._super = x32},
-                        DivStruct{._super = x33},
-                        x34,
-                        DivStruct{._super = x35},
-                        DivStruct{._super = x36},
-                        DivStruct{._super = x37},
-                        DivStruct{._super = x38},
-                        DivStruct{._super = x39},
-                        DivStruct{._super = x40},
-                        DivStruct{._super = x41},
-                        DivStruct{._super = x42},
-                        DivStruct{._super = x43},
-                        DivStruct{._super = x44},
-                        DivStruct{._super = x45},
-                        DivStruct{._super = x46},
-                        DivStruct{._super = x47},
-                        DivStruct{._super = x48},
-                        DivStruct{._super = x49},
-                        x50,
-                        DivStruct{._super = x51},
-                        DivStruct{._super = x52},
-                        DivStruct{._super = x53},
-                        DivStruct{._super = x54},
-                        DivStruct{._super = x55},
-                        DivStruct{._super = x56},
-                        DivStruct{._super = x57},
-                        DivStruct{._super = x58},
-                        DivStruct{._super = x59},
-                        DivStruct{._super = x60},
-                        DivStruct{._super = x61},
-                        DivStruct{._super = x62},
-                        DivStruct{._super = x63},
-                        DivStruct{._super = x64},
-                        DivStruct{._super = x65},
-                        x66,
-                        DivStruct{._super = x67},
-                        DivStruct{._super = x68},
-                        DivStruct{._super = x69},
-                        DivStruct{._super = x70},
-                        DivStruct{._super = x71},
-                        DivStruct{._super = x72},
-                        DivStruct{._super = x73},
-                        DivStruct{._super = x74},
-                        DivStruct{._super = x75},
-                        DivStruct{._super = x76},
-                        DivStruct{._super = x77},
-                        DivStruct{._super = x78},
-                        DivStruct{._super = x79},
-                        DivStruct{._super = x80},
-                        DivStruct{._super = x81},
-                        x82,
-                        DivStruct{._super = x83},
-                        DivStruct{._super = x84},
-                        DivStruct{._super = x85},
-                        DivStruct{._super = x86},
-                        DivStruct{._super = x87},
-                        DivStruct{._super = x88},
-                        DivStruct{._super = x89},
-                        DivStruct{._super = x90},
-                        DivStruct{._super = x91},
-                        DivStruct{._super = x92},
-                        DivStruct{._super = x93},
-                        DivStruct{._super = x94},
-                        DivStruct{._super = x95},
-                        DivStruct{._super = x96},
-                        DivStruct{._super = x97},
-                        x98,
-                        DivStruct{._super = x99},
-                        DivStruct{._super = x100},
-                        DivStruct{._super = x101},
-                        DivStruct{._super = x102},
-                        DivStruct{._super = x103},
-                        DivStruct{._super = x104},
-                        DivStruct{._super = x105},
-                        DivStruct{._super = x106},
-                        DivStruct{._super = x107},
-                        DivStruct{._super = x108},
-                        DivStruct{._super = x109},
-                        DivStruct{._super = x110},
-                        DivStruct{._super = x111},
-                        DivStruct{._super = x112},
-                        DivStruct{._super = x113},
-                        x114,
-                        DivStruct{._super = x115},
-                        DivStruct{._super = x116},
-                        DivStruct{._super = x117},
-                        DivStruct{._super = x118},
-                        DivStruct{._super = x119},
-                        DivStruct{._super = x120},
-                        DivStruct{._super = x121},
-                        DivStruct{._super = x122},
-                        DivStruct{._super = x123},
-                        DivStruct{._super = x124},
-                        DivStruct{._super = x125},
-                        DivStruct{._super = x126},
-                        DivStruct{._super = x127},
-                        DivStruct{._super = x128},
-                        DivStruct{._super = x129},
-                        x130,
-                        DivStruct{._super = x131},
-                        DivStruct{._super = x132},
-                        DivStruct{._super = x133},
-                        DivStruct{._super = x134},
-                        DivStruct{._super = x135},
-                        DivStruct{._super = x136},
-                        DivStruct{._super = x137},
-                        DivStruct{._super = x138},
-                        DivStruct{._super = x139},
-                        DivStruct{._super = x140},
-                        DivStruct{._super = x141},
-                        DivStruct{._super = x142},
-                        DivStruct{._super = x143},
-                        DivStruct{._super = x144},
-                        DivStruct{._super = x145},
-                        x146,
-                        DivStruct{._super = x147},
-                        DivStruct{._super = x148},
-                        DivStruct{._super = x149},
-                        DivStruct{._super = x150},
-                        DivStruct{._super = x151},
-                        DivStruct{._super = x152},
-                        DivStruct{._super = x153},
-                        DivStruct{._super = x154},
-                        DivStruct{._super = x155},
-                        DivStruct{._super = x156},
-                        DivStruct{._super = x157},
-                        DivStruct{._super = x158},
-                        DivStruct{._super = x159},
-                        DivStruct{._super = x160},
-                        DivStruct{._super = x161},
-                        x162,
-                        DivStruct{._super = x163},
-                        DivStruct{._super = x164},
-                        DivStruct{._super = x165},
-                        DivStruct{._super = x166},
-                        DivStruct{._super = x167},
-                        DivStruct{._super = x168},
-                        DivStruct{._super = x169},
-                        DivStruct{._super = x170},
-                        DivStruct{._super = x171},
-                        DivStruct{._super = x172},
-                        DivStruct{._super = x173},
-                        DivStruct{._super = x174},
-                        DivStruct{._super = x175},
-                        DivStruct{._super = x176},
-                        DivStruct{._super = x177},
-                        x178,
-                        DivStruct{._super = x179},
-                        DivStruct{._super = x180},
-                        DivStruct{._super = x181},
-                        DivStruct{._super = x182},
-                        DivStruct{._super = x183},
-                        DivStruct{._super = x184},
-                        DivStruct{._super = x185},
-                        DivStruct{._super = x186},
-                        DivStruct{._super = x187},
-                        DivStruct{._super = x188},
-                        DivStruct{._super = x189},
-                        DivStruct{._super = x190},
-                        DivStruct{._super = x191},
-                        DivStruct{._super = x192},
-                        DivStruct{._super = x193},
-                        x194,
-                        DivStruct{._super = x195},
-                        DivStruct{._super = x196},
-                        DivStruct{._super = x197},
-                        DivStruct{._super = x198},
-                        DivStruct{._super = x199},
-                        DivStruct{._super = x200},
-                        DivStruct{._super = x201},
-                        DivStruct{._super = x202},
-                        DivStruct{._super = x203},
-                        DivStruct{._super = x204},
-                        DivStruct{._super = x205},
-                        DivStruct{._super = x206},
-                        DivStruct{._super = x207},
-                        DivStruct{._super = x208},
-                        DivStruct{._super = x209},
-                        x210,
-                        DivStruct{._super = x211},
-                        DivStruct{._super = x212},
-                        DivStruct{._super = x213},
-                        DivStruct{._super = x214},
-                        DivStruct{._super = x215},
-                        DivStruct{._super = x216},
-                        DivStruct{._super = x217},
-                        DivStruct{._super = x218},
-                        DivStruct{._super = x219},
-                        DivStruct{._super = x220},
-                        DivStruct{._super = x221},
-                        DivStruct{._super = x222},
-                        DivStruct{._super = x223},
-                        DivStruct{._super = x224},
-                        DivStruct{._super = x225},
-                        x226,
-                        DivStruct{._super = x227},
-                        DivStruct{._super = x228},
-                        DivStruct{._super = x229},
-                        DivStruct{._super = x230},
-                        DivStruct{._super = x231},
-                        DivStruct{._super = x232},
-                        DivStruct{._super = x233},
-                        DivStruct{._super = x234},
-                        DivStruct{._super = x235},
-                        DivStruct{._super = x236},
-                        DivStruct{._super = x237},
-                        DivStruct{._super = x238},
-                        DivStruct{._super = x239},
-                        DivStruct{._super = x240},
-                        DivStruct{._super = x241},
-                        x242,
-                        DivStruct{._super = x243},
-                        DivStruct{._super = x244},
-                        DivStruct{._super = x245},
-                        DivStruct{._super = x246},
-                        DivStruct{._super = x247},
-                        DivStruct{._super = x248},
-                        DivStruct{._super = x249},
-                        DivStruct{._super = x250},
-                        DivStruct{._super = x251},
-                        DivStruct{._super = x252},
-                        DivStruct{._super = x253},
-                        DivStruct{._super = x254},
-                        DivStruct{._super = x255},
-                        DivStruct{._super = x256},
-                        DivStruct{._super = x257},
-                        x258,
-                        DivStruct{._super = x259},
-                        DivStruct{._super = x260},
-                        DivStruct{._super = x261},
-                        DivStruct{._super = x262},
-                        DivStruct{._super = x263},
-                        DivStruct{._super = x264},
-                        DivStruct{._super = x265},
-                        DivStruct{._super = x266},
-                        DivStruct{._super = x267},
-                        DivStruct{._super = x268},
-                        DivStruct{._super = x269},
-                        DivStruct{._super = x270},
-                        DivStruct{._super = x271},
-                        DivStruct{._super = x272},
-                        DivStruct{._super = x273},
-                        x274,
-                        DivStruct{._super = x275},
-                        DivStruct{._super = x276},
-                        DivStruct{._super = x277},
-                        DivStruct{._super = x278},
-                        DivStruct{._super = x279},
-                        DivStruct{._super = x280},
-                        DivStruct{._super = x281},
-                        DivStruct{._super = x282},
-                        DivStruct{._super = x283},
-                        DivStruct{._super = x284},
-                        DivStruct{._super = x285},
-                        DivStruct{._super = x286},
-                        DivStruct{._super = x287},
-                        DivStruct{._super = x288},
-                        DivStruct{._super = x289},
-                        x290,
-                        DivStruct{._super = x291},
-                        DivStruct{._super = x292},
-                        DivStruct{._super = x293},
-                        DivStruct{._super = x294},
-                        DivStruct{._super = x295},
-                        DivStruct{._super = x296},
-                        DivStruct{._super = x297},
-                        DivStruct{._super = x298},
-                        DivStruct{._super = x299},
-                        DivStruct{._super = x300},
-                        DivStruct{._super = x301},
-                        DivStruct{._super = x302},
-                        DivStruct{._super = x303},
-                        DivStruct{._super = x304},
-                        DivStruct{._super = x305},
-                        x306,
-                        DivStruct{._super = x307},
-                        DivStruct{._super = x308},
-                        DivStruct{._super = x309},
-                        DivStruct{._super = x310},
-                        DivStruct{._super = x311},
-                        DivStruct{._super = x312},
-                        DivStruct{._super = x313},
-                        DivStruct{._super = x314},
-                        DivStruct{._super = x315},
-                        DivStruct{._super = x316},
-                        DivStruct{._super = x317},
-                        DivStruct{._super = x318},
-                        DivStruct{._super = x319},
-                        DivStruct{._super = x320},
-                        DivStruct{._super = x321},
-                        x322,
-                        DivStruct{._super = x323},
-                        DivStruct{._super = x324},
-                        DivStruct{._super = x325},
-                        DivStruct{._super = x326},
-                        DivStruct{._super = x327},
-                        DivStruct{._super = x328},
-                        DivStruct{._super = x329},
-                        DivStruct{._super = x330},
-                        DivStruct{._super = x331},
-                        DivStruct{._super = x332},
-                        DivStruct{._super = x333},
-                        DivStruct{._super = x334},
-                        DivStruct{._super = x335},
-                        DivStruct{._super = x336},
-                        DivStruct{._super = x337},
-                        x338,
-                        DivStruct{._super = x339},
-                        DivStruct{._super = x340},
-                        DivStruct{._super = x341},
-                        DivStruct{._super = x342},
-                        DivStruct{._super = x343},
-                        DivStruct{._super = x344},
-                        DivStruct{._super = x345},
-                        DivStruct{._super = x346},
-                        DivStruct{._super = x347},
-                        DivStruct{._super = x348},
-                        DivStruct{._super = x349},
-                        DivStruct{._super = x350},
-                        DivStruct{._super = x351},
-                        DivStruct{._super = x352},
-                        DivStruct{._super = x353},
-                        x354,
-                        DivStruct{._super = x355},
-                        DivStruct{._super = x356},
-                        DivStruct{._super = x357},
-                        DivStruct{._super = x358},
-                        DivStruct{._super = x359},
-                        DivStruct{._super = x360},
-                        DivStruct{._super = x361},
-                        DivStruct{._super = x362},
-                        DivStruct{._super = x363},
-                        DivStruct{._super = x364},
-                        DivStruct{._super = x365},
-                        DivStruct{._super = x366},
-                        DivStruct{._super = x367},
-                        DivStruct{._super = x368},
-                        DivStruct{._super = x369},
-                        x370,
-                        DivStruct{._super = x371},
-                        DivStruct{._super = x372},
-                        DivStruct{._super = x373},
-                        DivStruct{._super = x374},
-                        DivStruct{._super = x375},
-                        DivStruct{._super = x376},
-                        DivStruct{._super = x377},
-                        DivStruct{._super = x378},
-                        DivStruct{._super = x379},
-                        DivStruct{._super = x380},
-                        DivStruct{._super = x381},
-                        DivStruct{._super = x382},
-                        DivStruct{._super = x383},
-                        DivStruct{._super = x384},
-                        DivStruct{._super = x385},
-                        x386,
-                        DivStruct{._super = x387},
-                        DivStruct{._super = x388},
-                        DivStruct{._super = x389},
-                        DivStruct{._super = x390},
-                        DivStruct{._super = x391},
-                        DivStruct{._super = x392},
-                        DivStruct{._super = x393},
-                        DivStruct{._super = x394},
-                        DivStruct{._super = x395},
-                        DivStruct{._super = x396},
-                        DivStruct{._super = x397},
-                        DivStruct{._super = x398},
-                        DivStruct{._super = x399},
-                        DivStruct{._super = x400},
-                        DivStruct{._super = x401},
-                        x402,
-                        DivStruct{._super = x403},
-                        DivStruct{._super = x404},
-                        DivStruct{._super = x405},
-                        DivStruct{._super = x406},
-                        DivStruct{._super = x407},
-                        DivStruct{._super = x408},
-                        DivStruct{._super = x409},
-                        DivStruct{._super = x410},
-                        DivStruct{._super = x411},
-                        DivStruct{._super = x412},
-                        DivStruct{._super = x413},
-                        DivStruct{._super = x414},
-                        DivStruct{._super = x415},
-                        DivStruct{._super = x416},
-                        DivStruct{._super = x417},
-                        x418,
-                        DivStruct{._super = x419},
-                        DivStruct{._super = x420},
-                        DivStruct{._super = x421},
-                        DivStruct{._super = x422},
-                        DivStruct{._super = x423},
-                        DivStruct{._super = x424},
-                        DivStruct{._super = x425},
-                        DivStruct{._super = x426},
-                        DivStruct{._super = x427},
-                        DivStruct{._super = x428},
-                        DivStruct{._super = x429},
-                        DivStruct{._super = x430},
-                        DivStruct{._super = x431},
-                        DivStruct{._super = x432},
-                        DivStruct{._super = x433},
-                        x434,
-                        DivStruct{._super = x435},
-                        DivStruct{._super = x436},
-                        DivStruct{._super = x437},
-                        DivStruct{._super = x438},
-                        DivStruct{._super = x439},
-                        DivStruct{._super = x440},
-                        DivStruct{._super = x441},
-                        DivStruct{._super = x442},
-                        DivStruct{._super = x443},
-                        DivStruct{._super = x444},
-                        DivStruct{._super = x445},
-                        DivStruct{._super = x446},
-                        DivStruct{._super = x447},
-                        DivStruct{._super = x448},
-                        DivStruct{._super = x449},
-                        x450,
-                        DivStruct{._super = x451},
-                        DivStruct{._super = x452},
-                        DivStruct{._super = x453},
-                        DivStruct{._super = x454},
-                        DivStruct{._super = x455},
-                        DivStruct{._super = x456},
-                        DivStruct{._super = x457},
-                        DivStruct{._super = x458},
-                        DivStruct{._super = x459},
-                        DivStruct{._super = x460},
-                        DivStruct{._super = x461},
-                        DivStruct{._super = x462},
-                        DivStruct{._super = x463},
-                        DivStruct{._super = x464},
-                        DivStruct{._super = x465},
-                        x466,
-                        DivStruct{._super = x467},
-                        DivStruct{._super = x468},
-                        DivStruct{._super = x469},
-                        DivStruct{._super = x470},
-                        DivStruct{._super = x471},
-                        DivStruct{._super = x472},
-                        DivStruct{._super = x473},
-                        DivStruct{._super = x474},
-                        DivStruct{._super = x475},
-                        DivStruct{._super = x476},
-                        DivStruct{._super = x477},
-                        DivStruct{._super = x478},
-                        DivStruct{._super = x479},
-                        DivStruct{._super = x480},
-                        DivStruct{._super = x481},
-                        x482,
-                        DivStruct{._super = x483},
-                        DivStruct{._super = x484},
-                        DivStruct{._super = x485},
-                        DivStruct{._super = x486},
-                        DivStruct{._super = x487},
-                        DivStruct{._super = x488},
-                        DivStruct{._super = x489},
-                        DivStruct{._super = x490},
-                        DivStruct{._super = x491},
-                        DivStruct{._super = x492},
-                        DivStruct{._super = x493},
-                        DivStruct{._super = x494},
-                        DivStruct{._super = x495},
-                        DivStruct{._super = x496},
-                        DivStruct{._super = x497},
-                        x498,
-                        DivStruct{._super = x499},
-                        DivStruct{._super = x500},
-                        DivStruct{._super = x501},
-                        DivStruct{._super = x502},
-                        DivStruct{._super = x503},
-                        DivStruct{._super = x504},
-                        DivStruct{._super = x505},
-                        DivStruct{._super = x506},
-                        DivStruct{._super = x507},
-                        DivStruct{._super = x508},
-                        DivStruct{._super = x509},
-                        DivStruct{._super = x510},
-                        DivStruct{._super = x511},
-                        DivStruct{._super = x512},
-                        DivStruct{._super = x513},
-                        x514,
-                        DivStruct{._super = x515},
-                        DivStruct{._super = x516},
-                        DivStruct{._super = x517},
-                        DivStruct{._super = x518},
-                        DivStruct{._super = x519},
-                        DivStruct{._super = x520},
-                        DivStruct{._super = x521},
-                        DivStruct{._super = x522},
-                        DivStruct{._super = x523},
-                        DivStruct{._super = x524},
-                        DivStruct{._super = x525},
-                        DivStruct{._super = x526},
-                        DivStruct{._super = x527},
-                        DivStruct{._super = x528},
-                        DivStruct{._super = x529},
-                        x530,
-                        DivStruct{._super = x531},
-                        DivStruct{._super = x532},
-                        DivStruct{._super = x533},
-                        DivStruct{._super = x534},
-                        DivStruct{._super = x535},
-                        DivStruct{._super = x536},
-                        DivStruct{._super = x537},
-                        DivStruct{._super = x538},
-                        DivStruct{._super = x539},
-                        DivStruct{._super = x540},
-                        DivStruct{._super = x541},
-                        DivStruct{._super = x542},
-                        DivStruct{._super = x543},
-                        DivStruct{._super = x544},
-                        DivStruct{._super = x545},
-                        x546,
-                        DivStruct{._super = x547},
-                        DivStruct{._super = x548},
-                        DivStruct{._super = x549},
-                        DivStruct{._super = x550},
-                        DivStruct{._super = x551},
-                        DivStruct{._super = x552},
-                        DivStruct{._super = x553},
-                        DivStruct{._super = x554},
-                        DivStruct{._super = x555},
-                        DivStruct{._super = x556},
-                        DivStruct{._super = x557},
-                        DivStruct{._super = x558},
-                        DivStruct{._super = x559},
-                        DivStruct{._super = x560},
-                        DivStruct{._super = x561},
-                        x562,
-                        DivStruct{._super = x563},
-                        DivStruct{._super = x564},
-                        DivStruct{._super = x565},
-                        DivStruct{._super = x566},
-                        DivStruct{._super = x567},
-                        DivStruct{._super = x568},
-                        DivStruct{._super = x569},
-                        DivStruct{._super = x570},
-                        DivStruct{._super = x571},
-                        DivStruct{._super = x572},
-                        DivStruct{._super = x573},
-                        DivStruct{._super = x574},
-                        DivStruct{._super = x575},
-                        DivStruct{._super = x576},
-                        DivStruct{._super = x577},
-                        x578,
-                        DivStruct{._super = x579},
-                        DivStruct{._super = x580},
-                        DivStruct{._super = x581},
-                        DivStruct{._super = x582},
-                        DivStruct{._super = x583},
-                        DivStruct{._super = x584},
-                        DivStruct{._super = x585},
-                        DivStruct{._super = x586},
-                        DivStruct{._super = x587},
-                        DivStruct{._super = x588},
-                        DivStruct{._super = x589},
-                        DivStruct{._super = x590},
-                        DivStruct{._super = x591},
-                        DivStruct{._super = x592},
-                        DivStruct{._super = x593},
-                        x594,
-                        DivStruct{._super = x595},
-                        DivStruct{._super = x596},
-                        DivStruct{._super = x597},
-                        DivStruct{._super = x598},
-                        DivStruct{._super = x599},
-                        DivStruct{._super = x600},
-                        DivStruct{._super = x601},
-                        DivStruct{._super = x602},
-                        DivStruct{._super = x603},
-                        DivStruct{._super = x604},
-                        DivStruct{._super = x605},
-                        DivStruct{._super = x606},
-                        DivStruct{._super = x607},
-                        DivStruct{._super = x608},
-                        DivStruct{._super = x609},
-                        x610,
-                        DivStruct{._super = x611},
-                        DivStruct{._super = x612},
-                        DivStruct{._super = x613},
-                        DivStruct{._super = x614},
-                        DivStruct{._super = x615},
-                        DivStruct{._super = x616},
-                        DivStruct{._super = x617},
-                        DivStruct{._super = x618},
-                        DivStruct{._super = x619},
-                        DivStruct{._super = x620},
-                        DivStruct{._super = x621},
-                        DivStruct{._super = x622},
-                        DivStruct{._super = x623},
-                        DivStruct{._super = x624},
-                        DivStruct{._super = x625},
-                        x626,
-                        DivStruct{._super = x627},
-                        DivStruct{._super = x628},
-                        DivStruct{._super = x629},
-                        DivStruct{._super = x630},
-                        DivStruct{._super = x631},
-                        DivStruct{._super = x632},
-                        DivStruct{._super = x633},
-                        DivStruct{._super = x634},
-                        DivStruct{._super = x635},
-                        DivStruct{._super = x636},
-                        DivStruct{._super = x637},
-                        DivStruct{._super = x638},
-                        DivStruct{._super = x639},
-                        DivStruct{._super = x640},
-                        DivStruct{._super = x641},
-                        x642,
-                        DivStruct{._super = x643},
-                        DivStruct{._super = x644},
-                        DivStruct{._super = x645},
-                        DivStruct{._super = x646},
-                        DivStruct{._super = x647},
-                        DivStruct{._super = x648},
-                        DivStruct{._super = x649},
-                        DivStruct{._super = x650},
-                        DivStruct{._super = x651},
-                        DivStruct{._super = x652},
-                        DivStruct{._super = x653},
-                        DivStruct{._super = x654},
-                        DivStruct{._super = x655},
-                        DivStruct{._super = x656},
-                        DivStruct{._super = x657},
-                        x658,
-                        DivStruct{._super = x659},
-                        DivStruct{._super = x660},
-                        DivStruct{._super = x661},
-                        DivStruct{._super = x662},
-                        DivStruct{._super = x663},
-                        DivStruct{._super = x664},
-                        DivStruct{._super = x665},
-                        DivStruct{._super = x666},
-                        DivStruct{._super = x667},
-                        DivStruct{._super = x668},
-                        DivStruct{._super = x669},
-                        DivStruct{._super = x670},
-                        DivStruct{._super = x671},
-                        DivStruct{._super = x672},
-                        DivStruct{._super = x673},
-                        x674,
-                        DivStruct{._super = x675},
-                        DivStruct{._super = x676},
-                        DivStruct{._super = x677},
-                        DivStruct{._super = x678},
-                        DivStruct{._super = x679},
-                        DivStruct{._super = x680},
-                        DivStruct{._super = x681},
-                        DivStruct{._super = x682},
-                        DivStruct{._super = x683},
-                        DivStruct{._super = x684},
-                        DivStruct{._super = x685},
-                        DivStruct{._super = x686},
-                        DivStruct{._super = x687},
-                        DivStruct{._super = x688},
-                        DivStruct{._super = x689},
-                        x690,
-                        DivStruct{._super = x691},
-                        DivStruct{._super = x692},
-                        DivStruct{._super = x693},
-                        DivStruct{._super = x694},
-                        DivStruct{._super = x695},
-                        DivStruct{._super = x696},
-                        DivStruct{._super = x697},
-                        DivStruct{._super = x698},
-                        DivStruct{._super = x699},
-                        DivStruct{._super = x700},
-                        DivStruct{._super = x701},
-                        DivStruct{._super = x702},
-                        DivStruct{._super = x703},
-                        DivStruct{._super = x704},
-                        DivStruct{._super = x705},
-                        x706,
-                        DivStruct{._super = x707},
-                        DivStruct{._super = x708},
-                        DivStruct{._super = x709},
-                        DivStruct{._super = x710},
-                        DivStruct{._super = x711},
-                        DivStruct{._super = x712},
-                        DivStruct{._super = x713},
-                        DivStruct{._super = x714},
-                        DivStruct{._super = x715},
-                        DivStruct{._super = x716},
-                        DivStruct{._super = x717},
-                        DivStruct{._super = x718},
-                        DivStruct{._super = x719},
-                        DivStruct{._super = x720},
-                        DivStruct{._super = x721},
-                        x722,
-                        DivStruct{._super = x723},
-                        DivStruct{._super = x724},
-                        DivStruct{._super = x725},
-                        DivStruct{._super = x726},
-                        DivStruct{._super = x727},
-                        DivStruct{._super = x728},
-                        DivStruct{._super = x729},
-                        DivStruct{._super = x730},
-                        DivStruct{._super = x731},
-                        DivStruct{._super = x732},
-                        DivStruct{._super = x733},
-                        DivStruct{._super = x734},
-                        DivStruct{._super = x735},
-                        DivStruct{._super = x736},
-                        DivStruct{._super = x737},
-                        x738,
-                        DivStruct{._super = x739},
-                        DivStruct{._super = x740},
-                        DivStruct{._super = x741},
-                        DivStruct{._super = x742},
-                        DivStruct{._super = x743},
-                        DivStruct{._super = x744},
-                        DivStruct{._super = x745},
-                        DivStruct{._super = x746},
-                        DivStruct{._super = x747},
-                        DivStruct{._super = x748},
-                        DivStruct{._super = x749},
-                        DivStruct{._super = x750},
-                        DivStruct{._super = x751},
-                        DivStruct{._super = x752},
-                        DivStruct{._super = x753},
-                        x754,
-                        DivStruct{._super = x755},
-                        DivStruct{._super = x756},
-                        DivStruct{._super = x757},
-                        DivStruct{._super = x758},
-                        DivStruct{._super = x759},
-                        DivStruct{._super = x760},
-                        DivStruct{._super = x761},
-                        DivStruct{._super = x762},
-                        DivStruct{._super = x763},
-                        DivStruct{._super = x764},
-                        DivStruct{._super = x765},
-                        DivStruct{._super = x766},
-                        DivStruct{._super = x767},
-                        DivStruct{._super = x768},
-                        DivStruct{._super = x769},
-                        x770,
-                        DivStruct{._super = x771},
-                        DivStruct{._super = x772},
-                        DivStruct{._super = x773},
-                        DivStruct{._super = x774},
-                        DivStruct{._super = x775},
-                        DivStruct{._super = x776},
-                        DivStruct{._super = x777},
-                        DivStruct{._super = x778},
-                        DivStruct{._super = x779},
-                        DivStruct{._super = x780},
-                        DivStruct{._super = x781},
-                        DivStruct{._super = x782},
-                        DivStruct{._super = x783},
-                        DivStruct{._super = x784},
-                        DivStruct{._super = x785},
-                        x786,
-                        DivStruct{._super = x787},
-                        DivStruct{._super = x788},
-                        DivStruct{._super = x789},
-                        DivStruct{._super = x790},
-                        DivStruct{._super = x791},
-                        DivStruct{._super = x792},
-                        DivStruct{._super = x793},
-                        DivStruct{._super = x794},
-                        DivStruct{._super = x795},
-                        DivStruct{._super = x796},
-                        DivStruct{._super = x797},
-                        DivStruct{._super = x798},
-                        DivStruct{._super = x799},
-                        DivStruct{._super = x800},
-                        DivStruct{._super = x801}}[to_size_t(x803)]
-                           ._super;
-            // UnpackReg(zirgen/circuit/keccak2/pack.zir:48)
-            NondetRegStruct x806 = exec_NondetBitReg(x805, x804);
-            return UnpackReg_800__16__SuperStruct{._super = x806};
-          }));
+  UnpackReg_800__16__SuperStruct800Array x802 = map(
+      Val800Array{
+          Val(0),   Val(1),   Val(2),   Val(3),   Val(4),   Val(5),   Val(6),   Val(7),   Val(8),
+          Val(9),   Val(10),  Val(11),  Val(12),  Val(13),  Val(14),  Val(15),  Val(16),  Val(17),
+          Val(18),  Val(19),  Val(20),  Val(21),  Val(22),  Val(23),  Val(24),  Val(25),  Val(26),
+          Val(27),  Val(28),  Val(29),  Val(30),  Val(31),  Val(32),  Val(33),  Val(34),  Val(35),
+          Val(36),  Val(37),  Val(38),  Val(39),  Val(40),  Val(41),  Val(42),  Val(43),  Val(44),
+          Val(45),  Val(46),  Val(47),  Val(48),  Val(49),  Val(50),  Val(51),  Val(52),  Val(53),
+          Val(54),  Val(55),  Val(56),  Val(57),  Val(58),  Val(59),  Val(60),  Val(61),  Val(62),
+          Val(63),  Val(64),  Val(65),  Val(66),  Val(67),  Val(68),  Val(69),  Val(70),  Val(71),
+          Val(72),  Val(73),  Val(74),  Val(75),  Val(76),  Val(77),  Val(78),  Val(79),  Val(80),
+          Val(81),  Val(82),  Val(83),  Val(84),  Val(85),  Val(86),  Val(87),  Val(88),  Val(89),
+          Val(90),  Val(91),  Val(92),  Val(93),  Val(94),  Val(95),  Val(96),  Val(97),  Val(98),
+          Val(99),  Val(100), Val(101), Val(102), Val(103), Val(104), Val(105), Val(106), Val(107),
+          Val(108), Val(109), Val(110), Val(111), Val(112), Val(113), Val(114), Val(115), Val(116),
+          Val(117), Val(118), Val(119), Val(120), Val(121), Val(122), Val(123), Val(124), Val(125),
+          Val(126), Val(127), Val(128), Val(129), Val(130), Val(131), Val(132), Val(133), Val(134),
+          Val(135), Val(136), Val(137), Val(138), Val(139), Val(140), Val(141), Val(142), Val(143),
+          Val(144), Val(145), Val(146), Val(147), Val(148), Val(149), Val(150), Val(151), Val(152),
+          Val(153), Val(154), Val(155), Val(156), Val(157), Val(158), Val(159), Val(160), Val(161),
+          Val(162), Val(163), Val(164), Val(165), Val(166), Val(167), Val(168), Val(169), Val(170),
+          Val(171), Val(172), Val(173), Val(174), Val(175), Val(176), Val(177), Val(178), Val(179),
+          Val(180), Val(181), Val(182), Val(183), Val(184), Val(185), Val(186), Val(187), Val(188),
+          Val(189), Val(190), Val(191), Val(192), Val(193), Val(194), Val(195), Val(196), Val(197),
+          Val(198), Val(199), Val(200), Val(201), Val(202), Val(203), Val(204), Val(205), Val(206),
+          Val(207), Val(208), Val(209), Val(210), Val(211), Val(212), Val(213), Val(214), Val(215),
+          Val(216), Val(217), Val(218), Val(219), Val(220), Val(221), Val(222), Val(223), Val(224),
+          Val(225), Val(226), Val(227), Val(228), Val(229), Val(230), Val(231), Val(232), Val(233),
+          Val(234), Val(235), Val(236), Val(237), Val(238), Val(239), Val(240), Val(241), Val(242),
+          Val(243), Val(244), Val(245), Val(246), Val(247), Val(248), Val(249), Val(250), Val(251),
+          Val(252), Val(253), Val(254), Val(255), Val(256), Val(257), Val(258), Val(259), Val(260),
+          Val(261), Val(262), Val(263), Val(264), Val(265), Val(266), Val(267), Val(268), Val(269),
+          Val(270), Val(271), Val(272), Val(273), Val(274), Val(275), Val(276), Val(277), Val(278),
+          Val(279), Val(280), Val(281), Val(282), Val(283), Val(284), Val(285), Val(286), Val(287),
+          Val(288), Val(289), Val(290), Val(291), Val(292), Val(293), Val(294), Val(295), Val(296),
+          Val(297), Val(298), Val(299), Val(300), Val(301), Val(302), Val(303), Val(304), Val(305),
+          Val(306), Val(307), Val(308), Val(309), Val(310), Val(311), Val(312), Val(313), Val(314),
+          Val(315), Val(316), Val(317), Val(318), Val(319), Val(320), Val(321), Val(322), Val(323),
+          Val(324), Val(325), Val(326), Val(327), Val(328), Val(329), Val(330), Val(331), Val(332),
+          Val(333), Val(334), Val(335), Val(336), Val(337), Val(338), Val(339), Val(340), Val(341),
+          Val(342), Val(343), Val(344), Val(345), Val(346), Val(347), Val(348), Val(349), Val(350),
+          Val(351), Val(352), Val(353), Val(354), Val(355), Val(356), Val(357), Val(358), Val(359),
+          Val(360), Val(361), Val(362), Val(363), Val(364), Val(365), Val(366), Val(367), Val(368),
+          Val(369), Val(370), Val(371), Val(372), Val(373), Val(374), Val(375), Val(376), Val(377),
+          Val(378), Val(379), Val(380), Val(381), Val(382), Val(383), Val(384), Val(385), Val(386),
+          Val(387), Val(388), Val(389), Val(390), Val(391), Val(392), Val(393), Val(394), Val(395),
+          Val(396), Val(397), Val(398), Val(399), Val(400), Val(401), Val(402), Val(403), Val(404),
+          Val(405), Val(406), Val(407), Val(408), Val(409), Val(410), Val(411), Val(412), Val(413),
+          Val(414), Val(415), Val(416), Val(417), Val(418), Val(419), Val(420), Val(421), Val(422),
+          Val(423), Val(424), Val(425), Val(426), Val(427), Val(428), Val(429), Val(430), Val(431),
+          Val(432), Val(433), Val(434), Val(435), Val(436), Val(437), Val(438), Val(439), Val(440),
+          Val(441), Val(442), Val(443), Val(444), Val(445), Val(446), Val(447), Val(448), Val(449),
+          Val(450), Val(451), Val(452), Val(453), Val(454), Val(455), Val(456), Val(457), Val(458),
+          Val(459), Val(460), Val(461), Val(462), Val(463), Val(464), Val(465), Val(466), Val(467),
+          Val(468), Val(469), Val(470), Val(471), Val(472), Val(473), Val(474), Val(475), Val(476),
+          Val(477), Val(478), Val(479), Val(480), Val(481), Val(482), Val(483), Val(484), Val(485),
+          Val(486), Val(487), Val(488), Val(489), Val(490), Val(491), Val(492), Val(493), Val(494),
+          Val(495), Val(496), Val(497), Val(498), Val(499), Val(500), Val(501), Val(502), Val(503),
+          Val(504), Val(505), Val(506), Val(507), Val(508), Val(509), Val(510), Val(511), Val(512),
+          Val(513), Val(514), Val(515), Val(516), Val(517), Val(518), Val(519), Val(520), Val(521),
+          Val(522), Val(523), Val(524), Val(525), Val(526), Val(527), Val(528), Val(529), Val(530),
+          Val(531), Val(532), Val(533), Val(534), Val(535), Val(536), Val(537), Val(538), Val(539),
+          Val(540), Val(541), Val(542), Val(543), Val(544), Val(545), Val(546), Val(547), Val(548),
+          Val(549), Val(550), Val(551), Val(552), Val(553), Val(554), Val(555), Val(556), Val(557),
+          Val(558), Val(559), Val(560), Val(561), Val(562), Val(563), Val(564), Val(565), Val(566),
+          Val(567), Val(568), Val(569), Val(570), Val(571), Val(572), Val(573), Val(574), Val(575),
+          Val(576), Val(577), Val(578), Val(579), Val(580), Val(581), Val(582), Val(583), Val(584),
+          Val(585), Val(586), Val(587), Val(588), Val(589), Val(590), Val(591), Val(592), Val(593),
+          Val(594), Val(595), Val(596), Val(597), Val(598), Val(599), Val(600), Val(601), Val(602),
+          Val(603), Val(604), Val(605), Val(606), Val(607), Val(608), Val(609), Val(610), Val(611),
+          Val(612), Val(613), Val(614), Val(615), Val(616), Val(617), Val(618), Val(619), Val(620),
+          Val(621), Val(622), Val(623), Val(624), Val(625), Val(626), Val(627), Val(628), Val(629),
+          Val(630), Val(631), Val(632), Val(633), Val(634), Val(635), Val(636), Val(637), Val(638),
+          Val(639), Val(640), Val(641), Val(642), Val(643), Val(644), Val(645), Val(646), Val(647),
+          Val(648), Val(649), Val(650), Val(651), Val(652), Val(653), Val(654), Val(655), Val(656),
+          Val(657), Val(658), Val(659), Val(660), Val(661), Val(662), Val(663), Val(664), Val(665),
+          Val(666), Val(667), Val(668), Val(669), Val(670), Val(671), Val(672), Val(673), Val(674),
+          Val(675), Val(676), Val(677), Val(678), Val(679), Val(680), Val(681), Val(682), Val(683),
+          Val(684), Val(685), Val(686), Val(687), Val(688), Val(689), Val(690), Val(691), Val(692),
+          Val(693), Val(694), Val(695), Val(696), Val(697), Val(698), Val(699), Val(700), Val(701),
+          Val(702), Val(703), Val(704), Val(705), Val(706), Val(707), Val(708), Val(709), Val(710),
+          Val(711), Val(712), Val(713), Val(714), Val(715), Val(716), Val(717), Val(718), Val(719),
+          Val(720), Val(721), Val(722), Val(723), Val(724), Val(725), Val(726), Val(727), Val(728),
+          Val(729), Val(730), Val(731), Val(732), Val(733), Val(734), Val(735), Val(736), Val(737),
+          Val(738), Val(739), Val(740), Val(741), Val(742), Val(743), Val(744), Val(745), Val(746),
+          Val(747), Val(748), Val(749), Val(750), Val(751), Val(752), Val(753), Val(754), Val(755),
+          Val(756), Val(757), Val(758), Val(759), Val(760), Val(761), Val(762), Val(763), Val(764),
+          Val(765), Val(766), Val(767), Val(768), Val(769), Val(770), Val(771), Val(772), Val(773),
+          Val(774), Val(775), Val(776), Val(777), Val(778), Val(779), Val(780), Val(781), Val(782),
+          Val(783), Val(784), Val(785), Val(786), Val(787), Val(788), Val(789), Val(790), Val(791),
+          Val(792), Val(793), Val(794), Val(795), Val(796), Val(797), Val(798), Val(799)},
+      LAYOUT_LOOKUP(layout1, _super),
+      ([&](Val800Array::value_type x803,
+           BoundLayout<NondetRegLayout800LayoutArray::value_type> x804) {
+        // UnpackReg(zirgen/circuit/keccak2/pack.zir:47)
+        Val x805 = DivStruct800Array{x2,
+                                     DivStruct{._super = x3},
+                                     DivStruct{._super = x4},
+                                     DivStruct{._super = x5},
+                                     DivStruct{._super = x6},
+                                     DivStruct{._super = x7},
+                                     DivStruct{._super = x8},
+                                     DivStruct{._super = x9},
+                                     DivStruct{._super = x10},
+                                     DivStruct{._super = x11},
+                                     DivStruct{._super = x12},
+                                     DivStruct{._super = x13},
+                                     DivStruct{._super = x14},
+                                     DivStruct{._super = x15},
+                                     DivStruct{._super = x16},
+                                     DivStruct{._super = x17},
+                                     x18,
+                                     DivStruct{._super = x19},
+                                     DivStruct{._super = x20},
+                                     DivStruct{._super = x21},
+                                     DivStruct{._super = x22},
+                                     DivStruct{._super = x23},
+                                     DivStruct{._super = x24},
+                                     DivStruct{._super = x25},
+                                     DivStruct{._super = x26},
+                                     DivStruct{._super = x27},
+                                     DivStruct{._super = x28},
+                                     DivStruct{._super = x29},
+                                     DivStruct{._super = x30},
+                                     DivStruct{._super = x31},
+                                     DivStruct{._super = x32},
+                                     DivStruct{._super = x33},
+                                     x34,
+                                     DivStruct{._super = x35},
+                                     DivStruct{._super = x36},
+                                     DivStruct{._super = x37},
+                                     DivStruct{._super = x38},
+                                     DivStruct{._super = x39},
+                                     DivStruct{._super = x40},
+                                     DivStruct{._super = x41},
+                                     DivStruct{._super = x42},
+                                     DivStruct{._super = x43},
+                                     DivStruct{._super = x44},
+                                     DivStruct{._super = x45},
+                                     DivStruct{._super = x46},
+                                     DivStruct{._super = x47},
+                                     DivStruct{._super = x48},
+                                     DivStruct{._super = x49},
+                                     x50,
+                                     DivStruct{._super = x51},
+                                     DivStruct{._super = x52},
+                                     DivStruct{._super = x53},
+                                     DivStruct{._super = x54},
+                                     DivStruct{._super = x55},
+                                     DivStruct{._super = x56},
+                                     DivStruct{._super = x57},
+                                     DivStruct{._super = x58},
+                                     DivStruct{._super = x59},
+                                     DivStruct{._super = x60},
+                                     DivStruct{._super = x61},
+                                     DivStruct{._super = x62},
+                                     DivStruct{._super = x63},
+                                     DivStruct{._super = x64},
+                                     DivStruct{._super = x65},
+                                     x66,
+                                     DivStruct{._super = x67},
+                                     DivStruct{._super = x68},
+                                     DivStruct{._super = x69},
+                                     DivStruct{._super = x70},
+                                     DivStruct{._super = x71},
+                                     DivStruct{._super = x72},
+                                     DivStruct{._super = x73},
+                                     DivStruct{._super = x74},
+                                     DivStruct{._super = x75},
+                                     DivStruct{._super = x76},
+                                     DivStruct{._super = x77},
+                                     DivStruct{._super = x78},
+                                     DivStruct{._super = x79},
+                                     DivStruct{._super = x80},
+                                     DivStruct{._super = x81},
+                                     x82,
+                                     DivStruct{._super = x83},
+                                     DivStruct{._super = x84},
+                                     DivStruct{._super = x85},
+                                     DivStruct{._super = x86},
+                                     DivStruct{._super = x87},
+                                     DivStruct{._super = x88},
+                                     DivStruct{._super = x89},
+                                     DivStruct{._super = x90},
+                                     DivStruct{._super = x91},
+                                     DivStruct{._super = x92},
+                                     DivStruct{._super = x93},
+                                     DivStruct{._super = x94},
+                                     DivStruct{._super = x95},
+                                     DivStruct{._super = x96},
+                                     DivStruct{._super = x97},
+                                     x98,
+                                     DivStruct{._super = x99},
+                                     DivStruct{._super = x100},
+                                     DivStruct{._super = x101},
+                                     DivStruct{._super = x102},
+                                     DivStruct{._super = x103},
+                                     DivStruct{._super = x104},
+                                     DivStruct{._super = x105},
+                                     DivStruct{._super = x106},
+                                     DivStruct{._super = x107},
+                                     DivStruct{._super = x108},
+                                     DivStruct{._super = x109},
+                                     DivStruct{._super = x110},
+                                     DivStruct{._super = x111},
+                                     DivStruct{._super = x112},
+                                     DivStruct{._super = x113},
+                                     x114,
+                                     DivStruct{._super = x115},
+                                     DivStruct{._super = x116},
+                                     DivStruct{._super = x117},
+                                     DivStruct{._super = x118},
+                                     DivStruct{._super = x119},
+                                     DivStruct{._super = x120},
+                                     DivStruct{._super = x121},
+                                     DivStruct{._super = x122},
+                                     DivStruct{._super = x123},
+                                     DivStruct{._super = x124},
+                                     DivStruct{._super = x125},
+                                     DivStruct{._super = x126},
+                                     DivStruct{._super = x127},
+                                     DivStruct{._super = x128},
+                                     DivStruct{._super = x129},
+                                     x130,
+                                     DivStruct{._super = x131},
+                                     DivStruct{._super = x132},
+                                     DivStruct{._super = x133},
+                                     DivStruct{._super = x134},
+                                     DivStruct{._super = x135},
+                                     DivStruct{._super = x136},
+                                     DivStruct{._super = x137},
+                                     DivStruct{._super = x138},
+                                     DivStruct{._super = x139},
+                                     DivStruct{._super = x140},
+                                     DivStruct{._super = x141},
+                                     DivStruct{._super = x142},
+                                     DivStruct{._super = x143},
+                                     DivStruct{._super = x144},
+                                     DivStruct{._super = x145},
+                                     x146,
+                                     DivStruct{._super = x147},
+                                     DivStruct{._super = x148},
+                                     DivStruct{._super = x149},
+                                     DivStruct{._super = x150},
+                                     DivStruct{._super = x151},
+                                     DivStruct{._super = x152},
+                                     DivStruct{._super = x153},
+                                     DivStruct{._super = x154},
+                                     DivStruct{._super = x155},
+                                     DivStruct{._super = x156},
+                                     DivStruct{._super = x157},
+                                     DivStruct{._super = x158},
+                                     DivStruct{._super = x159},
+                                     DivStruct{._super = x160},
+                                     DivStruct{._super = x161},
+                                     x162,
+                                     DivStruct{._super = x163},
+                                     DivStruct{._super = x164},
+                                     DivStruct{._super = x165},
+                                     DivStruct{._super = x166},
+                                     DivStruct{._super = x167},
+                                     DivStruct{._super = x168},
+                                     DivStruct{._super = x169},
+                                     DivStruct{._super = x170},
+                                     DivStruct{._super = x171},
+                                     DivStruct{._super = x172},
+                                     DivStruct{._super = x173},
+                                     DivStruct{._super = x174},
+                                     DivStruct{._super = x175},
+                                     DivStruct{._super = x176},
+                                     DivStruct{._super = x177},
+                                     x178,
+                                     DivStruct{._super = x179},
+                                     DivStruct{._super = x180},
+                                     DivStruct{._super = x181},
+                                     DivStruct{._super = x182},
+                                     DivStruct{._super = x183},
+                                     DivStruct{._super = x184},
+                                     DivStruct{._super = x185},
+                                     DivStruct{._super = x186},
+                                     DivStruct{._super = x187},
+                                     DivStruct{._super = x188},
+                                     DivStruct{._super = x189},
+                                     DivStruct{._super = x190},
+                                     DivStruct{._super = x191},
+                                     DivStruct{._super = x192},
+                                     DivStruct{._super = x193},
+                                     x194,
+                                     DivStruct{._super = x195},
+                                     DivStruct{._super = x196},
+                                     DivStruct{._super = x197},
+                                     DivStruct{._super = x198},
+                                     DivStruct{._super = x199},
+                                     DivStruct{._super = x200},
+                                     DivStruct{._super = x201},
+                                     DivStruct{._super = x202},
+                                     DivStruct{._super = x203},
+                                     DivStruct{._super = x204},
+                                     DivStruct{._super = x205},
+                                     DivStruct{._super = x206},
+                                     DivStruct{._super = x207},
+                                     DivStruct{._super = x208},
+                                     DivStruct{._super = x209},
+                                     x210,
+                                     DivStruct{._super = x211},
+                                     DivStruct{._super = x212},
+                                     DivStruct{._super = x213},
+                                     DivStruct{._super = x214},
+                                     DivStruct{._super = x215},
+                                     DivStruct{._super = x216},
+                                     DivStruct{._super = x217},
+                                     DivStruct{._super = x218},
+                                     DivStruct{._super = x219},
+                                     DivStruct{._super = x220},
+                                     DivStruct{._super = x221},
+                                     DivStruct{._super = x222},
+                                     DivStruct{._super = x223},
+                                     DivStruct{._super = x224},
+                                     DivStruct{._super = x225},
+                                     x226,
+                                     DivStruct{._super = x227},
+                                     DivStruct{._super = x228},
+                                     DivStruct{._super = x229},
+                                     DivStruct{._super = x230},
+                                     DivStruct{._super = x231},
+                                     DivStruct{._super = x232},
+                                     DivStruct{._super = x233},
+                                     DivStruct{._super = x234},
+                                     DivStruct{._super = x235},
+                                     DivStruct{._super = x236},
+                                     DivStruct{._super = x237},
+                                     DivStruct{._super = x238},
+                                     DivStruct{._super = x239},
+                                     DivStruct{._super = x240},
+                                     DivStruct{._super = x241},
+                                     x242,
+                                     DivStruct{._super = x243},
+                                     DivStruct{._super = x244},
+                                     DivStruct{._super = x245},
+                                     DivStruct{._super = x246},
+                                     DivStruct{._super = x247},
+                                     DivStruct{._super = x248},
+                                     DivStruct{._super = x249},
+                                     DivStruct{._super = x250},
+                                     DivStruct{._super = x251},
+                                     DivStruct{._super = x252},
+                                     DivStruct{._super = x253},
+                                     DivStruct{._super = x254},
+                                     DivStruct{._super = x255},
+                                     DivStruct{._super = x256},
+                                     DivStruct{._super = x257},
+                                     x258,
+                                     DivStruct{._super = x259},
+                                     DivStruct{._super = x260},
+                                     DivStruct{._super = x261},
+                                     DivStruct{._super = x262},
+                                     DivStruct{._super = x263},
+                                     DivStruct{._super = x264},
+                                     DivStruct{._super = x265},
+                                     DivStruct{._super = x266},
+                                     DivStruct{._super = x267},
+                                     DivStruct{._super = x268},
+                                     DivStruct{._super = x269},
+                                     DivStruct{._super = x270},
+                                     DivStruct{._super = x271},
+                                     DivStruct{._super = x272},
+                                     DivStruct{._super = x273},
+                                     x274,
+                                     DivStruct{._super = x275},
+                                     DivStruct{._super = x276},
+                                     DivStruct{._super = x277},
+                                     DivStruct{._super = x278},
+                                     DivStruct{._super = x279},
+                                     DivStruct{._super = x280},
+                                     DivStruct{._super = x281},
+                                     DivStruct{._super = x282},
+                                     DivStruct{._super = x283},
+                                     DivStruct{._super = x284},
+                                     DivStruct{._super = x285},
+                                     DivStruct{._super = x286},
+                                     DivStruct{._super = x287},
+                                     DivStruct{._super = x288},
+                                     DivStruct{._super = x289},
+                                     x290,
+                                     DivStruct{._super = x291},
+                                     DivStruct{._super = x292},
+                                     DivStruct{._super = x293},
+                                     DivStruct{._super = x294},
+                                     DivStruct{._super = x295},
+                                     DivStruct{._super = x296},
+                                     DivStruct{._super = x297},
+                                     DivStruct{._super = x298},
+                                     DivStruct{._super = x299},
+                                     DivStruct{._super = x300},
+                                     DivStruct{._super = x301},
+                                     DivStruct{._super = x302},
+                                     DivStruct{._super = x303},
+                                     DivStruct{._super = x304},
+                                     DivStruct{._super = x305},
+                                     x306,
+                                     DivStruct{._super = x307},
+                                     DivStruct{._super = x308},
+                                     DivStruct{._super = x309},
+                                     DivStruct{._super = x310},
+                                     DivStruct{._super = x311},
+                                     DivStruct{._super = x312},
+                                     DivStruct{._super = x313},
+                                     DivStruct{._super = x314},
+                                     DivStruct{._super = x315},
+                                     DivStruct{._super = x316},
+                                     DivStruct{._super = x317},
+                                     DivStruct{._super = x318},
+                                     DivStruct{._super = x319},
+                                     DivStruct{._super = x320},
+                                     DivStruct{._super = x321},
+                                     x322,
+                                     DivStruct{._super = x323},
+                                     DivStruct{._super = x324},
+                                     DivStruct{._super = x325},
+                                     DivStruct{._super = x326},
+                                     DivStruct{._super = x327},
+                                     DivStruct{._super = x328},
+                                     DivStruct{._super = x329},
+                                     DivStruct{._super = x330},
+                                     DivStruct{._super = x331},
+                                     DivStruct{._super = x332},
+                                     DivStruct{._super = x333},
+                                     DivStruct{._super = x334},
+                                     DivStruct{._super = x335},
+                                     DivStruct{._super = x336},
+                                     DivStruct{._super = x337},
+                                     x338,
+                                     DivStruct{._super = x339},
+                                     DivStruct{._super = x340},
+                                     DivStruct{._super = x341},
+                                     DivStruct{._super = x342},
+                                     DivStruct{._super = x343},
+                                     DivStruct{._super = x344},
+                                     DivStruct{._super = x345},
+                                     DivStruct{._super = x346},
+                                     DivStruct{._super = x347},
+                                     DivStruct{._super = x348},
+                                     DivStruct{._super = x349},
+                                     DivStruct{._super = x350},
+                                     DivStruct{._super = x351},
+                                     DivStruct{._super = x352},
+                                     DivStruct{._super = x353},
+                                     x354,
+                                     DivStruct{._super = x355},
+                                     DivStruct{._super = x356},
+                                     DivStruct{._super = x357},
+                                     DivStruct{._super = x358},
+                                     DivStruct{._super = x359},
+                                     DivStruct{._super = x360},
+                                     DivStruct{._super = x361},
+                                     DivStruct{._super = x362},
+                                     DivStruct{._super = x363},
+                                     DivStruct{._super = x364},
+                                     DivStruct{._super = x365},
+                                     DivStruct{._super = x366},
+                                     DivStruct{._super = x367},
+                                     DivStruct{._super = x368},
+                                     DivStruct{._super = x369},
+                                     x370,
+                                     DivStruct{._super = x371},
+                                     DivStruct{._super = x372},
+                                     DivStruct{._super = x373},
+                                     DivStruct{._super = x374},
+                                     DivStruct{._super = x375},
+                                     DivStruct{._super = x376},
+                                     DivStruct{._super = x377},
+                                     DivStruct{._super = x378},
+                                     DivStruct{._super = x379},
+                                     DivStruct{._super = x380},
+                                     DivStruct{._super = x381},
+                                     DivStruct{._super = x382},
+                                     DivStruct{._super = x383},
+                                     DivStruct{._super = x384},
+                                     DivStruct{._super = x385},
+                                     x386,
+                                     DivStruct{._super = x387},
+                                     DivStruct{._super = x388},
+                                     DivStruct{._super = x389},
+                                     DivStruct{._super = x390},
+                                     DivStruct{._super = x391},
+                                     DivStruct{._super = x392},
+                                     DivStruct{._super = x393},
+                                     DivStruct{._super = x394},
+                                     DivStruct{._super = x395},
+                                     DivStruct{._super = x396},
+                                     DivStruct{._super = x397},
+                                     DivStruct{._super = x398},
+                                     DivStruct{._super = x399},
+                                     DivStruct{._super = x400},
+                                     DivStruct{._super = x401},
+                                     x402,
+                                     DivStruct{._super = x403},
+                                     DivStruct{._super = x404},
+                                     DivStruct{._super = x405},
+                                     DivStruct{._super = x406},
+                                     DivStruct{._super = x407},
+                                     DivStruct{._super = x408},
+                                     DivStruct{._super = x409},
+                                     DivStruct{._super = x410},
+                                     DivStruct{._super = x411},
+                                     DivStruct{._super = x412},
+                                     DivStruct{._super = x413},
+                                     DivStruct{._super = x414},
+                                     DivStruct{._super = x415},
+                                     DivStruct{._super = x416},
+                                     DivStruct{._super = x417},
+                                     x418,
+                                     DivStruct{._super = x419},
+                                     DivStruct{._super = x420},
+                                     DivStruct{._super = x421},
+                                     DivStruct{._super = x422},
+                                     DivStruct{._super = x423},
+                                     DivStruct{._super = x424},
+                                     DivStruct{._super = x425},
+                                     DivStruct{._super = x426},
+                                     DivStruct{._super = x427},
+                                     DivStruct{._super = x428},
+                                     DivStruct{._super = x429},
+                                     DivStruct{._super = x430},
+                                     DivStruct{._super = x431},
+                                     DivStruct{._super = x432},
+                                     DivStruct{._super = x433},
+                                     x434,
+                                     DivStruct{._super = x435},
+                                     DivStruct{._super = x436},
+                                     DivStruct{._super = x437},
+                                     DivStruct{._super = x438},
+                                     DivStruct{._super = x439},
+                                     DivStruct{._super = x440},
+                                     DivStruct{._super = x441},
+                                     DivStruct{._super = x442},
+                                     DivStruct{._super = x443},
+                                     DivStruct{._super = x444},
+                                     DivStruct{._super = x445},
+                                     DivStruct{._super = x446},
+                                     DivStruct{._super = x447},
+                                     DivStruct{._super = x448},
+                                     DivStruct{._super = x449},
+                                     x450,
+                                     DivStruct{._super = x451},
+                                     DivStruct{._super = x452},
+                                     DivStruct{._super = x453},
+                                     DivStruct{._super = x454},
+                                     DivStruct{._super = x455},
+                                     DivStruct{._super = x456},
+                                     DivStruct{._super = x457},
+                                     DivStruct{._super = x458},
+                                     DivStruct{._super = x459},
+                                     DivStruct{._super = x460},
+                                     DivStruct{._super = x461},
+                                     DivStruct{._super = x462},
+                                     DivStruct{._super = x463},
+                                     DivStruct{._super = x464},
+                                     DivStruct{._super = x465},
+                                     x466,
+                                     DivStruct{._super = x467},
+                                     DivStruct{._super = x468},
+                                     DivStruct{._super = x469},
+                                     DivStruct{._super = x470},
+                                     DivStruct{._super = x471},
+                                     DivStruct{._super = x472},
+                                     DivStruct{._super = x473},
+                                     DivStruct{._super = x474},
+                                     DivStruct{._super = x475},
+                                     DivStruct{._super = x476},
+                                     DivStruct{._super = x477},
+                                     DivStruct{._super = x478},
+                                     DivStruct{._super = x479},
+                                     DivStruct{._super = x480},
+                                     DivStruct{._super = x481},
+                                     x482,
+                                     DivStruct{._super = x483},
+                                     DivStruct{._super = x484},
+                                     DivStruct{._super = x485},
+                                     DivStruct{._super = x486},
+                                     DivStruct{._super = x487},
+                                     DivStruct{._super = x488},
+                                     DivStruct{._super = x489},
+                                     DivStruct{._super = x490},
+                                     DivStruct{._super = x491},
+                                     DivStruct{._super = x492},
+                                     DivStruct{._super = x493},
+                                     DivStruct{._super = x494},
+                                     DivStruct{._super = x495},
+                                     DivStruct{._super = x496},
+                                     DivStruct{._super = x497},
+                                     x498,
+                                     DivStruct{._super = x499},
+                                     DivStruct{._super = x500},
+                                     DivStruct{._super = x501},
+                                     DivStruct{._super = x502},
+                                     DivStruct{._super = x503},
+                                     DivStruct{._super = x504},
+                                     DivStruct{._super = x505},
+                                     DivStruct{._super = x506},
+                                     DivStruct{._super = x507},
+                                     DivStruct{._super = x508},
+                                     DivStruct{._super = x509},
+                                     DivStruct{._super = x510},
+                                     DivStruct{._super = x511},
+                                     DivStruct{._super = x512},
+                                     DivStruct{._super = x513},
+                                     x514,
+                                     DivStruct{._super = x515},
+                                     DivStruct{._super = x516},
+                                     DivStruct{._super = x517},
+                                     DivStruct{._super = x518},
+                                     DivStruct{._super = x519},
+                                     DivStruct{._super = x520},
+                                     DivStruct{._super = x521},
+                                     DivStruct{._super = x522},
+                                     DivStruct{._super = x523},
+                                     DivStruct{._super = x524},
+                                     DivStruct{._super = x525},
+                                     DivStruct{._super = x526},
+                                     DivStruct{._super = x527},
+                                     DivStruct{._super = x528},
+                                     DivStruct{._super = x529},
+                                     x530,
+                                     DivStruct{._super = x531},
+                                     DivStruct{._super = x532},
+                                     DivStruct{._super = x533},
+                                     DivStruct{._super = x534},
+                                     DivStruct{._super = x535},
+                                     DivStruct{._super = x536},
+                                     DivStruct{._super = x537},
+                                     DivStruct{._super = x538},
+                                     DivStruct{._super = x539},
+                                     DivStruct{._super = x540},
+                                     DivStruct{._super = x541},
+                                     DivStruct{._super = x542},
+                                     DivStruct{._super = x543},
+                                     DivStruct{._super = x544},
+                                     DivStruct{._super = x545},
+                                     x546,
+                                     DivStruct{._super = x547},
+                                     DivStruct{._super = x548},
+                                     DivStruct{._super = x549},
+                                     DivStruct{._super = x550},
+                                     DivStruct{._super = x551},
+                                     DivStruct{._super = x552},
+                                     DivStruct{._super = x553},
+                                     DivStruct{._super = x554},
+                                     DivStruct{._super = x555},
+                                     DivStruct{._super = x556},
+                                     DivStruct{._super = x557},
+                                     DivStruct{._super = x558},
+                                     DivStruct{._super = x559},
+                                     DivStruct{._super = x560},
+                                     DivStruct{._super = x561},
+                                     x562,
+                                     DivStruct{._super = x563},
+                                     DivStruct{._super = x564},
+                                     DivStruct{._super = x565},
+                                     DivStruct{._super = x566},
+                                     DivStruct{._super = x567},
+                                     DivStruct{._super = x568},
+                                     DivStruct{._super = x569},
+                                     DivStruct{._super = x570},
+                                     DivStruct{._super = x571},
+                                     DivStruct{._super = x572},
+                                     DivStruct{._super = x573},
+                                     DivStruct{._super = x574},
+                                     DivStruct{._super = x575},
+                                     DivStruct{._super = x576},
+                                     DivStruct{._super = x577},
+                                     x578,
+                                     DivStruct{._super = x579},
+                                     DivStruct{._super = x580},
+                                     DivStruct{._super = x581},
+                                     DivStruct{._super = x582},
+                                     DivStruct{._super = x583},
+                                     DivStruct{._super = x584},
+                                     DivStruct{._super = x585},
+                                     DivStruct{._super = x586},
+                                     DivStruct{._super = x587},
+                                     DivStruct{._super = x588},
+                                     DivStruct{._super = x589},
+                                     DivStruct{._super = x590},
+                                     DivStruct{._super = x591},
+                                     DivStruct{._super = x592},
+                                     DivStruct{._super = x593},
+                                     x594,
+                                     DivStruct{._super = x595},
+                                     DivStruct{._super = x596},
+                                     DivStruct{._super = x597},
+                                     DivStruct{._super = x598},
+                                     DivStruct{._super = x599},
+                                     DivStruct{._super = x600},
+                                     DivStruct{._super = x601},
+                                     DivStruct{._super = x602},
+                                     DivStruct{._super = x603},
+                                     DivStruct{._super = x604},
+                                     DivStruct{._super = x605},
+                                     DivStruct{._super = x606},
+                                     DivStruct{._super = x607},
+                                     DivStruct{._super = x608},
+                                     DivStruct{._super = x609},
+                                     x610,
+                                     DivStruct{._super = x611},
+                                     DivStruct{._super = x612},
+                                     DivStruct{._super = x613},
+                                     DivStruct{._super = x614},
+                                     DivStruct{._super = x615},
+                                     DivStruct{._super = x616},
+                                     DivStruct{._super = x617},
+                                     DivStruct{._super = x618},
+                                     DivStruct{._super = x619},
+                                     DivStruct{._super = x620},
+                                     DivStruct{._super = x621},
+                                     DivStruct{._super = x622},
+                                     DivStruct{._super = x623},
+                                     DivStruct{._super = x624},
+                                     DivStruct{._super = x625},
+                                     x626,
+                                     DivStruct{._super = x627},
+                                     DivStruct{._super = x628},
+                                     DivStruct{._super = x629},
+                                     DivStruct{._super = x630},
+                                     DivStruct{._super = x631},
+                                     DivStruct{._super = x632},
+                                     DivStruct{._super = x633},
+                                     DivStruct{._super = x634},
+                                     DivStruct{._super = x635},
+                                     DivStruct{._super = x636},
+                                     DivStruct{._super = x637},
+                                     DivStruct{._super = x638},
+                                     DivStruct{._super = x639},
+                                     DivStruct{._super = x640},
+                                     DivStruct{._super = x641},
+                                     x642,
+                                     DivStruct{._super = x643},
+                                     DivStruct{._super = x644},
+                                     DivStruct{._super = x645},
+                                     DivStruct{._super = x646},
+                                     DivStruct{._super = x647},
+                                     DivStruct{._super = x648},
+                                     DivStruct{._super = x649},
+                                     DivStruct{._super = x650},
+                                     DivStruct{._super = x651},
+                                     DivStruct{._super = x652},
+                                     DivStruct{._super = x653},
+                                     DivStruct{._super = x654},
+                                     DivStruct{._super = x655},
+                                     DivStruct{._super = x656},
+                                     DivStruct{._super = x657},
+                                     x658,
+                                     DivStruct{._super = x659},
+                                     DivStruct{._super = x660},
+                                     DivStruct{._super = x661},
+                                     DivStruct{._super = x662},
+                                     DivStruct{._super = x663},
+                                     DivStruct{._super = x664},
+                                     DivStruct{._super = x665},
+                                     DivStruct{._super = x666},
+                                     DivStruct{._super = x667},
+                                     DivStruct{._super = x668},
+                                     DivStruct{._super = x669},
+                                     DivStruct{._super = x670},
+                                     DivStruct{._super = x671},
+                                     DivStruct{._super = x672},
+                                     DivStruct{._super = x673},
+                                     x674,
+                                     DivStruct{._super = x675},
+                                     DivStruct{._super = x676},
+                                     DivStruct{._super = x677},
+                                     DivStruct{._super = x678},
+                                     DivStruct{._super = x679},
+                                     DivStruct{._super = x680},
+                                     DivStruct{._super = x681},
+                                     DivStruct{._super = x682},
+                                     DivStruct{._super = x683},
+                                     DivStruct{._super = x684},
+                                     DivStruct{._super = x685},
+                                     DivStruct{._super = x686},
+                                     DivStruct{._super = x687},
+                                     DivStruct{._super = x688},
+                                     DivStruct{._super = x689},
+                                     x690,
+                                     DivStruct{._super = x691},
+                                     DivStruct{._super = x692},
+                                     DivStruct{._super = x693},
+                                     DivStruct{._super = x694},
+                                     DivStruct{._super = x695},
+                                     DivStruct{._super = x696},
+                                     DivStruct{._super = x697},
+                                     DivStruct{._super = x698},
+                                     DivStruct{._super = x699},
+                                     DivStruct{._super = x700},
+                                     DivStruct{._super = x701},
+                                     DivStruct{._super = x702},
+                                     DivStruct{._super = x703},
+                                     DivStruct{._super = x704},
+                                     DivStruct{._super = x705},
+                                     x706,
+                                     DivStruct{._super = x707},
+                                     DivStruct{._super = x708},
+                                     DivStruct{._super = x709},
+                                     DivStruct{._super = x710},
+                                     DivStruct{._super = x711},
+                                     DivStruct{._super = x712},
+                                     DivStruct{._super = x713},
+                                     DivStruct{._super = x714},
+                                     DivStruct{._super = x715},
+                                     DivStruct{._super = x716},
+                                     DivStruct{._super = x717},
+                                     DivStruct{._super = x718},
+                                     DivStruct{._super = x719},
+                                     DivStruct{._super = x720},
+                                     DivStruct{._super = x721},
+                                     x722,
+                                     DivStruct{._super = x723},
+                                     DivStruct{._super = x724},
+                                     DivStruct{._super = x725},
+                                     DivStruct{._super = x726},
+                                     DivStruct{._super = x727},
+                                     DivStruct{._super = x728},
+                                     DivStruct{._super = x729},
+                                     DivStruct{._super = x730},
+                                     DivStruct{._super = x731},
+                                     DivStruct{._super = x732},
+                                     DivStruct{._super = x733},
+                                     DivStruct{._super = x734},
+                                     DivStruct{._super = x735},
+                                     DivStruct{._super = x736},
+                                     DivStruct{._super = x737},
+                                     x738,
+                                     DivStruct{._super = x739},
+                                     DivStruct{._super = x740},
+                                     DivStruct{._super = x741},
+                                     DivStruct{._super = x742},
+                                     DivStruct{._super = x743},
+                                     DivStruct{._super = x744},
+                                     DivStruct{._super = x745},
+                                     DivStruct{._super = x746},
+                                     DivStruct{._super = x747},
+                                     DivStruct{._super = x748},
+                                     DivStruct{._super = x749},
+                                     DivStruct{._super = x750},
+                                     DivStruct{._super = x751},
+                                     DivStruct{._super = x752},
+                                     DivStruct{._super = x753},
+                                     x754,
+                                     DivStruct{._super = x755},
+                                     DivStruct{._super = x756},
+                                     DivStruct{._super = x757},
+                                     DivStruct{._super = x758},
+                                     DivStruct{._super = x759},
+                                     DivStruct{._super = x760},
+                                     DivStruct{._super = x761},
+                                     DivStruct{._super = x762},
+                                     DivStruct{._super = x763},
+                                     DivStruct{._super = x764},
+                                     DivStruct{._super = x765},
+                                     DivStruct{._super = x766},
+                                     DivStruct{._super = x767},
+                                     DivStruct{._super = x768},
+                                     DivStruct{._super = x769},
+                                     x770,
+                                     DivStruct{._super = x771},
+                                     DivStruct{._super = x772},
+                                     DivStruct{._super = x773},
+                                     DivStruct{._super = x774},
+                                     DivStruct{._super = x775},
+                                     DivStruct{._super = x776},
+                                     DivStruct{._super = x777},
+                                     DivStruct{._super = x778},
+                                     DivStruct{._super = x779},
+                                     DivStruct{._super = x780},
+                                     DivStruct{._super = x781},
+                                     DivStruct{._super = x782},
+                                     DivStruct{._super = x783},
+                                     DivStruct{._super = x784},
+                                     DivStruct{._super = x785},
+                                     x786,
+                                     DivStruct{._super = x787},
+                                     DivStruct{._super = x788},
+                                     DivStruct{._super = x789},
+                                     DivStruct{._super = x790},
+                                     DivStruct{._super = x791},
+                                     DivStruct{._super = x792},
+                                     DivStruct{._super = x793},
+                                     DivStruct{._super = x794},
+                                     DivStruct{._super = x795},
+                                     DivStruct{._super = x796},
+                                     DivStruct{._super = x797},
+                                     DivStruct{._super = x798},
+                                     DivStruct{._super = x799},
+                                     DivStruct{._super = x800},
+                                     DivStruct{._super = x801}}[to_size_t(x803)]
+                       ._super;
+        // UnpackReg(zirgen/circuit/keccak2/pack.zir:48)
+        NondetRegStruct x806 = exec_NondetBitReg(ctx, x805, x804);
+        return UnpackReg_800__16__SuperStruct{._super = x806};
+      }));
   Val x807 = x802[0]._super._super;
   Val x808 = x802[1]._super._super;
   Val x809 = x802[2]._super._super;
@@ -11087,63 +11188,67 @@ UnpackReg_800__16_Struct exec_UnpackReg_800__16_(Val50Array arg0,
       "zirgen/circuit/keccak2/pack.zir :49:14)))");
   return UnpackReg_800__16_Struct{._super = x802};
 }
-UnpackReg_800__16_Struct exec_SFlatToBits(Val16Array arg0,
-                                          BoundLayout<UnpackReg_800__16_Layout> layout1) {
+__device__ UnpackReg_800__16_Struct
+exec_SFlatToBits(ExecContext& ctx, Val16Array arg0, BoundLayout<UnpackReg_800__16_Layout> layout1) {
   // SFlatToBits(zirgen/circuit/keccak2/top.zir:329)
   UnpackReg_800__16_Struct x2 = exec_UnpackReg_800__16_(
-      {Val(0),   Val(0),   Val(0),   Val(0),  Val(0),  Val(0),  Val(0),   Val(0),   arg0[6],
-       arg0[7],  arg0[4],  arg0[5],  arg0[2], arg0[3], arg0[0], arg0[1],  Val(0),   Val(0),
-       Val(0),   Val(0),   Val(0),   Val(0),  Val(0),  Val(0),  arg0[14], arg0[15], arg0[12],
-       arg0[13], arg0[10], arg0[11], arg0[8], arg0[9], Val(0),  Val(0),   Val(0),   Val(0),
-       Val(0),   Val(0),   Val(0),   Val(0),  Val(0),  Val(0),  Val(0),   Val(0),   Val(0),
-       Val(0),   Val(0),   Val(0),   Val(0),  Val(0)},
+      ctx,
+      Val50Array{Val(0),   Val(0),   Val(0),   Val(0),   Val(0),   Val(0),   Val(0),  Val(0),
+                 arg0[6],  arg0[7],  arg0[4],  arg0[5],  arg0[2],  arg0[3],  arg0[0], arg0[1],
+                 Val(0),   Val(0),   Val(0),   Val(0),   Val(0),   Val(0),   Val(0),  Val(0),
+                 arg0[14], arg0[15], arg0[12], arg0[13], arg0[10], arg0[11], arg0[8], arg0[9],
+                 Val(0),   Val(0),   Val(0),   Val(0),   Val(0),   Val(0),   Val(0),  Val(0),
+                 Val(0),   Val(0),   Val(0),   Val(0),   Val(0),   Val(0),   Val(0),  Val(0),
+                 Val(0),   Val(0)},
       layout1);
   return x2;
 }
-TopStateStruct exec_ReadCycle(TopStateStruct arg0, BoundLayout<ReadCycleLayout> layout1) {
+__device__ TopStateStruct exec_ReadCycle(ExecContext& ctx,
+                                         TopStateStruct arg0,
+                                         BoundLayout<ReadCycleLayout> layout1) {
   // ReadCycle(zirgen/circuit/keccak2/top.zir:333)
   ReadCycleLoadStruct100Array x2 = map(
-      {Val(0),  Val(1),  Val(2),  Val(3),  Val(4),  Val(5),  Val(6),  Val(7),  Val(8),  Val(9),
-       Val(10), Val(11), Val(12), Val(13), Val(14), Val(15), Val(16), Val(17), Val(18), Val(19),
-       Val(20), Val(21), Val(22), Val(23), Val(24), Val(25), Val(26), Val(27), Val(28), Val(29),
-       Val(30), Val(31), Val(32), Val(33), Val(34), Val(35), Val(36), Val(37), Val(38), Val(39),
-       Val(40), Val(41), Val(42), Val(43), Val(44), Val(45), Val(46), Val(47), Val(48), Val(49),
-       Val(50), Val(51), Val(52), Val(53), Val(54), Val(55), Val(56), Val(57), Val(58), Val(59),
-       Val(60), Val(61), Val(62), Val(63), Val(64), Val(65), Val(66), Val(67), Val(68), Val(69),
-       Val(70), Val(71), Val(72), Val(73), Val(74), Val(75), Val(76), Val(77), Val(78), Val(79),
-       Val(80), Val(81), Val(82), Val(83), Val(84), Val(85), Val(86), Val(87), Val(88), Val(89),
-       Val(90), Val(91), Val(92), Val(93), Val(94), Val(95), Val(96), Val(97), Val(98), Val(99)},
+      Val100Array{
+          Val(0),  Val(1),  Val(2),  Val(3),  Val(4),  Val(5),  Val(6),  Val(7),  Val(8),  Val(9),
+          Val(10), Val(11), Val(12), Val(13), Val(14), Val(15), Val(16), Val(17), Val(18), Val(19),
+          Val(20), Val(21), Val(22), Val(23), Val(24), Val(25), Val(26), Val(27), Val(28), Val(29),
+          Val(30), Val(31), Val(32), Val(33), Val(34), Val(35), Val(36), Val(37), Val(38), Val(39),
+          Val(40), Val(41), Val(42), Val(43), Val(44), Val(45), Val(46), Val(47), Val(48), Val(49),
+          Val(50), Val(51), Val(52), Val(53), Val(54), Val(55), Val(56), Val(57), Val(58), Val(59),
+          Val(60), Val(61), Val(62), Val(63), Val(64), Val(65), Val(66), Val(67), Val(68), Val(69),
+          Val(70), Val(71), Val(72), Val(73), Val(74), Val(75), Val(76), Val(77), Val(78), Val(79),
+          Val(80), Val(81), Val(82), Val(83), Val(84), Val(85), Val(86), Val(87), Val(88), Val(89),
+          Val(90), Val(91), Val(92), Val(93), Val(94), Val(95), Val(96), Val(97), Val(98), Val(99)},
       LAYOUT_LOOKUP(layout1, load),
-      std::function([&](Val100Array::value_type x3,
-                        BoundLayout<NondetRegLayout100LayoutArray::value_type> x4) {
+      ([&](Val100Array::value_type x3, BoundLayout<NondetRegLayout100LayoutArray::value_type> x4) {
         // GetPreimage(zirgen/circuit/keccak2/top.zir:279)
         Val x5 = INVOKE_EXTERN(ctx, getPreimage, x3);
-        NondetRegStruct x6 = exec_NondetReg(x5, x4);
+        NondetRegStruct x6 = exec_NondetReg(ctx, x5, x4);
         return ReadCycleLoadStruct{._super = x6};
       }));
   // Log(<preamble>:22)
   // ReadCycle(zirgen/circuit/keccak2/top.zir:334)
-  INVOKE_EXTERN(ctx, log, "ReadCycle", {});
+  INVOKE_EXTERN(ctx, log, "ReadCycle", std::initializer_list<Val>{});
   // ReadCycle(zirgen/circuit/keccak2/top.zir:332)
   NondetRegStruct16Array x7 = arg0.sflat;
-  Val16Array x8 = {x7[0]._super,
-                   x7[1]._super,
-                   x7[2]._super,
-                   x7[3]._super,
-                   x7[4]._super,
-                   x7[5]._super,
-                   x7[6]._super,
-                   x7[7]._super,
-                   x7[8]._super,
-                   x7[9]._super,
-                   x7[10]._super,
-                   x7[11]._super,
-                   x7[12]._super,
-                   x7[13]._super,
-                   x7[14]._super,
-                   x7[15]._super};
+  Val16Array x8 = Val16Array{x7[0]._super,
+                             x7[1]._super,
+                             x7[2]._super,
+                             x7[3]._super,
+                             x7[4]._super,
+                             x7[5]._super,
+                             x7[6]._super,
+                             x7[7]._super,
+                             x7[8]._super,
+                             x7[9]._super,
+                             x7[10]._super,
+                             x7[11]._super,
+                             x7[12]._super,
+                             x7[13]._super,
+                             x7[14]._super,
+                             x7[15]._super};
   // ReadCycle(zirgen/circuit/keccak2/top.zir:335)
-  UnpackReg_800__16_Struct x9 = exec_SFlatToBits(x8, LAYOUT_LOOKUP(layout1, bits));
+  UnpackReg_800__16_Struct x9 = exec_SFlatToBits(ctx, x8, LAYOUT_LOOKUP(layout1, bits));
   UnpackReg_800__16__SuperStruct800Array x10 = x9._super;
   Val x11 = x10[0]._super._super;
   Val x12 = x10[1]._super._super;
@@ -12048,91 +12153,98 @@ TopStateStruct exec_ReadCycle(TopStateStruct arg0, BoundLayout<ReadCycleLayout> 
   Val x910 = x2[99]._super._super;
   // ReadCycle(zirgen/circuit/keccak2/top.zir:336)
   TopStateStruct x911 = exec_TopState(
-      {x11,  x12,  x13,  x14,  x15,  x16,  x17,  x18,  x19,  x20,  x21,  x22,  x23,  x24,  x25,
-       x26,  x27,  x28,  x29,  x30,  x31,  x32,  x33,  x34,  x35,  x36,  x37,  x38,  x39,  x40,
-       x41,  x42,  x43,  x44,  x45,  x46,  x47,  x48,  x49,  x50,  x51,  x52,  x53,  x54,  x55,
-       x56,  x57,  x58,  x59,  x60,  x61,  x62,  x63,  x64,  x65,  x66,  x67,  x68,  x69,  x70,
-       x71,  x72,  x73,  x74,  x75,  x76,  x77,  x78,  x79,  x80,  x81,  x82,  x83,  x84,  x85,
-       x86,  x87,  x88,  x89,  x90,  x91,  x92,  x93,  x94,  x95,  x96,  x97,  x98,  x99,  x100,
-       x101, x102, x103, x104, x105, x106, x107, x108, x109, x110, x111, x112, x113, x114, x115,
-       x116, x117, x118, x119, x120, x121, x122, x123, x124, x125, x126, x127, x128, x129, x130,
-       x131, x132, x133, x134, x135, x136, x137, x138, x139, x140, x141, x142, x143, x144, x145,
-       x146, x147, x148, x149, x150, x151, x152, x153, x154, x155, x156, x157, x158, x159, x160,
-       x161, x162, x163, x164, x165, x166, x167, x168, x169, x170, x171, x172, x173, x174, x175,
-       x176, x177, x178, x179, x180, x181, x182, x183, x184, x185, x186, x187, x188, x189, x190,
-       x191, x192, x193, x194, x195, x196, x197, x198, x199, x200, x201, x202, x203, x204, x205,
-       x206, x207, x208, x209, x210, x211, x212, x213, x214, x215, x216, x217, x218, x219, x220,
-       x221, x222, x223, x224, x225, x226, x227, x228, x229, x230, x231, x232, x233, x234, x235,
-       x236, x237, x238, x239, x240, x241, x242, x243, x244, x245, x246, x247, x248, x249, x250,
-       x251, x252, x253, x254, x255, x256, x257, x258, x259, x260, x261, x262, x263, x264, x265,
-       x266, x267, x268, x269, x270, x271, x272, x273, x274, x275, x276, x277, x278, x279, x280,
-       x281, x282, x283, x284, x285, x286, x287, x288, x289, x290, x291, x292, x293, x294, x295,
-       x296, x297, x298, x299, x300, x301, x302, x303, x304, x305, x306, x307, x308, x309, x310,
-       x311, x312, x313, x314, x315, x316, x317, x318, x319, x320, x321, x322, x323, x324, x325,
-       x326, x327, x328, x329, x330, x331, x332, x333, x334, x335, x336, x337, x338, x339, x340,
-       x341, x342, x343, x344, x345, x346, x347, x348, x349, x350, x351, x352, x353, x354, x355,
-       x356, x357, x358, x359, x360, x361, x362, x363, x364, x365, x366, x367, x368, x369, x370,
-       x371, x372, x373, x374, x375, x376, x377, x378, x379, x380, x381, x382, x383, x384, x385,
-       x386, x387, x388, x389, x390, x391, x392, x393, x394, x395, x396, x397, x398, x399, x400,
-       x401, x402, x403, x404, x405, x406, x407, x408, x409, x410, x411, x412, x413, x414, x415,
-       x416, x417, x418, x419, x420, x421, x422, x423, x424, x425, x426, x427, x428, x429, x430,
-       x431, x432, x433, x434, x435, x436, x437, x438, x439, x440, x441, x442, x443, x444, x445,
-       x446, x447, x448, x449, x450, x451, x452, x453, x454, x455, x456, x457, x458, x459, x460,
-       x461, x462, x463, x464, x465, x466, x467, x468, x469, x470, x471, x472, x473, x474, x475,
-       x476, x477, x478, x479, x480, x481, x482, x483, x484, x485, x486, x487, x488, x489, x490,
-       x491, x492, x493, x494, x495, x496, x497, x498, x499, x500, x501, x502, x503, x504, x505,
-       x506, x507, x508, x509, x510, x511, x512, x513, x514, x515, x516, x517, x518, x519, x520,
-       x521, x522, x523, x524, x525, x526, x527, x528, x529, x530, x531, x532, x533, x534, x535,
-       x536, x537, x538, x539, x540, x541, x542, x543, x544, x545, x546, x547, x548, x549, x550,
-       x551, x552, x553, x554, x555, x556, x557, x558, x559, x560, x561, x562, x563, x564, x565,
-       x566, x567, x568, x569, x570, x571, x572, x573, x574, x575, x576, x577, x578, x579, x580,
-       x581, x582, x583, x584, x585, x586, x587, x588, x589, x590, x591, x592, x593, x594, x595,
-       x596, x597, x598, x599, x600, x601, x602, x603, x604, x605, x606, x607, x608, x609, x610,
-       x611, x612, x613, x614, x615, x616, x617, x618, x619, x620, x621, x622, x623, x624, x625,
-       x626, x627, x628, x629, x630, x631, x632, x633, x634, x635, x636, x637, x638, x639, x640,
-       x641, x642, x643, x644, x645, x646, x647, x648, x649, x650, x651, x652, x653, x654, x655,
-       x656, x657, x658, x659, x660, x661, x662, x663, x664, x665, x666, x667, x668, x669, x670,
-       x671, x672, x673, x674, x675, x676, x677, x678, x679, x680, x681, x682, x683, x684, x685,
-       x686, x687, x688, x689, x690, x691, x692, x693, x694, x695, x696, x697, x698, x699, x700,
-       x701, x702, x703, x704, x705, x706, x707, x708, x709, x710, x711, x712, x713, x714, x715,
-       x716, x717, x718, x719, x720, x721, x722, x723, x724, x725, x726, x727, x728, x729, x730,
-       x731, x732, x733, x734, x735, x736, x737, x738, x739, x740, x741, x742, x743, x744, x745,
-       x746, x747, x748, x749, x750, x751, x752, x753, x754, x755, x756, x757, x758, x759, x760,
-       x761, x762, x763, x764, x765, x766, x767, x768, x769, x770, x771, x772, x773, x774, x775,
-       x776, x777, x778, x779, x780, x781, x782, x783, x784, x785, x786, x787, x788, x789, x790,
-       x791, x792, x793, x794, x795, x796, x797, x798, x799, x800, x801, x802, x803, x804, x805,
-       x806, x807, x808, x809, x810},
-      {x811, x812, x813, x814, x815, x816, x817, x818, x819, x820, x821, x822, x823, x824, x825,
-       x826, x827, x828, x829, x830, x831, x832, x833, x834, x835, x836, x837, x838, x839, x840,
-       x841, x842, x843, x844, x845, x846, x847, x848, x849, x850, x851, x852, x853, x854, x855,
-       x856, x857, x858, x859, x860, x861, x862, x863, x864, x865, x866, x867, x868, x869, x870,
-       x871, x872, x873, x874, x875, x876, x877, x878, x879, x880, x881, x882, x883, x884, x885,
-       x886, x887, x888, x889, x890, x891, x892, x893, x894, x895, x896, x897, x898, x899, x900,
-       x901, x902, x903, x904, x905, x906, x907, x908, x909, x910},
+      ctx,
+      Val800Array{
+          x11,  x12,  x13,  x14,  x15,  x16,  x17,  x18,  x19,  x20,  x21,  x22,  x23,  x24,  x25,
+          x26,  x27,  x28,  x29,  x30,  x31,  x32,  x33,  x34,  x35,  x36,  x37,  x38,  x39,  x40,
+          x41,  x42,  x43,  x44,  x45,  x46,  x47,  x48,  x49,  x50,  x51,  x52,  x53,  x54,  x55,
+          x56,  x57,  x58,  x59,  x60,  x61,  x62,  x63,  x64,  x65,  x66,  x67,  x68,  x69,  x70,
+          x71,  x72,  x73,  x74,  x75,  x76,  x77,  x78,  x79,  x80,  x81,  x82,  x83,  x84,  x85,
+          x86,  x87,  x88,  x89,  x90,  x91,  x92,  x93,  x94,  x95,  x96,  x97,  x98,  x99,  x100,
+          x101, x102, x103, x104, x105, x106, x107, x108, x109, x110, x111, x112, x113, x114, x115,
+          x116, x117, x118, x119, x120, x121, x122, x123, x124, x125, x126, x127, x128, x129, x130,
+          x131, x132, x133, x134, x135, x136, x137, x138, x139, x140, x141, x142, x143, x144, x145,
+          x146, x147, x148, x149, x150, x151, x152, x153, x154, x155, x156, x157, x158, x159, x160,
+          x161, x162, x163, x164, x165, x166, x167, x168, x169, x170, x171, x172, x173, x174, x175,
+          x176, x177, x178, x179, x180, x181, x182, x183, x184, x185, x186, x187, x188, x189, x190,
+          x191, x192, x193, x194, x195, x196, x197, x198, x199, x200, x201, x202, x203, x204, x205,
+          x206, x207, x208, x209, x210, x211, x212, x213, x214, x215, x216, x217, x218, x219, x220,
+          x221, x222, x223, x224, x225, x226, x227, x228, x229, x230, x231, x232, x233, x234, x235,
+          x236, x237, x238, x239, x240, x241, x242, x243, x244, x245, x246, x247, x248, x249, x250,
+          x251, x252, x253, x254, x255, x256, x257, x258, x259, x260, x261, x262, x263, x264, x265,
+          x266, x267, x268, x269, x270, x271, x272, x273, x274, x275, x276, x277, x278, x279, x280,
+          x281, x282, x283, x284, x285, x286, x287, x288, x289, x290, x291, x292, x293, x294, x295,
+          x296, x297, x298, x299, x300, x301, x302, x303, x304, x305, x306, x307, x308, x309, x310,
+          x311, x312, x313, x314, x315, x316, x317, x318, x319, x320, x321, x322, x323, x324, x325,
+          x326, x327, x328, x329, x330, x331, x332, x333, x334, x335, x336, x337, x338, x339, x340,
+          x341, x342, x343, x344, x345, x346, x347, x348, x349, x350, x351, x352, x353, x354, x355,
+          x356, x357, x358, x359, x360, x361, x362, x363, x364, x365, x366, x367, x368, x369, x370,
+          x371, x372, x373, x374, x375, x376, x377, x378, x379, x380, x381, x382, x383, x384, x385,
+          x386, x387, x388, x389, x390, x391, x392, x393, x394, x395, x396, x397, x398, x399, x400,
+          x401, x402, x403, x404, x405, x406, x407, x408, x409, x410, x411, x412, x413, x414, x415,
+          x416, x417, x418, x419, x420, x421, x422, x423, x424, x425, x426, x427, x428, x429, x430,
+          x431, x432, x433, x434, x435, x436, x437, x438, x439, x440, x441, x442, x443, x444, x445,
+          x446, x447, x448, x449, x450, x451, x452, x453, x454, x455, x456, x457, x458, x459, x460,
+          x461, x462, x463, x464, x465, x466, x467, x468, x469, x470, x471, x472, x473, x474, x475,
+          x476, x477, x478, x479, x480, x481, x482, x483, x484, x485, x486, x487, x488, x489, x490,
+          x491, x492, x493, x494, x495, x496, x497, x498, x499, x500, x501, x502, x503, x504, x505,
+          x506, x507, x508, x509, x510, x511, x512, x513, x514, x515, x516, x517, x518, x519, x520,
+          x521, x522, x523, x524, x525, x526, x527, x528, x529, x530, x531, x532, x533, x534, x535,
+          x536, x537, x538, x539, x540, x541, x542, x543, x544, x545, x546, x547, x548, x549, x550,
+          x551, x552, x553, x554, x555, x556, x557, x558, x559, x560, x561, x562, x563, x564, x565,
+          x566, x567, x568, x569, x570, x571, x572, x573, x574, x575, x576, x577, x578, x579, x580,
+          x581, x582, x583, x584, x585, x586, x587, x588, x589, x590, x591, x592, x593, x594, x595,
+          x596, x597, x598, x599, x600, x601, x602, x603, x604, x605, x606, x607, x608, x609, x610,
+          x611, x612, x613, x614, x615, x616, x617, x618, x619, x620, x621, x622, x623, x624, x625,
+          x626, x627, x628, x629, x630, x631, x632, x633, x634, x635, x636, x637, x638, x639, x640,
+          x641, x642, x643, x644, x645, x646, x647, x648, x649, x650, x651, x652, x653, x654, x655,
+          x656, x657, x658, x659, x660, x661, x662, x663, x664, x665, x666, x667, x668, x669, x670,
+          x671, x672, x673, x674, x675, x676, x677, x678, x679, x680, x681, x682, x683, x684, x685,
+          x686, x687, x688, x689, x690, x691, x692, x693, x694, x695, x696, x697, x698, x699, x700,
+          x701, x702, x703, x704, x705, x706, x707, x708, x709, x710, x711, x712, x713, x714, x715,
+          x716, x717, x718, x719, x720, x721, x722, x723, x724, x725, x726, x727, x728, x729, x730,
+          x731, x732, x733, x734, x735, x736, x737, x738, x739, x740, x741, x742, x743, x744, x745,
+          x746, x747, x748, x749, x750, x751, x752, x753, x754, x755, x756, x757, x758, x759, x760,
+          x761, x762, x763, x764, x765, x766, x767, x768, x769, x770, x771, x772, x773, x774, x775,
+          x776, x777, x778, x779, x780, x781, x782, x783, x784, x785, x786, x787, x788, x789, x790,
+          x791, x792, x793, x794, x795, x796, x797, x798, x799, x800, x801, x802, x803, x804, x805,
+          x806, x807, x808, x809, x810},
+      Val100Array{x811, x812, x813, x814, x815, x816, x817, x818, x819, x820, x821, x822, x823,
+                  x824, x825, x826, x827, x828, x829, x830, x831, x832, x833, x834, x835, x836,
+                  x837, x838, x839, x840, x841, x842, x843, x844, x845, x846, x847, x848, x849,
+                  x850, x851, x852, x853, x854, x855, x856, x857, x858, x859, x860, x861, x862,
+                  x863, x864, x865, x866, x867, x868, x869, x870, x871, x872, x873, x874, x875,
+                  x876, x877, x878, x879, x880, x881, x882, x883, x884, x885, x886, x887, x888,
+                  x889, x890, x891, x892, x893, x894, x895, x896, x897, x898, x899, x900, x901,
+                  x902, x903, x904, x905, x906, x907, x908, x909, x910},
       x8,
       LAYOUT_LOOKUP(layout1, _super));
   return x911;
 }
-TopStateStruct
-exec_ExpandCycle(TopStateStruct arg0, Val arg1, BoundLayout<ExpandCycleLayout> layout2) {
+__device__ TopStateStruct exec_ExpandCycle(ExecContext& ctx,
+                                           TopStateStruct arg0,
+                                           Val arg1,
+                                           BoundLayout<ExpandCycleLayout> layout2) {
   // Log(<preamble>:22)
   // ExpandCycle(zirgen/circuit/keccak2/top.zir:347)
-  INVOKE_EXTERN(ctx, log, "ExpandCycle", {});
+  INVOKE_EXTERN(ctx, log, "ExpandCycle", std::initializer_list<Val>{});
   // ExpandCycle(zirgen/circuit/keccak2/top.zir:346)
   TopStateKflatStruct100Array x3 = arg0.kflat;
   TopStateKflatStruct50Array x4;
   if (to_size_t(arg1)) {
-    x4 = {x3[2],  x3[3],  x3[6],  x3[7],  x3[10], x3[11], x3[14], x3[15], x3[18], x3[19],
-          x3[22], x3[23], x3[26], x3[27], x3[30], x3[31], x3[34], x3[35], x3[38], x3[39],
-          x3[42], x3[43], x3[46], x3[47], x3[50], x3[51], x3[54], x3[55], x3[58], x3[59],
-          x3[62], x3[63], x3[66], x3[67], x3[70], x3[71], x3[74], x3[75], x3[78], x3[79],
-          x3[82], x3[83], x3[86], x3[87], x3[90], x3[91], x3[94], x3[95], x3[98], x3[99]};
+    x4 = TopStateKflatStruct50Array{
+        x3[2],  x3[3],  x3[6],  x3[7],  x3[10], x3[11], x3[14], x3[15], x3[18], x3[19],
+        x3[22], x3[23], x3[26], x3[27], x3[30], x3[31], x3[34], x3[35], x3[38], x3[39],
+        x3[42], x3[43], x3[46], x3[47], x3[50], x3[51], x3[54], x3[55], x3[58], x3[59],
+        x3[62], x3[63], x3[66], x3[67], x3[70], x3[71], x3[74], x3[75], x3[78], x3[79],
+        x3[82], x3[83], x3[86], x3[87], x3[90], x3[91], x3[94], x3[95], x3[98], x3[99]};
   } else if (to_size_t((Val(1) - arg1))) {
-    x4 = {x3[0],  x3[1],  x3[4],  x3[5],  x3[8],  x3[9],  x3[12], x3[13], x3[16], x3[17],
-          x3[20], x3[21], x3[24], x3[25], x3[28], x3[29], x3[32], x3[33], x3[36], x3[37],
-          x3[40], x3[41], x3[44], x3[45], x3[48], x3[49], x3[52], x3[53], x3[56], x3[57],
-          x3[60], x3[61], x3[64], x3[65], x3[68], x3[69], x3[72], x3[73], x3[76], x3[77],
-          x3[80], x3[81], x3[84], x3[85], x3[88], x3[89], x3[92], x3[93], x3[96], x3[97]};
+    x4 = TopStateKflatStruct50Array{
+        x3[0],  x3[1],  x3[4],  x3[5],  x3[8],  x3[9],  x3[12], x3[13], x3[16], x3[17],
+        x3[20], x3[21], x3[24], x3[25], x3[28], x3[29], x3[32], x3[33], x3[36], x3[37],
+        x3[40], x3[41], x3[44], x3[45], x3[48], x3[49], x3[52], x3[53], x3[56], x3[57],
+        x3[60], x3[61], x3[64], x3[65], x3[68], x3[69], x3[72], x3[73], x3[76], x3[77],
+        x3[80], x3[81], x3[84], x3[85], x3[88], x3[89], x3[92], x3[93], x3[96], x3[97]};
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
@@ -12189,9 +12301,11 @@ exec_ExpandCycle(TopStateStruct arg0, Val arg1, BoundLayout<ExpandCycleLayout> l
   Val x54 = x4[49]._super._super;
   // ExpandCycle(zirgen/circuit/keccak2/top.zir:348)
   UnpackReg_800__16_Struct x55 = exec_UnpackReg_800__16_(
-      {x5,  x6,  x7,  x8,  x9,  x10, x11, x12, x13, x14, x15, x16, x17, x18, x19, x20, x21,
-       x22, x23, x24, x25, x26, x27, x28, x29, x30, x31, x32, x33, x34, x35, x36, x37, x38,
-       x39, x40, x41, x42, x43, x44, x45, x46, x47, x48, x49, x50, x51, x52, x53, x54},
+      ctx,
+      Val50Array{x5,  x6,  x7,  x8,  x9,  x10, x11, x12, x13, x14, x15, x16, x17,
+                 x18, x19, x20, x21, x22, x23, x24, x25, x26, x27, x28, x29, x30,
+                 x31, x32, x33, x34, x35, x36, x37, x38, x39, x40, x41, x42, x43,
+                 x44, x45, x46, x47, x48, x49, x50, x51, x52, x53, x54},
       LAYOUT_LOOKUP(layout2, bits));
   // ExpandCycle(zirgen/circuit/keccak2/top.zir:346)
   NondetRegStruct16Array x56 = arg0.sflat;
@@ -13098,94 +13212,99 @@ exec_ExpandCycle(TopStateStruct arg0, Val arg1, BoundLayout<ExpandCycleLayout> l
   Val x955 = x3[97]._super._super;
   Val x956 = x3[98]._super._super;
   Val x957 = x3[99]._super._super;
-  Val16Array x958 = {x56[0]._super,
-                     x56[1]._super,
-                     x56[2]._super,
-                     x56[3]._super,
-                     x56[4]._super,
-                     x56[5]._super,
-                     x56[6]._super,
-                     x56[7]._super,
-                     x56[8]._super,
-                     x56[9]._super,
-                     x56[10]._super,
-                     x56[11]._super,
-                     x56[12]._super,
-                     x56[13]._super,
-                     x56[14]._super,
-                     x56[15]._super};
+  Val16Array x958 = Val16Array{x56[0]._super,
+                               x56[1]._super,
+                               x56[2]._super,
+                               x56[3]._super,
+                               x56[4]._super,
+                               x56[5]._super,
+                               x56[6]._super,
+                               x56[7]._super,
+                               x56[8]._super,
+                               x56[9]._super,
+                               x56[10]._super,
+                               x56[11]._super,
+                               x56[12]._super,
+                               x56[13]._super,
+                               x56[14]._super,
+                               x56[15]._super};
   // ExpandCycle(zirgen/circuit/keccak2/top.zir:363)
   TopStateStruct x959 = exec_TopState(
-      {x58,  x59,  x60,  x61,  x62,  x63,  x64,  x65,  x66,  x67,  x68,  x69,  x70,  x71,  x72,
-       x73,  x74,  x75,  x76,  x77,  x78,  x79,  x80,  x81,  x82,  x83,  x84,  x85,  x86,  x87,
-       x88,  x89,  x90,  x91,  x92,  x93,  x94,  x95,  x96,  x97,  x98,  x99,  x100, x101, x102,
-       x103, x104, x105, x106, x107, x108, x109, x110, x111, x112, x113, x114, x115, x116, x117,
-       x118, x119, x120, x121, x122, x123, x124, x125, x126, x127, x128, x129, x130, x131, x132,
-       x133, x134, x135, x136, x137, x138, x139, x140, x141, x142, x143, x144, x145, x146, x147,
-       x148, x149, x150, x151, x152, x153, x154, x155, x156, x157, x158, x159, x160, x161, x162,
-       x163, x164, x165, x166, x167, x168, x169, x170, x171, x172, x173, x174, x175, x176, x177,
-       x178, x179, x180, x181, x182, x183, x184, x185, x186, x187, x188, x189, x190, x191, x192,
-       x193, x194, x195, x196, x197, x198, x199, x200, x201, x202, x203, x204, x205, x206, x207,
-       x208, x209, x210, x211, x212, x213, x214, x215, x216, x217, x218, x219, x220, x221, x222,
-       x223, x224, x225, x226, x227, x228, x229, x230, x231, x232, x233, x234, x235, x236, x237,
-       x238, x239, x240, x241, x242, x243, x244, x245, x246, x247, x248, x249, x250, x251, x252,
-       x253, x254, x255, x256, x257, x258, x259, x260, x261, x262, x263, x264, x265, x266, x267,
-       x268, x269, x270, x271, x272, x273, x274, x275, x276, x277, x278, x279, x280, x281, x282,
-       x283, x284, x285, x286, x287, x288, x289, x290, x291, x292, x293, x294, x295, x296, x297,
-       x298, x299, x300, x301, x302, x303, x304, x305, x306, x307, x308, x309, x310, x311, x312,
-       x313, x314, x315, x316, x317, x318, x319, x320, x321, x322, x323, x324, x325, x326, x327,
-       x328, x329, x330, x331, x332, x333, x334, x335, x336, x337, x338, x339, x340, x341, x342,
-       x343, x344, x345, x346, x347, x348, x349, x350, x351, x352, x353, x354, x355, x356, x357,
-       x358, x359, x360, x361, x362, x363, x364, x365, x366, x367, x368, x369, x370, x371, x372,
-       x373, x374, x375, x376, x377, x378, x379, x380, x381, x382, x383, x384, x385, x386, x387,
-       x388, x389, x390, x391, x392, x393, x394, x395, x396, x397, x398, x399, x400, x401, x402,
-       x403, x404, x405, x406, x407, x408, x409, x410, x411, x412, x413, x414, x415, x416, x417,
-       x418, x419, x420, x421, x422, x423, x424, x425, x426, x427, x428, x429, x430, x431, x432,
-       x433, x434, x435, x436, x437, x438, x439, x440, x441, x442, x443, x444, x445, x446, x447,
-       x448, x449, x450, x451, x452, x453, x454, x455, x456, x457, x458, x459, x460, x461, x462,
-       x463, x464, x465, x466, x467, x468, x469, x470, x471, x472, x473, x474, x475, x476, x477,
-       x478, x479, x480, x481, x482, x483, x484, x485, x486, x487, x488, x489, x490, x491, x492,
-       x493, x494, x495, x496, x497, x498, x499, x500, x501, x502, x503, x504, x505, x506, x507,
-       x508, x509, x510, x511, x512, x513, x514, x515, x516, x517, x518, x519, x520, x521, x522,
-       x523, x524, x525, x526, x527, x528, x529, x530, x531, x532, x533, x534, x535, x536, x537,
-       x538, x539, x540, x541, x542, x543, x544, x545, x546, x547, x548, x549, x550, x551, x552,
-       x553, x554, x555, x556, x557, x558, x559, x560, x561, x562, x563, x564, x565, x566, x567,
-       x568, x569, x570, x571, x572, x573, x574, x575, x576, x577, x578, x579, x580, x581, x582,
-       x583, x584, x585, x586, x587, x588, x589, x590, x591, x592, x593, x594, x595, x596, x597,
-       x598, x599, x600, x601, x602, x603, x604, x605, x606, x607, x608, x609, x610, x611, x612,
-       x613, x614, x615, x616, x617, x618, x619, x620, x621, x622, x623, x624, x625, x626, x627,
-       x628, x629, x630, x631, x632, x633, x634, x635, x636, x637, x638, x639, x640, x641, x642,
-       x643, x644, x645, x646, x647, x648, x649, x650, x651, x652, x653, x654, x655, x656, x657,
-       x658, x659, x660, x661, x662, x663, x664, x665, x666, x667, x668, x669, x670, x671, x672,
-       x673, x674, x675, x676, x677, x678, x679, x680, x681, x682, x683, x684, x685, x686, x687,
-       x688, x689, x690, x691, x692, x693, x694, x695, x696, x697, x698, x699, x700, x701, x702,
-       x703, x704, x705, x706, x707, x708, x709, x710, x711, x712, x713, x714, x715, x716, x717,
-       x718, x719, x720, x721, x722, x723, x724, x725, x726, x727, x728, x729, x730, x731, x732,
-       x733, x734, x735, x736, x737, x738, x739, x740, x741, x742, x743, x744, x745, x746, x747,
-       x748, x749, x750, x751, x752, x753, x754, x755, x756, x757, x758, x759, x760, x761, x762,
-       x763, x764, x765, x766, x767, x768, x769, x770, x771, x772, x773, x774, x775, x776, x777,
-       x778, x779, x780, x781, x782, x783, x784, x785, x786, x787, x788, x789, x790, x791, x792,
-       x793, x794, x795, x796, x797, x798, x799, x800, x801, x802, x803, x804, x805, x806, x807,
-       x808, x809, x810, x811, x812, x813, x814, x815, x816, x817, x818, x819, x820, x821, x822,
-       x823, x824, x825, x826, x827, x828, x829, x830, x831, x832, x833, x834, x835, x836, x837,
-       x838, x839, x840, x841, x842, x843, x844, x845, x846, x847, x848, x849, x850, x851, x852,
-       x853, x854, x855, x856, x857},
-      {x858, x859, x860, x861, x862, x863, x864, x865, x866, x867, x868, x869, x870, x871, x872,
-       x873, x874, x875, x876, x877, x878, x879, x880, x881, x882, x883, x884, x885, x886, x887,
-       x888, x889, x890, x891, x892, x893, x894, x895, x896, x897, x898, x899, x900, x901, x902,
-       x903, x904, x905, x906, x907, x908, x909, x910, x911, x912, x913, x914, x915, x916, x917,
-       x918, x919, x920, x921, x922, x923, x924, x925, x926, x927, x928, x929, x930, x931, x932,
-       x933, x934, x935, x936, x937, x938, x939, x940, x941, x942, x943, x944, x945, x946, x947,
-       x948, x949, x950, x951, x952, x953, x954, x955, x956, x957},
+      ctx,
+      Val800Array{
+          x58,  x59,  x60,  x61,  x62,  x63,  x64,  x65,  x66,  x67,  x68,  x69,  x70,  x71,  x72,
+          x73,  x74,  x75,  x76,  x77,  x78,  x79,  x80,  x81,  x82,  x83,  x84,  x85,  x86,  x87,
+          x88,  x89,  x90,  x91,  x92,  x93,  x94,  x95,  x96,  x97,  x98,  x99,  x100, x101, x102,
+          x103, x104, x105, x106, x107, x108, x109, x110, x111, x112, x113, x114, x115, x116, x117,
+          x118, x119, x120, x121, x122, x123, x124, x125, x126, x127, x128, x129, x130, x131, x132,
+          x133, x134, x135, x136, x137, x138, x139, x140, x141, x142, x143, x144, x145, x146, x147,
+          x148, x149, x150, x151, x152, x153, x154, x155, x156, x157, x158, x159, x160, x161, x162,
+          x163, x164, x165, x166, x167, x168, x169, x170, x171, x172, x173, x174, x175, x176, x177,
+          x178, x179, x180, x181, x182, x183, x184, x185, x186, x187, x188, x189, x190, x191, x192,
+          x193, x194, x195, x196, x197, x198, x199, x200, x201, x202, x203, x204, x205, x206, x207,
+          x208, x209, x210, x211, x212, x213, x214, x215, x216, x217, x218, x219, x220, x221, x222,
+          x223, x224, x225, x226, x227, x228, x229, x230, x231, x232, x233, x234, x235, x236, x237,
+          x238, x239, x240, x241, x242, x243, x244, x245, x246, x247, x248, x249, x250, x251, x252,
+          x253, x254, x255, x256, x257, x258, x259, x260, x261, x262, x263, x264, x265, x266, x267,
+          x268, x269, x270, x271, x272, x273, x274, x275, x276, x277, x278, x279, x280, x281, x282,
+          x283, x284, x285, x286, x287, x288, x289, x290, x291, x292, x293, x294, x295, x296, x297,
+          x298, x299, x300, x301, x302, x303, x304, x305, x306, x307, x308, x309, x310, x311, x312,
+          x313, x314, x315, x316, x317, x318, x319, x320, x321, x322, x323, x324, x325, x326, x327,
+          x328, x329, x330, x331, x332, x333, x334, x335, x336, x337, x338, x339, x340, x341, x342,
+          x343, x344, x345, x346, x347, x348, x349, x350, x351, x352, x353, x354, x355, x356, x357,
+          x358, x359, x360, x361, x362, x363, x364, x365, x366, x367, x368, x369, x370, x371, x372,
+          x373, x374, x375, x376, x377, x378, x379, x380, x381, x382, x383, x384, x385, x386, x387,
+          x388, x389, x390, x391, x392, x393, x394, x395, x396, x397, x398, x399, x400, x401, x402,
+          x403, x404, x405, x406, x407, x408, x409, x410, x411, x412, x413, x414, x415, x416, x417,
+          x418, x419, x420, x421, x422, x423, x424, x425, x426, x427, x428, x429, x430, x431, x432,
+          x433, x434, x435, x436, x437, x438, x439, x440, x441, x442, x443, x444, x445, x446, x447,
+          x448, x449, x450, x451, x452, x453, x454, x455, x456, x457, x458, x459, x460, x461, x462,
+          x463, x464, x465, x466, x467, x468, x469, x470, x471, x472, x473, x474, x475, x476, x477,
+          x478, x479, x480, x481, x482, x483, x484, x485, x486, x487, x488, x489, x490, x491, x492,
+          x493, x494, x495, x496, x497, x498, x499, x500, x501, x502, x503, x504, x505, x506, x507,
+          x508, x509, x510, x511, x512, x513, x514, x515, x516, x517, x518, x519, x520, x521, x522,
+          x523, x524, x525, x526, x527, x528, x529, x530, x531, x532, x533, x534, x535, x536, x537,
+          x538, x539, x540, x541, x542, x543, x544, x545, x546, x547, x548, x549, x550, x551, x552,
+          x553, x554, x555, x556, x557, x558, x559, x560, x561, x562, x563, x564, x565, x566, x567,
+          x568, x569, x570, x571, x572, x573, x574, x575, x576, x577, x578, x579, x580, x581, x582,
+          x583, x584, x585, x586, x587, x588, x589, x590, x591, x592, x593, x594, x595, x596, x597,
+          x598, x599, x600, x601, x602, x603, x604, x605, x606, x607, x608, x609, x610, x611, x612,
+          x613, x614, x615, x616, x617, x618, x619, x620, x621, x622, x623, x624, x625, x626, x627,
+          x628, x629, x630, x631, x632, x633, x634, x635, x636, x637, x638, x639, x640, x641, x642,
+          x643, x644, x645, x646, x647, x648, x649, x650, x651, x652, x653, x654, x655, x656, x657,
+          x658, x659, x660, x661, x662, x663, x664, x665, x666, x667, x668, x669, x670, x671, x672,
+          x673, x674, x675, x676, x677, x678, x679, x680, x681, x682, x683, x684, x685, x686, x687,
+          x688, x689, x690, x691, x692, x693, x694, x695, x696, x697, x698, x699, x700, x701, x702,
+          x703, x704, x705, x706, x707, x708, x709, x710, x711, x712, x713, x714, x715, x716, x717,
+          x718, x719, x720, x721, x722, x723, x724, x725, x726, x727, x728, x729, x730, x731, x732,
+          x733, x734, x735, x736, x737, x738, x739, x740, x741, x742, x743, x744, x745, x746, x747,
+          x748, x749, x750, x751, x752, x753, x754, x755, x756, x757, x758, x759, x760, x761, x762,
+          x763, x764, x765, x766, x767, x768, x769, x770, x771, x772, x773, x774, x775, x776, x777,
+          x778, x779, x780, x781, x782, x783, x784, x785, x786, x787, x788, x789, x790, x791, x792,
+          x793, x794, x795, x796, x797, x798, x799, x800, x801, x802, x803, x804, x805, x806, x807,
+          x808, x809, x810, x811, x812, x813, x814, x815, x816, x817, x818, x819, x820, x821, x822,
+          x823, x824, x825, x826, x827, x828, x829, x830, x831, x832, x833, x834, x835, x836, x837,
+          x838, x839, x840, x841, x842, x843, x844, x845, x846, x847, x848, x849, x850, x851, x852,
+          x853, x854, x855, x856, x857},
+      Val100Array{x858, x859, x860, x861, x862, x863, x864, x865, x866, x867, x868, x869, x870,
+                  x871, x872, x873, x874, x875, x876, x877, x878, x879, x880, x881, x882, x883,
+                  x884, x885, x886, x887, x888, x889, x890, x891, x892, x893, x894, x895, x896,
+                  x897, x898, x899, x900, x901, x902, x903, x904, x905, x906, x907, x908, x909,
+                  x910, x911, x912, x913, x914, x915, x916, x917, x918, x919, x920, x921, x922,
+                  x923, x924, x925, x926, x927, x928, x929, x930, x931, x932, x933, x934, x935,
+                  x936, x937, x938, x939, x940, x941, x942, x943, x944, x945, x946, x947, x948,
+                  x949, x950, x951, x952, x953, x954, x955, x956, x957},
       x958,
       LAYOUT_LOOKUP(layout2, _super));
   return x959;
 }
-TopStateStruct
-exec_WriteCycle(TopStateStruct arg0, TopStateStruct arg1, BoundLayout<WriteCycleLayout> layout2) {
+__device__ TopStateStruct exec_WriteCycle(ExecContext& ctx,
+                                          TopStateStruct arg0,
+                                          TopStateStruct arg1,
+                                          BoundLayout<WriteCycleLayout> layout2) {
   // Log(<preamble>:22)
   // WriteCycle(zirgen/circuit/keccak2/top.zir:371)
-  INVOKE_EXTERN(ctx, log, "WriteCycle", {});
+  INVOKE_EXTERN(ctx, log, "WriteCycle", std::initializer_list<Val>{});
   // WriteCycle(zirgen/circuit/keccak2/top.zir:370)
   TopStateBitsStruct800Array x3 = arg1.bits;
   // WriteCycle(zirgen/circuit/keccak2/top.zir:376)
@@ -15492,24 +15611,24 @@ exec_WriteCycle(TopStateStruct arg0, TopStateStruct arg1, BoundLayout<WriteCycle
   Val x2104 = (((x2103 + (x2097 * Val(8192))) + (x2098 * Val(16384))) + (x2099 * Val(32768)));
   // WriteCycle(zirgen/circuit/keccak2/top.zir:370)
   NondetRegStruct16Array x2105 = arg0.sflat;
-  Val16Array x2106 = {x2105[0]._super,
-                      x2105[1]._super,
-                      x2105[2]._super,
-                      x2105[3]._super,
-                      x2105[4]._super,
-                      x2105[5]._super,
-                      x2105[6]._super,
-                      x2105[7]._super,
-                      x2105[8]._super,
-                      x2105[9]._super,
-                      x2105[10]._super,
-                      x2105[11]._super,
-                      x2105[12]._super,
-                      x2105[13]._super,
-                      x2105[14]._super,
-                      x2105[15]._super};
+  Val16Array x2106 = Val16Array{x2105[0]._super,
+                                x2105[1]._super,
+                                x2105[2]._super,
+                                x2105[3]._super,
+                                x2105[4]._super,
+                                x2105[5]._super,
+                                x2105[6]._super,
+                                x2105[7]._super,
+                                x2105[8]._super,
+                                x2105[9]._super,
+                                x2105[10]._super,
+                                x2105[11]._super,
+                                x2105[12]._super,
+                                x2105[13]._super,
+                                x2105[14]._super,
+                                x2105[15]._super};
   // WriteCycle(zirgen/circuit/keccak2/top.zir:382)
-  UnpackReg_800__16_Struct x2107 = exec_SFlatToBits(x2106, LAYOUT_LOOKUP(layout2, bits));
+  UnpackReg_800__16_Struct x2107 = exec_SFlatToBits(ctx, x2106, LAYOUT_LOOKUP(layout2, bits));
   UnpackReg_800__16__SuperStruct800Array x2108 = x2107._super;
   Val x2109 = x2108[0]._super._super;
   Val x2110 = x2108[1]._super._super;
@@ -16313,266 +16432,282 @@ exec_WriteCycle(TopStateStruct arg0, TopStateStruct arg1, BoundLayout<WriteCycle
   Val x2908 = x2108[799]._super._super;
   // WriteCycle(zirgen/circuit/keccak2/top.zir:383)
   TopStateStruct x2909 = exec_TopState(
-      {x2109, x2110, x2111, x2112, x2113, x2114, x2115, x2116, x2117, x2118, x2119, x2120, x2121,
-       x2122, x2123, x2124, x2125, x2126, x2127, x2128, x2129, x2130, x2131, x2132, x2133, x2134,
-       x2135, x2136, x2137, x2138, x2139, x2140, x2141, x2142, x2143, x2144, x2145, x2146, x2147,
-       x2148, x2149, x2150, x2151, x2152, x2153, x2154, x2155, x2156, x2157, x2158, x2159, x2160,
-       x2161, x2162, x2163, x2164, x2165, x2166, x2167, x2168, x2169, x2170, x2171, x2172, x2173,
-       x2174, x2175, x2176, x2177, x2178, x2179, x2180, x2181, x2182, x2183, x2184, x2185, x2186,
-       x2187, x2188, x2189, x2190, x2191, x2192, x2193, x2194, x2195, x2196, x2197, x2198, x2199,
-       x2200, x2201, x2202, x2203, x2204, x2205, x2206, x2207, x2208, x2209, x2210, x2211, x2212,
-       x2213, x2214, x2215, x2216, x2217, x2218, x2219, x2220, x2221, x2222, x2223, x2224, x2225,
-       x2226, x2227, x2228, x2229, x2230, x2231, x2232, x2233, x2234, x2235, x2236, x2237, x2238,
-       x2239, x2240, x2241, x2242, x2243, x2244, x2245, x2246, x2247, x2248, x2249, x2250, x2251,
-       x2252, x2253, x2254, x2255, x2256, x2257, x2258, x2259, x2260, x2261, x2262, x2263, x2264,
-       x2265, x2266, x2267, x2268, x2269, x2270, x2271, x2272, x2273, x2274, x2275, x2276, x2277,
-       x2278, x2279, x2280, x2281, x2282, x2283, x2284, x2285, x2286, x2287, x2288, x2289, x2290,
-       x2291, x2292, x2293, x2294, x2295, x2296, x2297, x2298, x2299, x2300, x2301, x2302, x2303,
-       x2304, x2305, x2306, x2307, x2308, x2309, x2310, x2311, x2312, x2313, x2314, x2315, x2316,
-       x2317, x2318, x2319, x2320, x2321, x2322, x2323, x2324, x2325, x2326, x2327, x2328, x2329,
-       x2330, x2331, x2332, x2333, x2334, x2335, x2336, x2337, x2338, x2339, x2340, x2341, x2342,
-       x2343, x2344, x2345, x2346, x2347, x2348, x2349, x2350, x2351, x2352, x2353, x2354, x2355,
-       x2356, x2357, x2358, x2359, x2360, x2361, x2362, x2363, x2364, x2365, x2366, x2367, x2368,
-       x2369, x2370, x2371, x2372, x2373, x2374, x2375, x2376, x2377, x2378, x2379, x2380, x2381,
-       x2382, x2383, x2384, x2385, x2386, x2387, x2388, x2389, x2390, x2391, x2392, x2393, x2394,
-       x2395, x2396, x2397, x2398, x2399, x2400, x2401, x2402, x2403, x2404, x2405, x2406, x2407,
-       x2408, x2409, x2410, x2411, x2412, x2413, x2414, x2415, x2416, x2417, x2418, x2419, x2420,
-       x2421, x2422, x2423, x2424, x2425, x2426, x2427, x2428, x2429, x2430, x2431, x2432, x2433,
-       x2434, x2435, x2436, x2437, x2438, x2439, x2440, x2441, x2442, x2443, x2444, x2445, x2446,
-       x2447, x2448, x2449, x2450, x2451, x2452, x2453, x2454, x2455, x2456, x2457, x2458, x2459,
-       x2460, x2461, x2462, x2463, x2464, x2465, x2466, x2467, x2468, x2469, x2470, x2471, x2472,
-       x2473, x2474, x2475, x2476, x2477, x2478, x2479, x2480, x2481, x2482, x2483, x2484, x2485,
-       x2486, x2487, x2488, x2489, x2490, x2491, x2492, x2493, x2494, x2495, x2496, x2497, x2498,
-       x2499, x2500, x2501, x2502, x2503, x2504, x2505, x2506, x2507, x2508, x2509, x2510, x2511,
-       x2512, x2513, x2514, x2515, x2516, x2517, x2518, x2519, x2520, x2521, x2522, x2523, x2524,
-       x2525, x2526, x2527, x2528, x2529, x2530, x2531, x2532, x2533, x2534, x2535, x2536, x2537,
-       x2538, x2539, x2540, x2541, x2542, x2543, x2544, x2545, x2546, x2547, x2548, x2549, x2550,
-       x2551, x2552, x2553, x2554, x2555, x2556, x2557, x2558, x2559, x2560, x2561, x2562, x2563,
-       x2564, x2565, x2566, x2567, x2568, x2569, x2570, x2571, x2572, x2573, x2574, x2575, x2576,
-       x2577, x2578, x2579, x2580, x2581, x2582, x2583, x2584, x2585, x2586, x2587, x2588, x2589,
-       x2590, x2591, x2592, x2593, x2594, x2595, x2596, x2597, x2598, x2599, x2600, x2601, x2602,
-       x2603, x2604, x2605, x2606, x2607, x2608, x2609, x2610, x2611, x2612, x2613, x2614, x2615,
-       x2616, x2617, x2618, x2619, x2620, x2621, x2622, x2623, x2624, x2625, x2626, x2627, x2628,
-       x2629, x2630, x2631, x2632, x2633, x2634, x2635, x2636, x2637, x2638, x2639, x2640, x2641,
-       x2642, x2643, x2644, x2645, x2646, x2647, x2648, x2649, x2650, x2651, x2652, x2653, x2654,
-       x2655, x2656, x2657, x2658, x2659, x2660, x2661, x2662, x2663, x2664, x2665, x2666, x2667,
-       x2668, x2669, x2670, x2671, x2672, x2673, x2674, x2675, x2676, x2677, x2678, x2679, x2680,
-       x2681, x2682, x2683, x2684, x2685, x2686, x2687, x2688, x2689, x2690, x2691, x2692, x2693,
-       x2694, x2695, x2696, x2697, x2698, x2699, x2700, x2701, x2702, x2703, x2704, x2705, x2706,
-       x2707, x2708, x2709, x2710, x2711, x2712, x2713, x2714, x2715, x2716, x2717, x2718, x2719,
-       x2720, x2721, x2722, x2723, x2724, x2725, x2726, x2727, x2728, x2729, x2730, x2731, x2732,
-       x2733, x2734, x2735, x2736, x2737, x2738, x2739, x2740, x2741, x2742, x2743, x2744, x2745,
-       x2746, x2747, x2748, x2749, x2750, x2751, x2752, x2753, x2754, x2755, x2756, x2757, x2758,
-       x2759, x2760, x2761, x2762, x2763, x2764, x2765, x2766, x2767, x2768, x2769, x2770, x2771,
-       x2772, x2773, x2774, x2775, x2776, x2777, x2778, x2779, x2780, x2781, x2782, x2783, x2784,
-       x2785, x2786, x2787, x2788, x2789, x2790, x2791, x2792, x2793, x2794, x2795, x2796, x2797,
-       x2798, x2799, x2800, x2801, x2802, x2803, x2804, x2805, x2806, x2807, x2808, x2809, x2810,
-       x2811, x2812, x2813, x2814, x2815, x2816, x2817, x2818, x2819, x2820, x2821, x2822, x2823,
-       x2824, x2825, x2826, x2827, x2828, x2829, x2830, x2831, x2832, x2833, x2834, x2835, x2836,
-       x2837, x2838, x2839, x2840, x2841, x2842, x2843, x2844, x2845, x2846, x2847, x2848, x2849,
-       x2850, x2851, x2852, x2853, x2854, x2855, x2856, x2857, x2858, x2859, x2860, x2861, x2862,
-       x2863, x2864, x2865, x2866, x2867, x2868, x2869, x2870, x2871, x2872, x2873, x2874, x2875,
-       x2876, x2877, x2878, x2879, x2880, x2881, x2882, x2883, x2884, x2885, x2886, x2887, x2888,
-       x2889, x2890, x2891, x2892, x2893, x2894, x2895, x2896, x2897, x2898, x2899, x2900, x2901,
-       x2902, x2903, x2904, x2905, x2906, x2907, x2908},
-      {x24,   x45,   x67,   x88,   x109,  x130,  x151,  x172,  x193,  x214,  x235,  x256,  x277,
-       x298,  x319,  x340,  x361,  x382,  x403,  x424,  x445,  x466,  x487,  x508,  x529,  x550,
-       x571,  x592,  x613,  x634,  x655,  x676,  x697,  x718,  x739,  x760,  x781,  x802,  x823,
-       x844,  x865,  x886,  x907,  x928,  x949,  x970,  x991,  x1012, x1033, x1054, x1075, x1096,
-       x1117, x1138, x1159, x1180, x1201, x1222, x1243, x1264, x1285, x1306, x1327, x1348, x1369,
-       x1390, x1411, x1432, x1453, x1474, x1495, x1516, x1537, x1558, x1579, x1600, x1621, x1642,
-       x1663, x1684, x1705, x1726, x1747, x1768, x1789, x1810, x1831, x1852, x1873, x1894, x1915,
-       x1936, x1957, x1978, x1999, x2020, x2041, x2062, x2083, x2104},
+      ctx,
+      Val800Array{
+          x2109, x2110, x2111, x2112, x2113, x2114, x2115, x2116, x2117, x2118, x2119, x2120, x2121,
+          x2122, x2123, x2124, x2125, x2126, x2127, x2128, x2129, x2130, x2131, x2132, x2133, x2134,
+          x2135, x2136, x2137, x2138, x2139, x2140, x2141, x2142, x2143, x2144, x2145, x2146, x2147,
+          x2148, x2149, x2150, x2151, x2152, x2153, x2154, x2155, x2156, x2157, x2158, x2159, x2160,
+          x2161, x2162, x2163, x2164, x2165, x2166, x2167, x2168, x2169, x2170, x2171, x2172, x2173,
+          x2174, x2175, x2176, x2177, x2178, x2179, x2180, x2181, x2182, x2183, x2184, x2185, x2186,
+          x2187, x2188, x2189, x2190, x2191, x2192, x2193, x2194, x2195, x2196, x2197, x2198, x2199,
+          x2200, x2201, x2202, x2203, x2204, x2205, x2206, x2207, x2208, x2209, x2210, x2211, x2212,
+          x2213, x2214, x2215, x2216, x2217, x2218, x2219, x2220, x2221, x2222, x2223, x2224, x2225,
+          x2226, x2227, x2228, x2229, x2230, x2231, x2232, x2233, x2234, x2235, x2236, x2237, x2238,
+          x2239, x2240, x2241, x2242, x2243, x2244, x2245, x2246, x2247, x2248, x2249, x2250, x2251,
+          x2252, x2253, x2254, x2255, x2256, x2257, x2258, x2259, x2260, x2261, x2262, x2263, x2264,
+          x2265, x2266, x2267, x2268, x2269, x2270, x2271, x2272, x2273, x2274, x2275, x2276, x2277,
+          x2278, x2279, x2280, x2281, x2282, x2283, x2284, x2285, x2286, x2287, x2288, x2289, x2290,
+          x2291, x2292, x2293, x2294, x2295, x2296, x2297, x2298, x2299, x2300, x2301, x2302, x2303,
+          x2304, x2305, x2306, x2307, x2308, x2309, x2310, x2311, x2312, x2313, x2314, x2315, x2316,
+          x2317, x2318, x2319, x2320, x2321, x2322, x2323, x2324, x2325, x2326, x2327, x2328, x2329,
+          x2330, x2331, x2332, x2333, x2334, x2335, x2336, x2337, x2338, x2339, x2340, x2341, x2342,
+          x2343, x2344, x2345, x2346, x2347, x2348, x2349, x2350, x2351, x2352, x2353, x2354, x2355,
+          x2356, x2357, x2358, x2359, x2360, x2361, x2362, x2363, x2364, x2365, x2366, x2367, x2368,
+          x2369, x2370, x2371, x2372, x2373, x2374, x2375, x2376, x2377, x2378, x2379, x2380, x2381,
+          x2382, x2383, x2384, x2385, x2386, x2387, x2388, x2389, x2390, x2391, x2392, x2393, x2394,
+          x2395, x2396, x2397, x2398, x2399, x2400, x2401, x2402, x2403, x2404, x2405, x2406, x2407,
+          x2408, x2409, x2410, x2411, x2412, x2413, x2414, x2415, x2416, x2417, x2418, x2419, x2420,
+          x2421, x2422, x2423, x2424, x2425, x2426, x2427, x2428, x2429, x2430, x2431, x2432, x2433,
+          x2434, x2435, x2436, x2437, x2438, x2439, x2440, x2441, x2442, x2443, x2444, x2445, x2446,
+          x2447, x2448, x2449, x2450, x2451, x2452, x2453, x2454, x2455, x2456, x2457, x2458, x2459,
+          x2460, x2461, x2462, x2463, x2464, x2465, x2466, x2467, x2468, x2469, x2470, x2471, x2472,
+          x2473, x2474, x2475, x2476, x2477, x2478, x2479, x2480, x2481, x2482, x2483, x2484, x2485,
+          x2486, x2487, x2488, x2489, x2490, x2491, x2492, x2493, x2494, x2495, x2496, x2497, x2498,
+          x2499, x2500, x2501, x2502, x2503, x2504, x2505, x2506, x2507, x2508, x2509, x2510, x2511,
+          x2512, x2513, x2514, x2515, x2516, x2517, x2518, x2519, x2520, x2521, x2522, x2523, x2524,
+          x2525, x2526, x2527, x2528, x2529, x2530, x2531, x2532, x2533, x2534, x2535, x2536, x2537,
+          x2538, x2539, x2540, x2541, x2542, x2543, x2544, x2545, x2546, x2547, x2548, x2549, x2550,
+          x2551, x2552, x2553, x2554, x2555, x2556, x2557, x2558, x2559, x2560, x2561, x2562, x2563,
+          x2564, x2565, x2566, x2567, x2568, x2569, x2570, x2571, x2572, x2573, x2574, x2575, x2576,
+          x2577, x2578, x2579, x2580, x2581, x2582, x2583, x2584, x2585, x2586, x2587, x2588, x2589,
+          x2590, x2591, x2592, x2593, x2594, x2595, x2596, x2597, x2598, x2599, x2600, x2601, x2602,
+          x2603, x2604, x2605, x2606, x2607, x2608, x2609, x2610, x2611, x2612, x2613, x2614, x2615,
+          x2616, x2617, x2618, x2619, x2620, x2621, x2622, x2623, x2624, x2625, x2626, x2627, x2628,
+          x2629, x2630, x2631, x2632, x2633, x2634, x2635, x2636, x2637, x2638, x2639, x2640, x2641,
+          x2642, x2643, x2644, x2645, x2646, x2647, x2648, x2649, x2650, x2651, x2652, x2653, x2654,
+          x2655, x2656, x2657, x2658, x2659, x2660, x2661, x2662, x2663, x2664, x2665, x2666, x2667,
+          x2668, x2669, x2670, x2671, x2672, x2673, x2674, x2675, x2676, x2677, x2678, x2679, x2680,
+          x2681, x2682, x2683, x2684, x2685, x2686, x2687, x2688, x2689, x2690, x2691, x2692, x2693,
+          x2694, x2695, x2696, x2697, x2698, x2699, x2700, x2701, x2702, x2703, x2704, x2705, x2706,
+          x2707, x2708, x2709, x2710, x2711, x2712, x2713, x2714, x2715, x2716, x2717, x2718, x2719,
+          x2720, x2721, x2722, x2723, x2724, x2725, x2726, x2727, x2728, x2729, x2730, x2731, x2732,
+          x2733, x2734, x2735, x2736, x2737, x2738, x2739, x2740, x2741, x2742, x2743, x2744, x2745,
+          x2746, x2747, x2748, x2749, x2750, x2751, x2752, x2753, x2754, x2755, x2756, x2757, x2758,
+          x2759, x2760, x2761, x2762, x2763, x2764, x2765, x2766, x2767, x2768, x2769, x2770, x2771,
+          x2772, x2773, x2774, x2775, x2776, x2777, x2778, x2779, x2780, x2781, x2782, x2783, x2784,
+          x2785, x2786, x2787, x2788, x2789, x2790, x2791, x2792, x2793, x2794, x2795, x2796, x2797,
+          x2798, x2799, x2800, x2801, x2802, x2803, x2804, x2805, x2806, x2807, x2808, x2809, x2810,
+          x2811, x2812, x2813, x2814, x2815, x2816, x2817, x2818, x2819, x2820, x2821, x2822, x2823,
+          x2824, x2825, x2826, x2827, x2828, x2829, x2830, x2831, x2832, x2833, x2834, x2835, x2836,
+          x2837, x2838, x2839, x2840, x2841, x2842, x2843, x2844, x2845, x2846, x2847, x2848, x2849,
+          x2850, x2851, x2852, x2853, x2854, x2855, x2856, x2857, x2858, x2859, x2860, x2861, x2862,
+          x2863, x2864, x2865, x2866, x2867, x2868, x2869, x2870, x2871, x2872, x2873, x2874, x2875,
+          x2876, x2877, x2878, x2879, x2880, x2881, x2882, x2883, x2884, x2885, x2886, x2887, x2888,
+          x2889, x2890, x2891, x2892, x2893, x2894, x2895, x2896, x2897, x2898, x2899, x2900, x2901,
+          x2902, x2903, x2904, x2905, x2906, x2907, x2908},
+      Val100Array{
+          x24,   x45,   x67,   x88,   x109,  x130,  x151,  x172,  x193,  x214,  x235,  x256,  x277,
+          x298,  x319,  x340,  x361,  x382,  x403,  x424,  x445,  x466,  x487,  x508,  x529,  x550,
+          x571,  x592,  x613,  x634,  x655,  x676,  x697,  x718,  x739,  x760,  x781,  x802,  x823,
+          x844,  x865,  x886,  x907,  x928,  x949,  x970,  x991,  x1012, x1033, x1054, x1075, x1096,
+          x1117, x1138, x1159, x1180, x1201, x1222, x1243, x1264, x1285, x1306, x1327, x1348, x1369,
+          x1390, x1411, x1432, x1453, x1474, x1495, x1516, x1537, x1558, x1579, x1600, x1621, x1642,
+          x1663, x1684, x1705, x1726, x1747, x1768, x1789, x1810, x1831, x1852, x1873, x1894, x1915,
+          x1936, x1957, x1978, x1999, x2020, x2041, x2062, x2083, x2104},
       x2106,
       LAYOUT_LOOKUP(layout2, _super));
   return x2909;
 }
-DigestRegStruct exec_DigestReg(Val16Array arg0, BoundLayout<DigestRegLayout> layout1) {
+__device__ DigestRegStruct exec_DigestReg(ExecContext& ctx,
+                                          Val16Array arg0,
+                                          BoundLayout<DigestRegLayout> layout1) {
   // DigestReg(zirgen/circuit/keccak2/top.zir:391)
-  DigestRegValuesStruct16Array x2 =
-      map(arg0,
-          LAYOUT_LOOKUP(layout1, values),
-          std::function([&](Val16Array::value_type x3,
-                            BoundLayout<NondetRegLayout16LayoutArray::value_type> x4) {
-            NondetRegStruct x5 = exec_Reg(x3, x4);
-            return DigestRegValuesStruct{};
-          }));
+  DigestRegValuesStruct16Array x2 = map(
+      arg0,
+      LAYOUT_LOOKUP(layout1, values),
+      ([&](Val16Array::value_type x3, BoundLayout<NondetRegLayout16LayoutArray::value_type> x4) {
+        NondetRegStruct x5 = exec_Reg(ctx, x3, x4);
+        return DigestRegValuesStruct{};
+      }));
   return DigestRegStruct{};
 }
-TopStateStruct
-exec_ShutdownCycle(TopStateStruct arg0, BoundLayout<TopStateLayout> layout1, GlobalBuf global2) {
+__device__ TopStateStruct exec_ShutdownCycle(ExecContext& ctx,
+                                             TopStateStruct arg0,
+                                             BoundLayout<TopStateLayout> layout1,
+                                             GlobalBuf global2) {
   // ShutdownCycle(zirgen/circuit/keccak2/top.zir:394)
   BoundLayout<_globalLayout> x3 = BIND_LAYOUT(kLayoutGlobal, global2);
   // Log(<preamble>:22)
   // ShutdownCycle(zirgen/circuit/keccak2/top.zir:395)
-  INVOKE_EXTERN(ctx, log, "ShutdownCycle", {});
+  INVOKE_EXTERN(ctx, log, "ShutdownCycle", std::initializer_list<Val>{});
   // ShutdownCycle(zirgen/circuit/keccak2/top.zir:394)
   NondetRegStruct16Array x4 = arg0.sflat;
-  Val16Array x5 = {x4[0]._super,
-                   x4[1]._super,
-                   x4[2]._super,
-                   x4[3]._super,
-                   x4[4]._super,
-                   x4[5]._super,
-                   x4[6]._super,
-                   x4[7]._super,
-                   x4[8]._super,
-                   x4[9]._super,
-                   x4[10]._super,
-                   x4[11]._super,
-                   x4[12]._super,
-                   x4[13]._super,
-                   x4[14]._super,
-                   x4[15]._super};
+  Val16Array x5 = Val16Array{x4[0]._super,
+                             x4[1]._super,
+                             x4[2]._super,
+                             x4[3]._super,
+                             x4[4]._super,
+                             x4[5]._super,
+                             x4[6]._super,
+                             x4[7]._super,
+                             x4[8]._super,
+                             x4[9]._super,
+                             x4[10]._super,
+                             x4[11]._super,
+                             x4[12]._super,
+                             x4[13]._super,
+                             x4[14]._super,
+                             x4[15]._super};
   // ShutdownCycle(zirgen/circuit/keccak2/top.zir:396)
-  DigestRegStruct x6 = exec_DigestReg(x5, LAYOUT_LOOKUP(x3, finalDigest));
+  DigestRegStruct x6 = exec_DigestReg(ctx, x5, LAYOUT_LOOKUP(x3, finalDigest));
   // ShutdownCycle(zirgen/circuit/keccak2/top.zir:399)
   TopStateStruct x7 = exec_TopState(
-      {Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
-      {Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
-       Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
+      ctx,
+      Val800Array{
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+          Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
+      Val100Array{Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                  Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                  Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                  Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                  Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                  Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                  Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                  Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                  Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0),
+                  Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)},
       x5,
       layout1);
   return x7;
 }
-ControlStateStruct back_ControlState(Index distance0, BoundLayout<ControlStateLayout> layout1) {
+__device__ ControlStateStruct back_ControlState(ExecContext& ctx,
+                                                Index distance0,
+                                                BoundLayout<ControlStateLayout> layout1) {
   // ControlState(zirgen/circuit/keccak2/top.zir:403)
-  NondetRegStruct x2 = back_Reg(distance0, LAYOUT_LOOKUP(layout1, cycleType));
+  NondetRegStruct x2 = back_Reg(ctx, distance0, LAYOUT_LOOKUP(layout1, cycleType));
   // ControlState(zirgen/circuit/keccak2/top.zir:404)
-  NondetRegStruct x3 = back_Reg(distance0, LAYOUT_LOOKUP(layout1, subType));
+  NondetRegStruct x3 = back_Reg(ctx, distance0, LAYOUT_LOOKUP(layout1, subType));
   // ControlState(zirgen/circuit/keccak2/top.zir:405)
-  NondetRegStruct x4 = back_Reg(distance0, LAYOUT_LOOKUP(layout1, block));
+  NondetRegStruct x4 = back_Reg(ctx, distance0, LAYOUT_LOOKUP(layout1, block));
   // ControlState(zirgen/circuit/keccak2/top.zir:406)
-  NondetRegStruct x5 = back_Reg(distance0, LAYOUT_LOOKUP(layout1, round));
+  NondetRegStruct x5 = back_Reg(ctx, distance0, LAYOUT_LOOKUP(layout1, round));
   return ControlStateStruct{.cycleType = x2, .subType = x3, .block = x4, .round = x5};
 }
-ControlStateStruct
-exec_ControlState(Val arg0, Val arg1, Val arg2, Val arg3, BoundLayout<ControlStateLayout> layout4) {
+__device__ ControlStateStruct exec_ControlState(ExecContext& ctx,
+                                                Val arg0,
+                                                Val arg1,
+                                                Val arg2,
+                                                Val arg3,
+                                                BoundLayout<ControlStateLayout> layout4) {
   // ControlState(zirgen/circuit/keccak2/top.zir:403)
-  NondetRegStruct x5 = exec_Reg(arg0, LAYOUT_LOOKUP(layout4, cycleType));
+  NondetRegStruct x5 = exec_Reg(ctx, arg0, LAYOUT_LOOKUP(layout4, cycleType));
   // ControlState(zirgen/circuit/keccak2/top.zir:404)
-  NondetRegStruct x6 = exec_Reg(arg1, LAYOUT_LOOKUP(layout4, subType));
+  NondetRegStruct x6 = exec_Reg(ctx, arg1, LAYOUT_LOOKUP(layout4, subType));
   // ControlState(zirgen/circuit/keccak2/top.zir:405)
-  NondetRegStruct x7 = exec_Reg(arg2, LAYOUT_LOOKUP(layout4, block));
+  NondetRegStruct x7 = exec_Reg(ctx, arg2, LAYOUT_LOOKUP(layout4, block));
   // ControlState(zirgen/circuit/keccak2/top.zir:406)
-  NondetRegStruct x8 = exec_Reg(arg3, LAYOUT_LOOKUP(layout4, round));
+  NondetRegStruct x8 = exec_Reg(ctx, arg3, LAYOUT_LOOKUP(layout4, round));
   return ControlStateStruct{.cycleType = x5, .subType = x6, .block = x7, .round = x8};
 }
-ControlStateStruct exec_KeccackNextRound(ControlStateStruct arg0,
-                                         BoundLayout<KeccackNextRoundLayout> layout1) {
+__device__ ControlStateStruct exec_KeccackNextRound(ExecContext& ctx,
+                                                    ControlStateStruct arg0,
+                                                    BoundLayout<KeccackNextRoundLayout> layout1) {
   // KeccackNextRound(zirgen/circuit/keccak2/top.zir:411)
   BoundLayout<KeccackNextRound_SuperLayout> x2 = LAYOUT_LOOKUP(layout1, _super);
   // KeccackNextRound(zirgen/circuit/keccak2/top.zir:409)
   Val x3 = arg0.round._super;
   // KeccackNextRound(zirgen/circuit/keccak2/top.zir:410)
-  NondetRegStruct x4 = exec_IsZero((x3 - Val(23)), LAYOUT_LOOKUP(layout1, isLast));
+  NondetRegStruct x4 = exec_IsZero(ctx, (x3 - Val(23)), LAYOUT_LOOKUP(layout1, isLast));
   Val x5 = x4._super;
   ControlStateStruct x6;
   if (to_size_t(x5)) {
     // KeccackNextRound(zirgen/circuit/keccak2/top.zir:412)
     ControlStateStruct x7 =
-        exec_ControlState(Val(3), Val(0), Val(0), Val(0), LAYOUT_LOOKUP(x2, arm0));
+        exec_ControlState(ctx, Val(3), Val(0), Val(0), Val(0), LAYOUT_LOOKUP(x2, arm0));
     x6 = x7;
   } else if (to_size_t((Val(1) - x5))) {
     // KeccackNextRound(zirgen/circuit/keccak2/top.zir:414)
     ControlStateStruct x8 =
-        exec_ControlState(Val(4), Val(0), Val(0), (x3 + Val(1)), LAYOUT_LOOKUP(x2, arm1));
+        exec_ControlState(ctx, Val(4), Val(0), Val(0), (x3 + Val(1)), LAYOUT_LOOKUP(x2, arm1));
     x6 = x8;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
   // KeccackNextRound(zirgen/circuit/keccak2/top.zir:411)
-  ControlStateStruct x9 = back_ControlState(0, LAYOUT_LOOKUP(x2, _super));
+  ControlStateStruct x9 = back_ControlState(ctx, 0, LAYOUT_LOOKUP(x2, _super));
   return x9;
 }
-ControlStateStruct exec_ShaNextRound(ControlStateStruct arg0,
-                                     BoundLayout<ShaNextRoundLayout> layout1) {
+__device__ ControlStateStruct exec_ShaNextRound(ExecContext& ctx,
+                                                ControlStateStruct arg0,
+                                                BoundLayout<ShaNextRoundLayout> layout1) {
   // ShaNextRound(zirgen/circuit/keccak2/top.zir:420)
   BoundLayout<ShaNextRound_SuperLayout> x2 = LAYOUT_LOOKUP(layout1, _super);
   // ShaNextRound(zirgen/circuit/keccak2/top.zir:418)
   Val x3 = arg0.round._super;
   // ShaNextRound(zirgen/circuit/keccak2/top.zir:419)
-  NondetRegStruct x4 = exec_IsZero((x3 - Val(7)), LAYOUT_LOOKUP(layout1, isLast));
+  NondetRegStruct x4 = exec_IsZero(ctx, (x3 - Val(7)), LAYOUT_LOOKUP(layout1, isLast));
   Val x5 = x4._super;
   // ShaNextRound(zirgen/circuit/keccak2/top.zir:418)
   Val x6 = arg0.subType._super;
@@ -16580,35 +16715,37 @@ ControlStateStruct exec_ShaNextRound(ControlStateStruct arg0,
   ControlStateStruct x8;
   if (to_size_t(x5)) {
     // ShaNextRound(zirgen/circuit/keccak2/top.zir:421)
-    ControlStateStruct x9 = exec_ControlState(Val(10), x6, x7, Val(0), LAYOUT_LOOKUP(x2, arm0));
+    ControlStateStruct x9 =
+        exec_ControlState(ctx, Val(10), x6, x7, Val(0), LAYOUT_LOOKUP(x2, arm0));
     x8 = x9;
   } else if (to_size_t((Val(1) - x5))) {
     // ShaNextRound(zirgen/circuit/keccak2/top.zir:423)
     ControlStateStruct x10 =
-        exec_ControlState(Val(9), x6, x7, (x3 + Val(1)), LAYOUT_LOOKUP(x2, arm1));
+        exec_ControlState(ctx, Val(9), x6, x7, (x3 + Val(1)), LAYOUT_LOOKUP(x2, arm1));
     x8 = x10;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
   // ShaNextRound(zirgen/circuit/keccak2/top.zir:420)
-  ControlStateStruct x11 = back_ControlState(0, LAYOUT_LOOKUP(x2, _super));
+  ControlStateStruct x11 = back_ControlState(ctx, 0, LAYOUT_LOOKUP(x2, _super));
   return x11;
 }
-ControlStateStruct exec_ShaNextBlock(ControlStateStruct arg0,
-                                     BoundLayout<ShaNextBlockLayout> layout1) {
+__device__ ControlStateStruct exec_ShaNextBlock(ExecContext& ctx,
+                                                ControlStateStruct arg0,
+                                                BoundLayout<ShaNextBlockLayout> layout1) {
   // ShaNextBlock(zirgen/circuit/keccak2/top.zir:432)
   BoundLayout<ShaNextBlock_SuperLayout> x2 = LAYOUT_LOOKUP(layout1, _super);
   // ShaNextBlock(zirgen/circuit/keccak2/top.zir:427)
   Val x3 = arg0.block._super;
   // ShaNextBlock(zirgen/circuit/keccak2/top.zir:428)
-  NondetRegStruct x4 = exec_IsZero((x3 - Val(3)), LAYOUT_LOOKUP(layout1, isLast));
+  NondetRegStruct x4 = exec_IsZero(ctx, (x3 - Val(3)), LAYOUT_LOOKUP(layout1, isLast));
   Val x5 = x4._super;
   // ShaNextBlock(zirgen/circuit/keccak2/top.zir:429)
   Val x6 = (Val(1) - x5);
   // ShaNextBlock(zirgen/circuit/keccak2/top.zir:427)
   Val x7 = arg0.subType._super;
   // ShaNextBlock(zirgen/circuit/keccak2/top.zir:430)
-  NondetRegStruct x8 = exec_Reg((x5 * (Val(1) - x7)), LAYOUT_LOOKUP(layout1, isSub0));
+  NondetRegStruct x8 = exec_Reg(ctx, (x5 * (Val(1) - x7)), LAYOUT_LOOKUP(layout1, isSub0));
   Val x9 = x8._super;
   // ShaNextBlock(zirgen/circuit/keccak2/top.zir:431)
   Val x10 = ((Val(1) - x6) - x9);
@@ -16619,18 +16756,18 @@ ControlStateStruct exec_ShaNextBlock(ControlStateStruct arg0,
   if (to_size_t(x6)) {
     // ShaNextBlock(zirgen/circuit/keccak2/top.zir:433)
     ControlStateStruct x14 =
-        exec_ControlState(Val(9), x7, (x3 + Val(1)), Val(0), LAYOUT_LOOKUP(x2, arm0));
+        exec_ControlState(ctx, Val(9), x7, (x3 + Val(1)), Val(0), LAYOUT_LOOKUP(x2, arm0));
     x13 = x14;
   } else if (to_size_t(x9)) {
     // ShaNextBlock(zirgen/circuit/keccak2/top.zir:434)
     ControlStateStruct x15 =
-        exec_ControlState(Val(2), Val(0), Val(0), Val(0), LAYOUT_LOOKUP(x2, arm1));
+        exec_ControlState(ctx, Val(2), Val(0), Val(0), Val(0), LAYOUT_LOOKUP(x2, arm1));
     x13 = x15;
   } else if (to_size_t(x10)) {
     // NextPreimage(zirgen/circuit/keccak2/top.zir:280)
     // ShaNextBlock(zirgen/circuit/keccak2/top.zir:436)
     Val x16 = INVOKE_EXTERN(ctx, nextPreimage);
-    NondetRegStruct x17 = exec_NondetReg(x16, LAYOUT_LOOKUP(x11, more));
+    NondetRegStruct x17 = exec_NondetReg(ctx, x16, LAYOUT_LOOKUP(x11, more));
     Val x18 = x17._super;
     // AssertBit(zirgen/circuit/keccak2/bits.zir:6)
     // ShaNextBlock(zirgen/circuit/keccak2/top.zir:437)
@@ -16642,29 +16779,31 @@ ControlStateStruct exec_ShaNextBlock(ControlStateStruct arg0,
     if (to_size_t(x18)) {
       // ShaNextBlock(zirgen/circuit/keccak2/top.zir:439)
       ControlStateStruct x21 =
-          exec_ControlState(Val(1), Val(0), Val(0), Val(0), LAYOUT_LOOKUP(x12, arm0));
+          exec_ControlState(ctx, Val(1), Val(0), Val(0), Val(0), LAYOUT_LOOKUP(x12, arm0));
       x20 = x21;
     } else if (to_size_t(x19)) {
       // ShaNextBlock(zirgen/circuit/keccak2/top.zir:441)
       ControlStateStruct x22 =
-          exec_ControlState(Val(0), Val(0), Val(0), Val(0), LAYOUT_LOOKUP(x12, arm1));
+          exec_ControlState(ctx, Val(0), Val(0), Val(0), Val(0), LAYOUT_LOOKUP(x12, arm1));
       x20 = x22;
     } else {
       assert(0 && "Reached unreachable mux arm");
     }
     // ShaNextBlock(zirgen/circuit/keccak2/top.zir:438)
-    ControlStateStruct x23 = back_ControlState(0, LAYOUT_LOOKUP(x12, _super));
+    ControlStateStruct x23 = back_ControlState(ctx, 0, LAYOUT_LOOKUP(x12, _super));
     x13 = x23;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
   // ShaNextBlock(zirgen/circuit/keccak2/top.zir:432)
-  ControlStateStruct x24 = back_ControlState(0, LAYOUT_LOOKUP(x2, _super));
+  ControlStateStruct x24 = back_ControlState(ctx, 0, LAYOUT_LOOKUP(x2, _super));
   return x24;
 }
-ControlStateStruct exec_ComputeCurrentStep(Val12Array arg0,
-                                           ControlStateStruct arg1,
-                                           BoundLayout<ComputeCurrentStep_SuperLayout> layout2) {
+__device__ ControlStateStruct
+exec_ComputeCurrentStep(ExecContext& ctx,
+                        Val12Array arg0,
+                        ControlStateStruct arg1,
+                        BoundLayout<ComputeCurrentStep_SuperLayout> layout2) {
   // ComputeCurrentStep(zirgen/circuit/keccak2/top.zir:448)
   BoundLayout<ComputeCurrentStep_SuperArm2_SuperLayout> x3 = LAYOUT_LOOKUP(layout2, arm2);
   // ComputeCurrentStep(zirgen/circuit/keccak2/top.zir:447)
@@ -16674,101 +16813,102 @@ ControlStateStruct exec_ComputeCurrentStep(Val12Array arg0,
   if (to_size_t(arg0[0])) {
     // ComputeCurrentStep(zirgen/circuit/keccak2/top.zir:449)
     ControlStateStruct x7 =
-        exec_ControlState(Val(0), Val(0), Val(0), Val(0), LAYOUT_LOOKUP(layout2, arm0));
+        exec_ControlState(ctx, Val(0), Val(0), Val(0), Val(0), LAYOUT_LOOKUP(layout2, arm0));
     x6 = x7;
   } else if (to_size_t(arg0[1])) {
     // ComputeCurrentStep(zirgen/circuit/keccak2/top.zir:450)
     ControlStateStruct x8 =
-        exec_ControlState(Val(9), Val(0), Val(0), Val(0), LAYOUT_LOOKUP(layout2, arm1));
+        exec_ControlState(ctx, Val(9), Val(0), Val(0), Val(0), LAYOUT_LOOKUP(layout2, arm1));
     x6 = x8;
   } else if (to_size_t(arg0[2])) {
     ControlStateStruct x9;
     if (to_size_t(x4)) {
       // ComputeCurrentStep(zirgen/circuit/keccak2/top.zir:452)
       ControlStateStruct x10 =
-          exec_ControlState(Val(4), Val(0), Val(0), Val(0), LAYOUT_LOOKUP(x3, arm0));
+          exec_ControlState(ctx, Val(4), Val(0), Val(0), Val(0), LAYOUT_LOOKUP(x3, arm0));
       x9 = x10;
     } else if (to_size_t((Val(1) - x4))) {
       // ComputeCurrentStep(zirgen/circuit/keccak2/top.zir:454)
       ControlStateStruct x11 =
-          exec_ControlState(Val(2), Val(1), Val(0), Val(0), LAYOUT_LOOKUP(x3, arm1));
+          exec_ControlState(ctx, Val(2), Val(1), Val(0), Val(0), LAYOUT_LOOKUP(x3, arm1));
       x9 = x11;
     } else {
       assert(0 && "Reached unreachable mux arm");
     }
     // ComputeCurrentStep(zirgen/circuit/keccak2/top.zir:451)
-    ControlStateStruct x12 = back_ControlState(0, LAYOUT_LOOKUP(x3, _super));
+    ControlStateStruct x12 = back_ControlState(ctx, 0, LAYOUT_LOOKUP(x3, _super));
     x6 = x12;
   } else if (to_size_t(arg0[3])) {
     // ComputeCurrentStep(zirgen/circuit/keccak2/top.zir:456)
     ControlStateStruct x13 =
-        exec_ControlState(Val(9), Val(1), Val(0), Val(0), LAYOUT_LOOKUP(layout2, arm3));
+        exec_ControlState(ctx, Val(9), Val(1), Val(0), Val(0), LAYOUT_LOOKUP(layout2, arm3));
     x6 = x13;
   } else if (to_size_t(arg0[4])) {
     // ComputeCurrentStep(zirgen/circuit/keccak2/top.zir:457)
     ControlStateStruct x14 =
-        exec_ControlState(Val(5), Val(0), Val(0), x5, LAYOUT_LOOKUP(layout2, arm4));
+        exec_ControlState(ctx, Val(5), Val(0), Val(0), x5, LAYOUT_LOOKUP(layout2, arm4));
     x6 = x14;
   } else if (to_size_t(arg0[5])) {
     // ComputeCurrentStep(zirgen/circuit/keccak2/top.zir:458)
     ControlStateStruct x15 =
-        exec_ControlState(Val(6), Val(0), Val(0), x5, LAYOUT_LOOKUP(layout2, arm5));
+        exec_ControlState(ctx, Val(6), Val(0), Val(0), x5, LAYOUT_LOOKUP(layout2, arm5));
     x6 = x15;
   } else if (to_size_t(arg0[6])) {
     // ComputeCurrentStep(zirgen/circuit/keccak2/top.zir:459)
     ControlStateStruct x16 =
-        exec_ControlState(Val(7), Val(0), Val(0), x5, LAYOUT_LOOKUP(layout2, arm6));
+        exec_ControlState(ctx, Val(7), Val(0), Val(0), x5, LAYOUT_LOOKUP(layout2, arm6));
     x6 = x16;
   } else if (to_size_t(arg0[7])) {
     // ComputeCurrentStep(zirgen/circuit/keccak2/top.zir:460)
     ControlStateStruct x17 =
-        exec_ControlState(Val(8), Val(0), Val(0), x5, LAYOUT_LOOKUP(layout2, arm7));
+        exec_ControlState(ctx, Val(8), Val(0), Val(0), x5, LAYOUT_LOOKUP(layout2, arm7));
     x6 = x17;
   } else if (to_size_t(arg0[8])) {
     // ComputeCurrentStep(zirgen/circuit/keccak2/top.zir:461)
-    ControlStateStruct x18 = exec_KeccackNextRound(arg1, LAYOUT_LOOKUP(layout2, arm8));
+    ControlStateStruct x18 = exec_KeccackNextRound(ctx, arg1, LAYOUT_LOOKUP(layout2, arm8));
     x6 = x18;
   } else if (to_size_t(arg0[9])) {
     // ComputeCurrentStep(zirgen/circuit/keccak2/top.zir:462)
-    ControlStateStruct x19 = exec_ShaNextRound(arg1, LAYOUT_LOOKUP(layout2, arm9));
+    ControlStateStruct x19 = exec_ShaNextRound(ctx, arg1, LAYOUT_LOOKUP(layout2, arm9));
     x6 = x19;
   } else if (to_size_t(arg0[10])) {
     // ComputeCurrentStep(zirgen/circuit/keccak2/top.zir:463)
-    ControlStateStruct x20 = exec_ShaNextBlock(arg1, LAYOUT_LOOKUP(layout2, arm10));
+    ControlStateStruct x20 = exec_ShaNextBlock(ctx, arg1, LAYOUT_LOOKUP(layout2, arm10));
     x6 = x20;
   } else if (to_size_t(arg0[11])) {
     // ComputeCurrentStep(zirgen/circuit/keccak2/top.zir:464)
     ControlStateStruct x21 =
-        exec_ControlState(Val(1), Val(0), Val(0), Val(0), LAYOUT_LOOKUP(layout2, arm11));
+        exec_ControlState(ctx, Val(1), Val(0), Val(0), Val(0), LAYOUT_LOOKUP(layout2, arm11));
     x6 = x21;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
   // ComputeCurrentStep(zirgen/circuit/keccak2/top.zir:448)
-  ControlStateStruct x22 = back_ControlState(0, LAYOUT_LOOKUP(layout2, _super));
+  ControlStateStruct x22 = back_ControlState(ctx, 0, LAYOUT_LOOKUP(layout2, _super));
   return x22;
 }
-OneHot_12_Struct exec_OneHot_12_(Val arg0, BoundLayout<OneHot_12_Layout> layout1) {
+__device__ OneHot_12_Struct exec_OneHot_12_(ExecContext& ctx,
+                                            Val arg0,
+                                            BoundLayout<OneHot_12_Layout> layout1) {
   // OneHot(zirgen/circuit/keccak2/one_hot.zir:7)
-  OneHot_12__SuperStruct12Array x2 =
-      map({Val(0),
-           Val(1),
-           Val(2),
-           Val(3),
-           Val(4),
-           Val(5),
-           Val(6),
-           Val(7),
-           Val(8),
-           Val(9),
-           Val(10),
-           Val(11)},
-          LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val12Array::value_type x3,
-                            BoundLayout<NondetRegLayout12LayoutArray::value_type> x4) {
-            NondetRegStruct x5 = exec_NondetBitReg(isz((x3 - arg0)), x4);
-            return OneHot_12__SuperStruct{._super = x5};
-          }));
+  OneHot_12__SuperStruct12Array x2 = map(
+      Val12Array{Val(0),
+                 Val(1),
+                 Val(2),
+                 Val(3),
+                 Val(4),
+                 Val(5),
+                 Val(6),
+                 Val(7),
+                 Val(8),
+                 Val(9),
+                 Val(10),
+                 Val(11)},
+      LAYOUT_LOOKUP(layout1, _super),
+      ([&](Val12Array::value_type x3, BoundLayout<NondetRegLayout12LayoutArray::value_type> x4) {
+        NondetRegStruct x5 = exec_NondetBitReg(ctx, isz((x3 - arg0)), x4);
+        return OneHot_12__SuperStruct{._super = x5};
+      }));
   // OneHot(zirgen/circuit/keccak2/one_hot.zir:9)
   Val x6 = x2[0]._super._super;
   Val x7 = x2[1]._super._super;
@@ -16794,62 +16934,65 @@ OneHot_12_Struct exec_OneHot_12_(Val arg0, BoundLayout<OneHot_12_Layout> layout1
   EQZ(((x24 + (x20 * Val(11))) - arg0), "OneHot(zirgen/circuit/keccak2/one_hot.zir:11)");
   return OneHot_12_Struct{.bits = x2};
 }
-WrapOneHotStruct back_WrapOneHot(Index distance0, BoundLayout<WrapOneHotLayout> layout1) {
+__device__ WrapOneHotStruct back_WrapOneHot(ExecContext& ctx,
+                                            Index distance0,
+                                            BoundLayout<WrapOneHotLayout> layout1) {
   // WrapOneHot(zirgen/circuit/keccak2/top.zir:470)
-  WrapOneHot_SuperStruct12Array x2 =
-      map({Val(0),
-           Val(1),
-           Val(2),
-           Val(3),
-           Val(4),
-           Val(5),
-           Val(6),
-           Val(7),
-           Val(8),
-           Val(9),
-           Val(10),
-           Val(11)},
-          LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val12Array::value_type x3,
-                            BoundLayout<NondetRegLayout12LayoutArray::value_type> x4) {
-            NondetRegStruct x5 = back_Reg(distance0, x4);
-            return WrapOneHot_SuperStruct{._super = x5};
-          }));
+  WrapOneHot_SuperStruct12Array x2 = map(
+      Val12Array{Val(0),
+                 Val(1),
+                 Val(2),
+                 Val(3),
+                 Val(4),
+                 Val(5),
+                 Val(6),
+                 Val(7),
+                 Val(8),
+                 Val(9),
+                 Val(10),
+                 Val(11)},
+      LAYOUT_LOOKUP(layout1, _super),
+      ([&](Val12Array::value_type x3, BoundLayout<NondetRegLayout12LayoutArray::value_type> x4) {
+        NondetRegStruct x5 = back_Reg(ctx, distance0, x4);
+        return WrapOneHot_SuperStruct{._super = x5};
+      }));
   return WrapOneHotStruct{._super = x2};
 }
-WrapOneHotStruct exec_WrapOneHot(OneHot_12_Struct arg0, BoundLayout<WrapOneHotLayout> layout1) {
-  WrapOneHot_SuperStruct12Array x2 =
-      map({Val(0),
-           Val(1),
-           Val(2),
-           Val(3),
-           Val(4),
-           Val(5),
-           Val(6),
-           Val(7),
-           Val(8),
-           Val(9),
-           Val(10),
-           Val(11)},
-          LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val12Array::value_type x3,
-                            BoundLayout<NondetRegLayout12LayoutArray::value_type> x4) {
-            // WrapOneHot(zirgen/circuit/keccak2/top.zir:469)
-            NondetRegStruct x5 = arg0.bits[to_size_t(x3)]._super;
-            // WrapOneHot(zirgen/circuit/keccak2/top.zir:470)
-            NondetRegStruct x6 = exec_Reg(x5._super, x4);
-            return WrapOneHot_SuperStruct{._super = x6};
-          }));
+__device__ WrapOneHotStruct exec_WrapOneHot(ExecContext& ctx,
+                                            OneHot_12_Struct arg0,
+                                            BoundLayout<WrapOneHotLayout> layout1) {
+  WrapOneHot_SuperStruct12Array x2 = map(
+      Val12Array{Val(0),
+                 Val(1),
+                 Val(2),
+                 Val(3),
+                 Val(4),
+                 Val(5),
+                 Val(6),
+                 Val(7),
+                 Val(8),
+                 Val(9),
+                 Val(10),
+                 Val(11)},
+      LAYOUT_LOOKUP(layout1, _super),
+      ([&](Val12Array::value_type x3, BoundLayout<NondetRegLayout12LayoutArray::value_type> x4) {
+        // WrapOneHot(zirgen/circuit/keccak2/top.zir:469)
+        NondetRegStruct x5 = arg0.bits[to_size_t(x3)]._super;
+        // WrapOneHot(zirgen/circuit/keccak2/top.zir:470)
+        NondetRegStruct x6 = exec_Reg(ctx, x5._super, x4);
+        return WrapOneHot_SuperStruct{._super = x6};
+      }));
   return WrapOneHotStruct{._super = x2};
 }
-TopStateStruct exec_KeccakRound12_0_(TopStateStruct arg0,
-                                     TopStateStruct arg1,
-                                     TopStateStruct arg2,
-                                     TopStateStruct arg3,
-                                     BoundLayout<TopStateLayout> layout4) {
+__device__ TopStateStruct exec_KeccakRound12_0_(ExecContext& ctx,
+                                                TopStateStruct arg0,
+                                                TopStateStruct arg1,
+                                                TopStateStruct arg2,
+                                                TopStateStruct arg3,
+                                                BoundLayout<TopStateLayout> layout4) {
   // Log(<preamble>:22)
   // KeccakRound12(zirgen/circuit/keccak2/top.zir:108)
-  INVOKE_EXTERN(ctx, log, "KeccakRound12", {});
+  INVOKE_EXTERN(ctx, log, "KeccakRound12", std::initializer_list<Val>{});
   // KeccakRound12(zirgen/circuit/keccak2/top.zir:107)
   TopStateBitsStruct800Array x5 = arg1.bits;
   TopStateBitsStruct800Array x6 = arg2.bits;
@@ -19200,106 +19343,110 @@ TopStateStruct exec_KeccakRound12_0_(TopStateStruct arg0,
   Val x2344 = x2245[97]._super._super;
   Val x2345 = x2245[98]._super._super;
   Val x2346 = x2245[99]._super._super;
-  Val16Array x2347 = {x2246[0]._super,
-                      x2246[1]._super,
-                      x2246[2]._super,
-                      x2246[3]._super,
-                      x2246[4]._super,
-                      x2246[5]._super,
-                      x2246[6]._super,
-                      x2246[7]._super,
-                      x2246[8]._super,
-                      x2246[9]._super,
-                      x2246[10]._super,
-                      x2246[11]._super,
-                      x2246[12]._super,
-                      x2246[13]._super,
-                      x2246[14]._super,
-                      x2246[15]._super};
+  Val16Array x2347 = Val16Array{x2246[0]._super,
+                                x2246[1]._super,
+                                x2246[2]._super,
+                                x2246[3]._super,
+                                x2246[4]._super,
+                                x2246[5]._super,
+                                x2246[6]._super,
+                                x2246[7]._super,
+                                x2246[8]._super,
+                                x2246[9]._super,
+                                x2246[10]._super,
+                                x2246[11]._super,
+                                x2246[12]._super,
+                                x2246[13]._super,
+                                x2246[14]._super,
+                                x2246[15]._super};
   // KeccakRound12(zirgen/circuit/keccak2/top.zir:111)
   TopStateStruct x2348 = exec_TopState(
-      {x1445, x1446, x1447, x1448, x1449, x1450, x1451, x1452, x1453, x1454, x1455, x1456, x1457,
-       x1458, x1459, x1460, x1461, x1462, x1463, x1464, x1465, x1466, x1467, x1468, x1469, x1470,
-       x1471, x1472, x1473, x1474, x1475, x1476, x1637, x1638, x1639, x1640, x1641, x1642, x1643,
-       x1644, x1645, x1646, x1647, x1648, x1649, x1650, x1651, x1652, x1653, x1654, x1655, x1656,
-       x1657, x1658, x1659, x1660, x1661, x1662, x1663, x1664, x1665, x1666, x1667, x1668, x1829,
-       x1830, x1831, x1832, x1833, x1834, x1835, x1836, x1837, x1838, x1839, x1840, x1841, x1842,
-       x1843, x1844, x1845, x1846, x1847, x1848, x1849, x1850, x1851, x1852, x1853, x1854, x1855,
-       x1856, x1857, x1858, x1859, x1860, x2032, x2033, x2034, x2035, x2036, x2037, x2038, x2039,
-       x2040, x2041, x2042, x2043, x2044, x2045, x2046, x2047, x2048, x2049, x2050, x2051, x2052,
-       x2021, x2022, x2023, x2024, x2025, x2026, x2027, x2028, x2029, x2030, x2031, x2231, x2232,
-       x2233, x2234, x2235, x2236, x2237, x2238, x2239, x2240, x2241, x2242, x2243, x2244, x2213,
-       x2214, x2215, x2216, x2217, x2218, x2219, x2220, x2221, x2222, x2223, x2224, x2225, x2226,
-       x2227, x2228, x2229, x2230, x1545, x1546, x1547, x1548, x1549, x1550, x1551, x1552, x1553,
-       x1554, x1555, x1556, x1557, x1558, x1559, x1560, x1561, x1562, x1563, x1564, x1565, x1566,
-       x1567, x1568, x1569, x1570, x1571, x1572, x1541, x1542, x1543, x1544, x1745, x1746, x1747,
-       x1748, x1749, x1750, x1751, x1752, x1753, x1754, x1755, x1756, x1757, x1758, x1759, x1760,
-       x1761, x1762, x1763, x1764, x1733, x1734, x1735, x1736, x1737, x1738, x1739, x1740, x1741,
-       x1742, x1743, x1744, x1794, x1795, x1796, x1765, x1766, x1767, x1768, x1769, x1770, x1771,
-       x1772, x1773, x1774, x1775, x1776, x1777, x1778, x1779, x1780, x1781, x1782, x1783, x1784,
-       x1785, x1786, x1787, x1788, x1789, x1790, x1791, x1792, x1793, x1957, x1958, x1959, x1960,
-       x1961, x1962, x1963, x1964, x1965, x1966, x1967, x1968, x1969, x1970, x1971, x1972, x1973,
-       x1974, x1975, x1976, x1977, x1978, x1979, x1980, x1981, x1982, x1983, x1984, x1985, x1986,
-       x1987, x1988, x2149, x2150, x2151, x2152, x2153, x2154, x2155, x2156, x2157, x2158, x2159,
-       x2160, x2161, x2162, x2163, x2164, x2165, x2166, x2167, x2168, x2169, x2170, x2171, x2172,
-       x2173, x2174, x2175, x2176, x2177, x2178, x2179, x2180, x1508, x1477, x1478, x1479, x1480,
-       x1481, x1482, x1483, x1484, x1485, x1486, x1487, x1488, x1489, x1490, x1491, x1492, x1493,
-       x1494, x1495, x1496, x1497, x1498, x1499, x1500, x1501, x1502, x1503, x1504, x1505, x1506,
-       x1507, x1695, x1696, x1697, x1698, x1699, x1700, x1669, x1670, x1671, x1672, x1673, x1674,
-       x1675, x1676, x1677, x1678, x1679, x1680, x1681, x1682, x1683, x1684, x1685, x1686, x1687,
-       x1688, x1689, x1690, x1691, x1692, x1693, x1694, x1868, x1869, x1870, x1871, x1872, x1873,
-       x1874, x1875, x1876, x1877, x1878, x1879, x1880, x1881, x1882, x1883, x1884, x1885, x1886,
-       x1887, x1888, x1889, x1890, x1891, x1892, x1861, x1862, x1863, x1864, x1865, x1866, x1867,
-       x2077, x2078, x2079, x2080, x2081, x2082, x2083, x2084, x2053, x2054, x2055, x2056, x2057,
-       x2058, x2059, x2060, x2061, x2062, x2063, x2064, x2065, x2066, x2067, x2068, x2069, x2070,
-       x2071, x2072, x2073, x2074, x2075, x2076, x2099, x2100, x2101, x2102, x2103, x2104, x2105,
-       x2106, x2107, x2108, x2109, x2110, x2111, x2112, x2113, x2114, x2115, x2116, x2085, x2086,
-       x2087, x2088, x2089, x2090, x2091, x2092, x2093, x2094, x2095, x2096, x2097, x2098, x1578,
-       x1579, x1580, x1581, x1582, x1583, x1584, x1585, x1586, x1587, x1588, x1589, x1590, x1591,
-       x1592, x1593, x1594, x1595, x1596, x1597, x1598, x1599, x1600, x1601, x1602, x1603, x1604,
-       x1573, x1574, x1575, x1576, x1577, x1605, x1606, x1607, x1608, x1609, x1610, x1611, x1612,
-       x1613, x1614, x1615, x1616, x1617, x1618, x1619, x1620, x1621, x1622, x1623, x1624, x1625,
-       x1626, x1627, x1628, x1629, x1630, x1631, x1632, x1633, x1634, x1635, x1636, x1819, x1820,
-       x1821, x1822, x1823, x1824, x1825, x1826, x1827, x1828, x1797, x1798, x1799, x1800, x1801,
-       x1802, x1803, x1804, x1805, x1806, x1807, x1808, x1809, x1810, x1811, x1812, x1813, x1814,
-       x1815, x1816, x1817, x1818, x2006, x2007, x2008, x2009, x2010, x2011, x2012, x2013, x2014,
-       x2015, x2016, x2017, x2018, x2019, x2020, x1989, x1990, x1991, x1992, x1993, x1994, x1995,
-       x1996, x1997, x1998, x1999, x2000, x2001, x2002, x2003, x2004, x2005, x2181, x2182, x2183,
-       x2184, x2185, x2186, x2187, x2188, x2189, x2190, x2191, x2192, x2193, x2194, x2195, x2196,
-       x2197, x2198, x2199, x2200, x2201, x2202, x2203, x2204, x2205, x2206, x2207, x2208, x2209,
-       x2210, x2211, x2212, x1509, x1510, x1511, x1512, x1513, x1514, x1515, x1516, x1517, x1518,
-       x1519, x1520, x1521, x1522, x1523, x1524, x1525, x1526, x1527, x1528, x1529, x1530, x1531,
-       x1532, x1533, x1534, x1535, x1536, x1537, x1538, x1539, x1540, x1701, x1702, x1703, x1704,
-       x1705, x1706, x1707, x1708, x1709, x1710, x1711, x1712, x1713, x1714, x1715, x1716, x1717,
-       x1718, x1719, x1720, x1721, x1722, x1723, x1724, x1725, x1726, x1727, x1728, x1729, x1730,
-       x1731, x1732, x1893, x1894, x1895, x1896, x1897, x1898, x1899, x1900, x1901, x1902, x1903,
-       x1904, x1905, x1906, x1907, x1908, x1909, x1910, x1911, x1912, x1913, x1914, x1915, x1916,
-       x1917, x1918, x1919, x1920, x1921, x1922, x1923, x1924, x1925, x1926, x1927, x1928, x1929,
-       x1930, x1931, x1932, x1933, x1934, x1935, x1936, x1937, x1938, x1939, x1940, x1941, x1942,
-       x1943, x1944, x1945, x1946, x1947, x1948, x1949, x1950, x1951, x1952, x1953, x1954, x1955,
-       x1956, x2147, x2148, x2117, x2118, x2119, x2120, x2121, x2122, x2123, x2124, x2125, x2126,
-       x2127, x2128, x2129, x2130, x2131, x2132, x2133, x2134, x2135, x2136, x2137, x2138, x2139,
-       x2140, x2141, x2142, x2143, x2144, x2145, x2146},
-      {x2247, x2248, x2249, x2250, x2251, x2252, x2253, x2254, x2255, x2256, x2257, x2258, x2259,
-       x2260, x2261, x2262, x2263, x2264, x2265, x2266, x2267, x2268, x2269, x2270, x2271, x2272,
-       x2273, x2274, x2275, x2276, x2277, x2278, x2279, x2280, x2281, x2282, x2283, x2284, x2285,
-       x2286, x2287, x2288, x2289, x2290, x2291, x2292, x2293, x2294, x2295, x2296, x2297, x2298,
-       x2299, x2300, x2301, x2302, x2303, x2304, x2305, x2306, x2307, x2308, x2309, x2310, x2311,
-       x2312, x2313, x2314, x2315, x2316, x2317, x2318, x2319, x2320, x2321, x2322, x2323, x2324,
-       x2325, x2326, x2327, x2328, x2329, x2330, x2331, x2332, x2333, x2334, x2335, x2336, x2337,
-       x2338, x2339, x2340, x2341, x2342, x2343, x2344, x2345, x2346},
+      ctx,
+      Val800Array{
+          x1445, x1446, x1447, x1448, x1449, x1450, x1451, x1452, x1453, x1454, x1455, x1456, x1457,
+          x1458, x1459, x1460, x1461, x1462, x1463, x1464, x1465, x1466, x1467, x1468, x1469, x1470,
+          x1471, x1472, x1473, x1474, x1475, x1476, x1637, x1638, x1639, x1640, x1641, x1642, x1643,
+          x1644, x1645, x1646, x1647, x1648, x1649, x1650, x1651, x1652, x1653, x1654, x1655, x1656,
+          x1657, x1658, x1659, x1660, x1661, x1662, x1663, x1664, x1665, x1666, x1667, x1668, x1829,
+          x1830, x1831, x1832, x1833, x1834, x1835, x1836, x1837, x1838, x1839, x1840, x1841, x1842,
+          x1843, x1844, x1845, x1846, x1847, x1848, x1849, x1850, x1851, x1852, x1853, x1854, x1855,
+          x1856, x1857, x1858, x1859, x1860, x2032, x2033, x2034, x2035, x2036, x2037, x2038, x2039,
+          x2040, x2041, x2042, x2043, x2044, x2045, x2046, x2047, x2048, x2049, x2050, x2051, x2052,
+          x2021, x2022, x2023, x2024, x2025, x2026, x2027, x2028, x2029, x2030, x2031, x2231, x2232,
+          x2233, x2234, x2235, x2236, x2237, x2238, x2239, x2240, x2241, x2242, x2243, x2244, x2213,
+          x2214, x2215, x2216, x2217, x2218, x2219, x2220, x2221, x2222, x2223, x2224, x2225, x2226,
+          x2227, x2228, x2229, x2230, x1545, x1546, x1547, x1548, x1549, x1550, x1551, x1552, x1553,
+          x1554, x1555, x1556, x1557, x1558, x1559, x1560, x1561, x1562, x1563, x1564, x1565, x1566,
+          x1567, x1568, x1569, x1570, x1571, x1572, x1541, x1542, x1543, x1544, x1745, x1746, x1747,
+          x1748, x1749, x1750, x1751, x1752, x1753, x1754, x1755, x1756, x1757, x1758, x1759, x1760,
+          x1761, x1762, x1763, x1764, x1733, x1734, x1735, x1736, x1737, x1738, x1739, x1740, x1741,
+          x1742, x1743, x1744, x1794, x1795, x1796, x1765, x1766, x1767, x1768, x1769, x1770, x1771,
+          x1772, x1773, x1774, x1775, x1776, x1777, x1778, x1779, x1780, x1781, x1782, x1783, x1784,
+          x1785, x1786, x1787, x1788, x1789, x1790, x1791, x1792, x1793, x1957, x1958, x1959, x1960,
+          x1961, x1962, x1963, x1964, x1965, x1966, x1967, x1968, x1969, x1970, x1971, x1972, x1973,
+          x1974, x1975, x1976, x1977, x1978, x1979, x1980, x1981, x1982, x1983, x1984, x1985, x1986,
+          x1987, x1988, x2149, x2150, x2151, x2152, x2153, x2154, x2155, x2156, x2157, x2158, x2159,
+          x2160, x2161, x2162, x2163, x2164, x2165, x2166, x2167, x2168, x2169, x2170, x2171, x2172,
+          x2173, x2174, x2175, x2176, x2177, x2178, x2179, x2180, x1508, x1477, x1478, x1479, x1480,
+          x1481, x1482, x1483, x1484, x1485, x1486, x1487, x1488, x1489, x1490, x1491, x1492, x1493,
+          x1494, x1495, x1496, x1497, x1498, x1499, x1500, x1501, x1502, x1503, x1504, x1505, x1506,
+          x1507, x1695, x1696, x1697, x1698, x1699, x1700, x1669, x1670, x1671, x1672, x1673, x1674,
+          x1675, x1676, x1677, x1678, x1679, x1680, x1681, x1682, x1683, x1684, x1685, x1686, x1687,
+          x1688, x1689, x1690, x1691, x1692, x1693, x1694, x1868, x1869, x1870, x1871, x1872, x1873,
+          x1874, x1875, x1876, x1877, x1878, x1879, x1880, x1881, x1882, x1883, x1884, x1885, x1886,
+          x1887, x1888, x1889, x1890, x1891, x1892, x1861, x1862, x1863, x1864, x1865, x1866, x1867,
+          x2077, x2078, x2079, x2080, x2081, x2082, x2083, x2084, x2053, x2054, x2055, x2056, x2057,
+          x2058, x2059, x2060, x2061, x2062, x2063, x2064, x2065, x2066, x2067, x2068, x2069, x2070,
+          x2071, x2072, x2073, x2074, x2075, x2076, x2099, x2100, x2101, x2102, x2103, x2104, x2105,
+          x2106, x2107, x2108, x2109, x2110, x2111, x2112, x2113, x2114, x2115, x2116, x2085, x2086,
+          x2087, x2088, x2089, x2090, x2091, x2092, x2093, x2094, x2095, x2096, x2097, x2098, x1578,
+          x1579, x1580, x1581, x1582, x1583, x1584, x1585, x1586, x1587, x1588, x1589, x1590, x1591,
+          x1592, x1593, x1594, x1595, x1596, x1597, x1598, x1599, x1600, x1601, x1602, x1603, x1604,
+          x1573, x1574, x1575, x1576, x1577, x1605, x1606, x1607, x1608, x1609, x1610, x1611, x1612,
+          x1613, x1614, x1615, x1616, x1617, x1618, x1619, x1620, x1621, x1622, x1623, x1624, x1625,
+          x1626, x1627, x1628, x1629, x1630, x1631, x1632, x1633, x1634, x1635, x1636, x1819, x1820,
+          x1821, x1822, x1823, x1824, x1825, x1826, x1827, x1828, x1797, x1798, x1799, x1800, x1801,
+          x1802, x1803, x1804, x1805, x1806, x1807, x1808, x1809, x1810, x1811, x1812, x1813, x1814,
+          x1815, x1816, x1817, x1818, x2006, x2007, x2008, x2009, x2010, x2011, x2012, x2013, x2014,
+          x2015, x2016, x2017, x2018, x2019, x2020, x1989, x1990, x1991, x1992, x1993, x1994, x1995,
+          x1996, x1997, x1998, x1999, x2000, x2001, x2002, x2003, x2004, x2005, x2181, x2182, x2183,
+          x2184, x2185, x2186, x2187, x2188, x2189, x2190, x2191, x2192, x2193, x2194, x2195, x2196,
+          x2197, x2198, x2199, x2200, x2201, x2202, x2203, x2204, x2205, x2206, x2207, x2208, x2209,
+          x2210, x2211, x2212, x1509, x1510, x1511, x1512, x1513, x1514, x1515, x1516, x1517, x1518,
+          x1519, x1520, x1521, x1522, x1523, x1524, x1525, x1526, x1527, x1528, x1529, x1530, x1531,
+          x1532, x1533, x1534, x1535, x1536, x1537, x1538, x1539, x1540, x1701, x1702, x1703, x1704,
+          x1705, x1706, x1707, x1708, x1709, x1710, x1711, x1712, x1713, x1714, x1715, x1716, x1717,
+          x1718, x1719, x1720, x1721, x1722, x1723, x1724, x1725, x1726, x1727, x1728, x1729, x1730,
+          x1731, x1732, x1893, x1894, x1895, x1896, x1897, x1898, x1899, x1900, x1901, x1902, x1903,
+          x1904, x1905, x1906, x1907, x1908, x1909, x1910, x1911, x1912, x1913, x1914, x1915, x1916,
+          x1917, x1918, x1919, x1920, x1921, x1922, x1923, x1924, x1925, x1926, x1927, x1928, x1929,
+          x1930, x1931, x1932, x1933, x1934, x1935, x1936, x1937, x1938, x1939, x1940, x1941, x1942,
+          x1943, x1944, x1945, x1946, x1947, x1948, x1949, x1950, x1951, x1952, x1953, x1954, x1955,
+          x1956, x2147, x2148, x2117, x2118, x2119, x2120, x2121, x2122, x2123, x2124, x2125, x2126,
+          x2127, x2128, x2129, x2130, x2131, x2132, x2133, x2134, x2135, x2136, x2137, x2138, x2139,
+          x2140, x2141, x2142, x2143, x2144, x2145, x2146},
+      Val100Array{
+          x2247, x2248, x2249, x2250, x2251, x2252, x2253, x2254, x2255, x2256, x2257, x2258, x2259,
+          x2260, x2261, x2262, x2263, x2264, x2265, x2266, x2267, x2268, x2269, x2270, x2271, x2272,
+          x2273, x2274, x2275, x2276, x2277, x2278, x2279, x2280, x2281, x2282, x2283, x2284, x2285,
+          x2286, x2287, x2288, x2289, x2290, x2291, x2292, x2293, x2294, x2295, x2296, x2297, x2298,
+          x2299, x2300, x2301, x2302, x2303, x2304, x2305, x2306, x2307, x2308, x2309, x2310, x2311,
+          x2312, x2313, x2314, x2315, x2316, x2317, x2318, x2319, x2320, x2321, x2322, x2323, x2324,
+          x2325, x2326, x2327, x2328, x2329, x2330, x2331, x2332, x2333, x2334, x2335, x2336, x2337,
+          x2338, x2339, x2340, x2341, x2342, x2343, x2344, x2345, x2346},
       x2347,
       layout4);
   return x2348;
 }
-TopStateStruct exec_KeccakRound12_1_(TopStateStruct arg0,
-                                     TopStateStruct arg1,
-                                     TopStateStruct arg2,
-                                     TopStateStruct arg3,
-                                     BoundLayout<TopStateLayout> layout4) {
+__device__ TopStateStruct exec_KeccakRound12_1_(ExecContext& ctx,
+                                                TopStateStruct arg0,
+                                                TopStateStruct arg1,
+                                                TopStateStruct arg2,
+                                                TopStateStruct arg3,
+                                                BoundLayout<TopStateLayout> layout4) {
   // Log(<preamble>:22)
   // KeccakRound12(zirgen/circuit/keccak2/top.zir:108)
-  INVOKE_EXTERN(ctx, log, "KeccakRound12", {});
+  INVOKE_EXTERN(ctx, log, "KeccakRound12", std::initializer_list<Val>{});
   // KeccakRound12(zirgen/circuit/keccak2/top.zir:107)
   TopStateBitsStruct800Array x5 = arg1.bits;
   TopStateBitsStruct800Array x6 = arg2.bits;
@@ -21650,106 +21797,110 @@ TopStateStruct exec_KeccakRound12_1_(TopStateStruct arg0,
   Val x2344 = x2245[97]._super._super;
   Val x2345 = x2245[98]._super._super;
   Val x2346 = x2245[99]._super._super;
-  Val16Array x2347 = {x2246[0]._super,
-                      x2246[1]._super,
-                      x2246[2]._super,
-                      x2246[3]._super,
-                      x2246[4]._super,
-                      x2246[5]._super,
-                      x2246[6]._super,
-                      x2246[7]._super,
-                      x2246[8]._super,
-                      x2246[9]._super,
-                      x2246[10]._super,
-                      x2246[11]._super,
-                      x2246[12]._super,
-                      x2246[13]._super,
-                      x2246[14]._super,
-                      x2246[15]._super};
+  Val16Array x2347 = Val16Array{x2246[0]._super,
+                                x2246[1]._super,
+                                x2246[2]._super,
+                                x2246[3]._super,
+                                x2246[4]._super,
+                                x2246[5]._super,
+                                x2246[6]._super,
+                                x2246[7]._super,
+                                x2246[8]._super,
+                                x2246[9]._super,
+                                x2246[10]._super,
+                                x2246[11]._super,
+                                x2246[12]._super,
+                                x2246[13]._super,
+                                x2246[14]._super,
+                                x2246[15]._super};
   // KeccakRound12(zirgen/circuit/keccak2/top.zir:111)
   TopStateStruct x2348 = exec_TopState(
-      {x1445, x1446, x1447, x1448, x1449, x1450, x1451, x1452, x1453, x1454, x1455, x1456, x1457,
-       x1458, x1459, x1460, x1461, x1462, x1463, x1464, x1465, x1466, x1467, x1468, x1469, x1470,
-       x1471, x1472, x1473, x1474, x1475, x1476, x1657, x1658, x1659, x1660, x1661, x1662, x1663,
-       x1664, x1665, x1666, x1667, x1668, x1637, x1638, x1639, x1640, x1641, x1642, x1643, x1644,
-       x1645, x1646, x1647, x1648, x1649, x1650, x1651, x1652, x1653, x1654, x1655, x1656, x1850,
-       x1851, x1852, x1853, x1854, x1855, x1856, x1857, x1858, x1859, x1860, x1829, x1830, x1831,
-       x1832, x1833, x1834, x1835, x1836, x1837, x1838, x1839, x1840, x1841, x1842, x1843, x1844,
-       x1845, x1846, x1847, x1848, x1849, x2021, x2022, x2023, x2024, x2025, x2026, x2027, x2028,
-       x2029, x2030, x2031, x2032, x2033, x2034, x2035, x2036, x2037, x2038, x2039, x2040, x2041,
-       x2042, x2043, x2044, x2045, x2046, x2047, x2048, x2049, x2050, x2051, x2052, x2213, x2214,
-       x2215, x2216, x2217, x2218, x2219, x2220, x2221, x2222, x2223, x2224, x2225, x2226, x2227,
-       x2228, x2229, x2230, x2231, x2232, x2233, x2234, x2235, x2236, x2237, x2238, x2239, x2240,
-       x2241, x2242, x2243, x2244, x1541, x1542, x1543, x1544, x1545, x1546, x1547, x1548, x1549,
-       x1550, x1551, x1552, x1553, x1554, x1555, x1556, x1557, x1558, x1559, x1560, x1561, x1562,
-       x1563, x1564, x1565, x1566, x1567, x1568, x1569, x1570, x1571, x1572, x1733, x1734, x1735,
-       x1736, x1737, x1738, x1739, x1740, x1741, x1742, x1743, x1744, x1745, x1746, x1747, x1748,
-       x1749, x1750, x1751, x1752, x1753, x1754, x1755, x1756, x1757, x1758, x1759, x1760, x1761,
-       x1762, x1763, x1764, x1765, x1766, x1767, x1768, x1769, x1770, x1771, x1772, x1773, x1774,
-       x1775, x1776, x1777, x1778, x1779, x1780, x1781, x1782, x1783, x1784, x1785, x1786, x1787,
-       x1788, x1789, x1790, x1791, x1792, x1793, x1794, x1795, x1796, x1976, x1977, x1978, x1979,
-       x1980, x1981, x1982, x1983, x1984, x1985, x1986, x1987, x1988, x1957, x1958, x1959, x1960,
-       x1961, x1962, x1963, x1964, x1965, x1966, x1967, x1968, x1969, x1970, x1971, x1972, x1973,
-       x1974, x1975, x2152, x2153, x2154, x2155, x2156, x2157, x2158, x2159, x2160, x2161, x2162,
-       x2163, x2164, x2165, x2166, x2167, x2168, x2169, x2170, x2171, x2172, x2173, x2174, x2175,
-       x2176, x2177, x2178, x2179, x2180, x2149, x2150, x2151, x1477, x1478, x1479, x1480, x1481,
-       x1482, x1483, x1484, x1485, x1486, x1487, x1488, x1489, x1490, x1491, x1492, x1493, x1494,
-       x1495, x1496, x1497, x1498, x1499, x1500, x1501, x1502, x1503, x1504, x1505, x1506, x1507,
-       x1508, x1669, x1670, x1671, x1672, x1673, x1674, x1675, x1676, x1677, x1678, x1679, x1680,
-       x1681, x1682, x1683, x1684, x1685, x1686, x1687, x1688, x1689, x1690, x1691, x1692, x1693,
-       x1694, x1695, x1696, x1697, x1698, x1699, x1700, x1861, x1862, x1863, x1864, x1865, x1866,
-       x1867, x1868, x1869, x1870, x1871, x1872, x1873, x1874, x1875, x1876, x1877, x1878, x1879,
-       x1880, x1881, x1882, x1883, x1884, x1885, x1886, x1887, x1888, x1889, x1890, x1891, x1892,
-       x2053, x2054, x2055, x2056, x2057, x2058, x2059, x2060, x2061, x2062, x2063, x2064, x2065,
-       x2066, x2067, x2068, x2069, x2070, x2071, x2072, x2073, x2074, x2075, x2076, x2077, x2078,
-       x2079, x2080, x2081, x2082, x2083, x2084, x2085, x2086, x2087, x2088, x2089, x2090, x2091,
-       x2092, x2093, x2094, x2095, x2096, x2097, x2098, x2099, x2100, x2101, x2102, x2103, x2104,
-       x2105, x2106, x2107, x2108, x2109, x2110, x2111, x2112, x2113, x2114, x2115, x2116, x1573,
-       x1574, x1575, x1576, x1577, x1578, x1579, x1580, x1581, x1582, x1583, x1584, x1585, x1586,
-       x1587, x1588, x1589, x1590, x1591, x1592, x1593, x1594, x1595, x1596, x1597, x1598, x1599,
-       x1600, x1601, x1602, x1603, x1604, x1633, x1634, x1635, x1636, x1605, x1606, x1607, x1608,
-       x1609, x1610, x1611, x1612, x1613, x1614, x1615, x1616, x1617, x1618, x1619, x1620, x1621,
-       x1622, x1623, x1624, x1625, x1626, x1627, x1628, x1629, x1630, x1631, x1632, x1797, x1798,
-       x1799, x1800, x1801, x1802, x1803, x1804, x1805, x1806, x1807, x1808, x1809, x1810, x1811,
-       x1812, x1813, x1814, x1815, x1816, x1817, x1818, x1819, x1820, x1821, x1822, x1823, x1824,
-       x1825, x1826, x1827, x1828, x1989, x1990, x1991, x1992, x1993, x1994, x1995, x1996, x1997,
-       x1998, x1999, x2000, x2001, x2002, x2003, x2004, x2005, x2006, x2007, x2008, x2009, x2010,
-       x2011, x2012, x2013, x2014, x2015, x2016, x2017, x2018, x2019, x2020, x2189, x2190, x2191,
-       x2192, x2193, x2194, x2195, x2196, x2197, x2198, x2199, x2200, x2201, x2202, x2203, x2204,
-       x2205, x2206, x2207, x2208, x2209, x2210, x2211, x2212, x2181, x2182, x2183, x2184, x2185,
-       x2186, x2187, x2188, x1511, x1512, x1513, x1514, x1515, x1516, x1517, x1518, x1519, x1520,
-       x1521, x1522, x1523, x1524, x1525, x1526, x1527, x1528, x1529, x1530, x1531, x1532, x1533,
-       x1534, x1535, x1536, x1537, x1538, x1539, x1540, x1509, x1510, x1710, x1711, x1712, x1713,
-       x1714, x1715, x1716, x1717, x1718, x1719, x1720, x1721, x1722, x1723, x1724, x1725, x1726,
-       x1727, x1728, x1729, x1730, x1731, x1732, x1701, x1702, x1703, x1704, x1705, x1706, x1707,
-       x1708, x1709, x1918, x1919, x1920, x1921, x1922, x1923, x1924, x1893, x1894, x1895, x1896,
-       x1897, x1898, x1899, x1900, x1901, x1902, x1903, x1904, x1905, x1906, x1907, x1908, x1909,
-       x1910, x1911, x1912, x1913, x1914, x1915, x1916, x1917, x1948, x1949, x1950, x1951, x1952,
-       x1953, x1954, x1955, x1956, x1925, x1926, x1927, x1928, x1929, x1930, x1931, x1932, x1933,
-       x1934, x1935, x1936, x1937, x1938, x1939, x1940, x1941, x1942, x1943, x1944, x1945, x1946,
-       x1947, x2117, x2118, x2119, x2120, x2121, x2122, x2123, x2124, x2125, x2126, x2127, x2128,
-       x2129, x2130, x2131, x2132, x2133, x2134, x2135, x2136, x2137, x2138, x2139, x2140, x2141,
-       x2142, x2143, x2144, x2145, x2146, x2147, x2148},
-      {x2247, x2248, x2249, x2250, x2251, x2252, x2253, x2254, x2255, x2256, x2257, x2258, x2259,
-       x2260, x2261, x2262, x2263, x2264, x2265, x2266, x2267, x2268, x2269, x2270, x2271, x2272,
-       x2273, x2274, x2275, x2276, x2277, x2278, x2279, x2280, x2281, x2282, x2283, x2284, x2285,
-       x2286, x2287, x2288, x2289, x2290, x2291, x2292, x2293, x2294, x2295, x2296, x2297, x2298,
-       x2299, x2300, x2301, x2302, x2303, x2304, x2305, x2306, x2307, x2308, x2309, x2310, x2311,
-       x2312, x2313, x2314, x2315, x2316, x2317, x2318, x2319, x2320, x2321, x2322, x2323, x2324,
-       x2325, x2326, x2327, x2328, x2329, x2330, x2331, x2332, x2333, x2334, x2335, x2336, x2337,
-       x2338, x2339, x2340, x2341, x2342, x2343, x2344, x2345, x2346},
+      ctx,
+      Val800Array{
+          x1445, x1446, x1447, x1448, x1449, x1450, x1451, x1452, x1453, x1454, x1455, x1456, x1457,
+          x1458, x1459, x1460, x1461, x1462, x1463, x1464, x1465, x1466, x1467, x1468, x1469, x1470,
+          x1471, x1472, x1473, x1474, x1475, x1476, x1657, x1658, x1659, x1660, x1661, x1662, x1663,
+          x1664, x1665, x1666, x1667, x1668, x1637, x1638, x1639, x1640, x1641, x1642, x1643, x1644,
+          x1645, x1646, x1647, x1648, x1649, x1650, x1651, x1652, x1653, x1654, x1655, x1656, x1850,
+          x1851, x1852, x1853, x1854, x1855, x1856, x1857, x1858, x1859, x1860, x1829, x1830, x1831,
+          x1832, x1833, x1834, x1835, x1836, x1837, x1838, x1839, x1840, x1841, x1842, x1843, x1844,
+          x1845, x1846, x1847, x1848, x1849, x2021, x2022, x2023, x2024, x2025, x2026, x2027, x2028,
+          x2029, x2030, x2031, x2032, x2033, x2034, x2035, x2036, x2037, x2038, x2039, x2040, x2041,
+          x2042, x2043, x2044, x2045, x2046, x2047, x2048, x2049, x2050, x2051, x2052, x2213, x2214,
+          x2215, x2216, x2217, x2218, x2219, x2220, x2221, x2222, x2223, x2224, x2225, x2226, x2227,
+          x2228, x2229, x2230, x2231, x2232, x2233, x2234, x2235, x2236, x2237, x2238, x2239, x2240,
+          x2241, x2242, x2243, x2244, x1541, x1542, x1543, x1544, x1545, x1546, x1547, x1548, x1549,
+          x1550, x1551, x1552, x1553, x1554, x1555, x1556, x1557, x1558, x1559, x1560, x1561, x1562,
+          x1563, x1564, x1565, x1566, x1567, x1568, x1569, x1570, x1571, x1572, x1733, x1734, x1735,
+          x1736, x1737, x1738, x1739, x1740, x1741, x1742, x1743, x1744, x1745, x1746, x1747, x1748,
+          x1749, x1750, x1751, x1752, x1753, x1754, x1755, x1756, x1757, x1758, x1759, x1760, x1761,
+          x1762, x1763, x1764, x1765, x1766, x1767, x1768, x1769, x1770, x1771, x1772, x1773, x1774,
+          x1775, x1776, x1777, x1778, x1779, x1780, x1781, x1782, x1783, x1784, x1785, x1786, x1787,
+          x1788, x1789, x1790, x1791, x1792, x1793, x1794, x1795, x1796, x1976, x1977, x1978, x1979,
+          x1980, x1981, x1982, x1983, x1984, x1985, x1986, x1987, x1988, x1957, x1958, x1959, x1960,
+          x1961, x1962, x1963, x1964, x1965, x1966, x1967, x1968, x1969, x1970, x1971, x1972, x1973,
+          x1974, x1975, x2152, x2153, x2154, x2155, x2156, x2157, x2158, x2159, x2160, x2161, x2162,
+          x2163, x2164, x2165, x2166, x2167, x2168, x2169, x2170, x2171, x2172, x2173, x2174, x2175,
+          x2176, x2177, x2178, x2179, x2180, x2149, x2150, x2151, x1477, x1478, x1479, x1480, x1481,
+          x1482, x1483, x1484, x1485, x1486, x1487, x1488, x1489, x1490, x1491, x1492, x1493, x1494,
+          x1495, x1496, x1497, x1498, x1499, x1500, x1501, x1502, x1503, x1504, x1505, x1506, x1507,
+          x1508, x1669, x1670, x1671, x1672, x1673, x1674, x1675, x1676, x1677, x1678, x1679, x1680,
+          x1681, x1682, x1683, x1684, x1685, x1686, x1687, x1688, x1689, x1690, x1691, x1692, x1693,
+          x1694, x1695, x1696, x1697, x1698, x1699, x1700, x1861, x1862, x1863, x1864, x1865, x1866,
+          x1867, x1868, x1869, x1870, x1871, x1872, x1873, x1874, x1875, x1876, x1877, x1878, x1879,
+          x1880, x1881, x1882, x1883, x1884, x1885, x1886, x1887, x1888, x1889, x1890, x1891, x1892,
+          x2053, x2054, x2055, x2056, x2057, x2058, x2059, x2060, x2061, x2062, x2063, x2064, x2065,
+          x2066, x2067, x2068, x2069, x2070, x2071, x2072, x2073, x2074, x2075, x2076, x2077, x2078,
+          x2079, x2080, x2081, x2082, x2083, x2084, x2085, x2086, x2087, x2088, x2089, x2090, x2091,
+          x2092, x2093, x2094, x2095, x2096, x2097, x2098, x2099, x2100, x2101, x2102, x2103, x2104,
+          x2105, x2106, x2107, x2108, x2109, x2110, x2111, x2112, x2113, x2114, x2115, x2116, x1573,
+          x1574, x1575, x1576, x1577, x1578, x1579, x1580, x1581, x1582, x1583, x1584, x1585, x1586,
+          x1587, x1588, x1589, x1590, x1591, x1592, x1593, x1594, x1595, x1596, x1597, x1598, x1599,
+          x1600, x1601, x1602, x1603, x1604, x1633, x1634, x1635, x1636, x1605, x1606, x1607, x1608,
+          x1609, x1610, x1611, x1612, x1613, x1614, x1615, x1616, x1617, x1618, x1619, x1620, x1621,
+          x1622, x1623, x1624, x1625, x1626, x1627, x1628, x1629, x1630, x1631, x1632, x1797, x1798,
+          x1799, x1800, x1801, x1802, x1803, x1804, x1805, x1806, x1807, x1808, x1809, x1810, x1811,
+          x1812, x1813, x1814, x1815, x1816, x1817, x1818, x1819, x1820, x1821, x1822, x1823, x1824,
+          x1825, x1826, x1827, x1828, x1989, x1990, x1991, x1992, x1993, x1994, x1995, x1996, x1997,
+          x1998, x1999, x2000, x2001, x2002, x2003, x2004, x2005, x2006, x2007, x2008, x2009, x2010,
+          x2011, x2012, x2013, x2014, x2015, x2016, x2017, x2018, x2019, x2020, x2189, x2190, x2191,
+          x2192, x2193, x2194, x2195, x2196, x2197, x2198, x2199, x2200, x2201, x2202, x2203, x2204,
+          x2205, x2206, x2207, x2208, x2209, x2210, x2211, x2212, x2181, x2182, x2183, x2184, x2185,
+          x2186, x2187, x2188, x1511, x1512, x1513, x1514, x1515, x1516, x1517, x1518, x1519, x1520,
+          x1521, x1522, x1523, x1524, x1525, x1526, x1527, x1528, x1529, x1530, x1531, x1532, x1533,
+          x1534, x1535, x1536, x1537, x1538, x1539, x1540, x1509, x1510, x1710, x1711, x1712, x1713,
+          x1714, x1715, x1716, x1717, x1718, x1719, x1720, x1721, x1722, x1723, x1724, x1725, x1726,
+          x1727, x1728, x1729, x1730, x1731, x1732, x1701, x1702, x1703, x1704, x1705, x1706, x1707,
+          x1708, x1709, x1918, x1919, x1920, x1921, x1922, x1923, x1924, x1893, x1894, x1895, x1896,
+          x1897, x1898, x1899, x1900, x1901, x1902, x1903, x1904, x1905, x1906, x1907, x1908, x1909,
+          x1910, x1911, x1912, x1913, x1914, x1915, x1916, x1917, x1948, x1949, x1950, x1951, x1952,
+          x1953, x1954, x1955, x1956, x1925, x1926, x1927, x1928, x1929, x1930, x1931, x1932, x1933,
+          x1934, x1935, x1936, x1937, x1938, x1939, x1940, x1941, x1942, x1943, x1944, x1945, x1946,
+          x1947, x2117, x2118, x2119, x2120, x2121, x2122, x2123, x2124, x2125, x2126, x2127, x2128,
+          x2129, x2130, x2131, x2132, x2133, x2134, x2135, x2136, x2137, x2138, x2139, x2140, x2141,
+          x2142, x2143, x2144, x2145, x2146, x2147, x2148},
+      Val100Array{
+          x2247, x2248, x2249, x2250, x2251, x2252, x2253, x2254, x2255, x2256, x2257, x2258, x2259,
+          x2260, x2261, x2262, x2263, x2264, x2265, x2266, x2267, x2268, x2269, x2270, x2271, x2272,
+          x2273, x2274, x2275, x2276, x2277, x2278, x2279, x2280, x2281, x2282, x2283, x2284, x2285,
+          x2286, x2287, x2288, x2289, x2290, x2291, x2292, x2293, x2294, x2295, x2296, x2297, x2298,
+          x2299, x2300, x2301, x2302, x2303, x2304, x2305, x2306, x2307, x2308, x2309, x2310, x2311,
+          x2312, x2313, x2314, x2315, x2316, x2317, x2318, x2319, x2320, x2321, x2322, x2323, x2324,
+          x2325, x2326, x2327, x2328, x2329, x2330, x2331, x2332, x2333, x2334, x2335, x2336, x2337,
+          x2338, x2339, x2340, x2341, x2342, x2343, x2344, x2345, x2346},
       x2347,
       layout4);
   return x2348;
 }
-TopStateStruct exec_KeccakRound34_0_(TopStateStruct arg0,
-                                     TopStateStruct arg1,
-                                     TopStateStruct arg2,
-                                     Val arg3,
-                                     BoundLayout<KeccakRound34_0_Layout> layout4) {
+__device__ TopStateStruct exec_KeccakRound34_0_(ExecContext& ctx,
+                                                TopStateStruct arg0,
+                                                TopStateStruct arg1,
+                                                TopStateStruct arg2,
+                                                Val arg3,
+                                                BoundLayout<KeccakRound34_0_Layout> layout4) {
   // Log(<preamble>:22)
   // KeccakRound34(zirgen/circuit/keccak2/top.zir:115)
-  INVOKE_EXTERN(ctx, log, "KeccakRound34", {arg3});
+  INVOKE_EXTERN(ctx, log, "KeccakRound34", std::initializer_list<Val>{arg3});
   // KeccakRound34(zirgen/circuit/keccak2/top.zir:114)
   TopStateBitsStruct800Array x5 = arg0.bits;
   TopStateBitsStruct800Array x6 = arg1.bits;
@@ -28156,133 +28307,163 @@ TopStateStruct exec_KeccakRound34_0_(TopStateStruct arg0,
   Val x4805 = ((Val(1) - x1478) * x1510);
   // BitXor(zirgen/circuit/keccak2/bits.zir:32)
   Val x4806 = ((x1606 + x4805) - ((x1606 * Val(2)) * x4805));
-  Val64Array5Array5Array x4807 = {
-      {{x1608, x1610, x1612, x1614, x1616, x1618, x1620, x1622, x1624, x1626, x1628, x1630, x1632,
-        x1634, x1636, x1638, x1640, x1642, x1644, x1646, x1648, x1650, x1652, x1654, x1656, x1658,
-        x1660, x1662, x1664, x1666, x1668, x1670, x1672, x1674, x1676, x1678, x1680, x1682, x1684,
-        x1686, x1688, x1690, x1692, x1694, x1696, x1698, x1700, x1702, x1704, x1706, x1708, x1710,
-        x1712, x1714, x1716, x1718, x1720, x1722, x1724, x1726, x1728, x1730, x1732, x1734},
-       {x1736, x1738, x1740, x1742, x1744, x1746, x1748, x1750, x1752, x1754, x1756, x1758, x1760,
-        x1762, x1764, x1766, x1768, x1770, x1772, x1774, x1776, x1778, x1780, x1782, x1784, x1786,
-        x1788, x1790, x1792, x1794, x1796, x1798, x1800, x1802, x1804, x1806, x1808, x1810, x1812,
-        x1814, x1816, x1818, x1820, x1822, x1824, x1826, x1828, x1830, x1832, x1834, x1836, x1838,
-        x1840, x1842, x1844, x1846, x1848, x1850, x1852, x1854, x1856, x1858, x1860, x1862},
-       {x1864, x1866, x1868, x1870, x1872, x1874, x1876, x1878, x1880, x1882, x1884, x1886, x1888,
-        x1890, x1892, x1894, x1896, x1898, x1900, x1902, x1904, x1906, x1908, x1910, x1912, x1914,
-        x1916, x1918, x1920, x1922, x1924, x1926, x1928, x1930, x1932, x1934, x1936, x1938, x1940,
-        x1942, x1944, x1946, x1948, x1950, x1952, x1954, x1956, x1958, x1960, x1962, x1964, x1966,
-        x1968, x1970, x1972, x1974, x1976, x1978, x1980, x1982, x1984, x1986, x1988, x1990},
-       {x1992, x1994, x1996, x1998, x2000, x2002, x2004, x2006, x2008, x2010, x2012, x2014, x2016,
-        x2018, x2020, x2022, x2024, x2026, x2028, x2030, x2032, x2034, x2036, x2038, x2040, x2042,
-        x2044, x2046, x2048, x2050, x2052, x2054, x2056, x2058, x2060, x2062, x2064, x2066, x2068,
-        x2070, x2072, x2074, x2076, x2078, x2080, x2082, x2084, x2086, x2088, x2090, x2092, x2094,
-        x2096, x2098, x2100, x2102, x2104, x2106, x2108, x2110, x2112, x2114, x2116, x2118},
-       {x2120, x2122, x2124, x2126, x2128, x2130, x2132, x2134, x2136, x2138, x2140, x2142, x2144,
-        x2146, x2148, x2150, x2152, x2154, x2156, x2158, x2160, x2162, x2164, x2166, x2168, x2170,
-        x2172, x2174, x2176, x2178, x2180, x2182, x2184, x2186, x2188, x2190, x2192, x2194, x2196,
-        x2198, x2200, x2202, x2204, x2206, x2208, x2210, x2212, x2214, x2216, x2218, x2220, x2222,
-        x2224, x2226, x2228, x2230, x2232, x2234, x2236, x2238, x2240, x2242, x2244, x2246}},
-      {{x2248, x2250, x2252, x2254, x2256, x2258, x2260, x2262, x2264, x2266, x2268, x2270, x2272,
-        x2274, x2276, x2278, x2280, x2282, x2284, x2286, x2288, x2290, x2292, x2294, x2296, x2298,
-        x2300, x2302, x2304, x2306, x2308, x2310, x2312, x2314, x2316, x2318, x2320, x2322, x2324,
-        x2326, x2328, x2330, x2332, x2334, x2336, x2338, x2340, x2342, x2344, x2346, x2348, x2350,
-        x2352, x2354, x2356, x2358, x2360, x2362, x2364, x2366, x2368, x2370, x2372, x2374},
-       {x2376, x2378, x2380, x2382, x2384, x2386, x2388, x2390, x2392, x2394, x2396, x2398, x2400,
-        x2402, x2404, x2406, x2408, x2410, x2412, x2414, x2416, x2418, x2420, x2422, x2424, x2426,
-        x2428, x2430, x2432, x2434, x2436, x2438, x2440, x2442, x2444, x2446, x2448, x2450, x2452,
-        x2454, x2456, x2458, x2460, x2462, x2464, x2466, x2468, x2470, x2472, x2474, x2476, x2478,
-        x2480, x2482, x2484, x2486, x2488, x2490, x2492, x2494, x2496, x2498, x2500, x2502},
-       {x2504, x2506, x2508, x2510, x2512, x2514, x2516, x2518, x2520, x2522, x2524, x2526, x2528,
-        x2530, x2532, x2534, x2536, x2538, x2540, x2542, x2544, x2546, x2548, x2550, x2552, x2554,
-        x2556, x2558, x2560, x2562, x2564, x2566, x2568, x2570, x2572, x2574, x2576, x2578, x2580,
-        x2582, x2584, x2586, x2588, x2590, x2592, x2594, x2596, x2598, x2600, x2602, x2604, x2606,
-        x2608, x2610, x2612, x2614, x2616, x2618, x2620, x2622, x2624, x2626, x2628, x2630},
-       {x2632, x2634, x2636, x2638, x2640, x2642, x2644, x2646, x2648, x2650, x2652, x2654, x2656,
-        x2658, x2660, x2662, x2664, x2666, x2668, x2670, x2672, x2674, x2676, x2678, x2680, x2682,
-        x2684, x2686, x2688, x2690, x2692, x2694, x2696, x2698, x2700, x2702, x2704, x2706, x2708,
-        x2710, x2712, x2714, x2716, x2718, x2720, x2722, x2724, x2726, x2728, x2730, x2732, x2734,
-        x2736, x2738, x2740, x2742, x2744, x2746, x2748, x2750, x2752, x2754, x2756, x2758},
-       {x2760, x2762, x2764, x2766, x2768, x2770, x2772, x2774, x2776, x2778, x2780, x2782, x2784,
-        x2786, x2788, x2790, x2792, x2794, x2796, x2798, x2800, x2802, x2804, x2806, x2808, x2810,
-        x2812, x2814, x2816, x2818, x2820, x2822, x2824, x2826, x2828, x2830, x2832, x2834, x2836,
-        x2838, x2840, x2842, x2844, x2846, x2848, x2850, x2852, x2854, x2856, x2858, x2860, x2862,
-        x2864, x2866, x2868, x2870, x2872, x2874, x2876, x2878, x2880, x2882, x2884, x2886}},
-      {{x2888, x2890, x2892, x2894, x2896, x2898, x2900, x2902, x2904, x2906, x2908, x2910, x2912,
-        x2914, x2916, x2918, x2920, x2922, x2924, x2926, x2928, x2930, x2932, x2934, x2936, x2938,
-        x2940, x2942, x2944, x2946, x2948, x2950, x2952, x2954, x2956, x2958, x2960, x2962, x2964,
-        x2966, x2968, x2970, x2972, x2974, x2976, x2978, x2980, x2982, x2984, x2986, x2988, x2990,
-        x2992, x2994, x2996, x2998, x3000, x3002, x3004, x3006, x3008, x3010, x3012, x3014},
-       {x3016, x3018, x3020, x3022, x3024, x3026, x3028, x3030, x3032, x3034, x3036, x3038, x3040,
-        x3042, x3044, x3046, x3048, x3050, x3052, x3054, x3056, x3058, x3060, x3062, x3064, x3066,
-        x3068, x3070, x3072, x3074, x3076, x3078, x3080, x3082, x3084, x3086, x3088, x3090, x3092,
-        x3094, x3096, x3098, x3100, x3102, x3104, x3106, x3108, x3110, x3112, x3114, x3116, x3118,
-        x3120, x3122, x3124, x3126, x3128, x3130, x3132, x3134, x3136, x3138, x3140, x3142},
-       {x3144, x3146, x3148, x3150, x3152, x3154, x3156, x3158, x3160, x3162, x3164, x3166, x3168,
-        x3170, x3172, x3174, x3176, x3178, x3180, x3182, x3184, x3186, x3188, x3190, x3192, x3194,
-        x3196, x3198, x3200, x3202, x3204, x3206, x3208, x3210, x3212, x3214, x3216, x3218, x3220,
-        x3222, x3224, x3226, x3228, x3230, x3232, x3234, x3236, x3238, x3240, x3242, x3244, x3246,
-        x3248, x3250, x3252, x3254, x3256, x3258, x3260, x3262, x3264, x3266, x3268, x3270},
-       {x3272, x3274, x3276, x3278, x3280, x3282, x3284, x3286, x3288, x3290, x3292, x3294, x3296,
-        x3298, x3300, x3302, x3304, x3306, x3308, x3310, x3312, x3314, x3316, x3318, x3320, x3322,
-        x3324, x3326, x3328, x3330, x3332, x3334, x3336, x3338, x3340, x3342, x3344, x3346, x3348,
-        x3350, x3352, x3354, x3356, x3358, x3360, x3362, x3364, x3366, x3368, x3370, x3372, x3374,
-        x3376, x3378, x3380, x3382, x3384, x3386, x3388, x3390, x3392, x3394, x3396, x3398},
-       {x3400, x3402, x3404, x3406, x3408, x3410, x3412, x3414, x3416, x3418, x3420, x3422, x3424,
-        x3426, x3428, x3430, x3432, x3434, x3436, x3438, x3440, x3442, x3444, x3446, x3448, x3450,
-        x3452, x3454, x3456, x3458, x3460, x3462, x3464, x3466, x3468, x3470, x3472, x3474, x3476,
-        x3478, x3480, x3482, x3484, x3486, x3488, x3490, x3492, x3494, x3496, x3498, x3500, x3502,
-        x3504, x3506, x3508, x3510, x3512, x3514, x3516, x3518, x3520, x3522, x3524, x3526}},
-      {{x3528, x3530, x3532, x3534, x3536, x3538, x3540, x3542, x3544, x3546, x3548, x3550, x3552,
-        x3554, x3556, x3558, x3560, x3562, x3564, x3566, x3568, x3570, x3572, x3574, x3576, x3578,
-        x3580, x3582, x3584, x3586, x3588, x3590, x3592, x3594, x3596, x3598, x3600, x3602, x3604,
-        x3606, x3608, x3610, x3612, x3614, x3616, x3618, x3620, x3622, x3624, x3626, x3628, x3630,
-        x3632, x3634, x3636, x3638, x3640, x3642, x3644, x3646, x3648, x3650, x3652, x3654},
-       {x3656, x3658, x3660, x3662, x3664, x3666, x3668, x3670, x3672, x3674, x3676, x3678, x3680,
-        x3682, x3684, x3686, x3688, x3690, x3692, x3694, x3696, x3698, x3700, x3702, x3704, x3706,
-        x3708, x3710, x3712, x3714, x3716, x3718, x3720, x3722, x3724, x3726, x3728, x3730, x3732,
-        x3734, x3736, x3738, x3740, x3742, x3744, x3746, x3748, x3750, x3752, x3754, x3756, x3758,
-        x3760, x3762, x3764, x3766, x3768, x3770, x3772, x3774, x3776, x3778, x3780, x3782},
-       {x3784, x3786, x3788, x3790, x3792, x3794, x3796, x3798, x3800, x3802, x3804, x3806, x3808,
-        x3810, x3812, x3814, x3816, x3818, x3820, x3822, x3824, x3826, x3828, x3830, x3832, x3834,
-        x3836, x3838, x3840, x3842, x3844, x3846, x3848, x3850, x3852, x3854, x3856, x3858, x3860,
-        x3862, x3864, x3866, x3868, x3870, x3872, x3874, x3876, x3878, x3880, x3882, x3884, x3886,
-        x3888, x3890, x3892, x3894, x3896, x3898, x3900, x3902, x3904, x3906, x3908, x3910},
-       {x3912, x3914, x3916, x3918, x3920, x3922, x3924, x3926, x3928, x3930, x3932, x3934, x3936,
-        x3938, x3940, x3942, x3944, x3946, x3948, x3950, x3952, x3954, x3956, x3958, x3960, x3962,
-        x3964, x3966, x3968, x3970, x3972, x3974, x3976, x3978, x3980, x3982, x3984, x3986, x3988,
-        x3990, x3992, x3994, x3996, x3998, x4000, x4002, x4004, x4006, x4008, x4010, x4012, x4014,
-        x4016, x4018, x4020, x4022, x4024, x4026, x4028, x4030, x4032, x4034, x4036, x4038},
-       {x4040, x4042, x4044, x4046, x4048, x4050, x4052, x4054, x4056, x4058, x4060, x4062, x4064,
-        x4066, x4068, x4070, x4072, x4074, x4076, x4078, x4080, x4082, x4084, x4086, x4088, x4090,
-        x4092, x4094, x4096, x4098, x4100, x4102, x4104, x4106, x4108, x4110, x4112, x4114, x4116,
-        x4118, x4120, x4122, x4124, x4126, x4128, x4130, x4132, x4134, x4136, x4138, x4140, x4142,
-        x4144, x4146, x4148, x4150, x4152, x4154, x4156, x4158, x4160, x4162, x4164, x4166}},
-      {{x4168, x4170, x4172, x4174, x4176, x4178, x4180, x4182, x4184, x4186, x4188, x4190, x4192,
-        x4194, x4196, x4198, x4200, x4202, x4204, x4206, x4208, x4210, x4212, x4214, x4216, x4218,
-        x4220, x4222, x4224, x4226, x4228, x4230, x4232, x4234, x4236, x4238, x4240, x4242, x4244,
-        x4246, x4248, x4250, x4252, x4254, x4256, x4258, x4260, x4262, x4264, x4266, x4268, x4270,
-        x4272, x4274, x4276, x4278, x4280, x4282, x4284, x4286, x4288, x4290, x4292, x4294},
-       {x4296, x4298, x4300, x4302, x4304, x4306, x4308, x4310, x4312, x4314, x4316, x4318, x4320,
-        x4322, x4324, x4326, x4328, x4330, x4332, x4334, x4336, x4338, x4340, x4342, x4344, x4346,
-        x4348, x4350, x4352, x4354, x4356, x4358, x4360, x4362, x4364, x4366, x4368, x4370, x4372,
-        x4374, x4376, x4378, x4380, x4382, x4384, x4386, x4388, x4390, x4392, x4394, x4396, x4398,
-        x4400, x4402, x4404, x4406, x4408, x4410, x4412, x4414, x4416, x4418, x4420, x4422},
-       {x4424, x4426, x4428, x4430, x4432, x4434, x4436, x4438, x4440, x4442, x4444, x4446, x4448,
-        x4450, x4452, x4454, x4456, x4458, x4460, x4462, x4464, x4466, x4468, x4470, x4472, x4474,
-        x4476, x4478, x4480, x4482, x4484, x4486, x4488, x4490, x4492, x4494, x4496, x4498, x4500,
-        x4502, x4504, x4506, x4508, x4510, x4512, x4514, x4516, x4518, x4520, x4522, x4524, x4526,
-        x4528, x4530, x4532, x4534, x4536, x4538, x4540, x4542, x4544, x4546, x4548, x4550},
-       {x4552, x4554, x4556, x4558, x4560, x4562, x4564, x4566, x4568, x4570, x4572, x4574, x4576,
-        x4578, x4580, x4582, x4584, x4586, x4588, x4590, x4592, x4594, x4596, x4598, x4600, x4602,
-        x4604, x4606, x4608, x4610, x4612, x4614, x4616, x4618, x4620, x4622, x4624, x4626, x4628,
-        x4630, x4632, x4634, x4636, x4638, x4640, x4642, x4644, x4646, x4648, x4650, x4652, x4654,
-        x4656, x4658, x4660, x4662, x4664, x4666, x4668, x4670, x4672, x4674, x4676, x4678},
-       {x4680, x4682, x4684, x4686, x4688, x4690, x4692, x4694, x4696, x4698, x4700, x4702, x4704,
-        x4706, x4708, x4710, x4712, x4714, x4716, x4718, x4720, x4722, x4724, x4726, x4728, x4730,
-        x4732, x4734, x4736, x4738, x4740, x4742, x4744, x4746, x4748, x4750, x4752, x4754, x4756,
-        x4758, x4760, x4762, x4764, x4766, x4768, x4770, x4772, x4774, x4776, x4778, x4780, x4782,
-        x4784, x4786, x4788, x4790, x4792, x4794, x4796, x4798, x4800, x4802, x4804, x4806}}};
-  IotaStruct x4808 = exec_Iota(x4807, arg3, LAYOUT_LOOKUP(layout4, _0));
+  Val64Array5Array5Array x4807 = Val64Array5Array5Array{
+      Val64Array5Array{
+          Val64Array{x1608, x1610, x1612, x1614, x1616, x1618, x1620, x1622, x1624, x1626, x1628,
+                     x1630, x1632, x1634, x1636, x1638, x1640, x1642, x1644, x1646, x1648, x1650,
+                     x1652, x1654, x1656, x1658, x1660, x1662, x1664, x1666, x1668, x1670, x1672,
+                     x1674, x1676, x1678, x1680, x1682, x1684, x1686, x1688, x1690, x1692, x1694,
+                     x1696, x1698, x1700, x1702, x1704, x1706, x1708, x1710, x1712, x1714, x1716,
+                     x1718, x1720, x1722, x1724, x1726, x1728, x1730, x1732, x1734},
+          Val64Array{x1736, x1738, x1740, x1742, x1744, x1746, x1748, x1750, x1752, x1754, x1756,
+                     x1758, x1760, x1762, x1764, x1766, x1768, x1770, x1772, x1774, x1776, x1778,
+                     x1780, x1782, x1784, x1786, x1788, x1790, x1792, x1794, x1796, x1798, x1800,
+                     x1802, x1804, x1806, x1808, x1810, x1812, x1814, x1816, x1818, x1820, x1822,
+                     x1824, x1826, x1828, x1830, x1832, x1834, x1836, x1838, x1840, x1842, x1844,
+                     x1846, x1848, x1850, x1852, x1854, x1856, x1858, x1860, x1862},
+          Val64Array{x1864, x1866, x1868, x1870, x1872, x1874, x1876, x1878, x1880, x1882, x1884,
+                     x1886, x1888, x1890, x1892, x1894, x1896, x1898, x1900, x1902, x1904, x1906,
+                     x1908, x1910, x1912, x1914, x1916, x1918, x1920, x1922, x1924, x1926, x1928,
+                     x1930, x1932, x1934, x1936, x1938, x1940, x1942, x1944, x1946, x1948, x1950,
+                     x1952, x1954, x1956, x1958, x1960, x1962, x1964, x1966, x1968, x1970, x1972,
+                     x1974, x1976, x1978, x1980, x1982, x1984, x1986, x1988, x1990},
+          Val64Array{x1992, x1994, x1996, x1998, x2000, x2002, x2004, x2006, x2008, x2010, x2012,
+                     x2014, x2016, x2018, x2020, x2022, x2024, x2026, x2028, x2030, x2032, x2034,
+                     x2036, x2038, x2040, x2042, x2044, x2046, x2048, x2050, x2052, x2054, x2056,
+                     x2058, x2060, x2062, x2064, x2066, x2068, x2070, x2072, x2074, x2076, x2078,
+                     x2080, x2082, x2084, x2086, x2088, x2090, x2092, x2094, x2096, x2098, x2100,
+                     x2102, x2104, x2106, x2108, x2110, x2112, x2114, x2116, x2118},
+          Val64Array{x2120, x2122, x2124, x2126, x2128, x2130, x2132, x2134, x2136, x2138, x2140,
+                     x2142, x2144, x2146, x2148, x2150, x2152, x2154, x2156, x2158, x2160, x2162,
+                     x2164, x2166, x2168, x2170, x2172, x2174, x2176, x2178, x2180, x2182, x2184,
+                     x2186, x2188, x2190, x2192, x2194, x2196, x2198, x2200, x2202, x2204, x2206,
+                     x2208, x2210, x2212, x2214, x2216, x2218, x2220, x2222, x2224, x2226, x2228,
+                     x2230, x2232, x2234, x2236, x2238, x2240, x2242, x2244, x2246}},
+      Val64Array5Array{
+          Val64Array{x2248, x2250, x2252, x2254, x2256, x2258, x2260, x2262, x2264, x2266, x2268,
+                     x2270, x2272, x2274, x2276, x2278, x2280, x2282, x2284, x2286, x2288, x2290,
+                     x2292, x2294, x2296, x2298, x2300, x2302, x2304, x2306, x2308, x2310, x2312,
+                     x2314, x2316, x2318, x2320, x2322, x2324, x2326, x2328, x2330, x2332, x2334,
+                     x2336, x2338, x2340, x2342, x2344, x2346, x2348, x2350, x2352, x2354, x2356,
+                     x2358, x2360, x2362, x2364, x2366, x2368, x2370, x2372, x2374},
+          Val64Array{x2376, x2378, x2380, x2382, x2384, x2386, x2388, x2390, x2392, x2394, x2396,
+                     x2398, x2400, x2402, x2404, x2406, x2408, x2410, x2412, x2414, x2416, x2418,
+                     x2420, x2422, x2424, x2426, x2428, x2430, x2432, x2434, x2436, x2438, x2440,
+                     x2442, x2444, x2446, x2448, x2450, x2452, x2454, x2456, x2458, x2460, x2462,
+                     x2464, x2466, x2468, x2470, x2472, x2474, x2476, x2478, x2480, x2482, x2484,
+                     x2486, x2488, x2490, x2492, x2494, x2496, x2498, x2500, x2502},
+          Val64Array{x2504, x2506, x2508, x2510, x2512, x2514, x2516, x2518, x2520, x2522, x2524,
+                     x2526, x2528, x2530, x2532, x2534, x2536, x2538, x2540, x2542, x2544, x2546,
+                     x2548, x2550, x2552, x2554, x2556, x2558, x2560, x2562, x2564, x2566, x2568,
+                     x2570, x2572, x2574, x2576, x2578, x2580, x2582, x2584, x2586, x2588, x2590,
+                     x2592, x2594, x2596, x2598, x2600, x2602, x2604, x2606, x2608, x2610, x2612,
+                     x2614, x2616, x2618, x2620, x2622, x2624, x2626, x2628, x2630},
+          Val64Array{x2632, x2634, x2636, x2638, x2640, x2642, x2644, x2646, x2648, x2650, x2652,
+                     x2654, x2656, x2658, x2660, x2662, x2664, x2666, x2668, x2670, x2672, x2674,
+                     x2676, x2678, x2680, x2682, x2684, x2686, x2688, x2690, x2692, x2694, x2696,
+                     x2698, x2700, x2702, x2704, x2706, x2708, x2710, x2712, x2714, x2716, x2718,
+                     x2720, x2722, x2724, x2726, x2728, x2730, x2732, x2734, x2736, x2738, x2740,
+                     x2742, x2744, x2746, x2748, x2750, x2752, x2754, x2756, x2758},
+          Val64Array{x2760, x2762, x2764, x2766, x2768, x2770, x2772, x2774, x2776, x2778, x2780,
+                     x2782, x2784, x2786, x2788, x2790, x2792, x2794, x2796, x2798, x2800, x2802,
+                     x2804, x2806, x2808, x2810, x2812, x2814, x2816, x2818, x2820, x2822, x2824,
+                     x2826, x2828, x2830, x2832, x2834, x2836, x2838, x2840, x2842, x2844, x2846,
+                     x2848, x2850, x2852, x2854, x2856, x2858, x2860, x2862, x2864, x2866, x2868,
+                     x2870, x2872, x2874, x2876, x2878, x2880, x2882, x2884, x2886}},
+      Val64Array5Array{
+          Val64Array{x2888, x2890, x2892, x2894, x2896, x2898, x2900, x2902, x2904, x2906, x2908,
+                     x2910, x2912, x2914, x2916, x2918, x2920, x2922, x2924, x2926, x2928, x2930,
+                     x2932, x2934, x2936, x2938, x2940, x2942, x2944, x2946, x2948, x2950, x2952,
+                     x2954, x2956, x2958, x2960, x2962, x2964, x2966, x2968, x2970, x2972, x2974,
+                     x2976, x2978, x2980, x2982, x2984, x2986, x2988, x2990, x2992, x2994, x2996,
+                     x2998, x3000, x3002, x3004, x3006, x3008, x3010, x3012, x3014},
+          Val64Array{x3016, x3018, x3020, x3022, x3024, x3026, x3028, x3030, x3032, x3034, x3036,
+                     x3038, x3040, x3042, x3044, x3046, x3048, x3050, x3052, x3054, x3056, x3058,
+                     x3060, x3062, x3064, x3066, x3068, x3070, x3072, x3074, x3076, x3078, x3080,
+                     x3082, x3084, x3086, x3088, x3090, x3092, x3094, x3096, x3098, x3100, x3102,
+                     x3104, x3106, x3108, x3110, x3112, x3114, x3116, x3118, x3120, x3122, x3124,
+                     x3126, x3128, x3130, x3132, x3134, x3136, x3138, x3140, x3142},
+          Val64Array{x3144, x3146, x3148, x3150, x3152, x3154, x3156, x3158, x3160, x3162, x3164,
+                     x3166, x3168, x3170, x3172, x3174, x3176, x3178, x3180, x3182, x3184, x3186,
+                     x3188, x3190, x3192, x3194, x3196, x3198, x3200, x3202, x3204, x3206, x3208,
+                     x3210, x3212, x3214, x3216, x3218, x3220, x3222, x3224, x3226, x3228, x3230,
+                     x3232, x3234, x3236, x3238, x3240, x3242, x3244, x3246, x3248, x3250, x3252,
+                     x3254, x3256, x3258, x3260, x3262, x3264, x3266, x3268, x3270},
+          Val64Array{x3272, x3274, x3276, x3278, x3280, x3282, x3284, x3286, x3288, x3290, x3292,
+                     x3294, x3296, x3298, x3300, x3302, x3304, x3306, x3308, x3310, x3312, x3314,
+                     x3316, x3318, x3320, x3322, x3324, x3326, x3328, x3330, x3332, x3334, x3336,
+                     x3338, x3340, x3342, x3344, x3346, x3348, x3350, x3352, x3354, x3356, x3358,
+                     x3360, x3362, x3364, x3366, x3368, x3370, x3372, x3374, x3376, x3378, x3380,
+                     x3382, x3384, x3386, x3388, x3390, x3392, x3394, x3396, x3398},
+          Val64Array{x3400, x3402, x3404, x3406, x3408, x3410, x3412, x3414, x3416, x3418, x3420,
+                     x3422, x3424, x3426, x3428, x3430, x3432, x3434, x3436, x3438, x3440, x3442,
+                     x3444, x3446, x3448, x3450, x3452, x3454, x3456, x3458, x3460, x3462, x3464,
+                     x3466, x3468, x3470, x3472, x3474, x3476, x3478, x3480, x3482, x3484, x3486,
+                     x3488, x3490, x3492, x3494, x3496, x3498, x3500, x3502, x3504, x3506, x3508,
+                     x3510, x3512, x3514, x3516, x3518, x3520, x3522, x3524, x3526}},
+      Val64Array5Array{
+          Val64Array{x3528, x3530, x3532, x3534, x3536, x3538, x3540, x3542, x3544, x3546, x3548,
+                     x3550, x3552, x3554, x3556, x3558, x3560, x3562, x3564, x3566, x3568, x3570,
+                     x3572, x3574, x3576, x3578, x3580, x3582, x3584, x3586, x3588, x3590, x3592,
+                     x3594, x3596, x3598, x3600, x3602, x3604, x3606, x3608, x3610, x3612, x3614,
+                     x3616, x3618, x3620, x3622, x3624, x3626, x3628, x3630, x3632, x3634, x3636,
+                     x3638, x3640, x3642, x3644, x3646, x3648, x3650, x3652, x3654},
+          Val64Array{x3656, x3658, x3660, x3662, x3664, x3666, x3668, x3670, x3672, x3674, x3676,
+                     x3678, x3680, x3682, x3684, x3686, x3688, x3690, x3692, x3694, x3696, x3698,
+                     x3700, x3702, x3704, x3706, x3708, x3710, x3712, x3714, x3716, x3718, x3720,
+                     x3722, x3724, x3726, x3728, x3730, x3732, x3734, x3736, x3738, x3740, x3742,
+                     x3744, x3746, x3748, x3750, x3752, x3754, x3756, x3758, x3760, x3762, x3764,
+                     x3766, x3768, x3770, x3772, x3774, x3776, x3778, x3780, x3782},
+          Val64Array{x3784, x3786, x3788, x3790, x3792, x3794, x3796, x3798, x3800, x3802, x3804,
+                     x3806, x3808, x3810, x3812, x3814, x3816, x3818, x3820, x3822, x3824, x3826,
+                     x3828, x3830, x3832, x3834, x3836, x3838, x3840, x3842, x3844, x3846, x3848,
+                     x3850, x3852, x3854, x3856, x3858, x3860, x3862, x3864, x3866, x3868, x3870,
+                     x3872, x3874, x3876, x3878, x3880, x3882, x3884, x3886, x3888, x3890, x3892,
+                     x3894, x3896, x3898, x3900, x3902, x3904, x3906, x3908, x3910},
+          Val64Array{x3912, x3914, x3916, x3918, x3920, x3922, x3924, x3926, x3928, x3930, x3932,
+                     x3934, x3936, x3938, x3940, x3942, x3944, x3946, x3948, x3950, x3952, x3954,
+                     x3956, x3958, x3960, x3962, x3964, x3966, x3968, x3970, x3972, x3974, x3976,
+                     x3978, x3980, x3982, x3984, x3986, x3988, x3990, x3992, x3994, x3996, x3998,
+                     x4000, x4002, x4004, x4006, x4008, x4010, x4012, x4014, x4016, x4018, x4020,
+                     x4022, x4024, x4026, x4028, x4030, x4032, x4034, x4036, x4038},
+          Val64Array{x4040, x4042, x4044, x4046, x4048, x4050, x4052, x4054, x4056, x4058, x4060,
+                     x4062, x4064, x4066, x4068, x4070, x4072, x4074, x4076, x4078, x4080, x4082,
+                     x4084, x4086, x4088, x4090, x4092, x4094, x4096, x4098, x4100, x4102, x4104,
+                     x4106, x4108, x4110, x4112, x4114, x4116, x4118, x4120, x4122, x4124, x4126,
+                     x4128, x4130, x4132, x4134, x4136, x4138, x4140, x4142, x4144, x4146, x4148,
+                     x4150, x4152, x4154, x4156, x4158, x4160, x4162, x4164, x4166}},
+      Val64Array5Array{
+          Val64Array{x4168, x4170, x4172, x4174, x4176, x4178, x4180, x4182, x4184, x4186, x4188,
+                     x4190, x4192, x4194, x4196, x4198, x4200, x4202, x4204, x4206, x4208, x4210,
+                     x4212, x4214, x4216, x4218, x4220, x4222, x4224, x4226, x4228, x4230, x4232,
+                     x4234, x4236, x4238, x4240, x4242, x4244, x4246, x4248, x4250, x4252, x4254,
+                     x4256, x4258, x4260, x4262, x4264, x4266, x4268, x4270, x4272, x4274, x4276,
+                     x4278, x4280, x4282, x4284, x4286, x4288, x4290, x4292, x4294},
+          Val64Array{x4296, x4298, x4300, x4302, x4304, x4306, x4308, x4310, x4312, x4314, x4316,
+                     x4318, x4320, x4322, x4324, x4326, x4328, x4330, x4332, x4334, x4336, x4338,
+                     x4340, x4342, x4344, x4346, x4348, x4350, x4352, x4354, x4356, x4358, x4360,
+                     x4362, x4364, x4366, x4368, x4370, x4372, x4374, x4376, x4378, x4380, x4382,
+                     x4384, x4386, x4388, x4390, x4392, x4394, x4396, x4398, x4400, x4402, x4404,
+                     x4406, x4408, x4410, x4412, x4414, x4416, x4418, x4420, x4422},
+          Val64Array{x4424, x4426, x4428, x4430, x4432, x4434, x4436, x4438, x4440, x4442, x4444,
+                     x4446, x4448, x4450, x4452, x4454, x4456, x4458, x4460, x4462, x4464, x4466,
+                     x4468, x4470, x4472, x4474, x4476, x4478, x4480, x4482, x4484, x4486, x4488,
+                     x4490, x4492, x4494, x4496, x4498, x4500, x4502, x4504, x4506, x4508, x4510,
+                     x4512, x4514, x4516, x4518, x4520, x4522, x4524, x4526, x4528, x4530, x4532,
+                     x4534, x4536, x4538, x4540, x4542, x4544, x4546, x4548, x4550},
+          Val64Array{x4552, x4554, x4556, x4558, x4560, x4562, x4564, x4566, x4568, x4570, x4572,
+                     x4574, x4576, x4578, x4580, x4582, x4584, x4586, x4588, x4590, x4592, x4594,
+                     x4596, x4598, x4600, x4602, x4604, x4606, x4608, x4610, x4612, x4614, x4616,
+                     x4618, x4620, x4622, x4624, x4626, x4628, x4630, x4632, x4634, x4636, x4638,
+                     x4640, x4642, x4644, x4646, x4648, x4650, x4652, x4654, x4656, x4658, x4660,
+                     x4662, x4664, x4666, x4668, x4670, x4672, x4674, x4676, x4678},
+          Val64Array{x4680, x4682, x4684, x4686, x4688, x4690, x4692, x4694, x4696, x4698, x4700,
+                     x4702, x4704, x4706, x4708, x4710, x4712, x4714, x4716, x4718, x4720, x4722,
+                     x4724, x4726, x4728, x4730, x4732, x4734, x4736, x4738, x4740, x4742, x4744,
+                     x4746, x4748, x4750, x4752, x4754, x4756, x4758, x4760, x4762, x4764, x4766,
+                     x4768, x4770, x4772, x4774, x4776, x4778, x4780, x4782, x4784, x4786, x4788,
+                     x4790, x4792, x4794, x4796, x4798, x4800, x4802, x4804, x4806}}};
+  IotaStruct x4808 = exec_Iota(ctx, x4807, arg3, LAYOUT_LOOKUP(layout4, _0));
   Iota_Super_SuperStruct5Array x4809 = x4808._super;
   Iota_Super_Super_Super_SuperStruct5Array x4810 = x4809[0]._super;
   Val64Array x4811 = x4810[0]._super;
@@ -28417,144 +28598,148 @@ TopStateStruct exec_KeccakRound34_0_(TopStateStruct arg0,
   Val x4939 = x4840[97]._super._super;
   Val x4940 = x4840[98]._super._super;
   Val x4941 = x4840[99]._super._super;
-  Val16Array x4942 = {x4841[0]._super,
-                      x4841[1]._super,
-                      x4841[2]._super,
-                      x4841[3]._super,
-                      x4841[4]._super,
-                      x4841[5]._super,
-                      x4841[6]._super,
-                      x4841[7]._super,
-                      x4841[8]._super,
-                      x4841[9]._super,
-                      x4841[10]._super,
-                      x4841[11]._super,
-                      x4841[12]._super,
-                      x4841[13]._super,
-                      x4841[14]._super,
-                      x4841[15]._super};
+  Val16Array x4942 = Val16Array{x4841[0]._super,
+                                x4841[1]._super,
+                                x4841[2]._super,
+                                x4841[3]._super,
+                                x4841[4]._super,
+                                x4841[5]._super,
+                                x4841[6]._super,
+                                x4841[7]._super,
+                                x4841[8]._super,
+                                x4841[9]._super,
+                                x4841[10]._super,
+                                x4841[11]._super,
+                                x4841[12]._super,
+                                x4841[13]._super,
+                                x4841[14]._super,
+                                x4841[15]._super};
   // KeccakRound34(zirgen/circuit/keccak2/top.zir:117)
   TopStateStruct x4943 = exec_TopState(
-      {x4811[0],  x4811[1],  x4811[2],  x4811[3],  x4811[4],  x4811[5],  x4811[6],  x4811[7],
-       x4811[8],  x4811[9],  x4811[10], x4811[11], x4811[12], x4811[13], x4811[14], x4811[15],
-       x4811[16], x4811[17], x4811[18], x4811[19], x4811[20], x4811[21], x4811[22], x4811[23],
-       x4811[24], x4811[25], x4811[26], x4811[27], x4811[28], x4811[29], x4811[30], x4811[31],
-       x4812[0],  x4812[1],  x4812[2],  x4812[3],  x4812[4],  x4812[5],  x4812[6],  x4812[7],
-       x4812[8],  x4812[9],  x4812[10], x4812[11], x4812[12], x4812[13], x4812[14], x4812[15],
-       x4812[16], x4812[17], x4812[18], x4812[19], x4812[20], x4812[21], x4812[22], x4812[23],
-       x4812[24], x4812[25], x4812[26], x4812[27], x4812[28], x4812[29], x4812[30], x4812[31],
-       x4813[0],  x4813[1],  x4813[2],  x4813[3],  x4813[4],  x4813[5],  x4813[6],  x4813[7],
-       x4813[8],  x4813[9],  x4813[10], x4813[11], x4813[12], x4813[13], x4813[14], x4813[15],
-       x4813[16], x4813[17], x4813[18], x4813[19], x4813[20], x4813[21], x4813[22], x4813[23],
-       x4813[24], x4813[25], x4813[26], x4813[27], x4813[28], x4813[29], x4813[30], x4813[31],
-       x4814[0],  x4814[1],  x4814[2],  x4814[3],  x4814[4],  x4814[5],  x4814[6],  x4814[7],
-       x4814[8],  x4814[9],  x4814[10], x4814[11], x4814[12], x4814[13], x4814[14], x4814[15],
-       x4814[16], x4814[17], x4814[18], x4814[19], x4814[20], x4814[21], x4814[22], x4814[23],
-       x4814[24], x4814[25], x4814[26], x4814[27], x4814[28], x4814[29], x4814[30], x4814[31],
-       x4815[0],  x4815[1],  x4815[2],  x4815[3],  x4815[4],  x4815[5],  x4815[6],  x4815[7],
-       x4815[8],  x4815[9],  x4815[10], x4815[11], x4815[12], x4815[13], x4815[14], x4815[15],
-       x4815[16], x4815[17], x4815[18], x4815[19], x4815[20], x4815[21], x4815[22], x4815[23],
-       x4815[24], x4815[25], x4815[26], x4815[27], x4815[28], x4815[29], x4815[30], x4815[31],
-       x4817[0],  x4817[1],  x4817[2],  x4817[3],  x4817[4],  x4817[5],  x4817[6],  x4817[7],
-       x4817[8],  x4817[9],  x4817[10], x4817[11], x4817[12], x4817[13], x4817[14], x4817[15],
-       x4817[16], x4817[17], x4817[18], x4817[19], x4817[20], x4817[21], x4817[22], x4817[23],
-       x4817[24], x4817[25], x4817[26], x4817[27], x4817[28], x4817[29], x4817[30], x4817[31],
-       x4818[0],  x4818[1],  x4818[2],  x4818[3],  x4818[4],  x4818[5],  x4818[6],  x4818[7],
-       x4818[8],  x4818[9],  x4818[10], x4818[11], x4818[12], x4818[13], x4818[14], x4818[15],
-       x4818[16], x4818[17], x4818[18], x4818[19], x4818[20], x4818[21], x4818[22], x4818[23],
-       x4818[24], x4818[25], x4818[26], x4818[27], x4818[28], x4818[29], x4818[30], x4818[31],
-       x4819[0],  x4819[1],  x4819[2],  x4819[3],  x4819[4],  x4819[5],  x4819[6],  x4819[7],
-       x4819[8],  x4819[9],  x4819[10], x4819[11], x4819[12], x4819[13], x4819[14], x4819[15],
-       x4819[16], x4819[17], x4819[18], x4819[19], x4819[20], x4819[21], x4819[22], x4819[23],
-       x4819[24], x4819[25], x4819[26], x4819[27], x4819[28], x4819[29], x4819[30], x4819[31],
-       x4820[0],  x4820[1],  x4820[2],  x4820[3],  x4820[4],  x4820[5],  x4820[6],  x4820[7],
-       x4820[8],  x4820[9],  x4820[10], x4820[11], x4820[12], x4820[13], x4820[14], x4820[15],
-       x4820[16], x4820[17], x4820[18], x4820[19], x4820[20], x4820[21], x4820[22], x4820[23],
-       x4820[24], x4820[25], x4820[26], x4820[27], x4820[28], x4820[29], x4820[30], x4820[31],
-       x4821[0],  x4821[1],  x4821[2],  x4821[3],  x4821[4],  x4821[5],  x4821[6],  x4821[7],
-       x4821[8],  x4821[9],  x4821[10], x4821[11], x4821[12], x4821[13], x4821[14], x4821[15],
-       x4821[16], x4821[17], x4821[18], x4821[19], x4821[20], x4821[21], x4821[22], x4821[23],
-       x4821[24], x4821[25], x4821[26], x4821[27], x4821[28], x4821[29], x4821[30], x4821[31],
-       x4823[0],  x4823[1],  x4823[2],  x4823[3],  x4823[4],  x4823[5],  x4823[6],  x4823[7],
-       x4823[8],  x4823[9],  x4823[10], x4823[11], x4823[12], x4823[13], x4823[14], x4823[15],
-       x4823[16], x4823[17], x4823[18], x4823[19], x4823[20], x4823[21], x4823[22], x4823[23],
-       x4823[24], x4823[25], x4823[26], x4823[27], x4823[28], x4823[29], x4823[30], x4823[31],
-       x4824[0],  x4824[1],  x4824[2],  x4824[3],  x4824[4],  x4824[5],  x4824[6],  x4824[7],
-       x4824[8],  x4824[9],  x4824[10], x4824[11], x4824[12], x4824[13], x4824[14], x4824[15],
-       x4824[16], x4824[17], x4824[18], x4824[19], x4824[20], x4824[21], x4824[22], x4824[23],
-       x4824[24], x4824[25], x4824[26], x4824[27], x4824[28], x4824[29], x4824[30], x4824[31],
-       x4825[0],  x4825[1],  x4825[2],  x4825[3],  x4825[4],  x4825[5],  x4825[6],  x4825[7],
-       x4825[8],  x4825[9],  x4825[10], x4825[11], x4825[12], x4825[13], x4825[14], x4825[15],
-       x4825[16], x4825[17], x4825[18], x4825[19], x4825[20], x4825[21], x4825[22], x4825[23],
-       x4825[24], x4825[25], x4825[26], x4825[27], x4825[28], x4825[29], x4825[30], x4825[31],
-       x4826[0],  x4826[1],  x4826[2],  x4826[3],  x4826[4],  x4826[5],  x4826[6],  x4826[7],
-       x4826[8],  x4826[9],  x4826[10], x4826[11], x4826[12], x4826[13], x4826[14], x4826[15],
-       x4826[16], x4826[17], x4826[18], x4826[19], x4826[20], x4826[21], x4826[22], x4826[23],
-       x4826[24], x4826[25], x4826[26], x4826[27], x4826[28], x4826[29], x4826[30], x4826[31],
-       x4827[0],  x4827[1],  x4827[2],  x4827[3],  x4827[4],  x4827[5],  x4827[6],  x4827[7],
-       x4827[8],  x4827[9],  x4827[10], x4827[11], x4827[12], x4827[13], x4827[14], x4827[15],
-       x4827[16], x4827[17], x4827[18], x4827[19], x4827[20], x4827[21], x4827[22], x4827[23],
-       x4827[24], x4827[25], x4827[26], x4827[27], x4827[28], x4827[29], x4827[30], x4827[31],
-       x4829[0],  x4829[1],  x4829[2],  x4829[3],  x4829[4],  x4829[5],  x4829[6],  x4829[7],
-       x4829[8],  x4829[9],  x4829[10], x4829[11], x4829[12], x4829[13], x4829[14], x4829[15],
-       x4829[16], x4829[17], x4829[18], x4829[19], x4829[20], x4829[21], x4829[22], x4829[23],
-       x4829[24], x4829[25], x4829[26], x4829[27], x4829[28], x4829[29], x4829[30], x4829[31],
-       x4830[0],  x4830[1],  x4830[2],  x4830[3],  x4830[4],  x4830[5],  x4830[6],  x4830[7],
-       x4830[8],  x4830[9],  x4830[10], x4830[11], x4830[12], x4830[13], x4830[14], x4830[15],
-       x4830[16], x4830[17], x4830[18], x4830[19], x4830[20], x4830[21], x4830[22], x4830[23],
-       x4830[24], x4830[25], x4830[26], x4830[27], x4830[28], x4830[29], x4830[30], x4830[31],
-       x4831[0],  x4831[1],  x4831[2],  x4831[3],  x4831[4],  x4831[5],  x4831[6],  x4831[7],
-       x4831[8],  x4831[9],  x4831[10], x4831[11], x4831[12], x4831[13], x4831[14], x4831[15],
-       x4831[16], x4831[17], x4831[18], x4831[19], x4831[20], x4831[21], x4831[22], x4831[23],
-       x4831[24], x4831[25], x4831[26], x4831[27], x4831[28], x4831[29], x4831[30], x4831[31],
-       x4832[0],  x4832[1],  x4832[2],  x4832[3],  x4832[4],  x4832[5],  x4832[6],  x4832[7],
-       x4832[8],  x4832[9],  x4832[10], x4832[11], x4832[12], x4832[13], x4832[14], x4832[15],
-       x4832[16], x4832[17], x4832[18], x4832[19], x4832[20], x4832[21], x4832[22], x4832[23],
-       x4832[24], x4832[25], x4832[26], x4832[27], x4832[28], x4832[29], x4832[30], x4832[31],
-       x4833[0],  x4833[1],  x4833[2],  x4833[3],  x4833[4],  x4833[5],  x4833[6],  x4833[7],
-       x4833[8],  x4833[9],  x4833[10], x4833[11], x4833[12], x4833[13], x4833[14], x4833[15],
-       x4833[16], x4833[17], x4833[18], x4833[19], x4833[20], x4833[21], x4833[22], x4833[23],
-       x4833[24], x4833[25], x4833[26], x4833[27], x4833[28], x4833[29], x4833[30], x4833[31],
-       x4835[0],  x4835[1],  x4835[2],  x4835[3],  x4835[4],  x4835[5],  x4835[6],  x4835[7],
-       x4835[8],  x4835[9],  x4835[10], x4835[11], x4835[12], x4835[13], x4835[14], x4835[15],
-       x4835[16], x4835[17], x4835[18], x4835[19], x4835[20], x4835[21], x4835[22], x4835[23],
-       x4835[24], x4835[25], x4835[26], x4835[27], x4835[28], x4835[29], x4835[30], x4835[31],
-       x4836[0],  x4836[1],  x4836[2],  x4836[3],  x4836[4],  x4836[5],  x4836[6],  x4836[7],
-       x4836[8],  x4836[9],  x4836[10], x4836[11], x4836[12], x4836[13], x4836[14], x4836[15],
-       x4836[16], x4836[17], x4836[18], x4836[19], x4836[20], x4836[21], x4836[22], x4836[23],
-       x4836[24], x4836[25], x4836[26], x4836[27], x4836[28], x4836[29], x4836[30], x4836[31],
-       x4837[0],  x4837[1],  x4837[2],  x4837[3],  x4837[4],  x4837[5],  x4837[6],  x4837[7],
-       x4837[8],  x4837[9],  x4837[10], x4837[11], x4837[12], x4837[13], x4837[14], x4837[15],
-       x4837[16], x4837[17], x4837[18], x4837[19], x4837[20], x4837[21], x4837[22], x4837[23],
-       x4837[24], x4837[25], x4837[26], x4837[27], x4837[28], x4837[29], x4837[30], x4837[31],
-       x4838[0],  x4838[1],  x4838[2],  x4838[3],  x4838[4],  x4838[5],  x4838[6],  x4838[7],
-       x4838[8],  x4838[9],  x4838[10], x4838[11], x4838[12], x4838[13], x4838[14], x4838[15],
-       x4838[16], x4838[17], x4838[18], x4838[19], x4838[20], x4838[21], x4838[22], x4838[23],
-       x4838[24], x4838[25], x4838[26], x4838[27], x4838[28], x4838[29], x4838[30], x4838[31],
-       x4839[0],  x4839[1],  x4839[2],  x4839[3],  x4839[4],  x4839[5],  x4839[6],  x4839[7],
-       x4839[8],  x4839[9],  x4839[10], x4839[11], x4839[12], x4839[13], x4839[14], x4839[15],
-       x4839[16], x4839[17], x4839[18], x4839[19], x4839[20], x4839[21], x4839[22], x4839[23],
-       x4839[24], x4839[25], x4839[26], x4839[27], x4839[28], x4839[29], x4839[30], x4839[31]},
-      {x4842, x4843, x4844, x4845, x4846, x4847, x4848, x4849, x4850, x4851, x4852, x4853, x4854,
-       x4855, x4856, x4857, x4858, x4859, x4860, x4861, x4862, x4863, x4864, x4865, x4866, x4867,
-       x4868, x4869, x4870, x4871, x4872, x4873, x4874, x4875, x4876, x4877, x4878, x4879, x4880,
-       x4881, x4882, x4883, x4884, x4885, x4886, x4887, x4888, x4889, x4890, x4891, x4892, x4893,
-       x4894, x4895, x4896, x4897, x4898, x4899, x4900, x4901, x4902, x4903, x4904, x4905, x4906,
-       x4907, x4908, x4909, x4910, x4911, x4912, x4913, x4914, x4915, x4916, x4917, x4918, x4919,
-       x4920, x4921, x4922, x4923, x4924, x4925, x4926, x4927, x4928, x4929, x4930, x4931, x4932,
-       x4933, x4934, x4935, x4936, x4937, x4938, x4939, x4940, x4941},
+      ctx,
+      Val800Array{
+          x4811[0],  x4811[1],  x4811[2],  x4811[3],  x4811[4],  x4811[5],  x4811[6],  x4811[7],
+          x4811[8],  x4811[9],  x4811[10], x4811[11], x4811[12], x4811[13], x4811[14], x4811[15],
+          x4811[16], x4811[17], x4811[18], x4811[19], x4811[20], x4811[21], x4811[22], x4811[23],
+          x4811[24], x4811[25], x4811[26], x4811[27], x4811[28], x4811[29], x4811[30], x4811[31],
+          x4812[0],  x4812[1],  x4812[2],  x4812[3],  x4812[4],  x4812[5],  x4812[6],  x4812[7],
+          x4812[8],  x4812[9],  x4812[10], x4812[11], x4812[12], x4812[13], x4812[14], x4812[15],
+          x4812[16], x4812[17], x4812[18], x4812[19], x4812[20], x4812[21], x4812[22], x4812[23],
+          x4812[24], x4812[25], x4812[26], x4812[27], x4812[28], x4812[29], x4812[30], x4812[31],
+          x4813[0],  x4813[1],  x4813[2],  x4813[3],  x4813[4],  x4813[5],  x4813[6],  x4813[7],
+          x4813[8],  x4813[9],  x4813[10], x4813[11], x4813[12], x4813[13], x4813[14], x4813[15],
+          x4813[16], x4813[17], x4813[18], x4813[19], x4813[20], x4813[21], x4813[22], x4813[23],
+          x4813[24], x4813[25], x4813[26], x4813[27], x4813[28], x4813[29], x4813[30], x4813[31],
+          x4814[0],  x4814[1],  x4814[2],  x4814[3],  x4814[4],  x4814[5],  x4814[6],  x4814[7],
+          x4814[8],  x4814[9],  x4814[10], x4814[11], x4814[12], x4814[13], x4814[14], x4814[15],
+          x4814[16], x4814[17], x4814[18], x4814[19], x4814[20], x4814[21], x4814[22], x4814[23],
+          x4814[24], x4814[25], x4814[26], x4814[27], x4814[28], x4814[29], x4814[30], x4814[31],
+          x4815[0],  x4815[1],  x4815[2],  x4815[3],  x4815[4],  x4815[5],  x4815[6],  x4815[7],
+          x4815[8],  x4815[9],  x4815[10], x4815[11], x4815[12], x4815[13], x4815[14], x4815[15],
+          x4815[16], x4815[17], x4815[18], x4815[19], x4815[20], x4815[21], x4815[22], x4815[23],
+          x4815[24], x4815[25], x4815[26], x4815[27], x4815[28], x4815[29], x4815[30], x4815[31],
+          x4817[0],  x4817[1],  x4817[2],  x4817[3],  x4817[4],  x4817[5],  x4817[6],  x4817[7],
+          x4817[8],  x4817[9],  x4817[10], x4817[11], x4817[12], x4817[13], x4817[14], x4817[15],
+          x4817[16], x4817[17], x4817[18], x4817[19], x4817[20], x4817[21], x4817[22], x4817[23],
+          x4817[24], x4817[25], x4817[26], x4817[27], x4817[28], x4817[29], x4817[30], x4817[31],
+          x4818[0],  x4818[1],  x4818[2],  x4818[3],  x4818[4],  x4818[5],  x4818[6],  x4818[7],
+          x4818[8],  x4818[9],  x4818[10], x4818[11], x4818[12], x4818[13], x4818[14], x4818[15],
+          x4818[16], x4818[17], x4818[18], x4818[19], x4818[20], x4818[21], x4818[22], x4818[23],
+          x4818[24], x4818[25], x4818[26], x4818[27], x4818[28], x4818[29], x4818[30], x4818[31],
+          x4819[0],  x4819[1],  x4819[2],  x4819[3],  x4819[4],  x4819[5],  x4819[6],  x4819[7],
+          x4819[8],  x4819[9],  x4819[10], x4819[11], x4819[12], x4819[13], x4819[14], x4819[15],
+          x4819[16], x4819[17], x4819[18], x4819[19], x4819[20], x4819[21], x4819[22], x4819[23],
+          x4819[24], x4819[25], x4819[26], x4819[27], x4819[28], x4819[29], x4819[30], x4819[31],
+          x4820[0],  x4820[1],  x4820[2],  x4820[3],  x4820[4],  x4820[5],  x4820[6],  x4820[7],
+          x4820[8],  x4820[9],  x4820[10], x4820[11], x4820[12], x4820[13], x4820[14], x4820[15],
+          x4820[16], x4820[17], x4820[18], x4820[19], x4820[20], x4820[21], x4820[22], x4820[23],
+          x4820[24], x4820[25], x4820[26], x4820[27], x4820[28], x4820[29], x4820[30], x4820[31],
+          x4821[0],  x4821[1],  x4821[2],  x4821[3],  x4821[4],  x4821[5],  x4821[6],  x4821[7],
+          x4821[8],  x4821[9],  x4821[10], x4821[11], x4821[12], x4821[13], x4821[14], x4821[15],
+          x4821[16], x4821[17], x4821[18], x4821[19], x4821[20], x4821[21], x4821[22], x4821[23],
+          x4821[24], x4821[25], x4821[26], x4821[27], x4821[28], x4821[29], x4821[30], x4821[31],
+          x4823[0],  x4823[1],  x4823[2],  x4823[3],  x4823[4],  x4823[5],  x4823[6],  x4823[7],
+          x4823[8],  x4823[9],  x4823[10], x4823[11], x4823[12], x4823[13], x4823[14], x4823[15],
+          x4823[16], x4823[17], x4823[18], x4823[19], x4823[20], x4823[21], x4823[22], x4823[23],
+          x4823[24], x4823[25], x4823[26], x4823[27], x4823[28], x4823[29], x4823[30], x4823[31],
+          x4824[0],  x4824[1],  x4824[2],  x4824[3],  x4824[4],  x4824[5],  x4824[6],  x4824[7],
+          x4824[8],  x4824[9],  x4824[10], x4824[11], x4824[12], x4824[13], x4824[14], x4824[15],
+          x4824[16], x4824[17], x4824[18], x4824[19], x4824[20], x4824[21], x4824[22], x4824[23],
+          x4824[24], x4824[25], x4824[26], x4824[27], x4824[28], x4824[29], x4824[30], x4824[31],
+          x4825[0],  x4825[1],  x4825[2],  x4825[3],  x4825[4],  x4825[5],  x4825[6],  x4825[7],
+          x4825[8],  x4825[9],  x4825[10], x4825[11], x4825[12], x4825[13], x4825[14], x4825[15],
+          x4825[16], x4825[17], x4825[18], x4825[19], x4825[20], x4825[21], x4825[22], x4825[23],
+          x4825[24], x4825[25], x4825[26], x4825[27], x4825[28], x4825[29], x4825[30], x4825[31],
+          x4826[0],  x4826[1],  x4826[2],  x4826[3],  x4826[4],  x4826[5],  x4826[6],  x4826[7],
+          x4826[8],  x4826[9],  x4826[10], x4826[11], x4826[12], x4826[13], x4826[14], x4826[15],
+          x4826[16], x4826[17], x4826[18], x4826[19], x4826[20], x4826[21], x4826[22], x4826[23],
+          x4826[24], x4826[25], x4826[26], x4826[27], x4826[28], x4826[29], x4826[30], x4826[31],
+          x4827[0],  x4827[1],  x4827[2],  x4827[3],  x4827[4],  x4827[5],  x4827[6],  x4827[7],
+          x4827[8],  x4827[9],  x4827[10], x4827[11], x4827[12], x4827[13], x4827[14], x4827[15],
+          x4827[16], x4827[17], x4827[18], x4827[19], x4827[20], x4827[21], x4827[22], x4827[23],
+          x4827[24], x4827[25], x4827[26], x4827[27], x4827[28], x4827[29], x4827[30], x4827[31],
+          x4829[0],  x4829[1],  x4829[2],  x4829[3],  x4829[4],  x4829[5],  x4829[6],  x4829[7],
+          x4829[8],  x4829[9],  x4829[10], x4829[11], x4829[12], x4829[13], x4829[14], x4829[15],
+          x4829[16], x4829[17], x4829[18], x4829[19], x4829[20], x4829[21], x4829[22], x4829[23],
+          x4829[24], x4829[25], x4829[26], x4829[27], x4829[28], x4829[29], x4829[30], x4829[31],
+          x4830[0],  x4830[1],  x4830[2],  x4830[3],  x4830[4],  x4830[5],  x4830[6],  x4830[7],
+          x4830[8],  x4830[9],  x4830[10], x4830[11], x4830[12], x4830[13], x4830[14], x4830[15],
+          x4830[16], x4830[17], x4830[18], x4830[19], x4830[20], x4830[21], x4830[22], x4830[23],
+          x4830[24], x4830[25], x4830[26], x4830[27], x4830[28], x4830[29], x4830[30], x4830[31],
+          x4831[0],  x4831[1],  x4831[2],  x4831[3],  x4831[4],  x4831[5],  x4831[6],  x4831[7],
+          x4831[8],  x4831[9],  x4831[10], x4831[11], x4831[12], x4831[13], x4831[14], x4831[15],
+          x4831[16], x4831[17], x4831[18], x4831[19], x4831[20], x4831[21], x4831[22], x4831[23],
+          x4831[24], x4831[25], x4831[26], x4831[27], x4831[28], x4831[29], x4831[30], x4831[31],
+          x4832[0],  x4832[1],  x4832[2],  x4832[3],  x4832[4],  x4832[5],  x4832[6],  x4832[7],
+          x4832[8],  x4832[9],  x4832[10], x4832[11], x4832[12], x4832[13], x4832[14], x4832[15],
+          x4832[16], x4832[17], x4832[18], x4832[19], x4832[20], x4832[21], x4832[22], x4832[23],
+          x4832[24], x4832[25], x4832[26], x4832[27], x4832[28], x4832[29], x4832[30], x4832[31],
+          x4833[0],  x4833[1],  x4833[2],  x4833[3],  x4833[4],  x4833[5],  x4833[6],  x4833[7],
+          x4833[8],  x4833[9],  x4833[10], x4833[11], x4833[12], x4833[13], x4833[14], x4833[15],
+          x4833[16], x4833[17], x4833[18], x4833[19], x4833[20], x4833[21], x4833[22], x4833[23],
+          x4833[24], x4833[25], x4833[26], x4833[27], x4833[28], x4833[29], x4833[30], x4833[31],
+          x4835[0],  x4835[1],  x4835[2],  x4835[3],  x4835[4],  x4835[5],  x4835[6],  x4835[7],
+          x4835[8],  x4835[9],  x4835[10], x4835[11], x4835[12], x4835[13], x4835[14], x4835[15],
+          x4835[16], x4835[17], x4835[18], x4835[19], x4835[20], x4835[21], x4835[22], x4835[23],
+          x4835[24], x4835[25], x4835[26], x4835[27], x4835[28], x4835[29], x4835[30], x4835[31],
+          x4836[0],  x4836[1],  x4836[2],  x4836[3],  x4836[4],  x4836[5],  x4836[6],  x4836[7],
+          x4836[8],  x4836[9],  x4836[10], x4836[11], x4836[12], x4836[13], x4836[14], x4836[15],
+          x4836[16], x4836[17], x4836[18], x4836[19], x4836[20], x4836[21], x4836[22], x4836[23],
+          x4836[24], x4836[25], x4836[26], x4836[27], x4836[28], x4836[29], x4836[30], x4836[31],
+          x4837[0],  x4837[1],  x4837[2],  x4837[3],  x4837[4],  x4837[5],  x4837[6],  x4837[7],
+          x4837[8],  x4837[9],  x4837[10], x4837[11], x4837[12], x4837[13], x4837[14], x4837[15],
+          x4837[16], x4837[17], x4837[18], x4837[19], x4837[20], x4837[21], x4837[22], x4837[23],
+          x4837[24], x4837[25], x4837[26], x4837[27], x4837[28], x4837[29], x4837[30], x4837[31],
+          x4838[0],  x4838[1],  x4838[2],  x4838[3],  x4838[4],  x4838[5],  x4838[6],  x4838[7],
+          x4838[8],  x4838[9],  x4838[10], x4838[11], x4838[12], x4838[13], x4838[14], x4838[15],
+          x4838[16], x4838[17], x4838[18], x4838[19], x4838[20], x4838[21], x4838[22], x4838[23],
+          x4838[24], x4838[25], x4838[26], x4838[27], x4838[28], x4838[29], x4838[30], x4838[31],
+          x4839[0],  x4839[1],  x4839[2],  x4839[3],  x4839[4],  x4839[5],  x4839[6],  x4839[7],
+          x4839[8],  x4839[9],  x4839[10], x4839[11], x4839[12], x4839[13], x4839[14], x4839[15],
+          x4839[16], x4839[17], x4839[18], x4839[19], x4839[20], x4839[21], x4839[22], x4839[23],
+          x4839[24], x4839[25], x4839[26], x4839[27], x4839[28], x4839[29], x4839[30], x4839[31]},
+      Val100Array{
+          x4842, x4843, x4844, x4845, x4846, x4847, x4848, x4849, x4850, x4851, x4852, x4853, x4854,
+          x4855, x4856, x4857, x4858, x4859, x4860, x4861, x4862, x4863, x4864, x4865, x4866, x4867,
+          x4868, x4869, x4870, x4871, x4872, x4873, x4874, x4875, x4876, x4877, x4878, x4879, x4880,
+          x4881, x4882, x4883, x4884, x4885, x4886, x4887, x4888, x4889, x4890, x4891, x4892, x4893,
+          x4894, x4895, x4896, x4897, x4898, x4899, x4900, x4901, x4902, x4903, x4904, x4905, x4906,
+          x4907, x4908, x4909, x4910, x4911, x4912, x4913, x4914, x4915, x4916, x4917, x4918, x4919,
+          x4920, x4921, x4922, x4923, x4924, x4925, x4926, x4927, x4928, x4929, x4930, x4931, x4932,
+          x4933, x4934, x4935, x4936, x4937, x4938, x4939, x4940, x4941},
       x4942,
       LAYOUT_LOOKUP(layout4, _super));
   return x4943;
 }
-TopStateStruct exec_KeccakRound34_1_(TopStateStruct arg0,
-                                     TopStateStruct arg1,
-                                     TopStateStruct arg2,
-                                     Val arg3,
-                                     BoundLayout<KeccakRound34_1_Layout> layout4) {
+__device__ TopStateStruct exec_KeccakRound34_1_(ExecContext& ctx,
+                                                TopStateStruct arg0,
+                                                TopStateStruct arg1,
+                                                TopStateStruct arg2,
+                                                Val arg3,
+                                                BoundLayout<KeccakRound34_1_Layout> layout4) {
   // Log(<preamble>:22)
   // KeccakRound34(zirgen/circuit/keccak2/top.zir:115)
-  INVOKE_EXTERN(ctx, log, "KeccakRound34", {arg3});
+  INVOKE_EXTERN(ctx, log, "KeccakRound34", std::initializer_list<Val>{arg3});
   // KeccakRound34(zirgen/circuit/keccak2/top.zir:114)
   TopStateBitsStruct800Array x5 = arg0.bits;
   TopStateBitsStruct800Array x6 = arg1.bits;
@@ -34961,133 +35146,163 @@ TopStateStruct exec_KeccakRound34_1_(TopStateStruct arg0,
   Val x4805 = ((Val(1) - x1478) * x1510);
   // BitXor(zirgen/circuit/keccak2/bits.zir:32)
   Val x4806 = ((x1606 + x4805) - ((x1606 * Val(2)) * x4805));
-  Val64Array5Array5Array x4807 = {
-      {{x1608, x1610, x1612, x1614, x1616, x1618, x1620, x1622, x1624, x1626, x1628, x1630, x1632,
-        x1634, x1636, x1638, x1640, x1642, x1644, x1646, x1648, x1650, x1652, x1654, x1656, x1658,
-        x1660, x1662, x1664, x1666, x1668, x1670, x1672, x1674, x1676, x1678, x1680, x1682, x1684,
-        x1686, x1688, x1690, x1692, x1694, x1696, x1698, x1700, x1702, x1704, x1706, x1708, x1710,
-        x1712, x1714, x1716, x1718, x1720, x1722, x1724, x1726, x1728, x1730, x1732, x1734},
-       {x1736, x1738, x1740, x1742, x1744, x1746, x1748, x1750, x1752, x1754, x1756, x1758, x1760,
-        x1762, x1764, x1766, x1768, x1770, x1772, x1774, x1776, x1778, x1780, x1782, x1784, x1786,
-        x1788, x1790, x1792, x1794, x1796, x1798, x1800, x1802, x1804, x1806, x1808, x1810, x1812,
-        x1814, x1816, x1818, x1820, x1822, x1824, x1826, x1828, x1830, x1832, x1834, x1836, x1838,
-        x1840, x1842, x1844, x1846, x1848, x1850, x1852, x1854, x1856, x1858, x1860, x1862},
-       {x1864, x1866, x1868, x1870, x1872, x1874, x1876, x1878, x1880, x1882, x1884, x1886, x1888,
-        x1890, x1892, x1894, x1896, x1898, x1900, x1902, x1904, x1906, x1908, x1910, x1912, x1914,
-        x1916, x1918, x1920, x1922, x1924, x1926, x1928, x1930, x1932, x1934, x1936, x1938, x1940,
-        x1942, x1944, x1946, x1948, x1950, x1952, x1954, x1956, x1958, x1960, x1962, x1964, x1966,
-        x1968, x1970, x1972, x1974, x1976, x1978, x1980, x1982, x1984, x1986, x1988, x1990},
-       {x1992, x1994, x1996, x1998, x2000, x2002, x2004, x2006, x2008, x2010, x2012, x2014, x2016,
-        x2018, x2020, x2022, x2024, x2026, x2028, x2030, x2032, x2034, x2036, x2038, x2040, x2042,
-        x2044, x2046, x2048, x2050, x2052, x2054, x2056, x2058, x2060, x2062, x2064, x2066, x2068,
-        x2070, x2072, x2074, x2076, x2078, x2080, x2082, x2084, x2086, x2088, x2090, x2092, x2094,
-        x2096, x2098, x2100, x2102, x2104, x2106, x2108, x2110, x2112, x2114, x2116, x2118},
-       {x2120, x2122, x2124, x2126, x2128, x2130, x2132, x2134, x2136, x2138, x2140, x2142, x2144,
-        x2146, x2148, x2150, x2152, x2154, x2156, x2158, x2160, x2162, x2164, x2166, x2168, x2170,
-        x2172, x2174, x2176, x2178, x2180, x2182, x2184, x2186, x2188, x2190, x2192, x2194, x2196,
-        x2198, x2200, x2202, x2204, x2206, x2208, x2210, x2212, x2214, x2216, x2218, x2220, x2222,
-        x2224, x2226, x2228, x2230, x2232, x2234, x2236, x2238, x2240, x2242, x2244, x2246}},
-      {{x2248, x2250, x2252, x2254, x2256, x2258, x2260, x2262, x2264, x2266, x2268, x2270, x2272,
-        x2274, x2276, x2278, x2280, x2282, x2284, x2286, x2288, x2290, x2292, x2294, x2296, x2298,
-        x2300, x2302, x2304, x2306, x2308, x2310, x2312, x2314, x2316, x2318, x2320, x2322, x2324,
-        x2326, x2328, x2330, x2332, x2334, x2336, x2338, x2340, x2342, x2344, x2346, x2348, x2350,
-        x2352, x2354, x2356, x2358, x2360, x2362, x2364, x2366, x2368, x2370, x2372, x2374},
-       {x2376, x2378, x2380, x2382, x2384, x2386, x2388, x2390, x2392, x2394, x2396, x2398, x2400,
-        x2402, x2404, x2406, x2408, x2410, x2412, x2414, x2416, x2418, x2420, x2422, x2424, x2426,
-        x2428, x2430, x2432, x2434, x2436, x2438, x2440, x2442, x2444, x2446, x2448, x2450, x2452,
-        x2454, x2456, x2458, x2460, x2462, x2464, x2466, x2468, x2470, x2472, x2474, x2476, x2478,
-        x2480, x2482, x2484, x2486, x2488, x2490, x2492, x2494, x2496, x2498, x2500, x2502},
-       {x2504, x2506, x2508, x2510, x2512, x2514, x2516, x2518, x2520, x2522, x2524, x2526, x2528,
-        x2530, x2532, x2534, x2536, x2538, x2540, x2542, x2544, x2546, x2548, x2550, x2552, x2554,
-        x2556, x2558, x2560, x2562, x2564, x2566, x2568, x2570, x2572, x2574, x2576, x2578, x2580,
-        x2582, x2584, x2586, x2588, x2590, x2592, x2594, x2596, x2598, x2600, x2602, x2604, x2606,
-        x2608, x2610, x2612, x2614, x2616, x2618, x2620, x2622, x2624, x2626, x2628, x2630},
-       {x2632, x2634, x2636, x2638, x2640, x2642, x2644, x2646, x2648, x2650, x2652, x2654, x2656,
-        x2658, x2660, x2662, x2664, x2666, x2668, x2670, x2672, x2674, x2676, x2678, x2680, x2682,
-        x2684, x2686, x2688, x2690, x2692, x2694, x2696, x2698, x2700, x2702, x2704, x2706, x2708,
-        x2710, x2712, x2714, x2716, x2718, x2720, x2722, x2724, x2726, x2728, x2730, x2732, x2734,
-        x2736, x2738, x2740, x2742, x2744, x2746, x2748, x2750, x2752, x2754, x2756, x2758},
-       {x2760, x2762, x2764, x2766, x2768, x2770, x2772, x2774, x2776, x2778, x2780, x2782, x2784,
-        x2786, x2788, x2790, x2792, x2794, x2796, x2798, x2800, x2802, x2804, x2806, x2808, x2810,
-        x2812, x2814, x2816, x2818, x2820, x2822, x2824, x2826, x2828, x2830, x2832, x2834, x2836,
-        x2838, x2840, x2842, x2844, x2846, x2848, x2850, x2852, x2854, x2856, x2858, x2860, x2862,
-        x2864, x2866, x2868, x2870, x2872, x2874, x2876, x2878, x2880, x2882, x2884, x2886}},
-      {{x2888, x2890, x2892, x2894, x2896, x2898, x2900, x2902, x2904, x2906, x2908, x2910, x2912,
-        x2914, x2916, x2918, x2920, x2922, x2924, x2926, x2928, x2930, x2932, x2934, x2936, x2938,
-        x2940, x2942, x2944, x2946, x2948, x2950, x2952, x2954, x2956, x2958, x2960, x2962, x2964,
-        x2966, x2968, x2970, x2972, x2974, x2976, x2978, x2980, x2982, x2984, x2986, x2988, x2990,
-        x2992, x2994, x2996, x2998, x3000, x3002, x3004, x3006, x3008, x3010, x3012, x3014},
-       {x3016, x3018, x3020, x3022, x3024, x3026, x3028, x3030, x3032, x3034, x3036, x3038, x3040,
-        x3042, x3044, x3046, x3048, x3050, x3052, x3054, x3056, x3058, x3060, x3062, x3064, x3066,
-        x3068, x3070, x3072, x3074, x3076, x3078, x3080, x3082, x3084, x3086, x3088, x3090, x3092,
-        x3094, x3096, x3098, x3100, x3102, x3104, x3106, x3108, x3110, x3112, x3114, x3116, x3118,
-        x3120, x3122, x3124, x3126, x3128, x3130, x3132, x3134, x3136, x3138, x3140, x3142},
-       {x3144, x3146, x3148, x3150, x3152, x3154, x3156, x3158, x3160, x3162, x3164, x3166, x3168,
-        x3170, x3172, x3174, x3176, x3178, x3180, x3182, x3184, x3186, x3188, x3190, x3192, x3194,
-        x3196, x3198, x3200, x3202, x3204, x3206, x3208, x3210, x3212, x3214, x3216, x3218, x3220,
-        x3222, x3224, x3226, x3228, x3230, x3232, x3234, x3236, x3238, x3240, x3242, x3244, x3246,
-        x3248, x3250, x3252, x3254, x3256, x3258, x3260, x3262, x3264, x3266, x3268, x3270},
-       {x3272, x3274, x3276, x3278, x3280, x3282, x3284, x3286, x3288, x3290, x3292, x3294, x3296,
-        x3298, x3300, x3302, x3304, x3306, x3308, x3310, x3312, x3314, x3316, x3318, x3320, x3322,
-        x3324, x3326, x3328, x3330, x3332, x3334, x3336, x3338, x3340, x3342, x3344, x3346, x3348,
-        x3350, x3352, x3354, x3356, x3358, x3360, x3362, x3364, x3366, x3368, x3370, x3372, x3374,
-        x3376, x3378, x3380, x3382, x3384, x3386, x3388, x3390, x3392, x3394, x3396, x3398},
-       {x3400, x3402, x3404, x3406, x3408, x3410, x3412, x3414, x3416, x3418, x3420, x3422, x3424,
-        x3426, x3428, x3430, x3432, x3434, x3436, x3438, x3440, x3442, x3444, x3446, x3448, x3450,
-        x3452, x3454, x3456, x3458, x3460, x3462, x3464, x3466, x3468, x3470, x3472, x3474, x3476,
-        x3478, x3480, x3482, x3484, x3486, x3488, x3490, x3492, x3494, x3496, x3498, x3500, x3502,
-        x3504, x3506, x3508, x3510, x3512, x3514, x3516, x3518, x3520, x3522, x3524, x3526}},
-      {{x3528, x3530, x3532, x3534, x3536, x3538, x3540, x3542, x3544, x3546, x3548, x3550, x3552,
-        x3554, x3556, x3558, x3560, x3562, x3564, x3566, x3568, x3570, x3572, x3574, x3576, x3578,
-        x3580, x3582, x3584, x3586, x3588, x3590, x3592, x3594, x3596, x3598, x3600, x3602, x3604,
-        x3606, x3608, x3610, x3612, x3614, x3616, x3618, x3620, x3622, x3624, x3626, x3628, x3630,
-        x3632, x3634, x3636, x3638, x3640, x3642, x3644, x3646, x3648, x3650, x3652, x3654},
-       {x3656, x3658, x3660, x3662, x3664, x3666, x3668, x3670, x3672, x3674, x3676, x3678, x3680,
-        x3682, x3684, x3686, x3688, x3690, x3692, x3694, x3696, x3698, x3700, x3702, x3704, x3706,
-        x3708, x3710, x3712, x3714, x3716, x3718, x3720, x3722, x3724, x3726, x3728, x3730, x3732,
-        x3734, x3736, x3738, x3740, x3742, x3744, x3746, x3748, x3750, x3752, x3754, x3756, x3758,
-        x3760, x3762, x3764, x3766, x3768, x3770, x3772, x3774, x3776, x3778, x3780, x3782},
-       {x3784, x3786, x3788, x3790, x3792, x3794, x3796, x3798, x3800, x3802, x3804, x3806, x3808,
-        x3810, x3812, x3814, x3816, x3818, x3820, x3822, x3824, x3826, x3828, x3830, x3832, x3834,
-        x3836, x3838, x3840, x3842, x3844, x3846, x3848, x3850, x3852, x3854, x3856, x3858, x3860,
-        x3862, x3864, x3866, x3868, x3870, x3872, x3874, x3876, x3878, x3880, x3882, x3884, x3886,
-        x3888, x3890, x3892, x3894, x3896, x3898, x3900, x3902, x3904, x3906, x3908, x3910},
-       {x3912, x3914, x3916, x3918, x3920, x3922, x3924, x3926, x3928, x3930, x3932, x3934, x3936,
-        x3938, x3940, x3942, x3944, x3946, x3948, x3950, x3952, x3954, x3956, x3958, x3960, x3962,
-        x3964, x3966, x3968, x3970, x3972, x3974, x3976, x3978, x3980, x3982, x3984, x3986, x3988,
-        x3990, x3992, x3994, x3996, x3998, x4000, x4002, x4004, x4006, x4008, x4010, x4012, x4014,
-        x4016, x4018, x4020, x4022, x4024, x4026, x4028, x4030, x4032, x4034, x4036, x4038},
-       {x4040, x4042, x4044, x4046, x4048, x4050, x4052, x4054, x4056, x4058, x4060, x4062, x4064,
-        x4066, x4068, x4070, x4072, x4074, x4076, x4078, x4080, x4082, x4084, x4086, x4088, x4090,
-        x4092, x4094, x4096, x4098, x4100, x4102, x4104, x4106, x4108, x4110, x4112, x4114, x4116,
-        x4118, x4120, x4122, x4124, x4126, x4128, x4130, x4132, x4134, x4136, x4138, x4140, x4142,
-        x4144, x4146, x4148, x4150, x4152, x4154, x4156, x4158, x4160, x4162, x4164, x4166}},
-      {{x4168, x4170, x4172, x4174, x4176, x4178, x4180, x4182, x4184, x4186, x4188, x4190, x4192,
-        x4194, x4196, x4198, x4200, x4202, x4204, x4206, x4208, x4210, x4212, x4214, x4216, x4218,
-        x4220, x4222, x4224, x4226, x4228, x4230, x4232, x4234, x4236, x4238, x4240, x4242, x4244,
-        x4246, x4248, x4250, x4252, x4254, x4256, x4258, x4260, x4262, x4264, x4266, x4268, x4270,
-        x4272, x4274, x4276, x4278, x4280, x4282, x4284, x4286, x4288, x4290, x4292, x4294},
-       {x4296, x4298, x4300, x4302, x4304, x4306, x4308, x4310, x4312, x4314, x4316, x4318, x4320,
-        x4322, x4324, x4326, x4328, x4330, x4332, x4334, x4336, x4338, x4340, x4342, x4344, x4346,
-        x4348, x4350, x4352, x4354, x4356, x4358, x4360, x4362, x4364, x4366, x4368, x4370, x4372,
-        x4374, x4376, x4378, x4380, x4382, x4384, x4386, x4388, x4390, x4392, x4394, x4396, x4398,
-        x4400, x4402, x4404, x4406, x4408, x4410, x4412, x4414, x4416, x4418, x4420, x4422},
-       {x4424, x4426, x4428, x4430, x4432, x4434, x4436, x4438, x4440, x4442, x4444, x4446, x4448,
-        x4450, x4452, x4454, x4456, x4458, x4460, x4462, x4464, x4466, x4468, x4470, x4472, x4474,
-        x4476, x4478, x4480, x4482, x4484, x4486, x4488, x4490, x4492, x4494, x4496, x4498, x4500,
-        x4502, x4504, x4506, x4508, x4510, x4512, x4514, x4516, x4518, x4520, x4522, x4524, x4526,
-        x4528, x4530, x4532, x4534, x4536, x4538, x4540, x4542, x4544, x4546, x4548, x4550},
-       {x4552, x4554, x4556, x4558, x4560, x4562, x4564, x4566, x4568, x4570, x4572, x4574, x4576,
-        x4578, x4580, x4582, x4584, x4586, x4588, x4590, x4592, x4594, x4596, x4598, x4600, x4602,
-        x4604, x4606, x4608, x4610, x4612, x4614, x4616, x4618, x4620, x4622, x4624, x4626, x4628,
-        x4630, x4632, x4634, x4636, x4638, x4640, x4642, x4644, x4646, x4648, x4650, x4652, x4654,
-        x4656, x4658, x4660, x4662, x4664, x4666, x4668, x4670, x4672, x4674, x4676, x4678},
-       {x4680, x4682, x4684, x4686, x4688, x4690, x4692, x4694, x4696, x4698, x4700, x4702, x4704,
-        x4706, x4708, x4710, x4712, x4714, x4716, x4718, x4720, x4722, x4724, x4726, x4728, x4730,
-        x4732, x4734, x4736, x4738, x4740, x4742, x4744, x4746, x4748, x4750, x4752, x4754, x4756,
-        x4758, x4760, x4762, x4764, x4766, x4768, x4770, x4772, x4774, x4776, x4778, x4780, x4782,
-        x4784, x4786, x4788, x4790, x4792, x4794, x4796, x4798, x4800, x4802, x4804, x4806}}};
-  IotaStruct x4808 = exec_Iota(x4807, arg3, LAYOUT_LOOKUP(layout4, _0));
+  Val64Array5Array5Array x4807 = Val64Array5Array5Array{
+      Val64Array5Array{
+          Val64Array{x1608, x1610, x1612, x1614, x1616, x1618, x1620, x1622, x1624, x1626, x1628,
+                     x1630, x1632, x1634, x1636, x1638, x1640, x1642, x1644, x1646, x1648, x1650,
+                     x1652, x1654, x1656, x1658, x1660, x1662, x1664, x1666, x1668, x1670, x1672,
+                     x1674, x1676, x1678, x1680, x1682, x1684, x1686, x1688, x1690, x1692, x1694,
+                     x1696, x1698, x1700, x1702, x1704, x1706, x1708, x1710, x1712, x1714, x1716,
+                     x1718, x1720, x1722, x1724, x1726, x1728, x1730, x1732, x1734},
+          Val64Array{x1736, x1738, x1740, x1742, x1744, x1746, x1748, x1750, x1752, x1754, x1756,
+                     x1758, x1760, x1762, x1764, x1766, x1768, x1770, x1772, x1774, x1776, x1778,
+                     x1780, x1782, x1784, x1786, x1788, x1790, x1792, x1794, x1796, x1798, x1800,
+                     x1802, x1804, x1806, x1808, x1810, x1812, x1814, x1816, x1818, x1820, x1822,
+                     x1824, x1826, x1828, x1830, x1832, x1834, x1836, x1838, x1840, x1842, x1844,
+                     x1846, x1848, x1850, x1852, x1854, x1856, x1858, x1860, x1862},
+          Val64Array{x1864, x1866, x1868, x1870, x1872, x1874, x1876, x1878, x1880, x1882, x1884,
+                     x1886, x1888, x1890, x1892, x1894, x1896, x1898, x1900, x1902, x1904, x1906,
+                     x1908, x1910, x1912, x1914, x1916, x1918, x1920, x1922, x1924, x1926, x1928,
+                     x1930, x1932, x1934, x1936, x1938, x1940, x1942, x1944, x1946, x1948, x1950,
+                     x1952, x1954, x1956, x1958, x1960, x1962, x1964, x1966, x1968, x1970, x1972,
+                     x1974, x1976, x1978, x1980, x1982, x1984, x1986, x1988, x1990},
+          Val64Array{x1992, x1994, x1996, x1998, x2000, x2002, x2004, x2006, x2008, x2010, x2012,
+                     x2014, x2016, x2018, x2020, x2022, x2024, x2026, x2028, x2030, x2032, x2034,
+                     x2036, x2038, x2040, x2042, x2044, x2046, x2048, x2050, x2052, x2054, x2056,
+                     x2058, x2060, x2062, x2064, x2066, x2068, x2070, x2072, x2074, x2076, x2078,
+                     x2080, x2082, x2084, x2086, x2088, x2090, x2092, x2094, x2096, x2098, x2100,
+                     x2102, x2104, x2106, x2108, x2110, x2112, x2114, x2116, x2118},
+          Val64Array{x2120, x2122, x2124, x2126, x2128, x2130, x2132, x2134, x2136, x2138, x2140,
+                     x2142, x2144, x2146, x2148, x2150, x2152, x2154, x2156, x2158, x2160, x2162,
+                     x2164, x2166, x2168, x2170, x2172, x2174, x2176, x2178, x2180, x2182, x2184,
+                     x2186, x2188, x2190, x2192, x2194, x2196, x2198, x2200, x2202, x2204, x2206,
+                     x2208, x2210, x2212, x2214, x2216, x2218, x2220, x2222, x2224, x2226, x2228,
+                     x2230, x2232, x2234, x2236, x2238, x2240, x2242, x2244, x2246}},
+      Val64Array5Array{
+          Val64Array{x2248, x2250, x2252, x2254, x2256, x2258, x2260, x2262, x2264, x2266, x2268,
+                     x2270, x2272, x2274, x2276, x2278, x2280, x2282, x2284, x2286, x2288, x2290,
+                     x2292, x2294, x2296, x2298, x2300, x2302, x2304, x2306, x2308, x2310, x2312,
+                     x2314, x2316, x2318, x2320, x2322, x2324, x2326, x2328, x2330, x2332, x2334,
+                     x2336, x2338, x2340, x2342, x2344, x2346, x2348, x2350, x2352, x2354, x2356,
+                     x2358, x2360, x2362, x2364, x2366, x2368, x2370, x2372, x2374},
+          Val64Array{x2376, x2378, x2380, x2382, x2384, x2386, x2388, x2390, x2392, x2394, x2396,
+                     x2398, x2400, x2402, x2404, x2406, x2408, x2410, x2412, x2414, x2416, x2418,
+                     x2420, x2422, x2424, x2426, x2428, x2430, x2432, x2434, x2436, x2438, x2440,
+                     x2442, x2444, x2446, x2448, x2450, x2452, x2454, x2456, x2458, x2460, x2462,
+                     x2464, x2466, x2468, x2470, x2472, x2474, x2476, x2478, x2480, x2482, x2484,
+                     x2486, x2488, x2490, x2492, x2494, x2496, x2498, x2500, x2502},
+          Val64Array{x2504, x2506, x2508, x2510, x2512, x2514, x2516, x2518, x2520, x2522, x2524,
+                     x2526, x2528, x2530, x2532, x2534, x2536, x2538, x2540, x2542, x2544, x2546,
+                     x2548, x2550, x2552, x2554, x2556, x2558, x2560, x2562, x2564, x2566, x2568,
+                     x2570, x2572, x2574, x2576, x2578, x2580, x2582, x2584, x2586, x2588, x2590,
+                     x2592, x2594, x2596, x2598, x2600, x2602, x2604, x2606, x2608, x2610, x2612,
+                     x2614, x2616, x2618, x2620, x2622, x2624, x2626, x2628, x2630},
+          Val64Array{x2632, x2634, x2636, x2638, x2640, x2642, x2644, x2646, x2648, x2650, x2652,
+                     x2654, x2656, x2658, x2660, x2662, x2664, x2666, x2668, x2670, x2672, x2674,
+                     x2676, x2678, x2680, x2682, x2684, x2686, x2688, x2690, x2692, x2694, x2696,
+                     x2698, x2700, x2702, x2704, x2706, x2708, x2710, x2712, x2714, x2716, x2718,
+                     x2720, x2722, x2724, x2726, x2728, x2730, x2732, x2734, x2736, x2738, x2740,
+                     x2742, x2744, x2746, x2748, x2750, x2752, x2754, x2756, x2758},
+          Val64Array{x2760, x2762, x2764, x2766, x2768, x2770, x2772, x2774, x2776, x2778, x2780,
+                     x2782, x2784, x2786, x2788, x2790, x2792, x2794, x2796, x2798, x2800, x2802,
+                     x2804, x2806, x2808, x2810, x2812, x2814, x2816, x2818, x2820, x2822, x2824,
+                     x2826, x2828, x2830, x2832, x2834, x2836, x2838, x2840, x2842, x2844, x2846,
+                     x2848, x2850, x2852, x2854, x2856, x2858, x2860, x2862, x2864, x2866, x2868,
+                     x2870, x2872, x2874, x2876, x2878, x2880, x2882, x2884, x2886}},
+      Val64Array5Array{
+          Val64Array{x2888, x2890, x2892, x2894, x2896, x2898, x2900, x2902, x2904, x2906, x2908,
+                     x2910, x2912, x2914, x2916, x2918, x2920, x2922, x2924, x2926, x2928, x2930,
+                     x2932, x2934, x2936, x2938, x2940, x2942, x2944, x2946, x2948, x2950, x2952,
+                     x2954, x2956, x2958, x2960, x2962, x2964, x2966, x2968, x2970, x2972, x2974,
+                     x2976, x2978, x2980, x2982, x2984, x2986, x2988, x2990, x2992, x2994, x2996,
+                     x2998, x3000, x3002, x3004, x3006, x3008, x3010, x3012, x3014},
+          Val64Array{x3016, x3018, x3020, x3022, x3024, x3026, x3028, x3030, x3032, x3034, x3036,
+                     x3038, x3040, x3042, x3044, x3046, x3048, x3050, x3052, x3054, x3056, x3058,
+                     x3060, x3062, x3064, x3066, x3068, x3070, x3072, x3074, x3076, x3078, x3080,
+                     x3082, x3084, x3086, x3088, x3090, x3092, x3094, x3096, x3098, x3100, x3102,
+                     x3104, x3106, x3108, x3110, x3112, x3114, x3116, x3118, x3120, x3122, x3124,
+                     x3126, x3128, x3130, x3132, x3134, x3136, x3138, x3140, x3142},
+          Val64Array{x3144, x3146, x3148, x3150, x3152, x3154, x3156, x3158, x3160, x3162, x3164,
+                     x3166, x3168, x3170, x3172, x3174, x3176, x3178, x3180, x3182, x3184, x3186,
+                     x3188, x3190, x3192, x3194, x3196, x3198, x3200, x3202, x3204, x3206, x3208,
+                     x3210, x3212, x3214, x3216, x3218, x3220, x3222, x3224, x3226, x3228, x3230,
+                     x3232, x3234, x3236, x3238, x3240, x3242, x3244, x3246, x3248, x3250, x3252,
+                     x3254, x3256, x3258, x3260, x3262, x3264, x3266, x3268, x3270},
+          Val64Array{x3272, x3274, x3276, x3278, x3280, x3282, x3284, x3286, x3288, x3290, x3292,
+                     x3294, x3296, x3298, x3300, x3302, x3304, x3306, x3308, x3310, x3312, x3314,
+                     x3316, x3318, x3320, x3322, x3324, x3326, x3328, x3330, x3332, x3334, x3336,
+                     x3338, x3340, x3342, x3344, x3346, x3348, x3350, x3352, x3354, x3356, x3358,
+                     x3360, x3362, x3364, x3366, x3368, x3370, x3372, x3374, x3376, x3378, x3380,
+                     x3382, x3384, x3386, x3388, x3390, x3392, x3394, x3396, x3398},
+          Val64Array{x3400, x3402, x3404, x3406, x3408, x3410, x3412, x3414, x3416, x3418, x3420,
+                     x3422, x3424, x3426, x3428, x3430, x3432, x3434, x3436, x3438, x3440, x3442,
+                     x3444, x3446, x3448, x3450, x3452, x3454, x3456, x3458, x3460, x3462, x3464,
+                     x3466, x3468, x3470, x3472, x3474, x3476, x3478, x3480, x3482, x3484, x3486,
+                     x3488, x3490, x3492, x3494, x3496, x3498, x3500, x3502, x3504, x3506, x3508,
+                     x3510, x3512, x3514, x3516, x3518, x3520, x3522, x3524, x3526}},
+      Val64Array5Array{
+          Val64Array{x3528, x3530, x3532, x3534, x3536, x3538, x3540, x3542, x3544, x3546, x3548,
+                     x3550, x3552, x3554, x3556, x3558, x3560, x3562, x3564, x3566, x3568, x3570,
+                     x3572, x3574, x3576, x3578, x3580, x3582, x3584, x3586, x3588, x3590, x3592,
+                     x3594, x3596, x3598, x3600, x3602, x3604, x3606, x3608, x3610, x3612, x3614,
+                     x3616, x3618, x3620, x3622, x3624, x3626, x3628, x3630, x3632, x3634, x3636,
+                     x3638, x3640, x3642, x3644, x3646, x3648, x3650, x3652, x3654},
+          Val64Array{x3656, x3658, x3660, x3662, x3664, x3666, x3668, x3670, x3672, x3674, x3676,
+                     x3678, x3680, x3682, x3684, x3686, x3688, x3690, x3692, x3694, x3696, x3698,
+                     x3700, x3702, x3704, x3706, x3708, x3710, x3712, x3714, x3716, x3718, x3720,
+                     x3722, x3724, x3726, x3728, x3730, x3732, x3734, x3736, x3738, x3740, x3742,
+                     x3744, x3746, x3748, x3750, x3752, x3754, x3756, x3758, x3760, x3762, x3764,
+                     x3766, x3768, x3770, x3772, x3774, x3776, x3778, x3780, x3782},
+          Val64Array{x3784, x3786, x3788, x3790, x3792, x3794, x3796, x3798, x3800, x3802, x3804,
+                     x3806, x3808, x3810, x3812, x3814, x3816, x3818, x3820, x3822, x3824, x3826,
+                     x3828, x3830, x3832, x3834, x3836, x3838, x3840, x3842, x3844, x3846, x3848,
+                     x3850, x3852, x3854, x3856, x3858, x3860, x3862, x3864, x3866, x3868, x3870,
+                     x3872, x3874, x3876, x3878, x3880, x3882, x3884, x3886, x3888, x3890, x3892,
+                     x3894, x3896, x3898, x3900, x3902, x3904, x3906, x3908, x3910},
+          Val64Array{x3912, x3914, x3916, x3918, x3920, x3922, x3924, x3926, x3928, x3930, x3932,
+                     x3934, x3936, x3938, x3940, x3942, x3944, x3946, x3948, x3950, x3952, x3954,
+                     x3956, x3958, x3960, x3962, x3964, x3966, x3968, x3970, x3972, x3974, x3976,
+                     x3978, x3980, x3982, x3984, x3986, x3988, x3990, x3992, x3994, x3996, x3998,
+                     x4000, x4002, x4004, x4006, x4008, x4010, x4012, x4014, x4016, x4018, x4020,
+                     x4022, x4024, x4026, x4028, x4030, x4032, x4034, x4036, x4038},
+          Val64Array{x4040, x4042, x4044, x4046, x4048, x4050, x4052, x4054, x4056, x4058, x4060,
+                     x4062, x4064, x4066, x4068, x4070, x4072, x4074, x4076, x4078, x4080, x4082,
+                     x4084, x4086, x4088, x4090, x4092, x4094, x4096, x4098, x4100, x4102, x4104,
+                     x4106, x4108, x4110, x4112, x4114, x4116, x4118, x4120, x4122, x4124, x4126,
+                     x4128, x4130, x4132, x4134, x4136, x4138, x4140, x4142, x4144, x4146, x4148,
+                     x4150, x4152, x4154, x4156, x4158, x4160, x4162, x4164, x4166}},
+      Val64Array5Array{
+          Val64Array{x4168, x4170, x4172, x4174, x4176, x4178, x4180, x4182, x4184, x4186, x4188,
+                     x4190, x4192, x4194, x4196, x4198, x4200, x4202, x4204, x4206, x4208, x4210,
+                     x4212, x4214, x4216, x4218, x4220, x4222, x4224, x4226, x4228, x4230, x4232,
+                     x4234, x4236, x4238, x4240, x4242, x4244, x4246, x4248, x4250, x4252, x4254,
+                     x4256, x4258, x4260, x4262, x4264, x4266, x4268, x4270, x4272, x4274, x4276,
+                     x4278, x4280, x4282, x4284, x4286, x4288, x4290, x4292, x4294},
+          Val64Array{x4296, x4298, x4300, x4302, x4304, x4306, x4308, x4310, x4312, x4314, x4316,
+                     x4318, x4320, x4322, x4324, x4326, x4328, x4330, x4332, x4334, x4336, x4338,
+                     x4340, x4342, x4344, x4346, x4348, x4350, x4352, x4354, x4356, x4358, x4360,
+                     x4362, x4364, x4366, x4368, x4370, x4372, x4374, x4376, x4378, x4380, x4382,
+                     x4384, x4386, x4388, x4390, x4392, x4394, x4396, x4398, x4400, x4402, x4404,
+                     x4406, x4408, x4410, x4412, x4414, x4416, x4418, x4420, x4422},
+          Val64Array{x4424, x4426, x4428, x4430, x4432, x4434, x4436, x4438, x4440, x4442, x4444,
+                     x4446, x4448, x4450, x4452, x4454, x4456, x4458, x4460, x4462, x4464, x4466,
+                     x4468, x4470, x4472, x4474, x4476, x4478, x4480, x4482, x4484, x4486, x4488,
+                     x4490, x4492, x4494, x4496, x4498, x4500, x4502, x4504, x4506, x4508, x4510,
+                     x4512, x4514, x4516, x4518, x4520, x4522, x4524, x4526, x4528, x4530, x4532,
+                     x4534, x4536, x4538, x4540, x4542, x4544, x4546, x4548, x4550},
+          Val64Array{x4552, x4554, x4556, x4558, x4560, x4562, x4564, x4566, x4568, x4570, x4572,
+                     x4574, x4576, x4578, x4580, x4582, x4584, x4586, x4588, x4590, x4592, x4594,
+                     x4596, x4598, x4600, x4602, x4604, x4606, x4608, x4610, x4612, x4614, x4616,
+                     x4618, x4620, x4622, x4624, x4626, x4628, x4630, x4632, x4634, x4636, x4638,
+                     x4640, x4642, x4644, x4646, x4648, x4650, x4652, x4654, x4656, x4658, x4660,
+                     x4662, x4664, x4666, x4668, x4670, x4672, x4674, x4676, x4678},
+          Val64Array{x4680, x4682, x4684, x4686, x4688, x4690, x4692, x4694, x4696, x4698, x4700,
+                     x4702, x4704, x4706, x4708, x4710, x4712, x4714, x4716, x4718, x4720, x4722,
+                     x4724, x4726, x4728, x4730, x4732, x4734, x4736, x4738, x4740, x4742, x4744,
+                     x4746, x4748, x4750, x4752, x4754, x4756, x4758, x4760, x4762, x4764, x4766,
+                     x4768, x4770, x4772, x4774, x4776, x4778, x4780, x4782, x4784, x4786, x4788,
+                     x4790, x4792, x4794, x4796, x4798, x4800, x4802, x4804, x4806}}};
+  IotaStruct x4808 = exec_Iota(ctx, x4807, arg3, LAYOUT_LOOKUP(layout4, _0));
   Iota_Super_SuperStruct5Array x4809 = x4808._super;
   Iota_Super_Super_Super_SuperStruct5Array x4810 = x4809[0]._super;
   Val64Array x4811 = x4810[0]._super;
@@ -35222,137 +35437,140 @@ TopStateStruct exec_KeccakRound34_1_(TopStateStruct arg0,
   Val x4939 = x4840[97]._super._super;
   Val x4940 = x4840[98]._super._super;
   Val x4941 = x4840[99]._super._super;
-  Val16Array x4942 = {x4841[0]._super,
-                      x4841[1]._super,
-                      x4841[2]._super,
-                      x4841[3]._super,
-                      x4841[4]._super,
-                      x4841[5]._super,
-                      x4841[6]._super,
-                      x4841[7]._super,
-                      x4841[8]._super,
-                      x4841[9]._super,
-                      x4841[10]._super,
-                      x4841[11]._super,
-                      x4841[12]._super,
-                      x4841[13]._super,
-                      x4841[14]._super,
-                      x4841[15]._super};
+  Val16Array x4942 = Val16Array{x4841[0]._super,
+                                x4841[1]._super,
+                                x4841[2]._super,
+                                x4841[3]._super,
+                                x4841[4]._super,
+                                x4841[5]._super,
+                                x4841[6]._super,
+                                x4841[7]._super,
+                                x4841[8]._super,
+                                x4841[9]._super,
+                                x4841[10]._super,
+                                x4841[11]._super,
+                                x4841[12]._super,
+                                x4841[13]._super,
+                                x4841[14]._super,
+                                x4841[15]._super};
   // KeccakRound34(zirgen/circuit/keccak2/top.zir:117)
   TopStateStruct x4943 = exec_TopState(
-      {x4811[32], x4811[33], x4811[34], x4811[35], x4811[36], x4811[37], x4811[38], x4811[39],
-       x4811[40], x4811[41], x4811[42], x4811[43], x4811[44], x4811[45], x4811[46], x4811[47],
-       x4811[48], x4811[49], x4811[50], x4811[51], x4811[52], x4811[53], x4811[54], x4811[55],
-       x4811[56], x4811[57], x4811[58], x4811[59], x4811[60], x4811[61], x4811[62], x4811[63],
-       x4812[32], x4812[33], x4812[34], x4812[35], x4812[36], x4812[37], x4812[38], x4812[39],
-       x4812[40], x4812[41], x4812[42], x4812[43], x4812[44], x4812[45], x4812[46], x4812[47],
-       x4812[48], x4812[49], x4812[50], x4812[51], x4812[52], x4812[53], x4812[54], x4812[55],
-       x4812[56], x4812[57], x4812[58], x4812[59], x4812[60], x4812[61], x4812[62], x4812[63],
-       x4813[32], x4813[33], x4813[34], x4813[35], x4813[36], x4813[37], x4813[38], x4813[39],
-       x4813[40], x4813[41], x4813[42], x4813[43], x4813[44], x4813[45], x4813[46], x4813[47],
-       x4813[48], x4813[49], x4813[50], x4813[51], x4813[52], x4813[53], x4813[54], x4813[55],
-       x4813[56], x4813[57], x4813[58], x4813[59], x4813[60], x4813[61], x4813[62], x4813[63],
-       x4814[32], x4814[33], x4814[34], x4814[35], x4814[36], x4814[37], x4814[38], x4814[39],
-       x4814[40], x4814[41], x4814[42], x4814[43], x4814[44], x4814[45], x4814[46], x4814[47],
-       x4814[48], x4814[49], x4814[50], x4814[51], x4814[52], x4814[53], x4814[54], x4814[55],
-       x4814[56], x4814[57], x4814[58], x4814[59], x4814[60], x4814[61], x4814[62], x4814[63],
-       x4815[32], x4815[33], x4815[34], x4815[35], x4815[36], x4815[37], x4815[38], x4815[39],
-       x4815[40], x4815[41], x4815[42], x4815[43], x4815[44], x4815[45], x4815[46], x4815[47],
-       x4815[48], x4815[49], x4815[50], x4815[51], x4815[52], x4815[53], x4815[54], x4815[55],
-       x4815[56], x4815[57], x4815[58], x4815[59], x4815[60], x4815[61], x4815[62], x4815[63],
-       x4817[32], x4817[33], x4817[34], x4817[35], x4817[36], x4817[37], x4817[38], x4817[39],
-       x4817[40], x4817[41], x4817[42], x4817[43], x4817[44], x4817[45], x4817[46], x4817[47],
-       x4817[48], x4817[49], x4817[50], x4817[51], x4817[52], x4817[53], x4817[54], x4817[55],
-       x4817[56], x4817[57], x4817[58], x4817[59], x4817[60], x4817[61], x4817[62], x4817[63],
-       x4818[32], x4818[33], x4818[34], x4818[35], x4818[36], x4818[37], x4818[38], x4818[39],
-       x4818[40], x4818[41], x4818[42], x4818[43], x4818[44], x4818[45], x4818[46], x4818[47],
-       x4818[48], x4818[49], x4818[50], x4818[51], x4818[52], x4818[53], x4818[54], x4818[55],
-       x4818[56], x4818[57], x4818[58], x4818[59], x4818[60], x4818[61], x4818[62], x4818[63],
-       x4819[32], x4819[33], x4819[34], x4819[35], x4819[36], x4819[37], x4819[38], x4819[39],
-       x4819[40], x4819[41], x4819[42], x4819[43], x4819[44], x4819[45], x4819[46], x4819[47],
-       x4819[48], x4819[49], x4819[50], x4819[51], x4819[52], x4819[53], x4819[54], x4819[55],
-       x4819[56], x4819[57], x4819[58], x4819[59], x4819[60], x4819[61], x4819[62], x4819[63],
-       x4820[32], x4820[33], x4820[34], x4820[35], x4820[36], x4820[37], x4820[38], x4820[39],
-       x4820[40], x4820[41], x4820[42], x4820[43], x4820[44], x4820[45], x4820[46], x4820[47],
-       x4820[48], x4820[49], x4820[50], x4820[51], x4820[52], x4820[53], x4820[54], x4820[55],
-       x4820[56], x4820[57], x4820[58], x4820[59], x4820[60], x4820[61], x4820[62], x4820[63],
-       x4821[32], x4821[33], x4821[34], x4821[35], x4821[36], x4821[37], x4821[38], x4821[39],
-       x4821[40], x4821[41], x4821[42], x4821[43], x4821[44], x4821[45], x4821[46], x4821[47],
-       x4821[48], x4821[49], x4821[50], x4821[51], x4821[52], x4821[53], x4821[54], x4821[55],
-       x4821[56], x4821[57], x4821[58], x4821[59], x4821[60], x4821[61], x4821[62], x4821[63],
-       x4823[32], x4823[33], x4823[34], x4823[35], x4823[36], x4823[37], x4823[38], x4823[39],
-       x4823[40], x4823[41], x4823[42], x4823[43], x4823[44], x4823[45], x4823[46], x4823[47],
-       x4823[48], x4823[49], x4823[50], x4823[51], x4823[52], x4823[53], x4823[54], x4823[55],
-       x4823[56], x4823[57], x4823[58], x4823[59], x4823[60], x4823[61], x4823[62], x4823[63],
-       x4824[32], x4824[33], x4824[34], x4824[35], x4824[36], x4824[37], x4824[38], x4824[39],
-       x4824[40], x4824[41], x4824[42], x4824[43], x4824[44], x4824[45], x4824[46], x4824[47],
-       x4824[48], x4824[49], x4824[50], x4824[51], x4824[52], x4824[53], x4824[54], x4824[55],
-       x4824[56], x4824[57], x4824[58], x4824[59], x4824[60], x4824[61], x4824[62], x4824[63],
-       x4825[32], x4825[33], x4825[34], x4825[35], x4825[36], x4825[37], x4825[38], x4825[39],
-       x4825[40], x4825[41], x4825[42], x4825[43], x4825[44], x4825[45], x4825[46], x4825[47],
-       x4825[48], x4825[49], x4825[50], x4825[51], x4825[52], x4825[53], x4825[54], x4825[55],
-       x4825[56], x4825[57], x4825[58], x4825[59], x4825[60], x4825[61], x4825[62], x4825[63],
-       x4826[32], x4826[33], x4826[34], x4826[35], x4826[36], x4826[37], x4826[38], x4826[39],
-       x4826[40], x4826[41], x4826[42], x4826[43], x4826[44], x4826[45], x4826[46], x4826[47],
-       x4826[48], x4826[49], x4826[50], x4826[51], x4826[52], x4826[53], x4826[54], x4826[55],
-       x4826[56], x4826[57], x4826[58], x4826[59], x4826[60], x4826[61], x4826[62], x4826[63],
-       x4827[32], x4827[33], x4827[34], x4827[35], x4827[36], x4827[37], x4827[38], x4827[39],
-       x4827[40], x4827[41], x4827[42], x4827[43], x4827[44], x4827[45], x4827[46], x4827[47],
-       x4827[48], x4827[49], x4827[50], x4827[51], x4827[52], x4827[53], x4827[54], x4827[55],
-       x4827[56], x4827[57], x4827[58], x4827[59], x4827[60], x4827[61], x4827[62], x4827[63],
-       x4829[32], x4829[33], x4829[34], x4829[35], x4829[36], x4829[37], x4829[38], x4829[39],
-       x4829[40], x4829[41], x4829[42], x4829[43], x4829[44], x4829[45], x4829[46], x4829[47],
-       x4829[48], x4829[49], x4829[50], x4829[51], x4829[52], x4829[53], x4829[54], x4829[55],
-       x4829[56], x4829[57], x4829[58], x4829[59], x4829[60], x4829[61], x4829[62], x4829[63],
-       x4830[32], x4830[33], x4830[34], x4830[35], x4830[36], x4830[37], x4830[38], x4830[39],
-       x4830[40], x4830[41], x4830[42], x4830[43], x4830[44], x4830[45], x4830[46], x4830[47],
-       x4830[48], x4830[49], x4830[50], x4830[51], x4830[52], x4830[53], x4830[54], x4830[55],
-       x4830[56], x4830[57], x4830[58], x4830[59], x4830[60], x4830[61], x4830[62], x4830[63],
-       x4831[32], x4831[33], x4831[34], x4831[35], x4831[36], x4831[37], x4831[38], x4831[39],
-       x4831[40], x4831[41], x4831[42], x4831[43], x4831[44], x4831[45], x4831[46], x4831[47],
-       x4831[48], x4831[49], x4831[50], x4831[51], x4831[52], x4831[53], x4831[54], x4831[55],
-       x4831[56], x4831[57], x4831[58], x4831[59], x4831[60], x4831[61], x4831[62], x4831[63],
-       x4832[32], x4832[33], x4832[34], x4832[35], x4832[36], x4832[37], x4832[38], x4832[39],
-       x4832[40], x4832[41], x4832[42], x4832[43], x4832[44], x4832[45], x4832[46], x4832[47],
-       x4832[48], x4832[49], x4832[50], x4832[51], x4832[52], x4832[53], x4832[54], x4832[55],
-       x4832[56], x4832[57], x4832[58], x4832[59], x4832[60], x4832[61], x4832[62], x4832[63],
-       x4833[32], x4833[33], x4833[34], x4833[35], x4833[36], x4833[37], x4833[38], x4833[39],
-       x4833[40], x4833[41], x4833[42], x4833[43], x4833[44], x4833[45], x4833[46], x4833[47],
-       x4833[48], x4833[49], x4833[50], x4833[51], x4833[52], x4833[53], x4833[54], x4833[55],
-       x4833[56], x4833[57], x4833[58], x4833[59], x4833[60], x4833[61], x4833[62], x4833[63],
-       x4835[32], x4835[33], x4835[34], x4835[35], x4835[36], x4835[37], x4835[38], x4835[39],
-       x4835[40], x4835[41], x4835[42], x4835[43], x4835[44], x4835[45], x4835[46], x4835[47],
-       x4835[48], x4835[49], x4835[50], x4835[51], x4835[52], x4835[53], x4835[54], x4835[55],
-       x4835[56], x4835[57], x4835[58], x4835[59], x4835[60], x4835[61], x4835[62], x4835[63],
-       x4836[32], x4836[33], x4836[34], x4836[35], x4836[36], x4836[37], x4836[38], x4836[39],
-       x4836[40], x4836[41], x4836[42], x4836[43], x4836[44], x4836[45], x4836[46], x4836[47],
-       x4836[48], x4836[49], x4836[50], x4836[51], x4836[52], x4836[53], x4836[54], x4836[55],
-       x4836[56], x4836[57], x4836[58], x4836[59], x4836[60], x4836[61], x4836[62], x4836[63],
-       x4837[32], x4837[33], x4837[34], x4837[35], x4837[36], x4837[37], x4837[38], x4837[39],
-       x4837[40], x4837[41], x4837[42], x4837[43], x4837[44], x4837[45], x4837[46], x4837[47],
-       x4837[48], x4837[49], x4837[50], x4837[51], x4837[52], x4837[53], x4837[54], x4837[55],
-       x4837[56], x4837[57], x4837[58], x4837[59], x4837[60], x4837[61], x4837[62], x4837[63],
-       x4838[32], x4838[33], x4838[34], x4838[35], x4838[36], x4838[37], x4838[38], x4838[39],
-       x4838[40], x4838[41], x4838[42], x4838[43], x4838[44], x4838[45], x4838[46], x4838[47],
-       x4838[48], x4838[49], x4838[50], x4838[51], x4838[52], x4838[53], x4838[54], x4838[55],
-       x4838[56], x4838[57], x4838[58], x4838[59], x4838[60], x4838[61], x4838[62], x4838[63],
-       x4839[32], x4839[33], x4839[34], x4839[35], x4839[36], x4839[37], x4839[38], x4839[39],
-       x4839[40], x4839[41], x4839[42], x4839[43], x4839[44], x4839[45], x4839[46], x4839[47],
-       x4839[48], x4839[49], x4839[50], x4839[51], x4839[52], x4839[53], x4839[54], x4839[55],
-       x4839[56], x4839[57], x4839[58], x4839[59], x4839[60], x4839[61], x4839[62], x4839[63]},
-      {x4842, x4843, x4844, x4845, x4846, x4847, x4848, x4849, x4850, x4851, x4852, x4853, x4854,
-       x4855, x4856, x4857, x4858, x4859, x4860, x4861, x4862, x4863, x4864, x4865, x4866, x4867,
-       x4868, x4869, x4870, x4871, x4872, x4873, x4874, x4875, x4876, x4877, x4878, x4879, x4880,
-       x4881, x4882, x4883, x4884, x4885, x4886, x4887, x4888, x4889, x4890, x4891, x4892, x4893,
-       x4894, x4895, x4896, x4897, x4898, x4899, x4900, x4901, x4902, x4903, x4904, x4905, x4906,
-       x4907, x4908, x4909, x4910, x4911, x4912, x4913, x4914, x4915, x4916, x4917, x4918, x4919,
-       x4920, x4921, x4922, x4923, x4924, x4925, x4926, x4927, x4928, x4929, x4930, x4931, x4932,
-       x4933, x4934, x4935, x4936, x4937, x4938, x4939, x4940, x4941},
+      ctx,
+      Val800Array{
+          x4811[32], x4811[33], x4811[34], x4811[35], x4811[36], x4811[37], x4811[38], x4811[39],
+          x4811[40], x4811[41], x4811[42], x4811[43], x4811[44], x4811[45], x4811[46], x4811[47],
+          x4811[48], x4811[49], x4811[50], x4811[51], x4811[52], x4811[53], x4811[54], x4811[55],
+          x4811[56], x4811[57], x4811[58], x4811[59], x4811[60], x4811[61], x4811[62], x4811[63],
+          x4812[32], x4812[33], x4812[34], x4812[35], x4812[36], x4812[37], x4812[38], x4812[39],
+          x4812[40], x4812[41], x4812[42], x4812[43], x4812[44], x4812[45], x4812[46], x4812[47],
+          x4812[48], x4812[49], x4812[50], x4812[51], x4812[52], x4812[53], x4812[54], x4812[55],
+          x4812[56], x4812[57], x4812[58], x4812[59], x4812[60], x4812[61], x4812[62], x4812[63],
+          x4813[32], x4813[33], x4813[34], x4813[35], x4813[36], x4813[37], x4813[38], x4813[39],
+          x4813[40], x4813[41], x4813[42], x4813[43], x4813[44], x4813[45], x4813[46], x4813[47],
+          x4813[48], x4813[49], x4813[50], x4813[51], x4813[52], x4813[53], x4813[54], x4813[55],
+          x4813[56], x4813[57], x4813[58], x4813[59], x4813[60], x4813[61], x4813[62], x4813[63],
+          x4814[32], x4814[33], x4814[34], x4814[35], x4814[36], x4814[37], x4814[38], x4814[39],
+          x4814[40], x4814[41], x4814[42], x4814[43], x4814[44], x4814[45], x4814[46], x4814[47],
+          x4814[48], x4814[49], x4814[50], x4814[51], x4814[52], x4814[53], x4814[54], x4814[55],
+          x4814[56], x4814[57], x4814[58], x4814[59], x4814[60], x4814[61], x4814[62], x4814[63],
+          x4815[32], x4815[33], x4815[34], x4815[35], x4815[36], x4815[37], x4815[38], x4815[39],
+          x4815[40], x4815[41], x4815[42], x4815[43], x4815[44], x4815[45], x4815[46], x4815[47],
+          x4815[48], x4815[49], x4815[50], x4815[51], x4815[52], x4815[53], x4815[54], x4815[55],
+          x4815[56], x4815[57], x4815[58], x4815[59], x4815[60], x4815[61], x4815[62], x4815[63],
+          x4817[32], x4817[33], x4817[34], x4817[35], x4817[36], x4817[37], x4817[38], x4817[39],
+          x4817[40], x4817[41], x4817[42], x4817[43], x4817[44], x4817[45], x4817[46], x4817[47],
+          x4817[48], x4817[49], x4817[50], x4817[51], x4817[52], x4817[53], x4817[54], x4817[55],
+          x4817[56], x4817[57], x4817[58], x4817[59], x4817[60], x4817[61], x4817[62], x4817[63],
+          x4818[32], x4818[33], x4818[34], x4818[35], x4818[36], x4818[37], x4818[38], x4818[39],
+          x4818[40], x4818[41], x4818[42], x4818[43], x4818[44], x4818[45], x4818[46], x4818[47],
+          x4818[48], x4818[49], x4818[50], x4818[51], x4818[52], x4818[53], x4818[54], x4818[55],
+          x4818[56], x4818[57], x4818[58], x4818[59], x4818[60], x4818[61], x4818[62], x4818[63],
+          x4819[32], x4819[33], x4819[34], x4819[35], x4819[36], x4819[37], x4819[38], x4819[39],
+          x4819[40], x4819[41], x4819[42], x4819[43], x4819[44], x4819[45], x4819[46], x4819[47],
+          x4819[48], x4819[49], x4819[50], x4819[51], x4819[52], x4819[53], x4819[54], x4819[55],
+          x4819[56], x4819[57], x4819[58], x4819[59], x4819[60], x4819[61], x4819[62], x4819[63],
+          x4820[32], x4820[33], x4820[34], x4820[35], x4820[36], x4820[37], x4820[38], x4820[39],
+          x4820[40], x4820[41], x4820[42], x4820[43], x4820[44], x4820[45], x4820[46], x4820[47],
+          x4820[48], x4820[49], x4820[50], x4820[51], x4820[52], x4820[53], x4820[54], x4820[55],
+          x4820[56], x4820[57], x4820[58], x4820[59], x4820[60], x4820[61], x4820[62], x4820[63],
+          x4821[32], x4821[33], x4821[34], x4821[35], x4821[36], x4821[37], x4821[38], x4821[39],
+          x4821[40], x4821[41], x4821[42], x4821[43], x4821[44], x4821[45], x4821[46], x4821[47],
+          x4821[48], x4821[49], x4821[50], x4821[51], x4821[52], x4821[53], x4821[54], x4821[55],
+          x4821[56], x4821[57], x4821[58], x4821[59], x4821[60], x4821[61], x4821[62], x4821[63],
+          x4823[32], x4823[33], x4823[34], x4823[35], x4823[36], x4823[37], x4823[38], x4823[39],
+          x4823[40], x4823[41], x4823[42], x4823[43], x4823[44], x4823[45], x4823[46], x4823[47],
+          x4823[48], x4823[49], x4823[50], x4823[51], x4823[52], x4823[53], x4823[54], x4823[55],
+          x4823[56], x4823[57], x4823[58], x4823[59], x4823[60], x4823[61], x4823[62], x4823[63],
+          x4824[32], x4824[33], x4824[34], x4824[35], x4824[36], x4824[37], x4824[38], x4824[39],
+          x4824[40], x4824[41], x4824[42], x4824[43], x4824[44], x4824[45], x4824[46], x4824[47],
+          x4824[48], x4824[49], x4824[50], x4824[51], x4824[52], x4824[53], x4824[54], x4824[55],
+          x4824[56], x4824[57], x4824[58], x4824[59], x4824[60], x4824[61], x4824[62], x4824[63],
+          x4825[32], x4825[33], x4825[34], x4825[35], x4825[36], x4825[37], x4825[38], x4825[39],
+          x4825[40], x4825[41], x4825[42], x4825[43], x4825[44], x4825[45], x4825[46], x4825[47],
+          x4825[48], x4825[49], x4825[50], x4825[51], x4825[52], x4825[53], x4825[54], x4825[55],
+          x4825[56], x4825[57], x4825[58], x4825[59], x4825[60], x4825[61], x4825[62], x4825[63],
+          x4826[32], x4826[33], x4826[34], x4826[35], x4826[36], x4826[37], x4826[38], x4826[39],
+          x4826[40], x4826[41], x4826[42], x4826[43], x4826[44], x4826[45], x4826[46], x4826[47],
+          x4826[48], x4826[49], x4826[50], x4826[51], x4826[52], x4826[53], x4826[54], x4826[55],
+          x4826[56], x4826[57], x4826[58], x4826[59], x4826[60], x4826[61], x4826[62], x4826[63],
+          x4827[32], x4827[33], x4827[34], x4827[35], x4827[36], x4827[37], x4827[38], x4827[39],
+          x4827[40], x4827[41], x4827[42], x4827[43], x4827[44], x4827[45], x4827[46], x4827[47],
+          x4827[48], x4827[49], x4827[50], x4827[51], x4827[52], x4827[53], x4827[54], x4827[55],
+          x4827[56], x4827[57], x4827[58], x4827[59], x4827[60], x4827[61], x4827[62], x4827[63],
+          x4829[32], x4829[33], x4829[34], x4829[35], x4829[36], x4829[37], x4829[38], x4829[39],
+          x4829[40], x4829[41], x4829[42], x4829[43], x4829[44], x4829[45], x4829[46], x4829[47],
+          x4829[48], x4829[49], x4829[50], x4829[51], x4829[52], x4829[53], x4829[54], x4829[55],
+          x4829[56], x4829[57], x4829[58], x4829[59], x4829[60], x4829[61], x4829[62], x4829[63],
+          x4830[32], x4830[33], x4830[34], x4830[35], x4830[36], x4830[37], x4830[38], x4830[39],
+          x4830[40], x4830[41], x4830[42], x4830[43], x4830[44], x4830[45], x4830[46], x4830[47],
+          x4830[48], x4830[49], x4830[50], x4830[51], x4830[52], x4830[53], x4830[54], x4830[55],
+          x4830[56], x4830[57], x4830[58], x4830[59], x4830[60], x4830[61], x4830[62], x4830[63],
+          x4831[32], x4831[33], x4831[34], x4831[35], x4831[36], x4831[37], x4831[38], x4831[39],
+          x4831[40], x4831[41], x4831[42], x4831[43], x4831[44], x4831[45], x4831[46], x4831[47],
+          x4831[48], x4831[49], x4831[50], x4831[51], x4831[52], x4831[53], x4831[54], x4831[55],
+          x4831[56], x4831[57], x4831[58], x4831[59], x4831[60], x4831[61], x4831[62], x4831[63],
+          x4832[32], x4832[33], x4832[34], x4832[35], x4832[36], x4832[37], x4832[38], x4832[39],
+          x4832[40], x4832[41], x4832[42], x4832[43], x4832[44], x4832[45], x4832[46], x4832[47],
+          x4832[48], x4832[49], x4832[50], x4832[51], x4832[52], x4832[53], x4832[54], x4832[55],
+          x4832[56], x4832[57], x4832[58], x4832[59], x4832[60], x4832[61], x4832[62], x4832[63],
+          x4833[32], x4833[33], x4833[34], x4833[35], x4833[36], x4833[37], x4833[38], x4833[39],
+          x4833[40], x4833[41], x4833[42], x4833[43], x4833[44], x4833[45], x4833[46], x4833[47],
+          x4833[48], x4833[49], x4833[50], x4833[51], x4833[52], x4833[53], x4833[54], x4833[55],
+          x4833[56], x4833[57], x4833[58], x4833[59], x4833[60], x4833[61], x4833[62], x4833[63],
+          x4835[32], x4835[33], x4835[34], x4835[35], x4835[36], x4835[37], x4835[38], x4835[39],
+          x4835[40], x4835[41], x4835[42], x4835[43], x4835[44], x4835[45], x4835[46], x4835[47],
+          x4835[48], x4835[49], x4835[50], x4835[51], x4835[52], x4835[53], x4835[54], x4835[55],
+          x4835[56], x4835[57], x4835[58], x4835[59], x4835[60], x4835[61], x4835[62], x4835[63],
+          x4836[32], x4836[33], x4836[34], x4836[35], x4836[36], x4836[37], x4836[38], x4836[39],
+          x4836[40], x4836[41], x4836[42], x4836[43], x4836[44], x4836[45], x4836[46], x4836[47],
+          x4836[48], x4836[49], x4836[50], x4836[51], x4836[52], x4836[53], x4836[54], x4836[55],
+          x4836[56], x4836[57], x4836[58], x4836[59], x4836[60], x4836[61], x4836[62], x4836[63],
+          x4837[32], x4837[33], x4837[34], x4837[35], x4837[36], x4837[37], x4837[38], x4837[39],
+          x4837[40], x4837[41], x4837[42], x4837[43], x4837[44], x4837[45], x4837[46], x4837[47],
+          x4837[48], x4837[49], x4837[50], x4837[51], x4837[52], x4837[53], x4837[54], x4837[55],
+          x4837[56], x4837[57], x4837[58], x4837[59], x4837[60], x4837[61], x4837[62], x4837[63],
+          x4838[32], x4838[33], x4838[34], x4838[35], x4838[36], x4838[37], x4838[38], x4838[39],
+          x4838[40], x4838[41], x4838[42], x4838[43], x4838[44], x4838[45], x4838[46], x4838[47],
+          x4838[48], x4838[49], x4838[50], x4838[51], x4838[52], x4838[53], x4838[54], x4838[55],
+          x4838[56], x4838[57], x4838[58], x4838[59], x4838[60], x4838[61], x4838[62], x4838[63],
+          x4839[32], x4839[33], x4839[34], x4839[35], x4839[36], x4839[37], x4839[38], x4839[39],
+          x4839[40], x4839[41], x4839[42], x4839[43], x4839[44], x4839[45], x4839[46], x4839[47],
+          x4839[48], x4839[49], x4839[50], x4839[51], x4839[52], x4839[53], x4839[54], x4839[55],
+          x4839[56], x4839[57], x4839[58], x4839[59], x4839[60], x4839[61], x4839[62], x4839[63]},
+      Val100Array{
+          x4842, x4843, x4844, x4845, x4846, x4847, x4848, x4849, x4850, x4851, x4852, x4853, x4854,
+          x4855, x4856, x4857, x4858, x4859, x4860, x4861, x4862, x4863, x4864, x4865, x4866, x4867,
+          x4868, x4869, x4870, x4871, x4872, x4873, x4874, x4875, x4876, x4877, x4878, x4879, x4880,
+          x4881, x4882, x4883, x4884, x4885, x4886, x4887, x4888, x4889, x4890, x4891, x4892, x4893,
+          x4894, x4895, x4896, x4897, x4898, x4899, x4900, x4901, x4902, x4903, x4904, x4905, x4906,
+          x4907, x4908, x4909, x4910, x4911, x4912, x4913, x4914, x4915, x4916, x4917, x4918, x4919,
+          x4920, x4921, x4922, x4923, x4924, x4925, x4926, x4927, x4928, x4929, x4930, x4931, x4932,
+          x4933, x4934, x4935, x4936, x4937, x4938, x4939, x4940, x4941},
       x4942,
       LAYOUT_LOOKUP(layout4, _super));
   return x4943;
 }
-TopStruct exec_Top(BoundLayout<TopLayout> layout0, GlobalBuf global1) {
+__device__ TopStruct exec_Top(ExecContext& ctx, BoundLayout<TopLayout> layout0, GlobalBuf global1) {
   // Top(zirgen/circuit/keccak2/top.zir:477)
   BoundLayout<WrapOneHotLayout> x2 = LAYOUT_LOOKUP(layout0, cycleMux);
   // Top(zirgen/circuit/keccak2/top.zir:478)
@@ -35366,23 +35584,23 @@ TopStruct exec_Top(BoundLayout<TopLayout> layout0, GlobalBuf global1) {
   // IsFirstCycle(zirgen/circuit/keccak2/top.zir:278)
   // Top(zirgen/circuit/keccak2/top.zir:476)
   Val x7 = INVOKE_EXTERN(ctx, isFirstCycle);
-  NondetRegStruct x8 = exec_NondetReg(x7, LAYOUT_LOOKUP(layout0, isFirst));
+  NondetRegStruct x8 = exec_NondetReg(ctx, x7, LAYOUT_LOOKUP(layout0, isFirst));
   Val x9 = x8._super;
   // Top(zirgen/circuit/keccak2/top.zir:479)
   BoundLayout<ControlStateLayout> x10 = LAYOUT_LOOKUP(x4, _super);
   ControlStateStruct x11;
   if (to_size_t(x9)) {
     // Top(zirgen/circuit/keccak2/top.zir:480)
-    ControlStateStruct x12 = back_ControlState(1, x3);
+    ControlStateStruct x12 = back_ControlState(ctx, 1, x3);
     EQZ(x12.cycleType._super, "Top(zirgen/circuit/keccak2/top.zir:480)");
     // Top(zirgen/circuit/keccak2/top.zir:481)
     ControlStateStruct x13 =
-        exec_ControlState(Val(11), Val(0), Val(0), Val(0), LAYOUT_LOOKUP(x4, arm0));
+        exec_ControlState(ctx, Val(11), Val(0), Val(0), Val(0), LAYOUT_LOOKUP(x4, arm0));
     x11 = x13;
   } else if (to_size_t((Val(1) - x9))) {
     // Top(zirgen/circuit/keccak2/top.zir:483)
-    WrapOneHotStruct x14 = back_WrapOneHot(1, x2);
-    ControlStateStruct x15 = back_ControlState(1, x3);
+    WrapOneHotStruct x14 = back_WrapOneHot(ctx, 1, x2);
+    ControlStateStruct x15 = back_ControlState(ctx, 1, x3);
     WrapOneHot_SuperStruct12Array x16 = x14._super;
     Val x17 = x16[0]._super._super;
     Val x18 = x16[1]._super._super;
@@ -35397,17 +35615,20 @@ TopStruct exec_Top(BoundLayout<TopLayout> layout0, GlobalBuf global1) {
     Val x27 = x16[10]._super._super;
     Val x28 = x16[11]._super._super;
     ControlStateStruct x29 = exec_ComputeCurrentStep(
-        {x17, x18, x19, x20, x21, x22, x23, x24, x25, x26, x27, x28}, x15, LAYOUT_LOOKUP(x4, arm1));
+        ctx,
+        Val12Array{x17, x18, x19, x20, x21, x22, x23, x24, x25, x26, x27, x28},
+        x15,
+        LAYOUT_LOOKUP(x4, arm1));
     x11 = x29;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
   // Top(zirgen/circuit/keccak2/top.zir:479)
-  ControlStateStruct x30 = back_ControlState(0, x10);
+  ControlStateStruct x30 = back_ControlState(ctx, 0, x10);
   // Top(zirgen/circuit/keccak2/top.zir:485)
-  OneHot_12_Struct x31 = exec_OneHot_12_(x30.cycleType._super, LAYOUT_LOOKUP(layout0, oneHot));
+  OneHot_12_Struct x31 = exec_OneHot_12_(ctx, x30.cycleType._super, LAYOUT_LOOKUP(layout0, oneHot));
   // Top(zirgen/circuit/keccak2/top.zir:486)
-  WrapOneHotStruct x32 = exec_WrapOneHot(x31, x2);
+  WrapOneHotStruct x32 = exec_WrapOneHot(ctx, x31, x2);
   WrapOneHot_SuperStruct12Array x33 = x32._super;
   Val x34 = x33[0]._super._super;
   Val x35 = x33[1]._super._super;
@@ -35424,97 +35645,97 @@ TopStruct exec_Top(BoundLayout<TopLayout> layout0, GlobalBuf global1) {
   TopStateStruct x46;
   if (to_size_t(x34)) {
     // Top(zirgen/circuit/keccak2/top.zir:492)
-    TopStateStruct x47 = back_TopState(1, x5);
-    TopStateStruct x48 = exec_ShutdownCycle(x47, LAYOUT_LOOKUP(x6, arm0), global1);
+    TopStateStruct x47 = back_TopState(ctx, 1, x5);
+    TopStateStruct x48 = exec_ShutdownCycle(ctx, x47, LAYOUT_LOOKUP(x6, arm0), global1);
     x46 = x48;
   } else if (to_size_t(x35)) {
     // Top(zirgen/circuit/keccak2/top.zir:493)
-    TopStateStruct x49 = back_TopState(1, x5);
-    TopStateStruct x50 = exec_ReadCycle(x49, LAYOUT_LOOKUP(x6, arm1));
+    TopStateStruct x49 = back_TopState(ctx, 1, x5);
+    TopStateStruct x50 = exec_ReadCycle(ctx, x49, LAYOUT_LOOKUP(x6, arm1));
     x46 = x50;
   } else if (to_size_t(x36)) {
     // Top(zirgen/circuit/keccak2/top.zir:494)
-    TopStateStruct x51 = back_TopState(1, x5);
+    TopStateStruct x51 = back_TopState(ctx, 1, x5);
     // Top(zirgen/circuit/keccak2/top.zir:479)
-    ControlStateStruct x52 = back_ControlState(0, x10);
+    ControlStateStruct x52 = back_ControlState(ctx, 0, x10);
     // Top(zirgen/circuit/keccak2/top.zir:494)
-    TopStateStruct x53 = exec_ExpandCycle(x51, x52.subType._super, LAYOUT_LOOKUP(x6, arm2));
+    TopStateStruct x53 = exec_ExpandCycle(ctx, x51, x52.subType._super, LAYOUT_LOOKUP(x6, arm2));
     x46 = x53;
   } else if (to_size_t(x37)) {
     // Top(zirgen/circuit/keccak2/top.zir:495)
-    TopStateStruct x54 = back_TopState(1, x5);
-    TopStateStruct x55 = back_TopState(2, x5);
-    TopStateStruct x56 = exec_WriteCycle(x54, x55, LAYOUT_LOOKUP(x6, arm3));
+    TopStateStruct x54 = back_TopState(ctx, 1, x5);
+    TopStateStruct x55 = back_TopState(ctx, 2, x5);
+    TopStateStruct x56 = exec_WriteCycle(ctx, x54, x55, LAYOUT_LOOKUP(x6, arm3));
     x46 = x56;
   } else if (to_size_t(x38)) {
     // Top(zirgen/circuit/keccak2/top.zir:496)
-    TopStateStruct x57 = back_TopState(2, x5);
-    TopStateStruct x58 = back_TopState(1, x5);
-    TopStateStruct x59 = exec_KeccakRound0(x57, x58, LAYOUT_LOOKUP(x6, arm4));
+    TopStateStruct x57 = back_TopState(ctx, 2, x5);
+    TopStateStruct x58 = back_TopState(ctx, 1, x5);
+    TopStateStruct x59 = exec_KeccakRound0(ctx, x57, x58, LAYOUT_LOOKUP(x6, arm4));
     x46 = x59;
   } else if (to_size_t(x39)) {
     // Top(zirgen/circuit/keccak2/top.zir:497)
-    TopStateStruct x60 = back_TopState(1, x5);
-    TopStateStruct x61 = back_TopState(3, x5);
-    TopStateStruct x62 = back_TopState(2, x5);
-    TopStateStruct x63 = exec_KeccakRound12_0_(x60, x61, x62, x60, LAYOUT_LOOKUP(x6, arm5));
+    TopStateStruct x60 = back_TopState(ctx, 1, x5);
+    TopStateStruct x61 = back_TopState(ctx, 3, x5);
+    TopStateStruct x62 = back_TopState(ctx, 2, x5);
+    TopStateStruct x63 = exec_KeccakRound12_0_(ctx, x60, x61, x62, x60, LAYOUT_LOOKUP(x6, arm5));
     x46 = x63;
   } else if (to_size_t(x40)) {
     // Top(zirgen/circuit/keccak2/top.zir:498)
-    TopStateStruct x64 = back_TopState(2, x5);
-    TopStateStruct x65 = back_TopState(4, x5);
-    TopStateStruct x66 = back_TopState(3, x5);
-    TopStateStruct x67 = back_TopState(1, x5);
-    TopStateStruct x68 = exec_KeccakRound12_1_(x64, x65, x66, x67, LAYOUT_LOOKUP(x6, arm6));
+    TopStateStruct x64 = back_TopState(ctx, 2, x5);
+    TopStateStruct x65 = back_TopState(ctx, 4, x5);
+    TopStateStruct x66 = back_TopState(ctx, 3, x5);
+    TopStateStruct x67 = back_TopState(ctx, 1, x5);
+    TopStateStruct x68 = exec_KeccakRound12_1_(ctx, x64, x65, x66, x67, LAYOUT_LOOKUP(x6, arm6));
     x46 = x68;
   } else if (to_size_t(x41)) {
     // Top(zirgen/circuit/keccak2/top.zir:499)
-    TopStateStruct x69 = back_TopState(2, x5);
-    TopStateStruct x70 = back_TopState(1, x5);
+    TopStateStruct x69 = back_TopState(ctx, 2, x5);
+    TopStateStruct x70 = back_TopState(ctx, 1, x5);
     // Top(zirgen/circuit/keccak2/top.zir:479)
-    ControlStateStruct x71 = back_ControlState(0, x10);
+    ControlStateStruct x71 = back_ControlState(ctx, 0, x10);
     // Top(zirgen/circuit/keccak2/top.zir:499)
     TopStateStruct x72 =
-        exec_KeccakRound34_0_(x69, x70, x70, x71.round._super, LAYOUT_LOOKUP(x6, arm7));
+        exec_KeccakRound34_0_(ctx, x69, x70, x70, x71.round._super, LAYOUT_LOOKUP(x6, arm7));
     x46 = x72;
   } else if (to_size_t(x42)) {
     // Top(zirgen/circuit/keccak2/top.zir:500)
-    TopStateStruct x73 = back_TopState(3, x5);
-    TopStateStruct x74 = back_TopState(2, x5);
-    TopStateStruct x75 = back_TopState(1, x5);
+    TopStateStruct x73 = back_TopState(ctx, 3, x5);
+    TopStateStruct x74 = back_TopState(ctx, 2, x5);
+    TopStateStruct x75 = back_TopState(ctx, 1, x5);
     // Top(zirgen/circuit/keccak2/top.zir:479)
-    ControlStateStruct x76 = back_ControlState(0, x10);
+    ControlStateStruct x76 = back_ControlState(ctx, 0, x10);
     // Top(zirgen/circuit/keccak2/top.zir:500)
     TopStateStruct x77 =
-        exec_KeccakRound34_1_(x73, x74, x75, x76.round._super, LAYOUT_LOOKUP(x6, arm8));
+        exec_KeccakRound34_1_(ctx, x73, x74, x75, x76.round._super, LAYOUT_LOOKUP(x6, arm8));
     x46 = x77;
   } else if (to_size_t(x43)) {
     // Top(zirgen/circuit/keccak2/top.zir:501)
-    TopStateStruct x78 = back_TopState(1, x5);
-    TopStateStruct x79 = back_TopState(2, x5);
+    TopStateStruct x78 = back_TopState(ctx, 1, x5);
+    TopStateStruct x79 = back_TopState(ctx, 2, x5);
     // Top(zirgen/circuit/keccak2/top.zir:479)
-    ControlStateStruct x80 = back_ControlState(0, x10);
+    ControlStateStruct x80 = back_ControlState(ctx, 0, x10);
     // Top(zirgen/circuit/keccak2/top.zir:501)
     TopStateStruct x81 =
-        exec_ShaCycle(x78, x79, x80.round._super, x80.block._super, LAYOUT_LOOKUP(x6, arm9));
+        exec_ShaCycle(ctx, x78, x79, x80.round._super, x80.block._super, LAYOUT_LOOKUP(x6, arm9));
     x46 = x81;
   } else if (to_size_t(x44)) {
     // Top(zirgen/circuit/keccak2/top.zir:502)
-    TopStateStruct x82 = back_TopState(1, x5);
-    TopStateStruct x83 = exec_ShaNextBlockCycle(x82, LAYOUT_LOOKUP(x6, arm10));
+    TopStateStruct x82 = back_TopState(ctx, 1, x5);
+    TopStateStruct x83 = exec_ShaNextBlockCycle(ctx, x82, LAYOUT_LOOKUP(x6, arm10));
     x46 = x83;
   } else if (to_size_t(x45)) {
     // Top(zirgen/circuit/keccak2/top.zir:503)
-    TopStateStruct x84 = exec_InitCycle(LAYOUT_LOOKUP(x6, arm11));
+    TopStateStruct x84 = exec_InitCycle(ctx, LAYOUT_LOOKUP(x6, arm11));
     x46 = x84;
   } else {
     assert(0 && "Reached unreachable mux arm");
   }
   return TopStruct{};
 }
-void step_Top(MutableBuf data0, GlobalBuf global1) {
+__device__ void step_Top(ExecContext& ctx, MutableBuf data0, GlobalBuf global1) {
   // Top(zirgen/circuit/keccak2/top.zir:473)
   BoundLayout<TopLayout> x2 = BIND_LAYOUT(kLayout_Top, data0);
-  TopStruct x3 = exec_Top(x2, global1);
+  TopStruct x3 = exec_Top(ctx, x2, global1);
   return;
 }

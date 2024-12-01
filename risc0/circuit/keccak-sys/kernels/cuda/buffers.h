@@ -16,8 +16,8 @@
 
 #include "fp.h"
 
+#include <cassert>
 #include <cstdio>
-#include <stdexcept>
 
 namespace risc0 {
 
@@ -35,7 +35,7 @@ struct Buffer {
              col,
              val.asUInt32(),
              elem.asUInt32());
-      throw std::runtime_error("Inconsistent set");
+      assert(false && "Inconsistent set");
     }
     // printf("set(row: %zu, col: %zu, val: 0x%08x)\n", row, col, val.asUInt32());
     elem = val;
@@ -45,7 +45,7 @@ struct Buffer {
     Fp ret = buf[row * cols + col];
     if (ret == Fp::invalid() && checkedReads) {
       printf("get(row: %zu, col: %zu) -> 0x%08x\n", row, col, ret.asRaw());
-      throw std::runtime_error("Read of unset value");
+      assert(false && "Read of unset value");
     }
     // printf("get(row: %zu, col: %zu) -> 0x%08x\n", row, col, ret.asUInt32());
     return ret;

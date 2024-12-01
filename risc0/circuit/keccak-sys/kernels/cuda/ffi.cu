@@ -119,7 +119,7 @@ __device__ Val inRange(Val low, Val mid, Val high) {
 __device__ void eqz(Val a, const char* loc) {
   if (a.asUInt32()) {
     printf("eqz failure at: %s\n", loc);
-    throw std::runtime_error("eqz failure");
+    assert(false && "eqz failure");
   }
 }
 
@@ -236,9 +236,9 @@ __device__ auto map(cuda::std::array<T1, N> a, cuda::std::array<T2, N> b, F f) {
 
 template <typename T1, typename T2, typename F, size_t N>
 __device__ auto map(cuda::std::array<T1, N> a, const BoundLayout<T2>& b, F f) {
-  cuda::std::array<decltype(f(a[0], BoundLayout((*b.layout)[0], b.buf))), N> out;
+  cuda::std::array<decltype(f(a[0], BoundLayout(b.layout[0], b.buf))), N> out;
   for (size_t i = 0; i < N; i++) {
-    out[i] = f(a[i], BoundLayout((*b.layout)[i], b.buf));
+    out[i] = f(a[i], BoundLayout(b.layout[i], b.buf));
   }
   return out;
 }
@@ -256,7 +256,7 @@ template <typename T1, typename T2, typename T3, typename F, size_t N>
 __device__ auto reduce(cuda::std::array<T1, N> elems, T2 start, const BoundLayout<T3>& b, F f) {
   T2 cur = start;
   for (size_t i = 0; i < N; i++) {
-    cur = f(cur, elems[i], BoundLayout((*b.layout)[i], b.buf));
+    cur = f(cur, elems[i], BoundLayout(b.layout[i], b.buf));
   }
   return cur;
 }
@@ -313,7 +313,8 @@ __device__ Val extern_nextPreimage(ExecContext& ctx) {
 
 } // namespace impl
 
-__device__ void stepExec(ExecBuffers& buffers, PreflightTrace& preflight, size_t cycle) {
+__global__ void stepExec(ExecBuffers& buffers, PreflightTrace& preflight) {
+  uint32_t cycle = blockDim.x * blockIdx.x + threadIdx.x;
   impl::ExecContext ctx(preflight, cycle);
   impl::MutableBufObj data(ctx, buffers.data);
   impl::GlobalBufObj global(ctx, buffers.global);
@@ -331,11 +332,14 @@ const char* risc0_circuit_keccak_cpu_witgen(uint32_t mode,
                                             PreflightTrace* preflight,
                                             uint32_t lastCycle) {
   try {
-    for (size_t cycle = 0; cycle < lastCycle; cycle++) {
-      stepExec(*buffers, *preflight, cycle);
-    }
+    CudaStream stream;
+    auto cfg = getSimpleConfig(lastCycle);
+    stepExec<<<cfg.grid, cfg.block, 0, stream>>>(*buffers, *preflight);
+    CUDA_OK(cudaStreamSynchronize(stream));
   } catch (const std::exception& err) {
     return strdup(err.what());
+  } catch (...) {
+    return strdup("Generic exception");
   }
   return nullptr;
 }
