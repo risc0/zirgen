@@ -1,4 +1,5 @@
 // RUN: zirgen %s --emit=layoutattr | FileCheck %s
+// RUN: zirgen %s --emit=picus | FileCheck %s --check-prefix=PICUS
 
 //CHECK-LABEL: GlobalConstOp "layout$Top": Top
 //CHECK-NEXT:  | a: NondetReg
@@ -6,6 +7,9 @@
 //CHECK-NEXT:  | b: NondetReg
 //CHECK-NEXT:  | | @super: 0
 
+// PICUS: (prime-number 2013265921)
+
+#[picus]
 component Top() {
   a := NondetReg(0);
   b := Reg(0);
