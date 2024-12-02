@@ -90,4 +90,3 @@ cc_test(
     deps = [":bibc_utils"],
 )
 
-
