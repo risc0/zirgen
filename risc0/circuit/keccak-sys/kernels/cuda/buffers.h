@@ -28,7 +28,7 @@ struct Buffer {
   bool checkedReads;
 
   __device__ void set(size_t row, size_t col, Fp val) {
-    Fp& elem = buf[row * cols + col];
+    Fp& elem = buf[col * rows + row];
     if (elem != Fp::invalid() && elem != val) {
       printf("set(row: %zu, col: %zu, val: 0x%08x) cur: 0x%08x\n",
              row,
@@ -42,7 +42,7 @@ struct Buffer {
   }
 
   __device__ Fp get(size_t row, size_t col) {
-    Fp ret = buf[row * cols + col];
+    Fp ret = buf[col * rows + row];
     if (ret == Fp::invalid() && checkedReads) {
       printf("get(row: %zu, col: %zu) -> 0x%08x\n", row, col, ret.asRaw());
       assert(false && "Read of unset value");

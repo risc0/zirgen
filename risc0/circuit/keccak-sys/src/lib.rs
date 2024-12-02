@@ -39,25 +39,12 @@ pub struct RawBuffer {
 }
 
 extern "C" {
-    // pub fn risc0_circuit_keccak_poly_fp(
-    //     cycle: usize,
-    //     steps: usize,
-    //     poly_mixs: *const BabyBearExtElem,
-    //     args_ptr: *const *const BabyBearElem,
-    // ) -> BabyBearExtElem;
-
     pub fn risc0_circuit_keccak_cpu_witgen(
         mode: u32,
         buffers: *const RawExecBuffers,
         preflight: *const RawPreflightTrace,
         cycles: u32,
     ) -> *const std::os::raw::c_char;
-
-    // pub fn risc0_circuit_keccak_cpu_accum(
-    //     buffers: *const RawAccumBuffers,
-    //     preflight: *const RawPreflightTrace,
-    //     cycles: u32,
-    // ) -> *const std::os::raw::c_char;
 
     pub fn risc0_circuit_keccak_cpu_poly_fp(
         cycle: usize,
@@ -70,6 +57,13 @@ extern "C" {
 
 #[cfg(feature = "cuda")]
 extern "C" {
+    pub fn risc0_circuit_keccak_cuda_witgen(
+        mode: u32,
+        buffers: *const RawExecBuffers,
+        preflight: *const RawPreflightTrace,
+        cycles: u32,
+    ) -> *const std::os::raw::c_char;
+
     pub fn risc0_circuit_keccak_cuda_eval_check(
         check: DevicePointer<u8>,
         ctrl: DevicePointer<u8>,

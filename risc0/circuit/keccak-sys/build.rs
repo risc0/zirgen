@@ -36,8 +36,12 @@ fn build_cpu_kernels() {
 }
 
 fn build_cuda_kernels() {
+    env::set_var("SCCACHE_IDLE_TIMEOUT", "0");
     KernelBuild::new(KernelType::Cuda)
         .flag("-std=c++17")
+        .flag("-diag-suppress=550")
+        .flag("-Xptxas")
+        .flag("-O0")
         .files(glob_paths("kernels/cuda/*.cu"))
         .deps(["kernels/cuda"])
         .include(env::var("DEP_RISC0_SYS_CUDA_ROOT").unwrap())

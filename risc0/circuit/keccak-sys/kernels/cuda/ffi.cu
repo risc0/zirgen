@@ -60,19 +60,19 @@ namespace impl {
 using Val = Fp;
 using ExtVal = FpExt;
 
-__device__ size_t to_size_t(Val v) {
+__device__ __noinline__ size_t to_size_t(Val v) {
   return v.asUInt32();
 }
 
-__device__ ExtVal operator+(const Val& lhs, const ExtVal& rhs) {
+__device__ __noinline__ ExtVal operator+(const Val& lhs, const ExtVal& rhs) {
   return FpExt(lhs) + rhs;
 }
 
-__device__ ExtVal operator-(const ExtVal& lhs, const Val& rhs) {
+__device__ __noinline__ ExtVal operator-(const ExtVal& lhs, const Val& rhs) {
   return lhs - FpExt(rhs);
 }
 
-__device__ Val mod(Val a, Val b) {
+__device__ __noinline__ Val mod(Val a, Val b) {
   return Val(a.asUInt32() % b.asUInt32());
 }
 
@@ -91,39 +91,39 @@ public:
 constexpr size_t EXT_SIZE = 4;
 
 // Built in field operations
-__device__ Val isz(Val x) {
+__device__ __noinline__ Val isz(Val x) {
   return Val(x == Val(0));
 }
 
-__device__ Val neg_0(Val x) {
+__device__ __noinline__ Val neg_0(Val x) {
   return -x;
 }
 
-__device__ Val inv_0(Val x) {
+__device__ __noinline__ Val inv_0(Val x) {
   return inv(x);
 }
 
-__device__ ExtVal inv_0(ExtVal x) {
+__device__ __noinline__ ExtVal inv_0(ExtVal x) {
   return inv(x);
 }
 
-__device__ Val bitAnd(Val a, Val b) {
+__device__ __noinline__ Val bitAnd(Val a, Val b) {
   return Val(a.asUInt32() & b.asUInt32());
 }
 
-__device__ Val inRange(Val low, Val mid, Val high) {
+__device__ __noinline__ Val inRange(Val low, Val mid, Val high) {
   assert(low <= high);
   return Val(low <= mid && mid < high);
 }
 
-__device__ void eqz(Val a, const char* loc) {
+__device__ __noinline__ void eqz(Val a, const char* loc) {
   if (a.asUInt32()) {
     printf("eqz failure at: %s\n", loc);
     assert(false && "eqz failure");
   }
 }
 
-__device__ void eqz(ExtVal a, const char* loc) {
+__device__ __noinline__ void eqz(ExtVal a, const char* loc) {
   for (size_t i = 0; i < EXT_SIZE; i++) {
     eqz(a.elems[i], loc);
   }
@@ -145,7 +145,7 @@ struct BufferObj {
 struct MutableBufObj : public BufferObj {
   __device__ constexpr MutableBufObj(ExecContext& ctx, Buffer& buf) : ctx(ctx), buf(buf) {}
 
-  __device__ Val load(size_t col, size_t back) override {
+  __device__ __noinline__ Val load(size_t col, size_t back) override {
     if (back > ctx.cycle) {
       printf("Going back too far\n");
       return 0;
@@ -153,7 +153,9 @@ struct MutableBufObj : public BufferObj {
     return buf.get(ctx.cycle - back, col);
   }
 
-  __device__ void store(size_t col, Val val) override { return buf.set(ctx.cycle, col, val); }
+  __device__ __noinline__ void store(size_t col, Val val) override {
+    return buf.set(ctx.cycle, col, val);
+  }
 
   ExecContext& ctx;
   Buffer& buf;
@@ -164,12 +166,12 @@ using MutableBuf = MutableBufObj*;
 struct GlobalBufObj : public BufferObj {
   __device__ constexpr GlobalBufObj(ExecContext& ctx, Buffer& buf) : ctx(ctx), buf(buf) {}
 
-  __device__ Val load(size_t col, size_t back) override {
+  __device__ Val __noinline__ load(size_t col, size_t back) override {
     assert(back == 0);
     return buf.get(0, col);
   }
 
-  __device__ void store(size_t col, Val val) override { return buf.set(0, col, val); }
+  __device__ __noinline__ void store(size_t col, Val val) override { return buf.set(0, col, val); }
 
   ExecContext& ctx;
   Buffer& buf;
@@ -189,21 +191,21 @@ template <typename T> struct BoundLayout {
 #define LAYOUT_SUBSCRIPT(orig, index) BoundLayout(orig.layout[index], orig.buf)
 #define EQZ(val, loc) eqz(val, loc)
 
-__device__ void store(ExecContext& ctx, BoundLayout<Reg> reg, Val val) {
+__device__ __noinline__ void store(ExecContext& ctx, BoundLayout<Reg> reg, Val val) {
   reg.buf->store(reg.layout.col, val);
 }
 
-__device__ void storeExt(ExecContext& ctx, BoundLayout<Reg> reg, ExtVal val) {
+__device__ __noinline__ void storeExt(ExecContext& ctx, BoundLayout<Reg> reg, ExtVal val) {
   for (size_t i = 0; i < EXT_SIZE; i++) {
     reg.buf->store(reg.layout.col + i, val.elems[i]);
   }
 }
 
-__device__ Val load(ExecContext& ctx, BoundLayout<Reg> reg, size_t back) {
+__device__ __noinline__ Val load(ExecContext& ctx, BoundLayout<Reg> reg, size_t back) {
   return reg.buf->load(reg.layout.col, back);
 }
 
-__device__ ExtVal loadExt(ExecContext& ctx, BoundLayout<Reg> reg, size_t back) {
+__device__ __noinline__ ExtVal loadExt(ExecContext& ctx, BoundLayout<Reg> reg, size_t back) {
   cuda::std::array<Fp, EXT_SIZE> elems;
   for (size_t i = 0; i < EXT_SIZE; i++) {
     elems[i] = reg.buf->load(reg.layout.col + i, back);
@@ -217,7 +219,8 @@ __device__ ExtVal loadExt(ExecContext& ctx, BoundLayout<Reg> reg, size_t back) {
 #define STORE_EXT(reg, val) storeExt(ctx, reg, val)
 
 // Map + reduce support
-template <typename T1, typename F, size_t N> __device__ auto map(cuda::std::array<T1, N> a, F f) {
+template <typename T1, typename F, size_t N>
+__device__ __noinline__ auto map(cuda::std::array<T1, N> a, F f) {
   cuda::std::array<decltype(f(a[0])), N> out;
   for (size_t i = 0; i < N; i++) {
     out[i] = f(a[i]);
@@ -226,7 +229,7 @@ template <typename T1, typename F, size_t N> __device__ auto map(cuda::std::arra
 }
 
 template <typename T1, typename T2, typename F, size_t N>
-__device__ auto map(cuda::std::array<T1, N> a, cuda::std::array<T2, N> b, F f) {
+__device__ __noinline__ auto map(cuda::std::array<T1, N> a, cuda::std::array<T2, N> b, F f) {
   cuda::std::array<decltype(f(a[0], b[0])), N> out;
   for (size_t i = 0; i < N; i++) {
     out[i] = f(a[i], b[i]);
@@ -235,7 +238,7 @@ __device__ auto map(cuda::std::array<T1, N> a, cuda::std::array<T2, N> b, F f) {
 }
 
 template <typename T1, typename T2, typename F, size_t N>
-__device__ auto map(cuda::std::array<T1, N> a, const BoundLayout<T2>& b, F f) {
+__device__ __noinline__ auto map(cuda::std::array<T1, N> a, const BoundLayout<T2>& b, F f) {
   cuda::std::array<decltype(f(a[0], BoundLayout(b.layout[0], b.buf))), N> out;
   for (size_t i = 0; i < N; i++) {
     out[i] = f(a[i], BoundLayout(b.layout[i], b.buf));
@@ -244,7 +247,7 @@ __device__ auto map(cuda::std::array<T1, N> a, const BoundLayout<T2>& b, F f) {
 }
 
 template <typename T1, typename T2, typename F, size_t N>
-__device__ auto reduce(cuda::std::array<T1, N> elems, T2 start, F f) {
+__device__ __noinline__ auto reduce(cuda::std::array<T1, N> elems, T2 start, F f) {
   T2 cur = start;
   for (size_t i = 0; i < N; i++) {
     cur = f(cur, elems[i]);
@@ -291,7 +294,7 @@ template <typename T> __device__ void extern_log(ExecContext& ctx, const char* m
   // std::cout << "\n";
 }
 
-__device__ Val extern_getPreimage(ExecContext& ctx, Val idx) {
+__device__ __noinline__ Val extern_getPreimage(ExecContext& ctx, Val idx) {
   uint32_t idxLow = idx.asUInt32() % 4;
   uint32_t idxHigh = idx.asUInt32() / 4;
   uint32_t preimageIdx = ctx.preflight.curPreimage[ctx.cycle];
@@ -299,7 +302,7 @@ __device__ Val extern_getPreimage(ExecContext& ctx, Val idx) {
   return (preimages[idxHigh] >> (16 * idxLow)) & 0xffff;
 }
 
-__device__ Val extern_nextPreimage(ExecContext& ctx) {
+__device__ __noinline__ Val extern_nextPreimage(ExecContext& ctx) {
   return ctx.preflight.curPreimage[ctx.cycle] != ctx.preflight.preimagesSize;
 }
 
@@ -327,10 +330,10 @@ extern "C" {
 
 using namespace risc0;
 
-const char* risc0_circuit_keccak_cpu_witgen(uint32_t mode,
-                                            ExecBuffers* buffers,
-                                            PreflightTrace* preflight,
-                                            uint32_t lastCycle) {
+const char* risc0_circuit_keccak_cuda_witgen(uint32_t mode,
+                                             ExecBuffers* buffers,
+                                             PreflightTrace* preflight,
+                                             uint32_t lastCycle) {
   try {
     CudaStream stream;
     auto cfg = getSimpleConfig(lastCycle);

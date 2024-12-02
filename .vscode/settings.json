@@ -12,6 +12,9 @@
   "rust-analyzer.check.extraArgs": [
     "--target-dir=target/analyzer"
   ],
+  "rust-analyzer.cargo.features": [
+    "cuda"
+  ],
   "files.associations": {
     "*.h.inc": "cpp",
     "*.cpp.inc": "cpp",
