@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "zirgen/circuit/bigint/op_tests.h"
-#include "zirgen/circuit/bigint/rsa.h"
+#include "zirgen/Dialect/BigInt/IR/BigInt.h"
 #include "zirgen/circuit/bigint/test/bibc.h"
 
 #include <gtest/gtest.h>
@@ -21,10 +20,30 @@
 using namespace zirgen;
 using namespace zirgen::BigInt::test;
 
+namespace {
+
+void makeConstMulTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
+  size_t const_bits = 16;
+
+  auto inp = builder.create<BigInt::DefOp>(loc, bits, 0, true);
+  auto expected = builder.create<BigInt::DefOp>(loc, bits + const_bits, 1, true);
+
+  // Construct constant
+  mlir::Type theconstType = builder.getIntegerType(const_bits);
+  auto theconstAttr = builder.getIntegerAttr(theconstType, 0x5432); // value 0x5432
+  auto theconst = builder.create<BigInt::ConstOp>(loc, theconstAttr);
+
+  auto result = builder.create<BigInt::MulOp>(loc, theconst, inp);
+  auto diff = builder.create<BigInt::SubOp>(loc, result, expected);
+  builder.create<BigInt::EqualZeroOp>(loc, diff);
+}
+
+} // namespace
+
 TEST_F(BibcTest, ConstMul8) {
   mlir::OpBuilder builder(ctx);
   auto func = makeFunc("const_mul_8", builder);
-  BigInt::makeConstMulTest(builder, func.getLoc(), 8);
+  makeConstMulTest(builder, func.getLoc(), 8);
 
   auto inputs = apints({"2", "A864"});
   ZType a, b;

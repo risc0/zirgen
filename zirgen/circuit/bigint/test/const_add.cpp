@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "zirgen/circuit/bigint/op_tests.h"
-#include "zirgen/circuit/bigint/rsa.h"
+#include "zirgen/Dialect/BigInt/IR/BigInt.h"
 #include "zirgen/circuit/bigint/test/bibc.h"
 
 #include <gtest/gtest.h>
@@ -21,10 +20,29 @@
 using namespace zirgen;
 using namespace zirgen::BigInt::test;
 
+namespace {
+
+void makeConstAddTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
+  size_t const_bits = 16;
+  auto inp = builder.create<BigInt::DefOp>(loc, bits, 0, true);
+  auto expected = builder.create<BigInt::DefOp>(loc, std::max(bits, const_bits) + 1, 1, true);
+
+  // Construct constant
+  mlir::Type fortysevensType = builder.getIntegerType(const_bits);
+  auto fortysevensAttr = builder.getIntegerAttr(fortysevensType, 0x4747); // value 0x4747
+  auto fortysevens = builder.create<BigInt::ConstOp>(loc, fortysevensAttr);
+
+  auto result = builder.create<BigInt::AddOp>(loc, inp, fortysevens);
+  auto diff = builder.create<BigInt::SubOp>(loc, result, expected);
+  builder.create<BigInt::EqualZeroOp>(loc, diff);
+}
+
+} // namespace
+
 TEST_F(BibcTest, ConstAdd8) {
   mlir::OpBuilder builder(ctx);
   auto func = makeFunc("const_add_8", builder);
-  BigInt::makeConstAddTest(builder, func.getLoc(), 8);
+  makeConstAddTest(builder, func.getLoc(), 8);
 
   auto inputs = apints({"1", "4748"});
   ZType a, b;
@@ -35,7 +53,7 @@ TEST_F(BibcTest, ConstAdd8) {
 TEST_F(BibcTest, ConstAdd16) {
   mlir::OpBuilder builder(ctx);
   auto func = makeFunc("const_add_16", builder);
-  BigInt::makeConstAddTest(builder, func.getLoc(), 16);
+  makeConstAddTest(builder, func.getLoc(), 16);
 
   auto inputs = apints({"2", "4749"});
   ZType a, b;
@@ -46,7 +64,7 @@ TEST_F(BibcTest, ConstAdd16) {
 TEST_F(BibcTest, ConstAdd128) {
   mlir::OpBuilder builder(ctx);
   auto func = makeFunc("const_add_128", builder);
-  BigInt::makeConstAddTest(builder, func.getLoc(), 128);
+  makeConstAddTest(builder, func.getLoc(), 128);
 
   auto inputs = apints({"1", "4748"});
   ZType a, b;

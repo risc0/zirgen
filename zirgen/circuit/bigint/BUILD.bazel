@@ -9,12 +9,10 @@ cc_library(
     name = "lib",
     srcs = [
         "elliptic_curve.cpp",
-        "op_tests.cpp",
         "rsa.cpp",
     ],
     hdrs = [
         "elliptic_curve.h",
-        "op_tests.h",
         "rsa.h",
         "//zirgen/circuit/recursion",
         "//zirgen/circuit/rv32im/v1/edsl:rv32im",
@@ -27,45 +25,6 @@ cc_library(
         "//zirgen/circuit/verify:lib",
         "//zirgen/compiler/edsl",
     ],
-)
-
-# TODO: It would be nice to split these into production vs test ZKRs
-ZKRS = [
-    "rsa_256_x1",
-    "rsa_256_x2",
-    "rsa_3072_x1",
-    "rsa_3072_x15",
-    "const_add_test_8",
-    "const_add_alt_test_16",
-    "const_mul_test_8",
-    "add_test_8",
-    "add_test_16",
-    "add_test_128",
-    "const_one_test_8",
-    "const_twobyte_test_16",
-    "sub_test_8",
-    "sub_test_128",
-    "mul_test_8",
-    "mul_test_128",
-    "reduce_test_8",
-    "reduce_test_128",
-    "nondet_inv_test_8",
-]
-
-build_circuit(
-    name = "gen_bigint",
-    srcs = ["gen_bigint.cpp"],
-    outs = [fn for zkr in ZKRS for fn in [
-        zkr + ".zkr",
-        zkr + ".zkr.dbg",
-        zkr + ".bibc",
-    ]] + ["bigint.rs.inc"],
-    deps = [":lib"],
-)
-
-pkg_zip(
-    name = "bigint_zkr",
-    srcs = [x + ".zkr" for x in ZKRS],
 )
 
 cc_binary(
