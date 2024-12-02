@@ -32,6 +32,7 @@
 #include "zirgen/Main/RunTests.h"
 #include "zirgen/compiler/codegen/codegen.h"
 #include "zirgen/compiler/layout/viz.h"
+#include "zirgen/compiler/picus/picus.h"
 #include "zirgen/dsl/lower.h"
 #include "zirgen/dsl/parser.h"
 #include "zirgen/dsl/passes/Passes.h"
@@ -65,6 +66,7 @@ enum Action {
   PrintRust,
   PrintCpp,
   PrintStats,
+  PrintPicus,
 };
 } // namespace
 
@@ -82,7 +84,8 @@ static cl::opt<enum Action> emitAction(
         clEnumValN(PrintLayoutAttr, "layoutattr", "content of generated layout attributes as text"),
         clEnumValN(PrintRust, "rust", "Output generated rust code"),
         clEnumValN(PrintCpp, "cpp", "Output generated cpp code"),
-        clEnumValN(PrintStats, "stats", "Display statistics on generated circuit")));
+        clEnumValN(PrintStats, "stats", "Display statistics on generated circuit"),
+        clEnumValN(PrintPicus, "picus", "Output code for determinism verification with Picus")));
 
 static cl::list<std::string> includeDirs("I", cl::desc("Add include path"), cl::value_desc("path"));
 static cl::opt<bool> doTest("test", cl::desc("Run tests for the main module"));
@@ -193,6 +196,11 @@ int main(int argc, char* argv[]) {
 
   if (emitAction == Action::OptimizeZHLT) {
     typedModule->print(llvm::outs());
+    return 0;
+  }
+
+  if (emitAction == Action::PrintPicus) {
+    printPicus(*typedModule, llvm::outs());
     return 0;
   }
 
