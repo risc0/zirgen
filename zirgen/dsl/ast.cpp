@@ -128,6 +128,13 @@ bool operator==(const Statement& left, const Statement& right) {
   throw std::runtime_error("unreachable: missing case");
 }
 
+Attribute::Attribute(SMLoc loc, StringRef name) : Node(std::move(loc)), name(name) {}
+
+void Attribute::print(llvm::raw_ostream& out) const {
+  JSON::Dict dict(out);
+  dict.attr_string("name", name);
+}
+
 Parameter::Parameter(SMLoc loc, StringRef name, Expression::Ptr type, bool isVariadic)
     : Node(std::move(loc)), name(name), type(std::move(type)), isVariadic(isVariadic) {}
 
@@ -146,12 +153,14 @@ bool operator==(const Parameter& left, const Parameter& right) {
 Component::Component(SMLoc loc,
                      Kind kind,
                      StringRef name,
+                     Attribute::Vec attributes,
                      Parameter::Vec type_params,
                      Parameter::Vec params,
                      Expression::Ptr body)
     : Node(std::move(loc))
     , kind(kind)
     , name(name)
+    , attributes(attributes)
     , type_params(std::move(type_params))
     , params(std::move(params))
     , body(std::move(body)) {}
@@ -176,6 +185,7 @@ void Component::print(ostream& os) const {
     break;
   }
   dict.attr_string("name", name);
+  dict.attr_array("attributes", attributes);
   dict.attr_array("type_params", type_params);
   dict.attr_array("params", params);
   dict.attr_dict("body", body);

@@ -46,6 +46,7 @@ enum Token : int {
   tok_square_r = ']',
   tok_times = '*',
   tok_back = '@',
+  tok_hash = '#',
   tok_component = -1,
   tok_define = -2,
   tok_else = -3,
