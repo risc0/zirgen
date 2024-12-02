@@ -274,23 +274,23 @@ Val extern_getCycle(ExecContext& ctx) {
   return ctx.cycle;
 }
 
-std::ostream& hex_word(std::ostream& os, uint32_t word) {
-  std::cout << "0x"                                          //
-            << std::hex << std::setw(8) << std::setfill('0') //
-            << word                                          //
-            << std::dec << std::setw(0);
-  return os;
-}
+// std::ostream& hex_word(std::ostream& os, uint32_t word) {
+//   std::cout << "0x"                                          //
+//             << std::hex << std::setw(8) << std::setfill('0') //
+//             << word                                          //
+//             << std::dec << std::setw(0);
+//   return os;
+// }
 
 void extern_log(ExecContext& ctx, const std::string& message, std::vector<Val> vals) {
-  std::cout << "LOG[" << ctx.cycle << "]: '" << message << "': ";
-  for (size_t i = 0; i < vals.size(); i++) {
-    if (i != 0) {
-      std::cout << ", ";
-    }
-    hex_word(std::cout, vals[i].asUInt32());
-  }
-  std::cout << "\n";
+  // std::cout << "LOG[" << ctx.cycle << "]: '" << message << "': ";
+  // for (size_t i = 0; i < vals.size(); i++) {
+  //   if (i != 0) {
+  //     std::cout << ", ";
+  //   }
+  //   hex_word(std::cout, vals[i].asUInt32());
+  // }
+  // std::cout << "\n";
 }
 
 Val extern_getPreimage(ExecContext& ctx, Val idx) {

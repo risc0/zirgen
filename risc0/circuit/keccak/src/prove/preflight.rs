@@ -138,7 +138,7 @@ const KECCAK_PI: [usize; 24] = [
     10, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, 2, 20, 14, 22, 9, 6, 1,
 ];
 
-#[derive(Clone, Default)]
+#[derive(Clone, Debug, Default)]
 struct ShaInfo {
     a: [u32; DIGEST_WORDS],
     e: [u32; DIGEST_WORDS],
@@ -168,7 +168,7 @@ fn compute_sha_infos(state: &mut ShaState, data: &[u32]) -> Vec<ShaInfo> {
     }
     macro_rules! sigma0 {
         ($x:expr) => {
-            ($x.rotate_right(7) ^ $x.rotate_right(18) ^ ($x >> 3))
+            $x.rotate_right(7) ^ $x.rotate_right(18) ^ ($x >> 3)
         };
     }
     macro_rules! sigma1 {
@@ -185,9 +185,9 @@ fn compute_sha_infos(state: &mut ShaState, data: &[u32]) -> Vec<ShaInfo> {
         if i < 16 {
             w[i] = data[i];
         } else {
-            w[i] = sigma0!(w[i - 2])
+            w[i] = sigma1!(w[i - 2])
                 .wrapping_add(w[i - 7])
-                .wrapping_add(sigma1!(w[i - 15]))
+                .wrapping_add(sigma0!(w[i - 15]))
                 .wrapping_add(w[i - 16]);
         }
 
@@ -212,16 +212,18 @@ fn compute_sha_infos(state: &mut ShaState, data: &[u32]) -> Vec<ShaInfo> {
         if i % 8 == 7 {
             ret.push(cur.clone());
         }
-        state[0] = state[0].wrapping_add(a);
-        state[1] = state[1].wrapping_add(b);
-        state[2] = state[2].wrapping_add(c);
-        state[3] = state[3].wrapping_add(d);
-        state[4] = state[4].wrapping_add(e);
-        state[5] = state[5].wrapping_add(f);
-        state[6] = state[6].wrapping_add(g);
-        state[7] = state[7].wrapping_add(h);
-        ret.push((*state).into());
     }
+
+    state[0] = state[0].wrapping_add(a);
+    state[1] = state[1].wrapping_add(b);
+    state[2] = state[2].wrapping_add(c);
+    state[3] = state[3].wrapping_add(d);
+    state[4] = state[4].wrapping_add(e);
+    state[5] = state[5].wrapping_add(f);
+    state[6] = state[6].wrapping_add(g);
+    state[7] = state[7].wrapping_add(h);
+    ret.push((*state).into());
+
     ret
 }
 

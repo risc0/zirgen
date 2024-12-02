@@ -68,6 +68,7 @@ fn test_fwd_rev_ab() {
         circuit_hal
             .generate_witness(StepMode::SeqForward, &preflight, &global, &data)
             .unwrap();
+        hal.eltwise_zeroize_elem(&data.buf);
         data.buf.to_vec()
     };
 
@@ -80,6 +81,7 @@ fn test_fwd_rev_ab() {
         circuit_hal
             .generate_witness(StepMode::SeqReverse, &preflight, &global, &data)
             .unwrap();
+        hal.eltwise_zeroize_elem(&data.buf);
         data.buf.to_vec()
     };
 
