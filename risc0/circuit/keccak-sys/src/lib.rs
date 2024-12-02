@@ -17,6 +17,16 @@ use cust::memory::DevicePointer;
 
 use risc0_core::field::baby_bear::{BabyBearElem, BabyBearExtElem};
 
+#[derive(Debug)]
+#[repr(C)]
+pub struct ScatterInfo {
+    pub offset: u32,
+    pub row: u32,
+    pub col: u16,
+    pub count: u16,
+    pub bits: u32,
+}
+
 #[repr(C)]
 pub struct RawPreflightTrace {
     pub preimages: *const [u64; 25],

@@ -16,6 +16,8 @@
 #include "fp.h"
 #include "fpext.h"
 
+#include "vendor/poolstl.hpp"
+
 #include <array>
 #include <cassert>
 #include <cstdint>
@@ -176,37 +178,37 @@ struct GlobalBufObj : public BufferObj {
 using GlobalBuf = GlobalBufObj*;
 
 template <typename T> struct BoundLayout {
-  BoundLayout(const T& layout, BufferObj* buf) : layout(&layout), buf(buf) {}
+  BoundLayout(const T& layout, BufferObj* buf) : layout(layout), buf(buf) {}
   BoundLayout() = default;
   BoundLayout(const BoundLayout&) = default;
 
-  const T* layout = nullptr;
+  const T& layout;
   BufferObj* buf = nullptr;
 };
 
 #define BIND_LAYOUT(orig, buf) BoundLayout(orig, buf)
-#define LAYOUT_LOOKUP(orig, elem) BoundLayout(orig.layout->elem, orig.buf)
-#define LAYOUT_SUBSCRIPT(orig, index) BoundLayout((*orig.layout)[index], orig.buf)
+#define LAYOUT_LOOKUP(orig, elem) BoundLayout(orig.layout.elem, orig.buf)
+#define LAYOUT_SUBSCRIPT(orig, index) BoundLayout(orig.layout[index], orig.buf)
 #define EQZ(val, loc) eqz(val, loc)
 
 void store(ExecContext& ctx, BoundLayout<Reg> reg, Val val) {
-  reg.buf->store(reg.layout->col, val);
+  reg.buf->store(reg.layout.col, val);
 }
 
 void storeExt(ExecContext& ctx, BoundLayout<Reg> reg, ExtVal val) {
   for (size_t i = 0; i < EXT_SIZE; i++) {
-    reg.buf->store(reg.layout->col + i, val.elems[i]);
+    reg.buf->store(reg.layout.col + i, val.elems[i]);
   }
 }
 
 Val load(ExecContext& ctx, BoundLayout<Reg> reg, size_t back) {
-  return reg.buf->load(reg.layout->col, back);
+  return reg.buf->load(reg.layout.col, back);
 }
 
 ExtVal loadExt(ExecContext& ctx, BoundLayout<Reg> reg, size_t back) {
   std::array<Fp, EXT_SIZE> elems;
   for (size_t i = 0; i < EXT_SIZE; i++) {
-    elems[i] = reg.buf->load(reg.layout->col + i, back);
+    elems[i] = reg.buf->load(reg.layout.col + i, back);
   }
   return FpExt(elems[0], elems[1], elems[2], elems[3]);
 }
@@ -236,9 +238,9 @@ auto map(std::array<T1, N> a, std::array<T2, N> b, F f) {
 
 template <typename T1, typename T2, typename F, size_t N>
 auto map(std::array<T1, N> a, const BoundLayout<T2>& b, F f) {
-  std::array<decltype(f(a[0], BoundLayout((*b.layout)[0], b.buf))), N> out;
+  std::array<decltype(f(a[0], BoundLayout(b.layout[0], b.buf))), N> out;
   for (size_t i = 0; i < N; i++) {
-    out[i] = f(a[i], BoundLayout((*b.layout)[i], b.buf));
+    out[i] = f(a[i], BoundLayout(b.layout[i], b.buf));
   }
   return out;
 }
@@ -256,7 +258,7 @@ template <typename T1, typename T2, typename T3, typename F, size_t N>
 auto reduce(std::array<T1, N> elems, T2 start, const BoundLayout<T3>& b, F f) {
   T2 cur = start;
   for (size_t i = 0; i < N; i++) {
-    cur = f(cur, elems[i], BoundLayout((*b.layout)[i], b.buf));
+    cur = f(cur, elems[i], BoundLayout(b.layout[i], b.buf));
   }
   return cur;
 }
@@ -281,7 +283,7 @@ std::ostream& hex_word(std::ostream& os, uint32_t word) {
 }
 
 void extern_log(ExecContext& ctx, const std::string& message, std::vector<Val> vals) {
-  std::cout << "LOG: '" << message << "': ";
+  std::cout << "LOG[" << ctx.cycle << "]: '" << message << "': ";
   for (size_t i = 0; i < vals.size(); i++) {
     if (i != 0) {
       std::cout << ", ";
@@ -322,6 +324,10 @@ void stepExec(ExecBuffers& buffers, PreflightTrace& preflight, size_t cycle) {
 
 } // namespace risc0
 
+constexpr size_t kStepModeParallel = 0;
+constexpr size_t kStepModeSeqForward = 1;
+constexpr size_t kStepModeSeqReverse = 2;
+
 extern "C" {
 
 using namespace risc0;
@@ -331,8 +337,24 @@ const char* risc0_circuit_keccak_cpu_witgen(uint32_t mode,
                                             PreflightTrace* preflight,
                                             uint32_t lastCycle) {
   try {
-    for (size_t cycle = 0; cycle < lastCycle; cycle++) {
-      stepExec(*buffers, *preflight, cycle);
+    switch (mode) {
+    case kStepModeParallel: {
+      auto begin = poolstl::iota_iter<uint32_t>(0);
+      auto end = poolstl::iota_iter<uint32_t>(lastCycle);
+      std::for_each(
+          poolstl::par, begin, end, [&](uint32_t cycle) { stepExec(*buffers, *preflight, cycle); });
+    } break;
+    case kStepModeSeqForward:
+      for (size_t cycle = 0; cycle < lastCycle; cycle++) {
+        stepExec(*buffers, *preflight, cycle);
+      }
+      break;
+    case kStepModeSeqReverse: {
+      for (size_t i = lastCycle; i-- > 0;) {
+        // printf("stepExec: %zu\n", i);
+        stepExec(*buffers, *preflight, i);
+      }
+    } break;
     }
   } catch (const std::exception& err) {
     return strdup(err.what());

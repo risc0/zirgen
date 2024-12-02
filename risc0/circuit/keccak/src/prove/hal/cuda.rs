@@ -17,7 +17,7 @@ use std::rc::Rc;
 use anyhow::Result;
 use risc0_circuit_keccak_sys::{
     risc0_circuit_keccak_cuda_eval_check, risc0_circuit_keccak_cuda_witgen, RawBuffer,
-    RawExecBuffers, RawPreflightTrace,
+    RawExecBuffers, RawPreflightTrace, ScatterInfo,
 };
 use risc0_core::{
     field::{
@@ -61,6 +61,18 @@ impl<CH: CudaHash> CudaCircuitHal<CH> {
 }
 
 impl<CH: CudaHash> CircuitWitnessGenerator<CudaHal<CH>> for CudaCircuitHal<CH> {
+    fn scatter_preflight(
+        &self,
+        into: &MetaBuffer<CudaHal<CH>>,
+        infos: &[ScatterInfo],
+        data: &[u32],
+    ) -> Result<()> {
+        // let index = self._hal.copy_from_u32("index", index);
+        // let offsets = self.copy_from_u32("offsets", offsets);
+        // let values = self.copy_from_elem("values", values);
+        todo!()
+    }
+
     fn generate_witness(
         &self,
         mode: StepMode,

@@ -110,6 +110,9 @@ where
         );
 
         self.circuit_hal
+            .scatter_preflight(&data, &preflight.scatter, &preflight.data)?;
+
+        self.circuit_hal
             .generate_witness(StepMode::Parallel, &preflight, &global, &data)?;
 
         // Zero out 'invalid' entries in data and output.
@@ -158,12 +161,6 @@ where
 
         let mix: [Val; REGCOUNT_MIX] = std::array::from_fn(|_| prover.iop().random_elem());
         let mix = self.hal.copy_from_elem("mix", mix.as_slice());
-
-        tracing::debug!("REGCOUNT_ACCUM: {REGCOUNT_ACCUM}");
-        tracing::debug!("REGCOUNT_DATA: {REGCOUNT_DATA}");
-        tracing::debug!("REGCOUNT_CODE: {REGCOUNT_CODE}");
-        tracing::debug!("REGCOUNT_MIX: {REGCOUNT_MIX}");
-        tracing::debug!("REGCOUNT_GLOBAL: {REGCOUNT_GLOBAL}");
 
         let accum = self
             .hal

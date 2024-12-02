@@ -12,18 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use risc0_circuit_keccak_sys::ScatterInfo;
+use risc0_zkvm::sha::DIGEST_WORDS;
+
 use super::KeccakState;
 use crate::zirgen::circuit::LAYOUT_TOP;
 
 type ThetaB = [u64; 5];
-
-pub(crate) struct ScatterInfo {
-    pub offset: u32,
-    pub row: u32,
-    pub col: u16,
-    pub count: u16,
-    pub bits: u16,
-}
 
 pub(crate) struct PreflightTrace {
     pub preimages: Vec<KeccakState>,
@@ -50,7 +45,7 @@ impl ControlState {
     }
 
     fn as_u32(&self) -> u32 {
-        u32::from_be_bytes([self.cycle_type, self.sub_type, self.block, self.round])
+        u32::from_le_bytes([self.cycle_type, self.sub_type, self.block, self.round])
     }
 }
 
@@ -92,7 +87,7 @@ impl Control {
     }
 }
 
-type ShaState = [u32; 8];
+type ShaState = [u32; DIGEST_WORDS];
 
 const SHA_INIT: ShaState = [
     0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19,
@@ -145,9 +140,9 @@ const KECCAK_PI: [usize; 24] = [
 
 #[derive(Clone, Default)]
 struct ShaInfo {
-    a: [u32; 8],
-    e: [u32; 8],
-    w: [u32; 8],
+    a: [u32; DIGEST_WORDS],
+    e: [u32; DIGEST_WORDS],
+    w: [u32; DIGEST_WORDS],
 }
 
 fn compute_sha_infos(state: &mut ShaState, data: &[u32]) -> Vec<ShaInfo> {
@@ -350,7 +345,7 @@ impl PreflightTrace {
     }
 
     fn add_cycle(&mut self, ctrl: Control, bits: u32, kflat: u32, sflat: u32, preimage_idx: u32) {
-        let mut offset = self.data.len() as u32;
+        let offset = self.data.len() as u32;
         let cycle = self.preimage_idxs.len() as u32;
         let ctrl_state = ctrl.as_state();
         self.data.push(ctrl_state.as_u32());
@@ -361,11 +356,10 @@ impl PreflightTrace {
             count: 4,
             bits: 8,
         });
-        offset += 1;
         let onehot = 1 << ctrl_state.cycle_type;
         self.data.push(onehot);
         self.scatter.push(ScatterInfo {
-            offset,
+            offset: offset + 1,
             row: cycle,
             col: LAYOUT_TOP.cycle_mux._super[0]._super.offset as u16,
             count: 12,
@@ -418,7 +412,7 @@ impl PreflightTrace {
     ) {
         for block in 0..4 {
             let infos = compute_sha_infos(cur_sha, &data[16 * block..]);
-            for (i, info) in infos.iter().enumerate().take(8) {
+            for (i, info) in infos.iter().enumerate().take(DIGEST_WORDS) {
                 let bits = self.write_sha_info(info);
                 let ctrl = if is_in {
                     Control::ShaIn(block as u8, i as u8)
@@ -428,7 +422,7 @@ impl PreflightTrace {
                 self.add_cycle(ctrl, bits, kflat, *sflat, cur_idx);
             }
             *sflat = self.write_sha_state(cur_sha);
-            let bits = self.write_sha_info(&infos[8]);
+            let bits = self.write_sha_info(&infos[DIGEST_WORDS]);
             let ctrl = if is_in {
                 Control::ShaNextBlockIn(block as u8)
             } else {

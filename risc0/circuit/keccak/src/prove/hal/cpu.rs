@@ -18,7 +18,7 @@ use anyhow::Result;
 use rayon::{iter::IntoParallelIterator, prelude::*};
 use risc0_circuit_keccak_sys::{
     risc0_circuit_keccak_cpu_poly_fp, risc0_circuit_keccak_cpu_witgen, RawBuffer, RawExecBuffers,
-    RawPreflightTrace,
+    RawPreflightTrace, ScatterInfo,
 };
 use risc0_core::scope;
 use risc0_sys::ffi_wrap;
@@ -46,6 +46,38 @@ use super::{CircuitWitnessGenerator, MetaBuffer, PreflightTrace, StepMode};
 pub struct CpuCircuitHal;
 
 impl CircuitWitnessGenerator<CpuHal<CircuitField>> for CpuCircuitHal {
+    fn scatter_preflight(
+        &self,
+        into: &MetaBuffer<CpuHal<CircuitField>>,
+        infos: &[ScatterInfo],
+        data: &[u32],
+    ) -> Result<()> {
+        scope!("scatter_preflight");
+        let mut into_slice = into.buf.as_slice_mut();
+        for info in infos {
+            let inner_count = 32 / info.bits;
+            let mask: u32 = (1 << info.bits) - 1;
+            if info.row == 196 {
+                tracing::debug!("{info:?}");
+                tracing::debug!("inner_count: {inner_count}, mask: {mask}");
+            }
+            for i in 0..info.count as u32 {
+                let from_idx = info.offset + (i / inner_count);
+                let word = data[from_idx as usize];
+                let j = i % inner_count;
+                let val = (word >> (j * info.bits)) & mask;
+                let col = info.col as u32 + i;
+                let into_idx = col as usize * into.rows + info.row as usize;
+                into_slice[into_idx] = val.into();
+                // exec.data.set(info.row, info.column + i, val);
+                if info.row == 196 {
+                    tracing::debug!("from_idx: {from_idx}, word: {word:#010x}, j: {j}, val: {val:#010x}, col: {col}, into_idx: {into_idx}");
+                }
+            }
+        }
+        Ok(())
+    }
+
     fn generate_witness(
         &self,
         mode: StepMode,

@@ -17,6 +17,7 @@ pub(crate) mod cpu;
 pub(crate) mod cuda;
 
 use anyhow::Result;
+use risc0_circuit_keccak_sys::ScatterInfo;
 use risc0_core::field::Elem as _;
 use risc0_zkp::hal::Hal;
 
@@ -54,13 +55,20 @@ where
 #[derive(Clone, Copy, PartialEq)]
 pub(crate) enum StepMode {
     Parallel,
-    #[cfg(test)]
+    // #[cfg(test)]
     SeqForward,
-    #[cfg(test)]
+    // #[cfg(test)]
     SeqReverse,
 }
 
 pub(crate) trait CircuitWitnessGenerator<H: Hal> {
+    fn scatter_preflight(
+        &self,
+        into: &MetaBuffer<H>,
+        infos: &[ScatterInfo],
+        data: &[u32],
+    ) -> Result<()>;
+
     fn generate_witness(
         &self,
         mode: StepMode,
