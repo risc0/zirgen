@@ -549,6 +549,16 @@ Zhlt::ComponentOp LoweringImpl::gen(ComponentOp component,
   auto ctor = builder.create<Zhlt::ComponentOp>(
       loc, mangledName, valueType, constructArgsTypes, layoutType);
   ctor.getBody().takeBody(body);
+
+  for (NamedAttribute attr : component->getDiscardableAttrs()) {
+    StringRef name = attr.getName();
+    if (name == "picus") {
+      ctor->setAttr(name, attr.getValue());
+    } else {
+      ctor->emitError() << "unknown attribute `" << name << "`";
+    }
+  }
+
   return ctor;
 }
 
