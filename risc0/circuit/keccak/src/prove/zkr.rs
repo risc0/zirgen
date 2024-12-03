@@ -12,99 +12,66 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::{control_id::KECCAK_CONTROL_IDS, KECCAK_PO2_RANGE, RECURSION_PO2};
-use anyhow::{ensure, Result};
+use std::io::{Cursor, Read as _};
+
+use anyhow::{Context as _, Result};
 use risc0_circuit_recursion::prove::Program;
-use risc0_core::field::baby_bear::BabyBearElem;
+use zip::ZipArchive;
 
-// TODO: publish this value from recursion crate or find some other way not to have this constant here.
-const RECURSION_CODE_SIZE: usize = 23;
+use crate::{KECCAK_PO2, RECURSION_PO2};
 
-static REGISTER_ZKRS: std::sync::Once = std::sync::Once::new();
+const ZKR_ZIP: &[u8] = include_bytes!("keccak_zkr.zip");
 
-pub fn get_zkr(name: &str, po2: usize) -> Result<Program> {
-    let code_size = RECURSION_CODE_SIZE;
-    let u32s = crate::zkr::get_zkr_u32s(name)?;
-    ensure!(u32s.len() % code_size == 0);
-    ensure!(u32s.len() / code_size < (1 << po2));
-    let rows = u32s.len() / code_size;
-    let steps = 1 << po2;
-    let pct = (rows as f64 * 100.) / ((1 << po2) as f64);
+pub fn get_zkr_u32s(name: &str) -> Result<Vec<u32>> {
+    let mut zip = ZipArchive::new(Cursor::new(ZKR_ZIP))?;
+    let mut entry = zip
+        .by_name(name)
+        .with_context(|| format!("Failed to read {name}"))?;
 
-    tracing::debug!("Got {rows}/{steps} ({pct:.2}%) rows of program for {name} with po2={po2}");
+    let mut bytes = Vec::new();
+    entry.read_to_end(&mut bytes)?;
 
-    Ok(Program {
-        code: u32s.iter().cloned().map(BabyBearElem::from).collect(),
-        code_size,
-        po2,
-    })
+    Ok(Vec::from(bytemuck::cast_slice(bytes.as_slice())))
 }
 
-pub fn register_zkrs() {
-    REGISTER_ZKRS.call_once(|| {
-        for (po2, control_id) in KECCAK_PO2_RANGE.zip(KECCAK_CONTROL_IDS) {
-            let name = format!("keccak_lift_{}.zkr", po2);
-            risc0_zkvm::register_zkr(&control_id, move || get_zkr(&name, RECURSION_PO2));
-        }
-    });
+pub fn get_zkr() -> Result<Program> {
+    let name = format!("keccak_lift_{KECCAK_PO2}.zkr");
+    let u32s = get_zkr_u32s(&name)?;
+    Ok(Program::from_encoded(&u32s, RECURSION_PO2))
 }
 
 #[cfg(test)]
 mod tests {
-    use super::get_zkr;
-    use crate::{get_control_id, get_control_root, KECCAK_PO2_RANGE, RECURSION_PO2};
-    use anyhow::{ensure, Context, Result};
-    use risc0_zkp::core::digest::Digest;
-    use risc0_zkp::core::hash::poseidon2::Poseidon2HashSuite;
+    use anyhow::Result;
+    use risc0_zkp::core::{digest::Digest, hash::poseidon2::Poseidon2HashSuite};
     use risc0_zkvm::recursion::MerkleGroup;
 
-    fn compute_control_id(po2: usize) -> Result<Digest> {
-        let program = get_zkr(&format!("keccak_lift_{}.zkr", po2), RECURSION_PO2)?;
+    use crate::control_id::{KECCAK_CONTROL_ID, KECCAK_CONTROL_ROOT};
+
+    use super::get_zkr;
+
+    fn compute_control_id() -> Result<Digest> {
+        let program = get_zkr()?;
         let hash_suite = Poseidon2HashSuite::new_suite();
         Ok(program.compute_control_id(hash_suite))
     }
 
-    fn compute_control_root(po2: usize) -> Result<Digest> {
-        let control_id = compute_control_id(po2)?;
+    fn compute_control_root() -> Result<Digest> {
+        let control_id = compute_control_id()?;
         let hash_suite = Poseidon2HashSuite::new_suite();
         let hashfn = hash_suite.hashfn.as_ref();
         let group = MerkleGroup::new(vec![control_id])?;
         Ok(group.calc_root(hashfn))
     }
 
-    fn verify_control_id(po2: usize) -> Result<()> {
-        ensure!(
-            *get_control_id(po2) == compute_control_id(po2)?,
-            "Control id mismatch on po2={}",
-            po2
-        );
-        Ok(())
-    }
-
-    fn verify_control_root(po2: usize) -> Result<()> {
-        ensure!(
-            *get_control_root(po2) == compute_control_root(po2)?,
-            "Control root mismatch on po2={}",
-            po2
-        );
-        Ok(())
-    }
-
     // Makes sure our included control IDs are what we expect
     #[test]
-    fn control_ids() -> Result<()> {
-        for po2 in KECCAK_PO2_RANGE {
-            verify_control_id(po2).context(format!("po2={po2}"))?;
-        }
-        Ok(())
+    fn control_ids() {
+        assert_eq!(KECCAK_CONTROL_ID, compute_control_id().unwrap());
     }
 
     #[test]
-    fn control_roots() -> Result<()> {
-        for po2 in KECCAK_PO2_RANGE {
-            verify_control_root(po2).context(format!("po2={po2}"))?;
-        }
-
-        Ok(())
+    fn control_roots() {
+        assert_eq!(KECCAK_CONTROL_ROOT, compute_control_root().unwrap());
     }
 }

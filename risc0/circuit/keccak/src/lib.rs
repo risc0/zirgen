@@ -12,48 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#[cfg(not(feature = "make_control_ids"))]
 mod control_id;
 #[cfg(feature = "prove")]
 pub mod prove;
-#[cfg(not(target_os = "zkvm"))]
-pub(crate) mod zirgen;
-#[cfg(feature = "make_control_ids")]
-pub mod zkr;
-#[cfg(all(feature = "prove", not(feature = "make_control_ids")))]
-mod zkr;
-
-#[cfg(target_os = "zkvm")]
-mod guest;
-#[cfg(target_os = "zkvm")]
-pub use guest::*;
-
 #[cfg(test)]
 mod tests;
-
-use risc0_zkp::core::digest::Digest;
+#[cfg(not(target_os = "zkvm"))]
+pub(crate) mod zirgen;
 
 // TODO: Can we import this from somewhere other than ZKVM?
 pub const RECURSION_PO2: usize = 18;
 
-pub const KECCAK_PO2_RANGE: core::ops::Range<usize> = 14..19;
+pub const KECCAK_PO2: usize = 17;
 
-#[cfg(not(feature = "make_control_ids"))]
-fn lookup_by_po2(po2: usize, arr: &'static [Digest]) -> &'static Digest {
-    assert_eq!(arr.len(), KECCAK_PO2_RANGE.len());
-    assert!(
-        po2 <= KECCAK_PO2_RANGE.max().unwrap(),
-        "po2 {po2} out of range"
-    );
-    &arr[po2 - KECCAK_PO2_RANGE.min().unwrap()]
-}
-
-#[cfg(not(feature = "make_control_ids"))]
-pub fn get_control_id(po2: usize) -> &'static Digest {
-    lookup_by_po2(po2, &control_id::KECCAK_CONTROL_IDS)
-}
-
-#[cfg(not(feature = "make_control_ids"))]
-pub fn get_control_root(po2: usize) -> &'static Digest {
-    lookup_by_po2(po2, &control_id::KECCAK_CONTROL_ROOTS)
-}
+pub use self::control_id::{KECCAK_CONTROL_ID, KECCAK_CONTROL_ROOT};

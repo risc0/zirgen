@@ -18,7 +18,6 @@ mod preflight;
 mod tests;
 #[cfg(test)]
 pub mod testutil;
-#[cfg(not(feature = "make_control_ids"))]
 pub mod zkr;
 
 use std::rc::Rc;
@@ -53,7 +52,7 @@ pub type KeccakState = [u64; 25];
 pub type Seal = Vec<u32>;
 
 pub trait KeccakProver {
-    fn prove(&self, inputs: Vec<KeccakState>, po2: usize) -> Result<Seal>;
+    fn prove(&self, inputs: &[KeccakState], po2: usize) -> Result<Seal>;
 
     fn verify(&self, seal: &Seal) -> Result<()> {
         let hash_suite = Poseidon2HashSuite::new_suite();
@@ -96,7 +95,7 @@ where
     H: Hal<Field = CircuitField, Elem = Val, ExtElem = ExtVal>,
     C: CircuitHal<H> + CircuitWitnessGenerator<H>,
 {
-    fn prove(&self, inputs: Vec<KeccakState>, po2: usize) -> Result<Seal> {
+    fn prove(&self, inputs: &[KeccakState], po2: usize) -> Result<Seal> {
         scope!("prove");
 
         let cycles: usize = 1 << po2;

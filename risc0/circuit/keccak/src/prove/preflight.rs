@@ -14,7 +14,7 @@
 
 use risc0_circuit_keccak_sys::ScatterInfo;
 use risc0_core::scope;
-use risc0_zkvm::sha::DIGEST_WORDS;
+use risc0_zkp::core::digest::DIGEST_WORDS;
 
 use super::KeccakState;
 use crate::zirgen::circuit::LAYOUT_TOP;
@@ -274,12 +274,12 @@ fn chi_iota(s: &mut KeccakState, round: usize) {
 }
 
 impl PreflightTrace {
-    pub(crate) fn new(inputs: Vec<KeccakState>, cycles: usize) -> Self {
+    pub(crate) fn new(inputs: &[KeccakState], cycles: usize) -> Self {
         scope!("preflight");
 
         let mut cur_idx = 0;
         let mut ret = Self {
-            preimages: inputs.clone(),
+            preimages: inputs.to_vec(),
             preimage_idxs: vec![],
             data: vec![],
             scatter: vec![],

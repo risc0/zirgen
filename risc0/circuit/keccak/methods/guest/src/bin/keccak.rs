@@ -12,11 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use risc0_zkvm::guest::env;
-use risc0_zkvm::sha::Digest;
+use risc0_circuit_keccak::KECCAK_CONTROL_ROOT;
+use risc0_zkvm::{guest::env, sha::Digest};
+use risc0_zkvm_platform::syscall::sys_prove_keccak;
 
+// Computes and proves the result of a given keccak input transcript
 fn main() {
-    // Computes and proves the result of a given keccak input transcript
-    let (claim_digest, input, po2): (Digest, Vec<u32>, usize) = env::read();
-    risc0_circuit_keccak::prove(claim_digest, &input, po2).expect("Unable to prove with keccak");
+    let (claim_digest, input): (Digest, Vec<u32>) = env::read();
+
+    unsafe {
+        sys_prove_keccak(0, input.as_ptr(), input.len(), KECCAK_CONTROL_ROOT.as_ref());
+    }
+    env::verify_assumption(claim_digest, KECCAK_CONTROL_ROOT).unwrap();
 }

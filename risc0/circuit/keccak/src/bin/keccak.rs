@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// use hex_literal::hex;
 use risc0_circuit_keccak::prove::{keccak_prover, KeccakState};
 
 fn main() {
@@ -29,6 +28,6 @@ fn main() {
     let inputs = vec![state; count];
 
     let prover = keccak_prover().unwrap();
-    let seal = prover.prove(inputs, po2).unwrap();
+    let seal = prover.prove(&inputs, po2).unwrap();
     prover.verify(&seal).expect("Verification failed");
 }

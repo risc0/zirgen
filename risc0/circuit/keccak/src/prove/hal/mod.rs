@@ -44,20 +44,14 @@ where
             checked_reads,
         }
     }
-
-    #[cfg(test)]
-    pub fn to_vec(&self) -> Vec<H::Elem> {
-        use risc0_zkp::hal::Buffer as _;
-        self.buf.to_vec()
-    }
 }
 
 #[derive(Clone, Copy, PartialEq)]
 pub(crate) enum StepMode {
     Parallel,
-    // #[cfg(test)]
+    #[cfg(test)]
     SeqForward,
-    // #[cfg(test)]
+    #[cfg(test)]
     SeqReverse,
 }
 

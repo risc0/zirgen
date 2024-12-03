@@ -190,6 +190,7 @@ impl CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
     }
 }
 
+#[allow(dead_code)]
 pub fn keccak_prover() -> Result<Box<dyn KeccakProver>> {
     let hash_suite = Poseidon2HashSuite::new_suite();
     let hal = Rc::new(CpuHal::new(hash_suite));

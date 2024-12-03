@@ -31,10 +31,7 @@ use risc0_zkp::{
     core::log2_ceil,
     field::ExtElem as _,
     hal::{
-        cuda::{
-            BufferImpl as CudaBuffer, CudaHal, CudaHalPoseidon2, CudaHash, CudaHashPoseidon2,
-            CudaHashSha256,
-        },
+        cuda::{BufferImpl as CudaBuffer, CudaHal, CudaHalPoseidon2, CudaHash, CudaHashPoseidon2},
         AccumPreflight, Buffer, CircuitHal, Hal,
     },
     INV_RATE,
@@ -192,7 +189,6 @@ impl<CH: CudaHash> CircuitHal<CudaHal<CH>> for CudaCircuitHal<CH> {
     }
 }
 
-pub type CudaCircuitHalSha256 = CudaCircuitHal<CudaHashSha256>;
 pub type CudaCircuitHalPoseidon2 = CudaCircuitHal<CudaHashPoseidon2>;
 
 pub fn keccak_prover() -> Result<Box<dyn KeccakProver>> {

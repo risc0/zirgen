@@ -2,6 +2,7 @@
 resolver = "2"
 members = [
   "risc0/circuit/keccak",
+  "risc0/circuit/keccak-bootstrap",
   "risc0/circuit/keccak-sys",
   "zirgen/circuit/fib",
   "zirgen/dsl",
@@ -9,6 +10,7 @@ members = [
 
 [workspace.dependencies]
 risc0-circuit-keccak = { path = "risc0/circuit/keccak" }
+risc0-circuit-keccak-bootstrap = { path = "risc0/circuit/keccak-bootstrap" }
 risc0-circuit-keccak-sys = { path = "risc0/circuit/keccak-sys" }
 risc0-zirgen-dsl = { path = "zirgen/dsl" }
 sppark = "0.1.8"
