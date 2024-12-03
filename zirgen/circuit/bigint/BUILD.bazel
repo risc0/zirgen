@@ -83,6 +83,13 @@ genrule(
 )
 
 genrule(
+    name = "modadd",
+    outs = ["modadd.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modadd > $(OUTS)"
+)
+
+genrule(
     name = "modmul",
     outs = ["modmul.blob"],
     exec_tools = [":bigint2c"],
