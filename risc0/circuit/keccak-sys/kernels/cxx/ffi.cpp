@@ -48,7 +48,7 @@ struct PreflightTrace {
   uint32_t* curPreimage;
 };
 
-namespace impl {
+namespace keccak::cpu {
 
 #if defined(__clang__)
 #pragma clang diagnostic ignored "-Wunused-parameter"
@@ -312,12 +312,12 @@ Val extern_nextPreimage(ExecContext& ctx) {
 
 #include "steps.cpp.inc"
 
-} // namespace impl
+} // namespace keccak::cpu
 
 void stepExec(ExecBuffers& buffers, PreflightTrace& preflight, size_t cycle) {
-  impl::ExecContext ctx(preflight, cycle);
-  impl::MutableBufObj data(ctx, buffers.data);
-  impl::GlobalBufObj global(ctx, buffers.global);
+  keccak::cpu::ExecContext ctx(preflight, cycle);
+  keccak::cpu::MutableBufObj data(ctx, buffers.data);
+  keccak::cpu::GlobalBufObj global(ctx, buffers.global);
   step_Top(ctx, &data, &global);
 }
 
