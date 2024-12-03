@@ -57,6 +57,7 @@ BLOBS = [
     "modpow_65537",
     "ec_double",
     "ec_add",
+    "modadd",
     "modmul",
 ]
 

@@ -43,6 +43,7 @@ enum class Program {
   ModPow_65537,
   EC_Double,
   EC_Add,
+  ModAdd,
   ModMul,
 };
 } // namespace
@@ -53,6 +54,7 @@ static cl::opt<enum Program>
             cl::values(clEnumValN(Program::ModPow_65537, "modpow_65537", "ModPow_65537"),
                        clEnumValN(Program::EC_Double, "ec_double", "EC_Double"),
                        clEnumValN(Program::EC_Add, "ec_add", "EC_Add"),
+                       clEnumValN(Program::ModAdd, "modadd", "ModAdd"),
                        clEnumValN(Program::ModMul, "modmul", "ModMul")),  // TODO: Don't hardcode bitwidth
             cl::Required);
 
@@ -589,6 +591,10 @@ int main(int argc, char* argv[]) {
     break;
   case Program::ModMul:
     genModMul(loc, builder, 256); // TODO: Selectable bitwidth
+    break;
+  case Program::ModAdd:
+    genModAdd(loc, builder, 256); // TODO: Selectable bitwidth
+    break;
   }
 
   builder.create<func::ReturnOp>(loc);
