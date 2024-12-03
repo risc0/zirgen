@@ -16,14 +16,6 @@
 
 namespace risc0::impl {
 
-#if defined(__clang__)
-#pragma clang diagnostic ignored "-Wunused-parameter"
-#pragma clang diagnostic ignored "-Wunused-variable"
-#elif defined(__GNUC__)
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#pragma GCC diagnostic ignored "-Wunused-variable"
-#endif
-
 #include "steps.cu.inc"
 
 } // namespace risc0::impl

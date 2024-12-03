@@ -67,6 +67,7 @@ impl<CH: CudaHash> CircuitWitnessGenerator<CudaHal<CH>> for CudaCircuitHal<CH> {
         infos: &[ScatterInfo],
         from: &[u32],
     ) -> Result<()> {
+        scope!("scatter");
         let from = self._hal.copy_from_u32("from", from);
         ffi_wrap(|| unsafe {
             risc0_circuit_keccak_cuda_scatter(
@@ -86,7 +87,7 @@ impl<CH: CudaHash> CircuitWitnessGenerator<CudaHal<CH>> for CudaCircuitHal<CH> {
         global: &MetaBuffer<CudaHal<CH>>,
         data: &MetaBuffer<CudaHal<CH>>,
     ) -> Result<()> {
-        scope!("cuda_witgen");
+        scope!("witgen");
 
         let cycles = preflight.preimage_idxs.len();
         assert_eq!(cycles, data.rows);

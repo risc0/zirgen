@@ -147,7 +147,6 @@ struct MutableBufObj : public BufferObj {
 
   Val load(size_t col, size_t back) override {
     if (back > ctx.cycle) {
-      printf("Going back too far\n");
       return 0;
     }
     return buf.get(ctx.cycle - back, col);

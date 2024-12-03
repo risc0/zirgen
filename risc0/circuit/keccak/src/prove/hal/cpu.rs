@@ -52,7 +52,7 @@ impl CircuitWitnessGenerator<CpuHal<CircuitField>> for CpuCircuitHal {
         infos: &[ScatterInfo],
         data: &[u32],
     ) -> Result<()> {
-        scope!("scatter_preflight");
+        scope!("scatter");
         let mut into_slice = into.buf.as_slice_mut();
         for info in infos {
             let inner_count = 32 / info.bits;
@@ -77,7 +77,7 @@ impl CircuitWitnessGenerator<CpuHal<CircuitField>> for CpuCircuitHal {
         global: &MetaBuffer<CpuHal<CircuitField>>,
         data: &MetaBuffer<CpuHal<CircuitField>>,
     ) -> Result<()> {
-        scope!("cpu_witgen");
+        scope!("witgen");
 
         let cycles = preflight.preimage_idxs.len();
         assert_eq!(cycles, data.rows);

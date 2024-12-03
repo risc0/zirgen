@@ -13,6 +13,7 @@
 // limitations under the License.
 
 use risc0_circuit_keccak_sys::ScatterInfo;
+use risc0_core::scope;
 use risc0_zkvm::sha::DIGEST_WORDS;
 
 use super::KeccakState;
@@ -274,6 +275,8 @@ fn chi_iota(s: &mut KeccakState, round: usize) {
 
 impl PreflightTrace {
     pub(crate) fn new(inputs: Vec<KeccakState>, cycles: usize) -> Self {
+        scope!("preflight");
+
         let mut cur_idx = 0;
         let mut ret = Self {
             preimages: inputs.clone(),
