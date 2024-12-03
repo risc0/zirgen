@@ -43,8 +43,13 @@ enum class Program {
   ModPow_65537,
   EC_Double,
   EC_Add,
+  ExtFieldAdd,
+  ExtFieldMul,
+  ExtFieldSub,
   ModAdd,
+  ModInv,
   ModMul,
+  ModSub,
 };
 } // namespace
 
@@ -54,8 +59,13 @@ static cl::opt<enum Program>
             cl::values(clEnumValN(Program::ModPow_65537, "modpow_65537", "ModPow_65537"),
                        clEnumValN(Program::EC_Double, "ec_double", "EC_Double"),
                        clEnumValN(Program::EC_Add, "ec_add", "EC_Add"),
+                       clEnumValN(Program::ExtFieldAdd, "extfieldadd", "ExtFieldAdd"),
+                       clEnumValN(Program::ExtFieldMul, "extfieldmul", "ExtFieldMul"),
+                       clEnumValN(Program::ExtFieldSub, "extfieldsub", "ExtFieldSub"),
                        clEnumValN(Program::ModAdd, "modadd", "ModAdd"),
-                       clEnumValN(Program::ModMul, "modmul", "ModMul")),  // TODO: Don't hardcode bitwidth
+                       clEnumValN(Program::ModInv, "modinv", "ModInv"),
+                       clEnumValN(Program::ModMul, "modmul", "ModMul"),
+                       clEnumValN(Program::ModSub, "modsub", "ModSub")),  // TODO: Don't hardcode bitwidth
             cl::Required);
 
 const APInt secp256k1_prime = APInt::getAllOnes(256) - APInt::getOneBitSet(256, 32) -
@@ -589,11 +599,26 @@ int main(int argc, char* argv[]) {
   case Program::EC_Add:
     genECAdd(loc, builder, 256); // TODO: Selectable bitwidth
     break;
-  case Program::ModMul:
-    genModMul(loc, builder, 256); // TODO: Selectable bitwidth
+  case Program::ExtFieldAdd:  // TODO: Naming for degree 2
+    genExtFieldAdd(loc, builder, 256, 2); // TODO: Selectable bitwidth
+    break;
+  case Program::ExtFieldMul:
+    genExtFieldMul(loc, builder, 256, 2); // TODO: Selectable bitwidth
+    break;
+  case Program::ExtFieldSub:
+    genExtFieldSub(loc, builder, 256, 2); // TODO: Selectable bitwidth
     break;
   case Program::ModAdd:
     genModAdd(loc, builder, 256); // TODO: Selectable bitwidth
+    break;
+  case Program::ModInv:
+    genModInv(loc, builder, 256); // TODO: Selectable bitwidth
+    break;
+  case Program::ModMul:
+    genModMul(loc, builder, 256); // TODO: Selectable bitwidth
+    break;
+  case Program::ModSub:
+    genModSub(loc, builder, 256); // TODO: Selectable bitwidth
     break;
   }
 

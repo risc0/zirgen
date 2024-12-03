@@ -83,6 +83,27 @@ genrule(
 )
 
 genrule(
+    name = "extfieldadd",
+    outs = ["extfieldadd.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=extfieldadd > $(OUTS)"
+)
+
+genrule(
+    name = "extfieldmul",
+    outs = ["extfieldmul.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=extfieldmul > $(OUTS)"
+)
+
+genrule(
+    name = "extfieldsub",
+    outs = ["extfieldsub.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=extfieldsub > $(OUTS)"
+)
+
+genrule(
     name = "modadd",
     outs = ["modadd.blob"],
     exec_tools = [":bigint2c"],
@@ -90,10 +111,24 @@ genrule(
 )
 
 genrule(
+    name = "modinv",
+    outs = ["modinv.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modinv > $(OUTS)"
+)
+
+genrule(
     name = "modmul",
     outs = ["modmul.blob"],
     exec_tools = [":bigint2c"],
     cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modmul > $(OUTS)"
+)
+
+genrule(
+    name = "modsub",
+    outs = ["modsub.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modsub > $(OUTS)"
 )
 
 pkg_zip(
