@@ -19,8 +19,9 @@
 
 namespace zirgen::BigInt {
 
+void genModPow65537(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth);
+// TODO: Clarify this name
 void makeRSA(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
-
 llvm::APInt RSA(llvm::APInt N, llvm::APInt S);
 
 } // namespace zirgen::BigInt
