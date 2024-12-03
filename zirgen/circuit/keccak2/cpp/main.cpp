@@ -127,14 +127,27 @@ int main() {
   auto trace = ExecutionTrace(cycles, getDslParams());
   // Apply the preflight (i.e. scatter)
   applyPreflight(trace, preflight);
+  // Copy the original trace
+  ExecutionTrace copy = trace;
   // Run backwords
   std::cout << "out.ctypeOneHot = " << getLayoutInfo().ctypeOneHot << "\n";
-  for (size_t i = cycles; i-- > 0;) {
+  for (size_t i = 0; i < cycles; i++) {
+  //for (size_t i = cycles; i-- > 0;) {
     StepHandler ctx(preflight, i);
     std::cout << "Running cycle " << i << "\n";
     DslStep(ctx, trace, i);
   }
-
+  // Check that the step function didn't add any new registers
+  copy.data.setUnsafe(true);
+  trace.data.setUnsafe(true);
+  for (size_t i = 0; i < cycles; i++) {
+    for (size_t j = 0; j < copy.data.getCols(); j++) {
+      if (copy.data.get(i, j) != trace.data.get(i, j)) {
+        std::cout << "Unfinished, row = " << i << ", col = " << j << ", new value = " << trace.data.get(i, j).asUInt32() << "\n";
+        exit(1);
+      }
+    }
+  }
   // Make sure the results match
   zirgen::Digest compare;
   for (size_t i = 0; i < 8; i++) {
