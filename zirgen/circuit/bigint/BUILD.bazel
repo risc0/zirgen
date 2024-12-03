@@ -9,11 +9,13 @@ cc_library(
     name = "lib",
     srcs = [
         "elliptic_curve.cpp",
+        "field.cpp",
         "op_tests.cpp",
         "rsa.cpp",
     ],
     hdrs = [
         "elliptic_curve.h",
+        "field.h",
         "op_tests.h",
         "rsa.h",
         "//zirgen/circuit/recursion",
@@ -96,6 +98,7 @@ BLOBS = [
     "modpow_65537",
     "ec_double",
     "ec_add",
+    "modmul",
 ]
 
 genrule(
@@ -117,6 +120,13 @@ genrule(
     outs = ["ec_add.blob"],
     exec_tools = [":bigint2c"],
     cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=ec_add > $(OUTS)"
+)
+
+genrule(
+    name = "modmul",
+    outs = ["modmul.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modmul > $(OUTS)"
 )
 
 pkg_zip(
