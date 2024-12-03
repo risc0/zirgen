@@ -261,6 +261,7 @@ void Builtins::addBuiltins() {
   makeUnaryValOp<Zll::NegOp>("Neg");
 
   makeBinValOp<Zll::BitAndOp>("BitAnd");
+  makeBinValOp<Zll::ModOp>("Mod");
   makeBinValOp<Zll::AddOp>("Add");
   makeBinValOp<Zll::SubOp>("Sub");
   makeBinValOp<Zll::MulOp>("Mul");

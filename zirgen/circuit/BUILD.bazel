@@ -5,8 +5,6 @@ package(
 filegroup(
     name = "circuit",
     srcs = [
-        "//zirgen/circuit/bigint:bigint_zkr",
-        "//zirgen/circuit/bigint:gen_bigint",
         "//zirgen/circuit/fib",
         "//zirgen/circuit/keccak",
         "//zirgen/circuit/predicates:keccak_zkr",
