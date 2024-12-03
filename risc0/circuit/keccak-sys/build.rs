@@ -41,7 +41,7 @@ fn build_cuda_kernels() {
         .flag("-std=c++17")
         .flag("-diag-suppress=550")
         .flag("-Xptxas")
-        .flag("-O1")
+        .flag("-O2")
         .flag("-Xptxas")
         .flag("--allow-expensive-optimizations=false")
         .files(glob_paths("kernels/cuda/*.cu"))
