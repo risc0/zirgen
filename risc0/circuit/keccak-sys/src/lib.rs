@@ -67,6 +67,14 @@ extern "C" {
 
 #[cfg(feature = "cuda")]
 extern "C" {
+    pub fn risc0_circuit_keccak_cuda_scatter(
+        into: DevicePointer<u8>,
+        infos: *const ScatterInfo,
+        from: DevicePointer<u8>,
+        rows: u32,
+        count: u32,
+    ) -> *const std::os::raw::c_char;
+
     pub fn risc0_circuit_keccak_cuda_witgen(
         mode: u32,
         buffers: *const RawExecBuffers,

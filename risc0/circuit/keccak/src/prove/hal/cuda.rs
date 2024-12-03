@@ -16,8 +16,8 @@ use std::rc::Rc;
 
 use anyhow::Result;
 use risc0_circuit_keccak_sys::{
-    risc0_circuit_keccak_cuda_eval_check, risc0_circuit_keccak_cuda_witgen, RawBuffer,
-    RawExecBuffers, RawPreflightTrace, ScatterInfo,
+    risc0_circuit_keccak_cuda_eval_check, risc0_circuit_keccak_cuda_scatter,
+    risc0_circuit_keccak_cuda_witgen, RawBuffer, RawExecBuffers, RawPreflightTrace, ScatterInfo,
 };
 use risc0_core::{
     field::{
@@ -35,7 +35,7 @@ use risc0_zkp::{
             BufferImpl as CudaBuffer, CudaHal, CudaHalPoseidon2, CudaHash, CudaHashPoseidon2,
             CudaHashSha256,
         },
-        AccumPreflight, Buffer, CircuitHal,
+        AccumPreflight, Buffer, CircuitHal, Hal,
     },
     INV_RATE,
 };
@@ -65,12 +65,18 @@ impl<CH: CudaHash> CircuitWitnessGenerator<CudaHal<CH>> for CudaCircuitHal<CH> {
         &self,
         into: &MetaBuffer<CudaHal<CH>>,
         infos: &[ScatterInfo],
-        data: &[u32],
+        from: &[u32],
     ) -> Result<()> {
-        // let index = self._hal.copy_from_u32("index", index);
-        // let offsets = self.copy_from_u32("offsets", offsets);
-        // let values = self.copy_from_elem("values", values);
-        todo!()
+        let from = self._hal.copy_from_u32("from", from);
+        ffi_wrap(|| unsafe {
+            risc0_circuit_keccak_cuda_scatter(
+                into.buf.as_device_ptr(),
+                infos.as_ptr(),
+                from.as_device_ptr(),
+                into.rows as u32,
+                infos.len() as u32,
+            )
+        })
     }
 
     fn generate_witness(
