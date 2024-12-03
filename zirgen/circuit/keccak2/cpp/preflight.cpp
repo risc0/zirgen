@@ -92,19 +92,37 @@ uint32_t sha_k[64] = {
     0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2};
 
 // SHA-256 bit twiddling functions
-uint32_t rotright(uint32_t a, uint32_t b) { return ((a) >> (b)) | ((a) << (32 - (b))); }
-uint32_t ch(uint32_t x, uint32_t y, uint32_t z)  { return ((x) & (y)) ^ (~(x) & (z)); }
-uint32_t maj(uint32_t x, uint32_t y, uint32_t z) { return ((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)); }
-uint32_t ep0(uint32_t x) { return rotright(x, 2) ^ rotright(x, 13) ^ rotright(x, 22); }
-uint32_t ep1(uint32_t x) { return rotright(x, 6) ^ rotright(x, 11) ^ rotright(x, 25); }
-uint32_t sig0(uint32_t x) { return rotright(x, 7) ^ rotright(x, 18) ^ ((x) >> 3); }
-uint32_t sig1(uint32_t x) { return rotright(x, 17) ^ rotright(x, 19) ^ ((x) >> 10); }
+uint32_t rotright(uint32_t a, uint32_t b) {
+  return ((a) >> (b)) | ((a) << (32 - (b)));
+}
+uint32_t ch(uint32_t x, uint32_t y, uint32_t z) {
+  return ((x) & (y)) ^ (~(x) & (z));
+}
+uint32_t maj(uint32_t x, uint32_t y, uint32_t z) {
+  return ((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z));
+}
+uint32_t ep0(uint32_t x) {
+  return rotright(x, 2) ^ rotright(x, 13) ^ rotright(x, 22);
+}
+uint32_t ep1(uint32_t x) {
+  return rotright(x, 6) ^ rotright(x, 11) ^ rotright(x, 25);
+}
+uint32_t sig0(uint32_t x) {
+  return rotright(x, 7) ^ rotright(x, 18) ^ ((x) >> 3);
+}
+uint32_t sig1(uint32_t x) {
+  return rotright(x, 17) ^ rotright(x, 19) ^ ((x) >> 10);
+}
 
 // Expand a u32 into low and high 16 bits, and put back into a 64 bit number
 // as 32 bit words. This way, addition will not overflow in either 32 bit subwords
-uint64_t xs(uint32_t in) { return uint64_t(in & 0xffff) | (uint64_t(in >> 16) << 32); }
+uint64_t xs(uint32_t in) {
+  return uint64_t(in & 0xffff) | (uint64_t(in >> 16) << 32);
+}
 // Reduce back to 32 bits
-uint32_t rs(uint64_t in) { return ((in >> 32) << 16) + in; }
+uint32_t rs(uint64_t in) {
+  return ((in >> 32) << 16) + in;
+}
 // Extract the 'carry' data from a given input
 uint32_t xc(uint64_t in) {
   uint32_t lowCarry = (in >> 16) & 0x7;
@@ -112,7 +130,6 @@ uint32_t xc(uint64_t in) {
   uint32_t highCarry = (highWithCarry >> 16) & 0x7;
   return lowCarry | (highCarry << 3);
 }
-
 
 // Define the sha state vector
 using sha_state = std::array<uint32_t, 8>;
@@ -136,7 +153,7 @@ struct sha_info {
   std::array<uint32_t, 8> a;
   std::array<uint32_t, 8> e;
   std::array<uint32_t, 8> w;
-  std::array<uint32_t, 8> carry; 
+  std::array<uint32_t, 8> carry;
 };
 
 std::vector<sha_info> compute_sha_infos(sha_state& state, const uint32_t* data) {
@@ -181,7 +198,7 @@ std::vector<sha_info> compute_sha_infos(sha_state& state, const uint32_t* data) 
       out.push_back(cur);
     }
   }
-  std::array<uint32_t, 8> to_add = { a, b, c, d, e, f, g, h };
+  std::array<uint32_t, 8> to_add = {a, b, c, d, e, f, g, h};
   // Compute carry data
   std::array<uint32_t, 8> carry;
   for (size_t i = 0; i < 8; i++) {
@@ -222,8 +239,8 @@ struct ControlState {
   static ControlState Sha(bool isOut, uint8_t block, uint8_t round) {
     return ControlState{9, isOut, block, round};
   }
-  static ControlState ShaNextBlock(bool isOut, uint8_t block) { 
-    return ControlState{10, isOut, block, 0}; 
+  static ControlState ShaNextBlock(bool isOut, uint8_t block) {
+    return ControlState{10, isOut, block, 0};
   }
   static ControlState Init() { return ControlState{11, 0, 0, 0}; }
 };
@@ -319,7 +336,9 @@ PreflightTrace preflightSegment(const std::vector<KeccakState>& inputs, size_t c
     return offset;
   };
   auto writeIsZero = [&](uint16_t col, int32_t val) {
-    if (val < 0) { val += risc0::Fp::P; }
+    if (val < 0) {
+      val += risc0::Fp::P;
+    }
     ret.data.push_back(val == 0);
     addWords(col, ret.data.size() - 1, 1);
     uint32_t invVal = risc0::inv(Fp(val)).asUInt32();
@@ -353,7 +372,7 @@ PreflightTrace preflightSegment(const std::vector<KeccakState>& inputs, size_t c
             ret.data.push_back(infos[i].carry[j]);
             /* TODO: li */
             addBits(937 + 18 * j, ret.data.size() - 1, 18);
-          }  
+          }
           /* TODO: li */
           ret.data.push_back(1 << i);
           addBits(1081, ret.data.size() - 1, 8);
@@ -370,7 +389,8 @@ PreflightTrace preflightSegment(const std::vector<KeccakState>& inputs, size_t c
             writeIsZero(934, (int32_t(block) - 1) - 3);
             addBits(936, zeroOffset, 1);
           }
-          addCycle(ControlState::Sha(isOut, block, i), writeShaInfo(infos[i]), kflatOffset, sflatOffset);
+          addCycle(
+              ControlState::Sha(isOut, block, i), writeShaInfo(infos[i]), kflatOffset, sflatOffset);
         }
         sflatOffset = writeShaState(currentSha);
         writeIsZero(933, 0);
@@ -379,8 +399,10 @@ PreflightTrace preflightSegment(const std::vector<KeccakState>& inputs, size_t c
           ret.data.push_back(infos[8].carry[i]);
           addBits(937 + 6 * i, ret.data.size() - 1, 6);
         }
-        addCycle(
-            ControlState::ShaNextBlock(isOut, block), writeShaInfo(infos[8]), kflatOffset, sflatOffset);
+        addCycle(ControlState::ShaNextBlock(isOut, block),
+                 writeShaInfo(infos[8]),
+                 kflatOffset,
+                 sflatOffset);
       }
     };
     doShaCycles(false);
@@ -410,7 +432,7 @@ PreflightTrace preflightSegment(const std::vector<KeccakState>& inputs, size_t c
     }
     // Do 'write' cycle
     kflatOffset = writeKFlat(data, kstate);
-    writeIsZero(933, 0); 
+    writeIsZero(933, 0);
     addCycle(ControlState::Write(), writeShaInfo(sha_info(currentSha)), kflatOffset, sflatOffset);
     // Sha and write all for blocks
     doShaCycles(true);

@@ -132,7 +132,7 @@ int main() {
   // Run backwords
   std::cout << "out.ctypeOneHot = " << getLayoutInfo().ctypeOneHot << "\n";
   for (size_t i = 0; i < cycles; i++) {
-  //for (size_t i = cycles; i-- > 0;) {
+    // for (size_t i = cycles; i-- > 0;) {
     StepHandler ctx(preflight, i);
     std::cout << "Running cycle " << i << "\n";
     DslStep(ctx, trace, i);
@@ -143,7 +143,8 @@ int main() {
   for (size_t i = 0; i < cycles; i++) {
     for (size_t j = 0; j < copy.data.getCols(); j++) {
       if (copy.data.get(i, j) != trace.data.get(i, j)) {
-        std::cout << "Unfinished, row = " << i << ", col = " << j << ", new value = " << trace.data.get(i, j).asUInt32() << "\n";
+        std::cout << "Unfinished, row = " << i << ", col = " << j
+                  << ", new value = " << trace.data.get(i, j).asUInt32() << "\n";
         exit(1);
       }
     }
