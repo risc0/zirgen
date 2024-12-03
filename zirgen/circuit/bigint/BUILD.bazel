@@ -57,8 +57,13 @@ BLOBS = [
     "modpow_65537",
     "ec_double",
     "ec_add",
+    "extfieldadd",
+    "extfieldmul",
+    "extfieldsub",
     "modadd",
+    "modinv",
     "modmul",
+    "modsub",
 ]
 
 genrule(

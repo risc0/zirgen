@@ -593,7 +593,13 @@ impl Bootstrap {
         let field_path = risc0_root.join("bigint2/src/field");
         let rsa_path = risc0_root.join("bigint2/src/rsa");
 
+        self.copy_file(&src_path, &field_path, "extfieldadd.blob");
+        self.copy_file(&src_path, &field_path, "extfieldmul.blob");
+        self.copy_file(&src_path, &field_path, "extfieldsub.blob");
+        self.copy_file(&src_path, &field_path, "modadd.blob");
+        self.copy_file(&src_path, &field_path, "modinv.blob");
         self.copy_file(&src_path, &field_path, "modmul.blob");
+        self.copy_file(&src_path, &field_path, "modsub.blob");
         self.copy_file(&src_path, &rsa_path, "modpow_65537.blob");
         self.copy(
             &src_path.join("ec_double.blob"),

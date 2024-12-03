@@ -628,6 +628,7 @@ int main(int argc, char* argv[]) {
   PassManager pm(&ctx);
   pm.addPass(createCanonicalizerPass());
   pm.addPass(createCSEPass());
+  pm.addPass(BigInt::createLowerInvPass());
   pm.addPass(BigInt::createLowerReducePass());
   pm.addPass(createCSEPass());
   if (failed(pm.run(module))) {
