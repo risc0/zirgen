@@ -33,6 +33,7 @@ fn build_cpu_kernels() {
         .files(glob_paths("kernels/cxx/*.cpp"))
         .deps(glob_paths("kernels/cxx/*.h"))
         .deps(glob_paths("kernels/cxx/*.cpp.inc"))
+        .deps(glob_paths("kernels/cxx/*.h.inc"))
         .include(env::var("DEP_RISC0_SYS_CXX_ROOT").unwrap())
         .compile("risc0_rv32im_v2_cpu");
 }

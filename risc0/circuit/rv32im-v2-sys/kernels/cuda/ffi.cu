@@ -447,56 +447,56 @@ const char* risc0_circuit_rv32im_v2_cuda_witgen(uint32_t mode,
                                                 ExecBuffers* buffers,
                                                 PreflightTrace* preflight,
                                                 uint32_t lastCycle) {
-  // LookupTables tables;
-  // size_t split = preflight->tableSplitCycle;
-  // try {
-  //   switch (mode) {
-  //   case kStepModeParallel: {
-  //     auto begin1 = poolstl::iota_iter<uint32_t>(0);
-  //     auto end1 = poolstl::iota_iter<uint32_t>(split);
-  //     std::for_each(poolstl::par, begin1, end1, [&](uint32_t cycle) {
-  //       stepExec(*buffers, *preflight, tables, cycle);
-  //     });
+  LookupTables tables;
+  size_t split = preflight->tableSplitCycle;
+  try {
+    switch (mode) {
+    case kStepModeParallel: {
+      auto begin1 = poolstl::iota_iter<uint32_t>(0);
+      auto end1 = poolstl::iota_iter<uint32_t>(split);
+      std::for_each(poolstl::par, begin1, end1, [&](uint32_t cycle) {
+        stepExec(*buffers, *preflight, tables, cycle);
+      });
 
-  //     auto begin2 = poolstl::iota_iter<uint32_t>(split);
-  //     auto end2 = poolstl::iota_iter<uint32_t>(lastCycle);
-  //     std::for_each(poolstl::par, begin2, end2, [&](uint32_t cycle) {
-  //       stepExec(*buffers, *preflight, tables, cycle);
-  //     });
-  //   } break;
-  //   case kStepModeSeqForward:
-  //     for (size_t cycle = 0; cycle < lastCycle; cycle++) {
-  //       stepExec(*buffers, *preflight, tables, cycle);
-  //     }
-  //     break;
-  //   case kStepModeSeqReverse: {
-  //     for (size_t i = split; i-- > 0;) {
-  //       // printf("stepExec: %zu\n", i);
-  //       stepExec(*buffers, *preflight, tables, i);
-  //     }
-  //     for (size_t i = lastCycle; i-- > split;) {
-  //       // printf("stepExec: %zu\n", i);
-  //       stepExec(*buffers, *preflight, tables, i);
-  //     }
-  //   } break;
-  //   }
-  // } catch (const std::exception& err) {
-  //   return strdup(err.what());
-  // }
+      auto begin2 = poolstl::iota_iter<uint32_t>(split);
+      auto end2 = poolstl::iota_iter<uint32_t>(lastCycle);
+      std::for_each(poolstl::par, begin2, end2, [&](uint32_t cycle) {
+        stepExec(*buffers, *preflight, tables, cycle);
+      });
+    } break;
+    case kStepModeSeqForward:
+      for (size_t cycle = 0; cycle < lastCycle; cycle++) {
+        stepExec(*buffers, *preflight, tables, cycle);
+      }
+      break;
+    case kStepModeSeqReverse: {
+      for (size_t i = split; i-- > 0;) {
+        // printf("stepExec: %zu\n", i);
+        stepExec(*buffers, *preflight, tables, i);
+      }
+      for (size_t i = lastCycle; i-- > split;) {
+        // printf("stepExec: %zu\n", i);
+        stepExec(*buffers, *preflight, tables, i);
+      }
+    } break;
+    }
+  } catch (const std::exception& err) {
+    return strdup(err.what());
+  }
   return nullptr;
 }
 
 const char* risc0_circuit_rv32im_v2_cuda_accum(AccumBuffers* buffers,
                                                PreflightTrace* preflight,
                                                uint32_t lastCycle) {
-  // try {
-  //   LookupTables tables;
-  //   for (size_t cycle = 0; cycle < lastCycle; cycle++) {
-  //     stepAccum(*buffers, *preflight, tables, cycle);
-  //   }
-  // } catch (const std::exception& err) {
-  //   return strdup(err.what());
-  // }
+  try {
+    LookupTables tables;
+    for (size_t cycle = 0; cycle < lastCycle; cycle++) {
+      stepAccum(*buffers, *preflight, tables, cycle);
+    }
+  } catch (const std::exception& err) {
+    return strdup(err.what());
+  }
   return nullptr;
 }
 

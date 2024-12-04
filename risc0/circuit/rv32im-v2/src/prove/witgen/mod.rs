@@ -19,7 +19,7 @@ mod tests;
 
 use std::iter::zip;
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 use preflight::PreflightTrace;
 use risc0_circuit_rv32im_v2_sys::RawPreflightCycle;
 use risc0_core::scope;
@@ -121,7 +121,7 @@ impl<H: Hal> WitnessGenerator<H> {
         );
 
         // Set stateful columns from 'top'
-        let mut injector = Injector::new(cycles, REGCOUNT_DATA);
+        let mut injector = Injector::new(cycles);
         for (row, back) in trace.backs.iter().enumerate() {
             let cycle = &trace.cycles[row];
             // tracing::trace!("[{row}] pc: {:#010x}, state: {}", cycle.pc, cycle.state);
@@ -151,7 +151,9 @@ impl<H: Hal> WitnessGenerator<H> {
             &injector.values,
         );
 
-        circuit_hal.generate_witness(mode, &trace, &global, &data)?;
+        circuit_hal
+            .generate_witness(mode, &trace, &global, &data)
+            .context("witness generation failure")?;
 
         // Zero out 'invalid' entries in data and output.
         scope!("zeroize", {
@@ -172,18 +174,18 @@ impl<H: Hal> WitnessGenerator<H> {
 
 #[derive(Debug)]
 struct Injector {
-    cols: usize,
+    rows: usize,
     offsets: Vec<u32>,
     values: Vec<BabyBearElem>,
     index: Vec<u32>,
 }
 
 impl Injector {
-    fn new(rows: usize, cols: usize) -> Self {
+    fn new(rows: usize) -> Self {
         let mut index = Vec::with_capacity(rows + 1);
         index.push(0);
         Self {
-            cols,
+            rows,
             offsets: vec![],
             values: vec![],
             index,
@@ -203,7 +205,7 @@ impl Injector {
     }
 
     fn set(&mut self, row: usize, col: usize, value: u32) {
-        let idx = row * self.cols + col;
+        let idx = col * self.rows + row;
         self.offsets.push(idx as u32);
         self.values.push(value.into());
     }

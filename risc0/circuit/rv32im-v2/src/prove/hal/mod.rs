@@ -167,7 +167,7 @@ where
                         *elem = elem.valid_or_zero();
                         header[i] = *elem;
                     }
-                    header[global_len] = BabyBearElem::new_raw(segment.po2 as u32);
+                    header[global_len] = BabyBearElem::new_raw(segment.po2);
                 });
 
                 let header_digest = hashfn.hash_elem_slice(&header);
