@@ -56,6 +56,7 @@ struct ExtensionField {
   FieldResult Inv(FieldArg a) const;
   FieldResult Neg(FieldArg a) const;
   FieldResult BitAnd(FieldArg a, FieldArg b) const;
+  FieldResult Mod(FieldArg a, FieldArg b) const;
 
   FieldResult Zero() const { return FieldResult(degree); }
 

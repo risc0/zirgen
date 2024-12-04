@@ -189,6 +189,13 @@ OpFoldResult BitAndOp::fold(FoldAdaptor adaptor) {
       });
 }
 
+OpFoldResult ModOp::fold(FoldAdaptor adaptor) {
+  ExtensionField f = getExtensionField(getOut().getType());
+  return tryFold2(adaptor.getLhs(),
+                  adaptor.getRhs(),
+                  [f](ArrayRef<uint64_t> lhs, ArrayRef<uint64_t> rhs) { return f.Mod(lhs, rhs); });
+}
+
 OpFoldResult InRangeOp::fold(FoldAdaptor adaptor) {
   if (!adaptor.getLow() || !adaptor.getMid() || !adaptor.getHigh())
     return OpFoldResult();
@@ -423,6 +430,14 @@ LogicalResult BitAndOp::evaluate(Interpreter& interp,
                                  EvalAdaptor& adaptor,
                                  ExtensionField& field) {
   outs[0]->setVal(field.BitAnd(adaptor.getLhs()->getVal(), adaptor.getRhs()->getVal()));
+  return success();
+}
+
+LogicalResult ModOp::evaluate(Interpreter& interp,
+                              llvm::ArrayRef<zirgen::Zll::InterpVal*> outs,
+                              EvalAdaptor& adaptor,
+                              ExtensionField& field) {
+  outs[0]->setVal(field.Mod(adaptor.getLhs()->getVal(), adaptor.getRhs()->getVal()));
   return success();
 }
 
@@ -769,6 +784,12 @@ bool BitAndOp::updateRanges(mlir::DenseMap<mlir::Value, BigIntRange>& ranges) {
   return GET(getLhs()).inRangeP() && GET(getRhs()).inRangeP();
 }
 
+bool ModOp::updateRanges(mlir::DenseMap<mlir::Value, BigIntRange>& ranges) {
+  // TODO: This is pessemistic, but also, should never get called.
+  SET(getOut(), BigIntRange::rangeP());
+  return GET(getLhs()).inRangeP() && GET(getRhs()).inRangeP();
+}
+
 bool HashOp::updateRanges(mlir::DenseMap<mlir::Value, BigIntRange>& ranges) {
   bool allGood = true;
   for (Value v : getIn()) {
@@ -1018,6 +1039,13 @@ LogicalResult BitAndOp::inferReturnTypes(MLIRContext* ctx,
                                          std::optional<Location> loc,
                                          Adaptor adaptor,
                                          SmallVectorImpl<Type>& out) {
+  return inferTypes(ctx, adaptor.getOperands(), out);
+}
+
+LogicalResult ModOp::inferReturnTypes(MLIRContext* ctx,
+                                      std::optional<Location> loc,
+                                      Adaptor adaptor,
+                                      SmallVectorImpl<Type>& out) {
   return inferTypes(ctx, adaptor.getOperands(), out);
 }
 

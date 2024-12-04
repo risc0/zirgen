@@ -484,6 +484,13 @@ private:
                                                  ctx.use(op->getOperand(1)))
                                        .str());
         })
+        .Case<ModOp>([&](ModOp op) {
+          lines.push_back(indent + llvm::formatv("auto {0} = Fp({1}.asUInt32() % {2}.asUInt32());",
+                                                 ctx.def(op.getOut()),
+                                                 ctx.use(op->getOperand(0)),
+                                                 ctx.use(op->getOperand(1)))
+                                       .str());
+        })
         .Case<TrueOp>([&](TrueOp op) {
           lines.push_back(indent +
                           llvm::formatv("FpExt {0} = FpExt(0);", ctx.def(op.getOut())).str());

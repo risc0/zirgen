@@ -37,6 +37,7 @@ enum Token : int {
   tok_dot = '.',
   tok_eq = '=',
   tok_minus = '-',
+  tok_mod = '%',
   tok_paren_l = '(',
   tok_paren_r = ')',
   tok_plus = '+',

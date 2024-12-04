@@ -1,0 +1,206 @@
+// RUN: zirgen -I %S --test %s
+
+import bits;
+import one_hot;
+import xor5;
+import arr;
+import pack;
+
+// Computes the xor5 part of Theta, results are 'bits' and can be aliased
+component ThetaP1(a: Array<Array<Array<Val, 64>, 5>, 5>) {
+  for j : 0..5 {
+    for k : 0..64 {
+      Xor5(for i : 0..5 { a[i][j][k] } )
+    }
+  }
+}
+
+// Computes part 2 of theta, results are not by register
+component ThetaP2(a: Array<Array<Array<Val, 64>, 5>, 5>, c: Array<Array<Val, 64>, 5>) {
+  d := for j : 0..5 {
+    for k : 0..64 {
+      jm1 := if (Isz(j)) { 4 } else { j - 1 };
+      jp1 := if (Isz(j-4)) { 0 } else { j + 1 };
+      kp1 := if (Isz(k)) { 63 } else { k - 1 };
+      BitXor(c[jm1][k], c[jp1][kp1])
+    }
+  };
+  for i : 0..5 {
+    for j : 0..5 {
+      for k : 0..64 {
+        BitXor(a[i][j][k], d[j][k])
+      }
+    }
+  }
+}
+
+// One-shot version of theta
+component Theta(a: Array<Array<Array<Val, 64>, 5>, 5>) {
+  ThetaP2(a, ThetaP1(a))
+}
+
+component RhoMatrix() {
+  [[0,36,3,41,18],[1,44,10,45,2],[62,6,43,15,61],[28,55,25,21,56],[27,20,39,8,14]]
+}
+
+component Rho(a: Array<Array<Array<Val, 64>, 5>, 5>) {
+  for i : 0..5 {
+    for j : 0..5 {
+      RotateLeft<64>(a[i][j], RhoMatrix()[j][i])
+    }
+  }
+}
+
+component PiMatrix() {
+  [[0,3,1,4,2],[1,4,2,0,3],[2,0,3,1,4],[3,1,4,2,0],[4,2,0,3,1]]
+}
+
+component Pi(a: Array<Array<Array<Val, 64>, 5>, 5>) {
+  for i : 0..5 {
+    for j : 0..5 {
+      newi := PiMatrix()[j][i];
+      a[j][newi]
+    }
+  }
+}
+
+component Chi(a: Array<Array<Array<Val, 64>, 5>, 5>) {
+  for i : 0..5 {
+    for j : 0..5 {
+      for k : 0..64 {
+        jp1 := if (Isz(4-j)) { 0 } else { j + 1 };
+        jp2 := if (Isz(4-jp1)) { 0 } else { jp1 + 1 };
+        BitXor(a[i][j][k], (1 - a[i][jp1][k]) * a[i][jp2][k])
+      }
+    }
+  }
+}
+
+component IotaTable() {
+ [
+  [0x0001, 0x0000, 0x0000, 0x0000],
+  [0x8082, 0x0000, 0x0000, 0x0000],
+  [0x808a, 0x0000, 0x0000, 0x8000],
+  [0x8000, 0x8000, 0x0000, 0x8000],
+  [0x808b, 0x0000, 0x0000, 0x0000],
+  [0x0001, 0x8000, 0x0000, 0x0000],
+  [0x8081, 0x8000, 0x0000, 0x8000],
+  [0x8009, 0x0000, 0x0000, 0x8000],
+  [0x008a, 0x0000, 0x0000, 0x0000],
+  [0x0088, 0x0000, 0x0000, 0x0000],
+  [0x8009, 0x8000, 0x0000, 0x0000],
+  [0x000a, 0x8000, 0x0000, 0x0000],
+  [0x808b, 0x8000, 0x0000, 0x0000],
+  [0x008b, 0x0000, 0x0000, 0x8000],
+  [0x8089, 0x0000, 0x0000, 0x8000],
+  [0x8003, 0x0000, 0x0000, 0x8000],
+  [0x8002, 0x0000, 0x0000, 0x8000],
+  [0x0080, 0x0000, 0x0000, 0x8000],
+  [0x800a, 0x0000, 0x0000, 0x0000],
+  [0x000a, 0x8000, 0x0000, 0x8000],
+  [0x8081, 0x8000, 0x0000, 0x8000],
+  [0x8080, 0x0000, 0x0000, 0x8000],
+  [0x0001, 0x8000, 0x0000, 0x0000],
+  [0x8008, 0x8000, 0x0000, 0x8000]
+ ]
+}
+
+component ExpandedIotaTable() {
+  for i : 0..24 { UnpackNondet<64, 16>(IotaTable()[i]) }
+}
+
+component RoundToArray(idx: Val) {
+  table := ExpandedIotaTable();
+  split := OneHot<24>(idx);
+  for k : 0..64 {
+    reduce for i : 0..24 { split[i] * table[i][k] } init 0 with Add
+  }
+}
+
+component Iota(a: Array<Array<Array<Val, 64>, 5>, 5>, round: Val) {
+  iotaArray := RoundToArray(round);
+  for i : 0..5 {
+    for j : 0..5 {
+      if (Isz(i) * Isz(j)) {
+        for k: 0..64 { BitXor(iotaArray[k], a[i][j][k]) }
+      } else {
+        a[i][j]
+      }
+    }
+  }
+}
+
+/* Testing only components */
+
+component RegisterizeKeccak(a: Array<Array<Array<Val, 64>, 5>, 5>) {
+  for i : 0..5 {
+    for j : 0..5 {
+      for k : 0..64 {
+        Reg(a[i][j][k])
+      }
+    }
+  }
+}
+
+component TestDoRound(a: Array<Array<Array<Val, 64>, 5>, 5>, round: Val) {
+  a := RegisterizeKeccak(Pi(Rho(Theta(a))));
+  RegisterizeKeccak(Iota(Chi(a), round))
+}
+
+component PrintState(in: Array<Array<Array<Val, 64>, 5>, 5>) {
+  for i : 0..5 {
+    for j : 0..5 {
+      p := Pack<64, 16>(in[i][j]);
+      Log("%x, %x, %x, %x", p[0], p[1], p[2], p[3])
+    }
+  }
+}
+
+/*
+test TestTheta {
+  input := ExpandState(for i : 0..5 { for j : 0..5 { [ j, 0, i, 0] } });
+  PrintState(input);
+  Log("-----");
+  output := Theta(input);
+  PrintState(output);
+}
+
+test TestRho {
+  input := ExpandState(for i : 0..5 { for j : 0..5 { [ j, 0, i, 0] } });
+  PrintState(input);
+  Log("-----");
+  output := Rho(input);
+  PrintState(output);
+}
+
+test TestPi {
+  input := ExpandState(for i : 0..5 { for j : 0..5 { [ j, 0, i, 0] } });
+  PrintState(input);
+  Log("-----");
+  output := Pi(input);
+  PrintState(output);
+}
+
+test TestChi {
+  input := ExpandState(for i : 0..5 { for j : 0..5 { [ j, 0, i, 0] } });
+  PrintState(input);
+  Log("-----");
+  output := Chi(input);
+  PrintState(output);
+}
+
+test TestIota {
+  input := ExpandState(for i : 0..5 { for j : 0..5 { [ j, 0, i, 0] } });
+  PrintState(input);
+  Log("-----");
+  output := Iota(input, 3);
+  PrintState(output);
+}
+
+test Permute {
+  input := for i : 0..5 { for j : 0..5 { for k : 0..64 { 0 } } };
+  output := reduce 0..4 init input with TestDoRound;
+  PrintState(output);
+}
+*/
+

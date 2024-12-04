@@ -1,0 +1,68 @@
+// This file contains utilities that work with bits and twits.
+// RUN: zirgen --test %s
+
+// Assert that a given value is a bit
+function AssertBit(val: Val) {
+  val * (1 - val) = 0;
+}
+
+// Set a register nodeterministically, and then verify it is a bit
+component NondetBitReg(val: Val) {
+  reg := NondetReg(val);
+  AssertBit(reg);
+  reg
+}
+
+component BitReg(val: Val) {
+  reg := NondetBitReg(val);
+  val = reg;
+  reg
+}
+
+// Simple bit ops
+component BitAnd(a: Val, b: Val) {
+  a * b
+}
+
+component BitOr(a: Val, b: Val) {
+  a + b - a * b
+}
+
+component BitXor(a: Val, b: Val) {
+  a + b - 2 * a * b
+}
+
+// Tests....
+
+// Check that valid bits are valid
+test BitInRange {
+  AssertBit(0);
+  AssertBit(1);
+}
+
+// Check that 2 is not a bit
+test_fails BitOutOfRange {
+  AssertBit(2);
+}
+
+test TestAnd {
+  BitAnd(0, 0) = 0;
+  BitAnd(0, 1) = 0;
+  BitAnd(1, 0) = 0;
+  BitAnd(1, 1) = 1;
+}
+
+test TestOr {
+  BitOr(0, 0) = 0;
+  BitOr(0, 1) = 1;
+  BitOr(1, 0) = 1;
+  BitOr(1, 1) = 1;
+}
+
+test TestXor {
+  BitXor(0, 0) = 0;
+  BitXor(0, 1) = 1;
+  BitXor(1, 0) = 1;
+  BitXor(1, 1) = 0;
+}
+

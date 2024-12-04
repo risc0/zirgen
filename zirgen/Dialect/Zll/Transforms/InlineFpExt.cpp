@@ -266,7 +266,7 @@ struct Rewriter {
       TypeSwitch<Operation*>(&origOp)
           .Case<NegOp>([&](auto op) { doUnaryEltwise(op); })
           .Case<AddOp, SubOp>([&](auto op) { doBinaryEltwise(op, true); })
-          .Case<BitAndOp>([&](auto op) { doBinaryEltwise(op, false); })
+          .Case<BitAndOp, ModOp>([&](auto op) { doBinaryEltwise(op, false); })
           .Case<Iop::ReadOp>([&](auto op) { doIopRead(op); })
           .Case<Iop::RngValOp>([&](auto op) { doIopRngVal(op); })
           .Case<HashOp>([&](auto op) { doHash(op); })

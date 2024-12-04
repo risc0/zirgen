@@ -34,6 +34,8 @@ BinaryOpPrecedence getPrecedence(Token token) {
     return 4;
   case tok_div:
     return 4;
+  case tok_mod:
+    return 4;
   case tok_dot:
     return 5;
   default:
@@ -54,6 +56,9 @@ Parser::buildBinaryOp(Token token, Expression::Ptr&& lhs, Expression::Ptr&& rhs,
     return make_shared<Range>(location, std::move(lhs), std::move(rhs));
   case tok_bit_and:
     desugaredName = "BitAnd";
+    break;
+  case tok_mod:
+    desugaredName = "Mod";
     break;
   case tok_plus:
     desugaredName = "Add";
@@ -484,6 +489,7 @@ Expression::Ptr Parser::parseExpression(BinaryOpPrecedence precedence) {
     case tok_plus:
     case tok_times:
     case tok_div:
+    case tok_mod:
       if (!leftExpr) {
         error("missing left operand for binary operator");
       }
