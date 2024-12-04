@@ -1,0 +1,23 @@
+{
+  "rust-analyzer.linkedProjects": [
+    "Cargo.toml",
+    "zirgen/bootstrap/Cargo.toml"
+  ],
+  "rust-analyzer.server.extraEnv": {
+    "RISC0_SKIP_BUILD": "1",
+    "RISC0_SKIP_BUILD_KERNELS": "1",
+    "CARGO_TARGET_DIR": "target/analyzer"
+  },
+  "rust-analyzer.check.command": "clippy",
+  "rust-analyzer.check.extraArgs": [
+    "--target-dir=target/analyzer"
+  ],
+  "files.associations": {
+    "*.h.inc": "cpp",
+    "*.cpp.inc": "cpp",
+    "*.cu": "cuda",
+    "*.cuh.inc": "cuda",
+    "*.cu.inc": "cuda",
+    "*.rs.inc": "rust",
+  }
+}

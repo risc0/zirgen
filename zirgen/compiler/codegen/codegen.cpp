@@ -93,6 +93,7 @@ CodegenOptions getCudaCodegenOpts() {
   addCommonSyntax(opts);
   addCppSyntax(opts);
   ZStruct::addCppSyntax(opts);
+  Zhlt::addCppSyntax(opts);
   return opts;
 }
 

@@ -12,10 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use anyhow::{bail, Result};
-use clap::{Parser, ValueEnum};
-use glob::Pattern;
-use regex::Regex;
 use std::{
     cell::RefCell,
     collections::BTreeMap,
@@ -24,6 +20,11 @@ use std::{
     path::{Path, PathBuf},
     process::{exit, Command, Stdio},
 };
+
+use anyhow::{bail, Result};
+use clap::{Parser, ValueEnum};
+use glob::Pattern;
+use regex::Regex;
 
 #[derive(Debug)]
 struct Rule<'a> {
@@ -221,18 +222,14 @@ impl Bootstrap {
                 .join(""),
             )
         }
-        let dest_fn;
-        if src_fn.starts_with(rule.remove_prefix) {
-            dest_fn = &src_fn[rule.remove_prefix.len()..]
-        } else {
-            dest_fn = &src_fn
-        }
+        let dest_fn = src_fn.strip_prefix(rule.remove_prefix).unwrap_or(src_fn);
         self.copy(
             &src_file,
             &dest_base.join(rule.dest_dir).join(Path::new(dest_fn)),
         );
         true
     }
+
     fn copy_group(
         &self,
         circuit: &str,
@@ -285,14 +282,12 @@ impl Bootstrap {
                     tgt_path.display()
                 )
             }
-        } else {
-            if src != dst {
-                bail!(
-                    "Mismatch: {} != {} (binary)",
-                    src_path.display(),
-                    tgt_path.display()
-                )
-            }
+        } else if src != dst {
+            bail!(
+                "Mismatch: {} != {} (binary)",
+                src_path.display(),
+                tgt_path.display()
+            )
         }
 
         Ok(())
@@ -305,7 +300,6 @@ impl Bootstrap {
                 src_path.display(),
                 tgt_path.display()
             );
-            return;
         } else if self.args.check {
             if let Err(err) = self.check(src_path, tgt_path) {
                 eprintln!("Error: {}", err);
@@ -314,13 +308,13 @@ impl Bootstrap {
         } else {
             println!("{} -> {}", src_path.display(), tgt_path.display());
             let tgt_dir = tgt_path.parent().unwrap();
-            std::fs::create_dir_all(&tgt_dir).unwrap();
+            std::fs::create_dir_all(tgt_dir).unwrap();
 
             // Avoid using `std::fs::copy` because bazel creates files with r/o permissions.
             // We create a new file with r/w permissions and .copy the contents instead.
             let mut src = std::fs::File::open(src_path)
-                .expect(&format!("Could not open source: {}", src_path.display()));
-            let mut tgt = std::fs::File::create(&tgt_path).unwrap();
+                .unwrap_or_else(|_| panic!("Could not open source: {}", src_path.display()));
+            let mut tgt = std::fs::File::create(tgt_path).unwrap();
             io::copy(&mut src, &mut tgt).unwrap();
 
             let filename = tgt_path.file_name().unwrap().to_str().unwrap();
@@ -328,7 +322,7 @@ impl Bootstrap {
                 Command::new("rustfmt")
                     .args(tgt_path.to_str())
                     .status()
-                    .expect(&format!("Unable to format {}", tgt_path.display()));
+                    .unwrap_or_else(|_| panic!("Unable to format {}", tgt_path.display()));
             }
 
             if filename.ends_with(".cpp.inc")
@@ -452,10 +446,8 @@ impl Bootstrap {
             } else {
                 eprintln!("--check: All installed files match");
             }
-        } else {
-            if *self.error.borrow() {
-                panic!("Please add an appropriate error message here if we have defererred errors during a non-check operation");
-            }
+        } else if *self.error.borrow() {
+            panic!("Please add an appropriate error message here if we have defererred errors during a non-check operation");
         }
     }
 
@@ -499,16 +491,18 @@ impl Bootstrap {
 
     fn keccak(&self) {
         self.install_from_bazel(
-            "//zirgen/circuit/keccak:circuit_and_zkr",
-            self.output_or("zirgen/circuit/keccak"),
+            "//zirgen/circuit/keccak2:bootstrap",
+            self.output_or("risc0/circuit/keccak"),
             &[
-                Rule::copy("*.cpp", "cxx").base_suffix("-sys"),
-                Rule::copy("*.cpp.inc", "cxx").base_suffix("-sys"),
-                Rule::copy("*.h.inc", "cxx").base_suffix("-sys"),
+                Rule::copy("*.cpp", "kernels/cxx").base_suffix("-sys"),
+                Rule::copy("*.cpp.inc", "kernels/cxx").base_suffix("-sys"),
+                Rule::copy("*.h.inc", "kernels/cxx").base_suffix("-sys"),
                 Rule::copy("*.cu", "kernels/cuda").base_suffix("-sys"),
+                Rule::copy("*.cu.inc", "kernels/cuda").base_suffix("-sys"),
                 Rule::copy("*.cuh", "kernels/cuda").base_suffix("-sys"),
-                Rule::copy("*.rs", "src"),
-                Rule::copy("*.rs.inc", "src"),
+                Rule::copy("*.cuh.inc", "kernels/cuda").base_suffix("-sys"),
+                Rule::copy("*.rs", "src/zirgen"),
+                Rule::copy("*.rs.inc", "src/zirgen"),
                 Rule::copy("keccak_zkr.zip", "src/prove"),
             ],
         );
@@ -537,32 +531,18 @@ impl Bootstrap {
 
         self.copy_group(
             circuit,
-            &src_path,
+            src_path,
             &sys_path,
             MAIN_CPP_OUTPUTS,
             "cxx",
             "rust_",
         );
-        self.copy_group(circuit, &src_path, &rust_path, MAIN_RUST_OUTPUTS, "src", "");
-        self.copy_group(circuit, &src_path, &hal_root, CUDA_OUTPUTS, "cuda", "");
-        self.copy_group(circuit, &src_path, &hal_root, METAL_OUTPUTS, "metal", "");
+        self.copy_group(circuit, src_path, &rust_path, MAIN_RUST_OUTPUTS, "src", "");
+        self.copy_group(circuit, src_path, &hal_root, CUDA_OUTPUTS, "cuda", "");
+        self.copy_group(circuit, src_path, &hal_root, METAL_OUTPUTS, "metal", "");
 
-        self.copy_group(
-            circuit,
-            &src_path,
-            &sys_path,
-            &["layout.cpp.inc"],
-            "cxx",
-            "",
-        );
-        self.copy_group(
-            circuit,
-            &src_path,
-            &hal_root,
-            &["layout.cu.inc"],
-            "cuda",
-            "",
-        );
+        self.copy_group(circuit, src_path, &sys_path, &["layout.cpp.inc"], "cxx", "");
+        self.copy_group(circuit, src_path, &hal_root, &["layout.cu.inc"], "cuda", "");
         cargo_fmt_circuit(circuit, &rust_path, &None);
     }
 
@@ -572,13 +552,13 @@ impl Bootstrap {
         let bazel_bin = get_bazel_bin();
         let risc0_root = self.args.output.as_ref().expect("--output is required");
         let inc_path = Path::new("zirgen/circuit/verify/circom/include");
-        let src_path = bazel_bin.join("zirgen/circuit/verify/circom");
+        let src_path = &bazel_bin.join("zirgen/circuit/verify/circom");
         let tgt_path = risc0_root.join("groth16_proof/groth16");
         let rust_path = risc0_root.join("risc0/groth16/src");
 
-        self.copy_file(&inc_path, &tgt_path, "risc0.circom");
-        self.copy_file(&src_path, &tgt_path, "stark_verify.circom");
-        self.copy_file(&src_path, &rust_path, "seal_format.rs");
+        self.copy_file(inc_path, &tgt_path, "risc0.circom");
+        self.copy_file(src_path, &tgt_path, "stark_verify.circom");
+        self.copy_file(src_path, &rust_path, "seal_format.rs");
         cargo_fmt(&risc0_root.join("risc0/groth16/Cargo.toml"));
     }
 
