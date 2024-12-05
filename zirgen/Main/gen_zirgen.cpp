@@ -32,6 +32,7 @@
 #include "zirgen/Dialect/Zll/Transforms/Passes.h"
 #include "zirgen/Main/Main.h"
 #include "zirgen/Main/RunTests.h"
+#include "zirgen/Main/Target.h"
 #include "zirgen/compiler/codegen/codegen.h"
 #include "zirgen/compiler/layout/viz.h"
 #include "zirgen/dsl/lower.h"
@@ -61,6 +62,14 @@ static cl::opt<bool> multiplyIf("multiply-if",
                                 cl::desc("Mulitply out and refactor `if` statements when "
                                          "generating constraints, which can improve CSE."),
                                 cl::init(false));
+static cl::opt<std::string> circuitName("circuit-name", cl::desc("Name of circuit"));
+
+llvm::cl::opt<size_t> stepSplitCount{
+    "step-split-count",
+    llvm::cl::desc(
+        "Split up step functions into this many files to allow for parallel compilation"),
+    llvm::cl::value_desc("numParts"),
+    llvm::cl::init(1)};
 
 namespace {
 
@@ -83,28 +92,92 @@ std::unique_ptr<llvm::raw_ostream> openOutput(StringRef filename) {
   return ofs;
 }
 
-void emitDefs(CodegenEmitter& cg, ModuleOp mod, StringRef filename) {
-  auto os = openOutput(filename);
+void emitDefs(CodegenEmitter& cg, ModuleOp mod, const Twine& filename, const Template& tmpl) {
+  auto os = openOutput(filename.str());
+  *os << tmpl.header;
   CodegenEmitter::StreamOutputGuard guard(cg, os.get());
   auto emitZhlt = Zhlt::getEmitter(mod, cg);
   if (emitZhlt->emitDefs().failed()) {
     llvm::errs() << "Failed to emit circuit definitions to " << filename << "\n";
     exit(1);
   }
+  *os << tmpl.footer;
 }
 
-void emitTypes(CodegenEmitter& cg, ModuleOp mod, StringRef filename) {
-  auto os = openOutput(filename);
+void emitTypes(CodegenEmitter& cg, ModuleOp mod, const Twine& filename, const Template& tmpl) {
+  auto os = openOutput(filename.str());
+  *os << tmpl.header;
   CodegenEmitter::StreamOutputGuard guard(cg, os.get());
   cg.emitTypeDefs(mod);
+  *os << tmpl.footer;
 }
 
-template <typename... OpT> void emitOps(CodegenEmitter& cg, ModuleOp mod, StringRef filename) {
-  auto os = openOutput(filename);
+template <typename... OpT>
+void emitOps(CodegenEmitter& cg,
+             ModuleOp mod,
+             const Twine& filename,
+             const Template& tmpl,
+             size_t splitPart = 0,
+             size_t numSplit = 1) {
+  auto os = openOutput(filename.str());
+  *os << tmpl.header;
+  CodegenEmitter::StreamOutputGuard guard(cg, os.get());
+  size_t funcIdx = 0;
+  for (auto& op : *mod.getBody()) {
+    if (llvm::isa<OpT...>(&op)) {
+      if ((funcIdx % numSplit) == splitPart) {
+        cg.emitTopLevel(&op);
+      }
+      ++funcIdx;
+    }
+  }
+  *os << tmpl.footer;
+}
+
+template <typename... OpT>
+void emitOpDecls(CodegenEmitter& cg, ModuleOp mod, const Twine& filename, const Template& tmpl) {
+  auto os = openOutput(filename.str());
+  *os << tmpl.header;
   CodegenEmitter::StreamOutputGuard guard(cg, os.get());
   for (auto& op : *mod.getBody()) {
     if (llvm::isa<OpT...>(&op)) {
-      cg.emitTopLevel(&op);
+      cg.emitTopLevelDecl(&op);
+    }
+  }
+  *os << tmpl.footer;
+}
+
+void emitTarget(const CodegenTarget& target,
+                ModuleOp mod,
+                ModuleOp stepFuncs,
+                const CodegenOptions& opts) {
+  CodegenEmitter cg(opts, mod.getContext());
+  auto declExt = target.getDeclExtension();
+  auto implExt = target.getImplExtension();
+
+  emitDefs(cg, mod, "defs." + implExt + ".inc", target.getDefsTemplate());
+  emitTypes(cg, mod, "types." + declExt + ".inc", target.getTypesTemplate());
+
+  if (implExt != declExt) {
+    emitOpDecls<ZStruct::GlobalConstOp>(
+        cg, mod, "layout." + declExt + ".inc", target.getLayoutDeclTemplate());
+  }
+  emitOps<ZStruct::GlobalConstOp>(
+      cg, mod, "layout." + implExt + ".inc", target.getLayoutTemplate());
+
+  if (implExt != declExt) {
+    emitOpDecls<Zhlt::StepFuncOp>(cg, stepFuncs, "steps." + declExt, target.getStepDeclTemplate());
+  }
+  if (stepSplitCount == 1) {
+    emitOps<Zhlt::StepFuncOp>(cg, stepFuncs, "steps." + implExt, target.getStepTemplate());
+  } else {
+    for (size_t i = 0; i != stepSplitCount; ++i) {
+      emitOps<Zhlt::StepFuncOp>(cg,
+                                stepFuncs,
+                                "steps_" + std::to_string(i) + "." + implExt,
+                                target.getStepTemplate(),
+                                i,
+                                stepSplitCount);
     }
   }
 }
@@ -164,6 +237,17 @@ void emitPoly(ModuleOp mod, StringRef circuitName) {
   auto os = openOutput("validity.rs.inc");
   CodegenEmitter::StreamOutputGuard guard(rustCg, os.get());
   rustCg.emitModule(funcMod);
+}
+
+std::string getCircuitName(StringRef inputFilename) {
+  if (!circuitName.empty())
+    return circuitName;
+
+  StringRef fn = StringRef(inputFilename).rsplit('/').second;
+  if (fn.empty())
+    fn = inputFilename;
+  fn.consume_back(".zir");
+  return fn.str();
 }
 
 } // namespace
@@ -252,12 +336,10 @@ int main(int argc, char* argv[]) {
       op.erase();
   });
 
-  StringRef circuitName = StringRef(inputFilename).rsplit('/').second;
-  if (circuitName.empty())
-    circuitName = inputFilename;
-  circuitName.consume_back(".zir");
+  auto circuitName = getCircuitName(inputFilename);
+  auto circuitNameAttr = zirgen::Zll::CircuitNameAttr::get(&context, circuitName);
 
-  setModuleAttr(*typedModule, zirgen::Zll::CircuitNameAttr::get(&context, circuitName));
+  setModuleAttr(*typedModule, circuitNameAttr);
 
   emitPoly(*typedModule, circuitName);
 
@@ -296,26 +378,12 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-  auto rustOpts = codegen::getRustCodegenOpts();
-  CodegenEmitter rustCg(rustOpts, &context);
-  emitDefs(rustCg, *typedModule, "defs.rs.inc");
-  emitTypes(rustCg, *typedModule, "types.rs.inc");
-  emitOps<ZStruct::GlobalConstOp>(rustCg, *typedModule, "layout.rs.inc");
-  emitOps<Zhlt::StepFuncOp>(rustCg, stepFuncs, "steps.rs.inc");
-
-  auto cppOpts = codegen::getCppCodegenOpts();
-  CodegenEmitter cppCg(cppOpts, &context);
-  emitDefs(cppCg, *typedModule, "defs.cpp.inc");
-  emitTypes(cppCg, *typedModule, "types.h.inc");
-  emitOps<ZStruct::GlobalConstOp>(cppCg, *typedModule, "layout.cpp.inc");
-  emitOps<Zhlt::StepFuncOp, Zhlt::ExecFuncOp>(cppCg, stepFuncs, "steps.cpp.inc");
-
-  auto cudaOpts = codegen::getCudaCodegenOpts();
-  CodegenEmitter cudaCg(cudaOpts, &context);
-  emitDefs(cudaCg, *typedModule, "defs.cu.inc");
-  emitTypes(cudaCg, *typedModule, "types.cuh.inc");
-  emitOps<ZStruct::GlobalConstOp>(cudaCg, *typedModule, "layout.cu.inc");
-  emitOps<Zhlt::StepFuncOp, Zhlt::ExecFuncOp>(cudaCg, stepFuncs, "steps.cu.inc");
+  emitTarget(
+      RustCodegenTarget(circuitNameAttr), *typedModule, stepFuncs, codegen::getRustCodegenOpts());
+  emitTarget(
+      CppCodegenTarget(circuitNameAttr), *typedModule, stepFuncs, codegen::getCppCodegenOpts());
+  emitTarget(
+      CudaCodegenTarget(circuitNameAttr), *typedModule, stepFuncs, codegen::getCudaCodegenOpts());
 
   return 0;
 }

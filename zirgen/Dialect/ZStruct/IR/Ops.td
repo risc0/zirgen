@@ -29,7 +29,8 @@ class ZStructOp<string mnemonic, list<Trait> traits = []>
 def LookupOp : ZStructOp<"lookup", [Pure,
                                     InferTypeOpAdaptor,
                                     DeclareOpInterfaceMethods<CodegenExprOpInterface>,
-                                    DeclareOpInterfaceMethods<PolyOp>]> {
+                                    DeclareOpInterfaceMethods<PolyOp>,
+                                    CodegenAlwaysInlineOp]> {
   let summary = "Look up reference to struct or union member";
   let assemblyFormat = [{ $base `[` $member `]` `:` functional-type($base, $out) attr-dict }];
   let arguments = (ins AnyTypeOf<[StructType,LayoutType,UnionType]>:$base, StrAttr:$member);

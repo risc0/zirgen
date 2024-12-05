@@ -121,7 +121,9 @@ def CodegenGlobalOpInterface : OpInterface<"CodegenGlobalOpInterface"> {
   let cppNamespace = "::zirgen::Zll";
   let methods = [
     InterfaceMethod<"Write out this operation definition.",
-      "void", "emitGlobal", (ins "zirgen::codegen::CodegenEmitter&": $cgs)>
+      "void", "emitGlobal", (ins "zirgen::codegen::CodegenEmitter&": $cgs)>,
+    InterfaceMethod<"Write out a forward declaration for this operation.",
+      "void", "emitGlobalDecl", (ins "zirgen::codegen::CodegenEmitter&": $cgs)>
   ];
 }
 

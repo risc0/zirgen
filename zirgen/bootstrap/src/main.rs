@@ -14,7 +14,6 @@
 
 use std::{
     cell::RefCell,
-    collections::BTreeMap,
     io,
     io::{BufRead, BufReader},
     path::{Path, PathBuf},
@@ -349,6 +348,15 @@ impl Bootstrap {
             .unwrap_or(PathBuf::from(alternative))
     }
 
+    fn output_and(&self, relative: &str) -> PathBuf {
+        self.args
+            .output
+            .clone()
+            .expect("Output directory must be specified for external circuit")
+            .join(relative)
+            .to_path_buf()
+    }
+
     fn build_all_circuits(&self) {
         // Build the circuits using bazel(isk).
         // TODO: Migrate to install_from_bazel which builds just what's necessary.
@@ -492,11 +500,12 @@ impl Bootstrap {
     fn keccak(&self) {
         self.install_from_bazel(
             "//zirgen/circuit/keccak2:bootstrap",
-            self.output_or("risc0/circuit/keccak"),
+            self.output_and("risc0/circuit/keccak"),
             &[
                 Rule::copy("*.cpp", "kernels/cxx").base_suffix("-sys"),
                 Rule::copy("*.cpp.inc", "kernels/cxx").base_suffix("-sys"),
                 Rule::copy("*.h.inc", "kernels/cxx").base_suffix("-sys"),
+                Rule::copy("*.h", "kernels/cxx").base_suffix("-sys"),
                 Rule::copy("*.cu", "kernels/cuda").base_suffix("-sys"),
                 Rule::copy("*.cu.inc", "kernels/cuda").base_suffix("-sys"),
                 Rule::copy("*.cuh", "kernels/cuda").base_suffix("-sys"),

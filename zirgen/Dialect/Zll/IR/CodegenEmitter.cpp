@@ -59,6 +59,20 @@ void CodegenEmitter::emitTopLevel(Operation* op) {
       .Default([&](auto op) { emitStatement(op); });
 }
 
+void CodegenEmitter::emitTopLevelDecl(Operation* op) {
+  if (op->hasTrait<CodegenSkipTrait>())
+    return;
+
+  TypeSwitch<Operation*>(op)
+      .Case<FunctionOpInterface>([&](FunctionOpInterface op) { emitFuncDecl(op); })
+      .Case<CodegenGlobalOpInterface>(
+          [&](CodegenGlobalOpInterface op) { op.emitGlobalDecl(*this); })
+      .Default([&](auto op) {
+        llvm::errs() << "Unable to emit declaration for " << op << "\n";
+        abort();
+      });
+}
+
 StringAttr CodegenEmitter::canonIdent(llvm::StringRef ident, IdentKind idt) {
   return canonIdent(StringAttr::get(ctx, ident), idt);
 }
@@ -105,6 +119,46 @@ StringAttr CodegenEmitter::canonIdent(StringAttr identAttr, IdentKind idt) {
 
 void CodegenEmitter::resetValueNumbering() {
   nextVarId = 0;
+}
+
+void CodegenEmitter::emitFuncDecl(FunctionOpInterface op) {
+  if (op->hasTrait<OpTrait::IsIsolatedFromAbove>()) {
+    resetValueNumbering();
+  }
+  auto body = op.getCallableRegion();
+  llvm::ArrayRef<std::string> contextArgs;
+  if (opts.funcContextArgs.contains(op->getName().getStringRef())) {
+    contextArgs = opts.funcContextArgs.at(op->getName().getStringRef());
+  }
+
+  // Pick up any special names of arguments.
+  DenseMap<Value, StringRef> argValueNames;
+  if (auto opAsm = dyn_cast<OpAsmOpInterface>(op.getOperation())) {
+    opAsm.getAsmBlockArgumentNames(*body,
+                                   [&](Value v, StringRef name) { argValueNames[v] = name; });
+  }
+
+  llvm::SmallVector<CodegenIdent<IdentKind::Var>> argNames;
+  for (auto [argNum, arg] : llvm::enumerate(op.getArguments())) {
+    StringRef baseName;
+    if (auto argNameAttr = op.getArgAttrOfType<StringAttr>(argNum, "zirgen.argName"))
+      baseName = argNameAttr;
+    if (baseName.empty())
+      baseName = argValueNames.lookup(arg);
+    if (baseName.empty())
+      baseName = "arg";
+    argNames.push_back(getStringAttr((baseName + std::to_string(argNum)).str()));
+  }
+
+  opts.lang->emitFuncDeclaration(*this,
+                                 op.getNameAttr(),
+                                 contextArgs,
+                                 argNames,
+                                 llvm::cast<FunctionType>(op.getFunctionType()));
+
+  if (op->hasTrait<OpTrait::IsIsolatedFromAbove>()) {
+    resetValueNumbering();
+  }
 }
 
 void CodegenEmitter::emitFunc(FunctionOpInterface op) {
@@ -424,6 +478,10 @@ void CodegenEmitter::emitLiteral(mlir::Type ty, mlir::Attribute value) {
 
 void CodegenEmitter::emitConstDef(CodegenIdent<IdentKind::Const> name, CodegenValue value) {
   opts.lang->emitSaveConst(*this, name, value);
+}
+
+void CodegenEmitter::emitConstDecl(CodegenIdent<IdentKind::Const> name, Type type) {
+  opts.lang->emitConstDecl(*this, name, type);
 }
 
 void CodegenEmitter::emitConditional(CodegenValue condition, mlir::Region& region) {
