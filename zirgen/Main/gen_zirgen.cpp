@@ -310,5 +310,12 @@ int main(int argc, char* argv[]) {
   emitOps<ZStruct::GlobalConstOp>(cppCg, *typedModule, "layout.cpp.inc");
   emitOps<Zhlt::StepFuncOp, Zhlt::ExecFuncOp>(cppCg, stepFuncs, "steps.cpp.inc");
 
+  auto cudaOpts = codegen::getCudaCodegenOpts();
+  CodegenEmitter cudaCg(cudaOpts, &context);
+  emitDefs(cudaCg, *typedModule, "defs.cu.inc");
+  emitTypes(cudaCg, *typedModule, "types.cuh.inc");
+  emitOps<ZStruct::GlobalConstOp>(cudaCg, *typedModule, "layout.cu.inc");
+  emitOps<Zhlt::StepFuncOp, Zhlt::ExecFuncOp>(cudaCg, stepFuncs, "steps.cu.inc");
+
   return 0;
 }

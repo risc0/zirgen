@@ -109,6 +109,7 @@ int main() {
   KeccakState state;
   uint64_t pows = 987654321;
   for (size_t i = 0; i < state.size(); i++) {
+    printf("[%zu]: 0x%lx\n", i, pows);
     state[i] = pows;
     pows *= 123456789;
   }
