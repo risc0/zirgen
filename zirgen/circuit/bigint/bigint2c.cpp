@@ -40,7 +40,7 @@ cl::opt<std::string>
 
 namespace {
 enum class Program {
-  ModPow_65537,
+  ModPow65537,
   EC_Double,
   EC_Add,
 };
@@ -49,10 +49,16 @@ enum class Program {
 static cl::opt<enum Program>
     program("program",
             cl::desc("The program to compile"),
-            cl::values(clEnumValN(Program::ModPow_65537, "modpow_65537", "ModPow_65537"),
+            cl::values(clEnumValN(Program::ModPow65537, "modpow65537", "ModPow65537"),
                        clEnumValN(Program::EC_Double, "ec_double", "EC_Double"),
                        clEnumValN(Program::EC_Add, "ec_add", "EC_Add")),
             cl::Required);
+
+static cl::opt<size_t>
+    bitwidth("bitwidth",
+             cl::desc("The bitwidth of program parameters"),
+             cl::value_desc("bitwidth"),
+             cl::Required);
 
 const APInt secp256k1_prime = APInt::getAllOnes(256) - APInt::getOneBitSet(256, 32) -
                               APInt::getOneBitSet(256, 9) - APInt::getOneBitSet(256, 8) -
@@ -422,14 +428,14 @@ int main(int argc, char* argv[]) {
   builder.setInsertionPointToStart(func.addEntryBlock());
 
   switch (program) {
-  case Program::ModPow_65537:
-    zirgen::BigInt::genModPow65537(builder, loc, 4096); // TODO: Selectable bitwidth
+  case Program::ModPow65537:
+    zirgen::BigInt::genModPow65537(builder, loc, bitwidth);
     break;
   case Program::EC_Double:
-    zirgen::BigInt::EC::genECDouble(builder, loc, 256); // TODO: Selectable bitwidth
+    zirgen::BigInt::EC::genECDouble(builder, loc, bitwidth);
     break;
   case Program::EC_Add:
-    zirgen::BigInt::EC::genECAdd(builder, loc, 256); // TODO: Selectable bitwidth
+    zirgen::BigInt::EC::genECAdd(builder, loc, bitwidth);
     break;
   }
 
