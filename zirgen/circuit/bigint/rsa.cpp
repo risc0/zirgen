@@ -37,7 +37,7 @@ void genModPow65537(mlir::OpBuilder& builder, mlir::Location loc, size_t bitwidt
 }
 
 // Used for testing, this RSA code uses `Def` instead of `Load`/`Store`
-void makeRSA(OpBuilder builder, Location loc, size_t bits) {
+void makeRSAChecker(OpBuilder builder, Location loc, size_t bits) {
   // Check if (S^e = M (mod N)), where e = 65537
   auto N = builder.create<BigInt::DefOp>(loc, bits, 0, true, bits - 1);
   auto S = builder.create<BigInt::DefOp>(loc, bits, 1, true);
