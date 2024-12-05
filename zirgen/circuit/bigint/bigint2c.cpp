@@ -420,108 +420,6 @@ std::vector<uint32_t> polySplit(mlir::func::FuncOp func) {
   return flat;
 }
 
-// TODO: Move & cleanup finite field changes
-
-// Finite Field arithmetic
-//
-// These functions accelerate finite field arithmetic
-//  - The `Mod` versions are for prime order fields
-//  - The `FieldExt` versions are for simple extensions
-//    - Every finite extension of a finite field is simple, so in a sense this covers every finite
-//      field, but to use these functions you must represent the extension as the adjunction of a
-//      primitive element to a prime order field, which is not always convenient (i.e. when you have
-//      a tower of extensions)
-//
-// We do not use integer quotients in these functions, so minBits does not give us performance gains
-// and we therefore do not require the prime to be full bitwidth, enabling simpler generalization
-// (i.e., there's no need to make sure the bitwidth is minimal for your use case)
-
-void genModAdd(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) {
-  auto lhs = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, 0);
-  auto rhs = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0);
-  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 0);
-  auto result = BigInt::field::modAdd(builder, loc, lhs, rhs, prime);
-  builder.create<BigInt::StoreOp>(loc, result, 14, 0);
-}
-
-void genModInv(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) {
-  auto inp = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, 0);
-  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0);
-  auto result = BigInt::field::modInv(builder, loc, inp, prime);
-  builder.create<BigInt::StoreOp>(loc, result, 13, 0);
-}
-
-void genModMul(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) {
-  auto lhs = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, 0);
-  auto rhs = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0);
-  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 0);
-  auto result = BigInt::field::modMul(builder, loc, lhs, rhs, prime);
-  builder.create<BigInt::StoreOp>(loc, result, 14, 0);
-}
-
-void genModSub(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) {
-  auto lhs = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, 0);
-  auto rhs = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0);
-  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 0);
-  auto result = BigInt::field::modSub(builder, loc, lhs, rhs, prime);
-  builder.create<BigInt::StoreOp>(loc, result, 14, 0);
-}
-
-// Extension fields we use are most commonly degree 2
-// TODO: ^ Hence the use of 2 in the SmallVectors ... but is this true?
-void genExtFieldAdd(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth, size_t degree) {
-  // TODO: will need to handle bitwidth slightly smaller than data chunks
-  assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
-  size_t chunkwidth = bitwidth / 128;
-  llvm::SmallVector<Value, 2> lhs(degree);
-  llvm::SmallVector<Value, 2> rhs(degree);
-  for (size_t i = 0; i < degree; i++) {
-    lhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, i * chunkwidth);
-    rhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, i * chunkwidth);
-  }
-  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 0);
-  auto result = BigInt::field::extAdd(builder, loc, lhs, rhs, prime);
-  for (size_t i = 0; i < degree; i++) {
-    builder.create<BigInt::StoreOp>(loc, result[i], 14, i * chunkwidth);
-  }
-}
-
-void genExtFieldMul(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth, size_t degree) {
-  // TODO: will need to handle bitwidth slightly smaller than data chunks
-  assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
-  size_t chunkwidth = bitwidth / 128;
-  llvm::SmallVector<Value, 2> lhs(degree);
-  llvm::SmallVector<Value, 2> rhs(degree);
-  llvm::SmallVector<Value, 2> monic_irred_poly(degree);
-  for (size_t i = 0; i < degree; i++) {
-    lhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, i * chunkwidth);
-    rhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, i * chunkwidth);
-    monic_irred_poly[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, i * chunkwidth);
-  }
-  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 14, 0);
-  auto result = BigInt::field::extMul(builder, loc, lhs, rhs, prime, monic_irred_poly);
-  for (size_t i = 0; i < degree; i++) {
-    builder.create<BigInt::StoreOp>(loc, result[i], 15, i * chunkwidth);
-  }
-}
-
-void genExtFieldSub(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth, size_t degree) {
-  // TODO: will need to handle bitwidth slightly smaller than data chunks
-  assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
-  size_t chunkwidth = bitwidth / 128;
-  llvm::SmallVector<Value, 2> lhs(degree);
-  llvm::SmallVector<Value, 2> rhs(degree);
-  for (size_t i = 0; i < degree; i++) {
-    lhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, i * chunkwidth);
-    rhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, i * chunkwidth);
-  }
-  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 0);
-  auto result = BigInt::field::extSub(builder, loc, lhs, rhs, prime);
-  for (size_t i = 0; i < degree; i++) {
-    builder.create<BigInt::StoreOp>(loc, result[i], 14, i * chunkwidth);
-  }
-}
-
 int main(int argc, char* argv[]) {
   llvm::InitLLVM y(argc, argv);
   mlir::registerAsmPrinterCLOptions();
@@ -554,25 +452,25 @@ int main(int argc, char* argv[]) {
     zirgen::BigInt::EC::genECAdd(builder, loc, bitwidth);
     break;
   case Program::ExtFieldAdd:  // TODO: Naming for degree 2
-    genExtFieldAdd(loc, builder, bitwidth, 2);
+    zirgen::BigInt::field::genExtFieldAdd(builder, loc, bitwidth, 2);
     break;
   case Program::ExtFieldMul:
-    genExtFieldMul(loc, builder, bitwidth, 2);
+    zirgen::BigInt::field::genExtFieldMul(builder, loc, bitwidth, 2);
     break;
   case Program::ExtFieldSub:
-    genExtFieldSub(loc, builder, bitwidth, 2);
+    zirgen::BigInt::field::genExtFieldSub(builder, loc, bitwidth, 2);
     break;
   case Program::ModAdd:
-    genModAdd(loc, builder, bitwidth);
+    zirgen::BigInt::field::genModAdd(builder, loc, bitwidth);
     break;
   case Program::ModInv:
-    genModInv(loc, builder, bitwidth);
+    zirgen::BigInt::field::genModInv(builder, loc, bitwidth);
     break;
   case Program::ModMul:
-    genModMul(loc, builder, bitwidth);
+    zirgen::BigInt::field::genModMul(builder, loc, bitwidth);
     break;
   case Program::ModSub:
-    genModSub(loc, builder, bitwidth);
+    zirgen::BigInt::field::genModSub(builder, loc, bitwidth);
     break;
   }
 
