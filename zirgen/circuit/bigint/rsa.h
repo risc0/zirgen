@@ -19,8 +19,10 @@
 
 namespace zirgen::BigInt {
 
-void makeRSA(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
-
+void genModPow65537(mlir::OpBuilder& builder, mlir::Location loc, size_t bitwidth);
+// TODO: Unify our tests so we don't need separate codepaths for the RSA versions with & without
+// Loads & Stores
+void makeRSAChecker(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
 llvm::APInt RSA(llvm::APInt N, llvm::APInt S);
 
 } // namespace zirgen::BigInt

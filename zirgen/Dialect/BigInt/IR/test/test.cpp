@@ -152,7 +152,7 @@ int main(int argc, const char** argv) {
   builder.setInsertionPointToEnd(&inModule.getBodyRegion().front());
   auto inFunc = builder.create<func::FuncOp>(loc, "main", FunctionType::get(&context, {}, {}));
   builder.setInsertionPointToEnd(inFunc.addEntryBlock());
-  makeRSA(builder, loc, numBits);
+  makeRSAChecker(builder, loc, numBits);
   builder.create<func::ReturnOp>(loc);
 
   PassManager pm(&context);

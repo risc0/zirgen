@@ -52,30 +52,30 @@ cc_binary(
 )
 
 BLOBS = [
-    "modpow_65537",
-    "ec_double",
-    "ec_add",
+    "modpow65537_4096",
+    "ec_double_256",
+    "ec_add_256",
 ]
 
 genrule(
-    name = "modpow_65537",
-    outs = ["modpow_65537.blob"],
+    name = "modpow65537_4096",
+    outs = ["modpow65537_4096.blob"],
     exec_tools = [":bigint2c"],
-    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modpow_65537 > $(OUTS)"
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modpow65537 --bitwidth 4096 > $(OUTS)"
 )
 
 genrule(
-    name = "ec_double",
-    outs = ["ec_double.blob"],
+    name = "ec_double_256",
+    outs = ["ec_double_256.blob"],
     exec_tools = [":bigint2c"],
-    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=ec_double > $(OUTS)"
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=ec_double --bitwidth 256 > $(OUTS)"
 )
 
 genrule(
-    name = "ec_add",
-    outs = ["ec_add.blob"],
+    name = "ec_add_256",
+    outs = ["ec_add_256.blob"],
     exec_tools = [":bigint2c"],
-    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=ec_add > $(OUTS)"
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=ec_add --bitwidth 256 > $(OUTS)"
 )
 
 pkg_zip(
