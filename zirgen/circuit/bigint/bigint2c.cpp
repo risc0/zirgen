@@ -423,13 +423,13 @@ int main(int argc, char* argv[]) {
 
   switch (program) {
   case Program::ModPow_65537:
-    zirgen::BigInt::genModPow65537(loc, builder, 4096); // TODO: Selectable bitwidth
+    zirgen::BigInt::genModPow65537(builder, loc, 4096); // TODO: Selectable bitwidth
     break;
   case Program::EC_Double:
-    zirgen::BigInt::EC::genECDouble(loc, builder, 256); // TODO: Selectable bitwidth
+    zirgen::BigInt::EC::genECDouble(builder, loc, 256); // TODO: Selectable bitwidth
     break;
   case Program::EC_Add:
-    zirgen::BigInt::EC::genECAdd(loc, builder, 256); // TODO: Selectable bitwidth
+    zirgen::BigInt::EC::genECAdd(builder, loc, 256); // TODO: Selectable bitwidth
     break;
   }
 

@@ -352,23 +352,7 @@ AffinePt sub(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
 
 // Full programs, including I/O
 
-void genECDouble(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) {
-  assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
-  size_t chunkwidth = bitwidth / 128;
-
-  auto pt_x = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, 0);
-  auto pt_y = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, chunkwidth);
-  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0, bitwidth - 1);
-  auto a = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, chunkwidth);
-  auto b = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 2 * chunkwidth);
-  auto curve = std::make_shared<BigInt::EC::WeierstrassCurve>(prime, a, b);
-  auto pt = BigInt::EC::AffinePt(pt_x, pt_y, curve);
-  auto doubled = BigInt::EC::doub(builder, loc, pt);
-  builder.create<BigInt::StoreOp>(loc, doubled.x(), 13, 0);
-  builder.create<BigInt::StoreOp>(loc, doubled.y(), 13, chunkwidth);
-}
-
-void genECAdd(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) {
+void genECAdd(mlir::OpBuilder& builder, mlir::Location loc, size_t bitwidth) {
   assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
   size_t chunkwidth = bitwidth / 128;
   auto p_x = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, 0);
@@ -384,6 +368,22 @@ void genECAdd(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) {
   auto result = BigInt::EC::add(builder, loc, lhs, rhs);
   builder.create<BigInt::StoreOp>(loc, result.x(), 14, 0);
   builder.create<BigInt::StoreOp>(loc, result.y(), 14, chunkwidth);
+}
+
+void genECDouble(mlir::OpBuilder& builder, mlir::Location loc, size_t bitwidth) {
+  assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
+  size_t chunkwidth = bitwidth / 128;
+
+  auto pt_x = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, 0);
+  auto pt_y = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, chunkwidth);
+  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0, bitwidth - 1);
+  auto a = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, chunkwidth);
+  auto b = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 2 * chunkwidth);
+  auto curve = std::make_shared<BigInt::EC::WeierstrassCurve>(prime, a, b);
+  auto pt = BigInt::EC::AffinePt(pt_x, pt_y, curve);
+  auto doubled = BigInt::EC::doub(builder, loc, pt);
+  builder.create<BigInt::StoreOp>(loc, doubled.x(), 13, 0);
+  builder.create<BigInt::StoreOp>(loc, doubled.y(), 13, chunkwidth);
 }
 
 // Test functions

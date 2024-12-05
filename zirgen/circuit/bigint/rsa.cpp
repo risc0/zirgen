@@ -20,7 +20,7 @@ using namespace mlir;
 namespace zirgen::BigInt {
 
 // TODO: Why don't we have consistent builder/loc order?
-void genModPow65537(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) {
+void genModPow65537(mlir::OpBuilder& builder, mlir::Location loc, size_t bitwidth) {
   // Check if (S^e = M (mod N)), where e = 65537
   auto S = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, 0);
   auto N = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0);
