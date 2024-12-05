@@ -299,7 +299,6 @@ void CudaLanguageSyntax::emitArrayDef(CodegenEmitter& cg,
                                       mlir::Type ty,
                                       mlir::Type elemType,
                                       size_t numElems) {
-  // Cuda doesn't support std::array constexpr on the device, so use a C array type.
   cg << "using " << cg.getTypeName(ty) << " = cuda::std::array<" << cg.getTypeName(elemType) << ","
      << numElems << ">;\n";
 }

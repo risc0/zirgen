@@ -45,6 +45,7 @@ ZIRGEN_OUTS = [
     "taps.rs",
     "types.cuh.inc",
     "types.h.inc",
+    "types.cuh.inc",
     "types.rs.inc",
     "validity.ir",
 ]

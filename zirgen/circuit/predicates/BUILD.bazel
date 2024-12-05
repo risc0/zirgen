@@ -33,19 +33,13 @@ ZKRS = [
     "union",
 ]
 
-KECCAK_ZKRS = [("keccak_lift_" + str(po2)) for po2 in range(14, 25)]
-
 build_circuit(
     name = "gen_predicates",
     srcs = ["gen_predicates.cpp"],
-    outs = [fn for zkr in (ZKRS + KECCAK_ZKRS) for fn in [
+    outs = [fn for zkr in ZKRS for fn in [
         zkr + ".zkr",
         zkr + ".zkr.dbg",
     ]],
-    data = ["@zirgen//zirgen/circuit/keccak:validity.ir"],
-    extra_args = [
-        "--keccak-ir=$(location @zirgen//zirgen/circuit/keccak:validity.ir)",
-    ],
     deps = [":lib"],
 )
 
@@ -73,9 +67,4 @@ sh_test(
         ":actual_hashes.txt",
         ":golden_hashes.txt",
     ],
-)
-
-pkg_zip(
-    name = "keccak_zkr",
-    srcs = [x + ".zkr" for x in KECCAK_ZKRS],
 )
