@@ -534,6 +534,9 @@ OpFoldResult LookupOp::fold(FoldAdaptor adaptor) {
 }
 
 void LookupOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
+  // If we're looking up a path, put it all together at once.  This is
+  // especially useful for layouts since we only have to call
+  // layoutLookup once.
   SmallVector<CodegenIdent<IdentKind::Field>> path;
   LookupOp op = *this;
   Value lastBase;

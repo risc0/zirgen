@@ -150,11 +150,21 @@ fn strip_locations_and_whitespace(text: &str) -> Result<String> {
     // replace everything that might be a line number with '*'
     let re = Regex::new(":[0-9]+")?;
     let stripped = re.replace_all(text, "*");
-    // Remove all whitespace to avoid noticing reformatting changes
+
+    // Remove anything that might be changed by reformatting
     Ok(stripped
         .as_ref()
         .chars()
-        .filter(|&c| c != ' ' && c == '\t' && c != '\n')
+        .filter(|&c| {
+            (
+                // Reformatting may change whitespace
+                c != ' ' && c != '\t' && c != '\n' &&
+                // Reformatting may add commas at the end of lists
+                c != ',' &&
+                // Reformatting may break apart long strings into separate lines
+                c != '\\' && c != '"'
+            )
+        })
         .collect())
 }
 
@@ -300,6 +310,7 @@ impl Bootstrap {
                 tgt_path.display()
             );
         } else if self.args.check {
+            println!("{} == {}?", src_path.display(), tgt_path.display());
             if let Err(err) = self.check(src_path, tgt_path) {
                 eprintln!("Error: {}", err);
                 *self.error.borrow_mut() = true;
@@ -327,6 +338,7 @@ impl Bootstrap {
             if filename.ends_with(".cpp.inc")
                 || filename.ends_with(".cu.inc")
                 || filename.ends_with(".cuh")
+                || filename.ends_with(".cu")
             {
                 if let Err(err) = Command::new("clang-format")
                     .args(["-i", tgt_path.to_str().unwrap()])

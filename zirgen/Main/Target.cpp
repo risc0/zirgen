@@ -61,7 +61,9 @@ namespace )" + circuitName.getCppNamespace() +
                              R"(::cpu {
 )")
                                 .str(),
-                  .footer = "}\n"};
+                  .footer = R"(
+} // namespace )" + circuitName.getCppNamespace() + R"(::cpu
+)"};
 }
 
 Template CppCodegenTarget::getStepDeclTemplate() const {
@@ -78,7 +80,9 @@ namespace )" + circuitName.getCppNamespace() +
 
 )")
                                 .str(),
-                  .footer = "}\n"};
+                  .footer = R"(
+} // namespace )" + circuitName.getCppNamespace() + R"(::cpu
+)"};
 }
 
 Template CudaCodegenTarget::getStepTemplate() const {
@@ -91,7 +95,9 @@ namespace )" + circuitName.getCppNamespace() +
 
 )")
                                 .str(),
-                  .footer = "}\n"};
+                  .footer = R"(
+} // namespace )" + circuitName.getCppNamespace() + R"(::cuda
+)"};
 }
 
 Template CudaCodegenTarget::getStepDeclTemplate() const {
@@ -104,7 +110,9 @@ namespace )" + circuitName.getCppNamespace() +
                              R"(::cuda {
 )")
                                 .str(),
-                  .footer = "}\n"};
+                  .footer = R"(
+} // namespace )" + circuitName.getCppNamespace() + R"(::cuda
+)"};
 }
 
 } // namespace zirgen
