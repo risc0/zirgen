@@ -36,7 +36,10 @@ Value modMul(mlir::OpBuilder builder, mlir::Location loc, Value lhs, Value rhs, 
 
 Value modSub(mlir::OpBuilder builder, mlir::Location loc, Value lhs, Value rhs, Value prime) {
     auto diff = builder.create<BigInt::SubOp>(loc, lhs, rhs);
-    auto result = builder.create<BigInt::ReduceOp>(loc, diff, prime);
+    // True statements can fail to prove if a ReduceOp is given negative inputs; thus, add `prime`
+    // to ensure all normalized inputs can produce an answer
+    auto diff_aug = builder.create<BigInt::AddOp>(loc, diff, prime);
+    auto result = builder.create<BigInt::ReduceOp>(loc, diff_aug, prime);
     return result;
 }
 
