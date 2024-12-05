@@ -554,25 +554,25 @@ int main(int argc, char* argv[]) {
     zirgen::BigInt::EC::genECAdd(builder, loc, bitwidth);
     break;
   case Program::ExtFieldAdd:  // TODO: Naming for degree 2
-    genExtFieldAdd(loc, builder, 256, 2); // TODO: Selectable bitwidth
+    genExtFieldAdd(loc, builder, bitwidth, 2);
     break;
   case Program::ExtFieldMul:
-    genExtFieldMul(loc, builder, 256, 2); // TODO: Selectable bitwidth
+    genExtFieldMul(loc, builder, bitwidth, 2);
     break;
   case Program::ExtFieldSub:
-    genExtFieldSub(loc, builder, 256, 2); // TODO: Selectable bitwidth
+    genExtFieldSub(loc, builder, bitwidth, 2);
     break;
   case Program::ModAdd:
-    genModAdd(loc, builder, 256); // TODO: Selectable bitwidth
+    genModAdd(loc, builder, bitwidth);
     break;
   case Program::ModInv:
-    genModInv(loc, builder, 256); // TODO: Selectable bitwidth
+    genModInv(loc, builder, bitwidth);
     break;
   case Program::ModMul:
-    genModMul(loc, builder, 256); // TODO: Selectable bitwidth
+    genModMul(loc, builder, bitwidth);
     break;
   case Program::ModSub:
-    genModSub(loc, builder, 256); // TODO: Selectable bitwidth
+    genModSub(loc, builder, bitwidth);
     break;
   }
 

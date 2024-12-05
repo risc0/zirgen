@@ -58,13 +58,13 @@ BLOBS = [
     "modpow65537_4096",
     "ec_double_256",
     "ec_add_256",
-    "extfieldadd",
-    "extfieldmul",
-    "extfieldsub",
-    "modadd",
-    "modinv",
-    "modmul",
-    "modsub",
+    "extfieldadd_256",
+    "extfieldmul_256",
+    "extfieldsub_256",
+    "modadd_256",
+    "modinv_256",
+    "modmul_256",
+    "modsub_256",
 ]
 
 genrule(
@@ -89,52 +89,52 @@ genrule(
 )
 
 genrule(
-    name = "extfieldadd",
-    outs = ["extfieldadd.blob"],
+    name = "extfieldadd_256",
+    outs = ["extfieldadd_256.blob"],
     exec_tools = [":bigint2c"],
-    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=extfieldadd > $(OUTS)"
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=extfieldadd --bitwidth 256 > $(OUTS)"
 )
 
 genrule(
-    name = "extfieldmul",
-    outs = ["extfieldmul.blob"],
+    name = "extfieldmul_256",
+    outs = ["extfieldmul_256.blob"],
     exec_tools = [":bigint2c"],
-    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=extfieldmul > $(OUTS)"
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=extfieldmul --bitwidth 256 > $(OUTS)"
 )
 
 genrule(
-    name = "extfieldsub",
-    outs = ["extfieldsub.blob"],
+    name = "extfieldsub_256",
+    outs = ["extfieldsub_256.blob"],
     exec_tools = [":bigint2c"],
-    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=extfieldsub > $(OUTS)"
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=extfieldsub --bitwidth 256 > $(OUTS)"
 )
 
 genrule(
-    name = "modadd",
-    outs = ["modadd.blob"],
+    name = "modadd_256",
+    outs = ["modadd_256.blob"],
     exec_tools = [":bigint2c"],
-    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modadd > $(OUTS)"
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modadd --bitwidth 256 > $(OUTS)"
 )
 
 genrule(
-    name = "modinv",
-    outs = ["modinv.blob"],
+    name = "modinv_256",
+    outs = ["modinv_256.blob"],
     exec_tools = [":bigint2c"],
-    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modinv > $(OUTS)"
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modinv --bitwidth 256 > $(OUTS)"
 )
 
 genrule(
-    name = "modmul",
-    outs = ["modmul.blob"],
+    name = "modmul_256",
+    outs = ["modmul_256.blob"],
     exec_tools = [":bigint2c"],
-    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modmul > $(OUTS)"
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modmul --bitwidth 256 > $(OUTS)"
 )
 
 genrule(
-    name = "modsub",
-    outs = ["modsub.blob"],
+    name = "modsub_256",
+    outs = ["modsub_256.blob"],
     exec_tools = [":bigint2c"],
-    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modsub > $(OUTS)"
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modsub --bitwidth 256 > $(OUTS)"
 )
 
 pkg_zip(
