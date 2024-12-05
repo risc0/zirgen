@@ -54,11 +54,10 @@ static cl::opt<enum Program>
                        clEnumValN(Program::EC_Add, "ec_add", "EC_Add")),
             cl::Required);
 
-static cl::opt<size_t>
-    bitwidth("bitwidth",
-             cl::desc("The bitwidth of program parameters"),
-             cl::value_desc("bitwidth"),
-             cl::Required);
+static cl::opt<size_t> bitwidth("bitwidth",
+                                cl::desc("The bitwidth of program parameters"),
+                                cl::value_desc("bitwidth"),
+                                cl::Required);
 
 const APInt secp256k1_prime = APInt::getAllOnes(256) - APInt::getOneBitSet(256, 32) -
                               APInt::getOneBitSet(256, 9) - APInt::getOneBitSet(256, 8) -
