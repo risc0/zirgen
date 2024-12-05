@@ -32,15 +32,19 @@ DEFAULT_OUTS = [
 
 ZIRGEN_OUTS = [
     "defs.cpp.inc",
+    "defs.cu.inc",
     "defs.rs.inc",
     "info.rs",
     "layout.cpp.inc",
+    "layout.cu.inc",
     "layout.rs.inc",
     "poly_ext.rs",
     "steps.cpp.inc",
+    "steps.cu.inc",
     "steps.rs.inc",
     "taps.rs",
     "types.h.inc",
+    "types.cuh.inc",
     "types.rs.inc",
     "validity.ir",
 ]

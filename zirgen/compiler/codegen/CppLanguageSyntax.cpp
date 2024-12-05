@@ -247,7 +247,7 @@ void CppLanguageSyntax::emitMapConstruct(CodegenEmitter& cg,
   cg << "map(" << array << ", ";
   if (layout)
     cg << *layout << ", ";
-  cg << "std::function([&](";
+  cg << "([&](";
   cg << cg.getTypeName(array.getType()) << "::value_type " << argNames[0];
   if (layout)
     cg << ", BoundLayout<" << cg.getTypeName(layout->getType()) << "::value_type> " << argNames[1];
@@ -266,7 +266,7 @@ void CppLanguageSyntax::emitReduceConstruct(CodegenEmitter& cg,
   if (layout) {
     cg << *layout << ", ";
   }
-  cg << "std::function([&](";
+  cg << "([&](";
   cg << cg.getTypeName(init.getType()) << " " << argNames[0] << ", "
      << cg.getTypeName(array.getType()) << "::value_type " << argNames[1];
   if (layout) {
@@ -299,19 +299,27 @@ void CudaLanguageSyntax::emitArrayDef(CodegenEmitter& cg,
                                       mlir::Type ty,
                                       mlir::Type elemType,
                                       size_t numElems) {
-  // Cuda doesn't support std::array constexpr on the device, so use a C array type.
-  cg << "using " << cg.getTypeName(ty) << " = " << cg.getTypeName(elemType) << "[" << numElems
-     << "];\n";
+  cg << "using " << cg.getTypeName(ty) << " = cuda::std::array<" << cg.getTypeName(elemType) << ","
+     << numElems << ">;\n";
 }
 
 void CudaLanguageSyntax::emitArrayConstruct(CodegenEmitter& cg,
                                             mlir::Type ty,
                                             mlir::Type elemType,
                                             llvm::ArrayRef<CodegenValue> values) {
-  // Leave off the type name when constructing arrays; otherwise it coerces it into a pointer.
-  cg << "{";
+  cg << cg.getTypeName(ty) << "{";
   cg.interleaveComma(values);
   cg << "}";
+}
+
+void CudaLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
+                                            CodegenIdent<IdentKind::Func> funcName,
+                                            llvm::ArrayRef<std::string> contextArgDecls,
+                                            llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
+                                            mlir::FunctionType funcType,
+                                            mlir::Region* body) {
+  cg << "__device__ ";
+  CppLanguageSyntax::emitFuncDefinition(cg, funcName, contextArgDecls, argNames, funcType, body);
 }
 
 } // namespace zirgen::codegen
