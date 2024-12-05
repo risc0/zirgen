@@ -10,7 +10,7 @@ risc0-binfmt = { workspace = true }
 risc0-core = { workspace = true }
 risc0-zkp = { workspace = true, default-features = false, features = [
   "prove",
-  # "circuit_debug",
+  "circuit_debug",
 ] }
 serde = { version = "1.0", default-features = false, features = [
   "derive",

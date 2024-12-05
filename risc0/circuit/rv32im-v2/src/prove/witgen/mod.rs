@@ -71,13 +71,13 @@ impl<H: Hal> WitnessGenerator<H> {
         tracing::trace!("{segment:#?}");
         tracing::trace!("{trace:#?}");
 
-        assert_eq!(
-            segment.suspend_cycle + segment.paging_cycles + LOOKUP_TABLE_CYCLES as u32 + 1,
-            cycles as u32,
-            "suspend_cycle: {} + paging_cycles: {} + {LOOKUP_TABLE_CYCLES} + 1 == trace.cycles",
-            segment.suspend_cycle,
-            segment.paging_cycles
-        );
+        // assert_eq!(
+        //     segment.suspend_cycle + segment.paging_cycles + LOOKUP_TABLE_CYCLES as u32 + 1,
+        //     cycles as u32,
+        //     "suspend_cycle: {} + paging_cycles: {} + {LOOKUP_TABLE_CYCLES} + 1 == trace.cycles",
+        //     segment.suspend_cycle,
+        //     segment.paging_cycles
+        // );
         // assert_eq!(cycles, 1 << segment.po2, "cycles == 1 << segment.po2");
         assert!(cycles <= 1 << segment.po2, "cycles <= 1 << segment.po2");
         let cycles = 1 << segment.po2;

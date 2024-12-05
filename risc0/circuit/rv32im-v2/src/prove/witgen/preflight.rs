@@ -80,6 +80,7 @@ impl Segment {
         preflight.body()?;
         preflight.write_pages()?;
         preflight.generate_tables()?;
+        preflight.padding();
         preflight.wrap_memory_txns()?;
         preflight.update_p2_zcheck()?;
 
@@ -177,6 +178,14 @@ impl<'a> Preflight<'a> {
         Ok(())
     }
 
+    pub fn padding(&mut self) -> Result<()> {
+        let last_cycle = 1 << self.segment.po2;
+        for i in self.trace.cycles.len()..last_cycle {
+            self.add_cycle_special(STATE_CONTROL_DONE, STATE_CONTROL_DONE, 0, 0, Back::None);
+        }
+        Ok(())
+    }
+
     // Now, go back and update memory transactions to wrap around
     fn wrap_memory_txns(&mut self) -> Result<()> {
         for txn in self.trace.txns.iter_mut() {
@@ -202,30 +211,27 @@ impl<'a> Preflight<'a> {
     fn update_p2_zcheck(&mut self) -> Result<()> {
         let mut checksum = Checksum::new(&self.trace.nonce);
         for (row, back) in self.trace.backs.iter_mut().enumerate() {
-            match back {
-                Back::Poseidon2(p2_state) => {
-                    let cycle = &self.trace.cycles[row];
-                    let next_cycle = &self.trace.cycles[row + 1];
-                    let state = (cycle.major as u32 - 7) * 8 + cycle.minor as u32;
-                    if state == STATE_POSEIDON_LOAD_IN {
-                        checksum.start();
-                        for (i, txn_idx) in (cycle.txn_idx..next_cycle.txn_idx).enumerate() {
-                            let txn = &self.trace.txns[txn_idx as usize];
-                            checksum.add(p2_state.load_tx_type, i, txn);
-                        }
-                    }
-                    match state {
-                        STATE_POSEIDON_LOAD_IN
-                        | STATE_POSEIDON_EXT_ROUND
-                        | STATE_POSEIDON_INT_ROUND => {
-                            p2_state.zcheck = checksum.zcheck;
-                        }
-                        _ => {
-                            checksum.clear();
-                        }
+            if let Back::Poseidon2(p2_state) = back {
+                let cycle = &self.trace.cycles[row];
+                let next_cycle = &self.trace.cycles[row + 1];
+                let state = (cycle.major as u32 - 7) * 8 + cycle.minor as u32;
+                if state == STATE_POSEIDON_LOAD_IN {
+                    checksum.start();
+                    for (i, txn_idx) in (cycle.txn_idx..next_cycle.txn_idx).enumerate() {
+                        let txn = &self.trace.txns[txn_idx as usize];
+                        checksum.add(p2_state.load_tx_type, i, txn);
                     }
                 }
-                _ => {}
+                match state {
+                    STATE_POSEIDON_LOAD_IN
+                    | STATE_POSEIDON_EXT_ROUND
+                    | STATE_POSEIDON_INT_ROUND => {
+                        p2_state.zcheck = checksum.zcheck;
+                    }
+                    _ => {
+                        checksum.clear();
+                    }
+                }
             }
         }
 
