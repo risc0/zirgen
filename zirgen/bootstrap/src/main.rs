@@ -546,13 +546,13 @@ impl Bootstrap {
         let kernels = Some(sys.join("kernels"));
         let sys = Some(sys);
 
-        self.copy_group(circuit, &src, &rust, edsl::RUST_OUTPUTS, "src", "");
-        self.copy_group(circuit, &src, &sys, edsl::CPP_OUTPUTS, "cxx", "rust_");
-        self.copy_group(circuit, &src, &kernels, edsl::CUDA_OUTPUTS, "cuda", "");
-        self.copy_group(circuit, &src, &kernels, edsl::METAL_OUTPUTS, "metal", "");
+        self.copy_group(circuit, src, &rust, edsl::RUST_OUTPUTS, "src", "");
+        self.copy_group(circuit, src, &sys, edsl::CPP_OUTPUTS, "cxx", "rust_");
+        self.copy_group(circuit, src, &kernels, edsl::CUDA_OUTPUTS, "cuda", "");
+        self.copy_group(circuit, src, &kernels, edsl::METAL_OUTPUTS, "metal", "");
 
-        self.copy_group(circuit, &src, &sys, &["layout.cpp.inc"], "cxx", "");
-        self.copy_group(circuit, &src, &kernels, &["layout.cu.inc"], "cuda", "");
+        self.copy_group(circuit, src, &sys, &["layout.cpp.inc"], "cxx", "");
+        self.copy_group(circuit, src, &kernels, &["layout.cu.inc"], "cuda", "");
         cargo_fmt_circuit(circuit, &rust, &None);
     }
 

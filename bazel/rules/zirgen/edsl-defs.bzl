@@ -43,7 +43,6 @@ ZIRGEN_OUTS = [
     "steps.cu.inc",
     "steps.rs.inc",
     "taps.rs",
-    "types.cuh.inc",
     "types.h.inc",
     "types.cuh.inc",
     "types.rs.inc",
