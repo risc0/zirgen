@@ -62,7 +62,8 @@ namespace )" + circuitName.getCppNamespace() +
 )")
                                 .str(),
                   .footer = R"(
-} // namespace )" + circuitName.getCppNamespace() + R"(::cpu
+} // namespace )" + circuitName.getCppNamespace() +
+                            R"(::cpu
 )"};
 }
 
@@ -81,7 +82,8 @@ namespace )" + circuitName.getCppNamespace() +
 )")
                                 .str(),
                   .footer = R"(
-} // namespace )" + circuitName.getCppNamespace() + R"(::cpu
+} // namespace )" + circuitName.getCppNamespace() +
+                            R"(::cpu
 )"};
 }
 
@@ -96,7 +98,8 @@ namespace )" + circuitName.getCppNamespace() +
 )")
                                 .str(),
                   .footer = R"(
-} // namespace )" + circuitName.getCppNamespace() + R"(::cuda
+} // namespace )" + circuitName.getCppNamespace() +
+                            R"(::cuda
 )"};
 }
 
@@ -111,7 +114,8 @@ namespace )" + circuitName.getCppNamespace() +
 )")
                                 .str(),
                   .footer = R"(
-} // namespace )" + circuitName.getCppNamespace() + R"(::cuda
+} // namespace )" + circuitName.getCppNamespace() +
+                            R"(::cuda
 )"};
 }
 

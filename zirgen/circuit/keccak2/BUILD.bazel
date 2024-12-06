@@ -49,6 +49,8 @@ OUTS = ZIRGEN_OUTS + [
     "eval_check.cuh",
     "steps.h",
     "steps.cuh",
+    "layout.h.inc",
+    "layout.cuh.inc",
 ]
 
 build_circuit(

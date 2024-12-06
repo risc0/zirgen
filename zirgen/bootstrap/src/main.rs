@@ -156,14 +156,12 @@ fn strip_locations_and_whitespace(text: &str) -> Result<String> {
         .as_ref()
         .chars()
         .filter(|&c| {
-            (
-                // Reformatting may change whitespace
-                c != ' ' && c != '\t' && c != '\n' &&
-                // Reformatting may add commas at the end of lists
-                c != ',' &&
-                // Reformatting may break apart long strings into separate lines
-                c != '\\' && c != '"'
-            )
+            // Reformatting may change whitespace
+            c != ' ' && c != '\t' && c != '\n'
+            // Reformatting may add commas at the end of lists
+            && c != ','
+            // Reformatting may break apart long strings into separate lines
+            && c != '\\' && c != '"'
         })
         .collect())
 }
