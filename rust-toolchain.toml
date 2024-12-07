@@ -1,5 +1,4 @@
 [toolchain]
-# mirror zkvm
-channel = "1.77"
+channel = "1.81"
 components = ["clippy", "rustfmt"]
 profile = "minimal"

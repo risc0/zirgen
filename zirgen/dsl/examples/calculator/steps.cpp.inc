@@ -24,8 +24,7 @@ OneHotStruct exec_OneHot(ExecContext& ctx, Val arg0, BoundLayout<OneHotLayout> l
   NondetRegStruct2Array x2 =
       map(Val2Array{Val(0), Val(1)},
           LAYOUT_LOOKUP(layout1, _super),
-          std::function([&](Val2Array::value_type x3,
-                            BoundLayout<NondetRegLayout2LayoutArray::value_type> x4) {
+          ([&](Val2Array::value_type x3, BoundLayout<NondetRegLayout2LayoutArray::value_type> x4) {
             NondetRegStruct x5 = exec_NondetReg(ctx, isz((x3 - arg0)), x4);
             return x5;
           }));

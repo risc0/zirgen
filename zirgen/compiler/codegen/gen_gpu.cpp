@@ -610,8 +610,13 @@ private:
                << ");";
         })
         .Case<MakeTemporaryBufferOp>([&](MakeTemporaryBufferOp op) {
+          StringRef typeName;
+          if (op.getType().getElement().getFieldK() > 1)
+            typeName = "FpExt";
+          else
+            typeName = "Fp";
           ss << llvm::formatv(
-                    "{0} {1}[{2}];\n", outType, ctx.def(op.getOut()), op.getType().getSize())
+                    "{0} {1}[{2}];\n", typeName, ctx.def(op.getOut()), op.getType().getSize())
                     .str();
         })
         .Case<func::CallOp>([&](func::CallOp op) {
