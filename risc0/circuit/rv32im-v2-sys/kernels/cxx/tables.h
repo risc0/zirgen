@@ -25,8 +25,15 @@
 namespace risc0 {
 
 struct LookupTables {
-  std::array<Fp, 1 << 8> tableU8;
-  std::array<Fp, 1 << 16> tableU16;
+  std::array<std::atomic<Fp>, 1 << 8> tableU8;
+  std::array<std::atomic<Fp>, 1 << 16> tableU16;
+
+  void atomic_rmw(std::atomic<Fp>& atom, Fp count) {
+    Fp old = atom.load(), next;
+    do {
+      next = old + count;
+    } while (!atom.compare_exchange_strong(old, next));
+  }
 
   void lookupDelta(Fp table, Fp index, Fp count) {
     uint32_t tableU32 = table.asUInt32();
@@ -44,9 +51,9 @@ struct LookupTables {
     }
     // printf("table = %u, index = %u\n", tableU32, indexU32);
     if (tableU32 == 8) {
-      tableU8[indexU32] += count;
+      atomic_rmw(tableU8[indexU32], count);
     } else {
-      tableU16[indexU32] += count;
+      atomic_rmw(tableU16[indexU32], count);
     }
   }
 

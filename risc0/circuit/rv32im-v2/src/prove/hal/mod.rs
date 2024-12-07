@@ -128,9 +128,8 @@ where
     fn prove(&self, segment: &Segment) -> Result<Seal> {
         scope!("prove");
 
-        // let mut rng = thread_rng();
-        // let nonce = BabyBearExtElem::random(&mut rng);
-        let nonce = BabyBearExtElem::ONE;
+        let mut rng = thread_rng();
+        let nonce = BabyBearExtElem::random(&mut rng);
 
         let witgen = WitnessGenerator::new(
             self.hal.as_ref(),
