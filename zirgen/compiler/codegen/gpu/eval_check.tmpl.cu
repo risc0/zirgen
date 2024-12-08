@@ -8,7 +8,7 @@
 
 #include <cstdint>
 
-namespace {{cppNamespace}} {
+namespace {{cppNamespace}}::cuda {
 
 {{#decls}}
 
@@ -33,4 +33,4 @@ __device__ FpExt {{fn}}(uint32_t idx,
 }
 {{/funcs}}
 
-}  // namespace {{cppNamespace}}
+}  // namespace {{cppNamespace}}::cuda

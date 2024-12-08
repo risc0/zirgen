@@ -50,12 +50,13 @@ void CppLanguageSyntax::emitSwitchStatement(CodegenEmitter& cg,
   cg << "}\n";
 }
 
-void CppLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
-                                           CodegenIdent<IdentKind::Func> funcName,
-                                           llvm::ArrayRef<std::string> contextArgDecls,
-                                           llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
-                                           mlir::FunctionType funcType,
-                                           mlir::Region* body) {
+namespace {
+
+void emitRawFuncDeclaration(CodegenEmitter& cg,
+                            CodegenIdent<IdentKind::Func> funcName,
+                            llvm::ArrayRef<std::string> contextArgDecls,
+                            llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
+                            mlir::FunctionType funcType) {
   auto returnTypes = funcType.getResults();
   if (returnTypes.size() == 0) {
     cg << "void";
@@ -84,7 +85,29 @@ void CppLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
     cg << " " << argName;
   });
 
-  cg << ") {\n";
+  cg << ")  ";
+}
+
+} // namespace
+
+void CppLanguageSyntax::emitFuncDeclaration(CodegenEmitter& cg,
+                                            CodegenIdent<IdentKind::Func> funcName,
+                                            llvm::ArrayRef<std::string> contextArgDecls,
+                                            llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
+                                            mlir::FunctionType funcType) {
+  cg << "extern ";
+  emitRawFuncDeclaration(cg, funcName, contextArgDecls, argNames, funcType);
+  cg << ";\n";
+}
+
+void CppLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
+                                           CodegenIdent<IdentKind::Func> funcName,
+                                           llvm::ArrayRef<std::string> contextArgDecls,
+                                           llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
+                                           mlir::FunctionType funcType,
+                                           mlir::Region* body) {
+  emitRawFuncDeclaration(cg, funcName, contextArgDecls, argNames, funcType);
+  cg << " {\n";
   cg.emitRegion(*body);
   cg << "}\n";
 }
@@ -120,6 +143,12 @@ void CppLanguageSyntax::emitSaveResults(CodegenEmitter& cg,
     cg.interleaveComma(names);
     cg << "] = " << emitExpression << ";\n";
   }
+}
+
+void CppLanguageSyntax::emitConstDecl(CodegenEmitter& cg,
+                                      CodegenIdent<IdentKind::Const> name,
+                                      Type ty) {
+  cg << "extern const " << cg.getTypeName(ty) << " " << name << ";\n";
 }
 
 void CppLanguageSyntax::emitSaveConst(CodegenEmitter& cg,
@@ -287,6 +316,12 @@ void CppLanguageSyntax::emitLayoutDef(CodegenEmitter& cg,
 
 // ----------------------------------------------------------------------
 // CUDA variant of C++ that needs things slightly different than regular C++
+void CudaLanguageSyntax::emitConstDecl(CodegenEmitter& cg,
+                                       CodegenIdent<IdentKind::Const> name,
+                                       Type ty) {
+  cg << "extern __device__ const " << cg.getTypeName(ty) << " " << name << ";\n";
+}
+
 void CudaLanguageSyntax::emitSaveConst(CodegenEmitter& cg,
                                        CodegenIdent<IdentKind::Const> name,
                                        CodegenValue value) {
@@ -299,8 +334,8 @@ void CudaLanguageSyntax::emitArrayDef(CodegenEmitter& cg,
                                       mlir::Type ty,
                                       mlir::Type elemType,
                                       size_t numElems) {
-  cg << "using " << cg.getTypeName(ty) << " = cuda::std::array<" << cg.getTypeName(elemType) << ","
-     << numElems << ">;\n";
+  cg << "using " << cg.getTypeName(ty) << " = ::cuda::std::array<" << cg.getTypeName(elemType)
+     << "," << numElems << ">;\n";
 }
 
 void CudaLanguageSyntax::emitArrayConstruct(CodegenEmitter& cg,
@@ -320,6 +355,16 @@ void CudaLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
                                             mlir::Region* body) {
   cg << "__device__ ";
   CppLanguageSyntax::emitFuncDefinition(cg, funcName, contextArgDecls, argNames, funcType, body);
+}
+
+void CudaLanguageSyntax::emitFuncDeclaration(CodegenEmitter& cg,
+                                             CodegenIdent<IdentKind::Func> funcName,
+                                             llvm::ArrayRef<std::string> contextArgDecls,
+                                             llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
+                                             mlir::FunctionType funcType) {
+  cg << "extern __device__ ";
+  emitRawFuncDeclaration(cg, funcName, contextArgDecls, argNames, funcType);
+  cg << ";\n";
 }
 
 } // namespace zirgen::codegen
