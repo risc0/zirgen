@@ -373,7 +373,6 @@ enum class Access {
   Public,
 };
 
-
 // Concrete statement nodes
 class Definition : public Statement {
   std::string name;
@@ -385,7 +384,6 @@ public:
   StringRef getName() const { return name; }
   Expression* getValue() const { return value.get(); }
   Access getAccess() const { return access; }
-  bool getIsGlobal() const { return access == Access::Global; }
   void print(llvm::raw_ostream&) const override;
   static bool classof(const Statement* s);
 };
@@ -402,7 +400,6 @@ public:
   StringRef getName() const { return name; }
   Expression* getType() const { return type.get(); }
   Access getAccess() const { return access; }
-  bool getIsGlobal() const { return access == Access::Global; }
   void print(llvm::raw_ostream&) const override;
   static bool classof(const Statement* s);
 };

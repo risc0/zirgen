@@ -277,7 +277,7 @@ void Impl::gen(ast::Statement* s, SymbolTable& symbols) {
       .Case<ast::Definition>([&](ast::Definition* s) {
         mlir::Location sl(loc(s));
         llvm::StringRef name = s->getName();
-        if (s->getIsGlobal()) {
+        if (ast::Access::Global == s->getAccess()) {
           auto construct = dynamic_cast<ast::Construct*>(s->getValue());
           if (!construct) {
             mlir::emitError(sl) << "Expecting a global definition to construct a component";
@@ -318,7 +318,7 @@ void Impl::gen(ast::Statement* s, SymbolTable& symbols) {
         mlir::Location sl(loc(s));
         llvm::StringRef name = s->getName();
         mlir::Value type = gen(s->getType(), symbols);
-        if (s->getIsGlobal()) {
+        if (ast::Access::Global == s->getAccess()) {
           mlir::Value declaration = builder.create<GetGlobalOp>(sl, name, type).getOut();
           symbols.define(name, {declaration, Source::Global, sl});
         } else {
