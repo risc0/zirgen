@@ -84,7 +84,7 @@ TEST(ast, DefineAndResolve) {
 
   string expect = R"({"class":"Block","body":)"
                   R"([{"class":"Definition","name":"plef","value":)"
-                  R"({"class":"Literal","value":101},"isGlobal":false}],)"
+                  R"({"class":"Literal","value":101}}],)"
                   R"("value":{"class":"Ident","name":"plef"}})";
   EXPECT_EQ(print(v), expect);
 }

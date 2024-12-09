@@ -48,12 +48,12 @@ Expr Specialize(Expr&& type, ExprVec&& args) {
   return std::make_unique<ast::Specialize>(loc, std::move(type), std::move(args));
 }
 
-Stmt Definition(string name, Expr&& value, bool isGlobal) {
-  return std::make_unique<ast::Definition>(loc, name, std::move(value), isGlobal);
+Stmt Definition(string name, Expr&& value, Access access) {
+  return std::make_unique<ast::Definition>(loc, name, std::move(value), access);
 }
 
-Stmt Declaration(string name, Expr&& type, bool isGlobal) {
-  return std::make_unique<ast::Declaration>(loc, name, std::move(type), isGlobal);
+Stmt Declaration(string name, Expr&& type, Access access) {
+  return std::make_unique<ast::Declaration>(loc, name, std::move(type), access);
 }
 
 Stmt Constraint(Expr&& lhs, Expr&& rhs) {

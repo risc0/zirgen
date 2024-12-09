@@ -228,14 +228,14 @@ Block::Ptr Parser::parseBlock() {
   while (!done) {
     Token token = lexer.peekToken();
     SMLoc location = lexer.getLastLocation();
-    bool globalTokenPending = false;
+    Access upcomingAccess = Access::Default;
     switch (token) {
     case tok_curly_r:
       done = true;
       break;
     case tok_global:
       lexer.takeToken();
-      globalTokenPending = true;
+      upcomingAccess = Access::Global;
       // Fallthrough
     default:
       // definition, declaration, constraint, void, or value
@@ -283,8 +283,8 @@ Block::Ptr Parser::parseBlock() {
           return nullptr;
         }
         body.push_back(
-            make_shared<Definition>(location, identifier, std::move(defBody), globalTokenPending));
-        globalTokenPending = false;
+            make_shared<Definition>(location, identifier, std::move(defBody), upcomingAccess));
+        upcomingAccess = Access::Default;
         lastExpression = nullptr;
       } else if (lexer.peekToken() == tok_eq) {
         // constraint
@@ -314,16 +314,22 @@ Block::Ptr Parser::parseBlock() {
           return nullptr;
         }
         body.push_back(make_shared<Declaration>(
-            location, identifier, std::move(declType), globalTokenPending));
-        globalTokenPending = false;
+            location, identifier, std::move(declType), upcomingAccess));
+        upcomingAccess = Access::Default;
         lastExpression = nullptr;
       } else if (lexer.peekToken() != tok_curly_r) {
         error("invalid statement");
         return nullptr;
       }
-      if (globalTokenPending) {
-        error("Expected declaration or definition after `global'");
-        return nullptr;
+      switch (upcomingAccess) {
+        case Access::Global:
+          error("Expected declaration or definition after `global'");
+          return nullptr;
+        case Access::Public:
+          error("Expected declaration or definition after `public'");
+          return nullptr;
+        case Access::Default:
+          break;
       }
       break;
     }
