@@ -65,6 +65,10 @@ AffinePt mul(OpBuilder builder, Location loc, Value scalar, const AffinePt& pt);
 AffinePt neg(OpBuilder builder, Location loc, const AffinePt& pt);
 AffinePt sub(OpBuilder builder, Location loc, const AffinePt& lhs, const AffinePt& rhs);
 
+// Full Programs
+void genECAdd(mlir::OpBuilder& builder, mlir::Location loc, size_t bitwidth);
+void genECDouble(mlir::OpBuilder& builder, mlir::Location loc, size_t bitwidth);
+
 // Test functions
 void makeECAddTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
 void makeECDoubleTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits);

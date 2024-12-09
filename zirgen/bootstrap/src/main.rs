@@ -591,12 +591,9 @@ impl Bootstrap {
         let rsa_path = risc0_root.join("bigint2/src/rsa");
         let ec_path = risc0_root.join("bigint2/src/ec");
 
-        self.copy_file(&src_path, &rsa_path, "modpow_65537.blob");
-        self.copy(
-            &src_path.join("ec_double.blob"),
-            &ec_path.join("double.blob"),
-        );
-        self.copy(&src_path.join("ec_add.blob"), &ec_path.join("add.blob"));
+        self.copy_file(&src_path, &rsa_path, "modpow65537_4096.blob");
+        self.copy_file(&src_path, &ec_path, "ec_add_256.blob");
+        self.copy_file(&src_path, &ec_path, "ec_double_256.blob");
     }
 }
 

@@ -19,7 +19,25 @@ using namespace mlir;
 
 namespace zirgen::BigInt {
 
-void makeRSA(OpBuilder builder, Location loc, size_t bits) {
+void genModPow65537(mlir::OpBuilder& builder, mlir::Location loc, size_t bitwidth) {
+  // Check if (S^e = M (mod N)), where e = 65537
+  auto S = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, 0);
+  auto N = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0);
+  // We square S 16 times to get S^65536
+  Value x = S;
+  for (size_t i = 0; i < 16; i++) {
+    auto xm = builder.create<BigInt::MulOp>(loc, x, x);
+    x = builder.create<BigInt::ReduceOp>(loc, xm, N);
+  }
+  // Multiply in one more copy of S + reduce
+  auto xm = builder.create<BigInt::MulOp>(loc, x, S);
+  x = builder.create<BigInt::ReduceOp>(loc, xm, N);
+  // this is our result
+  builder.create<BigInt::StoreOp>(loc, x, 13, 0);
+}
+
+// Used for testing, this RSA code uses `Def` instead of `Load`/`Store`
+void makeRSAChecker(OpBuilder builder, Location loc, size_t bits) {
   // Check if (S^e = M (mod N)), where e = 65537
   auto N = builder.create<BigInt::DefOp>(loc, bits, 0, true, bits - 1);
   auto S = builder.create<BigInt::DefOp>(loc, bits, 1, true);
@@ -38,6 +56,7 @@ void makeRSA(OpBuilder builder, Location loc, size_t bits) {
   builder.create<BigInt::EqualZeroOp>(loc, diff);
 }
 
+// Used for testing, to compute expected outputs.
 // I verified this by comparing against:
 // pow(S, 65537, N) in python
 APInt RSA(APInt N, APInt S) {
