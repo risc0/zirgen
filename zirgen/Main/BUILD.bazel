@@ -7,10 +7,13 @@ cc_library(
     srcs = [
         "Main.cpp",
         "RunTests.cpp",
+        "Target.cpp",
     ],
     hdrs = [
         "Main.h",
         "RunTests.h",
+        "Target.cpp",
+        "Target.h",
     ],
     deps = [
         "//risc0/core",

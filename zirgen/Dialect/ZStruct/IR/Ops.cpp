@@ -534,11 +534,32 @@ OpFoldResult LookupOp::fold(FoldAdaptor adaptor) {
 }
 
 void LookupOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
+  // If we're looking up a path, put it all together at once.  This is
+  // especially useful for layouts since we only have to call
+  // layoutLookup once.
+  SmallVector<CodegenIdent<IdentKind::Field>> path;
+  LookupOp op = *this;
+  Value lastBase;
+  while (op) {
+    lastBase = op.getBase();
+    path.push_back(op.getMemberAttr());
+    op = op.getBase().getDefiningOp<LookupOp>();
+  }
+
   if (isLayoutType(getBase().getType())) {
+
     cg.emitInvokeMacro(cg.getStringAttr("layoutLookup"),
-                       {getBase(), CodegenIdent<IdentKind::Field>(getMemberAttr())});
+                       {lastBase, [&]() {
+                          llvm::interleave(
+                              llvm::reverse(path),
+                              *cg.getOutputStream(),
+                              [&](auto pathElem) { cg << pathElem; },
+                              ".");
+                        }});
   } else {
-    cg << getBase() << "." << CodegenIdent<codegen::IdentKind::Field>(getMemberAttr());
+    cg << lastBase << ".";
+    llvm::interleave(
+        llvm::reverse(path), *cg.getOutputStream(), [&](auto pathElem) { cg << pathElem; }, ".");
   }
 }
 
@@ -752,6 +773,10 @@ LogicalResult ReduceOp::verifyRegions() {
 
 void GlobalConstOp::emitGlobal(codegen::CodegenEmitter& cg) {
   cg.emitConstDef(getSymNameAttr(), CodegenValue(getType(), getConstant()));
+}
+
+void GlobalConstOp::emitGlobalDecl(codegen::CodegenEmitter& cg) {
+  cg.emitConstDecl(getSymNameAttr(), getType());
 }
 
 LogicalResult LoadOp::evaluate(Interpreter& interp,

@@ -124,6 +124,14 @@ void RustLanguageSyntax::emitSwitchStatement(CodegenEmitter& cg,
   cg << "}";
 }
 
+void RustLanguageSyntax::emitFuncDeclaration(CodegenEmitter& cg,
+                                             CodegenIdent<IdentKind::Func> funcName,
+                                             llvm::ArrayRef<std::string> contextArgDecls,
+                                             llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
+                                             mlir::FunctionType funcType) {
+  // Rust does not have forward declarations.
+}
+
 void RustLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
                                             CodegenIdent<IdentKind::Func> funcName,
                                             llvm::ArrayRef<std::string> contextArgDecls,
@@ -223,6 +231,12 @@ void RustLanguageSyntax::emitSaveConst(CodegenEmitter& cg,
   if (ty.hasTrait<CodegenOnlyPassByReferenceTypeTrait>() || ty.hasTrait<CodegenLayoutTypeTrait>())
     cg << "&";
   cg << cg.getTypeName(value.getType()) << " = " << value << ";\n";
+}
+
+void RustLanguageSyntax::emitConstDecl(CodegenEmitter& cg,
+                                       CodegenIdent<IdentKind::Const> name,
+                                       Type ty) {
+  // Rust does not have forward declarations.
 }
 
 void RustLanguageSyntax::emitCall(CodegenEmitter& cg,

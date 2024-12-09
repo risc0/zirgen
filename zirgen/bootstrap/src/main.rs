@@ -14,7 +14,6 @@
 
 use std::{
     cell::RefCell,
-    collections::BTreeMap,
     io,
     io::{BufRead, BufReader},
     path::{Path, PathBuf},
@@ -151,11 +150,19 @@ fn strip_locations_and_whitespace(text: &str) -> Result<String> {
     // replace everything that might be a line number with '*'
     let re = Regex::new(":[0-9]+")?;
     let stripped = re.replace_all(text, "*");
-    // Remove all whitespace to avoid noticing reformatting changes
+
+    // Remove anything that might be changed by reformatting
     Ok(stripped
         .as_ref()
         .chars()
-        .filter(|&c| c != ' ' && c == '\t' && c != '\n')
+        .filter(|&c| {
+            // Reformatting may change whitespace
+            c != ' ' && c != '\t' && c != '\n'
+            // Reformatting may add commas at the end of lists
+            && c != ','
+            // Reformatting may break apart long strings into separate lines
+            && c != '\\' && c != '"'
+        })
         .collect())
 }
 
@@ -301,6 +308,7 @@ impl Bootstrap {
                 tgt_path.display()
             );
         } else if self.args.check {
+            println!("{} == {}?", src_path.display(), tgt_path.display());
             if let Err(err) = self.check(src_path, tgt_path) {
                 eprintln!("Error: {}", err);
                 *self.error.borrow_mut() = true;
@@ -328,6 +336,7 @@ impl Bootstrap {
             if filename.ends_with(".cpp.inc")
                 || filename.ends_with(".cu.inc")
                 || filename.ends_with(".cuh")
+                || filename.ends_with(".cu")
             {
                 if let Err(err) = Command::new("clang-format")
                     .args(["-i", tgt_path.to_str().unwrap()])
@@ -347,6 +356,15 @@ impl Bootstrap {
             .output
             .clone()
             .unwrap_or(PathBuf::from(alternative))
+    }
+
+    fn output_and(&self, relative: &str) -> PathBuf {
+        self.args
+            .output
+            .clone()
+            .expect("Output directory must be specified for external circuit")
+            .join(relative)
+            .to_path_buf()
     }
 
     fn build_all_circuits(&self) {
@@ -492,11 +510,12 @@ impl Bootstrap {
     fn keccak(&self) {
         self.install_from_bazel(
             "//zirgen/circuit/keccak2:bootstrap",
-            self.output_or("risc0/circuit/keccak"),
+            self.output_and("risc0/circuit/keccak"),
             &[
                 Rule::copy("*.cpp", "kernels/cxx").base_suffix("-sys"),
                 Rule::copy("*.cpp.inc", "kernels/cxx").base_suffix("-sys"),
                 Rule::copy("*.h.inc", "kernels/cxx").base_suffix("-sys"),
+                Rule::copy("*.h", "kernels/cxx").base_suffix("-sys"),
                 Rule::copy("*.cu", "kernels/cuda").base_suffix("-sys"),
                 Rule::copy("*.cu.inc", "kernels/cuda").base_suffix("-sys"),
                 Rule::copy("*.cuh", "kernels/cuda").base_suffix("-sys"),
