@@ -306,7 +306,8 @@ void Impl::gen(ast::Statement* s, SymbolTable& symbols) {
               diag << "Only constructor parameters may be shadowed.";
               diag.attachNote(def->location) << "see previous definition";
             }
-            declaration = builder.create<DeclarationOp>(sl, exprType, name, mlir::Value()).getOut();
+            bool isPublic = s->getAccess() == ast::Access::Public;
+            declaration = builder.create<DeclarationOp>(sl, exprType, name, isPublic, mlir::Value()).getOut();
             symbols.define(name, {declaration, Source::Declaration, sl});
           }
           builder.create<DefinitionOp>(sl, declaration, definition);
@@ -321,7 +322,8 @@ void Impl::gen(ast::Statement* s, SymbolTable& symbols) {
           mlir::Value declaration = builder.create<GetGlobalOp>(sl, name, type).getOut();
           symbols.define(name, {declaration, Source::Global, sl});
         } else {
-          mlir::Value declaration = builder.create<DeclarationOp>(sl, name, type).getOut();
+          bool isPublic = s->getAccess() == ast::Access::Public;
+          mlir::Value declaration = builder.create<DeclarationOp>(sl, name, isPublic, type).getOut();
           symbols.define(name, {declaration, Source::Declaration, sl});
         }
       })
