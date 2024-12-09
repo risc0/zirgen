@@ -61,9 +61,9 @@ void tr_Record(std::string shape, T t, std::ostream& dest, std::queue<mlir::Type
     // Instead of rendering array types directly, we'll point to the
     // underlying type and append a size subscript to the field name
     mlir::Type ft = field.type;
-    if (ArrayType a_t = ft.dyn_cast<ArrayType>()) {
+    if (ArrayType a_t = mlir::dyn_cast<ArrayType>(ft)) {
       dest << " \\[" + std::to_string(a_t.getSize()) + "\\]";
-    } else if (ft.isa<ValType>()) {
+    } else if (mlir::isa<ValType>(ft)) {
       dest << ": Val";
     }
     worklist.push(field.type);
@@ -73,7 +73,7 @@ void tr_Record(std::string shape, T t, std::ostream& dest, std::queue<mlir::Type
   // don't bother pointing to Val; everything points to Val eventually
   for (auto& field : t.getFields()) {
     mlir::Type ft = field.type;
-    if (ft.isa<ValType>())
+    if (mlir::isa<ValType>(ft))
       continue;
     dest << std::string(t.getId()) << ":";
     dest << std::string(field.name.getValue()) << " -> ";
@@ -186,7 +186,7 @@ void SN::StructBody(StructType t, std::map<std::string, UnionType>& unions) {
   auto fields = t.getFields();
   if (0 == fields.size())
     return;
-  if (1 == fields.size() && fields[0].type.isa<ValType>()) {
+  if (1 == fields.size() && mlir::isa<ValType>(fields[0].type)) {
     dest << ": Val";
     return;
   }
@@ -353,7 +353,7 @@ void SN::LayoutBody(LayoutType t, std::map<std::string, LayoutType>& unions) {
   auto fields = t.getFields();
   if (0 == fields.size())
     return;
-  if (1 == fields.size() && fields[0].type.isa<ValType>()) {
+  if (1 == fields.size() && mlir::isa<ValType>(fields[0].type)) {
     dest << ": Val";
     return;
   }
@@ -583,7 +583,7 @@ void LS::EmitUnion(LayoutType lt) {
   table.resize(arms.size());
   for (size_t col = 0; col < arms.size(); ++col) {
     table[col].resize(regs);
-    auto subt = arms[col].dyn_cast<LayoutType>();
+    auto subt = mlir::dyn_cast<LayoutType>(arms[col]);
     if (!subt)
       continue;
     size_t off = 0;
@@ -713,10 +713,10 @@ std::string LS::typeName(mlir::Type t) {
 std::string LS::linkToName(mlir::Type t) {
   std::string link;
   std::string text;
-  if (auto lat = t.dyn_cast<LayoutArrayType>()) {
+  if (auto lat = mlir::dyn_cast<LayoutArrayType>(t)) {
     link = typeName(lat.getElement());
     text = typeName(t);
-  } else if (t.isa<RefType>()) {
+  } else if (mlir::isa<RefType>(t)) {
     return "Ref";
   } else {
     link = typeName(t);
@@ -728,7 +728,7 @@ std::string LS::linkToName(mlir::Type t) {
 mlir::Type LS::unwrap(mlir::Type t) {
   if (!t)
     return t;
-  auto lt = t.dyn_cast<LayoutType>();
+  auto lt = mlir::dyn_cast<LayoutType>(t);
   if (!lt)
     return t;
   // If the layout has a single field whose name is "@super", use that

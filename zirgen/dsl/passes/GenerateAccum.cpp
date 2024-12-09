@@ -83,7 +83,7 @@ public:
     offset = builder.create<LookupOp>(currentLoc(ctx), randomnessLayout, "$offset");
     offset = builder.create<ZStruct::LoadOp>(currentLoc(ctx), offset, zeroDistance);
 
-    auto accumLayoutType = accumLayout.getType().cast<LayoutArrayType>();
+    auto accumLayoutType = cast<LayoutArrayType>(accumLayout.getType());
 
     // Read last accumulator from previous row
     IntegerAttr distanceAttr = builder.getIndexAttr(1);
@@ -104,7 +104,7 @@ public:
   // Write and constrain the ultimate accumulator value for this cycle to the
   // last column in the accum buffer.
   void finalize() {
-    auto accumLayoutType = accumLayout.getType().cast<LayoutArrayType>();
+    auto accumLayoutType = cast<LayoutArrayType>(accumLayout.getType());
 
     // If we have a non-multiple of 3 number of arguments, be sure to write
     // the last accumulator value into a register
@@ -349,7 +349,7 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
     if (accumArgTypes[0] != retType) {
       return ComponentOp();
     }
-    auto mixArrayType = accumArgTypes[1].dyn_cast<ArrayType>();
+    auto mixArrayType = dyn_cast<ArrayType>(accumArgTypes[1]);
     if (!mixArrayType || mixArrayType.getElement() != Zhlt::getExtValType(ctx)) {
       return ComponentOp();
     }
@@ -512,7 +512,7 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
     if (userAccum) {
       // If there is a user accum program, add it's layout as 'user' member
       members.insert(members.end(), {StringAttr::get(ctx, "user"), userAccum.getLayoutType()});
-      userRandomnessSize = userAccum.getArgumentTypes()[1].dyn_cast<ArrayType>().getSize();
+      userRandomnessSize = dyn_cast<ArrayType>(userAccum.getArgumentTypes()[1]).getSize();
     }
     // Add the auto-generated columns
     members.insert(members.end(), {StringAttr::get(ctx, "columns"), accumColumnsType});
@@ -536,7 +536,7 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
     Value cur = accum.getConstructParam()[0];
     Value topLayout;
     for (const Key& key : keyPath) {
-      if (auto ltype = cur.getType().dyn_cast<LayoutType>()) {
+      if (auto ltype = dyn_cast<LayoutType>(cur.getType())) {
         if (ltype.getId() == "Top") {
           topLayout = cur;
         }
@@ -572,7 +572,7 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
 
     // Load from the list of saved selectors
     Value selectorLayoutArray = builder.create<LookupOp>(currentLoc(ctx), cur, "@selector");
-    size_t armCount = selectorLayoutArray.getType().dyn_cast<LayoutArrayType>().getSize();
+    size_t armCount = dyn_cast<LayoutArrayType>(selectorLayoutArray.getType()).getSize();
     SmallVector<Value> selectors;
     Value zeroDistance =
         builder.create<arith::ConstantOp>(currentLoc(ctx), builder.getIndexAttr(0));
