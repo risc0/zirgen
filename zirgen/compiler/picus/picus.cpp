@@ -1,8 +1,11 @@
 #include "zirgen/compiler/picus/picus.h"
-#include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
-#include "zirgen/Dialect/ZHLT/IR/TypeUtils.h"
-#include "llvm/ADT/TypeSwitch.h"
 #include "mlir/Dialect/Arith//IR/Arith.h"
+#include "mlir/Pass/PassManager.h"
+#include "mlir/Transforms/Passes.h"
+#include "zirgen/Dialect/ZHLT/IR/TypeUtils.h"
+#include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
+#include "zirgen/dsl/passes/Passes.h"
+#include "llvm/ADT/TypeSwitch.h"
 
 #include <queue>
 #include <set>
@@ -19,8 +22,7 @@ using SignalArray = ArrayAttr;
 using SignalStruct = DictionaryAttr;
 using AnySignal = Attribute;
 
-template <typename F>
-void visit(AnySignal signal, F f) {
+template <typename F> void visit(AnySignal signal, F f) {
   if (auto s = dyn_cast<Signal>(signal)) {
     f(s);
   } else if (auto arr = dyn_cast<SignalArray>(signal)) {
@@ -101,11 +103,17 @@ private:
 
   void visitOp(Operation* op) {
     llvm::TypeSwitch<Operation*>(op)
-      .Case<ConstOp, LoadOp, LookupOp, ConstructOp, SubOp, EqualZeroOp, PackOp, ReturnOp, AliasLayoutOp>([&](auto op) { visitOp(op); })
-      .Case<StoreOp, arith::ConstantOp>([](auto) { /* no-op */ })
-      .Default([](Operation* op) {
-        llvm::errs() << "unhandled op: " << *op << "\n";
-      });
+        .Case<ConstOp,
+              LoadOp,
+              LookupOp,
+              ConstructOp,
+              SubOp,
+              EqualZeroOp,
+              PackOp,
+              ReturnOp,
+              AliasLayoutOp>([&](auto op) { visitOp(op); })
+        .Case<StoreOp, arith::ConstantOp>([](auto) { /* no-op */ })
+        .Default([](Operation* op) { llvm::errs() << "unhandled op: " << *op << "\n"; });
   }
 
   void visitOp(ConstOp constant) {
@@ -134,14 +142,21 @@ private:
     os << "(call [";
     if (auto layout = construct.getLayout()) {
       AnySignal layoutSignal = valuesToSignals.at(layout);
-      llvm::interleave(flatten(layoutSignal), os, [&](Signal s) { os << s.str(); }, " ");
+      llvm::interleave(
+          flatten(layoutSignal), os, [&](Signal s) { os << s.str(); }, " ");
       os << " ";
     }
-    llvm::interleave(flatten(result), os, [&](Signal s) { os << s.str(); }, " ");
+    llvm::interleave(
+        flatten(result), os, [&](Signal s) { os << s.str(); }, " ");
     os << "] " << construct.getCallee() << " [";
-    llvm::interleave(construct.getConstructParam(), os, [&](Value arg) {
-      llvm::interleave(flatten(valuesToSignals.at(arg)), os, [&](Signal s) { os << s.str(); }, " ");
-    }, " ");
+    llvm::interleave(
+        construct.getConstructParam(),
+        os,
+        [&](Value arg) {
+          llvm::interleave(
+              flatten(valuesToSignals.at(arg)), os, [&](Signal s) { os << s.str(); }, " ");
+        },
+        " ");
     os << "])\n";
   }
 
@@ -245,9 +260,7 @@ private:
     return mod.lookupSymbol<ComponentOp>(mangledName);
   }
 
-  std::string freshName() {
-    return "x" + std::to_string(nameCounter++);
-  }
+  std::string freshName() { return "x" + std::to_string(nameCounter++); }
 
   MLIRContext* ctx;
   ModuleOp mod;
@@ -261,5 +274,13 @@ private:
 } // namespace
 
 void printPicus(ModuleOp mod, llvm::raw_ostream& os) {
+  PassManager pm(mod->getContext());
+  pm.addPass(zirgen::dsl::createInlineForPicusPass());
+  pm.addPass(createCanonicalizerPass());
+  if (failed(pm.run(mod))) {
+    llvm::errs() << "Preemptive inlining for Picus failed";
+    return;
+  }
+
   PicusPrinter(os).print(mod);
 }

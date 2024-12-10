@@ -13,5 +13,6 @@ cc_library(
     deps = [
         "//zirgen/Dialect/ZHLT/IR",
         "//zirgen/Dialect/ZStruct/IR",
+        "//zirgen/dsl/passes:passes",
     ],
 )
