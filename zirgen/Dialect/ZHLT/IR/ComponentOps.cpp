@@ -140,7 +140,8 @@ mlir::LogicalResult CheckFuncOp::verifyMaxDegree(size_t maxDegree) {
 
   LogicalResult res = success();
   this->walk([&](Zll::EqualZeroOp op) {
-    auto degree = solver.lookupState<ZStruct::DegreeAnalysis::Element>(op)->getValue();
+    auto point = solver.getProgramPointAfter(op);
+    auto degree = solver.lookupState<ZStruct::DegreeAnalysis::Element>(point)->getValue();
     assert(degree.isDefined());
     if (degree.get() <= maxDegree)
       return;
@@ -150,7 +151,8 @@ mlir::LogicalResult CheckFuncOp::verifyMaxDegree(size_t maxDegree) {
 
     // Note the degree contribution of enclosing muxes
     Operation* parent = op->getParentOp();
-    auto parentDegree = solver.lookupState<ZStruct::DegreeAnalysis::Element>(parent)->getValue();
+    point = solver.getProgramPointAfter(parent);
+    auto parentDegree = solver.lookupState<ZStruct::DegreeAnalysis::Element>(point)->getValue();
     assert(parentDegree.isDefined());
     if (parentDegree.get() != 0) {
       diag.attachNote(parent->getLoc()) << "At mux depth " << parentDegree.get();

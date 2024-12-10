@@ -25,7 +25,7 @@ using namespace ZStruct;
 
 bool isLegalTypeArg(Attribute attr) {
   // Would this attribute be a legal argument for a mangled component name?
-  return attr && (attr.isa<StringAttr>() || attr.isa<PolynomialAttr>());
+  return attr && (isa<StringAttr>(attr) || isa<PolynomialAttr>(attr));
 }
 
 std::string mangledTypeName(StringRef componentName, llvm::ArrayRef<Attribute> typeArgs) {
@@ -35,11 +35,11 @@ std::string mangledTypeName(StringRef componentName, llvm::ArrayRef<Attribute> t
   if (typeArgs.size() != 0) {
     stream << "<";
     llvm::interleaveComma(typeArgs, stream, [&](Attribute typeArg) {
-      if (auto strAttr = typeArg.dyn_cast<StringAttr>()) {
+      if (auto strAttr = dyn_cast<StringAttr>(typeArg)) {
         stream << strAttr.getValue();
-      } else if (auto intAttr = typeArg.dyn_cast<PolynomialAttr>()) {
+      } else if (auto intAttr = dyn_cast<PolynomialAttr>(typeArg)) {
         stream << intAttr[0];
-      } else if (auto intAttr = typeArg.dyn_cast<IntegerAttr>()) {
+      } else if (auto intAttr = dyn_cast<IntegerAttr>(typeArg)) {
         stream << intAttr;
       } else {
         llvm::errs() << "Mangling type " << typeArg << " not implemented\n";
@@ -453,7 +453,7 @@ llvm::MapVector<Type, size_t> muxArgumentCounts(TypeRange in) {
   llvm::MapVector<Type, size_t> worstCase;
   for (auto type : in) {
     llvm::MapVector<Type, size_t> curCase;
-    Zhlt::extractArguments(curCase, type.cast<LayoutType>());
+    Zhlt::extractArguments(curCase, cast<LayoutType>(type));
     for (const auto& kvp : curCase) {
       worstCase[kvp.first] = std::max(worstCase[kvp.first], kvp.second);
     }

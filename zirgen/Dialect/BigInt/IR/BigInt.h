@@ -15,6 +15,7 @@
 #pragma once
 
 #include "mlir/Dialect/Func/IR/FuncOps.h"
+#include "mlir/IR/AsmState.h"
 #include "mlir/IR/BuiltinAttributes.h"
 #include "mlir/IR/BuiltinOps.h"
 #include "mlir/IR/OpImplementation.h"

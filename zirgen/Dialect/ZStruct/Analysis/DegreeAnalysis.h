@@ -25,10 +25,13 @@ public:
   using Zll::DegreeAnalysis::DegreeAnalysis;
   using Zll::DegreeAnalysis::Element;
 
-  void visitOperation(Operation* op) override {
-    TypeSwitch<Operation*>(op)
-        .Case<LookupOp, SubscriptOp, LoadOp, BindLayoutOp>([&](auto op) { visitOp(op); })
-        .Default([&](auto op) { Zll::DegreeAnalysis::visitOperation(op); });
+  LogicalResult visitOperation(Operation* op) override {
+    return TypeSwitch<Operation*, LogicalResult>(op)
+        .Case<LookupOp, SubscriptOp, LoadOp, BindLayoutOp>([&](auto op) {
+          visitOp(op);
+          return success();
+        })
+        .Default([&](auto op) { return Zll::DegreeAnalysis::visitOperation(op); });
   }
 
 private:

@@ -124,7 +124,7 @@ public:
   }
 
 private:
-  void visitOperation(Operation* op) override;
+  LogicalResult visitOperation(Operation* op) override;
   void visitOp(ZStruct::AliasLayoutOp op);
   void visitOp(ZStruct::LookupOp op);
   void visitOp(ZStruct::SubscriptOp op);

@@ -30,6 +30,7 @@
 #include "zirgen/dsl/passes/Passes.h"
 #include "llvm/ADT/StringExtras.h"
 #include "llvm/Support/CommandLine.h"
+#include "llvm/Support/ManagedStatic.h"
 #include "llvm/Support/MemoryBuffer.h"
 
 namespace cl = llvm::cl;
@@ -180,7 +181,7 @@ struct TestExternHandler : public zirgen::Zll::ExternHandler {
       std::vector<InterpVal> vals(varArgs.size());
       std::vector<InterpVal*> valPtrs(varArgs.size());
       for (size_t i = 0; i < varArgs.size(); i++) {
-        vals[i].setVal(varArgs[i].cast<mlir::PolynomialAttr>().asArrayRef());
+        vals[i].setVal(cast<mlir::PolynomialAttr>(varArgs[i]).asArrayRef());
         valPtrs[i] = &vals[i];
       }
       results = *zirgen::Zll::ExternHandler::doExtern("log", message, valPtrs, outCount);

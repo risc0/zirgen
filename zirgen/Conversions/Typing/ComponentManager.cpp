@@ -107,9 +107,9 @@ ComponentManager::findIllegalRecursion(Zhl::ComponentOp component, ArrayRef<Attr
       return false;
     }
     for (size_t i = 0; i < info.typeArgs.size(); i++) {
-      if (typeArgs[i].isa<PolynomialAttr>()) {
+      if (isa<PolynomialAttr>(typeArgs[i])) {
         // Treat all numbers as equal for the sake of detecting recursion
-      } else if (auto type = typeArgs[i].dyn_cast<StringAttr>()) {
+      } else if (auto type = dyn_cast<StringAttr>(typeArgs[i])) {
         if (type != info.typeArgs[i]) {
           return false;
         }
@@ -204,8 +204,8 @@ mlir::FailureOr<Zhlt::ComponentOp> ComponentManager::genGenericBuiltin(
     }
 
     std::string elementTypeName;
-    if (typeArgs[0].isa<StringAttr>()) {
-      elementTypeName = typeArgs[0].cast<StringAttr>().getValue();
+    if (isa<StringAttr>(typeArgs[0])) {
+      elementTypeName = cast<StringAttr>(typeArgs[0]).getValue();
     } else {
       return emitError(loc, "array element parameter must be a type name");
     }
@@ -215,8 +215,8 @@ mlir::FailureOr<Zhlt::ComponentOp> ComponentManager::genGenericBuiltin(
     }
 
     unsigned size = 0;
-    if (typeArgs[1].isa<PolynomialAttr>()) {
-      size = typeArgs[1].cast<PolynomialAttr>()[0];
+    if (isa<PolynomialAttr>(typeArgs[1])) {
+      size = cast<PolynomialAttr>(typeArgs[1])[0];
     } else {
       return emitError(loc, "array size parameter must be an integer");
     }

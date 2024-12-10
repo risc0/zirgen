@@ -278,7 +278,7 @@ void polySplit(mlir::func::FuncOp func) {
     TypeSwitch<Operation*>(&origOp)
         .Case<BigInt::EqualZeroOp>([&](auto op) { state[op.getIn()].apply(PolySplitState(1, 0)); })
         .Case<BigInt::StoreOp>([&](auto op) {
-          auto bit = op.getIn().getType().template dyn_cast<BigInt::BigIntType>();
+          auto bit = dyn_cast<BigInt::BigIntType>(op.getIn().getType());
           size_t size = (bit.getCoeffs() + 15) / 16;
           if (bit.getMaxPos() > 255 || bit.getMaxNeg() > 0) {
             llvm::errs() << "Store must be of a normalized BigInt";
@@ -288,8 +288,7 @@ void polySplit(mlir::func::FuncOp func) {
           state[op.getIn()].atom = PolyAtom(op.getArena(), op.getOffset(), size, true);
         })
         .Case<BigInt::NondetRemOp, BigInt::NondetQuotOp, BigInt::NondetInvOp>([&](auto op) {
-          size_t size =
-              (op.getType().template dyn_cast<BigInt::BigIntType>().getCoeffs() + 15) / 16;
+          size_t size = (dyn_cast<BigInt::BigIntType>(op.getType()).getCoeffs() + 15) / 16;
           if (state[op].neededForEq && state[op].atom.arena == 0) {
             state[op].atom = PolyAtom(kArenaTmp, offsetTmp, size, true);
             offsetTmp += size;
@@ -307,8 +306,7 @@ void polySplit(mlir::func::FuncOp func) {
           }
         })
         .Case<BigInt::ConstOp>([&](auto op) {
-          size_t size =
-              (op.getType().template dyn_cast<BigInt::BigIntType>().getCoeffs() + 15) / 16;
+          size_t size = (dyn_cast<BigInt::BigIntType>(op.getType()).getCoeffs() + 15) / 16;
           APInt value = op.getValue();
           value = value.zext(128 * size);
           for (size_t i = 0; i < size * 4; i++) {
@@ -318,8 +316,7 @@ void polySplit(mlir::func::FuncOp func) {
           offsetConst += size;
         })
         .Case<BigInt::LoadOp>([&](auto op) {
-          size_t size =
-              (op.getType().template dyn_cast<BigInt::BigIntType>().getCoeffs() + 15) / 16;
+          size_t size = (dyn_cast<BigInt::BigIntType>(op.getType()).getCoeffs() + 15) / 16;
           state[op].atom = PolyAtom(op.getArena(), op.getOffset(), size, false);
         })
         .Case<mlir::func::ReturnOp>([&](auto op) {})
@@ -334,7 +331,7 @@ void polySplit(mlir::func::FuncOp func) {
     if (auto op = dyn_cast<BigInt::EqualZeroOp>(&origOp)) {
       // Compute the polynomial
       Polynomial p = eval(state, op.getIn().getDefiningOp());
-      auto bit = op.getIn().getType().dyn_cast<BigInt::BigIntType>();
+      auto bit = dyn_cast<BigInt::BigIntType>(op.getIn().getType());
       flattener.flatten(p, bit);
     }
   }
