@@ -525,6 +525,32 @@ impl Bootstrap {
                 Rule::copy("keccak_zkr.zip", "src/prove"),
             ],
         );
+        // Unpack the ZKRs copied over in the zip file.
+        let dest_path = self.output_and("risc0/circuit/keccak/src/prove");
+        let mut unzip = Command::new("unzip");
+        unzip.current_dir(dest_path.clone());
+        let status = unzip.arg("-o").arg("keccak_zkr.zip").status().unwrap();
+        if !status.success() {
+            exit(status.code().unwrap());
+        }
+        // Delete the superfluous zip file.
+        let zip_path = dest_path.join("keccak_zkr.zip");
+        let rm_args = [zip_path];
+        let status = Command::new("rm").args(rm_args).status().unwrap();
+        if !status.success() {
+            exit(status.code().unwrap());
+        }
+        // Compress each ZKR file with 'xz'.
+        let mut xz = Command::new("xz");
+        for zkr in [
+            "keccak_lift_14.zkr", "keccak_lift_15.zkr", "keccak_lift_16.zkr",
+            "keccak_lift_17.zkr", "keccak_lift_18.zkr"] {
+            let zkr_path = dest_path.join(zkr);
+            let status = xz.arg("-f").arg("-k").arg(zkr_path).status().unwrap();
+            if !status.success() {
+                exit(status.code().unwrap());
+            }
+        }
     }
 
     fn calculator(&self) {
