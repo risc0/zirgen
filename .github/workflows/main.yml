@@ -52,6 +52,18 @@ jobs:
           - os: Linux
             config: --config=ci
     steps:
+      # Flush bazel cache once per week
+      - name: Get current week
+        id: get-week
+        run: echo "week=$(/bin/date -u "+$Y-%w")" >> $GITHUB_OUTPUT
+        shell: bash
+      - name: Bazel cache
+        uses: actions/cache@v3
+        with:
+          # This is the directory for ephemeral runners; non-ephemeral runners (e.g. macos)
+          # store it in a different place where it isn't affected by actions/cache.
+          path: ~/.cache/bazel
+          key: bazel-${{ runner.os }}-${{ steps.get-week.outputs.week }}
       - uses: actions/checkout@v3
       - uses: ./.github/actions/bazelisk
       - name: Build & test
