@@ -14,7 +14,9 @@
 
 use std::{
     cell::RefCell,
+    fs::{read, remove_file, OpenOptions},
     io,
+    io::Write,
     io::{BufRead, BufReader},
     path::{Path, PathBuf},
     process::{exit, Command, Stdio},
@@ -24,6 +26,7 @@ use anyhow::{bail, Result};
 use clap::{Parser, ValueEnum};
 use glob::Pattern;
 use regex::Regex;
+use xz2::write::XzEncoder;
 
 #[derive(Debug)]
 struct Rule<'a> {
@@ -263,6 +266,24 @@ impl Bootstrap {
 
     fn copy_file(&self, src_dir: &Path, tgt_dir: &Path, filename: &str) {
         self.copy(&src_dir.join(filename), &tgt_dir.join(filename))
+    }
+
+    fn xz_file(&self, dir: &Path, filename: &str) {
+        let src_path = &dir.join(filename);
+        let new_name = filename.to_owned() + ".xz";
+        let out_path = &dir.join(new_name);
+        let contents = read(src_path).expect("Failed to read input file!");
+        let output = OpenOptions::new()
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .open(out_path)
+            .expect("Could not create output xz file!");
+        let mut encoder = XzEncoder::new(&output, 9);
+        encoder
+            .write_all(&contents)
+            .expect("Failed to write svg file contents!");
+        encoder.try_finish().expect("Failed to finish compressing!");
     }
 
     fn check(&self, src_path: &Path, tgt_path: &Path) -> Result<()> {
@@ -541,15 +562,15 @@ impl Bootstrap {
             exit(status.code().unwrap());
         }
         // Compress each ZKR file with 'xz'.
-        let mut xz = Command::new("xz");
         for zkr in [
-            "keccak_lift_14.zkr", "keccak_lift_15.zkr", "keccak_lift_16.zkr",
-            "keccak_lift_17.zkr", "keccak_lift_18.zkr"] {
-            let zkr_path = dest_path.join(zkr);
-            let status = xz.arg("-f").arg("-k").arg(zkr_path).status().unwrap();
-            if !status.success() {
-                exit(status.code().unwrap());
-            }
+            "keccak_lift_14.zkr",
+            "keccak_lift_15.zkr",
+            "keccak_lift_16.zkr",
+            "keccak_lift_17.zkr",
+            "keccak_lift_18.zkr",
+        ] {
+            self.xz_file(&dest_path, zkr);
+            remove_file(&dest_path.join(zkr)).expect("failed to remove zkr file!");
         }
     }
 
