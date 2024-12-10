@@ -37,10 +37,6 @@ class ZhltInlinerInterface : public DialectInlinerInterface {
   using DialectInlinerInterface::DialectInlinerInterface;
 
   bool isLegalToInline(Operation* call, Operation* callable, bool wouldBeCloned) const final {
-    if (isa<ComponentOp>(callable))
-      // Only inline aspects that have been generated for components, not for the original
-      // components.
-      return false;
     return isa<FunctionOpInterface>(callable);
   }
 
