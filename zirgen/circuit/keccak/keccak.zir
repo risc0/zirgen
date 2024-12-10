@@ -1037,37 +1037,7 @@ component chi_minor1<X: Val, Y: Val>(rvals: RetTuple,
     RetTuple(withr_a, withr_b, withr_c, dummyE(), dummyB(), dummyB(),
              minor_new, Y+9,
              rvprev01.rnd, rvprev01.blk, rvprev01.midx, auxr),
-    { NXTX := IncMod5(X); //TODO
-      idx2nx := (NXTX+5*Y)*3 + 2;
-      in_a2nx := InRange(0,idx2nx,BLEN());
-      v_2nx := [in_a2nx, 1-in_a2nx] -> (rvpstate.arr_a[idx2nx],
-        { idx2nxb := idx2nx - BLEN();
-          in_b2nx := InRange(0,idx2nxb,BLEN());
-          [in_b2nx, 1-in_b2nx] -> (rvpstate.arr_b[idx2nxb],
-            { idx2nxc := idx2nxb - BLEN();
-              in_c2nx := InRange(0,idx2nxc,BLEN());
-              [in_c2nx, 1-in_c2nx] ->
-                (rvpstate.arr_c[idx2nxc],
-                 rvpstate.arr_d[idx2nxc-BLEN()]) })});
-      unpack_2nx := ToBitsU<SLEN()>(v_2nx);
-      FromBits<SLEN()>(unpack_2nx) = v_2nx;
-
-      NXP1 := IncMod5(NXTX);
-      idx2nxp1 := (NXP1+5*Y)*3 + 2;
-      in_a2nxp1 := InRange(0,idx2nxp1,BLEN());
-      v_2nxp1 := [in_a2nxp1, 1-in_a2nxp1] -> (rvpstate.arr_a[idx2nxp1],
-        { idx2nxp1b := idx2nxp1 - BLEN();
-          in_b2nxp1 := InRange(0,idx2nxp1b,BLEN());
-          [in_b2nxp1, 1-in_b2nxp1] -> (rvpstate.arr_b[idx2nxp1b],
-            { idx2nxp1c := idx2nxp1b - BLEN();
-              in_c2nxp1 := InRange(0,idx2nxp1c,BLEN());
-              [in_c2nxp1, 1-in_c2nxp1] ->
-                (rvpstate.arr_c[idx2nxp1c],
-                 rvpstate.arr_d[idx2nxp1c-BLEN()]) })});
-      unpack_2nxp1 := ToBitsU<SLEN()>(v_2nxp1);
-      FromBits<SLEN()>(unpack_2nxp1) = v_2nxp1;
-
-      idx2nxp2 := (IncMod5(NXP1)+5*Y)*3 + 2;
+    { idx2nxp2 := (IncMod5(IncMod5(XP1))+5*Y)*3 + 2;
       in_a2nxp2 := InRange(0,idx2nxp2,BLEN());
       v_2nxp2 := [in_a2nxp2, 1-in_a2nxp2] -> (rvpstate.arr_a[idx2nxp2],
         { idx2nxp2b := idx2nxp2 - BLEN();
@@ -1082,14 +1052,12 @@ component chi_minor1<X: Val, Y: Val>(rvals: RetTuple,
       FromBits<SLEN()>(unpack_2nxp2) = v_2nxp2;
 
       anx3n := for i : 0..SLEN() {
-        andnxor(unpack_2nx[i], unpack_2nxp1[i], unpack_2nxp2[i]) };
+        andnxor(unpack_2xp1[i], unpack_2xp2[i], unpack_2nxp2[i]) };
       res3n := Reg(FromBits<SLEN()>(anx3n));
 
       withr_d := Concatenate<SLEN(),RLEN()-SLEN()>(
-        unpack_2nxp1, [res3n,NondetReg(0),NondetReg(0)]);
-      e := ConcatZeros<SLEN(),BLEN()-SLEN()>(unpack_2nxp2);
-      f := ConcatZeros<SLEN(),BLEN()-SLEN()>(unpack_2nx);
-      RetTuple(withr_a, withr_b, withr_c, withr_d, e, f,
+        unpack_2nxp2, [res3n,NondetReg(0),NondetReg(0)]);
+      RetTuple(withr_a, withr_b, withr_c, withr_d, dummyB(), dummyB(),
                minor_new, Y+9,
                rvprev01.rnd, rvprev01.blk, rvprev01.midx, auxr)
     })
