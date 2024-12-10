@@ -879,7 +879,7 @@ component rho_major<Y: Val>(rvals: RetTuple) {
 }
 
 component chi_minor0<X: Val, Y: Val>(rvpstate: RetTuple,
-                                     auxr: Array<NondetReg, AUXLEN()>) {
+                                     auxregs: Array<NondetReg, AUXBIN()>) {
   XP1 := IncMod5(X);
   idx0xp1 := (XP1+5*Y)*3 + 0;
   in_a0xp1 := InRange(0,idx0xp1,BLEN());
@@ -975,12 +975,13 @@ component chi_minor0<X: Val, Y: Val>(rvpstate: RetTuple,
   a := ConcatZeros<SLEN(),BLEN()-SLEN()>(unpack_1xp1);
   c := ConcatZeros<SLEN(),BLEN()-SLEN()>(unpack_1xp2);
   f := ConcatZeros<SLEN(),BLEN()-SLEN()>(unpack_1x);
+  auxr := ConcatZeros<AUXBIN(),AUXLEN()-AUXBIN()>(auxregs);
   RetTuple(a, unpack_0xp2, c, withrs_d, unpack_0x, f,
            minor_new, Y+9, rvpstate.rnd, rvpstate.blk, rvpstate.midx, auxr)
 }
 
 component chi_minor1<X: Val, Y: Val>(rvals: RetTuple,
-                                     auxr: Array<NondetReg, AUXLEN()>) {
+                                     auxregs: Array<NondetReg, AUXBIN()>) {
   rvpstate := rvals@(2+3*(X/2)); //X=0,pstate=2 X=2,pstate=5 X=4,pstate=8
   rvprev01 := rvals@1;
 
@@ -1030,6 +1031,7 @@ component chi_minor1<X: Val, Y: Val>(rvals: RetTuple,
   withr_b := ConcatElem<SLEN()>(unpack_2xp1, Reg(rvprev01.arr_d[1+BLEN()]));
   withr_c := ConcatElem<SLEN()>(unpack_2xp2, res3);
   minor_new := 2 + 3*(X/2);
+  auxr := ConcatZeros<AUXBIN(),AUXLEN()-AUXBIN()>(auxregs);
 
   [Isz(X-4), 1-Isz(X-4)] -> (
     RetTuple(withr_a, withr_b, withr_c, dummyE(), dummyB(), dummyB(),
@@ -1094,13 +1096,14 @@ component chi_minor1<X: Val, Y: Val>(rvals: RetTuple,
 }
 
 component chi_minor2<Y: Val>(rvals: RetTuple,
-                             auxr: Array<NondetReg, AUXLEN()>) {
+                             auxregs: Array<NondetReg, AUXBIN()>) {
   rvprev01 := rvals@1;
   rvprev03 := rvals@3;
   rvprev04 := rvals@4;
   rvprev06 := rvals@6;
   rvprev07 := rvals@7;
   rvpstate := rvals@9;
+  auxr := ConcatZeros<AUXBIN(),AUXLEN()-AUXBIN()>(auxregs);
 
   [Isz(Y), 1-Isz(Y)] -> (
     { a := [Reg(rvprev07.arr_a[0+SLEN()]),Reg(rvprev07.arr_b[0+SLEN()]),
@@ -1201,7 +1204,7 @@ component chi_minor2<Y: Val>(rvals: RetTuple,
 }
 
 component iota_xor_rc(rvprev01: RetTuple,
-                      auxr: Array<NondetReg, AUXLEN()>) {
+                      auxregs: Array<NondetReg, AUXBIN()>) {
   b := rvprev01.blk;
   unpack_a000 := ToBitsU<BLEN()>(rvprev01.arr_a[0]);
   unpack_a001 := ToBitsU<BLEN()>(rvprev01.arr_a[1]);
@@ -1221,35 +1224,56 @@ component iota_xor_rc(rvprev01: RetTuple,
   prod := Reg(newBlk*invNewBlk);
   newBlk*(1-prod) = 0;
 
-  nxt := unpack_rnd -> (
-    [0,1,b],[0,2,b],[0,3,b],[0,4,b],[0,5,b],[0,6,b],[0,7,b],[0,8,b],[0,9,b],
-    [0,10,b],[0,11,b],[0,12,b],[0,13,b],[0,14,b],[0,15,b],[0,16,b],[0,17,b],
-    [0,18,b],[0,19,b],[0,20,b],[0,21,b],[0,22,b],[0,23,b],
-    [prod, 1-prod] -> ([14,0,newBlk], [MAJOR_EXTRA(),0,0]) );
+  r1 := for i : 0..BLEN() { xor2(rc[0][i],unpack_a000[i]) };
+  r2 := for i : 0..SLEN() { xor2(rc[1][i],unpack_a001[i]) };
+  r3 := for i : 0..SLEN() { xor2(rc[2][i],rvprev01.arr_f[i]) };
+  a00 := [Reg(FromBits<BLEN()>(r1)),
+          Reg(FromBits<SLEN()>(r2)),
+          Reg(FromBits<SLEN()>(r3))];
+  w1 := for i : 0..WORDLEN() { r1[i] };
+  w2 := vConcatenate<BLEN()-WORDLEN(), 2*WORDLEN()-BLEN()>(
+    for i : WORDLEN()..BLEN() { r1[i] },
+    for i : 0..2*WORDLEN()-BLEN() { r2[i] });
+  w3 := vConcatenate<SLEN()+BLEN()-2*WORDLEN(), 3*WORDLEN()-BLEN()-SLEN()>(
+    for i : 2*WORDLEN()-BLEN()..SLEN() { r2[i] },
+    for i : 0..3*WORDLEN()-BLEN()-SLEN() { r3[i]});
+  w4 := for i : 0..WORDLEN() { r3[3*WORDLEN()-BLEN()-SLEN()+i] };
 
-  a00 := [
-    Reg(FromBits<BLEN()>(for i : 0..BLEN() {
-      xor2(rc[0][i],unpack_a000[i])})),
-    Reg(FromBits<SLEN()>(for i : 0..SLEN() {
-      xor2(rc[1][i],unpack_a001[i])})),
-    Reg(FromBits<SLEN()>(for i : 0..SLEN() {
-      xor2(rc[2][i],rvprev01.arr_f[i])}))];
+  m := rvprev01.midx;
+  midxnxt := Reg(m + 1);
+  invmnxt := NondetReg(Inv(midxnxt));
+  invmnxt*midxnxt = 1;
+  digest :=
+    [Reg(FromBits<WORDLEN()>(w1)), Reg(FromBits<WORDLEN()>(w2)),
+     Reg(FromBits<WORDLEN()>(w3)), Reg(FromBits<WORDLEN()>(w4))];
+  auxtmp1 := ConcatElem<AUXBIN()>(auxregs, midxnxt);
+  auxr := Concatenate<AUXBIN()+1,4>(auxtmp1, digest);
+
+  nxt := unpack_rnd -> (
+    [0,1,b,m],[0,2,b,m],[0,3,b,m],[0,4,b,m],[0,5,b,m],[0,6,b,m],
+    [0,7,b,m],[0,8,b,m],[0,9,b,m],[0,10,b,m],[0,11,b,m],[0,12,b,m],
+    [0,13,b,m],[0,14,b,m],[0,15,b,m],[0,16,b,m],[0,17,b,m],[0,18,b,m],
+    [0,19,b,m],[0,20,b,m],[0,21,b,m],[0,22,b,m],[0,23,b,m],
+    [prod, 1-prod] -> (
+      [14,0,newBlk,m],
+      { WriteMemory(midxnxt, digest); [MAJOR_EXTRA(),0,0,midxnxt] } ));
+
   a := Concatenate<3,BLEN()-3>(a00, for i : 3..BLEN() {
     Reg(rvprev01.arr_a[i])});
-  d_suffix := [invNewBlk, prod];
-  d_tmp := ConcatZeros<9,RLEN()-2-9>(
+  d_suffix := [invNewBlk, prod, invmnxt];
+  d_tmp := ConcatZeros<9,RLEN()-3-9>(
     for i : 0..9 {Reg(rvprev01.arr_d[i])});
-  d := Concatenate<RLEN()-2, 2>(d_tmp, d_suffix);
+  d := Concatenate<RLEN()-3, 3>(d_tmp, d_suffix);
 
   RetTuple(a, RGZ<BLEN()>(rvprev01.arr_b), RGZ<BLEN()>(rvprev01.arr_c), d,
            unpack_a000, unpack_a001,
-           0, nxt[0], nxt[1], nxt[2], rvprev01.midx, auxr)
+           0, nxt[0], nxt[1], nxt[2], nxt[3], auxr)
 }
 
 component chi_major<Y: Val>(rvals: RetTuple) {
   m := rvals@1.minor;
   minor_onehot := OneHotU<10>(m);
-  aux_regs := ConcatZeros<10,AUXLEN()-10>(minor_onehot);
+  aux_regs := ConcatZeros<10,AUXBIN()-10>(minor_onehot);
   r := minor_onehot -> (
     chi_minor0<0,Y>(rvals@1, aux_regs),
     chi_minor1<0,Y>(rvals, aux_regs),
@@ -1496,86 +1520,49 @@ component absorb_major2(rvals: RetTuple) {
   r
 }
 
-component equal_word<X: Val>(rvprev: RetTuple,
-                             auxregs: Array<NondetReg, AUXBIN()>) {
+component output_word<X: Val>(rvprev: RetTuple,
+                              auxregs: Array<NondetReg, AUXBIN()>) {
   v1 := rvprev.arr_a[3*X + 0];
   v2 := rvprev.arr_a[3*X + 1];
   v3 := rvprev.arr_a[3*X + 2];
-  unpack_a := ToBitsU<BLEN()>(v1);
-  FromBits<BLEN()>(unpack_a) = v1;
-  unpack_e := ToBitsU<SLEN()>(v2);
-  FromBits<SLEN()>(unpack_e) = v2;
-  unpack_f := ToBitsU<SLEN()>(v3);
-  FromBits<SLEN()>(unpack_f) = v3;
+  unpack_1 := ToBitsU<BLEN()>(v1);
+  FromBits<BLEN()>(unpack_1) = v1;
+  unpack_2 := ToBitsU<SLEN()>(v2);
+  FromBits<SLEN()>(unpack_2) = v2;
+  unpack_3 := ToBitsU<SLEN()>(v3);
+  FromBits<SLEN()>(unpack_3) = v3;
+  w1 := for i : 0..WORDLEN() { unpack_1[i] };
+  w2 := Concatenate<BLEN()-WORDLEN(), 2*WORDLEN()-BLEN()>(
+    for i : WORDLEN()..BLEN() { unpack_1[i] },
+    for i : 0..2*WORDLEN()-BLEN() { unpack_2[i] });
+  w3 := Concatenate<SLEN()+BLEN()-2*WORDLEN(), 3*WORDLEN()-BLEN()-SLEN()>(
+    for i : 2*WORDLEN()-BLEN()..SLEN() { unpack_2[i] },
+    for i : 0..3*WORDLEN()-BLEN()-SLEN() { unpack_3[i]});
+  w4 := for i : 0..WORDLEN() { unpack_3[3*WORDLEN()-BLEN()-SLEN()+i] };
 
-  inp1 := readInput();
-  unpack_1 := ToBitsU<WORDLEN()>(inp1);
-  inp2 := readInput();
-  unpack_2 := ToBitsU<WORDLEN()>(inp2);
-  inp3 := readInput();
-  unpack_3 := ToBitsU<WORDLEN()>(inp3);
-  inp4 := readInput();
-  unpack_4 := ToBitsU<WORDLEN()>(inp4);
-  memidx := Reg(rvprev.midx + 1 + X);
+  memidx := Reg(rvprev.midx + X);
   invmidx := NondetReg(Inv(memidx));
   invmidx*memidx = 1;
 
   digest :=
-    [Reg(FromBits<WORDLEN()>(unpack_1)), Reg(FromBits<WORDLEN()>(unpack_2)),
-     Reg(FromBits<WORDLEN()>(unpack_3)), Reg(FromBits<WORDLEN()>(unpack_4))];
+    [Reg(FromBits<WORDLEN()>(w1)), Reg(FromBits<WORDLEN()>(w2)),
+     Reg(FromBits<WORDLEN()>(w3)), Reg(FromBits<WORDLEN()>(w4))];
   auxtmp1 := ConcatElem<AUXBIN()>(auxregs, memidx);
   auxr := Concatenate<AUXBIN()+1,4>(auxtmp1, digest);
   WriteMemory(memidx, digest);
 
-  arr12 := for i : 0..BLEN() {
-    in_first12 := InRange(0,i,WORDLEN());
-    NondetReg([in_first12, 1-in_first12] -> (
-      unpack_1[i], unpack_2[i-WORDLEN()]))};
-  for i : 0..WORDLEN() { AliasLayout!(arr12[i],unpack_1[i]); };
-  for i : WORDLEN()..BLEN() {
-    AliasLayout!(arr12[i], unpack_2[i-WORDLEN()]); };
-  arr23 := for i : 0..SLEN() {
-    in_first23 := InRange(0,i,2*WORDLEN()-BLEN());
-    NondetReg([in_first23, 1-in_first23] -> (
-      unpack_2[i+BLEN()-WORDLEN()], unpack_3[i-(2*WORDLEN()-BLEN())]))};
-  for i : 0..2*WORDLEN()-BLEN() {
-    AliasLayout!(arr23[i], unpack_2[i+BLEN()-WORDLEN()]); };
-  for i : 2*WORDLEN()-BLEN()..SLEN() {
-    AliasLayout!(arr23[i], unpack_3[i-(2*WORDLEN()-BLEN())]); };
-  arr34 := for i : 0..SLEN() {
-    in_first34 := InRange(0,i,3*WORDLEN()-BLEN()-SLEN());
-    NondetReg([in_first34, 1-in_first34] -> (
-      unpack_3[i+SLEN()+BLEN()-2*WORDLEN()],
-      unpack_4[i-(3*WORDLEN()-BLEN()-SLEN())]))};
-  for i : 0..3*WORDLEN()-BLEN()-SLEN() {
-    AliasLayout!(arr34[i], unpack_3[i+SLEN()+BLEN()-2*WORDLEN()]); };
-  for i : 3*WORDLEN()-BLEN()-SLEN()..SLEN() {
-    AliasLayout!(arr34[i], unpack_4[i-(3*WORDLEN()-BLEN()-SLEN())]); };
+  b := ConcatElem<SLEN()>(dummyS(), invmidx);
+  a := ConcatZeros<SLEN(), BLEN()-SLEN()>(unpack_2);
+  e := ConcatZeros<SLEN(), BLEN()-SLEN()>(unpack_3);
 
-  for i : 0..BLEN() { unpack_a[i] = arr12[i]; };
-  for i : 0..SLEN() { unpack_e[i] = arr23[i]; };
-  for i : 0..SLEN() { unpack_f[i] = arr34[i]; };
-
-  c := ConcatElem<SLEN()>(arr23, invmidx);
-  e := ConcatZeros<SLEN(), BLEN()-SLEN()>(unpack_e);
-  f := ConcatZeros<SLEN(), BLEN()-SLEN()>(unpack_f);
-  last_a := unpack_a[BLEN()-1];
-  0 = last_a * (1-last_a);
-  last12 := arr12[BLEN()-1];
-  0 = last12 * (1-last12);
-
-  RetTuple(unpack_a, arr12, c,
-    ConcatZeros<SLEN(), RLEN()-SLEN()>(arr34),
-    e, f, X+1, MAJOR_EXTRA(), 0, 0, memidx, auxr)
+  RetTuple(a, b, dummyB(), dummyE(), e, unpack_1,
+           X, MAJOR_EXTRA(), 0, 0, memidx, auxr)
 }
-
 
 component parse_next_block(rvprev: RetTuple,
                            auxregs: Array<NondetReg, AUXBIN()>) {
   memidxNxt := Reg(rvprev.midx + 1);
   invmidxNxt := NondetReg(Inv(memidxNxt));
-  midxNN := memidxNxt + 1;
-  invmidxNN := NondetReg(Inv(midxNN));
 
   blk := NondetReg(readInput());
   readInput(); readInput(); readInput();
@@ -1589,28 +1576,38 @@ component parse_next_block(rvprev: RetTuple,
   auxr := Concatenate<AUXBIN()+1,4>(auxtmp1, digest);
   WriteMemory(memidxNxt, digest);
 
-  idx2 := Reg(midxNN);
-  digest2 := [Reg(0x0080), Reg(0), Reg(0), Reg(0)];
+  d := Concatenate<SLEN(),3>(dummyS(), [invBlk,prod,invmidxNxt]);
+
+  [prod, 1-prod] -> (
+    RetTuple(dummyB(), dummyB(), dummyB(), d, dummyB(), dummyB(),
+             0, 14, 0, blk, memidxNxt, auxr),
+    RetTuple(dummyB(), dummyB(), dummyB(), d, dummyB(), dummyB(),
+             4, MAJOR_EXTRA(), 0, 0, memidxNxt, auxr))
+}
+
+component final_write(rvprev: RetTuple,
+                      auxregs: Array<NondetReg, AUXBIN()>) {
+  midxNN := Reg(rvprev.midx + 1);
+  invmidxNN := NondetReg(Inv(midxNN));
+
+  digest := [Reg(0x0080), Reg(0), Reg(0), Reg(0)];
+  auxtmp1 := ConcatElem<AUXBIN()>(auxregs, midxNN);
+  auxr := Concatenate<AUXBIN()+1,4>(auxtmp1, digest);
 
   nskip := NondetReg(7 - ((midxNN+1)&7)); // 7 - num_of_writes%8
   unpack_nskip := ToBitsU<3>(nskip);
   FromBits<3>(unpack_nskip) = nskip; // 0 <= nskip <= 7
 
-  dz := for i : 0..11 { NondetReg(0) };
-  d1 := Concatenate<11,3>(dz, unpack_nskip);
-  d2 := Concatenate<14,6>(d1,
-    [nskip,invBlk,prod,invmidxNxt,invmidxNN,idx2]);
-  d := Concatenate<20,4>(d2, digest2);
+  invmidxNN*midxNN = 1;
+  WriteMemory(midxNN, digest);
+  bitlen := 64*midxNN; // TODO: overflow
 
-  [prod, 1-prod] -> (
-    RetTuple(dummyB(), dummyB(), dummyB(), d, dummyB(), dummyB(),
-             0, 14, 0, blk, memidxNxt, auxr),
-    { invmidxNN*midxNN = 1;
-      WriteMemory(idx2, digest2);
-      bitlen := 64*midxNN; // TODO: overflow
-      RetTuple(dummyB(), dummyB(), dummyB(), d, dummyB(), dummyB(),
-        S2MINOR_SKIP()-1, S2MAJOR_SETUP(), bitlen, nskip, midxNN, auxr)
-    })
+  d := Concatenate<BLEN(), 2>(dummyB(), [invmidxNN, nskip]);
+  e := Concatenate<BLEN()-3, 3>(
+    for i : 0..BLEN()-3 { NondetReg(0) }, unpack_nskip);
+
+  RetTuple(dummyB(), dummyB(), dummyB(), d, e, dummyB(),
+    S2MINOR_SKIP()-1, S2MAJOR_SETUP(), bitlen, nskip, midxNN, auxr)
 }
 
 component mem_padding_sha256(rvprev01: RetTuple,
@@ -1624,10 +1621,10 @@ component mem_padding_sha256(rvprev01: RetTuple,
   FromBits<F>(unpack_bitlen) = bitlen;
   b12low := FromBits<Q>(for i : 0..Q {unpack_bitlen[i]});
   b12high := FromBits<Q>(for i : Q..H {unpack_bitlen[i]});
-  b12 := Reg(b12low*E + b12high);
+  b12 := b12low*E + b12high;
   b34low := FromBits<Q>(for i : H..(H+Q) {unpack_bitlen[i]});
   b34high := FromBits<F-H-Q>(for i : (H+Q)..F {unpack_bitlen[i]});
-  b34 := Reg(b34low*E + b34high);
+  b34 := b34low*E + b34high;
 
   memidx := Reg(rvprev01.midx + 1);
   nskip := rvprev01.blk;
@@ -1635,29 +1632,20 @@ component mem_padding_sha256(rvprev01: RetTuple,
   prod := Reg(nskip*invn);
   nskip*(1-prod) = 0;
 
-  a_tmp := for i : 0 .. SLEN() { NondetReg(unpack_bitlen[i]) };
-  for i : 0 .. SLEN() { AliasLayout!(a_tmp[i], unpack_bitlen[i]); };
-  a := ConcatElem<SLEN()>(a_tmp, b12);
+  a := for i : 0 .. BLEN() { NondetReg(unpack_bitlen[i]) };
+  for i : 0 .. BLEN() { AliasLayout!(a[i], unpack_bitlen[i]); };
   
-  b_tmp := for i : SLEN() .. F { NondetReg(unpack_bitlen[i]) };
-  for i :  SLEN() .. F {
-    AliasLayout!(b_tmp[i-SLEN()], unpack_bitlen[i]); };
-  zdigest := for i : 0..4 { NondetReg(0) }; //TODO: slice? dom bug
-  vdigest := [NondetReg(0), NondetReg(0), b34, b12];
-  b_tmp2 := Concatenate<F-SLEN(), 4>(b_tmp, zdigest);
-  b_tmp3 := ConcatZeros<F-SLEN()+4, BLEN()+SLEN()-F-4-3>(b_tmp2);
-  b := Concatenate<BLEN()-3, 3>(b_tmp3, for i : 0..3 { vdigest[i] });
+  b_tmp := for i : BLEN() .. F { NondetReg(unpack_bitlen[i]) };
+  for i : BLEN() .. F {
+    AliasLayout!(b_tmp[i-BLEN()], unpack_bitlen[i]); };
+  b := ConcatZeros<F-BLEN(), 2*BLEN()-F>(b_tmp);
 
-  d := ConcatZeros<3, RLEN()-3>(
-    [invn, prod, memidx]);
-
-  // anti-hoisting workaround
-  [1-prod, prod] -> (
-    { WriteMemory(memidx, vdigest); },
-    { } );
-  [1-prod, prod] -> (
-    { },
-    { WriteMemory(memidx, zdigest); } );
+  digest := [1-prod, prod] -> (
+    [Reg(0), Reg(0), Reg(b34), Reg(b12)],
+    for i : 0..4 { Reg(0) } );
+  WriteMemory(memidx, digest);
+  d_tmp := Concatenate<4, 3>(digest, [invn, prod, memidx]);
+  d := ConcatZeros<7, RLEN()-7>(d_tmp);
 
   [1-prod, prod] -> (
     RetTuple(a, b, dummyB(), d, dummyB(), dummyB(),
@@ -1702,11 +1690,11 @@ component extra_major(rvals: RetTuple, pc: NondetReg, inv_pc: NondetReg) {
   minor_onehot := OneHotU<6>(minor_idx);
   auxregs := ConcatZeros<6, AUXBIN()-6>(minor_onehot);
   r := minor_onehot -> (
-    equal_word<0>(rvals@1, auxregs),
-    equal_word<1>(rvals@2, auxregs),
-    equal_word<2>(rvals@3, auxregs),
-    equal_word<3>(rvals@4, auxregs),
+    output_word<1>(rvals@1, auxregs),
+    output_word<2>(rvals@2, auxregs),
+    output_word<3>(rvals@3, auxregs),
     parse_next_block(rvals@1, auxregs),
+    final_write(rvals@1, auxregs),
     { blk := NondetReg(readInput());
       //invBlk := NondetReg(Inv(Blk)); Blk*InvBlk = 1; //maybe unneeded
       readInput(); readInput(); readInput();
@@ -1721,6 +1709,7 @@ component extra_major(rvals: RetTuple, pc: NondetReg, inv_pc: NondetReg) {
                dummyB(), dummyB(), 0, 14, 0, blk, 0, auxr)
     }
   );
+  for i : 0..SLEN() { 0 = r.arr_a[i] * (1-r.arr_a[i]); };
   r
 }
 
