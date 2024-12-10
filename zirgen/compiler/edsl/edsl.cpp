@@ -14,9 +14,9 @@
 
 #include "zirgen/compiler/edsl/edsl.h"
 
+#include "mlir/Analysis/TopologicalSortUtils.h"
 #include "mlir/Pass/PassManager.h"
 #include "mlir/Transforms/Passes.h"
-#include "mlir/Analysis/TopologicalSortUtils.h"
 
 #include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
 #include "zirgen/Dialect/Zll/Analysis/DegreeAnalysis.h"
@@ -243,7 +243,8 @@ size_t Module::computeMaxDegree(StringRef name) {
 
   size_t max = 0;
   moduleCopy.walk([&](func::ReturnOp op) {
-    Zll::Degree degree = solver.lookupState<DegreeLattice>(solver.getProgramPointAfter(op))->getValue();
+    auto point = solver.getProgramPointAfter(op);
+    Zll::Degree degree = solver.lookupState<DegreeLattice>(point)->getValue();
     max = std::max<size_t>(max, degree.get());
   });
   if (max == 0) {
@@ -274,11 +275,13 @@ void Module::dumpPoly(StringRef name) {
 
   Block* block = &func.front();
   Operation* cur = block->getTerminator();
-  size_t degree = solver.lookupState<DegreeLattice>(solver.getProgramPointAfter(cur))->getValue().get();
+  auto point = solver.getProgramPointAfter(cur);
+  size_t degree = solver.lookupState<DegreeLattice>(point)->getValue().get();
   llvm::errs() << "Degree = " << degree << "\n";
   while (true) {
+    point = solver.getProgramPointAfter(cur);
     cur->print(llvm::errs(), OpPrintingFlags().enableDebugInfo(true));
-    size_t curDeg = solver.lookupState<DegreeLattice>(solver.getProgramPointAfter(cur))->getValue().get();
+    size_t curDeg = solver.lookupState<DegreeLattice>(point)->getValue().get();
     llvm::errs() << "\n";
     if (auto retOp = mlir::dyn_cast<mlir::func::ReturnOp>(cur)) {
       cur = retOp.getOperands()[0].getDefiningOp();

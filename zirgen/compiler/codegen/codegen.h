@@ -14,13 +14,13 @@
 
 #pragma once
 
-#include "llvm/Support/ManagedStatic.h"
 #include "mlir/Dialect/Func/IR/FuncOps.h"
 #include "mlir/IR/Builders.h"
 #include "mlir/IR/BuiltinOps.h"
 #include "mlir/Pass/PassManager.h"
 #include "zirgen/Dialect/Zll/IR/Codegen.h"
 #include "zirgen/compiler/codegen/protocol_info_const.h"
+#include "llvm/Support/ManagedStatic.h"
 
 #include <memory>
 #include <string>

@@ -305,7 +305,7 @@ void Process::mergeArrays(ColumnTable& columns) {
     auto& lCol = columns[i];
     for (size_t j = 0; j < lCol.instances.size(); ++j) {
       auto& lInst = lCol.instances[j];
-      if (LayoutArrayType lAT =  mlir::dyn_cast<LayoutArrayType>(lInst.type)) {
+      if (LayoutArrayType lAT = mlir::dyn_cast<LayoutArrayType>(lInst.type)) {
         // Look for later columns which contain arrays having the same
         // element type.
         mlir::Type eltype = lAT.getElement();

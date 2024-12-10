@@ -86,7 +86,9 @@ void DegreeAnalysis::visitOp(PowOp op) {
 
 void DegreeAnalysis::visitOp(EqualZeroOp op) {
   Degree in = getOrCreateFor<Element>(getProgramPointAfter(op), op.getIn())->getValue();
-  Degree parent = getOrCreateFor<Element>(getProgramPointAfter(op), getProgramPointAfter(op->getParentOp()))->getValue();
+  auto opPoint = getProgramPointAfter(op);
+  auto parentPoint = getProgramPointAfter(op->getParentOp());
+  Degree parent = getOrCreateFor<Element>(opPoint, parentPoint)->getValue();
   if (in.isDefined() && parent.isDefined()) {
     auto lattice = getOrCreate<Element>(getProgramPointAfter(op));
     propagateIfChanged(lattice, lattice->join(parent.get() + in.get()));
@@ -126,7 +128,9 @@ void DegreeAnalysis::visitOp(AndCondOp op) {
 
 void DegreeAnalysis::visitOp(IfOp op) {
   Degree cond = getOrCreateFor<Element>(getProgramPointAfter(op), op.getCond())->getValue();
-  Degree parent = getOrCreateFor<Element>(getProgramPointAfter(op), getProgramPointAfter(op->getParentOp()))->getValue();
+  auto opPoint = getProgramPointAfter(op);
+  auto parentPoint = getProgramPointAfter(op->getParentOp());
+  Degree parent = getOrCreateFor<Element>(opPoint, parentPoint)->getValue();
   if (cond.isDefined() && parent.isDefined()) {
     auto lattice = getOrCreate<Element>(getProgramPointAfter(op));
     propagateIfChanged(lattice, lattice->join(parent.get() + cond.get()));

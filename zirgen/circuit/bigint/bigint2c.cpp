@@ -312,8 +312,7 @@ std::vector<uint32_t> polySplit(mlir::func::FuncOp func) {
           state[op.getIn()].atom = PolyAtom(op.getArena(), op.getOffset(), size, true);
         })
         .Case<BigInt::NondetRemOp, BigInt::NondetQuotOp, BigInt::NondetInvOp>([&](auto op) {
-          size_t size =
-              (dyn_cast<BigInt::BigIntType>(op.getType()).getCoeffs() + 15) / 16;
+          size_t size = (dyn_cast<BigInt::BigIntType>(op.getType()).getCoeffs() + 15) / 16;
           if (state[op].neededForEq && state[op].atom.arena == 0) {
             state[op].atom = PolyAtom(kArenaTmp, offsetTmp, size, true);
             offsetTmp += size;
@@ -331,8 +330,7 @@ std::vector<uint32_t> polySplit(mlir::func::FuncOp func) {
           }
         })
         .Case<BigInt::ConstOp>([&](auto op) {
-          size_t size =
-              (dyn_cast<BigInt::BigIntType>(op.getType()).getCoeffs() + 15) / 16;
+          size_t size = (dyn_cast<BigInt::BigIntType>(op.getType()).getCoeffs() + 15) / 16;
           APInt value = op.getValue();
           value = value.zext(128 * size);
           for (size_t i = 0; i < size * 4; i++) {
@@ -342,8 +340,7 @@ std::vector<uint32_t> polySplit(mlir::func::FuncOp func) {
           offsetConst += size;
         })
         .Case<BigInt::LoadOp>([&](auto op) {
-          size_t size =
-              (dyn_cast<BigInt::BigIntType>(op.getType()).getCoeffs() + 15) / 16;
+          size_t size = (dyn_cast<BigInt::BigIntType>(op.getType()).getCoeffs() + 15) / 16;
           state[op].atom = PolyAtom(op.getArena(), op.getOffset(), size, false);
         })
         .Case<mlir::func::ReturnOp>([&](auto op) {})

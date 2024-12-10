@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "mlir/Analysis/DataFlow/SparseAnalysis.h"
 #include "zirgen/Dialect/Zll/IR/IR.h"
 #include "zirgen/Utilities/DataFlow.h"
 #include "llvm/ADT/TypeSwitch.h"
-#include "mlir/Analysis/DataFlow/SparseAnalysis.h"
 
 namespace zirgen::Zll {
 
