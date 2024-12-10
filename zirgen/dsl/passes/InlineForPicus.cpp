@@ -14,7 +14,7 @@
 
 #include "Passes.h"
 #include "mlir/Analysis/CallGraph.h"
-// #include "mlir/Transforms/Inliner.h"
+#include "mlir/Transforms/Inliner.h"
 
 #include "zirgen/dsl/passes/PassDetail.h"
 
@@ -28,21 +28,27 @@ namespace {
 struct InlineForPicusPass : public InlineForPicusBase<InlineForPicusPass> {
   void runOnOperation() override {
     ModuleOp mod = getOperation();
-    CallGraph &cg = getAnalysis<CallGraph>();
+    CallGraph& cg = getAnalysis<CallGraph>();
 
-    // By default, assume that any inlining is profitable.
-    auto profitabilityCb = [=](const Inliner::ResolvedCall &call) {
-      return isProfitableToInline(call, 0);
+    // Inline a specific set of components
+    auto profitabilityCb = [=](const Inliner::ResolvedCall& call) {
+      auto op = cast<Zhlt::ConstructOp>(call.call);
+      auto callee = op.getCallee();
+      return callee == "Add" || callee == "Sub" || callee == "Mul" || callee == "NondetReg" ||
+             callee == "Component";
     };
 
     // Get an instance of the inliner.
-    Inliner inliner(op, cg, *this, getAnalysisManager(), runPipelineHelper,
-                    config, profitabilityCb);
+    InlinerConfig config;
+    auto runPipelineHelper = [](Pass& pass, OpPassManager& pipeline, Operation* op) {
+      return mlir::cast<InlineForPicusPass>(pass).runPipeline(pipeline, op);
+    };
+    Inliner inliner(
+        mod, cg, *this, getAnalysisManager(), runPipelineHelper, config, profitabilityCb);
 
-  //   // Run the inlining.
-  //   if (failed(inliner.doInlining()))
-  //     signalPassFailure();
-  //   return;
+    // Run the inlining.
+    if (failed(inliner.doInlining()))
+      signalPassFailure();
   }
 };
 

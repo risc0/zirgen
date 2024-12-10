@@ -8,6 +8,19 @@
 //CHECK-NEXT:  | | @super: 0
 
 // PICUS: (prime-number 2013265921)
+// PICUS-NEXT: (begin-module Top)
+// PICUS-NEXT: (output layout_a__super)
+// PICUS-NEXT: (output layout_b__super__super)
+// PICUS-NEXT: (output result_a__super)
+// PICUS-NEXT: (output result_b__super__super)
+// PICUS-NEXT: (output result_b_reg__super)
+// PICUS-NEXT: (assert (= x0 0))
+// PICUS-NEXT: (call [layout_b__super__super x1__super__super x1_reg__super] Reg [x0])
+// PICUS-NEXT: (assert (= layout_a__super layout_b__super__super))
+// PICUS-NEXT: (assert (= result_a__super layout_a__super))
+// PICUS-NEXT: (assert (= result_b__super__super x1__super__super))
+// PICUS-NEXT: (assert (= result_b_reg__super x1_reg__super))
+// PICUS-NEXT: (end-module)
 
 #[picus]
 component Top() {
