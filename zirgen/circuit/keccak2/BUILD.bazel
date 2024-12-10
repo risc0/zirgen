@@ -27,18 +27,30 @@ zirgen_build(
     zir_file = ":top.zir",
 )
 
+SPLIT_VALIDITY = 5
+
+SPLIT_STEP = 16
+
 OUTS = ZIRGEN_OUTS + [
-    "rust_poly_fp_0.cpp",
-    "rust_poly_fp_1.cpp",
-    "rust_poly_fp_2.cpp",
-    "rust_poly_fp_3.cpp",
-    "rust_poly_fp_4.cpp",
-    "eval_check_0.cu",
-    "eval_check_1.cu",
-    "eval_check_2.cu",
-    "eval_check_3.cu",
-    "eval_check_4.cu",
+    fn
+    for i in range(SPLIT_VALIDITY)
+    for fn in [
+        "rust_poly_fp_" + str(i) + ".cpp",
+        "eval_check_" + str(i) + ".cu",
+    ]
+] + [
+    fn
+    for i in range(SPLIT_STEP)
+    for fn in [
+        "steps_" + str(i) + ".cpp",
+        "steps_" + str(i) + ".cu",
+    ]
+] + [
     "eval_check.cuh",
+    "steps.h",
+    "steps.cuh",
+    "layout.h.inc",
+    "layout.cuh.inc",
 ]
 
 build_circuit(
@@ -50,7 +62,9 @@ build_circuit(
         "zirgen/circuit/keccak2/top.zir",
         "-I",
         "zirgen/circuit/keccak2",
-        "--validity-split-count=5",
+        "--circuit-name=keccak",
+        "--validity-split-count=" + str(SPLIT_VALIDITY),
+        "--step-split-count=" + str(SPLIT_STEP),
     ],
 )
 

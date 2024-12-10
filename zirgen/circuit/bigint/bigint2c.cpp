@@ -30,6 +30,7 @@
 #include "zirgen/Dialect/BigInt/IR/BigInt.h"
 #include "zirgen/Dialect/BigInt/Transforms/Passes.h"
 #include "zirgen/circuit/bigint/elliptic_curve.h"
+#include "zirgen/circuit/bigint/rsa.h"
 
 using namespace zirgen;
 namespace cl = llvm::cl;
@@ -39,7 +40,7 @@ cl::opt<std::string>
 
 namespace {
 enum class Program {
-  ModPow_65537,
+  ModPow65537,
   EC_Double,
   EC_Add,
 };
@@ -48,10 +49,15 @@ enum class Program {
 static cl::opt<enum Program>
     program("program",
             cl::desc("The program to compile"),
-            cl::values(clEnumValN(Program::ModPow_65537, "modpow_65537", "ModPow_65537"),
+            cl::values(clEnumValN(Program::ModPow65537, "modpow65537", "ModPow65537"),
                        clEnumValN(Program::EC_Double, "ec_double", "EC_Double"),
                        clEnumValN(Program::EC_Add, "ec_add", "EC_Add")),
             cl::Required);
+
+static cl::opt<size_t> bitwidth("bitwidth",
+                                cl::desc("The bitwidth of program parameters"),
+                                cl::value_desc("bitwidth"),
+                                cl::Required);
 
 const APInt secp256k1_prime = APInt::getAllOnes(256) - APInt::getOneBitSet(256, 32) -
                               APInt::getOneBitSet(256, 9) - APInt::getOneBitSet(256, 8) -
@@ -399,58 +405,6 @@ std::vector<uint32_t> polySplit(mlir::func::FuncOp func) {
   return flat;
 }
 
-void genModPow65537(mlir::Location loc, mlir::OpBuilder& builder) {
-  const size_t bits = 4096;
-  // Check if (S^e = M (mod N)), where e = 65537
-  auto S = builder.create<BigInt::LoadOp>(loc, bits, 11, 0);
-  auto N = builder.create<BigInt::LoadOp>(loc, bits, 12, 0);
-  // We square S 16 times to get S^65536
-  Value x = S;
-  for (size_t i = 0; i < 16; i++) {
-    auto xm = builder.create<BigInt::MulOp>(loc, x, x);
-    x = builder.create<BigInt::ReduceOp>(loc, xm, N);
-  }
-  // Multiply in one more copy of S + reduce
-  auto xm = builder.create<BigInt::MulOp>(loc, x, S);
-  x = builder.create<BigInt::ReduceOp>(loc, xm, N);
-  // this is our result
-  builder.create<BigInt::StoreOp>(loc, x, 13, 0);
-}
-
-void genECDouble(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) {
-  assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
-  size_t chunkwidth = bitwidth / 128;
-
-  auto pt_x = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, 0);
-  auto pt_y = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, chunkwidth);
-  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0, bitwidth - 1);
-  auto a = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, chunkwidth);
-  auto b = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 2 * chunkwidth);
-  auto curve = std::make_shared<BigInt::EC::WeierstrassCurve>(prime, a, b);
-  auto pt = BigInt::EC::AffinePt(pt_x, pt_y, curve);
-  auto doubled = BigInt::EC::doub(builder, loc, pt);
-  builder.create<BigInt::StoreOp>(loc, doubled.x(), 13, 0);
-  builder.create<BigInt::StoreOp>(loc, doubled.y(), 13, chunkwidth);
-}
-
-void genECAdd(mlir::Location loc, mlir::OpBuilder& builder, size_t bitwidth) {
-  assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
-  size_t chunkwidth = bitwidth / 128;
-  auto p_x = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, 0);
-  auto p_y = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, chunkwidth);
-  auto q_x = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0);
-  auto q_y = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, chunkwidth);
-  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 0, bitwidth - 1);
-  auto a = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, chunkwidth);
-  auto b = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 2 * chunkwidth);
-  auto curve = std::make_shared<BigInt::EC::WeierstrassCurve>(prime, a, b);
-  auto lhs = BigInt::EC::AffinePt(p_x, p_y, curve);
-  auto rhs = BigInt::EC::AffinePt(q_x, q_y, curve);
-  auto result = BigInt::EC::add(builder, loc, lhs, rhs);
-  builder.create<BigInt::StoreOp>(loc, result.x(), 14, 0);
-  builder.create<BigInt::StoreOp>(loc, result.y(), 14, chunkwidth);
-}
-
 int main(int argc, char* argv[]) {
   llvm::InitLLVM y(argc, argv);
   mlir::registerAsmPrinterCLOptions();
@@ -473,14 +427,14 @@ int main(int argc, char* argv[]) {
   builder.setInsertionPointToStart(func.addEntryBlock());
 
   switch (program) {
-  case Program::ModPow_65537:
-    genModPow65537(loc, builder);
+  case Program::ModPow65537:
+    zirgen::BigInt::genModPow65537(builder, loc, bitwidth);
     break;
   case Program::EC_Double:
-    genECDouble(loc, builder, 256); // TODO: Selectable bitwidth
+    zirgen::BigInt::EC::genECDouble(builder, loc, bitwidth);
     break;
   case Program::EC_Add:
-    genECAdd(loc, builder, 256); // TODO: Selectable bitwidth
+    zirgen::BigInt::EC::genECAdd(builder, loc, bitwidth);
     break;
   }
 

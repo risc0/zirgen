@@ -350,6 +350,42 @@ AffinePt sub(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   return add(builder, loc, lhs, neg_rhs);
 }
 
+// Full programs, including I/O
+
+void genECAdd(mlir::OpBuilder& builder, mlir::Location loc, size_t bitwidth) {
+  assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
+  size_t chunkwidth = bitwidth / 128;
+  auto p_x = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, 0);
+  auto p_y = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, chunkwidth);
+  auto q_x = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0);
+  auto q_y = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, chunkwidth);
+  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 0, bitwidth - 1);
+  auto a = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, chunkwidth);
+  auto b = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 2 * chunkwidth);
+  auto curve = std::make_shared<BigInt::EC::WeierstrassCurve>(prime, a, b);
+  auto lhs = BigInt::EC::AffinePt(p_x, p_y, curve);
+  auto rhs = BigInt::EC::AffinePt(q_x, q_y, curve);
+  auto result = BigInt::EC::add(builder, loc, lhs, rhs);
+  builder.create<BigInt::StoreOp>(loc, result.x(), 14, 0);
+  builder.create<BigInt::StoreOp>(loc, result.y(), 14, chunkwidth);
+}
+
+void genECDouble(mlir::OpBuilder& builder, mlir::Location loc, size_t bitwidth) {
+  assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
+  size_t chunkwidth = bitwidth / 128;
+
+  auto pt_x = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, 0);
+  auto pt_y = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, chunkwidth);
+  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0, bitwidth - 1);
+  auto a = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, chunkwidth);
+  auto b = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 2 * chunkwidth);
+  auto curve = std::make_shared<BigInt::EC::WeierstrassCurve>(prime, a, b);
+  auto pt = BigInt::EC::AffinePt(pt_x, pt_y, curve);
+  auto doubled = BigInt::EC::doub(builder, loc, pt);
+  builder.create<BigInt::StoreOp>(loc, doubled.x(), 13, 0);
+  builder.create<BigInt::StoreOp>(loc, doubled.y(), 13, chunkwidth);
+}
+
 // Test functions
 
 void makeECAddTest(mlir::OpBuilder builder, mlir::Location loc, size_t bits) {
