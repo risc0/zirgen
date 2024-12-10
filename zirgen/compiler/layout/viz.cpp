@@ -14,6 +14,7 @@
 
 #include "zirgen/compiler/layout/viz.h"
 #include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
+#include "zirgen/Utilities/KeyPath.h"
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/ADT/DenseSet.h"
 #include "llvm/ADT/TypeSwitch.h"
@@ -27,6 +28,7 @@ namespace viz {
 
 namespace {
 
+using dsl::KeyPath;
 using Zll::ValType;
 using namespace ZStruct;
 
@@ -849,20 +851,6 @@ void layoutAttrs(mlir::ModuleOp mod, std::ostream& dest) {
   });
 }
 
-using Key = std::variant<mlir::StringRef, size_t>;
-using KeyPath = std::vector<Key>;
-
-void printKeyPath(std::ostream& os, const KeyPath& keyPath) {
-  for (const Key& key : keyPath) {
-    if (auto* member = std::get_if<mlir::StringRef>(&key)) {
-      os << "." << member->str();
-    } else {
-      os << "[" << std::get<size_t>(key) << "]";
-    }
-  }
-  os << "\n";
-}
-
 class ColumnKeyPathPrinter {
 public:
   ColumnKeyPathPrinter(mlir::ModuleOp mod, std::ostream& os) : mod(mod), os(os) {}
@@ -880,7 +868,7 @@ public:
 private:
   void print(RefAttr ref, size_t index) {
     if (ref.getIndex() == index)
-      printKeyPath(os, keyPath);
+      os << keyPath << "\n";
   }
 
   void print(StructAttr str, size_t index) {

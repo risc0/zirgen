@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <variant>
+
 #include "mlir/Analysis/DataFlowFramework.h"
 #include "llvm/Support/raw_ostream.h"
 
