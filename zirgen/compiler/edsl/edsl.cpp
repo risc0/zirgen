@@ -243,7 +243,7 @@ size_t Module::computeMaxDegree(StringRef name) {
 
   size_t max = 0;
   moduleCopy.walk([&](func::ReturnOp op) {
-    Zll::Degree degree = solver.lookupState<DegreeLattice>(op)->getValue();
+    Zll::Degree degree = solver.lookupState<DegreeLattice>(solver.getProgramPointAfter(op))->getValue();
     max = std::max<size_t>(max, degree.get());
   });
   if (max == 0) {
@@ -274,11 +274,11 @@ void Module::dumpPoly(StringRef name) {
 
   Block* block = &func.front();
   Operation* cur = block->getTerminator();
-  size_t degree = solver.lookupState<DegreeLattice>(cur)->getValue().get();
+  size_t degree = solver.lookupState<DegreeLattice>(solver.getProgramPointAfter(cur))->getValue().get();
   llvm::errs() << "Degree = " << degree << "\n";
   while (true) {
     cur->print(llvm::errs(), OpPrintingFlags().enableDebugInfo(true));
-    size_t curDeg = solver.lookupState<DegreeLattice>(cur)->getValue().get();
+    size_t curDeg = solver.lookupState<DegreeLattice>(solver.getProgramPointAfter(cur))->getValue().get();
     llvm::errs() << "\n";
     if (auto retOp = mlir::dyn_cast<mlir::func::ReturnOp>(cur)) {
       cur = retOp.getOperands()[0].getDefiningOp();
