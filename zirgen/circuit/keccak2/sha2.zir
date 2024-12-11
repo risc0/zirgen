@@ -45,23 +45,6 @@ component CarryAndExpand(in: Array<Val, 2>) {
   out
 }
 
-component ExpandBE(in: Array<Val, 2>) {
-  original := UnpackNondet<32, 16>(in);
-  // Swap bytes, maintain bits, registerize
-  out := for i : 0..32 {
-    bit := i & 7;
-    byte := (i - bit) * Inv(8);
-    NondetBitReg(original[(3 - byte) * 8 + bit])
-  };
-  // 'Pack' into bytes
-  bytes := Pack<32, 8>(out);
-  // Verify byteswapping it back matches
-  in[0] = bytes[2] * 256 + bytes[3];
-  in[1] = bytes[0] * 256 + bytes[1];
-  // Return output
-  out
-}
-
 component PushFront<SIZE: Val>(in: Array<Val, 32>, lst: Array<Array<Val, 32>, SIZE>) {
   for i : 0..SIZE {
     if (Isz(i)) { in }
