@@ -24,7 +24,9 @@ using SignalStruct = DictionaryAttr;
 using AnySignal = Attribute;
 
 template <typename F> void visit(AnySignal signal, F f) {
-  if (auto s = dyn_cast<Signal>(signal)) {
+  if (!signal) {
+    // no-op
+  } else if (auto s = dyn_cast<Signal>(signal)) {
     f(s);
   } else if (auto arr = dyn_cast<SignalArray>(signal)) {
     for (auto elem : arr)
@@ -76,6 +78,8 @@ private:
 
     // Non-layout parameters are inputs
     for (BlockArgument param : component.getConstructParam()) {
+      if (isa<StringType>(param.getType()) || isa<VariadicType>(param.getType()))
+        continue;
       AnySignal signal = signalize(freshName(), param.getType());
       declareSignals(signal, /*isInput=*/true);
       valuesToSignals.insert({param, signal});
@@ -111,6 +115,7 @@ private:
               StringOp,
               SubOp,
               VariadicPackOp,
+              ExternOp,
               LoadOp,
               LookupOp,
               SubscriptOp,
@@ -138,12 +143,22 @@ private:
   }
 
   void visitOp(VariadicPackOp pack) {
-    SmallVector<AnySignal> signals;
-    for (Value operand : pack.getIn()) {
-      signals.push_back(valuesToSignals.at(operand));
+    // Picus doesn't support variadics at call interfaces, so we associate them
+    // with null signals. To see that this is sound (but not complete), first
+    // note that variadics can only be used as call parameters in Zirgen. Then
+    // note that additional variadic inputs only increase the number of
+    // deterministic signals and don't increase the number of output signals.
+    // Furthermore, adding new constraints to a constraint set (i.e. those
+    // associated with the variadic input signals) can only shrink the set of
+    // satisfying assignments.
+    valuesToSignals.insert({pack.getOut(), nullptr});
+  }
+
+  void visitOp(ExternOp ext) {
+    for (Value result : ext.getOut()) {
+      Signal signal = Signal::get(ctx, freshName());
+      valuesToSignals.insert({result, signal});
     }
-    auto signal = SignalArray::get(ctx, signals);
-    valuesToSignals.insert({pack.getOut(), signal});
   }
 
   void visitOp(LoadOp load) {
@@ -286,6 +301,8 @@ private:
         fields.emplace_back(field.name, signalize(name, field.type));
       }
       return SignalStruct::get(ctx, fields);
+    } else if (isa<StringType>(type) || isa<VariadicType>(type)) {
+      return nullptr;
     } else {
       llvm::errs() << type << "\n";
       throw std::runtime_error("signalizing unhandled type");
