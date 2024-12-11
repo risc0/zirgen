@@ -40,17 +40,11 @@ mlir::ParseResult parseFields(mlir::AsmParser& p, llvm::SmallVectorImpl<FieldInf
         if (p.parseKeywordOrString(&name) || p.parseColon()) {
           return mlir::failure();
         }
-        StorageKind storage = StorageKind::Normal;
-        if (succeeded(p.parseOptionalKeyword("reserve"))) {
-          storage = StorageKind::Reserve;
-        } else if (succeeded(p.parseOptionalKeyword("use"))) {
-          storage = StorageKind::Use;
-        }
         mlir::Type type;
         if (p.parseType(type)) {
           return mlir::failure();
         }
-        parameters.push_back(FieldInfo{mlir::StringAttr::get(p.getContext(), name), type, storage});
+        parameters.push_back(FieldInfo{mlir::StringAttr::get(p.getContext(), name), type});
         return mlir::success();
       });
 }
@@ -60,16 +54,6 @@ void printFields(mlir::AsmPrinter& p, llvm::ArrayRef<FieldInfo> fields) {
   llvm::interleaveComma(fields, p, [&](const FieldInfo& field) {
     p.printKeywordOrString(field.name.getValue());
     p << ": ";
-    switch (field.storage) {
-    case StorageKind::Normal:
-      break;
-    case StorageKind::Reserve:
-      p << "reserve ";
-      break;
-    case StorageKind::Use:
-      p << "use ";
-      break;
-    }
     p << field.type;
   });
   p << ">";
