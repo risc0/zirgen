@@ -4,6 +4,7 @@
 #include "mlir/Transforms/Passes.h"
 #include "zirgen/Dialect/ZHLT/IR/TypeUtils.h"
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
+#include "zirgen/Dialect/ZStruct/Transforms/Passes.h"
 #include "zirgen/dsl/passes/Passes.h"
 #include "llvm/ADT/TypeSwitch.h"
 
@@ -102,15 +103,23 @@ private:
   }
 
   void visitOp(Operation* op) {
+    // Switch over operation types, and emit corresponding Picus code and track
+    // the mapping between MLIR values and Picus signals. Because Picus doesn't
+    // have control flow, MapOp/ReduceOp are unrolled.
     llvm::TypeSwitch<Operation*>(op)
         .Case<ConstOp,
+              StringOp,
+              SubOp,
+              VariadicPackOp,
               LoadOp,
               LookupOp,
+              SubscriptOp,
               ConstructOp,
-              SubOp,
               EqualZeroOp,
+              ArrayOp,
               PackOp,
               ReturnOp,
+              GetGlobalLayoutOp,
               AliasLayoutOp>([&](auto op) { visitOp(op); })
         .Case<StoreOp, arith::ConstantOp>([](auto) { /* no-op */ })
         .Default([](Operation* op) { llvm::errs() << "unhandled op: " << *op << "\n"; });
@@ -123,6 +132,20 @@ private:
     valuesToSignals.insert({constant.getOut(), signal});
   }
 
+  void visitOp(StringOp str) {
+    auto signal = SignalStruct::get(ctx, {});
+    valuesToSignals.insert({str.getOut(), signal});
+  }
+
+  void visitOp(VariadicPackOp pack) {
+    SmallVector<AnySignal> signals;
+    for (Value operand : pack.getIn()) {
+      signals.push_back(valuesToSignals.at(operand));
+    }
+    auto signal = SignalArray::get(ctx, signals);
+    valuesToSignals.insert({pack.getOut(), signal});
+  }
+
   void visitOp(LoadOp load) {
     auto signal = cast<Signal>(valuesToSignals.at(load.getRef()));
     valuesToSignals.insert({load.getOut(), signal});
@@ -132,6 +155,18 @@ private:
     auto signal = cast<SignalStruct>(valuesToSignals.at(lookup.getBase()));
     auto subSignal = signal.get(lookup.getMember());
     valuesToSignals.insert({lookup.getOut(), subSignal});
+  }
+
+  void visitOp(SubscriptOp subscript) {
+    auto signal = cast<SignalArray>(valuesToSignals.at(subscript.getBase()));
+
+    SmallVector<OpFoldResult> results;
+    if (failed(subscript.getIndex().getDefiningOp()->fold(results))) {
+      llvm::errs() << "failed to resolve subscript index\n";
+    }
+    uint64_t index = cast<PolynomialAttr>(results[0].get<Attribute>())[0];
+    auto subSignal = signal[index];
+    valuesToSignals.insert({subscript.getOut(), subSignal});
   }
 
   void visitOp(ConstructOp construct) {
@@ -176,6 +211,16 @@ private:
     os << " 0))\n";
   }
 
+  void visitOp(ArrayOp arr) {
+    SmallVector<AnySignal> elements;
+    for (auto arg : arr.getElements()) {
+      AnySignal element = valuesToSignals.at(arg);
+      elements.push_back(element);
+    }
+    auto signal = SignalArray::get(ctx, elements);
+    valuesToSignals.insert({arr.getOut(), signal});
+  }
+
   void visitOp(PackOp pack) {
     SmallVector<NamedAttribute> fields;
     for (auto [field, arg] : llvm::zip(pack.getOut().getType().getFields(), pack.getMembers())) {
@@ -197,6 +242,13 @@ private:
     for (auto [outs, rets] : llvm::zip(flatten(outputSignal), flatten(returnSignal))) {
       os << "(assert (= " << outs.str() << " " << rets.str() << "))\n";
     }
+  }
+
+  void visitOp(GetGlobalLayoutOp get) {
+    // This is sound but presumably not complete?
+    AnySignal signal = signalize(freshName(), get.getType());
+    declareSignals(signal, /*isInput=*/false);
+    valuesToSignals.insert({get.getOut(), signal});
   }
 
   void visitOp(AliasLayoutOp alias) {
@@ -276,9 +328,10 @@ private:
 void printPicus(ModuleOp mod, llvm::raw_ostream& os) {
   PassManager pm(mod->getContext());
   pm.addPass(zirgen::dsl::createInlineForPicusPass());
+  pm.addPass(createUnrollPass());
   pm.addPass(createCanonicalizerPass());
   if (failed(pm.run(mod))) {
-    llvm::errs() << "Preemptive inlining for Picus failed";
+    llvm::errs() << "Preprocessing for Picus failed";
     return;
   }
 
