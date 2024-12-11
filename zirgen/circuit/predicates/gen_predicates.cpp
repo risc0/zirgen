@@ -36,8 +36,9 @@ verifyAndValidate(DigestVal root, ReadIopVal seal, size_t po2, const CircuitInte
 }
 
 template <typename T>
-static T getRecursiveObj(DigestVal root, ReadIopVal seal, const CircuitInterface& circuit) {
-  auto info = verifyAndValidate(root, seal, recursion::kRecursionPo2, circuit);
+static T
+getRecursiveObj(DigestVal root, ReadIopVal seal, size_t po2, const CircuitInterface& circuit) {
+  auto info = verifyAndValidate(root, seal, po2, circuit);
   DigestVal innerRoot = intoDigest(llvm::ArrayRef<Val>(info.out).slice(0, 16), DigestKind::Default);
   DigestVal innerOut = intoDigest(llvm::ArrayRef<Val>(info.out).slice(16, 16), DigestKind::Sha256);
   auto dataVec = seal.readBaseVals(T::size);
@@ -51,9 +52,9 @@ static T getRecursiveObj(DigestVal root, ReadIopVal seal, const CircuitInterface
 // Verify the recursion VM seal encoded in the IOP and return the assumption that it verifies.
 // The caller must check the root on the returned assumption and decide if it is acceptable.
 static Assumption
-verifyAssumption(DigestVal condRoot, ReadIopVal seal, const CircuitInterface& circuit) {
+verifyAssumption(DigestVal condRoot, ReadIopVal seal, size_t po2, const CircuitInterface& circuit) {
   // Does the same work as verify and validate, without having a root to check against.
-  auto info = zirgen::verify::verify(seal, recursion::kRecursionPo2, circuit);
+  auto info = zirgen::verify::verify(seal, po2, circuit);
   Val codeRootIndex = seal.readBaseVals(1)[0];
   auto merklePath = seal.readDigests(recursion::kAllowedCodeMerkleDepth);
   auto calculatedRoot = calculateMerkleProofRoot(info.codeRoot, codeRootIndex, merklePath);
@@ -88,38 +89,74 @@ template <typename T> static void writeOutObj(Buffer out, T outData) {
   out.setDigest(1, outData.digest(), "outDigest");
 }
 
-template <typename Func> void addLift(Module& module, const std::string name, Func func) {
-  for (size_t po2 = 14; po2 < 25; ++po2) {
-    module.addFunc<3>(name + "_" + std::to_string(po2),
-                      {gbuf(recursion::kOutSize), ioparg(), ioparg()},
-                      [&](Buffer out, ReadIopVal rootIop, ReadIopVal rv32seal) {
-                        auto circuit = getInterfaceRV32IM();
-                        DigestVal root = rootIop.readDigests(1)[0];
-                        VerifyInfo info = verifyAndValidate(root, rv32seal, po2, *circuit);
-                        llvm::ArrayRef inStream(info.out);
-                        ReceiptClaim claim(inStream, true);
-                        auto outData = func(claim);
-                        writeOutObj(out, outData);
-                        out.setDigest(0, root, "root");
-                      });
-  }
-}
-
-template <typename Func> void addJoin(Module& module, const std::string name, Func func) {
-  module.addFunc<4>(name,
-                    {gbuf(recursion::kOutSize), ioparg(), ioparg(), ioparg()},
-                    [&](Buffer out, ReadIopVal rootIop, ReadIopVal in1, ReadIopVal in2) {
-                      auto circuit = getInterfaceRecursion();
+// Add a program that verifies n RV32IM receipts with the given po2, then passes the claim into the
+// given func.
+template <typename Func>
+void addLift(Module& module, const std::string name, size_t po2, Func func) {
+  module.addFunc<3>(name,
+                    {gbuf(recursion::kOutSize), ioparg(), ioparg()},
+                    [&](Buffer out, ReadIopVal rootIop, ReadIopVal rv32seal) {
+                      auto circuit = getInterfaceRV32IM();
                       DigestVal root = rootIop.readDigests(1)[0];
-                      ReceiptClaim val1 = getRecursiveObj<ReceiptClaim>(root, in1, *circuit);
-                      ReceiptClaim val2 = getRecursiveObj<ReceiptClaim>(root, in2, *circuit);
-                      auto outData = func(val1, val2);
+                      VerifyInfo info = verifyAndValidate(root, rv32seal, po2, *circuit);
+                      llvm::ArrayRef inStream(info.out);
+                      ReceiptClaim claim(inStream, true);
+                      auto outData = func(claim);
                       writeOutObj(out, outData);
                       out.setDigest(0, root, "root");
                     });
 }
 
-template <typename Func> void addResolve(Module& module, const std::string name, Func func) {
+// Add a program that verifies n RV32IM receipts with the given po2, then passes the claims into the
+// provided func.
+template <typename Func>
+void addLiftJoin(Module& module, const std::string name, size_t n, size_t po2, Func func) {
+  module.addFunc<3>(name,
+                    {gbuf(recursion::kOutSize), ioparg(), ioparg()},
+                    [&](Buffer out, ReadIopVal rootIop, ReadIopVal in) {
+                      auto circuit = getInterfaceRV32IM();
+                      // Read the control root.
+                      DigestVal root = rootIop.readDigests(1)[0];
+                      // Verify and extract the receipt claims.
+                      std::vector<ReceiptClaim> claims;
+                      for (size_t i = 0; i < n; ++i) {
+                        VerifyInfo info = verifyAndValidate(root, in, po2, *circuit);
+                        llvm::ArrayRef inStream(info.out);
+                        claims.emplace_back(inStream, true);
+                      }
+                      // Run the (join) logic to verify the claims and construct the output.
+                      auto outData = func(claims);
+                      writeOutObj(out, outData);
+                      out.setDigest(0, root, "root");
+                    });
+}
+
+// Add a program that verifies n recursion receipts at the given po2, then passes the claims into
+// the provided func.
+template <typename Func>
+void addJoin(Module& module, const std::string name, size_t n, size_t po2, Func func) {
+  module.addFunc<3>(name,
+                    {gbuf(recursion::kOutSize), ioparg(), ioparg()},
+                    [&](Buffer out, ReadIopVal rootIop, ReadIopVal in) {
+                      auto circuit = getInterfaceRecursion();
+                      // Read the control root.
+                      DigestVal root = rootIop.readDigests(1)[0];
+                      // Verify and extract the receipt claims.
+                      std::vector<ReceiptClaim> claims;
+                      for (size_t i = 0; i < n; ++i) {
+                        claims.push_back(getRecursiveObj<ReceiptClaim>(root, in, po2, *circuit));
+                      }
+                      // Run the (join) logic to verify the claims and construct the output.
+                      auto outData = func(claims);
+                      writeOutObj(out, outData);
+                      out.setDigest(0, root, "root");
+                    });
+}
+
+// Add a program that verifies one in-tree recursion receipt and one out-of-tree recursion receipt
+// (assumption), both at the given po2.
+template <typename Func>
+void addResolve(Module& module, const std::string name, size_t po2, Func func) {
   module.addFunc<6>(name,
                     {gbuf(recursion::kOutSize), ioparg(), ioparg(), ioparg(), ioparg(), ioparg()},
                     [&](Buffer out,
@@ -130,8 +167,9 @@ template <typename Func> void addResolve(Module& module, const std::string name,
                         ReadIopVal journalIop) {
                       auto circuit = getInterfaceRecursion();
                       DigestVal root = rootIop.readDigests(1)[0];
-                      ReceiptClaim cond = getRecursiveObj<ReceiptClaim>(root, condIop, *circuit);
-                      Assumption assum = verifyAssumption(root, assumIop, *circuit);
+                      ReceiptClaim cond =
+                          getRecursiveObj<ReceiptClaim>(root, condIop, po2, *circuit);
+                      Assumption assum = verifyAssumption(root, assumIop, po2, *circuit);
 
                       // NOTE: readBaseVals is used here instead of readDigest
                       // because we need to read in the SHA-256 digest as
@@ -146,27 +184,33 @@ template <typename Func> void addResolve(Module& module, const std::string name,
                     });
 }
 
-template <typename Func> void addSingleton(Module& module, const std::string name, Func func) {
+// Add a program that verifies a recursion receipt at the given po2, then passes the claim into the
+// provided func.
+template <typename Func>
+void addSingleton(Module& module, const std::string name, size_t po2, Func func) {
   module.addFunc<3>(name,
                     {gbuf(recursion::kOutSize), ioparg(), ioparg()},
                     [&](Buffer out, ReadIopVal rootIop, ReadIopVal in) {
                       auto circuit = getInterfaceRecursion();
                       DigestVal root = rootIop.readDigests(1)[0];
-                      ReceiptClaim val = getRecursiveObj<ReceiptClaim>(root, in, *circuit);
+                      ReceiptClaim val = getRecursiveObj<ReceiptClaim>(root, in, po2, *circuit);
                       auto outData = func(val);
                       writeOutObj(out, outData);
                       out.setDigest(0, root, "root");
                     });
 }
 
-template <typename Func> void addUnion(Module& module, const std::string name, Func func) {
+// Add a program that verifies two out-of-tree recursion receipts at the given po2, then passes the
+// claims into the provided func.
+template <typename Func>
+void addUnion(Module& module, const std::string name, size_t po2, Func func) {
   module.addFunc<4>(name,
                     {gbuf(recursion::kOutSize), ioparg(), ioparg(), ioparg()},
                     [&](Buffer out, ReadIopVal rootIop, ReadIopVal leftIop, ReadIopVal rightIop) {
                       auto circuit = getInterfaceRecursion();
                       DigestVal root = rootIop.readDigests(1)[0];
-                      Assumption left = verifyAssumption(root, leftIop, *circuit);
-                      Assumption right = verifyAssumption(root, rightIop, *circuit);
+                      Assumption left = verifyAssumption(root, leftIop, po2, *circuit);
+                      Assumption right = verifyAssumption(root, rightIop, po2, *circuit);
 
                       auto outData = func(left, right);
                       writeOutObj(out, outData);
@@ -176,6 +220,12 @@ template <typename Func> void addUnion(Module& module, const std::string name, F
 
 static cl::opt<std::string>
     outputDir("output-dir", cl::desc("Output directory"), cl::value_desc("dir"), cl::Required);
+
+const size_t MIN_RV32IM_PO2 = 14;
+const size_t MAX_RV32IM_PO2 = 24;
+const size_t MIN_RECURSION_PO2 = 18;
+const size_t MAX_RECURSION_PO2 = 21;
+const size_t MAX_JOIN_WIDTH = 12;
 
 int main(int argc, char* argv[]) {
   llvm::InitLLVM y(argc, argv);
@@ -196,19 +246,44 @@ int main(int argc, char* argv[]) {
                       out.setDigest(1, claim, "claim");
                     });
 
-  addLift(module, "lift", [](ReceiptClaim claim) { return claim; });
+  // Add the programs that verify RVM32IM receipts.
+  for (size_t po2 = MIN_RV32IM_PO2; po2 <= MAX_RV32IM_PO2; ++po2) {
+    addLift(module, "lift_" + std::to_string(po2), po2, [](ReceiptClaim claim) { return claim; });
 
-  addJoin(module, "join", [&](ReceiptClaim a, ReceiptClaim b) { return join(a, b); });
+    for (size_t n = 2; po2 <= MAX_JOIN_WIDTH; ++n) {
+      addLiftJoin(module,
+                  "lift_join" + std::to_string(n) + "_" + std::to_string(po2),
+                  n,
+                  po2,
+                  [&](llvm::ArrayRef<ReceiptClaim> claims) { return join(claims); });
+    }
+  }
 
-  addResolve(
-      module, "resolve", [&](ReceiptClaim a, Assumption b, DigestVal tail, DigestVal journal) {
-        return resolve(a, b, tail, journal);
-      });
+  // Add the programs that verify recursion receipts.
+  for (size_t po2 = MIN_RECURSION_PO2; po2 <= MAX_RECURSION_PO2; ++po2) {
+    addSingleton(module, "identity_" + std::to_string(po2), po2, [&](ReceiptClaim a) {
+      return identity(a);
+    });
 
-  addSingleton(module, "identity", [&](ReceiptClaim a) { return identity(a); });
+    for (size_t n = 2; po2 <= MAX_JOIN_WIDTH; ++n) {
+      addJoin(module,
+              "join" + std::to_string(n) + "_" + std::to_string(po2),
+              n,
+              po2,
+              [&](llvm::ArrayRef<ReceiptClaim> claims) { return join(claims); });
+    }
 
-  addUnion(
-      module, "union", [&](Assumption left, Assumption right) { return unionFunc(left, right); });
+    addResolve(module,
+               "resolve_" + std::to_string(po2),
+               po2,
+               [&](ReceiptClaim a, Assumption b, DigestVal tail, DigestVal journal) {
+                 return resolve(a, b, tail, journal);
+               });
+
+    addUnion(module, "union_" + std::to_string(po2), po2, [&](Assumption left, Assumption right) {
+      return unionFunc(left, right);
+    });
+  }
 
   module.optimize();
   module.getModule().walk([&](mlir::func::FuncOp func) { zirgen::emitRecursion(outputDir, func); });

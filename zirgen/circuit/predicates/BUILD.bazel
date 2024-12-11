@@ -22,15 +22,39 @@ cc_library(
     ],
 )
 
+# Must match constants in gen_predicates.cpp
+MIN_RV32IM_PO2 = 14;
+MAX_RV32IM_PO2 = 24;
+MIN_RECURSION_PO2 = 18;
+MAX_RECURSION_PO2 = 21;
+MAX_JOIN_WIDTH = 12;
+
+RV32IM_PO2S = list(range(MIN_RV32IM_PO2, MAX_JOIN_WIDTH+1))
+RECURSION_PO2S = list(range(MIN_RECURSION_PO2, MAX_RECURSION_PO2+1))
+JOIN_WIDTHS = list(range(2, MAX_JOIN_WIDTH+1))
+
 ZKRS = [
     ("lift_" + str(po2))
-    for po2 in range(14, 25)
+    for po2 in RV32IM_PO2S
+] + [
+    ("lift_join" + str(n) + "_" + str(po2))
+    for n in JOIN_WIDTHS
+    for po2 in RV32IM_PO2S
+] + [
+    ("join" + str(n) + "_" + str(po2))
+    for n in JOIN_WIDTHS
+    for po2 in RECURSION_PO2S
+] + [
+    ("resolve_" + str(po2))
+    for po2 in RECURSION_PO2S
+] + [
+    ("identity_" + str(po2))
+    for po2 in RECURSION_PO2S
+] + [
+    ("union_" + str(po2))
+    for po2 in RECURSION_PO2S
 ] + [
     "test_recursion_circuit",
-    "join",
-    "resolve",
-    "identity",
-    "union",
 ]
 
 build_circuit(

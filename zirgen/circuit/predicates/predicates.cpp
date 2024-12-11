@@ -60,7 +60,7 @@ U32Reg::U32Reg(llvm::ArrayRef<Val>& stream) {
   }
 }
 
-Val U32Reg::flat() {
+Val U32Reg::flat() const {
   Val tot = 0;
   Val mul = 1;
   for (size_t i = 0; i < 4; i++) {
@@ -130,31 +130,38 @@ DigestVal UnionClaim::digest() {
   return taggedStruct("risc0.UnionClaim", {left, right}, {});
 }
 
-ReceiptClaim join(ReceiptClaim claim1, ReceiptClaim claim2) {
+ReceiptClaim join(llvm::ArrayRef<ReceiptClaim> claims) {
   // Make an empty output
   ReceiptClaim claimOut;
 
   // Constraints on pre/post state
-  assert_eq(claim1.post.memory, claim2.pre.memory);
-  eq(claim1.post.pc.flat(), claim2.pre.pc.flat());
-  claimOut.pre = claim1.pre;
-  claimOut.post = claim2.post;
+  for (size_t i = 0; i < claims.size() - 1; i++) {
+    assert_eq(claims[i].post.memory, claims[i + i].pre.memory);
+    eq(claims[i].post.pc.flat(), claims[i + 1].pre.pc.flat());
+  }
+  claimOut.pre = claims.front().pre;
+  claimOut.post = claims.back().post;
 
-  // Verify first receipt is a system split
-  eq(claim1.sysExit, 2);
-  eq(claim1.userExit, 0);
+  // Verify non-final receipts are system splits.
+  // NOTE: The final claim is unconstrained here, but is part of the output claim.
   std::vector zeroVec(16, Val(0));
   auto zeroHash = intoDigest(zeroVec, DigestKind::Sha256);
-  assert_eq(claim1.output, zeroHash);
+  for (size_t i = 0; i < claims.size() - 1; i++) {
+    eq(claims[i].sysExit, 2);
+    eq(claims[i].userExit, 0);
+    assert_eq(claims[i].output, zeroHash);
+  }
 
   // Final output comes from second receipt
-  claimOut.output = claim2.output;
-  claimOut.sysExit = claim2.sysExit;
-  claimOut.userExit = claim2.userExit;
+  claimOut.output = claims.back().output;
+  claimOut.sysExit = claims.back().sysExit;
+  claimOut.userExit = claims.back().userExit;
 
   // Input must be the same for all
-  assert_eq(claim1.input, claim2.input);
-  claimOut.input = claim1.input;
+  claimOut.input = claims.front().input;
+  for (size_t i = 1; i < claims.size(); i++) {
+    assert_eq(claims[i].input, claimOut.input);
+  }
 
   // Return output
   return claimOut;

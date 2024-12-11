@@ -29,7 +29,7 @@ struct U32Reg {
   // Write to an output
   void write(std::vector<Val>& stream);
 
-  Val flat();
+  Val flat() const;
 
   std::array<Val, 4> val;
 };
@@ -110,7 +110,7 @@ struct UnionClaim {
 
 // ReciptClaim lift(size_t po2, ReadIopVal seal);
 
-ReceiptClaim join(ReceiptClaim in1, ReceiptClaim in2);
+ReceiptClaim join(llvm::ArrayRef<ReceiptClaim> claims);
 ReceiptClaim identity(ReceiptClaim in);
 ReceiptClaim resolve(ReceiptClaim cond, Assumption assum, DigestVal tail, DigestVal journal);
 
