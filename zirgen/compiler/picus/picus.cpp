@@ -74,7 +74,7 @@ private:
     if (done.count(component))
       return;
 
-    os << "(begin-module " << component.getName() << ")\n";
+    os << "(begin-module " << canonicalizeIdentifier(component.getName().str()) << ")\n";
 
     // Non-layout parameters are inputs
     for (BlockArgument param : component.getConstructParam()) {

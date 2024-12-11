@@ -34,8 +34,8 @@ struct InlineForPicusPass : public InlineForPicusBase<InlineForPicusPass> {
     auto profitabilityCb = [=](const Inliner::ResolvedCall& call) {
       auto op = cast<Zhlt::ConstructOp>(call.call);
       auto callee = op.getCallee();
-      return callee == "Add" || callee == "Sub" || callee == "Mul" || callee == "NondetReg" ||
-             callee == "Component";
+      return callee == "Add" || callee == "Sub" || callee == "Mul" || callee == "Val" ||
+             callee == "NondetReg" || callee == "Component";
     };
 
     // Get an instance of the inliner.
