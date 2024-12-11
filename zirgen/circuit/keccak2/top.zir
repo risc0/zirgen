@@ -135,9 +135,7 @@ component ShaState(a: Array<Array<Val, 32>, 4>, e: Array<Array<Val, 32>, 4>, w: 
 
 component DoShaStep(in: ShaState, k: Array<Val, 2>, doLoad: Val, win: Array<Val, 2>) {
   rawW := ComputeW(in.w);
-  pickW := for i : 0..2 { doLoad * win[i] + (1 - doLoad) * rawW[i] };
-  // Log("  w = ", pickW[0], pickW[1]);
-  w := CarryAndExpand(pickW);
+  w := if (doLoad) { ExpandBE(win) } else { CarryAndExpand(rawW) };
   comp := ComputeAE(in.a, in.e, w, k);
   a := CarryAndExpand(comp.rawA);
   e := CarryAndExpand(comp.rawE);
