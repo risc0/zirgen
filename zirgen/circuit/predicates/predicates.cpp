@@ -136,7 +136,7 @@ ReceiptClaim join(llvm::ArrayRef<ReceiptClaim> claims) {
 
   // Constraints on pre/post state
   for (size_t i = 0; i < claims.size() - 1; i++) {
-    assert_eq(claims[i].post.memory, claims[i + i].pre.memory);
+    assert_eq(claims[i].post.memory, claims[i + 1].pre.memory);
     eq(claims[i].post.pc.flat(), claims[i + 1].pre.pc.flat());
   }
   claimOut.pre = claims.front().pre;
