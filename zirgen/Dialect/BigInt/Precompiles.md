@@ -89,7 +89,7 @@ use crate::ffi::sys_bigint2_3;
 
 const BLOB: &[u8] = include_bytes_aligned!(4, "add128.blob");
 
-pub fn add128(lhs: &[u32; 4], rhs: &[u32; 4], result: &mut [u32; 4]) {
+pub fn add128(lhs: &[u32; 4], rhs: &[u32; 4], result: &mut [u32; 8]) {
     unsafe {
         sys_bigint2_3(
             BLOB.as_ptr(),
