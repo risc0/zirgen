@@ -17,6 +17,7 @@
 #include <deque>
 #include <random>
 
+#include "mlir/IR/AsmState.h"
 #include "zirgen/Dialect/Zll/IR/IR.h"
 #include "zirgen/compiler/zkp/hash.h"
 #include "zirgen/compiler/zkp/read_iop.h"

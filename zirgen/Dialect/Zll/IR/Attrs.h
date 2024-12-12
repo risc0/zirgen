@@ -38,7 +38,7 @@ public:
   static PolynomialAttr get(MLIRContext* context, ArrayRef<uint64_t> content) {
     ArrayRef<int64_t> content_cast(reinterpret_cast<const int64_t*>(content.data()),
                                    content.size());
-    return DenseI64ArrayAttr::get(context, content_cast).cast<PolynomialAttr>();
+    return mlir::cast<PolynomialAttr>(DenseI64ArrayAttr::get(context, content_cast));
   }
 };
 

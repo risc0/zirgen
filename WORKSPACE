@@ -16,9 +16,9 @@ load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
 
 bazel_skylib_workspace()
 
-LLVM_COMMIT = "0d72fe9777e7c131dfb50c172b944d64437e2ece"
+LLVM_COMMIT = "fea7b65f23632b42ff8f7e2595ac0641e2c1d214"
 
-LLVM_SHA256 = "41f69c116fd1e25d290031c408f6ea0246cafb993b1fdab6f781c87fc0b903cf"
+LLVM_SHA256 = "7f8da8de897f20824e7d11204768ccb29a47419385bb6c9b3f5eccfd738d7510"
 
 http_archive(
     name = "llvm-raw",

@@ -735,7 +735,7 @@ struct Instructions {
           for (size_t i = 0; i < op.getIn().size(); i++) {
             inputs.push_back(toId[op.getIn()[i]]);
           }
-          auto kind = op.getOut().getType().cast<DigestType>().getKind();
+          auto kind = cast<DigestType>(op.getOut().getType()).getKind();
           if (kind == DigestKind::Default) {
             kind = (hashType == HashType::SHA256) ? DigestKind::Sha256 : DigestKind::Poseidon2;
           }
@@ -754,7 +754,7 @@ struct Instructions {
           }
         })
         .Case<FromDigestOp>([&](FromDigestOp op) {
-          if (op.getIn().getType().cast<DigestType>().getKind() != DigestKind::Sha256) {
+          if (cast<DigestType>(op.getIn().getType()).getKind() != DigestKind::Sha256) {
             throw std::runtime_error("Unimplemented digest type in FromDigestOp encoding");
           }
           if (op.getOut().size() != 16) {
@@ -783,7 +783,7 @@ struct Instructions {
           std::vector<uint64_t> valsIds;
           for (auto digest : op.getDigests()) {
             digestIds.push_back(toId[digest]);
-            digestTypes.push_back(digest.getType().cast<DigestType>().getKind());
+            digestTypes.push_back(cast<DigestType>(digest.getType()).getKind());
           }
           for (auto val : op.getVals()) {
             valsIds.push_back(toId[val]);

@@ -16,6 +16,7 @@
 
 #include "mlir/Debug/CLOptionsSetup.h"
 #include "mlir/Dialect/Func/Extensions/InlinerExtension.h"
+#include "mlir/IR/AsmState.h"
 #include "mlir/Transforms/Passes.h"
 #include "risc0/core/elf.h"
 #include "risc0/core/util.h"

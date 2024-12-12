@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <variant>
+
 namespace zirgen::dsl {
 
 using Key = std::variant<mlir::StringRef, size_t>;

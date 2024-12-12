@@ -14,6 +14,7 @@
 
 #include <functional>
 
+#include "mlir/Analysis/TopologicalSortUtils.h"
 #include "mlir/Dialect/Affine/IR/AffineOps.h"
 #include "mlir/Dialect/Arith/IR/Arith.h"
 #include "mlir/IR/Dominance.h"
@@ -22,7 +23,6 @@
 #include "mlir/Pass/PassManager.h"
 #include "mlir/Transforms/CSE.h"
 #include "mlir/Transforms/GreedyPatternRewriteDriver.h"
-#include "mlir/Transforms/TopologicalSortUtils.h"
 #include "llvm/ADT/TypeSwitch.h"
 
 #include "zirgen/Dialect/ZHLT/IR/TypeUtils.h"

@@ -26,8 +26,8 @@ def AnyScalar : AnyTypeOf<[Val, Digest]>;
 def ExternParameter : AnyTypeOf<[AnyScalar, String, VariadicPack]>;
 def Sha256Digest :
     Type<And<[
-      CPred<"$_self.isa<DigestType>()">,
-      CPred<"$_self.cast<DigestType>().getKind() == DigestKind::Sha256">]>>,
+      CPred<"mlir::isa<DigestType>($_self)">,
+      CPred<"mlir::cast<DigestType>($_self).getKind() == DigestKind::Sha256">]>>,
     BuildableType<"DigestType::get($_builder.getContext(), DigestKind::Sha256)">
 {}
 
@@ -97,7 +97,7 @@ def GetOp : ZllOp<"get", [Pure, EvalOpAdaptor, IsPoly, InferTypeOpAdaptor,
   let hasCanonicalizer = 1;
   let hasVerifier = 1;
   let extraClassDeclaration = [{
-    BufferKind getBufferKind() { return getBuf().getType().cast<BufferType>().getKind(); }
+    BufferKind getBufferKind() { return mlir::cast<BufferType>(getBuf().getType()).getKind(); }
   }];
 }
 
