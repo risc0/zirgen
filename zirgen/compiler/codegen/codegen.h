@@ -20,6 +20,7 @@
 #include "mlir/Pass/PassManager.h"
 #include "zirgen/Dialect/Zll/IR/Codegen.h"
 #include "zirgen/compiler/codegen/protocol_info_const.h"
+#include "llvm/Support/ManagedStatic.h"
 
 #include <memory>
 #include <string>
@@ -97,6 +98,11 @@ private:
                           llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                           mlir::FunctionType funcType,
                           mlir::Region* body) override;
+  void emitFuncDeclaration(CodegenEmitter& cg,
+                           CodegenIdent<IdentKind::Func> funcName,
+                           llvm::ArrayRef<std::string> contextArgs,
+                           llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
+                           mlir::FunctionType funcType) override;
 
   void emitReturn(CodegenEmitter& cg, llvm::ArrayRef<CodegenValue> values) override;
 
@@ -108,6 +114,8 @@ private:
   void emitSaveConst(CodegenEmitter& cg,
                      CodegenIdent<IdentKind::Const> name,
                      CodegenValue value) override;
+  void
+  emitConstDecl(CodegenEmitter& cg, CodegenIdent<IdentKind::Const> name, mlir::Type type) override;
 
   void emitCall(CodegenEmitter& cg,
                 CodegenIdent<IdentKind::Func> callee,
@@ -180,6 +188,11 @@ struct CppLanguageSyntax : public LanguageSyntax {
                           llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                           mlir::FunctionType funcType,
                           mlir::Region* body) override;
+  void emitFuncDeclaration(CodegenEmitter& cg,
+                           CodegenIdent<IdentKind::Func> funcName,
+                           llvm::ArrayRef<std::string> contextArgs,
+                           llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
+                           mlir::FunctionType funcType) override;
 
   void emitReturn(CodegenEmitter& cg, llvm::ArrayRef<CodegenValue> values) override;
 
@@ -191,6 +204,8 @@ struct CppLanguageSyntax : public LanguageSyntax {
   void emitSaveConst(CodegenEmitter& cg,
                      CodegenIdent<IdentKind::Const> name,
                      CodegenValue value) override;
+  void
+  emitConstDecl(CodegenEmitter& cg, CodegenIdent<IdentKind::Const> name, mlir::Type type) override;
 
   void emitCall(CodegenEmitter& cg,
                 CodegenIdent<IdentKind::Func> callee,
@@ -241,6 +256,8 @@ private:
 };
 
 struct CudaLanguageSyntax : public CppLanguageSyntax {
+  void
+  emitConstDecl(CodegenEmitter& cg, CodegenIdent<IdentKind::Const> name, mlir::Type type) override;
   void emitSaveConst(CodegenEmitter& cg,
                      CodegenIdent<IdentKind::Const> name,
                      CodegenValue value) override;
@@ -256,6 +273,11 @@ struct CudaLanguageSyntax : public CppLanguageSyntax {
                           llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                           mlir::FunctionType funcType,
                           mlir::Region* body) override;
+  void emitFuncDeclaration(CodegenEmitter& cg,
+                           CodegenIdent<IdentKind::Func> funcName,
+                           llvm::ArrayRef<std::string> contextArgs,
+                           llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
+                           mlir::FunctionType funcType) override;
 };
 
 // Returns codegen options for emitting specific language variants,
@@ -306,7 +328,8 @@ struct CodegenCLOptions {
                                        llvm::cl::Required};
   llvm::cl::opt<size_t> validitySplitCount{
       "validity-split-count",
-      llvm::cl::desc("Split up validity polynomial into this many files"),
+      llvm::cl::desc(
+          "Split up validity polynomial into this many files to allow for parallel compilation"),
       llvm::cl::value_desc("numParts"),
       llvm::cl::init(1)};
 };

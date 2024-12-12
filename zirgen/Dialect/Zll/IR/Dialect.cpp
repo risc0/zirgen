@@ -81,7 +81,7 @@ void ZllDialect::initialize() {
 
 Operation*
 ZllDialect::materializeConstant(OpBuilder& builder, Attribute value, Type type, Location loc) {
-  if (auto polyAttr = value.dyn_cast<PolynomialAttr>()) {
+  if (auto polyAttr = dyn_cast<PolynomialAttr>(value)) {
     // Promote to requested return type.
     SmallVector<uint64_t> elems = llvm::to_vector(polyAttr.asArrayRef());
     elems.resize(llvm::cast<ValType>(type).getFieldK());

@@ -45,9 +45,9 @@ LogicalResult LookupOp::verify() {
   }
   Type outType = getOut().getType();
   for (auto& field : *elements) {
-    if (!member.equals(field.name)) {
+    if (member != field.name)
       continue;
-    }
+
     if (outType != field.type) {
       emitError() << "Field type " << field.type << " but out type " << outType << "\n";
       return failure();
@@ -171,8 +171,8 @@ mlir::IntegerAttr SubscriptOp::getIndexAsAttr() {
   SmallVector<OpFoldResult, 4> foldResults;
   if (succeeded(indexOp->fold(foldResults))) {
     assert(foldResults.size() == 1);
-    if (auto attr = foldResults[0].dyn_cast<Attribute>()) {
-      return attr.cast<mlir::IntegerAttr>();
+    if (auto attr = dyn_cast<Attribute>(foldResults[0])) {
+      return cast<mlir::IntegerAttr>(attr);
     }
   }
   return nullptr;
@@ -241,7 +241,7 @@ LogicalResult SubscriptOp::verify() {
 }
 
 LogicalResult LoadOp::verify() {
-  auto inElemType = getRef().getType().cast<RefType>().getElement();
+  auto inElemType = cast<RefType>(getRef().getType()).getElement();
   auto outElemType = getOut().getType();
   if (inElemType == outElemType)
     return success();
@@ -268,7 +268,7 @@ void LoadOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
 }
 
 LogicalResult StoreOp::verify() {
-  if (getRef().getType().cast<RefType>().getElement() != getVal().getType()) {
+  if (cast<RefType>(getRef().getType()).getElement() != getVal().getType()) {
     return emitError() << "Source value type must match destination ref element type";
   }
   return success();
@@ -534,11 +534,32 @@ OpFoldResult LookupOp::fold(FoldAdaptor adaptor) {
 }
 
 void LookupOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
+  // If we're looking up a path, put it all together at once.  This is
+  // especially useful for layouts since we only have to call
+  // layoutLookup once.
+  SmallVector<CodegenIdent<IdentKind::Field>> path;
+  LookupOp op = *this;
+  Value lastBase;
+  while (op) {
+    lastBase = op.getBase();
+    path.push_back(op.getMemberAttr());
+    op = op.getBase().getDefiningOp<LookupOp>();
+  }
+
   if (isLayoutType(getBase().getType())) {
+
     cg.emitInvokeMacro(cg.getStringAttr("layoutLookup"),
-                       {getBase(), CodegenIdent<IdentKind::Field>(getMemberAttr())});
+                       {lastBase, [&]() {
+                          llvm::interleave(
+                              llvm::reverse(path),
+                              *cg.getOutputStream(),
+                              [&](auto pathElem) { cg << pathElem; },
+                              ".");
+                        }});
   } else {
-    cg << getBase() << "." << CodegenIdent<codegen::IdentKind::Field>(getMemberAttr());
+    cg << lastBase << ".";
+    llvm::interleave(
+        llvm::reverse(path), *cg.getOutputStream(), [&](auto pathElem) { cg << pathElem; }, ".");
   }
 }
 
@@ -714,7 +735,7 @@ LogicalResult MapOp::verifyRegions() {
 
   if (getLayout()) {
     BlockArgument layoutElem = getBody().getArgument(1);
-    if (layoutElem.getType() != getLayout().getType().cast<LayoutArrayType>().getElement()) {
+    if (layoutElem.getType() != cast<LayoutArrayType>(getLayout().getType()).getElement()) {
       return emitOpError() << "wrong type of layout argument in body, array is "
                            << getLayout().getType() << " but induction var is "
                            << layoutElem.getType();
@@ -752,6 +773,10 @@ LogicalResult ReduceOp::verifyRegions() {
 
 void GlobalConstOp::emitGlobal(codegen::CodegenEmitter& cg) {
   cg.emitConstDef(getSymNameAttr(), CodegenValue(getType(), getConstant()));
+}
+
+void GlobalConstOp::emitGlobalDecl(codegen::CodegenEmitter& cg) {
+  cg.emitConstDecl(getSymNameAttr(), getType());
 }
 
 LogicalResult LoadOp::evaluate(Interpreter& interp,

@@ -683,7 +683,7 @@ private:
   }
 
   std::string emitLoc(Operation* op) {
-    if (auto loc = op->getLoc().dyn_cast<FileLineColLoc>()) {
+    if (auto loc = dyn_cast<FileLineColLoc>(op->getLoc())) {
       return llvm::formatv("{0}:{1}", loc.getFilename().str(), loc.getLine()).str();
     }
     return "\"unknown\"";

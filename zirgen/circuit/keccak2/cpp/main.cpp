@@ -88,7 +88,7 @@ void ShaSingleKeccak(zirgen::Digest& digest, zirgen::keccak2::KeccakState state)
   std::vector<uint32_t> toHash(64);
   uint32_t* viewState = (uint32_t*)&state;
   for (size_t i = 0; i < 50; i++) {
-    toHash[i] = viewState[i];
+    toHash[i] = htonl(viewState[i]);
   }
   for (size_t i = 0; i < 4; i++) {
     zirgen::impl::compress(digest, toHash.data() + i * 16);

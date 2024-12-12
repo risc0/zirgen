@@ -53,13 +53,13 @@ public:
   // often very deeply nested and therefore have very large text representations
   // in the IR. These aliases make the IR much more readable.
   AliasResult getAlias(Type type, raw_ostream& os) const final {
-    if (auto component = type.dyn_cast<StructType>()) {
+    if (auto component = dyn_cast<StructType>(type)) {
       os << "zstruct$" << component.getId();
       return AliasResult::FinalAlias;
-    } else if (auto component = type.dyn_cast<LayoutType>()) {
+    } else if (auto component = dyn_cast<LayoutType>(type)) {
       os << "zlayout$" << component.getId();
       return AliasResult::FinalAlias;
-    } else if (auto component = type.dyn_cast<UnionType>()) {
+    } else if (auto component = dyn_cast<UnionType>(type)) {
       os << "zunion$" << component.getId();
       return AliasResult::FinalAlias;
     }

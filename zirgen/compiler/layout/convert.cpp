@@ -153,7 +153,7 @@ public:
       if (failed(converter->convertSignatureArgs(newRegion->getArgumentTypes(), result))) {
         return rewriter.notifyMatchFailure(op, "argument type conversion failed");
       }
-      rewriter.applySignatureConversion(newRegion, result);
+      rewriter.applySignatureConversion(&newRegion->front(), result);
     }
     Operation* newOp = rewriter.create(state);
     rewriter.replaceOp(op, newOp->getResults());

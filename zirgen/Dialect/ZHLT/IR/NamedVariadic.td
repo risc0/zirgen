@@ -39,7 +39,7 @@ class detail_ParamSnippets<
              # index # ")";
 
    defvar getterName = "get" # ucName;
-   
+
    // Declare and define accessors for the types of this param.
    code typeGetter = !if(variadic, [{
       ::llvm::ArrayRef<::mlir::Type> }] # getterName # "Types" # [{ () {
@@ -86,13 +86,13 @@ class detail_ParamSnippets<
      SubstLeaves<"$_self", "typePart", type.predicate>,
      ";\n})">;
 
-  dag builderTypeArg = 
+  dag builderTypeArg =
     !if(!empty(builderCall),
       !dag(ins,
         [CArg<!if(variadic, "::mlir::TypeRange",
             !if(!isa<TypeDef>(type),
                 !cast<TypeDef>(type).cppType,
-                type.cppClassName))>],
+                type.cppType))>],
         [name]),
         // No builder call - don't make user specify type.
         (ins));
@@ -148,7 +148,7 @@ class NamedVariadicSnippets<
   //   $rawTypes: The flattened TypeRange of raw types
   //   $segmentSizes: A DenseI32ArrayAttr of segment sizes in the style of AttrSizedOperandSegments.
   code typeGetters = !interleave(!foreach(snip, paramSnips, snip.typeGetter), "\n");
-  
+
   // Declare getters for the values passed this param, typically for inclusion in extraClassDeclaration.
   //
   // Callers must substitute in the following:
@@ -189,7 +189,7 @@ class NamedVariadicSnippets<
   //   $buildRawTypes: SmallVector<TypeRange> containing the list of types being built.
   //   $buildSegmentSizes: SmallVector<int32_t> containing the segment sizes for each argument.
   code builderBuildTypes = !interleave(!foreach(snip, paramSnips, snip.builderBuildType), "\n");
-  
+
   // Argument declarations for a builder function taking values for these parameters.
   dag builderValueArgs = !foldl(
       (ins),
@@ -214,25 +214,25 @@ class NamedVariadicSubstSnippets<NamedVariadicSnippets orig,
   string cppValueType,
   string cppValueRangeType
 > {
-  code typeGetters = 
+  code typeGetters =
        !subst("$rawTypes", rawTypes,
        !subst("$segmentSizes", segmentSizes,
        orig.typeGetters));
-  code valueGetters = 
+  code valueGetters =
        !subst("$rawValues", rawValues,
        !subst("$segmentSizes", segmentSizes,
        !subst("$cppValueType", cppValueType,
        !subst("$cppValueRangeType", cppValueRangeType,
        orig.valueGetters))));
-  code setValueNames = 
+  code setValueNames =
        !subst("$rawValues", rawValues,
        !subst("$segmentSizes", segmentSizes,
        orig.setValueNames));
-  code builderBuildTypes = 
+  code builderBuildTypes =
        !subst("$buildRawTypes", buildRawTypes,
        !subst("$buildSegmentSizes", buildSegmentSizes,
        orig.builderBuildTypes));
-  code builderBuildValues = 
+  code builderBuildValues =
        !subst("$buildRawValues", buildRawValues,
        !subst("$buildSegmentSizes", buildSegmentSizes,
        orig.builderBuildValues));

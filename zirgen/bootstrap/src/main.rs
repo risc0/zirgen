@@ -14,9 +14,8 @@
 
 use std::{
     cell::RefCell,
-    collections::BTreeMap,
-    io,
-    io::{BufRead, BufReader},
+    fs::{File, OpenOptions},
+    io::{self, BufRead, BufReader},
     path::{Path, PathBuf},
     process::{exit, Command, Stdio},
 };
@@ -25,6 +24,8 @@ use anyhow::{bail, Result};
 use clap::{Parser, ValueEnum};
 use glob::Pattern;
 use regex::Regex;
+use xz2::write::XzEncoder;
+use zip::ZipArchive;
 
 #[derive(Debug)]
 struct Rule<'a> {
@@ -151,11 +152,19 @@ fn strip_locations_and_whitespace(text: &str) -> Result<String> {
     // replace everything that might be a line number with '*'
     let re = Regex::new(":[0-9]+")?;
     let stripped = re.replace_all(text, "*");
-    // Remove all whitespace to avoid noticing reformatting changes
+
+    // Remove anything that might be changed by reformatting
     Ok(stripped
         .as_ref()
         .chars()
-        .filter(|&c| c != ' ' && c == '\t' && c != '\n')
+        .filter(|&c| {
+            // Reformatting may change whitespace
+            c != ' ' && c != '\t' && c != '\n'
+            // Reformatting may add commas at the end of lists
+            && c != ','
+            // Reformatting may break apart long strings into separate lines
+            && c != '\\' && c != '"'
+        })
         .collect())
 }
 
@@ -301,6 +310,7 @@ impl Bootstrap {
                 tgt_path.display()
             );
         } else if self.args.check {
+            println!("{} == {}?", src_path.display(), tgt_path.display());
             if let Err(err) = self.check(src_path, tgt_path) {
                 eprintln!("Error: {}", err);
                 *self.error.borrow_mut() = true;
@@ -328,6 +338,7 @@ impl Bootstrap {
             if filename.ends_with(".cpp.inc")
                 || filename.ends_with(".cu.inc")
                 || filename.ends_with(".cuh")
+                || filename.ends_with(".cu")
             {
                 if let Err(err) = Command::new("clang-format")
                     .args(["-i", tgt_path.to_str().unwrap()])
@@ -349,6 +360,15 @@ impl Bootstrap {
             .unwrap_or(PathBuf::from(alternative))
     }
 
+    fn output_and(&self, relative: &str) -> PathBuf {
+        self.args
+            .output
+            .clone()
+            .expect("Output directory must be specified for external circuit")
+            .join(relative)
+            .to_path_buf()
+    }
+
     fn build_all_circuits(&self) {
         // Build the circuits using bazel(isk).
         // TODO: Migrate to install_from_bazel which builds just what's necessary.
@@ -359,9 +379,7 @@ impl Bootstrap {
         let status = match status {
             Ok(stat) => stat,
             Err(err) => match err.kind() {
-                std::io::ErrorKind::NotFound => {
-                    Command::new("bazel").args(bazel_args).status().unwrap()
-                }
+                io::ErrorKind::NotFound => Command::new("bazel").args(bazel_args).status().unwrap(),
                 _ => panic!("{}", err.to_string()),
             },
         };
@@ -492,20 +510,39 @@ impl Bootstrap {
     fn keccak(&self) {
         self.install_from_bazel(
             "//zirgen/circuit/keccak2:bootstrap",
-            self.output_or("risc0/circuit/keccak"),
+            self.output_and("risc0/circuit/keccak"),
             &[
                 Rule::copy("*.cpp", "kernels/cxx").base_suffix("-sys"),
                 Rule::copy("*.cpp.inc", "kernels/cxx").base_suffix("-sys"),
                 Rule::copy("*.h.inc", "kernels/cxx").base_suffix("-sys"),
+                Rule::copy("*.h", "kernels/cxx").base_suffix("-sys"),
                 Rule::copy("*.cu", "kernels/cuda").base_suffix("-sys"),
                 Rule::copy("*.cu.inc", "kernels/cuda").base_suffix("-sys"),
                 Rule::copy("*.cuh", "kernels/cuda").base_suffix("-sys"),
                 Rule::copy("*.cuh.inc", "kernels/cuda").base_suffix("-sys"),
                 Rule::copy("*.rs", "src/zirgen"),
                 Rule::copy("*.rs.inc", "src/zirgen"),
-                Rule::copy("keccak_zkr.zip", "src/prove"),
             ],
         );
+
+        // Extract each .zkr from .zip and encode as .xz in target directory.
+        let dest_path = self.output_and("risc0/circuit/keccak/src/prove");
+        let bazel_bin = get_bazel_bin();
+        let zip_file = File::open(bazel_bin.join("zirgen/circuit/keccak2/keccak_zkr.zip"))
+            .expect("keccak_zkr.zip not found!");
+        let mut zip = ZipArchive::new(zip_file).unwrap();
+        for i in 0..zip.len() {
+            let mut src = zip.by_index(i).unwrap();
+            let tgt_path = dest_path.join(format!("{}.xz", src.name()));
+            let tgt_file = OpenOptions::new()
+                .write(true)
+                .create(true)
+                .truncate(true)
+                .open(tgt_path)
+                .expect("Could not create output xz file!");
+            let mut tgt = XzEncoder::new(&tgt_file, 6);
+            io::copy(&mut src, &mut tgt).unwrap();
+        }
     }
 
     fn calculator(&self) {

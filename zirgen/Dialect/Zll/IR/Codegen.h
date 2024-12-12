@@ -131,6 +131,11 @@ public:
                                   llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                                   mlir::FunctionType funcType,
                                   mlir::Region* body) = 0;
+  virtual void emitFuncDeclaration(CodegenEmitter& cg,
+                                   CodegenIdent<IdentKind::Func> funcName,
+                                   llvm::ArrayRef<std::string> contextArgs,
+                                   llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
+                                   mlir::FunctionType funcType) = 0;
 
   virtual void emitConditional(CodegenEmitter& cg, CodegenValue condition, EmitPart emitThen) = 0;
 
@@ -149,6 +154,8 @@ public:
 
   virtual void
   emitSaveConst(CodegenEmitter& cg, CodegenIdent<IdentKind::Const> name, CodegenValue value) = 0;
+  virtual void
+  emitConstDecl(CodegenEmitter& cg, CodegenIdent<IdentKind::Const> name, mlir::Type type) = 0;
 
   virtual void emitCall(CodegenEmitter& cg,
                         CodegenIdent<IdentKind::Func> callee,
@@ -292,7 +299,9 @@ public:
 
   void emitModule(mlir::ModuleOp op);
   void emitTopLevel(mlir::Operation* op);
+  void emitTopLevelDecl(mlir::Operation* op);
   void emitFunc(mlir::FunctionOpInterface op);
+  void emitFuncDecl(mlir::FunctionOpInterface op);
   void emitRegion(mlir::Region& region);
   void emitBlock(mlir::Block& block);
 
@@ -310,6 +319,9 @@ public:
 
   // Emits a named definition for a constant value.
   void emitConstDef(CodegenIdent<IdentKind::Const> name, CodegenValue value);
+
+  // Emits a forward declaration for a constant value.
+  void emitConstDecl(CodegenIdent<IdentKind::Const> name, mlir::Type type);
 
   // Emits a named type definition for the specified structure
   void emitStructDef(mlir::Type ty,

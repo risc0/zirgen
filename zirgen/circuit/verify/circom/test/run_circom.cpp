@@ -22,12 +22,13 @@
 #include "zirgen/circuit/verify/circom/circom.h"
 #include "zirgen/compiler/zkp/poseidon_254.h"
 
+using namespace mlir;
 using namespace zirgen::Zll;
 
 namespace zirgen::snark {
 
 std::vector<uint64_t>
-run_circom(mlir::func::FuncOp func, const std::vector<uint32_t>& iop, const std::string& tmp_path) {
+run_circom(func::FuncOp func, const std::vector<uint32_t>& iop, const std::string& tmp_path) {
   // Write the circom file
   std::ofstream circom_writer;
   circom_writer.exceptions(std::ofstream::failbit | std::ofstream::badbit);
@@ -44,7 +45,7 @@ run_circom(mlir::func::FuncOp func, const std::vector<uint32_t>& iop, const std:
   json_writer << "  \"iop\": [\n";
   size_t idx = 0;
   func.front().walk([&](Iop::ReadOp op) {
-    if (auto type = op.getOuts()[0].getType().dyn_cast<ValType>()) {
+    if (auto type = dyn_cast<ValType>(op.getOuts()[0].getType())) {
       for (size_t i = 0; i < op.getOuts().size(); i++) {
         uint32_t demont = uint64_t(iop[idx++]) * kBabyBearFromMontgomery % kBabyBearP;
         json_writer << "  \"" << demont << '"' << (idx == iop.size() ? ' ' : ',');
@@ -84,7 +85,7 @@ run_circom(mlir::func::FuncOp func, const std::vector<uint32_t>& iop, const std:
 
   // Read the outputs
   std::vector<uint64_t> out;
-  size_t outSize = func.front().getArgument(0).getType().cast<BufferType>().getSize();
+  size_t outSize = cast<BufferType>(func.front().getArgument(0).getType()).getSize();
   std::ifstream json_reader;
   json_reader.exceptions(std::ifstream::failbit | std::ifstream::badbit | std::ifstream::eofbit);
   json_reader.open(tmp_path + "/output.json");

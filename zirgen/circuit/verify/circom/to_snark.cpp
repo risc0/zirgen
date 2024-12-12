@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
   size_t elems = 0;
   std::vector<std::string> body;
   func.front().walk([&](Iop::ReadOp op) {
-    if (auto type = op.getOuts()[0].getType().dyn_cast<ValType>()) {
+    if (auto type = mlir::dyn_cast<ValType>(op.getOuts()[0].getType())) {
       for (size_t i = 0; i < op.getOuts().size(); i++) {
         body.push_back("    IopType::Fp,\n");
         words++;

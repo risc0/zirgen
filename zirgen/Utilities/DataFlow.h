@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <variant>
+
 #include "mlir/Analysis/DataFlowFramework.h"
 #include "llvm/Support/raw_ostream.h"
 
@@ -188,7 +190,7 @@ public:
 
   virtual LogicalResult initialize(Operation* top) override {
     WalkResult result = top->walk<WalkOrder::PreOrder>([&](Operation* op) {
-      if (failed(visit(op)))
+      if (failed(visitOperation(op)))
         return WalkResult::interrupt();
       return WalkResult::advance();
     });
@@ -196,21 +198,17 @@ public:
   }
 
   // Delegate to calling visitOperation on the appropriate operation
-  LogicalResult visit(ProgramPoint point) override {
-    if (auto* op = llvm::dyn_cast_if_present<Operation*>(point))
-      visitOperation(op);
-    else if (auto v = llvm::dyn_cast_if_present<Value>(point))
-      if (auto arg = llvm::dyn_cast<BlockArgument>(v))
-        visitOperation(arg.getOwner()->getParentOp());
-      else
-        visitOperation(v.getDefiningOp());
+  LogicalResult visit(ProgramPoint* point) override {
+    if (auto* op = point->getOperation())
+      return visitOperation(op);
+    else if (auto* block = point->getBlock())
+      return visitOperation(block->getParentOp());
     else
       return failure();
-    return success();
   }
 
 private:
-  virtual void visitOperation(Operation* op) = 0;
+  virtual LogicalResult visitOperation(Operation* op) = 0;
 };
 
 } // namespace dsl
