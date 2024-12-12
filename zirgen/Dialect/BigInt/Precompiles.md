@@ -50,7 +50,7 @@ genrule(
     name = "add128",
     outs = ["add128.blob"],
     exec_tools = [":bigint2c"],
-    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=add128 > $(OUTS)"
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=add128 --bitwidth 128 > $(OUTS)"
 )
 ```
 
