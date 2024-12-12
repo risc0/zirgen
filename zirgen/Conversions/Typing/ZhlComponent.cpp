@@ -1515,12 +1515,10 @@ void LoweringImpl::gen(DefinitionOp definition, ComponentBuilder& cb) {
   }
 
   auto memberName = declaration.getMember();
-  if (!Zhlt::isLocalVariable(memberName)) {
-    if (declaration.getIsPublic()) {
-      cb.val()->addMember(memberName, def);
-    } else {
-      cb.val()->addPrivateMember(memberName, def);
-    }
+  if (declaration.getIsPublic()) {
+    cb.val()->addMember(memberName, def);
+  } else {
+    cb.val()->addPrivateMember(memberName, def);
   }
 }
 

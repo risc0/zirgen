@@ -179,7 +179,4 @@ llvm::MapVector<Type, size_t> muxArgumentCounts(TypeRange in);
 // Extracts the maximum number of each 'argument' type used by any arm of the mux
 llvm::MapVector<Type, size_t> muxArgumentCounts(ZStruct::LayoutType in);
 
-// Return true if the given variable name is local
-bool isLocalVariable(llvm::StringRef name);
-
 } // namespace zirgen::Zhlt
