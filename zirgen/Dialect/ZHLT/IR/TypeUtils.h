@@ -43,6 +43,10 @@ public:
     addMember(builder.getStringAttr(memberName), value);
   }
 
+  void addPrivateMember(StringRef memberName, Value value) {
+    addPrivateMember(builder.getStringAttr(memberName), value);
+  }
+
   void addMember(StringAttr memberName, Value value) {
     assert(value);
     assert(value.getType());
@@ -55,6 +59,14 @@ public:
       members.push_back({memberName, value.getType()});
       memberValues.push_back(value);
     }
+  }
+
+  void addPrivateMember(StringAttr memberName, Value value) {
+    assert(value);
+    assert(value.getType());
+    assert(memberName != "@super");
+    members.push_back({memberName, value.getType(), .isPrivate = true});
+    memberValues.push_back(value);
   }
 
   bool empty() const { return members.empty(); }
