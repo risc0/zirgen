@@ -5,7 +5,7 @@ Creating a new accelerator using BigInt2 requires a series of related changes ac
 To keep the demo simple, let's imagine that we want to create a trivial accelerator which sums two 128-bit numbers, which we'll call "add128".
 
 
-First, create files under `zirgen/circuit/bigint/` which will hold the accelerator builder function. We might call them `add128.h` and `add128.cpp`, declaring and then defining a function like this:
+First, create files under [`zirgen/circuit/bigint/`] which will hold the accelerator builder function. We might call them `add128.h` and `add128.cpp`, declaring and then defining a function like this:
 
 ```
 void genAdd128(mlir::OpBuilder& builder, mlir::Location loc) {
