@@ -4,9 +4,9 @@ import inst;
 import consts;
 
 component DigestReg(values: Array<ValU32, 8>) {
-  values := for v : values { 
-    low := Reg(v.low); 
-    high := Reg(v.high); 
+  public values := for v : values {
+    public low := Reg(v.low);
+    public high := Reg(v.high);
   };
 }
 

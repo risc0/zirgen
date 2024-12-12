@@ -6,12 +6,12 @@
 // that the layouts fully resolve when generating the validity polynomial.
 
 component A(a: Val) {
-  a := Reg(a);
+  public a := Reg(a);
 }
 
 component B(a: A) {
-  aa := a;
-  extra := Reg(0);
+  public aa := a;
+  public extra := Reg(0);
   aa
 }
 

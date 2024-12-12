@@ -3,8 +3,8 @@
 // RUN: zirgen --test %s --input-data-hex 0001020304050607 2>&1 | FileCheck %s
 
 component TwoVals(a: Val, b: Val) {
-  a := a;
-  b := b;
+  public a := a;
+  public b := b;
 }
 
 component TwoValsAre(vals: TwoVals, a: Val, b: Val) {

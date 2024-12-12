@@ -3,12 +3,12 @@
 extern Output(x:Val);
 
 component TestBlocks() {
-  a := NondetReg(6);
-  block := {
-    b := NondetReg(7);
-    block := {
-      c := a;
-      d := b;
+  public a := NondetReg(6);
+  public block := {
+    public b := NondetReg(7);
+    public block := {
+      public c := a;
+      public d := b;
     };
   };
 }

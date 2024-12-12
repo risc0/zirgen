@@ -82,7 +82,7 @@ TEST(lower, Bit) {
     %1 = zhl.parameter "x"(0) : %0
     %2 = zhl.global "Reg"
     %3 = zhl.construct %2(%1)
-    %4 = zhl.declare "r"
+    %4 = zhl.declare "r" {isPublic = false}
     zhl.define %4 = %3
     %5 = zhl.global "IsBit"
     %6 = zhl.construct %5(%3)
@@ -124,7 +124,7 @@ TEST(lower, Function) {
     %1 = zhl.parameter "x"(0) : %0
     %2 = zhl.global "Reg"
     %3 = zhl.construct %2(%1)
-    %4 = zhl.declare "r"
+    %4 = zhl.declare "r" {isPublic = false}
     zhl.define %4 = %3
     %5 = zhl.global "IsBit"
     %6 = zhl.construct %5(%3)
@@ -251,7 +251,7 @@ component Foo() {
     %0 = zhl.global "Reg"
     %1 = zhl.literal 1
     %2 = zhl.construct %0(%1)
-    %3 = zhl.declare "a"
+    %3 = zhl.declare "a" {isPublic = false}
     zhl.define %3 = %2
     %4 = zhl.literal 1
     %5 = zhl.back %4, %2

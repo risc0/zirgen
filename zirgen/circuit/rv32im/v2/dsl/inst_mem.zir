@@ -6,23 +6,23 @@ import po2;
 
 component MemLoadInput(cycle: Reg, inst_input: InstInput) {
   inst_input.state = StateDecode();
-  ii := inst_input;
-  decoded := DecodeInst(cycle, ii);
-  rs1 := ReadReg(cycle, ii, decoded.rs1);
+  public ii := inst_input;
+  public decoded := DecodeInst(cycle, ii);
+  public rs1 := ReadReg(cycle, ii, decoded.rs1);
   addr_u32 := NormalizeU32(AddU32(rs1, decoded.immI));
-  addr := AddrDecomposeBits(addr_u32, ii.mode);
-  data := MemoryRead(cycle, addr.addr);
+  public addr := AddrDecomposeBits(addr_u32, ii.mode);
+  public data := MemoryRead(cycle, addr.addr);
 }
 
 component MemStoreInput(cycle: Reg, inst_input: InstInput) {
   inst_input.state = StateDecode();
-  ii := inst_input;
-  decoded := DecodeInst(cycle, ii);
-  rs1 := ReadReg(cycle, ii, decoded.rs1);
-  rs2 := ReadReg(cycle, ii, decoded.rs2);
+  public ii := inst_input;
+  public decoded := DecodeInst(cycle, ii);
+  public rs1 := ReadReg(cycle, ii, decoded.rs1);
+  public rs2 := ReadReg(cycle, ii, decoded.rs2);
   addr_u32 := NormalizeU32(AddU32(rs1, decoded.immS));
-  addr := AddrDecomposeBits(addr_u32, ii.mode);
-  data := MemoryRead(cycle, addr.addr);
+  public addr := AddrDecomposeBits(addr_u32, ii.mode);
+  public data := MemoryRead(cycle, addr.addr);
 }
 
 component MemStoreFinalize(cycle: Reg, input: MemStoreInput, new_val: ValU32) {
@@ -30,8 +30,8 @@ component MemStoreFinalize(cycle: Reg, input: MemStoreInput, new_val: ValU32) {
 }
 
 component SplitWord(word: Val) {
-  byte0 := NondetU8Reg(word & 0xff);
-  byte1 := NondetU8Reg((word & 0xff00) / 0x100);
+  public byte0 := NondetU8Reg(word & 0xff);
+  public byte1 := NondetU8Reg((word & 0xff00) / 0x100);
   word = byte1 * 0x100 + byte0;
 }
 

@@ -472,18 +472,27 @@ bool operator==(const ArrayLiteral& left, const ArrayLiteral& right) {
   return vec_compare(left.getElements(), right.getElements());
 }
 
-Definition::Definition(SMLoc loc, StringRef name, Expression::Ptr value, bool isGlobal)
+Definition::Definition(SMLoc loc, StringRef name, Expression::Ptr value, Access access)
     : Statement(Kind::Definition, std::move(loc))
     , name(std::move(name))
     , value(std::move(value))
-    , isGlobal(isGlobal) {}
+    , access(access) {}
 
 void Definition::print(ostream& os) const {
   JSON::Dict dict(os);
   dict.attr_string("class", "Definition");
   dict.attr_string("name", name);
   dict.attr_dict("value", value);
-  dict.attr_bool("isGlobal", isGlobal);
+  switch (access) {
+  case Access::Global:
+    dict.attr_string("access", "global");
+    break;
+  case Access::Public:
+    dict.attr_string("access", "public");
+    break;
+  default:
+    break;
+  }
 }
 
 bool Definition::classof(const Statement* s) {
@@ -492,21 +501,30 @@ bool Definition::classof(const Statement* s) {
 
 bool operator==(const Definition& left, const Definition& right) {
   return left.getName() == right.getName() && *left.getValue() == *right.getValue() &&
-         left.getIsGlobal() == right.getIsGlobal();
+         left.getAccess() == right.getAccess();
 }
 
-Declaration::Declaration(SMLoc loc, StringRef name, Expression::Ptr type, bool isGlobal)
+Declaration::Declaration(SMLoc loc, StringRef name, Expression::Ptr type, Access access)
     : Statement(Kind::Declaration, std::move(loc))
     , name(std::move(name))
     , type(std::move(type))
-    , isGlobal(isGlobal) {}
+    , access(access) {}
 
 void Declaration::print(ostream& os) const {
   JSON::Dict dict(os);
   dict.attr_string("class", "Declaration");
   dict.attr_string("name", name);
   dict.attr_dict("type", type);
-  dict.attr_bool("isGlobal", isGlobal);
+  switch (access) {
+  case Access::Global:
+    dict.attr_string("access", "global");
+    break;
+  case Access::Public:
+    dict.attr_string("access", "public");
+    break;
+  default:
+    break;
+  }
 }
 
 bool Declaration::classof(const Statement* s) {
@@ -515,7 +533,7 @@ bool Declaration::classof(const Statement* s) {
 
 bool operator==(const Declaration& left, const Declaration& right) {
   return left.getName() == right.getName() && *left.getType() == *right.getType() &&
-         left.getIsGlobal() == right.getIsGlobal();
+         left.getAccess() == right.getAccess();
 }
 
 Constraint::Constraint(SMLoc loc, Expression::Ptr left, Expression::Ptr right)
