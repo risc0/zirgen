@@ -73,7 +73,7 @@ We can now `bazelisk build //zirgen/circuit/bigint/...` to produce our new blob 
         self.copy_file(&src_path, &add128_path, "add128.blob");
 ```
 
-We may now bootstrap the risc0 repository, including the new blob file, like this:
+We may now bootstrap the risc0 repository, including the new blob file, like this (you may need to adjust the path):
 
 
 ```
