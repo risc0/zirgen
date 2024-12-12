@@ -5,8 +5,8 @@ extern LookupDelta(table: Val, index: Val, count: Val);
 extern LookupCurrent(table: Val, index: Val): Val;
 
 argument ArgU8(count: Val, val: Val) {
-  count := NondetReg(count);
-  val := NondetReg(val);
+  public count := NondetReg(count);
+  public val := NondetReg(val);
   LookupDelta(8, val, count);
 }
 
@@ -25,8 +25,8 @@ component U8Reg(val: Val) {
 }
 
 argument ArgU16(count: Val, val: Val) {
-  count := NondetReg(count);
-  val := NondetReg(val);
+  public count := NondetReg(count);
+  public val := NondetReg(val);
   LookupDelta(16, val, count);
 }
 
