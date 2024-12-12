@@ -1,10 +1,10 @@
 // RUN: zirgen-opt --canonicalize %s | FileCheck %s
 
 //CHECK-DAG: !zstruct$A = !zstruct.struct<A, <foo: !zstruct.ref>>
-//CHECK-DAG: !zstruct$Q = !zstruct.struct<Q, <foo: f32, bar: reserve f32>>
+//CHECK-DAG: !zstruct$Q = !zstruct.struct<Q, <foo: f32, bar: f32>>
 //CHECK-DAG: !zstruct$X = !zstruct.struct<X, <a: f32>>
 //CHECK-DAG: !zstruct$Y = !zstruct.struct<Y, <foo: f32, bar: f32>>
-//CHECK-DAG: !zstruct$Z = !zstruct.struct<Z, <foo: use f32, bar: f32>>
+//CHECK-DAG: !zstruct$Z = !zstruct.struct<Z, <foo: f32, bar: f32>>
 //CHECK-DAG: !zstruct$B = !zstruct.struct<B, <bar: !zstruct$A, baz: !zunion$A>>
 //CHECK-DAG: !zunion$A = !zstruct.union<A, <foo: !zstruct.ref>>
 
@@ -20,16 +20,16 @@ func.func @struct_syntax_2(%arg : !zstruct.struct<Y, <foo:f32, bar:f32>>) -> !zs
   return %arg: !zstruct.struct<Y, <foo:f32, bar: f32>>
 }
 
-func.func @struct_syntax_3(%arg : !zstruct.struct<Z, <foo: use f32, bar:f32>>) -> !zstruct.struct<Z, <foo: use f32, bar:f32>> {
+func.func @struct_syntax_3(%arg : !zstruct.struct<Z, <foo: f32, bar:f32>>) -> !zstruct.struct<Z, <foo: f32, bar:f32>> {
   // CHECK-LABEL: @struct_syntax_3
   // CHECK-NEXT: return %arg0 : !zstruct$Z
-  return %arg: !zstruct.struct<Z, <foo: use f32, bar: f32>>
+  return %arg: !zstruct.struct<Z, <foo: f32, bar: f32>>
 }
 
-func.func @struct_syntax_4(%arg: !zstruct.struct<Q, <foo:f32, bar:reserve f32>>) -> !zstruct.struct<Q, <foo: use f32, bar:reserve f32>> {
+func.func @struct_syntax_4(%arg: !zstruct.struct<Q, <foo:f32, bar: f32>>) -> !zstruct.struct<Q, <foo: f32, bar: f32>> {
   // CHECK-LABEL: @struct_syntax_4
   // CHECK-NEXT: return %arg0 : !zstruct$Q
-  return %arg: !zstruct.struct<Q, <foo:f32, bar:reserve f32>>
+  return %arg: !zstruct.struct<Q, <foo:f32, bar: f32>>
 }
 
 func.func @union_syntax_1(%arg : !zstruct.union<"A0A", <foo:f32>>) -> !zstruct.union<"A0A", <foo:f32>> {
