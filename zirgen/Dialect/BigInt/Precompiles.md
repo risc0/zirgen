@@ -102,3 +102,5 @@ pub fn add128(lhs: &[u32; 4], rhs: &[u32; 4], result: &mut [u32; 8]) {
 ```
 
 One can now import the `add128` function to perform simple addition through the bigint2 accelerator.
+
+[`zirgen/circuit/bigint/`]: https://github.com/risc0/zirgen/tree/main/zirgen/circuit/bigint
