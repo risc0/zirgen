@@ -23,6 +23,7 @@ namespace utils {
 // Helper functions for more concise test-case implementations
 
 // using namespace zirgen::dsl;
+using AttrVec = ast::Attribute::Vec;
 using Expr = ast::Expression::Ptr;
 using ExprVec = ast::Expression::Vec;
 using Stmt = ast::Statement::Ptr;

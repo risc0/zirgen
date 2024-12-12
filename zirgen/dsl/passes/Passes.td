@@ -147,6 +147,11 @@ def ElideTrivialStructs : Pass<"elide-trivial-structs", "mlir::ModuleOp"> {
   let dependentDialects = ["zirgen::ZStruct::ZStructDialect"];
 }
 
+def InlineForPicus : Pass<"picus-inline", "mlir::ModuleOp"> {
+  let summary = "Inlines common components for Picus";
+  let constructor = "zirgen::dsl::createInlineForPicusPass()";
+}
+
 def InlinePure : Pass<"inline-pure", "mlir::ModuleOp"> {
   let summary = "Inline pure functions and operations without layouts";
   let constructor = "zirgen::dsl::createInlinePurePass()";
