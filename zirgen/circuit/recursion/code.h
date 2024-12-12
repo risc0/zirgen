@@ -148,7 +148,7 @@ constexpr size_t kCodeSize = 23;
 constexpr size_t kDataSize = 128;
 constexpr size_t kMixSize = 20;
 constexpr size_t kAccumSize = 12;
-constexpr size_t kRecursionPo2 = 18;
+constexpr size_t kRecursionPo2 = 18;          // DO NOT MERGE: This is no longer global
 constexpr size_t kAllowedCodeMerkleDepth = 8; // allows for 2^8 allowed code roots.
 constexpr size_t kNumRollup = 2;
 
