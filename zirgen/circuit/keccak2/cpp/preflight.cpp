@@ -15,6 +15,7 @@
 #include "zirgen/circuit/keccak2/cpp/preflight.h"
 #include "zirgen/circuit/keccak2/cpp/wrap_dsl.h"
 
+#include <arpa/inet.h>
 #include <array>
 #include <cassert>
 #include <iostream>
