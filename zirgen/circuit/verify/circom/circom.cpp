@@ -38,7 +38,7 @@ void CircomGenerator::emit(mlir::func::FuncOp func, bool encodeOutput) {
   outs << "  signal input iop[" << iopSize << "];\n";
   // Check if the function has an output buffer, and if so add it
   size_t outSize = 0;
-  if (auto btype = block.getArgument(0).getType().dyn_cast<BufferType>()) {
+  if (auto btype = dyn_cast<BufferType>(block.getArgument(0).getType())) {
     if (btype.getKind() == BufferKind::Global) {
       outSize = btype.getSize();
       if (encodeOutput) {

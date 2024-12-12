@@ -74,7 +74,8 @@ struct StatsPrinter {
       llvm::SmallVector<size_t, 6> constraintsPerDegree(6, 0);
 
       check.walk([&](Zll::EqualZeroOp constraint) {
-        size_t degree = solver.lookupState<Zll::DegreeLattice>(constraint)->getValue().get();
+        auto point = solver.getProgramPointAfter(constraint);
+        size_t degree = solver.lookupState<Zll::DegreeLattice>(point)->getValue().get();
         if (degree >= constraintsPerDegree.size())
           constraintsPerDegree.append(degree - constraintsPerDegree.size() + 1, 0);
         constraintsPerDegree[degree]++;

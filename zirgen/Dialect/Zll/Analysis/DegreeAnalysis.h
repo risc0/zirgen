@@ -46,7 +46,7 @@ public:
 
   using OperationDataflowAnalysis::OperationDataflowAnalysis;
 
-  void visitOperation(Operation* op) override {
+  LogicalResult visitOperation(Operation* op) override {
     TypeSwitch<Operation*>(op)
         .Case<ConstOp,
               GetOp,
@@ -66,6 +66,7 @@ public:
           if (op->hasTrait<OpTrait::ReturnLike>())
             return visitReturnLikeOp(op);
         });
+    return success();
   }
 
 private:

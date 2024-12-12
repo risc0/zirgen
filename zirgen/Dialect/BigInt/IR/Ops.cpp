@@ -79,8 +79,8 @@ LogicalResult AddOp::inferReturnTypes(MLIRContext* ctx,
                                       std::optional<Location> loc,
                                       Adaptor adaptor,
                                       SmallVectorImpl<Type>& out) {
-  auto lhsType = adaptor.getLhs().getType().cast<BigIntType>();
-  auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
+  auto lhsType = cast<BigIntType>(adaptor.getLhs().getType());
+  auto rhsType = cast<BigIntType>(adaptor.getRhs().getType());
   size_t maxCoeffs = std::max(lhsType.getCoeffs(), rhsType.getCoeffs());
   size_t maxPos = lhsType.getMaxPos() + rhsType.getMaxPos();
   size_t maxNeg = lhsType.getMaxNeg() + rhsType.getMaxNeg();
@@ -94,8 +94,8 @@ LogicalResult SubOp::inferReturnTypes(MLIRContext* ctx,
                                       std::optional<Location> loc,
                                       Adaptor adaptor,
                                       SmallVectorImpl<Type>& out) {
-  auto lhsType = adaptor.getLhs().getType().cast<BigIntType>();
-  auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
+  auto lhsType = cast<BigIntType>(adaptor.getLhs().getType());
+  auto rhsType = cast<BigIntType>(adaptor.getRhs().getType());
   size_t maxCoeffs = std::max(lhsType.getCoeffs(), rhsType.getCoeffs());
   size_t maxPos = lhsType.getMaxPos() + rhsType.getMaxNeg();
   size_t maxNeg = lhsType.getMaxNeg() + rhsType.getMaxPos();
@@ -108,8 +108,8 @@ LogicalResult MulOp::inferReturnTypes(MLIRContext* ctx,
                                       std::optional<Location> loc,
                                       Adaptor adaptor,
                                       SmallVectorImpl<Type>& out) {
-  auto lhsType = adaptor.getLhs().getType().cast<BigIntType>();
-  auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
+  auto lhsType = cast<BigIntType>(adaptor.getLhs().getType());
+  auto rhsType = cast<BigIntType>(adaptor.getRhs().getType());
   size_t coeffs = lhsType.getCoeffs() + rhsType.getCoeffs() - 1;
   // The maximum number of coefficient pairs from the inputs used to calculate an output coefficient
   size_t maxCoeffs = std::min(lhsType.getCoeffs(), rhsType.getCoeffs());
@@ -153,8 +153,8 @@ LogicalResult NondetRemOp::inferReturnTypes(MLIRContext* ctx,
                                             std::optional<Location> loc,
                                             Adaptor adaptor,
                                             SmallVectorImpl<Type>& out) {
-  auto lhsType = adaptor.getLhs().getType().cast<BigIntType>();
-  auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
+  auto lhsType = cast<BigIntType>(adaptor.getLhs().getType());
+  auto rhsType = cast<BigIntType>(adaptor.getRhs().getType());
   auto outBits = lhsType.getMaxPosBits();
   if (rhsType.getMaxPosBits() < outBits) {
     outBits = rhsType.getMaxPosBits();
@@ -172,8 +172,8 @@ LogicalResult NondetQuotOp::inferReturnTypes(MLIRContext* ctx,
                                              std::optional<Location> loc,
                                              Adaptor adaptor,
                                              SmallVectorImpl<Type>& out) {
-  auto lhsType = adaptor.getLhs().getType().cast<BigIntType>();
-  auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
+  auto lhsType = cast<BigIntType>(adaptor.getLhs().getType());
+  auto rhsType = cast<BigIntType>(adaptor.getRhs().getType());
   size_t outBits = lhsType.getMaxPosBits();
   if (rhsType.getMinBits() > 0) {
     outBits -= rhsType.getMinBits() - 1;
@@ -192,7 +192,7 @@ LogicalResult NondetInvOp::inferReturnTypes(MLIRContext* ctx,
                                             std::optional<Location> loc,
                                             Adaptor adaptor,
                                             SmallVectorImpl<Type>& out) {
-  auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
+  auto rhsType = cast<BigIntType>(adaptor.getRhs().getType());
   size_t coeffsWidth = ceilDiv(rhsType.getMaxPosBits(), kBitsPerCoeff);
   out.push_back(BigIntType::get(ctx,
                                 /*coeffs=*/coeffsWidth,
@@ -206,7 +206,7 @@ LogicalResult InvOp::inferReturnTypes(MLIRContext* ctx,
                                       std::optional<Location> loc,
                                       Adaptor adaptor,
                                       SmallVectorImpl<Type>& out) {
-  auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
+  auto rhsType = cast<BigIntType>(adaptor.getRhs().getType());
   size_t coeffsWidth = ceilDiv(rhsType.getMaxPosBits(), kBitsPerCoeff);
   out.push_back(BigIntType::get(ctx,
                                 /*coeffs=*/coeffsWidth,
@@ -220,8 +220,8 @@ LogicalResult ReduceOp::inferReturnTypes(MLIRContext* ctx,
                                          std::optional<Location> loc,
                                          Adaptor adaptor,
                                          SmallVectorImpl<Type>& out) {
-  auto lhsType = adaptor.getLhs().getType().cast<BigIntType>();
-  auto rhsType = adaptor.getRhs().getType().cast<BigIntType>();
+  auto lhsType = cast<BigIntType>(adaptor.getLhs().getType());
+  auto rhsType = cast<BigIntType>(adaptor.getRhs().getType());
   auto outBits = lhsType.getMaxPosBits();
   if (rhsType.getMaxPosBits() < outBits) {
     outBits = rhsType.getMaxPosBits();

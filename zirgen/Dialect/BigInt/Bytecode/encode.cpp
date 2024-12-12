@@ -54,7 +54,7 @@ size_t Builder::lookup(mlir::Operation& op) {
 }
 
 size_t Builder::lookup(mlir::Type opType) {
-  BigIntType bit = opType.cast<BigIntType>();
+  BigIntType bit = mlir::cast<BigIntType>(opType);
   Type t;
   t.coeffs = bit.getCoeffs();
   t.maxPos = bit.getMaxPos();

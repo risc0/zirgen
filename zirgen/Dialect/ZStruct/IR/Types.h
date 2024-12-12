@@ -22,17 +22,10 @@
 
 namespace zirgen::ZStruct {
 
-enum class StorageKind : uint32_t {
-  Normal = 0,
-  Reserve = 1,
-  Use = 2,
-};
-
 // member of struct or union
 struct FieldInfo {
   mlir::StringAttr name;
   mlir::Type type;
-  StorageKind storage = StorageKind::Normal;
 };
 
 } // namespace zirgen::ZStruct
@@ -51,8 +44,7 @@ template <> struct AttrTypeSubElementHandler<FieldInfo> {
                            AttrSubElementReplacements& attrRepls,
                            TypeSubElementReplacements& typeRepls) {
     return FieldInfo{.name = cast<StringAttr>(attrRepls.take_front(1)[0]),
-                     .type = typeRepls.take_front(1)[0],
-                     .storage = param.storage};
+                     .type = typeRepls.take_front(1)[0]};
   }
 };
 
