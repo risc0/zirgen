@@ -305,7 +305,7 @@ void Process::mergeArrays(ColumnTable& columns) {
     auto& lCol = columns[i];
     for (size_t j = 0; j < lCol.instances.size(); ++j) {
       auto& lInst = lCol.instances[j];
-      if (LayoutArrayType lAT = lInst.type.dyn_cast<LayoutArrayType>()) {
+      if (LayoutArrayType lAT = mlir::dyn_cast<LayoutArrayType>(lInst.type)) {
         // Look for later columns which contain arrays having the same
         // element type.
         mlir::Type eltype = lAT.getElement();
@@ -315,7 +315,7 @@ void Process::mergeArrays(ColumnTable& columns) {
           bool match = false;
           for (size_t l = 0; l < rCol.instances.size(); ++l) {
             auto& rInst = rCol.instances[l];
-            if (LayoutArrayType rAT = rInst.type.dyn_cast<LayoutArrayType>()) {
+            if (LayoutArrayType rAT = mlir::dyn_cast<LayoutArrayType>(rInst.type)) {
               match |= rAT.getElement() == eltype;
             }
           }
@@ -360,10 +360,10 @@ JobList Process::subalignments(BranchList& branches) {
     unsigned offset = 0;
     for (auto& fi : branches[row].fields) {
       mlir::Type t = fi.type;
-      if (auto at = t.dyn_cast<LayoutArrayType>()) {
+      if (auto at = mlir::dyn_cast<LayoutArrayType>(t)) {
         t = at.getElement();
       }
-      if (auto st = t.dyn_cast<LayoutType>()) {
+      if (auto st = mlir::dyn_cast<LayoutType>(t)) {
         alignments[offset].insert(st);
         offsets[st].insert(offset);
         offset += sizes[st];
@@ -544,7 +544,7 @@ void improve(Circuit& circuit) {
     std::set<std::string> typeIDs;
     BranchList branches;
     for (auto& fi : ul.fields) {
-      if (auto st = fi.type.dyn_cast<LayoutType>()) {
+      if (auto st = mlir::dyn_cast<LayoutType>(fi.type)) {
         // Ignore non-struct members.
         if (st.getKind() == LayoutKind::Mux || st.getKind() == LayoutKind::MajorMux) {
           continue;

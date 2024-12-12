@@ -74,12 +74,12 @@ namespace zirgen::Zll {
 // Folding
 
 static bool matchVal(Attribute operand, uint64_t val) {
-  auto op = operand.dyn_cast_or_null<PolynomialAttr>();
+  auto op = dyn_cast_or_null<PolynomialAttr>(operand);
   return op && op.size() == 1 && op[0] == val;
 }
 
 static ExtensionField getExtensionField(Type ty) {
-  return ty.cast<ValType>().getExtensionField();
+  return cast<ValType>(ty).getExtensionField();
 }
 
 static uint64_t integerFromAttr(Attribute attr) {
@@ -248,7 +248,7 @@ LogicalResult GetOp::evaluate(Interpreter& interp,
     return success();
   }
   auto buf = adaptor.getBuf()->getBuf();
-  size_t size = getBuf().getType().cast<BufferType>().getSize();
+  size_t size = cast<BufferType>(getBuf().getType()).getSize();
   size_t totOffset = size * interp.getBackCycle(getBack()) + getOffset();
   if (totOffset >= buf.size()) {
     return emitError() << "Attempting to get out of bounds index " << totOffset
@@ -277,7 +277,7 @@ LogicalResult SetOp::evaluate(Interpreter& interp,
                               llvm::ArrayRef<zirgen::Zll::InterpVal*> outs,
                               EvalAdaptor& adaptor) {
   Interpreter::BufferRef vec = adaptor.getBuf()->getBuf();
-  size_t size = getBuf().getType().dyn_cast<BufferType>().getSize();
+  size_t size = dyn_cast<BufferType>(getBuf().getType()).getSize();
   size_t totOffset = size * interp.getCycle() + getOffset();
   if (totOffset >= vec.size()) {
     return emitError() << "Attempting to set out of bounds index " << totOffset
@@ -321,7 +321,7 @@ LogicalResult SetGlobalDigestOp::evaluate(Interpreter& interp,
   const Digest& digest = adaptor.getIn()->getDigest();
   auto buf = adaptor.getBuf()->getBuf();
   std::vector<uint32_t> encoded;
-  switch (getIn().getType().cast<DigestType>().getKind()) {
+  switch (cast<DigestType>(getIn().getType()).getKind()) {
   case DigestKind::Default:
     encoded = interp.getHashSuite().encode(digest);
     break;
@@ -503,7 +503,7 @@ LogicalResult IntoDigestOp::evaluate(Interpreter& interp,
     encoded.push_back(poly[0]);
   }
   Digest out;
-  switch (getOut().getType().cast<DigestType>().getKind()) {
+  switch (cast<DigestType>(getOut().getType()).getKind()) {
   case DigestKind::Default:
     out = interp.getHashSuite().decode(encoded);
     break;
@@ -523,7 +523,7 @@ LogicalResult FromDigestOp::evaluate(Interpreter& interp,
                                      EvalAdaptor& adaptor) {
   const Digest& digest = adaptor.getIn()->getDigest();
   std::vector<uint32_t> encoded;
-  switch (getIn().getType().cast<DigestType>().getKind()) {
+  switch (cast<DigestType>(getIn().getType()).getKind()) {
   case DigestKind::Default:
     encoded = interp.getHashSuite().encode(digest);
     break;
@@ -1001,7 +1001,7 @@ LogicalResult SliceOp::inferReturnTypes(MLIRContext* ctx,
                                         std::optional<Location> loc,
                                         Adaptor adaptor,
                                         SmallVectorImpl<Type>& out) {
-  auto inType = adaptor.getIn().getType().cast<BufferType>();
+  auto inType = cast<BufferType>(adaptor.getIn().getType());
   uint32_t offset = adaptor.getOffset();
   uint32_t size = adaptor.getSize();
   if (offset + size > inType.getSize()) {
@@ -1014,11 +1014,11 @@ LogicalResult SliceOp::inferReturnTypes(MLIRContext* ctx,
 
 static LogicalResult inferTypes(MLIRContext* ctx, ValueRange vals, SmallVectorImpl<Type>& out) {
   assert(1 <= vals.size());
-  auto vt = vals[0].getType().cast<ValType>();
+  auto vt = cast<ValType>(vals[0].getType());
   auto fieldP = vt.getFieldP();
   auto fieldK = vt.getFieldK();
   for (size_t i = 1; i < vals.size(); ++i) {
-    vt = vals[i].getType().cast<ValType>();
+    vt = cast<ValType>(vals[i].getType());
     if (vt.getFieldP() != fieldP) {
       return failure();
     }
@@ -1062,7 +1062,7 @@ LogicalResult GetGlobalOp::inferReturnTypes(MLIRContext* ctx,
                                             std::optional<Location> loc,
                                             Adaptor adaptor,
                                             SmallVectorImpl<Type>& out) {
-  auto bufType = adaptor.getBuf().getType().cast<BufferType>();
+  auto bufType = cast<BufferType>(adaptor.getBuf().getType());
   out.push_back(bufType.getElement());
   return success();
 }
@@ -1071,7 +1071,7 @@ LogicalResult GetOp::inferReturnTypes(MLIRContext* ctx,
                                       std::optional<Location> loc,
                                       Adaptor adaptor,
                                       SmallVectorImpl<Type>& out) {
-  auto bufType = adaptor.getBuf().getType().cast<BufferType>();
+  auto bufType = cast<BufferType>(adaptor.getBuf().getType());
   out.push_back(bufType.getElement());
   return success();
 }
@@ -1156,7 +1156,7 @@ LogicalResult NormalizeOp::inferReturnTypes(MLIRContext* ctx,
 
 LogicalResult GetOp::verify() {
   // Verify that buffer is not global
-  if (getBuf().getType().cast<BufferType>().getKind() == BufferKind::Global) {
+  if (cast<BufferType>(getBuf().getType()).getKind() == BufferKind::Global) {
     return failure();
   }
   return success();
@@ -1164,7 +1164,7 @@ LogicalResult GetOp::verify() {
 
 LogicalResult SetOp::verify() {
   // Verify that buffer is not global
-  if (getBuf().getType().cast<BufferType>().getKind() == BufferKind::Global) {
+  if (cast<BufferType>(getBuf().getType()).getKind() == BufferKind::Global) {
     return failure();
   }
   // Make sure the element we're storing is the same type
@@ -1177,8 +1177,8 @@ LogicalResult SetOp::verify() {
 
 LogicalResult GetGlobalOp::verify() {
   // Verify that buffer is not global
-  if (getBuf().getType().cast<BufferType>().getKind() != BufferKind::Global &&
-      getBuf().getType().cast<BufferType>().getKind() != BufferKind::Temporary) {
+  if (cast<BufferType>(getBuf().getType()).getKind() != BufferKind::Global &&
+      cast<BufferType>(getBuf().getType()).getKind() != BufferKind::Temporary) {
     return failure();
   }
   return success();
@@ -1186,8 +1186,8 @@ LogicalResult GetGlobalOp::verify() {
 
 LogicalResult SetGlobalOp::verify() {
   // Verify that buffer is not global
-  if (getBuf().getType().cast<BufferType>().getKind() != BufferKind::Global &&
-      getBuf().getType().cast<BufferType>().getKind() != BufferKind::Temporary) {
+  if (cast<BufferType>(getBuf().getType()).getKind() != BufferKind::Global &&
+      cast<BufferType>(getBuf().getType()).getKind() != BufferKind::Temporary) {
     return failure();
   }
   return success();
@@ -1195,7 +1195,7 @@ LogicalResult SetGlobalOp::verify() {
 
 LogicalResult SetGlobalDigestOp::verify() {
   // Verify that buffer is not global
-  if (getBuf().getType().cast<BufferType>().getKind() != BufferKind::Global) {
+  if (cast<BufferType>(getBuf().getType()).getKind() != BufferKind::Global) {
     return failure();
   }
   return success();
@@ -1203,7 +1203,7 @@ LogicalResult SetGlobalDigestOp::verify() {
 
 LogicalResult IntoDigestOp::verify() {
   // Verify inputs are Fp
-  if (getIn()[0].getType().cast<ValType>().getFieldK() != 1) {
+  if (cast<ValType>(getIn()[0].getType()).getFieldK() != 1) {
     return emitError() << "Values must be in base field";
   }
   // 16 elements is OK for either type of hash
@@ -1211,12 +1211,12 @@ LogicalResult IntoDigestOp::verify() {
     return success();
   }
   // 32 (bytes) is also OK for Sha256
-  if (getOut().getType().cast<DigestType>().getKind() == DigestKind::Sha256 &&
+  if (cast<DigestType>(getOut().getType()).getKind() == DigestKind::Sha256 &&
       getIn().size() == 32) {
     return success();
   }
   // 8 (field elements) is also OK for Poseidon2
-  if (getOut().getType().cast<DigestType>().getKind() == DigestKind::Poseidon2 &&
+  if (cast<DigestType>(getOut().getType()).getKind() == DigestKind::Poseidon2 &&
       getIn().size() == 8) {
     return success();
   }
@@ -1225,7 +1225,7 @@ LogicalResult IntoDigestOp::verify() {
 
 LogicalResult FromDigestOp::verify() {
   // Verify inputs are Fp
-  if (getOut()[0].getType().cast<ValType>().getFieldK() != 1) {
+  if (cast<ValType>(getOut()[0].getType()).getFieldK() != 1) {
     return failure();
   }
   // 16 elements is OK for either type of hash
@@ -1233,12 +1233,12 @@ LogicalResult FromDigestOp::verify() {
     return success();
   }
   // 32 (bytes) is also OK for Sha256
-  if (getIn().getType().cast<DigestType>().getKind() == DigestKind::Sha256 &&
+  if (cast<DigestType>(getIn().getType()).getKind() == DigestKind::Sha256 &&
       getOut().size() == 32) {
     return success();
   }
   // 8 (field elements) is also OK for Poseidon2
-  if (getIn().getType().cast<DigestType>().getKind() == DigestKind::Poseidon2 &&
+  if (cast<DigestType>(getIn().getType()).getKind() == DigestKind::Poseidon2 &&
       getOut().size() == 8) {
     return success();
   }
@@ -1248,13 +1248,13 @@ LogicalResult FromDigestOp::verify() {
 LogicalResult TaggedStructOp::verify() {
   // Verify digests are Sha256
   for (auto digest : getDigests()) {
-    if (!digest.getType().isa<DigestType>()) {
+    if (!isa<DigestType>(digest.getType())) {
       return emitOpError() << "Input type is not a digest";
     }
   }
   // Verify values are Fps
   for (auto val : getVals()) {
-    if (val.getType().cast<ValType>().getFieldK() != 1) {
+    if (cast<ValType>(val.getType()).getFieldK() != 1) {
       return emitOpError() << "Input vals must be in the base field";
     }
   }

@@ -14,9 +14,9 @@
 
 #include "zirgen/compiler/edsl/edsl.h"
 
+#include "mlir/Analysis/TopologicalSortUtils.h"
 #include "mlir/Pass/PassManager.h"
 #include "mlir/Transforms/Passes.h"
-#include "mlir/Transforms/TopologicalSortUtils.h"
 
 #include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
 #include "zirgen/Dialect/Zll/Analysis/DegreeAnalysis.h"
@@ -101,7 +101,7 @@ Val::Val(llvm::ArrayRef<uint64_t> val, SourceLoc loc) {
 }
 
 Val::Val(Register reg, SourceLoc loc) {
-  if (reg.buf.getType().cast<BufferType>().getKind() == BufferKind::Global) {
+  if (cast<BufferType>(reg.buf.getType()).getKind() == BufferKind::Global) {
     value = getBuilder().create<GetGlobalOp>(toLoc(loc, reg.ident), reg.buf, 0);
   } else {
     auto getOp =
@@ -115,7 +115,7 @@ Val::Val(Register reg, SourceLoc loc) {
 }
 
 void Register::operator=(CaptureVal x) {
-  if (buf.getType().cast<BufferType>().getKind() == BufferKind::Global) {
+  if (cast<BufferType>(buf.getType()).getKind() == BufferKind::Global) {
     getBuilder().create<SetGlobalOp>(toLoc(x.loc, x.ident), buf, 0, x.getValue());
   } else {
     getBuilder().create<SetOp>(toLoc(x.loc, x.ident), buf, 0, x.getValue());
@@ -127,7 +127,7 @@ mlir::Location CaptureIdx::getLoc() {
 }
 
 Val Buffer::get(size_t idx, StringRef ident, SourceLoc loc) {
-  if (buf.getType().cast<BufferType>().getKind() == BufferKind::Global) {
+  if (cast<BufferType>(buf.getType()).getKind() == BufferKind::Global) {
     return Val(getBuilder().create<GetGlobalOp>(toLoc(loc, ident), buf, 0));
   } else {
     return Val(getBuilder().create<GetOp>(toLoc(loc, ident), buf, idx, 0, IntegerAttr()));
@@ -135,7 +135,7 @@ Val Buffer::get(size_t idx, StringRef ident, SourceLoc loc) {
 }
 
 void Buffer::set(size_t idx, Val x, StringRef ident, SourceLoc loc) {
-  if (buf.getType().cast<BufferType>().getKind() == BufferKind::Global) {
+  if (cast<BufferType>(buf.getType()).getKind() == BufferKind::Global) {
     getBuilder().create<SetGlobalOp>(toLoc(loc, ident), buf, idx, x.getValue());
   } else {
     getBuilder().create<SetOp>(toLoc(loc, ident), buf, idx, x.getValue());
@@ -143,7 +143,7 @@ void Buffer::set(size_t idx, Val x, StringRef ident, SourceLoc loc) {
 }
 
 void Buffer::setDigest(size_t idx, DigestVal x, StringRef ident, SourceLoc loc) {
-  if (buf.getType().cast<BufferType>().getKind() != BufferKind::Global) {
+  if (cast<BufferType>(buf.getType()).getKind() != BufferKind::Global) {
     throw(std::runtime_error("Currently digests can only be stored in globals"));
   }
   getBuilder().create<SetGlobalDigestOp>(toLoc(loc, ident), buf, idx, x.getValue());
@@ -154,7 +154,7 @@ Buffer Buffer::slice(size_t offset, size_t size, SourceLoc loc) {
 }
 
 Register Buffer::getRegister(size_t idx, StringRef ident, SourceLoc loc) {
-  if (idx >= buf.getType().cast<BufferType>().getSize()) {
+  if (idx >= cast<BufferType>(buf.getType()).getSize()) {
     llvm::errs() << "Out of bounds index: " << loc.filename << ":" << loc.line << "\n";
     throw std::runtime_error("OOB Index");
   }
@@ -243,7 +243,8 @@ size_t Module::computeMaxDegree(StringRef name) {
 
   size_t max = 0;
   moduleCopy.walk([&](func::ReturnOp op) {
-    Zll::Degree degree = solver.lookupState<DegreeLattice>(op)->getValue();
+    auto point = solver.getProgramPointAfter(op);
+    Zll::Degree degree = solver.lookupState<DegreeLattice>(point)->getValue();
     max = std::max<size_t>(max, degree.get());
   });
   if (max == 0) {
@@ -274,11 +275,13 @@ void Module::dumpPoly(StringRef name) {
 
   Block* block = &func.front();
   Operation* cur = block->getTerminator();
-  size_t degree = solver.lookupState<DegreeLattice>(cur)->getValue().get();
+  auto point = solver.getProgramPointAfter(cur);
+  size_t degree = solver.lookupState<DegreeLattice>(point)->getValue().get();
   llvm::errs() << "Degree = " << degree << "\n";
   while (true) {
+    point = solver.getProgramPointAfter(cur);
     cur->print(llvm::errs(), OpPrintingFlags().enableDebugInfo(true));
-    size_t curDeg = solver.lookupState<DegreeLattice>(cur)->getValue().get();
+    size_t curDeg = solver.lookupState<DegreeLattice>(point)->getValue().get();
     llvm::errs() << "\n";
     if (auto retOp = mlir::dyn_cast<mlir::func::ReturnOp>(cur)) {
       cur = retOp.getOperands()[0].getDefiningOp();
@@ -567,7 +570,7 @@ void Module::runFunc(func::FuncOp func,
   interpreter.setExternHandler(handler);
   for (size_t i = 0; i < bufs.size(); i++) {
     Value arg = func.getArgument(i);
-    auto type = arg.getType().dyn_cast<BufferType>();
+    auto type = dyn_cast<BufferType>(arg.getType());
     if (!type) {
       throw std::runtime_error("Function has non-buffer types");
     }

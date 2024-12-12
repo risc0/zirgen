@@ -35,9 +35,9 @@ llvm::StringRef trimFilename(llvm::StringRef fn) {
 
 std::string getLocString(mlir::Location loc) {
   std::string out;
-  auto named = loc->dyn_cast<mlir::NameLoc>();
+  auto named = mlir::dyn_cast<mlir::NameLoc>(loc);
   if (named) {
-    auto innerLoc = named.getChildLoc()->dyn_cast<mlir::FileLineColLoc>();
+    auto innerLoc = mlir::dyn_cast<mlir::FileLineColLoc>(named.getChildLoc());
     if (innerLoc) {
       out = llvm::formatv("{0}({1}:{2})",
                           named.getName(),
@@ -47,7 +47,7 @@ std::string getLocString(mlir::Location loc) {
       out = llvm::formatv("{0}", named.getName());
     }
   } else {
-    auto fileLineCol = loc->dyn_cast<mlir::FileLineColLoc>();
+    auto fileLineCol = mlir::dyn_cast<mlir::FileLineColLoc>(loc);
     if (fileLineCol) {
       out =
           llvm::formatv("{0}:{1}", trimFilename(fileLineCol.getFilename()), fileLineCol.getLine());

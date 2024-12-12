@@ -360,7 +360,7 @@ void CodegenEmitter::emitValue(CodegenValue val) {
     // If this comes from a mlir::Value, either reference the
     // previously emitted operation or emit it inline.
     if (varNames.contains(val.value)) {
-      VarInfo& varInfo = varNames.getOrInsertDefault(val.value);
+      VarInfo& varInfo = varNames[val.value];
 
       if (varInfo.usesRemaining) {
         varInfo.usesRemaining--;

@@ -479,7 +479,7 @@ void LoweringImpl::gen(TypeParamOp typeParam, ArrayRef<Attribute> typeArgs) {
       throw MalformedIRException();
     }
   } else if (paramTypeName == "Val") {
-    if (!paramValue.isa<PolynomialAttr>()) {
+    if (!isa<PolynomialAttr>(paramValue)) {
       typeParam.emitError("expected a type parameter of type `Val`");
       paramValue = PolynomialAttr::get(ctx, {0});
     }
@@ -859,7 +859,7 @@ void LoweringImpl::gen(ConstructOp construct, ComponentBuilder& cb) {
     }
   }
   // If there is a variadic parameter, add its pack to the argument list
-  if (expectedArgType != argumentTypes.end() && expectedArgType->isa<VariadicType>()) {
+  if (expectedArgType != argumentTypes.end() && isa<VariadicType>(*expectedArgType)) {
     auto packed = builder.create<Zll::VariadicPackOp>(
         construct.getLoc(), *expectedArgType, variadicArguments);
     arguments.push_back(packed);
@@ -869,7 +869,7 @@ void LoweringImpl::gen(ConstructOp construct, ComponentBuilder& cb) {
   }
   // If we still haven't reached the end of the parameters, there aren't enough arguments
   if (expectedArgType != argumentTypes.end()) {
-    bool isVariadic = (!argumentTypes.empty() && argumentTypes.back().isa<VariadicType>());
+    bool isVariadic = (!argumentTypes.empty() && isa<VariadicType>(argumentTypes.back()));
     size_t minimumArgCount = isVariadic ? argumentTypes.size() - 1 : argumentTypes.size();
     size_t actualArgCount = construct.getArgs().size();
     auto diag = construct.emitError() << "expected ";
@@ -1053,7 +1053,7 @@ void LoweringImpl::gen(BlockOp block, ComponentBuilder& cb) {
 
 void LoweringImpl::gen(MapOp map, ComponentBuilder& cb) {
   Value array = coerceToArray(asValue(map.getArray()));
-  if (!array.getType().isa<ArrayType>()) {
+  if (!isa<ArrayType>(array.getType())) {
     map.emitError() << "this map expression's array value has non-array "
                        "type `"
                     << getTypeId(array.getType()) << "`";
@@ -1114,7 +1114,7 @@ void LoweringImpl::gen(ReduceOp reduce, ComponentBuilder& cb) {
   } else {
     init = coerceTo(init, lhsType);
   }
-  if (!array.getType().isa<ArrayType>()) {
+  if (!isa<ArrayType>(array.getType())) {
     reduce.emitError() << "this reduce expression's array value has non-array "
                           "type `"
                        << getTypeId(array.getType()) << "`";

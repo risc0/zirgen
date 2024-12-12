@@ -177,7 +177,7 @@ struct ConvertLoad : public ConversionPattern {
     // outs Val:$out
     // Load a value from a ref, which has been converted to a buffer slice.
     auto load = dyn_cast<LoadOp>(op);
-    assert(load.getResult().getType().isa<ValType>());
+    assert(isa<ValType>(load.getResult().getType()));
     auto loc = op->getLoc();
     auto buf = operands[0];
     size_t offset = 0;
@@ -223,8 +223,8 @@ struct ConvertLookup : public ConversionPattern {
     auto lookup = dyn_cast<LookupOp>(op);
     auto memberName = lookup.getMember();
     size_t index = 0;
-    if (lookup.getBase().getType().isa<StructType>()) {
-      StructType t = lookup.getBase().getType().cast<StructType>();
+    if (isa<StructType>(lookup.getBase().getType())) {
+      auto t = cast<StructType>(lookup.getBase().getType());
       for (auto& field : t.getFields()) {
         if (field.name == memberName) {
           break;
