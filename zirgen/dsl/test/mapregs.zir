@@ -16,8 +16,8 @@ component TriangleSum(x: Val, y: Val) {
 }
 
 component SumRegs<numRegs: Val>(vals: Array<Val, numRegs>) {
-  regs := for i : 0..numRegs { AddDoubler(vals[i]) };
-  sum := reduce regs init 0 with TriangleSum;
+  public regs := for i : 0..numRegs { AddDoubler(vals[i]) };
+  public sum := reduce regs init 0 with TriangleSum;
 }
 
 test {

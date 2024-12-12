@@ -4,7 +4,7 @@ import bits;
 
 component OneHot<N: Val>(v: Val) {
   // Make N bit registers, with bit v set and all others 0
-  bits := for i : 0..N { NondetBitReg(Isz(i - v)) };
+  public bits := for i : 0..N { NondetBitReg(Isz(i - v)) };
   // Verify exactly one bit is set
   reduce bits init 0 with Add = 1;
   // Verify the right bit is set

@@ -2,7 +2,10 @@
 
 extern Print(x: Val);
 
-component Foo(a: Val) { b := Reg(a); b }
+component Foo(a: Val) {
+  public b := Reg(a);
+  b
+}
 
 // CHECK-LABEL: zhlt.validity_taps_func @validity_taps
 component HeyMux(a: Val, b: Val, c: Val) {

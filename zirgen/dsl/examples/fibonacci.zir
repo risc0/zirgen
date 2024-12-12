@@ -29,7 +29,7 @@ component CycleCounter() {
   global total_cycles := NondetReg(6);
 
   cycle := NondetReg(GetCycle());
-  is_first_cycle := IsZero(cycle);
+  public is_first_cycle := IsZero(cycle);
 
   [is_first_cycle, 1-is_first_cycle] -> ({
     // First cycle; previous cycle should be the last cycle.
@@ -59,7 +59,7 @@ component Top() {
   d3 := Reg(d1 + d2);
 
   // If cycle = steps, write the next term to the output
-  terminate := IsZero(cycle - steps + 1);
+  public terminate := IsZero(cycle - steps + 1);
   [terminate, 1 - terminate] -> ({
     global f_last := Reg(d3);
     Log("f_last = %u", f_last);

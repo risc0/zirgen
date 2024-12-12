@@ -214,7 +214,7 @@ def DefinitionOp: ZhlOp<"define"> {
 
 def DeclarationOp: ZhlOp<"declare", [ReturnsExpr]> {
   let summary = "declare member";
-  let arguments = (ins StrAttr:$member, Optional<Expr>:$typeExp);
+  let arguments = (ins StrAttr:$member, BoolAttr:$isPublic, Optional<Expr>:$typeExp);
   let results = (outs Expr:$out);
   let assemblyFormat = [{
     $member (`:` $typeExp^)? attr-dict

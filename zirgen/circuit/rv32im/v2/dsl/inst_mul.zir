@@ -6,10 +6,10 @@ import po2;
 
 component MulInput(cycle: Reg, inst_input: InstInput) {
   inst_input.state = StateDecode();
-  ii := inst_input;
-  decoded := DecodeInst(cycle, ii);
-  rs1 := ReadReg(cycle, ii, decoded.rs1);
-  rs2 := ReadReg(cycle, ii, decoded.rs2);
+  public ii := inst_input;
+  public decoded := DecodeInst(cycle, ii);
+  public rs1 := ReadReg(cycle, ii, decoded.rs1);
+  public rs2 := ReadReg(cycle, ii, decoded.rs2);
   ii
 }
 
@@ -38,8 +38,8 @@ component Mul0(cycle: Reg, inst_input: InstInput) {
 component DoMul(in1: ValU32, in2: ValU32, sign1: Val, sign2: Val) {
   settings := MultiplySettings(sign1, sign2, 0);
   mul := MultiplyAccumulate(in1, in2, ConstU32<0>(), settings);
-  low := mul.outLow;
-  high := mul.outHigh;
+  public low := mul.outLow;
+  public high := mul.outHigh;
 }
 
 component OpSLL(input: MulInput) {

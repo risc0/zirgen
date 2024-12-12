@@ -11,8 +11,8 @@ extern LookupDelta(table: Val, idx: Val, amount: Val);
 extern LookupPeek(table: Val, idx: Val) : Val;
 
 argument ArgU8(c: Val, v: Val) {
-  c := NondetReg(c);
-  v := NondetReg(v);
+  public c := NondetReg(c);
+  public v := NondetReg(v);
   LookupDelta(0, v, c);
 }
 

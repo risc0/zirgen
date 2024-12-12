@@ -47,10 +47,10 @@ Whew, that the 'high level', good luck!
 // 'neg' bit based on the combination of the actual sign bit and if we are
 // interpreting the value as signed.
 component ExpandU32(x: ValU32, signed: Val) {
-  b0 := NondetU8Reg(x.low & 0xff);
-  b1 := NondetU8Reg((x.low & 0xff00) / 0x100);
-  b2 := NondetU8Reg(x.high & 0xff);
-  b3 := NondetU8Reg((x.high & 0xff00) / 0x100);
+  public b0 := NondetU8Reg(x.low & 0xff);
+  public b1 := NondetU8Reg((x.low & 0xff00) / 0x100);
+  public b2 := NondetU8Reg(x.high & 0xff);
+  public b3 := NondetU8Reg((x.high & 0xff00) / 0x100);
   // We decompose the top byte into sign bit and lower 7 bits
   // In so doing, we multiply the top 7 bits by 2 so the range check enforces
   // the fact that the value is only 7 bits
@@ -62,7 +62,7 @@ component ExpandU32(x: ValU32, signed: Val) {
   x.low = b0 + b1 * 0x100;
   x.high = b2 + b3Top7times2 * 0x80 + topBit * 0x8000;
   // Now compute neg
-  neg := topBit * signed;
+  public neg := topBit * signed;
   // Now we make b3, which should equal the orignal byte (and is linear).
   b3 = b3Top7times2 / 2 + 0x80 * topBit;
 }
@@ -94,17 +94,17 @@ test ExpandU32Test {
 // - carry byte: bits 16-23
 // - carry extra: bits 24-25
 component SplitTotal(a: Val) {
-  out := NondetU16Reg(a & 0xffff);
+  public out := NondetU16Reg(a & 0xffff);
   carryByte := NondetU8Reg((a & 0xff0000) / 0x10000);
   carryExtra := NondetFakeTwitReg((a & 0xf000000) / 0x1000000);
   a = carryExtra * 0x1000000 + carryByte * 0x10000 + out;
-  carry := carryExtra * 0x100 + carryByte;
+  public carry := carryExtra * 0x100 + carryByte;
 }
 
 component MultiplySettings(aSigned: Val, bSigned: Val, cSigned: Val) {
-  aSigned := aSigned;
-  bSigned := bSigned;
-  cSigned := cSigned;
+  public aSigned := aSigned;
+  public bSigned := bSigned;
+  public cSigned := cSigned;
 }
 
 // Compute a * b + c, where a, b, and c are 32 bit numbers, and the output is
@@ -149,8 +149,8 @@ component MultiplyAccumulate(a: ValU32, b: ValU32, c: ValU32, settings: Multiply
       ax.b3 * bx.b3;
   s3Out := NondetU16Reg(s3Tot & 0xffff);
   s3Carry := FakeTwitReg((s3Tot - s3Out) / 0x10000);
-  outLow := ValU32(s0.out, s1.out);
-  outHigh := ValU32(s2.out, s3Out);
+  public outLow := ValU32(s0.out, s1.out);
+  public outHigh := ValU32(s2.out, s3Out);
 }
 
 component MultiplyTestCase(a: ValU32, b: ValU32, c: ValU32, settings: MultiplySettings, ol: ValU32, oh: ValU32) {

@@ -17,24 +17,24 @@ component s2w(rtuple: RetTuple) {
 }
 
 component w2s(w_: Array<NondetReg, 32>) {
-  a := for i : 0..22 { NondetReg(w_[i]) };
+  public a := for i : 0..22 { NondetReg(w_[i]) };
   for i : 0..22 { AliasLayout!(a[i], w_[i]); };
 
-  b := for i : 22..32 { NondetReg(w_[i]) };
+  public b := for i : 22..32 { NondetReg(w_[i]) };
   for i : 22..32 { AliasLayout!(b[i-22], w_[i]); };
 }
 
 component ae2s(a_: Array<NondetReg, 32>, e_: Array<NondetReg, 32>) {
-  e := for i : 0..22 { NondetReg(a_[i]) };
+  public e := for i : 0..22 { NondetReg(a_[i]) };
   for i : 0..22 { AliasLayout!(e[i], a_[i]); };
 
   f1 := for i : 22..32 { NondetReg(a_[i]) };
   for i : 22..32 { AliasLayout!(f1[i-22], a_[i]); };
   f2 := for i : 0..12 { NondetReg(e_[i]) };
   for i : 0..12 { AliasLayout!(f2[i], e_[i]); };
-  f := Concatenate<10,12>(f1, f2);
+  public f := Concatenate<10,12>(f1, f2);
 
-  c := for i : 12..32 { NondetReg(e_[i]) };
+  public c := for i : 12..32 { NondetReg(e_[i]) };
   for i : 12..32 { AliasLayout!(c[i-12], e_[i]); };
 }
 
@@ -71,8 +71,8 @@ component sha256rc_table<i: Val>() {
 }
 
 component TwoShorts(lsbs: Val, msbs: Val) {
-  low := lsbs;
-  high := msbs;
+  public low := lsbs;
+  public high := msbs;
 }
 
 component rightRotate<A: Val, N: Val>(a: Array<Val, A>) {
@@ -154,8 +154,8 @@ component computeAE(a_: Array<Val, 32>, b_: Array<Val, 32>,
   stage1 :=
     add(pack2(w_), add(k_rc, add(pack2(h_), add(pack_ch, pack2(s1)))));
   pack_maj := pack2(maj3<32>(a_, b_, c_));
-  aOut := add(stage1, add(pack_maj, pack2(s0)));
-  eOut := add(stage1, pack2(d_));
+  public aOut := add(stage1, add(pack_maj, pack2(s0)));
+  public eOut := add(stage1, pack2(d_));
 }
 
 component unpack_with_carry(low: Val, high: Val) {
@@ -167,7 +167,7 @@ component unpack_with_carry(low: Val, high: Val) {
   FromBits<20>(high_bits) = high_plus_carry;
   low16 := for i : 0..16 { low_bits[i] };
   high16 := for i : 0..16 { high_bits[i] };
-  carrybits := Concatenate<3,4>(
+  public carrybits := Concatenate<3,4>(
     for i : 16..19 { low_bits[i] },
     for i : 16..20 { high_bits[i] });
   Concatenate<16,16>(low16, high16)

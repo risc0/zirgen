@@ -2,8 +2,8 @@
 
 
 function InstInfo(a: Val, b: Val) {
-  a := a;
-  b := b;
+  public a := a;
+  public b := b;
 }
 
 function Table() {[
@@ -16,7 +16,7 @@ function GetTableEntry(x: Val) {
 }
 
 function ParameterizedType<x : Val>() {
-  a := x;
+  public a := x;
 }
 
 function ComplextTypeDependence<x :Val>() {

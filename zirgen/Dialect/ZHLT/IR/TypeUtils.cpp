@@ -468,8 +468,4 @@ llvm::MapVector<Type, size_t> muxArgumentCounts(LayoutType in) {
   return Zhlt::muxArgumentCounts(layoutFields);
 }
 
-bool isLocalVariable(llvm::StringRef name) {
-  return name.starts_with("_");
-}
-
 } // namespace zirgen::Zhlt

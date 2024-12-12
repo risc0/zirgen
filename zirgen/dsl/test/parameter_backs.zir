@@ -13,7 +13,7 @@ component DoubleBackOne(x: NondetReg) {
 
 component Top() {
     first := NondetReg(IsFirstCycle());
-    result : NondetReg;
+    public result : NondetReg;
     result := [first, 1 - first] -> (
         NondetReg(1),
         DoubleBackOne(result@0)

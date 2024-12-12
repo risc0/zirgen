@@ -18,9 +18,9 @@ component NondetDigestReg(elems: Digest) {
 // Argument for memory element where each (index, digest) is written
 // exactly once then is read exactly once.
 argument UseOnceMemoryElement(c: Val, i: Val, d: Digest) {
-  count := Reg(c);
-  index := Reg(i);
-  digest := NondetDigestReg(d);
+  public count := Reg(c);
+  public index := Reg(i);
+  public digest := NondetDigestReg(d);
 }
 
 component ReadMemory(i: Val) {

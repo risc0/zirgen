@@ -12,12 +12,12 @@ extern SimpleMemoryPeek(index: Val) : Val;
 component MEM_DIGEST_LEN() { 4 }
 argument UseOnceMemoryElement(_count: Val, _index: Val,
                               arw: Array<Val, MEM_DIGEST_LEN()>) {
-  count := NondetReg(_count);
-  index := NondetReg(_index);
-  digest0 := NondetReg(arw[0]);
-  digest1 := NondetReg(arw[1]);
-  digest2 := NondetReg(arw[2]);
-  digest3 := NondetReg(arw[3]);
+  public count := NondetReg(_count);
+  public index := NondetReg(_index);
+  public digest0 := NondetReg(arw[0]);
+  public digest1 := NondetReg(arw[1]);
+  public digest2 := NondetReg(arw[2]);
+  public digest3 := NondetReg(arw[3]);
   //digest := [d1,d2,d3,d4]; // error: does not own the layout of member
 }
 component ReadMemory(i: Val, ar: Array<NondetReg, MEM_DIGEST_LEN()+1>) {
@@ -93,7 +93,7 @@ component FromBits<n: Val>(bits: Array<Val, n>) {
 }
 component OneHotU<N: Val>(v: Val) {
   // Make N bit registers, with bit v set and all others 0
-  bits := for i : 0..N { NondetReg(Isz(i - v)) };
+  public bits := for i : 0..N { NondetReg(Isz(i - v)) };
   // Verify exactly one bit is set
   reduce bits init 0 with Add = 1;
   // Verify the right bit is set
@@ -172,18 +172,18 @@ component RetTuple(a: Array<NondetReg, BLEN()>,
                    block: Val,
                    memIdx: Val,
                    auxregs: Array<NondetReg, AUXLEN()>) {
-  arr_a := for elem : a { NondetReg(elem) }; AliasLayout!(a, arr_a);
-  arr_b := for elem : b { NondetReg(elem) }; AliasLayout!(b, arr_b);
-  arr_c := for elem : c { NondetReg(elem) }; AliasLayout!(c, arr_c);
-  arr_d := for elem : d { NondetReg(elem) }; AliasLayout!(d, arr_d);
-  arr_e := for elem : e { NondetReg(elem) }; AliasLayout!(e, arr_e);
-  arr_f := for elem : f { NondetReg(elem) }; AliasLayout!(f, arr_f);
-  minor := Reg(minor_count);
-  major := Reg(major_count);
-  rnd := Reg(round);
-  blk := Reg(block);
-  midx := Reg(memIdx);
-  auxr := for elem : auxregs { NondetReg(elem) }; AliasLayout!(auxregs, auxr);
+  public arr_a := for elem : a { NondetReg(elem) }; AliasLayout!(a, arr_a);
+  public arr_b := for elem : b { NondetReg(elem) }; AliasLayout!(b, arr_b);
+  public arr_c := for elem : c { NondetReg(elem) }; AliasLayout!(c, arr_c);
+  public arr_d := for elem : d { NondetReg(elem) }; AliasLayout!(d, arr_d);
+  public arr_e := for elem : e { NondetReg(elem) }; AliasLayout!(e, arr_e);
+  public arr_f := for elem : f { NondetReg(elem) }; AliasLayout!(f, arr_f);
+  public minor := Reg(minor_count);
+  public major := Reg(major_count);
+  public rnd := Reg(round);
+  public blk := Reg(block);
+  public midx := Reg(memIdx);
+  public auxr := for elem : auxregs { NondetReg(elem) }; AliasLayout!(auxregs, auxr);
 }
 
 component RGZ<N: Val>(arr: Array<Val, N>) {
@@ -306,17 +306,17 @@ component WordTriple(_a: Array<NondetReg, BLEN()>,
 }
 component RotLeft3impl<A: Val, B: Val, C: Val, S: Val>
   (a: Array<NondetReg, A>, b: Array<NondetReg, B>, c: Array<NondetReg, C>) {
-  ra := for i : 0..A {
+  public ra := for i : 0..A {
     wraparound := InRange(0,i,S);
     NondetReg([wraparound,1-wraparound] -> (c[C-S+i],a[i-S]))};
   for i : 0..S { AliasLayout!(c[C-S+i], ra[i]); };
   for i : S..A { AliasLayout!(a[i-S], ra[i]); };
-  rb := for i : 0..B {
+  public rb := for i : 0..B {
     wraparound := InRange(0,i,S);
     NondetReg([wraparound,1-wraparound] -> (a[A-S+i],b[i-S]))};
   for i : 0..S { AliasLayout!(a[A-S+i], rb[i]); };
   for i : S..B { AliasLayout!(b[i-S], rb[i]); };
-  rc := for i : 0..C {
+  public rc := for i : 0..C {
     wraparound := InRange(0,i,S);
     NondetReg([wraparound,1-wraparound] -> (b[B-S+i],c[i-S]))};
   for i : 0..S { AliasLayout!(b[B-S+i], rc[i]); };
@@ -338,20 +338,20 @@ component RotLeft3<A: Val, B: Val, C: Val, S1: Val, S2: Val, S3: Val>
 }
 component vRotLeft3impl<A: Val, B: Val, C: Val, S: Val>
   (a: Array<Val, A>, b: Array<Val, B>, c: Array<Val, C>) {
-  ra := for i : 0..A {
+  public ra := for i : 0..A {
     wraparound := InRange(0,i,S);
     [wraparound,1-wraparound] -> (c[C-S+i],a[i-S])};
-  rb := for i : 0..B {
+  public rb := for i : 0..B {
     wraparound := InRange(0,i,S);
     [wraparound,1-wraparound] -> (a[A-S+i],b[i-S])};
-  rc := for i : 0..C {
+  public rc := for i : 0..C {
     wraparound := InRange(0,i,S);
     [wraparound,1-wraparound] -> (b[B-S+i],c[i-S])};
 }
 component vRotLeft3<A: Val, B: Val, C: Val, S1: Val, S2: Val, S3: Val>
   (a: Array<Val, A>, b: Array<Val, B>, c: Array<Val, C>) {
   za := Isz(S1);
-  packed := [za, 1-za] -> (
+  public packed := [za, 1-za] -> (
     [FromBits<A>(a),FromBits<B>(b),FromBits<C>(c)],
     { arr1 := vRotLeft3impl<A, B, C, S1>(a, b, c);
       zb := Isz(S2);
@@ -386,33 +386,33 @@ component xor5words_resvals<Xidx: Val, Sidx: Val>(rvpst: RetTuple) {
 
 component xor5words_result<Sidx: Val>(rvpst: RetTuple) {
   CURRLEN := [Isz(Sidx), 1-Isz(Sidx)] -> (BLEN(), SLEN());
-  minor_onehot :=  OneHotU<5>(rvpst.minor);
+  public minor_onehot :=  OneHotU<5>(rvpst.minor);
   vals := minor_onehot -> ( xor5words_resvals<0,Sidx>(rvpst),
                             xor5words_resvals<1,Sidx>(rvpst),
                             xor5words_resvals<2,Sidx>(rvpst),
                             xor5words_resvals<3,Sidx>(rvpst),
                             xor5words_resvals<4,Sidx>(rvpst));
   val_a := vals[0];
-  unpack_a := ToBits<CURRLEN>(val_a);
+  public unpack_a := ToBits<CURRLEN>(val_a);
   FromBits<CURRLEN>(unpack_a) = val_a;
 
   val_b := vals[1];
-  unpack_b := ToBits<CURRLEN>(val_b);
+  public unpack_b := ToBits<CURRLEN>(val_b);
   FromBits<CURRLEN>(unpack_b) = val_b;
 
   val_c := vals[2];
-  unpack_c := ToBits<CURRLEN>(val_c);
+  public unpack_c := ToBits<CURRLEN>(val_c);
   FromBits<CURRLEN>(unpack_c) = val_c;
 
   val_d := vals[3];
-  unpack_d := ToBits<CURRLEN>(val_d);
+  public unpack_d := ToBits<CURRLEN>(val_d);
   FromBits<CURRLEN>(unpack_d) = val_d;
 
   val_e := vals[4];
-  unpack_e := ToBitsU<CURRLEN>(val_e);
+  public unpack_e := ToBitsU<CURRLEN>(val_e);
   FromBits<CURRLEN>(unpack_e) = val_e;
 
-  resbits := for i : 0..CURRLEN {
+  public resbits := for i : 0..CURRLEN {
     NondetReg(1 & (unpack_a[i] + unpack_b[i] + unpack_c[i] +
                    unpack_d[i] + unpack_e[i])) };
 

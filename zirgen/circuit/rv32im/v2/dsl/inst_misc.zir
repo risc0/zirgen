@@ -5,17 +5,17 @@ import is_zero;
 
 component MiscInput(cycle: Reg, inst_input: InstInput) {
   inst_input.state = StateDecode();
-  ii := inst_input;
-  decoded := DecodeInst(cycle, ii);
-  rs1 := ReadReg(cycle, ii, decoded.rs1);
-  rs2 := ReadReg(cycle, ii, decoded.rs2);
+  public ii := inst_input;
+  public decoded := DecodeInst(cycle, ii);
+  public rs1 := ReadReg(cycle, ii, decoded.rs1);
+  public rs2 := ReadReg(cycle, ii, decoded.rs2);
   ii
 }
 
 component MiscOutput(do_write: Val, to_write: DenormedValU32, new_pc: DenormedValU32) {
-  do_write := do_write;
-  to_write := to_write;
-  new_pc := new_pc;
+  public do_write := do_write;
+  public to_write := to_write;
+  public new_pc := new_pc;
 }
 
 component FinalizeMisc(cycle: Reg, input: MiscInput, output: MiscOutput) {

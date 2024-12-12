@@ -68,6 +68,7 @@ enum Token : int {
   tok_string_literal = -20,
   tok_variadic = -21,
   tok_global = -22,
+  tok_public = -23,
   tok_eof = 0,
 };
 

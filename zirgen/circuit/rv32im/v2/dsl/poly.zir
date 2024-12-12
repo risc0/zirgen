@@ -1,9 +1,9 @@
 // RUN: zirgen -I %S --test %s
 
 component PolyEvalState(z: ExtVal, curMul: ExtVal, curTot: ExtVal) {
-  z := z;
-  curMul := curMul;
-  curTot := curTot;
+  public z := z;
+  public curMul := curMul;
+  public curTot := curTot;
 }
 
 component Pow<pow: Val>(z: ExtVal) {

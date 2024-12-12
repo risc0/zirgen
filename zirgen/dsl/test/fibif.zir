@@ -6,8 +6,8 @@ extern PrintCur(v: Val);
 extern PrintPrev(v: Val);
 
 component Fib(in0: Val, in1: Val) {
-  x0 := Reg(in1);
-  x1 := Reg(in0 + in1);
+  public x0 := Reg(in1);
+  public x1 := Reg(in0 + in1);
 }
 
 component Top() {

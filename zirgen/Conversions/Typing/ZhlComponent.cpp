@@ -739,7 +739,7 @@ Value LoweringImpl::lookup(Value component, StringRef member) {
 
     bool foundSuper = false;
     for (ZStruct::FieldInfo field : fields) {
-      if (field.name == member) {
+      if (field.name == member && !field.isPrivate) {
         return builder.create<ZStruct::LookupOp>(component.getLoc(), component, member);
       }
       foundSuper |= (field.name == "@super");
@@ -1514,8 +1514,11 @@ void LoweringImpl::gen(DefinitionOp definition, ComponentBuilder& cb) {
     }
   }
 
-  if (!Zhlt::isLocalVariable(declaration.getMember())) {
-    cb.val()->addMember(declaration.getMember(), def);
+  auto memberName = declaration.getMember();
+  if (declaration.getIsPublic()) {
+    cb.val()->addMember(memberName, def);
+  } else {
+    cb.val()->addPrivateMember(memberName, def);
   }
 }
 

@@ -6,15 +6,15 @@ extern Output(v: Val);
 extern GetCycle() : Val;
 
 component Count(first: Val) {
-  a : Reg;
+  public a : Reg;
   // TODO: Don't reference nonexistant back values.
   a := Reg((1+a@1) * (1 - first));
 }
 
 // Makes the previous value of the count accessible as "prev".
 component PrevCount(first: Val) {
-  c := Count(first);
-  prev := c@1;
+  public c := Count(first);
+  public prev := c@1;
 }
 
 // CHECK-LABEL: Running count

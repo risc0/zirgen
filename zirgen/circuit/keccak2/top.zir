@@ -32,14 +32,14 @@ import sha2;
 
 // Make a 'top state' with the 3 elements are per above
 component TopState(bits: Array<Val, 800>, kflat: Array<Val, 100>, sflat: Array<Val, 16>) {
-  bits := for i : 0..800 {
+  public bits := for i : 0..800 {
     Reg(bits[i])
   };
   // Log("Top State Top 16 bits = %x", Pack<16, 16>(for i : 0..16 { bits[i] })[0]);
-  kflat := for i : 0..100 {
+  public kflat := for i : 0..100 {
     Reg(kflat[i])
   };
-  sflat := for i : 0..16 {
+  public sflat := for i : 0..16 {
     Reg(sflat[i])
   };
 }
@@ -128,18 +128,18 @@ component GetK8(oneHot: OneHot<8>) {
 }
 
 component ShaState(a: Array<Array<Val, 32>, 4>, e: Array<Array<Val, 32>, 4>, w: Array<Array<Val, 32>, 16>) {
-  a := a;
-  e := e;
-  w := w;
+  public a := a;
+  public e := e;
+  public w := w;
 }
 
 component DoShaStep(in: ShaState, k: Array<Val, 2>, doLoad: Val, win: Array<Val, 2>) {
   rawW := ComputeW(in.w);
-  w := if (doLoad) { ExpandBE(win) } else { CarryAndExpand(rawW) };
+  public w := if (doLoad) { ExpandBE(win) } else { CarryAndExpand(rawW) };
   comp := ComputeAE(in.a, in.e, w, k);
-  a := CarryAndExpand(comp.rawA);
-  e := CarryAndExpand(comp.rawE);
-  newState := ShaState(PushFront<4>(a, in.a), PushFront<4>(e, in.e), PushFront<16>(w, in.w));
+  public a := CarryAndExpand(comp.rawA);
+  public e := CarryAndExpand(comp.rawE);
+  public newState := ShaState(PushFront<4>(a, in.a), PushFront<4>(e, in.e), PushFront<16>(w, in.w));
 }
 
 component LoadShaState(back1: TopState, back2: TopState) {
@@ -398,10 +398,10 @@ component ShutdownCycle(stateIn: TopState) {
 }
 
 component ControlState(cycleType: Val, subType: Val, block: Val, round: Val) {
-  cycleType := Reg(cycleType);
-  subType := Reg(subType);
-  block := Reg(block);
-  round := Reg(round);
+  public cycleType := Reg(cycleType);
+  public subType := Reg(subType);
+  public block := Reg(block);
+  public round := Reg(round);
 }
 
 component KeccackNextRound(prev: ControlState) {
