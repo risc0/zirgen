@@ -15,6 +15,7 @@
 #include "zirgen/circuit/keccak2/cpp/preflight.h"
 #include "zirgen/circuit/keccak2/cpp/wrap_dsl.h"
 
+#include <arpa/inet.h>
 #include <array>
 #include <cassert>
 #include <iostream>
@@ -149,7 +150,7 @@ std::vector<sha_info> compute_sha_infos(sha_state& state, const uint32_t* data) 
   sha_info cur;
   for (size_t i = 0; i < 64; i++) {
     if (i < 16) {
-      w[i] = data[i];
+      w[i] = htonl(data[i]);
     } else {
       w[i] = SIG1(w[i - 2]) + w[i - 7] + SIG0(w[i - 15]) + w[i - 16];
     }
