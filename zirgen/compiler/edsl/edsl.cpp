@@ -165,8 +165,7 @@ mlir::Location CaptureVal::getLoc() {
   return toLoc(loc);
 }
 
-// TODO: Figure out why we get more crashes in CSE when threading is enabled.
-Module::Module() : ctx(MLIRContext::Threading::DISABLED), builder(&ctx) {
+Module::Module() : builder(&ctx) {
   ctx.getOrLoadDialect<ZllDialect>();
   ctx.getOrLoadDialect<Iop::IopDialect>();
   ctx.getOrLoadDialect<ZStruct::ZStructDialect>();
