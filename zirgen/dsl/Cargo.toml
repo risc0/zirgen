@@ -19,7 +19,7 @@ serial_test = "3.1"
 strum = { version = "0.26", features = ["derive"] }
 strum_macros = "0.26"
 test-log = { version = "0.2", features = ["trace"] }
-tracing = "0.1.40"
+tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 
 [[example]]
