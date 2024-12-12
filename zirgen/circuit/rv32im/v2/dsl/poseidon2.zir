@@ -115,7 +115,7 @@ component DoExtRoundByIdx(in: Array<Val, 24>, idx: Val) {
   idxHot := OneHot<8>(idx);
   // Construct constants which are degree 1...
   zeroConsts := for i : 0..24 { 0 };
-  mixedConsts := reduce for i : 0..8 { 
+  mixedConsts := reduce for i : 0..8 {
     MultBy(ExtRoundConstants()[i], idxHot.bits[i])
   } init zeroConsts with AddConsts;
   // Do ext round with those constants

@@ -13,12 +13,12 @@
 extern IsFirstCycle() : Val;
 
 component Pair(a: Val, b: Val) {
-  a := Reg(a);
-  b := Reg(b);
+  public a := Reg(a);
+  public b := Reg(b);
 }
 
 component MakePair() {
-    x := NondetReg(7);
+    public x := NondetReg(7);
     Pair(x, 6)
 }
 
