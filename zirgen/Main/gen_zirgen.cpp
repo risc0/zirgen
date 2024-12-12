@@ -277,7 +277,9 @@ ModuleOp makeStepFuncs(ModuleOp mod) {
     pm.addPass(zirgen::ZStruct::createInlineLayoutPass());
     pm.addPass(zirgen::ZStruct::createUnrollPass());
     pm.addPass(zirgen::Zhlt::createOptimizeParWitgenPass());
+    pm.addPass(createCSEPass());
     pm.addPass(zirgen::Zhlt::createOutlineIfsPass());
+    pm.addPass(zirgen::Zhlt::createOptimizeParWitgenPass());
   }
 
   if (failed(pm.run(stepFuncs))) {

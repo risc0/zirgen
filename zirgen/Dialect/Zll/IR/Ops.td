@@ -89,7 +89,7 @@ def SliceOp : ZllOp<"slice", [Pure, InferTypeOpAdaptor]> {
   let assemblyFormat = [{ $in `,` $offset `,` $size `:` type($in) attr-dict }];
 }
 
-def GetOp : ZllOp<"get", [Pure, EvalOpAdaptor, IsPoly, InferTypeOpAdaptor, CodegenAlwaysInlineOp,
+def GetOp : ZllOp<"get", [Pure, EvalOpAdaptor, IsPoly, InferTypeOpAdaptor,
                              DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
   let arguments = (ins Buffer:$buf, UI32Attr:$offset, UI32Attr:$back, OptionalAttr<UI32Attr>:$tap);
   let results = (outs Val:$out);
