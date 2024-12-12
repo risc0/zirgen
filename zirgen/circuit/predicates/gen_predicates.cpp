@@ -250,7 +250,7 @@ int main(int argc, char* argv[]) {
   for (size_t po2 = MIN_RV32IM_PO2; po2 <= MAX_RV32IM_PO2; ++po2) {
     addLift(module, "lift_" + std::to_string(po2), po2, [](ReceiptClaim claim) { return claim; });
 
-    for (size_t n = 2; po2 <= MAX_JOIN_WIDTH; ++n) {
+    for (size_t n = 2; n <= MAX_JOIN_WIDTH; ++n) {
       addLiftJoin(module,
                   "lift_join" + std::to_string(n) + "_" + std::to_string(po2),
                   n,
@@ -265,7 +265,7 @@ int main(int argc, char* argv[]) {
       return identity(a);
     });
 
-    for (size_t n = 2; po2 <= MAX_JOIN_WIDTH; ++n) {
+    for (size_t n = 2; n <= MAX_JOIN_WIDTH; ++n) {
       addJoin(module,
               "join" + std::to_string(n) + "_" + std::to_string(po2),
               n,
