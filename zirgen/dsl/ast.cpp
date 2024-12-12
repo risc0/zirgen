@@ -484,14 +484,14 @@ void Definition::print(ostream& os) const {
   dict.attr_string("name", name);
   dict.attr_dict("value", value);
   switch (access) {
-    case Access::Global:
-      dict.attr_string("access", "global");
-      break;
-    case Access::Public:
-      dict.attr_string("access", "public");
-      break;
-    default:
-      break;
+  case Access::Global:
+    dict.attr_string("access", "global");
+    break;
+  case Access::Public:
+    dict.attr_string("access", "public");
+    break;
+  default:
+    break;
   }
 }
 
@@ -516,14 +516,14 @@ void Declaration::print(ostream& os) const {
   dict.attr_string("name", name);
   dict.attr_dict("type", type);
   switch (access) {
-    case Access::Global:
-      dict.attr_string("access", "global");
-      break;
-    case Access::Public:
-      dict.attr_string("access", "public");
-      break;
-    default:
-      break;
+  case Access::Global:
+    dict.attr_string("access", "global");
+    break;
+  case Access::Public:
+    dict.attr_string("access", "public");
+    break;
+  default:
+    break;
   }
 }
 

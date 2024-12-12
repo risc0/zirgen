@@ -234,8 +234,13 @@ Block::Ptr Parser::parseBlock() {
       done = true;
       break;
     case tok_global:
+    case tok_public:
       lexer.takeToken();
-      upcomingAccess = Access::Global;
+      if (token == tok_global) {
+        upcomingAccess = Access::Global;
+      } else {
+        upcomingAccess = Access::Public;
+      }
       // Fallthrough
     default:
       // definition, declaration, constraint, void, or value
@@ -313,8 +318,8 @@ Block::Ptr Parser::parseBlock() {
           error("expected semicolon after member declaration");
           return nullptr;
         }
-        body.push_back(make_shared<Declaration>(
-            location, identifier, std::move(declType), upcomingAccess));
+        body.push_back(
+            make_shared<Declaration>(location, identifier, std::move(declType), upcomingAccess));
         upcomingAccess = Access::Default;
         lastExpression = nullptr;
       } else if (lexer.peekToken() != tok_curly_r) {
@@ -322,14 +327,14 @@ Block::Ptr Parser::parseBlock() {
         return nullptr;
       }
       switch (upcomingAccess) {
-        case Access::Global:
-          error("Expected declaration or definition after `global'");
-          return nullptr;
-        case Access::Public:
-          error("Expected declaration or definition after `public'");
-          return nullptr;
-        case Access::Default:
-          break;
+      case Access::Global:
+        error("Expected declaration or definition after `global'");
+        return nullptr;
+      case Access::Public:
+        error("Expected declaration or definition after `public'");
+        return nullptr;
+      case Access::Default:
+        break;
       }
       break;
     }
