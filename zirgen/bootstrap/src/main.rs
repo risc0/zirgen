@@ -14,10 +14,8 @@
 
 use std::{
     cell::RefCell,
-    fs::{read, remove_file, OpenOptions},
-    io,
-    io::Write,
-    io::{BufRead, BufReader},
+    fs::{File, OpenOptions},
+    io::{self, BufRead, BufReader},
     path::{Path, PathBuf},
     process::{exit, Command, Stdio},
 };
@@ -27,6 +25,7 @@ use clap::{Parser, ValueEnum};
 use glob::Pattern;
 use regex::Regex;
 use xz2::write::XzEncoder;
+use zip::ZipArchive;
 
 #[derive(Debug)]
 struct Rule<'a> {
@@ -268,24 +267,6 @@ impl Bootstrap {
         self.copy(&src_dir.join(filename), &tgt_dir.join(filename))
     }
 
-    fn xz_file(&self, dir: &Path, filename: &str) {
-        let src_path = &dir.join(filename);
-        let new_name = filename.to_owned() + ".xz";
-        let out_path = &dir.join(new_name);
-        let contents = read(src_path).expect("Failed to read input file!");
-        let output = OpenOptions::new()
-            .write(true)
-            .create(true)
-            .truncate(true)
-            .open(out_path)
-            .expect("Could not create output xz file!");
-        let mut encoder = XzEncoder::new(&output, 9);
-        encoder
-            .write_all(&contents)
-            .expect("Failed to write svg file contents!");
-        encoder.try_finish().expect("Failed to finish compressing!");
-    }
-
     fn check(&self, src_path: &Path, tgt_path: &Path) -> Result<()> {
         let src = std::fs::read(src_path)?;
         let dst = std::fs::read(tgt_path)?;
@@ -398,9 +379,7 @@ impl Bootstrap {
         let status = match status {
             Ok(stat) => stat,
             Err(err) => match err.kind() {
-                std::io::ErrorKind::NotFound => {
-                    Command::new("bazel").args(bazel_args).status().unwrap()
-                }
+                io::ErrorKind::NotFound => Command::new("bazel").args(bazel_args).status().unwrap(),
                 _ => panic!("{}", err.to_string()),
             },
         };
@@ -543,34 +522,26 @@ impl Bootstrap {
                 Rule::copy("*.cuh.inc", "kernels/cuda").base_suffix("-sys"),
                 Rule::copy("*.rs", "src/zirgen"),
                 Rule::copy("*.rs.inc", "src/zirgen"),
-                Rule::copy("keccak_zkr.zip", "src/prove"),
             ],
         );
-        // Unpack the ZKRs copied over in the zip file.
+
+        // Extract each .zkr from .zip and encode as .xz in target directory.
         let dest_path = self.output_and("risc0/circuit/keccak/src/prove");
-        let mut unzip = Command::new("unzip");
-        unzip.current_dir(dest_path.clone());
-        let status = unzip.arg("-o").arg("keccak_zkr.zip").status().unwrap();
-        if !status.success() {
-            exit(status.code().unwrap());
-        }
-        // Delete the superfluous zip file.
-        let zip_path = dest_path.join("keccak_zkr.zip");
-        let rm_args = [zip_path];
-        let status = Command::new("rm").args(rm_args).status().unwrap();
-        if !status.success() {
-            exit(status.code().unwrap());
-        }
-        // Compress each ZKR file with 'xz'.
-        for zkr in [
-            "keccak_lift_14.zkr",
-            "keccak_lift_15.zkr",
-            "keccak_lift_16.zkr",
-            "keccak_lift_17.zkr",
-            "keccak_lift_18.zkr",
-        ] {
-            self.xz_file(&dest_path, zkr);
-            remove_file(&dest_path.join(zkr)).expect("failed to remove zkr file!");
+        let bazel_bin = get_bazel_bin();
+        let zip_file = File::open(bazel_bin.join("zirgen/circuit/keccak2/keccak_zkr.zip"))
+            .expect("keccak_zkr.zip not found!");
+        let mut zip = ZipArchive::new(zip_file).unwrap();
+        for i in 0..zip.len() {
+            let mut src = zip.by_index(i).unwrap();
+            let tgt_path = dest_path.join(format!("{}.xz", src.name()));
+            let tgt_file = OpenOptions::new()
+                .write(true)
+                .create(true)
+                .truncate(true)
+                .open(tgt_path)
+                .expect("Could not create output xz file!");
+            let mut tgt = XzEncoder::new(&tgt_file, 6);
+            io::copy(&mut src, &mut tgt).unwrap();
         }
     }
 
