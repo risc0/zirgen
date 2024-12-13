@@ -1157,7 +1157,7 @@ LogicalResult NormalizeOp::inferReturnTypes(MLIRContext* ctx,
 LogicalResult GetOp::verify() {
   // Verify that buffer is not global
   if (cast<BufferType>(getBuf().getType()).getKind() == BufferKind::Global) {
-    return failure();
+    return emitError() << "Wrong type of buffer";
   }
   return success();
 }
@@ -1165,13 +1165,14 @@ LogicalResult GetOp::verify() {
 LogicalResult SetOp::verify() {
   // Verify that buffer is not global
   if (cast<BufferType>(getBuf().getType()).getKind() == BufferKind::Global) {
-    return failure();
+    return emitError() << "Set may not be used on global buffers";
   }
   // Make sure the element we're storing is the same type
   auto bufType = getBuf().getType().getElement();
   auto valType = getIn().getType();
   if (bufType.getFieldK() < valType.getFieldK() || bufType.getFieldP() != valType.getFieldP())
-    return failure();
+    return emitError() << "Wrong type of field element; tring to store " << valType << " in "
+                       << bufType << "\n";
   return success();
 }
 
@@ -1320,7 +1321,13 @@ void GetOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
 void SetOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
   cg.emitFuncCall(cg.getStringAttr("set"),
                   /*ContextArgs=*/{"ctx"},
-                  {getBuf(), cg.guessAttributeType(getOffsetAttr())});
+                  {getBuf(), cg.guessAttributeType(getOffsetAttr()), getIn()});
+}
+
+void SetGlobalOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
+  cg.emitFuncCall(cg.getStringAttr("set_global"),
+                  /*ContextArgs=*/{"ctx"},
+                  {getBuf(), cg.guessAttributeType(getOffsetAttr()), getIn()});
 }
 
 } // namespace zirgen::Zll

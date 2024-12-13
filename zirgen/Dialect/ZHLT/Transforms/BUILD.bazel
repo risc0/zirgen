@@ -36,6 +36,8 @@ cc_library(
         "GenerateSteps.cpp",
         "HoistAllocs.cpp",
         "LowerFuncs.cpp",
+        "OptimizeParWitgen.cpp",
+        "OutlineIfs.cpp",
         "PassDetail.h",
         "StripAliasLayoutOps.cpp",
         "StripTests.cpp",
@@ -48,5 +50,6 @@ cc_library(
         "//zirgen/Dialect/ZHL/IR",
         "//zirgen/Dialect/ZHLT/IR",
         "//zirgen/Dialect/ZStruct/Analysis",
+        "//zirgen/Dialect/ZStruct/Transforms:passes",
     ],
 )

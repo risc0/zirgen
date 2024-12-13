@@ -65,6 +65,7 @@ build_circuit(
         "--circuit-name=keccak",
         "--validity-split-count=" + str(SPLIT_VALIDITY),
         "--step-split-count=" + str(SPLIT_STEP),
+        "--parallel-witgen",
     ],
 )
 
