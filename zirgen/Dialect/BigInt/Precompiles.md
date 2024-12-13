@@ -82,6 +82,7 @@ We may now bootstrap the risc0 repository, including the new blob file, like thi
 cargo bootstrap bigint2 --output=`$HOME`/risc0/
 ```
 
+## Invoking a bigint program
 To invoke the new addition program, we move over to the `risc0` repository. Here we will create a new module, akin to `bigint2/src/ec` or `bigint2/src/rsa`, containing a new `bigint2/src/add128/mod.rs` file. Its contents should look like this:
 
 
