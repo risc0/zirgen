@@ -87,7 +87,6 @@ cargo bootstrap bigint2 --output=`$HOME`/risc0/
 ## Invoking a bigint program
 To invoke the new addition program, we move over to the `risc0` repository. Here we will create a new module, akin to `bigint2/src/ec` or `bigint2/src/rsa`, containing a new `bigint2/src/add128/mod.rs` file. Its contents should look like this:
 
-
 ```
 use include_bytes_aligned::include_bytes_aligned;
 use crate::ffi::sys_bigint2_3;
@@ -106,6 +105,17 @@ pub fn add128(lhs: &[u32; 4], rhs: &[u32; 4], result: &mut [u32; 8]) {
 }
 ```
 
+Notice that the size of the `result` buffer is larger than the input buffers -- this is because the sum of two 128-bit unsigned integers can be as large as 256 bits. It is important that each input and output buffer is sufficiently large, as otherwise the bigint program can read and/or write out of bounds (the `unsafe` keyword is warning us of this possibility of out-of-bounds access). You can look at the types used in the Load/Store ops to help determine appropriate buffer sizes.
+
 One can now import the `add128` function to perform simple addition through the bigint2 accelerator.
 
+## Utilizing the new precompile
+
+The `add128` function is now available as part of the `risc0-bigint2` package. All that's left now is to add a dependency on this package and call your precompile!
+
+The bigint system passes input and output data as arrays of `u32`s with the least significant digits first. For example, if we wanted to compute `4294967296 + 4` with our `add128` function, we would call `add128([0, 1, 0, 0], [4, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0])` and after the call the result buffer would read `[4, 1, 0, 0, 0, 0, 0, 0]`. How you process your broader program's data into this format will be application-specific, but we have helper functions for some cases; see for instance the `num-bigint` and `num-bigint-dig` features of the `risc0-bigint2` crate.
+
+For a relatively simple real-world example of utilizing a precompile, look at how we use the `modpow_65537` precompile to [patch RustCrypto's RSA crate][rustcrypto-rsa-patch].
+
 [`zirgen/circuit/bigint/`]: https://github.com/risc0/zirgen/tree/main/zirgen/circuit/bigint
+[rustcrypto-rsa-patch]: https://github.com/risc0/RustCrypto-RSA/pull/5/files
