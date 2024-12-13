@@ -1,6 +1,6 @@
 # Creating a precompile using the BigInt2 system
 
-Creating a new accelerator using BigInt2 requires a series of related changes across files in two repositories. This is the process you should follow if you want to create a new bigint2 precompile and make it available within the zkVM.
+Creating a new precompile using BigInt2 requires a series of related changes across files in two repositories. This is the process you should follow if you want to create a new bigint2 precompile and make it available within the zkVM.
 
 To keep the demo simple, let's imagine that we want to create a trivial accelerator which sums two 128-bit numbers, which we'll call "add128".
 
