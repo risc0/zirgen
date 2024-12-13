@@ -26,6 +26,7 @@ namespace zirgen::ZStruct {
 struct FieldInfo {
   mlir::StringAttr name;
   mlir::Type type;
+  bool isPrivate = false;
 };
 
 } // namespace zirgen::ZStruct
@@ -44,7 +45,8 @@ template <> struct AttrTypeSubElementHandler<FieldInfo> {
                            AttrSubElementReplacements& attrRepls,
                            TypeSubElementReplacements& typeRepls) {
     return FieldInfo{.name = cast<StringAttr>(attrRepls.take_front(1)[0]),
-                     .type = typeRepls.take_front(1)[0]};
+                     .type = typeRepls.take_front(1)[0],
+                     .isPrivate = param.isPrivate};
   }
 };
 

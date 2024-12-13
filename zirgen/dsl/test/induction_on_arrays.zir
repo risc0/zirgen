@@ -9,7 +9,7 @@ extern IsFirstCycle() : Val;
 component Top() {
   first := NondetReg(IsFirstCycle());
 
-  arr : Array<Reg, 4>;
+  public arr : Array<Reg, 4>;
   arr := for i : 0..4 {
     Reg([first, 1-first] -> (
       i + 1,

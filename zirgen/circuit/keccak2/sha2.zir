@@ -34,8 +34,8 @@ component CarryExtract(in: Val) {
   bit0 := NondetBitReg(((in & 0xf0000) / 0x10000) & 1);
   bit1 := NondetBitReg((((in & 0xf0000) / 0x10000) & 2) / 2);
   bit2 := NondetBitReg((((in & 0xf0000) / 0x10000) & 4) / 4);
-  carry := bit2 * 4 + bit1 * 2 + bit0;
-  out := in - carry * 0x10000;
+  public carry := bit2 * 4 + bit1 * 2 + bit0;
+  public out := in - carry * 0x10000;
 }
 
 component CarryAndExpand(in: Array<Val, 2>) {
@@ -89,8 +89,8 @@ component ComputeAE(oa: Array<Array<Val, 32>, 4>, oe: Array<Array<Val, 32>, 4>, 
   s0 := XorU32(RotateRight<32>(a, 2), XorU32(RotateRight<32>(a, 13), RotateRight<32>(a, 22)));
   s1 := XorU32(RotateRight<32>(e, 6), XorU32(RotateRight<32>(e, 11), RotateRight<32>(e, 25)));
   stage1 := Add2(Pack32(w), Add2(k, Add2(Pack32(h), Add2(Pack32(ChU32(e, f, g)), Pack32(s1)))));
-  rawA := Add2(stage1, Add2(Pack32(MajU32(a, b, c)), Pack32(s0)));
-  rawE := Add2(stage1, Pack32(d));
+  public rawA := Add2(stage1, Add2(Pack32(MajU32(a, b, c)), Pack32(s0)));
+  public rawE := Add2(stage1, Pack32(d));
 }
 
 component TableK() {
@@ -134,9 +134,9 @@ component InitE() {
 
 // A version of state used in testing SHA256
 component TestState(a: Array<Array<Val, 32>, 4>, e: Array<Array<Val, 32>, 4>, w: Array<Array<Val, 32>, 16>) {
-  a := a;
-  e := e;
-  w := w;
+  public a := a;
+  public e := e;
+  public w := w;
   flatA := Pack<32, 16>(a[0]);
   flatE := Pack<32, 16>(e[0]);
   Log("a = %x %x, e = %x %x", flatA[1], flatA[0], flatE[1], flatE[0]);
