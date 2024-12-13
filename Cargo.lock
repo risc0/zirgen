@@ -192,9 +192,9 @@ dependencies = [
 
 [[package]]
 name = "cc"
-version = "1.2.3"
+version = "1.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "27f657647bcff5394bf56c7317665bbf790a137a50eaaa5c6bfbb9e27a518f2d"
+checksum = "9157bbaa6b165880c27a4293a474c91cdcf265cc68cc829bf10be0964a391caf"
 dependencies = [
  "jobserver",
  "libc",
@@ -819,7 +819,7 @@ version = "1.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ad2e855e8019f99e4b94ac33670eb4e4f570a2e044f3749a0b2c7f83b841e52c"
 dependencies = [
- "cc 1.2.3",
+ "cc 1.2.4",
 ]
 
 [[package]]
@@ -1110,7 +1110,7 @@ name = "risc0-circuit-fib"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "cc 1.2.3",
+ "cc 1.2.4",
  "env_logger",
  "glob",
  "log",
