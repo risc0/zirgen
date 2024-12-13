@@ -19,28 +19,28 @@ namespace zirgen::BigInt::field {
 // Prime field operations
 
 Value modAdd(mlir::OpBuilder builder, mlir::Location loc, Value lhs, Value rhs, Value prime) {
-    auto sum = builder.create<BigInt::AddOp>(loc, lhs, rhs);
-    auto result = builder.create<BigInt::ReduceOp>(loc, sum, prime);
-    return result;
+  auto sum = builder.create<BigInt::AddOp>(loc, lhs, rhs);
+  auto result = builder.create<BigInt::ReduceOp>(loc, sum, prime);
+  return result;
 }
 
 Value modInv(mlir::OpBuilder builder, mlir::Location loc, Value inp, Value prime) {
-    return builder.create<BigInt::InvOp>(loc, inp, prime);
+  return builder.create<BigInt::InvOp>(loc, inp, prime);
 }
 
 Value modMul(mlir::OpBuilder builder, mlir::Location loc, Value lhs, Value rhs, Value prime) {
-    auto prod = builder.create<BigInt::MulOp>(loc, lhs, rhs);
-    auto result = builder.create<BigInt::ReduceOp>(loc, prod, prime);
-    return result;
+  auto prod = builder.create<BigInt::MulOp>(loc, lhs, rhs);
+  auto result = builder.create<BigInt::ReduceOp>(loc, prod, prime);
+  return result;
 }
 
 Value modSub(mlir::OpBuilder builder, mlir::Location loc, Value lhs, Value rhs, Value prime) {
-    auto diff = builder.create<BigInt::SubOp>(loc, lhs, rhs);
-    // True statements can fail to prove if a ReduceOp is given negative inputs; thus, add `prime`
-    // to ensure all normalized inputs can produce an answer
-    auto diff_aug = builder.create<BigInt::AddOp>(loc, diff, prime);
-    auto result = builder.create<BigInt::ReduceOp>(loc, diff_aug, prime);
-    return result;
+  auto diff = builder.create<BigInt::SubOp>(loc, lhs, rhs);
+  // True statements can fail to prove if a ReduceOp is given negative inputs; thus, add `prime`
+  // to ensure all normalized inputs can produce an answer
+  auto diff_aug = builder.create<BigInt::AddOp>(loc, diff, prime);
+  auto result = builder.create<BigInt::ReduceOp>(loc, diff_aug, prime);
+  return result;
 }
 
 // Full programs, including I/O
