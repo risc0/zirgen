@@ -44,9 +44,6 @@ enum class Program {
   ModPow65537,
   EC_Double,
   EC_Add,
-  ExtFieldAdd,
-  ExtFieldMul,
-  ExtFieldSub,
   ModAdd,
   ModInv,
   ModMul,
@@ -60,13 +57,10 @@ static cl::opt<enum Program>
             cl::values(clEnumValN(Program::ModPow65537, "modpow65537", "ModPow65537"),
                        clEnumValN(Program::EC_Double, "ec_double", "EC_Double"),
                        clEnumValN(Program::EC_Add, "ec_add", "EC_Add"),
-                       clEnumValN(Program::ExtFieldAdd, "extfieldadd", "ExtFieldAdd"),
-                       clEnumValN(Program::ExtFieldMul, "extfieldmul", "ExtFieldMul"),
-                       clEnumValN(Program::ExtFieldSub, "extfieldsub", "ExtFieldSub"),
                        clEnumValN(Program::ModAdd, "modadd", "ModAdd"),
                        clEnumValN(Program::ModInv, "modinv", "ModInv"),
                        clEnumValN(Program::ModMul, "modmul", "ModMul"),
-                       clEnumValN(Program::ModSub, "modsub", "ModSub")),  // TODO: Don't hardcode bitwidth
+                       clEnumValN(Program::ModSub, "modsub", "ModSub")),
             cl::Required);
 
 static cl::opt<size_t> bitwidth("bitwidth",
@@ -447,15 +441,6 @@ int main(int argc, char* argv[]) {
     break;
   case Program::EC_Add:
     zirgen::BigInt::EC::genECAdd(builder, loc, bitwidth);
-    break;
-  case Program::ExtFieldAdd:  // TODO: Naming for degree 2
-    zirgen::BigInt::field::genExtFieldAdd(builder, loc, bitwidth, 2);
-    break;
-  case Program::ExtFieldMul:
-    zirgen::BigInt::field::genExtFieldMul(builder, loc, bitwidth, 2);
-    break;
-  case Program::ExtFieldSub:
-    zirgen::BigInt::field::genExtFieldSub(builder, loc, bitwidth, 2);
     break;
   case Program::ModAdd:
     zirgen::BigInt::field::genModAdd(builder, loc, bitwidth);
