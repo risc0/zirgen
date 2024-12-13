@@ -19,6 +19,7 @@ void genAdd128(mlir::OpBuilder& builder, mlir::Location loc) {
 
 We might also like to create a test function here, but we'll gloss over that for now.
 
+## Compile your bigint program to a bigint blob using bigint2c
 To make use of the new function, we must add it as an option of the `bigint2c` compiler program, which generates the precompiled blobs we'll need to load into the zkVM. Inside `zirgen/circuit/bigint/bigint2c.cpp`, we'll add a new command line option:
 
 ```
