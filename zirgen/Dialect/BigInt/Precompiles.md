@@ -45,6 +45,8 @@ case Program::Add128:
   break;
 ```
 
+## Bootstrapping your precompile into the `risc0` repo
+
 The `bigint2c` program can now compile our addition function into a "bibc" format blob. In order to use this blob from the `risc0` repo, we must add it to the bootstrap process, which means we must integrate blob-generation into the zirgen circuit build process. This happens in `zirgen/circuit/bigint/BUILD.bazel`, where we must create a new genrule for the new blob file:
 
 ```
