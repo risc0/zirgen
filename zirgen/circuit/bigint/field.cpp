@@ -45,8 +45,6 @@ Value modSub(mlir::OpBuilder builder, mlir::Location loc, Value lhs, Value rhs, 
 
 // Full programs, including I/O
 
-// TODO: Move & cleanup finite field changes
-
 // Finite Field arithmetic
 //
 // These functions accelerate finite field arithmetic
