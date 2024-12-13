@@ -50,7 +50,7 @@ LogicalResult UnrollMaps::matchAndRewrite(MapOp op, PatternRewriter& rewriter) c
     for (auto& innerOp : innerBlock.without_terminator()) {
       rewriter.clone(innerOp, mapping);
     }
-    mapped.push_back(mapping.lookup(innerReturnVal));
+    mapped.push_back(mapping.lookupOrDefault(innerReturnVal));
   }
   auto unrolled = outType.materialize(op.getLoc(), mapped, rewriter);
   rewriter.replaceOp(op, unrolled);

@@ -62,6 +62,11 @@ static cl::opt<bool> multiplyIf("multiply-if",
                                 cl::desc("Mulitply out and refactor `if` statements when "
                                          "generating constraints, which can improve CSE."),
                                 cl::init(false));
+static cl::opt<bool>
+    parallelWitgen("parallel-witgen",
+                   cl::desc("Assume the witness can be generated in parallel, and that all externs "
+                            "used in witness generation are idempotent."),
+                   cl::init(false));
 static cl::opt<std::string> circuitName("circuit-name", cl::desc("Name of circuit"));
 
 llvm::cl::opt<size_t> stepSplitCount{
@@ -222,7 +227,7 @@ void emitPoly(ModuleOp mod, StringRef circuitName) {
   //  pm.addPass(createPrintIRPass());
 
   if (failed(pm.run(funcMod))) {
-    llvm::errs() << "an internal compiler error occurred while lowering this module:\n";
+    llvm::errs() << "an internal compiler error occurred while optimizing poly for this module:\n";
     funcMod.print(llvm::errs());
     exit(1);
   }
@@ -248,6 +253,43 @@ std::string getCircuitName(StringRef inputFilename) {
     fn = inputFilename;
   fn.consume_back(".zir");
   return fn.str();
+}
+
+ModuleOp makeStepFuncs(ModuleOp mod) {
+  mlir::ModuleOp stepFuncs = mod.clone();
+  // Privatize everything that we don't need, and generate step functions.
+  mlir::PassManager pm(mod.getContext());
+  applyDefaultTimingPassManagerCLOptions(pm);
+  if (failed(applyPassManagerCLOptions(pm))) {
+    llvm::errs() << "Pass manager does not agree with command line options.\n";
+    exit(1);
+  }
+  pm.enableVerifier(true);
+
+  pm.addPass(zirgen::Zhlt::createLowerStepFuncsPass());
+  pm.addPass(zirgen::ZStruct::createBuffersToArgsPass());
+  pm.addPass(mlir::createCanonicalizerPass());
+  pm.addPass(mlir::createSymbolPrivatizePass(/*excludeSymbols=*/{"step$Top", "step$Top$accum"}));
+  pm.addPass(mlir::createSymbolDCEPass());
+
+  if (parallelWitgen) {
+    pm.addPass(mlir::createInlinerPass());
+    pm.addPass(zirgen::ZStruct::createInlineLayoutPass());
+    pm.addPass(zirgen::ZStruct::createUnrollPass());
+    pm.addPass(zirgen::Zhlt::createOptimizeParWitgenPass());
+    pm.addPass(createCSEPass());
+    pm.addPass(zirgen::Zhlt::createOutlineIfsPass());
+    pm.addPass(zirgen::Zhlt::createOptimizeParWitgenPass());
+  }
+
+  if (failed(pm.run(stepFuncs))) {
+    llvm::errs()
+        << "an internal compiler error occurred while making step functions for this module:\n";
+    stepFuncs.print(llvm::errs());
+    exit(1);
+  }
+
+  return stepFuncs;
 }
 
 } // namespace
@@ -352,7 +394,7 @@ int main(int argc, char* argv[]) {
   pm.addPass(mlir::createCSEPass());
 
   if (failed(pm.run(typedModule.value()))) {
-    llvm::errs() << "an internal compiler error occurred while lowering this module:\n";
+    llvm::errs() << "an internal compiler error occurred while optimizing this module:\n";
     typedModule->print(llvm::errs());
     return 1;
   }
@@ -363,20 +405,7 @@ int main(int argc, char* argv[]) {
   }
 
   // Create step functions
-  mlir::ModuleOp stepFuncs = typedModule->clone();
-  // Privatize everything that we don't need, and generate step functions.
-  pm.clear();
-  pm.addPass(zirgen::Zhlt::createLowerStepFuncsPass());
-  pm.addPass(zirgen::ZStruct::createBuffersToArgsPass());
-  pm.addPass(mlir::createCanonicalizerPass());
-  pm.addPass(mlir::createSymbolPrivatizePass(/*excludeSymbols=*/{"step$Top", "step$Top$accum"}));
-  pm.addPass(mlir::createSymbolDCEPass());
-
-  if (failed(pm.run(stepFuncs))) {
-    llvm::errs() << "an internal compiler error occurred while lowering this module:\n";
-    stepFuncs.print(llvm::errs());
-    return 1;
-  }
+  mlir::ModuleOp stepFuncs = makeStepFuncs(*typedModule);
 
   emitTarget(
       RustCodegenTarget(circuitNameAttr), *typedModule, stepFuncs, codegen::getRustCodegenOpts());
