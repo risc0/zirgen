@@ -125,8 +125,10 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   yR = builder.create<BigInt::AddOp>(loc, yR, nu);
   yR = builder.create<BigInt::SubOp>(loc, prime, yR); // i.e., negate (mod prime)
   Value prime_sqr = builder.create<BigInt::MulOp>(loc, prime, prime);
-  yR = builder.create<BigInt::AddOp>(
-      loc, yR, prime_sqr); // The prime^2 term is for the original lambda * xR
+  // Quot/Rem needs nonnegative inputs, so enforce positivity
+  // This is a prime^2 term for the original lambda * xR
+  // A prime term (for the lhs.y in nu) was already included in the negation step
+  yR = builder.create<BigInt::AddOp>(loc, yR, prime_sqr);
   Value k_y = builder.create<BigInt::NondetQuotOp>(loc, yR, prime);
   yR = builder.create<BigInt::NondetRemOp>(loc, yR, prime);
 
