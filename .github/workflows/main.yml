@@ -52,7 +52,22 @@ jobs:
           - os: Linux
             config: --config=ci
     steps:
+      - name: Get Date
+        id: get-date
+        run: |
+             echo "date=$(/bin/date -u "+%Y-%m-%d")" >> $GITHUB_OUTPUT
+        shell: bash
       - uses: actions/checkout@v3
+      # Cache bazel build on linux.  (MacOS uses the local cache on the runner.)
+      - if: matrix.os == 'Linux'
+        uses: actions/cache@v4
+        env:
+          cache-name: bazel-build
+        with:
+          path: "~/.cache/bazel"
+          # Generate a new build cache once a day, reusing the previous day's if available
+          key: "bazel-${{ matrix.os }}-${{ steps.get-date.outputs.date }}"
+          restore-keys: "bazel-${{ matrix.os }}-"
       - uses: ./.github/actions/bazelisk
       - name: Build & test
         env:
