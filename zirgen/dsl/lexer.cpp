@@ -84,6 +84,7 @@ Token Lexer::takeToken() {
         {"test_fails", tok_test_fails},
         {"with", tok_with},
         {"global", tok_global},
+        {"public", tok_public},
     };
     auto found = keywords.find(identifier);
     return found != keywords.end() ? found->second : tok_ident;

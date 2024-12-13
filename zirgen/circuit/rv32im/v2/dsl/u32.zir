@@ -8,8 +8,8 @@ import po2;
 
 // A u32 value as two components (low / high) of no more than 16 bits
 component ValU32(low: Val, high: Val) {
-  low := low;
-  high := high;
+  public low := low;
+  public high := high;
 }
 
 // Convert a constant field element to a U32
@@ -18,8 +18,8 @@ component ConstU32<x:Val>() { ValU32(x & 0xffff, (x - (x & 0xffff)) / 0x10000) }
 // A denormalized u32, where the value is the low 32 bits of high*2^16 + low
 // but both low + high may be up to 2^17
 component DenormedValU32(low: Val, high: Val) {
-  low := low;
-  high := high;
+  public low := low;
+  public high := high;
 }
 
 // Add without normalization
@@ -51,7 +51,7 @@ component NormalizeU32(x: DenormedValU32) {
   highCarry := NondetBitReg((high & 0x10000) / 0x10000);
   high = highCarry * 0x10000 + high16;
   // Make the carry accessable
-  carry := highCarry;
+  public carry := highCarry;
   // Make us cast as a value
   ValU32(low16, high16)
 }
@@ -60,7 +60,7 @@ component NormalizeU32(x: DenormedValU32) {
 // and the low 2 bits.  Basically, this is used for memory IO
 component AddrDecompose(x: ValU32, mode: Val) {
   // Grab low 2 bits
-  low2 := NondetTwitReg(x.low & 0x3);
+  public low2 := NondetTwitReg(x.low & 0x3);
   // Check that upper part is legal (below 0xc000 is not machine mode)
   upperDiff := U16Reg(mode * 0xffff + (1 - mode) * 0xbfff - x.high);
   // Check that we are not accessing the zero page
@@ -78,9 +78,9 @@ component AddrDecompose(x: ValU32, mode: Val) {
 // Same as above but avoids the twit
 component AddrDecomposeBits(x: ValU32, mode: Val) {
   // Grab low 2 bits
-  low0 := NondetBitReg(x.low & 0x1);
-  low1 := NondetBitReg((x.low & 0x2) / 2);
-  low2 := low1 * 2 + low0;
+  public low0 := NondetBitReg(x.low & 0x1);
+  public low1 := NondetBitReg((x.low & 0x2) / 2);
+  public low2 := low1 * 2 + low0;
   // Check that upper part is legal (below 0xc000 is not machine mode)
   upperDiff := U16Reg(mode * 0xffff + (1 - mode) * 0xbfff - x.high);
   // Check that we are not accessing the zero page
@@ -90,7 +90,7 @@ component AddrDecomposeBits(x: ValU32, mode: Val) {
   // Verify
   med14 * 4 + low2 = x.low;
   // Make addr (30 bits max)
-  addr := 0x4000 * x.high + med14;
+  public addr := 0x4000 * x.high + med14;
   // Cast as a val
   addr
 }
@@ -111,13 +111,13 @@ component AssertEqU32(x: ValU32, y: ValU32) {
 component CmpEqual(x: ValU32, y: ValU32) {
   low_same := IsZero(x.low - y.low);
   high_same := IsZero(x.high - y.high);
-  is_equal := Reg(low_same * high_same);
+  public is_equal := Reg(low_same * high_same);
 }
 
 // Comparison operations
 component CmpLessThanUnsigned(x: ValU32, y: ValU32) {
   diff := NormalizeU32(SubU32(x, y));
-  is_less_than := 1 - diff.carry;
+  public is_less_than := 1 - diff.carry;
 }
 
 // Get the sign bit from a U32
@@ -137,7 +137,7 @@ component CmpLessThan(x: ValU32, y: ValU32) {
   // Compute the 'overflow' status bit
   overflow := Reg(s1 * (1 - s2) * (1 - s3) + (1 - s1) * s2 * s3);
   // Compute signed LT
-  is_less_than := Reg(overflow + s3 - 2 * overflow * s3);
+  public is_less_than := Reg(overflow + s3 - 2 * overflow * s3);
 }
 
 component BitwiseAndU16(x: Val, y: Val) {

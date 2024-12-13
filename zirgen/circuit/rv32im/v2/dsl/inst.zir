@@ -6,13 +6,13 @@ import mem;
 import one_hot;
 
 component InstInput(cycle: Val, major: Val, minor: Val, pc_u32: ValU32, state: Val, mode: Val) {
-  cycle := cycle;
-  major := major;
-  minor := minor;
-  pc_u32 := pc_u32;
-  state := state;
-  mode := mode;
-  minor_onehot := OneHot<8>(minor);
+  public cycle := cycle;
+  public major := major;
+  public minor := minor;
+  public pc_u32 := pc_u32;
+  public state := state;
+  public mode := mode;
+  public minor_onehot := OneHot<8>(minor);
 }
 
 component DecodeInst(cycle: Reg, ii: InstInput) {
@@ -44,9 +44,9 @@ component WriteRd(cycle: Reg, input: InstInput, decoded: Decoder, do_write: Val,
 }
 
 component InstOutput(new_pc: ValU32, new_state: Val, new_mode: Val) {
-  new_pc := new_pc;
-  new_state := new_state;
-  new_mode := new_mode;
+  public new_pc := new_pc;
+  public new_state := new_state;
+  public new_mode := new_mode;
 }
 
 component VerifyOpcode(decoded: Decoder, opcode: Val) {

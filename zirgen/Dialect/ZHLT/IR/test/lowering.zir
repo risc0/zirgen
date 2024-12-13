@@ -41,13 +41,13 @@ component TestLiteral() {
 }
 
 component A(a: Val, b: B) {
-  a := a;
+  public a := a;
   b
 }
 
 component B(b: Val, c: Val) {
-  b := b;
-  c := c;
+  public b := b;
+  public c := c;
 }
 
 component TestLookup() {

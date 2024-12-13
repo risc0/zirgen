@@ -7,18 +7,18 @@ import poseidon2;
 
 component PoseidonOpDef(
   hasState: Val,
-  stateAddr: Val, 
-  bufOutAddr: Val, 
-  isElem: Val, 
+  stateAddr: Val,
+  bufOutAddr: Val,
+  isElem: Val,
   checkOut: Val,
   loadTxType: Val
 ) {
-  hasState := hasState;
-  stateAddr := stateAddr;
-  bufOutAddr := bufOutAddr;
-  isElem := isElem;
-  checkOut := checkOut;
-  loadTxType := loadTxType;
+  public hasState := hasState;
+  public stateAddr := stateAddr;
+  public bufOutAddr := bufOutAddr;
+  public isElem := isElem;
+  public checkOut := checkOut;
+  public loadTxType := loadTxType;
 }
 
 component PoseidonState(
@@ -31,21 +31,21 @@ component PoseidonState(
   inner: Array<Val, 24>,
   zcheck: ExtVal)
 {
-  hasState := Reg(opDef.hasState);
-  stateAddr := Reg(opDef.stateAddr);
-  bufOutAddr := Reg(opDef.bufOutAddr);
-  isElem := Reg(opDef.isElem);
-  checkOut := Reg(opDef.checkOut);
-  loadTxType := Reg(opDef.loadTxType);
+  public hasState := Reg(opDef.hasState);
+  public stateAddr := Reg(opDef.stateAddr);
+  public bufOutAddr := Reg(opDef.bufOutAddr);
+  public isElem := Reg(opDef.isElem);
+  public checkOut := Reg(opDef.checkOut);
+  public loadTxType := Reg(opDef.loadTxType);
 
-  nextState := Reg(nextState);
-  subState := Reg(subState);
-  bufInAddr := Reg(bufInAddr);
-  count := Reg(count);
-  mode := Reg(mode);
+  public nextState := Reg(nextState);
+  public subState := Reg(subState);
+  public bufInAddr := Reg(bufInAddr);
+  public count := Reg(count);
+  public mode := Reg(mode);
 
-  inner := for v : inner { Reg(v) };
-  zcheck := ExtReg(zcheck);
+  public inner := for v : inner { Reg(v) };
+  public zcheck := ExtReg(zcheck);
 }
 
 component PoseidonInvalid() {
@@ -307,8 +307,8 @@ component PoseidonStoreState(cycle: Reg, prev: PoseidonState) {
 }
 
 component PagingReturn(idx: Val, mode: Val) {
-  idx := idx;
-  mode := mode;
+  public idx := idx;
+  public mode := mode;
 }
 
 extern nextPagingIdx(): PagingReturn;

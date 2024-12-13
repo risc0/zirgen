@@ -36,15 +36,23 @@ llvm::hash_code hash_value(const FieldInfo& fi) {
 mlir::ParseResult parseFields(mlir::AsmParser& p, llvm::SmallVectorImpl<FieldInfo>& parameters) {
   return p.parseCommaSeparatedList(
       mlir::AsmParser::Delimiter::LessGreater, [&]() -> mlir::ParseResult {
+        bool isPrivate = false;
         std::string name;
         if (p.parseKeywordOrString(&name) || p.parseColon()) {
           return mlir::failure();
+        }
+        if (name == "private") {
+          isPrivate = true;
+          if (p.parseKeywordOrString(&name) || p.parseColon()) {
+            return mlir::failure();
+          }
         }
         mlir::Type type;
         if (p.parseType(type)) {
           return mlir::failure();
         }
-        parameters.push_back(FieldInfo{mlir::StringAttr::get(p.getContext(), name), type});
+        parameters.push_back(
+            FieldInfo{mlir::StringAttr::get(p.getContext(), name), type, isPrivate});
         return mlir::success();
       });
 }
@@ -52,6 +60,9 @@ mlir::ParseResult parseFields(mlir::AsmParser& p, llvm::SmallVectorImpl<FieldInf
 void printFields(mlir::AsmPrinter& p, llvm::ArrayRef<FieldInfo> fields) {
   p << '<';
   llvm::interleaveComma(fields, p, [&](const FieldInfo& field) {
+    if (field.isPrivate) {
+      p.printKeywordOrString("private");
+    }
     p.printKeywordOrString(field.name.getValue());
     p << ": ";
     p << field.type;

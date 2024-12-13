@@ -18,8 +18,8 @@ extern IsFirstCycle() : Val;
 extern GetCycle() : Val;
 
 component MajorMinor(major: Val, minor: Val) {
-  major := major;
-  minor := minor;
+  public major := major;
+  public minor := minor;
 }
 
 extern GetMajorMinor(): MajorMinor;
