@@ -165,8 +165,7 @@ mlir::Location CaptureVal::getLoc() {
   return toLoc(loc);
 }
 
-// TODO: Figure out why we get more crashes in CSE when threading is enabled.
-Module::Module() : ctx(MLIRContext::Threading::DISABLED), builder(&ctx) {
+Module::Module() : builder(&ctx) {
   ctx.getOrLoadDialect<ZllDialect>();
   ctx.getOrLoadDialect<Iop::IopDialect>();
   ctx.getOrLoadDialect<ZStruct::ZStructDialect>();
@@ -174,12 +173,17 @@ Module::Module() : ctx(MLIRContext::Threading::DISABLED), builder(&ctx) {
   builder.setInsertionPointToEnd(&module->getBodyRegion().front());
 }
 
-void Module::optimize(size_t stageCount) {
+void Module::addOptimizationPasses(PassManager& pm) {
   sortForReproducibility();
-  PassManager pm(module->getContext());
+
   OpPassManager& opm = pm.nest<func::FuncOp>();
   opm.addPass(createCanonicalizerPass());
   opm.addPass(createCSEPass());
+}
+
+void Module::optimize(size_t stageCount) {
+  PassManager pm(module->getContext());
+  addOptimizationPasses(pm);
   if (failed(pm.run(*module))) {
     throw std::runtime_error("Failed to apply basic optimization passes");
   }
