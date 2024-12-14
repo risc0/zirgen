@@ -54,7 +54,7 @@ struct LookupTables {
     if (tableU32 != 8 && tableU32 != 16) {
       throw std::runtime_error("Invalid lookup table");
     }
-    if (index.asUInt32() >= (1 << tableU32)) {
+    if (index.asUInt32() >= (1U << tableU32)) {
       std::cerr << "LOOKUP ERROR: table = " << table.asUInt32() << ", index = " << index.asUInt32()
                 << "\n";
       throw std::runtime_error("u8/16 table error");

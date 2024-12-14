@@ -11,10 +11,10 @@ extern HostReadPrepare(fd: Val, len: Val): Val;
 extern HostWrite(fd: Val, addr: ValU32, len: Val): Val;
 
 component ECallOutput(state: Val, s0: Val, s1: Val, s2: Val) {
-  state := state;
-  s0 := s0;
-  s1 := s1;
-  s2 := s2;
+  public state := state;
+  public s0 := s0;
+  public s1 := s1;
+  public s2 := s2;
 }
 
 component IllegalECall() {
@@ -54,13 +54,13 @@ component ECallTerminate(cycle: Reg, input: InstInput) {
 
 component DecomposeLow2(len: Val) {
   // We split len into a multiple of 4, and the low 2 bits as one hot
-  high := NondetReg((len & 0xfffc) / 4);
-  low2 := NondetReg(len & 0x3);
-  low2Hot := OneHot<4>(low2);
-  highZero := IsZero(high);
-  isZero := Reg(highZero * low2Hot[0]);
-  low2Zero := low2Hot[0];
-  low2Nonzero := low2Hot[1] + low2Hot[2] + low2Hot[3];
+  public high := NondetReg((len & 0xfffc) / 4);
+  public low2 := NondetReg(len & 0x3);
+  public low2Hot := OneHot<4>(low2);
+  public highZero := IsZero(high);
+  public isZero := Reg(highZero * low2Hot[0]);
+  public low2Zero := low2Hot[0];
+  public low2Nonzero := low2Hot[1] + low2Hot[2] + low2Hot[3];
 }
 
 component ECallHostReadSetup(cycle: Reg, input: InstInput) {

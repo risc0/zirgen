@@ -26,6 +26,8 @@ std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createStripAliasLayoutOpsPa
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createLowerStepFuncsPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createBuffersToArgsPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createAnalyzeBuffersPass();
+std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createOptimizeParWitgenPass();
+std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createOutlineIfsPass();
 
 #define GEN_PASS_REGISTRATION
 #include "zirgen/Dialect/ZHLT/Transforms/Passes.h.inc"

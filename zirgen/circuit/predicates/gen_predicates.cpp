@@ -285,6 +285,15 @@ int main(int argc, char* argv[]) {
     });
   }
 
-  module.optimize();
-  module.getModule().walk([&](mlir::func::FuncOp func) { zirgen::emitRecursion(outputDir, func); });
+  mlir::PassManager pm(module.getModule()->getContext());
+  if (failed(applyPassManagerCLOptions(pm))) {
+    exit(1);
+  }
+  module.addOptimizationPasses(pm);
+  pm.nest<mlir::func::FuncOp>().addPass(createEmitRecursionPass(outputDir));
+
+  if (failed(pm.run(module.getModule()))) {
+    llvm::errs() << "Unable to run recursion pipeline\n";
+    exit(1);
+  }
 }

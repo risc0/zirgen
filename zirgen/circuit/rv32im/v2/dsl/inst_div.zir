@@ -6,10 +6,10 @@ import po2;
 
 component DivInput(cycle: Reg, inst_input: InstInput) {
   inst_input.state = StateDecode();
-  ii := inst_input;
-  decoded := DecodeInst(cycle, ii);
-  rs1 := ReadReg(cycle, ii, decoded.rs1);
-  rs2 := ReadReg(cycle, ii, decoded.rs2);
+  public ii := inst_input;
+  public decoded := DecodeInst(cycle, ii);
+  public rs1 := ReadReg(cycle, ii, decoded.rs1);
+  public rs2 := ReadReg(cycle, ii, decoded.rs2);
   ii
 }
 
@@ -36,8 +36,8 @@ component Div0(cycle: Reg, inst_input: InstInput) {
 }
 
 component DivideReturn(quot: ValU32, rem: ValU32) {
-  quot := quot;
-  rem := rem;
+  public quot := quot;
+  public rem := rem;
 }
 
 extern Divide(numer: ValU32, denom: ValU32, sign_type: Val) : DivideReturn;
