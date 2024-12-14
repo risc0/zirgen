@@ -55,6 +55,7 @@ BLOBS = [
     "modpow65537_4096",
     "ec_double_256",
     "ec_add_256",
+    "add128",
 ]
 
 genrule(
@@ -76,6 +77,13 @@ genrule(
     outs = ["ec_add_256.blob"],
     exec_tools = [":bigint2c"],
     cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=ec_add --bitwidth 256 > $(OUTS)"
+)
+
+genrule(
+    name = "add128",
+    outs = ["add128.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=add128 --bitwidth 128 > $(OUTS)"
 )
 
 pkg_zip(
