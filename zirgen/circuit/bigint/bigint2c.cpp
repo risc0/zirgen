@@ -43,6 +43,7 @@ enum class Program {
   ModPow65537,
   EC_Double,
   EC_Add,
+  Add128
 };
 } // namespace
 
@@ -52,6 +53,7 @@ static cl::opt<enum Program>
             cl::values(clEnumValN(Program::ModPow65537, "modpow65537", "ModPow65537"),
                        clEnumValN(Program::EC_Double, "ec_double", "EC_Double"),
                        clEnumValN(Program::EC_Add, "ec_add", "EC_Add")),
+                       clEnumValN(Program::Add128, "add128", "Add128")),
             cl::Required);
 
 static cl::opt<size_t> bitwidth("bitwidth",
@@ -432,6 +434,9 @@ int main(int argc, char* argv[]) {
     break;
   case Program::EC_Add:
     zirgen::BigInt::EC::genECAdd(builder, loc, bitwidth);
+    break;
+  case Program::Add128:
+    zirgen::BigInt::genAdd128(builder, loc);
     break;
   }
 
