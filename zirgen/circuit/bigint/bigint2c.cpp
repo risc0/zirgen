@@ -52,7 +52,7 @@ static cl::opt<enum Program>
             cl::desc("The program to compile"),
             cl::values(clEnumValN(Program::ModPow65537, "modpow65537", "ModPow65537"),
                        clEnumValN(Program::EC_Double, "ec_double", "EC_Double"),
-                       clEnumValN(Program::EC_Add, "ec_add", "EC_Add")),
+                       clEnumValN(Program::EC_Add, "ec_add", "EC_Add"),
                        clEnumValN(Program::Add128, "add128", "Add128")),
             cl::Required);
 
