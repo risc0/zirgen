@@ -63,7 +63,9 @@ struct PreflightContext {
     back.memCycle = memCycle;
     back.userCycle = userCycle;
     back.extraPtr = extraPtr;
-    back.diffCount = 0;
+    back.diffCount[0] = 0;
+    back.diffCount[1] = 0;
+
     memCycle = trace.txns.size();
     extraPtr = trace.extra.size();
   }
@@ -151,7 +153,7 @@ struct PreflightContext {
       origValue[word] = val;
     }
     txn.word = word;
-    txn.cycle = trace.cycles.size();
+    txn.cycle = 2 * trace.cycles.size();
     txn.val = val;
     txn.prevCycle = (prevCycle.count(word) ? prevCycle[word] : -1);
     txn.prevVal = val;
@@ -174,7 +176,7 @@ struct PreflightContext {
     }
     MemoryTransaction txn;
     txn.word = word;
-    txn.cycle = trace.cycles.size();
+    txn.cycle = 2 * trace.cycles.size() + 1;
     txn.val = val;
     txn.prevCycle = (prevCycle.count(word) ? prevCycle[word] : -1);
     txn.prevVal = prevVal;
@@ -303,7 +305,7 @@ PreflightTrace preflightSegment(const Segment& in) {
     } else {
       // Otherwise, compute cycle diff and another diff
       uint32_t diff = txn.cycle - txn.prevCycle;
-      ret.cycles[diff].diffCount++;
+      ret.cycles[diff/2].diffCount[diff%2]++;
     }
 
     // If last cycle, set final value to original value

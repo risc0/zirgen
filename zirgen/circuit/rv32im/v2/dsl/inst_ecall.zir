@@ -153,6 +153,7 @@ component ECall0(cycle: Reg, inst_input: InstInput) {
   s0 : Reg;
   s1 : Reg;
   s2 : Reg;
+  DoCycleTable(cycle);
   pc_addr := AddrDecomposeBits(inst_input.pc_u32, inst_input.mode);
   pc_addr.low2 = 0;
   output := inst_input.minor_onehot -> (
@@ -171,9 +172,5 @@ component ECall0(cycle: Reg, inst_input: InstInput) {
   isDecode := IsZero(output.state - StateDecode());
   isP2Entry := IsZero(output.state - StatePoseidonEcall());
   addPC := NormalizeU32(AddU32(inst_input.pc_u32, ValU32((isDecode + isP2Entry) * 4, 0)));
-  // Cancel out 'cycle' table entries
-  arg := CycleArg(-GetDiffCount(cycle), cycle);
-  AliasLayout!(arg.cycle, cycle);
-  arg.cycle = cycle;
   InstOutput(addPC, output.state, 1)
 }

@@ -332,6 +332,10 @@ CircuitParams getDslParams() {
   return ret;
 }
 
+size_t getCycleCol() {
+  return impl::kLayout_Top.cycle._super.col;
+}
+
 size_t getTopStateCol() {
   return impl::kLayout_Top.nextPcLow._super.col;
 }

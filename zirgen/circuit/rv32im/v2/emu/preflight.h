@@ -46,7 +46,7 @@ struct PreflightCycle {
   uint32_t memCycle;
   uint32_t userCycle;
   uint32_t extraPtr;
-  uint32_t diffCount;
+  uint32_t diffCount[2];
 };
 
 struct PreflightTrace {

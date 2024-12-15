@@ -175,7 +175,7 @@ struct ReplayHandler : public StepHandler {
     tables.memoryDelta(addr, cycle, data, count);
   }
 
-  uint32_t getDiffCount(uint32_t cycle) override { return preflight.cycles[cycle].diffCount; }
+  uint32_t getDiffCount(uint32_t cycle) override { return preflight.cycles[cycle/2].diffCount[cycle%2]; }
 
   const PreflightTrace& preflight;
   LookupTables& tables;
@@ -216,6 +216,7 @@ ExecutionTrace runSegment(const Segment& segment) {
   for (size_t i = 0; i < cycles; i++) {
     std::cout << "Cycle: " << i << ", pc = " << preflightTrace.cycles[i].pc / 4
               << ", state = " << preflightTrace.cycles[i].state << "\n";
+    trace.data.set(i, getCycleCol(), i);
     trace.data.set(i, getTopStateCol() + 0, preflightTrace.cycles[i].pc & 0xffff);
     trace.data.set(i, getTopStateCol() + 1, preflightTrace.cycles[i].pc >> 16);
     trace.data.set(i, getTopStateCol() + 2, preflightTrace.cycles[i].state);

@@ -443,8 +443,8 @@ component PoseidonPaging(cycle: Reg, mode: Val, prev: PoseidonState) {
 }
 
 component Poseidon0(cycle:Reg, inst_input: InstInput) {
+  DoCycleTable(cycle);
   state : PoseidonState;
-  // Cancel out 'cycle' table entries
   state := inst_input.minor_onehot -> (
     PoseidonEntry(cycle, inst_input.pc_u32, inst_input.mode),
     PoseidonLoadState(cycle, state@1),
@@ -455,15 +455,12 @@ component Poseidon0(cycle:Reg, inst_input: InstInput) {
     PoseidonPaging(cycle, inst_input.mode,state@1),
     PoseidonStoreState(cycle, state@1)
   );
-  arg := CycleArg(-GetDiffCount(cycle), cycle);
-  AliasLayout!(arg.cycle, cycle);
-  arg.cycle = cycle;
   InstOutput(inst_input.pc_u32, state.nextState, state.mode)
 }
 
 component Poseidon1(cycle:Reg, inst_input: InstInput) {
+  DoCycleTable(cycle);
   state : PoseidonState;
-  // Cancel out 'cycle' table entries
   state := inst_input.minor_onehot -> (
     PoseidonExtRound(state@1),
     PoseidonIntRounds(state@1),
@@ -474,9 +471,6 @@ component Poseidon1(cycle:Reg, inst_input: InstInput) {
     PoseidonInvalid(),
     PoseidonInvalid()
   );
-  arg := CycleArg(-GetDiffCount(cycle), cycle);
-  AliasLayout!(arg.cycle, cycle);
-  arg.cycle = cycle;
   InstOutput(inst_input.pc_u32, state.nextState, state.mode)
 }
 
