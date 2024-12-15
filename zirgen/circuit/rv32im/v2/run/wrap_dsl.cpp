@@ -250,10 +250,6 @@ Val extern_isFirstCycle_0(ExecContext& ctx) {
   return ctx.cycle == 0;
 }
 
-Val extern_getCycle(ExecContext& ctx) {
-  return ctx.cycle;
-}
-
 std::ostream& hex_word(std::ostream& os, uint32_t word) {
   std::cout << "0x"                                          //
             << std::hex << std::setw(8) << std::setfill('0') //
