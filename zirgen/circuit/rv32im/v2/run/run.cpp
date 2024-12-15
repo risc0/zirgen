@@ -175,7 +175,9 @@ struct ReplayHandler : public StepHandler {
     tables.memoryDelta(addr, cycle, data, count);
   }
 
-  uint32_t getDiffCount(uint32_t cycle) override { return preflight.cycles[cycle/2].diffCount[cycle%2]; }
+  uint32_t getDiffCount(uint32_t cycle) override {
+    return preflight.cycles[cycle / 2].diffCount[cycle % 2];
+  }
 
   const PreflightTrace& preflight;
   LookupTables& tables;

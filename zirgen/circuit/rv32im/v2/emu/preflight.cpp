@@ -305,7 +305,7 @@ PreflightTrace preflightSegment(const Segment& in) {
     } else {
       // Otherwise, compute cycle diff and another diff
       uint32_t diff = txn.cycle - txn.prevCycle;
-      ret.cycles[diff/2].diffCount[diff%2]++;
+      ret.cycles[diff / 2].diffCount[diff % 2]++;
     }
 
     // If last cycle, set final value to original value
