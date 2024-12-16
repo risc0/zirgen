@@ -606,9 +606,14 @@ impl Bootstrap {
         let risc0_root = risc0_root.join("risc0");
         let bazel_bin = get_bazel_bin();
         let src_path = bazel_bin.join("zirgen/circuit/bigint");
-        let rsa_path = risc0_root.join("bigint2/src/rsa");
         let ec_path = risc0_root.join("bigint2/src/ec");
+        let field_path = risc0_root.join("bigint2/src/field");
+        let rsa_path = risc0_root.join("bigint2/src/rsa");
 
+        self.copy_file(&src_path, &field_path, "modadd_256.blob");
+        self.copy_file(&src_path, &field_path, "modinv_256.blob");
+        self.copy_file(&src_path, &field_path, "modmul_256.blob");
+        self.copy_file(&src_path, &field_path, "modsub_256.blob");
         self.copy_file(&src_path, &rsa_path, "modpow65537_4096.blob");
         self.copy_file(&src_path, &ec_path, "ec_add_256.blob");
         self.copy_file(&src_path, &ec_path, "ec_double_256.blob");
