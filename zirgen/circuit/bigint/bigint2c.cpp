@@ -30,6 +30,7 @@
 #include "zirgen/Dialect/BigInt/IR/BigInt.h"
 #include "zirgen/Dialect/BigInt/Transforms/Passes.h"
 #include "zirgen/circuit/bigint/elliptic_curve.h"
+#include "zirgen/circuit/bigint/field.h"
 #include "zirgen/circuit/bigint/rsa.h"
 
 using namespace zirgen;
@@ -43,6 +44,10 @@ enum class Program {
   ModPow65537,
   EC_Double,
   EC_Add,
+  ModAdd,
+  ModInv,
+  ModMul,
+  ModSub,
 };
 } // namespace
 
@@ -51,7 +56,11 @@ static cl::opt<enum Program>
             cl::desc("The program to compile"),
             cl::values(clEnumValN(Program::ModPow65537, "modpow65537", "ModPow65537"),
                        clEnumValN(Program::EC_Double, "ec_double", "EC_Double"),
-                       clEnumValN(Program::EC_Add, "ec_add", "EC_Add")),
+                       clEnumValN(Program::EC_Add, "ec_add", "EC_Add"),
+                       clEnumValN(Program::ModAdd, "modadd", "ModAdd"),
+                       clEnumValN(Program::ModInv, "modinv", "ModInv"),
+                       clEnumValN(Program::ModMul, "modmul", "ModMul"),
+                       clEnumValN(Program::ModSub, "modsub", "ModSub")),
             cl::Required);
 
 static cl::opt<size_t> bitwidth("bitwidth",
@@ -433,6 +442,18 @@ int main(int argc, char* argv[]) {
   case Program::EC_Add:
     zirgen::BigInt::EC::genECAdd(builder, loc, bitwidth);
     break;
+  case Program::ModAdd:
+    zirgen::BigInt::field::genModAdd(builder, loc, bitwidth);
+    break;
+  case Program::ModInv:
+    zirgen::BigInt::field::genModInv(builder, loc, bitwidth);
+    break;
+  case Program::ModMul:
+    zirgen::BigInt::field::genModMul(builder, loc, bitwidth);
+    break;
+  case Program::ModSub:
+    zirgen::BigInt::field::genModSub(builder, loc, bitwidth);
+    break;
   }
 
   builder.create<func::ReturnOp>(loc);
@@ -441,6 +462,7 @@ int main(int argc, char* argv[]) {
   PassManager pm(&ctx);
   pm.addPass(createCanonicalizerPass());
   pm.addPass(createCSEPass());
+  pm.addPass(BigInt::createLowerInvPass());
   pm.addPass(BigInt::createLowerReducePass());
   pm.addPass(createCSEPass());
   if (failed(pm.run(module))) {
