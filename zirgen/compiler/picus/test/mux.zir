@@ -1,0 +1,9 @@
+
+extern IsFirstCycle() : Val;
+
+#[picus]
+component Top() {
+  first := Reg(0);
+  x := [1 - first, first] -> (Reg(7), Reg(8));
+  Log("x = %u", x);
+}

@@ -26,9 +26,10 @@
 #include <set>
 
 using namespace mlir;
-using namespace zirgen::Zhlt;
-using namespace zirgen::ZStruct;
-using namespace zirgen::Zll;
+using namespace zirgen;
+using namespace Zhlt;
+using namespace ZStruct;
+using namespace Zll;
 
 namespace {
 
@@ -55,6 +56,20 @@ template <typename F> void visit(AnySignal signal, F f) {
     for (auto field : str) {
       visit(field.getValue(), f);
     }
+  }
+}
+
+AnySignal getSuperSignal(AnySignal signal) {
+  if (auto arr = dyn_cast<SignalArray>(signal)) {
+    SmallVector<AnySignal> supers;
+    for (auto elem : arr)
+      supers.push_back(getSuperSignal(elem));
+    return SignalArray::get(signal.getContext(), supers);
+  } else if (auto str = dyn_cast<SignalStruct>(signal)) {
+    return str.getNamed("@super")->getValue();
+  } else {
+    // Signal, nullptr, etc
+    return nullptr;
   }
 }
 
@@ -131,6 +146,7 @@ private:
     // the mapping between MLIR values and Picus signals. Because Picus doesn't
     // have control flow, MapOp/ReduceOp are unrolled.
     llvm::TypeSwitch<Operation*>(op)
+        .Case<InvOp, BitAndOp, ModOp, InRangeOp, ExternOp>([&](auto op) { visitNondetOp(op); })
         .Case<ConstOp,
               StringOp,
               SubOp,
@@ -141,14 +157,24 @@ private:
               SubscriptOp,
               ConstructOp,
               EqualZeroOp,
+              Zhlt::BackOp,
+              SwitchOp,
               ArrayOp,
               PackOp,
               ReturnOp,
               GetGlobalLayoutOp,
               AliasLayoutOp,
               zirgen::Zhlt::BackOp>([&](auto op) { visitOp(op); })
-        .Case<StoreOp, arith::ConstantOp>([](auto) { /* no-op */ })
+        .Case<StoreOp, YieldOp, arith::ConstantOp>([](auto) { /* no-op */ })
         .Default([](Operation* op) { llvm::errs() << "unhandled op: " << *op << "\n"; });
+  }
+
+  // For nondeterministic operations, mark all results as fresh signals.
+  void visitNondetOp(Operation* op) {
+    for (Value result : op->getResults()) {
+      Signal signal = Signal::get(ctx, freshName());
+      valuesToSignals.insert({result, signal});
+    }
   }
 
   void visitOp(ConstOp constant) {
@@ -175,13 +201,6 @@ private:
     valuesToSignals.insert({pack.getOut(), nullptr});
   }
 
-  void visitOp(ExternOp ext) {
-    for (Value result : ext.getOut()) {
-      Signal signal = Signal::get(ctx, freshName());
-      valuesToSignals.insert({result, signal});
-    }
-  }
-
   void visitOp(LoadOp load) {
     auto signal = cast<Signal>(valuesToSignals.at(load.getRef()));
     valuesToSignals.insert({load.getOut(), signal});
@@ -198,7 +217,9 @@ private:
 
     SmallVector<OpFoldResult> results;
     if (failed(subscript.getIndex().getDefiningOp()->fold(results))) {
-      llvm::errs() << "failed to resolve subscript index\n";
+      auto diag = subscript->emitError("failed to resolve subscript index\n");
+      llvm::errs() << "index: " << *subscript.getIndex().getDefiningOp() << "\n";
+      return;
     }
     uint64_t index = cast<PolynomialAttr>(results[0].get<Attribute>())[0];
     auto subSignal = signal[index];
@@ -245,6 +266,61 @@ private:
     os << "(assert (= ";
     os << cast<Signal>(valuesToSignals.at(eqz.getIn())).str();
     os << " 0))\n";
+  }
+
+  void visitOp(Zhlt::BackOp back) {
+    os << "// TODO: back goes here\n";
+    auto signal = signalize("back_" + freshName(), back.getType());
+    valuesToSignals.insert({back.getOut(), signal});
+  }
+
+  void visitOp(SwitchOp mux) {
+    os << "// mark begin mux\n";
+
+    SmallVector<Signal> selectorSignals;
+    for (Value selector : mux.getSelector()) {
+      selectorSignals.push_back(cast<Signal>(valuesToSignals.at(selector)));
+    }
+
+    SmallVector<SmallVector<Signal>> armSignals;
+
+    for (Region& arm : mux.getArms()) {
+      // Probably need to "turn off" AliasLayoutOps, since different arms may
+      // write different values to the common super
+      assert(arm.hasOneBlock());
+      for (Operation& op : arm.front()) {
+        visitOp(&op);
+      }
+      // Collect values yielded by each arm
+      Value yielded = cast<YieldOp>(arm.front().getTerminator()).getValue();
+      AnySignal signal = valuesToSignals.at(yielded);
+      Type type = yielded.getType();
+      while (type != mux.getType()) {
+        signal = getSuperSignal(signal);
+        type = Zhlt::getSuperType(type);
+      }
+      armSignals.push_back(flatten(signal));
+      os << "// mark arm\n";
+    }
+
+    AnySignal outSignal = signalize("mux_" + freshName(), mux.getType());
+    valuesToSignals.insert({mux.getOut(), outSignal});
+
+    SmallVector<Signal> outSignals = flatten(outSignal);
+    for (size_t i = 0; i < outSignals.size(); i++) {
+      os << "(assert (= " << outSignals[i].str();
+      for (size_t j = 0; j < armSignals.size(); j++) {
+        if (j != armSignals.size() - 1)
+          os << " (+";
+        os << " (* " << selectorSignals[j].str() << " " << armSignals[j][i].str() << ")";
+      }
+      for (size_t j = 0; j < armSignals.size(); j++) {
+        os << ")";
+      }
+      os << "\n";
+    }
+
+    os << "// mark end of mux\n";
   }
 
   void visitOp(ArrayOp arr) {
