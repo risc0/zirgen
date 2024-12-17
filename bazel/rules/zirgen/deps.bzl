@@ -23,15 +23,15 @@ def zirgen_dependencies():
     """
     http_archive(
         name = "bazel_skylib",
-        sha256 = "74d544d96f4a5bb630d465ca8bbcfe231e3594e5aae57e1edbf17a6eb3ca2506",
+        sha256 = "bc283cdfcd526a52c3201279cda4bc298652efa898b10b4db0837dc51652756f",
         urls = [
-            "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.3.0/bazel-skylib-1.3.0.tar.gz",
-            "https://github.com/bazelbuild/bazel-skylib/releases/download/1.1.1/bazel-skylib-1.3.0.tar.gz",
+            "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.7.1/bazel-skylib-1.7.1.tar.gz",
+            "https://github.com/bazelbuild/bazel-skylib/releases/download/1.7.1/bazel-skylib-1.7.1.tar.gz",
         ],
     )
 
-    LLVM_COMMIT = "0d72fe9777e7c131dfb50c172b944d64437e2ece"
-    LLVM_SHA256 = "41f69c116fd1e25d290031c408f6ea0246cafb993b1fdab6f781c87fc0b903cf"
+    LLVM_COMMIT = "fea7b65f23632b42ff8f7e2595ac0641e2c1d214"
+    LLVM_SHA256 = "7f8da8de897f20824e7d11204768ccb29a47419385bb6c9b3f5eccfd738d7510"
     http_archive(
         name = "llvm-raw",
         build_file_content = "# empty",
