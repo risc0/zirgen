@@ -24,7 +24,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           # Full history is required by license-check.py
           fetch-depth: 0
@@ -42,6 +42,13 @@ jobs:
           python-version: "3.10"
       - run: python license-check.py
 
+  bootstrap:
+    runs-on: [self-hosted, prod, cpu, macOS]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/bazelisk
+      - run: cargo bootstrap -- --check rv32im-v2
+
   bazel:
     runs-on: [self-hosted, prod, cpu, "${{ matrix.os }}"]
     strategy:
@@ -57,7 +64,7 @@ jobs:
         run: |
              echo "date=$(/bin/date -u "+%Y-%m-%d")" >> $GITHUB_OUTPUT
         shell: bash
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       # Cache bazel build on linux.  (MacOS uses the local cache on the runner.)
       - if: matrix.os == 'Linux'
         uses: actions/cache@v4
@@ -97,7 +104,7 @@ jobs:
       RISC0_BUILD_LOCKED: 1
       RUST_BACKTRACE: full
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - if: matrix.feature == 'cuda'
         uses: ./.github/actions/cuda
       - uses: risc0/risc0/.github/actions/rustup@4ab1f0bba1b0515819221bebc59f95aad0a6a3a9
@@ -120,7 +127,7 @@ jobs:
       RUST_BACKTRACE: full
       RISC0_BUILD_LOCKED: 1
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: risc0/risc0/.github/actions/rustup@4ab1f0bba1b0515819221bebc59f95aad0a6a3a9
       - uses: risc0/risc0/.github/actions/sccache@1a373c71585766e4f6985b96c48389daaf69d528
       - run: |
