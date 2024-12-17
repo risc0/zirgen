@@ -62,48 +62,50 @@ impl<'a> Rule<'a> {
 
 type Rules<'a> = &'a [Rule<'a>];
 
-const MAIN_CPP_OUTPUTS: &[&str] = &[
-    "poly_fp.cpp",
-    "step_exec.cpp",
-    "step_verify_bytes.cpp",
-    "step_verify_mem.cpp",
-    "step_compute_accum.cpp",
-    "step_verify_accum.cpp",
-];
+mod edsl {
+    pub const RUST_OUTPUTS: &[&str] = &["poly_ext.rs", "taps.rs", "info.rs", "layout.rs.inc"];
 
-const MAIN_RUST_OUTPUTS: &[&str] = &["poly_ext.rs", "taps.rs", "info.rs", "layout.rs.inc"];
+    pub const CPP_OUTPUTS: &[&str] = &[
+        "poly_fp.cpp",
+        "step_exec.cpp",
+        "step_verify_bytes.cpp",
+        "step_verify_mem.cpp",
+        "step_compute_accum.cpp",
+        "step_verify_accum.cpp",
+    ];
 
-const CUDA_OUTPUTS: &[&str] = &[
-    "step_exec.cu",
-    "step_verify_bytes.cu",
-    "step_verify_mem.cu",
-    "step_compute_accum.cu",
-    "step_verify_accum.cu",
-    "eval_check.cu",
-];
+    pub const CUDA_OUTPUTS: &[&str] = &[
+        "step_exec.cu",
+        "step_verify_bytes.cu",
+        "step_verify_mem.cu",
+        "step_compute_accum.cu",
+        "step_verify_accum.cu",
+        "eval_check.cu",
+    ];
 
-const METAL_OUTPUTS: &[&str] = &[
-    // "step_exec.metal",
-    // "step_verify_bytes.metal",
-    // "step_verify_mem.metal",
-    "step_compute_accum.metal",
-    "step_verify_accum.metal",
-    "eval_check.metal",
-];
+    pub const METAL_OUTPUTS: &[&str] = &[
+        // "step_exec.metal",
+        // "step_verify_bytes.metal",
+        // "step_verify_mem.metal",
+        "step_compute_accum.metal",
+        "step_verify_accum.metal",
+        "eval_check.metal",
+    ];
+}
 
 const RECURSION_ZKR_ZIP: &str = "recursion_zkr.zip";
 
 #[derive(Clone, Debug, ValueEnum)]
 enum Circuit {
+    Bigint2,
+    Calculator,
     Fib,
+    Keccak,
     Predicates,
     Recursion,
     Rv32im,
-    Keccak,
-    Calculator,
+    Rv32imV2,
     Verify,
-    #[clap(name("bigint2"))]
-    BigInt2,
 }
 
 #[derive(Parser)]
@@ -446,14 +448,15 @@ impl Bootstrap {
 
     fn run(&self) {
         match self.args.circuit {
+            Circuit::Bigint2 => self.bigint2(),
+            Circuit::Calculator => self.calculator(),
             Circuit::Fib => self.fib(),
+            Circuit::Keccak => self.keccak(),
             Circuit::Predicates => self.predicates(),
             Circuit::Recursion => self.recursion(),
             Circuit::Rv32im => self.rv32im(),
-            Circuit::Keccak => self.keccak(),
-            Circuit::Calculator => self.calculator(),
+            Circuit::Rv32imV2 => self.rv32im_v2(),
             Circuit::Verify => self.stark_verify(),
-            Circuit::BigInt2 => self.bigint2(),
         }
 
         if self.args.check {
@@ -497,14 +500,31 @@ impl Bootstrap {
 
     fn recursion(&self) {
         self.build_all_circuits();
-
         self.copy_edsl_style("recursion", "zirgen/circuit/recursion")
     }
 
     fn rv32im(&self) {
         self.build_all_circuits();
-
         self.copy_edsl_style("rv32im", "zirgen/circuit/rv32im/v1/edsl")
+    }
+
+    fn rv32im_v2(&self) {
+        self.install_from_bazel(
+            "//zirgen/circuit/rv32im/v2/dsl:codegen",
+            self.output_or("risc0/circuit/rv32im-v2"),
+            &[
+                Rule::copy("*.cpp", "kernels/cxx").base_suffix("-sys"),
+                Rule::copy("*.cpp.inc", "kernels/cxx").base_suffix("-sys"),
+                Rule::copy("*.h", "kernels/cxx").base_suffix("-sys"),
+                Rule::copy("*.h.inc", "kernels/cxx").base_suffix("-sys"),
+                Rule::copy("*.cu", "kernels/cuda").base_suffix("-sys"),
+                Rule::copy("*.cu.inc", "kernels/cuda").base_suffix("-sys"),
+                Rule::copy("*.cuh", "kernels/cuda").base_suffix("-sys"),
+                Rule::copy("*.cuh.inc", "kernels/cuda").base_suffix("-sys"),
+                Rule::copy("*.rs", "src/zirgen"),
+                Rule::copy("*.rs.inc", "src/zirgen"),
+            ],
+        );
     }
 
     fn keccak(&self) {
@@ -557,30 +577,22 @@ impl Bootstrap {
     fn copy_edsl_style(&self, circuit: &str, src_dir: &str) {
         let risc0_root = self.args.output.as_ref().expect("--output is required");
         let risc0_root = risc0_root.join("risc0");
-        let src_path = Path::new(src_dir);
-        let rust_path = risc0_root.join("circuit").join(circuit);
-        let rust_path = Some(rust_path);
-        let sys_path = risc0_root
+        let src = Path::new(src_dir);
+        let rust = Some(risc0_root.join("circuit").join(circuit));
+        let sys = risc0_root
             .join("circuit")
             .join(String::from(circuit) + "-sys");
-        let hal_root = Some(sys_path.join("kernels"));
-        let sys_path = Some(sys_path);
+        let kernels = Some(sys.join("kernels"));
+        let sys = Some(sys);
 
-        self.copy_group(
-            circuit,
-            src_path,
-            &sys_path,
-            MAIN_CPP_OUTPUTS,
-            "cxx",
-            "rust_",
-        );
-        self.copy_group(circuit, src_path, &rust_path, MAIN_RUST_OUTPUTS, "src", "");
-        self.copy_group(circuit, src_path, &hal_root, CUDA_OUTPUTS, "cuda", "");
-        self.copy_group(circuit, src_path, &hal_root, METAL_OUTPUTS, "metal", "");
+        self.copy_group(circuit, src, &rust, edsl::RUST_OUTPUTS, "src", "");
+        self.copy_group(circuit, src, &sys, edsl::CPP_OUTPUTS, "cxx", "rust_");
+        self.copy_group(circuit, src, &kernels, edsl::CUDA_OUTPUTS, "cuda", "");
+        self.copy_group(circuit, src, &kernels, edsl::METAL_OUTPUTS, "metal", "");
 
-        self.copy_group(circuit, src_path, &sys_path, &["layout.cpp.inc"], "cxx", "");
-        self.copy_group(circuit, src_path, &hal_root, &["layout.cu.inc"], "cuda", "");
-        cargo_fmt_circuit(circuit, &rust_path, &None);
+        self.copy_group(circuit, src, &sys, &["layout.cpp.inc"], "cxx", "");
+        self.copy_group(circuit, src, &kernels, &["layout.cu.inc"], "cuda", "");
+        cargo_fmt_circuit(circuit, &rust, &None);
     }
 
     fn stark_verify(&self) {
