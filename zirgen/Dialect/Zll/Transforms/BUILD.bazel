@@ -41,6 +41,7 @@ cc_library(
         "MakePolynomial.cpp",
         "MultiplyToIf.cpp",
         "PassDetail.h",
+        "SortForReproducibility.cpp",
         "SplitStage.cpp",
     ],
     hdrs = [

@@ -53,10 +53,10 @@ public:
 
     if (memberName == "@super") {
       // TODO: Why do we require @super to be first?  Document this requirement.
-      members.insert(members.begin(), {memberName, value.getType()});
+      members.insert(members.begin(), {.name = memberName, .type = value.getType()});
       memberValues.insert(memberValues.begin(), value);
     } else {
-      members.push_back({memberName, value.getType()});
+      members.push_back({.name = memberName, .type = value.getType()});
       memberValues.push_back(value);
     }
   }
@@ -65,7 +65,7 @@ public:
     assert(value);
     assert(value.getType());
     assert(memberName != "@super");
-    members.push_back({memberName, value.getType(), .isPrivate = true});
+    members.push_back({.name = memberName, .type = value.getType(), .isPrivate = true});
     memberValues.push_back(value);
   }
 
