@@ -1,0 +1,7 @@
+load("//bazel/rules/lit:defs.bzl", "glob_lit_tests")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+glob_lit_tests(test_file_exts = ["zir"])
