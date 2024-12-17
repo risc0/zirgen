@@ -1,4 +1,3 @@
-#test
 name: CI
 
 on:
@@ -20,7 +19,6 @@ permissions:
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 
 jobs:
   check:
