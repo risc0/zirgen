@@ -518,16 +518,10 @@ private:
       mlir::TypeSwitch<Operation*>(&origOp)
           .Case<ConstOp>([&](ConstOp op) {
             auto attr = op->getAttrOfType<PolynomialAttr>("coefficients");
-            if (attr.size() != 1) {
-              SmallVector<uint64_t> expected = {{0, 1, 0, 0}};
-              if (!attr.asArrayRef().equals(expected)) {
-                llvm::errs() << "Unsupported field extension constant: "
-                             << emitPolynomialAttr(op, "coefficients") << "\n";
-                throw(std::runtime_error("unsupported field extension constant"));
-              }
-              ss << "PolyExtStep::Shift";
-            } else {
+            if (attr.size() == 1) {
               ss << "PolyExtStep::Const(" << emitPolynomialAttr(op, "coefficients") << ")";
+            } else {
+              ss << "PolyExtStep::ConstExt(" << emitPolynomialAttr(op, "coefficients") << ")";
             }
             ctx.fp.var(op.getOut());
           })
