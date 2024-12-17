@@ -83,8 +83,6 @@ llvm::SmallVector<Value, 2> extMul(mlir::OpBuilder builder, mlir::Location loc, 
                 result[idx] = builder.create<BigInt::ReduceOp>(loc, result[idx], prime);
             }
         }
-        auto sum = builder.create<BigInt::AddOp>(loc, lhs[i], rhs[i]);
-        result[i] = builder.create<BigInt::ReduceOp>(loc, sum, prime);
     }
     // Reduce using the monic irred polynomial of the extension field
     for (size_t i = 2 * deg - 2; i >= deg; i--) {
