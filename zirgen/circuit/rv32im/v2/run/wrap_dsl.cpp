@@ -108,11 +108,9 @@ struct BufferObj {
 struct MutableBufObj : public BufferObj {
   MutableBufObj(ExecContext& ctx, TraceGroup& group) : ctx(ctx), group(group) {}
   Val load(size_t col, size_t back) override {
-    if (back > ctx.cycle) {
-      std::cerr << "Going back too far\n";
-      return 0;
-    }
-    return group.get(ctx.cycle - back, col);
+    size_t backRow = (group.getRows() + ctx.cycle - back) % group.getRows();
+    if (back > ctx.cycle) { return 0; }  // TODO: Remove
+    return group.get(backRow, col);
   }
   void store(size_t col, Val val) override { return group.set(ctx.cycle, col, val); }
   ExecContext& ctx;

@@ -57,6 +57,6 @@ struct PreflightTrace {
   risc0::FpExt rng;
 };
 
-PreflightTrace preflightSegment(const Segment& in);
+PreflightTrace preflightSegment(const Segment& in, size_t segmentSize);
 
 } // namespace zirgen::rv32im_v2

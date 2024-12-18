@@ -47,5 +47,3 @@ component RegA2() { 12 }
 component RegA3() { 13 }
 
 component RegA7() { 17 }
-
-

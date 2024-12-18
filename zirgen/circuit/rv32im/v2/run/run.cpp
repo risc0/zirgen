@@ -185,25 +185,21 @@ struct ReplayHandler : public StepHandler {
   size_t which;
 };
 
-ExecutionTrace runSegment(const Segment& segment) {
+ExecutionTrace runSegment(const Segment& segment, size_t segmentSize) {
   auto rootIn = segment.image.getDigest(1);
-  auto preflightTrace = preflightSegment(segment);
+  auto preflightTrace = preflightSegment(segment, segmentSize);
   size_t cycles = preflightTrace.cycles.size();
   std::cout << "**** TRACE cycle: " << cycles << "\n";
   std::cout << "Segment main cycle count: " << segment.suspendCycle << "\n";
   std::cout << "Segment paging count: " << segment.pagingCycles << "\n";
-  size_t tableCycles = (256 + 65536) / 16;
-  size_t total = segment.suspendCycle + segment.pagingCycles + tableCycles + 1;
-  if (total != cycles) {
-    throw std::runtime_error("Cycle count size mismatch");
-  }
   ExecutionTrace trace(cycles, getDslParams());
   // Set globals:
   // TODO: Don't hardcode column numbers
+  trace.global.set(37, segment.segmentThreshold);
   for (size_t i = 0; i < 8; i++) {
     // State in
-    trace.global.set(37 + 2 * i, rootIn.words[i] & 0xffff);
-    trace.global.set(37 + 2 * i + 1, rootIn.words[i] >> 16);
+    trace.global.set(38 + 2 * i, rootIn.words[i] & 0xffff);
+    trace.global.set(38 + 2 * i + 1, rootIn.words[i] >> 16);
     // Input digest
     trace.global.set(0 + 2 * i, segment.input.words[i] & 0xffff);
     trace.global.set(0 + 2 * i + 1, segment.input.words[i] >> 16);
@@ -241,11 +237,13 @@ ExecutionTrace runSegment(const Segment& segment) {
   }
 
   LookupTables tables;
+  // for (size_t i = 0; i < preflightTrace.tableSplitCycle; i++) {
   for (size_t i = preflightTrace.tableSplitCycle; i-- > 0;) {
     std::cout << "Running cycle " << i << "\n";
     ReplayHandler memory(preflightTrace, tables, i);
     DslStep(memory, trace, i);
   }
+  // for (size_t i = preflightTrace.tableSplitCycle; i < cycles; i++) {
   for (size_t i = cycles; i-- > preflightTrace.tableSplitCycle;) {
     std::cout << "Running cycle " << i << "\n";
     ReplayHandler memory(preflightTrace, tables, i);

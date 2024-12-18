@@ -35,6 +35,7 @@ component Top() {
   global termA1low: Reg;
   global termA1high: Reg;
   global rng: ExtReg;
+  global shutdownCycle: Reg;
 
   // Top state
   cycle : Reg;
