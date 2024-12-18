@@ -107,7 +107,9 @@ llvm::SmallVector<Value, 2> extSub(mlir::OpBuilder builder, mlir::Location loc, 
     for (size_t i = 0; i < deg; i++) {
         // auto diff = builder.create<BigInt::SubOp>(loc, lhs[i], rhs[i]);
         auto diff = builder.create<BigInt::SubOp>(loc, lhs[i], rhs[i]);
-        result[i] = builder.create<BigInt::ReduceOp>(loc, diff, prime);
+        //Add `prime` due to the same reason as in modSub
+        auto diff_aug = builder.create<BigInt::AddOp>(loc, diff, prime);
+        result[i] = builder.create<BigInt::ReduceOp>(loc, diff_aug, prime);
     }
     return result;
 }
