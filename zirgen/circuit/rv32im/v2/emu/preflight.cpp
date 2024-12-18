@@ -259,7 +259,7 @@ struct PreflightContext {
     }
     machineMode = 1;
     cycleCompleteSpecial(STATE_CONTROL_DONE, STATE_CONTROL_DONE, 0);
-    while(trace.cycles.size() < segmentSize) {
+    while (trace.cycles.size() < segmentSize) {
       cycleCompleteSpecial(STATE_CONTROL_DONE, STATE_CONTROL_DONE, 0);
     }
   }

@@ -236,14 +236,14 @@ ExecutionTrace runSegment(const Segment& segment, size_t segmentSize) {
   }
 
   LookupTables tables;
-  for (size_t i = 0; i < preflightTrace.tableSplitCycle; i++) {
-  //for (size_t i = preflightTrace.tableSplitCycle; i-- > 0;) {
+  // for (size_t i = 0; i < preflightTrace.tableSplitCycle; i++) {
+  for (size_t i = preflightTrace.tableSplitCycle; i-- > 0;) {
     std::cout << "Running cycle " << i << "\n";
     ReplayHandler memory(preflightTrace, tables, i);
     DslStep(memory, trace, i);
   }
-  for (size_t i = preflightTrace.tableSplitCycle; i < cycles; i++) {
-  // for (size_t i = cycles; i-- > preflightTrace.tableSplitCycle;) {
+  // for (size_t i = preflightTrace.tableSplitCycle; i < cycles; i++) {
+  for (size_t i = cycles; i-- > preflightTrace.tableSplitCycle;) {
     std::cout << "Running cycle " << i << "\n";
     ReplayHandler memory(preflightTrace, tables, i);
     DslStep(memory, trace, i);
