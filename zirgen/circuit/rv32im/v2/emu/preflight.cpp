@@ -41,6 +41,7 @@ struct PreflightContext {
   std::map<uint32_t, uint32_t> origValue;
   std::map<uint32_t, uint32_t> prevCycle;
   std::map<uint32_t, uint32_t> pageMemory;
+  bool debug = false;
 
   PreflightContext(PreflightTrace& trace, const Segment& segment, PagedMemory& pager)
       : trace(trace), segment(segment), pager(pager) {
@@ -63,7 +64,9 @@ struct PreflightContext {
     back.memCycle = memCycle;
     back.userCycle = userCycle;
     back.extraPtr = extraPtr;
-    back.diffCount = 0;
+    back.diffCount[0] = 0;
+    back.diffCount[1] = 0;
+
     memCycle = trace.txns.size();
     extraPtr = trace.extra.size();
   }
@@ -89,7 +92,9 @@ struct PreflightContext {
 
   void resume() {
     cycleCompleteSpecial(STATE_RESUME, STATE_RESUME, pc);
-    std::cout << trace.cycles.size() << " Resume\n";
+    if (debug) {
+      std::cout << trace.cycles.size() << " Resume\n";
+    }
     for (size_t i = 0; i < 8; i++) {
       store(INPUT_WORD + i, 0);
     }
@@ -105,13 +110,17 @@ struct PreflightContext {
     cycleCompleteSpecial(STATE_SUSPEND, STATE_POSEIDON_ENTRY, 0);
   }
   void instruction(InstType type, const DecodedInst& decoded) {
-    std::cout << trace.cycles.size() << " Type: " << instName(type) << "\n";
+    if (debug) {
+      std::cout << trace.cycles.size() << " Type: " << instName(type) << "\n";
+    }
     cycleCompleteInst(STATE_DECODE, pc, type);
     userCycle++;
     physCycles++;
   }
   void ecallCycle(uint32_t curState, uint32_t nextState, uint32_t s0, uint32_t s1, uint32_t s2) {
-    std::cout << trace.cycles.size() << " ecallCycle\n";
+    if (debug) {
+      std::cout << trace.cycles.size() << " ecallCycle\n";
+    }
     trace.extra.push_back(s0);
     trace.extra.push_back(s1);
     trace.extra.push_back(s2);
@@ -119,7 +128,9 @@ struct PreflightContext {
     physCycles++;
   }
   void p2Cycle(uint32_t curState, P2State p2) {
-    std::cout << trace.cycles.size() << " p2Cycle\n";
+    if (debug) {
+      std::cout << trace.cycles.size() << " p2Cycle\n";
+    }
     p2.write(trace.extra);
     cycleCompleteSpecial(curState, p2.nextState, pc);
     physCycles++;
@@ -151,7 +162,7 @@ struct PreflightContext {
       origValue[word] = val;
     }
     txn.word = word;
-    txn.cycle = trace.cycles.size();
+    txn.cycle = 2 * trace.cycles.size();
     txn.val = val;
     txn.prevCycle = (prevCycle.count(word) ? prevCycle[word] : -1);
     txn.prevVal = val;
@@ -174,7 +185,7 @@ struct PreflightContext {
     }
     MemoryTransaction txn;
     txn.word = word;
-    txn.cycle = trace.cycles.size();
+    txn.cycle = 2 * trace.cycles.size() + 1;
     txn.val = val;
     txn.prevCycle = (prevCycle.count(word) ? prevCycle[word] : -1);
     txn.prevVal = prevVal;
@@ -229,7 +240,7 @@ struct PreflightContext {
     cycleCompleteSpecial(STATE_STORE_ROOT, STATE_CONTROL_TABLE, 0);
   }
 
-  void doTables() {
+  void doTables(size_t segmentSize) {
     for (size_t i = 16; i < 256; i += 16) {
       cycleCompleteSpecial(STATE_CONTROL_TABLE, STATE_CONTROL_TABLE, i);
     }
@@ -239,13 +250,24 @@ struct PreflightContext {
     }
     machineMode = 0;
     cycleCompleteSpecial(STATE_CONTROL_TABLE, STATE_CONTROL_DONE, 0);
+    if (!segment.isTerminate) {
+      if (trace.cycles.size() < segment.segmentThreshold) {
+        throw std::runtime_error("Stopping segment too early");
+      }
+      size_t diff = trace.cycles.size() - segment.segmentThreshold;
+      trace.cycles[diff / 2].diffCount[diff % 2]++;
+    }
+    machineMode = 1;
     cycleCompleteSpecial(STATE_CONTROL_DONE, STATE_CONTROL_DONE, 0);
+    while (trace.cycles.size() < segmentSize) {
+      cycleCompleteSpecial(STATE_CONTROL_DONE, STATE_CONTROL_DONE, 0);
+    }
   }
 };
 
 } // namespace
 
-PreflightTrace preflightSegment(const Segment& in) {
+PreflightTrace preflightSegment(const Segment& in, size_t segmentSize) {
   PreflightTrace ret;
   MemoryImage image(in.image);
   PagedMemory pager(image);
@@ -293,7 +315,7 @@ PreflightTrace preflightSegment(const Segment& in) {
 
   // Do table reification
   ret.tableSplitCycle = ret.cycles.size();
-  preflightContext.doTables();
+  preflightContext.doTables(segmentSize);
 
   // Now, go back and update memory transactions to wrap around
   for (auto& txn : ret.txns) {
@@ -303,7 +325,7 @@ PreflightTrace preflightSegment(const Segment& in) {
     } else {
       // Otherwise, compute cycle diff and another diff
       uint32_t diff = txn.cycle - txn.prevCycle;
-      ret.cycles[diff].diffCount++;
+      ret.cycles[diff / 2].diffCount[diff % 2]++;
     }
 
     // If last cycle, set final value to original value
@@ -361,9 +383,6 @@ PreflightTrace preflightSegment(const Segment& in) {
     // Fallthrough is intentional
     case STATE_POSEIDON_EXT_ROUND:
     case STATE_POSEIDON_INT_ROUND:
-      std::cerr << "loadTxType = " << loadTxType << "\n";
-      std::cerr << "polygoo Cycle " << i << ", fp = " << cur.elems[0].asUInt32() << ", "
-                << cur.elems[1].asUInt32() << "\n";
       // Write to extra
       for (size_t i = 0; i < 4; i++) {
         ret.extra[extraOffset + i] = cur.elems[i].asUInt32();

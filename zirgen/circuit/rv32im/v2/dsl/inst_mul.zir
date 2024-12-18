@@ -19,6 +19,7 @@ component IllegalMulOp(input: MulInput) {
 }
 
 component Mul0(cycle: Reg, inst_input: InstInput) {
+  DoCycleTable(cycle);
   input := MulInput(cycle, inst_input);
   mul_output := input.minor_onehot -> (
     OpSLL(input),

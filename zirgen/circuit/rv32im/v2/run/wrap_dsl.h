@@ -35,6 +35,7 @@ struct StepHandler {
 
 CircuitParams getDslParams();
 
+size_t getCycleCol();
 size_t getTopStateCol();
 size_t getEcall0StateCol();
 size_t getPoseidonStateCol();

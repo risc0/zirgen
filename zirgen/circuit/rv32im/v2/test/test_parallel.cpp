@@ -22,16 +22,18 @@ const std::string kernelName = "zirgen/circuit/rv32im/v2/kernel/kernel";
 const std::string progName = "zirgen/circuit/rv32im/v2/emu/test/guest";
 
 int main() {
-  size_t cycles = 20000;
+  size_t threshold = 16000;
+  size_t segmentSize = 16384;
+  size_t maximum = 100000;
   TestIoHandler io;
   io.push_u32(0, 5);
 
   // Load image
   auto image = MemoryImage::fromElfs(kernelName, progName);
   // Do execution
-  auto segments = execute(image, io, cycles, cycles);
+  auto segments = execute(image, io, threshold, maximum);
   // Do 'run' (preflight + expansion)
   for (const auto& segment : segments) {
-    runSegment(segment);
+    runSegment(segment, segmentSize);
   }
 }

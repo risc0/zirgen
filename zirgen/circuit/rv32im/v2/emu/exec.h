@@ -52,13 +52,15 @@ struct Segment {
   size_t suspendCycle;
   // Total physical cycles
   size_t pagingCycles;
+  // Segement threshold
+  size_t segmentThreshold;
 };
 
 // Run the executor and returns a set of segments. The memory image passed in
 // is updated in place.
 std::vector<Segment> execute(MemoryImage& in,
                              HostIoHandler& io,
-                             size_t segmentSize,
+                             size_t segmentThreshold,
                              size_t maxCycles,
                              Digest input = Digest::zero());
 

@@ -108,11 +108,8 @@ struct BufferObj {
 struct MutableBufObj : public BufferObj {
   MutableBufObj(ExecContext& ctx, TraceGroup& group) : ctx(ctx), group(group) {}
   Val load(size_t col, size_t back) override {
-    if (back > ctx.cycle) {
-      std::cerr << "Going back too far\n";
-      return 0;
-    }
-    return group.get(ctx.cycle - back, col);
+    size_t backRow = (group.getRows() + ctx.cycle - back) % group.getRows();
+    return group.get(backRow, col);
   }
   void store(size_t col, Val val) override { return group.set(ctx.cycle, col, val); }
   ExecContext& ctx;
@@ -250,10 +247,6 @@ Val extern_isFirstCycle_0(ExecContext& ctx) {
   return ctx.cycle == 0;
 }
 
-Val extern_getCycle(ExecContext& ctx) {
-  return ctx.cycle;
-}
-
 std::ostream& hex_word(std::ostream& os, uint32_t word) {
   std::cout << "0x"                                          //
             << std::hex << std::setw(8) << std::setfill('0') //
@@ -330,6 +323,10 @@ CircuitParams getDslParams() {
   ret.accumCols = impl::kRegCountAccum;
   ret.mixCols = impl::kRegCountMix;
   return ret;
+}
+
+size_t getCycleCol() {
+  return impl::kLayout_Top.cycle._super.col;
 }
 
 size_t getTopStateCol() {

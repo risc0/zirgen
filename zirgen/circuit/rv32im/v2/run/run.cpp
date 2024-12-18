@@ -175,7 +175,9 @@ struct ReplayHandler : public StepHandler {
     tables.memoryDelta(addr, cycle, data, count);
   }
 
-  uint32_t getDiffCount(uint32_t cycle) override { return preflight.cycles[cycle].diffCount; }
+  uint32_t getDiffCount(uint32_t cycle) override {
+    return preflight.cycles[cycle / 2].diffCount[cycle % 2];
+  }
 
   const PreflightTrace& preflight;
   LookupTables& tables;
@@ -183,25 +185,21 @@ struct ReplayHandler : public StepHandler {
   size_t which;
 };
 
-ExecutionTrace runSegment(const Segment& segment) {
+ExecutionTrace runSegment(const Segment& segment, size_t segmentSize) {
   auto rootIn = segment.image.getDigest(1);
-  auto preflightTrace = preflightSegment(segment);
+  auto preflightTrace = preflightSegment(segment, segmentSize);
   size_t cycles = preflightTrace.cycles.size();
   std::cout << "**** TRACE cycle: " << cycles << "\n";
   std::cout << "Segment main cycle count: " << segment.suspendCycle << "\n";
   std::cout << "Segment paging count: " << segment.pagingCycles << "\n";
-  size_t tableCycles = (256 + 65536) / 16;
-  size_t total = segment.suspendCycle + segment.pagingCycles + tableCycles + 1;
-  if (total != cycles) {
-    throw std::runtime_error("Cycle count size mismatch");
-  }
   ExecutionTrace trace(cycles, getDslParams());
   // Set globals:
   // TODO: Don't hardcode column numbers
+  trace.global.set(37, segment.segmentThreshold);
   for (size_t i = 0; i < 8; i++) {
     // State in
-    trace.global.set(37 + 2 * i, rootIn.words[i] & 0xffff);
-    trace.global.set(37 + 2 * i + 1, rootIn.words[i] >> 16);
+    trace.global.set(38 + 2 * i, rootIn.words[i] & 0xffff);
+    trace.global.set(38 + 2 * i + 1, rootIn.words[i] >> 16);
     // Input digest
     trace.global.set(0 + 2 * i, segment.input.words[i] & 0xffff);
     trace.global.set(0 + 2 * i + 1, segment.input.words[i] >> 16);
@@ -216,6 +214,7 @@ ExecutionTrace runSegment(const Segment& segment) {
   for (size_t i = 0; i < cycles; i++) {
     std::cout << "Cycle: " << i << ", pc = " << preflightTrace.cycles[i].pc / 4
               << ", state = " << preflightTrace.cycles[i].state << "\n";
+    trace.data.set(i, getCycleCol(), i);
     trace.data.set(i, getTopStateCol() + 0, preflightTrace.cycles[i].pc & 0xffff);
     trace.data.set(i, getTopStateCol() + 1, preflightTrace.cycles[i].pc >> 16);
     trace.data.set(i, getTopStateCol() + 2, preflightTrace.cycles[i].state);
@@ -225,7 +224,6 @@ ExecutionTrace runSegment(const Segment& segment) {
         (i == cycles - 1) ? preflightTrace.extra.size() : preflightTrace.cycles[i + 1].extraPtr;
     size_t extraSize = extraEnd - extraStart;
     if (extraSize == 3) {
-      // Not sure why this became discontigous....
       for (size_t j = 0; j < extraSize; j++) {
         trace.data.set(i, getEcall0StateCol() + j, preflightTrace.extra[extraStart + j]);
       }
@@ -238,11 +236,13 @@ ExecutionTrace runSegment(const Segment& segment) {
   }
 
   LookupTables tables;
+  // for (size_t i = 0; i < preflightTrace.tableSplitCycle; i++) {
   for (size_t i = preflightTrace.tableSplitCycle; i-- > 0;) {
     std::cout << "Running cycle " << i << "\n";
     ReplayHandler memory(preflightTrace, tables, i);
     DslStep(memory, trace, i);
   }
+  // for (size_t i = preflightTrace.tableSplitCycle; i < cycles; i++) {
   for (size_t i = cycles; i-- > preflightTrace.tableSplitCycle;) {
     std::cout << "Running cycle " << i << "\n";
     ReplayHandler memory(preflightTrace, tables, i);
@@ -256,6 +256,11 @@ ExecutionTrace runSegment(const Segment& segment) {
   // Zero any undecided values in data
   trace.data.setUnset();
   // Do accum
+  std::cout << "Doing accum\n";
+  // Make final accum == 0
+  for (size_t i = 0; i < 4; i++) {
+    trace.accum.set(cycles - 1, trace.accum.getCols() - 4 + i, 0);
+  }
   for (size_t i = 0; i < cycles; i++) {
     ReplayHandler memory(preflightTrace, tables, i);
     DslStepAccum(memory, trace, i);
