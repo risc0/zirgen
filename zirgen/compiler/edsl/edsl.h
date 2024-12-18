@@ -200,11 +200,6 @@ public:
     }
     return f;
   }
-  // HACK: Evaluation order of arguments is unspecified in c++ and
-  // different compilers do it differently. We want our circuit
-  // compilations to be reproducible, so sortForReproducibility tries
-  // to undo the varation in argument order.
-  void sortForReproducibility();
 
   void addOptimizationPasses(mlir::PassManager& pm);
   void optimize(size_t stageCount = 0);

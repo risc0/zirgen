@@ -73,4 +73,15 @@ def BalancedSplit : Pass<"balanced-split"> {
     ];
 }
 
+def SortForReproducibility : Pass<"sort-for-reproducibility"> {
+  let summary = "Attempt to make operation order consistent between compilers and compilations";
+  let description = [{
+     HACK: Evaluation order of arguments is unspecified in c++ and
+     different compilers do it differently. We want our circuit
+     compilations to be reproducible, so sortForReproducibility tries
+     to undo the varation in argument order.
+  }];
+  let constructor = "zirgen::Zll::createSortForReproducibilityPass()";
+}
+
 #endif // ZLL_TRANSFORM_PASSES
