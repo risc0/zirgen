@@ -44,9 +44,15 @@ component Top() {
   next_state : Reg;
   next_machine_mode : Reg;
 
-  // Registerize first cycle + cycle number [TODO, verify]
+  // Registerize first cycle + cycle number
   is_first_cycle := NondetBitReg(IsFirstCycle());
-  cycle := Reg((1 - is_first_cycle) * (cycle@1 + 1));
+  // If first cycle, verify we terminate, either way return cycle #
+  cycle := if (is_first_cycle) {
+    next_state@1 = StateControlDone();
+    Reg(0)
+  } else {
+    Reg(cycle@1 + 1)
+  };
   // Get PC (init pc == 0)
   low_pc := (1 - is_first_cycle) * next_pc_low@1;
   high_pc := (1 - is_first_cycle) * next_pc_high@1;

@@ -224,7 +224,6 @@ ExecutionTrace runSegment(const Segment& segment, size_t segmentSize) {
         (i == cycles - 1) ? preflightTrace.extra.size() : preflightTrace.cycles[i + 1].extraPtr;
     size_t extraSize = extraEnd - extraStart;
     if (extraSize == 3) {
-      // Not sure why this became discontigous....
       for (size_t j = 0; j < extraSize; j++) {
         trace.data.set(i, getEcall0StateCol() + j, preflightTrace.extra[extraStart + j]);
       }
@@ -237,14 +236,14 @@ ExecutionTrace runSegment(const Segment& segment, size_t segmentSize) {
   }
 
   LookupTables tables;
-  // for (size_t i = 0; i < preflightTrace.tableSplitCycle; i++) {
-  for (size_t i = preflightTrace.tableSplitCycle; i-- > 0;) {
+  for (size_t i = 0; i < preflightTrace.tableSplitCycle; i++) {
+  //for (size_t i = preflightTrace.tableSplitCycle; i-- > 0;) {
     std::cout << "Running cycle " << i << "\n";
     ReplayHandler memory(preflightTrace, tables, i);
     DslStep(memory, trace, i);
   }
-  // for (size_t i = preflightTrace.tableSplitCycle; i < cycles; i++) {
-  for (size_t i = cycles; i-- > preflightTrace.tableSplitCycle;) {
+  for (size_t i = preflightTrace.tableSplitCycle; i < cycles; i++) {
+  // for (size_t i = cycles; i-- > preflightTrace.tableSplitCycle;) {
     std::cout << "Running cycle " << i << "\n";
     ReplayHandler memory(preflightTrace, tables, i);
     DslStep(memory, trace, i);
@@ -257,6 +256,11 @@ ExecutionTrace runSegment(const Segment& segment, size_t segmentSize) {
   // Zero any undecided values in data
   trace.data.setUnset();
   // Do accum
+  std::cout << "Doing accum\n";
+  // Make final accum == 0
+  for (size_t i = 0; i < 4; i++) {
+    trace.accum.set(cycles - 1, trace.accum.getCols() - 4 + i, 0);
+  }
   for (size_t i = 0; i < cycles; i++) {
     ReplayHandler memory(preflightTrace, tables, i);
     DslStepAccum(memory, trace, i);

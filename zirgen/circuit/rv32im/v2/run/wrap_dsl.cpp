@@ -109,7 +109,6 @@ struct MutableBufObj : public BufferObj {
   MutableBufObj(ExecContext& ctx, TraceGroup& group) : ctx(ctx), group(group) {}
   Val load(size_t col, size_t back) override {
     size_t backRow = (group.getRows() + ctx.cycle - back) % group.getRows();
-    if (back > ctx.cycle) { return 0; }  // TODO: Remove
     return group.get(backRow, col);
   }
   void store(size_t col, Val val) override { return group.set(ctx.cycle, col, val); }
