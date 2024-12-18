@@ -97,7 +97,7 @@ component OpLH(input: MemLoadInput) {
   input.addr.low0 = 0;
   low16 := input.addr.low1 * input.data.high + (1 - input.addr.low1) * input.data.low;
   highBit := NondetBitReg((low16 & 0x8000) / 0x8000);
-  low15x2 := NondetU8Reg((low16 & 0x7fff) * 2);
+  low15x2 := NondetU16Reg((low16 & 0x7fff) * 2);
   low16 = highBit * 0x8000 + low15x2 / 2;
   ValU32(low16, 0xffff * highBit)
 }
