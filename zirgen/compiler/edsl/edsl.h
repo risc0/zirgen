@@ -206,6 +206,7 @@ public:
   // to undo the varation in argument order.
   void sortForReproducibility();
 
+  void addOptimizationPasses(mlir::PassManager& pm);
   void optimize(size_t stageCount = 0);
   void setExternHandler(Zll::ExternHandler* handler);
   void runFunc(llvm::StringRef name,

@@ -38,5 +38,6 @@ cc_binary(
         "//zirgen/Main",
         "//zirgen/compiler/codegen",
         "//zirgen/compiler/layout",
+        "//zirgen/compiler/picus",
     ],
 )
