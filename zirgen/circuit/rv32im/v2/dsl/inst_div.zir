@@ -19,6 +19,7 @@ component IllegalDivOp(input: DivInput) {
 }
 
 component Div0(cycle: Reg, inst_input: InstInput) {
+  DoCycleTable(cycle);
   input := DivInput(cycle, inst_input);
   mul_output := input.minor_onehot -> (
     OpSRL(input),

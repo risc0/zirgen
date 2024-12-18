@@ -31,6 +31,6 @@ int main() {
     uint32_t result = io.pop_u32(1);
     std::cout << "Result = " << result << "\n";
   }
-  auto ptrace = preflightSegment(segments[0]);
+  auto ptrace = preflightSegment(segments[0], 1000000 + 2000);
   return 0;
 }

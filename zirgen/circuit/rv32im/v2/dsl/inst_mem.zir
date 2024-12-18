@@ -46,6 +46,7 @@ component IllegalStoreOp(input: MemStoreInput) {
 }
 
 component Mem0(cycle: Reg, inst_input: InstInput) {
+  DoCycleTable(cycle);
   input := MemLoadInput(cycle, inst_input);
   output := inst_input.minor_onehot -> (
     OpLB(input),
@@ -63,6 +64,7 @@ component Mem0(cycle: Reg, inst_input: InstInput) {
 }
 
 component Mem1(cycle: Reg, inst_input: InstInput) {
+  DoCycleTable(cycle);
   input := MemStoreInput(cycle, inst_input);
   output := inst_input.minor_onehot -> (
     OpSB(input),

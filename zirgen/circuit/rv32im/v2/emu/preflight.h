@@ -46,7 +46,7 @@ struct PreflightCycle {
   uint32_t memCycle;
   uint32_t userCycle;
   uint32_t extraPtr;
-  uint32_t diffCount;
+  uint32_t diffCount[2];
 };
 
 struct PreflightTrace {
@@ -57,6 +57,6 @@ struct PreflightTrace {
   risc0::FpExt rng;
 };
 
-PreflightTrace preflightSegment(const Segment& in);
+PreflightTrace preflightSegment(const Segment& in, size_t segmentSize);
 
 } // namespace zirgen::rv32im_v2
