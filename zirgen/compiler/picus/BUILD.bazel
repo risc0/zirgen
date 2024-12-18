@@ -1,0 +1,18 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "picus",
+    srcs = [
+        "picus.cpp",
+    ],
+    hdrs = [
+        "picus.h",
+    ],
+    deps = [
+        "//zirgen/Dialect/ZHLT/IR",
+        "//zirgen/Dialect/ZStruct/IR",
+        "//zirgen/dsl/passes:passes",
+    ],
+)
