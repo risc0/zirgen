@@ -28,65 +28,76 @@ cc_test(
     name = "const_add",
     srcs = ["const_add.cpp"],
     deps = [":bibc_utils"],
+    size = "small",
 )
 
 cc_test(
     name = "const_add_alt",
     srcs = ["const_add_alt.cpp"],
     deps = [":bibc_utils"],
+    size = "small",
 )
 
 cc_test(
     name = "const_mul",
     srcs = ["const_mul.cpp"],
     deps = [":bibc_utils"],
+    size = "small",
 )
 
 cc_test(
     name = "add",
     srcs = ["add.cpp"],
     deps = [":bibc_utils"],
+    size = "small",
 )
 
 cc_test(
     name = "const_one",
     srcs = ["const_one.cpp"],
     deps = [":bibc_utils"],
+    size = "small",
 )
 
 cc_test(
     name = "const_twobyte",
     srcs = ["const_twobyte.cpp"],
     deps = [":bibc_utils"],
+    size = "small",
 )
 
 cc_test(
     name = "sub",
     srcs = ["sub.cpp"],
     deps = [":bibc_utils"],
+    size = "small",
 )
 
 cc_test(
     name = "mul",
     srcs = ["mul.cpp"],
     deps = [":bibc_utils"],
+    size = "small",
 )
 
 cc_test(
     name = "reduce",
     srcs = ["reduce.cpp"],
     deps = [":bibc_utils"],
+    size = "small",
 )
 
 cc_test(
     name = "nondet_inv",
     srcs = ["nondet_inv.cpp"],
     deps = [":bibc_utils"],
+    size = "small",
 )
 
 cc_test(
     name = "rsa",
     srcs = ["rsa.cpp"],
     deps = [":bibc_utils"],
+    size = "small",
 )
 

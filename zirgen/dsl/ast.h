@@ -112,6 +112,15 @@ protected:
 
 bool operator==(const Statement& left, const Statement& right);
 
+class Attribute : public Node<Attribute> {
+  std::string name;
+
+public:
+  Attribute(SMLoc, StringRef name);
+  StringRef getName() const { return name; }
+  void print(llvm::raw_ostream&) const override;
+};
+
 class Parameter : public Node<Parameter> {
   std::string name;
   Expression::Ptr type;
@@ -140,6 +149,7 @@ public:
 private:
   const Kind kind;
   std::string name;
+  Attribute::Vec attributes;
   Parameter::Vec type_params;
   Parameter::Vec params;
   Expression::Ptr body;
@@ -148,11 +158,13 @@ public:
   Component(SMLoc loc,
             Kind kind,
             StringRef name,
+            Attribute::Vec attributes,
             Parameter::Vec type_params,
             Parameter::Vec params,
             Expression::Ptr body);
   Kind getKind() const { return kind; }
   StringRef getName() const { return name; }
+  Attribute::ArrayRef getAttributes() const { return attributes; }
   Parameter::ArrayRef getTypeParams() const { return type_params; }
   Parameter::ArrayRef getParams() const { return params; }
   Expression* getBody() const { return body.get(); }

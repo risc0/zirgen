@@ -9,10 +9,12 @@ cc_library(
     name = "lib",
     srcs = [
         "elliptic_curve.cpp",
+        "field.cpp",
         "rsa.cpp",
     ],
     hdrs = [
         "elliptic_curve.h",
+        "field.h",
         "rsa.h",
         "//zirgen/circuit/recursion",
         "//zirgen/circuit/rv32im/v1/edsl:rv32im",
@@ -55,6 +57,10 @@ BLOBS = [
     "modpow65537_4096",
     "ec_double_256",
     "ec_add_256",
+    "modadd_256",
+    "modinv_256",
+    "modmul_256",
+    "modsub_256",
 ]
 
 genrule(
@@ -76,6 +82,34 @@ genrule(
     outs = ["ec_add_256.blob"],
     exec_tools = [":bigint2c"],
     cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=ec_add --bitwidth 256 > $(OUTS)"
+)
+
+genrule(
+    name = "modadd_256",
+    outs = ["modadd_256.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modadd --bitwidth 256 > $(OUTS)"
+)
+
+genrule(
+    name = "modinv_256",
+    outs = ["modinv_256.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modinv --bitwidth 256 > $(OUTS)"
+)
+
+genrule(
+    name = "modmul_256",
+    outs = ["modmul_256.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modmul --bitwidth 256 > $(OUTS)"
+)
+
+genrule(
+    name = "modsub_256",
+    outs = ["modsub_256.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modsub --bitwidth 256 > $(OUTS)"
 )
 
 pkg_zip(

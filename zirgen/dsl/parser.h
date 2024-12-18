@@ -59,6 +59,7 @@ private:
   Expression::Ptr
   buildBinaryOp(Token token, Expression::Ptr&& lhs, Expression::Ptr&& rhs, llvm::SMLoc location);
   void parseImport();
+  Attribute::Vec parseOptionalAttributeList();
   Parameter::Vec parseOptionalTypeParameters();
   Parameter::Vec parseParameters();
   Parameter::Ptr parseParameter();
