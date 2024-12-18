@@ -47,6 +47,6 @@ int main() {
   auto segments = execute(image, io, cycles, cycles);
   // Do 'run' (preflight + expansion)
   for (const auto& segment : segments) {
-    runSegment(segment);
+    runSegment(segment, cycles + 1000);
   }
 }
