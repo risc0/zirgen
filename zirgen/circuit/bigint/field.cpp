@@ -57,7 +57,7 @@ llvm::SmallVector<Value, 2> extAdd(mlir::OpBuilder builder, mlir::Location loc, 
     return result;
 }
 
-llvm::SmallVector<Value, 2> extMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime, llvm::SmallVector<Value, 2> monic_irred_poly) {
+llvm::SmallVector<Value, 2> extMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, llvm::SmallVector<Value, 2> monic_irred_poly, Value prime) {
     // TODO: Annoying to have a SmallVector output that needs to be deg - 1 bigger than the inputs; I think that means all should be 3...
     // TODO: We could have a simplified version for nth roots x^n - a
     // Here `monic_irred_poly` is the coefficients a_i such that x^n - sum_i a_i x^i = 0
@@ -193,7 +193,7 @@ void genExtFieldMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth
     monic_irred_poly[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, i * chunkwidth);
   }
   auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 14, 0);
-  auto result = BigInt::field::extMul(builder, loc, lhs, rhs, prime, monic_irred_poly);
+  auto result = BigInt::field::extMul(builder, loc, lhs, rhs, monic_irred_poly, prime);
   for (size_t i = 0; i < degree; i++) {
     builder.create<BigInt::StoreOp>(loc, result[i], 15, i * chunkwidth);
   }
