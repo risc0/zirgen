@@ -261,11 +261,62 @@ ExecutionTrace runSegment(const Segment& segment, size_t segmentSize) {
   for (size_t i = 0; i < 4; i++) {
     trace.accum.set(cycles - 1, trace.accum.getCols() - 4 + i, 0);
   }
+  // Run normally
   for (size_t i = 0; i < cycles; i++) {
     ReplayHandler memory(preflightTrace, tables, i);
     DslStepAccum(memory, trace, i);
   }
-  // TODO: Check final is zero?
+  // Now try in multiphase, save old value for comparison
+  TraceGroup oldAccum = trace.accum;
+  trace.accum = TraceGroup(cycles, oldAccum.getCols());
+  std::cout << "Doing parallel accum: phase 1\n";
+  // We run backwords to pretend to be parallel
+  for (size_t i = cycles; i-- > 0;) {
+    ReplayHandler memory(preflightTrace, tables, i);
+    DslStepAccumPhase1(memory, trace, i);
+  }
+  trace.accum.setUnset(); // Zero any 'don't care' entries
+  std::cout << "Doing parallel accum: phase 2\n";
+  trace.accum.setUnsafe(); // Allow in place updates
+  // Then we compute a prefix sum over the last 4 columns
+  std::array<Fp, 4> tot;
+  for (size_t i = 0; i < cycles; i++) {
+    for (size_t j = 0; j < 4; j++) {
+      tot[j] += trace.accum.get(i, trace.accum.getCols() - 4 + j);
+      trace.accum.set(i, trace.accum.getCols() - 4 + j, tot[j]);
+    }
+  }
+  std::cout << "Doing parallel accum: phase 3\n";
+  // Finally, (in 'parallel'), we add the prev total all other Fp4s...
+  for (size_t i = cycles; i-- > 0;) {
+    size_t back1 = (i + cycles - 1) % cycles;
+    std::array<Fp, 4> prev;
+    for (size_t k = 0; k < 4; k++) {
+      prev[k] = trace.accum.get(back1, trace.accum.getCols() - 4 + k);
+    }
+    for (size_t j = 0; j < trace.accum.getCols() / 4 - 1; j++) {
+      for (size_t k = 0; k < 4; k++) {
+        trace.accum.set(i, j * 4 + k, trace.accum.get(i, j * 4 + k) + prev[k]);
+      }
+    }
+  }
+  // Verify the results match
+  oldAccum.setUnsafe();
+  for (size_t i = 0; i < cycles; i++) {
+    for (size_t j = 0; j < trace.accum.getCols(); j++) {
+      if (oldAccum.get(i, j) == Fp::invalid()) {
+        // We don't care about 'dont't care' values matching
+        continue;
+      }
+      if (trace.accum.get(i, j) != oldAccum.get(i, j)) {
+        std::cerr << "Bad parallel accum\n";
+        std::cerr << "i = " << i << ", j = " << j;
+        std::cerr << ", normal = " << oldAccum.get(i, j).asUInt32();
+        std::cerr << ", parallel = " << trace.accum.get(i, j).asUInt32() << "\n";
+        throw std::runtime_error("Bad parallel accum");
+      }
+    }
+  }
   std::cout << "Done\n";
   return trace;
 }

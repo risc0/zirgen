@@ -106,14 +106,18 @@ struct BufferObj {
 };
 
 struct MutableBufObj : public BufferObj {
-  MutableBufObj(ExecContext& ctx, TraceGroup& group) : ctx(ctx), group(group) {}
+  MutableBufObj(ExecContext& ctx, TraceGroup& group) : ctx(ctx), group(group), zeroBack(false) {}
   Val load(size_t col, size_t back) override {
+    if (zeroBack && back > 0) {
+      return 0;
+    }
     size_t backRow = (group.getRows() + ctx.cycle - back) % group.getRows();
     return group.get(backRow, col);
   }
   void store(size_t col, Val val) override { return group.set(ctx.cycle, col, val); }
   ExecContext& ctx;
   TraceGroup& group;
+  bool zeroBack;
 };
 
 using MutableBuf = MutableBufObj*;
@@ -352,6 +356,18 @@ void DslStepAccum(StepHandler& stepHandler, ExecutionTrace& trace, size_t cycle)
   impl::ExecContext ctx(stepHandler, trace, cycle);
   impl::MutableBufObj data(ctx, trace.data);
   impl::MutableBufObj accum(ctx, trace.accum);
+  // Global is required when using user-accum
+  // impl::GlobalBufObj global(ctx, trace.global);
+  impl::GlobalBufObj mix(ctx, trace.mix);
+  step_TopAccum(ctx, &accum, &data, /*&global, */ &mix);
+}
+
+// Basically exactly the same as above, but all 'backs' read as zero
+void DslStepAccumPhase1(StepHandler& stepHandler, ExecutionTrace& trace, size_t cycle) {
+  impl::ExecContext ctx(stepHandler, trace, cycle);
+  impl::MutableBufObj data(ctx, trace.data);
+  impl::MutableBufObj accum(ctx, trace.accum);
+  accum.zeroBack = true;
   // Global is required when using user-accum
   // impl::GlobalBufObj global(ctx, trace.global);
   impl::GlobalBufObj mix(ctx, trace.mix);

@@ -40,7 +40,7 @@ private:
   size_t rows;
   size_t cols;
   std::vector<Fp> vec;
-  bool unsafeReads;
+  bool unsafe;
 };
 
 class GlobalTraceGroup {

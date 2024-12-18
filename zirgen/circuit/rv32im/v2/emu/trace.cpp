@@ -18,11 +18,11 @@
 namespace zirgen::rv32im_v2 {
 
 TraceGroup::TraceGroup(size_t rows, size_t cols)
-    : rows(rows), cols(cols), vec(rows * cols, Fp::invalid()), unsafeReads(false) {}
+    : rows(rows), cols(cols), vec(rows * cols, Fp::invalid()), unsafe(false) {}
 
 void TraceGroup::set(size_t row, size_t col, Fp val) {
   Fp& elem = vec[row * cols + col];
-  if (elem != Fp::invalid() && elem != val) {
+  if (elem != Fp::invalid() && elem != val && !unsafe) {
     std::cerr << "Invalid trace set: row = " << row << ", col = " << col << "\n";
     std::cerr << "Current = " << elem.asUInt32() << ", new = " << val.asUInt32() << "\n";
     throw std::runtime_error("Inconsistant set");
@@ -33,7 +33,7 @@ void TraceGroup::set(size_t row, size_t col, Fp val) {
 
 Fp TraceGroup::get(size_t row, size_t col) {
   Fp ret = vec[row * cols + col];
-  if (ret == Fp::invalid() && !unsafeReads) {
+  if (ret == Fp::invalid() && !unsafe) {
     std::cerr << "Invalid trace get: row = " << row << ", col = " << col << "\n";
     throw std::runtime_error("Read of unset value");
   }
@@ -50,7 +50,7 @@ void TraceGroup::setUnset() {
 }
 
 void TraceGroup::setUnsafe(bool val) {
-  unsafeReads = true;
+  unsafe = val;
 }
 
 GlobalTraceGroup::GlobalTraceGroup(size_t cols)

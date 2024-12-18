@@ -42,5 +42,6 @@ size_t getPoseidonStateCol();
 
 void DslStep(StepHandler& stepHandler, ExecutionTrace& trace, size_t cycle);
 void DslStepAccum(StepHandler& stepHandler, ExecutionTrace& trace, size_t cycle);
+void DslStepAccumPhase1(StepHandler& stepHandler, ExecutionTrace& trace, size_t cycle);
 
 } // namespace zirgen::rv32im_v2
