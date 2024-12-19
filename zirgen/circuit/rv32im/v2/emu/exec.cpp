@@ -34,13 +34,16 @@ struct ExecContext {
   size_t machineMode = 0;
   size_t userCycles = 0;
   size_t physCycles = 0;
+  bool debug = false;
 
   ExecContext(HostIoHandler& upstream, PagedMemory& pager) : upstream(upstream), pager(pager) {}
 
   void resume() {}
   void suspend() {}
   void instruction(InstType type, const DecodedInst& decoded) {
-    std::cout << "pc = " << pc << ", instType = " << instName(type) << "\n";
+    if (debug) {
+      std::cout << "pc = " << pc << ", instType = " << instName(type) << "\n";
+    }
     userCycles++;
     physCycles++;
   }
@@ -48,7 +51,9 @@ struct ExecContext {
     physCycles++;
   }
   void p2Cycle(uint32_t cur, const P2State& state) {
-    std::cout << "poseidon: " << state.nextState << "\n";
+    if (debug) {
+      std::cout << "poseidon: " << state.nextState << "\n";
+    }
     physCycles++;
   }
   void trapRewind() {}
@@ -91,6 +96,7 @@ std::vector<Segment> execute(
     if (execContext.physCycles + pager.getPagingCycles() >= segmentThreshold) {
       ret.back().suspendCycle = execContext.physCycles;
       ret.back().pagingCycles = pager.getPagingCycles();
+      ret.back().segmentThreshold = segmentThreshold;
       r0Context.suspend();
       ret.back().image = pager.commit();
       ret.back().isTerminate = false;
@@ -104,6 +110,7 @@ std::vector<Segment> execute(
   }
   ret.back().suspendCycle = execContext.physCycles;
   ret.back().pagingCycles = pager.getPagingCycles();
+  ret.back().segmentThreshold = segmentThreshold;
   r0Context.suspend();
   ret.back().image = pager.commit();
   ret.back().isTerminate = true;

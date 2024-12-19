@@ -1,19 +1,20 @@
-load("@zirgen//bazel/rules/lit:defs.bzl", "glob_lit_tests")
-load("@zirgen//bazel/rules/zirgen:dsl-defs.bzl", "zirgen_build", "zirgen_genfiles")
+load("//bazel/rules/lit:defs.bzl", "glob_lit_tests")
+load("//bazel/rules/zirgen:dsl-defs.bzl", "zirgen_build")
+load("//bazel/rules/zirgen:edsl-defs.bzl", "ZIRGEN_OUTS", "build_circuit")
 
-package(
-    default_visibility = ["//visibility:public"],
-)
+package(default_visibility = ["//visibility:public"])
+
+ZIR_FILES = glob(["*.zir"])
 
 filegroup(
     name = "imports",
-    srcs = glob(["*.zir"]),
+    srcs = ZIR_FILES,
 )
 
 glob_lit_tests(
     data = [
         ":imports",
-        "@zirgen//zirgen/circuit/rv32im/shared/test:riscv_test_bins",
+        "//zirgen/circuit/rv32im/shared/test:riscv_test_bins",
     ],
     size_override = {"top.zir": "medium"},
     test_file_exts = ["zir"],
@@ -30,14 +31,46 @@ zirgen_build(
     zir_file = ":top.zir",
 )
 
-# zirgen_genfiles(
-#     name = "Incs",
-#     data = [":imports"],
-#     zir_file = ":top.zir",
-#     zirgen_outs = [
-#         (
-#             ["--emit=rust"],
-#             "micro.rs.inc",
-#         ),
-#     ],
-# )
+SPLIT_VALIDITY = 4
+
+# SPLIT_STEP = 1
+
+OUTS = ZIRGEN_OUTS + [
+    "eval_check.cuh",
+    "layout.h.inc",
+    "layout.cuh.inc",
+    "steps.h",
+    "steps.cuh",
+] + [
+    # fn
+    # for i in range(SPLIT_STEP)
+    # for fn in [
+    #     "steps_" + str(i) + ".cpp",
+    #     "steps_" + str(i) + ".cu",
+    # ]
+    "steps.cpp",
+    "steps.cu",
+] + [
+    fn
+    for i in range(SPLIT_VALIDITY)
+    for fn in [
+        "rust_poly_fp_" + str(i) + ".cpp",
+        "eval_check_" + str(i) + ".cu",
+    ]
+]
+
+build_circuit(
+    name = "codegen",
+    outs = OUTS,
+    bin = "//zirgen/Main:gen_zirgen",
+    data = ZIR_FILES,
+    extra_args = [
+        "zirgen/circuit/rv32im/v2/dsl/top.zir",
+        "-I",
+        "zirgen/circuit/rv32im/v2/dsl",
+        "--circuit-name=rv32im_v2",
+        # "--step-split-count=" + str(SPLIT_STEP),
+        "--validity-split-count=" + str(SPLIT_VALIDITY),
+        # "--parallel-witgen",
+    ],
+)

@@ -119,7 +119,7 @@ def GetGlobalOp : ZllOp<"get_global", [Pure, EvalOpAdaptor, IsPoly, InferTypeOpA
 }
 
 def SetGlobalOp : ZllOp<"set_global", [EvalOpAdaptor, IsReduce,
-                                          CodegenOpWithProperties<["Offset"]>]> {
+                                       DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
   let summary = "Store to a buffer that doesn't support cycle offsets (e.g. a Global or Temporary buffer)";
   let arguments = (ins Buffer:$buf, UI32Attr:$offset, Val:$in);
   let assemblyFormat = [{ $buf `:` type($buf) `[` $offset `]` `=` $in `:` type($in) attr-dict }];

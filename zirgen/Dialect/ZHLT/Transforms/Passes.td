@@ -77,4 +77,25 @@ def AnalyzeBuffers : Pass<"analyze-buffers", "mlir::ModuleOp"> {
   let constructor = "zirgen::Zhlt::createAnalyzeBuffersPass()";
 }
 
+def OptimizeParWitgen : Pass<"optimize-par-witgen", "mlir::ModuleOp"> {
+  let summary = "Optimize for parallel witness generation";
+  let description = [{
+     Applies optimizations for parallel witness generation.
+        * Flattens, unrolls, and inlines all zstruct structures to minimize using local memory.
+        * Erases unused externs and constraint checks.
+        * Assumes any other externs called are idempotent
+  }];
+  let constructor = "zirgen::Zhlt::createOptimizeParWitgenPass()";
+}
+
+def OutlineIfs : Pass<"outline-ifs", "mlir::ModuleOp"> {
+  let summary = "Move bodies of `if` statements into their own calls";
+  let description = [{
+     Outlines the body of of all zll.if operations inside of zhlt.step_funcs to
+     separate functions.  Captures values when necessary, but prefers to reconstruct
+     them from e.g. `zll.get` operations.
+  }];
+  let constructor = "zirgen::Zhlt::createOutlineIfsPass()";
+}
+
 #endif // ZHLT_TRANSFORM_PASSES

@@ -78,10 +78,10 @@ component ControlMRET(cycle: Reg, input: InstInput) {
 }
 
 component ControlSuspend(cycle: Reg, input: InstInput) {
-  input.state = StateSuspend();
   // We use PC zero state to determine if we in cycle 1 or 2 of suspend
   pcZero := IsZero(input.pc_u32.low + input.pc_u32.high);
   if (pcZero) {
+    input.state = StateSuspend();
     // In step 2
     global isTerminate: Reg;
     // Write from memory if terminating, or zeros if suspending
@@ -165,14 +165,19 @@ component ControlTable(cycle: Reg, input: InstInput) {
 
 component ControlDone(cycle: Reg, input: InstInput) {
   input.state = StateControlDone();
-  InstOutput(ValU32(0, 0), StateControlDone(), 0)
+  global isTerminate: Reg;
+  global shutdownCycle: Reg;
+  if ((1 - input.mode) * (1 - isTerminate)) {
+    Log("Verifying end state");
+    IsCycle(cycle - shutdownCycle);
+  } else {
+    // NOP
+  };
+  InstOutput(ValU32(0, 0), StateControlDone(), 1)
 }
 
 component Control0(cycle: Reg, inst_input: InstInput) {
-  // Cancel out 'cycle' table entries
-  arg := CycleArg(-GetDiffCount(cycle), cycle);
-  AliasLayout!(arg.cycle, cycle);
-  arg.cycle = cycle;
+  DoCycleTable(cycle);
   inst_input.minor_onehot -> (
     ControlLoadRoot(cycle, inst_input),
     ControlResume(cycle, inst_input),

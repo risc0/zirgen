@@ -66,8 +66,8 @@ void BibcTest::lower() {
   // Lower the inverse and reduce ops to simpler, executable ops
   mlir::PassManager pm(ctx);
   pm.enableVerifier(true);
-  pm.addPass(zirgen::BigInt::createLowerReducePass());
   pm.addPass(zirgen::BigInt::createLowerInvPass());
+  pm.addPass(zirgen::BigInt::createLowerReducePass());
   if (failed(pm.run(module))) {
     llvm::errs() << "an internal validation error occurred:\n";
     module.print(llvm::errs());

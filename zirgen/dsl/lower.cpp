@@ -358,6 +358,11 @@ void Impl::gen(ast::Component* c, SymbolTable& outerscope) {
     op->setAttr("generic", mlir::UnitAttr::get(&ctx));
   }
 
+  for (ast::Attribute::Ptr attr : c->getAttributes()) {
+    llvm::StringRef name = attr->getName();
+    op->setAttr(name, mlir::UnitAttr::get(&ctx));
+  }
+
   mlir::Region* region = &op.getBody();
   builder.createBlock(region, region->begin());
   uint32_t idx = 0;

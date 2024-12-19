@@ -26,6 +26,16 @@ namespace mlir {
 class ZirgenInlinerInterface : public DialectInlinerInterface {
   using DialectInlinerInterface::DialectInlinerInterface;
 
+  bool isLegalToInline(Operation* call, Operation* callable, bool wouldBeCloned) const final {
+    return true;
+  }
+
+  bool isLegalToInline(Region* dest,
+                       Region* src,
+                       bool wouldBeCloned,
+                       IRMapping& valueMapping) const final {
+    return true;
+  }
   bool
   isLegalToInline(Operation* op, Region* dest, bool wouldBeCloned, IRMapping& valueMapping) const {
     // All ops in this dialect are inlinable

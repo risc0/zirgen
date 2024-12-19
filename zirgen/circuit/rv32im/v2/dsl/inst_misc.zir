@@ -26,6 +26,7 @@ component FinalizeMisc(cycle: Reg, input: MiscInput, output: MiscOutput) {
 }
 
 component Misc0(cycle: Reg, inst_input: InstInput) {
+  DoCycleTable(cycle);
   input := MiscInput(cycle, inst_input);
   misc_output := input.minor_onehot -> (
     OpADD(input),
@@ -41,6 +42,7 @@ component Misc0(cycle: Reg, inst_input: InstInput) {
 }
 
 component Misc1(cycle: Reg, inst_input: InstInput) {
+  DoCycleTable(cycle);
   input := MiscInput(cycle, inst_input);
   misc_output := input.minor_onehot -> (
     OpXORI(input),
@@ -56,6 +58,7 @@ component Misc1(cycle: Reg, inst_input: InstInput) {
 }
 
 component Misc2(cycle: Reg, inst_input: InstInput) {
+  DoCycleTable(cycle);
   input := MiscInput(cycle, inst_input);
   misc_output := input.minor_onehot -> (
     OpBGE(input),
