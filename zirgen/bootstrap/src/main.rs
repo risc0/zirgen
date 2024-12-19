@@ -608,7 +608,6 @@ impl Bootstrap {
             self.output_or("zirgen/dsl/examples/calculator"),
             &[Rule::copy("*.inc", ""), Rule::copy("*.rs", "")],
         );
-        cargo_fmt_circuit("calculator", &self.args.output, &None);
     }
 
     fn copy_edsl_style(&'static self, circuit: &str, src_dir: &str) {
