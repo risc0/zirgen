@@ -1,3 +1,4 @@
+common --enable_bzlmod
 build -c opt
 # Make sure we still detect assertion failures
 build --copt=-UNDEBUG
