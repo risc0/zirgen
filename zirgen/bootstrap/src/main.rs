@@ -14,8 +14,7 @@
 
 use std::{
     cell::RefCell,
-    fs::{File, OpenOptions},
-    io::{self, BufRead, BufReader},
+    io::{self, BufRead, BufReader, Read},
     path::{Path, PathBuf},
     process::{exit, Command, Stdio},
 };
@@ -24,8 +23,7 @@ use anyhow::{bail, Result};
 use clap::{Parser, ValueEnum};
 use glob::Pattern;
 use regex::Regex;
-use xz2::write::XzEncoder;
-use zip::ZipArchive;
+use xz2::read::XzEncoder;
 
 #[derive(Debug)]
 struct Rule<'a> {
@@ -33,6 +31,7 @@ struct Rule<'a> {
     dest_dir: &'a str,
     remove_prefix: &'a str,
     base_suffix: &'a str,
+    compressed: bool,
 }
 
 impl<'a> Rule<'a> {
@@ -42,6 +41,7 @@ impl<'a> Rule<'a> {
             dest_dir,
             remove_prefix: "",
             base_suffix: "",
+            compressed: false,
         }
     }
 
@@ -55,6 +55,13 @@ impl<'a> Rule<'a> {
     const fn base_suffix(self, base_suffix: &'a str) -> Self {
         Self {
             base_suffix,
+            ..self
+        }
+    }
+
+    const fn compressed(self) -> Self {
+        Self {
+            compressed: true,
             ..self
         }
     }
@@ -234,10 +241,22 @@ impl Bootstrap {
             )
         }
         let dest_fn = src_fn.strip_prefix(rule.remove_prefix).unwrap_or(src_fn);
-        self.copy(
-            &src_file,
-            &dest_base.join(rule.dest_dir).join(Path::new(dest_fn)),
-        );
+        let mut dst_file = dest_base.join(rule.dest_dir).join(Path::new(dest_fn));
+
+        if rule.compressed {
+            let mut dst_file_name = dst_file.file_name().unwrap().to_os_string();
+            dst_file_name.push(std::ffi::OsStr::new(".xz"));
+            dst_file.set_file_name(dst_file_name);
+        }
+
+        let src_data = std::fs::File::open(&src_file)
+            .unwrap_or_else(|_| panic!("Could not open source: {}", src_file.display()));
+        if rule.compressed {
+            let compressed_data = XzEncoder::new(src_data, 6);
+            self.copy(&src_file, compressed_data, &dst_file);
+        } else {
+            self.copy(&src_file, src_data, &dst_file);
+        }
         true
     }
 
@@ -261,16 +280,21 @@ impl Bootstrap {
             }
             .join(child_dir);
 
-            self.copy(&src_path, &tgt_dir.join(filename));
+            let src_data = std::fs::File::open(&src_path)
+                .unwrap_or_else(|_| panic!("Could not open source: {}", src_path.display()));
+            self.copy(&src_path, src_data, &tgt_dir.join(filename));
         }
     }
 
     fn copy_file(&self, src_dir: &Path, tgt_dir: &Path, filename: &str) {
-        self.copy(&src_dir.join(filename), &tgt_dir.join(filename))
+        let src_file = src_dir.join(filename);
+        let src_data = std::fs::File::open(&src_file)
+            .unwrap_or_else(|_| panic!("Could not open source: {}", src_file.display()));
+        self.copy(&src_file, src_data, &tgt_dir.join(filename))
     }
 
-    fn check(&self, src_path: &Path, tgt_path: &Path) -> Result<()> {
-        let src = std::fs::read(src_path)?;
+    fn check(&self, src_path: &Path, src_data: impl Read, tgt_path: &Path) -> Result<()> {
+        let src: Vec<u8> = src_data.bytes().collect::<std::io::Result<Vec<u8>>>()?;
         let dst = std::fs::read(tgt_path)?;
 
         let src_fn = src_path.file_name().unwrap().to_str().unwrap();
@@ -304,7 +328,7 @@ impl Bootstrap {
         Ok(())
     }
 
-    fn copy(&self, src_path: &Path, tgt_path: &Path) {
+    fn copy(&self, src_path: &Path, mut src_data: impl Read, tgt_path: &Path) {
         if self.args.dry_run {
             println!(
                 "{} -> {} (dry run, skipping)",
@@ -313,7 +337,7 @@ impl Bootstrap {
             );
         } else if self.args.check {
             println!("{} == {}?", src_path.display(), tgt_path.display());
-            if let Err(err) = self.check(src_path, tgt_path) {
+            if let Err(err) = self.check(src_path, src_data, tgt_path) {
                 eprintln!("Error: {}", err);
                 *self.error.borrow_mut() = true;
             };
@@ -324,10 +348,8 @@ impl Bootstrap {
 
             // Avoid using `std::fs::copy` because bazel creates files with r/o permissions.
             // We create a new file with r/w permissions and .copy the contents instead.
-            let mut src = std::fs::File::open(src_path)
-                .unwrap_or_else(|_| panic!("Could not open source: {}", src_path.display()));
             let mut tgt = std::fs::File::create(tgt_path).unwrap();
-            io::copy(&mut src, &mut tgt).unwrap();
+            io::copy(&mut src_data, &mut tgt).unwrap();
 
             let filename = tgt_path.file_name().unwrap().to_str().unwrap();
             if filename.ends_with(".rs.inc") || filename.ends_with(".rs") {
@@ -542,27 +564,9 @@ impl Bootstrap {
                 Rule::copy("*.cuh.inc", "kernels/cuda").base_suffix("-sys"),
                 Rule::copy("*.rs", "src/zirgen"),
                 Rule::copy("*.rs.inc", "src/zirgen"),
+                Rule::copy("*.zkr", "src/prove").compressed(),
             ],
         );
-
-        // Extract each .zkr from .zip and encode as .xz in target directory.
-        let dest_path = self.output_and("risc0/circuit/keccak/src/prove");
-        let bazel_bin = get_bazel_bin();
-        let zip_file = File::open(bazel_bin.join("zirgen/circuit/keccak2/keccak_zkr.zip"))
-            .expect("keccak_zkr.zip not found!");
-        let mut zip = ZipArchive::new(zip_file).unwrap();
-        for i in 0..zip.len() {
-            let mut src = zip.by_index(i).unwrap();
-            let tgt_path = dest_path.join(format!("{}.xz", src.name()));
-            let tgt_file = OpenOptions::new()
-                .write(true)
-                .create(true)
-                .truncate(true)
-                .open(tgt_path)
-                .expect("Could not create output xz file!");
-            let mut tgt = XzEncoder::new(&tgt_file, 6);
-            io::copy(&mut src, &mut tgt).unwrap();
-        }
     }
 
     fn calculator(&self) {
