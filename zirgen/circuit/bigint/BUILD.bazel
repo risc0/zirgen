@@ -57,9 +57,11 @@ BLOBS = [
     "modpow65537_4096",
     "ec_double_256",
     "ec_add_256",
+    "extbyimontmul_256",
     "extfieldadd_256",
     "extfieldmul_256",
     "extfieldsub_256",
+    "extfieldmontmul_256",
     "modadd_256",
     "modinv_256",
     "modmul_256",
@@ -88,6 +90,13 @@ genrule(
 )
 
 genrule(
+    name = "extbyimontmul_256",
+    outs = ["extbyimontmul_256.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=extbyimontmul --bitwidth 256 > $(OUTS)"
+)
+
+genrule(
     name = "extfieldadd_256",
     outs = ["extfieldadd_256.blob"],
     exec_tools = [":bigint2c"],
@@ -106,6 +115,13 @@ genrule(
     outs = ["extfieldsub_256.blob"],
     exec_tools = [":bigint2c"],
     cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=extfieldsub --bitwidth 256 > $(OUTS)"
+)
+
+genrule(
+    name = "extfieldmontmul_256",
+    outs = ["extfieldmontmul_256.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=extfieldmontmul --bitwidth 256 > $(OUTS)"
 )
 
 genrule(

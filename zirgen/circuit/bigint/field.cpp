@@ -57,6 +57,34 @@ llvm::SmallVector<Value, 2> extAdd(mlir::OpBuilder builder, mlir::Location loc, 
     return result;
 }
 
+llvm::SmallVector<Value, 2> extByiMontMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime, Value rinv) {
+    // TODO: Document assumptions
+    // TODO: Annoying to have a SmallVector output that needs to be deg - 1 bigger than the inputs; I think that means all should be 3...
+    auto deg = lhs.size();
+    // TODO We don't actually need vectors here, clean up
+    // TODO This is specifically for 𝔽_p[x] / (x^2 + 1)
+    assert(deg == 2);
+    assert(rhs.size() == deg);
+    llvm::SmallVector<Value, 2> result(2 * deg);
+
+    Value lolo = builder.create<BigInt::MulOp>(loc, lhs[0], rhs[0]);
+    lolo = builder.create<BigInt::ReduceOp>(loc, lolo, prime);
+    Value lohi = builder.create<BigInt::MulOp>(loc, lhs[0], rhs[1]);
+    lohi = builder.create<BigInt::ReduceOp>(loc, lohi, prime);
+    Value hilo = builder.create<BigInt::MulOp>(loc, lhs[1], rhs[0]);
+    hilo = builder.create<BigInt::ReduceOp>(loc, hilo, prime);
+    Value hihi = builder.create<BigInt::MulOp>(loc, lhs[1], rhs[1]);
+    hihi = builder.create<BigInt::ReduceOp>(loc, hihi, prime);
+
+    result[0] = builder.create<BigInt::SubOp>(loc, lolo, hihi);
+    result[0] = builder.create<BigInt::AddOp>(loc, result[0], prime);  // enforce non-negative
+    result[0] = builder.create<BigInt::ReduceOp>(loc, result[0], prime);
+    result[1] = builder.create<BigInt::AddOp>(loc, lohi, hilo);
+    result[1] = builder.create<BigInt::ReduceOp>(loc, result[1], prime);
+
+    return result;
+}
+
 llvm::SmallVector<Value, 2> extMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, llvm::SmallVector<Value, 2> monic_irred_poly, Value prime) {
     // TODO: Annoying to have a SmallVector output that needs to be deg - 1 bigger than the inputs; I think that means all should be 3...
     // TODO: We could have a simplified version for nth roots x^n - a
@@ -75,6 +103,51 @@ llvm::SmallVector<Value, 2> extMul(mlir::OpBuilder builder, mlir::Location loc, 
             size_t idx = i + j;
             auto prod = builder.create<BigInt::MulOp>(loc, lhs[i], rhs[j]);
             auto reduced_prod = builder.create<BigInt::ReduceOp>(loc, prod, prime);
+            if (first_write[idx]) {
+                result[idx] = reduced_prod;
+                first_write[idx] = false;
+            } else {
+                result[idx] = builder.create<BigInt::AddOp>(loc, result[idx], reduced_prod);
+                result[idx] = builder.create<BigInt::ReduceOp>(loc, result[idx], prime);
+            }
+        }
+    }
+    // Reduce using the monic irred polynomial of the extension field
+    for (size_t i = 2 * deg - 2; i >= deg; i--) {
+        for (size_t j = 0; j < deg; j++) {
+            auto prod = builder.create<BigInt::MulOp>(loc, result[i], monic_irred_poly[j]);
+            result[i - deg + j] = builder.create<BigInt::AddOp>(loc, result[i - deg + j], prod);
+            result[i - deg + j] = builder.create<BigInt::ReduceOp>(loc, result[i - deg + j], prime);
+        }
+        // No need to zero out result[i], it will just get dropped
+    }
+    // Result's degree is just `deg`, drop the coefficients beyond that
+    result.truncate(deg);
+
+    return result;
+}
+
+llvm::SmallVector<Value, 2> extMontMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, llvm::SmallVector<Value, 2> monic_irred_poly, Value prime, Value rinv) {
+    // TODO: Document assumptions: This assumes lhs, rhs in mont form but irred poly _NOT_ in mont form
+    // TODO: Annoying to have a SmallVector output that needs to be deg - 1 bigger than the inputs; I think that means all should be 3...
+    // TODO: We could have a simplified version for nth roots x^n - a
+    // Here `monic_irred_poly` is the coefficients a_i such that x^n - sum_i a_i x^i = 0
+    auto deg = lhs.size();
+    // Note: The field is not an extension field if deg <= 1
+    assert(deg > 1);
+    assert(rhs.size() == deg);
+    assert(monic_irred_poly.size() == deg);
+    llvm::SmallVector<Value, 2> result(2 * deg - 1);
+    llvm::SmallVector<bool, 2> first_write(2 * deg - 1, true);
+
+    // Compute product of polynomials
+    for (size_t i = 0; i < deg; i++) {
+        for (size_t j = 0; j < deg; j++) {
+            size_t idx = i + j;
+            auto prod = builder.create<BigInt::MulOp>(loc, lhs[i], rhs[j]);
+            auto pre_mont = builder.create<BigInt::ReduceOp>(loc, prod, prime);
+            auto prod_mont = builder.create<BigInt::MulOp>(loc, pre_mont, rinv);
+            auto reduced_prod = builder.create<BigInt::ReduceOp>(loc, prod_mont, prime);
             if (first_write[idx]) {
                 result[idx] = reduced_prod;
                 first_write[idx] = false;
@@ -180,6 +253,25 @@ void genExtFieldAdd(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth
   }
 }
 
+void genExtByiMontMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth) {
+  // TODO: will need to handle bitwidth slightly smaller than data chunks
+  assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
+  size_t chunkwidth = bitwidth / 128;
+  size_t degree = 2;  // TODO: Could be much cleaner
+  llvm::SmallVector<Value, 2> lhs(degree);
+  llvm::SmallVector<Value, 2> rhs(degree);
+  for (size_t i = 0; i < degree; i++) {
+    lhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, i * chunkwidth);
+    rhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, i * chunkwidth);
+  }
+  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 0);
+  auto rinv = builder.create<BigInt::LoadOp>(loc, bitwidth, 14, 0);
+  auto result = BigInt::field::extByiMontMul(builder, loc, lhs, rhs, prime, rinv);
+  for (size_t i = 0; i < degree; i++) {
+    builder.create<BigInt::StoreOp>(loc, result[i], 15, i * chunkwidth);
+  }
+}
+
 void genExtFieldMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth, size_t degree) {
   // TODO: will need to handle bitwidth slightly smaller than data chunks
   assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
@@ -196,6 +288,26 @@ void genExtFieldMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth
   auto result = BigInt::field::extMul(builder, loc, lhs, rhs, monic_irred_poly, prime);
   for (size_t i = 0; i < degree; i++) {
     builder.create<BigInt::StoreOp>(loc, result[i], 15, i * chunkwidth);
+  }
+}
+
+void genExtFieldMontMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth, size_t degree) {
+  // TODO: will need to handle bitwidth slightly smaller than data chunks
+  assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
+  size_t chunkwidth = bitwidth / 128;
+  llvm::SmallVector<Value, 2> lhs(degree);
+  llvm::SmallVector<Value, 2> rhs(degree);
+  llvm::SmallVector<Value, 2> monic_irred_poly(degree);
+  for (size_t i = 0; i < degree; i++) {
+    lhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, i * chunkwidth);
+    rhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, i * chunkwidth);
+    monic_irred_poly[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, i * chunkwidth);
+  }
+  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 14, 0);
+  auto rinv = builder.create<BigInt::LoadOp>(loc, bitwidth, 15, 0);
+  auto result = BigInt::field::extMontMul(builder, loc, lhs, rhs, monic_irred_poly, prime, rinv);
+  for (size_t i = 0; i < degree; i++) {
+    builder.create<BigInt::StoreOp>(loc, result[i], 16, i * chunkwidth);
   }
 }
 

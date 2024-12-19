@@ -39,9 +39,11 @@ void genModAdd(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth);
 void genModInv(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth);
 void genModMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth);
 void genModSub(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth);
+void genExtByiMontMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth);
 void genExtFieldAdd(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth, size_t degree);
 void genExtFieldMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth, size_t degree);
 void genExtFieldSub(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth, size_t degree);
+void genExtFieldMontMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth, size_t degree);
 
 // Prime field arithmetic (aka modular arithmetic)
 Value modAdd(mlir::OpBuilder builder, mlir::Location loc, Value lhs, Value rhs, Value prime);
@@ -53,7 +55,9 @@ Value modSub(mlir::OpBuilder builder, mlir::Location loc, Value lhs, Value rhs, 
 // Extension fields we use are most commonly degree 2
 // TODO: ^ Hence the use of 2 in the SmallVectors ... but is this true?
 llvm::SmallVector<Value, 2> extAdd(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime);
+llvm::SmallVector<Value, 2> extByiMontMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime, Value rinv);
 llvm::SmallVector<Value, 2> extMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, llvm::SmallVector<Value, 2> monic_irred_poly, Value prime);
 llvm::SmallVector<Value, 2> extSub(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime);
+llvm::SmallVector<Value, 2> extMontMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, llvm::SmallVector<Value, 2> monic_irred_poly, Value prime, Value rinv);
 
 } // namespace zirgen::BigInt::field
