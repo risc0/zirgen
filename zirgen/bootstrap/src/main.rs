@@ -450,12 +450,19 @@ impl Bootstrap {
 
         let bazel_args = ["build", "--config", bazel_config(), build_target];
 
-        let mut child = Command::new("bazelisk")
+        let mut command = Command::new("bazelisk");
+        command
             .args(bazel_args)
             .stdout(Stdio::inherit())
-            .stderr(Stdio::piped())
-            .spawn()
-            .expect("Unable to run bazelisk");
+            .stderr(Stdio::piped());
+
+        if std::env::var("CC").is_ok_and(|cc| cc.contains(" ")) {
+            // HACK: Rust in CI gives us a CC of "sccache clang", which bazel can't handle.
+            // TODO: find a better way of handling this.
+            command.env_remove("CC");
+        }
+
+        let mut child = command.spawn().expect("Unable to run bazelisk");
         let child_out = BufReader::new(child.stderr.take().unwrap());
 
         let mut rules_used: Vec<bool> = Vec::new();
