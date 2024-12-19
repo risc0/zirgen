@@ -100,8 +100,6 @@ mod edsl {
     ];
 }
 
-const RECURSION_ZKR_ZIP: &str = "recursion_zkr.zip";
-
 #[derive(Clone, Debug, ValueEnum)]
 enum Circuit {
     Bigint2,
@@ -509,15 +507,12 @@ impl Bootstrap {
     }
 
     fn predicates(&self) {
-        self.build_all_circuits();
-
-        let bazel_bin = get_bazel_bin();
-        let risc0_root = self.args.output.as_ref().expect("--output is required");
-        let risc0_root = risc0_root.join("risc0");
-        let rust_path = risc0_root.join("circuit/recursion");
-        let zkr_src_path = bazel_bin.join("zirgen/circuit/predicates");
-        let zkr_tgt_path = rust_path.join("src");
-        self.copy_file(&zkr_src_path, &zkr_tgt_path, RECURSION_ZKR_ZIP);
+        self.install_from_bazel(
+            "//zirgen/circuit/predicates:recursion_zkr",
+            self.output_and("risc0/circuit/recursion"),
+            &[
+                Rule::copy("*.zip", "src")
+            ]);
     }
 
     fn recursion(&self) {
