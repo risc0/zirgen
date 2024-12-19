@@ -13,8 +13,7 @@
 // limitations under the License.
 
 use std::{
-    cell::RefCell,
-    io::{self, BufRead, BufReader, Read},
+    io::{self, stdout, BufRead, BufReader, Read, Write},
     path::{Path, PathBuf},
     process::{exit, Command, Stdio},
 };
@@ -23,6 +22,8 @@ use anyhow::{bail, Result};
 use clap::{Parser, ValueEnum};
 use glob::Pattern;
 use regex::Regex;
+use std::sync::Mutex;
+use threadpool::ThreadPool;
 use xz2::read::XzEncoder;
 
 #[derive(Debug)]
@@ -140,7 +141,9 @@ struct Bootstrap {
     args: Args,
 
     /// True if we've encountered an error.
-    error: RefCell<bool>,
+    error: Mutex<bool>,
+
+    pool: ThreadPool,
 }
 
 fn get_bazel_bin() -> PathBuf {
@@ -207,12 +210,13 @@ impl Bootstrap {
     fn new(args: Args) -> Self {
         Self {
             args,
-            error: RefCell::new(false),
+            error: Mutex::new(false),
+            pool: threadpool::Builder::new().build(),
         }
     }
 
     fn apply_rule(
-        &self,
+        &'static self,
         rule: &Rule,
         src_file: impl AsRef<Path>,
         dest_base: impl AsRef<Path>,
@@ -259,7 +263,7 @@ impl Bootstrap {
     }
 
     fn copy_group(
-        &self,
+        &'static self,
         circuit: &str,
         src_path: &Path,
         out_dir: &Option<PathBuf>,
@@ -284,7 +288,7 @@ impl Bootstrap {
         }
     }
 
-    fn copy_file(&self, src_dir: &Path, tgt_dir: &Path, filename: &str) {
+    fn copy_file(&'static self, src_dir: &Path, tgt_dir: &Path, filename: &str) {
         let src_file = src_dir.join(filename);
         let src_data = std::fs::File::open(&src_file)
             .unwrap_or_else(|_| panic!("Could not open source: {}", src_file.display()));
@@ -309,24 +313,25 @@ impl Bootstrap {
             let src = strip_locations_and_whitespace(&String::from_utf8(src)?)?;
             let dst = strip_locations_and_whitespace(&String::from_utf8(dst)?)?;
             if src != dst {
-                bail!(
-                    "Mismatch: {} != {} (text)",
-                    src_path.display(),
-                    tgt_path.display()
-                )
+                bail!("Text does not match")
             }
         } else if src != dst {
-            bail!(
-                "Mismatch: {} != {} (binary)",
-                src_path.display(),
-                tgt_path.display()
-            )
+            bail!("Binary blobs do not match")
         }
 
         Ok(())
     }
 
-    fn copy(&self, src_path: &Path, mut src_data: impl Read, tgt_path: &Path) {
+    fn copy(
+        &'static self,
+        src_path: &Path,
+        mut src_data: impl Read + Send + 'static,
+        tgt_path: &Path,
+    ) {
+        // Allocate copies for thread pool work item
+        let src_path = src_path.to_path_buf();
+        let tgt_path = tgt_path.to_path_buf();
+
         if self.args.dry_run {
             println!(
                 "{} -> {} (dry run, skipping)",
@@ -334,44 +339,69 @@ impl Bootstrap {
                 tgt_path.display()
             );
         } else if self.args.check {
-            println!("{} == {}?", src_path.display(), tgt_path.display());
-            if let Err(err) = self.check(src_path, src_data, tgt_path) {
-                eprintln!("Error: {}", err);
-                *self.error.borrow_mut() = true;
-            };
+            self.pool.execute(move || {
+                if let Err(err) = self.check(&src_path, src_data, &tgt_path) {
+                    write!(
+                        stdout().lock(),
+                        "ERROR: {} != {}: {}\n",
+                        src_path.display(),
+                        tgt_path.display(),
+                        err
+                    )
+                    .unwrap();
+                    *self.error.lock().unwrap() = true;
+                } else {
+                    write!(
+                        stdout().lock(),
+                        "{} == {}\n",
+                        src_path.display(),
+                        tgt_path.display()
+                    )
+                    .unwrap();
+                }
+            });
         } else {
-            println!("{} -> {}", src_path.display(), tgt_path.display());
             let tgt_dir = tgt_path.parent().unwrap();
             std::fs::create_dir_all(tgt_dir).unwrap();
 
-            // Avoid using `std::fs::copy` because bazel creates files with r/o permissions.
-            // We create a new file with r/w permissions and .copy the contents instead.
-            let mut tgt = std::fs::File::create(tgt_path).unwrap();
-            io::copy(&mut src_data, &mut tgt).unwrap();
+            self.pool.execute(move || {
+                // Avoid using `std::fs::copy` because bazel creates files with r/o permissions.
+                // We create a new file with r/w permissions and .copy the contents instead.
+                let mut tgt = std::fs::File::create(&tgt_path).unwrap();
+                io::copy(&mut src_data, &mut tgt).unwrap();
 
-            let filename = tgt_path.file_name().unwrap().to_str().unwrap();
-            if filename.ends_with(".rs.inc") || filename.ends_with(".rs") {
-                Command::new("rustfmt")
-                    .args(tgt_path.to_str())
-                    .status()
-                    .unwrap_or_else(|_| panic!("Unable to format {}", tgt_path.display()));
-            }
-
-            if filename.ends_with(".cpp.inc")
-                || filename.ends_with(".cu.inc")
-                || filename.ends_with(".cuh")
-                || filename.ends_with(".cu")
-            {
-                if let Err(err) = Command::new("clang-format")
-                    .args(["-i", tgt_path.to_str().unwrap()])
-                    .status()
-                {
-                    eprintln!(
-                        "Warning: unable to format {} with clang-format: {err}",
-                        tgt_path.display()
-                    );
+                let filename = tgt_path.file_name().unwrap().to_str().unwrap();
+                if filename.ends_with(".rs.inc") || filename.ends_with(".rs") {
+                    Command::new("rustfmt")
+                        .args(tgt_path.to_str())
+                        .status()
+                        .unwrap_or_else(|_| panic!("Unable to format {}", tgt_path.display()));
                 }
-            }
+
+                if filename.ends_with(".cpp.inc")
+                    || filename.ends_with(".cu.inc")
+                    || filename.ends_with(".cuh")
+                    || filename.ends_with(".cu")
+                {
+                    if let Err(err) = Command::new("clang-format")
+                        .args(["-i", tgt_path.to_str().unwrap()])
+                        .status()
+                    {
+                        eprintln!(
+                            "Warning: unable to format {} with clang-format: {err}",
+                            tgt_path.display()
+                        );
+                    }
+                }
+
+                write!(
+                    stdout().lock(),
+                    "{} -> {}\n",
+                    src_path.display(),
+                    tgt_path.display()
+                )
+                .unwrap();
+            });
         }
     }
 
@@ -411,7 +441,7 @@ impl Bootstrap {
     }
 
     fn install_from_bazel(
-        &self,
+        &'static self,
         build_target: &str,
         dest_base: impl AsRef<Path>,
         install_rules: Rules,
@@ -466,7 +496,7 @@ impl Bootstrap {
         }
     }
 
-    fn run(&self) {
+    fn run(&'static self) {
         match self.args.circuit {
             Circuit::Bigint2 => self.bigint2(),
             Circuit::Calculator => self.calculator(),
@@ -479,20 +509,22 @@ impl Bootstrap {
             Circuit::Verify => self.stark_verify(),
         }
 
+        self.pool.join();
+
         if self.args.check {
-            if *self.error.borrow() {
+            if *self.error.lock().unwrap() {
                 eprintln!("--check: Mismatches encountered");
                 // Ado a different error message if we have errors during other operations
                 exit(1);
             } else {
                 eprintln!("--check: All installed files match");
             }
-        } else if *self.error.borrow() {
+        } else if *self.error.lock().unwrap() {
             panic!("Please add an appropriate error message here if we have defererred errors during a non-check operation");
         }
     }
 
-    fn fib(&self) {
+    fn fib(&'static self) {
         self.install_from_bazel(
             "//zirgen/circuit/fib",
             self.output_or("zirgen/circuit/fib"),
@@ -506,26 +538,25 @@ impl Bootstrap {
         cargo_fmt_circuit("fib", &self.args.output, &None);
     }
 
-    fn predicates(&self) {
+    fn predicates(&'static self) {
         self.install_from_bazel(
             "//zirgen/circuit/predicates:recursion_zkr",
             self.output_and("risc0/circuit/recursion"),
-            &[
-                Rule::copy("*.zip", "src")
-            ]);
+            &[Rule::copy("*.zip", "src")],
+        );
     }
 
-    fn recursion(&self) {
+    fn recursion(&'static self) {
         self.build_all_circuits();
         self.copy_edsl_style("recursion", "zirgen/circuit/recursion")
     }
 
-    fn rv32im(&self) {
+    fn rv32im(&'static self) {
         self.build_all_circuits();
         self.copy_edsl_style("rv32im", "zirgen/circuit/rv32im/v1/edsl")
     }
 
-    fn rv32im_v2(&self) {
+    fn rv32im_v2(&'static self) {
         self.install_from_bazel(
             "//zirgen/circuit/rv32im/v2/dsl:codegen",
             self.output_and("risc0/circuit/rv32im-v2"),
@@ -544,7 +575,7 @@ impl Bootstrap {
         );
     }
 
-    fn keccak(&self) {
+    fn keccak(&'static self) {
         self.install_from_bazel(
             "//zirgen/circuit/keccak2:bootstrap",
             self.output_and("risc0/circuit/keccak"),
@@ -564,7 +595,7 @@ impl Bootstrap {
         );
     }
 
-    fn calculator(&self) {
+    fn calculator(&'static self) {
         self.install_from_bazel(
             "//zirgen/dsl/examples/calculator",
             self.output_or("zirgen/dsl/examples/calculator"),
@@ -573,7 +604,7 @@ impl Bootstrap {
         cargo_fmt_circuit("calculator", &self.args.output, &None);
     }
 
-    fn copy_edsl_style(&self, circuit: &str, src_dir: &str) {
+    fn copy_edsl_style(&'static self, circuit: &str, src_dir: &str) {
         let risc0_root = self.args.output.as_ref().expect("--output is required");
         let risc0_root = risc0_root.join("risc0");
         let src = Path::new(src_dir);
@@ -594,7 +625,7 @@ impl Bootstrap {
         cargo_fmt_circuit(circuit, &rust, &None);
     }
 
-    fn stark_verify(&self) {
+    fn stark_verify(&'static self) {
         self.build_all_circuits();
 
         let bazel_bin = get_bazel_bin();
@@ -610,7 +641,7 @@ impl Bootstrap {
         cargo_fmt(&risc0_root.join("risc0/groth16/Cargo.toml"));
     }
 
-    fn bigint2(&self) {
+    fn bigint2(&'static self) {
         self.build_all_circuits();
 
         let risc0_root = self.args.output.as_ref().expect("--output is required");
@@ -644,6 +675,8 @@ fn bazel_config() -> &'static str {
 
 fn main() {
     env_logger::init();
-    let bootstrap = Bootstrap::new(Args::parse());
+
+    // Allocate `bootstrap` object with static lifetime so we can reference `self` in threadpool callbacks.
+    let bootstrap: &'static mut _ = Box::leak(Box::new(Bootstrap::new(Args::parse())));
     bootstrap.run();
 }
