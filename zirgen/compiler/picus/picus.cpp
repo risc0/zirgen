@@ -139,7 +139,8 @@ private:
               PackOp,
               ReturnOp,
               GetGlobalLayoutOp,
-              AliasLayoutOp>([&](auto op) { visitOp(op); })
+              AliasLayoutOp,
+              zirgen::Zhlt::BackOp>([&](auto op) { visitOp(op); })
         .Case<StoreOp, arith::ConstantOp>([](auto) { /* no-op */ })
         .Default([](Operation* op) { llvm::errs() << "unhandled op: " << *op << "\n"; });
   }
@@ -286,6 +287,16 @@ private:
     for (auto [sl, sr] : llvm::zip(flatten(lhs), flatten(rhs))) {
       os << "(assert (= " << sl.str() << " " << sr.str() << "))\n";
     }
+  }
+
+  void visitOp(zirgen::Zhlt::BackOp back) {
+    auto callee = back.getCallee();
+    size_t distance = back.getDistance().getZExtValue();
+    AnySignal signal = signalize(freshName(), back.getType());
+    if (distance > 0) {
+      declareSignals(signal, /*isInput=*/true);
+    }
+    valuesToSignals.insert({back.getOut(), signal});
   }
 
   // Constructs a fresh signal structure corresponding to the given type
