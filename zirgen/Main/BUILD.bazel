@@ -22,9 +22,8 @@ cc_library(
         "//zirgen/Dialect/Zll/Transforms:passes",
         "//zirgen/dsl",
         "//zirgen/dsl/passes",
-        "@llvm-project//mlir:AllTranslations",
+        "@llvm-project//mlir:Debug",
         "@llvm-project//mlir:FuncExtensions",
-        "@llvm-project//mlir:MlirOptLib",
     ],
 )
 
