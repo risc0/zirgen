@@ -54,8 +54,9 @@ component ECallTerminate(cycle: Reg, input: InstInput) {
 
 component DecomposeLow2(len: Val) {
   // We split len into a multiple of 4, and the low 2 bits as one hot
-  public high := NondetReg((len & 0xfffc) / 4);
+  public high := NondetU16Reg((len & 0xfffc) / 4);
   public low2 := NondetReg(len & 0x3);
+  len = 4*high + low2;
   public low2Hot := OneHot<4>(low2);
   public highZero := IsZero(high);
   public isZero := Reg(highZero * low2Hot[0]);
