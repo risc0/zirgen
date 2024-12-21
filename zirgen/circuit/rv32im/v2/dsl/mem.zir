@@ -93,7 +93,7 @@ component MemoryRead(cycle: Reg, addr: Val) {
 
 // A normal memory write
 component MemoryWrite(cycle: Reg, addr: Val, data: ValU32) {
-  io := MemoryIO(2*cycle + 1, addr);
+  public io := MemoryIO(2*cycle + 1, addr);
   IsForward(io);
   io.newTxn.dataLow = data.low;
   io.newTxn.dataHigh = data.high;
