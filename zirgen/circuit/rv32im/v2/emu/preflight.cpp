@@ -135,6 +135,14 @@ struct PreflightContext {
     cycleCompleteSpecial(curState, p2.nextState, pc);
     physCycles++;
   }
+  void shaCycle(uint32_t curState, ShaState sha) {
+    if (debug) {
+      std::cout << trace.cycles.size() << " shaCycle\n";
+    }
+    sha.write(trace.extra);
+    cycleCompleteSpecial(curState, sha.nextState, pc);
+    physCycles++;
+  }
 
   void trapRewind() {
     trace.txns.resize(memCycle);

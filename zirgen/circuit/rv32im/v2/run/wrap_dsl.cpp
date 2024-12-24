@@ -76,6 +76,9 @@ ExtVal inv_0(ExtVal x) {
 Val bitAnd(Val a, Val b) {
   return Val(a.asUInt32() & b.asUInt32());
 }
+Val mod(Val a, Val b) {
+  return Val(a.asUInt32() % b.asUInt32());
+}
 Val inRange(Val low, Val mid, Val high) {
   assert(low <= high);
   return Val(low <= mid && mid < high);
@@ -339,6 +342,10 @@ size_t getEcall0StateCol() {
 
 size_t getPoseidonStateCol() {
   return impl::kLayout_Top.instResult.arm9.state.hasState._super.col;
+}
+
+size_t getShaStateCol() {
+  return impl::kLayout_Top.instResult.arm11.state.stateInAddr._super.col;
 }
 
 void DslStep(StepHandler& stepHandler, ExecutionTrace& trace, size_t cycle) {

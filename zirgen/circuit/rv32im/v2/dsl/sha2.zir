@@ -1,0 +1,182 @@
+// RUN: zirgen -I %S --test %s
+
+import arr;
+import bits;
+import one_hot;
+import pack;
+
+component XorU32(a: Array<Val, 32>, b: Array<Val, 32>) {
+  for i : 0..32 {
+    BitXor(a[i], b[i])
+  }
+}
+
+component MajU32(a: Array<Val, 32>, b: Array<Val, 32>, c: Array<Val, 32>) {
+  for i : 0..32 {
+    a[i] * b[i] * (1 - c[i]) +
+    a[i] * (1 - b[i]) * c[i] +
+    (1 - a[i]) * b[i] * c[i] +
+    a[i] * b[i] * c[i]
+  }
+}
+
+component ChU32(a: Array<Val, 32>, b: Array<Val, 32>, c: Array<Val, 32>) {
+  for i : 0..32 {
+    a[i] * b[i] + (1 - a[i]) * c[i]
+  }
+}
+
+component Add2(a: Array<Val, 2>, b: Array<Val, 2>) {
+  for i : 0..2 { a[i] + b[i] }
+}
+
+component CarryExtract(in: Val) {
+  bit0 := NondetBitReg(((in & 0xf0000) / 0x10000) & 1);
+  bit1 := NondetBitReg((((in & 0xf0000) / 0x10000) & 2) / 2);
+  bit2 := NondetBitReg((((in & 0xf0000) / 0x10000) & 4) / 4);
+  public carry := bit2 * 4 + bit1 * 2 + bit0;
+  public out := in - carry * 0x10000;
+}
+
+component CarryAndExpand(in: Array<Val, 2>) {
+  lowCarry := CarryExtract(in[0]);
+  highCarry := CarryExtract(in[1] + lowCarry.carry);
+  out := UnpackReg<32, 16>([lowCarry.out, highCarry.out]);
+  out
+}
+
+component ExpandBE(in: Array<Val, 2>) {
+  original := UnpackNondet<32, 16>(in);
+  // Swap bytes, maintain bits, registerize
+  out := for i : 0..32 {
+    bit := i & 7;
+    byte := (i - bit) * Inv(8);
+    NondetBitReg(original[(3 - byte) * 8 + bit])
+  };
+  // 'Pack' into bytes
+  bytes := Pack<32, 8>(out);
+  // Verify byteswapping it back matches
+  in[0] = bytes[2] * 256 + bytes[3];
+  in[1] = bytes[0] * 256 + bytes[1];
+  // Return output
+  out
+}
+
+component PushFront<SIZE: Val>(in: Array<Val, 32>, lst: Array<Array<Val, 32>, SIZE>) {
+  for i : 0..SIZE {
+    if (Isz(i)) { in }
+    else { lst[i - 1] }
+  }
+}
+
+component Pack32(x: Array<Val, 32>) { Pack<32, 16>(x) }
+
+// Given old Ws, produce new 'raw' W
+component ComputeW(ow : Array<Array<Val, 32>, 16>) {
+  s0 := XorU32(RotateRight<32>(ow[14], 7), XorU32(RotateRight<32>(ow[14], 18), ShiftRight<32>(ow[14], 3)));
+  s1 := XorU32(RotateRight<32>(ow[1], 17), XorU32(RotateRight<32>(ow[1], 19), ShiftRight<32>(ow[1], 10)));
+  rawW := Add2(Pack32(s0), Add2(Pack32(s1), Add2(Pack32(ow[15]), Pack32(ow[6]))));
+  rawW
+}
+
+// Same as above, but compute directly from specific 'backs'
+component ComputeWBack(w2 : Array<Val, 32>, w7 : Array<Val, 32>, w15 : Array<Val, 32>, w16: Array<Val, 32>) {
+  s0 := XorU32(RotateRight<32>(w15, 7), XorU32(RotateRight<32>(w15, 18), ShiftRight<32>(w15, 3)));
+  s1 := XorU32(RotateRight<32>(w2, 17), XorU32(RotateRight<32>(w2, 19), ShiftRight<32>(w2, 10)));
+  rawW := Add2(Pack32(s0), Add2(Pack32(s1), Add2(Pack32(w16), Pack32(w7))));
+  rawW
+}
+// component PX(x: Array<Val, 32>) { Pack<32, 16>(x)[0] }
+
+// Given old A/E, new W, and k, produce new A/E
+component ComputeAE(oa: Array<Array<Val, 32>, 4>, oe: Array<Array<Val, 32>, 4>, w: Array<Val, 32>, k: Array<Val, 2>) {
+  a := oa[0]; b := oa[1]; c := oa[2]; d := oa[3];
+  e := oe[0]; f := oe[1]; g := oe[2]; h := oe[3];
+  // Log("----", PX(a), PX(b), PX(c), PX(d), PX(e), PX(f), PX(g), PX(h));
+  s0 := XorU32(RotateRight<32>(a, 2), XorU32(RotateRight<32>(a, 13), RotateRight<32>(a, 22)));
+  s1 := XorU32(RotateRight<32>(e, 6), XorU32(RotateRight<32>(e, 11), RotateRight<32>(e, 25)));
+  stage1 := Add2(Pack32(w), Add2(k, Add2(Pack32(h), Add2(Pack32(ChU32(e, f, g)), Pack32(s1)))));
+  public rawA := Add2(stage1, Add2(Pack32(MajU32(a, b, c)), Pack32(s0)));
+  public rawE := Add2(stage1, Pack32(d));
+}
+
+component TableK() {
+  [
+   [0x2f98, 0x428a], [0x4491, 0x7137], [0xfbcf, 0xb5c0], [0xdba5, 0xe9b5],
+   [0xc25b, 0x3956], [0x11f1, 0x59f1], [0x82a4, 0x923f], [0x5ed5, 0xab1c],
+   [0xaa98, 0xd807], [0x5b01, 0x1283], [0x85be, 0x2431], [0x7dc3, 0x550c],
+   [0x5d74, 0x72be], [0xb1fe, 0x80de], [0x06a7, 0x9bdc], [0xf174, 0xc19b],
+   [0x69c1, 0xe49b], [0x4786, 0xefbe], [0x9dc6, 0x0fc1], [0xa1cc, 0x240c],
+   [0x2c6f, 0x2de9], [0x84aa, 0x4a74], [0xa9dc, 0x5cb0], [0x88da, 0x76f9],
+   [0x5152, 0x983e], [0xc66d, 0xa831], [0x27c8, 0xb003], [0x7fc7, 0xbf59],
+   [0x0bf3, 0xc6e0], [0x9147, 0xd5a7], [0x6351, 0x06ca], [0x2967, 0x1429],
+   [0x0a85, 0x27b7], [0x2138, 0x2e1b], [0x6dfc, 0x4d2c], [0x0d13, 0x5338],
+   [0x7354, 0x650a], [0x0abb, 0x766a], [0xc92e, 0x81c2], [0x2c85, 0x9272],
+   [0xe8a1, 0xa2bf], [0x664b, 0xa81a], [0x8b70, 0xc24b], [0x51a3, 0xc76c],
+   [0xe819, 0xd192], [0x0624, 0xd699], [0x3585, 0xf40e], [0xa070, 0x106a],
+   [0xc116, 0x19a4], [0x6c08, 0x1e37], [0x774c, 0x2748], [0xbcb5, 0x34b0],
+   [0x0cb3, 0x391c], [0xaa4a, 0x4ed8], [0xca4f, 0x5b9c], [0x6ff3, 0x682e],
+   [0x82ee, 0x748f], [0x636f, 0x78a5], [0x7814, 0x84c8], [0x0208, 0x8cc7],
+   [0xfffa, 0x90be], [0x6ceb, 0xa450], [0xa3f7, 0xbef9], [0x78f2, 0xc671]
+  ]
+}
+
+component InitA() {
+ [
+  [0xe667, 0x6a09],
+  [0xae85, 0xbb67],
+  [0xf372, 0x3c6e],
+  [0xf53a, 0xa54f]
+ ]
+}
+
+component InitE() {
+ [
+  [0x527f, 0x510e],
+  [0x688c, 0x9b05],
+  [0xd9ab, 0x1f83],
+  [0xcd19, 0x5be0]
+ ]
+}
+
+// A version of state used in testing SHA256
+component TestState(a: Array<Array<Val, 32>, 4>, e: Array<Array<Val, 32>, 4>, w: Array<Array<Val, 32>, 16>) {
+  public a := a;
+  public e := e;
+  public w := w;
+  flatA := Pack<32, 16>(a[0]);
+  flatE := Pack<32, 16>(e[0]);
+  Log("a = %x %x, e = %x %x", flatA[1], flatA[0], flatE[1], flatE[0]);
+}
+
+component GetK(round: Val) {
+  oneHot := OneHot<64>(round);
+  table := TableK();
+  for i : 0..2 {
+    reduce for j : 0..64 { oneHot[j] * table[j][i] } init 0 with Add
+  }
+}
+
+component DoTestStepLoad(in: TestState, round: Val) {
+  comp := ComputeAE(in.a, in.e, in.w[round], GetK(round));
+  a := CarryAndExpand(comp.rawA);
+  e := CarryAndExpand(comp.rawE);
+  TestState(PushFront<4>(a, in.a), PushFront<4>(e, in.e), in.w)
+}
+
+component DoTestStepMix(in: TestState, round: Val) {
+  w := CarryAndExpand(ComputeW(in.w));
+  comp := ComputeAE(in.a, in.e, w, GetK(16 + round));
+  a := CarryAndExpand(comp.rawA);
+  e := CarryAndExpand(comp.rawE);
+  TestState(PushFront<4>(a, in.a), PushFront<4>(e, in.e), PushFront<16>(w, in.w))
+}
+
+test TestVector {
+  initState := TestState(
+    for i : 0..4 { UnpackReg<32, 16>(InitA()[i]) },
+    for i : 0..4 { UnpackReg<32, 16>(InitE()[i]) },
+    for i : 0..16 { for j : 0..32 { Reg(0) } });
+  afterLoads := reduce 0..16 init initState with DoTestStepLoad;
+  finalState := reduce 0..48 init afterLoads with DoTestStepMix;
+}

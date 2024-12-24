@@ -19,7 +19,7 @@
 
 using namespace zirgen::rv32im_v2;
 
-const std::string kernelName = "zirgen/circuit/rv32im/v2/test/test_p2_kernel";
+const std::string kernelName = "zirgen/circuit/rv32im/v2/test/test_sha_kernel";
 
 int main() {
   size_t cycles = 100000;
