@@ -57,13 +57,22 @@ component DoDiv(numer: ValU32, denom: ValU32, signed: Val, ones_comp: Val) {
   rem := ValU32(rem_low, rem_high);
   // Either all signed, or nothing signed
   settings := MultiplySettings(signed, signed, signed);
-  // Do the acuumulate
+  // Do the accumulate
   mul := MultiplyAccumulate(quot, denom, rem, settings);
   // Check the main result (numer = quot * denom + rem
   AssertEqU32(mul.outLow, numer);
   // The top bits should all be 0 or all be 1
   topBitType := NondetBitReg(1 - Isz(mul.outHigh.low));
   AssertEqU32(mul.outHigh, ValU32(0xffff * topBitType, 0xffff * topBitType));
+  // Check if denom is zero
+  isZero := IsZero(denom.low + denom.high);
+  // If non-zero, make sure 0 <= rem < denom
+  if (isZero) {
+    AssertEqU32(rem, numer);
+  } else {
+    cmp := CmpLessThanUnsigned(rem, denom);
+    cmp.is_less_than = 1;
+  };
   DivideReturn(quot, rem)
 }
 
