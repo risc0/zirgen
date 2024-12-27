@@ -43,17 +43,6 @@ component DivideReturn(quot: ValU32, rem: ValU32) {
 
 extern Divide(numer: ValU32, denom: ValU32, sign_type: Val) : DivideReturn;
 
-/*
-component PairU32(a: ValU32, b: ValU32) {
-  aLow := NondetReg(a.low);
-  aHigh := NondetReg(a.high);
-  bLow := NondetReg(b.low);
-  bHigh := NondetReg(b.high);
-  public a := ValU32(aLow, aHigh);
-  public b := ValU32(bLow, bHigh);
-}
-*/
-
 component DoDiv(numer: ValU32, denom: ValU32, signed: Val, ones_comp: Val) {
   // Guess the answer
   guess := Divide(numer, denom, signed + 2 * ones_comp);
