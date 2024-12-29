@@ -8,25 +8,49 @@ To keep the demo simple, let's imagine that we want to create a trivial precompi
 ## Write a bigint program
 First, create files under [`zirgen/circuit/bigint/`] which will hold the accelerator builder function. We might call them `add128.h` and `add128.cpp`, declaring and then defining a function like this:
 
+In add128.cpp:
 ```
+#include "zirgen/circuit/bigint/add128.h"
+
+namespace zirgen::BigInt {
 void genAdd128(mlir::OpBuilder& builder, mlir::Location loc) {
     auto lhs = builder.create<BigInt::LoadOp>(loc, 128, 11, 0);
     auto rhs = builder.create<BigInt::LoadOp>(loc, 128, 12, 0);
     auto sum = builder.create<BigInt::AddOp>(loc, lhs, rhs);  
     builder.create<BigInt::StoreOp>(loc, sum, 13, 0);
 }
+}
+```
+
+In add128.h
+```
+#include "zirgen/Dialect/BigInt/IR/BigInt.h"
+
+namespace zirgen::BigInt {
+void genAdd128(mlir::OpBuilder& builder, mlir::Location loc);
+}
 ```
 
 We might also like to create a test function here, but we'll gloss over that for now.
 
 ## Compile your bigint program to a bigint blob using bigint2c
-To make use of the new function, we must add it as an option of the `bigint2c` compiler program, which generates the precompiled blobs we'll need to load into the zkVM. Inside `zirgen/circuit/bigint/bigint2c.cpp`, we'll add a new command line option:
+To make use of the new function, we must add it as an option of the `bigint2c` compiler program, which generates the precompiled blobs we'll need to load into the zkVM. Ensure you include the new circuit header file:
+
+```
+#include "zirgen/circuit/bigint/add128.h"
+```
+
+Inside `zirgen/circuit/bigint/bigint2c.cpp`, we'll add a new command line option:
 
 ```
 enum class Program {
   ModPow65537,
   EC_Double,
   EC_Add,
+  ModAdd,
+  ModInv,
+  ModMul,
+  ModSub,
   Add128
 };
 ```
@@ -65,8 +89,34 @@ BLOBS = [
     "modpow65537_4096",
     "ec_double_256",
     "ec_add_256",
+    "modadd_256",
+    "modinv_256",
+    "modmul_256",
+    "modsub_256",
     "add128",
 ]
+```
+
+Add "add128.cpp" to `cc_library.srcs`. Add "add128.h" to `cc_library.hdrs`.
+
+```
+    srcs = [
+        "elliptic_curve.cpp",
+        "field.cpp",
+        "rsa.cpp",
+        "add128.cpp",
+    ],
+```
+
+```
+    hdrs = [
+        "elliptic_curve.h",
+        "field.h",
+        "rsa.h",
+        "add128.h",
+        "//zirgen/circuit/recursion",
+        "//zirgen/circuit/rv32im/v1/edsl:rv32im",
+    ],
 ```
 
 We can now `bazelisk build //zirgen/circuit/bigint/...` to produce our new blob along with the others. In order to make this available to the `risc0` world, we must add the new blob to the bootstrap process. In `zirgen/bootstrap/src/main.rs`, in the `bigint2` function, after a series of similar lines, we must add these lines to copy the new blob over:
