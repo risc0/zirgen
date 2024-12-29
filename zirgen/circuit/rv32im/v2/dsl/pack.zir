@@ -3,7 +3,7 @@
 
 import bits;
 import arr;
-import po2;
+import u32;
 
 // We have 3 functions here:
 // 1) Pack an array of N bits into N/P elements

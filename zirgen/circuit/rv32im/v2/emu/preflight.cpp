@@ -327,7 +327,7 @@ PreflightTrace preflightSegment(const Segment& in, size_t segmentSize) {
 
   // Now, go back and update memory transactions to wrap around
   for (auto& txn : ret.txns) {
-    if (txn.prevCycle == -1) {
+    if (static_cast<int>(txn.prevCycle) == -1) {
       // If first cycle for word, set to 'prevCycle' to final cycle
       txn.prevCycle = preflightContext.prevCycle[txn.word];
     } else {

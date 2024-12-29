@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <arpa/inet.h>
+
 namespace zirgen::rv32im_v2 {
 
 // 1 to 1 state from inst_sha
