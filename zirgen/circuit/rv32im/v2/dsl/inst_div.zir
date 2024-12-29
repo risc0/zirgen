@@ -59,19 +59,36 @@ component DoDiv(numer: ValU32, denom: ValU32, signed: Val, ones_comp: Val) {
   settings := MultiplySettings(signed, signed, signed);
   // Do the accumulate
   mul := MultiplyAccumulate(quot, denom, rem, settings);
-  // Check the main result (numer = quot * denom + rem
+  // Check the main result (numer = quot * denom + rem)
   AssertEqU32(mul.outLow, numer);
   // The top bits should all be 0 or all be 1
   topBitType := NondetBitReg(1 - Isz(mul.outHigh.low));
   AssertEqU32(mul.outHigh, ValU32(0xffff * topBitType, 0xffff * topBitType));
   // Check if denom is zero
   isZero := IsZero(denom.low + denom.high);
+  // Get top bit of numerator
+  topNum := NondetBitReg((numer.high & 0x8000) / 0x8000);
+  // Verify we got it right
+  U16Reg((numer.high - 0x8000 * topNum) * 2);
+  numNeg := topNum * signed;
+  // Get the absolute value of the denominator
+  denomNeg := mul.bNeg;
+  denomAbs := NormalizeU32(DenormedValU32(
+    denomNeg * (0x10000 - denom.low) + (1 - denomNeg) * denom.low,
+    denomNeg * (0xffff - denom.high) + (1 - denomNeg) * denom.high
+  ));
+  // Flip the sign of the remainder if the numerator is negative
+  remNormal := NormalizeU32(DenormedValU32(
+    numNeg * (0x10000 - rem.low) + (1 - numNeg) * rem.low,
+    numNeg * (0xffff - rem.high) + (1 - numNeg) * rem.high
+  ));
+  // Decide if we need to swap order of 
   // If non-zero, make sure 0 <= rem < denom
   if (isZero) {
     AssertEqU32(rem, numer);
   } else {
-    cmp := CmpLessThanUnsigned(rem, denom);
-    cmp.is_less_than = 1;
+    lt := CmpLessThanUnsigned(remNormal, denomAbs);
+    lt.is_less_than = 1;
   };
   DivideReturn(quot, rem)
 }

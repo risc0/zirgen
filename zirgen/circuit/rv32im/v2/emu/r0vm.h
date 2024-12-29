@@ -26,6 +26,7 @@
 #include "zirgen/compiler/zkp/poseidon2.h"
 
 #include "zirgen/circuit/rv32im/v2/emu/p2.h"
+#include "zirgen/circuit/rv32im/v2/emu/sha.h"
 
 namespace zirgen::rv32im_v2 {
 
@@ -250,6 +251,14 @@ template <typename Context> struct R0Context {
     return false;
   }
 
+  bool doSha2() {
+    // Bump PC
+    context.pc += 4;
+    context.ecallCycle(STATE_MACHINE_ECALL, STATE_SHA_ECALL, 0, 0, 0);
+    ShaECall(context);
+    return false;
+  }
+
   // Machine mode ECALL, allow for overrides in subclasses
   bool doMachineECALL() {
     switch (loadReg(REG_A7)) {
@@ -261,6 +270,8 @@ template <typename Context> struct R0Context {
       return doHostWrite();
     case HOST_ECALL_POSEIDON2:
       return doPoseidon2();
+    case HOST_ECALL_SHA2:
+      return doSha2();
     default:
       throw std::runtime_error("unimplemented machine ECALL");
     }

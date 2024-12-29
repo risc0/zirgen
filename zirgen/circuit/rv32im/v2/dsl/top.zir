@@ -11,6 +11,7 @@ import inst_mem;
 import inst_control;
 import inst_ecall;
 import inst_p2;
+import inst_sha;
 import mem;
 import one_hot;
 
@@ -70,7 +71,7 @@ component Top() {
   // Make a nice input to all the instructions
   inst_input := InstInput(major, minor, pc_u32, state, machine_mode);
   // Now we split on major
-  major_onehot := OneHot<11>(major);
+  major_onehot := OneHot<12>(major);
   inst_result := major_onehot ->! (
     Misc0(cycle, inst_input),
     Misc1(cycle, inst_input),
@@ -82,7 +83,8 @@ component Top() {
     Control0(cycle, inst_input),
     ECall0(cycle, inst_input),
     Poseidon0(cycle, inst_input),
-    Poseidon1(cycle, inst_input)
+    Poseidon1(cycle, inst_input),
+    Sha0(cycle, inst_input)
   );
   // Compute next PC
   pc_word := inst_result.new_pc.low / 4 + inst_result.new_pc.high * 16384;
