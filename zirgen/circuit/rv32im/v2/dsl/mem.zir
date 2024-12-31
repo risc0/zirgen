@@ -101,7 +101,7 @@ component MemoryWrite(cycle: Reg, addr: Val, data: ValU32) {
 
 // Let the host write anythings (used in host read words)
 component MemoryWriteUnconstrained(cycle: Reg, addr: Val) {
-  io := MemoryIO(2*cycle + 1, addr);
+  public io := MemoryIO(2*cycle + 1, addr);
   IsForward(io);
 }
 
