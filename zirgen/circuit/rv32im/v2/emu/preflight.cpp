@@ -221,6 +221,7 @@ struct PreflightContext {
     }
     size_t rlen = segment.readRecord[curRead].size();
     memcpy(data, segment.readRecord[curRead].data(), rlen);
+    curRead++;
     return rlen;
   }
 
