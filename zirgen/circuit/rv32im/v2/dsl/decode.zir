@@ -4,7 +4,7 @@ import bits;
 import u32;
 
 // Decode an instruction
-// Largely done by starting at: https://github.com/jameslzhu/riscv-card/blob/master/riscv-card.pdf
+// Largely done by starting at: https://github.com/jameslzhu/riscv-card/releases/download/latest/riscv-card.pdf
 
 component Decoder(inst: ValU32) {
 
