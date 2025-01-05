@@ -1,0 +1,13 @@
+[package]
+name = "preflight_for_keccak180"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+crunchy = "0.2.2"
+num-bigint = "0.4.6"
+
+[workspace]
+
+[features]
+nozvec = []
