@@ -61,7 +61,7 @@ inline uint32_t host_write(uint32_t fd, uint32_t buf, uint32_t len) {
   return a0;
 }
 
-constexpr uint32_t sizes[11] = { 0, 1, 2, 3, 4, 5, 7, 13, 19, 40, 101 };
+constexpr uint32_t sizes[11] = {0, 1, 2, 3, 4, 5, 7, 13, 19, 40, 101};
 
 void test_multi_read() {
   uint8_t buf[200];
@@ -69,9 +69,11 @@ void test_multi_read() {
   for (size_t i = 0; i < 4; i++) {
     // Try a variety of size
     for (size_t j = 0; j < 11; j++) {
-      host_read(0, (uint32_t) (buf + i), sizes[j]);
+      host_read(0, (uint32_t)(buf + i), sizes[j]);
       for (size_t k = 0; k < sizes[j]; k++) {
-        if (buf[i + k] != k) { die(); }
+        if (buf[i + k] != k) {
+          die();
+        }
       }
     }
   }

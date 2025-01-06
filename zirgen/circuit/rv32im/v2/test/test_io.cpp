@@ -26,13 +26,12 @@ struct RandomReadSizeHandler : public HostIoHandler {
   uint32_t write(uint32_t fd, const uint8_t* data, uint32_t len) override { return len; }
   uint32_t read(uint32_t fd, uint8_t* data, uint32_t len) override {
     std::cout << "DOING READ OF SIZE " << len << "\n";
-    for(size_t i = 0; i < len; i++) {
+    for (size_t i = 0; i < len; i++) {
       data[i] = i;
     }
     return len;
   }
 };
-
 
 int main() {
   size_t cycles = 100000;
