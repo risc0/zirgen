@@ -56,6 +56,12 @@ struct ExecContext {
     }
     physCycles++;
   }
+  void shaCycle(uint32_t cur, const ShaState& state) {
+    if (debug) {
+      std::cout << "sha: " << state.nextState << "\n";
+    }
+    physCycles++;
+  }
   void trapRewind() {}
   void trap(TrapCause cause) {}
 

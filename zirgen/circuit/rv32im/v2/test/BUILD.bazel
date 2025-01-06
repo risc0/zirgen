@@ -1,18 +1,14 @@
 load("@zirgen//bazel/toolchain/rv32im-linux:defs.bzl", "risc0_cc_kernel_binary")
+load(":defs.bzl", "riscv_test_suite")
 
 cc_test(
     name = "test_parallel",
-    srcs = [
-        "test_parallel.cpp",
-    ],
+    srcs = ["test_parallel.cpp"],
     data = [
         "//zirgen/circuit/rv32im/v2/emu/test:guest",
         "//zirgen/circuit/rv32im/v2/kernel",
-        "@zirgen//zirgen/circuit/rv32im/shared/test:riscv_test_bins",
     ],
-    deps = [
-        "//zirgen/circuit/rv32im/v2/run",
-    ],
+    deps = ["//zirgen/circuit/rv32im/v2/run"],
 )
 
 risc0_cc_kernel_binary(
@@ -26,13 +22,34 @@ risc0_cc_kernel_binary(
 
 cc_test(
     name = "test_p2",
+    srcs = ["test_p2.cpp"],
+    data = [":test_p2_kernel"],
+    deps = ["//zirgen/circuit/rv32im/v2/run"],
+)
+
+risc0_cc_kernel_binary(
+    name = "test_sha_kernel",
     srcs = [
-        "test_p2.cpp",
+        "entry.s",
+        "test_sha_kernel.cpp",
     ],
-    data = [
-        ":test_p2_kernel",
-    ],
+    deps = ["//zirgen/circuit/rv32im/v2/platform:core"],
+)
+
+cc_test(
+    name = "test_sha",
+    srcs = ["test_sha.cpp"],
+    data = [":test_sha_kernel"],
+    deps = ["//zirgen/circuit/rv32im/v2/run"],
+)
+
+cc_binary(
+    name = "risc0-simulate",
+    srcs = ["risc0-simulate.cpp"],
     deps = [
+        "//risc0/core",
         "//zirgen/circuit/rv32im/v2/run",
     ],
 )
+
+riscv_test_suite()

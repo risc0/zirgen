@@ -227,10 +227,21 @@ ExecutionTrace runSegment(const Segment& segment, size_t segmentSize) {
       for (size_t j = 0; j < extraSize; j++) {
         trace.data.set(i, getEcall0StateCol() + j, preflightTrace.extra[extraStart + j]);
       }
-    } else {
+    } else if (extraSize == sizeof(P2State) / 4) {
       for (size_t j = 0; j < extraSize; j++) {
         // std::cout << "  extra: " << preflightTrace.extra[extraStart + j] << "\n";
         trace.data.set(i, getPoseidonStateCol() + j, preflightTrace.extra[extraStart + j]);
+      }
+    } else if (extraSize == sizeof(ShaState) / 4) {
+      for (size_t j = 0; j < ShaState::FpCount; j++) {
+        trace.data.set(i, getShaStateCol() + j, preflightTrace.extra[extraStart + j]);
+      }
+      for (size_t j = 0; j < ShaState::U32Count; j++) {
+        uint32_t val = preflightTrace.extra[extraStart + ShaState::FpCount + j];
+        std::cout << "  SHA_WORD: " << val << "\n";
+        for (size_t k = 0; k < 32; k++) {
+          trace.data.set(i, getShaStateCol() + ShaState::FpCount + 32 * j + k, (val >> k) & 1);
+        }
       }
     }
   }
