@@ -579,16 +579,14 @@ fn iota_rc(vals: &mut[B32], idx: &mut usize) {
   for _ in 0..3*BLEN-3+9 {
     vals[*idx] = vals[*idx - COLS]; *idx += 1;
   }
-  zloop(vals, idx, RLEN-9-3);
-  let blk = vals[*idx-COLS+3+2*BLEN+3];
-  let midx = vals[*idx-COLS+3+2*BLEN+4];
+  zloop(vals, idx, RLEN-9-2);
+  let blk = vals[*idx-COLS+2+2*BLEN+3];
+  let midx = vals[*idx-COLS+2+2*BLEN+4];
   let midxnxt = midx + 1;
   let newblk = blk.wrapping_sub(1); //cannot overlow
   let inv_newblk = inv_babybear(newblk);
-  let inv_midxnxt = inv_babybear(midxnxt);
   vals[*idx] = inv_newblk; *idx += 1;
   vals[*idx] = mult_babybear(newblk, inv_newblk); *idx += 1; 
-  vals[*idx] = inv_midxnxt; *idx += 1;
 
   unpack32::<BLEN>(vals, idx, a000);
   unpack32::<BLEN>(vals, idx, a001);
@@ -669,8 +667,8 @@ fn absorb_word(xyidx: usize, blk: B32, midx: B32,
   unpack_low(vals, idx, w);
   unpack_low(vals, idx, inp);
   unpack_mid(vals, idx, inp);
+  zcopy!(vals, *idx); *idx +=1;
   let new_midx = midx + 1 + (xyidx as B32);
-  vals[*idx] = inv_babybear(new_midx); *idx += 1;
   unpack_high(vals, idx, inp);
   let res = w ^ inp;
   vals[*idx] = (res & ((1 << BLEN)-1)) as B32; *idx += 1;
@@ -1088,10 +1086,7 @@ fn print_row(vals: &[B32], row: usize) {
 fn output_word(w: K64, midx_nxt: B32, xidx: B32,
                vals: &mut[B32], idx: &mut usize) {
   unpack_mid(vals, idx, w);
-  zloop(vals, idx, 1+SLEN);
-  let inv_midx = inv_babybear(midx_nxt);
-  vals[*idx] = inv_midx; *idx += 1;
-  zloop(vals, idx, BLEN+RLEN);
+  zloop(vals, idx, 2+SLEN+BLEN+RLEN);
   unpack_high(vals, idx, w);
   zcopy!(vals, *idx); *idx +=1;
   unpack_low(vals, idx, w);
@@ -1146,9 +1141,8 @@ fn memzpad(bitlen: B32, midx_new: B32, nskip_new: B32,
   let invn = inv_babybear(nskip_new);
   vals[*idx] = invn; *idx += 1;
   vals[*idx] = mult_babybear(nskip_new, invn); *idx += 1;
-  vals[*idx] = inv_babybear(midx_new); *idx += 1;
   vals[*idx] = midx_new; *idx += 1;
-  zloop(vals, idx, RLEN-8+2*BLEN);
+  zloop(vals, idx, RLEN-7+2*BLEN);
   if 0 == nskip_new {
     vals[*idx] = 1; *idx += 1;
     vals[*idx] = 16; *idx += 1;
@@ -1170,15 +1164,14 @@ fn memzpad(bitlen: B32, midx_new: B32, nskip_new: B32,
 fn final_write_and_padding(vals: &mut[B32], st: &[K64]) {
   let mut midxnn = st[KWORDS] as B32;
   let mut idx = st[KWORDS+1] as usize; 
-  zloop(vals, &mut idx, 4*BLEN);
-  vals[idx] = inv_babybear(midxnn); idx += 1;
   let mut nskip = 7 - ((midxnn+1)&7);
+  zloop(vals, &mut idx, SLEN);
   vals[idx] = nskip; idx += 1;
-  zloop(vals, &mut idx, BLEN-3);
+  zloop(vals, &mut idx, 4*BLEN-3+RLEN);
   vals[idx] = nskip&1; idx += 1;
   vals[idx] = (nskip>>1)&1; idx += 1;
   vals[idx] = (nskip>>2)&1; idx += 1;
-  zloop(vals, &mut idx, BLEN+1); // +minor_skip
+  zcopy!(vals, idx); idx +=1;
   vals[idx] = 16; idx += 1;
   let bitlen = 64*midxnn;
   vals[idx] = bitlen; idx += 1;
@@ -1216,10 +1209,9 @@ fn end_kinstance(vals: &mut[B32], all: &[[K64; EWORDS]], stidx: usize) {
   let midxnxt = midx+4;
   let blk = curr_st[KWORDS] as B32; 
   let inv_blk = inv_babybear(blk);
-  zloop(vals, &mut idx, BLEN*3 + SLEN);
+  zloop(vals, &mut idx, BLEN*4);
   vals[idx] = inv_blk; idx += 1;
   vals[idx] = mult_babybear(blk, inv_blk); idx += 1;
-  vals[idx] = inv_babybear(midxnxt); idx += 1;
   zloop(vals, &mut idx, BLEN*2);
   if 0 == blk {
     vals[idx] = 4; idx += 1;
