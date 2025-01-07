@@ -151,6 +151,8 @@ component MultiplyAccumulate(a: ValU32, b: ValU32, c: ValU32, settings: Multiply
   s3Carry := FakeTwitReg((s3Tot - s3Out) / 0x10000);
   public outLow := ValU32(s0.out, s1.out);
   public outHigh := ValU32(s2.out, s3Out);
+  public aNeg := ax.neg;
+  public bNeg := bx.neg;
 }
 
 component MultiplyTestCase(a: ValU32, b: ValU32, c: ValU32, settings: MultiplySettings, ol: ValU32, oh: ValU32) {

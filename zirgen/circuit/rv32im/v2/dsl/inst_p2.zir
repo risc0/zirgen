@@ -464,6 +464,7 @@ component PoseidonPaging(cycle: Reg, mode: Val, prev: PoseidonState) {
 
 component Poseidon0(cycle:Reg, inst_input: InstInput) {
   DoCycleTable(cycle);
+  inst_input.state = StatePoseidonEntry() + inst_input.minor;
   state : PoseidonState;
   state := inst_input.minor_onehot -> (
     PoseidonEntry(cycle, inst_input.pc_u32, inst_input.mode),
@@ -480,6 +481,7 @@ component Poseidon0(cycle:Reg, inst_input: InstInput) {
 
 component Poseidon1(cycle:Reg, inst_input: InstInput) {
   DoCycleTable(cycle);
+  inst_input.state = StatePoseidonExtRound() + inst_input.minor;
   state : PoseidonState;
   state := inst_input.minor_onehot -> (
     PoseidonExtRound(state@1),
