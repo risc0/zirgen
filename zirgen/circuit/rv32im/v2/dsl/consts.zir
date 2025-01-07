@@ -39,11 +39,18 @@ component StatePoseidonStoreState() { 23 }
 component StatePoseidonExtRound() { 24 }
 component StatePoseidonIntRounds() { 25 }
 
-component StateDecode() { 32 }
+component StateShaEcall() { 32 }
+component StateShaLoadState() { 33 }
+component StateShaLoadData() { 34 }
+component StateShaMix() { 35 }
+component StateShaStoreState() { 36 }
+
+component StateDecode() { 40 }
 
 component RegA0() { 10 }
 component RegA1() { 11 }
 component RegA2() { 12 }
 component RegA3() { 13 }
+component RegA4() { 14 }
 
 component RegA7() { 17 }

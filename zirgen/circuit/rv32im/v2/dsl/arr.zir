@@ -1,0 +1,45 @@
+// RUN: zirgen --test %s
+
+// Vector / List functions
+
+// Shifts + Rotates
+component RotateLeft<SIZE: Val>(in: Array<Val, SIZE>, n: Val) {
+  for i : 0..SIZE {
+    if (InRange(0, i - n, SIZE)) { in[i - n] } else { in[SIZE + i - n] }
+  }
+}
+
+component RotateRight<SIZE: Val>(in: Array<Val, SIZE>, n: Val) {
+  for i : 0..SIZE {
+    if (InRange(0, i + n, SIZE)) { in[i + n] } else { in[i + n - SIZE] }
+  }
+}
+
+component ShiftLeft<SIZE: Val>(in: Array<Val, SIZE>, n: Val) {
+  for i : 0..SIZE {
+    if (InRange(0, i - n, SIZE)) { in[i - n] } else { 0 }
+  }
+}
+
+component ShiftRight<SIZE: Val>(in: Array<Val, SIZE>, n: Val) {
+  for i : 0..SIZE {
+    if (InRange(0, i + n, SIZE)) { in[i + n] } else { 0 }
+  }
+}
+
+component EqArr<SIZE: Val>(a: Array<Val, SIZE>, b: Array<Val, SIZE>) {
+  for i : 0..SIZE {
+    a[i] = b[i];
+  }
+}
+
+// Tests....
+
+test ShiftAndRotate {
+  // Remember: array entry 0 is the low bit, so there seem backwards
+  EqArr<8>(ShiftRight<8>([3, 1, 5, 0, 2, 0, 0, 0], 2), [5, 0, 2, 0, 0, 0, 0, 0]);
+  EqArr<8>(ShiftLeft<8>([1, 4, 2, 0, 6, 0, 0, 0], 2), [0, 0, 1, 4, 2, 0, 6, 0]);
+  EqArr<8>(RotateRight<8>([7, 6, 1, 0, 2, 0, 0, 0], 2), [1, 0, 2, 0, 0, 0, 7, 6]);
+  EqArr<8>(RotateLeft<8>([4, 5, 1, 0, 1, 0, 0, 3], 2), [0, 3, 4, 5, 1, 0, 1, 0]);
+}
+
