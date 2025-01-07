@@ -3,7 +3,6 @@
 import inst;
 import consts;
 
-
 // Prepare to read a certain length, maybe return a smaller one
 extern HostReadPrepare(fd: Val, len: Val): Val;
 
@@ -87,8 +86,8 @@ component ECallHostReadSetup(cycle: Reg, input: InstInput) {
   lenDecomp := DecomposeLow2(newLen);
   // Check if length is exactly 1, 2, or 3
   len123 := Reg(lenDecomp.highZero * lenDecomp.low2Nonzero);
-  // Check if things are 'uneven'
-  uneven := Reg(len123 * ptrDecomp.low2Nonzero);
+  // Check if things are 'uneven' (this is an 'or')
+  uneven := Reg(len123 + ptrDecomp.low2Nonzero - len123 * ptrDecomp.low2Nonzero);
   // Now pick the next cycle
   nextCycle :=
     // If length == 0, go back to decoding
@@ -118,11 +117,54 @@ component ECallHostWrite(cycle: Reg, input: InstInput) {
   ECallOutput(StateDecode(), 0, 0, 0)
 }
 
-component ECallHostReadBytes(cycle: Reg, input: InstInput) {
-  // TODO
+component ECallHostReadBytes(cycle: Reg, input: InstInput, ptrWord: Val, ptrLow2: Val, len: Val) {
   input.state = StateHostReadBytes();
-  0 = 1;
-  ECallOutput(16, 0, 0, 0)
+  // Decompose next len
+  lenDecomp := DecomposeLow2(len - 1);
+  // Check if length is exactly 1, 2, or 3
+  len123 := Reg(lenDecomp.highZero * lenDecomp.low2Nonzero);
+  // Check is next pointer is even (this can only happen if Low2 == 3)
+  nextPtrEven := IsZero(ptrLow2 - 3);
+  nextPtrUneven := 1 - nextPtrEven;
+  nextPtrWord := nextPtrEven * (ptrWord + 1) + nextPtrUneven * ptrWord;
+  nextPtrLow2 := nextPtrUneven * (ptrLow2 + 1);
+  // Check if things are 'uneven' (this is an 'or')
+  uneven := Reg(len123 + nextPtrUneven - len123 * nextPtrUneven);
+  // Check is length is exactly zero
+  lenZero := IsZero(len - 1);
+  // Split low bits into parts
+  low0 := NondetBitReg(ptrLow2 & 1);
+  low1 := BitReg((ptrLow2 - low0) / 2);
+  // Load the original word
+  origWord := MemoryRead(cycle, ptrWord);
+  // Write the answer
+  io := MemoryWriteUnconstrained(cycle, ptrWord).io;
+  // Make the non-specified half matches
+  if (low1) {
+    origWord.low = io.newTxn.dataLow;
+  } else {
+    origWord.high = io.newTxn.dataHigh;
+  };
+  // Get the half that changed
+  oldHalf := low1 * origWord.high + (1 - low1) * origWord.low;
+  newHalf := low1 * io.newTxn.dataHigh + (1 - low1) * io.newTxn.dataLow;
+  // Split both into bytes
+  oldBytes := SplitWord(oldHalf);
+  newBytes := SplitWord(newHalf);
+  // Make sure the non-specified bytes matchs
+  if (low0) {
+    oldBytes.byte0 = newBytes.byte0;
+  } else {
+    oldBytes.byte1 = newBytes.byte1;
+  };
+  nextCycle :=
+    // If length == 0, go back to decoding
+    lenZero * StateDecode() +
+    // If length != 0 and uneven, do bytes
+    (1 - lenZero) * uneven * StateHostReadBytes() +
+    // If length != 0 and even, more words
+    (1 - lenZero) * (1 - uneven) * StateHostReadWords();
+  ECallOutput(nextCycle, nextPtrWord, nextPtrLow2, len - 1)
 }
 
 component ECallHostReadWords(cycle: Reg, input: InstInput, ptrWord: Val, len: Val) {
@@ -130,9 +172,9 @@ component ECallHostReadWords(cycle: Reg, input: InstInput, ptrWord: Val, len: Va
   lenDecomp := DecomposeLow2(len);
   wordsDecomp := DecomposeLow2(lenDecomp.high);
   doWord := [
-    wordsDecomp.low2Hot[1] * wordsDecomp.highZero,
-    wordsDecomp.low2Hot[2] * wordsDecomp.highZero,
-    wordsDecomp.low2Hot[3] * wordsDecomp.highZero,
+    (wordsDecomp.low2Hot[1] + wordsDecomp.low2Hot[2] + wordsDecomp.low2Hot[3])  * wordsDecomp.highZero + (1 - wordsDecomp.highZero),
+    (wordsDecomp.low2Hot[2] + wordsDecomp.low2Hot[3])* wordsDecomp.highZero + (1 - wordsDecomp.highZero),
+    (wordsDecomp.low2Hot[3]) * wordsDecomp.highZero + (1 - wordsDecomp.highZero),
     (1 - wordsDecomp.highZero)
   ];
   count := reduce doWord init 0 with Add;
@@ -140,14 +182,15 @@ component ECallHostReadWords(cycle: Reg, input: InstInput, ptrWord: Val, len: Va
     addr := Reg(doWord[i] * (ptrWord + i) + (1 - doWord[i]) * SafeWriteWord());
     MemoryWriteUnconstrained(cycle, addr);
   };
-  lenZero := IsZero(len - 4 * count);
+  newLenHighZero := IsZero(lenDecomp.high - count);
+  lenZero := Reg(newLenHighZero * (1 - lenDecomp.low2Nonzero));
   nextCycle :=
     // If length == 0, go back to decoding
     lenZero * StateDecode() +
     // If length != 0 and uneven, do bytes
-    (1 - lenZero) * (lenDecomp.low2Nonzero) * StateHostReadBytes() +
-    // If lengtj != 0 and even, more words
-    (1 - lenZero) * (1 - lenDecomp.low2Nonzero) * StateHostReadWords();
+    (1 - lenZero) * newLenHighZero * StateHostReadBytes() +
+    // If length != 0 and even, more words
+    (1 - lenZero) * (1 - newLenHighZero) * StateHostReadWords();
   ECallOutput(nextCycle, ptrWord + count, 0, len - count * 4)
 }
 
@@ -163,7 +206,7 @@ component ECall0(cycle: Reg, inst_input: InstInput) {
     ECallTerminate(cycle, inst_input),
     ECallHostReadSetup(cycle, inst_input),
     ECallHostWrite(cycle, inst_input),
-    ECallHostReadBytes(cycle, inst_input),
+    ECallHostReadBytes(cycle, inst_input, s0@1, s1@1, s2@1),
     ECallHostReadWords(cycle, inst_input, s0@1, s2@1),
     IllegalECall(),
     IllegalECall()
