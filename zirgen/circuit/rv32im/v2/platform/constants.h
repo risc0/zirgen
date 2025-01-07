@@ -95,6 +95,7 @@ constexpr uint32_t HOST_ECALL_TERMINATE = 0;
 constexpr uint32_t HOST_ECALL_READ = 1;
 constexpr uint32_t HOST_ECALL_WRITE = 2;
 constexpr uint32_t HOST_ECALL_POSEIDON2 = 3;
+constexpr uint32_t HOST_ECALL_SHA2 = 4;
 
 constexpr uint32_t PFLAG_IS_ELEM = 0x80000000;
 constexpr uint32_t PFLAG_CHECK_OUT = 0x40000000;
@@ -140,7 +141,13 @@ constexpr uint32_t STATE_POSEIDON_STORE_STATE = 23;
 constexpr uint32_t STATE_POSEIDON_EXT_ROUND = 24;
 constexpr uint32_t STATE_POSEIDON_INT_ROUND = 25;
 
-constexpr uint32_t STATE_DECODE = 32;
+constexpr uint32_t STATE_SHA_ECALL = 32;
+constexpr uint32_t STATE_SHA_LOAD_STATE = 33;
+constexpr uint32_t STATE_SHA_LOAD_DATA = 34;
+constexpr uint32_t STATE_SHA_MIX = 35;
+constexpr uint32_t STATE_SHA_STORE_STATE = 36;
+
+constexpr uint32_t STATE_DECODE = 40;
 
 constexpr uint32_t SAFE_WRITE_WORD = 0x3fffc040;
 
