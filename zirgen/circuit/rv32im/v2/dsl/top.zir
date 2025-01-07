@@ -1,9 +1,5 @@
 // RUN: true
 
-// TODO: Now that the v2 circuit uses an extern to compute major/minor it no
-// longer makes sense to do rv32im conformance testing here.  Make sure
-// integration tests are covering this.
-
 import inst_div;
 import inst_misc;
 import inst_mul;
