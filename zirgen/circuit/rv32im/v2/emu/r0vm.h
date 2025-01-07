@@ -107,11 +107,7 @@ template <typename Context> struct R0Context {
 
   // Generic ecall handling for user mode
   bool doUserECALL() {
-    uint32_t dispatch = loadReg(REG_A7);
-    if (dispatch >= 512) {
-      return doTrap(TrapCause::ENVIRONMENT_CALL_FROM_U_MODE);
-    }
-    uint32_t dispatchAddr = loadMem(ECALL_DISPATCH_WORD + dispatch);
+    uint32_t dispatchAddr = loadMem(ECALL_DISPATCH_WORD);
     if (dispatchAddr % 4 != 0 || dispatchAddr < KERNEL_START_ADDR) {
       return doTrap(TrapCause::ENVIRONMENT_CALL_FROM_U_MODE);
     }
