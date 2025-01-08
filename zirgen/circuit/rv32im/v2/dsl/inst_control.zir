@@ -38,8 +38,8 @@ component ControlResume(cycle: Reg, ii: InstInput) {
     InstOutput(pc, StateResume(), mode.low)
   } else {
     global input : DigestReg;
-    for i : 0..8 { 
-      MemoryWrite(cycle, InputWord() + i, 
+    for i : 0..8 {
+      MemoryWrite(cycle, InputWord() + i,
         ValU32(input.values[i].low, input.values[i].high));
     };
     InstOutput(ii.pc_u32, StateDecode(), ii.mode)
@@ -55,10 +55,7 @@ component ControlUserECALL(cycle: Reg, input: InstInput) {
   load_inst.low = 0x0073;
   input.state = StateDecode();
   input.mode = 0;
-  dispatch_idx := MemoryRead(cycle, UserRegBase() + RegA7());
-  dispatch_idx.high = 0;
-  U16Reg(dispatch_idx.low * 128);
-  new_pc_addr := MemoryRead(cycle, EcallDispatchWord() + dispatch_idx.low);
+  new_pc_addr := MemoryRead(cycle, EcallDispatchWord());
   MemoryWrite(cycle, MepcWord(), input.pc_u32);
   InstOutput(new_pc_addr, StateDecode(), 1)
 }
@@ -98,7 +95,7 @@ component ControlSuspend(cycle: Reg, input: InstInput) {
       // TODO: Apparently if we don't have this clause, the compiler generates
       // a mux where the 'else' case fails at runtime.
     };
-  
+
     // Begin page out
     InstOutput(ValU32(0, 0), StatePoseidonEntry(), 3)
   } else {
