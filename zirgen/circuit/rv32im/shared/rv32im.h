@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@
     TblEntry(6, 1, 0x23, 0x1,   -1, SH) \
     TblEntry(6, 2, 0x23, 0x2,   -1, SW) \
     TblEntry(7, 0, 0x73, 0x0, 0x00, EANY) \
-    TblEntry(7, 1, 0x73, 0x0, 0x18, MRET) \
+    TblEntry(7, 1, 0x73, 0x0, 0x18, MRET)
 // clang-format on
 
 namespace zirgen {
@@ -208,7 +208,7 @@ private:
 
 // The emulator class is templated on a 'context' object that allows
 // other code to observe the and override various parts of the emulator.
-// We provide a simple base version of this for testing 
+// We provide a simple base version of this for testing
 struct BaseContext {
   bool done = false;
   uint32_t pc;
@@ -231,15 +231,13 @@ struct BaseContext {
 
   // Handle privledged instructions
   bool doECALL() {
-    done = true;  // ECALL induces termination
-    return true;  // end normally
+    done = true; // ECALL induces termination
+    return true; // end normally
   }
-  bool doMRET() {
-    throw std::runtime_error("Unimplemented");
-  }
-  bool doTrap(TrapCause cause) {
-    throw std::runtime_error("Unimplemented");
-  }
+
+  bool doMRET() { throw std::runtime_error("Unimplemented"); }
+
+  bool doTrap(TrapCause cause) { throw std::runtime_error("Unimplemented"); }
 
   // Callback when instructions are decoded
   void instDecoded(InstType type, const DecodedInst& decoded) {}
@@ -252,9 +250,7 @@ struct BaseContext {
   void setPC(uint32_t pc) { this->pc = pc; }
 
   // Manage registers
-  uint32_t loadReg(uint32_t reg) {
-    return regs[reg];
-  }
+  uint32_t loadReg(uint32_t reg) { return regs[reg]; }
   void storeReg(uint32_t reg, uint32_t val) {
     if (reg) {
       regs[reg] = val;
@@ -262,12 +258,8 @@ struct BaseContext {
   }
 
   // Manage memory
-  uint32_t loadMem(uint32_t word) {
-    return memory[word];
-  }
-  void storeMem(uint32_t word, uint32_t val) {
-    memory[word] = val;
-  }
+  uint32_t loadMem(uint32_t word) { return memory[word]; }
+  void storeMem(uint32_t word, uint32_t val) { memory[word] = val; }
 };
 
 template <typename Context> class RV32Emulator {
@@ -296,7 +288,7 @@ public:
       return;
     }
     uint32_t inst = context.loadMem(pc / 4);
-    if ((inst & 0x3) != 0x3) { 
+    if ((inst & 0x3) != 0x3) {
       context.doTrap(TrapCause::ILLEGAL_INSTRUCTION);
       return;
     }
@@ -329,7 +321,8 @@ public:
       ret = context.doTrap(TrapCause::ILLEGAL_INSTRUCTION);
       break;
     }
-    if (ret) context.endNormal(type, decoded);
+    if (ret)
+      context.endNormal(type, decoded);
   }
 
 private:
@@ -594,19 +587,19 @@ private:
 
   bool stepPriv(InstType type, const DecodedInst& decoded) {
     switch (type) {
-      case InstType::EANY:
-        switch(decoded.rs2) {
-          case 0:
-            return context.doECALL();
-          case 1:
-            return context.doTrap(TrapCause::BREAKPOINT);
-          default:
-            return context.doTrap(TrapCause::ILLEGAL_INSTRUCTION);
-          }
-      case InstType::MRET:
-        return context.doMRET();
+    case InstType::EANY:
+      switch (decoded.rs2) {
+      case 0:
+        return context.doECALL();
+      case 1:
+        return context.doTrap(TrapCause::BREAKPOINT);
       default:
-        __builtin_unreachable();
+        return context.doTrap(TrapCause::ILLEGAL_INSTRUCTION);
+      }
+    case InstType::MRET:
+      return context.doMRET();
+    default:
+      __builtin_unreachable();
     }
     return true;
   }
