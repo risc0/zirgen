@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -83,13 +83,16 @@ inline void do_poseidon2(uint32_t state, uint32_t bufIn, uint32_t bufOut, uint32
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Warray-bounds"
+
 // Helpers to access user registers
 inline uint32_t get_ureg(uint32_t reg) {
   return (reinterpret_cast<uint32_t*>(USER_REGS_ADDR))[reg];
 }
+
 inline void set_ureg(uint32_t reg, uint32_t val) {
   (reinterpret_cast<uint32_t*>(USER_REGS_ADDR))[reg] = val;
 }
+
 #pragma GCC diagnostic pop
 
 // Implement system calls
@@ -139,11 +142,13 @@ inline uint32_t sys_write(uint32_t fd, uint32_t buf, uint32_t len) {
     set_ureg(REG_A0, sys_##name(get_ureg(REG_A0)));                                                \
     mret();                                                                                        \
   }
+
 #define SYSCALL_WRAP_2(name)                                                                       \
   void sys_##name##_wrap() {                                                                       \
     set_ureg(REG_A0, sys_##name(get_ureg(REG_A0), get_ureg(REG_A1)));                              \
     mret();                                                                                        \
   }
+
 #define SYSCALL_WRAP_3(name)                                                                       \
   void sys_##name##_wrap() {                                                                       \
     set_ureg(REG_A0, sys_##name(get_ureg(REG_A0), get_ureg(REG_A1), get_ureg(REG_A2)));            \
@@ -155,12 +160,26 @@ inline uint32_t sys_write(uint32_t fd, uint32_t buf, uint32_t len) {
 SYS_CALL_LIST
 #undef SyscallEntry
 
+uint32_t syscallTable[512];
+
+extern "C" void ecall_dispatch() {
+  uint32_t idx = get_ureg(REG_A7);
+  register uintptr_t t0 asm("t0") = syscallTable[idx];
+  asm volatile("jr t0\n"
+               :         // no outputs
+               : "r"(t0) // inputs
+               :         // no clobbers
+  );
+}
+
 extern "C" void start() {
   // Set up user stack
   set_ureg(REG_SP, 0xbffffffc);
-  uint32_t* table = reinterpret_cast<uint32_t*>(ECALL_DISPATCH_ADDR);
   // Set up syscall dispatch table
-#define SyscallEntry(id, name, args) table[id] = reinterpret_cast<uint32_t>(sys_##name##_wrap);
+  uint32_t* dispatchAddr = reinterpret_cast<uint32_t*>(ECALL_DISPATCH_ADDR);
+  *dispatchAddr = reinterpret_cast<uint32_t>(ecall_dispatch);
+#define SyscallEntry(id, name, args)                                                               \
+  syscallTable[id] = reinterpret_cast<uint32_t>(sys_##name##_wrap);
   SYS_CALL_LIST
 #undef SyscallEntry
   // Jump into userland
