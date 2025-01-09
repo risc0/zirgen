@@ -70,8 +70,6 @@ component ECallHostReadSetup(cycle: Reg, input: InstInput) {
   fd := MemoryRead(cycle, MachineRegBase() + RegA0());
   ptr := MemoryRead(cycle, MachineRegBase() + RegA1());
   len := MemoryRead(cycle, MachineRegBase() + RegA2());
-  // fd < 64k
-  fd.high = 0;
   // Make sure length < 64k (about 1k cycles)
   len.high = 0;
   // Get the 'returned' length
