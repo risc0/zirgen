@@ -275,8 +275,6 @@ private:
   }
 
   void visitOp(SwitchOp mux) {
-    os << "// mark begin mux\n";
-
     SmallVector<Signal> selectorSignals;
     for (Value selector : mux.getSelector()) {
       selectorSignals.push_back(cast<Signal>(valuesToSignals.at(selector)));
@@ -300,7 +298,6 @@ private:
         type = Zhlt::getSuperType(type);
       }
       armSignals.push_back(flatten(signal));
-      os << "// mark arm\n";
     }
 
     AnySignal outSignal = signalize("mux_" + freshName(), mux.getType());
@@ -319,8 +316,6 @@ private:
       }
       os << "\n";
     }
-
-    os << "// mark end of mux\n";
   }
 
   void visitOp(ArrayOp arr) {
@@ -364,10 +359,71 @@ private:
   }
 
   void visitOp(AliasLayoutOp alias) {
-    auto lhs = valuesToSignals.at(alias.getLhs());
-    auto rhs = valuesToSignals.at(alias.getRhs());
-    for (auto [sl, sr] : llvm::zip(flatten(lhs), flatten(rhs))) {
-      os << "(assert (= " << sl.str() << " " << sr.str() << "))\n";
+    // If lhs and rhs have the same lifetime, then aliasing them is
+    // straightforward: simply constrain lhs = rhs. If they have different
+    // lifetimes, it's more complicated. Luckily, the only way for things to
+    // have different lifetimes is because of muxing: values in a mux arm have
+    // a lifetime strictly contained by the enclosing scope, and values in
+    // different arms of the same mux have strictly non-overlapping lifetimes.
+    // We assert that we never see aliases of the second type, as there
+    // currently is no way to produce such aliases in Zirgen and it's not clear
+    // how this ought to be handled. For the first case, we require the
+    // corresponding signals to be equal only when the shorter-lived value is
+    // live, so we produce Picus assertions of the form s * lhs = s * rhs: if
+    // s = 0, this is trivially satisified, and if s = 1 it implies lhs = rhs.
+    // If there are multiple intervening muxes, we take the product of all the
+    // intervening selectors: product_i(s_i) * lhs = product_i(s_i) * rhs.
+
+    Value lhs = alias.getLhs();
+    Value rhs = alias.getRhs();
+    Operation* lhsOp = lhs.getDefiningOp();
+    Operation* rhsOp = rhs.getDefiningOp();
+    Block* lhsBlock = lhs.getParentBlock();
+    Block* rhsBlock = rhs.getParentBlock();
+
+    // Find the longer-lived value
+    Value shortLived;
+    Value longLived;
+    if (lhsBlock->findAncestorOpInBlock(*rhsOp) != nullptr) {
+      shortLived = rhs;
+      longLived = lhs;
+    } else if (rhsBlock->findAncestorOpInBlock(*lhsOp) != nullptr) {
+      shortLived = lhs;
+      longLived = rhs;
+    } else {
+      assert(false && "cannot resolve relative lifetimes of aliased values");
+    }
+
+    SmallVector<Value> interveningSelectors;
+    Region* x = shortLived.getParentRegion();
+    while (x != longLived.getParentRegion()) {
+      // All loops are unrolled and no other ops contain regions, so the
+      // ancestor must be a SwitchOp.
+      auto mux = cast<SwitchOp>(x->getParentOp());
+      interveningSelectors.push_back(mux.getSelector()[x->getRegionNumber()]);
+      x = x->getParentRegion();
+    }
+
+    auto conditionalize = [&](Signal signal) {
+      if (interveningSelectors.empty()) {
+        os << signal.str();
+      } else {
+        for (Value s : interveningSelectors)
+          os << "(* " << cast<Signal>(valuesToSignals.at(s)).str() << " ";
+        os << signal.str();
+        for (size_t i = 0; i < interveningSelectors.size(); i++)
+          os << ")";
+      }
+    };
+
+    auto lhsSignal = valuesToSignals.at(lhs);
+    auto rhsSignal = valuesToSignals.at(rhs);
+    for (auto [sl, sr] : llvm::zip(flatten(lhsSignal), flatten(rhsSignal))) {
+      os << "(assert (= ";
+      conditionalize(sl);
+      os << " ";
+      conditionalize(sr);
+      os << "))\n";
     }
   }
 

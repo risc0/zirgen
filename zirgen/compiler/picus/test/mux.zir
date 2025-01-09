@@ -1,5 +1,27 @@
+// RUN: zirgen %s --emit=picus | FileCheck %s
 
-extern IsFirstCycle() : Val;
+// CHECK: (prime-number 2013265921)
+// CHECK-NEXT: (begin-module Top)
+// CHECK-NEXT: (output layout_first__super__super)
+// CHECK-NEXT: (output layout_x__super__super__super)
+// CHECK-NEXT: (output layout_x_arm0__super__super__super)
+// CHECK-NEXT: (output layout_x_arm1__super__super__super)
+// CHECK-NEXT: (output result_first__super__super)
+// CHECK-NEXT: (output result_first_reg__super)
+// CHECK-NEXT: (output result_x__super__super)
+// CHECK-NEXT: (output result_x_reg__super)
+// CHECK-NEXT: (assert (= x0 8))
+// CHECK-NEXT: (assert (= x1 7))
+// CHECK-NEXT: (assert (= x2 1))
+// CHECK-NEXT: (assert (= x3 0))
+// CHECK-NEXT: (call [layout_first__super__super x4__super__super x4_reg__super] Reg [x3])
+// CHECK-NEXT: (assert (= x5 (- x2 x4__super__super)))
+// CHECK-NEXT: (assert (= (* x5 layout_x__super__super__super) (* x5 layout_x_arm0__super__super__super)))
+// CHECK-NEXT: (call [layout_x_arm0__super__super__super x6__super__super x6_reg__super] Reg [x1])
+// CHECK-NEXT: (assert (= (* x4__super__super layout_x__super__super__super) (* x4__super__super layout_x_arm1__super__super__super)))
+// CHECK-NEXT: (call [layout_x_arm1__super__super__super x7__super__super x7_reg__super] Reg [x0])
+// CHECK-NEXT: (assert (= mux_x8__super__super (+ (* x5 x6__super__super) (* x4__super__super x7__super__super)))
+// CHECK-NEXT: (assert (= mux_x8_reg__super (+ (* x5 x6_reg__super) (* x4__super__super x7_reg__super)))
 
 #[picus]
 component Top() {
