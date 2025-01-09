@@ -231,7 +231,7 @@ void genExtFieldXXOneMul(mlir::OpBuilder builder, mlir::Location loc, size_t bit
     rhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, i * chunkwidth);
   }
   auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 0);
-  auto primesqr = builder.create<BigInt::LoadOp>(loc, bitwidth, 14, 0);
+  auto primesqr = builder.create<BigInt::LoadOp>(loc, 2*bitwidth, 14, 0);
   auto result = BigInt::field::extMulXXONE(builder, loc, lhs, rhs, prime, primesqr);
   for (size_t i = 0; i < 2; i++) {
     builder.create<BigInt::StoreOp>(loc, result[i], 15, i * chunkwidth);
