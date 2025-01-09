@@ -56,12 +56,14 @@ fn inv_babybear(x: B32) -> B32 { // inefficient, please replace!
   z.to_u32_digits().first().unwrap().clone()
 }
 
+/*
 fn mult_babybear (x: B32, y: B32) -> B32 { //branch on prod==0 slower?
   let bx = x as u64;
   let by = y as u64;
   let product = bx.wrapping_mul(by);
   (product % BABYBEAR_MODULUS) as B32
 }
+*/
 
 macro_rules! zcopy {
     ($arr: expr, $idx: expr) => {
@@ -586,7 +588,17 @@ fn iota_rc(vals: &mut[B32], idx: &mut usize) {
   let newblk = blk.wrapping_sub(1); //cannot overlow
   let inv_newblk = inv_babybear(newblk);
   vals[*idx] = inv_newblk; *idx += 1;
-  vals[*idx] = mult_babybear(newblk, inv_newblk); *idx += 1; 
+
+  //vals[*idx] = mult_babybear(newblk, inv_newblk); *idx += 1;
+  #[cfg(not(feature="nozvec"))]
+  {
+    if 0 != newblk { vals[*idx] = 1; }
+  }
+  #[cfg(feature="nozvec")]
+  {
+    if 0 != newblk { vals[*idx] = 1; } else { vals[*idx] = 0 }
+  }
+  *idx += 1;
 
   unpack32::<BLEN>(vals, idx, a000);
   unpack32::<BLEN>(vals, idx, a001);
@@ -1140,14 +1152,17 @@ fn memzpad(bitlen: B32, midx_new: B32, nskip_new: B32,
   }
   let invn = inv_babybear(nskip_new);
   vals[*idx] = invn; *idx += 1;
-  vals[*idx] = mult_babybear(nskip_new, invn); *idx += 1;
+  //vals[*idx] = mult_babybear(nskip_new, invn); *idx += 1;
+  *idx += 1;
   vals[*idx] = midx_new; *idx += 1;
   zloop(vals, idx, RLEN-7+2*BLEN);
   if 0 == nskip_new {
+    vals[*idx-(RLEN-7+2*BLEN+1+1)] = 0; //mult_babybear(nskip_new, invn)
     vals[*idx] = 1; *idx += 1;
     vals[*idx] = 16; *idx += 1;
     zloop(vals, idx, 2);
   } else {
+    vals[*idx-(RLEN-7+2*BLEN+1+1)] = 1; //mult_babybear(nskip_new, invn)
     vals[*idx] = 0; *idx += 1;
     vals[*idx] = 16; *idx += 1;
     vals[*idx] = bitlen; *idx += 1;
@@ -1211,13 +1226,16 @@ fn end_kinstance(vals: &mut[B32], all: &[[K64; EWORDS]], stidx: usize) {
   let inv_blk = inv_babybear(blk);
   zloop(vals, &mut idx, BLEN*4);
   vals[idx] = inv_blk; idx += 1;
-  vals[idx] = mult_babybear(blk, inv_blk); idx += 1;
-  zloop(vals, &mut idx, BLEN*2);
+  //vals[idx] = mult_babybear(blk, inv_blk); idx += 1;
   if 0 == blk {
+    vals[idx] = 0; idx += 1; //mult_babybear(nskip_new, invn)
+    zloop(vals, &mut idx, BLEN*2);
     vals[idx] = 4; idx += 1;
     vals[idx] = 17; idx += 1;
     zloop(vals, &mut idx, 2);
   } else {
+    vals[idx] = 1; idx += 1; //mult_babybear(nskip_new, invn)
+    zloop(vals, &mut idx, BLEN*2);
     zcopy!(vals, idx); idx +=1;
     vals[idx] = 14; idx += 1;
     zcopy!(vals, idx); idx +=1;
