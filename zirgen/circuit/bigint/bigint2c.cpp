@@ -47,6 +47,7 @@ enum class Program {
   ExtFieldAdd,
   ExtFieldMul,
   ExtField_Deg4_Mul,
+  ExtField_XXOne_Mul,
   ExtFieldSub,
   ModAdd,
   ModInv,
@@ -63,6 +64,8 @@ static cl::opt<enum Program>
                        clEnumValN(Program::EC_Add, "ec_add", "EC_Add"),
                        clEnumValN(Program::ExtFieldAdd, "extfieldadd", "ExtFieldAdd"),
                        clEnumValN(Program::ExtFieldMul, "extfieldmul", "ExtFieldMul"),
+                       clEnumValN(Program::ExtField_XXOne_Mul,
+                         "extfield_xxone_mul", "ExtField_XXOne_Mul"),
                        clEnumValN(Program::ExtField_Deg4_Mul,
                          "extfield_deg4_mul", "ExtField_Deg4_Mul"),
                        clEnumValN(Program::ExtFieldSub, "extfieldsub", "ExtFieldSub"),
@@ -456,6 +459,9 @@ int main(int argc, char* argv[]) {
     break;
   case Program::ExtFieldMul:
     zirgen::BigInt::field::genExtFieldMul(builder, loc, bitwidth, 2);
+    break;
+  case Program::ExtField_XXOne_Mul:
+    zirgen::BigInt::field::genExtFieldXXOneMul(builder, loc, bitwidth);
     break;
   case Program::ExtField_Deg4_Mul:
     zirgen::BigInt::field::genExtFieldMul(builder, loc, bitwidth, 4);

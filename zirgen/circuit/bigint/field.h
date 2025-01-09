@@ -41,6 +41,7 @@ void genModMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth);
 void genModSub(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth);
 void genExtFieldAdd(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth, size_t degree);
 void genExtFieldMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth, size_t degree);
+void genExtFieldXXOneMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth);
 void genExtFieldSub(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth, size_t degree);
 
 // Prime field arithmetic (aka modular arithmetic)
@@ -54,6 +55,7 @@ Value modSub(mlir::OpBuilder builder, mlir::Location loc, Value lhs, Value rhs, 
 // TODO: ^ Hence the use of 2 in the SmallVectors ... but is this true?
 llvm::SmallVector<Value, 2> extAdd(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime);
 llvm::SmallVector<Value, 2> extMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, llvm::SmallVector<Value, 2> monic_irred_poly, Value prime);
+llvm::SmallVector<Value, 2> extMulXXONE(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime);
 llvm::SmallVector<Value, 2> extSub(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime);
 
 } // namespace zirgen::BigInt::field

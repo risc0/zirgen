@@ -57,6 +57,27 @@ llvm::SmallVector<Value, 2> extAdd(mlir::OpBuilder builder, mlir::Location loc, 
     return result;
 }
 
+// Deg2 extfield mul with irreducible polynomial x^2+1
+// (ax+b)(cx+d) == acxx-ac(xx+1) + (ad+bc)x + bd == (ad+bc)x + bd-ac
+llvm::SmallVector<Value, 2> extMulXXONE(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime) {
+    assert(lhs.size() == 2);
+    assert(rhs.size() == 2);
+    llvm::SmallVector<Value, 2> result(2);
+
+    auto ad = builder.create<BigInt::MulOp>(loc, lhs[1], rhs[0]);
+    auto bc = builder.create<BigInt::MulOp>(loc, lhs[0], rhs[1]);
+    result[1] = builder.create<BigInt::AddOp>(loc, ad, bc);
+    result[1] = builder.create<BigInt::ReduceOp>(loc, result[1], prime);
+
+    auto bd = builder.create<BigInt::MulOp>(loc, lhs[0], rhs[0]);
+    auto ac = builder.create<BigInt::MulOp>(loc, lhs[1], rhs[1]);
+    result[0] = builder.create<BigInt::SubOp>(loc, bd, ac);
+    result[0] = builder.create<BigInt::AddOp>(loc, result[0], prime);
+    result[0] = builder.create<BigInt::ReduceOp>(loc, result[0], prime);
+
+    return result;
+}
+
 llvm::SmallVector<Value, 2> extMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, llvm::SmallVector<Value, 2> monic_irred_poly, Value prime) {
     // TODO: Annoying to have a SmallVector output that needs to be deg - 1 bigger than the inputs; I think that means all should be 3...
     // TODO: We could have a simplified version for nth roots x^n - a
@@ -196,6 +217,23 @@ void genExtFieldMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth
   auto result = BigInt::field::extMul(builder, loc, lhs, rhs, monic_irred_poly, prime);
   for (size_t i = 0; i < degree; i++) {
     builder.create<BigInt::StoreOp>(loc, result[i], 15, i * chunkwidth);
+  }
+}
+
+void genExtFieldXXOneMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth) {
+  // TODO: will need to handle bitwidth slightly smaller than data chunks
+  assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
+  size_t chunkwidth = bitwidth / 128;
+  llvm::SmallVector<Value, 2> lhs(2);
+  llvm::SmallVector<Value, 2> rhs(2);
+  for (size_t i = 0; i < 2; i++) {
+    lhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, i * chunkwidth);
+    rhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, i * chunkwidth);
+  }
+  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 0);
+  auto result = BigInt::field::extMulXXONE(builder, loc, lhs, rhs, prime);
+  for (size_t i = 0; i < 2; i++) {
+    builder.create<BigInt::StoreOp>(loc, result[i], 14, i * chunkwidth);
   }
 }
 

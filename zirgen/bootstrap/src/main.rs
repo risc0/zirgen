@@ -613,6 +613,7 @@ impl Bootstrap {
         // TODO: Bitwidths on field ops
         self.copy_file(&src_path, &field_path, "extfieldadd_256.blob");
         self.copy_file(&src_path, &field_path, "extfieldmul_256.blob");
+        self.copy_file(&src_path, &field_path, "extfield_xxone_mul_256.blob");
         self.copy_file(&src_path, &field_path, "extfield_deg4_mul_256.blob");
         self.copy_file(&src_path, &field_path, "extfieldsub_256.blob");
         self.copy_file(&src_path, &field_path, "modadd_256.blob");
