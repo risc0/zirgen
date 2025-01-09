@@ -59,7 +59,7 @@ llvm::SmallVector<Value, 2> extAdd(mlir::OpBuilder builder, mlir::Location loc, 
 
 // Deg2 extfield mul with irreducible polynomial x^2+1
 // (ax+b)(cx+d) == acxx-ac(xx+1) + (ad+bc)x + bd == (ad+bc)x + bd-ac
-llvm::SmallVector<Value, 2> extMulXXONE(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime) {
+llvm::SmallVector<Value, 2> extMulXXONE(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime, Value primesqr) {
     assert(lhs.size() == 2);
     assert(rhs.size() == 2);
     llvm::SmallVector<Value, 2> result(2);
@@ -72,7 +72,7 @@ llvm::SmallVector<Value, 2> extMulXXONE(mlir::OpBuilder builder, mlir::Location 
     auto bd = builder.create<BigInt::MulOp>(loc, lhs[0], rhs[0]);
     auto ac = builder.create<BigInt::MulOp>(loc, lhs[1], rhs[1]);
     result[0] = builder.create<BigInt::SubOp>(loc, bd, ac);
-    result[0] = builder.create<BigInt::AddOp>(loc, result[0], prime);
+    result[0] = builder.create<BigInt::AddOp>(loc, result[0], primesqr);
     result[0] = builder.create<BigInt::ReduceOp>(loc, result[0], prime);
 
     return result;
@@ -231,9 +231,10 @@ void genExtFieldXXOneMul(mlir::OpBuilder builder, mlir::Location loc, size_t bit
     rhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, i * chunkwidth);
   }
   auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 0);
-  auto result = BigInt::field::extMulXXONE(builder, loc, lhs, rhs, prime);
+  auto primesqr = builder.create<BigInt::LoadOp>(loc, bitwidth, 14, 0);
+  auto result = BigInt::field::extMulXXONE(builder, loc, lhs, rhs, prime, primesqr);
   for (size_t i = 0; i < 2; i++) {
-    builder.create<BigInt::StoreOp>(loc, result[i], 14, i * chunkwidth);
+    builder.create<BigInt::StoreOp>(loc, result[i], 15, i * chunkwidth);
   }
 }
 
