@@ -311,7 +311,7 @@ private:
       for (size_t j = 0; j < armSignals.size(); j++) {
         os << ")";
       }
-      os << "\n";
+      os << ")\n";
     }
     os << "; end mux\n";
   }
@@ -525,8 +525,6 @@ void printPicus(ModuleOp mod, llvm::raw_ostream& os) {
     llvm::errs() << "Preprocessing for Picus failed";
     return;
   }
-
-  mod.print(os);
 
   PicusPrinter(os).print(mod);
 }

@@ -14,17 +14,27 @@
 // CHECK-NEXT: (assert (= x1 7))
 // CHECK-NEXT: (assert (= x2 1))
 // CHECK-NEXT: (assert (= x3 0))
-// CHECK-NEXT: (call [layout_first__super__super x4__super__super x4_reg__super] Reg [x3])
-// CHECK-NEXT: (assert (= x5 (- x2 x4__super__super)))
+// CHECK-NEXT: (assert (= x4 (- x3 layout_first__super__super)))
+// CHECK-NEXT: (assert (= x4 0))
+// CHECK-NEXT: (assert (= x5 (- x2 layout_first__super__super)))
 // CHECK-NEXT: ; begin mux
 // CHECK-NEXT: (assert (= (* x5 layout_x__super__super__super) (* x5 layout_x_arm0__super__super__super)))
-// CHECK-NEXT: (call [layout_x_arm0__super__super__super x6__super__super x6_reg__super] Reg [x1])
+// CHECK-NEXT: (assert (= x6 (- x1 layout_x_arm0__super__super__super)))
+// CHECK-NEXT: (assert (= x6 0))
 // CHECK-NEXT: ; mark mux arm
-// CHECK-NEXT: (assert (= (* x4__super__super layout_x__super__super__super) (* x4__super__super layout_x_arm1__super__super__super)))
-// CHECK-NEXT: (call [layout_x_arm1__super__super__super x7__super__super x7_reg__super] Reg [x0])
+// CHECK-NEXT: (assert (= (* layout_first__super__super layout_x__super__super__super) (* layout_first__super__super layout_x_arm1__super__super__super)))
+// CHECK-NEXT: (assert (= x7 (- x0 layout_x_arm1__super__super__super)))
+// CHECK-NEXT: (assert (= x7 0))
 // CHECK-NEXT: ; mark mux arm
-// CHECK-NEXT: (assert (= mux_x8__super__super (+ (* x5 x6__super__super) (* x4__super__super x7__super__super)))
-// CHECK-NEXT: (assert (= mux_x8_reg__super (+ (* x5 x6_reg__super) (* x4__super__super x7_reg__super)))
+// CHECK-NEXT: (assert (= mux_x8__super__super (+ (* x5 layout_x_arm0__super__super__super) (* layout_first__super__super layout_x_arm1__super__super__super))))
+// CHECK-NEXT: (assert (= mux_x8_reg__super (+ (* x5 layout_x_arm0__super__super__super) (* layout_first__super__super layout_x_arm1__super__super__super))))
+// CHECK-NEXT: ; end mux
+// CHECK-NEXT: (call [] Log [ ])
+// CHECK-NEXT: (assert (= result_first__super__super layout_first__super__super))
+// CHECK-NEXT: (assert (= result_first_reg__super layout_first__super__super))
+// CHECK-NEXT: (assert (= result_x__super__super layout_x__super__super__super))
+// CHECK-NEXT: (assert (= result_x_reg__super layout_x__super__super__super))
+// CHECK-NEXT: (end-module)
 
 #[picus]
 component Top() {
