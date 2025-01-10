@@ -268,13 +268,9 @@ private:
     os << " 0))\n";
   }
 
-  void visitOp(Zhlt::BackOp back) {
-    os << "// TODO: back goes here\n";
-    auto signal = signalize("back_" + freshName(), back.getType());
-    valuesToSignals.insert({back.getOut(), signal});
-  }
-
   void visitOp(SwitchOp mux) {
+    os << "; begin mux\n";
+
     SmallVector<Signal> selectorSignals;
     for (Value selector : mux.getSelector()) {
       selectorSignals.push_back(cast<Signal>(valuesToSignals.at(selector)));
@@ -298,6 +294,7 @@ private:
         type = Zhlt::getSuperType(type);
       }
       armSignals.push_back(flatten(signal));
+      os << "; mark mux arm\n";
     }
 
     AnySignal outSignal = signalize("mux_" + freshName(), mux.getType());
@@ -316,6 +313,7 @@ private:
       }
       os << "\n";
     }
+    os << "; end mux\n";
   }
 
   void visitOp(ArrayOp arr) {
@@ -427,7 +425,7 @@ private:
     }
   }
 
-  void visitOp(zirgen::Zhlt::BackOp back) {
+  void visitOp(Zhlt::BackOp back) {
     size_t distance = back.getDistance().getZExtValue();
     AnySignal signal = signalize(freshName(), back.getType());
     // We cannot handle the zero-distance case this way, so we expect that
@@ -519,6 +517,7 @@ private:
 
 void printPicus(ModuleOp mod, llvm::raw_ostream& os) {
   PassManager pm(mod->getContext());
+  pm.addPass(zirgen::dsl::createGenerateBackPass());
   pm.addPass(zirgen::dsl::createInlineForPicusPass());
   pm.addPass(createUnrollPass());
   pm.addPass(createCanonicalizerPass());
@@ -526,6 +525,8 @@ void printPicus(ModuleOp mod, llvm::raw_ostream& os) {
     llvm::errs() << "Preprocessing for Picus failed";
     return;
   }
+
+  mod.print(os);
 
   PicusPrinter(os).print(mod);
 }
