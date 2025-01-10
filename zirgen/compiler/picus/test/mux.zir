@@ -16,10 +16,13 @@
 // CHECK-NEXT: (assert (= x3 0))
 // CHECK-NEXT: (call [layout_first__super__super x4__super__super x4_reg__super] Reg [x3])
 // CHECK-NEXT: (assert (= x5 (- x2 x4__super__super)))
+// CHECK-NEXT: ; begin mux
 // CHECK-NEXT: (assert (= (* x5 layout_x__super__super__super) (* x5 layout_x_arm0__super__super__super)))
 // CHECK-NEXT: (call [layout_x_arm0__super__super__super x6__super__super x6_reg__super] Reg [x1])
+// CHECK-NEXT: ; mark mux arm
 // CHECK-NEXT: (assert (= (* x4__super__super layout_x__super__super__super) (* x4__super__super layout_x_arm1__super__super__super)))
 // CHECK-NEXT: (call [layout_x_arm1__super__super__super x7__super__super x7_reg__super] Reg [x0])
+// CHECK-NEXT: ; mark mux arm
 // CHECK-NEXT: (assert (= mux_x8__super__super (+ (* x5 x6__super__super) (* x4__super__super x7__super__super)))
 // CHECK-NEXT: (assert (= mux_x8_reg__super (+ (* x5 x6_reg__super) (* x4__super__super x7_reg__super)))
 
