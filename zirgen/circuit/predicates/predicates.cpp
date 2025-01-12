@@ -30,6 +30,16 @@ static Val readVal(llvm::ArrayRef<Val>& stream) {
   return out;
 }
 
+static std::array<Val, 4> readExtVal(llvm::ArrayRef<Val>& stream) {
+  assert(stream.size() >= 4);
+  std::array<Val, 4> out;
+  for (size_t i = 0; i < 4; i++) {
+    out[i] = stream[i];
+  }
+  stream = stream.drop_front(4);
+  return out;
+}
+
 // Read a default digest (i.e. Poseidon2) from the stream.
 static DigestVal readDigest(llvm::ArrayRef<Val>& stream, bool longDigest = false) {
   size_t digestSize = (longDigest ? 32 : 16);
@@ -58,6 +68,14 @@ U32Reg::U32Reg(llvm::ArrayRef<Val>& stream) {
   for (size_t i = 0; i < 4; i++) {
     val[i] = readVal(stream);
   }
+}
+
+U32Reg U32Reg::zero() {
+  U32Reg ret;
+  for (size_t i = 0; i < 4; i++) {
+    ret.val[i] = 0;
+  }
+  return ret;
 }
 
 Val U32Reg::flat() {
@@ -203,6 +221,34 @@ UnionClaim unionFunc(Assumption left, Assumption right) {
   UnionClaim claim;
   claim.left = left.digest();
   claim.right = right.digest();
+  return claim;
+}
+
+ReceiptClaim fromRv32imV2(llvm::ArrayRef<Val>& stream) {
+  DigestVal input = readSha(stream);
+  Val isTerminate = readVal(stream);
+  DigestVal output = readSha(stream);
+  /*Val rng =*/readExtVal(stream);
+  /*Val shutdownCycle =*/readVal(stream);
+  DigestVal stateIn = readSha(stream);
+  DigestVal stateOut = readSha(stream);
+  Val termA0High = readVal(stream);
+  Val termA0Low = readVal(stream);
+  // Val termA1High = readVal(stream);
+  // Val termA1Low = readVal(stream);
+
+  ReceiptClaim claim;
+  claim.input = input;
+  claim.pre.pc = U32Reg::zero();
+  claim.pre.memory = stateIn;
+  claim.post.pc = U32Reg::zero();
+  claim.post.memory = stateOut;
+  // isTerminate:
+  // 0 -> 2
+  // 1 -> termA0Low (0, 1)
+  claim.sysExit = (2 - 2 * isTerminate) + (isTerminate * termA0Low);
+  claim.userExit = isTerminate * termA0High;
+  claim.output = output;
   return claim;
 }
 

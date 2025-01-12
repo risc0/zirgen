@@ -31,6 +31,8 @@ struct U32Reg {
 
   Val flat();
 
+  static U32Reg zero();
+
   std::array<Val, 4> val;
 };
 
@@ -67,6 +69,8 @@ struct ReceiptClaim {
   Val userExit;
   DigestVal output;
 };
+
+ReceiptClaim fromRv32imV2(llvm::ArrayRef<Val>& stream);
 
 struct Output {
   // Default constructor
