@@ -80,7 +80,6 @@ llvm::SmallVector<Value, 2> extXXOneMul(mlir::OpBuilder builder, mlir::Location 
 
 llvm::SmallVector<Value, 2> extMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, llvm::SmallVector<Value, 2> monic_irred_poly, Value prime) {
     // TODO: Annoying to have a SmallVector output that needs to be deg - 1 bigger than the inputs; I think that means all should be 3...
-    // TODO: We could have a simplified version for nth roots x^n - a
     // Here `monic_irred_poly` is the coefficients a_i such that x^n - sum_i a_i x^i = 0
     auto deg = lhs.size();
     // Note: The field is not an extension field if deg <= 1
@@ -183,9 +182,7 @@ void genModSub(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth) {
 }
 
 // Extension fields we use are most commonly degree 2
-// TODO: ^ Hence the use of 2 in the SmallVectors ... but is this true?
 void genExtFieldAdd(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth, size_t degree) {
-  // TODO: will need to handle bitwidth slightly smaller than data chunks
   assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
   size_t chunkwidth = bitwidth / 128;
   llvm::SmallVector<Value, 2> lhs(degree);
@@ -202,7 +199,6 @@ void genExtFieldAdd(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth
 }
 
 void genExtFieldMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth, size_t degree) {
-  // TODO: will need to handle bitwidth slightly smaller than data chunks
   assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
   size_t chunkwidth = bitwidth / 128;
   llvm::SmallVector<Value, 2> lhs(degree);
@@ -221,7 +217,6 @@ void genExtFieldMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth
 }
 
 void genExtFieldSub(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth, size_t degree) {
-  // TODO: will need to handle bitwidth slightly smaller than data chunks
   assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
   size_t chunkwidth = bitwidth / 128;
   llvm::SmallVector<Value, 2> lhs(degree);
@@ -238,7 +233,6 @@ void genExtFieldSub(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth
 }
 
 void genExtFieldXXOneMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth) {
-  // TODO: will need to handle bitwidth slightly smaller than data chunks
   assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
   size_t chunkwidth = bitwidth / 128;
   llvm::SmallVector<Value, 2> lhs(2);

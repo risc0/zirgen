@@ -610,7 +610,6 @@ impl Bootstrap {
         let field_path = risc0_root.join("bigint2/src/field");
         let rsa_path = risc0_root.join("bigint2/src/rsa");
 
-        // TODO: Bitwidths on field ops
         self.copy_file(&src_path, &field_path, "extfield_deg2_add_256.blob");
         self.copy_file(&src_path, &field_path, "extfield_deg2_mul_256.blob");
         self.copy_file(&src_path, &field_path, "extfield_deg4_mul_256.blob");

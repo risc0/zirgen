@@ -72,7 +72,7 @@ static cl::opt<enum Program>
                        clEnumValN(Program::ModAdd, "modadd", "ModAdd"),
                        clEnumValN(Program::ModInv, "modinv", "ModInv"),
                        clEnumValN(Program::ModMul, "modmul", "ModMul"),
-                       clEnumValN(Program::ModSub, "modsub", "ModSub")),  // TODO: Don't hardcode bitwidth
+                       clEnumValN(Program::ModSub, "modsub", "ModSub")),
             cl::Required);
 
 static cl::opt<size_t> bitwidth("bitwidth",
