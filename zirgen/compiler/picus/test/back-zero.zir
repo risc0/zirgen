@@ -6,6 +6,8 @@
 // CHECK-NEXT: (output layout_a__super__super)
 // CHECK-NEXT: (output result_a__super__super)
 // CHECK-NEXT: (output result_a_reg__super)
+// CHECK-NEXT: (input x1__super__super)
+// CHECK-NEXT: (input x1_reg__super)
 // CHECK-NEXT: (call [{{.*}}] Reg [{{.*}}])
 // CHECK-NEXT: (assert (= result_a__super__super x2__super__super))
 // CHECK-NEXT: (assert (= result_a_reg__super x2_reg__super))

@@ -300,6 +300,8 @@ private:
     AnySignal signal = signalize(freshName(), back.getType());
     if (distance > 0) {
       declareSignals(signal, SignalType::AssumeDeterministic);
+    } else {
+      declareSignals(signal, SignalType::Input);
     }
     valuesToSignals.insert({back.getOut(), signal});
   }
