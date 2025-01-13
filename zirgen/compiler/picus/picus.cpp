@@ -296,7 +296,6 @@ private:
   }
 
   void visitOp(zirgen::Zhlt::BackOp back) {
-    auto callee = back.getCallee();
     size_t distance = back.getDistance().getZExtValue();
     AnySignal signal = signalize(freshName(), back.getType());
     if (distance > 0) {
