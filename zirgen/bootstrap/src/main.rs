@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -159,8 +159,8 @@ fn get_bazel_bin() -> PathBuf {
 }
 
 fn strip_locations_and_whitespace(text: &str) -> Result<String> {
-    // replace everything that might be a line number with '*'
-    let re = Regex::new(":[0-9]+")?;
+    // replace everything that might be a line number or a copyright date with '*'
+    let re = Regex::new("(:[0-9]+)|( [0-9]+ RISC)")?;
     let stripped = re.replace_all(text, "*");
 
     // Remove anything that might be changed by reformatting
