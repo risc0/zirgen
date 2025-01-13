@@ -44,11 +44,11 @@ enum class Program {
   ModPow65537,
   EC_Double,
   EC_Add,
-  ExtFieldAdd,
-  ExtFieldMul,
+  ExtField_Deg2_Add,
+  ExtField_Deg2_Mul,
   ExtField_Deg4_Mul,
+  ExtField_Deg2_Sub,
   ExtField_XXOne_Mul,
-  ExtFieldSub,
   ModAdd,
   ModInv,
   ModMul,
@@ -62,13 +62,13 @@ static cl::opt<enum Program>
             cl::values(clEnumValN(Program::ModPow65537, "modpow65537", "ModPow65537"),
                        clEnumValN(Program::EC_Double, "ec_double", "EC_Double"),
                        clEnumValN(Program::EC_Add, "ec_add", "EC_Add"),
-                       clEnumValN(Program::ExtFieldAdd, "extfieldadd", "ExtFieldAdd"),
-                       clEnumValN(Program::ExtFieldMul, "extfieldmul", "ExtFieldMul"),
-                       clEnumValN(Program::ExtField_XXOne_Mul,
-                         "extfield_xxone_mul", "ExtField_XXOne_Mul"),
+                       clEnumValN(Program::ExtField_Deg2_Add, "extfield_deg2_add", "ExtField_Deg2_Add"),
+                       clEnumValN(Program::ExtField_Deg2_Mul, "extfield_deg2_mul", "ExtField_Deg2_Mul"),
                        clEnumValN(Program::ExtField_Deg4_Mul,
                          "extfield_deg4_mul", "ExtField_Deg4_Mul"),
-                       clEnumValN(Program::ExtFieldSub, "extfieldsub", "ExtFieldSub"),
+                       clEnumValN(Program::ExtField_Deg2_Sub, "extfield_deg2_sub", "ExtField_Deg2_Sub"),
+                       clEnumValN(Program::ExtField_XXOne_Mul,
+                         "extfield_xxone_mul", "ExtField_XXOne_Mul"),
                        clEnumValN(Program::ModAdd, "modadd", "ModAdd"),
                        clEnumValN(Program::ModInv, "modinv", "ModInv"),
                        clEnumValN(Program::ModMul, "modmul", "ModMul"),
@@ -454,20 +454,20 @@ int main(int argc, char* argv[]) {
   case Program::EC_Add:
     zirgen::BigInt::EC::genECAdd(builder, loc, bitwidth);
     break;
-  case Program::ExtFieldAdd:  // TODO: Naming for degree 2
+  case Program::ExtField_Deg2_Add:
     zirgen::BigInt::field::genExtFieldAdd(builder, loc, bitwidth, 2);
     break;
-  case Program::ExtFieldMul:
+  case Program::ExtField_Deg2_Mul:
     zirgen::BigInt::field::genExtFieldMul(builder, loc, bitwidth, 2);
-    break;
-  case Program::ExtField_XXOne_Mul:
-    zirgen::BigInt::field::genExtFieldXXOneMul(builder, loc, bitwidth);
     break;
   case Program::ExtField_Deg4_Mul:
     zirgen::BigInt::field::genExtFieldMul(builder, loc, bitwidth, 4);
     break;
-  case Program::ExtFieldSub:
+  case Program::ExtField_Deg2_Sub:
     zirgen::BigInt::field::genExtFieldSub(builder, loc, bitwidth, 2);
+    break;
+  case Program::ExtField_XXOne_Mul:
+    zirgen::BigInt::field::genExtFieldXXOneMul(builder, loc, bitwidth);
     break;
   case Program::ModAdd:
     zirgen::BigInt::field::genModAdd(builder, loc, bitwidth);

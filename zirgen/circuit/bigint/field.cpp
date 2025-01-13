@@ -59,7 +59,7 @@ llvm::SmallVector<Value, 2> extAdd(mlir::OpBuilder builder, mlir::Location loc, 
 
 // Deg2 extfield mul with irreducible polynomial x^2+1
 // (ax+b)(cx+d) == acxx-ac(xx+1) + (ad+bc)x + bd == (ad+bc)x + bd-ac
-llvm::SmallVector<Value, 2> extMulXXONE(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime, Value primesqr) {
+llvm::SmallVector<Value, 2> extXXOneMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime, Value primesqr) {
     assert(lhs.size() == 2);
     assert(rhs.size() == 2);
     llvm::SmallVector<Value, 2> result(2);
@@ -220,24 +220,6 @@ void genExtFieldMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth
   }
 }
 
-void genExtFieldXXOneMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth) {
-  // TODO: will need to handle bitwidth slightly smaller than data chunks
-  assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
-  size_t chunkwidth = bitwidth / 128;
-  llvm::SmallVector<Value, 2> lhs(2);
-  llvm::SmallVector<Value, 2> rhs(2);
-  for (size_t i = 0; i < 2; i++) {
-    lhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, i * chunkwidth);
-    rhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, i * chunkwidth);
-  }
-  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 0);
-  auto primesqr = builder.create<BigInt::LoadOp>(loc, 2*bitwidth, 14, 0);
-  auto result = BigInt::field::extMulXXONE(builder, loc, lhs, rhs, prime, primesqr);
-  for (size_t i = 0; i < 2; i++) {
-    builder.create<BigInt::StoreOp>(loc, result[i], 15, i * chunkwidth);
-  }
-}
-
 void genExtFieldSub(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth, size_t degree) {
   // TODO: will need to handle bitwidth slightly smaller than data chunks
   assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
@@ -252,6 +234,24 @@ void genExtFieldSub(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth
   auto result = BigInt::field::extSub(builder, loc, lhs, rhs, prime);
   for (size_t i = 0; i < degree; i++) {
     builder.create<BigInt::StoreOp>(loc, result[i], 14, i * chunkwidth);
+  }
+}
+
+void genExtFieldXXOneMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth) {
+  // TODO: will need to handle bitwidth slightly smaller than data chunks
+  assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
+  size_t chunkwidth = bitwidth / 128;
+  llvm::SmallVector<Value, 2> lhs(2);
+  llvm::SmallVector<Value, 2> rhs(2);
+  for (size_t i = 0; i < 2; i++) {
+    lhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, i * chunkwidth);
+    rhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, i * chunkwidth);
+  }
+  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 0);
+  auto primesqr = builder.create<BigInt::LoadOp>(loc, 2*bitwidth, 14, 0);
+  auto result = BigInt::field::extXXOneMul(builder, loc, lhs, rhs, prime, primesqr);
+  for (size_t i = 0; i < 2; i++) {
+    builder.create<BigInt::StoreOp>(loc, result[i], 15, i * chunkwidth);
   }
 }
 
