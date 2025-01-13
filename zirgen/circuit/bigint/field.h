@@ -29,6 +29,8 @@ namespace zirgen::BigInt::field {
 //      field, but to use these functions you must represent the extension as the adjunction of a
 //      primitive element to a prime order field, which is not always convenient (i.e. when you have
 //      a tower of extensions)
+//  - The `ExtFieldXXOne` version of multiply is for specifically the field extension with
+//    irreducible polynomial `x^2 + 1` (i.e., extension by the square root of negative one)
 //
 // We do not use integer quotients in these functions, so minBits does not give us performance gains
 // and we therefore do not require the prime to be full bitwidth, enabling simpler generalization
@@ -55,7 +57,7 @@ Value modSub(mlir::OpBuilder builder, mlir::Location loc, Value lhs, Value rhs, 
 // TODO: ^ Hence the use of 2 in the SmallVectors ... but is this true?
 llvm::SmallVector<Value, 2> extAdd(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime);
 llvm::SmallVector<Value, 2> extMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, llvm::SmallVector<Value, 2> monic_irred_poly, Value prime);
-llvm::SmallVector<Value, 2> extMulXXONE(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime, Value primesqr);
+llvm::SmallVector<Value, 2> extXXOneMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime, Value primesqr);
 llvm::SmallVector<Value, 2> extSub(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime);
 
 } // namespace zirgen::BigInt::field
