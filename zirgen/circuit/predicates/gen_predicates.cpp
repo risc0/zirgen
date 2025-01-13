@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -114,7 +114,7 @@ void addRv32imV2Lift(Module& module, const std::string name, const std::string& 
                         DigestVal root = rootIop.readDigests(1)[0];
                         VerifyInfo info = zirgen::verify::verify(seal, po2, *circuit);
                         llvm::ArrayRef inStream(info.out);
-                        ReceiptClaim claim = fromRv32imV2(inStream);
+                        ReceiptClaim claim = ReceiptClaim::fromRv32imV2(inStream);
                         writeOutObj(out, claim);
                         out.setDigest(0, root, "root");
                       });

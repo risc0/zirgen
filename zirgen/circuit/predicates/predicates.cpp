@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -224,7 +224,7 @@ UnionClaim unionFunc(Assumption left, Assumption right) {
   return claim;
 }
 
-ReceiptClaim fromRv32imV2(llvm::ArrayRef<Val>& stream) {
+ReceiptClaim ReceiptClaim::fromRv32imV2(llvm::ArrayRef<Val>& stream) {
   DigestVal input = readSha(stream);
   Val isTerminate = readVal(stream);
   DigestVal output = readSha(stream);
@@ -239,16 +239,23 @@ ReceiptClaim fromRv32imV2(llvm::ArrayRef<Val>& stream) {
 
   ReceiptClaim claim;
   claim.input = input;
+  claim.output = output;
+
   claim.pre.pc = U32Reg::zero();
   claim.pre.memory = stateIn;
+
   claim.post.pc = U32Reg::zero();
-  claim.post.memory = stateOut;
+  eqz(isTerminate * (1 - isTerminate));
+  std::vector zeroVec(16, Val(0));
+  DigestVal zeroHash = intoDigest(zeroVec, DigestKind::Sha256);
+  claim.post.memory = select(isTerminate, {stateOut, zeroHash});
+
   // isTerminate:
   // 0 -> 2
   // 1 -> termA0Low (0, 1)
   claim.sysExit = (2 - 2 * isTerminate) + (isTerminate * termA0Low);
   claim.userExit = isTerminate * termA0High;
-  claim.output = output;
+
   return claim;
 }
 

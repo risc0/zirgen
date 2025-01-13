@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -62,6 +62,8 @@ struct ReceiptClaim {
   // Digest into a single value
   DigestVal digest();
 
+  static ReceiptClaim fromRv32imV2(llvm::ArrayRef<Val>& stream);
+
   DigestVal input;
   SystemState pre;
   SystemState post;
@@ -69,8 +71,6 @@ struct ReceiptClaim {
   Val userExit;
   DigestVal output;
 };
-
-ReceiptClaim fromRv32imV2(llvm::ArrayRef<Val>& stream);
 
 struct Output {
   // Default constructor
