@@ -62,7 +62,7 @@ struct ReceiptClaim {
   // Digest into a single value
   DigestVal digest();
 
-  static ReceiptClaim fromRv32imV2(llvm::ArrayRef<Val>& stream);
+  static ReceiptClaim fromRv32imV2(llvm::ArrayRef<Val>& stream, size_t po2);
 
   DigestVal input;
   SystemState pre;

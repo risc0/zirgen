@@ -23,6 +23,8 @@ namespace zirgen::predicates {
 
 using Zll::DigestKind;
 
+constexpr size_t kMaxInsnCycles = 2000; // TODO(flaub): update this with precise value.
+
 static Val readVal(llvm::ArrayRef<Val>& stream) {
   assert(stream.size() >= 1);
   Val out = stream[0];
@@ -224,18 +226,22 @@ UnionClaim unionFunc(Assumption left, Assumption right) {
   return claim;
 }
 
-ReceiptClaim ReceiptClaim::fromRv32imV2(llvm::ArrayRef<Val>& stream) {
+ReceiptClaim ReceiptClaim::fromRv32imV2(llvm::ArrayRef<Val>& stream, size_t po2) {
   DigestVal input = readSha(stream);
   Val isTerminate = readVal(stream);
   DigestVal output = readSha(stream);
   /*Val rng =*/readExtVal(stream);
-  /*Val shutdownCycle =*/readVal(stream);
+  Val shutdownCycle = readVal(stream);
   DigestVal stateIn = readSha(stream);
   DigestVal stateOut = readSha(stream);
   Val termA0High = readVal(stream);
   Val termA0Low = readVal(stream);
   // Val termA1High = readVal(stream);
   // Val termA1Low = readVal(stream);
+
+  // TODO(flaub): implement this once shutdownCycle is finished in the rv32im-v2 circuit
+  // size_t segmentThreshold = (1 << po2) - kMaxInsnCycles;
+  // eq(shutdownCycle, segmentThreshold);
 
   ReceiptClaim claim;
   claim.input = input;

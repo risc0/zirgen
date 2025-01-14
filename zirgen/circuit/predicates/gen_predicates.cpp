@@ -114,7 +114,7 @@ void addRv32imV2Lift(Module& module, const std::string name, const std::string& 
                         DigestVal root = rootIop.readDigests(1)[0];
                         VerifyInfo info = zirgen::verify::verify(seal, po2, *circuit);
                         llvm::ArrayRef inStream(info.out);
-                        ReceiptClaim claim = ReceiptClaim::fromRv32imV2(inStream);
+                        ReceiptClaim claim = ReceiptClaim::fromRv32imV2(inStream, po2);
                         writeOutObj(out, claim);
                         out.setDigest(0, root, "root");
                       });
