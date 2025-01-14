@@ -56,24 +56,22 @@ enum class Program {
 };
 } // namespace
 
-static cl::opt<enum Program>
-    program("program",
-            cl::desc("The program to compile"),
-            cl::values(clEnumValN(Program::ModPow65537, "modpow65537", "ModPow65537"),
-                       clEnumValN(Program::EC_Double, "ec_double", "EC_Double"),
-                       clEnumValN(Program::EC_Add, "ec_add", "EC_Add"),
-                       clEnumValN(Program::ExtField_Deg2_Add, "extfield_deg2_add", "ExtField_Deg2_Add"),
-                       clEnumValN(Program::ExtField_Deg2_Mul, "extfield_deg2_mul", "ExtField_Deg2_Mul"),
-                       clEnumValN(Program::ExtField_Deg4_Mul,
-                         "extfield_deg4_mul", "ExtField_Deg4_Mul"),
-                       clEnumValN(Program::ExtField_Deg2_Sub, "extfield_deg2_sub", "ExtField_Deg2_Sub"),
-                       clEnumValN(Program::ExtField_XXOne_Mul,
-                         "extfield_xxone_mul", "ExtField_XXOne_Mul"),
-                       clEnumValN(Program::ModAdd, "modadd", "ModAdd"),
-                       clEnumValN(Program::ModInv, "modinv", "ModInv"),
-                       clEnumValN(Program::ModMul, "modmul", "ModMul"),
-                       clEnumValN(Program::ModSub, "modsub", "ModSub")),
-            cl::Required);
+static cl::opt<enum Program> program(
+    "program",
+    cl::desc("The program to compile"),
+    cl::values(clEnumValN(Program::ModPow65537, "modpow65537", "ModPow65537"),
+               clEnumValN(Program::EC_Double, "ec_double", "EC_Double"),
+               clEnumValN(Program::EC_Add, "ec_add", "EC_Add"),
+               clEnumValN(Program::ExtField_Deg2_Add, "extfield_deg2_add", "ExtField_Deg2_Add"),
+               clEnumValN(Program::ExtField_Deg2_Mul, "extfield_deg2_mul", "ExtField_Deg2_Mul"),
+               clEnumValN(Program::ExtField_Deg4_Mul, "extfield_deg4_mul", "ExtField_Deg4_Mul"),
+               clEnumValN(Program::ExtField_Deg2_Sub, "extfield_deg2_sub", "ExtField_Deg2_Sub"),
+               clEnumValN(Program::ExtField_XXOne_Mul, "extfield_xxone_mul", "ExtField_XXOne_Mul"),
+               clEnumValN(Program::ModAdd, "modadd", "ModAdd"),
+               clEnumValN(Program::ModInv, "modinv", "ModInv"),
+               clEnumValN(Program::ModMul, "modmul", "ModMul"),
+               clEnumValN(Program::ModSub, "modsub", "ModSub")),
+    cl::Required);
 
 static cl::opt<size_t> bitwidth("bitwidth",
                                 cl::desc("The bitwidth of program parameters"),
