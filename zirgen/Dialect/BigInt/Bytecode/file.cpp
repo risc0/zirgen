@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -84,14 +84,14 @@ struct Writer {
 };
 
 void writeU16(uint16_t value, Writer& stream) {
-  std::array<uint8_t, 2> buf;
+  std::array<uint8_t, 2> buf{};
   buf[0] = (value >> 0x00) & 0xFFU;
   buf[1] = (value >> 0x08) & 0xFFU;
   stream.write(buf.data(), buf.size());
 }
 
 void writeU32(uint32_t value, Writer& stream) {
-  std::array<uint8_t, 4> buf;
+  std::array<uint8_t, 4> buf{};
   buf[0] = (value >> 0x00) & 0xFFU;
   buf[1] = (value >> 0x08) & 0xFFU;
   buf[2] = (value >> 0x10) & 0xFFU;
@@ -100,7 +100,7 @@ void writeU32(uint32_t value, Writer& stream) {
 }
 
 void writeU64(uint64_t value, Writer& stream) {
-  std::array<uint8_t, 8> buf;
+  std::array<uint8_t, 8> buf{};
   buf[0] = (value >> 0x00) & 0xFFU;
   buf[1] = (value >> 0x08) & 0xFFU;
   buf[2] = (value >> 0x10) & 0xFFU;
@@ -231,20 +231,20 @@ struct Reader {
 };
 
 uint32_t readU16(Reader& stream) {
-  std::array<uint8_t, 2> buf;
+  std::array<uint8_t, 2> buf{};
   stream.read(buf.data(), buf.size());
   return (static_cast<uint16_t>(buf[0]) << 0x00) | (static_cast<uint16_t>(buf[1]) << 0x08);
 }
 
 uint32_t readU32(Reader& stream) {
-  std::array<uint8_t, 4> buf;
+  std::array<uint8_t, 4> buf{};
   stream.read(buf.data(), buf.size());
   return (static_cast<uint32_t>(buf[0]) << 0x00) | (static_cast<uint32_t>(buf[1]) << 0x08) |
          (static_cast<uint32_t>(buf[2]) << 0x10) | (static_cast<uint32_t>(buf[3]) << 0x18);
 }
 
 uint64_t readU64(Reader& stream) {
-  std::array<uint8_t, 8> buf;
+  std::array<uint8_t, 8> buf{};
   stream.read(buf.data(), buf.size());
   return (static_cast<uint64_t>(buf[0]) << 0x00) | (static_cast<uint64_t>(buf[1]) << 0x08) |
          (static_cast<uint64_t>(buf[2]) << 0x10) | (static_cast<uint64_t>(buf[3]) << 0x18) |
