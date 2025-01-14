@@ -45,10 +45,10 @@ Value modSub(mlir::OpBuilder builder, mlir::Location loc, Value lhs, Value rhs, 
 
 // Extension field operations
 
-llvm::SmallVector<Value, 2> extAdd(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime) {
+llvm::SmallVector<Value, 3> extAdd(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 3> lhs, llvm::SmallVector<Value, 3> rhs, Value prime) {
     auto deg = lhs.size();
     assert(rhs.size() == deg);
-    llvm::SmallVector<Value, 2> result(deg);
+    llvm::SmallVector<Value, 3> result(deg);
 
     for (size_t i = 0; i < deg; i++) {
         auto sum = builder.create<BigInt::AddOp>(loc, lhs[i], rhs[i]);
@@ -59,10 +59,10 @@ llvm::SmallVector<Value, 2> extAdd(mlir::OpBuilder builder, mlir::Location loc, 
 
 // Deg2 extfield mul with irreducible polynomial x^2+1
 // (ax+b)(cx+d) == acxx-ac(xx+1) + (ad+bc)x + bd == (ad+bc)x + bd-ac
-llvm::SmallVector<Value, 2> extXXOneMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime, Value primesqr) {
+llvm::SmallVector<Value, 3> extXXOneMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 3> lhs, llvm::SmallVector<Value, 3> rhs, Value prime, Value primesqr) {
     assert(lhs.size() == 2);
     assert(rhs.size() == 2);
-    llvm::SmallVector<Value, 2> result(2);
+    llvm::SmallVector<Value, 3> result(2);
 
     auto ad = builder.create<BigInt::MulOp>(loc, lhs[1], rhs[0]);
     auto bc = builder.create<BigInt::MulOp>(loc, lhs[0], rhs[1]);
@@ -78,15 +78,14 @@ llvm::SmallVector<Value, 2> extXXOneMul(mlir::OpBuilder builder, mlir::Location 
     return result;
 }
 
-llvm::SmallVector<Value, 2> extMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, llvm::SmallVector<Value, 2> monic_irred_poly, Value prime) {
-    // TODO: Annoying to have a SmallVector output that needs to be deg - 1 bigger than the inputs; I think that means all should be 3...
+llvm::SmallVector<Value, 3> extMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 3> lhs, llvm::SmallVector<Value, 3> rhs, llvm::SmallVector<Value, 3> monic_irred_poly, Value prime) {
     // Here `monic_irred_poly` is the coefficients a_i such that x^n - sum_i a_i x^i = 0
     auto deg = lhs.size();
     // Note: The field is not an extension field if deg <= 1
     assert(deg > 1);
     assert(rhs.size() == deg);
     assert(monic_irred_poly.size() == deg);
-    llvm::SmallVector<Value, 2> result(2 * deg - 1);
+    llvm::SmallVector<Value, 3> result(2 * deg - 1);
     llvm::SmallVector<bool, 2> first_write(2 * deg - 1, true);
 
     // Compute product of polynomials
@@ -119,10 +118,10 @@ llvm::SmallVector<Value, 2> extMul(mlir::OpBuilder builder, mlir::Location loc, 
     return result;
 }
 
-llvm::SmallVector<Value, 2> extSub(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime) {
+llvm::SmallVector<Value, 3> extSub(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 3> lhs, llvm::SmallVector<Value, 3> rhs, Value prime) {
     auto deg = lhs.size();
     assert(rhs.size() == deg);
-    llvm::SmallVector<Value, 2> result(deg);
+    llvm::SmallVector<Value, 3> result(deg);
 
     for (size_t i = 0; i < deg; i++) {
         // auto diff = builder.create<BigInt::SubOp>(loc, lhs[i], rhs[i]);
@@ -185,8 +184,8 @@ void genModSub(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth) {
 void genExtFieldAdd(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth, size_t degree) {
   assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
   size_t chunkwidth = bitwidth / 128;
-  llvm::SmallVector<Value, 2> lhs(degree);
-  llvm::SmallVector<Value, 2> rhs(degree);
+  llvm::SmallVector<Value, 3> lhs(degree);
+  llvm::SmallVector<Value, 3> rhs(degree);
   for (size_t i = 0; i < degree; i++) {
     lhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, i * chunkwidth);
     rhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, i * chunkwidth);
@@ -201,9 +200,9 @@ void genExtFieldAdd(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth
 void genExtFieldMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth, size_t degree) {
   assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
   size_t chunkwidth = bitwidth / 128;
-  llvm::SmallVector<Value, 2> lhs(degree);
-  llvm::SmallVector<Value, 2> rhs(degree);
-  llvm::SmallVector<Value, 2> monic_irred_poly(degree);
+  llvm::SmallVector<Value, 3> lhs(degree);
+  llvm::SmallVector<Value, 3> rhs(degree);
+  llvm::SmallVector<Value, 3> monic_irred_poly(degree);
   for (size_t i = 0; i < degree; i++) {
     lhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, i * chunkwidth);
     rhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, i * chunkwidth);
@@ -219,8 +218,8 @@ void genExtFieldMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth
 void genExtFieldSub(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth, size_t degree) {
   assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
   size_t chunkwidth = bitwidth / 128;
-  llvm::SmallVector<Value, 2> lhs(degree);
-  llvm::SmallVector<Value, 2> rhs(degree);
+  llvm::SmallVector<Value, 3> lhs(degree);
+  llvm::SmallVector<Value, 3> rhs(degree);
   for (size_t i = 0; i < degree; i++) {
     lhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, i * chunkwidth);
     rhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, i * chunkwidth);
@@ -235,8 +234,8 @@ void genExtFieldSub(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth
 void genExtFieldXXOneMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth) {
   assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
   size_t chunkwidth = bitwidth / 128;
-  llvm::SmallVector<Value, 2> lhs(2);
-  llvm::SmallVector<Value, 2> rhs(2);
+  llvm::SmallVector<Value, 3> lhs(2);
+  llvm::SmallVector<Value, 3> rhs(2);
   for (size_t i = 0; i < 2; i++) {
     lhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, i * chunkwidth);
     rhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, i * chunkwidth);
