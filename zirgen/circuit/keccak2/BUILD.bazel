@@ -69,6 +69,7 @@ build_circuit(
         "--validity-split-count=" + str(SPLIT_VALIDITY),
         "--step-split-count=" + str(SPLIT_STEP),
         "--parallel-witgen",
+        "--protocol-info=KECCAK:v1_______"
     ],
 )
 
