@@ -54,9 +54,9 @@ Value modSub(mlir::OpBuilder builder, mlir::Location loc, Value lhs, Value rhs, 
 
 // Extension field arithmetic
 // Extension fields we use are most commonly degree 2
-llvm::SmallVector<Value, 2> extAdd(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime);
-llvm::SmallVector<Value, 2> extMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, llvm::SmallVector<Value, 2> monic_irred_poly, Value prime);
-llvm::SmallVector<Value, 2> extXXOneMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime, Value primesqr);
-llvm::SmallVector<Value, 2> extSub(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 2> lhs, llvm::SmallVector<Value, 2> rhs, Value prime);
+llvm::SmallVector<Value, 3> extAdd(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 3> lhs, llvm::SmallVector<Value, 3> rhs, Value prime);
+llvm::SmallVector<Value, 3> extMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 3> lhs, llvm::SmallVector<Value, 3> rhs, llvm::SmallVector<Value, 3> monic_irred_poly, Value prime);
+llvm::SmallVector<Value, 3> extXXOneMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 3> lhs, llvm::SmallVector<Value, 3> rhs, Value prime, Value primesqr);
+llvm::SmallVector<Value, 3> extSub(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 3> lhs, llvm::SmallVector<Value, 3> rhs, Value prime);
 
 } // namespace zirgen::BigInt::field
