@@ -59,6 +59,8 @@ llvm::SmallVector<Value, 3> extAdd(mlir::OpBuilder builder, mlir::Location loc, 
 
 // Deg2 extfield mul with irreducible polynomial x^2+1
 // (ax+b)(cx+d) == acxx-ac(xx+1) + (ad+bc)x + bd == (ad+bc)x + bd-ac
+// This is a more optimized algorithm specialized to the x^2+1 polynomial;
+// you could also use the degree 2 extMul code for this, but it is generally slower
 llvm::SmallVector<Value, 3> extXXOneMul(mlir::OpBuilder builder, mlir::Location loc, llvm::SmallVector<Value, 3> lhs, llvm::SmallVector<Value, 3> rhs, Value prime, Value primesqr) {
     assert(lhs.size() == 2);
     assert(rhs.size() == 2);
