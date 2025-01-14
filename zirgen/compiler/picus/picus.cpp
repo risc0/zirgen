@@ -298,11 +298,10 @@ private:
   void visitOp(zirgen::Zhlt::BackOp back) {
     size_t distance = back.getDistance().getZExtValue();
     AnySignal signal = signalize(freshName(), back.getType());
-    if (distance > 0) {
-      declareSignals(signal, SignalType::AssumeDeterministic);
-    } else {
-      declareSignals(signal, SignalType::Input);
-    }
+    // We cannot handle the zero-distance case this way, so we expect that
+    // all zero-distance backs will have been converted & inlined already.
+    assert (distance > 0);
+    declareSignals(signal, SignalType::AssumeDeterministic);
     valuesToSignals.insert({back.getOut(), signal});
   }
 
