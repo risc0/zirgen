@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -300,7 +300,7 @@ private:
     AnySignal signal = signalize(freshName(), back.getType());
     // We cannot handle the zero-distance case this way, so we expect that
     // all zero-distance backs will have been converted & inlined already.
-    assert (distance > 0);
+    assert(distance > 0);
     declareSignals(signal, SignalType::AssumeDeterministic);
     valuesToSignals.insert({back.getOut(), signal});
   }
@@ -354,9 +354,15 @@ private:
   void declareSignal(Signal signal, SignalType type) {
     std::string op;
     switch (type) {
-      case SignalType::Input: op = "input"; break;
-      case SignalType::Output: op = "output"; break;
-      case SignalType::AssumeDeterministic: op = "assume-deterministic"; break;
+    case SignalType::Input:
+      op = "input";
+      break;
+    case SignalType::Output:
+      op = "output";
+      break;
+    case SignalType::AssumeDeterministic:
+      op = "assume-deterministic";
+      break;
     }
     os << "(" << op << " " << signal.str() << ")\n";
   }
