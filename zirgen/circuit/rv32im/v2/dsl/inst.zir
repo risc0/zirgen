@@ -5,8 +5,7 @@ import decode;
 import mem;
 import one_hot;
 
-component InstInput(cycle: Val, major: Val, minor: Val, pc_u32: ValU32, state: Val, mode: Val) {
-  public cycle := cycle;
+component InstInput(major: Val, minor: Val, pc_u32: ValU32, state: Val, mode: Val) {
   public major := major;
   public minor := minor;
   public pc_u32 := pc_u32;
@@ -15,11 +14,15 @@ component InstInput(cycle: Val, major: Val, minor: Val, pc_u32: ValU32, state: V
   public minor_onehot := OneHot<8>(minor);
 }
 
-component DecodeInst(cycle: Reg, ii: InstInput) {
+component DoCycleTable(cycle: Reg) {
   // Cancel out 'cycle' table entries
-  arg := CycleArg(-GetDiffCount(cycle), cycle);
-  AliasLayout!(arg.cycle, cycle);
-  arg.cycle = cycle;
+  arg1 := CycleArg(-GetDiffCount(2*cycle), 2*cycle);
+  arg2 := CycleArg(-GetDiffCount(2*cycle+1), 2*cycle + 1);
+  arg1.cycle = 2*cycle;
+  arg2.cycle = 2*cycle + 1;
+}
+
+component DecodeInst(cycle: Reg, ii: InstInput) {
   // Decompose PC into an address
   pc_addr := AddrDecompose(ii.pc_u32, ii.mode);
   // Verify alignment

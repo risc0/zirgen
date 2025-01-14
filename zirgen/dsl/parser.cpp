@@ -88,8 +88,10 @@ Parser::buildBinaryOp(Token token, Expression::Ptr&& lhs, Expression::Ptr&& rhs,
 Module::Ptr Parser::parseModule() {
   Component::Vec components;
 
-  for (bool done = false; !done;) {
+  bool done = false;
+  while (!done) {
     switch (lexer.peekToken()) {
+    case tok_hash:
     case tok_argument:
     case tok_component:
     case tok_function:
@@ -124,7 +126,45 @@ Module::Ptr Parser::parseModule() {
   }
 }
 
+Attribute::Vec Parser::parseOptionalAttributeList() {
+  if (lexer.peekToken() != tok_hash)
+    return {};
+  lexer.takeToken();
+
+  if (!lexer.takeTokenIf(tok_square_l)) {
+    error("Expected '#[' at the beginning of an attribute list");
+    return {};
+  }
+
+  Attribute::Vec attributes;
+
+  // Handle the case where there are no attributes
+  if (lexer.takeTokenIf(tok_paren_r)) {
+    return attributes;
+  }
+
+  Token token;
+  do {
+    if (lexer.takeTokenIf(tok_ident)) {
+      auto attribute = make_shared<Attribute>(lexer.getLastLocation(), lexer.getIdentifier());
+      attributes.push_back(attribute);
+      token = lexer.takeToken();
+    } else {
+      break;
+    }
+  } while (token == tok_comma && errors.empty());
+
+  if (token != tok_square_r) {
+    error("Expected ']' at the end of an attribute list");
+    return {};
+  }
+
+  return attributes;
+}
+
 Component::Ptr Parser::parseComponent() {
+  Attribute::Vec attributes = parseOptionalAttributeList();
+
   ast::Component::Kind kind;
   switch (lexer.takeToken()) {
   case tok_argument:
@@ -139,7 +179,11 @@ Component::Ptr Parser::parseComponent() {
   case tok_extern:
     return parseExtern();
   default:
-    error("A component declaration must start with the `component` keyword");
+    if (attributes.empty()) {
+      error("A component declaration must start with the `component` keyword");
+    } else {
+      error("Attributes are only allowed on component declarations");
+    }
     return nullptr;
   }
   SMLoc location = lexer.getLastLocation();
@@ -154,8 +198,13 @@ Component::Ptr Parser::parseComponent() {
   Parameter::Vec params = parseParameters();
   Expression::Ptr body = parseBlock();
 
-  return make_shared<Component>(
-      location, kind, name, std::move(typeParams), std::move(params), std::move(body));
+  return make_shared<Component>(location,
+                                kind,
+                                name,
+                                std::move(attributes),
+                                std::move(typeParams),
+                                std::move(params),
+                                std::move(body));
 }
 
 Component::Ptr Parser::parseExtern() {
@@ -192,6 +241,7 @@ Component::Ptr Parser::parseExtern() {
   return make_shared<Component>(location,
                                 Component::Kind::Extern,
                                 name,
+                                Attribute::Vec(),
                                 std::move(typeParams),
                                 std::move(params),
                                 std::move(returnType));
@@ -211,8 +261,13 @@ Component::Ptr Parser::parseTest() {
   Expression::Ptr body = parseBlock();
   name = std::string(isFail ? "test$fail$" : "test$succ$") + name;
 
-  return make_shared<Component>(
-      location, ast::Component::Kind::Object, name, Parameter::Vec(), Parameter::Vec(), body);
+  return make_shared<Component>(location,
+                                ast::Component::Kind::Object,
+                                name,
+                                Attribute::Vec(),
+                                Parameter::Vec(),
+                                Parameter::Vec(),
+                                body);
 }
 
 Block::Ptr Parser::parseBlock() {

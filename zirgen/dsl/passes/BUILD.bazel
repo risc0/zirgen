@@ -43,6 +43,7 @@ cc_library(
         "GenerateTaps.cpp",
         "HoistInvariants.cpp",
         "InlinePure.cpp",
+        "InlineForPicus.cpp",
         "PassDetail.h",
         "SemanticLowering.cpp",
         "TopologicalShuffle.cpp",

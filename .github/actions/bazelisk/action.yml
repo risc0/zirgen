@@ -1,8 +1,28 @@
 name: bazelisk installer
 description: Install bazelisk
+inputs:
+  cache-key:
+    required: true
 runs:
   using: composite
   steps:
+    # Cache bazel build on linux.  (MacOS uses the local cache on the runner.)
+    - name: Get Date
+      id: get-date
+      run: |
+           echo "date=$(/bin/date -u "+%Y-%m-%d")" >> $GITHUB_OUTPUT
+      shell: bash
+    - if: matrix.os == 'Linux'
+      uses: actions/cache@v4
+      env:
+        cache-name: bazel-build
+      with:
+        path: "~/.cache/bazel"
+        # Generate a new build cache once a day, reusing the previous day's if available
+        key: "bazel-${{ matrix.os }}-${{ inputs.cache-key }}-${{ steps.get-date.outputs.date }}"
+        restore-keys: |
+          bazel-${{ matrix.os }}-${{ inputs.cache-key }}-
+          bazel-${{ matrix.os }}-
     - if: runner.os == 'Linux'
       run: |
         echo "BAZELISK_OS=linux" >> $GITHUB_ENV

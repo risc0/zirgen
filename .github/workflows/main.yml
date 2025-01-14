@@ -42,6 +42,31 @@ jobs:
           python-version: "3.10"
       - run: python license-check.py
 
+  check-generated-zirgen:
+    runs-on: [self-hosted, prod, Linux, cpu]
+    strategy:
+        fail-fast: true
+        matrix:
+          os: [Linux]
+    env:
+      RUST_BACKTRACE: full
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/bazelisk
+        with:
+          cache-key: bootstrap
+      - uses: risc0/risc0/.github/actions/rustup@4ab1f0bba1b0515819221bebc59f95aad0a6a3a9
+      - uses: risc0/risc0/.github/actions/sccache@1a373c71585766e4f6985b96c48389daaf69d528
+        with:
+          key: ${{ matrix.os }}-bootstrap
+      # TODO: check generated fib files once they generate properly
+      #      - name: fib generated files up to date
+      #        run: cargo bootstrap -- --check fib
+      #        continue-on-error: true
+      - name: calculator generated files up to date
+        run: cargo bootstrap -- --check calculator
+        continue-on-error: true
+
   bazel:
     runs-on: [self-hosted, prod, cpu, "${{ matrix.os }}"]
     strategy:
@@ -54,6 +79,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/bazelisk
+        with:
+          cache-key: build
       - name: Build & test
         env:
           CONFIG: ${{ matrix.config }}
@@ -124,6 +151,7 @@ jobs:
       - bazel
       - test
       - doc
+      - check-generated-zirgen
     runs-on: ubuntu-latest
     steps:
       - name: Check all job status

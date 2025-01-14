@@ -1,0 +1,240 @@
+// RUN: true
+
+import consts;
+import inst;
+import inst_p2;  // To get ReadAddr, maybe should move that somewhere else
+import sha2;
+
+component ShaState(
+  a: Array<Val, 32>,
+  e: Array<Val, 32>,
+  w: Array<Val, 32>,
+  stateInAddr: Val,
+  stateOutAddr: Val,
+  dataAddr: Val,
+  count: Val,
+  kAddr: Val,
+  round: Val,
+  nextState: Val)
+{
+  public stateInAddr := Reg(stateInAddr);
+  public stateOutAddr := Reg(stateOutAddr);
+  public dataAddr := Reg(dataAddr);
+  public count := Reg(count);
+  public kAddr := Reg(kAddr);
+  public round := Reg(round);
+  public nextState := Reg(nextState);
+  public a := for b : a { NondetReg(b) };
+  public e := for b : e { NondetReg(b) };
+  public w := for b : w { NondetReg(b) };
+}
+
+component ShaInvalid() {
+  0 = 1;
+  ShaState(
+    for i : 0..32 { 0 },
+    for i : 0..32 { 0 },
+    for i : 0..32 { 0 },
+    0, 0, 0, 0, 0, 0,
+    StateDecode()
+  )
+}
+
+component ShaEcall(cycle: Reg) {
+  Log("SHA ECALL");
+  // Load values from registers
+  stateInAddr := ReadAddr(cycle, RegA0());
+  stateOutAddr := ReadAddr(cycle, RegA1());
+  dataAddr := ReadAddr(cycle, RegA2());
+  Log("Data Addr: ", dataAddr);
+  count := MemoryRead(cycle, MachineRegBase() + RegA3()).low;
+  kAddr := ReadAddr(cycle, RegA4());
+  ShaState(
+    for i : 0..32 { 0 },
+    for i : 0..32 { 0 },
+    for i : 0..32 { 0 },
+    stateInAddr,
+    stateOutAddr,
+    dataAddr,
+    count,
+    kAddr,
+    0,
+    StateShaLoadState()
+  )
+}
+
+component UnpackU32NondetLE(val: ValU32) {
+  UnpackNondet<32, 16>([val.low, val.high]);
+}
+
+component UnpackU32NondetBE(val: ValU32) {
+  unpacked := UnpackNondet<32, 16>([val.low, val.high]);
+  for o : 0..32 {
+    j := o & 7;
+    i := (o - j) / 8; 
+    unpacked[(3 - i) * 8 + j]
+  }
+}
+
+component VerifyUnpackU32LE(unpacked: Array<Val, 32>, orig: ValU32) {
+  packed := Pack<32, 16>(unpacked);
+  for i : 0..32 { AssertBit(unpacked[i]); };
+  orig.low = packed[0];
+  orig.high = packed[1];
+}
+
+component VerifyUnpackU32BE(unpacked: Array<Val, 32>, orig: ValU32) {
+  packed := Pack<32, 8>(unpacked);
+  for i : 0..32 { AssertBit(unpacked[i]); };
+  orig.low = packed[2] * 256 + packed[3];
+  orig.high = packed[0] * 256 + packed[1];
+}
+
+component BitsToBE(unpacked: Array<Val, 32>) {
+  packed := Pack<32, 8>(unpacked);
+  ValU32(packed[2] * 256 + packed[3],  packed[0] * 256 + packed[1])
+}
+
+component ShaLoadState(cycle: Reg, prev: ShaState) {
+  lastRound := IsZero(3 - prev.round);
+  countZero := IsZero(prev.count);
+  nextState := if (lastRound) {
+    if (countZero) {
+      StateDecode() 
+    } else { 
+      StateShaLoadData()
+    }
+  } else {
+    StateShaLoadState()
+  };
+  a32 := MemoryRead(cycle, prev.stateInAddr + 3 - prev.round);
+  e32 := MemoryRead(cycle, prev.stateInAddr + 7 - prev.round);
+  MemoryWrite(cycle, prev.stateOutAddr + 3 - prev.round, a32);
+  MemoryWrite(cycle, prev.stateOutAddr + 7 - prev.round, e32);
+  out := ShaState(
+    UnpackU32NondetBE(a32),
+    UnpackU32NondetBE(e32),
+    for i : 0..32 { 0 },
+    prev.stateInAddr,
+    prev.stateOutAddr,
+    prev.dataAddr,
+    prev.count,
+    prev.kAddr,
+    (1 - lastRound) * (prev.round + 1),
+    nextState
+  );
+  VerifyUnpackU32BE(out.a, a32);
+  VerifyUnpackU32BE(out.e, e32);
+  for i : 0..32 { out.w[i] = 0; };
+  out
+}
+
+component ShaLoadData(cycle: Reg, prev: ShaState, p2: ShaState, p3: ShaState, p4: ShaState) {
+  lastRound := IsZero(15 - prev.round);
+  k := MemoryRead(cycle, prev.kAddr + prev.round);
+  wMem := MemoryRead(cycle, prev.dataAddr);
+  wNondet := UnpackU32NondetBE(wMem);
+  wBits := for i : 0..32 { NondetReg(wNondet[i]) };
+  VerifyUnpackU32BE(wBits, wMem);
+  ae := ComputeAE([prev.a, p2.a, p3.a, p4.a], [prev.e, p2.e, p3.e, p4.e], wBits, [k.low, k.high]);
+  Log("a = ", ae.rawA[0], ae.rawA[1]);
+  Log("e = ", ae.rawE[0], ae.rawE[1]);
+  a := CarryAndExpand(ae.rawA);
+  e := CarryAndExpand(ae.rawE);
+  out := ShaState(
+    a,
+    e,
+    wBits,
+    prev.stateInAddr,
+    prev.stateOutAddr,
+    prev.dataAddr + 1,
+    prev.count,
+    prev.kAddr,
+    (1 - lastRound) * (prev.round + 1),
+    lastRound * StateShaMix() + (1 - lastRound) * StateShaLoadData()
+  );
+  AliasLayout!(a, out.a);
+  AliasLayout!(e, out.e);
+  AliasLayout!(wBits, out.w);
+  out
+}
+
+component ShaMix(cycle: Reg, prev: ShaState, p2: ShaState, p3: ShaState, p4: ShaState, p7: ShaState, p15: ShaState, p16: ShaState) {
+  lastRound := IsZero(47 - prev.round);
+  k := MemoryRead(cycle, prev.kAddr + 16 + prev.round);
+  wRaw := ComputeWBack(p2.w, p7.w, p15.w, p16.w);
+  wBits := CarryAndExpand(wRaw);
+  ae := ComputeAE([prev.a, p2.a, p3.a, p4.a], [prev.e, p2.e, p3.e, p4.e], wBits, [k.low, k.high]);
+  Log("a = ", ae.rawA[0], ae.rawA[1]);
+  Log("e = ", ae.rawE[0], ae.rawE[1]);
+  a := CarryAndExpand(ae.rawA);
+  e := CarryAndExpand(ae.rawE);
+  out := ShaState(
+    a,
+    e,
+    wBits,
+    prev.stateInAddr,
+    prev.stateOutAddr,
+    prev.dataAddr,
+    prev.count,
+    prev.kAddr,
+    (1 - lastRound) * (prev.round + 1),
+    lastRound * StateShaStoreState() + (1 - lastRound) * StateShaMix()
+  );
+  AliasLayout!(a, out.a);
+  AliasLayout!(e, out.e);
+  AliasLayout!(wBits, out.w);
+  out
+}
+
+component ShaStoreState(cycle: Reg, prev: ShaState, p4: ShaState, p68: ShaState) {
+  lastRound := IsZero(3 - prev.round);
+  newCount := prev.count - lastRound;
+  countZero := IsZero(newCount);
+  nextState := if (countZero) { 
+    StateDecode() 
+  } else { 
+    if (lastRound) {
+      StateShaLoadData()
+    } else {
+      StateShaStoreState()
+    }
+  };
+  a := CarryAndExpand(Add2(Pack32(p4.a), Pack32(p68.a)));
+  e := CarryAndExpand(Add2(Pack32(p4.e), Pack32(p68.e)));
+  out := ShaState(
+    a,
+    e,
+    for i : 0..32 { 0 },
+    prev.stateInAddr,
+    prev.stateOutAddr,
+    prev.dataAddr,
+    newCount,
+    prev.kAddr,
+    (1 - lastRound) * (prev.round + 1),
+    nextState
+  );
+  AliasLayout!(a, out.a);
+  AliasLayout!(e, out.e);
+  MemoryWrite(cycle, prev.stateOutAddr + 3 - prev.round, BitsToBE(a));
+  MemoryWrite(cycle, prev.stateOutAddr + 7 - prev.round, BitsToBE(e));
+  out
+}
+
+component Sha0(cycle:Reg, inst_input: InstInput) {
+  DoCycleTable(cycle);
+  inst_input.state = StateShaEcall() + inst_input.minor;
+  state : ShaState;
+  state := inst_input.minor_onehot -> (
+    ShaEcall(cycle),
+    ShaLoadState(cycle, state@1),  // 4 cycles, load A/E from state input
+    ShaLoadData(cycle, state@1, state@2, state@3, state@4), // 16 cycles, load data
+    ShaMix(cycle, state@1,  state@2, state@3, state@4, state@7, state@15, state@16),  // 48 cycles, do internal mixing
+    ShaStoreState(cycle, state@1, state@4, state@68), // 4 cycles, update state (in place)
+    ShaInvalid(),
+    ShaInvalid(),
+    ShaInvalid()
+  );
+  InstOutput(inst_input.pc_u32, state.nextState, inst_input.mode)
+}
+

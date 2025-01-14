@@ -76,6 +76,9 @@ ExtVal inv_0(ExtVal x) {
 Val bitAnd(Val a, Val b) {
   return Val(a.asUInt32() & b.asUInt32());
 }
+Val mod(Val a, Val b) {
+  return Val(a.asUInt32() % b.asUInt32());
+}
 Val inRange(Val low, Val mid, Val high) {
   assert(low <= high);
   return Val(low <= mid && mid < high);
@@ -108,11 +111,8 @@ struct BufferObj {
 struct MutableBufObj : public BufferObj {
   MutableBufObj(ExecContext& ctx, TraceGroup& group) : ctx(ctx), group(group) {}
   Val load(size_t col, size_t back) override {
-    if (back > ctx.cycle) {
-      std::cerr << "Going back too far\n";
-      return 0;
-    }
-    return group.get(ctx.cycle - back, col);
+    size_t backRow = (group.getRows() + ctx.cycle - back) % group.getRows();
+    return group.get(backRow, col);
   }
   void store(size_t col, Val val) override { return group.set(ctx.cycle, col, val); }
   ExecContext& ctx;
@@ -250,10 +250,6 @@ Val extern_isFirstCycle_0(ExecContext& ctx) {
   return ctx.cycle == 0;
 }
 
-Val extern_getCycle(ExecContext& ctx) {
-  return ctx.cycle;
-}
-
 std::ostream& hex_word(std::ostream& os, uint32_t word) {
   std::cout << "0x"                                          //
             << std::hex << std::setw(8) << std::setfill('0') //
@@ -332,6 +328,10 @@ CircuitParams getDslParams() {
   return ret;
 }
 
+size_t getCycleCol() {
+  return impl::kLayout_Top.cycle._super.col;
+}
+
 size_t getTopStateCol() {
   return impl::kLayout_Top.nextPcLow._super.col;
 }
@@ -342,6 +342,10 @@ size_t getEcall0StateCol() {
 
 size_t getPoseidonStateCol() {
   return impl::kLayout_Top.instResult.arm9.state.hasState._super.col;
+}
+
+size_t getShaStateCol() {
+  return impl::kLayout_Top.instResult.arm11.state.stateInAddr._super.col;
 }
 
 void DslStep(StepHandler& stepHandler, ExecutionTrace& trace, size_t cycle) {

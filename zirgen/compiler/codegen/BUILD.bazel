@@ -1,5 +1,32 @@
+load("@llvm-project//mlir:tblgen.bzl", "gentbl_cc_library", "td_library")
+
 package(
     default_visibility = ["//visibility:public"],
+)
+
+td_library(
+    name = "PassesTdFiles",
+    srcs = ["Passes.td"],
+    deps = [
+        "@llvm-project//mlir:OpBaseTdFiles",
+        "@llvm-project//mlir:RewritePassBaseTdFiles",
+    ],
+)
+
+gentbl_cc_library(
+    name = "PassesIncGen",
+    tbl_outs = [
+        (
+            ["-gen-pass-decls"],
+            "Passes.h.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Passes.td",
+    deps = [
+        ":PassesTdFiles",
+        "@llvm-project//mlir:PassBaseTdFiles",
+    ],
 )
 
 cc_library(
@@ -14,9 +41,13 @@ cc_library(
         "gen_rust.cpp",
         "mustache.h",
     ],
-    hdrs = ["codegen.h"],
+    hdrs = [
+        "Passes.h",
+        "codegen.h",
+    ],
     data = [":data"],
     deps = [
+        ":PassesIncGen",
         ":protocol_info_const",
         "//zirgen/Dialect/ZHLT/IR:Codegen",
         "//zirgen/Dialect/Zll/Analysis",
