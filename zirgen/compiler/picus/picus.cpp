@@ -147,9 +147,9 @@ private:
     // have control flow, MapOp/ReduceOp are unrolled.
     llvm::TypeSwitch<Operation*>(op)
         .Case<InvOp, BitAndOp, ModOp, InRangeOp, ExternOp>([&](auto op) { visitNondetOp(op); })
+        .Case<AddOp, SubOp, MulOp>([&](auto op) { visitBinaryPolyOp(op); })
         .Case<ConstOp,
               StringOp,
-              SubOp,
               VariadicPackOp,
               ExternOp,
               LoadOp,
@@ -250,6 +250,25 @@ private:
         },
         " ");
     os << "])\n";
+  }
+
+  void visitBinaryPolyOp(Operation* op) {
+    auto symbol = llvm::TypeSwitch<Operation*, const char*>(op)
+      .Case<AddOp>([](auto) { return "+"; })
+      .Case<SubOp>([](auto) { return "-"; })
+      .Case<MulOp>([](auto) { return "*"; })
+      .Default([&](auto) {
+        op->emitError("unknown binary poly op");
+        return nullptr;
+      });
+
+    auto signal = Signal::get(ctx, freshName());
+    valuesToSignals.insert({op->getResult(0), signal});
+
+    os << "(assert (= " << signal.str() << " (" << symbol << " ";
+    os << cast<Signal>(valuesToSignals.at(op->getOperand(0))).str() << " ";
+    os << cast<Signal>(valuesToSignals.at(op->getOperand(1))).str();
+    os << ")))\n";
   }
 
   void visitOp(SubOp sub) {

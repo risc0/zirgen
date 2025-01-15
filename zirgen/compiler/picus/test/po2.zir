@@ -1,0 +1,6 @@
+#[picus]
+component Po2(n: Val) {
+  arr := [1, 2, 4, 8];
+  arr[n]
+  // the picus lowering for SubscriptOp requires constant indices!
+}
