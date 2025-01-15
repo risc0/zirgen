@@ -91,7 +91,7 @@ public:
     this->mod = mod;
     os << "(prime-number 2013265921)\n";
     for (auto component : mod.getOps<ComponentOp>()) {
-      if (component->hasAttr("picus")) {
+      if (component->hasAttr("picus_analyze")) {
         workQueue.push(component);
       }
     }

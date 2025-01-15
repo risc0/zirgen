@@ -6,7 +6,7 @@
 // CHECK: (assume-deterministic x1_reg__super)
 // CHECK: (end-module)
 
-#[picus]
+#[picus_analyze]
 component Count(first: Val) {
   public a : Reg;
   a := Reg(a@1);

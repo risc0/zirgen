@@ -36,7 +36,7 @@
 // CHECK-NEXT: (assert (= result_x_reg__super layout_x__super__super__super))
 // CHECK-NEXT: (end-module)
 
-#[picus]
+#[picus_analyze]
 component Top() {
   first := Reg(0);
   x := [1 - first, first] -> (Reg(7), Reg(8));

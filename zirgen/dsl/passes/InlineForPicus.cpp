@@ -14,9 +14,9 @@
 
 #include "Passes.h"
 #include "mlir/Analysis/CallGraph.h"
+#include "mlir/Dialect/Arith/IR/Arith.h"
 #include "mlir/Transforms/GreedyPatternRewriteDriver.h"
 #include "mlir/Transforms/Inliner.h"
-#include "mlir/Dialect/Arith/IR/Arith.h"
 
 #include "zirgen/dsl/passes/PassDetail.h"
 
@@ -41,8 +41,10 @@ struct ZeroDistanceBacksToCalls : public OpRewritePattern<Zhlt::BackOp> {
     if (back.getDistance().getZExtValue() > 0)
       return failure();
 
-    auto distance = rewriter.create<mlir::arith::ConstantOp>(back->getLoc(), rewriter.getIndexAttr(0));
-    auto callee = SymbolTable::lookupNearestSymbolFrom<Zhlt::ComponentOp>(back, back.getCalleeAttr());
+    auto distance =
+        rewriter.create<mlir::arith::ConstantOp>(back->getLoc(), rewriter.getIndexAttr(0));
+    auto callee =
+        SymbolTable::lookupNearestSymbolFrom<Zhlt::ComponentOp>(back, back.getCalleeAttr());
     auto callOp = rewriter.create<Zhlt::BackCallOp>(
         back->getLoc(), callee.getSymName(), callee.getOutType(), distance, back.getLayout());
     rewriter.replaceOp(back, callOp);
@@ -58,13 +60,18 @@ struct InlineForPicusPass : public InlineForPicusBase<InlineForPicusPass> {
     // Convert backs with distance zero for inlining
     RewritePatternSet patterns(ctx);
     patterns.insert<ZeroDistanceBacksToCalls>(ctx);
-    if (applyPatternsAndFoldGreedily(mod, std::move(patterns)).failed())  {
+    if (applyPatternsAndFoldGreedily(mod, std::move(patterns)).failed()) {
       signalPassFailure();
     }
 
     CallGraph& cg = getAnalysis<CallGraph>();
 
     auto profitabilityCb = [=](const Inliner::ResolvedCall& call) {
+      // Inline any calls to components marked "picus_inline"
+      if (call.targetNode->getCallableRegion()->getParentOp()->hasAttr("picus_inline")) {
+        return true;
+      }
+
       // All BackCallOps come from backs with distance 0 because of the rewrite
       // pattern, and these should all be inlined so we can do a more detailed
       // analysis of their determinism.

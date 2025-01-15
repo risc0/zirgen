@@ -1,4 +1,4 @@
-#[picus]
+#[picus_analyze]
 component ShaNextBlockCycle(back1: TopState) {
   Log("ShaNextBlockCycle");
   // Extract current a + e values in packed format

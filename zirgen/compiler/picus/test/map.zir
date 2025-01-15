@@ -36,7 +36,7 @@
 // CHECK-NEXT: (assert (= result_a_3__super__super_reg__super layout_a_3__super__super__super__super))
 // CHECK-NEXT: (end-module)
 
-#[picus]
+#[picus_analyze]
 component Top() {
   a := for i : 0..4 { Reg(i) };
 }

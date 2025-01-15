@@ -230,7 +230,7 @@ component ExtractBits2(a: Array<Array<Val, 32>, 4>, e: Array<Array<Val, 32>, 4>,
   )
 }
 
-#[picus]
+#[picus_analyze]
 component ShaNextBlockCycle(back1: TopState) {
   Log("ShaNextBlockCycle");
   // Extract current a + e values in packed format

@@ -16,7 +16,7 @@
 // CHECK-NEXT: (assert (= result_b_reg__super layout_b__super__super))
 // CHECK-NEXT: (end-module)
 
-#[picus]
+#[picus_analyze]
 component Top() {
   a := NondetReg(0);
   b := Reg(0);
