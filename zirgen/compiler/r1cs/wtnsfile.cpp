@@ -100,7 +100,7 @@ uint64_t Reader::readU64() {
          (static_cast<uint64_t>(buf[6]) << 0x30) | (static_cast<uint64_t>(buf[7]) << 0x38);
 }
 
-uint64_t Reader::readU64(uint64_t& capacity) {
+[[maybe_unused]] uint64_t Reader::readU64(uint64_t& capacity) {
   check(capacity < sizeof(uint64_t));
   capacity -= sizeof(uint64_t);
   return readU64();
