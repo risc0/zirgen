@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,6 +36,12 @@ using Signal = StringAttr;
 using SignalArray = ArrayAttr;
 using SignalStruct = DictionaryAttr;
 using AnySignal = Attribute;
+
+enum class SignalType {
+  Input,
+  Output,
+  AssumeDeterministic,
+};
 
 template <typename F> void visit(AnySignal signal, F f) {
   if (!signal) {
@@ -95,7 +101,7 @@ private:
       if (isa<StringType>(param.getType()) || isa<VariadicType>(param.getType()))
         continue;
       AnySignal signal = signalize(freshName(), param.getType());
-      declareSignals(signal, /*isInput=*/true);
+      declareSignals(signal, SignalType::Input);
       valuesToSignals.insert({param, signal});
       workQueue.push(lookupConstructor(param.getType()));
     }
@@ -103,13 +109,13 @@ private:
     // The layout is an output
     if (auto layout = component.getLayout()) {
       AnySignal layoutSignal = signalize("layout", layout.getType());
-      declareSignals(layoutSignal, /*isInput=*/false);
+      declareSignals(layoutSignal, SignalType::Output);
       valuesToSignals.insert({layout, layoutSignal});
     }
 
     // The result is an output
     AnySignal result = signalize("result", component.getOutType());
-    declareSignals(result, /*isInput=*/false);
+    declareSignals(result, SignalType::Output);
     valuesToSignals.insert({Value(), result});
 
     for (Operation& op : component.getBody().front()) {
@@ -139,7 +145,8 @@ private:
               PackOp,
               ReturnOp,
               GetGlobalLayoutOp,
-              AliasLayoutOp>([&](auto op) { visitOp(op); })
+              AliasLayoutOp,
+              zirgen::Zhlt::BackOp>([&](auto op) { visitOp(op); })
         .Case<StoreOp, arith::ConstantOp>([](auto) { /* no-op */ })
         .Default([](Operation* op) { llvm::errs() << "unhandled op: " << *op << "\n"; });
   }
@@ -276,7 +283,7 @@ private:
   void visitOp(GetGlobalLayoutOp get) {
     // This is sound but presumably not complete?
     AnySignal signal = signalize(freshName(), get.getType());
-    declareSignals(signal, /*isInput=*/false);
+    declareSignals(signal, SignalType::Output);
     valuesToSignals.insert({get.getOut(), signal});
   }
 
@@ -286,6 +293,16 @@ private:
     for (auto [sl, sr] : llvm::zip(flatten(lhs), flatten(rhs))) {
       os << "(assert (= " << sl.str() << " " << sr.str() << "))\n";
     }
+  }
+
+  void visitOp(zirgen::Zhlt::BackOp back) {
+    size_t distance = back.getDistance().getZExtValue();
+    AnySignal signal = signalize(freshName(), back.getType());
+    // We cannot handle the zero-distance case this way, so we expect that
+    // all zero-distance backs will have been converted & inlined already.
+    assert(distance > 0);
+    declareSignals(signal, SignalType::AssumeDeterministic);
+    valuesToSignals.insert({back.getOut(), signal});
   }
 
   // Constructs a fresh signal structure corresponding to the given type
@@ -330,12 +347,24 @@ private:
     return flattened;
   }
 
-  void declareSignals(AnySignal signal, bool isInput) {
-    visit(signal, [&](Signal s) { declareSignal(s, isInput); });
+  void declareSignals(AnySignal signal, SignalType type) {
+    visit(signal, [&](Signal s) { declareSignal(s, type); });
   }
 
-  void declareSignal(Signal signal, bool isInput) {
-    os << "(" << (isInput ? "input " : "output ") << signal.str() << ")\n";
+  void declareSignal(Signal signal, SignalType type) {
+    std::string op;
+    switch (type) {
+    case SignalType::Input:
+      op = "input";
+      break;
+    case SignalType::Output:
+      op = "output";
+      break;
+    case SignalType::AssumeDeterministic:
+      op = "assume-deterministic";
+      break;
+    }
+    os << "(" << op << " " << signal.str() << ")\n";
   }
 
   ComponentOp lookupConstructor(Type type) {
