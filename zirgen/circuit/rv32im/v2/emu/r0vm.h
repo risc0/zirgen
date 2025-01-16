@@ -134,8 +134,8 @@ template <typename Context> struct R0Context {
   bool doTerminate() {
     context.ecallCycle(STATE_MACHINE_ECALL, STATE_TERMINATE, 0, 0, 0);
     done = true;
-    loadMem(USER_REGS_WORD + REG_A0);
-    loadMem(USER_REGS_WORD + REG_A1);
+    loadReg(REG_A0);
+    loadReg(REG_A1);
     context.ecallCycle(STATE_TERMINATE, STATE_SUSPEND, 0, 0, 0);
     return false;
   }
