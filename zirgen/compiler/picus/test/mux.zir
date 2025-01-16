@@ -7,9 +7,7 @@
 // CHECK-NEXT: (output layout_x_arm0__super__super__super)
 // CHECK-NEXT: (output layout_x_arm1__super__super__super)
 // CHECK-NEXT: (output result_first__super__super)
-// CHECK-NEXT: (output result_first_reg__super)
 // CHECK-NEXT: (output result_x__super__super)
-// CHECK-NEXT: (output result_x_reg__super)
 // CHECK-NEXT: (assert (= x0 8))
 // CHECK-NEXT: (assert (= x1 7))
 // CHECK-NEXT: (assert (= x2 1))
@@ -27,18 +25,15 @@
 // CHECK-NEXT: (assert (= x7 0))
 // CHECK-NEXT: ; mark mux arm
 // CHECK-NEXT: (assert (= mux_x8__super__super (+ (* x5 layout_x_arm0__super__super__super) (* layout_first__super__super layout_x_arm1__super__super__super))))
-// CHECK-NEXT: (assert (= mux_x8_reg__super (+ (* x5 layout_x_arm0__super__super__super) (* layout_first__super__super layout_x_arm1__super__super__super))))
 // CHECK-NEXT: ; end mux
 // CHECK-NEXT: (call [] Log [ ])
 // CHECK-NEXT: (assert (= result_first__super__super layout_first__super__super))
-// CHECK-NEXT: (assert (= result_first_reg__super layout_first__super__super))
 // CHECK-NEXT: (assert (= result_x__super__super layout_x__super__super__super))
-// CHECK-NEXT: (assert (= result_x_reg__super layout_x__super__super__super))
 // CHECK-NEXT: (end-module)
 
 #[picus_analyze]
 component Top() {
-  first := Reg(0);
-  x := [1 - first, first] -> (Reg(7), Reg(8));
+  public first := Reg(0);
+  public x := [1 - first, first] -> (Reg(7), Reg(8));
   Log("x = %u", x);
 }

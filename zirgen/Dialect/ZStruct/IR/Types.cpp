@@ -62,6 +62,7 @@ void printFields(mlir::AsmPrinter& p, llvm::ArrayRef<FieldInfo> fields) {
   llvm::interleaveComma(fields, p, [&](const FieldInfo& field) {
     if (field.isPrivate) {
       p.printKeywordOrString("private");
+      p << " ";
     }
     p.printKeywordOrString(field.name.getValue());
     p << ": ";

@@ -54,6 +54,7 @@ template <typename F> void visit(AnySignal signal, F f) {
       visit(elem, f);
   } else if (auto str = dyn_cast<SignalStruct>(signal)) {
     for (auto field : str) {
+      assert(field.getName() != "@layout");
       visit(field.getValue(), f);
     }
   }
@@ -254,13 +255,13 @@ private:
 
   void visitBinaryPolyOp(Operation* op) {
     auto symbol = llvm::TypeSwitch<Operation*, const char*>(op)
-      .Case<AddOp>([](auto) { return "+"; })
-      .Case<SubOp>([](auto) { return "-"; })
-      .Case<MulOp>([](auto) { return "*"; })
-      .Default([&](auto) {
-        op->emitError("unknown binary poly op");
-        return nullptr;
-      });
+                      .Case<AddOp>([](auto) { return "+"; })
+                      .Case<SubOp>([](auto) { return "-"; })
+                      .Case<MulOp>([](auto) { return "*"; })
+                      .Default([&](auto) {
+                        op->emitError("unknown binary poly op");
+                        return nullptr;
+                      });
 
     auto signal = Signal::get(ctx, freshName());
     valuesToSignals.insert({op->getResult(0), signal});
@@ -348,7 +349,7 @@ private:
   void visitOp(PackOp pack) {
     SmallVector<NamedAttribute> fields;
     for (auto [field, arg] : llvm::zip(pack.getOut().getType().getFields(), pack.getMembers())) {
-      if (field.name.strref() == "@layout")
+      if (field.isPrivate || field.name.strref() == "@layout")
         continue;
       AnySignal member = valuesToSignals.at(arg);
       fields.emplace_back(field.name, member);
@@ -363,7 +364,10 @@ private:
     // of the component. Unify those signals with those of the return value.
     AnySignal outputSignal = valuesToSignals.at(Value());
     AnySignal returnSignal = valuesToSignals.at(ret.getValue());
-    for (auto [outs, rets] : llvm::zip(flatten(outputSignal), flatten(returnSignal))) {
+    SmallVector<Signal> outs = flatten(outputSignal);
+    SmallVector<Signal> rets = flatten(returnSignal);
+    assert(outs.size() == rets.size());
+    for (auto [outs, rets] : llvm::zip(outs, rets)) {
       os << "(assert (= " << outs.str() << " " << rets.str() << "))\n";
     }
   }
@@ -470,8 +474,10 @@ private:
       for (auto field : str.getFields()) {
         if (field.name.strref() == "@layout")
           continue;
-        std::string name = prefix + "_" + canonicalizeIdentifier(field.name.str());
-        fields.emplace_back(field.name, signalize(name, field.type));
+        if (!field.isPrivate) {
+          std::string name = prefix + "_" + canonicalizeIdentifier(field.name.str());
+          fields.emplace_back(field.name, signalize(name, field.type));
+        }
       }
       return SignalStruct::get(ctx, fields);
     } else if (auto str = dyn_cast<LayoutType>(type)) {

@@ -3,7 +3,6 @@
 // CHECK: (prime-number 2013265921)
 // CHECK: (begin-module Count)
 // CHECK: (assume-deterministic x1__super__super)
-// CHECK: (assume-deterministic x1_reg__super)
 // CHECK: (end-module)
 
 #[picus_analyze]
