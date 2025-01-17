@@ -44,18 +44,20 @@ enum class SignalType {
   AssumeDeterministic,
 };
 
-template <typename F> void visit(AnySignal signal, F f) {
+template <typename F> void visit(AnySignal signal, F f, bool visitedLayout = false) {
   if (!signal) {
     // no-op
   } else if (auto s = dyn_cast<Signal>(signal)) {
     f(s);
   } else if (auto arr = dyn_cast<SignalArray>(signal)) {
     for (auto elem : arr)
-      visit(elem, f);
+      visit(elem, f, visitedLayout);
   } else if (auto str = dyn_cast<SignalStruct>(signal)) {
     for (auto field : str) {
-      assert(field.getName() != "@layout");
-      visit(field.getValue(), f);
+      if (!visitedLayout || field.getName() != "@layout") {
+        visitedLayout = true;
+        visit(field.getValue(), f, visitedLayout);
+      }
     }
   }
 }
@@ -122,17 +124,16 @@ private:
       workQueue.push(lookupConstructor(param.getType()));
     }
 
-    // The layout is an output
-    if (auto layout = component.getLayout()) {
-      AnySignal layoutSignal = signalize("layout", layout.getType());
-      declareSignals(layoutSignal, SignalType::Output);
-      valuesToSignals.insert({layout, layoutSignal});
-    }
-
     // The result is an output
     AnySignal result = signalize("result", component.getOutType());
     declareSignals(result, SignalType::Output);
     valuesToSignals.insert({Value(), result});
+
+    // The layout is an output
+    if (auto layout = component.getLayout()) {
+      AnySignal layoutSignal = cast<SignalStruct>(result).get("@layout");
+      valuesToSignals.insert({layout, layoutSignal});
+    }
 
     for (Operation& op : component.getBody().front()) {
       visitOp(&op);
@@ -208,6 +209,7 @@ private:
   }
 
   void visitOp(LookupOp lookup) {
+    // TODO: this doesn't handle @super member lookups!!!!!!!
     auto signal = cast<SignalStruct>(valuesToSignals.at(lookup.getBase()));
     auto subSignal = signal.get(lookup.getMember());
     valuesToSignals.insert({lookup.getOut(), subSignal});
@@ -349,7 +351,7 @@ private:
   void visitOp(PackOp pack) {
     SmallVector<NamedAttribute> fields;
     for (auto [field, arg] : llvm::zip(pack.getOut().getType().getFields(), pack.getMembers())) {
-      if (field.isPrivate || field.name.strref() == "@layout")
+      if (field.isPrivate)
         continue;
       AnySignal member = valuesToSignals.at(arg);
       fields.emplace_back(field.name, member);
@@ -368,7 +370,11 @@ private:
     SmallVector<Signal> rets = flatten(returnSignal);
     assert(outs.size() == rets.size());
     for (auto [outs, rets] : llvm::zip(outs, rets)) {
-      os << "(assert (= " << outs.str() << " " << rets.str() << "))\n";
+      // Skip emitting vacuous constraints (a = a). These can come from the same
+      // layout occuring at different levels of nesting within an @super member.
+      if (outs != rets) {
+        os << "(assert (= " << outs.str() << " " << rets.str() << "))\n";
+      }
     }
   }
 
@@ -459,24 +465,47 @@ private:
   }
 
   // Constructs a fresh signal structure corresponding to the given type
-  AnySignal signalize(std::string prefix, Type type) {
+  AnySignal signalize(std::string prefix, Type type, AnySignal layout = nullptr) {
     if (isa<ValType>(type) || isa<RefType>(type)) {
       return Signal::get(ctx, prefix);
     } else if (auto array = dyn_cast<ArrayLikeTypeInterface>(type)) {
       SmallVector<AnySignal> elements;
       for (size_t i = 0; i < array.getSize(); i++) {
         std::string name = prefix + "_" + std::to_string(i);
-        elements.push_back(signalize(name, array.getElement()));
+        AnySignal sublayout;
+        if (auto arrLayout = cast_if_present<SignalArray>(layout)) {
+          sublayout = arrLayout[i];
+        }
+        elements.push_back(signalize(name, array.getElement(), sublayout));
       }
       return SignalArray::get(ctx, elements);
     } else if (auto str = dyn_cast<StructType>(type)) {
       SmallVector<NamedAttribute> fields;
+      // If we haven't generated a layout yet, generate it first. Then,
+      // recursively pass along sublayouts for reuse, so that we don't generate
+      // extra signals for registers at every level of nesting. For example,
+      // foo.@layout.bar and foo.bar.@layout should refer to the same layout.
+      if (!layout) {
+        for (auto field : str.getFields()) {
+          if (field.name == "@layout") {
+            std::string name = prefix + "_" + canonicalizeIdentifier(field.name.str());
+            layout = signalize(name, field.type);
+            break;
+          }
+        }
+      }
       for (auto field : str.getFields()) {
-        if (field.name.strref() == "@layout")
+        if (field.name == "@layout") {
+          fields.emplace_back(field.name, layout);
           continue;
+        }
         if (!field.isPrivate) {
           std::string name = prefix + "_" + canonicalizeIdentifier(field.name.str());
-          fields.emplace_back(field.name, signalize(name, field.type));
+          AnySignal sublayout;
+          if (auto strLayout = cast_if_present<SignalStruct>(layout)) {
+            sublayout = strLayout.get(field.name);
+          }
+          fields.emplace_back(field.name, signalize(name, field.type, sublayout));
         }
       }
       return SignalStruct::get(ctx, fields);
