@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -658,6 +658,11 @@ impl Bootstrap {
         let field_path = risc0_root.join("bigint2/src/field");
         let rsa_path = risc0_root.join("bigint2/src/rsa");
 
+        self.copy_file(&src_path, &field_path, "extfield_deg2_add_256.blob");
+        self.copy_file(&src_path, &field_path, "extfield_deg2_mul_256.blob");
+        self.copy_file(&src_path, &field_path, "extfield_deg4_mul_256.blob");
+        self.copy_file(&src_path, &field_path, "extfield_deg2_sub_256.blob");
+        self.copy_file(&src_path, &field_path, "extfield_xxone_mul_256.blob");
         self.copy_file(&src_path, &field_path, "modadd_256.blob");
         self.copy_file(&src_path, &field_path, "modinv_256.blob");
         self.copy_file(&src_path, &field_path, "modmul_256.blob");
