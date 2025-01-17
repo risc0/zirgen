@@ -1,9 +1,5 @@
 // RUN: true
 
-// TODO: Now that the v2 circuit uses an extern to compute major/minor it no
-// longer makes sense to do rv32im conformance testing here.  Make sure
-// integration tests are covering this.
-
 import inst_div;
 import inst_misc;
 import inst_mul;
@@ -11,11 +7,11 @@ import inst_mem;
 import inst_control;
 import inst_ecall;
 import inst_p2;
+import inst_sha;
 import mem;
 import one_hot;
 
 extern IsFirstCycle() : Val;
-extern GetCycle() : Val;
 
 component MajorMinor(major: Val, minor: Val) {
   public major := major;
@@ -36,18 +32,24 @@ component Top() {
   global termA1low: Reg;
   global termA1high: Reg;
   global rng: ExtReg;
+  global shutdownCycle: Reg;
 
   // Top state
+  cycle : Reg;
   next_pc_low : Reg;
   next_pc_high : Reg;
   next_state : Reg;
   next_machine_mode : Reg;
 
-  // Registerize first cycle + cycle number [TODO, verify]
-  is_first_cycle := NondetReg(IsFirstCycle());
-  cycleND := NondetReg(GetCycle());
-  cycle := Reg(cycleND);
-  AliasLayout!(cycleND, cycle);
+  // Registerize first cycle + cycle number
+  is_first_cycle := NondetBitReg(IsFirstCycle());
+  // If first cycle, verify we terminate, either way return cycle #
+  cycle := if (is_first_cycle) {
+    next_state@1 = StateControlDone();
+    Reg(0)
+  } else {
+    Reg(cycle@1 + 1)
+  };
   // Get PC (init pc == 0)
   low_pc := (1 - is_first_cycle) * next_pc_low@1;
   high_pc := (1 - is_first_cycle) * next_pc_high@1;
@@ -63,9 +65,9 @@ component Top() {
   minor := NondetReg(peek_major_minor.minor);
   Log("Major/Minor = ", major, minor);
   // Make a nice input to all the instructions
-  inst_input := InstInput(cycle, major, minor, pc_u32, state, machine_mode);
+  inst_input := InstInput(major, minor, pc_u32, state, machine_mode);
   // Now we split on major
-  major_onehot := OneHot<11>(major);
+  major_onehot := OneHot<12>(major);
   inst_result := major_onehot ->! (
     Misc0(cycle, inst_input),
     Misc1(cycle, inst_input),
@@ -77,7 +79,8 @@ component Top() {
     Control0(cycle, inst_input),
     ECall0(cycle, inst_input),
     Poseidon0(cycle, inst_input),
-    Poseidon1(cycle, inst_input)
+    Poseidon1(cycle, inst_input),
+    Sha0(cycle, inst_input)
   );
   // Compute next PC
   pc_word := inst_result.new_pc.low / 4 + inst_result.new_pc.high * 16384;

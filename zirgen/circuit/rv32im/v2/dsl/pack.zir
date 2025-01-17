@@ -1,0 +1,45 @@
+// RUN: zirgen -I %S --test %s
+// Bit packing and unpacking logic
+
+import bits;
+import arr;
+import u32;
+
+// We have 3 functions here:
+// 1) Pack an array of N bits into N/P elements
+// 2) Unpack an array of N bits from N/P elements *without* verifying
+// 3) Same as above, but registerize and verify
+// We don't handle 'uneven' packings, and rely on external code to make
+// sure the 'parts' eveny divide the whole.
+
+// Pack N bits into parts of P bits each
+component Pack<N: Val, P: Val>(in : Array<Val, N>) {
+  N % P = 0;
+  for i : 0..(N / P) {
+    reduce for j : 0..P { Po2(j) * in[i*P+ j] } init 0 with Add
+  }
+}
+
+component UnpackNondet<N: Val, P: Val>(in: Array<Val, N/P>) {
+  N % P = 0;
+  inv := Inv(P);
+  for n : 0..N {
+    j := n % P;
+    i := (n - j) * inv;
+    (in[i] & Po2(j)) / Po2(j)
+  }
+}
+
+component UnpackReg<N: Val, P: Val>(in: Array<Val, N/P>) {
+  bitVals := UnpackNondet<N, P>(in);
+  bits := for n : 0..N { NondetBitReg(bitVals[n]) };
+  EqArr<N/P>(Pack<N, P>(bits), in);
+  bits
+}
+
+test PackUnpack {
+  bits := UnpackReg<16, 4>([1, 15, 5, 10]);
+  EqArr<16>(bits, [1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1]);
+  oneVal := Pack<16, 16>(bits);
+  oneVal[0] = 0xa5f1;
+}

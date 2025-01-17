@@ -276,12 +276,32 @@ component PoseidonCheckOut(cycle: Reg, prev: PoseidonState) {
   PoseidonState(GetDef(prev), nextState, 0, 0, 0, prev.mode, prev.inner, MakeExt(0))
 }
 
+component FieldToWord(val: Val) {
+  // Decompose a field element into two u16s
+  public low := NondetU16Reg(val & 0xffff);
+  public high := U16Reg((val - low) / 65536);
+  // Check decomposition is unique
+  // If low == 0, high must be < 30720, otherwise high must be <= 30719
+  // Guess if low is zero
+  lowIsZero := NondetBitReg(Isz(low));
+  // Now check results:  Technically, prover could set low-is-zero to false even if
+  // low was zero, but this only results in a stricter check of high, so it's pointless
+  if (lowIsZero) {
+    low = 0;
+    U16Reg(30720 - high);
+  } else {
+    U16Reg(30719 - high);
+  };
+  // Return as u32
+  public ret := ValU32(low, high);
+}
+
 component PoseidonStoreOut(cycle: Reg, prev: PoseidonState) {
   for i : 0..8 {
-    val := prev.inner[i];
-    low := NondetU16Reg(val & 0xffff);
-    high := U16Reg((val - low) / 65536);
-    MemoryWrite(cycle, prev.bufOutAddr + i, ValU32(low, high));
+    ftw := FieldToWord(prev.inner[i]);
+    mw := MemoryWrite(cycle, prev.bufOutAddr + i, ftw.ret);
+    AliasLayout!(mw.io.newTxn.dataLow, ftw.low.arg.val);
+    AliasLayout!(mw.io.newTxn.dataHigh, ftw.high.arg.val);
   };
   isNormal := IsZero(prev.loadTxType - TxKindRead());
   outState := isNormal * StateDecode() + (1 - isNormal) * StatePoseidonPaging();
@@ -298,10 +318,10 @@ component PoseidonDoOut(cycle: Reg, prev: PoseidonState) {
 
 component PoseidonStoreState(cycle: Reg, prev: PoseidonState) {
   for i : 0..8 {
-    val := prev.inner[16 + i];
-    low := NondetU16Reg(val & 0xffff);
-    high := U16Reg((val - low) / 65536);
-    MemoryWrite(cycle, prev.stateAddr+ i, ValU32(low, high));
+    ftw := FieldToWord(prev.inner[16 + i]);
+    mw := MemoryWrite(cycle, prev.stateAddr+ i, ftw.ret);
+    AliasLayout!(mw.io.newTxn.dataLow, ftw.low.arg.val);
+    AliasLayout!(mw.io.newTxn.dataHigh, ftw.high.arg.val);
   };
   PoseidonState(GetDef(prev), StateDecode(), 0, 0, 0, prev.mode, prev.inner, MakeExt(0))
 }
@@ -443,8 +463,9 @@ component PoseidonPaging(cycle: Reg, mode: Val, prev: PoseidonState) {
 }
 
 component Poseidon0(cycle:Reg, inst_input: InstInput) {
+  DoCycleTable(cycle);
+  inst_input.state = StatePoseidonEntry() + inst_input.minor;
   state : PoseidonState;
-  // Cancel out 'cycle' table entries
   state := inst_input.minor_onehot -> (
     PoseidonEntry(cycle, inst_input.pc_u32, inst_input.mode),
     PoseidonLoadState(cycle, state@1),
@@ -455,15 +476,13 @@ component Poseidon0(cycle:Reg, inst_input: InstInput) {
     PoseidonPaging(cycle, inst_input.mode,state@1),
     PoseidonStoreState(cycle, state@1)
   );
-  arg := CycleArg(-GetDiffCount(cycle), cycle);
-  AliasLayout!(arg.cycle, cycle);
-  arg.cycle = cycle;
   InstOutput(inst_input.pc_u32, state.nextState, state.mode)
 }
 
 component Poseidon1(cycle:Reg, inst_input: InstInput) {
+  DoCycleTable(cycle);
+  inst_input.state = StatePoseidonExtRound() + inst_input.minor;
   state : PoseidonState;
-  // Cancel out 'cycle' table entries
   state := inst_input.minor_onehot -> (
     PoseidonExtRound(state@1),
     PoseidonIntRounds(state@1),
@@ -474,9 +493,6 @@ component Poseidon1(cycle:Reg, inst_input: InstInput) {
     PoseidonInvalid(),
     PoseidonInvalid()
   );
-  arg := CycleArg(-GetDiffCount(cycle), cycle);
-  AliasLayout!(arg.cycle, cycle);
-  arg.cycle = cycle;
   InstOutput(inst_input.pc_u32, state.nextState, state.mode)
 }
 

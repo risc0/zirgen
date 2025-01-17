@@ -1,0 +1,34 @@
+// RUN: zirgen %s --emit=picus | FileCheck %s
+
+// CHECK: (prime-number 2013265921)
+// CHECK-NEXT: (begin-module Top)
+// CHECK-NEXT: (output layout_a_0__super__super__super__super)
+// CHECK-NEXT: (output layout_a_1__super__super__super__super)
+// CHECK-NEXT: (output layout_a_2__super__super__super__super)
+// CHECK-NEXT: (output layout_a_3__super__super__super__super)
+// CHECK-NEXT: (output result_a_0__super__super__super__super)
+// CHECK-NEXT: (output result_a_1__super__super__super__super)
+// CHECK-NEXT: (output result_a_2__super__super__super__super)
+// CHECK-NEXT: (output result_a_3__super__super__super__super)
+// CHECK-NEXT: (assert (= x0 3))
+// CHECK-NEXT: (assert (= x1 2))
+// CHECK-NEXT: (assert (= x2 1))
+// CHECK-NEXT: (assert (= x3 0))
+// CHECK-NEXT: (assert (= x4 (- x3 layout_a_0__super__super__super__super)))
+// CHECK-NEXT: (assert (= x4 0))
+// CHECK-NEXT: (assert (= x5 (- x2 layout_a_1__super__super__super__super)))
+// CHECK-NEXT: (assert (= x5 0))
+// CHECK-NEXT: (assert (= x6 (- x1 layout_a_2__super__super__super__super)))
+// CHECK-NEXT: (assert (= x6 0))
+// CHECK-NEXT: (assert (= x7 (- x0 layout_a_3__super__super__super__super)))
+// CHECK-NEXT: (assert (= x7 0))
+// CHECK-NEXT: (assert (= result_a_0__super__super__super__super layout_a_0__super__super__super__super))
+// CHECK-NEXT: (assert (= result_a_1__super__super__super__super layout_a_1__super__super__super__super))
+// CHECK-NEXT: (assert (= result_a_2__super__super__super__super layout_a_2__super__super__super__super))
+// CHECK-NEXT: (assert (= result_a_3__super__super__super__super layout_a_3__super__super__super__super))
+// CHECK-NEXT: (end-module)
+
+#[picus_analyze]
+component Top() {
+  public a := for i : 0..4 { Reg(i) };
+}

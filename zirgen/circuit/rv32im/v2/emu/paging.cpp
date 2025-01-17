@@ -37,8 +37,10 @@ size_t CYCLE_COST_EXTRA = 1 + // LOAD_ROOT
                           2 + // SUSPEND
                           1 + // POSEIDON_ENTRY
                           // Page writes
-                          1 + // POSEIDON_PAGING
-                          1 + // STORE_ROOT
+                          1 +          // POSEIDON_PAGING
+                          1 +          // STORE_ROOT
+                          256 / 16 +   // U8 table
+                          65536 / 16 + // U16 table
                           0;
 
 PagedMemory::PagedMemory(MemoryImage& image) : image(image), pagingCycles(CYCLE_COST_EXTRA) {}

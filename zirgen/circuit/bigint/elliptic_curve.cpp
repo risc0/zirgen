@@ -110,8 +110,6 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
 
   Value nu = builder.create<BigInt::MulOp>(loc, lambda, lhs.x());
   nu = builder.create<BigInt::SubOp>(loc, lhs.y(), nu);
-  nu = builder.create<BigInt::AddOp>(
-      loc, nu, prime); // Quot/Rem needs nonnegative inputs, so enforce positivity
 
   Value lambda_sqr = builder.create<BigInt::MulOp>(loc, lambda, lambda);
   Value xR = builder.create<BigInt::SubOp>(loc, lambda_sqr, lhs.x());
@@ -126,12 +124,11 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   Value yR = builder.create<BigInt::MulOp>(loc, lambda, xR);
   yR = builder.create<BigInt::AddOp>(loc, yR, nu);
   yR = builder.create<BigInt::SubOp>(loc, prime, yR); // i.e., negate (mod prime)
-  yR = builder.create<BigInt::AddOp>(
-      loc, yR, prime); // Quot/Rem needs nonnegative inputs, so enforce positivity
-  yR = builder.create<BigInt::AddOp>(loc, yR, prime);
   Value prime_sqr = builder.create<BigInt::MulOp>(loc, prime, prime);
-  yR = builder.create<BigInt::AddOp>(
-      loc, yR, prime_sqr); // The prime^2 term is for the original lambda * xR
+  // Quot/Rem needs nonnegative inputs, so enforce positivity
+  // This is a prime^2 term for the original lambda * xR
+  // A prime term (for the lhs.y in nu) was already included in the negation step
+  yR = builder.create<BigInt::AddOp>(loc, yR, prime_sqr);
   Value k_y = builder.create<BigInt::NondetQuotOp>(loc, yR, prime);
   yR = builder.create<BigInt::NondetRemOp>(loc, yR, prime);
 
@@ -151,7 +148,6 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   Value y_check_other = builder.create<BigInt::SubOp>(loc, lhs.x(), xR);
   y_check_other = builder.create<BigInt::MulOp>(loc, lambda, y_check_other);
   y_check_other = builder.create<BigInt::SubOp>(loc, y_check_other, lhs.y());
-  y_check_other = builder.create<BigInt::AddOp>(loc, y_check_other, prime);
   y_check_other = builder.create<BigInt::AddOp>(loc, y_check_other, prime);
   y_check_other = builder.create<BigInt::AddOp>(loc, y_check_other, prime_sqr);
   y_check = builder.create<BigInt::SubOp>(loc, y_check, y_check_other);

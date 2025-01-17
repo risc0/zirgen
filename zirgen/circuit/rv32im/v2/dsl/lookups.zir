@@ -21,7 +21,7 @@ component NondetU8Reg(val: Val) {
 component U8Reg(val: Val) {
   ret := NondetU8Reg(val);
   ret = val;
-  val
+  ret
 }
 
 argument ArgU16(count: Val, val: Val) {
@@ -32,7 +32,7 @@ argument ArgU16(count: Val, val: Val) {
 
 // Set a register nodeterministically, and then verify it is a U16
 component NondetU16Reg(val: Val) {
-  arg := ArgU16(1, val);
+  public arg := ArgU16(1, val);
   arg.count = 1;
   arg.val
 }
@@ -41,7 +41,7 @@ component NondetU16Reg(val: Val) {
 component U16Reg(val: Val) {
   ret := NondetU16Reg(val);
   ret = val;
-  val
+  ret
 }
 
 // TODO: Tests

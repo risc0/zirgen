@@ -19,6 +19,7 @@
 #include "mlir/IR/BuiltinOps.h"
 #include "mlir/Pass/PassManager.h"
 #include "zirgen/Dialect/Zll/IR/Codegen.h"
+#include "zirgen/compiler/codegen/Passes.h"
 #include "zirgen/compiler/codegen/protocol_info_const.h"
 #include "llvm/Support/ManagedStatic.h"
 

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,6 +31,8 @@ struct U32Reg {
 
   Val flat();
 
+  static U32Reg zero();
+
   std::array<Val, 4> val;
 };
 
@@ -59,6 +61,8 @@ struct ReceiptClaim {
   void write(std::vector<Val>& stream);
   // Digest into a single value
   DigestVal digest();
+
+  static ReceiptClaim fromRv32imV2(llvm::ArrayRef<Val>& stream, size_t po2);
 
   DigestVal input;
   SystemState pre;

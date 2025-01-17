@@ -1,0 +1,22 @@
+// RUN: zirgen %s --emit=picus | FileCheck %s
+
+// CHECK: (prime-number 2013265921)
+// CHECK-NEXT: (begin-module Top)
+// CHECK-NEXT: (output layout_a__super)
+// CHECK-NEXT: (output layout_b__super__super)
+// CHECK-NEXT: (output result_a__super)
+// CHECK-NEXT: (output result_b__super__super)
+// CHECK-NEXT: (assert (= x0 0))
+// CHECK-NEXT: (assert (= x1 (- x0 layout_b__super__super)))
+// CHECK-NEXT: (assert (= x1 0))
+// CHECK-NEXT: (assert (= layout_a__super layout_b__super__super))
+// CHECK-NEXT: (assert (= result_a__super layout_a__super))
+// CHECK-NEXT: (assert (= result_b__super__super layout_b__super__super))
+// CHECK-NEXT: (end-module)
+
+#[picus_analyze]
+component Top() {
+  public a := NondetReg(0);
+  public b := Reg(0);
+  AliasLayout!(a, b);
+}

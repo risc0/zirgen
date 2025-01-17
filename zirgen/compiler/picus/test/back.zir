@@ -1,0 +1,13 @@
+// RUN: zirgen %s --emit=picus | FileCheck %s
+
+// CHECK: (prime-number 2013265921)
+// CHECK: (begin-module Count)
+// CHECK: (assume-deterministic x1__super__super)
+// CHECK: (end-module)
+
+#[picus_analyze]
+component Count(first: Val) {
+  public a : Reg;
+  a := Reg(a@1);
+}
+

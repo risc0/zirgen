@@ -12,7 +12,10 @@ filegroup(
 
 glob_lit_tests(
     data = [":imports"],
-    size_override = {"top.zir": "medium"},
+    size_override = {
+        "top.zir": "medium",
+        "sha2.zir": "medium",
+    },
     test_file_exts = ["zir"],
 )
 
@@ -66,6 +69,7 @@ build_circuit(
         "--validity-split-count=" + str(SPLIT_VALIDITY),
         "--step-split-count=" + str(SPLIT_STEP),
         "--parallel-witgen",
+        "--protocol-info=KECCAK:v1_______"
     ],
 )
 
@@ -76,22 +80,16 @@ build_circuit(
     srcs = ["predicates.cpp"],
     outs = [fn for zkr in ZKRS for fn in [
         zkr + ".zkr",
-        zkr + ".zkr.dbg",
     ]],
     data = ["@zirgen//zirgen/circuit/keccak2:validity.ir"],
     extra_args = ["--keccak-ir=$(location :validity.ir)"],
     deps = ["//zirgen/circuit/predicates:lib"],
 )
 
-pkg_zip(
-    name = "keccak_zkr",
-    srcs = [x + ".zkr" for x in ZKRS],
-)
-
 filegroup(
     name = "bootstrap",
     srcs = [
         ":codegen",
-        ":keccak_zkr",
+        ":predicates",
     ],
 )

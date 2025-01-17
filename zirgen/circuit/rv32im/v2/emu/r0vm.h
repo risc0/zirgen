@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@
 #include "zirgen/compiler/zkp/poseidon2.h"
 
 #include "zirgen/circuit/rv32im/v2/emu/p2.h"
+#include "zirgen/circuit/rv32im/v2/emu/sha.h"
 
 namespace zirgen::rv32im_v2 {
 
@@ -106,11 +107,7 @@ template <typename Context> struct R0Context {
 
   // Generic ecall handling for user mode
   bool doUserECALL() {
-    uint32_t dispatch = loadReg(REG_A7);
-    if (dispatch >= 512) {
-      return doTrap(TrapCause::ENVIRONMENT_CALL_FROM_U_MODE);
-    }
-    uint32_t dispatchAddr = loadMem(ECALL_DISPATCH_WORD + dispatch);
+    uint32_t dispatchAddr = loadMem(ECALL_DISPATCH_WORD);
     if (dispatchAddr % 4 != 0 || dispatchAddr < KERNEL_START_ADDR) {
       return doTrap(TrapCause::ENVIRONMENT_CALL_FROM_U_MODE);
     }
@@ -137,8 +134,8 @@ template <typename Context> struct R0Context {
   bool doTerminate() {
     context.ecallCycle(STATE_MACHINE_ECALL, STATE_TERMINATE, 0, 0, 0);
     done = true;
-    loadMem(USER_REGS_WORD + REG_A0);
-    loadMem(USER_REGS_WORD + REG_A1);
+    loadReg(REG_A0);
+    loadReg(REG_A1);
     context.ecallCycle(STATE_TERMINATE, STATE_SUSPEND, 0, 0, 0);
     return false;
   }
@@ -172,18 +169,22 @@ template <typename Context> struct R0Context {
     std::vector<uint8_t> bytes(len);
     rlen = context.read(fd, bytes.data(), len);
     storeReg(REG_A0, rlen);
+    uint32_t i = 0;
     if (rlen == 0) {
       context.pc += 4;
     }
     context.ecallCycle(curState, nextState(ptr, rlen), ptr / 4, ptr % 4, rlen);
     curState = nextState(ptr, rlen);
-    uint32_t i = 0;
     while (rlen > 0 && ptr % 4 != 0) {
       writeByte(ptr, bytes[i]);
-      // context.hostReadBytes(ptr);
       ptr++;
       i++;
       rlen--;
+      if (rlen == 0) {
+        context.pc += 4;
+      }
+      context.ecallCycle(curState, nextState(ptr, rlen), ptr / 4, ptr % 4, rlen);
+      curState = nextState(ptr, rlen);
     }
     while (rlen >= 4) {
       uint32_t words = std::min(rlen / 4, uint32_t(4));
@@ -194,12 +195,12 @@ template <typename Context> struct R0Context {
             word |= bytes[i + k] << (8 * k);
           }
           storeMem(ptr / 4, word);
+          ptr += 4;
+          i += 4;
+          rlen -= 4;
         } else {
           storeMem(SAFE_WRITE_WORD, 0);
         }
-        ptr += words;
-        i += words;
-        rlen -= words;
       }
       if (rlen == 0) {
         context.pc += 4;
@@ -207,12 +208,16 @@ template <typename Context> struct R0Context {
       context.ecallCycle(curState, nextState(ptr, rlen), ptr / 4, ptr % 4, rlen);
       curState = nextState(ptr, rlen);
     }
-    while (rlen > 0 && ptr % 4 != 0) {
+    while (rlen > 0) {
       writeByte(ptr, bytes[i]);
-      // context.hostReadBytes(ptr);
       ptr++;
       i++;
       rlen--;
+      if (rlen == 0) {
+        context.pc += 4;
+      }
+      context.ecallCycle(curState, nextState(ptr, rlen), ptr / 4, ptr % 4, rlen);
+      curState = nextState(ptr, rlen);
     }
     return false;
   }
@@ -250,6 +255,14 @@ template <typename Context> struct R0Context {
     return false;
   }
 
+  bool doSha2() {
+    // Bump PC
+    context.pc += 4;
+    context.ecallCycle(STATE_MACHINE_ECALL, STATE_SHA_ECALL, 0, 0, 0);
+    ShaECall(context);
+    return false;
+  }
+
   // Machine mode ECALL, allow for overrides in subclasses
   bool doMachineECALL() {
     switch (loadReg(REG_A7)) {
@@ -261,6 +274,8 @@ template <typename Context> struct R0Context {
       return doHostWrite();
     case HOST_ECALL_POSEIDON2:
       return doPoseidon2();
+    case HOST_ECALL_SHA2:
+      return doSha2();
     default:
       throw std::runtime_error("unimplemented machine ECALL");
     }

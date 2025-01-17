@@ -19,6 +19,6 @@
 
 namespace zirgen::rv32im_v2 {
 
-ExecutionTrace runSegment(const Segment& segment);
+ExecutionTrace runSegment(const Segment& segment, size_t segmentSize);
 
 } // namespace zirgen::rv32im_v2

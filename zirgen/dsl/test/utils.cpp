@@ -98,18 +98,21 @@ Expr ArrayLiteral(ExprVec&& elements) {
 
 Comp Component(string name, ParamVec&& tp, ParamVec&& p, Expr&& body) {
   auto kind = ast::Component::Kind::Object;
-  return make_unique<ast::Component>(loc, kind, name, std::move(tp), std::move(p), std::move(body));
+  return make_unique<ast::Component>(
+      loc, kind, name, AttrVec{}, std::move(tp), std::move(p), std::move(body));
 }
 
 Comp Function(string name, ParamVec&& tp, ParamVec&& p, Expr&& body) {
   auto kind = ast::Component::Kind::Function;
-  return make_unique<ast::Component>(loc, kind, name, std::move(tp), std::move(p), std::move(body));
+  return make_unique<ast::Component>(
+      loc, kind, name, AttrVec{}, std::move(tp), std::move(p), std::move(body));
 }
 
 Comp Extern(string name, ParamVec&& p, Expr&& resultType) {
   auto kind = ast::Component::Kind::Extern;
+  ast::Attribute::Vec attributes;
   return make_unique<ast::Component>(
-      loc, kind, name, ParamVec{}, std::move(p), std::move(resultType));
+      loc, kind, name, AttrVec{}, ParamVec{}, std::move(p), std::move(resultType));
 }
 
 Mod Module(CompVec&& components) {
