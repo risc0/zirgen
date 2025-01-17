@@ -162,7 +162,7 @@ component ExtractBits(steps: Array<DoShaStep, 8>, i: Val) {
 
 component LoadWin(kf: Array<Val, 100>, round: OneHot<8>, block: Val) {
   blockSelect := OneHot<4>(block);
-  other := reduce for i : 0..6 { round[2 + i] } init 0 with Add; 
+  other := reduce for i : 0..6 { round[2 + i] } init 0 with Add;
   [round[0], round[1], other] -> (
     blockSelect -> (
       for i : 0..8 { for j : 0..2 { kf[(i + 0) * 2 + j] }},
@@ -230,6 +230,7 @@ component ExtractBits2(a: Array<Array<Val, 32>, 4>, e: Array<Array<Val, 32>, 4>,
   )
 }
 
+#[picus_analyze]
 component ShaNextBlockCycle(back1: TopState) {
   Log("ShaNextBlockCycle");
   // Extract current a + e values in packed format

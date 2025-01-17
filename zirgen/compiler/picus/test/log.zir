@@ -3,16 +3,13 @@
 // CHECK: (prime-number 2013265921)
 // CHECK-NEXT: (begin-module Top)
 // CHECK-NEXT: (output layout_x__super__super)
-// CHECK-NEXT: (output result_x__super__super)
-// CHECK-NEXT: (output result_x_reg__super)
 // CHECK-NEXT: (assert (= x0 5))
-// CHECK-NEXT: (call [layout_x__super__super x1__super__super x1_reg__super] Reg [x0])
+// CHECK-NEXT: (assert (= x1 (- x0 layout_x__super__super)))
+// CHECK-NEXT: (assert (= x1 0))
 // CHECK-NEXT: (call [] Log [ ])
-// CHECK-NEXT: (assert (= result_x__super__super x1__super__super))
-// CHECK-NEXT: (assert (= result_x_reg__super x1_reg__super))
 // CHECK-NEXT: (end-module)
 
-#[picus]
+#[picus_analyze]
 component Top() {
   x := Reg(5);
   Log("x = %u", x);
