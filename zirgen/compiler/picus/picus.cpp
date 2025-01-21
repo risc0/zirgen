@@ -243,7 +243,7 @@ private:
     }
     llvm::interleave(
         flatten(result), os, [&](Signal s) { os << s.str(); }, " ");
-    os << "] " << construct.getCallee() << " [";
+    os << "] " << canonicalizeIdentifier(construct.getCallee().str()) << " [";
     llvm::interleave(
         construct.getConstructParam(),
         os,
