@@ -6,18 +6,17 @@
 // CHECK-NEXT: (output layout_b__super__super)
 // CHECK-NEXT: (output result_a__super)
 // CHECK-NEXT: (output result_b__super__super)
-// CHECK-NEXT: (output result_b_reg__super)
 // CHECK-NEXT: (assert (= x0 0))
-// CHECK-NEXT: (call [layout_b__super__super x1__super__super x1_reg__super] Reg [x0])
+// CHECK-NEXT: (assert (= x1 (- x0 layout_b__super__super)))
+// CHECK-NEXT: (assert (= x1 0))
 // CHECK-NEXT: (assert (= layout_a__super layout_b__super__super))
 // CHECK-NEXT: (assert (= result_a__super layout_a__super))
-// CHECK-NEXT: (assert (= result_b__super__super x1__super__super))
-// CHECK-NEXT: (assert (= result_b_reg__super x1_reg__super))
+// CHECK-NEXT: (assert (= result_b__super__super layout_b__super__super))
 // CHECK-NEXT: (end-module)
 
-#[picus]
+#[picus_analyze]
 component Top() {
-  a := NondetReg(0);
-  b := Reg(0);
+  public a := NondetReg(0);
+  public b := Reg(0);
   AliasLayout!(a, b);
 }

@@ -72,5 +72,6 @@ build_circuit(
         # "--step-split-count=" + str(SPLIT_STEP),
         "--validity-split-count=" + str(SPLIT_VALIDITY),
         # "--parallel-witgen",
+        "--protocol-info=RV32IM:v2_______",
     ],
 )

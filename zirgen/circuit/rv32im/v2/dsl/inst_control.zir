@@ -109,7 +109,7 @@ component ControlSuspend(cycle: Reg, input: InstInput) {
     // Write PC + original mode
     MemoryWrite(cycle, SuspendPcWord(), input.pc_u32);
     MemoryWrite(cycle, SuspendModeWord(), ValU32(input.mode, 0));
-    // Go to cycle 2 (i.e. write root
+    // Go to cycle 2 (i.e. write root)
     InstOutput(ValU32(0, 0), StateSuspend(), input.mode)
   }
 }

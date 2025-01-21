@@ -42,8 +42,8 @@ component MachineECall(cycle: Reg, input: InstInput, pc_addr: Val) {
 
 component ECallTerminate(cycle: Reg, input: InstInput) {
   input.state = StateTerminate();
-  a0 := MemoryRead(cycle, UserRegBase() + RegA0());
-  a1 := MemoryRead(cycle, UserRegBase() + RegA1());
+  a0 := MemoryRead(cycle, MachineRegBase() + RegA0());
+  a1 := MemoryRead(cycle, MachineRegBase() + RegA1());
   global termA0low := Reg(a0.low);
   global termA0high := Reg(a0.high);
   global termA1low := Reg(a1.low);

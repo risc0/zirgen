@@ -26,6 +26,9 @@ ZKRS = [
     ("lift_" + str(po2))
     for po2 in range(14, 25)
 ] + [
+    ("lift_rv32im_v2_" + str(po2))
+    for po2 in range(14, 25)
+] + [
     "test_recursion_circuit",
     "join",
     "resolve",
@@ -40,6 +43,8 @@ build_circuit(
         zkr + ".zkr",
         zkr + ".zkr.dbg",
     ]],
+    data = ["//zirgen/circuit/rv32im/v2/dsl:validity.ir"],
+    extra_args = ["--rv32im-v2-ir=$(location //zirgen/circuit/rv32im/v2/dsl:validity.ir)"],
     deps = [":lib"],
 )
 

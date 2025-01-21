@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -88,7 +88,7 @@ template <typename T> static void writeOutObj(Buffer out, T outData) {
   out.setDigest(1, outData.digest(), "outDigest");
 }
 
-template <typename Func> void addLift(Module& module, const std::string name, Func func) {
+template <typename Func> void addRv32imV1Lift(Module& module, const std::string& name, Func func) {
   for (size_t po2 = 14; po2 < 25; ++po2) {
     module.addFunc<3>(name + "_" + std::to_string(po2),
                       {gbuf(recursion::kOutSize), ioparg(), ioparg()},
@@ -105,7 +105,23 @@ template <typename Func> void addLift(Module& module, const std::string name, Fu
   }
 }
 
-template <typename Func> void addJoin(Module& module, const std::string name, Func func) {
+void addRv32imV2Lift(Module& module, const std::string name, const std::string& irPath) {
+  auto circuit = getInterfaceZirgen(module.getModule().getContext(), irPath);
+  for (size_t po2 = 14; po2 < 25; ++po2) {
+    module.addFunc<3>(name + "_" + std::to_string(po2),
+                      {gbuf(recursion::kOutSize), ioparg(), ioparg()},
+                      [&](Buffer out, ReadIopVal rootIop, ReadIopVal seal) {
+                        DigestVal root = rootIop.readDigests(1)[0];
+                        VerifyInfo info = zirgen::verify::verify(seal, po2, *circuit);
+                        llvm::ArrayRef inStream(info.out);
+                        ReceiptClaim claim = ReceiptClaim::fromRv32imV2(inStream, po2);
+                        writeOutObj(out, claim);
+                        out.setDigest(0, root, "root");
+                      });
+  }
+}
+
+template <typename Func> void addJoin(Module& module, const std::string& name, Func func) {
   module.addFunc<4>(name,
                     {gbuf(recursion::kOutSize), ioparg(), ioparg(), ioparg()},
                     [&](Buffer out, ReadIopVal rootIop, ReadIopVal in1, ReadIopVal in2) {
@@ -119,7 +135,7 @@ template <typename Func> void addJoin(Module& module, const std::string name, Fu
                     });
 }
 
-template <typename Func> void addResolve(Module& module, const std::string name, Func func) {
+template <typename Func> void addResolve(Module& module, const std::string& name, Func func) {
   module.addFunc<6>(name,
                     {gbuf(recursion::kOutSize), ioparg(), ioparg(), ioparg(), ioparg(), ioparg()},
                     [&](Buffer out,
@@ -146,7 +162,7 @@ template <typename Func> void addResolve(Module& module, const std::string name,
                     });
 }
 
-template <typename Func> void addSingleton(Module& module, const std::string name, Func func) {
+template <typename Func> void addSingleton(Module& module, const std::string& name, Func func) {
   module.addFunc<3>(name,
                     {gbuf(recursion::kOutSize), ioparg(), ioparg()},
                     [&](Buffer out, ReadIopVal rootIop, ReadIopVal in) {
@@ -159,7 +175,7 @@ template <typename Func> void addSingleton(Module& module, const std::string nam
                     });
 }
 
-template <typename Func> void addUnion(Module& module, const std::string name, Func func) {
+template <typename Func> void addUnion(Module& module, const std::string& name, Func func) {
   module.addFunc<4>(name,
                     {gbuf(recursion::kOutSize), ioparg(), ioparg(), ioparg()},
                     [&](Buffer out, ReadIopVal rootIop, ReadIopVal leftIop, ReadIopVal rightIop) {
@@ -176,6 +192,12 @@ template <typename Func> void addUnion(Module& module, const std::string name, F
 
 static cl::opt<std::string>
     outputDir("output-dir", cl::desc("Output directory"), cl::value_desc("dir"), cl::Required);
+
+static cl::opt<std::string>
+    rv32imV2IR("rv32im-v2-ir",
+               cl::desc("rv32im-v2 validity polynomial IR"),
+               cl::value_desc("path"),
+               cl::init("bazel-bin/zirgen/circuit/rv32im/v2/dsl/validity.ir"));
 
 int main(int argc, char* argv[]) {
   llvm::InitLLVM y(argc, argv);
@@ -196,7 +218,8 @@ int main(int argc, char* argv[]) {
                       out.setDigest(1, claim, "claim");
                     });
 
-  addLift(module, "lift", [](ReceiptClaim claim) { return claim; });
+  addRv32imV1Lift(module, "lift", [](ReceiptClaim claim) { return claim; });
+  addRv32imV2Lift(module, "lift_rv32im_v2", rv32imV2IR.getValue());
 
   addJoin(module, "join", [&](ReceiptClaim a, ReceiptClaim b) { return join(a, b); });
 
