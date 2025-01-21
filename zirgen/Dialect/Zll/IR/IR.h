@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@
 #include "mlir/Interfaces/SideEffectInterfaces.h"
 #include "zirgen/compiler/codegen/protocol_info_const.h"
 
+#include "zirgen/Dialect/ByteCode/Interfaces/Interfaces.h"
 #include "zirgen/Dialect/Zll/IR/BigInt.h"
 #include "zirgen/Dialect/Zll/IR/Codegen.h"
 #include "zirgen/Dialect/Zll/IR/Enums.h.inc"

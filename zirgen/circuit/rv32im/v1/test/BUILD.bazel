@@ -11,8 +11,8 @@ cc_binary(
     name = "bigint2-makeinc",
     srcs = ["bigint2-makeinc.cpp"],
     deps = [
-        "//zirgen/Dialect/BigInt/IR",
         "//zirgen/Dialect/BigInt/Bytecode",
+        "//zirgen/Dialect/BigInt/IR",
         "//zirgen/circuit/bigint:lib",
     ],
 )
@@ -36,8 +36,8 @@ cc_library(
         "runner.h",
     ],
     deps = [
-        "//zirgen/circuit/rv32im/v1/edsl:lib",
         "//zirgen/Dialect/BigInt/Bytecode",
+        "//zirgen/circuit/rv32im/v1/edsl:lib",
         "//zirgen/compiler/zkp",
     ],
 )
@@ -105,8 +105,8 @@ risc0_cc_binary(
     name = "test-bigint2-guest",
     srcs = ["test-bigint2-guest.cpp"],
     deps = [
-      ":guest",
-      ":bigint2-inc",
+        ":bigint2-inc",
+        ":guest",
     ],
 )
 

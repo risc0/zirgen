@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -1316,6 +1316,31 @@ void GetOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
       cg.getStringAttr("get"),
       /*ContextArgs=*/{"ctx"},
       {getBuf(), cg.guessAttributeType(getOffsetAttr()), cg.guessAttributeType(getBackAttr())});
+}
+
+void ConstOp::getByteCodeIntArgs(llvm::SmallVectorImpl<size_t>& intArgs) {
+  llvm::append_range(intArgs, getCoefficients());
+}
+
+void GetOp::getByteCodeIntArgs(llvm::SmallVectorImpl<size_t>& intArgs) {
+  intArgs.push_back(getOffset());
+  intArgs.push_back(getBack());
+}
+
+void GetGlobalOp::getByteCodeIntArgs(llvm::SmallVectorImpl<size_t>& intArgs) {
+  intArgs.push_back(getOffset());
+}
+
+void AndEqzOp::getByteCodeIntArgs(llvm::SmallVectorImpl<size_t>& intArgs) {
+  if (auto mixPow = getOperation()->getAttrOfType<IntegerAttr>("zirgen.mixPowerIndex")) {
+    intArgs.push_back(mixPow.getInt());
+  }
+}
+
+void AndCondOp::getByteCodeIntArgs(llvm::SmallVectorImpl<size_t>& intArgs) {
+  if (auto mixPow = getOperation()->getAttrOfType<IntegerAttr>("zirgen.mixPowerIndex")) {
+    intArgs.push_back(mixPow.getInt());
+  }
 }
 
 void SetOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {

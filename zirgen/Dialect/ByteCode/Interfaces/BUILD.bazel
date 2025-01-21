@@ -1,0 +1,48 @@
+load("@llvm-project//mlir:tblgen.bzl", "gentbl_cc_library", "td_library")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+td_library(
+    name = "TdFiles",
+    srcs = [
+        "Interfaces.td",
+    ],
+    deps = [
+        "@llvm-project//mlir:OpBaseTdFiles",
+    ],
+)
+
+gentbl_cc_library(
+    name = "InterfacesIncGen",
+    tbl_outs = [
+        (
+            [
+                "-gen-op-interface-decls",
+            ],
+            "Interfaces.h.inc",
+        ),
+        (
+            ["-gen-op-interface-defs"],
+            "Interfaces.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Interfaces.td",
+    deps = [":TdFiles"],
+)
+
+cc_library(
+    name = "Interfaces",
+    srcs = [
+        "Interfaces.cpp",
+    ],
+    hdrs = [
+        "Interfaces.h",
+    ],
+    deps = [
+        ":InterfacesIncGen",
+        "@llvm-project//mlir:IR",
+    ],
+)

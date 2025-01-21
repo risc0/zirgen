@@ -9,7 +9,6 @@ td_library(
     srcs = ["Passes.td"],
     deps = [
         "@llvm-project//mlir:OpBaseTdFiles",
-        "@llvm-project//mlir:RewritePassBaseTdFiles",
     ],
 )
 
@@ -30,30 +29,26 @@ gentbl_cc_library(
 )
 
 cc_library(
-    name = "passes",
+    name = "Transforms",
     srcs = [
-        "AddReductions.cpp",
-        "BalancedSplit.cpp",
-        "ComputeTaps.cpp",
-        "DropConstraints.cpp",
-        "ExtractPolyMix.cpp",
-        "IfToMultiply.cpp",
-        "InlineFpExt.cpp",
-        "MakePolynomial.cpp",
-        "MultiplyToIf.cpp",
-        "PassDetail.h",
-        "SortForReproducibility.cpp",
-        "SplitStage.cpp",
+        "Bufferize.cpp",
+        "Encoder.cpp",
+        "Executor.cpp",
+        "NaiveEncode.cpp",
+        "Schedule.cpp",
+        "ScheduleZll.cpp",
     ],
     hdrs = [
-        "BalancedSplit.h",
+        "Bufferize.h",
+        "Executor.h",
         "Passes.h",
+        "Schedule.h",
     ],
     deps = [
         ":PassesIncGen",
-        "//zirgen/Dialect/IOP/IR",
-        "//zirgen/Dialect/Zll/Analysis",
+        "//zirgen/Dialect/ByteCode/IR",
         "//zirgen/Dialect/Zll/IR",
         "@llvm-project//mlir:FuncDialect",
+        "@llvm-project//mlir:Pass",
     ],
 )

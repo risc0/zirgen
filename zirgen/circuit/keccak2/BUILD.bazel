@@ -30,18 +30,9 @@ zirgen_build(
     zir_file = ":top.zir",
 )
 
-SPLIT_VALIDITY = 5
-
 SPLIT_STEP = 16
 
 OUTS = ZIRGEN_OUTS + [
-    fn
-    for i in range(SPLIT_VALIDITY)
-    for fn in [
-        "rust_poly_fp_" + str(i) + ".cpp",
-        "eval_check_" + str(i) + ".cu",
-    ]
-] + [
     fn
     for i in range(SPLIT_STEP)
     for fn in [
@@ -50,6 +41,8 @@ OUTS = ZIRGEN_OUTS + [
     ]
 ] + [
     "eval_check.cuh",
+    "eval_check_bc.cu.inc",
+    "poly_fp_bc.cpp.inc",
     "steps.h",
     "steps.cuh",
     "layout.h.inc",
@@ -66,10 +59,9 @@ build_circuit(
         "-I",
         "zirgen/circuit/keccak2",
         "--circuit-name=keccak",
-        "--validity-split-count=" + str(SPLIT_VALIDITY),
         "--step-split-count=" + str(SPLIT_STEP),
         "--parallel-witgen",
-        "--protocol-info=KECCAK:v1_______"
+        "--protocol-info=KECCAK:v1_______",
     ],
 )
 

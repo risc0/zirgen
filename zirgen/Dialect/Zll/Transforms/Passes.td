@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -82,6 +82,28 @@ def SortForReproducibility : Pass<"sort-for-reproducibility"> {
      to undo the varation in argument order.
   }];
   let constructor = "zirgen::Zll::createSortForReproducibilityPass()";
+}
+
+def ExtractPolyMix : Pass<"extract-poly-mix", "mlir::func::FuncOp"> {
+  let summary = "Extract poly_mix from zll.and_eqz and zll.and_cond operations";
+  let description = [{
+     This removes zll.and_eqz, zll.true, and zll.and_cond operations from the functions present.
+     It transforms them into array lookups of anew `poly_mix` argument which provides all the powers
+     of poly_mix.
+
+     The powers needed must be generated elsewhere; this just assumes that the powers available
+     are the same ones as provided by MixPowerAnalysis.
+  }];
+  let constructor = "zirgen::Zll::createExtractPolyMixPass()";
+}
+
+def AnnotatePolyMix : Pass<"annotate-poly-mix", "mlir::func::FuncOp"> {
+  let summary = "Add zirgen.mixPowerIndex to zll.and_eqz and zlll.and_cond";
+  let description = [{
+     This adds the mix power index from MixPowerAnalysis as a `zirgen.mixPowerIndex` attribute
+     on zll.and_eqz and zll.and_cond operations
+  }];
+  let constructor = "zirgen::Zll::createAnnotatePolyMixPass()";
 }
 
 #endif // ZLL_TRANSFORM_PASSES

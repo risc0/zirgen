@@ -20,9 +20,9 @@ cc_library(
         "//zirgen/circuit/rv32im/v1/edsl:rv32im",
     ],
     deps = [
+        "//zirgen/Dialect/BigInt/Bytecode",
         "//zirgen/Dialect/BigInt/IR",
         "//zirgen/Dialect/BigInt/Transforms",
-        "//zirgen/Dialect/BigInt/Bytecode",
         "//zirgen/circuit/recursion:lib",
         "//zirgen/circuit/verify:lib",
         "//zirgen/compiler/edsl",
@@ -33,8 +33,8 @@ cc_binary(
     name = "bibc-exec",
     srcs = ["bibc-exec.cpp"],
     deps = [
-        "//zirgen/Dialect/BigInt/IR",
         "//zirgen/Dialect/BigInt/Bytecode",
+        "//zirgen/Dialect/BigInt/IR",
         "@llvm-project//llvm:Support",
         "@llvm-project//mlir:MlirOptLib",
     ],
@@ -44,10 +44,10 @@ cc_binary(
     name = "bigint2c",
     srcs = ["bigint2c.cpp"],
     deps = [
-        "//zirgen/circuit/bigint:lib",
         "//zirgen/Dialect/BigInt/Bytecode",
         "//zirgen/Dialect/BigInt/IR",
         "//zirgen/Dialect/BigInt/Transforms",
+        "//zirgen/circuit/bigint:lib",
         "@llvm-project//llvm:Support",
         "@llvm-project//mlir:MlirOptLib",
     ],
@@ -71,22 +71,22 @@ BLOBS = [
 genrule(
     name = "modpow65537_4096",
     outs = ["modpow65537_4096.blob"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modpow65537 --bitwidth 4096 > $(OUTS)",
     exec_tools = [":bigint2c"],
-    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modpow65537 --bitwidth 4096 > $(OUTS)"
 )
 
 genrule(
     name = "ec_double_256",
     outs = ["ec_double_256.blob"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=ec_double --bitwidth 256 > $(OUTS)",
     exec_tools = [":bigint2c"],
-    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=ec_double --bitwidth 256 > $(OUTS)"
 )
 
 genrule(
     name = "ec_add_256",
     outs = ["ec_add_256.blob"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=ec_add --bitwidth 256 > $(OUTS)",
     exec_tools = [":bigint2c"],
-    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=ec_add --bitwidth 256 > $(OUTS)"
 )
 
 genrule(
@@ -127,33 +127,32 @@ genrule(
 genrule(
     name = "modadd_256",
     outs = ["modadd_256.blob"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modadd --bitwidth 256 > $(OUTS)",
     exec_tools = [":bigint2c"],
-    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modadd --bitwidth 256 > $(OUTS)"
 )
 
 genrule(
     name = "modinv_256",
     outs = ["modinv_256.blob"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modinv --bitwidth 256 > $(OUTS)",
     exec_tools = [":bigint2c"],
-    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modinv --bitwidth 256 > $(OUTS)"
 )
 
 genrule(
     name = "modmul_256",
     outs = ["modmul_256.blob"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modmul --bitwidth 256 > $(OUTS)",
     exec_tools = [":bigint2c"],
-    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modmul --bitwidth 256 > $(OUTS)"
 )
 
 genrule(
     name = "modsub_256",
     outs = ["modsub_256.blob"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modsub --bitwidth 256 > $(OUTS)",
     exec_tools = [":bigint2c"],
-    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modsub --bitwidth 256 > $(OUTS)"
 )
 
 pkg_zip(
     name = "bigint_blob",
     srcs = [x + ".blob" for x in BLOBS],
 )
-

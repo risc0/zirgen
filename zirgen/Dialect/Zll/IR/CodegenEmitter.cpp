@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -97,7 +97,8 @@ StringAttr CodegenEmitter::canonIdent(StringAttr identAttr, IdentKind idt) {
   for (char ch : ident) {
     // Special characters aren't supported by any of our output languages, so replace with
     // underscores.
-    if (ch == '$' || ch == '@' || ch == ' ' || ch == ':' || ch == '<' || ch == '>' || ch == ',') {
+    if (ch == '$' || ch == '@' || ch == ' ' || ch == ':' || ch == '<' || ch == '>' || ch == ',' ||
+        ch == '.') {
       id.push_back('_');
     } else {
       id.push_back(ch);
@@ -326,6 +327,11 @@ void CodegenEmitter::emitStatement(Operation* op) {
   // If it handles this case specially, let it do its thing.
   if (auto statementOp = dyn_cast<CodegenStatementOpInterface>(op)) {
     statementOp.emitStatement(*this);
+    return;
+  }
+
+  if (opts.statementOps.contains(op->getName().getStringRef())) {
+    emitExpr(op);
     return;
   }
 

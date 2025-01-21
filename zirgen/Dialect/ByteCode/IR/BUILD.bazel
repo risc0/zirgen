@@ -1,0 +1,129 @@
+load("@llvm-project//mlir:tblgen.bzl", "gentbl_cc_library", "td_library")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+td_library(
+    name = "TdFiles",
+    srcs = [
+        "Attrs.td",
+        "Dialect.td",
+        "Ops.td",
+        "Types.td",
+    ],
+    deps = [
+        "//zirgen/Dialect/ByteCode/Interfaces:TdFiles",
+        "@llvm-project//mlir:InferTypeOpInterfaceTdFiles",
+        "@llvm-project//mlir:OpBaseTdFiles",
+        "@llvm-project//mlir:SideEffectInterfacesTdFiles",
+    ],
+)
+
+gentbl_cc_library(
+    name = "AttrsIncGen",
+    tbl_outs = [
+        (
+            [
+                "-gen-attrdef-decls",
+            ],
+            "Attrs.h.inc",
+        ),
+        (
+            [
+                "-gen-attrdef-defs",
+            ],
+            "Attrs.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Attrs.td",
+    deps = [":TdFiles"],
+)
+
+gentbl_cc_library(
+    name = "TypesIncGen",
+    tbl_outs = [
+        (
+            [
+                "-gen-typedef-decls",
+            ],
+            "Types.h.inc",
+        ),
+        (
+            [
+                "-gen-typedef-defs",
+            ],
+            "Types.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Types.td",
+    deps = [":TdFiles"],
+)
+
+gentbl_cc_library(
+    name = "OpsIncGen",
+    tbl_outs = [
+        (
+            [
+                "-gen-dialect-decls",
+                "-dialect=zbytecode",
+            ],
+            "Dialect.h.inc",
+        ),
+        (
+            [
+                "-gen-dialect-defs",
+                "-dialect=zbytecode",
+            ],
+            "Dialect.cpp.inc",
+        ),
+        (
+            ["-gen-op-decls"],
+            "Ops.h.inc",
+        ),
+        (
+            ["-gen-op-defs"],
+            "Ops.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Ops.td",
+    deps = [":TdFiles"],
+)
+
+cc_library(
+    name = "IR",
+    srcs = [
+        "Attrs.cpp",
+        "Dialect.cpp",
+        "Ops.cpp",
+    ],
+    hdrs = [
+        "ByteCode.h",
+    ],
+    deps = [
+        ":AttrsIncGen",
+        ":OpsIncGen",
+        ":TypesIncGen",
+        "//zirgen/Dialect/ByteCode/Interfaces",
+        "@llvm-project//mlir:FuncDialect",
+        "@llvm-project//mlir:IR",
+        "@llvm-project//mlir:InferTypeOpInterface",
+    ],
+)
+
+cc_library(
+    name = "Codegen",
+    srcs = [
+        "Codegen.cpp",
+    ],
+    hdrs = [
+        "Codegen.h",
+    ],
+    deps = [
+        ":IR",
+        "//zirgen/Dialect/Zll/IR",
+    ],
+)

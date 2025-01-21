@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
 
 #include "zirgen/Dialect/BigInt/IR/BigInt.h"
 #include "zirgen/Dialect/BigInt/Transforms/Passes.h"
+#include "zirgen/Dialect/ByteCode/IR/ByteCode.h"
+#include "zirgen/Dialect/ByteCode/Transforms/Passes.h"
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
 #include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
 #include "zirgen/Dialect/ZStruct/Transforms/Passes.h"
@@ -30,19 +32,26 @@ using namespace zirgen;
 
 int main(int argc, char** argv) {
   mlir::DialectRegistry registry;
+
   mlir::registerCanonicalizerPass();
   mlir::registerCSEPass();
   mlir::registerSymbolPrivatizePass();
   mlir::registerInlinerPass();
+  mlir::registerTransformsPasses();
+
   zirgen::BigInt::registerPasses();
   zirgen::Zll::registerPasses();
   zirgen::ZStructToZll::registerPasses();
   zirgen::ZStruct::registerPasses();
   zirgen::dsl::registerPasses();
+  zirgen::ByteCode::registerPasses();
+
   registry.insert<mlir::func::FuncDialect>();
   registry.insert<BigInt::BigIntDialect>();
   registry.insert<Zll::ZllDialect>();
   registry.insert<ZStruct::ZStructDialect>();
   registry.insert<Zhlt::ZhltDialect>();
+  registry.insert<ByteCode::ByteCodeDialect>();
+
   return failed(mlir::MlirOptMain(argc, argv, "Zirgen optimizer driver\n", registry));
 }
