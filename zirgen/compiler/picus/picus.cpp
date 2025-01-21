@@ -242,7 +242,7 @@ private:
       os << " ";
     }
     llvm::interleave(
-        flatten(result), os, [&](Signal s) { os << s.str(); }, " ");
+        flatten(result, /*skipLayout=*/true), os, [&](Signal s) { os << s.str(); }, " ");
     os << "] " << canonicalizeIdentifier(construct.getCallee().str()) << " [";
     llvm::interleave(
         construct.getConstructParam(),
@@ -525,9 +525,9 @@ private:
   }
 
   // Returns a flattened list of all the signal names in a signal structure.
-  SmallVector<Signal> flatten(AnySignal signal) {
+  SmallVector<Signal> flatten(AnySignal signal, bool skipLayout = false) {
     SmallVector<Signal> flattened;
-    visit(signal, [&](Signal s) { flattened.push_back(s); });
+    visit(signal, [&](Signal s) { flattened.push_back(s); }, /*visitedLayout=*/skipLayout);
     return flattened;
   }
 
