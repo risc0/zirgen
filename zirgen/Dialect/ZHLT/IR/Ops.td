@@ -64,6 +64,14 @@ def BackOp: ZhltOp<"back", [MemoryEffects<[MemRead]>]> {
   let hasVerifier = 1;
 }
 
+def DirectiveOp: ZhltOp<"directive"> {
+  let summary = "Includes information in the IR that affects downstream compilation";
+  let arguments = (ins StrAttr:$name, Variadic<ZirType>:$args);
+  let assemblyFormat = [{
+    $name `(` $args `:` type($args) `)` attr-dict
+  }];
+}
+
 def MagicOp: ZhltOp<"magic", [Pure]> {
   let summary = "Construct magic value for error recovery";
   let description = [{

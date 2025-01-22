@@ -177,7 +177,8 @@ private:
               ReturnOp,
               GetGlobalLayoutOp,
               AliasLayoutOp,
-              zirgen::Zhlt::BackOp>([&](auto op) { visitOp(op); })
+              zirgen::Zhlt::BackOp,
+              DirectiveOp>([&](auto op) { visitOp(op); })
         .Case<StoreOp, YieldOp, arith::ConstantOp>([](auto) { /* no-op */ })
         .Default([](Operation* op) { llvm::errs() << "unhandled op: " << *op << "\n"; });
   }
@@ -473,6 +474,19 @@ private:
     assert(distance > 0);
     declareSignals(signal, SignalType::AssumeDeterministic);
     valuesToSignals.insert({back.getOut(), signal});
+  }
+
+  void visitOp(DirectiveOp directive) {
+    if (directive.getName() == "AssumeRange") {
+      auto args = directive.getArgs();
+      auto low = cast<Signal>(valuesToSignals.at(args[0]));
+      auto x = cast<Signal>(valuesToSignals.at(args[1]));
+      auto high = cast<Signal>(valuesToSignals.at(args[2]));
+      os << "(assume (<= " << low.str() << " " << x.str() << "))\n";
+      os << "(assume (< " << x.str() << " " << high.str() << "))\n";
+    } else {
+      directive->emitError("Cannot lower this directive to Picus");
+    }
   }
 
   // Constructs a fresh signal structure corresponding to the given type

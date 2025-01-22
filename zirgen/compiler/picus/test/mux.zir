@@ -27,7 +27,6 @@
 // CHECK-NEXT: (assert (= mux_x8__layout__super__super (+ (* x5 result__layout_x_arm0__super__super__super) (* result__layout_first__super__super result__layout_x_arm1__super__super__super))))
 // CHECK-NEXT: (assert (= mux_x8__super__super (+ (* x5 result__layout_x_arm0__super__super__super) (* result__layout_first__super__super result__layout_x_arm1__super__super__super))))
 // CHECK-NEXT: ; end mux
-// CHECK-NEXT: (call [] Log [ ])
 // CHECK-NEXT: (assert (= result_first__super__super result__layout_first__super__super))
 // CHECK-NEXT: (assert (= result_x__super__super result__layout_x__super__super__super))
 // CHECK-NEXT: (end-module)
