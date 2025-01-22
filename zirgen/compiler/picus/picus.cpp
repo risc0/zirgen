@@ -112,6 +112,7 @@ private:
     if (done.count(component))
       return;
 
+    outputSignalCounter = 0;
     os << "(begin-module " << canonicalizeIdentifier(component.getName().str()) << ")\n";
 
     // Non-layout parameters are inputs
@@ -133,6 +134,16 @@ private:
     if (auto layout = component.getLayout()) {
       AnySignal layoutSignal = cast<SignalStruct>(result).get("@layout");
       valuesToSignals.insert({layout, layoutSignal});
+    }
+
+    // Picus doesn't currently handle components without any output signals,
+    // which means we need to inline these in the short term for successful
+    // analysis. But it also means the component is only adding constraints,
+    // so it should probably marked with picus_inline so this information is
+    // available to Picus for its analysis.
+    if (outputSignalCounter == 0) {
+      component->emitWarning(
+          "This component has a trivial output. Did you mean to add the picus_inline attribute?");
     }
 
     for (Operation& op : component.getBody().front()) {
@@ -542,6 +553,7 @@ private:
       op = "input";
       break;
     case SignalType::Output:
+      outputSignalCounter++;
       op = "output";
       break;
     case SignalType::AssumeDeterministic:
@@ -565,6 +577,7 @@ private:
   std::set<ComponentOp> done;
   llvm::DenseMap<Value, AnySignal> valuesToSignals;
   unsigned nameCounter = 0;
+  unsigned outputSignalCounter = 0;
 };
 
 } // namespace

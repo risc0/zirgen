@@ -2,6 +2,7 @@
 // RUN: zirgen --test %s
 
 // Assert that a given value is a bit
+#[picus_inline]
 function AssertBit(val: Val) {
   val * (1 - val) = 0;
 }

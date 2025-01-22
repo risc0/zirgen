@@ -28,6 +28,7 @@ component ShiftRight<SIZE: Val>(in: Array<Val, SIZE>, n: Val) {
   }
 }
 
+#[picus_inline]
 component EqArr<SIZE: Val>(a: Array<Val, SIZE>, b: Array<Val, SIZE>) {
   for i : 0..SIZE {
     a[i] = b[i];

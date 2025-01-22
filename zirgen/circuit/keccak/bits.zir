@@ -7,6 +7,7 @@ function AssertBit(val: Val) {
 }
 
 // Set a register nodeterministically, and then verify it is a bit
+#[picus_inline]
 component NondetBitReg(val: Val) {
   reg := NondetReg(val);
   AssertBit(reg);

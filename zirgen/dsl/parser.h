@@ -46,7 +46,7 @@ public:
 
 protected:
   Component::Ptr parseComponent();
-  Component::Ptr parseExtern();
+  Component::Ptr parseExtern(Attribute::ArrayRef attributes);
   Component::Ptr parseTest();
   Block::Ptr parseBlock();
 
