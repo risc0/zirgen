@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -552,7 +552,8 @@ Zhlt::ComponentOp LoweringImpl::gen(ComponentOp component,
 
   for (NamedAttribute attr : component->getDiscardableAttrs()) {
     StringRef name = attr.getName();
-    if (name == "function" || name == "argument" || name == "generic" || name == "picus") {
+    if (name == "function" || name == "argument" || name == "generic" || name == "picus_analyze" ||
+        name == "picus_inline") {
       ctor->setAttr(name, attr.getValue());
     } else {
       ctor->emitError() << "unknown attribute `" << name << "`";

@@ -57,6 +57,11 @@ BLOBS = [
     "modpow65537_4096",
     "ec_double_256",
     "ec_add_256",
+    "extfield_deg2_add_256",
+    "extfield_deg2_mul_256",
+    "extfield_deg4_mul_256",
+    "extfield_deg2_sub_256",
+    "extfield_xxone_mul_256",
     "modadd_256",
     "modinv_256",
     "modmul_256",
@@ -82,6 +87,41 @@ genrule(
     outs = ["ec_add_256.blob"],
     exec_tools = [":bigint2c"],
     cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=ec_add --bitwidth 256 > $(OUTS)"
+)
+
+genrule(
+    name = "extfield_deg2_add_256",
+    outs = ["extfield_deg2_add_256.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=extfield_deg2_add --bitwidth 256 > $(OUTS)"
+)
+
+genrule(
+    name = "extfield_deg4_mul_256",
+    outs = ["extfield_deg4_mul_256.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=extfield_deg4_mul --bitwidth 256 > $(OUTS)"
+)
+
+genrule(
+    name = "extfield_deg2_mul_256",
+    outs = ["extfield_deg2_mul_256.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=extfield_deg2_mul --bitwidth 256 > $(OUTS)"
+)
+
+genrule(
+    name = "extfield_deg2_sub_256",
+    outs = ["extfield_deg2_sub_256.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=extfield_deg2_sub --bitwidth 256 > $(OUTS)"
+)
+
+genrule(
+    name = "extfield_xxone_mul_256",
+    outs = ["extfield_xxone_mul_256.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=extfield_xxone_mul --bitwidth 256 > $(OUTS)"
 )
 
 genrule(

@@ -257,7 +257,7 @@ def IntoDigestOp : ZllOp<"into_digest", [Pure, EvalOpAdaptor]> {
 }
 
 def FromDigestOp : ZllOp<"from_digest", [Pure, EvalOpAdaptor]> {
-  let summary = "Reinterpret a diest into field elements";
+  let summary = "Reinterpret a digest into field elements";
   let assemblyFormat = [{ $in `:` type($in) `->` custom<ArrType>(type($out)) attr-dict }];
   let arguments = (ins Digest:$in);
   let results = (outs Variadic<Val>:$out);

@@ -5,6 +5,7 @@ import bits;
 import arr;
 
 // The max we can pack into one BB element is 30 bits
+#[picus_inline]
 component Po2(n: Val) {
   arr := [ 0x00000001, 0x00000002, 0x00000004, 0x00000008,
            0x00000010, 0x00000020, 0x00000040, 0x00000080,
