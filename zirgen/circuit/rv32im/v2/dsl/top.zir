@@ -82,7 +82,7 @@ component Top() {
     Poseidon0(cycle, inst_input),
     Poseidon1(cycle, inst_input),
     Sha0(cycle, inst_input),
-    BigInt0(cycle, inst_input) // 12
+    BigInt0(cycle, inst_input)
   );
   // Compute next PC
   pc_word := inst_result.new_pc.low / 4 + inst_result.new_pc.high * 16384;
@@ -96,7 +96,7 @@ component Top() {
 }
 
 component TopRet(x: Val) {
-  x := x;
+  public x := Reg(x);
 }
 
 component Accum(top: TopRet, mix: Array<ExtVal, 3>) {

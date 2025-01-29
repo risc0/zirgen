@@ -311,24 +311,23 @@ std::array<Val, 2> extern_nextPagingIdx(ExecContext& ctx) {
 
 // TODO
 std::array<Val, 16> extern_bigIntExtern(ExecContext& ctx) {
-  return {
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-  };
+  auto ret = ctx.stepHandler.bigIntWitness(ctx.cycle);
+  return {ret[0],
+          ret[1],
+          ret[2],
+          ret[3],
+          ret[4],
+          ret[5],
+          ret[6],
+          ret[7],
+          ret[8],
+          ret[9],
+          ret[10],
+          ret[11],
+          ret[12],
+          ret[13],
+          ret[14],
+          ret[15]};
 }
 
 #if defined(__clang__)
@@ -373,7 +372,9 @@ size_t getShaStateCol() {
 
 std::vector<Back> getBigIntStateBacks(const BigIntState& state) {
   std::vector<Back> backs{
+      {impl::kLayout_Top.instResult.arm12.state.isEcall._super.col, state.isEcall},
       {impl::kLayout_Top.instResult.arm12.state.pc._super.col, state.pc},
+      {impl::kLayout_Top.instResult.arm12.state.polyOp._super.col, state.polyOp},
       {impl::kLayout_Top.instResult.arm12.state.nextState._super.col, state.nextState},
   };
 

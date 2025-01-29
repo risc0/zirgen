@@ -31,6 +31,7 @@ struct StepHandler {
   virtual risc0::Fp lookupCurrent(risc0::Fp table, risc0::Fp index) = 0;
   virtual void memoryDelta(uint32_t cycle, uint32_t addr, uint32_t data, risc0::Fp count) = 0;
   virtual uint32_t getDiffCount(uint32_t cycle) = 0;
+  virtual std::vector<uint32_t> bigIntWitness(uint32_t cycle) = 0;
 };
 
 CircuitParams getDslParams();

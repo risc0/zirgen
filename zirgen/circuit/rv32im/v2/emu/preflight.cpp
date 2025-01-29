@@ -158,6 +158,9 @@ struct PreflightContext {
   }
 
   void bigintCycle(uint32_t curState, uint32_t nextState, BigIntState bigint) {
+    for (uint32_t byte : bigint.bytes) {
+      trace.extra.push_back(byte);
+    }
     cycleCompleteSpecial(curState, nextState, pc, getBigIntStateBacks(bigint));
     physCycles++;
   }
@@ -220,8 +223,7 @@ struct PreflightContext {
     trace.txns.push_back(txn);
   }
 
-  // Since hostWrites are ignored, we can return trash
-  uint32_t hostPeek(uint32_t word) { return 0; }
+  uint32_t hostPeek(uint32_t addr) { return pager.peek(addr); }
 
   // Replay 'rlen'
   uint32_t write(uint32_t fd, const uint8_t* data, uint32_t len) {

@@ -50,10 +50,11 @@ inline void sys_bigint2(uint32_t* entry,
                "mv t2, %1\n"
                "mv t3, %2\n"
                "sub sp, sp, %3\n"
-               "mv a1, %4\n"
-               "mv a2, %5\n"
-               "mv a3, %6\n"
-               "mv a4, %7\n"
+               "mv a0, %4\n"
+               "mv a1, %5\n"
+               "mv a2, %6\n"
+               "mv a3, %7\n"
+               "mv a4, %8\n"
                "ecall\n"
                "add sp, sp, %3\n"
                : // outputs
@@ -61,6 +62,7 @@ inline void sys_bigint2(uint32_t* entry,
                  "r"(verifyProg),
                  "r"(consts),
                  "r"(tmpSpace),
+                 "r"(entry),
                  "r"(a),
                  "r"(b),
                  "r"(c),

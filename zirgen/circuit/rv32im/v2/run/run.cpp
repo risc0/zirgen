@@ -179,6 +179,15 @@ struct ReplayHandler : public StepHandler {
     return preflight.cycles[cycle / 2].diffCount[cycle % 2];
   }
 
+  std::vector<uint32_t> bigIntWitness(uint32_t cycle) override {
+    std::vector<uint32_t> ret;
+    size_t extraPtr = preflight.cycles[cycle].extraPtr;
+    for (size_t i = 0; i < 16; i++) {
+      ret.push_back(preflight.extra[extraPtr + i]);
+    }
+    return ret;
+  }
+
   const PreflightTrace& preflight;
   LookupTables& tables;
   size_t cycle;
@@ -247,7 +256,7 @@ ExecutionTrace runSegment(const Segment& segment, size_t segmentSize) {
     }
 
     for (const Back& back : curCycle.backs) {
-      printf("[%zu]: Inject back(%zu, 0x%08x)\n", i, back.col, back.word);
+      // printf("[%zu]: Inject back(%zu, 0x%08x)\n", i, back.col, back.word);
       trace.data.set(i, back.col, back.word);
     }
   }

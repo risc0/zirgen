@@ -15,29 +15,22 @@ component BigIntExternReturn(
 extern BigIntExtern(): BigIntExternReturn;
 
 // component BigIntAccum(poly: ExtVal, term: ExtVal, tot: ExtVal) {
-//   public poly := poly;
-//   public term := term;
-//   public tot := tot;
+//   public poly := ExtReg(poly);
+//   public term := ExtReg(term);
+//   public tot := ExtReg(tot);
 // }
 
 component BigIntState(
-  pc: Val,                   // RamReg readInst;
-  // polyOp: Val,               // OneHot<7> polyOp;
-  bytes: Array<Val, 16>,     // std::array<ByteReg, 16> bytes;
-  // poly: ExtVal,              // FpExtReg poly;
-  // term: ExtVal,              // FpExtReg term;
-  // tot: ExtVal,               // FpExtReg tot;
-  nextState: Val) {
+  isEcall: Val,
+  pc: Val,
+  polyOp: Val,
+  bytes: Array<Val, 16>,
+  nextState: Val
+) {
+  public isEcall := BitReg(isEcall);
   public pc := Reg(pc);
-  // Reg isLast;
-  // // Reg instWordAddr;
-  // public polyOp := Reg(polyOp);
+  public polyOp := Reg(polyOp);
   public bytes := for x : bytes { Reg(x) };
-  // // FpExtReg mix;
-  // public poly := ExtReg(poly);
-  // public term := ExtReg(term);
-  // public tot := ExtReg(tot);
-  // public tmp: ExtReg(tmp); // FpExtReg tmp;
   public nextState := Reg(nextState);
 }
 
@@ -46,12 +39,10 @@ component BigIntInvalid() {
 
   0 = 1;
   BigIntState(
+    /*isEcall=*/0,
     /*pc=*/0,
-    // /*polyOp=*/0,
+    /*polyOp=*/0,
     /*bytes=*/for i : 0..16 { 0 },
-    // /*poly=*/MakeExt(0),
-    // /*term=*/MakeExt(0),
-    // /*tot=*/MakeExt(0),
     /*nextState=*/StateDecode()
   )
 }
@@ -63,12 +54,10 @@ component BigIntEcall(cycle: Reg) {
   Log("pc", pc);
 
   BigIntState(
+    /*isEcall=*/1,
     /*pc=*/pc - 1,
-    // /*polyOp=*/0, // nop
+    /*polyOp=*/0, // nop
     /*bytes=*/for i : 0..16 { 0 },
-    // /*poly=*/MakeExt(0),
-    // /*term=*/MakeExt(0),
-    // /*tot=*/MakeExt(0),
     /*nextState=*/StateBigIntStep()
   )
 }
@@ -131,6 +120,7 @@ component BigIntStep(cycle: Reg, prev: BigIntState) {
   pc := prev.pc + 1;
   Log("pc", pc);
 
+  // Read & decode the instruction
   loadInst := MemoryRead(cycle, pc);
   instHigh := SplitWord(loadInst.high);
 
@@ -148,6 +138,8 @@ component BigIntStep(cycle: Reg, prev: BigIntState) {
   coeff := reduce for i : 0..3 { coeffBits[i] * Po2(i) } init 0 with Add;
 
   offset := loadInst.low;
+
+  // Read the register value and compute initial address
   dataAddr := ReadAddr(cycle, reg) + offset * 4;
 
   Log("polyOp, memOp, reg, coeff, offset, addr", polyOp, memOp, reg, coeff, offset, dataAddr);
@@ -159,15 +151,20 @@ component BigIntStep(cycle: Reg, prev: BigIntState) {
     BigIntCheck()
   );
 
+  // Check if the instruction is a pure NOP & not first
+  isLast := IsZero(polyOp) * (1 - prev.isEcall);
+  nextState := if (isLast) {
+    StateDecode()
+  } else {
+    StateBigIntStep()
+  };
+
   BigIntState(
+    /*isEcall=*/0,
     /*pc=*/pc,
-    // /*polyOp=*/0, // nop
-    // /*bytes=*/for i : 0..16 { 0 },
+    /*polyOp=*/polyOp,
     /*bytes=*/bytes,
-    // /*poly=*/MakeExt(0),
-    // /*term=*/MakeExt(0),
-    // /*tot=*/MakeExt(0),
-    /*nextState=*/StateDecode()
+    /*nextState=*/nextState
   )
 }
 
