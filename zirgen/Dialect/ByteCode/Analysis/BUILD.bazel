@@ -1,0 +1,19 @@
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+
+cc_library(
+    name = "Analysis",
+    srcs = [
+        "ArmAnalysis.cpp",
+    ],
+    hdrs = [
+        "ArmAnalysis.h",
+    ],
+    deps = [
+        "//zirgen/Dialect/ByteCode/IR",
+        "@llvm-project//mlir:FuncDialect",
+    ],
+)

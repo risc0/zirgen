@@ -50,6 +50,35 @@ namespace zirgen::ByteCode {
 
 namespace {
 
+struct CaptureCompare {
+  using CaptureVal = std::pair<Value, size_t>;
+
+  bool operator()(const CaptureVal& lhs, const CaptureVal& rhs) {
+    return lhs.first.getImpl() < rhs.first.getImpl();
+  }
+};
+
+// Registers needed to calculate a particular value, including its transitive dependencies.
+struct RegsNeededInfo {
+  // Allow moves but not copies.
+  RegsNeededInfo(const RegsNeededInfo&) = delete;
+  RegsNeededInfo(RegsNeededInfo&&) = default;
+
+  // Previously scheduled or captured values that are needed by this
+  // operation.
+  llvm::SmallVector<std::pair<Value, size_t>> captures;
+  size_t captureRegs = 0;
+
+  // Maximum width of yet-to-be scheduled scheduled operations, including all the captures.
+  size_t maxWidth = 0;
+};
+
+llvm::raw_ostream& operator<<(llvm::raw_ostream& os, const RegsNeededInfo& info) {
+  os << "[capture regs=" << info.captureRegs << "(" << info.captures.size()
+     << "), max=" << info.maxWidth << "]";
+  return os;
+}
+
 class Scheduler {
 public:
   Scheduler(Block* orig, ScheduleInterface& scheduleInterface)
@@ -77,36 +106,40 @@ private:
     LLVM_DEBUG({
       llvm::dbgs() << "Scheduling ";
       op->print(llvm::dbgs(), asmState);
-      llvm::dbgs() << " (" << llvm::range_size(*orig) << " left)\n";
+      llvm::dbgs() << " (" << llvm::range_size(*orig) << " left):";
+      for (auto result : op->getResults()) {
+        if (regsNeededCache.contains(result))
+          llvm::dbgs() << " " << regsNeededCache.at(result);
+      }
+      llvm::dbgs() << "\n";
     });
+    invalidateWorkQueue.push_back(op);
     if (!op->hasOneUse())
-      invalidateRegsNeeded(op);
+      invalidateRegsNeeded();
   }
 
-  void invalidateRegsNeeded(Operation* topOp) {
-    SmallVector<Operation*> workQueue;
-    workQueue.push_back(topOp);
-
-    while (!workQueue.empty()) {
-      Operation* op = workQueue.pop_back_val();
+  void invalidateRegsNeeded() {
+    while (!invalidateWorkQueue.empty()) {
+      Operation* op = invalidateWorkQueue.pop_back_val();
 
       for (Value result : op->getResults()) {
         if (!regsNeededCache.erase(result))
           continue;
-        llvm::append_range(workQueue, result.getUsers());
+        llvm::append_range(invalidateWorkQueue, result.getUsers());
       }
     }
   }
 
   void makeScheduleProgress(Operation* op);
-  size_t getRegsNeeded(Value val);
+  const RegsNeededInfo& getRegsNeeded(Value val);
 
   Block* orig;
   std::unique_ptr<Block> scheduled;
 
-  DenseMap<Value, size_t> regsNeededCache;
+  DenseMap<Value, RegsNeededInfo> regsNeededCache;
   AsmState asmState;
   ScheduleInterface& scheduleInterface;
+  SmallVector<Operation*> invalidateWorkQueue;
 };
 
 void Scheduler::scheduleAll() {
@@ -144,7 +177,7 @@ void Scheduler::makeScheduleProgress(Operation* op) {
       if (!op->getOperands().empty()) {
         llvm::dbgs() << "(needed by operands:";
         for (Value operand : op->getOperands()) {
-          size_t needed = getRegsNeeded(operand);
+          const RegsNeededInfo& needed = getRegsNeeded(operand);
           Operation* definer = operand.getDefiningOp();
           if (!definer || definer->getBlock() != orig)
             llvm::dbgs() << " (" << needed << ")";
@@ -166,10 +199,10 @@ void Scheduler::makeScheduleProgress(Operation* op) {
       if (!definer || definer->getBlock() != orig)
         continue;
 
-      size_t needed = getRegsNeeded(operand);
-      if (!predOp || needed > predRegsNeeded) {
+      const auto& needed = getRegsNeeded(operand);
+      if (!predOp || needed.maxWidth > predRegsNeeded) {
         predOp = definer;
-        predRegsNeeded = needed;
+        predRegsNeeded = needed.maxWidth;
       }
     }
 
@@ -184,13 +217,15 @@ void Scheduler::makeScheduleProgress(Operation* op) {
   }
 }
 
-size_t Scheduler::getRegsNeeded(Value topVal) {
-  if (regsNeededCache.contains(topVal))
-    return regsNeededCache.lookup(topVal);
+const RegsNeededInfo& Scheduler::getRegsNeeded(Value topVal) {
+  auto it = regsNeededCache.find(topVal);
+  if (it != regsNeededCache.end()) {
+    return it->second;
+  }
 
   SmallVector<Value> workQueue;
   workQueue.push_back(topVal);
-  SmallVector<std::pair<Value, size_t>> operandRegs;
+  SmallVector<std::pair<Value, const RegsNeededInfo*>> operandRegs;
 
   while (!workQueue.empty()) {
     Value val = workQueue.back();
@@ -206,8 +241,12 @@ size_t Scheduler::getRegsNeeded(Value topVal) {
     if (!definer || definer->getBlock() != orig) {
       // This operation is not in the scheduling queue; it's either already been scheduled or is
       // outside our scope.
-      // Increase its priority so we use it sooner.
-      regsNeededCache[val] = 2 * valRegs;
+      //
+      // Track as a capture.
+      regsNeededCache.try_emplace(val,
+                                  RegsNeededInfo{.captures = {{val, valRegs}},
+                                                 .captureRegs = valRegs,
+                                                 .maxWidth = valRegs});
       workQueue.pop_back();
       continue;
     }
@@ -215,12 +254,16 @@ size_t Scheduler::getRegsNeeded(Value topVal) {
     bool operandsDone = true;
     operandRegs.clear();
 
+    size_t captureCapacity = 0;
     for (Value operand : definer->getOperands()) {
-      if (!regsNeededCache.contains(operand)) {
+      if (regsNeededCache.contains(operand)) {
+        auto* needed = &regsNeededCache.at(operand);
+        captureCapacity += needed->captures.size();
+        operandRegs.emplace_back(val, needed);
+      } else {
         workQueue.push_back(operand);
         operandsDone = false;
       }
-      operandRegs.emplace_back(val, regsNeededCache.lookup(operand));
     }
 
     if (!operandsDone) {
@@ -231,34 +274,53 @@ size_t Scheduler::getRegsNeeded(Value topVal) {
     assert(operandRegs.size() == definer->getNumOperands());
 
     // Sort by most registers needed first
-    llvm::stable_sort(operandRegs,
-                      [&](const auto& lhs, const auto& rhs) { return lhs.second > rhs.second; });
+    llvm::stable_sort(operandRegs, [&](const auto& lhs, const auto& rhs) {
+      return lhs.second->maxWidth > rhs.second->maxWidth;
+    });
 
     size_t prevOperandRegs = 0;
     size_t maxLive = 0;
+    llvm::SmallVector<std::pair<Value, size_t>> captures;
+    llvm::SmallVector<std::pair<Value, size_t>> capturesTmp;
+
     for (auto& [operand, operandRegCount] : operandRegs) {
       prevOperandRegs += scheduleInterface.getValueRegs(operand);
-      size_t operandMaxRegs = operandRegCount + prevOperandRegs;
+      size_t operandMaxRegs = operandRegCount->maxWidth + prevOperandRegs;
       if (operandMaxRegs > maxLive)
         maxLive = operandMaxRegs;
+
+      if (captures.empty()) {
+        llvm::append_range(captures, operandRegCount->captures);
+      } else if (!operandRegCount->captures.empty()) {
+        capturesTmp.clear();
+        std::set_union(captures.begin(),
+                       captures.end(),
+                       operandRegCount->captures.begin(),
+                       operandRegCount->captures.end(),
+                       std::back_inserter(capturesTmp),
+                       CaptureCompare());
+        std::swap(capturesTmp, captures);
+      }
     }
 
-    size_t outputRegs = 0;
-    for (Value result : definer->getResults()) {
-      outputRegs += scheduleInterface.getValueRegs(result);
+    size_t captureRegs = 0;
+    for (auto [captured, regs] : captures) {
+      captureRegs += regs;
     }
-    if (outputRegs > maxLive)
-      maxLive = outputRegs;
-
+    if (captureRegs > maxLive)
+      maxLive = captureRegs;
+    RegsNeededInfo info{
+        .captures = std::move(captures), .captureRegs = captureRegs, .maxWidth = maxLive};
     /*    LLVM_DEBUG({
-          llvm::dbgs() << maxLive << " regs needed for ";
+          llvm::dbgs() << info << " regs needed for ";
           val.print(llvm::dbgs(), asmState);
           llvm::dbgs() << "\n";
           });*/
-    regsNeededCache[val] = maxLive;
+    auto [it, didInsert] = regsNeededCache.try_emplace(val, std::move(info));
+    assert(didInsert);
   }
 
-  return regsNeededCache.lookup(topVal);
+  return regsNeededCache.at(topVal);
 }
 
 } // namespace

@@ -27,6 +27,7 @@ using namespace mlir;
 
 namespace zirgen::ByteCode {
 
+#if 0
 DispatchKeyAttr getDispatchKey(Operation* op) {
   SmallVector<size_t> intArgs;
   if (auto bcInterface = llvm::dyn_cast<ByteCodeOpInterface>(op)) {
@@ -56,6 +57,7 @@ DispatchKeyAttr getDispatchKey(Operation* op) {
                               intKinds,
                               /*blockArgs=*/blockArgNums);
 }
+#endif
 
 std::string getNameForIntKind(mlir::Attribute intKind) {
   if (auto strAttr = llvm::dyn_cast<StringAttr>(intKind)) {

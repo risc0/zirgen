@@ -29,7 +29,7 @@ namespace zirgen::ByteCode {
 namespace {
 
 struct Expander {
-  Expander(ExecuteOp executeOp, EncodedAttr encoded, Region& oldBody, Region& newBody)
+  Expander(ExecutorOp executeOp, EncodedAttr encoded, Region& oldBody, Region& newBody)
       : executeOp(executeOp), encoded(encoded), newBody(newBody), builder(&newBody) {
     for (auto arg : oldBody.getArguments()) {
       newBody.addArgument(arg.getType(), arg.getLoc());
@@ -76,7 +76,7 @@ struct Expander {
     }
   }
 
-  ExecuteOp executeOp;
+  ExecutorOp executeOp;
   EncodedAttr byteCode;
   Region& newBody;
   OpBuilder builder;
@@ -92,7 +92,7 @@ struct ExpandBCPass : public impl::ExpandBCBase<ExpandBCPass> {
     assert(funcOp.getBody().hasOneBlock());
 
     GetEncodedOp getEncodedOp = funcOp.getBody().getOps<GetEncodedOp>().front();
-    ExecuteOp executeOp = funcOp.getBody().getOps<GetEncodedOp>().front();
+    ExecutorOp executeOp = funcOp.getBody().getOps<GetEncodedOp>().front();
     DefineEncodedOp defineOp = SymbolTable::lookupNearestSymbolFrom<DefineEncodedOp>(
         getEncodedOp, getEncodedOp.getTarget());
     if (!defineOp) {

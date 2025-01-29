@@ -1,38 +1,13 @@
-// RUN: zirgen-opt -gen-executor %s --mlir-disable-threading | FileCheck %s
-// RUN: zirgen-opt -print-naive-bc %s --mlir-disable-threading | FileCheck %s --check-prefixes=BC-CHECK
+// RUN: zirgen-opt -gen-executor -gen-encoding %s --mlir-disable-threading | FileCheck %s
 
-func.func @empty() {
-  return
+
+// -----
+
+func.func @basic() -> !zll.val<BabyBear> {
+  %0 = zll.const 1
+  %1 = zll.neg %0 : <BabyBear>
+  return %1 : !zll.val<BabyBear>
 }
-// BC-CHECK-LABEL: START empty
-// BC-CHECK-NEXT: INT-KIND DispatchKey bits 0
-// BC-CHECK-NEXT: DispatchKey 0
-// BC-CHECK-NEXT: END empty
-// CHECK-LABEL: func.func @empty
-// CHECK: zbytecode.execute
-// CHECK-NEXT: bytecode.exit
-// CHECK-NEXT: }
-// CHECK-NEXT: return
-
-func.func @basic() {
-  %0, %1 = zbytecode.test [] : () -> (none, none)
-  zbytecode.test [17] %1 : (none) -> ()
-  return
-}
-
-// BC-CHECK-LABEL: START basic
-// BC-CHECK-NEXT: INT-KIND DispatchKey bits 8
-// BC-CHECK-NEXT: INT-KIND naive_buf bits 8
-// BC-CHECK-NEXT: INT-KIND {{.*}}test{{.*}} bits 8
-// BC-CHECK-NEXT: BUF naive_buf size 2
-// BC-CHECK-NEXT: DispatchKey 0
-// BC-CHECK-NEXT: naive_buf 0
-// BC-CHECK-NEXT: naive_buf 1
-// BC-CHECK-NEXT: DispatchKey 1
-// BC-CHECK-NEXT: naive_buf 1
-// BC-CHECK-NEXT: {{.*}}test{{.*}} 17
-// BC-CHECK-NEXT: DispatchKey 2
-// BC-CHECK-NEXT: END basic
 
 // CHECK-LABEL: func.func @basic(%arg0: !zbytecode.encoded)
 // CHECK: zbytecode.execute %arg0

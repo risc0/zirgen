@@ -14,6 +14,9 @@
 
 #pragma once
 
+#include <variant>
+
+#include "mlir/Dialect/Func/IR/FuncOps.h"
 #include "mlir/IR/BuiltinOps.h"
 #include "mlir/IR/Dialect.h"
 #include "mlir/IR/OpDefinition.h"
@@ -26,6 +29,19 @@
 namespace zirgen {
 
 class Interpreter;
+
+namespace ByteCode {
+
+// Representation of a value in a partially encoded bytecode program.
+using EncodedElement =
+    std::variant</*intArg=*/size_t, /*operand=*/mlir::Value, /*result=*/mlir::OpResult>;
+
+// Representation of a value in a partially encoded bytecode program used
+// to build an EncodedOp.
+using BuildEncodedElement =
+    std::variant</*intArg=*/size_t, /*operand=*/mlir::Value, /*result type=*/mlir::Type>;
+
+} // namespace ByteCode
 
 } // namespace zirgen
 
@@ -41,10 +57,6 @@ class Interpreter;
 #include "zirgen/Dialect/ByteCode/IR/Ops.h.inc"
 
 namespace zirgen::ByteCode {
-
-DispatchKeyAttr getDispatchKey(mlir::Operation* op);
-
-mlir::Attribute getDispatchKeyIntKind(mlir::MLIRContext* ctx);
 
 std::string getNameForIntKind(mlir::Attribute intKind);
 

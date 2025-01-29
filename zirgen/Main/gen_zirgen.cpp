@@ -64,7 +64,7 @@ static cl::opt<std::string> protocolInfo("protocol-info",
 static cl::opt<bool> multiplyIf("multiply-if",
                                 cl::desc("Mulitply out and refactor `if` statements when "
                                          "generating constraints, which can improve CSE."),
-                                cl::init(false));
+                                cl::init(true));
 static cl::opt<bool>
     parallelWitgen("parallel-witgen",
                    cl::desc("Assume the witness can be generated in parallel, and that all externs "

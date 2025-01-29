@@ -23,22 +23,24 @@ class ByteCodeAttr<string name, string attrMnemonic, list<Trait> traits = []>
   let mnemonic = attrMnemonic;
 }
 
-def TempBufInfoAttr : ByteCodeAttr<"TempBufInfo", "temp_buf"> {
+def TempBufAttr : ByteCodeAttr<"TempBuf", "temp_buf"> {
   let parameters = (ins
-    // Arbitrary attribute used as a uniquing key for integer kinds.
-    "mlir::Attribute": $intKind,
-    // Number of bits used to encode this kind of int
+    // Name of this temporary buffer, and the intKind of values used to index into it.
+    "mlir::StringAttr": $intKind,
+    // Number of elements of this temporary buffer to be allocated.
     "size_t": $size
   );
   let assemblyFormat = [{ $intKind `size` $size }];
 }
 
+def TempBufArrayAttr : TypedArrayAttrBase<TempBufAttr, "Array of temporary buffers">;
+
 def IntKindInfoAttr : ByteCodeAttr<"IntKindInfo", "int_kind_info"> {
   let summary = "Information on a set of encoded integers in a bytecode encoding";
   let parameters = (ins
-    // Arbitrary attribute used as a uniquing key for integer kinds.
-    "mlir::Attribute": $intKind,
-    // Number of bits used to encode this kind of int
+    // Name of this integer kind
+    "mlir::StringAttr": $intKind,
+    // Number of bits used to encode
     "size_t": $encodedBits
   );
   let assemblyFormat = [{ $intKind `u` $encodedBits }];
@@ -47,31 +49,14 @@ def IntKindInfoAttr : ByteCodeAttr<"IntKindInfo", "int_kind_info"> {
 def IntKindInfoArrayAttr : TypedArrayAttrBase<IntKindInfoAttr, "Array of integer kinds">;
 
 def EncodedAttr : ByteCodeAttr<"Encoded", "encoded"> {
-  let summary = "A bytecode encoding for passing to an executor";
+  let summary = "A encoded bytecode program for passing to an executor";
   let parameters = (ins
+    // Actual encoded data
     StringRefParameter<>: $encoded,
     // Sizes of any temporary buffers that need to be allocated to execute this bytecode.
-    ArrayRefParameter<"zirgen::ByteCode::TempBufInfoAttr">: $tempBufs
+    ArrayRefParameter<"zirgen::ByteCode::TempBufAttr">: $tempBufs
   );
   let assemblyFormat = [{ $encoded `temps` $tempBufs }];
-}
-
-def DispatchKeyAttr : ByteCodeAttr<"DispatchKey", "dispatch_key"> {
-  let summary = "Unique identifier for a byte code operation on concrete types";
-  let parameters = (ins
-     StringRefParameter<>:$operationName,
-     ArrayRefParameter<"mlir::Type">:$operandTypes,
-     ArrayRefParameter<"mlir::Type">:$resultTypes,
-     // Int kinds of any additional decoded arguments, not including value operands.
-     ArrayRefParameter<"mlir::Attribute">:$intKinds,
-     // Further unique by any captured block arguments from containing
-     // block in case they happen to be the same type.
-     ArrayRefParameter<"size_t">:$blockArgNums
-  );
-  let assemblyFormat = [{
-     $operationName `(` $intKinds `,` $operandTypes `,` $blockArgNums `)`
-     `->` $resultTypes
-  }];
 }
 
 #endif // BYTECODE_ATTRS

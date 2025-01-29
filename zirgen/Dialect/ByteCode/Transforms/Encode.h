@@ -23,7 +23,6 @@
 
 namespace zirgen::ByteCode {
 
-#if 0
 /// Encodes the given region as bytecodes suitable for executing with the given executor.
 /// Requirements:
 ///    * The region must contain a single block.
@@ -33,22 +32,6 @@ namespace zirgen::ByteCode {
 /// In the future, we may supply a IRMapper or similar to this function
 /// to allow it to encode a region using an executor built on a
 /// different region.
-EncodedAttr encodeByteCode(mlir::Region* region,
-                           ExecutorOp executor,
-                           BufferizeInterface& bufferize,
-                           const EncodeOptions& encodeOpts = EncodeOptions());
-#endif
-
-// Build an executor supporting the operations present in the given region.
-// Any operations without a ByteCodeOpInterface are ignored.
-//
-// The supplied `encodedInput` value can be used to supply an encoded byte code generated
-// by `encodeByteCode`.
-//
-// `bufferize` is used to gather the integer types and width of temporary value indexes.
-ExecutorOp buildExecutor(mlir::Location loc,
-                         mlir::Region* region,
-                         mlir::Value encodedInput,
-                         BufferizeInterface& bufferize);
+// void addEncodePatterns(mlir::RewritePatternSet& patterns, ExecutorOp executor);
 
 } // namespace zirgen::ByteCode

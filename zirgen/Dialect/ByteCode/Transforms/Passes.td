@@ -17,18 +17,49 @@
 
 include "mlir/Pass/PassBase.td"
 
-def GenExecutor : Pass<"gen-executor", "mlir::func::FuncOp"> {
+def GenExecutor : Pass<"gen-executor", "mlir::ModuleOp"> {
   let description = [{
-    Transform input functions to bytecode executors.
+    Generate a bytecode executor suitable for executing any functions present.
   }];
+  let options = [
+    Option<"execSymbol", "exec-symbol",
+           "std::string", /*default=*/"\"exec_byte_code\"", "Symbol name of the geneerated bytecode executor">,
+    Option<"maxArms", "max-arms", "size_t", /*default=*/"256", "Maximum number of arms to generate">,
+    Option<"minArmUse", "min-arm-use", "size_t", /*default=*/"5", "Minimum number of uses of a sequence of operations in order to generate an arm for them">,
+    Option<"maxCapture", "max-capture", "size_t", /*default=*/"5", "Maximum number of temporary values to capture in an arm">,
+    Option<"maxYield", "max-yield", "size_t", /*default=*/"5", "Maximum number of temporary values output from an arm">,
+    
+  ];
+  let statistics = [
+    Statistic<"armCount", "arms", "Number of arms generated">,
+    Statistic<"maxArmOps", "max-arm-ops", "maximum number of operations in an arm">,
+    Statistic<"maxArmUses", "max-arm-uses", "maximum number of uses of an arm">,
+    Statistic<"maxArmReplaced", "max-arm-replaced", "maximum number of operations that could potentially be replaced due to an arm">
+  ];
   let dependentDialects = ["mlir::func::FuncDialect", "zirgen::ByteCode::ByteCodeDialect"];
 }
 
-def PrintNaiveBC : Pass<"print-naive-bc", "mlir::func::FuncOp"> {
+def GenEncoding : Pass<"gen-encoding", "mlir::ModuleOp"> {
   let description = [{
-     Print a naive encoding of each function to execute on an executor made for it.
+     For each function present, convert it into a EncodedBlockOp full of bytecode.
   }];
+  let options = [
+    Option<"execSymbol", "exec-symbol",
+           "std::string", /*default=*/"\"exec_byte_code\"", "Symbol name bytecode executor">
+  ];
   let dependentDialects = ["mlir::func::FuncDialect", "zirgen::ByteCode::ByteCodeDialect"];
+  let statistics = [
+    Statistic<"origOps", "orig-ops", "Original operation count before encoding">,
+    Statistic<"encodedOps", "encoded-ops", "Operation count after encoding">,
+    Statistic<"encodedVals", "encoded-vals", "Total encoded values">,
+  ];
+}
+
+def CloneSimpleZll : Pass<"clone-simple-zll", "mlir::func::FuncOp"> {
+  let description = [{
+     Clone all "simple" operations for each user.  This should be used for operations
+     which are more expensive to encode and decode bytecode to execute than to re-execute.
+  }];
 }
 
 def ScheduleZll : Pass<"schedule-zll", "mlir::func::FuncOp"> {
@@ -40,6 +71,15 @@ def ScheduleZll : Pass<"schedule-zll", "mlir::func::FuncOp"> {
       "zirgen::ByteCode::ByteCodeDialect",
       "zirgen::Zll::ZllDialect",
   ];
+}
+
+#ifdef NOPE
+
+def PrintNaiveBC : Pass<"print-naive-bc", "mlir::func::FuncOp"> {
+  let description = [{
+     Print a naive encoding of each function to execute on an executor made for it.
+  }];
+  let dependentDialects = ["mlir::func::FuncDialect", "zirgen::ByteCode::ByteCodeDialect"];
 }
 
 def CloneActiveZll : Pass<"clone-active-zll", "mlir::func::FuncOp"> {
@@ -83,6 +123,6 @@ def GenExecutorZll : Pass<"gen-executor-zll", "mlir::ModuleOp"> {
   }];
 }
 
-
+#endif
 
 #endif // BYTECODE_TRANSFORM_PASSES

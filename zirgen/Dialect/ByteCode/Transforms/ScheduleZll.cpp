@@ -26,7 +26,6 @@
 
 #include "zirgen/Dialect/ByteCode/IR/ByteCode.h"
 #include "zirgen/Dialect/ByteCode/Transforms/Bufferize.h"
-#include "zirgen/Dialect/ByteCode/Transforms/Executor.h"
 #include "zirgen/Dialect/ByteCode/Transforms/Passes.h"
 #include "zirgen/Dialect/ByteCode/Transforms/Schedule.h"
 #include "zirgen/Dialect/Zll/IR/IR.h"
@@ -39,28 +38,8 @@ using namespace zirgen::Zll;
 namespace zirgen::ByteCode {
 
 #define GEN_PASS_DEF_SCHEDULEZLL
-#define GEN_PASS_DEF_CLONEACTIVEZLL
-#define GEN_PASS_DEF_GENEXECUTORZLL
+#define GEN_PASS_DEF_CLONESIMPLEZLL
 #include "zirgen/Dialect/ByteCode/Transforms/Passes.h.inc"
-
-void addZllToByteCodeToPipeline(OpPassManager& pm) {
-  auto& funcNest = pm.nest<mlir::func::FuncOp>();
-  funcNest.addPass(createCompositeFixedPointPass(
-      "optimize-for-zll-bytecode",
-      [&](OpPassManager& fixedPM) {
-        fixedPM.addPass(createScheduleZll());
-        fixedPM.addPass(createCloneActiveZll());
-      },
-      /*maxIterations=*/30));
-  pm.addPass(createLocationSnapshotPass({}, "/tmp/before-bytecoding.ir"));
-  pm.addPass(createGenExecutorZll());
-}
-
-static PassPipelineRegistration<>
-    zllPipeline("zll-to-bytecode",
-                "A pipeline which converts Zll functions to functions which interpret bytecode, "
-                "and the associated bytecode.",
-                addZllToByteCodeToPipeline);
 
 struct ZllSchedule : public ScheduleInterface {
   size_t getValueRegs(mlir::Value value) override {
@@ -71,7 +50,7 @@ struct ZllSchedule : public ScheduleInterface {
   }
 
   bool isPure(mlir::Operation* op) override {
-    if (llvm::isa<GetOp, GetGlobalOp>(op))
+    if (llvm::isa<GetOp, GetGlobalOp, ConstOp>(op))
       return true;
     return mlir::isPure(op);
   }
@@ -85,6 +64,43 @@ struct ScheduleZllPass : public impl::ScheduleZllBase<ScheduleZllPass> {
     Block* block = &funcOp.getBody().front();
     ZllSchedule schedule;
     scheduleBlock(block, schedule);
+  }
+};
+
+namespace {
+
+template <typename OpT> struct ClonePerUserPattern : public OpRewritePattern<OpT> {
+  using OpRewritePattern<OpT>::OpRewritePattern;
+
+  LogicalResult matchAndRewrite(OpT op, PatternRewriter& rewriter) const final {
+    if (llvm::hasNItemsOrLess(op->getUsers(), 1))
+      return failure();
+
+    // Clone and pick one off
+    Operation* cloned = rewriter.clone(*op);
+
+    for (auto [oldResult, newResult] : llvm::zip_equal(op->getResults(), cloned->getResults())) {
+      if (!oldResult.use_empty())
+        oldResult.getUses().begin()->set(newResult);
+    }
+    return success();
+  }
+};
+
+} // namespace
+
+struct CloneSimpleZllPass : public impl::CloneSimpleZllBase<CloneSimpleZllPass> {
+  void runOnOperation() override {
+    func::FuncOp funcOp = getOperation();
+    assert(funcOp.getBody().hasOneBlock());
+    auto* ctx = &getContext();
+
+    RewritePatternSet patterns(ctx);
+    patterns.insert<ClonePerUserPattern<ConstOp>>(ctx);
+    patterns.insert<ClonePerUserPattern<GetOp>>(ctx);
+    patterns.insert<ClonePerUserPattern<GetGlobalOp>>(ctx);
+    patterns.insert<ClonePerUserPattern<TrueOp>>(ctx);
+    (void)applyPatternsAndFoldGreedily(funcOp, std::move(patterns));
   }
 };
 
@@ -196,6 +212,7 @@ constexpr bool kVerifyActiveCounts = false;
 
 } // namespace
 
+#if 0
 struct CloneActiveZllPass : public impl::CloneActiveZllBase<CloneActiveZllPass> {
   using CloneActiveZllBase::CloneActiveZllBase;
   DenseSet<Operation*> cachedDoClone, cachedDontClone;
@@ -495,7 +512,7 @@ struct CloneActiveZllPass : public impl::CloneActiveZllBase<CloneActiveZllPass> 
     }
   }
 };
-
+#endif
 namespace {
 
 struct ZllBufferize : public BufferizeInterface {
@@ -563,42 +580,5 @@ void ZllBufferize::analyze(Region* region) {
 }
 
 } // namespace
-
-struct GenExecutorZllPass : public impl::GenExecutorZllBase<GenExecutorZllPass> {
-  void runOnOperation() override {
-    ModuleOp mod = getOperation();
-
-    for (func::FuncOp funcOp : mod.getBody()->getOps<func::FuncOp>()) {
-      Liveness liveness(funcOp);
-      ZllBufferize zllBufferize(liveness);
-      zllBufferize.analyze(&funcOp.getBody());
-
-      assert(funcOp.getBody().hasOneBlock());
-      Block* block = &funcOp.getBody().front();
-
-      OpBuilder builder(&getContext());
-      auto encodedSymName = builder.getStringAttr(funcOp.getSymName() + "$byte_code");
-      GetEncodedOp getEncodedOp = builder.create<GetEncodedOp>(funcOp.getLoc(), encodedSymName);
-      ExecuteOp execOp =
-          buildExecutor(funcOp.getLoc(), &funcOp.getBody(), getEncodedOp, zllBufferize);
-      EncodedAttr encoded = encodeByteCode(&funcOp.getBody(), execOp, zllBufferize);
-      if (!encoded) {
-        llvm::errs() << "Unable to encode byte code\n";
-        signalPassFailure();
-        return;
-      }
-
-      block->clear();
-
-      builder.setInsertionPointToStart(block);
-      builder.insert(getEncodedOp);
-      builder.insert(execOp);
-      builder.create<func::ReturnOp>(funcOp.getLoc(), execOp.getResults());
-
-      builder.setInsertionPoint(funcOp);
-      builder.create<DefineEncodedOp>(funcOp.getLoc(), encodedSymName, encoded);
-    }
-  }
-};
 
 } // namespace zirgen::ByteCode

@@ -34,6 +34,7 @@ EmitPart getLocalAccessor(Attribute intKind) {
 }
 
 void addCppSyntaxImpl(codegen::CodegenOptions& opts, bool isCuda) {
+#if 0
   opts.addFuncContextArgument<func::FuncOp>("size_t cycle");
   opts.addFuncContextArgument<func::FuncOp>("size_t steps");
   opts.addOpSyntax<DefineEncodedOp>([isCuda](codegen::CodegenEmitter& cg, DefineEncodedOp op) {
@@ -70,7 +71,7 @@ void addCppSyntaxImpl(codegen::CodegenOptions& opts, bool isCuda) {
     cg << "debugIn(" << getLocalAccessor(op.getIntKind()) << ")";
   });
 
-  opts.addOpSyntax<OperationOp>([](codegen::CodegenEmitter& cg, OperationOp op) {
+  opts.addOpSyntax<WrappedOp>([](codegen::CodegenEmitter& cg, WrappedOp op) {
     cg << CodegenIdent<IdentKind::Func>(op.getWrappedOpNameAttr()) << "(";
     cg.interleaveComma(op.getOperands());
     cg << ")";
@@ -91,8 +92,8 @@ void addCppSyntaxImpl(codegen::CodegenOptions& opts, bool isCuda) {
     cg << "assert(false && \"byte code execution loop should never end\");";
   });
 
-  opts.markStatementOp<ExecuteOp>();
-  opts.addOpSyntax<ExecuteOp>([=](codegen::CodegenEmitter& cg, ExecuteOp op) {
+  opts.markStatementOp<ExecutorOp>();
+  opts.addOpSyntax<ExecutorOp>([=](codegen::CodegenEmitter& cg, ExecutorOp op) {
     for (auto intInfo : op.getIntKinds().getAsRange<IntKindInfoAttr>()) {
       cg << "constexpr size_t "
          << cg.getIdent<IdentKind::Const>(getNameForIntKind(intInfo.getIntKind()) + "Bits") << " = "
@@ -140,6 +141,7 @@ void addCppSyntaxImpl(codegen::CodegenOptions& opts, bool isCuda) {
     cg << "} // switch(dispatchKey)\n";
     cg << "} // for(;;)\n";
   });
+#endif
 }
 
 } // namespace

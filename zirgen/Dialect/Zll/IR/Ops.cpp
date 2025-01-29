@@ -15,6 +15,7 @@
 #include "zirgen/Dialect/Zll/IR/IR.h"
 
 #include "mlir/IR/Builders.h"
+#include "mlir/IR/Matchers.h"
 #include "mlir/IR/PatternMatch.h"
 #include "llvm/ADT/TypeSwitch.h"
 
@@ -875,8 +876,29 @@ public:
   }
 };
 
+class CanonicalizeEqualZeroDifference : public OpRewritePattern<EqualZeroOp> {
+public:
+  using OpRewritePattern::OpRewritePattern;
+
+  LogicalResult matchAndRewrite(EqualZeroOp op, PatternRewriter& rewriter) const override {
+    auto subOp = op.getIn().getDefiningOp<SubOp>();
+    if (!subOp)
+      return failure();
+
+    if (matchPattern(subOp.getLhs(), m_Constant()) && !matchPattern(subOp.getRhs(), m_Constant())) {
+      // Canonicalize eqz(C - X) to eqz(X - C) so it can be folded if C happens to be 0.
+      Value newSubOp =
+          rewriter.create<SubOp>(subOp.getLoc(), subOp.getType(), subOp.getRhs(), subOp.getLhs());
+      rewriter.modifyOpInPlace(op, [&]() { op.getInMutable().set(newSubOp); });
+      return success();
+    }
+    return failure();
+  }
+};
+
 void EqualZeroOp::getCanonicalizationPatterns(RewritePatternSet& patterns, MLIRContext* context) {
   patterns.add<CanonicalizeEqualZeroOp>(context);
+  patterns.add<CanonicalizeEqualZeroDifference>(context);
 }
 
 template <class Op> struct RemoveSlicePattern : public OpRewritePattern<Op> {

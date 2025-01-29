@@ -19,6 +19,22 @@ cc_binary(
 )
 
 cc_binary(
+    name = "zirgen-reduce",
+    srcs = ["zirgen-reduce.cpp"],
+    deps = [
+        "//zirgen/Dialect/BigInt/IR",
+        "//zirgen/Dialect/BigInt/Transforms",
+        "//zirgen/Dialect/ByteCode/IR",
+        "//zirgen/Dialect/ByteCode/Transforms",
+        "//zirgen/Dialect/ZStruct/Transforms:passes",
+        "//zirgen/Dialect/Zll/Conversion/ZStructToZll:passes",
+        "//zirgen/Dialect/Zll/Transforms:passes",
+        "//zirgen/dsl/passes",
+        "@llvm-project//mlir:MlirReduceLib",
+    ],
+)
+
+cc_binary(
     name = "zirgen-translate",
     srcs = ["zirgen-translate.cpp"],
     deps = [
