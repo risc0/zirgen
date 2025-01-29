@@ -12,6 +12,7 @@ cc_library(
         "trace.cpp",
     ],
     hdrs = [
+        "bigint.h",
         "exec.h",
         "image.h",
         "p2.h",

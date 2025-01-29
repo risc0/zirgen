@@ -165,6 +165,7 @@ struct Flattener {
   Flattener() {}
   void finalize() {
     // Add final nop to return
+    printf("PolyOp::kNop\n");
     out.push_back(MemOp::kNop << 28 | PolyOp::kNop);
   }
   void flatten(const PolyAtom& atom, bool doFinal, int coeff) {
@@ -179,8 +180,9 @@ struct Flattener {
     uint32_t finalPolyOp = (doFinal ? PolyOp::kOpAddTot : PolyOp::kOpSetTerm);
     for (size_t i = 0; i < atom.size; i++) {
       uint32_t polyOp = (i + 1 == atom.size ? finalPolyOp : PolyOp::kOpShift);
-      out.push_back(memOp << 28 | polyOp << 24 | (coeff + 4) << 21 | atom.arena << 16 |
-                    (atom.offset + atom.size - 1 - i));
+      uint32_t offset = atom.offset + atom.size - 1 - i;
+      printf("polyOp: (%u, %u, %u, %d, %u)\n", polyOp, memOp, atom.arena, coeff, offset);
+      out.push_back(memOp << 28 | polyOp << 24 | (coeff + 4) << 21 | atom.arena << 16 | offset);
     }
   }
   void flatten(const PolyProd& prod, int coeff) {
@@ -211,11 +213,15 @@ struct Flattener {
     size_t carryCount = (bit.getCoeffs() + 15) / 16;
     for (size_t i = 0; i < carryCount; i++) {
       uint32_t common = MemOp::kNop << 28 | (carryCount - 1 - i);
+      printf("PolyOp::kOpCarry1\n");
       out.push_back(PolyOp::kOpCarry1 << 24 | common);
+      printf("PolyOp::kOpCarry2\n");
       out.push_back(PolyOp::kOpCarry2 << 24 | common);
       if (i == carryCount - 1) {
+        printf("PolyOp::kOpEqz\n");
         out.push_back(PolyOp::kOpEqz << 24 | common);
       } else {
+        printf("PolyOp::kOpShift\n");
         out.push_back(PolyOp::kOpShift << 24 | common);
       }
     }

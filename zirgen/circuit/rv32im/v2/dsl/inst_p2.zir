@@ -172,7 +172,7 @@ component ShiftPoly(data: Array<GetData, 8>, in: ExtVal) {
 }
 
 component PoseidonLoadInShort(cycle: Reg, prev: PoseidonState) {
-  Log("txnType", prev.loadTxType);
+  // Log("txnType", prev.loadTxType);
   txType := OneHot<3>(prev.loadTxType);
   loadList := for i : 0..8 {
     MemoryGet(cycle, prev.bufInAddr + i, txType)
@@ -195,7 +195,7 @@ component PoseidonLoadInShort(cycle: Reg, prev: PoseidonState) {
 }
 
 component PoseidonLoadInLow(cycle: Reg, prev: PoseidonState) {
-  Log("txnType", prev.loadTxType);
+  // Log("txnType", prev.loadTxType);
   txType := OneHot<3>(prev.loadTxType);
   loadList := for i : 0..8 {
     MemoryGet(cycle, prev.bufInAddr + i, txType)
@@ -212,7 +212,7 @@ component PoseidonLoadInLow(cycle: Reg, prev: PoseidonState) {
 }
 
 component PoseidonLoadInHigh(cycle: Reg, prev: PoseidonState) {
-  Log("txnType", prev.loadTxType);
+  // Log("txnType", prev.loadTxType);
   txType := OneHot<3>(prev.loadTxType);
   loadList := for i : 0..8 {
     MemoryGet(cycle, prev.bufInAddr + i, txType)
@@ -305,8 +305,8 @@ component PoseidonStoreOut(cycle: Reg, prev: PoseidonState) {
   };
   isNormal := IsZero(prev.loadTxType - TxKindRead());
   outState := isNormal * StateDecode() + (1 - isNormal) * StatePoseidonPaging();
-  nextState := 
-    prev.hasState * StatePoseidonStoreState() + 
+  nextState :=
+    prev.hasState * StatePoseidonStoreState() +
     (1 -  prev.hasState) * outState;
   extInv := NondetExtReg(ExtInv(prev.zcheck));
   PoseidonState(GetDef(prev), nextState, 0, 0, 0, prev.mode, prev.inner, MakeExt(0))
@@ -473,7 +473,7 @@ component Poseidon0(cycle:Reg, inst_input: InstInput) {
     PoseidonInvalid(),
     PoseidonInvalid(),
     PoseidonDoOut(cycle, state@1),
-    PoseidonPaging(cycle, inst_input.mode,state@1),
+    PoseidonPaging(cycle, inst_input.mode, state@1),
     PoseidonStoreState(cycle, state@1)
   );
   InstOutput(inst_input.pc_u32, state.nextState, state.mode)
@@ -495,4 +495,3 @@ component Poseidon1(cycle:Reg, inst_input: InstInput) {
   );
   InstOutput(inst_input.pc_u32, state.nextState, state.mode)
 }
-

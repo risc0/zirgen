@@ -1,0 +1,190 @@
+// RUN: true
+
+component BigIntExternReturn(
+  x00: Val, x01: Val, x02: Val, x03: Val,
+  x04: Val, x05: Val, x06: Val, x07: Val,
+  x08: Val, x09: Val, x10: Val, x11: Val,
+  x12: Val, x13: Val, x14: Val, x15: Val
+) {
+  public x00 := x00; public x01 := x01; public x02 := x02; public x03 := x03;
+  public x04 := x04; public x05 := x05; public x06 := x06; public x07 := x07;
+  public x08 := x08; public x09 := x09; public x10 := x10; public x11 := x11;
+  public x12 := x12; public x13 := x13; public x14 := x14; public x15 := x15;
+}
+
+extern BigIntExtern(): BigIntExternReturn;
+
+// component BigIntAccum(poly: ExtVal, term: ExtVal, tot: ExtVal) {
+//   public poly := poly;
+//   public term := term;
+//   public tot := tot;
+// }
+
+component BigIntState(
+  pc: Val,                   // RamReg readInst;
+  // polyOp: Val,               // OneHot<7> polyOp;
+  bytes: Array<Val, 16>,     // std::array<ByteReg, 16> bytes;
+  // poly: ExtVal,              // FpExtReg poly;
+  // term: ExtVal,              // FpExtReg term;
+  // tot: ExtVal,               // FpExtReg tot;
+  nextState: Val) {
+  public pc := Reg(pc);
+  // Reg isLast;
+  // // Reg instWordAddr;
+  // public polyOp := Reg(polyOp);
+  public bytes := for x : bytes { Reg(x) };
+  // // FpExtReg mix;
+  // public poly := ExtReg(poly);
+  // public term := ExtReg(term);
+  // public tot := ExtReg(tot);
+  // public tmp: ExtReg(tmp); // FpExtReg tmp;
+  public nextState := Reg(nextState);
+}
+
+component BigIntInvalid() {
+  Log("BigIntInvalid");
+
+  0 = 1;
+  BigIntState(
+    /*pc=*/0,
+    // /*polyOp=*/0,
+    /*bytes=*/for i : 0..16 { 0 },
+    // /*poly=*/MakeExt(0),
+    // /*term=*/MakeExt(0),
+    // /*tot=*/MakeExt(0),
+    /*nextState=*/StateDecode()
+  )
+}
+
+component BigIntEcall(cycle: Reg) {
+  Log("BigIntEcall");
+
+  pc := ReadAddr(cycle, RegT2());
+  Log("pc", pc);
+
+  BigIntState(
+    /*pc=*/pc - 1,
+    // /*polyOp=*/0, // nop
+    /*bytes=*/for i : 0..16 { 0 },
+    // /*poly=*/MakeExt(0),
+    // /*term=*/MakeExt(0),
+    // /*tot=*/MakeExt(0),
+    /*nextState=*/StateBigIntStep()
+  )
+}
+
+component SplitU32(x : ValU32) {
+  low := SplitWord(x.low);
+  high := SplitWord(x.high);
+  public bytes := [low.byte0, low.byte1, high.byte0, high.byte1];
+}
+
+component BigIntRead(cycle: Reg, addr: Val) {
+  Log("BigIntRead");
+
+  words := for i : 0..4 {
+    SplitU32(MemoryRead(cycle, addr + i))
+  };
+
+  [
+    words[0].bytes[0], words[0].bytes[1], words[0].bytes[2], words[0].bytes[3],
+    words[1].bytes[0], words[1].bytes[1], words[1].bytes[2], words[1].bytes[3],
+    words[2].bytes[0], words[2].bytes[1], words[2].bytes[2], words[2].bytes[3],
+    words[3].bytes[0], words[3].bytes[1], words[3].bytes[2], words[3].bytes[3]
+  ]
+}
+
+component BigIntWitness(ret: BigIntExternReturn) {
+  nondet := [
+    NondetReg(ret.x00), NondetReg(ret.x01), NondetReg(ret.x02), NondetReg(ret.x03),
+    NondetReg(ret.x04), NondetReg(ret.x05), NondetReg(ret.x06), NondetReg(ret.x07),
+    NondetReg(ret.x08), NondetReg(ret.x09), NondetReg(ret.x10), NondetReg(ret.x11),
+    NondetReg(ret.x12), NondetReg(ret.x13), NondetReg(ret.x14), NondetReg(ret.x15)
+  ];
+  for reg : nondet {
+    U8Reg(reg)
+  }
+}
+
+component BigIntWrite(cycle: Reg, addr: Val) {
+  Log("BigIntWrite");
+
+  bytes := BigIntWitness(BigIntExtern());
+  for i : 0..4 {
+    word := ValU32(
+      bytes[i * 4 + 0] + bytes[i * 4 + 1] * 0x100,
+      bytes[i * 4 + 2] + bytes[i * 4 + 3] * 0x100
+    );
+    MemoryWrite(cycle, addr + i, word);
+  };
+  bytes
+}
+
+component BigIntCheck() {
+  Log("BigIntCheck");
+  BigIntWitness(BigIntExtern())
+}
+
+component BigIntStep(cycle: Reg, prev: BigIntState) {
+  Log("BigIntStep");
+
+  pc := prev.pc + 1;
+  Log("pc", pc);
+
+  loadInst := MemoryRead(cycle, pc);
+  instHigh := SplitWord(loadInst.high);
+
+  instType := instHigh.byte1;
+  coeffReg := instHigh.byte0;
+
+  polyOp := NondetReg(instType & 0xf);
+  memOp := NondetReg((instType - polyOp) / 16);
+  instType = memOp * 16 + polyOp;
+
+  regBits := for i : 0..5 { NondetBitReg((coeffReg & Po2(i)) / Po2(i)) };
+  reg := reduce for i : 0..5 { regBits[i] * Po2(i) } init 0 with Add;
+
+  coeffBits := for i : 0..3 { NondetBitReg((coeffReg & Po2(5 + i)) / Po2(5 + i)) };
+  coeff := reduce for i : 0..3 { coeffBits[i] * Po2(i) } init 0 with Add;
+
+  offset := loadInst.low;
+  dataAddr := ReadAddr(cycle, reg) + offset * 4;
+
+  Log("polyOp, memOp, reg, coeff, offset, addr", polyOp, memOp, reg, coeff, offset, dataAddr);
+
+  memOpOneHot := OneHot<3>(memOp);
+  bytes := memOpOneHot -> (
+    BigIntRead(cycle, dataAddr),
+    BigIntWrite(cycle, dataAddr),
+    BigIntCheck()
+  );
+
+  BigIntState(
+    /*pc=*/pc,
+    // /*polyOp=*/0, // nop
+    // /*bytes=*/for i : 0..16 { 0 },
+    /*bytes=*/bytes,
+    // /*poly=*/MakeExt(0),
+    // /*term=*/MakeExt(0),
+    // /*tot=*/MakeExt(0),
+    /*nextState=*/StateDecode()
+  )
+}
+
+component BigInt0(cycle: Reg, inst_input: InstInput) {
+  Log("BigInt0");
+
+  inst_input.state = StateBigIntEcall() + inst_input.minor;
+  state : BigIntState;
+  state := inst_input.minor_onehot -> (
+    BigIntEcall(cycle),
+    BigIntStep(cycle, state@1),
+    BigIntInvalid(),
+    BigIntInvalid(),
+    BigIntInvalid(),
+    BigIntInvalid(),
+    BigIntInvalid(),
+    BigIntInvalid()
+  );
+  InstOutput(inst_input.pc_u32, state.nextState, inst_input.mode)
+}

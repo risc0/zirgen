@@ -62,6 +62,9 @@ struct ExecContext {
     }
     physCycles++;
   }
+
+  void bigintCycle(uint32_t cur, uint32_t next, const BigIntState& bigint) { physCycles++; }
+
   void trapRewind() {}
   void trap(TrapCause cause) {}
 

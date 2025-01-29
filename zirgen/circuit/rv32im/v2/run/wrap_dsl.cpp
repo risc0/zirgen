@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "zirgen/circuit/rv32im/v2/run/wrap_dsl.h"
+#include "zirgen/circuit/rv32im/v2/emu/preflight.h"
 #include "zirgen/circuit/rv32im/v2/platform/constants.h"
 
 #include <array>
@@ -308,6 +309,28 @@ std::array<Val, 2> extern_nextPagingIdx(ExecContext& ctx) {
   return {ret[0], ret[1]};
 }
 
+// TODO
+std::array<Val, 16> extern_bigIntExtern(ExecContext& ctx) {
+  return {
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+  };
+}
+
 #if defined(__clang__)
 #pragma clang diagnostic ignored "-Wunused-parameter"
 #pragma clang diagnostic ignored "-Wunused-variable"
@@ -346,6 +369,20 @@ size_t getPoseidonStateCol() {
 
 size_t getShaStateCol() {
   return impl::kLayout_Top.instResult.arm11.state.stateInAddr._super.col;
+}
+
+std::vector<Back> getBigIntStateBacks(const BigIntState& state) {
+  std::vector<Back> backs{
+      {impl::kLayout_Top.instResult.arm12.state.pc._super.col, state.pc},
+      {impl::kLayout_Top.instResult.arm12.state.nextState._super.col, state.nextState},
+  };
+
+  for (size_t i = 0; i < 16; i++) {
+    backs.push_back(
+        Back{impl::kLayout_Top.instResult.arm12.state.bytes[i]._super.col, state.bytes[i]});
+  }
+
+  return backs;
 }
 
 void DslStep(StepHandler& stepHandler, ExecutionTrace& trace, size_t cycle) {
