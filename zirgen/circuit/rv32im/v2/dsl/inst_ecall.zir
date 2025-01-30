@@ -22,7 +22,7 @@ component IllegalECall() {
 }
 
 component MachineECall(cycle: Reg, input: InstInput, pc_addr: Val) {
-  Log("MachineECall");
+  // Log("MachineECall");
   load_inst := MemoryRead(cycle, pc_addr);
   input.state = StateDecode();
   load_inst.high = 0x0000;
