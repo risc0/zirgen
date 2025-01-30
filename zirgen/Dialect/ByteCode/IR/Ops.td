@@ -20,6 +20,7 @@ include "mlir/IR/OpBase.td"
 include "mlir/IR/SymbolInterfaces.td"
 include "mlir/Interfaces/InferTypeOpInterface.td"
 include "mlir/Interfaces/SideEffectInterfaces.td"
+include "mlir/Interfaces/FunctionInterfaces.td"
 
 include "zirgen/Dialect/ByteCode/IR/Attrs.td"
 include "zirgen/Dialect/ByteCode/IR/Dialect.td"
@@ -31,22 +32,24 @@ class ByteCodeOp<string mnemonic, list<Trait> traits = []>
 }
 
 def ExecutorOp : ByteCodeOp<"executor", [
-    SingleBlock, HasParent<"mlir::ModuleOp">, Symbol, OpAsmOpInterface, IsolatedFromAbove]> {
+    SingleBlock, HasParent<"mlir::ModuleOp">, Symbol, OpAsmOpInterface, IsolatedFromAbove,
+    Symbol,
+    DeclareOpInterfaceMethods<CallableOpInterface, [
+       "getArgumentTypes", "getCallableRegion", "getResultTypes"]>]> {
   let summary = "ExecutorOp represents an executor that executes bytecode that's specifically compiled for it.";
   let description = [{
      Each region contains zero or more operations which execute the given bytecodes.
   }];
   let arguments = (ins
     SymbolNameAttr:$sym_name,
-    OptionalAttr<StrAttr>:$sym_visibility,
     TypeAttrOf<FunctionType>:$function_type,
-    StrArrayAttr:$argNames,
-    // How many bits each integer is encoded in.  Unspecified integer kinds are encoded in 32 bits.
-    OptionalAttr<IntKindInfoArrayAttr>: $intKinds
+    OptionalAttr<StrAttr>:$sym_visibility,
+    OptionalAttr<DictArrayAttr>:$arg_attrs,
+    OptionalAttr<DictArrayAttr>:$res_attrs
   );
   
   let regions = (region VariadicRegion<SizedRegion<1>>: $arms);
-  let assemblyFormat = "$sym_name $argNames $function_type attr-dict-with-keyword $arms";
+  let assemblyFormat = "$sym_name $function_type attr-dict-with-keyword $arms";
 
   let extraClassDeclaration = [{
     /// Allow the dialect prefix to be omitted.

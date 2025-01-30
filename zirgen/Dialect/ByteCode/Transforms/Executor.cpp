@@ -211,19 +211,22 @@ struct GenExecutorPass : public impl::GenExecutorBase<GenExecutorPass> {
     auto funcType = armAnalysis.getFunctionType();
     auto argNames = armAnalysis.getArgNames();
 
-    DenseMap<StringAttr, /*index=*/size_t> argIndex;
-    for (auto [idx, argName] : llvm::enumerate(argNames))
-      argIndex[argName] = idx;
-
     OpBuilder builder = OpBuilder::atBlockBegin(mod.getBody());
-    auto executeOp =
-        builder.create<ExecutorOp>(builder.getUnknownLoc(),
-                                   execSymbol,
-                                   /*visibility=*/StringAttr(),
-                                   funcType,
-                                   builder.getArrayAttr(llvm::to_vector_of<Attribute>(argNames)),
-                                   /*intKinds=*/ArrayAttr(),
-                                   /*number of arms=*/arms.size());
+    DenseMap<StringAttr, /*index=*/size_t> argIndex;
+    SmallVector<Attribute> argAttrs;
+    for (auto [idx, argName] : llvm::enumerate(argNames)) {
+      argIndex[argName] = idx;
+      argAttrs.push_back(
+          builder.getDictionaryAttr(builder.getNamedAttr("zirgen.argName", argName)));
+    }
+
+    auto executeOp = builder.create<ExecutorOp>(builder.getUnknownLoc(),
+                                                execSymbol,
+                                                funcType,
+                                                /*visibility=*/StringAttr(),
+                                                /*arg_attrs=*/builder.getArrayAttr(argAttrs),
+                                                /*res_attrs=*/ArrayAttr(),
+                                                /*number of arms=*/arms.size());
     for (auto [idx, armInfo] : llvm::enumerate(arms)) {
       ++armCount;
       maxArmOps.updateMax(armInfo->getOps().size());

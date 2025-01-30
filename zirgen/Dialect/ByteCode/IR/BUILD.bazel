@@ -14,6 +14,7 @@ td_library(
     ],
     deps = [
         "//zirgen/Dialect/ByteCode/Interfaces:TdFiles",
+        "@llvm-project//mlir:FunctionInterfacesTdFiles",
         "@llvm-project//mlir:InferTypeOpInterfaceTdFiles",
         "@llvm-project//mlir:OpBaseTdFiles",
         "@llvm-project//mlir:SideEffectInterfacesTdFiles",

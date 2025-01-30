@@ -25,7 +25,7 @@ def GenExecutor : Pass<"gen-executor", "mlir::ModuleOp"> {
     Option<"execSymbol", "exec-symbol",
            "std::string", /*default=*/"\"exec_byte_code\"", "Symbol name of the geneerated bytecode executor">,
     Option<"maxArms", "max-arms", "size_t", /*default=*/"256", "Maximum number of arms to generate">,
-    Option<"minArmUse", "min-arm-use", "size_t", /*default=*/"5", "Minimum number of uses of a sequence of operations in order to generate an arm for them">,
+    Option<"minArmUse", "min-arm-use", "size_t", /*default=*/"2", "Minimum number of uses of a sequence of operations in order to generate an arm for them">,
     Option<"maxCapture", "max-capture", "size_t", /*default=*/"5", "Maximum number of temporary values to capture in an arm">,
     Option<"maxYield", "max-yield", "size_t", /*default=*/"5", "Maximum number of temporary values output from an arm">,
     

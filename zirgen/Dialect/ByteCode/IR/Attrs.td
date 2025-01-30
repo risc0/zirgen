@@ -26,11 +26,11 @@ class ByteCodeAttr<string name, string attrMnemonic, list<Trait> traits = []>
 def TempBufAttr : ByteCodeAttr<"TempBuf", "temp_buf"> {
   let parameters = (ins
     // Name of this temporary buffer, and the intKind of values used to index into it.
-    "mlir::StringAttr": $intKind,
+    "mlir::StringAttr": $bufName,
     // Number of elements of this temporary buffer to be allocated.
     "size_t": $size
   );
-  let assemblyFormat = [{ $intKind `size` $size }];
+  let assemblyFormat = [{ $bufName `size` $size }];
 }
 
 def TempBufArrayAttr : TypedArrayAttrBase<TempBufAttr, "Array of temporary buffers">;

@@ -130,7 +130,7 @@ public:
                                   llvm::ArrayRef<std::string> contextArgs,
                                   llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                                   mlir::FunctionType funcType,
-                                  mlir::Region* body) = 0;
+                                  EmitPart emitBody) = 0;
   virtual void emitFuncDeclaration(CodegenEmitter& cg,
                                    CodegenIdent<IdentKind::Func> funcName,
                                    llvm::ArrayRef<std::string> contextArgs,
@@ -308,6 +308,10 @@ public:
   void emitTopLevel(mlir::Operation* op);
   void emitTopLevelDecl(mlir::Operation* op);
   void emitFunc(mlir::FunctionOpInterface op);
+  void emitFunc(mlir::CallableOpInterface op,
+                mlir::FunctionType funcType,
+                llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
+                EmitPart body);
   void emitFuncDecl(mlir::FunctionOpInterface op);
   void emitRegion(mlir::Region& region);
   void emitBlock(mlir::Block& block);

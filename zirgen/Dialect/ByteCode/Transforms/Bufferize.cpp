@@ -175,11 +175,21 @@ struct BufferizeImpl {
     return offset;
   }
 
+  void saveMetadata(EncodedBlockOp blockOp) {
+    OpBuilder builder(blockOp);
+    SmallVector<Attribute> tempBufs;
+
+    for (auto [kind, bufInfo] : bufs) {
+      tempBufs.push_back(builder.getAttr<TempBufAttr>(kind, bufInfo.maxOffset));
+    }
+    blockOp.setTempBufsAttr(builder.getArrayAttr(tempBufs));
+  }
+
 private:
   EncodedOp encodedOp;
   BufferizeInterface& bufferize;
 
-  DenseMap</*buffer kind=*/StringAttr, BufInfo> bufs;
+  llvm::MapVector</*buffer kind=*/StringAttr, BufInfo> bufs;
   DenseMap<Value, /*encoded temp buffer offset=*/ActiveInfo> active;
   SmallVector<std::pair<Operation*, SmallVector<BuildEncodedElement>>> replacements;
 };
@@ -190,7 +200,7 @@ LogicalResult bufferize(EncodedBlockOp encodedOp, BufferizeInterface& bufferize)
 
   encodedOp.walk([&](Block* block) { impl.processBlock(block); });
 
-  //  impl.saveMetadata(encodedOp);
+  impl.saveMetadata(encodedOp);
   return success();
 
 } // namespace

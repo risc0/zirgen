@@ -166,20 +166,13 @@ void CodegenEmitter::emitFunc(FunctionOpInterface op) {
   if (op->hasTrait<OpTrait::IsIsolatedFromAbove>()) {
     resetValueNumbering();
   }
-  auto body = op.getCallableRegion();
-
-  emitTypeDefs(op);
-
-  llvm::ArrayRef<std::string> contextArgs;
-  if (opts.funcContextArgs.contains(op->getName().getStringRef())) {
-    contextArgs = opts.funcContextArgs.at(op->getName().getStringRef());
-  }
-
-  // Pick up any special names of arguments.
   DenseMap<Value, StringRef> argValueNames;
   if (auto opAsm = dyn_cast<OpAsmOpInterface>(op.getOperation())) {
-    opAsm.getAsmBlockArgumentNames(*body,
-                                   [&](Value v, StringRef name) { argValueNames[v] = name; });
+    if (auto callable = op.getCallableRegion()) {
+      // Pick up any special names of arguments.
+      opAsm.getAsmBlockArgumentNames(*callable,
+                                     [&](Value v, StringRef name) { argValueNames[v] = name; });
+    }
   }
 
   llvm::SmallVector<CodegenIdent<IdentKind::Var>> argNames;
@@ -193,13 +186,28 @@ void CodegenEmitter::emitFunc(FunctionOpInterface op) {
       baseName = "arg";
     argNames.push_back(getNewValueName(arg, baseName, /*owned=*/false));
   }
+  emitFunc(op, llvm::cast<FunctionType>(op.getFunctionType()), argNames, [&]() {
+    Region* region = op.getCallableRegion();
+    assert(region && "Missing callable region for emitting function");
 
-  opts.lang->emitFuncDefinition(*this,
-                                op.getNameAttr(),
-                                contextArgs,
-                                argNames,
-                                llvm::cast<FunctionType>(op.getFunctionType()),
-                                body);
+    emitRegion(*region);
+  });
+}
+
+void CodegenEmitter::emitFunc(CallableOpInterface op,
+                              FunctionType funcType,
+                              llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
+                              EmitPart body) {
+
+  emitTypeDefs(op);
+
+  llvm::ArrayRef<std::string> contextArgs;
+  if (opts.funcContextArgs.contains(op->getName().getStringRef())) {
+    contextArgs = opts.funcContextArgs.at(op->getName().getStringRef());
+  }
+
+  opts.lang->emitFuncDefinition(
+      *this, SymbolTable::getSymbolName(op), contextArgs, argNames, funcType, body);
 
   if (op->hasTrait<OpTrait::IsIsolatedFromAbove>()) {
     resetValueNumbering();

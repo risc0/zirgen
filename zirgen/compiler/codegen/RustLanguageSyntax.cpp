@@ -137,7 +137,7 @@ void RustLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
                                             llvm::ArrayRef<std::string> contextArgDecls,
                                             llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                                             mlir::FunctionType funcType,
-                                            mlir::Region* body) {
+                                            EmitPart body) {
   cg << "pub fn " << funcName << "<'a>(";
 
   if (!contextArgDecls.empty()) {
@@ -182,7 +182,7 @@ void RustLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
   }
 
   cg << "> {\n";
-  cg.emitRegion(*body);
+  cg << body;
   cg << "}\n";
 }
 

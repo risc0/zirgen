@@ -348,7 +348,15 @@ void ArmAnalysisImpl::analyzeOne() {
   SetVector<Location> locs;
 
   for (std::unique_ptr<CandidateTrace>& run : top.runs) {
-    locs.insert(run->locs.begin(), run->locs.end());
+    // Deeply uniquify locations since otherwise we end up with an
+    // excessive number of things like call sites.
+    for (Location loc : run->locs) {
+      loc->walk([&](Location subLoc) {
+        if (llvm::isa<FileLineColRange>(subLoc))
+          locs.insert(subLoc);
+        return WalkResult::advance();
+      });
+    }
     if (run->advance(poison).failed()) {
       LLVM_DEBUG(llvm::dbgs() << "advancing failed\n");
       countThis = true;

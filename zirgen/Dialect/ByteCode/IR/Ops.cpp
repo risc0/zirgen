@@ -165,4 +165,15 @@ void EncodedOp::build(OpBuilder& builder,
   prop.encoded = builder.getDenseI64ArrayAttr(encoded);
 }
 
+Region* ExecutorOp::getCallableRegion() {
+  return nullptr;
+}
+
+ArrayRef<Type> ExecutorOp::getArgumentTypes() {
+  return getFunctionType().getInputs();
+}
+ArrayRef<Type> ExecutorOp::getResultTypes() {
+  return getFunctionType().getResults();
+}
+
 } // namespace zirgen::ByteCode

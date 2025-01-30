@@ -196,14 +196,17 @@ void emitTarget(const CodegenTarget& target,
 void emitByteCode(ModuleOp mod) {
   mod = mod.clone();
 
-  PassManager pm(mod.getContext());
+  PassManager pm(mod.getContext(), ModuleOp::getOperationName(), OpPassManager::Nesting::Implicit);
   pm.enableVerifier(true);
   pm.addPass(mlir::createInlinerPass());
   pm.nest<func::FuncOp>().addPass(Zll::createAnnotatePolyMixPass());
   pm.addPass(createCanonicalizerPass());
   pm.addPass(createCSEPass());
-  //  pm.addPass(createPrintIRoPass());
-  ByteCode::addZllToByteCodeToPipeline(pm);
+  pm.addPass(ByteCode::createCloneSimpleZll());
+  pm.addPass(ByteCode::createScheduleZll());
+  pm.addPass(ByteCode::createGenExecutor());
+  pm.addPass(ByteCode::createEncode());
+  pm.addPass(ByteCode::createBufferizeZll());
   if (failed(pm.run(mod))) {
     throw std::runtime_error("Failed to apply stage1 passes");
   }
