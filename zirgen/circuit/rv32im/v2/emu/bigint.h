@@ -44,8 +44,8 @@ struct BigIntInstruction {
 
   static BigIntInstruction decode(uint32_t insn) {
     return BigIntInstruction{
-        .memOp = insn >> 28 & 0x0f,
         .polyOp = insn >> 24 & 0x0f,
+        .memOp = insn >> 28 & 0x0f,
         .coeff = insn >> 21 & 0x07,
         .reg = insn >> 16 & 0x1f,
         .offset = insn & 0xffff,
