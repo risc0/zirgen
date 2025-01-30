@@ -8,7 +8,7 @@ import inst_control;
 import inst_ecall;
 import inst_p2;
 import inst_sha;
-import inst_bigint2;
+import inst_bigint;
 import mem;
 import one_hot;
 
@@ -92,15 +92,11 @@ component Top() {
   next_state := Reg(inst_result.new_state);
   next_machine_mode := Reg(inst_result.new_mode);
 
-  TopRet(0)
+  inst_result.topState
 }
 
-component TopRet(x: Val) {
-  public x := Reg(x);
-}
-
-component Accum(top: TopRet, mix: Array<ExtVal, 3>) {
-  Log("Accum");
+component Accum(topState: BigIntTopState, mix: Array<ExtVal, 1>) {
+  BigIntAccum(topState, mix);
 }
 
 test run {

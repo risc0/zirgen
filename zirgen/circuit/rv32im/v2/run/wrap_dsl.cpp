@@ -375,6 +375,7 @@ std::vector<Back> getBigIntStateBacks(const BigIntState& state) {
       {impl::kLayout_Top.instResult.arm12.state.isEcall._super.col, state.isEcall},
       {impl::kLayout_Top.instResult.arm12.state.pc._super.col, state.pc},
       {impl::kLayout_Top.instResult.arm12.state.polyOp._super.col, state.polyOp},
+      {impl::kLayout_Top.instResult.arm12.state.coeff._super.col, state.coeff},
       {impl::kLayout_Top.instResult.arm12.state.nextState._super.col, state.nextState},
   };
 
@@ -397,10 +398,9 @@ void DslStepAccum(StepHandler& stepHandler, ExecutionTrace& trace, size_t cycle)
   impl::ExecContext ctx(stepHandler, trace, cycle);
   impl::MutableBufObj data(ctx, trace.data);
   impl::MutableBufObj accum(ctx, trace.accum);
-  // Global is required when using user-accum
-  // impl::GlobalBufObj global(ctx, trace.global);
+  impl::GlobalBufObj global(ctx, trace.global);
   impl::GlobalBufObj mix(ctx, trace.mix);
-  step_TopAccum(ctx, &accum, &data, /*&global, */ &mix);
+  step_TopAccum(ctx, &accum, &data, &global, &mix);
 }
 
 } // namespace zirgen::rv32im_v2

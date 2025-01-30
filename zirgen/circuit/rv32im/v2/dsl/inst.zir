@@ -46,10 +46,15 @@ component WriteRd(cycle: Reg, input: InstInput, decoded: Decoder, do_write: Val,
   MemoryWrite(cycle, write_addr, write_data);
 }
 
-component InstOutput(new_pc: ValU32, new_state: Val, new_mode: Val) {
+component InstOutputBase(new_pc: ValU32, new_state: Val, new_mode: Val, topState: BigIntTopState) {
   public new_pc := new_pc;
   public new_state := new_state;
   public new_mode := new_mode;
+  public topState := topState;
+}
+
+component InstOutput(new_pc: ValU32, new_state: Val, new_mode: Val) {
+  InstOutputBase(new_pc, new_state, new_mode, BigIntTopStateNull())
 }
 
 component VerifyOpcode(decoded: Decoder, opcode: Val) {
@@ -67,3 +72,12 @@ component VerifyOpcodeF3F7(decoded: Decoder, opcode: Val, func3: Val, func7: Val
   decoded.func7 = func7;
 }
 
+component BigIntTopState(polyOp: Val, coeff: Val, witness: Array<Val, 16>) {
+  public polyOp := polyOp;
+  public coeff := coeff;
+  public witness := witness;
+}
+
+component BigIntTopStateNull() {
+  BigIntTopState(0, 0, for i : 0..16 { 0 })
+}

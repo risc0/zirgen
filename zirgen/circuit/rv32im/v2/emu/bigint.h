@@ -30,6 +30,7 @@ struct BigIntState {
   uint32_t isEcall;
   uint32_t pc;
   uint32_t polyOp;
+  uint32_t coeff;
   std::array<uint32_t, 16> bytes{};
   uint32_t nextState;
 };
@@ -37,7 +38,7 @@ struct BigIntState {
 struct BigIntInstruction {
   uint32_t polyOp;
   uint32_t memOp;
-  int coeff;
+  uint32_t coeff;
   uint32_t reg;
   uint32_t offset;
 
@@ -45,7 +46,7 @@ struct BigIntInstruction {
     return BigIntInstruction{
         .memOp = insn >> 28 & 0x0f,
         .polyOp = insn >> 24 & 0x0f,
-        .coeff = int(insn >> 21 & 0x07) - 4,
+        .coeff = insn >> 21 & 0x07,
         .reg = insn >> 16 & 0x1f,
         .offset = insn & 0xffff,
     };
@@ -112,6 +113,7 @@ struct BigInt {
     bigint.state.isEcall = 1;
     bigint.state.pc = ctx.load(MACHINE_REGS_WORD + REG_T2) / 4 - 1;
     bigint.state.polyOp = 0;
+    bigint.state.coeff = 0;
     bigint.state.nextState = STATE_BIGINT_STEP;
     ctx.bigintCycle(STATE_BIGINT_ECALL, STATE_BIGINT_STEP, bigint.state);
 
@@ -194,6 +196,7 @@ struct BigInt {
 
     state.isEcall = 0;
     state.polyOp = decoded.polyOp;
+    state.coeff = decoded.coeff;
 
     ctx.bigintCycle(STATE_BIGINT_STEP, state.nextState, state);
   }
