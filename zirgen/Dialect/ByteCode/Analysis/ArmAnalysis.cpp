@@ -45,9 +45,9 @@ using namespace mlir;
 namespace zirgen::ByteCode {
 
 llvm::raw_ostream& operator<<(llvm::raw_ostream& os, const ArmInfo& armInfo) {
-  os << "[arm: " << armInfo.ops.size() << " ops, " << armInfo.count << " uses, "
+  os << "[arm: " << armInfo.getOps().size() << " ops, " << armInfo.getCount() << " uses, "
      << armInfo.numLoadVals << " in, " << armInfo.numYieldVals << " out:\n";
-  for (auto op : armInfo.ops) {
+  for (auto op : armInfo.getOps()) {
     os << "  " << *op << "\n";
   }
   os << "offsets=";
@@ -95,7 +95,7 @@ struct UniqueArmMapInfo {
   static unsigned getHashValue(const ArmInfo& a) {
     return llvm::hash_combine(
         // Operation names
-        hash_range(llvm::map_range(a.ops, [](Operation* op) { return op->getName(); })),
+        hash_range(llvm::map_range(a.getOps(), [](Operation* op) { return op->getName(); })),
         // Types of all values consumed and produced
         ValueRange(a.values).getTypes(),
         // Names of captured function arguments
@@ -113,7 +113,7 @@ struct UniqueArmMapInfo {
     if (ValueRange(lhs.values).getTypes() != ValueRange(rhs.values).getTypes())
       return false;
 
-    if (!llvm::equal(lhs.ops, rhs.ops, [](Operation* lhsOp, Operation* rhsOp) {
+    if (!llvm::equal(lhs.getOps(), rhs.getOps(), [](Operation* lhsOp, Operation* rhsOp) {
           return lhsOp->getName() == rhsOp->getName() &&
                  lhsOp->getNumOperands() == rhsOp->getNumOperands() &&
                  lhsOp->getNumResults() == rhsOp->getNumResults();
@@ -136,7 +136,7 @@ struct CandidateTrace {
 
     Operation* op = ops[pos++];
     locs.insert(op->getLoc());
-    key.ops = ops.slice(0, pos);
+    key.allOps = {ops.slice(0, pos)};
     if (pos > 1)
       poison.insert(op);
 
@@ -180,7 +180,7 @@ struct CandidateTrace {
 
     // Generate our offsets for operations
     key.valueOffsets.clear();
-    for (Operation* prevOp : key.ops) {
+    for (Operation* prevOp : key.getOps()) {
       for (Value val : prevOp->getOperands()) {
         if (isa<BlockArgument>(val)) {
           assert(blockArgIdx.contains(val));
@@ -254,9 +254,13 @@ struct QueueEntry {
     // Returns true if this is lower priority than rhs
     return runs.size() < rhs.runs.size();
   }
-  const ArmInfo& getArmInfo() const {
+  ArmInfo getArmInfo() const {
     assert(!runs.empty());
-    return runs.front()->key;
+    ArmInfo armInfo = runs.front()->key;
+    for (auto& run : llvm::drop_begin(runs)) {
+      llvm::append_range(armInfo.allOps, run->key.allOps);
+    }
+    return armInfo;
   }
   SmallVector<std::unique_ptr<CandidateTrace>> runs;
 };
@@ -276,8 +280,8 @@ struct ArmAnalysisImpl {
   std::vector<std::vector<Operation*>>& blockOpStorage;
 
   std::vector<QueueEntry> searchQueue;
-  llvm::SetVector<ArmInfo, SmallVector<ArmInfo>, DenseSet<ArmInfo, UniqueArmMapInfo>> singleOps;
-  llvm::SmallVector<ArmInfo> multiOps;
+  llvm::SetVector<ArmInfo, std::vector<ArmInfo>, DenseSet<ArmInfo, UniqueArmMapInfo>> singleOps;
+  std::vector<ArmInfo> multiOps;
 
   llvm::MapVector<StringAttr, Type> args;
   llvm::SmallVector<Type> resultTypes;
@@ -330,7 +334,6 @@ void ArmAnalysisImpl::analyzeOne() {
   std::pop_heap(searchQueue.begin(), searchQueue.end());
   // Save this for later since it can get overwritten when we advance.
   ArmInfo topArmInfo = top.getArmInfo();
-  topArmInfo.count = top.runs.size();
 
   LLVM_DEBUG(llvm::dbgs() << "queue size=" << searchQueue.size() << ", analyzing " << topArmInfo
                           << "\n");
@@ -356,7 +359,7 @@ void ArmAnalysisImpl::analyzeOne() {
     subRuns[key].push_back(std::move(run));
   }
 
-  if (topArmInfo.ops.size() == 1) {
+  if (topArmInfo.getOps().size() == 1) {
     // Always save single-op runs
     topArmInfo.loc = FusedLoc::get(ctx, locs.getArrayRef());
     singleOps.insert(topArmInfo);
@@ -376,7 +379,7 @@ void ArmAnalysisImpl::analyzeOne() {
       subRun.erase(it, subRun.end());
       continue;
     }
-    if (subRun.size() < kMinArmUseCount && subKey.ops.size() > 1) {
+    if (subRun.size() < kMinArmUseCount && subKey.getOps().size() > 1) {
       LLVM_DEBUG(llvm::dbgs() << "not enough used\n");
       countThis = true;
       continue;
@@ -386,7 +389,7 @@ void ArmAnalysisImpl::analyzeOne() {
     std::push_heap(searchQueue.begin(), searchQueue.end());
   }
 
-  if (countThis && topArmInfo.ops.size() > 1) {
+  if (countThis && topArmInfo.getOps().size() > 1) {
     topArmInfo.loc = FusedLoc::get(ctx, locs.getArrayRef());
     multiOps.emplace_back(std::move(topArmInfo));
   }

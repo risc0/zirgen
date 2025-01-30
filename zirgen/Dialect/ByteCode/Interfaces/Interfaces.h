@@ -17,16 +17,4 @@
 #include "mlir/IR/BuiltinOps.h"
 #include "mlir/IR/Operation.h"
 
-namespace zirgen::ByteCode {
-
-// Options used when encoding bytecode
-struct EncodeOptions {
-  EncodeOptions() = default;
-
-  /// Output encoding in human readable format instead of machine readable format.
-  bool outputText = false;
-};
-
-} // namespace zirgen::ByteCode
-
 #include "zirgen/Dialect/ByteCode/Interfaces/Interfaces.h.inc"

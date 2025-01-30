@@ -132,6 +132,8 @@ buffer offset.
       // -1: values[0]
       // -2: values[1]
       // -3: results[0]
+      //
+      // Users should only access these through `getElement`.
       DenseI64ArrayAttr:$encoded,
       Variadic<AnyType>:$values);
   let results = (outs Variadic<AnyType>:$results);

@@ -30,7 +30,7 @@ using namespace mlir;
 
 namespace zirgen::ByteCode {
 
-#define GEN_PASS_DEF_GENENCODING
+#define GEN_PASS_DEF_ENCODE
 #include "zirgen/Dialect/ByteCode/Transforms/Passes.h.inc"
 
 namespace {
@@ -90,6 +90,7 @@ struct EncodeArmPattern {
         return;
       }
 
+      assert(std::distance(foundStart, foundEnd) == opNames.size());
       if (succeeded(matchAndRewriteAt(block, Block::iterator(*foundStart.getCurrent())))) {
         skipped = blockVec.slice(0, foundStart - mapped.begin());
         remain = blockVec.slice(foundEnd - mapped.begin());
@@ -100,10 +101,10 @@ struct EncodeArmPattern {
       assert(pos != mapped.end());
       ++pos;
     }
+    skipped = blockVec;
   }
 
   LogicalResult matchAndRewriteAt(Block* block, Block::iterator blockIt) const {
-
     Operation* origOp = &*blockIt;
 
     // Mapping from values in arm to values in block
@@ -250,6 +251,8 @@ struct EncodeArmPattern {
       }
     }
 
+    assert(toReplace.size() == opNames.size());
+
     // Remove all the operations we replaced
     for (Operation* replaceOp : toReplace)
       replaceOp->dropAllReferences();
@@ -290,6 +293,17 @@ struct EncodePatterns {
     blockVecs.push_back(blockVec);
     for (auto& [benefit, pattern] : patterns)
       applyToAllBlocks(block, *pattern);
+
+    if (!blockVecs.empty()) {
+      llvm::errs() << "Some blocks did not match any patterns!\n";
+      for (auto blockVec : blockVecs) {
+        llvm::errs() << blockVec.size() << "ops:\n";
+        for (Operation* op : blockVec) {
+          llvm::errs() << "   " << *op << "\n";
+        }
+      }
+      abort();
+    }
   }
 
   void applyToAllBlocks(Block* block, EncodeArmPattern& pattern) {
@@ -306,17 +320,15 @@ struct EncodePatterns {
     blockVecs = std::move(nextPatternBlockVecs);
   }
 };
-struct GenEncodingPass : public impl::GenEncodingBase<GenEncodingPass> {
-  using GenEncodingBase::GenEncodingBase;
+
+struct EncodePass : public impl::EncodeBase<EncodePass> {
+  using EncodeBase::EncodeBase;
 
   // When copying pass, start out with no arm statistics
-  GenEncodingPass(const GenEncodingPass& rhs) : armStats() {}
+  EncodePass(const EncodePass& rhs) : armStats() {}
 
   struct ArmStatistic {
-    ArmStatistic(GenEncodingPass* pass,
-                 size_t armIdx,
-                 const char* nameBase,
-                 const char* description)
+    ArmStatistic(EncodePass* pass, size_t armIdx, const char* nameBase, const char* description)
         : nameStorage("arm" + std::to_string(armIdx) + "-" + nameBase)
         , stat(pass, nameStorage.c_str(), description) {}
 
@@ -327,9 +339,9 @@ struct GenEncodingPass : public impl::GenEncodingBase<GenEncodingPass> {
   };
 
   struct ArmStatistics {
-    ArmStatistics(GenEncodingPass* pass, size_t armIdx) : pass(pass), armIdx(armIdx) {}
+    ArmStatistics(EncodePass* pass, size_t armIdx) : pass(pass), armIdx(armIdx) {}
 
-    GenEncodingPass* pass;
+    EncodePass* pass;
     size_t armIdx;
 
     ArmStatistic uses{pass, armIdx, "uses", "Number of times this arm was used "};
@@ -388,7 +400,22 @@ struct GenEncodingPass : public impl::GenEncodingBase<GenEncodingPass> {
 
       patterns.applyAllPatterns(block);
 
+      if (llvm::any_of(*block, [&](Operation& op) { return !llvm::isa<EncodedOp>(op); })) {
+        blockOp.emitError("Unable to encode all items");
+        blockOp->dump();
+        signalPassFailure();
+        continue;
+      }
+
       // Erase arguments that we were able to eliminate
+      for (Value arg : blockOp.getBody().front().getArguments()) {
+        if (!arg.use_empty()) {
+          blockOp.emitError("Unable to remove uses of block arguments") << arg;
+          blockOp->dump();
+          signalPassFailure();
+          return;
+        }
+      }
       blockOp.getBody().front().eraseArguments(0, blockOp.getBody().getNumArguments());
 
       for (EncodedOp op : blockOp.getBody().getOps<EncodedOp>()) {

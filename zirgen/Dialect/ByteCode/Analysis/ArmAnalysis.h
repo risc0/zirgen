@@ -26,11 +26,18 @@ namespace zirgen::ByteCode {
 struct ArmInfo {
   mlir::LocationAttr loc;
 
-  // Representative set of operations for this arm.
-  llvm::ArrayRef<mlir::Operation*> ops;
+  llvm::SmallVector<llvm::ArrayRef<mlir::Operation*>> allOps;
+
+  // Returns a representative sample of the operations present
+  llvm::ArrayRef<mlir::Operation*> getOps() const {
+    if (allOps.empty())
+      return {};
+    else
+      return allOps.front();
+  }
 
   // Number of times we've seen this set of operations.
-  size_t count = 0;
+  size_t getCount() const { return allOps.size(); }
 
   // For each operation in this arm, the number of integer arguments
   // (from getByteCodeIntArgs) that need to be decoded.  This does not
@@ -101,8 +108,8 @@ public:
 private:
   void calcDispatchKey(mlir::Operation* op);
 
-  llvm::SmallVector<ArmInfo> distinctOps;
-  llvm::SmallVector<ArmInfo> multiOpArms;
+  std::vector<ArmInfo> distinctOps;
+  std::vector<ArmInfo> multiOpArms;
 
   std::vector<std::vector<mlir::Operation*>> blockOpStorage;
 

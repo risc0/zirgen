@@ -56,7 +56,7 @@ void buildArm(OpBuilder& builder,
 
   size_t offset = 0;
   Operation* newOp = nullptr;
-  for (auto [op, numIntArgs] : llvm::zip_equal(arm->ops, arm->opIntArgs)) {
+  for (auto [op, numIntArgs] : llvm::zip_equal(arm->getOps(), arm->opIntArgs)) {
     SmallVector<Value> intArgs;
     for (auto i : llvm::seq(numIntArgs)) {
       (void)i;
@@ -93,6 +93,84 @@ void buildArm(OpBuilder& builder,
   builder.create<YieldOp>(loc, operands);
 }
 
+struct BuildArmInfo {
+  BuildArmInfo(const ArmInfo* armInfo) : armInfo(armInfo) { allOps = armInfo->allOps; }
+
+  ssize_t getBenefit() const {
+    ssize_t benefit = armInfo->getOps().size();
+    //    benefit -= armInfo->numLoadVals;
+    benefit -= armInfo->numYieldVals;
+    benefit *= armInfo->getCount() - 1;
+    return benefit;
+  }
+
+  bool operator<(const BuildArmInfo& rhs) const { return getBenefit() < rhs.getBenefit(); }
+  const ArmInfo* armInfo;
+
+  SmallVector<ArrayRef<Operation*>> allOps;
+};
+
+struct ArmFinder {
+  ArmFinder(ArmAnalysis& armAnalysis) : armAnalysis(armAnalysis) {
+    // Take arms from multiOpArms based on total number of operations
+    // among all instances until we fill up maxArms arms.
+
+    llvm::append_range(multiOpArms, llvm::make_pointer_range(armAnalysis.getMultiOpArms()));
+    std::make_heap(multiOpArms.begin(), multiOpArms.end());
+  }
+
+  const ArmInfo* takeNextBest() {
+    while (!multiOpArms.empty()) {
+      std::pop_heap(multiOpArms.begin(), multiOpArms.end());
+      BuildArmInfo& buildArmInfo = multiOpArms.back();
+
+      auto it = llvm::remove_if(buildArmInfo.allOps, [&](ArrayRef<Operation*> ops) {
+        return llvm::any_of(ops, [&](Operation* op) { return seen.contains(op); });
+      });
+      if (it != buildArmInfo.allOps.end()) {
+        // Seen some of these already; throw it back in the queue
+        buildArmInfo.allOps.erase(it, buildArmInfo.allOps.end());
+        if (buildArmInfo.allOps.size() < 2)
+          multiOpArms.pop_back();
+        else
+          std::push_heap(multiOpArms.begin(), multiOpArms.end());
+        continue;
+      }
+
+      for (ArrayRef<Operation*> ops : buildArmInfo.allOps) {
+        seen.insert(ops.begin(), ops.end());
+      }
+
+      const ArmInfo* armInfo = buildArmInfo.armInfo;
+      multiOpArms.pop_back();
+      return armInfo;
+
+      //      llvm::errs() << "benefit " << getBenefit(*armInfo) << " arm " << *armInfo << "\n";
+
+      //      if (getBenefit(*armInfo) < 0) continue;
+
+      /*      if (armInfo->count < minArmUse)
+              continue;
+            if (armInfo->numLoadVals > maxCapture)
+              continue;
+            if (armInfo->numYieldVals > maxYield)
+            continue;*/
+
+      /*      llvm::errs() << "Got arm " << *armInfo << " OK!\n";
+            for (Operation* op : armInfo->ops) {
+              llvm::errs() << "  " << *op << "\n";
+              }*/
+      //      return armInfo;
+    }
+    assert(multiOpArms.empty());
+    return nullptr;
+  }
+
+  ArmAnalysis& armAnalysis;
+  SmallVector<BuildArmInfo> multiOpArms;
+  DenseSet<Operation*> seen;
+};
+
 } // namespace
 
 struct GenExecutorPass : public impl::GenExecutorBase<GenExecutorPass> {
@@ -108,30 +186,19 @@ struct GenExecutorPass : public impl::GenExecutorBase<GenExecutorPass> {
     SmallVector<const ArmInfo*> arms;
     llvm::append_range(arms, llvm::make_pointer_range(armAnalysis.getDistinctOps()));
 
-    // Take arms from multiOpArms based on total number of operations
-    // among all instances until we fill up maxArms arms.
-    SmallVector<std::pair<size_t, const ArmInfo*>> multiOpArms;
-    llvm::append_range(multiOpArms,
-                       llvm::map_range(armAnalysis.getMultiOpArms(), [&](const ArmInfo& armInfo) {
-                         return std::make_pair(armInfo.ops.size(), &armInfo);
-                       }));
-    llvm::sort(multiOpArms, llvm::less_first());
+    ArmFinder armFinder(armAnalysis);
 
-    while (arms.size() < maxArms && !multiOpArms.empty()) {
-      const ArmInfo* armInfo = multiOpArms.back().second;
-      multiOpArms.pop_back();
+    while (arms.size() < maxArms) {
+      const ArmInfo* armInfo = armFinder.takeNextBest();
+      if (!armInfo)
+        break;
+      arms.push_back(armInfo);
+    }
 
-      if (armInfo->count < minArmUse)
-        continue;
-      if (armInfo->numLoadVals > maxCapture)
-        continue;
-      if (armInfo->numYieldVals > maxYield)
-        continue;
-
-      /*      llvm::errs() << "Got arm " << *armInfo << " OK!\n";
-            for (Operation* op : armInfo->ops) {
-              llvm::errs() << "  " << *op << "\n";
-              }*/
+    while (arms.size() < maxArms) {
+      const ArmInfo* armInfo = armFinder.takeNextBest();
+      if (!armInfo)
+        break;
       arms.push_back(armInfo);
     }
 
@@ -140,8 +207,6 @@ struct GenExecutorPass : public impl::GenExecutorBase<GenExecutorPass> {
       signalPassFailure();
       return;
     }
-
-    llvm::sort(multiOpArms, llvm::less_first());
 
     auto funcType = armAnalysis.getFunctionType();
     auto argNames = armAnalysis.getArgNames();
@@ -161,9 +226,9 @@ struct GenExecutorPass : public impl::GenExecutorBase<GenExecutorPass> {
                                    /*number of arms=*/arms.size());
     for (auto [idx, armInfo] : llvm::enumerate(arms)) {
       ++armCount;
-      maxArmOps.updateMax(armInfo->ops.size());
-      maxArmUses.updateMax(armInfo->count);
-      maxArmReplaced.updateMax(armInfo->count * armInfo->ops.size());
+      maxArmOps.updateMax(armInfo->getOps().size());
+      maxArmUses.updateMax(armInfo->getCount());
+      maxArmReplaced.updateMax(armInfo->getCount() * armInfo->getOps().size());
       buildArm(builder, armInfo->loc, executeOp.getArms()[idx], armInfo, argIndex);
     }
   }

@@ -30,7 +30,7 @@ using namespace mlir;
 
 namespace zirgen::ByteCode {
 
-#define GEN_PASS_DEF_GENEXECUTOR
+#define GEN_PASS_DEF_GENNAIVEENCODING
 #define GEN_PASS_DEF_GENENCODING
 #include "zirgen/Dialect/ByteCode/Transforms/Passes.h.inc"
 
@@ -160,7 +160,7 @@ struct GenExecutorPass : public impl::GenExecutorBase<GenExecutorPass> {
   }
 };
 
-struct GenEncodingPass : public impl::GenEncodingBase<GenEncodingPass> {
+struct EncodePass : public impl::EncodeBase<EncodePass> {
   void runOnOperation() override {
     func::FuncOp funcOp = getOperation();
     assert(funcOp.getBody().hasOneBlock());

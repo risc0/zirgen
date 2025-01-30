@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include "mlir/Analysis/Liveness.h"
 #include "mlir/IR/BuiltinOps.h"
 #include "mlir/IR/Location.h"
 #include "mlir/IR/Region.h"
@@ -21,11 +22,13 @@
 
 namespace zirgen::ByteCode {
 
-// An interface for a bufferizer to supply buffer indexes for values.
+// An interface for a bufferizer to supply buffer kinds and sizes for values.
 class BufferizeInterface {
 public:
-  virtual std::pair</*intKind=*/mlir::Attribute, /*index=*/size_t>
-  getKindAndIndex(mlir::Value value) = 0;
+  // Returns an identifier for the kind of buffer this uses, and the number of registers in it uses.
+  virtual std::pair</*kind=*/mlir::StringAttr, /*size=*/size_t>
+  getKindAndSize(mlir::Value value) = 0;
+
   virtual ~BufferizeInterface() = default;
 
 protected:
@@ -34,14 +37,18 @@ protected:
 };
 
 // A bufferize interface that assignes each value to a separate index,
-// regardless of type, size, or liveness.
+// regardless of type or size.
 class NaiveBufferize : public BufferizeInterface {
 public:
-  std::pair</*intKind=*/mlir::Attribute, /*index=*/size_t>
-  getKindAndIndex(mlir::Value value) override;
+  NaiveBufferize(mlir::StringAttr kind) : kind(kind) {}
+
+  std::pair</*kind=*/mlir::StringAttr, /*size=*/size_t> getKindAndSize(mlir::Value value) override;
 
 private:
-  llvm::DenseMap<mlir::Value, size_t> indexes;
+  mlir::StringAttr kind;
 };
+
+class EncodedBlockOp;
+mlir::LogicalResult bufferize(EncodedBlockOp encodedOp, BufferizeInterface& intf);
 
 } // namespace zirgen::ByteCode
