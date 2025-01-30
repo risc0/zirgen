@@ -24,4 +24,6 @@ namespace zirgen::ByteCode {
 #define GEN_PASS_REGISTRATION
 #include "zirgen/Dialect/ByteCode/Transforms/Passes.h.inc"
 
+void addZllToByteCodeToPipeline(mlir::OpPassManager& pm);
+
 } // namespace zirgen::ByteCode

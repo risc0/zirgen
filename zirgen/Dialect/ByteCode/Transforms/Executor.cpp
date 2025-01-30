@@ -97,11 +97,22 @@ struct BuildArmInfo {
   BuildArmInfo(const ArmInfo* armInfo) : armInfo(armInfo) { allOps = armInfo->allOps; }
 
   ssize_t getBenefit() const {
-    ssize_t benefit = armInfo->getOps().size();
-    //    benefit -= armInfo->numLoadVals;
-    benefit -= armInfo->numYieldVals;
-    benefit *= armInfo->getCount() - 1;
-    return benefit;
+    if (true) {
+      //      ssize_t benefit = 35;
+      //      for (Operation* op : armInfo->getOps()) {
+      //        if (llvm::isa<MulOp, AndEqzOp, AndCondOp>(op))
+      //          benefit += 1;
+      //      }
+      ssize_t benefit = armInfo->getOps().size();
+      benefit -= armInfo->numYieldVals;
+      benefit *= armInfo->getCount() - 1;
+      return benefit;
+    } else {
+      ssize_t benefit = armInfo->getOps().size() * armInfo->getOps().size();
+      benefit -= armInfo->numLoadVals * armInfo->numYieldVals;
+      // benefit *= armInfo->getCount() - 1;
+      return benefit;
+    }
   }
 
   bool operator<(const BuildArmInfo& rhs) const { return getBenefit() < rhs.getBenefit(); }
@@ -137,11 +148,10 @@ struct ArmFinder {
         continue;
       }
 
+      const ArmInfo* armInfo = buildArmInfo.armInfo;
       for (ArrayRef<Operation*> ops : buildArmInfo.allOps) {
         seen.insert(ops.begin(), ops.end());
       }
-
-      const ArmInfo* armInfo = buildArmInfo.armInfo;
       multiOpArms.pop_back();
       return armInfo;
 
@@ -194,14 +204,6 @@ struct GenExecutorPass : public impl::GenExecutorBase<GenExecutorPass> {
         break;
       arms.push_back(armInfo);
     }
-
-    while (arms.size() < maxArms) {
-      const ArmInfo* armInfo = armFinder.takeNextBest();
-      if (!armInfo)
-        break;
-      arms.push_back(armInfo);
-    }
-
     if (arms.empty()) {
       mod.emitError() << "Unable to find potential dispatch arms";
       signalPassFailure();

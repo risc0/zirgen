@@ -98,7 +98,7 @@ void addCppSyntaxImpl(codegen::CodegenOptions& opts, bool isCuda) {
       totLen += op.size();
     auto encodedConstName = cg.getIdent<IdentKind::Const>("encoded_" + op.getSymName());
     if (isCuda)
-      cg << "  __device__";
+      cg << "  __device__ ";
     cg << "static constexpr uint32_t " << encodedConstName << "[" << totLen << "] = {";
     cg.interleaveComma(encodedOps, [&](EncodedOp encoded) {
       cg << "\n";
@@ -114,7 +114,7 @@ void addCppSyntaxImpl(codegen::CodegenOptions& opts, bool isCuda) {
     cg << "  void reset() { curPos = " << encodedConstName << "; }\n";
     for (auto tempBuf : op.getTempBufs()->getAsRange<TempBufAttr>()) {
       if (isCuda)
-        cg << "  __device__";
+        cg << "  __device__ ";
       cg << " static constexpr size_t "
          << cg.getIdent<IdentKind::Func>("get_" + tempBuf.getBufName().strref() + "_size")
          << "() { return " << tempBuf.getSize() << "; }\n";

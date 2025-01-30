@@ -202,11 +202,8 @@ void emitByteCode(ModuleOp mod) {
   pm.nest<func::FuncOp>().addPass(Zll::createAnnotatePolyMixPass());
   pm.addPass(createCanonicalizerPass());
   pm.addPass(createCSEPass());
-  pm.addPass(ByteCode::createCloneSimpleZll());
-  pm.addPass(ByteCode::createScheduleZll());
-  pm.addPass(ByteCode::createGenExecutor());
-  pm.addPass(ByteCode::createEncode());
-  pm.addPass(ByteCode::createBufferizeZll());
+  //  pm.addPass(ByteCode::createCloneSimpleZll());
+  ByteCode::addZllToByteCodeToPipeline(pm);
   if (failed(pm.run(mod))) {
     throw std::runtime_error("Failed to apply stage1 passes");
   }
