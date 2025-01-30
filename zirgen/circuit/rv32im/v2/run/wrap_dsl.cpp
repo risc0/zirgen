@@ -331,9 +331,11 @@ std::array<Val, 16> extern_bigIntExtern(ExecContext& ctx) {
 }
 
 #if defined(__clang__)
+#pragma clang diagnostic ignored "-Wunused-but-set-variable"
 #pragma clang diagnostic ignored "-Wunused-parameter"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #elif defined(__GNUC__)
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
@@ -398,9 +400,10 @@ void DslStepAccum(StepHandler& stepHandler, ExecutionTrace& trace, size_t cycle)
   impl::ExecContext ctx(stepHandler, trace, cycle);
   impl::MutableBufObj data(ctx, trace.data);
   impl::MutableBufObj accum(ctx, trace.accum);
-  impl::GlobalBufObj global(ctx, trace.global);
   impl::GlobalBufObj mix(ctx, trace.mix);
-  step_TopAccum(ctx, &accum, &data, &global, &mix);
+  // impl::GlobalBufObj global(ctx, trace.global);
+  // step_TopAccum(ctx, &accum, &data, &global, &mix);
+  step_TopAccum(ctx, &accum, &data, &mix);
 }
 
 } // namespace zirgen::rv32im_v2

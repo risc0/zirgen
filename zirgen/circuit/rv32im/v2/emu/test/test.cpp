@@ -34,3 +34,11 @@ int main() {
   auto ptrace = preflightSegment(segments[0], 1000000 + 2000);
   return 0;
 }
+
+namespace zirgen::rv32im_v2 {
+
+std::vector<Back> getBigIntStateBacks(const BigIntState& state) {
+  return std::vector<Back>{};
+}
+
+} // namespace zirgen::rv32im_v2

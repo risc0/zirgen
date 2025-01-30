@@ -18,6 +18,5 @@ cc_binary(
     ],
     deps = [
         "//zirgen/circuit/rv32im/v2/emu",
-        "//zirgen/circuit/rv32im/v2/run",
     ],
 )
