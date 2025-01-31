@@ -31,4 +31,24 @@ def ByteCodeOpInterface : OpInterface<"ByteCodeOpInterface"> {
   ];
 }
 
+def BitWidthOpInterface : OpInterface<"BitWidthOpInterface"> {
+  let cppNamespace = "::zirgen::ByteCode";
+  let methods = [
+    InterfaceMethod<[{
+        Counts how many encoded elements this operation uses.
+    }],
+    "size_t", "getNumEncodedElements", (ins), "",
+    [{ return 1; }]>,
+    InterfaceMethod<[{
+        Set the bit widths of the encoded elements for this operation
+    }], 
+    "void", "setEncodedElementsBits", (ins "llvm::ArrayRef<size_t>":$bits), "",
+    [{
+       assert(bits.size() == 1 && "Must override setEncodedElementsBits if we have more than one element");
+       mlir::Builder builder($_op->getContext());
+       $_op.setBitsAttr(builder.getIndexAttr(bits[0]));
+    }]>
+  ];
+}
+
 #endif /* BYTECODE_INTERFACES */

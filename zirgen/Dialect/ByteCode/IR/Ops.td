@@ -34,6 +34,7 @@ class ByteCodeOp<string mnemonic, list<Trait> traits = []>
 def ExecutorOp : ByteCodeOp<"executor", [
     SingleBlock, HasParent<"mlir::ModuleOp">, Symbol, OpAsmOpInterface, IsolatedFromAbove,
     Symbol,
+    BitWidthOpInterface,
     DeclareOpInterfaceMethods<CallableOpInterface, [
        "getArgumentTypes", "getCallableRegion", "getResultTypes"]>]> {
   let summary = "ExecutorOp represents an executor that executes bytecode that's specifically compiled for it.";
@@ -45,7 +46,9 @@ def ExecutorOp : ByteCodeOp<"executor", [
     TypeAttrOf<FunctionType>:$function_type,
     OptionalAttr<StrAttr>:$sym_visibility,
     OptionalAttr<DictArrayAttr>:$arg_attrs,
-    OptionalAttr<DictArrayAttr>:$res_attrs
+    OptionalAttr<DictArrayAttr>:$res_attrs,
+    // Bits used for dispatch
+    OptionalAttr<IndexAttr>:$bits
   );
   
   let regions = (region VariadicRegion<SizedRegion<1>>: $arms);
@@ -57,11 +60,18 @@ def ExecutorOp : ByteCodeOp<"executor", [
   }];
 }
 
-def YieldOp : ByteCodeOp<"yield", [Terminator, HasParent<"ExecutorOp">]> {
+def YieldOp : ByteCodeOp<"yield", [
+    Terminator, HasParent<"ExecutorOp">,
+    DeclareOpInterfaceMethods<BitWidthOpInterface, ["getNumEncodedElements", "setEncodedElementsBits"]>
+]> {
   let summary = "Yield the given values to be saved from this arm of the ExecutorOp.";
   let arguments  = (ins
-      Variadic<AnyType>: $vals);
-  let assemblyFormat = "operands `:` type(operands) attr-dict";
+      Variadic<AnyType>: $vals,
+      OptionalAttr<DenseI64ArrayAttr>: $bits);
+  let assemblyFormat = "operands (`u` `` $bits^)? `:` type(operands) attr-dict";
+  let builders = [
+     OpBuilder<(ins "mlir::ValueRange":$vals),
+        [{ return build($_builder, $_state, vals, /*bits=*/mlir::DenseI64ArrayAttr()); }]>];
 }
 
 def ExitOp : ByteCodeOp<"exit", [Terminator, ParentOneOf<["ExecutorOp", "EncodedBlockOp"]>]> {
@@ -71,16 +81,26 @@ def ExitOp : ByteCodeOp<"exit", [Terminator, ParentOneOf<["ExecutorOp", "Encoded
   let hasVerifier = 1;
 }
 
-def LoadOp : ByteCodeOp<"load", [HasParent<"ExecutorOp">]> {
+def LoadOp : ByteCodeOp<"load", [HasParent<"ExecutorOp">, BitWidthOpInterface]> {
+  let arguments = (ins
+      DefaultValuedOptionalAttr<IndexAttr, "{}">:$bits);
   let results = (outs
       AnyType: $out);
-  let assemblyFormat = "type($out) attr-dict";
+  let assemblyFormat = "(`u` `` $bits^ `:`)? type($out) attr-dict";
+  let builders = [
+     OpBuilder<(ins "mlir::Type":$outType),
+        [{ return build($_builder, $_state, outType, /*bits=*/mlir::IntegerAttr()); }]>];
 }
 
-def DecodeOp : ByteCodeOp<"decode", [HasParent<"ExecutorOp">]> {
+def DecodeOp : ByteCodeOp<"decode", [HasParent<"ExecutorOp">, BitWidthOpInterface]> {
+  let arguments = (ins
+      DefaultValuedOptionalAttr<IndexAttr, "{}">:$bits);
   let results = (outs
       Index: $out);
-  let assemblyFormat = "attr-dict";
+  let assemblyFormat = "(`u` `` $bits^)? attr-dict";
+  let builders = [
+     OpBuilder<(ins),
+        [{ return build($_builder, $_state, /*bits=*/mlir::IntegerAttr()); }]>];
 }
 
 def GetArgumentOp : ByteCodeOp<"get_argument", [HasParent<"ExecutorOp">]> {

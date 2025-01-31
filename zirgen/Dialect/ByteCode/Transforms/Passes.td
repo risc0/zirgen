@@ -117,4 +117,21 @@ def CloneActiveZll : Pass<"clone-active-zll", "mlir::func::FuncOp"> {
   ];
 }
 
+def CalcBitWidths : Pass<"calc-bit-widths", "mlir::ModuleOp"> {
+  let description = [{
+     Annotate all zbytecode.load and zbytecode.decode, and zbytecode.executor operations with
+     the appropariate number of bits to contain the encoded items.
+
+     This must run after bufferization, i.e. no zbytecode.encoded operations may have
+     operands.
+  }];
+  let options = [
+    Option<"execSymbol", "exec-symbol",
+           "std::string", /*default=*/"\"exec_byte_code\"", "Symbol name bytecode executor">
+  ];
+  let dependentDialects = [
+      "zirgen::ByteCode::ByteCodeDialect",
+  ];
+}
+
 #endif // BYTECODE_TRANSFORM_PASSES

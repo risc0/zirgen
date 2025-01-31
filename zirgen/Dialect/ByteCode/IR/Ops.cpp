@@ -176,4 +176,14 @@ ArrayRef<Type> ExecutorOp::getResultTypes() {
   return getFunctionType().getResults();
 }
 
+size_t YieldOp::getNumEncodedElements() {
+  return getVals().size();
+}
+
+void YieldOp::setEncodedElementsBits(llvm::ArrayRef<size_t> bits) {
+  assert(bits.size() == getVals().size());
+  mlir::Builder builder(getContext());
+  setBitsAttr(builder.getDenseI64ArrayAttr(llvm::to_vector_of<int64_t>(bits)));
+}
+
 } // namespace zirgen::ByteCode

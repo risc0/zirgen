@@ -1346,7 +1346,8 @@ void ConstOp::getByteCodeIntArgs(llvm::SmallVectorImpl<size_t>& intArgs) {
 
 void GetOp::getByteCodeIntArgs(llvm::SmallVectorImpl<size_t>& intArgs) {
   intArgs.push_back(getOffset());
-  intArgs.push_back(getBack());
+  if (getBack() != 0)
+    intArgs.push_back(getBack());
 }
 
 void GetGlobalOp::getByteCodeIntArgs(llvm::SmallVectorImpl<size_t>& intArgs) {

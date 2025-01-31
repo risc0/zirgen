@@ -23,6 +23,7 @@
 #include "zirgen/Dialect/ByteCode/Analysis/ArmAnalysis.h"
 #include "zirgen/Dialect/ByteCode/IR/ByteCode.h"
 #include "zirgen/Dialect/ByteCode/Transforms/Passes.h"
+#include "zirgen/Dialect/Zll/IR/IR.h"
 
 #define DEBUG_TYPE "gen-executor"
 
@@ -103,7 +104,18 @@ struct BuildArmInfo {
       //        if (llvm::isa<MulOp, AndEqzOp, AndCondOp>(op))
       //          benefit += 1;
       //      }
-      ssize_t benefit = armInfo->getOps().size();
+      //      ssize_t benefit = armInfo->values.size();
+      //      ssize_t benefit = armInfo->getOps().size();
+      ssize_t benefit = llvm::count_if(armInfo->getOps(), [&](auto op) {
+        return !llvm::any_of(op->getResults(), [&](Value result) {
+          auto valType = llvm::dyn_cast<Zll::ValType>(result.getType());
+          if (valType && valType.getFieldK() > 1)
+            return true;
+          return llvm::isa<Zll::ConstraintType>(result.getType());
+        });
+      });
+
+      // benefit -= armInfo->numLoadVals;
       benefit -= armInfo->numYieldVals;
       benefit *= armInfo->getCount() - 1;
       return benefit;
@@ -149,6 +161,15 @@ struct ArmFinder {
       }
 
       const ArmInfo* armInfo = buildArmInfo.armInfo;
+      /*      if (true ) {
+              if (armInfo->getCount() < minArmUse)
+                continue;
+              if (armInfo->numLoadVals > maxCapture)
+                continue;
+              if (armInfo->numYieldVals > maxYield)
+                continue;
+            }
+      */
       for (ArrayRef<Operation*> ops : buildArmInfo.allOps) {
         seen.insert(ops.begin(), ops.end());
       }
@@ -156,15 +177,6 @@ struct ArmFinder {
       return armInfo;
 
       //      llvm::errs() << "benefit " << getBenefit(*armInfo) << " arm " << *armInfo << "\n";
-
-      //      if (getBenefit(*armInfo) < 0) continue;
-
-      /*      if (armInfo->count < minArmUse)
-              continue;
-            if (armInfo->numLoadVals > maxCapture)
-              continue;
-            if (armInfo->numYieldVals > maxYield)
-            continue;*/
 
       /*      llvm::errs() << "Got arm " << *armInfo << " OK!\n";
             for (Operation* op : armInfo->ops) {
@@ -228,6 +240,7 @@ struct GenExecutorPass : public impl::GenExecutorBase<GenExecutorPass> {
                                                 /*visibility=*/StringAttr(),
                                                 /*arg_attrs=*/builder.getArrayAttr(argAttrs),
                                                 /*res_attrs=*/ArrayAttr(),
+                                                /*bit width=*/IntegerAttr(),
                                                 /*number of arms=*/arms.size());
     for (auto [idx, armInfo] : llvm::enumerate(arms)) {
       ++armCount;

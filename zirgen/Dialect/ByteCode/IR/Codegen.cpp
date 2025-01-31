@@ -56,7 +56,6 @@ void addCppSyntaxImpl(codegen::CodegenOptions& opts, bool isCuda) {
   opts.markStatementOp<ExecutorOp>();
   opts.addFuncContextArgument<ExecutorOp>("size_t cycle");
   opts.addFuncContextArgument<ExecutorOp>("size_t steps");
-  opts.addFuncContextArgument<ExecutorOp>("ProgT& prog");
   opts.addOpSyntax<ExecutorOp>([=](codegen::CodegenEmitter& cg, ExecutorOp op) {
     SmallVector<CodegenIdent<IdentKind::Var>> argNames;
     for (DictionaryAttr argAttrDict : op.getArgAttrs()->getAsRange<DictionaryAttr>()) {
@@ -69,6 +68,7 @@ void addCppSyntaxImpl(codegen::CodegenOptions& opts, bool isCuda) {
                 /*body=*/[&]() {
                   cg << "size_t mask = steps - 1;\n";
                   cg << "Fp fpBuffer[ProgT::getFpBufferSize()];\n";
+                  cg << "ProgT prog;\n";
                   cg << "prog.reset();\n";
                   cg << "for (;;) {\n";
                   cg << "size_t dispatchKey = prog.decode();\n";
