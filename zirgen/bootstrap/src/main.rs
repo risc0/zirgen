@@ -341,9 +341,9 @@ impl Bootstrap {
         } else if self.args.check {
             self.pool.execute(move || {
                 if let Err(err) = self.check(&src_path, src_data, &tgt_path) {
-                    write!(
+                    writeln!(
                         stdout().lock(),
-                        "ERROR: {} != {}: {}\n",
+                        "ERROR: {} != {}: {}",
                         src_path.display(),
                         tgt_path.display(),
                         err
@@ -351,9 +351,9 @@ impl Bootstrap {
                     .unwrap();
                     *self.error.lock().unwrap() = true;
                 } else {
-                    write!(
+                    writeln!(
                         stdout().lock(),
-                        "{} == {}\n",
+                        "{} == {}",
                         src_path.display(),
                         tgt_path.display()
                     )
@@ -394,9 +394,9 @@ impl Bootstrap {
                     }
                 }
 
-                write!(
+                writeln!(
                     stdout().lock(),
-                    "{} -> {}\n",
+                    "{} -> {}",
                     src_path.display(),
                     tgt_path.display()
                 )

@@ -20,6 +20,7 @@ mod taps;
 
 use risc0_zkp::{adapter::TapsProvider, taps::TapSet};
 
+#[derive(Default)]
 pub struct CircuitImpl;
 
 impl CircuitImpl {

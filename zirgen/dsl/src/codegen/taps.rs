@@ -69,8 +69,8 @@ impl TapSetOwned {
         let mut combos = vec![&myself];
         let mut combos_to_id = BTreeMap::from([(&myself, 0_usize)]);
         // Build flat table
-        for group_id in 0..num_groups {
-            group_begin[group_id] = taps.len();
+        for (group_id, group) in group_begin.iter_mut().enumerate().take(num_groups) {
+            *group = taps.len();
             let regs = all.get(&group_id).unwrap();
             let reg_count = regs.keys().last().unwrap() + 1;
             tot_reg_count += reg_count;
@@ -80,8 +80,8 @@ impl TapSetOwned {
                     continue;
                 }
                 let combo = regs.get(&reg).unwrap();
-                assert!(combo.len() > 0);
-                let combo_id = combos_to_id.entry(&combo).or_insert_with(|| {
+                assert!(!combo.is_empty());
+                let combo_id = combos_to_id.entry(combo).or_insert_with(|| {
                     let ret = combos.len();
                     combos.push(combo);
                     ret
