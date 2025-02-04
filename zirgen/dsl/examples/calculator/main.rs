@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -116,7 +116,7 @@ fn prove<
     clear_invalid(&code);
 
     let hashfn = Rc::clone(&hal.get_hash_suite().hashfn);
-    let mut prover = risc0_zkp::prove::Prover::new(hal, &*crate::taps::TAPSET);
+    let mut prover = risc0_zkp::prove::Prover::new(hal, crate::taps::TAPSET);
     // At the start of the protocol, seed the Fiat-Shamir transcript with context information
     // about the proof system and circuit.
     prover
