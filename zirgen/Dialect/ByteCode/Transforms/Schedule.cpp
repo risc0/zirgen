@@ -327,7 +327,7 @@ const OpInfo& Scheduler::getOpInfo(Operation* topOp) {
       return lhs.second->queuePriority() < rhs.second->queuePriority();
     });
 
-    // Registers that have mee saved so far by operands making use of them.
+    // Registers that have been saved so far by operands making use of them.
     ssize_t adjustedRegs = 0;
 
     size_t maxLive = 0;
@@ -404,3 +404,4 @@ void scheduleBlock(Block* block, ScheduleInterface& scheduleInterface) {
 }
 
 } // namespace zirgen::ByteCode
+

@@ -34,6 +34,7 @@ std::unique_ptr<mlir::Pass> createBalancedSplitPass(size_t maxOps = 1000);
 std::unique_ptr<mlir::Pass> createSortForReproducibilityPass();
 std::unique_ptr<mlir::OperationPass<mlir::func::FuncOp>> createExtractPolyMixPass();
 std::unique_ptr<mlir::OperationPass<mlir::func::FuncOp>> createAnnotatePolyMixPass();
+std::unique_ptr<mlir::Pass> createReorderConstraintsPass();
 
 // Generate the code for registering passes.
 #define GEN_PASS_REGISTRATION

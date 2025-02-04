@@ -42,6 +42,7 @@ cc_library(
         "MakePolynomial.cpp",
         "MultiplyToIf.cpp",
         "PassDetail.h",
+        "ReorderConstraints.cpp",
         "SortForReproducibility.cpp",
         "SplitStage.cpp",
     ],

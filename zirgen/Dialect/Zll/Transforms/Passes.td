@@ -106,4 +106,13 @@ def AnnotatePolyMix : Pass<"annotate-poly-mix", "mlir::func::FuncOp"> {
   let constructor = "zirgen::Zll::createAnnotatePolyMixPass()";
 }
 
+def ReorderConstraints : Pass<"reorder-constraints"> {
+  let summary = "Optimize by reordering zll.eqz constraints";
+  let description = [{
+     ReorderConstraints reorders constraints, and puts groups of constraints
+     inside a `if(1)` such that they can be better optimized by CSE.
+  }];
+  let constructor = "zirgen::Zll::createReorderConstraintsPass()";
+}
+
 #endif // ZLL_TRANSFORM_PASSES

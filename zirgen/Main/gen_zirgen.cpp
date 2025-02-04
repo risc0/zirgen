@@ -1,4 +1,4 @@
-b// Copyright 2025 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -406,6 +406,7 @@ int main(int argc, char* argv[]) {
     checkPasses.addPass(mlir::createCanonicalizerPass());
     checkPasses.addPass(zirgen::dsl::createTopologicalShufflePass());
   }
+  checkPasses.addPass(zirgen::Zll::createReorderConstraintsPass());
 
   if (failed(pm.run(typedModule.value()))) {
     llvm::errs() << "an internal compiler error occurred while lowering this module:\n";

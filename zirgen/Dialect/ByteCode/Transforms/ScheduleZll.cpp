@@ -484,9 +484,9 @@ struct CloneActiveZllPass : public impl::CloneActiveZllBase<CloneActiveZllPass> 
             activeVal.print(llvm::dbgs(), asmState);
             llvm::dbgs() << "\n";
           });
-/*          llvm::errs() << "Spilling ";
+          llvm::errs() << "Spilling ";
           activeVal.print(llvm::errs(), asmState);
-          llvm::errs() << "\n";*/
+          llvm::errs() << "\n";
           active.update(it, ActiveState::SpilledDoNotClone);
           ++opSpillVals;
         } else if (state == ActiveState::Used) {
