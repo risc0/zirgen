@@ -135,7 +135,8 @@ struct CandidateTrace {
       return failure();
 
     Operation* op = ops[pos++];
-    locs.insert(op->getLoc());
+    if (locs.empty())
+      locs.insert(op->getLoc());
     key.allOps = {ops.slice(0, pos)};
     if (pos > 1)
       poison.insert(op);
@@ -350,13 +351,16 @@ void ArmAnalysisImpl::analyzeOne() {
   for (std::unique_ptr<CandidateTrace>& run : top.runs) {
     // Deeply uniquify locations since otherwise we end up with an
     // excessive number of things like call sites.
-    for (Location loc : run->locs) {
-      loc->walk([&](Location subLoc) {
-        if (llvm::isa<FileLineColRange>(subLoc))
-          locs.insert(subLoc);
-        return WalkResult::advance();
-      });
+    if (locs.empty()) {
+      for (Location loc : run->locs) {
+        loc->walk([&](Location subLoc) {
+          if (llvm::isa<FileLineColRange>(subLoc))
+            locs.insert(subLoc);
+          return WalkResult::advance();
+        });
+      }
     }
+
     if (run->advance(poison).failed()) {
       LLVM_DEBUG(llvm::dbgs() << "advancing failed\n");
       countThis = true;

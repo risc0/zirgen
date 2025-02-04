@@ -77,6 +77,9 @@ def BufferizeZll : Pass<"bufferize-zll", "zirgen::ByteCode::EncodedBlockOp"> {
   let description = [{
      Generate temporary buffer assignments for an encoded bytecode program
   }];
+  let statistics = [
+    Statistic<"maxWidth", "max-width", "Widest register usage">,
+  ];
   let dependentDialects = [
       "zirgen::ByteCode::ByteCodeDialect",
       "zirgen::Zll::ZllDialect",

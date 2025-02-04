@@ -143,7 +143,7 @@ struct CalcBitWidthsPass : public impl::CalcBitWidthsBase<CalcBitWidthsPass> {
 
     mod.walk([&](EncodedOp encodedOp) {
       size_t armIdx = std::get<size_t>(encodedOp.getElement(0));
-      encodedOp.setEncodedBitsAttr(encodedBits[armIdx]);
+//      encodedOp.setEncodedBitsAttr(encodedBits[armIdx]);
     });
   }
 };

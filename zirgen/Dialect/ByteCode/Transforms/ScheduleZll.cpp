@@ -52,10 +52,19 @@ void addZllToByteCodeToPipeline(OpPassManager& pm) {
         fixedPM.addPass(createCloneActiveZll());
       },
       /*maxIterations=*/30));
-  pm.addPass(createLocationSnapshotPass({}, "/tmp/before-bytecoding.ir"));
+  /*    pm.addPass(createCloneSimpleZll());
+pm.addPass(createLocationSnapshotPass({}, "/tmp/before-first-schedule.ir"));
+pm.addPass(createScheduleZll());
+pm.addPass(createLocationSnapshotPass({}, "/tmp/before-clone.ir"));
+pm.addPass(createCloneActiveZll());
+pm.addPass(createLocationSnapshotPass({}, "/tmp/before-second-schedule.ir"));
+pm.addPass(createScheduleZll());
+pm.addPass(createLocationSnapshotPass({}, "/tmp/before-bytecoding.ir"));*/
+  pm.addPass(createScheduleZll());
   pm.addPass(ByteCode::createGenExecutor());
   pm.addPass(ByteCode::createEncode());
   pm.nest<ByteCode::EncodedBlockOp>().addPass(ByteCode::createBufferizeZll());
+  //  pm.addPass(ByteCode::createCalcBitWidths());
 }
 
 static PassPipelineRegistration<>
@@ -144,18 +153,24 @@ struct ZllBufferize : public BufferizeInterface {
 
 struct BufferizeZllPass : public impl::BufferizeZllBase<BufferizeZllPass> {
   void runOnOperation() override {
+    EncodedBlockOp blockOp = getOperation();
 
     ZllBufferize zllBufferize(&getContext());
-    if (failed(bufferize(getOperation(), zllBufferize))) {
-      getOperation()->emitError("Unable to bufferize");
+    if (failed(bufferize(blockOp, zllBufferize))) {
+      blockOp->emitError("Unable to bufferize");
       signalPassFailure();
+      return;
     }
+
+    auto tempBufs = blockOp.getTempBufs();
+    for (auto tempBuf : tempBufs->getAsRange<TempBufAttr>())
+      maxWidth.updateMax(tempBuf.getSize());
   }
 };
 
 namespace {
 
-constexpr bool kShowStats = false;
+constexpr bool kShowStats = true;
 
 // State of active values
 enum class ActiveState {
@@ -420,6 +435,8 @@ struct CloneActiveZllPass : public impl::CloneActiveZllBase<CloneActiveZllPass> 
       }
     };
 
+    size_t opPos = 0;
+    size_t blockSize = llvm::range_size(*block);
     for (Operation* op : llvm::make_pointer_range(*block)) {
       LLVM_DEBUG({
         llvm::dbgs() << "\nBefore ";
@@ -467,6 +484,9 @@ struct CloneActiveZllPass : public impl::CloneActiveZllBase<CloneActiveZllPass> 
             activeVal.print(llvm::dbgs(), asmState);
             llvm::dbgs() << "\n";
           });
+/*          llvm::errs() << "Spilling ";
+          activeVal.print(llvm::errs(), asmState);
+          llvm::errs() << "\n";*/
           active.update(it, ActiveState::SpilledDoNotClone);
           ++opSpillVals;
         } else if (state == ActiveState::Used) {
@@ -539,6 +559,7 @@ struct CloneActiveZllPass : public impl::CloneActiveZllBase<CloneActiveZllPass> 
             active.erase(operand);
         }
       }
+      ++opPos;
     }
 
     LLVM_DEBUG({

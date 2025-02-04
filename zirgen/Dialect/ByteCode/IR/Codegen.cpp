@@ -102,7 +102,7 @@ void addCppSyntaxImpl(codegen::CodegenOptions& opts, bool isCuda) {
     cg << "static constexpr uint32_t " << encodedConstName << "[" << totLen << "] = {";
     cg.interleaveComma(encodedOps, [&](EncodedOp encoded) {
       cg << "\n";
-      cg.emitLoc(encoded.getLoc());
+//      cg.emitLoc(encoded.getLoc());
       cg.interleaveComma(encoded.getEncoded());
     });
     cg << "\n};\n";
