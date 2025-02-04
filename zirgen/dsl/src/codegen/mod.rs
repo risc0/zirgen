@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -142,7 +142,7 @@ pub fn default_log<E: risc0_zkp::field::Elem + Into<u32>>(
         if p == b'%' {
             p = next_char();
             let mut _len = 0;
-            while p >= b'0' && p <= b'9' {
+            while p.is_ascii_digit() {
                 _len *= 10;
                 _len += p - b'0';
                 p = next_char();
@@ -157,13 +157,13 @@ pub fn default_log<E: risc0_zkp::field::Elem + Into<u32>>(
                 let mut vals: [u64; 4] = [0; 4];
                 let mut is_u32 = true;
                 let mut u32val: u32 = 0;
-                for i in 0..4 {
-                    vals[i] = next_arg().into() as u64;
-                    if vals[i] > 0xff {
+                for val in vals.iter_mut() {
+                    *val = next_arg().into() as u64;
+                    if *val > 0xff {
                         is_u32 = false;
                     } else {
                         u32val >>= 8;
-                        u32val |= (vals[i] as u32) << 24;
+                        u32val |= (*val as u32) << 24;
                     }
                 }
                 if p == b'e' {
@@ -174,11 +174,11 @@ pub fn default_log<E: risc0_zkp::field::Elem + Into<u32>>(
                     print!("{:x}", u32val);
                 } else {
                     print!("[");
-                    for i in 0..4 {
+                    for (i, val) in vals.iter().enumerate() {
                         if i != 0 {
                             print!(", ");
                         }
-                        print!("{}", vals[i]);
+                        print!("{}", val);
                     }
                     print!("]");
                 }
@@ -187,6 +187,6 @@ pub fn default_log<E: risc0_zkp::field::Elem + Into<u32>>(
             print!("{}", p as char);
         }
     }
-    print!("\n");
+    println!();
     Ok(())
 }

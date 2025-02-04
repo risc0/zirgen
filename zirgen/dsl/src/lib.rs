@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,15 +37,15 @@ enum BufferKind {
     Cycle,
 }
 
-impl<'a, E: Default + Clone> Debug for BufferRow<'a, E> {
+impl<E: Default + Clone> Debug for BufferRow<'_, E> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::result::Result<(), std::fmt::Error> {
         write!(f, "BufferRow({:?})", self.kind)
     }
 }
 
-impl<'a, E: Default + Clone> PartialEq for BufferRow<'a, E> {
+impl<E: Default + Clone> PartialEq for BufferRow<'_, E> {
     fn eq(&self, rhs: &Self) -> bool {
-        self.kind == rhs.kind && ((self.buf as *const _) == (rhs.buf as *const _))
+        self.kind == rhs.kind && std::ptr::eq(self.buf, rhs.buf)
     }
 }
 
@@ -127,14 +127,14 @@ pub struct BoundLayout<'a, L: 'static, E: Elem> {
     pub buf: BufferRow<'a, E>,
 }
 
-impl<'a, L: 'static, E: Elem> Copy for BoundLayout<'a, L, E> {}
-impl<'a, L: 'static, E: Elem> Clone for BoundLayout<'a, L, E> {
+impl<L: 'static, E: Elem> Copy for BoundLayout<'_, L, E> {}
+impl<L: 'static, E: Elem> Clone for BoundLayout<'_, L, E> {
     fn clone(&self) -> Self {
         *self
     }
 }
 
-impl<'a, L: risc0_zkp::layout::Component + 'static, E: Elem> Debug for BoundLayout<'a, L, E> {
+impl<L: risc0_zkp::layout::Component + 'static, E: Elem> Debug for BoundLayout<'_, L, E> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::result::Result<(), std::fmt::Error> {
         write!(f, "BoundLayout({}, {:?})", self.layout.ty_name(), self.buf)
     }
@@ -163,7 +163,7 @@ impl<'a, L, E: Elem> BoundLayout<'a, L, E> {
     }
 }
 
-impl<'a, E: Elem> BoundLayout<'a, Reg, E> {
+impl<E: Elem> BoundLayout<'_, Reg, E> {
     pub fn load_ext<EE: ExtElem<SubElem = E>>(&self, ctx: &impl CycleContext, back: usize) -> EE {
         let subelems =
             (0..EE::EXT_SIZE).map(|idx| self.buf.load(ctx, self.layout.offset + idx, back));
@@ -182,13 +182,13 @@ impl<'a, E: Elem> BoundLayout<'a, Reg, E> {
         self.load_ext::<EE>(ctx, back).valid_or_zero()
     }
     pub fn store_ext<EE: ExtElem<SubElem = E>>(&self, ctx: &impl CycleContext, val: EE) {
-        for (idx, elem) in val.subelems().into_iter().enumerate() {
+        for (idx, elem) in val.subelems().iter().enumerate() {
             self.buf.store(ctx, self.layout.offset + idx, *elem)
         }
     }
 }
 
-impl<'a, E: Elem + Clone + Default + Copy> BoundLayout<'a, Reg, E> {
+impl<E: Elem + Clone + Default + Copy> BoundLayout<'_, Reg, E> {
     pub fn load(&self, ctx: &impl CycleContext, back: usize) -> E {
         self.buf.load(ctx, self.layout.offset, back)
     }
