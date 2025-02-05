@@ -101,7 +101,7 @@ def GenerateLayout : Pass<"generate-layout", "mlir::ModuleOp"> {
 }
 
 def GenerateValidityRegs : Pass<"generate-validity-regs", "mlir::ModuleOp"> {
-  let summary = "Generates validity polynomial evaluation functions on reigsters";
+  let summary = "Generates validity polynomial evaluation functions on registers";
   let description = [{
     Generates validity polynomial evaluation functions for all
     components present and adds them to the module.  Each generated
