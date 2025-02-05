@@ -92,7 +92,7 @@ component ECallHostReadSetup(cycle: Reg, input: InstInput) {
     lenDecomp.isZero * StateDecode() +
     // If length != 0 and uneven, do bytes
     (1 - lenDecomp.isZero) * uneven * StateHostReadBytes() +
-    // If lenght != 0 and even, do words
+    // If length != 0 and even, do words
     (1 - lenDecomp.isZero) * (1 - uneven) * StateHostReadWords();
   ECallOutput(nextCycle, ptrWord, ptrDecomp.low2, newLen)
 }
