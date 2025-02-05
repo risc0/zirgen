@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 #include "zirgen/Dialect/Zll/IR/IR.h"
 
 #include "mlir/IR/Builders.h"
+#include "mlir/IR/Matchers.h"
 #include "mlir/IR/PatternMatch.h"
 #include "llvm/ADT/TypeSwitch.h"
 
@@ -875,8 +876,29 @@ public:
   }
 };
 
+class CanonicalizeEqualZeroDifference : public OpRewritePattern<EqualZeroOp> {
+public:
+  using OpRewritePattern::OpRewritePattern;
+
+  LogicalResult matchAndRewrite(EqualZeroOp op, PatternRewriter& rewriter) const override {
+    auto subOp = op.getIn().getDefiningOp<SubOp>();
+    if (!subOp)
+      return failure();
+
+    if (matchPattern(subOp.getLhs(), m_Constant()) && !matchPattern(subOp.getRhs(), m_Constant())) {
+      // Canonicalize eqz(C - X) to eqz(X - C) so it can be folded if C happens to be 0.
+      Value newSubOp =
+          rewriter.create<SubOp>(subOp.getLoc(), subOp.getType(), subOp.getRhs(), subOp.getLhs());
+      rewriter.modifyOpInPlace(op, [&]() { op.getInMutable().set(newSubOp); });
+      return success();
+    }
+    return failure();
+  }
+};
+
 void EqualZeroOp::getCanonicalizationPatterns(RewritePatternSet& patterns, MLIRContext* context) {
   patterns.add<CanonicalizeEqualZeroOp>(context);
+  patterns.add<CanonicalizeEqualZeroDifference>(context);
 }
 
 template <class Op> struct RemoveSlicePattern : public OpRewritePattern<Op> {
@@ -1316,6 +1338,32 @@ void GetOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
       cg.getStringAttr("get"),
       /*ContextArgs=*/{"ctx"},
       {getBuf(), cg.guessAttributeType(getOffsetAttr()), cg.guessAttributeType(getBackAttr())});
+}
+
+void ConstOp::getByteCodeIntArgs(llvm::SmallVectorImpl<size_t>& intArgs) {
+  llvm::append_range(intArgs, getCoefficients());
+}
+
+void GetOp::getByteCodeIntArgs(llvm::SmallVectorImpl<size_t>& intArgs) {
+  intArgs.push_back(getOffset());
+  if (getBack() != 0)
+    intArgs.push_back(getBack());
+}
+
+void GetGlobalOp::getByteCodeIntArgs(llvm::SmallVectorImpl<size_t>& intArgs) {
+  intArgs.push_back(getOffset());
+}
+
+void AndEqzOp::getByteCodeIntArgs(llvm::SmallVectorImpl<size_t>& intArgs) {
+  if (auto mixPow = getOperation()->getAttrOfType<IntegerAttr>("zirgen.mixPowerIndex")) {
+    intArgs.push_back(mixPow.getInt());
+  }
+}
+
+void AndCondOp::getByteCodeIntArgs(llvm::SmallVectorImpl<size_t>& intArgs) {
+  if (auto mixPow = getOperation()->getAttrOfType<IntegerAttr>("zirgen.mixPowerIndex")) {
+    intArgs.push_back(mixPow.getInt());
+  }
 }
 
 void SetOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {

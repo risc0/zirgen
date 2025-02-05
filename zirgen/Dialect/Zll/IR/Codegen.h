@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -130,7 +130,7 @@ public:
                                   llvm::ArrayRef<std::string> contextArgs,
                                   llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                                   mlir::FunctionType funcType,
-                                  mlir::Region* body) = 0;
+                                  EmitPart emitBody) = 0;
   virtual void emitFuncDeclaration(CodegenEmitter& cg,
                                    CodegenIdent<IdentKind::Func> funcName,
                                    llvm::ArrayRef<std::string> contextArgs,
@@ -257,6 +257,11 @@ struct CodegenOptions {
     opSyntax[name] = f;
   }
 
+  // Marks the given operation as emitted as an entire statement
+  // without saving result values.  Equivalent to the
+  // CodegenStatementOp trait.
+  template <typename OpT> void markStatementOp() { statementOps.insert(OpT::getOperationName()); }
+
   // Add a context argument to be included when defining functions of the given operation type(s)
   template <typename OpT> void addFuncContextArgument(llvm::StringRef decl) {
     funcContextArgs[OpT::getOperationName()].push_back(decl.str());
@@ -285,6 +290,8 @@ struct CodegenOptions {
 
   llvm::StringMap<std::function<void(CodegenEmitter&, mlir::Attribute)>> literalSyntax;
   llvm::StringMap<std::function<void(CodegenEmitter&, mlir::Operation*)>> opSyntax;
+
+  llvm::StringSet<> statementOps;
 };
 
 // Manages emitting generated code.
@@ -301,6 +308,10 @@ public:
   void emitTopLevel(mlir::Operation* op);
   void emitTopLevelDecl(mlir::Operation* op);
   void emitFunc(mlir::FunctionOpInterface op);
+  void emitFunc(mlir::CallableOpInterface op,
+                mlir::FunctionType funcType,
+                llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
+                EmitPart body);
   void emitFuncDecl(mlir::FunctionOpInterface op);
   void emitRegion(mlir::Region& region);
   void emitBlock(mlir::Block& block);
@@ -415,6 +426,10 @@ public:
   llvm::raw_ostream* getOutputStream() const { return outStream; }
 
   mlir::StringAttr getStringAttr(llvm::StringRef str);
+
+  template <IdentKind Kind> CodegenIdent<Kind> getIdent(const llvm::Twine& str) {
+    return getStringAttr(str.str());
+  }
 
   // llvm::interleave turns the separator into into a StringRef, and
   // we'd prefer not to implicitly let StringRefs be emitted without

@@ -75,3 +75,4 @@ build_circuit(
         "--protocol-info=RV32IM:v2_______",
     ],
 )
+w

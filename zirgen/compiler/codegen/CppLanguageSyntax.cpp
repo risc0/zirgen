@@ -105,10 +105,10 @@ void CppLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
                                            llvm::ArrayRef<std::string> contextArgDecls,
                                            llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                                            mlir::FunctionType funcType,
-                                           mlir::Region* body) {
+                                           EmitPart body) {
   emitRawFuncDeclaration(cg, funcName, contextArgDecls, argNames, funcType);
   cg << " {\n";
-  cg.emitRegion(*body);
+  cg << body;
   cg << "}\n";
 }
 
@@ -352,7 +352,7 @@ void CudaLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
                                             llvm::ArrayRef<std::string> contextArgDecls,
                                             llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                                             mlir::FunctionType funcType,
-                                            mlir::Region* body) {
+                                            EmitPart body) {
   cg << "__device__ ";
   CppLanguageSyntax::emitFuncDefinition(cg, funcName, contextArgDecls, argNames, funcType, body);
 }

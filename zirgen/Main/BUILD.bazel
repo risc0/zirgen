@@ -17,6 +17,7 @@ cc_library(
     ],
     deps = [
         "//risc0/core",
+        "//zirgen/Dialect/ByteCode/IR",
         "//zirgen/Dialect/ZHLT/Transforms:passes",
         "//zirgen/Dialect/ZStruct/Transforms:passes",
         "//zirgen/Dialect/Zll/Transforms:passes",
@@ -33,6 +34,8 @@ cc_binary(
     deps = [
         "//risc0/core",
         "//zirgen/Conversions/Typing",
+        "//zirgen/Dialect/ByteCode/IR:Codegen",
+        "//zirgen/Dialect/ByteCode/Transforms",
         "//zirgen/Dialect/ZHLT/IR:Codegen",
         "//zirgen/Main",
         "//zirgen/compiler/codegen",

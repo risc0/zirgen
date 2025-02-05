@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -97,7 +97,8 @@ StringAttr CodegenEmitter::canonIdent(StringAttr identAttr, IdentKind idt) {
   for (char ch : ident) {
     // Special characters aren't supported by any of our output languages, so replace with
     // underscores.
-    if (ch == '$' || ch == '@' || ch == ' ' || ch == ':' || ch == '<' || ch == '>' || ch == ',') {
+    if (ch == '$' || ch == '@' || ch == ' ' || ch == ':' || ch == '<' || ch == '>' || ch == ',' ||
+        ch == '.') {
       id.push_back('_');
     } else {
       id.push_back(ch);
@@ -165,20 +166,13 @@ void CodegenEmitter::emitFunc(FunctionOpInterface op) {
   if (op->hasTrait<OpTrait::IsIsolatedFromAbove>()) {
     resetValueNumbering();
   }
-  auto body = op.getCallableRegion();
-
-  emitTypeDefs(op);
-
-  llvm::ArrayRef<std::string> contextArgs;
-  if (opts.funcContextArgs.contains(op->getName().getStringRef())) {
-    contextArgs = opts.funcContextArgs.at(op->getName().getStringRef());
-  }
-
-  // Pick up any special names of arguments.
   DenseMap<Value, StringRef> argValueNames;
   if (auto opAsm = dyn_cast<OpAsmOpInterface>(op.getOperation())) {
-    opAsm.getAsmBlockArgumentNames(*body,
-                                   [&](Value v, StringRef name) { argValueNames[v] = name; });
+    if (auto callable = op.getCallableRegion()) {
+      // Pick up any special names of arguments.
+      opAsm.getAsmBlockArgumentNames(*callable,
+                                     [&](Value v, StringRef name) { argValueNames[v] = name; });
+    }
   }
 
   llvm::SmallVector<CodegenIdent<IdentKind::Var>> argNames;
@@ -192,13 +186,28 @@ void CodegenEmitter::emitFunc(FunctionOpInterface op) {
       baseName = "arg";
     argNames.push_back(getNewValueName(arg, baseName, /*owned=*/false));
   }
+  emitFunc(op, llvm::cast<FunctionType>(op.getFunctionType()), argNames, [&]() {
+    Region* region = op.getCallableRegion();
+    assert(region && "Missing callable region for emitting function");
 
-  opts.lang->emitFuncDefinition(*this,
-                                op.getNameAttr(),
-                                contextArgs,
-                                argNames,
-                                llvm::cast<FunctionType>(op.getFunctionType()),
-                                body);
+    emitRegion(*region);
+  });
+}
+
+void CodegenEmitter::emitFunc(CallableOpInterface op,
+                              FunctionType funcType,
+                              llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
+                              EmitPart body) {
+
+  emitTypeDefs(op);
+
+  llvm::ArrayRef<std::string> contextArgs;
+  if (opts.funcContextArgs.contains(op->getName().getStringRef())) {
+    contextArgs = opts.funcContextArgs.at(op->getName().getStringRef());
+  }
+
+  opts.lang->emitFuncDefinition(
+      *this, SymbolTable::getSymbolName(op), contextArgs, argNames, funcType, body);
 
   if (op->hasTrait<OpTrait::IsIsolatedFromAbove>()) {
     resetValueNumbering();
@@ -326,6 +335,11 @@ void CodegenEmitter::emitStatement(Operation* op) {
   // If it handles this case specially, let it do its thing.
   if (auto statementOp = dyn_cast<CodegenStatementOpInterface>(op)) {
     statementOp.emitStatement(*this);
+    return;
+  }
+
+  if (opts.statementOps.contains(op->getName().getStringRef())) {
+    emitExpr(op);
     return;
   }
 

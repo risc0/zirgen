@@ -15,6 +15,7 @@ td_library(
         "Types.td",
     ],
     deps = [
+        "//zirgen/Dialect/ByteCode/Interfaces:TdFiles",
         "@llvm-project//mlir:ControlFlowInterfacesTdFiles",
         "@llvm-project//mlir:InferTypeOpInterfaceTdFiles",
         "@llvm-project//mlir:OpBaseTdFiles",
@@ -176,6 +177,7 @@ cc_library(
         ":OpsIncGen",
         ":TypeInterfacesIncGen",
         ":TypesIncGen",
+        "//zirgen/Dialect/ByteCode/Interfaces",
         "//zirgen/compiler/codegen:protocol_info_const",
         "//zirgen/compiler/zkp",
         "@llvm-project//mlir:FuncDialect",

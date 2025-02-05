@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,6 +23,9 @@
 #include "mlir/Transforms/Passes.h"
 #include "zirgen/Conversions/Typing/BuiltinComponents.h"
 #include "zirgen/Conversions/Typing/ComponentManager.h"
+#include "zirgen/Dialect/ByteCode/IR/ByteCode.h"
+#include "zirgen/Dialect/ByteCode/IR/Codegen.h"
+#include "zirgen/Dialect/ByteCode/Transforms/Passes.h"
 #include "zirgen/Dialect/ZHLT/IR/Codegen.h"
 #include "zirgen/Dialect/ZHLT/Transforms/Passes.h"
 #include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
@@ -61,7 +64,7 @@ static cl::opt<std::string> protocolInfo("protocol-info",
 static cl::opt<bool> multiplyIf("multiply-if",
                                 cl::desc("Mulitply out and refactor `if` statements when "
                                          "generating constraints, which can improve CSE."),
-                                cl::init(false));
+                                cl::init(true));
 static cl::opt<bool>
     parallelWitgen("parallel-witgen",
                    cl::desc("Assume the witness can be generated in parallel, and that all externs "
@@ -187,6 +190,42 @@ void emitTarget(const CodegenTarget& target,
   }
 }
 
+// Generates code to execute the single function in `mod' using a
+// bytecode interpreter.  This can make compilation of the generated
+// code significantly faster at the potential expense of a performance hit.
+void emitByteCode(ModuleOp mod) {
+  mod = mod.clone();
+
+  PassManager pm(mod.getContext(), ModuleOp::getOperationName(), OpPassManager::Nesting::Implicit);
+  pm.enableVerifier(true);
+  pm.addPass(mlir::createInlinerPass());
+  pm.nest<func::FuncOp>().addPass(Zll::createAnnotatePolyMixPass());
+  pm.addPass(createCanonicalizerPass());
+  pm.addPass(createCSEPass());
+  //  pm.addPass(ByteCode::createCloneSimpleZll());
+  ByteCode::addZllToByteCodeToPipeline(pm);
+  if (failed(pm.run(mod))) {
+    throw std::runtime_error("Failed to apply stage1 passes");
+  }
+
+  {
+    auto cudaOpts = codegen::getCudaCodegenOpts();
+    ByteCode::addCudaSyntax(cudaOpts);
+    auto os = openOutput("eval_check_bc.cu.inc");
+    CodegenEmitter cudaCg(cudaOpts, os.get(), mod.getContext());
+    cudaCg.emitModule(mod);
+  }
+  {
+    auto cppOpts = codegen::getCppCodegenOpts();
+    ByteCode::addCppSyntax(cppOpts);
+    auto os = openOutput("poly_fp_bc.cpp.inc");
+    CodegenEmitter cppCg(cppOpts, os.get(), mod.getContext());
+    cppCg.emitModule(mod);
+  }
+
+  mod.erase();
+}
+
 void emitPoly(ModuleOp mod, StringRef circuitName) {
   ModuleOp funcMod = mod.cloneWithoutRegions();
   OpBuilder builder(funcMod.getContext());
@@ -232,6 +271,7 @@ void emitPoly(ModuleOp mod, StringRef circuitName) {
     exit(1);
   }
 
+  emitByteCode(funcMod);
   emitCodeZirgenPoly(funcMod, codegenCLOptions->outputDir);
 
   // TODO: modularize generating the validity stuff
@@ -366,6 +406,7 @@ int main(int argc, char* argv[]) {
     checkPasses.addPass(mlir::createCanonicalizerPass());
     checkPasses.addPass(zirgen::dsl::createTopologicalShufflePass());
   }
+  checkPasses.addPass(zirgen::Zll::createReorderConstraintsPass());
 
   if (failed(pm.run(typedModule.value()))) {
     llvm::errs() << "an internal compiler error occurred while lowering this module:\n";

@@ -72,7 +72,7 @@ cc_test(
     deps = [
         "//risc0/core",
         "//zirgen/circuit/rv32im/v2/run",
-    ]
+    ],
 )
 
 riscv_test_suite()

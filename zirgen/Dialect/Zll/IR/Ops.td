@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ include "mlir/Interfaces/SideEffectInterfaces.td"
 
 include "zirgen/Dialect/Zll/IR/Attrs.td"
 include "zirgen/Dialect/Zll/IR/Types.td"
+include "zirgen/Dialect/ByteCode/Interfaces/Interfaces.td"
 
 def IsPoly : DeclareOpInterfaceMethods<PolyOp>;
 
@@ -35,7 +36,8 @@ class ZllOp<string mnemonic, list<Trait> traits = []>
     : Op<ZllDialect, mnemonic, traits> {
 }
 
-def ConstOp : ZllOp<"const", [Pure, ConstantLike, EvalOpAdaptor, IsPoly, IsReduce, InferTypeOpAdaptor]> {
+def ConstOp : ZllOp<"const", [Pure, ConstantLike, EvalOpAdaptor, IsPoly, IsReduce, InferTypeOpAdaptor,
+                              DeclareOpInterfaceMethods<ByteCodeOpInterface>]> {
   let summary = "Introduce a numeric constant";
   let arguments = (ins PolynomialAttr:$coefficients);
   let results = (outs Val:$out);
@@ -90,7 +92,8 @@ def SliceOp : ZllOp<"slice", [Pure, InferTypeOpAdaptor]> {
 }
 
 def GetOp : ZllOp<"get", [Pure, EvalOpAdaptor, IsPoly, InferTypeOpAdaptor,
-                             DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
+                             DeclareOpInterfaceMethods<CodegenExprOpInterface>,
+                             DeclareOpInterfaceMethods<ByteCodeOpInterface>]> {
   let arguments = (ins Buffer:$buf, UI32Attr:$offset, UI32Attr:$back, OptionalAttr<UI32Attr>:$tap);
   let results = (outs Val:$out);
   let assemblyFormat = [{ $buf `[` $offset `]` `back` $back (`tap` $tap^)? `:` type($buf) attr-dict }];
@@ -109,7 +112,8 @@ def SetOp : ZllOp<"set", [EvalOpAdaptor, DeclareOpInterfaceMethods<CodegenExprOp
 }
 
 def GetGlobalOp : ZllOp<"get_global", [Pure, EvalOpAdaptor, IsPoly, InferTypeOpAdaptor,
-                                          CodegenOpWithProperties<["Offset"]>]> {
+                                          CodegenOpWithProperties<["Offset"]>,
+                                          DeclareOpInterfaceMethods<ByteCodeOpInterface>]> {
   let summary = "Read from a buffer that doesn't support cycle offsets (e.g. a Global or Temporary buffer)";
   let arguments = (ins Buffer:$buf, UI32Attr:$offset);
   let results = (outs Val:$out);
@@ -201,14 +205,16 @@ def TrueOp : ZllOp<"true", [Pure, IsPoly, DeclareOpInterfaceMethods<CodegenExprO
   let results = (outs Constraint:$out);
 }
 
-def AndEqzOp : ZllOp<"and_eqz", [Pure, IsPoly, DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
+def AndEqzOp : ZllOp<"and_eqz", [Pure, IsPoly, DeclareOpInterfaceMethods<CodegenExprOpInterface>,
+                                 DeclareOpInterfaceMethods<ByteCodeOpInterface>]> {
   let summary = "And a constraint with an eqz constraint";
   let assemblyFormat = [{ $in `,` $val `:` type($val) attr-dict }];
   let arguments = (ins Constraint:$in, Val:$val);
   let results = (outs Constraint:$out);
 }
 
-def AndCondOp : ZllOp<"and_cond", [Pure, IsPoly, DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
+def AndCondOp : ZllOp<"and_cond", [Pure, IsPoly, DeclareOpInterfaceMethods<CodegenExprOpInterface>,
+                                   DeclareOpInterfaceMethods<ByteCodeOpInterface>]> {
   let summary = "And a constraint that conditionalizes another constraints";
   let assemblyFormat = [{ $in `,` $cond `:` type($cond) `,` $inner attr-dict }];
   let arguments= (ins Constraint:$in, Val:$cond, Constraint:$inner);

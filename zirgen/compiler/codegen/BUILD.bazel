@@ -51,6 +51,7 @@ cc_library(
         ":protocol_info_const",
         "//zirgen/Dialect/ZHLT/IR:Codegen",
         "//zirgen/Dialect/Zll/Analysis",
+        "//zirgen/Dialect/ByteCode/Transforms",
         "//zirgen/Dialect/Zll/Transforms:passes",
         "//zirgen/circuit/recursion:lib",
     ],

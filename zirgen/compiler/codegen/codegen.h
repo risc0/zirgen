@@ -98,7 +98,7 @@ private:
                           llvm::ArrayRef<std::string> contextArgs,
                           llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                           mlir::FunctionType funcType,
-                          mlir::Region* body) override;
+                          EmitPart body) override;
   void emitFuncDeclaration(CodegenEmitter& cg,
                            CodegenIdent<IdentKind::Func> funcName,
                            llvm::ArrayRef<std::string> contextArgs,
@@ -188,7 +188,7 @@ struct CppLanguageSyntax : public LanguageSyntax {
                           llvm::ArrayRef<std::string> contextArgs,
                           llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                           mlir::FunctionType funcType,
-                          mlir::Region* body) override;
+                          EmitPart body) override;
   void emitFuncDeclaration(CodegenEmitter& cg,
                            CodegenIdent<IdentKind::Func> funcName,
                            llvm::ArrayRef<std::string> contextArgs,
@@ -273,7 +273,7 @@ struct CudaLanguageSyntax : public CppLanguageSyntax {
                           llvm::ArrayRef<std::string> contextArgs,
                           llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                           mlir::FunctionType funcType,
-                          mlir::Region* body) override;
+                          EmitPart body) override;
   void emitFuncDeclaration(CodegenEmitter& cg,
                            CodegenIdent<IdentKind::Func> funcName,
                            llvm::ArrayRef<std::string> contextArgs,
