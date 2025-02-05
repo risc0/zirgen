@@ -82,6 +82,13 @@ component BigIntRead(cycle: Reg, addr: Val) {
 }
 
 component BigIntWitness(ret: BigIntExternReturn) {
+  // TODO: why can't we do this?
+  // [
+  //   NondetU8Reg(ret.x00), NondetU8Reg(ret.x01), NondetU8Reg(ret.x02), NondetU8Reg(ret.x03),
+  //   NondetU8Reg(ret.x04), NondetU8Reg(ret.x05), NondetU8Reg(ret.x06), NondetU8Reg(ret.x07),
+  //   NondetU8Reg(ret.x08), NondetU8Reg(ret.x09), NondetU8Reg(ret.x10), NondetU8Reg(ret.x11),
+  //   NondetU8Reg(ret.x12), NondetU8Reg(ret.x13), NondetU8Reg(ret.x14), NondetU8Reg(ret.x15)
+  // ]
   nondet := [
     NondetReg(ret.x00), NondetReg(ret.x01), NondetReg(ret.x02), NondetReg(ret.x03),
     NondetReg(ret.x04), NondetReg(ret.x05), NondetReg(ret.x06), NondetReg(ret.x07),
@@ -170,7 +177,7 @@ component BigIntStep(cycle: Reg, prev: BigIntState) {
 
 component BigInt0(cycle: Reg, inst_input: InstInput) {
   Log("BigInt0");
-
+  DoCycleTable(cycle);
   inst_input.state = StateBigIntEcall() + inst_input.minor;
   state : BigIntState;
   state := inst_input.minor_onehot -> (
