@@ -177,7 +177,7 @@ constexpr inline FpExt inv(FpExt in) {
   Fp b0 = a[0] * a[0] + BETA * (a[1] * (a[3] + a[3]) - a[2] * a[2]);
   Fp b2 = a[0] * (a[2] + a[2]) - a[1] * a[1] + BETA * (a[3] * a[3]);
   // Now, we make b' by inverting b2.  When we muliply both sizes by b', we get out = (a' * b') /
-  // (b * b').  But by construcion b * b' is in fact an element of Fp, call it c.
+  // (b * b').  But by construction b * b' is in fact an element of Fp, call it c.
   Fp c = b0 * b0 + BETA * b2 * b2;
   // But we can now invert C direcly, and multiply by a'*b', out = a'*b'*inv(c)
   Fp ic = inv(c);
