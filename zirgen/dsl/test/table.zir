@@ -19,7 +19,7 @@ function ParameterizedType<x : Val>() {
   public a := x;
 }
 
-function ComplextTypeDependence<x :Val>() {
+function ComplexTypeDependence<x :Val>() {
   ParameterizedType<GetTableEntry(x)>().a
 }
 
