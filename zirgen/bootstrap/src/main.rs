@@ -659,10 +659,13 @@ impl Bootstrap {
         let rsa_path = risc0_root.join("bigint2/src/rsa");
 
         self.copy_file(&src_path, &field_path, "extfield_deg2_add_256.blob");
+        self.copy_file(&src_path, &field_path, "extfield_deg2_add_384.blob");
         self.copy_file(&src_path, &field_path, "extfield_deg2_mul_256.blob");
         self.copy_file(&src_path, &field_path, "extfield_deg4_mul_256.blob");
         self.copy_file(&src_path, &field_path, "extfield_deg2_sub_256.blob");
+        self.copy_file(&src_path, &field_path, "extfield_deg2_sub_384.blob");
         self.copy_file(&src_path, &field_path, "extfield_xxone_mul_256.blob");
+        self.copy_file(&src_path, &field_path, "extfield_xxone_mul_384.blob");
         self.copy_file(&src_path, &field_path, "modadd_256.blob");
         self.copy_file(&src_path, &field_path, "modadd_384.blob");
         self.copy_file(&src_path, &field_path, "modinv_256.blob");
