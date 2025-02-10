@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,6 +39,18 @@ struct DeconditionalizeIfOp : public OpRewritePattern<Zll::IfOp> {
   }
 };
 
+struct EraseUnwantedDirectives : public OpRewritePattern<Zhlt::DirectiveOp> {
+  using OpRewritePattern::OpRewritePattern;
+
+  LogicalResult matchAndRewrite(Zhlt::DirectiveOp op, PatternRewriter& rewriter) const final {
+    if (op.getName() == "AssumeRange") {
+      rewriter.eraseOp(op);
+      return success();
+    }
+    return failure();
+  }
+};
+
 } // namespace
 
 // Transform ComponentOps into constraint-checking functions.
@@ -51,6 +63,7 @@ struct GenerateCheckLayoutPass : public GenerateCheckLayoutBase<GenerateCheckLay
     patterns.insert<EraseOp<ZStruct::StoreOp>>(ctx);
     patterns.insert<EraseOp<Zll::ExternOp>>(ctx);
     patterns.insert<EraseOp<Zll::EqualZeroOp>>(ctx);
+    patterns.insert<EraseUnwantedDirectives>(ctx);
     patterns.insert<BackToCall>(ctx);
     patterns.insert<InlineCalls>(ctx);
     patterns.insert<ZStruct::SplitSwitchArms>(ctx);

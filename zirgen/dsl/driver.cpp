@@ -207,7 +207,6 @@ int main(int argc, char* argv[]) {
   pm.clear();
   if (!doTest)
     pm.addPass(zirgen::Zhlt::createStripTestsPass());
-  pm.addPass(zirgen::Zhlt::createLowerAssumeRangePass());
   zirgen::addTypingPasses(pm);
 
   pm.addPass(zirgen::dsl::createGenerateCheckPass());
