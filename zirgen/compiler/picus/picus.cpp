@@ -552,7 +552,8 @@ private:
   // Returns a flattened list of all the signal names in a signal structure.
   SmallVector<Signal> flatten(AnySignal signal, bool skipLayout = false) {
     SmallVector<Signal> flattened;
-    visit(signal, [&](Signal s) { flattened.push_back(s); }, /*visitedLayout=*/skipLayout);
+    visit(
+        signal, [&](Signal s) { flattened.push_back(s); }, /*visitedLayout=*/skipLayout);
     return flattened;
   }
 

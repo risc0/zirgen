@@ -38,7 +38,8 @@ struct LowerAssumeRange : public OpRewritePattern<DirectiveOp> {
       Value one = rewriter.create<Zll::ConstOp>(loc, 1);
       Value cond = rewriter.create<Zll::InRangeOp>(loc, args[0], args[1], args[2]);
       cond = rewriter.create<Zll::SubOp>(loc, one, cond);
-      rewriter.replaceOpWithNewOp<Zll::ExternOp>(directive, TypeRange{}, ValueRange{cond, message}, "Assert", /*extra=*/"");
+      rewriter.replaceOpWithNewOp<Zll::ExternOp>(
+          directive, TypeRange{}, ValueRange{cond, message}, "Assert", /*extra=*/"");
       return success();
     } else {
       return failure();
