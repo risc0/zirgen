@@ -221,7 +221,6 @@ private:
   }
 
   void visitOp(LookupOp lookup) {
-    // TODO: this doesn't handle @super member lookups!!!!!!!
     auto signal = cast<SignalStruct>(valuesToSignals.at(lookup.getBase()));
     auto subSignal = signal.get(lookup.getMember());
     valuesToSignals.insert({lookup.getOut(), subSignal});
