@@ -31,7 +31,7 @@ component BigIntState(
 }
 
 component BigIntInvalid() {
-  Log("BigIntInvalid");
+  // Log("BigIntInvalid");
 
   0 = 1;
   BigIntState(
@@ -45,7 +45,7 @@ component BigIntInvalid() {
 }
 
 component BigIntEcall(cycle: Reg) {
-  Log("BigIntEcall");
+  // Log("BigIntEcall");
 
   pc := ReadAddr(cycle, RegT2());
   Log("pc", pc);
@@ -67,7 +67,7 @@ component SplitU32(x : ValU32) {
 }
 
 component BigIntRead(cycle: Reg, addr: Val) {
-  Log("BigIntRead");
+  // Log("BigIntRead");
 
   words := for i : 0..4 {
     SplitU32(MemoryRead(cycle, addr + i))
@@ -101,7 +101,7 @@ component BigIntWitness(ret: BigIntExternReturn) {
 }
 
 component BigIntWrite(cycle: Reg, addr: Val) {
-  Log("BigIntWrite");
+  // Log("BigIntWrite");
 
   bytes := BigIntWitness(BigIntExtern());
   for i : 0..4 {
@@ -115,12 +115,12 @@ component BigIntWrite(cycle: Reg, addr: Val) {
 }
 
 component BigIntCheck() {
-  Log("BigIntCheck");
+  // Log("BigIntCheck");
   BigIntWitness(BigIntExtern())
 }
 
 component BigIntStep(cycle: Reg, prev: BigIntState) {
-  Log("BigIntStep");
+  // Log("BigIntStep");
 
   pc := prev.pc + 1;
   Log("pc", pc);
@@ -148,7 +148,7 @@ component BigIntStep(cycle: Reg, prev: BigIntState) {
   // Read the register value and compute initial address
   dataAddr := ReadAddr(cycle, reg) + offset * 4;
 
-  Log("polyOp, memOp, reg, coeff, offset, addr", polyOp, memOp, reg, coeff, offset, dataAddr);
+  // Log("polyOp, memOp, reg, coeff, offset, addr", polyOp, memOp, reg, coeff, offset, dataAddr);
 
   memOpOneHot := OneHot<3>(memOp);
   bytes := memOpOneHot -> (
@@ -215,11 +215,6 @@ component BigIntAccum(topState: BigIntTopState, mix: Array<ExtVal, 1>) {
 }
 
 component BigIntAccumPowers(mix: ExtVal) {
-  // FpExt cur = one;
-  // for (size_t i = 0; i < 17; i++) {
-  //   powers.push_back(cur);
-  //   cur = cur * mix;
-  // }
   powers0 := MakeExt(1);
   powers1 := ExtMul(powers0, mix);
   powers2 := ExtMul(powers1, mix);
@@ -249,12 +244,6 @@ component BigIntAccumPowers(mix: ExtVal) {
 component BigIntAccumStep(topState: BigIntTopState, prev: BigIntAccumState, mix: ExtVal) {
   public powers := BigIntAccumPowers(mix);
 
-  // FpExt deltaPoly = zero;
-  // FpExt negPoly = zero;
-  // for (size_t i = 0; i < 16; i++) {
-  //   deltaPoly = deltaPoly + powers[i] * FpExt(getByte(i));
-  //   negPoly = negPoly + powers[i] * FpExt(Val(128));
-  // }
   public deltaPoly := reduce for i : 0..16 {
     ExtMul(powers[i], MakeExt(topState.witness[i]))
   } init MakeExt(0) with ExtAdd;
@@ -263,7 +252,6 @@ component BigIntAccumStep(topState: BigIntTopState, prev: BigIntAccumState, mix:
     ExtMul(powers[i], MakeExt(128))
   } init MakeExt(0) with ExtAdd;
 
-  // FpExt newPoly = oldPoly + deltaPoly;
   public newPoly := ExtAdd(prev.poly, deltaPoly);
 }
 
@@ -277,10 +265,7 @@ component BigIntPolyOpNop() {
 }
 
 component BigIntPolyOpShift(topState: BigIntTopState, prev: BigIntAccumState, mix: ExtVal) {
-  Log("BigIntPolyOpShift", topState.coeff, topState.witness[0], topState.witness[1]);
-  // poly->set(newPoly * powers[16]);
-  // term->set(oldTerm);
-  // tot->set(oldTot);
+  // Log("BigIntPolyOpShift", topState.coeff, topState.witness[0], topState.witness[1]);
   step := BigIntAccumStep(topState, prev, mix);
   BigIntAccumState(
     /*poly=*/ExtMul(step.newPoly, step.powers[16]),
@@ -290,10 +275,7 @@ component BigIntPolyOpShift(topState: BigIntTopState, prev: BigIntAccumState, mi
 }
 
 component BigIntPolyOpSetTerm(topState: BigIntTopState, prev: BigIntAccumState, mix: ExtVal) {
-  Log("BigIntPolyOpSetTerm");
-  // poly->set(zero);
-  // term->set(newPoly);
-  // tot->set(oldTot);
+  // Log("BigIntPolyOpSetTerm");
   step := BigIntAccumStep(topState, prev, mix);
   BigIntAccumState(
     /*poly=*/MakeExt(0),
@@ -303,14 +285,8 @@ component BigIntPolyOpSetTerm(topState: BigIntTopState, prev: BigIntAccumState, 
 }
 
 component BigIntPolyOpAddTotal(topState: BigIntTopState, prev: BigIntAccumState, mix: ExtVal) {
-  Log("BigIntPolyOpAddTotal");
-  // Val coeffVal = checkCoeff[0] + checkCoeff[1] * 2 + checkCoeff[2] * 4 - 4;
-  // FpExt coeff(coeffVal);
+  // Log("BigIntPolyOpAddTotal");
   coeff := MakeExt(topState.coeff - 4);
-  // poly->set(zero);
-  // term->set(one);
-  // tmp->set(coeff * oldTerm);
-  // tot->set(oldTot + tmp * newPoly);
   step := BigIntAccumStep(topState, prev, mix);
   tmp := ExtReg(ExtMul(coeff, prev.term));
   BigIntAccumState(
@@ -321,10 +297,7 @@ component BigIntPolyOpAddTotal(topState: BigIntTopState, prev: BigIntAccumState,
 }
 
 component BigIntPolyOpCarry1(topState: BigIntTopState, prev: BigIntAccumState, mix: ExtVal) {
-  Log("BigIntPolyOpCarry1");
-  // poly->set(oldPoly + (deltaPoly - negPoly) * c16k);
-  // term->set(oldTerm);
-  // tot->set(oldTot);
+  // Log("BigIntPolyOpCarry1");
   step := BigIntAccumStep(topState, prev, mix);
   BigIntAccumState(
     /*poly=*/ExtAdd(prev.poly, ExtMul(ExtSub(step.deltaPoly, step.negPoly), MakeExt(16384))),
@@ -334,10 +307,7 @@ component BigIntPolyOpCarry1(topState: BigIntTopState, prev: BigIntAccumState, m
 }
 
 component BigIntPolyOpCarry2(topState: BigIntTopState, prev: BigIntAccumState, mix: ExtVal) {
-  Log("BigIntPolyOpCarry2");
-  // poly->set(oldPoly + deltaPoly * c256);
-  // term->set(oldTerm);
-  // tot->set(oldTot);
+  // Log("BigIntPolyOpCarry2");
   step := BigIntAccumStep(topState, prev, mix);
   BigIntAccumState(
     /*poly=*/ExtAdd(prev.poly, ExtMul(step.deltaPoly, MakeExt(256))),
@@ -347,21 +317,11 @@ component BigIntPolyOpCarry2(topState: BigIntTopState, prev: BigIntAccumState, m
 }
 
 component BigIntPolyOpEqz(topState: BigIntTopState, prev: BigIntAccumState, mix: ExtVal) {
-  Log("BigIntPolyOpEqz");
-  // FpExt carryMul = powers[1] - c256;
-  // FpExt goalZero = oldTot + newPoly * carryMul;
-  // eqz(goalZero.elem(0));
-  // eqz(goalZero.elem(1));
-  // eqz(goalZero.elem(2));
-  // eqz(goalZero.elem(3));
-  // poly->set(zero);
-  // term->set(one);
-  // tot->set(zero);
+  // Log("BigIntPolyOpEqz");
   step := BigIntAccumStep(topState, prev, mix);
   carryMul := ExtSub(step.powers[1], MakeExt(256));
   goalZero := ExtAdd(prev.total, ExtMul(step.newPoly, carryMul));
-  // TODO(flaub): FIXME!
-  // EqzExt(goalZero);
+  EqzExt(goalZero);
   BigIntAccumState(
     /*poly=*/MakeExt(0),
     /*term=*/MakeExt(1),

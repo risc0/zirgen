@@ -95,9 +95,9 @@ component Top() {
   inst_result.topState
 }
 
-// component Accum(topState: BigIntTopState, mix: Array<ExtVal, 1>) {
-//   BigIntAccum(topState, mix);
-// }
+component Accum(topState: BigIntTopState, mix: Array<ExtVal, 1>) {
+  BigIntAccum(topState, mix);
+}
 
 test run {
   Top();
