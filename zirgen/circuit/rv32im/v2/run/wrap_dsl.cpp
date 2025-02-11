@@ -401,9 +401,8 @@ void DslStepAccum(StepHandler& stepHandler, ExecutionTrace& trace, size_t cycle)
   impl::MutableBufObj data(ctx, trace.data);
   impl::MutableBufObj accum(ctx, trace.accum);
   impl::GlobalBufObj mix(ctx, trace.mix);
-  // impl::GlobalBufObj global(ctx, trace.global);
-  // step_TopAccum(ctx, &accum, &data, &global, &mix);
-  step_TopAccum(ctx, &accum, &data, &mix);
+  impl::GlobalBufObj global(ctx, trace.global);
+  step_TopAccum(ctx, &accum, &data, &global, &mix);
 }
 
 } // namespace zirgen::rv32im_v2
