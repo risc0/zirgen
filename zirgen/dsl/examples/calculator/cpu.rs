@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -105,7 +105,7 @@ impl calc_circuit::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
         let data = &data.as_slice_sync();
         let data = BufferRow::cycle(data);
         let global = &global.as_slice_sync();
-        let global = BufferRow::global(&global);
+        let global = BufferRow::global(global);
 
         let mut exec_context = CpuExecContext {
             cycle: 0,
@@ -168,7 +168,7 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
         let check = orig_check.as_slice_sync();
 
         // TODO: modularize this
-        (0..domain).into_iter().for_each(|cycle| {
+        (0..domain).for_each(|cycle| {
             let tot = calc_circuit::validity::calculator(
                 &ValidityCtx {
                     cycle,

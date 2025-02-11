@@ -341,9 +341,9 @@ impl Bootstrap {
         } else if self.args.check {
             self.pool.execute(move || {
                 if let Err(err) = self.check(&src_path, src_data, &tgt_path) {
-                    write!(
+                    writeln!(
                         stdout().lock(),
-                        "ERROR: {} != {}: {}\n",
+                        "ERROR: {} != {}: {}",
                         src_path.display(),
                         tgt_path.display(),
                         err
@@ -351,9 +351,9 @@ impl Bootstrap {
                     .unwrap();
                     *self.error.lock().unwrap() = true;
                 } else {
-                    write!(
+                    writeln!(
                         stdout().lock(),
-                        "{} == {}\n",
+                        "{} == {}",
                         src_path.display(),
                         tgt_path.display()
                     )
@@ -394,9 +394,9 @@ impl Bootstrap {
                     }
                 }
 
-                write!(
+                writeln!(
                     stdout().lock(),
-                    "{} -> {}\n",
+                    "{} -> {}",
                     src_path.display(),
                     tgt_path.display()
                 )
@@ -659,14 +659,21 @@ impl Bootstrap {
         let rsa_path = risc0_root.join("bigint2/src/rsa");
 
         self.copy_file(&src_path, &field_path, "extfield_deg2_add_256.blob");
+        self.copy_file(&src_path, &field_path, "extfield_deg2_add_384.blob");
         self.copy_file(&src_path, &field_path, "extfield_deg2_mul_256.blob");
         self.copy_file(&src_path, &field_path, "extfield_deg4_mul_256.blob");
         self.copy_file(&src_path, &field_path, "extfield_deg2_sub_256.blob");
+        self.copy_file(&src_path, &field_path, "extfield_deg2_sub_384.blob");
         self.copy_file(&src_path, &field_path, "extfield_xxone_mul_256.blob");
+        self.copy_file(&src_path, &field_path, "extfield_xxone_mul_384.blob");
         self.copy_file(&src_path, &field_path, "modadd_256.blob");
+        self.copy_file(&src_path, &field_path, "modadd_384.blob");
         self.copy_file(&src_path, &field_path, "modinv_256.blob");
+        self.copy_file(&src_path, &field_path, "modinv_384.blob");
         self.copy_file(&src_path, &field_path, "modmul_256.blob");
+        self.copy_file(&src_path, &field_path, "modmul_384.blob");
         self.copy_file(&src_path, &field_path, "modsub_256.blob");
+        self.copy_file(&src_path, &field_path, "modsub_384.blob");
         self.copy_file(&src_path, &rsa_path, "modpow65537_4096.blob");
         self.copy_file(&src_path, &ec_path, "ec_add_256.blob");
         self.copy_file(&src_path, &ec_path, "ec_double_256.blob");
