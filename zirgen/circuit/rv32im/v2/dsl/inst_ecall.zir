@@ -22,6 +22,7 @@ component IllegalECall() {
 }
 
 component MachineECall(cycle: Reg, input: InstInput, pc_addr: Val) {
+  // Log("MachineECall");
   load_inst := MemoryRead(cycle, pc_addr);
   input.state = StateDecode();
   load_inst.high = 0x0000;
@@ -29,13 +30,14 @@ component MachineECall(cycle: Reg, input: InstInput, pc_addr: Val) {
   input.mode = 1;
   dispatch_idx := MemoryRead(cycle, MachineRegBase() + RegA7());
   dispatch_idx.high = 0;
-  dispatch := OneHot<5>(dispatch_idx.low);
+  dispatch := OneHot<6>(dispatch_idx.low);
   state := dispatch -> (
-    StateTerminate(),
-    StateHostReadSetup(),
-    StateHostWrite(),
-    StatePoseidonEcall(),
-    StateShaEcall()
+    StateTerminate(),     // 9, major: 8
+    StateHostReadSetup(), // 10, major: 8
+    StateHostWrite(),     // 11, major: 8
+    StatePoseidonEcall(), // 16, major: 9
+    StateShaEcall(),      // 32, major: 11
+    StateBigIntEcall()    // 40, major: 12
   );
   ECallOutput(state, 0, 0, 0)
 }
@@ -215,6 +217,7 @@ component ECall0(cycle: Reg, inst_input: InstInput) {
   isDecode := IsZero(output.state - StateDecode());
   isP2Entry := IsZero(output.state - StatePoseidonEcall());
   isShaEcall := IsZero(output.state - StateShaEcall());
-  addPC := NormalizeU32(AddU32(inst_input.pc_u32, ValU32((isDecode + isP2Entry + isShaEcall) * 4, 0)));
+  isBigIntEcall := IsZero(output.state - StateBigIntEcall());
+  addPC := NormalizeU32(AddU32(inst_input.pc_u32, ValU32((isDecode + isP2Entry + isShaEcall + isBigIntEcall) * 4, 0)));
   InstOutput(addPC, output.state, 1)
 }

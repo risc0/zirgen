@@ -63,16 +63,34 @@ risc0_cc_kernel_binary(
 
 cc_test(
     name = "test_io",
-    srcs = [
-        "test_io.cpp",
-    ],
-    data = [
-        ":test_io_kernel",
-    ],
+    srcs = ["test_io.cpp"],
+    data = [":test_io_kernel"],
     deps = [
         "//risc0/core",
         "//zirgen/circuit/rv32im/v2/run",
-    ]
+    ],
+)
+
+risc0_cc_kernel_binary(
+    name = "test_bigint_kernel",
+    srcs = [
+        "entry.s",
+        "test_bigint_kernel.cpp",
+    ],
+    deps = [
+        "//zirgen/circuit/rv32im/v1/test:bigint2-inc",
+        "//zirgen/circuit/rv32im/v2/platform:core",
+    ],
+)
+
+cc_test(
+    name = "test_bigint",
+    srcs = ["test_bigint.cpp"],
+    data = [":test_bigint_kernel"],
+    deps = [
+        "//risc0/core",
+        "//zirgen/circuit/rv32im/v2/run",
+    ],
 )
 
 riscv_test_suite()

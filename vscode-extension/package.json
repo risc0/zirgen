@@ -1,0 +1,25 @@
+{
+  "name": "zirgen",
+  "displayName": "zirgen",
+  "description": "Syntax highlighting for zirgen",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "zirgen",
+      "aliases": ["zirgen"],
+      "extensions": [".zir"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "zirgen",
+      "scopeName": "source.zirgen",
+      "path": "./syntaxes/zirgen.tmLanguage.json"
+    }]
+  }
+}

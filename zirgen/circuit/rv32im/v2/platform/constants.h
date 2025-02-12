@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -96,6 +96,7 @@ constexpr uint32_t HOST_ECALL_READ = 1;
 constexpr uint32_t HOST_ECALL_WRITE = 2;
 constexpr uint32_t HOST_ECALL_POSEIDON2 = 3;
 constexpr uint32_t HOST_ECALL_SHA2 = 4;
+constexpr uint32_t HOST_ECALL_BIGINT = 5;
 
 constexpr uint32_t PFLAG_IS_ELEM = 0x80000000;
 constexpr uint32_t PFLAG_CHECK_OUT = 0x40000000;
@@ -147,7 +148,10 @@ constexpr uint32_t STATE_SHA_LOAD_DATA = 34;
 constexpr uint32_t STATE_SHA_MIX = 35;
 constexpr uint32_t STATE_SHA_STORE_STATE = 36;
 
-constexpr uint32_t STATE_DECODE = 40;
+constexpr uint32_t STATE_BIGINT_ECALL = 40;
+constexpr uint32_t STATE_BIGINT_STEP = 41;
+
+constexpr uint32_t STATE_DECODE = 48;
 
 constexpr uint32_t SAFE_WRITE_WORD = 0x3fffc040;
 

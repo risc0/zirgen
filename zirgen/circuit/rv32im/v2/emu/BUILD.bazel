@@ -12,6 +12,7 @@ cc_library(
         "trace.cpp",
     ],
     hdrs = [
+        "bigint.h",
         "exec.h",
         "image.h",
         "p2.h",
@@ -22,9 +23,10 @@ cc_library(
         "trace.h",
     ],
     deps = [
+        "//risc0/fp",
+        "//zirgen/Dialect/BigInt/Bytecode",
+        "//zirgen/circuit/rv32im/shared",
         "//zirgen/circuit/rv32im/v2/platform:core",
-        "@zirgen//risc0/fp",
-        "@zirgen//zirgen/circuit/rv32im/shared",
-        "@zirgen//zirgen/compiler/zkp",
+        "//zirgen/compiler/zkp",
     ],
 )

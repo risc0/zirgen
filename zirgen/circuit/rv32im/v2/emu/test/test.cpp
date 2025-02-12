@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,3 +34,11 @@ int main() {
   auto ptrace = preflightSegment(segments[0], 1000000 + 2000);
   return 0;
 }
+
+namespace zirgen::rv32im_v2 {
+
+std::vector<Back> getBigIntStateBacks(const BigIntState& state) {
+  return std::vector<Back>{};
+}
+
+} // namespace zirgen::rv32im_v2

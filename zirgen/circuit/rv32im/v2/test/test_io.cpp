@@ -34,17 +34,21 @@ struct RandomReadSizeHandler : public HostIoHandler {
 };
 
 int main() {
-  size_t cycles = 100000;
-  RandomReadSizeHandler io;
+  try {
+    size_t cycles = 100000;
+    RandomReadSizeHandler io;
 
-  // Load image
-  auto image = MemoryImage::fromRawElf(kernelName);
-  // Do executions
-  auto segments = execute(image, io, cycles, cycles);
-  // Do 'run' (preflight + expansion)
-  for (const auto& segment : segments) {
-    std::cout << "HEY, doing a segment!\n";
-    runSegment(segment, cycles + 1000);
+    // Load image
+    auto image = MemoryImage::fromRawElf(kernelName);
+    // Do executions
+    auto segments = execute(image, io, cycles, cycles);
+    // Do 'run' (preflight + expansion)
+    for (const auto& segment : segments) {
+      std::cout << "HEY, doing a segment!\n";
+      runSegment(segment, cycles + 1000);
+    }
+    std::cout << "What a fine day\n";
+  } catch (std::exception& ex) {
+    printf("Exception: %s\n", ex.what());
   }
-  std::cout << "What a fine day\n";
 }

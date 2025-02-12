@@ -18,6 +18,6 @@
     "*.cu": "cuda",
     "*.cuh.inc": "cuda",
     "*.cu.inc": "cuda",
-    "*.rs.inc": "rust",
+    "*.rs.inc": "rust"
   }
 }
