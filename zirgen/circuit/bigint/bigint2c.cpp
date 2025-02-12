@@ -29,6 +29,7 @@
 #include "zirgen/Dialect/BigInt/Bytecode/file.h"
 #include "zirgen/Dialect/BigInt/IR/BigInt.h"
 #include "zirgen/Dialect/BigInt/Transforms/Passes.h"
+#include "zirgen/circuit/bigint/basic.h"
 #include "zirgen/circuit/bigint/elliptic_curve.h"
 #include "zirgen/circuit/bigint/field.h"
 #include "zirgen/circuit/bigint/rsa.h"
@@ -53,6 +54,7 @@ enum class Program {
   ModInv,
   ModMul,
   ModSub,
+  Mul,
 };
 } // namespace
 
@@ -70,7 +72,8 @@ static cl::opt<enum Program> program(
                clEnumValN(Program::ModAdd, "modadd", "ModAdd"),
                clEnumValN(Program::ModInv, "modinv", "ModInv"),
                clEnumValN(Program::ModMul, "modmul", "ModMul"),
-               clEnumValN(Program::ModSub, "modsub", "ModSub")),
+               clEnumValN(Program::ModSub, "modsub", "ModSub"),
+               clEnumValN(Program::Mul, "mul", "Mul")),
     cl::Required);
 
 static cl::opt<size_t> bitwidth("bitwidth",
@@ -478,6 +481,9 @@ int main(int argc, char* argv[]) {
     break;
   case Program::ModSub:
     zirgen::BigInt::field::genModSub(builder, loc, bitwidth);
+    break;
+  case Program::Mul:
+    zirgen::BigInt::genMul(builder, loc, bitwidth);
     break;
   }
 
