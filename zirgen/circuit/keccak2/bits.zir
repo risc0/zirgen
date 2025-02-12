@@ -2,11 +2,13 @@
 // RUN: zirgen --test %s
 
 // Assert that a given value is a bit
+#[picus_inline]
 function AssertBit(val: Val) {
   val * (1 - val) = 0;
 }
 
 // Set a register nodeterministically, and then verify it is a bit
+#[picus_inline]
 component NondetBitReg(val: Val) {
   reg := NondetReg(val);
   AssertBit(reg);

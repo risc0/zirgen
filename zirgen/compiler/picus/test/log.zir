@@ -1,12 +1,14 @@
 // RUN: zirgen %s --emit=picus | FileCheck %s
 
+// The Log extern should be inlined away!
+
 // CHECK: (prime-number 2013265921)
 // CHECK-NEXT: (begin-module Top)
-// CHECK-NEXT: (output layout_x__super__super)
+// CHECK-NEXT: (output result__layout_x__super__super)
 // CHECK-NEXT: (assert (= x0 5))
-// CHECK-NEXT: (assert (= x1 (- x0 layout_x__super__super)))
+// CHECK-NEXT: (assert (= x1 (- x0 result__layout_x__super__super)))
 // CHECK-NEXT: (assert (= x1 0))
-// CHECK-NEXT: (call [] Log [ ])
+// CHECK-NOT: (call [] Log [ ])
 // CHECK-NEXT: (end-module)
 
 #[picus_analyze]

@@ -1,0 +1,17 @@
+// RUN: zirgen %s --emit=picus | FileCheck %s
+
+// Initially during development, we used a simpler scheme for translating
+// parameter layouts than we ended up needing. This test ensures that the layout
+// of the argument and result appear as intended, and without any redundancy.
+
+// CHECK: (begin-module Foo)
+// CHECK-NEXT: (input x0__layout__super__super)
+// CHECK-NEXT: (input x0__super__super)
+// CHECK-NEXT: (output result__layout__super__super__super)
+// CHECK-NEXT: (output result__super__super__super)
+
+#[picus_analyze]
+component Foo(x: Reg) {
+  // x@0 = 9;
+  Reg(x@0)
+}

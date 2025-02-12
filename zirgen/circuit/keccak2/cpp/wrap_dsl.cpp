@@ -18,6 +18,7 @@
 #include <assert.h>
 #include <cstddef>
 #include <cstdint>
+#include <cstdlib>
 #include <functional>
 #include <iostream>
 #include <map>
@@ -240,6 +241,13 @@ void extern_log(ExecContext& ctx, const std::string& message, std::vector<Val> v
     std::cout << " " << vals[i].asUInt32();
   }
   std::cout << std::dec << "\n";
+}
+
+void extern_assert(ExecContext& ctx, Val condition, const std::string& message) {
+  if (condition != 0) {
+    std::cout << " failed: " << message << "\n";
+    std::exit(EXIT_FAILURE);
+  }
 }
 
 Val extern_getPreimage(ExecContext& ctx, Val idx) {

@@ -155,6 +155,7 @@ component LoadShaState(back1: TopState, back2: TopState) {
   ShaState(a, e, w)
 }
 
+#[picus_inline]
 component ExtractBits(steps: Array<DoShaStep, 8>, i: Val) {
     [InRange(0, i, 8), InRange(8, i, 16), InRange(16, i, 24), InRange(24, i, 25)] ->
       (steps[i].a, steps[i - 8].e, steps[i - 16].w, for j : 0..32 {0})
@@ -214,6 +215,7 @@ component ShaCycle(back1: TopState, back2: TopState, round: Val, block: Val) {
   topState
 }
 
+#[picus_inline]
 component ExtractBits2(a: Array<Array<Val, 32>, 4>, e: Array<Array<Val, 32>, 4>, i: Val) {
   [
     InRange(0, i, 4),
