@@ -8,11 +8,13 @@ package(
 cc_library(
     name = "lib",
     srcs = [
+        "basic.cpp",
         "elliptic_curve.cpp",
         "field.cpp",
         "rsa.cpp",
     ],
     hdrs = [
+        "basic.h",
         "elliptic_curve.h",
         "field.h",
         "rsa.h",
@@ -73,6 +75,7 @@ BLOBS = [
     "modmul_384",
     "modsub_256",
     "modsub_384",
+    "mul_256",
 ]
 
 genrule(
@@ -206,6 +209,13 @@ genrule(
     outs = ["modsub_384.blob"],
     exec_tools = [":bigint2c"],
     cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modsub --bitwidth 384 > $(OUTS)"
+)
+
+genrule(
+    name = "mul_256",
+    outs = ["mul_256.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=mul --bitwidth 256 > $(OUTS)"
 )
 
 pkg_zip(

@@ -657,6 +657,7 @@ impl Bootstrap {
         let ec_path = risc0_root.join("bigint2/src/ec");
         let field_path = risc0_root.join("bigint2/src/field");
         let rsa_path = risc0_root.join("bigint2/src/rsa");
+        let zkos_bigint_v1compat = risc0_root.join("zkos/v1compat/src/bigint_v1compat");
 
         self.copy_file(&src_path, &field_path, "extfield_deg2_add_256.blob");
         self.copy_file(&src_path, &field_path, "extfield_deg2_add_384.blob");
@@ -677,6 +678,8 @@ impl Bootstrap {
         self.copy_file(&src_path, &rsa_path, "modpow65537_4096.blob");
         self.copy_file(&src_path, &ec_path, "ec_add_256.blob");
         self.copy_file(&src_path, &ec_path, "ec_double_256.blob");
+        self.copy_file(&src_path, &zkos_bigint_v1compat, "modmul_256.blob");
+        self.copy_file(&src_path, &zkos_bigint_v1compat, "mul_256.blob");
     }
 }
 
