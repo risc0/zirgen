@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public:
 
 protected:
   Component::Ptr parseComponent();
-  Component::Ptr parseExtern();
+  Component::Ptr parseExtern(Attribute::ArrayRef attributes);
   Component::Ptr parseTest();
   Block::Ptr parseBlock();
 

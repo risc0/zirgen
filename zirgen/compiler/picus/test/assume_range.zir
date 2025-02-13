@@ -1,0 +1,34 @@
+// RUN: zirgen %s --emit=picus | FileCheck %s
+
+// CHECK: (begin-module Sqrt)
+// CHECK-NEXT: (input x4)
+// CHECK-NEXT: (input x5)
+// CHECK-NEXT: (output result__layout__super__super__super)
+// CHECK-NEXT: (output result__super__super__super)
+// CHECK-NEXT: (assert (= x6 10000))
+// CHECK-NEXT: (assert (= x7 100))
+// CHECK-NEXT: (assert (= x8 0))
+// CHECK-NEXT: (assume (<= x8 x4))
+// CHECK-NEXT: (assume (< x4 x6))
+// CHECK-NEXT: (assume (<= x8 x5))
+// CHECK-NEXT: (assume (< x5 x7))
+// CHECK-NOT: assume
+// CHECK: (end-module)
+
+component Sqrt(x: Val, hint: Val) {
+  AssumeRange!(0, x, 100*100);
+  AssumeRange!(0, hint, 100);
+  y := Reg(hint);
+  x = y * y;
+  y
+}
+
+#[picus_analyze]
+component Top() {
+  x := Reg(25);
+  y := Sqrt(x, 5);
+}
+
+test {
+  Top()
+}

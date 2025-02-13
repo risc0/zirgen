@@ -1,0 +1,28 @@
+// RUN: zirgen %s --emit=picus | FileCheck %s
+
+// This test covers a bug observed during development where layouts were given
+// two separate result signals in a call: one for the layout outputs
+// corresponding to the layout argument of the call, and the other corresponding
+// to the @layout member of the result.
+
+// CHECK: (begin-module Top)
+// CHECK-NEXT: (output result__layout_x__super__super__super)
+// CHECK-NEXT: (assert (= x0 1))
+// CHECK-NEXT: (call [result__layout_x__super__super__super x1__super__super__super] RegWrapper [x0])
+// CHECK-NEXT: (end-module)
+
+// CHECK: (begin-module RegWrapper)
+// CHECK-NEXT: (input x2)
+// CHECK-NEXT: (output result__layout__super__super__super)
+// CHECK-NEXT: (output result__super__super__super)
+// CHECK-NOT: (output
+// CHECK: (end-module)
+
+component RegWrapper(val: Val) {
+  Reg(2 * val)
+}
+
+#[picus_analyze]
+component Top() {
+  x := RegWrapper(1);
+}

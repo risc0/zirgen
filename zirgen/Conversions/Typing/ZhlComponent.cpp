@@ -1046,6 +1046,21 @@ void LoweringImpl::gen(DirectiveOp directive, ComponentBuilder& cb) {
       directive.emitError() << "Unable to determine layout of " << directive.getArgs()[0];
     if (!right)
       directive.emitError() << "Unable to determine layout of " << directive.getArgs()[1];
+  } else if (directive.getName() == "AssumeRange") {
+    if (directive.getArgs().size() != 3) {
+      size_t args = directive.getArgs().size();
+      directive.emitError() << "'AssumeRange' directive expects three arguments, got " << args;
+    }
+    SmallVector<Value> args;
+    for (Value arg : directive.getArgs()) {
+      arg = asValue(arg);
+      if (!Zhlt::isCoercibleTo(arg.getType(), Zhlt::getValType(ctx))) {
+        emitError(arg.getLoc()) << "'AssumeRange' directive expects Val arguments, got "
+                                << getTypeId(arg.getType());
+      }
+      args.push_back(coerceTo(arg, Zhlt::getValType(ctx)));
+    }
+    builder.create<Zhlt::DirectiveOp>(directive->getLoc(), "AssumeRange", args);
   } else {
     directive.emitError() << "Unknown compiler directive '" << directive.getName() << "'";
   }

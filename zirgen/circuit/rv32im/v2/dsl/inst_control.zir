@@ -128,7 +128,7 @@ component ControlTable(cycle: Reg, input: InstInput) {
   input.state = StateControlTable();
   entry := Reg(input.pc_u32.low);
   mode := Reg(input.mode);
-  Log("mode/entry = ", mode, entry);
+  // Log("mode/entry = ", mode, entry);
   if (mode) {
     // 16 bit table
     for i : 0..16 {

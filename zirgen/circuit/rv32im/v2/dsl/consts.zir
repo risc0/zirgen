@@ -45,7 +45,14 @@ component StateShaLoadData() { 34 }
 component StateShaMix() { 35 }
 component StateShaStoreState() { 36 }
 
-component StateDecode() { 40 }
+component StateBigIntEcall() { 40 }
+component StateBigIntStep() { 41 }
+
+component StateDecode() { 48 }
+
+component RegT0() { 5 }
+component RegT1() { 6 }
+component RegT2() { 7 }
 
 component RegA0() { 10 }
 component RegA1() { 11 }
@@ -54,3 +61,4 @@ component RegA3() { 13 }
 component RegA4() { 14 }
 
 component RegA7() { 17 }
+

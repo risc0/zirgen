@@ -31,11 +31,13 @@ component Add2(a: Array<Val, 2>, b: Array<Val, 2>) {
 }
 
 component CarryExtract(in: Val) {
+  AssumeRange!(0, in, 0x80000);
   bit0 := NondetBitReg(((in & 0xf0000) / 0x10000) & 1);
   bit1 := NondetBitReg((((in & 0xf0000) / 0x10000) & 2) / 2);
   bit2 := NondetBitReg((((in & 0xf0000) / 0x10000) & 4) / 4);
   public carry := bit2 * 4 + bit1 * 2 + bit0;
   public out := in - carry * 0x10000;
+  AssumeRange!(0, out, 0x10000);
 }
 
 component CarryAndExpand(in: Array<Val, 2>) {

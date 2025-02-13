@@ -14,7 +14,7 @@ cc_library(
         "wrap_dsl.h",
     ],
     deps = [
+        "//risc0/core",
         "//zirgen/circuit/rv32im/v2/emu",
-        "@zirgen//risc0/core",
     ],
 )

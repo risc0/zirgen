@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -177,7 +177,7 @@ Component::Ptr Parser::parseComponent() {
     kind = ast::Component::Kind::Function;
     break;
   case tok_extern:
-    return parseExtern();
+    return parseExtern(attributes);
   default:
     if (attributes.empty()) {
       error("A component declaration must start with the `component` keyword");
@@ -207,7 +207,7 @@ Component::Ptr Parser::parseComponent() {
                                 std::move(body));
 }
 
-Component::Ptr Parser::parseExtern() {
+Component::Ptr Parser::parseExtern(Attribute::ArrayRef attributes) {
   SMLoc location = lexer.getLastLocation();
 
   if (!lexer.takeTokenIf(tok_ident)) {
@@ -241,7 +241,7 @@ Component::Ptr Parser::parseExtern() {
   return make_shared<Component>(location,
                                 Component::Kind::Extern,
                                 name,
-                                Attribute::Vec(),
+                                attributes,
                                 std::move(typeParams),
                                 std::move(params),
                                 std::move(returnType));

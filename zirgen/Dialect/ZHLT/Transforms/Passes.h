@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createHoistAllocsPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createStripTestsPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateStepsPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createStripAliasLayoutOpsPass();
+std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createLowerAssumeRangePass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createLowerStepFuncsPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createBuffersToArgsPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createAnalyzeBuffersPass();

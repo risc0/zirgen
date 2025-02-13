@@ -27,6 +27,8 @@ component Po2(n: Val) {
 // sure the 'parts' eveny divide the whole.
 
 // Pack N bits into parts of P bits each
+// TODO: once possible, let picus decide when to inline this
+#[picus_inline]
 component Pack<N: Val, P: Val>(in : Array<Val, N>) {
   N % P = 0;
   for i : 0..(N / P) {
@@ -34,6 +36,7 @@ component Pack<N: Val, P: Val>(in : Array<Val, N>) {
   }
 }
 
+#[picus_inline]
 component UnpackNondet<N: Val, P: Val>(in: Array<Val, N/P>) {
   N % P = 0;
   inv := Inv(P);

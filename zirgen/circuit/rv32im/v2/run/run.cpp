@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -124,15 +124,15 @@ struct ReplayHandler : public StepHandler {
   MemoryTransaction getMemoryTxn(uint32_t addr) override {
     size_t memCycle = preflight.cycles[cycle].memCycle + which;
     const auto& txn = preflight.txns[memCycle];
-    printf("getMemoryTxn(%lu, 0x%08x): txn(%u, 0x%08x, 0x%08x)\n",
-           cycle,
-           addr,
-           txn.cycle,
-           txn.word,
-           txn.val);
+    // printf("getMemoryTxn(%lu, 0x%08x): txn(%u, 0x%08x, 0x%08x)\n",
+    //        cycle,
+    //        addr,
+    //        txn.cycle,
+    //        txn.word,
+    //        txn.val);
     which++;
     if (txn.word != addr) {
-      std::cerr << "txn.word = " << txn.word << ", addr = " << addr << "\n";
+      printf("txn.word = 0x%08x, addr = 0x%08x\n", txn.word, addr);
       throw std::runtime_error("memory peek not in replay");
     }
     return txn;
@@ -179,6 +179,15 @@ struct ReplayHandler : public StepHandler {
     return preflight.cycles[cycle / 2].diffCount[cycle % 2];
   }
 
+  std::vector<uint32_t> bigIntWitness(uint32_t cycle) override {
+    std::vector<uint32_t> ret;
+    size_t extraPtr = preflight.cycles[cycle].extraPtr;
+    for (size_t i = 0; i < 16; i++) {
+      ret.push_back(preflight.extra[extraPtr + i]);
+    }
+    return ret;
+  }
+
   const PreflightTrace& preflight;
   LookupTables& tables;
   size_t cycle;
@@ -212,14 +221,15 @@ ExecutionTrace runSegment(const Segment& segment, size_t segmentSize) {
   trace.global.set(16, segment.isTerminate);
   // Set stateful columns from 'top'
   for (size_t i = 0; i < cycles; i++) {
-    std::cout << "Cycle: " << i << ", pc = " << preflightTrace.cycles[i].pc / 4
-              << ", state = " << preflightTrace.cycles[i].state << "\n";
+    const PreflightCycle& curCycle = preflightTrace.cycles[i];
+    // std::cout << "Cycle: " << i << ", pc = " << curCycle.pc / 4
+    //           << ", state = " << curCycle.state << "\n";
     trace.data.set(i, getCycleCol(), i);
-    trace.data.set(i, getTopStateCol() + 0, preflightTrace.cycles[i].pc & 0xffff);
-    trace.data.set(i, getTopStateCol() + 1, preflightTrace.cycles[i].pc >> 16);
-    trace.data.set(i, getTopStateCol() + 2, preflightTrace.cycles[i].state);
-    trace.data.set(i, getTopStateCol() + 3, preflightTrace.cycles[i].machineMode);
-    size_t extraStart = preflightTrace.cycles[i].extraPtr;
+    trace.data.set(i, getTopStateCol() + 0, curCycle.pc & 0xffff);
+    trace.data.set(i, getTopStateCol() + 1, curCycle.pc >> 16);
+    trace.data.set(i, getTopStateCol() + 2, curCycle.state);
+    trace.data.set(i, getTopStateCol() + 3, curCycle.machineMode);
+    size_t extraStart = curCycle.extraPtr;
     size_t extraEnd =
         (i == cycles - 1) ? preflightTrace.extra.size() : preflightTrace.cycles[i + 1].extraPtr;
     size_t extraSize = extraEnd - extraStart;
@@ -244,18 +254,23 @@ ExecutionTrace runSegment(const Segment& segment, size_t segmentSize) {
         }
       }
     }
+
+    for (const Back& back : curCycle.backs) {
+      // printf("[%zu]: Inject back(%zu, 0x%08x)\n", i, back.col, back.word);
+      trace.data.set(i, back.col, back.word);
+    }
   }
 
   LookupTables tables;
   // for (size_t i = 0; i < preflightTrace.tableSplitCycle; i++) {
   for (size_t i = preflightTrace.tableSplitCycle; i-- > 0;) {
-    std::cout << "Running cycle " << i << "\n";
+    // printf("Running cycle: %zu\n", i);
     ReplayHandler memory(preflightTrace, tables, i);
     DslStep(memory, trace, i);
   }
   // for (size_t i = preflightTrace.tableSplitCycle; i < cycles; i++) {
   for (size_t i = cycles; i-- > preflightTrace.tableSplitCycle;) {
-    std::cout << "Running cycle " << i << "\n";
+    // printf("Running cycle: %zu\n", i);
     ReplayHandler memory(preflightTrace, tables, i);
     DslStep(memory, trace, i);
   }

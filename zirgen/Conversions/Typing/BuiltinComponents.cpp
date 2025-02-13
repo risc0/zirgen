@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -288,18 +288,21 @@ void Builtins::addBuiltins() {
 // Builtins that are defined using the DSL.
 static llvm::StringLiteral zirPreamble = R"(
 
+#[picus_inline]
 component Reg(v: Val) {
    reg := NondetReg(v);
    v = reg;
    reg
 }
 
+#[picus_inline]
 component ExtReg(v: ExtVal) {
    reg := NondetExtReg(v);
    EqzExt(ExtSub(reg, v));
    reg
 }
 
+#[picus_inline]
 function Div(lhs: Val, rhs: Val) {
    reciprocal := Inv(rhs);
    reciprocal * rhs = 1;
@@ -307,8 +310,13 @@ function Div(lhs: Val, rhs: Val) {
    reciprocal * lhs
 }
 
+#[picus_inline]
 extern Log(message: String, vals: Val...);
+
+#[picus_inline]
 extern Abort();
+
+#[picus_inline]
 extern Assert(x: Val, message: String);
 
 )";

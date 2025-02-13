@@ -1,0 +1,52 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "zirgen",
+	"patterns": [
+		{
+			"include": "#comment"
+		},
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#strings"
+		}
+	],
+	"repository": {
+    "comment": {
+      "patterns": [
+        {
+          "name": "comment.line.double-dash.zir",
+          "match": "(//).*$\\n?"
+        },
+        {
+          "name": "comment.block.zir",
+          "begin": "/\\*",
+          "end": "\\*/",
+          "captures": { "0": { "name": "punctuation.definition.comment.zir" } }
+        }
+      ]
+    },
+		"keywords": {
+			"patterns": [{
+				"name": "keyword.zir",
+				"match": "\\b(argument|component|extern|function|global|import|init|order|public|reduce|test|test_fails|with)\\b"
+      }, {
+				"name": "keyword.control.zir",
+				"match": "\\b(for|if|else)\\b"
+			}]
+		},
+		"strings": {
+			"name": "string.quoted.double.zir",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.zir",
+					"match": "\\\\."
+				}
+			]
+		}
+	},
+	"scopeName": "source.zirgen"
+}

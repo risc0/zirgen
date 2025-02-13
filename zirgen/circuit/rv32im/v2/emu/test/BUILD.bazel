@@ -16,5 +16,7 @@ cc_binary(
         ":guest",
         "//zirgen/circuit/rv32im/v2/kernel",
     ],
-    deps = ["//zirgen/circuit/rv32im/v2/emu"],
+    deps = [
+        "//zirgen/circuit/rv32im/v2/emu",
+    ],
 )

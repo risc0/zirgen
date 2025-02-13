@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -62,6 +62,9 @@ struct ExecContext {
     }
     physCycles++;
   }
+
+  void bigintCycle(uint32_t cur, uint32_t next, const BigIntState& bigint) { physCycles++; }
+
   void trapRewind() {}
   void trap(TrapCause cause) {}
 

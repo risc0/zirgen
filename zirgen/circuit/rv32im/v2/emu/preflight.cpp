@@ -52,7 +52,11 @@ struct PreflightContext {
     }
   }
 
-  void cycleComplete(uint32_t state, uint32_t pc, uint8_t major, uint8_t minor) {
+  void cycleComplete(uint32_t state,
+                     uint32_t pc,
+                     uint8_t major,
+                     uint8_t minor,
+                     const std::vector<Back>& backs = {}) {
     trace.cycles.emplace_back();
     auto& back = trace.cycles.back();
     back.state = state;
@@ -66,6 +70,7 @@ struct PreflightContext {
     back.extraPtr = extraPtr;
     back.diffCount[0] = 0;
     back.diffCount[1] = 0;
+    back.backs = backs;
 
     memCycle = trace.txns.size();
     extraPtr = trace.extra.size();
@@ -86,8 +91,11 @@ struct PreflightContext {
     }
   }
 
-  void cycleCompleteSpecial(uint32_t curState, uint32_t nextState, uint32_t pc) {
-    cycleComplete(nextState, pc, 7 + curState / 8, curState % 8);
+  void cycleCompleteSpecial(uint32_t curState,
+                            uint32_t nextState,
+                            uint32_t pc,
+                            const std::vector<Back>& backs = {}) {
+    cycleComplete(nextState, pc, 7 + curState / 8, curState % 8, backs);
   }
 
   void resume() {
@@ -100,6 +108,7 @@ struct PreflightContext {
     }
     cycleCompleteSpecial(STATE_RESUME, STATE_DECODE, pc);
   }
+
   void suspend() {
     pc = 0;
     cycleCompleteSpecial(STATE_SUSPEND, STATE_SUSPEND, 0);
@@ -109,6 +118,7 @@ struct PreflightContext {
     machineMode = 3;
     cycleCompleteSpecial(STATE_SUSPEND, STATE_POSEIDON_ENTRY, 0);
   }
+
   void instruction(InstType type, const DecodedInst& decoded) {
     if (debug) {
       std::cout << trace.cycles.size() << " Type: " << instName(type) << "\n";
@@ -117,6 +127,7 @@ struct PreflightContext {
     userCycle++;
     physCycles++;
   }
+
   void ecallCycle(uint32_t curState, uint32_t nextState, uint32_t s0, uint32_t s1, uint32_t s2) {
     if (debug) {
       std::cout << trace.cycles.size() << " ecallCycle\n";
@@ -127,6 +138,7 @@ struct PreflightContext {
     cycleCompleteSpecial(curState, nextState, pc);
     physCycles++;
   }
+
   void p2Cycle(uint32_t curState, P2State p2) {
     if (debug) {
       std::cout << trace.cycles.size() << " p2Cycle\n";
@@ -135,6 +147,7 @@ struct PreflightContext {
     cycleCompleteSpecial(curState, p2.nextState, pc);
     physCycles++;
   }
+
   void shaCycle(uint32_t curState, ShaState sha) {
     if (debug) {
       std::cout << trace.cycles.size() << " shaCycle\n";
@@ -144,10 +157,19 @@ struct PreflightContext {
     physCycles++;
   }
 
+  void bigintCycle(uint32_t curState, uint32_t nextState, BigIntState bigint) {
+    for (uint32_t byte : bigint.bytes) {
+      trace.extra.push_back(byte);
+    }
+    cycleCompleteSpecial(curState, nextState, pc, getBigIntStateBacks(bigint));
+    physCycles++;
+  }
+
   void trapRewind() {
     trace.txns.resize(memCycle);
     trace.extra.resize(extraPtr);
   }
+
   void trap(TrapCause cause) {
     // TODO:
     // cycleComplete(CycleType::CONTROL, ControlSubtype::TRAP, static_cast<uint32_t>(cause));
@@ -201,8 +223,7 @@ struct PreflightContext {
     trace.txns.push_back(txn);
   }
 
-  // Since hostWrites are ignored, we can return trash
-  uint32_t hostPeek(uint32_t word) { return 0; }
+  uint32_t hostPeek(uint32_t addr) { return pager.peek(addr); }
 
   // Replay 'rlen'
   uint32_t write(uint32_t fd, const uint8_t* data, uint32_t len) {
@@ -211,6 +232,7 @@ struct PreflightContext {
     }
     return segment.writeRecord[curWrite++];
   }
+
   // Replay data
   uint32_t read(uint32_t fd, uint8_t* data, uint32_t len) {
     if (curRead >= segment.readRecord.size()) {
@@ -234,6 +256,7 @@ struct PreflightContext {
     }
     cycleCompleteSpecial(STATE_LOAD_ROOT, STATE_POSEIDON_ENTRY, 0);
   }
+
   void readNode(size_t idx) { p2DoNode(*this, idx, true); }
   void readPage(size_t page) { p2DoPage(*this, page, true); }
   void readDone() { p2ReadDone(*this); }
@@ -241,6 +264,7 @@ struct PreflightContext {
   void writeNode(size_t idx) { p2DoNode(*this, idx, false); }
   void writePage(size_t page) { p2DoPage(*this, page, false); }
   void writeDone() { p2WriteDone(*this); }
+
   void writeRoot() {
     size_t rootAddr = getDigestAddr(1);
     for (size_t i = 0; i < 8; i++) {

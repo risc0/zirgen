@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,11 @@
 
 #pragma once
 
-#include "llvm/Support/Casting.h"
-
 #include "risc0/fp/fpext.h"
+#include "zirgen/circuit/rv32im/v2/emu/bigint.h"
 #include "zirgen/circuit/rv32im/v2/emu/exec.h"
+
+#include "llvm/Support/Casting.h"
 
 namespace zirgen::rv32im_v2 {
 
@@ -36,6 +37,11 @@ enum class CycleType : uint32_t {
   TABLE,
 };
 
+struct Back {
+  size_t col;
+  uint32_t word;
+};
+
 struct PreflightCycle {
   uint32_t state;
   uint32_t pc;
@@ -47,6 +53,7 @@ struct PreflightCycle {
   uint32_t userCycle;
   uint32_t extraPtr;
   uint32_t diffCount[2];
+  std::vector<Back> backs;
 };
 
 struct PreflightTrace {
@@ -58,5 +65,7 @@ struct PreflightTrace {
 };
 
 PreflightTrace preflightSegment(const Segment& in, size_t segmentSize);
+
+std::vector<Back> getBigIntStateBacks(const BigIntState& state);
 
 } // namespace zirgen::rv32im_v2

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -179,8 +179,8 @@ struct Flattener {
     uint32_t finalPolyOp = (doFinal ? PolyOp::kOpAddTot : PolyOp::kOpSetTerm);
     for (size_t i = 0; i < atom.size; i++) {
       uint32_t polyOp = (i + 1 == atom.size ? finalPolyOp : PolyOp::kOpShift);
-      out.push_back(memOp << 28 | polyOp << 24 | (coeff + 4) << 21 | atom.arena << 16 |
-                    (atom.offset + atom.size - 1 - i));
+      uint32_t offset = atom.offset + atom.size - 1 - i;
+      out.push_back(memOp << 28 | polyOp << 24 | (coeff + 4) << 21 | atom.arena << 16 | offset);
     }
   }
   void flatten(const PolyProd& prod, int coeff) {

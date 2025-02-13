@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "zirgen/circuit/rv32im/v2/run/wrap_dsl.h"
+#include "zirgen/circuit/rv32im/v2/emu/preflight.h"
 #include "zirgen/circuit/rv32im/v2/platform/constants.h"
 
 #include <array>
@@ -308,10 +309,33 @@ std::array<Val, 2> extern_nextPagingIdx(ExecContext& ctx) {
   return {ret[0], ret[1]};
 }
 
+// TODO
+std::array<Val, 16> extern_bigIntExtern(ExecContext& ctx) {
+  auto ret = ctx.stepHandler.bigIntWitness(ctx.cycle);
+  return {ret[0],
+          ret[1],
+          ret[2],
+          ret[3],
+          ret[4],
+          ret[5],
+          ret[6],
+          ret[7],
+          ret[8],
+          ret[9],
+          ret[10],
+          ret[11],
+          ret[12],
+          ret[13],
+          ret[14],
+          ret[15]};
+}
+
 #if defined(__clang__)
+#pragma clang diagnostic ignored "-Wunused-but-set-variable"
 #pragma clang diagnostic ignored "-Wunused-parameter"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #elif defined(__GNUC__)
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
@@ -348,6 +372,23 @@ size_t getShaStateCol() {
   return impl::kLayout_Top.instResult.arm11.state.stateInAddr._super.col;
 }
 
+std::vector<Back> getBigIntStateBacks(const BigIntState& state) {
+  std::vector<Back> backs{
+      {impl::kLayout_Top.instResult.arm12.state.isEcall._super.col, state.isEcall},
+      {impl::kLayout_Top.instResult.arm12.state.pc._super.col, state.pc},
+      {impl::kLayout_Top.instResult.arm12.state.polyOp._super.col, state.polyOp},
+      {impl::kLayout_Top.instResult.arm12.state.coeff._super.col, state.coeff},
+      {impl::kLayout_Top.instResult.arm12.state.nextState._super.col, state.nextState},
+  };
+
+  for (size_t i = 0; i < 16; i++) {
+    backs.push_back(
+        Back{impl::kLayout_Top.instResult.arm12.state.bytes[i]._super.col, state.bytes[i]});
+  }
+
+  return backs;
+}
+
 void DslStep(StepHandler& stepHandler, ExecutionTrace& trace, size_t cycle) {
   impl::ExecContext ctx(stepHandler, trace, cycle);
   impl::MutableBufObj data(ctx, trace.data);
@@ -359,10 +400,9 @@ void DslStepAccum(StepHandler& stepHandler, ExecutionTrace& trace, size_t cycle)
   impl::ExecContext ctx(stepHandler, trace, cycle);
   impl::MutableBufObj data(ctx, trace.data);
   impl::MutableBufObj accum(ctx, trace.accum);
-  // Global is required when using user-accum
-  // impl::GlobalBufObj global(ctx, trace.global);
   impl::GlobalBufObj mix(ctx, trace.mix);
-  step_TopAccum(ctx, &accum, &data, /*&global, */ &mix);
+  impl::GlobalBufObj global(ctx, trace.global);
+  step_TopAccum(ctx, &accum, &data, &global, &mix);
 }
 
 } // namespace zirgen::rv32im_v2
