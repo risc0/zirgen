@@ -796,13 +796,21 @@ Switch::Ptr Parser::parseConditional() {
 
   cases.push_back(parseBlock());
   selectors.push_back(condition);
+
+  // Build else clause, implicit empty one if none is provided
+  Expression::Vec subArgs;
+  subArgs.push_back(make_shared<Literal>(location, 1));
+  subArgs.push_back(condition);
+  selectors.push_back(
+      make_shared<Construct>(location, make_shared<Ident>(location, "Sub"), subArgs));
+
   if (lexer.takeTokenIf(tok_else)) {
     cases.push_back(parseBlock());
-    Expression::Vec subArgs;
-    subArgs.push_back(make_shared<Literal>(location, 1));
-    subArgs.push_back(condition);
-    selectors.push_back(
-        make_shared<Construct>(location, make_shared<Ident>(location, "Sub"), subArgs));
+  } else {
+    Ident::Ptr component = make_shared<Ident>(location, "Component");
+    auto trivial = make_shared<Construct>(location, std::move(component), Expression::Vec{});
+    Block::Ptr block = make_shared<Block>(location, Statement::Vec{}, std::move(trivial));
+    cases.push_back(block);
   }
   Expression::Ptr selector = make_shared<ArrayLiteral>(location, std::move(selectors));
   return make_shared<Switch>(location, std::move(selector), std::move(cases), false);

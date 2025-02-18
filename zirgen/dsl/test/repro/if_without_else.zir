@@ -1,0 +1,29 @@
+// RUN: zirgen %s --emit=zhl 2>&1 | FileCheck %s
+// RUN: zirgen %s --test --test-cycles=4 2>&1 | FileCheck %s --check-prefix=EXEC
+
+// This test covers a bug where an `if` without an `else` resulted in a mux with
+// only one arm. This is incorrect, as these three expressions should all be
+// semantically equivalent:
+
+// if (x) {a}
+// if (x) {a} else {}
+// [x, 1-x] -> ({a}, {})
+
+extern IsFirstCycle() : Val;
+
+component Top() {
+  x := NondetReg(IsFirstCycle());
+  if (x) {
+    Log("First cycle")
+  }
+}
+
+// CHECK: %[[arr:[0-9]+]] = zhl.array[%{{[0-9]+}}, %{{[0-9]+}}]
+// CHECK: %{{[0-9]+}} = zhl.switch %[[arr]] -> {
+
+// EXEC: [0] Log: First cycle
+// EXEC-NOT: Log: First cycle
+
+test {
+  Top()
+}
