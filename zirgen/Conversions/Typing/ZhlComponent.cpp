@@ -609,6 +609,11 @@ void LoweringImpl::gen(ExternOp ext, ComponentBuilder& cb) {
             countVals(field.type);
           }
         })
+        .Case<ArrayType>([&](ArrayType ty) {
+          for (size_t i = 0; i < ty.getSize(); i++) {
+            countVals(ty.getElement());
+          }
+        })
         .Default([&](auto ty) {
           ext.emitError() << "Unsupported extern return type " << ty;
           throw MalformedIRException();
@@ -632,6 +637,14 @@ void LoweringImpl::gen(ExternOp ext, ComponentBuilder& cb) {
             fields.push_back(wrapVals(field.type));
           }
           return builder.create<ZStruct::PackOp>(ext.getLoc(), ty, fields);
+        })
+        .Case<ArrayType>([&](ArrayType ty) {
+          llvm::SmallVector<Value> elements;
+          elements.reserve(ty.getSize());
+          for (size_t i = 0; i < ty.getSize(); i++) {
+            elements.push_back(wrapVals(ty.getElement()));
+          }
+          return builder.create<ZStruct::ArrayOp>(ext.getLoc(), ty, elements);
         })
         .Default([&](auto ty) {
           ext.emitError() << "Unsupported extern return type " << ty;
