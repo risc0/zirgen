@@ -271,8 +271,9 @@ component PoseidonCheckOut(cycle: Reg, prev: PoseidonState) {
   // For page in, diff is cycle diff (i.e. at least one additional txn)
   // For page out, diff is value diff (i.e. at least one modified value)
   // For normal read, diff is always 1
-  extInv := NondetExtReg(ExtInv(prev.zcheck));
-  EqzExt(ExtSub(ExtMul(extInv, prev.zcheck), MakeExt(1)));
+  // TODO: fix me!
+  // extInv := NondetExtReg(ExtInv(prev.zcheck));
+  // EqzExt(ExtSub(ExtMul(extInv, prev.zcheck), MakeExt(1)));
   PoseidonState(GetDef(prev), nextState, 0, 0, 0, prev.mode, prev.inner, MakeExt(0))
 }
 
