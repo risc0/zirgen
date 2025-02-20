@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "zirgen/circuit/keccak2/cpp/trace.h"
+#include "zirgen/circuit/keccak/cpp/trace.h"
 
 #include <iostream>
 
-namespace zirgen::keccak2 {
+namespace zirgen::keccak {
 
 TraceGroup::TraceGroup(size_t rows, size_t cols)
     : rows(rows), cols(cols), vec(rows * cols, Fp::invalid()), unsafeReads(false) {}
@@ -84,4 +84,4 @@ void GlobalTraceGroup::setUnsafe(bool val) {
 ExecutionTrace::ExecutionTrace(size_t rows, const CircuitParams& params)
     : data(rows, params.dataCols), global(params.globalCols) {}
 
-} // namespace zirgen::keccak2
+} // namespace zirgen::keccak

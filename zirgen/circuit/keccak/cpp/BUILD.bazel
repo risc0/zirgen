@@ -11,7 +11,7 @@ cc_library(
 #        "run.cpp",
         "trace.cpp",
         "wrap_dsl.cpp",
-        "//zirgen/circuit/keccak2:cppinc",
+        "//zirgen/circuit/keccak:cppinc",
     ],
     hdrs = [
         "preflight.h",

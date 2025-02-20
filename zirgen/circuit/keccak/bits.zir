@@ -2,6 +2,7 @@
 // RUN: zirgen --test %s
 
 // Assert that a given value is a bit
+#[picus_inline]
 function AssertBit(val: Val) {
   val * (1 - val) = 0;
 }
@@ -20,6 +21,21 @@ component BitReg(val: Val) {
   reg
 }
 
+// Simple bit ops
+component BitAnd(a: Val, b: Val) {
+  a * b
+}
+
+component BitOr(a: Val, b: Val) {
+  a + b - a * b
+}
+
+component BitXor(a: Val, b: Val) {
+  a + b - 2 * a * b
+}
+
+// Tests....
+
 // Check that valid bits are valid
 test BitInRange {
   AssertBit(0);
@@ -31,55 +47,24 @@ test_fails BitOutOfRange {
   AssertBit(2);
 }
 
-// Assert the a given value is a 2-bit number (i.e. 0-3)
-function AssertTwit(val: Val) {
-  val * (1 - val) * (2 - val) * (3 - val) = 0;
+test TestAnd {
+  BitAnd(0, 0) = 0;
+  BitAnd(0, 1) = 0;
+  BitAnd(1, 0) = 0;
+  BitAnd(1, 1) = 1;
 }
 
-component BitAnd(a: Val, b: Val) {
-  Reg(a * b)
+test TestOr {
+  BitOr(0, 0) = 0;
+  BitOr(0, 1) = 1;
+  BitOr(1, 0) = 1;
+  BitOr(1, 1) = 1;
 }
 
-component BitOr(a: Val, b: Val) {
-  Reg(1 - (1 - a) * (1 - b))
-}
-
-// Set a register nodeterministically, and then verify it is a twit
-component NondetTwitReg(val: Val) {
-  reg := NondetReg(val);
-  AssertTwit(reg);
-  reg
-}
-
-// Set a register nodeterministically, and then verify it is a twit
-component NondetFakeTwitReg(val: Val) {
-  reg0 := NondetBitReg(val & 1);
-  reg1 := NondetBitReg((val & 2) / 2);
-  reg1 * 2 + reg0
-}
-
-component TwitReg(val: Val) {
-  reg := NondetTwitReg(val);
-  val = reg;
-  reg
-}
-
-component FakeTwitReg(val: Val) {
-  reg := NondetFakeTwitReg(val);
-  val = reg;
-  reg
-}
-
-// Check that all valid twit values are OK
-test TwitInRange{
-  AssertTwit(0);
-  AssertTwit(1);
-  AssertTwit(2);
-  AssertTwit(3);
-}
-
-// Check that 4 is not a twit
-test_fails TwitOutOfRange {
-  AssertTwit(4);
+test TestXor {
+  BitXor(0, 0) = 0;
+  BitXor(0, 1) = 1;
+  BitXor(1, 0) = 1;
+  BitXor(1, 1) = 0;
 }
 

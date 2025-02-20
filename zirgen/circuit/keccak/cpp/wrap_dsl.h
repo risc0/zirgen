@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,11 +15,11 @@
 #pragma once
 
 #include "risc0/core/util.h"
-#include "zirgen/circuit/keccak2/cpp/preflight.h"
+#include "zirgen/circuit/keccak/cpp/preflight.h"
 
 #include <array>
 
-namespace zirgen::keccak2 {
+namespace zirgen::keccak {
 
 struct StepHandler {
   StepHandler(const PreflightTrace& trace, size_t cycle) : trace(trace), cycle(cycle) {}
@@ -46,4 +46,4 @@ LayoutInfo getLayoutInfo();
 CircuitParams getDslParams();
 void DslStep(StepHandler& stepHandler, ExecutionTrace& trace, size_t cycle);
 
-} // namespace zirgen::keccak2
+} // namespace zirgen::keccak
