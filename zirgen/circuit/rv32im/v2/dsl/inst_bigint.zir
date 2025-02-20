@@ -1,18 +1,6 @@
 // RUN: true
 
-component BigIntExternReturn(
-  x00: Val, x01: Val, x02: Val, x03: Val,
-  x04: Val, x05: Val, x06: Val, x07: Val,
-  x08: Val, x09: Val, x10: Val, x11: Val,
-  x12: Val, x13: Val, x14: Val, x15: Val
-) {
-  public x00 := x00; public x01 := x01; public x02 := x02; public x03 := x03;
-  public x04 := x04; public x05 := x05; public x06 := x06; public x07 := x07;
-  public x08 := x08; public x09 := x09; public x10 := x10; public x11 := x11;
-  public x12 := x12; public x13 := x13; public x14 := x14; public x15 := x15;
-}
-
-extern BigIntExtern(): BigIntExternReturn;
+extern BigIntExtern(): Array<Val, 16>;
 
 component BigIntState(
   isEcall: Val,
@@ -81,23 +69,8 @@ component BigIntRead(cycle: Reg, addr: Val) {
   ]
 }
 
-component BigIntWitness(ret: BigIntExternReturn) {
-  // TODO: why can't we do this?
-  // [
-  //   NondetU8Reg(ret.x00), NondetU8Reg(ret.x01), NondetU8Reg(ret.x02), NondetU8Reg(ret.x03),
-  //   NondetU8Reg(ret.x04), NondetU8Reg(ret.x05), NondetU8Reg(ret.x06), NondetU8Reg(ret.x07),
-  //   NondetU8Reg(ret.x08), NondetU8Reg(ret.x09), NondetU8Reg(ret.x10), NondetU8Reg(ret.x11),
-  //   NondetU8Reg(ret.x12), NondetU8Reg(ret.x13), NondetU8Reg(ret.x14), NondetU8Reg(ret.x15)
-  // ]
-  nondet := [
-    NondetReg(ret.x00), NondetReg(ret.x01), NondetReg(ret.x02), NondetReg(ret.x03),
-    NondetReg(ret.x04), NondetReg(ret.x05), NondetReg(ret.x06), NondetReg(ret.x07),
-    NondetReg(ret.x08), NondetReg(ret.x09), NondetReg(ret.x10), NondetReg(ret.x11),
-    NondetReg(ret.x12), NondetReg(ret.x13), NondetReg(ret.x14), NondetReg(ret.x15)
-  ];
-  for reg : nondet {
-    U8Reg(reg)
-  }
+component BigIntWitness(ret: Array<Val, 16>) {
+  for v : ret { NondetU8Reg(v) }
 }
 
 component BigIntWrite(cycle: Reg, addr: Val) {

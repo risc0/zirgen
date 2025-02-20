@@ -90,10 +90,6 @@ component ControlSuspend(cycle: Reg, input: InstInput) {
       global termA0high := Reg(0);
       global termA1low := Reg(0);
       global termA1high := Reg(0);
-    } else {
-      // Do nothing
-      // TODO: Apparently if we don't have this clause, the compiler generates
-      // a mux where the 'else' case fails at runtime.
     };
 
     // Begin page out

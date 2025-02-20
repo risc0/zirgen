@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -145,8 +145,10 @@ TEST(parser, conditional_if_else) {
 TEST(parser, conditional_if) {
   TestParser parser("if (x) { y }");
 
-  // desuggars to [x] -> ({ y })"
-  auto expected = Switch(ArrayLiteral(arr(Ident("x"))), arr(Block({}, Ident("y"))));
+  // desugars to [x, 1-x] -> ({ y }, {})"
+  auto expected =
+      Switch(ArrayLiteral(arr(Ident("x"), Construct(Ident("Sub"), arr(Literal(1), Ident("x"))))),
+             arr(Block({}, Ident("y")), Block({}, Construct(Ident("Component"), {}))));
   EXPECT_EQ(*parser.parseExpression(), *expected);
 }
 
