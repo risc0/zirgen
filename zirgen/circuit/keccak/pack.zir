@@ -47,6 +47,7 @@ component UnpackNondet<N: Val, P: Val>(in: Array<Val, N/P>) {
   }
 }
 
+#[picus_inline]
 component UnpackReg<N: Val, P: Val>(in: Array<Val, N/P>) {
   bitVals := UnpackNondet<N, P>(in);
   bits := for n : 0..N { NondetBitReg(bitVals[n]) };
