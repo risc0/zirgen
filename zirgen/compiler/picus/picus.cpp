@@ -159,7 +159,7 @@ private:
     // the mapping between MLIR values and Picus signals. Because Picus doesn't
     // have control flow, MapOp/ReduceOp are unrolled.
     llvm::TypeSwitch<Operation*>(op)
-        .Case<InvOp, BitAndOp, ModOp, InRangeOp, ExternOp>([&](auto op) { visitNondetOp(op); })
+        .Case< BitAndOp, ExternOp, InRangeOp, InvOp, IsZeroOp, ModOp>([&](auto op) { visitNondetOp(op); })
         .Case<AddOp, SubOp, MulOp>([&](auto op) { visitBinaryPolyOp(op); })
         .Case<ConstOp,
               StringOp,
@@ -192,9 +192,11 @@ private:
   }
 
   void visitOp(ConstOp constant) {
+    // Optimization: instead of creating a fresh signal for a constant op, make
+    // a pseudosignal whose "name" is the constant literal. That way, every time
+    // the signal is printed, we end up inlining the literal instead.
     assert(constant.getCoefficients().size() == 1 && "not implemented");
-    auto signal = Signal::get(ctx, freshName());
-    os << "(assert (= " << signal.str() << " " << constant.getCoefficients()[0] << "))\n";
+    auto signal = Signal::get(ctx, std::to_string(constant.getCoefficients()[0]));
     valuesToSignals.insert({constant.getOut(), signal});
   }
 
@@ -276,13 +278,20 @@ private:
                         return nullptr;
                       });
 
-    auto signal = Signal::get(ctx, freshName());
-    valuesToSignals.insert({op->getResult(0), signal});
+    // Optimization: if the result is only used once, use a pseudosignal to
+    // inline the expression at the point of use instead of creating a dedicated
+    // signal.
+    std::string expr = "(" + std::string(symbol) + " " +
+        cast<Signal>(valuesToSignals.at(op->getOperand(0))).str() + " " +
+        cast<Signal>(valuesToSignals.at(op->getOperand(1))).str() + ")";
 
-    os << "(assert (= " << signal.str() << " (" << symbol << " ";
-    os << cast<Signal>(valuesToSignals.at(op->getOperand(0))).str() << " ";
-    os << cast<Signal>(valuesToSignals.at(op->getOperand(1))).str();
-    os << ")))\n";
+    if (op->getResult(0).hasOneUse()) {
+      valuesToSignals.insert({op->getResult(0), Signal::get(ctx, expr)});
+    } else {
+      auto signal = Signal::get(ctx, freshName());
+      valuesToSignals.insert({op->getResult(0), signal});
+      os << "(assert (= " << signal.str() << " " << expr << "))\n";
+    }
   }
 
   void visitOp(SubOp sub) {
@@ -493,6 +502,7 @@ private:
     if (isa<ValType>(type) || isa<RefType>(type)) {
       return Signal::get(ctx, prefix);
     } else if (auto array = dyn_cast<ArrayLikeTypeInterface>(type)) {
+      assert(isa<ArrayType>(type) || !layout);
       SmallVector<AnySignal> elements;
       for (size_t i = 0; i < array.getSize(); i++) {
         std::string name = prefix + "_" + std::to_string(i);
@@ -528,12 +538,28 @@ private:
           AnySignal sublayout;
           if (auto strLayout = cast_if_present<SignalStruct>(layout)) {
             sublayout = strLayout.get(field.name);
+            // Mux members have their layouts wrapped in a structure with fields
+            // for each arm and the common super, whereas their values are only
+            // the common super. Navigate this extra indirection if necessary.
+            auto sublayoutCasted = llvm::dyn_cast_or_null<SignalStruct>(sublayout);
+            if (sublayoutCasted) {
+              bool isMux = false;
+              for (NamedAttribute field : sublayoutCasted) {
+                if (field.getName().strref().starts_with("arm")) {
+                  isMux = true;
+                }
+              }
+              if (isMux) {
+                sublayout = sublayoutCasted.get("@super");
+              }
+            }
           }
           fields.emplace_back(field.name, signalize(name, field.type, sublayout));
         }
       }
       return SignalStruct::get(ctx, fields);
     } else if (auto str = dyn_cast<LayoutType>(type)) {
+      assert(!layout);
       SmallVector<NamedAttribute> fields;
       for (auto field : str.getFields()) {
         std::string name = prefix + "_" + canonicalizeIdentifier(field.name.str());
