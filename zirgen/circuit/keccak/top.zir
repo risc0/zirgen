@@ -133,6 +133,7 @@ component ShaState(a: Array<Array<Val, 32>, 4>, e: Array<Array<Val, 32>, 4>, w: 
   public w := w;
 }
 
+#[picus_analyze]
 component DoShaStep(in: ShaState, k: Array<Val, 2>, doLoad: Val, win: Array<Val, 2>) {
   rawW := ComputeW(in.w);
   public w := if (doLoad) { ExpandBE(win) } else { CarryAndExpand(rawW) };
@@ -232,7 +233,6 @@ component ExtractBits2(a: Array<Array<Val, 32>, 4>, e: Array<Array<Val, 32>, 4>,
   )
 }
 
-#[picus_analyze]
 component ShaNextBlockCycle(back1: TopState) {
   Log("ShaNextBlockCycle");
   // Extract current a + e values in packed format
