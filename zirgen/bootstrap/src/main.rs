@@ -584,7 +584,7 @@ impl Bootstrap {
 
     fn keccak(&'static self) {
         self.install_from_bazel(
-            "//zirgen/circuit/keccak2:bootstrap",
+            "//zirgen/circuit/keccak:bootstrap",
             self.output_and("risc0/circuit/keccak"),
             &[
                 Rule::copy("*.cpp", "kernels/cxx").base_suffix("-sys"),

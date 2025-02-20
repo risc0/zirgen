@@ -1,48 +1,95 @@
+load("@rules_pkg//pkg:zip.bzl", "pkg_zip")
 load("//bazel/rules/lit:defs.bzl", "glob_lit_tests")
+load("//bazel/rules/zirgen:dsl-defs.bzl", "zirgen_build")
 load("//bazel/rules/zirgen:edsl-defs.bzl", "ZIRGEN_OUTS", "build_circuit")
 
-package(
-    default_visibility = ["//visibility:public"],
+package(default_visibility = ["//visibility:public"])
+
+filegroup(
+    name = "imports",
+    srcs = glob(["*.zir"]),
 )
 
-KECCAK_ZIR_FILES = [
-    "bits.zir",
-    "keccak.zir",
-    "one_hot.zir",
-    "sha256_for_keccak.zir",
-]
-
 glob_lit_tests(
-    # TODO: shorten timeout once zirgen is faster
-    timeout = "long",
-    data = KECCAK_ZIR_FILES,
-    exclude = KECCAK_ZIR_FILES,
+    data = [":imports"],
+    size_override = {
+        "top.zir": "medium",
+        "sha2.zir": "medium",
+    },
     test_file_exts = ["zir"],
 )
 
-KECCAK_OUTS = ZIRGEN_OUTS + [
-    "rust_poly_fp_0.cpp",
-    "rust_poly_fp_1.cpp",
-    "rust_poly_fp_2.cpp",
-    "rust_poly_fp_3.cpp",
-    "rust_poly_fp_4.cpp",
-    "eval_check_0.cu",
-    "eval_check_1.cu",
-    "eval_check_2.cu",
-    "eval_check_3.cu",
-    "eval_check_4.cu",
+zirgen_build(
+    name = "cppinc",
+    out = "keccak.cpp.inc",
+    data = [":imports"],
+    opts = [
+        "--emit=cpp",
+        "--validity=false",
+    ],
+    zir_file = ":top.zir",
+)
+
+SPLIT_VALIDITY = 5
+
+SPLIT_STEP = 16
+
+OUTS = ZIRGEN_OUTS + [
+    fn
+    for i in range(SPLIT_VALIDITY)
+    for fn in [
+        "rust_poly_fp_" + str(i) + ".cpp",
+        "eval_check_" + str(i) + ".cu",
+    ]
+] + [
+    fn
+    for i in range(SPLIT_STEP)
+    for fn in [
+        "steps_" + str(i) + ".cpp",
+        "steps_" + str(i) + ".cu",
+    ]
+] + [
     "eval_check.cuh",
+    "steps.h",
+    "steps.cuh",
+    "layout.h.inc",
+    "layout.cuh.inc",
 ]
 
 build_circuit(
-    name = "keccak",
-    outs = KECCAK_OUTS,
+    name = "codegen",
+    outs = OUTS,
     bin = "//zirgen/Main:gen_zirgen",
-    data = KECCAK_ZIR_FILES,
+    data = [":imports"],
     extra_args = [
-        "zirgen/circuit/keccak/keccak.zir",
+        "zirgen/circuit/keccak/top.zir",
         "-I",
         "zirgen/circuit/keccak",
-        "--validity-split-count=5",
+        "--circuit-name=keccak",
+        "--validity-split-count=" + str(SPLIT_VALIDITY),
+        "--step-split-count=" + str(SPLIT_STEP),
+        "--parallel-witgen",
+        "--protocol-info=KECCAK:v1_______"
+    ],
+)
+
+ZKRS = [("keccak_lift_" + str(po2)) for po2 in range(14, 19)]
+
+build_circuit(
+    name = "predicates",
+    srcs = ["predicates.cpp"],
+    outs = [fn for zkr in ZKRS for fn in [
+        zkr + ".zkr",
+    ]],
+    data = ["@zirgen//zirgen/circuit/keccak:validity.ir"],
+    extra_args = ["--keccak-ir=$(location :validity.ir)"],
+    deps = ["//zirgen/circuit/predicates:lib"],
+)
+
+filegroup(
+    name = "bootstrap",
+    srcs = [
+        ":codegen",
+        ":predicates",
     ],
 )

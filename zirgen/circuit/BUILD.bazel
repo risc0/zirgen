@@ -7,7 +7,6 @@ filegroup(
     srcs = [
         "//zirgen/circuit/bigint:bigint_blob",
         "//zirgen/circuit/fib",
-        "//zirgen/circuit/keccak",
         "//zirgen/circuit/predicates:recursion_zkr",
         "//zirgen/circuit/recursion",
         "//zirgen/circuit/rv32im/v1/edsl:rv32im",
