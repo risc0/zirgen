@@ -8,6 +8,7 @@
 bazel-*
 compile_commands.json
 dist/
+MODULE.bazel.lock
 rust-project.json
 target/
 tmp/
