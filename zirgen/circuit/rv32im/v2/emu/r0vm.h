@@ -137,6 +137,7 @@ template <typename Context> struct R0Context {
     done = true;
     loadReg(REG_A0);
     loadReg(REG_A1);
+    context.pc += 4;
     context.ecallCycle(STATE_TERMINATE, STATE_SUSPEND, 0, 0, 0);
     return false;
   }

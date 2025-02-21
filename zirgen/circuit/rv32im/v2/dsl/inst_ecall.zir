@@ -214,10 +214,11 @@ component ECall0(cycle: Reg, inst_input: InstInput) {
   s0 := Reg(output.s0);
   s1 := Reg(output.s1);
   s2 := Reg(output.s2);
+  isSuspend := IsZero(output.state - StateSuspend());
   isDecode := IsZero(output.state - StateDecode());
   isP2Entry := IsZero(output.state - StatePoseidonEcall());
   isShaEcall := IsZero(output.state - StateShaEcall());
   isBigIntEcall := IsZero(output.state - StateBigIntEcall());
-  addPC := NormalizeU32(AddU32(inst_input.pc_u32, ValU32((isDecode + isP2Entry + isShaEcall + isBigIntEcall) * 4, 0)));
+  addPC := NormalizeU32(AddU32(inst_input.pc_u32, ValU32((isSuspend + isDecode + isP2Entry + isShaEcall + isBigIntEcall) * 4, 0)));
   InstOutput(addPC, output.state, 1)
 }
