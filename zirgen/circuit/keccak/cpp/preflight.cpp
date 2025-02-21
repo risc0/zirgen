@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "zirgen/circuit/keccak2/cpp/preflight.h"
-#include "zirgen/circuit/keccak2/cpp/wrap_dsl.h"
+#include "zirgen/circuit/keccak/cpp/preflight.h"
+#include "zirgen/circuit/keccak/cpp/wrap_dsl.h"
 
 #include <arpa/inet.h>
 #include <array>
 #include <cassert>
 #include <iostream>
 
-namespace zirgen::keccak2 {
+namespace zirgen::keccak {
 
 namespace {
 
@@ -192,7 +192,7 @@ struct ControlState {
   static ControlState Write() { return ControlState{3, 0, 0, 0}; }
   static ControlState Keccak0(uint8_t round) { return ControlState{4, 0, 0, round}; }
   static ControlState Keccak1(uint8_t round) { return ControlState{5, 0, 0, round}; }
-  static ControlState Keccak2(uint8_t round) { return ControlState{6, 0, 0, round}; }
+  static ControlState keccak(uint8_t round) { return ControlState{6, 0, 0, round}; }
   static ControlState Keccak3(uint8_t round) { return ControlState{7, 0, 0, round}; }
   static ControlState Keccak4(uint8_t round) { return ControlState{8, 0, 0, round}; }
   static ControlState ShaIn(uint8_t block, uint8_t round) {
@@ -329,7 +329,7 @@ PreflightTrace preflightSegment(const std::vector<KeccakState>& inputs, size_t c
       addCycle(ControlState::Keccak0(round), writeTheta(theta), kflatOffset, sflatOffset);
       theta_p2_rho_pi(kstate, theta);
       addCycle(ControlState::Keccak1(round), writeKeccak(kstate, false), kflatOffset, sflatOffset);
-      addCycle(ControlState::Keccak2(round), writeKeccak(kstate, true), kflatOffset, sflatOffset);
+      addCycle(ControlState::keccak(round), writeKeccak(kstate, true), kflatOffset, sflatOffset);
       chi_iota(kstate, round);
       addCycle(ControlState::Keccak3(round), writeKeccak(kstate, false), kflatOffset, sflatOffset);
       addCycle(ControlState::Keccak4(round), writeKeccak(kstate, true), kflatOffset, sflatOffset);
@@ -371,4 +371,4 @@ void applyPreflight(ExecutionTrace& exec, const PreflightTrace& preflight) {
   }
 }
 
-} // namespace zirgen::keccak2
+} // namespace zirgen::keccak

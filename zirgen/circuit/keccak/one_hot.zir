@@ -1,4 +1,4 @@
-// RUN: zirgen -I zirgen/%S --test %s
+// RUN: zirgen -I %S --test %s
 
 import bits;
 

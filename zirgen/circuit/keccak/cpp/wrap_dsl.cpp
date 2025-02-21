@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "zirgen/circuit/keccak2/cpp/wrap_dsl.h"
+#include "zirgen/circuit/keccak/cpp/wrap_dsl.h"
 
 #include <array>
 #include <assert.h>
@@ -26,7 +26,7 @@
 
 #include "risc0/core/util.h"
 
-namespace zirgen::keccak2 {
+namespace zirgen::keccak {
 
 namespace impl {
 
@@ -270,7 +270,7 @@ Val extern_nextPreimage(ExecContext& ctx) {
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #endif
-#include "zirgen/circuit/keccak2/keccak.cpp.inc"
+#include "zirgen/circuit/keccak/keccak.cpp.inc"
 
 } // namespace impl
 
@@ -298,4 +298,4 @@ void DslStep(StepHandler& stepHandler, ExecutionTrace& trace, size_t cycle) {
   step_Top(ctx, &data, &global);
 }
 
-} // namespace zirgen::keccak2
+} // namespace zirgen::keccak

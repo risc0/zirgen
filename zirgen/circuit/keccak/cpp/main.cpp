@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "zirgen/circuit/keccak2/cpp/wrap_dsl.h"
+#include "zirgen/circuit/keccak/cpp/wrap_dsl.h"
 #include "zirgen/compiler/zkp/sha256.h"
 
 /* The below implementation (up till the end of keccackf) is taken from:
@@ -84,7 +84,7 @@ static void keccakf(uint64_t s[25]) {
   std::cout << "Final: " << round << ", s[0] = " << std::hex << s[0] << std::dec << "\n";
 }
 
-void ShaSingleKeccak(zirgen::Digest& digest, zirgen::keccak2::KeccakState state) {
+void ShaSingleKeccak(zirgen::Digest& digest, zirgen::keccak::KeccakState state) {
   std::vector<uint32_t> toHash(64);
   uint32_t* viewState = (uint32_t*)&state;
   for (size_t i = 0; i < 50; i++) {
@@ -95,7 +95,7 @@ void ShaSingleKeccak(zirgen::Digest& digest, zirgen::keccak2::KeccakState state)
   }
 }
 
-void DoTransaction(zirgen::Digest& digest, zirgen::keccak2::KeccakState state) {
+void DoTransaction(zirgen::Digest& digest, zirgen::keccak::KeccakState state) {
   ShaSingleKeccak(digest, state);
   std::cout << "After compressing input: " << digest << "\n";
   keccakf(state.data());
@@ -105,7 +105,7 @@ void DoTransaction(zirgen::Digest& digest, zirgen::keccak2::KeccakState state) {
 
 int main() {
   // Make an example
-  using namespace zirgen::keccak2;
+  using namespace zirgen::keccak;
   KeccakState state;
   uint64_t pows = 987654321;
   for (size_t i = 0; i < state.size(); i++) {

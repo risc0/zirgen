@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
 
 #pragma once
 
-#include "zirgen/circuit/keccak2/cpp/trace.h"
+#include "zirgen/circuit/keccak/cpp/trace.h"
 
-namespace zirgen::keccak2 {
+namespace zirgen::keccak {
 
 struct ScatterInfo {
   uint32_t dataOffset; // Place to get the data from (as u32 words)
@@ -40,4 +40,4 @@ struct PreflightTrace {
 PreflightTrace preflightSegment(const std::vector<KeccakState>& inputs, size_t cycles);
 void applyPreflight(ExecutionTrace& exec, const PreflightTrace& preflight);
 
-} // namespace zirgen::keccak2
+} // namespace zirgen::keccak
