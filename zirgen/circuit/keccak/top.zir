@@ -133,7 +133,6 @@ component ShaState(a: Array<Array<Val, 32>, 4>, e: Array<Array<Val, 32>, 4>, w: 
   public w := w;
 }
 
-#[picus_analyze]
 component DoShaStep(in: ShaState, k: Array<Val, 2>, doLoad: Val, win: Array<Val, 2>) {
   rawW := ComputeW(in.w);
   public w := if (doLoad) { ExpandBE(win) } else { CarryAndExpand(rawW) };
@@ -330,8 +329,9 @@ component SFlatToBits(f: Array<Val, 16>) {
 }
 
 component ReadCycle(stateIn: TopState) {
-  load := for i : 0..100 { NondetReg(GetPreimage(i)) };
   Log("ReadCycle");
+  load := for i : 0..100 { NondetReg(GetPreimage(i)) };
+  PicusInput!(load);
   bits := SFlatToBits(stateIn.sflat);
   stateOut := TopState(bits, load, stateIn.sflat);
   for i : 0..100 {
@@ -470,6 +470,7 @@ component WrapOneHot(oneHot: OneHot<12>) {
   for i : 0..12 { Reg(oneHot.bits[i]) }
 }
 
+#[picus_analyze]
 component Top() {
   global finalDigest: DigestReg;
 
@@ -489,17 +490,38 @@ component Top() {
   };
   curState: TopState;
   curState := cycleMux -> (
-    ShutdownCycle(curState@1),
-    ReadCycle(curState@1),
-    ExpandCycle(curState@1, controlState.subType),
-    WriteCycle(curState@1, curState@2),
-    KeccakRound0(curState@2, curState@1),
-    KeccakRound12<0>(curState@1, curState@3, curState@2, curState@1),
-    KeccakRound12<1>(curState@2, curState@4, curState@3, curState@1),
-    KeccakRound34<0>(curState@2, curState@1, curState@1, controlState.round),
-    KeccakRound34<1>(curState@3, curState@2, curState@1, controlState.round),
-    ShaCycle(curState@1, curState@2, controlState.round, controlState.block),
-    ShaNextBlockCycle(curState@1),
-    InitCycle()
+    /*Deterministic*/ ShutdownCycle(curState@1),
+    /*Deterministic*/ ReadCycle(curState@1),
+    /*Deterministic*/ ExpandCycle(curState@1, controlState.subType),
+    /*Deterministic*/ WriteCycle(curState@1, curState@2),
+    /*Deterministic*/ KeccakRound0(curState@2, curState@1),
+    /*Deterministic*/ KeccakRound12<0>(curState@1, curState@3, curState@2, curState@1),
+    /*Deterministic*/ KeccakRound12<1>(curState@2, curState@4, curState@3, curState@1),
+    /*Deterministic*/ KeccakRound34<0>(curState@2, curState@1, curState@1, controlState.round),
+    /*Deterministic*/ KeccakRound34<1>(curState@3, curState@2, curState@1, controlState.round),
+    /*Deterministic*/ ShaCycle(curState@1, curState@2, controlState.round, controlState.block),
+    /*Deterministic*/ ShaNextBlockCycle(curState@1),
+    /*Deterministic*/ InitCycle()
   );
 }
+
+
+// #[picus_analyze]
+// component KeccakRound12Wrapper0(sb: TopState, s0: TopState, s1: TopState, back1: TopState) {
+//   curState := KeccakRound12<0>(sb, s0, s1, back1);
+// }
+
+// #[picus_analyze]
+// component KeccakRound12Wrapper1(sb: TopState, s0: TopState, s1: TopState, back1: TopState) {
+//   curState := KeccakRound12<1>(sb, s0, s1, back1);
+// }
+
+// #[picus_analyze]
+// component KeccakRound34Wrapper0(s0: TopState, s1: TopState, back1: TopState, round: Val) {
+//   curState := KeccakRound34<0>(s0, s1, back1, round);
+// }
+
+// #[picus_analyze]
+// component KeccakRound34Wrapper1(s0: TopState, s1: TopState, back1: TopState, round: Val) {
+//   curState := KeccakRound34<1>(s0, s1, back1, round);
+// }

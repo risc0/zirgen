@@ -38,6 +38,7 @@ cc_library(
         "HoistAllocs.cpp",
         "HoistCommonMuxCode.cpp",
         "LowerAssumeRange.cpp",
+        "LowerDirectives.cpp",
         "LowerFuncs.cpp",
         "OptimizeParWitgen.cpp",
         "OutlineIfs.cpp",
