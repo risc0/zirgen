@@ -1074,6 +1074,13 @@ void LoweringImpl::gen(DirectiveOp directive, ComponentBuilder& cb) {
       args.push_back(coerceTo(arg, Zhlt::getValType(ctx)));
     }
     builder.create<Zhlt::DirectiveOp>(directive->getLoc(), "AssumeRange", args);
+  } else if (directive.getName() == "PicusInput") {
+    if (directive.getArgs().size() != 1) {
+      size_t args = directive.getArgs().size();
+      directive.emitError() << "'PicusInput' directive expects 1 argument, got " << args;
+    }
+    SmallVector<Value> args = {asValue(directive.getArgs()[0])};
+    builder.create<Zhlt::DirectiveOp>(directive->getLoc(), "PicusInput", args);
   } else {
     directive.emitError() << "Unknown compiler directive '" << directive.getName() << "'";
   }

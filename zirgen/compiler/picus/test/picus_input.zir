@@ -1,0 +1,23 @@
+// RUN: zirgen %s --emit=picus | FileCheck %s
+
+// CHECK: (prime-number 2013265921)
+// CHECK-NEXT: (begin-module Top)
+// CHECK-NEXT: (output result__layout_store_0__super__super__super)
+// CHECK-NEXT: (output result__layout_store_1__super__super__super)
+// CHECK-NEXT: (output result__layout_store_2__super__super__super)
+// CHECK-NEXT: (output result__super)
+// CHECK-NEXT: (call [x0__super_0 x0__super_1 x0__super_2] ReadData [])
+// CHECK-NEXT: (assume-deterministic result__layout_store_0__super__super__super)
+// CHECK-NEXT: (assume-deterministic result__layout_store_1__super__super__super)
+// CHECK-NEXT: (assume-deterministic result__layout_store_2__super__super__super)
+// CHECK-NEXT: (assert (= result__super (+ (+ result__layout_store_0__super__super__super result__layout_store_1__super__super__super) result__layout_store_2__super__super__super)))
+// CHECK-NEXT: (end-module)
+
+extern ReadData() : Array<Val, 3>;
+
+#[picus_analyze]
+component Top() {
+  store := for i : ReadData() { NondetReg(i) };
+  PicusInput!(store);
+  reduce store init 0 with Add
+}
