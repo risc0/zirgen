@@ -24,7 +24,7 @@ namespace zirgen::Zhlt {
 
 namespace {
 
-struct LowerAssumeRange : public OpRewritePattern<DirectiveOp> {
+struct LowerDirectives : public OpRewritePattern<DirectiveOp> {
   using OpRewritePattern::OpRewritePattern;
 
   LogicalResult matchAndRewrite(DirectiveOp directive, PatternRewriter& rewriter) const final {
@@ -41,16 +41,21 @@ struct LowerAssumeRange : public OpRewritePattern<DirectiveOp> {
       rewriter.replaceOpWithNewOp<Zll::ExternOp>(
           directive, TypeRange{}, ValueRange{cond, message}, "Assert", /*extra=*/"");
       return success();
+    } else if (directive.getName() == "PicusInput") {
+      // This is a no-op unless compiling with `--emit=picus`. Since this pass
+      // is after picus emission in the compiler pipeline, we are in some other
+      // compilation mode. Just erase it.
+      rewriter.eraseOp(directive);
     } else {
       return failure();
     }
   }
 };
 
-struct LowerAssumeRangePass : public LowerAssumeRangeBase<LowerAssumeRangePass> {
+struct LowerDirectivesPass : public LowerDirectivesBase<LowerDirectivesPass> {
   void runOnOperation() override {
     RewritePatternSet patterns(&getContext());
-    patterns.add<LowerAssumeRange>(&getContext());
+    patterns.add<LowerDirectives>(&getContext());
     if (applyPatternsAndFoldGreedily(getOperation(), std::move(patterns)).failed()) {
       signalPassFailure();
     }
@@ -59,8 +64,8 @@ struct LowerAssumeRangePass : public LowerAssumeRangeBase<LowerAssumeRangePass> 
 
 } // namespace
 
-std::unique_ptr<OperationPass<ModuleOp>> createLowerAssumeRangePass() {
-  return std::make_unique<LowerAssumeRangePass>();
+std::unique_ptr<OperationPass<ModuleOp>> createLowerDirectivesPass() {
+  return std::make_unique<LowerDirectivesPass>();
 }
 
 } // namespace zirgen::Zhlt

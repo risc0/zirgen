@@ -78,6 +78,7 @@ component Chi(a: Array<Array<Array<Val, 64>, 5>, 5>) {
   }
 }
 
+#[picus_inline]
 component IotaTable() {
  [
   [0x0001, 0x0000, 0x0000, 0x0000],
