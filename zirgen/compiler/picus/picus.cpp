@@ -186,6 +186,7 @@ private:
   // For nondeterministic operations, mark all results as fresh signals.
   void visitNondetOp(Operation* op) {
     for (Value result : op->getResults()) {
+      assert(result.getType() == Zhlt::getValType(ctx));
       Signal signal = Signal::get(ctx, freshName());
       valuesToSignals.insert({result, signal});
     }
@@ -244,12 +245,15 @@ private:
 
   void visitOp(ConstructOp construct) {
     workQueue.push(mod.lookupSymbol<ComponentOp>(construct.getCallee()));
-    AnySignal result = signalize(freshName(), construct.getOutType());
+    AnySignal layoutSignal;
+    if (auto layout = construct.getLayout()) {
+      layoutSignal = valuesToSignals.at(layout);
+    }
+    AnySignal result = signalize(freshName(), construct.getOutType(), /*layout=*/layoutSignal);
     valuesToSignals.insert({construct.getOut(), result});
 
     os << "(call [";
-    if (auto layout = construct.getLayout()) {
-      AnySignal layoutSignal = valuesToSignals.at(layout);
+    if (layoutSignal) {
       llvm::interleave(
           flatten(layoutSignal), os, [&](Signal s) { os << s.str(); }, " ");
       os << " ";
@@ -492,6 +496,9 @@ private:
       auto high = cast<Signal>(valuesToSignals.at(args[2]));
       os << "(assume (<= " << low.str() << " " << x.str() << "))\n";
       os << "(assume (< " << x.str() << " " << high.str() << "))\n";
+    } else if (directive.getName() == "PicusInput") {
+      auto signal = valuesToSignals.at(directive.getArgs()[0]);
+      declareSignals(signal, SignalType::AssumeDeterministic, /*skipLayout=*/true);
     } else {
       directive->emitError("Cannot lower this directive to Picus");
     }
@@ -582,8 +589,8 @@ private:
     return flattened;
   }
 
-  void declareSignals(AnySignal signal, SignalType type) {
-    visit(signal, [&](Signal s) { declareSignal(s, type); });
+  void declareSignals(AnySignal signal, SignalType type, bool skipLayout = false) {
+    visit(signal, [&](Signal s) { declareSignal(s, type); }, /*visitedLayout=*/skipLayout);
   }
 
   void declareSignal(Signal signal, SignalType type) {
