@@ -303,16 +303,6 @@ private:
     }
   }
 
-  void visitOp(SubOp sub) {
-    auto signal = Signal::get(ctx, freshName());
-    valuesToSignals.insert({sub.getOut(), signal});
-
-    os << "(assert (= " << signal.str() << " (- ";
-    os << cast<Signal>(valuesToSignals.at(sub.getLhs())).str() << " ";
-    os << cast<Signal>(valuesToSignals.at(sub.getRhs())).str();
-    os << ")))\n";
-  }
-
   void visitOp(EqualZeroOp eqz) {
     os << "(assert (= ";
     os << cast<Signal>(valuesToSignals.at(eqz.getIn())).str();
@@ -408,9 +398,10 @@ private:
   }
 
   void visitOp(GetGlobalLayoutOp get) {
-    // This is sound but presumably not complete?
+    // The globals have a single unique value that is shared with the verifier,
+    // so we can count on these always being deterministic.
     AnySignal signal = signalize(freshName(), get.getType());
-    declareSignals(signal, SignalType::Output);
+    declareSignals(signal, SignalType::AssumeDeterministic);
     valuesToSignals.insert({get.getOut(), signal});
   }
 

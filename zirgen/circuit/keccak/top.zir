@@ -504,24 +504,3 @@ component Top() {
     /*Deterministic*/ InitCycle()
   );
 }
-
-
-// #[picus_analyze]
-// component KeccakRound12Wrapper0(sb: TopState, s0: TopState, s1: TopState, back1: TopState) {
-//   curState := KeccakRound12<0>(sb, s0, s1, back1);
-// }
-
-// #[picus_analyze]
-// component KeccakRound12Wrapper1(sb: TopState, s0: TopState, s1: TopState, back1: TopState) {
-//   curState := KeccakRound12<1>(sb, s0, s1, back1);
-// }
-
-// #[picus_analyze]
-// component KeccakRound34Wrapper0(s0: TopState, s1: TopState, back1: TopState, round: Val) {
-//   curState := KeccakRound34<0>(s0, s1, back1, round);
-// }
-
-// #[picus_analyze]
-// component KeccakRound34Wrapper1(s0: TopState, s1: TopState, back1: TopState, round: Val) {
-//   curState := KeccakRound34<1>(s0, s1, back1, round);
-// }
