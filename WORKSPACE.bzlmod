@@ -1,0 +1,44 @@
+workspace(name = "zirgen")
+
+load("@llvm-raw//utils/bazel:configure.bzl", "llvm_configure")
+llvm_configure(name = "llvm-project")
+
+load("//bazel/toolchain/risc0:repo.bzl", "risc0_toolchain")
+
+risc0_toolchain(name = "risc0_toolchain")
+
+load("//bazel/toolchain/rv32im-linux:repo.bzl", "rv32im_linux_toolchain")
+
+rv32im_linux_toolchain(name = "rv32im_linux_toolchain")
+
+load("@rules_conda//:defs.bzl", "conda_create", "load_conda", "register_toolchain")
+
+load_conda(
+    install_mamba = True,
+    installer = "miniforge",
+    quiet = False,
+)
+
+conda_create(
+    name = "py3_env",
+    environment = "@//:environment.yml",
+    quiet = False,
+    use_mamba = True,
+)
+
+register_toolchain(py3_env = "py3_env")
+
+register_toolchains(
+    "//bazel/rules/clang_format:toolchain",
+)
+
+load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
+
+rules_pkg_dependencies()
+
+load("@hermetic_cc_toolchain//toolchain:defs.bzl", zig_toolchains = "toolchains")
+
+# Plain zig_toolchains() will pick reasonable defaults. See
+# toolchain/defs.bzl:toolchains on how to change the Zig SDK version and
+# download URL.
+zig_toolchains()
