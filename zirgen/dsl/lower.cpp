@@ -398,7 +398,7 @@ void Impl::gen(ast::Component* c, SymbolTable& outerscope) {
   SymbolTable innerscope(funcparams);
   ast::Expression* body = c->getBody();
   if (!body) {
-    mlir::emitError(loc(c)) << "missing body expresion";
+    mlir::emitError(loc(c)) << "missing body expression";
   } else if (ast::Component::Kind::Extern == c->getKind()) {
     if (llvm::isa<ast::Block>(body)) {
       mlir::emitError(loc(c)) << "Unexpected block in extern";

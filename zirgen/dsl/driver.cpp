@@ -169,7 +169,7 @@ int main(int argc, char* argv[]) {
   zirgen::addAccumAndGlobalPasses(pm);
 
   if (failed(pm.run(typedModule.value()))) {
-    llvm::errs() << "an internal compiler error ocurred while type checking this module:\n";
+    llvm::errs() << "an internal compiler error occurred while type checking this module:\n";
     typedModule->print(llvm::errs());
     return 1;
   }
