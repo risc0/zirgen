@@ -32,8 +32,8 @@ class Parser {
 public:
   Parser(llvm::SourceMgr& mgr) : sourceManager(mgr), lexer(mgr, errors), testNum(0) {}
 
-  // Parses the file, and returns its AST if it is well formed. If it is not
-  // well formed, it returns nullptr and the syntax errors that occurred can be
+  // Parses the file, and returns its AST if it is well-formed. If it is not
+  // well-formed, it returns nullptr and the syntax errors that occurred can be
   // queried with the getErrors method. This method should only be called once
   // per Parser instance.
   ast::Module::Ptr parseModule();
