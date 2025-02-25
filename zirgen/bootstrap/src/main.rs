@@ -123,7 +123,7 @@ struct Args {
 
     /// Output path for the generated circuit files.
     ///
-    /// When bootstapping the risc0 monorepo, this should be the path to the repo root.
+    /// When bootstrapping the risc0 monorepo, this should be the path to the repo root.
     #[clap(long)]
     output: Option<PathBuf>,
 
