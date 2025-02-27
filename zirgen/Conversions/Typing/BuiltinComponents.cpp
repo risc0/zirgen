@@ -29,8 +29,7 @@ struct Builtins {
       : builder(builder)
       , ctx(builder.getContext())
       , valType(Zhlt::getValType(ctx))
-      , extValType(Zhlt::getExtValType(ctx))
-      , loc(builder.getUnknownLoc()) {}
+      , extValType(Zhlt::getExtValType(ctx)) {}
 
   void addBuiltins();
   void genTrivial(StringRef name, Type type);
@@ -44,7 +43,7 @@ private:
                    Type valueType,
                    TypeRange constructParams,
                    Type layoutType,
-                   const std::function<void(/*args=*/ValueRange)>& buildBody);
+                   const std::function<void(Location, /*args=*/ValueRange)>& buildBody);
   template <typename OpT> void makeBinValOp(StringRef name);
   template <typename OpT> void makeBinExtValOp(StringRef name);
   template <typename OpT> void makeUnaryValOp(StringRef name);
@@ -61,20 +60,19 @@ private:
 
   Zll::ValType valType;
   Zll::ValType extValType;
-  Location loc;
 };
 
 void Builtins::makeBuiltin(StringRef name,
                            Type valueType,
                            TypeRange constructParams,
                            Type layoutType,
-                           const std::function<void(ValueRange)>& buildBody) {
-  auto op = builder.create<Zhlt::ComponentOp>(
-      builder.getUnknownLoc(), name, valueType, constructParams, layoutType);
+                           const std::function<void(Location, ValueRange)>& buildBody) {
+  Location loc = NameLoc::get(builder.getStringAttr("builtin " + name));
+  auto op = builder.create<Zhlt::ComponentOp>(loc, name, valueType, constructParams, layoutType);
 
   OpBuilder::InsertionGuard insertionGuard(builder);
   builder.setInsertionPointToStart(op.addEntryBlock());
-  buildBody(op.getArguments());
+  buildBody(loc, op.getArguments());
 }
 
 template <typename OpT> void Builtins::makeBinValOp(StringRef name) {
@@ -82,7 +80,7 @@ template <typename OpT> void Builtins::makeBinValOp(StringRef name) {
               /*valueType=*/valType,
               /*constructParams=*/{valType, valType},
               /*layout=*/Type(),
-              [&](ValueRange args) {
+              [&](Location loc, ValueRange args) {
                 auto op = builder.create<OpT>(loc, args[0], args[1]);
                 builder.create<Zhlt::ReturnOp>(loc, op);
               });
@@ -93,7 +91,7 @@ template <typename OpT> void Builtins::makeBinExtValOp(StringRef name) {
               /*valueType=*/extValType,
               /*constructParams=*/{extValType, extValType},
               /*layout=*/Type(),
-              [&](ValueRange args) {
+              [&](Location loc, ValueRange args) {
                 auto op = builder.create<OpT>(loc, args[0], args[1]);
                 builder.create<Zhlt::ReturnOp>(loc, op);
               });
@@ -104,7 +102,7 @@ template <typename OpT> void Builtins::makeUnaryValOp(StringRef name) {
               /*valueType=*/valType,
               /*constructParams=*/{valType},
               /*layout=*/Type(),
-              [&](ValueRange args) {
+              [&](Location loc, ValueRange args) {
                 auto op = builder.create<OpT>(loc, args[0]);
                 builder.create<Zhlt::ReturnOp>(loc, op);
               });
@@ -115,7 +113,7 @@ template <typename OpT> void Builtins::makeUnaryExtValOp(StringRef name) {
               /*valueType=*/extValType,
               /*constructParams=*/{extValType},
               /*layout=*/Type(),
-              [&](ValueRange args) {
+              [&](Location loc, ValueRange args) {
                 auto op = builder.create<OpT>(loc, args[0]);
                 builder.create<Zhlt::ReturnOp>(loc, op);
               });
@@ -129,7 +127,7 @@ void Builtins::genNondetReg() {
       /*valueType=*/returnType,
       /*constructParams=*/{valType},
       /*layout=*/refType,
-      [&](ValueRange args) {
+      [&](Location loc, ValueRange args) {
         Value val = args[0];
         Value ref = builder.create<ZStruct::LookupOp>(loc, args[1], "@super");
         builder.create<ZStruct::StoreOp>(loc, ref, val);
@@ -149,7 +147,7 @@ void Builtins::genNondetExtReg() {
               /*valueType=*/returnType,
               /*constructParams=*/{extValType},
               /*layout=*/refType,
-              [&](ValueRange args) {
+              [&](Location loc, ValueRange args) {
                 Value val = args[0];
                 Value ref = builder.create<ZStruct::LookupOp>(loc, args[1], "@super");
                 builder.create<ZStruct::StoreOp>(loc, ref, val);
@@ -168,7 +166,7 @@ void Builtins::genMakeExt() {
               /*valueType=*/extValType,
               /*constructParams=*/{valType},
               /*layout=*/Type(),
-              [&](ValueRange args) {
+              [&](Location loc, ValueRange args) {
                 // Convert from Fp -> FpExt by adding an Ext of 0
                 Value val = args[0];
                 SmallVector<uint64_t> zero(extValType.getFieldK(), 0);
@@ -183,7 +181,7 @@ void Builtins::genEqzExt() {
               /*valueType=*/Zhlt::getComponentType(ctx),
               /*constructParams=*/{extValType},
               /*layout=*/Type(),
-              [&](ValueRange args) {
+              [&](Location loc, ValueRange args) {
                 builder.create<Zll::EqualZeroOp>(loc, args[0]);
                 auto packed = builder.create<ZStruct::PackOp>(
                     loc, Zhlt::getComponentType(ctx), /*members=*/ValueRange{});
@@ -196,7 +194,7 @@ void Builtins::genComponent() {
               /*valueType=*/Zhlt::getComponentType(ctx),
               /*constructParams=*/ValueRange{},
               /*layout=*/Type(),
-              [&](ValueRange args) {
+              [&](Location loc, ValueRange args) {
                 auto packed = builder.create<ZStruct::PackOp>(
                     loc, Zhlt::getComponentType(ctx), /*members=*/ValueRange{});
                 builder.create<Zhlt::ReturnOp>(loc, packed);
@@ -209,7 +207,7 @@ void Builtins::genInRange() {
               /*valueType=*/val,
               /*constructParams*/ {val, val, val},
               /*layout=*/Type(),
-              [&](ValueRange args) {
+              [&](Location loc, ValueRange args) {
                 auto op = builder.create<Zll::InRangeOp>(loc, args[0], args[1], args[2]);
                 builder.create<Zhlt::ReturnOp>(loc, op);
               });
@@ -220,14 +218,14 @@ void Builtins::genTrivial(StringRef name, Type type) {
               /*valueType=*/type,
               /*constructParams=*/{type},
               /*layout=*/Type(),
-              [&](ValueRange args) { builder.create<Zhlt::ReturnOp>(loc, args[0]); });
+              [&](Location loc, ValueRange args) { builder.create<Zhlt::ReturnOp>(loc, args[0]); });
 }
 
 void Builtins::genArray(StringRef mangledName,
                         ZStruct::ArrayType arrayType,
                         ZStruct::LayoutArrayType layoutType,
                         TypeRange ctorParams) {
-  auto build = [&](ValueRange args) {
+  auto build = [&](Location loc, ValueRange args) {
     Type elemType = arrayType.getElement();
     SmallVector<Value> elements;
     for (size_t i = 0; i < arrayType.getSize(); i++) {

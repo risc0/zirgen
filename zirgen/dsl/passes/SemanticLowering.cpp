@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -602,15 +602,16 @@ struct GenerateCheckPass : public GenerateCheckBase<GenerateCheckPass> {
     FrozenRewritePatternSet frozenPatterns(std::move(patterns));
 
     OpBuilder::InsertionGuard guard(builder);
-    auto checkFuncOp = builder.create<Zhlt::CheckFuncOp>(builder.getUnknownLoc(), checkFuncName);
+    auto loc = NameLoc::get(builder.getStringAttr("All Constraints"));
+    auto checkFuncOp = builder.create<Zhlt::CheckFuncOp>(loc, checkFuncName);
     builder.setInsertionPointToStart(checkFuncOp.addEntryBlock());
 
     for (auto callee : callees) {
-      builder.create<func::CallOp>(builder.getUnknownLoc(), callee, /*results=*/TypeRange{});
+      builder.create<func::CallOp>(loc, callee, /*results=*/TypeRange{});
     }
 
     // Now, inline everything and get rid of everything that's not a constraint.
-    builder.create<Zhlt::ReturnOp>(builder.getUnknownLoc());
+    builder.create<Zhlt::ReturnOp>(loc);
     GreedyRewriteConfig config;
     config.maxIterations = 100;
     if (applyPatternsAndFoldGreedily(checkFuncOp, frozenPatterns, config).failed()) {

@@ -17,6 +17,7 @@ cc_library(
     ],
     deps = [
         "//risc0/core",
+        "//risc0/fp",
         "//zirgen/Dialect/ZHLT/Transforms:passes",
         "//zirgen/Dialect/ZStruct/Transforms:passes",
         "//zirgen/Dialect/Zll/Transforms:passes",

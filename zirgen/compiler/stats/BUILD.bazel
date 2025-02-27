@@ -1,0 +1,17 @@
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "stats",
+    srcs = [
+        "OpStats.cpp",
+    ],
+    hdrs = ["OpStats.h"],
+    deps = [
+        "//risc0/fp",
+        "//zirgen/Dialect/Zll/IR",
+        "@llvm-project//llvm:Support",
+        "@llvm-project//mlir:IR",
+    ],
+)
