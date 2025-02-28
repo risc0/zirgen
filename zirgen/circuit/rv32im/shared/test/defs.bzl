@@ -70,15 +70,15 @@ def compile_riscv_tests():
                     Label("@riscv_tests//:isa/macros/scalar/test_macros.h"),
                 ],
                 copts = [
-                    "-Iexternal/riscv_tests",
-                    "-Iexternal/riscv_tests/isa/macros/scalar",
+                    "-Iexternal/_main~_repo_rules~riscv_tests",
+                    "-Iexternal/_main~_repo_rules~riscv_tests/isa/macros/scalar",
                     "-Izirgen/circuit/rv32im/shared/test",
                     "-Iexternal/zirgen/zirgen/circuit/rv32im/shared/test"
                 ],
             )
             all_bins = all_bins + [test]
     native.filegroup(
-        name = "riscv_test_bins", 
+        name = "riscv_test_bins",
         srcs = all_bins,
         visibility = ["//visibility:public"],
     )
