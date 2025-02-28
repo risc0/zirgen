@@ -59,7 +59,8 @@ llvm::ManagedStatic<OpStatsCLOptions> clOpts;
 // Number of times to run profiling loop
 constexpr size_t kNumIter = 1000 * 1000;
 
-// Prevent a value from being optimized for use in profiling loop.
+// Prevent a value from being optimized for use in profiling loop.  Adapted from
+// DoNotOptimize in Google's benchmark.h.
 template <typename FpT> FpT blackBox(FpT value) {
 #if defined(__clang__)
   asm volatile("" : "+r,m"(value) : : "memory");
