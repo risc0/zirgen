@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 #include "zirgen/compiler/codegen/codegen.h"
 #include "zirgen/compiler/codegen/protocol_info_const.h"
+#include "zirgen/compiler/stats/OpStats.h"
 
 #include "mlir/Pass/PassManager.h"
 #include "mlir/Transforms/Passes.h"
@@ -259,6 +260,7 @@ private:
 
 void registerCodegenCLOptions() {
   *codegenCLOptions;
+  registerOpStatsCLOptions();
 }
 
 void emitCode(ModuleOp module, const EmitCodeOptions& opts) {
@@ -300,6 +302,10 @@ void emitCode(ModuleOp module, const EmitCodeOptions& opts) {
   }
 
   optimizePoly(module, opts);
+
+  BogoCycleAnalysis bogoCycles;
+  bogoCycles.printStatsIfRequired(module, llvm::outs());
+
   module.walk([&](func::FuncOp func) {
     emitter.emitPolyFunc("poly_fp", func);
     emitter.emitPolyExtFunc(func);
@@ -327,6 +333,9 @@ void emitCodeZirgenPoly(ModuleOp module, StringRef outputDir) {
 
   // Save as IR so we can generate predicates to verify the validity polynomial.
   emitter.emitIR("validity", module);
+
+  BogoCycleAnalysis bogoCycles;
+  bogoCycles.printStatsIfRequired(module, llvm::outs());
 
   module.walk([&](func::FuncOp func) {
     emitter.emitPolyExtFunc(func);

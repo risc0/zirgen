@@ -222,6 +222,7 @@ pub fn back_nondet_reg<'a>(
     distance0: Index,
     layout1: BoundLayout<'a, NondetRegLayout, Val>,
 ) -> Result<NondetRegStruct<'a>> {
+    // builtin NondetReg
     let x2: NondetRegStruct = NondetRegStruct {
         _super: (layout1.map(|c| c._super)).load(ctx, distance0),
         _layout: layout1,
@@ -448,6 +449,7 @@ pub fn validity_taps<'a>(
     poly_mix1: PolyMix,
     global2: BufferRow<Val>,
 ) -> Result<MixState> {
+    // All Constraints
     let x3: ExtVal = get(ctx, taps0, 2, 0)?;
     let x4: ExtVal = get(ctx, taps0, 4, 0)?;
     let x5: ExtVal = get(ctx, taps0, 5, 0)?;
@@ -456,13 +458,15 @@ pub fn validity_taps<'a>(
     let x8: ExtVal = get(ctx, taps0, 10, 0)?;
     let x9: ExtVal = get(ctx, taps0, 11, 0)?;
     let x10: ExtVal = get(ctx, taps0, 12, 0)?;
-    // CycleCounter(zirgen/dsl/examples/fibonacci.zir:34)
-    // Top(zirgen/dsl/examples/fibonacci.zir:49)
     let x11: MixState = trivial_constraint()?;
+    // Top(zirgen/dsl/examples/fibonacci.zir:44)
+    // Top(zirgen/dsl/examples/fibonacci.zir:44)
     let x12: BoundLayout<_globalLayout, _> = bind_layout!(LAYOUT_GLOBAL, global2);
+    // builtin Add
     // Top(zirgen/dsl/examples/fibonacci.zir:62)
     let x13: ExtVal = ((x3 - ((x12.map(|c| c.steps)).map(|c| c._super)).load(ctx, 0))
         + ExtVal::new(Val::new(1), Val::new(0), Val::new(0), Val::new(0)));
+    // builtin Sub
     // IsZero(zirgen/dsl/examples/fibonacci.zir:12)
     let x14: ExtVal = (ExtVal::new(Val::new(1), Val::new(0), Val::new(0), Val::new(0)) - x9);
     // CycleCounter(zirgen/dsl/examples/fibonacci.zir:32)
@@ -518,26 +522,34 @@ pub fn validity_regs<'a>(
 ) -> Result<MixState> {
     let x3: BoundLayout<TopLayout, _> = bind_layout!(LAYOUT_TOP, data1);
     let x4: BoundLayout<_globalLayout, _> = bind_layout!(LAYOUT_GLOBAL, global2);
+    // builtin Add
     // CycleCounter(zirgen/dsl/examples/fibonacci.zir:39)
     // Top(zirgen/dsl/examples/fibonacci.zir:49)
     let x5: Val =
         ((((x3.map(|c| c.cycle)).map(|c| c._super)).map(|c| c._super)).load(ctx, 1) + Val::new(1));
     let x6: Val = ((((x3.map(|c| c.cycle)).map(|c| c._super)).map(|c| c._super)).load(ctx, 0) - x5);
+    // builtin Add
     // Top(zirgen/dsl/examples/fibonacci.zir:59)
     let x7: Val = (((x3.map(|c| c.d1)).map(|c| c._super)).load(ctx, 0)
         + ((x3.map(|c| c.d2)).map(|c| c._super)).load(ctx, 0));
+    // builtin Sub
     // Top(zirgen/dsl/examples/fibonacci.zir:62)
     let x8: Val = ((((x3.map(|c| c.cycle)).map(|c| c._super)).map(|c| c._super)).load(ctx, 0)
         - ((x4.map(|c| c.steps)).map(|c| c._super)).load(ctx, 0));
+    // builtin Add
     let x9: Val = (x8 + Val::new(1));
+    // builtin Sub
     // IsZero(zirgen/dsl/examples/fibonacci.zir:12)
     let x10: Val = (Val::new(1)
         - (((x3.map(|c| c.terminate)).map(|c| c._super)).map(|c| c._super)).load(ctx, 0));
+    // builtin Mul
     let x11: Val =
         ((((x3.map(|c| c.terminate)).map(|c| c._super)).map(|c| c._super)).load(ctx, 0) * x10);
+    // builtin Sub
     // IsZero(zirgen/dsl/examples/fibonacci.zir:14)
     let x12: Val = (Val::new(1)
         - (((x3.map(|c| c.terminate)).map(|c| c._super)).map(|c| c._super)).load(ctx, 0));
+    // builtin Mul
     // IsZero(zirgen/dsl/examples/fibonacci.zir:16)
     let x13: Val =
         ((((x3.map(|c| c.terminate)).map(|c| c._super)).map(|c| c._super)).load(ctx, 0) * x9);
@@ -548,6 +560,7 @@ pub fn validity_regs<'a>(
     // Top(zirgen/dsl/examples/fibonacci.zir:64)
     let x15: Val = (((x3.map(|c| c.d3)).map(|c| c._super)).load(ctx, 0)
         - ((x4.map(|c| c.f_last)).map(|c| c._super)).load(ctx, 0));
+    // builtin Sub
     // IsZero(zirgen/dsl/examples/fibonacci.zir:12)
     // CycleCounter(zirgen/dsl/examples/fibonacci.zir:32)
     // Top(zirgen/dsl/examples/fibonacci.zir:49)
@@ -555,6 +568,7 @@ pub fn validity_regs<'a>(
         - ((((x3.map(|c| c.cycle)).map(|c| c.is_first_cycle)).map(|c| c._super))
             .map(|c| c._super))
         .load(ctx, 0));
+    // builtin Mul
     let x17: Val = (((((x3.map(|c| c.cycle)).map(|c| c.is_first_cycle)).map(|c| c._super))
         .map(|c| c._super))
     .load(ctx, 0)
@@ -563,11 +577,13 @@ pub fn validity_regs<'a>(
     let x18: Val = ((((x3.map(|c| c.cycle)).map(|c| c._super)).map(|c| c._super)).load(ctx, 0)
         * ((((x3.map(|c| c.cycle)).map(|c| c.is_first_cycle)).map(|c| c.inv)).map(|c| c._super))
             .load(ctx, 0));
+    // builtin Sub
     let x19: Val = (Val::new(1)
         - ((((x3.map(|c| c.cycle)).map(|c| c.is_first_cycle)).map(|c| c._super))
             .map(|c| c._super))
         .load(ctx, 0));
     let x20: MixState = and_eqz(ctx, and_eqz(ctx, trivial_constraint()?, x17)?, (x18 - x19))?;
+    // builtin Mul
     // IsZero(zirgen/dsl/examples/fibonacci.zir:16)
     let x21: Val = (((((x3.map(|c| c.cycle)).map(|c| c.is_first_cycle)).map(|c| c._super))
         .map(|c| c._super))
@@ -579,6 +595,7 @@ pub fn validity_regs<'a>(
     .load(ctx, 0)
         * ((((x3.map(|c| c.cycle)).map(|c| c.is_first_cycle)).map(|c| c.inv)).map(|c| c._super))
             .load(ctx, 0));
+    // builtin Sub
     // CycleCounter(zirgen/dsl/examples/fibonacci.zir:34)
     let x23: Val = (Val::new(1)
         - ((((x3.map(|c| c.cycle)).map(|c| c.is_first_cycle)).map(|c| c._super))
@@ -589,6 +606,7 @@ pub fn validity_regs<'a>(
         x23,
         and_eqz(ctx, trivial_constraint()?, x6)?,
     )?;
+    // builtin Sub
     // Top(zirgen/dsl/examples/fibonacci.zir:55)
     let x25: Val = (Val::new(1)
         - ((((x3.map(|c| c.cycle)).map(|c| c.is_first_cycle)).map(|c| c._super))
@@ -601,6 +619,7 @@ pub fn validity_regs<'a>(
     let x27: Val = (((x3.map(|c| c.d2)).map(|c| c._super)).load_unchecked(ctx, 1) * x25);
     // Reg(<preamble>:6)
     let x28: Val = ((x26 + x27) - ((x3.map(|c| c.d1)).map(|c| c._super)).load(ctx, 0));
+    // builtin Sub
     // Top(zirgen/dsl/examples/fibonacci.zir:56)
     let x29: Val = (Val::new(1)
         - ((((x3.map(|c| c.cycle)).map(|c| c.is_first_cycle)).map(|c| c._super))
