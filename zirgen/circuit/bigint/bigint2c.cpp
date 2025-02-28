@@ -50,6 +50,8 @@ enum class Program {
   ExtField_Deg4_Mul,
   ExtField_Deg2_Sub,
   ExtField_XXOne_Mul,
+  ExtField_DegSix_Sqr,
+  ExtField_DegSix_Mul,
   ModAdd,
   ModInv,
   ModMul,
@@ -69,6 +71,8 @@ static cl::opt<enum Program> program(
                clEnumValN(Program::ExtField_Deg4_Mul, "extfield_deg4_mul", "ExtField_Deg4_Mul"),
                clEnumValN(Program::ExtField_Deg2_Sub, "extfield_deg2_sub", "ExtField_Deg2_Sub"),
                clEnumValN(Program::ExtField_XXOne_Mul, "extfield_xxone_mul", "ExtField_XXOne_Mul"),
+               clEnumValN(Program::ExtField_DegSix_Sqr, "extfield_degsix_sqr", "ExtField_DegSix_Sqr"),
+               clEnumValN(Program::ExtField_DegSix_Mul, "extfield_degsix_mul", "ExtField_DegSix_Mul"),
                clEnumValN(Program::ModAdd, "modadd", "ModAdd"),
                clEnumValN(Program::ModInv, "modinv", "ModInv"),
                clEnumValN(Program::ModMul, "modmul", "ModMul"),
@@ -469,6 +473,12 @@ int main(int argc, char* argv[]) {
     break;
   case Program::ExtField_XXOne_Mul:
     zirgen::BigInt::field::genExtFieldXXOneMul(builder, loc, bitwidth);
+    break;
+  case Program::ExtField_DegSix_Sqr:
+    zirgen::BigInt::field::genExtFieldDegSixSqr(builder, loc, bitwidth);
+    break;
+  case Program::ExtField_DegSix_Mul:
+    zirgen::BigInt::field::genExtFieldDegSixMul(builder, loc, bitwidth);
     break;
   case Program::ModAdd:
     zirgen::BigInt::field::genModAdd(builder, loc, bitwidth);

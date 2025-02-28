@@ -44,6 +44,8 @@ void genModSub(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth);
 void genExtFieldAdd(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth, size_t degree);
 void genExtFieldMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth, size_t degree);
 void genExtFieldXXOneMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth);
+void genExtFieldDegSixSqr(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth);
+void genExtFieldDegSixMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth);
 void genExtFieldSub(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth, size_t degree);
 
 // Prime field arithmetic (aka modular arithmetic)
@@ -71,6 +73,17 @@ llvm::SmallVector<Value, 3> extXXOneMul(mlir::OpBuilder builder,
                                         llvm::SmallVector<Value, 3> rhs,
                                         Value prime,
                                         Value primesqr);
+llvm::SmallVector<Value, 7> extDegSixSqr(mlir::OpBuilder builder,
+                                         mlir::Location loc,
+                                         llvm::SmallVector<Value, 7> inp,
+                                         Value prime,
+                                         Value primesqr5);
+llvm::SmallVector<Value, 7> extDegSixMul(mlir::OpBuilder builder,
+                                         mlir::Location loc,
+                                         llvm::SmallVector<Value, 7> lhs,
+                                         llvm::SmallVector<Value, 7> rhs,
+                                         Value prime,
+                                         Value primesqr5);
 llvm::SmallVector<Value, 3> extSub(mlir::OpBuilder builder,
                                    mlir::Location loc,
                                    llvm::SmallVector<Value, 3> lhs,

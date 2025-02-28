@@ -667,6 +667,8 @@ impl Bootstrap {
         self.copy_file(&src_path, &field_path, "extfield_deg2_sub_384.blob");
         self.copy_file(&src_path, &field_path, "extfield_xxone_mul_256.blob");
         self.copy_file(&src_path, &field_path, "extfield_xxone_mul_384.blob");
+        self.copy_file(&src_path, &field_path, "extfield_degsix_mul_384.blob");
+        self.copy_file(&src_path, &field_path, "extfield_degsix_sqr_384.blob");
         self.copy_file(&src_path, &field_path, "modadd_256.blob");
         self.copy_file(&src_path, &field_path, "modadd_384.blob");
         self.copy_file(&src_path, &field_path, "modinv_256.blob");

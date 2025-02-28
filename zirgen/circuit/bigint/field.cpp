@@ -89,6 +89,200 @@ llvm::SmallVector<Value, 3> extXXOneMul(mlir::OpBuilder builder,
   return result;
 }
 
+llvm::SmallVector<Value, 7> extDegSixSqr(mlir::OpBuilder builder,
+                                         mlir::Location loc,
+                                         llvm::SmallVector<Value, 7> inp,
+                                         Value prime,
+                                         Value primesqr5) {
+  assert(inp.size() == 6);
+  llvm::SmallVector<Value, 7> result(6);
+
+  Value s0_a = builder.create<BigInt::AddOp>(loc, inp[0], inp[1]);
+  Value s0_b = builder.create<BigInt::SubOp>(loc, inp[0], inp[1]);
+  Value s0_c = builder.create<BigInt::AddOp>(loc, inp[0], inp[0]);
+  Value s0_c0 = builder.create<BigInt::MulOp>(loc, s0_a, s0_b);
+  Value s0_c1 = builder.create<BigInt::MulOp>(loc, s0_c, inp[1]);
+
+  Value ab_c0_0 = builder.create<BigInt::MulOp>(loc, inp[0], inp[2]);
+  Value ab_c0_1 = builder.create<BigInt::MulOp>(loc, inp[1], inp[3]);
+  Value ab_c0 = builder.create<BigInt::SubOp>(loc, ab_c0_0, ab_c0_1);
+  Value ab_c1_0 = builder.create<BigInt::MulOp>(loc, inp[0], inp[3]);
+  Value ab_c1_1 = builder.create<BigInt::MulOp>(loc, inp[1], inp[2]);
+  Value ab_c1 = builder.create<BigInt::AddOp>(loc, ab_c1_0, ab_c1_1);
+
+  Value s1_c0 = builder.create<BigInt::AddOp>(loc, ab_c0, ab_c0);
+  Value s1_c1 = builder.create<BigInt::AddOp>(loc, ab_c1, ab_c1);
+
+  Value s2_a = builder.create<BigInt::SubOp>(loc, s0_a, inp[2]);
+  s2_a = builder.create<BigInt::SubOp>(loc, s2_a, inp[3]);
+  s2_a = builder.create<BigInt::AddOp>(loc, s2_a, inp[4]);
+  s2_a = builder.create<BigInt::AddOp>(loc, s2_a, inp[5]);
+  Value s2_b = builder.create<BigInt::SubOp>(loc, s0_b, inp[2]);
+  s2_b = builder.create<BigInt::AddOp>(loc, s2_b, inp[3]);
+  s2_b = builder.create<BigInt::AddOp>(loc, s2_b, inp[4]);
+  s2_b = builder.create<BigInt::SubOp>(loc, s2_b, inp[5]);
+  Value s2_c0 = builder.create<BigInt::MulOp>(loc, s2_a, s2_b);
+  Value s2_t0 = builder.create<BigInt::SubOp>(loc, inp[0], inp[2]);
+  s2_t0 = builder.create<BigInt::AddOp>(loc, s2_t0, inp[4]);
+  Value s2_t1 = builder.create<BigInt::SubOp>(loc, inp[1], inp[3]);
+  s2_t1 = builder.create<BigInt::AddOp>(loc, s2_t1, inp[5]);
+  s2_t1 = builder.create<BigInt::AddOp>(loc, s2_t1, s2_t1);
+  Value s2_c1 = builder.create<BigInt::MulOp>(loc, s2_t0, s2_t1);
+
+  Value bc_c0_0 = builder.create<BigInt::MulOp>(loc, inp[2], inp[4]);
+  Value bc_c0_1 = builder.create<BigInt::MulOp>(loc, inp[3], inp[5]);
+  Value bc_c0 = builder.create<BigInt::SubOp>(loc, bc_c0_0, bc_c0_1);
+  Value bc_c1_0 = builder.create<BigInt::MulOp>(loc, inp[2], inp[5]);
+  Value bc_c1_1 = builder.create<BigInt::MulOp>(loc, inp[3], inp[4]);
+  Value bc_c1 = builder.create<BigInt::AddOp>(loc, bc_c1_0, bc_c1_1);
+
+  Value s3_c0 = builder.create<BigInt::AddOp>(loc, bc_c0, bc_c0);
+  Value s3_c1 = builder.create<BigInt::AddOp>(loc, bc_c1, bc_c1);
+
+  Value s4_a = builder.create<BigInt::AddOp>(loc, inp[4], inp[5]);
+  Value s4_b = builder.create<BigInt::SubOp>(loc, inp[4], inp[5]);
+  Value s4_c = builder.create<BigInt::AddOp>(loc, inp[4], inp[4]);
+  Value s4_c0 = builder.create<BigInt::MulOp>(loc, s4_a, s4_b);
+  Value s4_c1 = builder.create<BigInt::MulOp>(loc, s4_c, inp[5]);
+
+  result[4] = builder.create<BigInt::AddOp>(loc, s1_c0, s2_c0);
+  result[4] = builder.create<BigInt::AddOp>(loc, result[4], s3_c0);
+  result[4] = builder.create<BigInt::SubOp>(loc, result[4], s4_c0);
+  result[4] = builder.create<BigInt::SubOp>(loc, result[4], s0_c0);
+
+  result[5] = builder.create<BigInt::AddOp>(loc, s1_c1, s2_c1);
+  result[5] = builder.create<BigInt::AddOp>(loc, result[5], s3_c1);
+  result[5] = builder.create<BigInt::SubOp>(loc, result[5], s4_c1);
+  result[5] = builder.create<BigInt::SubOp>(loc, result[5], s0_c1);
+
+  Value s3n_c0 = builder.create<BigInt::SubOp>(loc, s3_c0, s3_c1);
+  Value s3n_c1 = builder.create<BigInt::AddOp>(loc, s3_c0, s3_c1);
+  result[0] = builder.create<BigInt::AddOp>(loc, s3n_c0, s0_c0);
+  result[1] = builder.create<BigInt::AddOp>(loc, s3n_c1, s0_c1);
+
+  Value s4n_c0 = builder.create<BigInt::SubOp>(loc, s4_c0, s4_c1);
+  Value s4n_c1 = builder.create<BigInt::AddOp>(loc, s4_c0, s4_c1);
+  result[2] = builder.create<BigInt::AddOp>(loc, s4n_c0, s1_c0);
+  result[3] = builder.create<BigInt::AddOp>(loc, s4n_c1, s1_c1);
+
+  result[0] = builder.create<BigInt::AddOp>(loc, result[0], primesqr5);
+  result[0] = builder.create<BigInt::ReduceOp>(loc, result[0], prime);
+  result[1] = builder.create<BigInt::AddOp>(loc, result[1], primesqr5);
+  result[1] = builder.create<BigInt::ReduceOp>(loc, result[1], prime);
+  result[2] = builder.create<BigInt::AddOp>(loc, result[2], primesqr5);
+  result[2] = builder.create<BigInt::ReduceOp>(loc, result[2], prime);
+  result[3] = builder.create<BigInt::AddOp>(loc, result[3], primesqr5);
+  result[3] = builder.create<BigInt::ReduceOp>(loc, result[3], prime);
+  result[4] = builder.create<BigInt::AddOp>(loc, result[4], primesqr5);
+  result[4] = builder.create<BigInt::ReduceOp>(loc, result[4], prime);
+  result[5] = builder.create<BigInt::AddOp>(loc, result[5], primesqr5);
+  result[5] = builder.create<BigInt::ReduceOp>(loc, result[5], prime);
+
+  return result;
+}
+
+llvm::SmallVector<Value, 7> extDegSixMul(mlir::OpBuilder builder,
+                                         mlir::Location loc,
+                                         llvm::SmallVector<Value, 7> lhs,
+                                         llvm::SmallVector<Value, 7> rhs,
+                                         Value prime,
+                                         Value primesqr5) {
+  assert(lhs.size() == 6);
+  assert(rhs.size() == 6);
+  llvm::SmallVector<Value, 7> result(6);
+
+  auto b10_p_b11 = builder.create<BigInt::AddOp>(loc, rhs[2], rhs[3]);
+  auto b10_m_b11 = builder.create<BigInt::SubOp>(loc, rhs[2], rhs[3]);
+  auto b20_p_b21 = builder.create<BigInt::AddOp>(loc, rhs[4], rhs[5]);
+  auto b20_m_b21 = builder.create<BigInt::SubOp>(loc, rhs[4], rhs[5]);
+
+  result[0] = builder.create<BigInt::MulOp>(loc, lhs[0], rhs[0]);
+  Value prod = builder.create<BigInt::MulOp>(loc, lhs[1], rhs[1]);
+  result[0] = builder.create<BigInt::SubOp>(loc, result[0], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[2], b20_m_b21);
+  result[0] = builder.create<BigInt::AddOp>(loc, result[0], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[3], b20_p_b21);
+  result[0] = builder.create<BigInt::SubOp>(loc, result[0], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[4], b10_m_b11);
+  result[0] = builder.create<BigInt::AddOp>(loc, result[0], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[5], b10_p_b11);
+  result[0] = builder.create<BigInt::SubOp>(loc, result[0], prod);
+  result[0] = builder.create<BigInt::AddOp>(loc, result[0], primesqr5);
+  result[0] = builder.create<BigInt::ReduceOp>(loc, result[0], prime);
+
+  result[1] = builder.create<BigInt::MulOp>(loc, lhs[0], rhs[1]);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[1], rhs[0]);
+  result[1] = builder.create<BigInt::AddOp>(loc, result[1], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[2], b20_p_b21);
+  result[1] = builder.create<BigInt::AddOp>(loc, result[1], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[3], b20_m_b21);
+  result[1] = builder.create<BigInt::AddOp>(loc, result[1], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[4], b10_p_b11);
+  result[1] = builder.create<BigInt::AddOp>(loc, result[1], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[5], b10_m_b11);
+  result[1] = builder.create<BigInt::AddOp>(loc, result[1], prod);
+  result[1] = builder.create<BigInt::AddOp>(loc, result[1], primesqr5);
+  result[1] = builder.create<BigInt::ReduceOp>(loc, result[1], prime);
+
+  result[2] = builder.create<BigInt::MulOp>(loc, lhs[0], rhs[2]);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[1], rhs[3]);
+  result[2] = builder.create<BigInt::SubOp>(loc, result[2], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[2], rhs[0]);
+  result[2] = builder.create<BigInt::AddOp>(loc, result[2], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[3], rhs[1]);
+  result[2] = builder.create<BigInt::SubOp>(loc, result[2], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[4], b20_m_b21);
+  result[2] = builder.create<BigInt::AddOp>(loc, result[2], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[5], b20_p_b21);
+  result[2] = builder.create<BigInt::SubOp>(loc, result[2], prod);
+  result[2] = builder.create<BigInt::AddOp>(loc, result[2], primesqr5);
+  result[2] = builder.create<BigInt::ReduceOp>(loc, result[2], prime);
+
+  result[3] = builder.create<BigInt::MulOp>(loc, lhs[0], rhs[3]);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[1], rhs[2]);
+  result[3] = builder.create<BigInt::AddOp>(loc, result[3], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[2], rhs[1]);
+  result[3] = builder.create<BigInt::AddOp>(loc, result[3], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[3], rhs[0]);
+  result[3] = builder.create<BigInt::AddOp>(loc, result[3], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[4], b20_p_b21);
+  result[3] = builder.create<BigInt::AddOp>(loc, result[3], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[5], b20_m_b21);
+  result[3] = builder.create<BigInt::AddOp>(loc, result[3], prod);
+  result[3] = builder.create<BigInt::AddOp>(loc, result[3], primesqr5);
+  result[3] = builder.create<BigInt::ReduceOp>(loc, result[3], prime);
+
+  result[4] = builder.create<BigInt::MulOp>(loc, lhs[0], rhs[4]);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[1], rhs[5]);
+  result[4] = builder.create<BigInt::SubOp>(loc, result[4], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[2], rhs[2]);
+  result[4] = builder.create<BigInt::AddOp>(loc, result[4], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[3], rhs[3]);
+  result[4] = builder.create<BigInt::SubOp>(loc, result[4], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[4], rhs[0]);
+  result[4] = builder.create<BigInt::AddOp>(loc, result[4], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[5], rhs[1]);
+  result[4] = builder.create<BigInt::SubOp>(loc, result[4], prod);
+  result[4] = builder.create<BigInt::AddOp>(loc, result[4], primesqr5);
+  result[4] = builder.create<BigInt::ReduceOp>(loc, result[4], prime);
+
+  result[5] = builder.create<BigInt::MulOp>(loc, lhs[0], rhs[5]);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[1], rhs[4]);
+  result[5] = builder.create<BigInt::AddOp>(loc, result[5], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[2], rhs[3]);
+  result[5] = builder.create<BigInt::AddOp>(loc, result[5], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[3], rhs[2]);
+  result[5] = builder.create<BigInt::AddOp>(loc, result[5], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[4], rhs[1]);
+  result[5] = builder.create<BigInt::AddOp>(loc, result[5], prod);
+  prod = builder.create<BigInt::MulOp>(loc, lhs[5], rhs[0]);
+  result[5] = builder.create<BigInt::AddOp>(loc, result[5], prod);
+  result[5] = builder.create<BigInt::AddOp>(loc, result[5], primesqr5);
+  result[5] = builder.create<BigInt::ReduceOp>(loc, result[5], prime);
+
+  return result;
+}
+
 llvm::SmallVector<Value, 3> extMul(mlir::OpBuilder builder,
                                    mlir::Location loc,
                                    llvm::SmallVector<Value, 3> lhs,
@@ -265,6 +459,38 @@ void genExtFieldXXOneMul(mlir::OpBuilder builder, mlir::Location loc, size_t bit
   auto result = BigInt::field::extXXOneMul(builder, loc, lhs, rhs, prime, primesqr);
   for (size_t i = 0; i < 2; i++) {
     builder.create<BigInt::StoreOp>(loc, result[i], 15, i * chunkwidth);
+  }
+}
+
+void genExtFieldDegSixMul(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth) {
+  assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
+  size_t chunkwidth = bitwidth / 128;
+  llvm::SmallVector<Value, 7> lhs(6);
+  llvm::SmallVector<Value, 7> rhs(6);
+  for (size_t i = 0; i < 6; i++) {
+    lhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, i * chunkwidth);
+    rhs[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, i * chunkwidth);
+  }
+  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 13, 0);
+  auto primesqr5 = builder.create<BigInt::LoadOp>(loc, 2 * bitwidth, 14, 0);
+  auto result = BigInt::field::extDegSixMul(builder, loc, lhs, rhs, prime, primesqr5);
+  for (size_t i = 0; i < 6; i++) {
+    builder.create<BigInt::StoreOp>(loc, result[i], 15, i * chunkwidth);
+  }
+}
+
+void genExtFieldDegSixSqr(mlir::OpBuilder builder, mlir::Location loc, size_t bitwidth) {
+  assert(bitwidth % 128 == 0); // Bitwidth must be an even number of 128-bit chunks
+  size_t chunkwidth = bitwidth / 128;
+  llvm::SmallVector<Value, 7> inp(6);
+  for (size_t i = 0; i < 6; i++) {
+    inp[i] = builder.create<BigInt::LoadOp>(loc, bitwidth, 11, i * chunkwidth);
+  }
+  auto prime = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0);
+  auto primesqr5 = builder.create<BigInt::LoadOp>(loc, 2 * bitwidth, 13, 0);
+  auto result = BigInt::field::extDegSixSqr(builder, loc, inp, prime, primesqr5);
+  for (size_t i = 0; i < 6; i++) {
+    builder.create<BigInt::StoreOp>(loc, result[i], 14, i * chunkwidth);
   }
 }
 
