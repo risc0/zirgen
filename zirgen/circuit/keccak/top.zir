@@ -434,6 +434,7 @@ component ShaNextBlock(prev: ControlState) {
     ControlState(CycleTypeExpand(), 0, 0, 0),
     {
       more := NondetReg(NextPreimage());
+      PicusInput!(more);
       AssertBit(more);
       if (more) {
         ControlState(CycleTypeRead(), 0, 0, 0)
@@ -445,6 +446,7 @@ component ShaNextBlock(prev: ControlState) {
 }
 
 component ComputeCurrentStep(prevMux: Array<Val, 12>, prev: ControlState) {
+  PicusHintEq!(reduce prevMux init 0 with Add, 1);
   prevMux -> (
     ControlState(CycleTypeShutdown(), 0, 0, 0),
     ControlState(CycleTypeSha(), 0, 0, 0),  // Read -> SHA
