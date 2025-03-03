@@ -41,11 +41,12 @@ struct LowerDirectives : public OpRewritePattern<DirectiveOp> {
       rewriter.replaceOpWithNewOp<Zll::ExternOp>(
           directive, TypeRange{}, ValueRange{cond, message}, "Assert", /*extra=*/"");
       return success();
-    } else if (directive.getName() == "PicusInput") {
+    } else if (directive.getName() == "PicusInput" || directive.getName() == "PicusHintEq") {
       // This is a no-op unless compiling with `--emit=picus`. Since this pass
       // is after picus emission in the compiler pipeline, we are in some other
       // compilation mode. Just erase it.
       rewriter.eraseOp(directive);
+      return success();
     } else {
       return failure();
     }

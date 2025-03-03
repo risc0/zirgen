@@ -159,7 +159,8 @@ private:
     // the mapping between MLIR values and Picus signals. Because Picus doesn't
     // have control flow, MapOp/ReduceOp are unrolled.
     llvm::TypeSwitch<Operation*>(op)
-        .Case< BitAndOp, ExternOp, InRangeOp, InvOp, IsZeroOp, ModOp>([&](auto op) { visitNondetOp(op); })
+        .Case<BitAndOp, ExternOp, InRangeOp, InvOp, IsZeroOp, ModOp>(
+            [&](auto op) { visitNondetOp(op); })
         .Case<AddOp, SubOp, MulOp>([&](auto op) { visitBinaryPolyOp(op); })
         .Case<ConstOp,
               StringOp,
@@ -286,8 +287,8 @@ private:
     // inline the expression at the point of use instead of creating a dedicated
     // signal.
     std::string expr = "(" + std::string(symbol) + " " +
-        cast<Signal>(valuesToSignals.at(op->getOperand(0))).str() + " " +
-        cast<Signal>(valuesToSignals.at(op->getOperand(1))).str() + ")";
+                       cast<Signal>(valuesToSignals.at(op->getOperand(0))).str() + " " +
+                       cast<Signal>(valuesToSignals.at(op->getOperand(1))).str() + ")";
 
     if (op->getResult(0).hasOneUse()) {
       valuesToSignals.insert({op->getResult(0), Signal::get(ctx, expr)});
@@ -487,6 +488,10 @@ private:
       auto high = cast<Signal>(valuesToSignals.at(args[2]));
       os << "(assume (<= " << low.str() << " " << x.str() << "))\n";
       os << "(assume (< " << x.str() << " " << high.str() << "))\n";
+    } else if (directive.getName() == "PicusHintEq") {
+      auto leftSignal = cast<Signal>(valuesToSignals.at(directive.getArgs()[0]));
+      auto rightSignal = cast<Signal>(valuesToSignals.at(directive.getArgs()[1]));
+      os << "(assert (= " << leftSignal.str() << " " << rightSignal.str() << "))\n";
     } else if (directive.getName() == "PicusInput") {
       auto signal = valuesToSignals.at(directive.getArgs()[0]);
       declareSignals(signal, SignalType::AssumeDeterministic, /*skipLayout=*/true);
@@ -581,7 +586,8 @@ private:
   }
 
   void declareSignals(AnySignal signal, SignalType type, bool skipLayout = false) {
-    visit(signal, [&](Signal s) { declareSignal(s, type); }, /*visitedLayout=*/skipLayout);
+    visit(
+        signal, [&](Signal s) { declareSignal(s, type); }, /*visitedLayout=*/skipLayout);
   }
 
   void declareSignal(Signal signal, SignalType type) {
