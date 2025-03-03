@@ -63,7 +63,7 @@ void addAccumAndGlobalPasses(mlir::PassManager& pm) {
 }
 
 void addTypingPasses(mlir::PassManager& pm) {
-  pm.addPass(zirgen::Zhlt::createLowerAssumeRangePass());
+  pm.addPass(zirgen::Zhlt::createLowerDirectivesPass());
   pm.addPass(zirgen::dsl::createGenerateBackPass());
   pm.addPass(zirgen::dsl::createGenerateCheckLayoutPass());
   pm.addPass(zirgen::dsl::createGenerateLayoutPass());

@@ -35,7 +35,7 @@ cc_library(
         "AnalyzeBuffers.cpp",
         "GenerateSteps.cpp",
         "HoistAllocs.cpp",
-        "LowerAssumeRange.cpp",
+        "LowerDirectives.cpp",
         "LowerFuncs.cpp",
         "OptimizeParWitgen.cpp",
         "OutlineIfs.cpp",

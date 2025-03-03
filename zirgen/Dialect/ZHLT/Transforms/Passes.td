@@ -62,9 +62,9 @@ def StripAliasLayoutOps : Pass<"inline-layout", "mlir::ModuleOp"> {
   let dependentDialects = ["zirgen::Zhlt::ZhltDialect"];
 }
 
-def LowerAssumeRange : Pass<"lower-assume-range", "mlir::ModuleOp"> {
-  let summary = "Translate AssumeRange directives to assertions";
-  let constructor = "zirgen::Zhlt::createLowerAssumeRangePass()";
+def LowerDirectives : Pass<"lower-assume-range", "mlir::ModuleOp"> {
+  let summary = "Translate directives to lower level code";
+  let constructor = "zirgen::Zhlt::createLowerDirectivesPass()";
   let dependentDialects = ["zirgen::Zhlt::ZhltDialect"];
 }
 
