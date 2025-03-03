@@ -85,6 +85,10 @@ jobs:
         env:
           CONFIG: ${{ matrix.config }}
         run: bazelisk test //... $CONFIG
+      - name: (macOS) Clean Up `bazelisk` Installation Files
+        if: runner.os == 'macOS'
+        run: rm -rf /var/tmp/_bazel_$USER/install/*
+        shell: bash
 
   test:
     runs-on: [self-hosted, prod, "${{ matrix.os }}", "${{ matrix.arch }}", "${{ matrix.device }}"]
