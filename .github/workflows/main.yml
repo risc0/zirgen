@@ -28,7 +28,7 @@ jobs:
         with:
           # Full history is required by license-check.py
           fetch-depth: 0
-      - uses: risc0/risc0/.github/actions/rustup@4ab1f0bba1b0515819221bebc59f95aad0a6a3a9
+      - uses: risc0/risc0/.github/actions/rustup@a9d723e29a44563497220a998b5de4e03d9da049
       - name: Install cargo-sort
         uses: risc0/cargo-install@v1
         with:
@@ -55,7 +55,7 @@ jobs:
       - uses: ./.github/actions/bazelisk
         with:
           cache-key: bootstrap
-      - uses: risc0/risc0/.github/actions/rustup@4ab1f0bba1b0515819221bebc59f95aad0a6a3a9
+      - uses: risc0/risc0/.github/actions/rustup@a9d723e29a44563497220a998b5de4e03d9da049
       - uses: risc0/risc0/.github/actions/sccache@1a373c71585766e4f6985b96c48389daaf69d528
         with:
           key: ${{ matrix.os }}-bootstrap
@@ -112,7 +112,7 @@ jobs:
       - uses: actions/checkout@v3
       - if: matrix.feature == 'cuda'
         uses: ./.github/actions/cuda
-      - uses: risc0/risc0/.github/actions/rustup@4ab1f0bba1b0515819221bebc59f95aad0a6a3a9
+      - uses: risc0/risc0/.github/actions/rustup@a9d723e29a44563497220a998b5de4e03d9da049
       - uses: risc0/risc0/.github/actions/sccache@1a373c71585766e4f6985b96c48389daaf69d528
         with:
           key: ${{ matrix.os }}-${{ matrix.feature }}
@@ -133,7 +133,7 @@ jobs:
       RISC0_BUILD_LOCKED: 1
     steps:
       - uses: actions/checkout@v3
-      - uses: risc0/risc0/.github/actions/rustup@4ab1f0bba1b0515819221bebc59f95aad0a6a3a9
+      - uses: risc0/risc0/.github/actions/rustup@a9d723e29a44563497220a998b5de4e03d9da049
       - uses: risc0/risc0/.github/actions/sccache@1a373c71585766e4f6985b96c48389daaf69d528
       - run: |
           curl -L https://risczero.com/install | bash
