@@ -45,7 +45,7 @@ runs:
 
     - env:
         BAZELISK_URL: https://github.com/bazelbuild/bazelisk/releases/download
-        BAZELISK_VERSION: v1.16.0
+        BAZELISK_VERSION: v1.25.0
       run: |
         if ! command -v bazelisk &>/dev/null; then
           BAZELISK_FILE=bazelisk-$BAZELISK_OS-$BAZELISK_ARCH
