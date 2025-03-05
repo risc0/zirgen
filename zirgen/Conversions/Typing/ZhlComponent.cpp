@@ -552,8 +552,8 @@ Zhlt::ComponentOp LoweringImpl::gen(ComponentOp component,
 
   for (NamedAttribute attr : component->getDiscardableAttrs()) {
     StringRef name = attr.getName();
-    if (name == "function" || name == "argument" || name == "generic" || name == "picus_analyze" ||
-        name == "picus_inline") {
+    if (name == "argument" || name == "extern" || name == "function" || name == "generic" ||
+        name == "picus_analyze" || name == "picus_inline") {
       ctor->setAttr(name, attr.getValue());
     } else {
       ctor->emitError() << "unknown attribute `" << name << "`";

@@ -147,7 +147,7 @@ TEST(lower, Extern) {
 
   string expect =
       R"(module {
-  zhl.component @MyExtern {
+  zhl.component @MyExtern attributes {extern} {
     %0 = zhl.global "XType"
     %1 = zhl.parameter "x"(0) : %0
     %2 = zhl.global "YType"

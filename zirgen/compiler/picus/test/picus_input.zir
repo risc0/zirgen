@@ -6,7 +6,6 @@
 // CHECK-NEXT: (output result__layout_store_1__super__super__super)
 // CHECK-NEXT: (output result__layout_store_2__super__super__super)
 // CHECK-NEXT: (output result__super)
-// CHECK-NEXT: (call [x0__super_0 x0__super_1 x0__super_2] ReadData [])
 // CHECK-NEXT: (assume-deterministic result__layout_store_0__super__super__super)
 // CHECK-NEXT: (assume-deterministic result__layout_store_1__super__super__super)
 // CHECK-NEXT: (assume-deterministic result__layout_store_2__super__super__super)
