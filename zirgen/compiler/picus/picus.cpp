@@ -85,6 +85,13 @@ std::string canonicalizeIdentifier(std::string ident) {
   return ident;
 }
 
+// Determine if a value is used approximately once in the emitted *Picus code*.
+// Values are typically emitted where they are used, but may also be emitted
+// more times if they occur in a mux selector.
+bool isUsedOnce(Value val) {
+  return val.hasOneUse() && !isa<SwitchOp>(val.getUses().begin()->getOwner());
+}
+
 class PicusPrinter {
 public:
   PicusPrinter(llvm::raw_ostream& os) : os(os) {}
@@ -291,7 +298,7 @@ private:
     // signal.
     std::string expr = "(- 0 " + cast<Signal>(valuesToSignals.at(neg.getIn())).str() + ")";
 
-    if (neg->getResult(0).hasOneUse()) {
+    if (isUsedOnce(neg->getResult(0))) {
       valuesToSignals.insert({neg.getOut(), Signal::get(ctx, expr)});
     } else {
       auto signal = Signal::get(ctx, freshName());
@@ -317,7 +324,7 @@ private:
                        cast<Signal>(valuesToSignals.at(op->getOperand(0))).str() + " " +
                        cast<Signal>(valuesToSignals.at(op->getOperand(1))).str() + ")";
 
-    if (op->getResult(0).hasOneUse()) {
+    if (isUsedOnce(op->getResult(0))) {
       valuesToSignals.insert({op->getResult(0), Signal::get(ctx, expr)});
     } else {
       auto signal = Signal::get(ctx, freshName());
