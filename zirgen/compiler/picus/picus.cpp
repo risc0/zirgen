@@ -244,7 +244,13 @@ private:
       llvm::errs() << "index: " << *subscript.getIndex().getDefiningOp() << "\n";
       return;
     }
-    uint64_t index = cast<PolynomialAttr>(results[0].get<Attribute>())[0];
+    uint64_t index = UINT64_MAX;
+    auto attr = results[0].get<Attribute>();
+    if (auto polyAttr = dyn_cast<PolynomialAttr>(attr)) {
+      index = polyAttr[0];
+    } else if (auto intAttr = dyn_cast<IntegerAttr>(attr)) {
+      index = getIndexVal(intAttr);
+    }
     auto subSignal = signal[index];
     valuesToSignals.insert({subscript.getOut(), subSignal});
   }
