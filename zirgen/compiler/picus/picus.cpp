@@ -170,6 +170,7 @@ private:
         .Case<ConstOp,
               StringOp,
               VariadicPackOp,
+              NegOp,
               ExternOp,
               LoadOp,
               LookupOp,
@@ -282,6 +283,21 @@ private:
         },
         " ");
     os << "])\n";
+  }
+
+  void visitOp(NegOp neg) {
+    // Optimization: if the result is only used once, use a pseudosignal to
+    // inline the expression at the point of use instead of creating a dedicated
+    // signal.
+    std::string expr = "(- 0 " + cast<Signal>(valuesToSignals.at(neg.getIn())).str() + ")";
+
+    if (neg->getResult(0).hasOneUse()) {
+      valuesToSignals.insert({neg.getOut(), Signal::get(ctx, expr)});
+    } else {
+      auto signal = Signal::get(ctx, freshName());
+      valuesToSignals.insert({neg.getOut(), signal});
+      os << "(assert (= " << signal.str() << " " << expr << "))\n";
+    }
   }
 
   void visitBinaryPolyOp(Operation* op) {

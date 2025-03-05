@@ -84,7 +84,8 @@ struct InlineForPicusPass : public InlineForPicusBase<InlineForPicusPass> {
       auto callee = op.getCallee();
       return callee == "Add" || callee == "BitAnd" || callee == "Component" ||
              callee == "InRange" || callee == "Inv" || callee == "Isz" || callee == "Mod" ||
-             callee == "Mul" || callee == "NondetReg" || callee == "Sub" || callee == "Val";
+             callee == "Mul" || callee == "Neg" || callee == "NondetReg" || callee == "Sub" ||
+             callee == "Val";
     };
 
     // Get an instance of the inliner.
