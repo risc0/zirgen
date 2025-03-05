@@ -515,6 +515,13 @@ private:
       auto high = cast<Signal>(valuesToSignals.at(args[2]));
       os << "(assume (<= " << low.str() << " " << x.str() << "))\n";
       os << "(assume (< " << x.str() << " " << high.str() << "))\n";
+    } if (directive.getName() == "AssertRange") {
+      auto args = directive.getArgs();
+      auto low = cast<Signal>(valuesToSignals.at(args[0]));
+      auto x = cast<Signal>(valuesToSignals.at(args[1]));
+      auto high = cast<Signal>(valuesToSignals.at(args[2]));
+      os << "(assert (<= " << low.str() << " " << x.str() << "))\n";
+      os << "(assert (< " << x.str() << " " << high.str() << "))\n";
     } else if (directive.getName() == "PicusHintEq") {
       auto leftSignal = cast<Signal>(valuesToSignals.at(directive.getArgs()[0]));
       auto rightSignal = cast<Signal>(valuesToSignals.at(directive.getArgs()[1]));
