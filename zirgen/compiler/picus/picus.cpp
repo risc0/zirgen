@@ -515,6 +515,7 @@ private:
   }
 
   void visitOp(DirectiveOp directive) {
+    os << "directive: " << directive->getName() << "\n";
     if (directive.getName() == "AssumeRange") {
       auto args = directive.getArgs();
       auto low = cast<Signal>(valuesToSignals.at(args[0]));
@@ -522,7 +523,7 @@ private:
       auto high = cast<Signal>(valuesToSignals.at(args[2]));
       os << "(assume (<= " << low.str() << " " << x.str() << "))\n";
       os << "(assume (< " << x.str() << " " << high.str() << "))\n";
-    } if (directive.getName() == "AssertRange") {
+    } else if (directive.getName() == "AssertRange") {
       auto args = directive.getArgs();
       auto low = cast<Signal>(valuesToSignals.at(args[0]));
       auto x = cast<Signal>(valuesToSignals.at(args[1]));
