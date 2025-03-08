@@ -58,60 +58,123 @@ bool compare(Operation* op1, Operation* op2) {
 
 } // namespace
 
-// For structure-like components, if two members are equal in the PackOp at the
-// end of the constructor, those members will ultimately be equal in all other
-// situations, such as when reconstructing an instance from a back and when
-// zero-initializing (trivially, since both members are zeroed).
+// Look for code shared between mux arms, and hoist it. If code is common to at
+// least two arms, hoisting it reduces code size. However, this hurts code speed
+// because that code will be unnecessarily executed for any mux arms where it
+// didn't previously occur. That being said, this is always a beneficial
+// optimization if the code occurs on *every* mux arm.
 struct HoistCommonMuxCodePass : public HoistCommonMuxCodeBase<HoistCommonMuxCodePass> {
   HoistCommonMuxCodePass() = default;
+  HoistCommonMuxCodePass(bool eager) { this->eager = eager; }
   HoistCommonMuxCodePass(const HoistCommonMuxCodePass& pass) {}
 
   void runOnOperation() override {
     getOperation().walk<WalkOrder::PostOrder>([&](SwitchOp mux) {
       // If code in the mux is shared by multiple but not all mux arms, then
-      // hoisting it reduces code size but increases execution cost. Since we
-      // want code shared by all arms, search the first mux arm for hoistable
-      // operations, and then search the other mux arms for matching operations.
-      auto it = mux.getRegion(0).op_begin();
-      while (it != mux->getRegion(0).op_end()) {
+      // hoisting it reduces code size but increases execution cost. We at worst
+      // break even on execution if it's shared by all mux arms.
+      if (eager) {
+        hoistForSize(mux);
+      } else {
+        hoistForSpeed(mux);
+      }
+    });
+  }
+
+  void hoistForSpeed(SwitchOp mux) {
+    // We're looking for operations shared in all mux arms, and all such
+    // operations must also be in the first mux arm.
+    auto it = mux.getRegion(0).op_begin();
+    while (it != mux->getRegion(0).op_end()) {
+      Operation& op = *(it++);
+      if (isHoistable(&op)) {
+        SmallVector<Operation*> toHoist;
+        toHoist.reserve(mux.getArms().size());
+        toHoist.push_back(&op);
+        if (shouldHoistForSpeed(mux, op, toHoist)) {
+          doHoist(mux, toHoist);
+        }
+      }
+    }
+  }
+
+  // Return true if hoisting `op` out of `mux` doesn't add redundant execution
+  bool shouldHoistForSpeed(SwitchOp mux, Operation& op, SmallVector<Operation*>& toHoist) {
+    // Check if `op` occurs in all arms of `mux`. We already know it occurs in
+    // the first arm, and since it's hoistable in the first arm it must be
+    // hoistable in all other arms, so skip these checks.
+    return llvm::all_of(mux.getRegions(), [&](Region* region) {
+      if (region->getRegionNumber() == 0)
+        return true;
+
+      return llvm::any_of(region->getOps(), [&](Operation& op2) {
+        if (compare(&op, &op2)) {
+          toHoist.push_back(&op2);
+          return true;
+        }
+        return false;
+      });
+    });
+  }
+
+  void hoistForSize(SwitchOp mux) {
+    // We're looking for operations shared in two or more mux arms, which means
+    // we need to consider operations from any pair of mux arms.
+    for (size_t i = 0; i < mux->getNumRegions(); ++i) {
+      Region& region = mux.getRegion(i);
+      auto it = region.op_begin();
+      while (it != region.op_end()) {
         Operation& op = *(it++);
         if (isHoistable(&op)) {
           SmallVector<Operation*> toHoist;
           toHoist.reserve(mux.getArms().size());
           toHoist.push_back(&op);
-
-          bool hoistable = llvm::all_of(mux.getRegions(), [&](Region* region) {
-            if (region->getRegionNumber() == 0)
-              return true;
-
-            return llvm::any_of(region->getOps(), [&](Operation& op2) {
-              if (compare(&op, &op2)) {
-                toHoist.push_back(&op2);
-                return true;
-              }
-              return false;
-            });
-          });
-
-          if (hoistable) {
-            LLVM_DEBUG(llvm::dbgs() << "hoist: " << *toHoist[0] << "\n");
-            toHoist[0]->moveBefore(mux);
-            for (size_t i = 1; i < toHoist.size(); ++i) {
-              toHoist[i]->replaceAllUsesWith(toHoist[0]->getResults());
-              toHoist[i]->erase();
-              ++opsDeleted;
-            }
+          if (shouldHoistForSize(mux, op, i, toHoist)) {
+            doHoist(mux, toHoist);
           }
         }
       }
-    });
+    }
+  }
+
+  // Return true if hoisting `op` out of `mux` reduces code size
+  bool shouldHoistForSize(SwitchOp mux, Operation& op, size_t i, SmallVector<Operation*>& toHoist) {
+    // Check if op occurs in multiple arms of `mux`. We already know it occurs
+    // in the first arm, so check if any of the other arms have it as well.
+    // Since it's hoistable in the first arm, it's also hoistable in all other
+    // arms, so we don't need to check again.
+    bool shouldHoist = false;
+    for (size_t j = i + 1; j < mux->getNumRegions(); ++j) {
+      shouldHoist |= llvm::any_of(mux.getRegion(j).getOps(), [&](Operation& op2) {
+        if (compare(&op, &op2)) {
+          toHoist.push_back(&op2);
+          return true;
+        }
+        return false;
+      });
+    }
+    return shouldHoist;
+  }
+
+  void doHoist(SwitchOp mux, ArrayRef<Operation*> toHoist) {
+    LLVM_DEBUG(llvm::dbgs() << "hoist: " << *toHoist[0] << "\n");
+    toHoist[0]->moveBefore(mux);
+    for (size_t i = 1; i < toHoist.size(); ++i) {
+      toHoist[i]->replaceAllUsesWith(toHoist[0]->getResults());
+      toHoist[i]->erase();
+      ++opsDeleted;
+    }
   }
 
   Statistic opsDeleted{this, "opsDeleted", "number of operations saved by mux hoisting"};
 };
 
 std::unique_ptr<OperationPass<ModuleOp>> createHoistCommonMuxCodePass() {
-  return std::make_unique<HoistCommonMuxCodePass>();
+  return std::make_unique<HoistCommonMuxCodePass>(false);
+}
+
+std::unique_ptr<OperationPass<ModuleOp>> createHoistCommonMuxCodePass(bool eager) {
+  return std::make_unique<HoistCommonMuxCodePass>(eager);
 }
 
 } // namespace zirgen::Zhlt

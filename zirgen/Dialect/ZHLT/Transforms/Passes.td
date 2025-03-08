@@ -42,6 +42,10 @@ def HoistCommonMuxCode : Pass<"hoist-from-mux", "mlir::ModuleOp"> {
   let summary = "Hoist code shared across all mux arms out of the mux";
   let constructor = "zirgen::Zhlt::createHoistCommonMuxCodePass()";
   let dependentDialects = ["zirgen::Zhlt::ZhltDialect"];
+  let options = [
+    Option<"eager", "mux-hoist-eager", "bool", /*default=*/"false",
+           "If true, hoist code shared by 2 or more mux arms">,
+  ];
 }
 
 def StripTests : Pass<"strip-tests", "mlir::ModuleOp"> {

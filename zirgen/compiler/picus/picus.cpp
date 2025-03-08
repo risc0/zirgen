@@ -18,6 +18,7 @@
 #include "mlir/Transforms/Passes.h"
 #include "zirgen/Dialect/ZHLT/IR/TypeUtils.h"
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
+#include "zirgen/Dialect/ZHLT/Transforms/Passes.h"
 #include "zirgen/Dialect/ZStruct/Transforms/Passes.h"
 #include "zirgen/dsl/passes/Passes.h"
 #include "llvm/ADT/TypeSwitch.h"
@@ -675,6 +676,7 @@ void printPicus(ModuleOp mod, llvm::raw_ostream& os) {
   PassManager pm(mod->getContext());
   pm.addPass(zirgen::dsl::createGenerateBackPass());
   pm.addPass(zirgen::dsl::createInlineForPicusPass());
+  pm.addPass(zirgen::Zhlt::createHoistCommonMuxCodePass(/*eager=*/true));
   pm.addPass(createUnrollPass());
   pm.addPass(createCanonicalizerPass());
   if (failed(pm.run(mod))) {
