@@ -36,6 +36,7 @@ cc_library(
         "ElideRedundantMembers.cpp",
         "GenerateSteps.cpp",
         "HoistAllocs.cpp",
+        "HoistCommonMuxCode.cpp",
         "LowerAssumeRange.cpp",
         "LowerFuncs.cpp",
         "OptimizeParWitgen.cpp",
