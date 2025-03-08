@@ -5,10 +5,9 @@
 // the expected output signals.
 
 // CHECK: (begin-module Complicated)
-// CHECK-NEXT: (input x1)
-// CHECK-NEXT: (output result__layout_a__super__super)
-// CHECK-NEXT: (output result__layout_c__super__super)
-// CHECK-NEXT: (output result__super)
+// CHECK-NEXT: (input {{x[0-9]+}})
+// CHECK-NEXT: (output layout_a__super__super)
+// CHECK-NEXT: (output layout_c__super__super)
 // CHECK-NOT: output
 // CHECK: (end-module)
 

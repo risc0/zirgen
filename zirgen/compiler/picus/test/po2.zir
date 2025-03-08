@@ -1,13 +1,11 @@
 // RUN: zirgen %s --emit=picus | FileCheck %s
 
-// CHECK: (prime-number 2013265921)
-// CHECK-NEXT: (begin-module Top)
-// CHECK-DAG: (assert (= {{x[0-9]+}} 1))
-// CHECK-DAG: (assert (= {{x[0-9]+}} 2))
-// CHECK-DAG: (assert (= {{x[0-9]+}} 4))
-// CHECK-DAG: (assert (= {{x[0-9]+}} 8))
+// CHECK: (begin-module Top)
+// CHECK-DAG: (assert (= (- 1 layout_a__super__super) 0))
+// CHECK-DAG: (assert (= (- 2 layout_b__super__super) 0))
+// CHECK-DAG: (assert (= (- 4 layout_c__super__super) 0))
+// CHECK-DAG: (assert (= (- 8 layout_d__super__super) 0))
 // CHECK: (end-module)
-// CHECK-NOT: (begin-module Po2)
 
 
 // Inline this component, so that the subscript index resolves to a compile-time

@@ -4,9 +4,7 @@
 // CHECK-NEXT: (begin-module Top)
 // CHECK-NEXT: (output layout_a__super)
 // CHECK-NEXT: (output layout_b__super__super)
-// CHECK-NEXT: (assert (= x0 0))
-// CHECK-NEXT: (assert (= x1 (- x0 layout_b__super__super)))
-// CHECK-NEXT: (assert (= x1 0))
+// CHECK-NEXT: (assert (= (- 0 layout_b__super__super) 0))
 // CHECK-NEXT: (assert (= layout_a__super layout_b__super__super))
 // CHECK-NEXT: (end-module)
 

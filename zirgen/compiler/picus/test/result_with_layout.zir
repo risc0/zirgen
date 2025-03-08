@@ -7,12 +7,11 @@
 
 // CHECK: (begin-module Top)
 // CHECK-NEXT: (output layout_x__super__super__super)
-// CHECK-NEXT: (assert (= x0 1))
-// CHECK-NEXT: (call [layout_x__super__super__super ] RegWrapper [x0])
+// CHECK-NEXT: (call [layout_x__super__super__super ] RegWrapper [1])
 // CHECK-NEXT: (end-module)
 
 // CHECK: (begin-module RegWrapper)
-// CHECK-NEXT: (input x2)
+// CHECK-NEXT: (input {{x[0-9]+}})
 // CHECK-NEXT: (output layout__super__super__super)
 // CHECK-NOT: (output
 // CHECK: (end-module)
