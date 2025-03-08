@@ -18,6 +18,12 @@
 include "mlir/Pass/PassBase.td"
 include "mlir/Rewrite/PassUtil.td"
 
+def ElideRedundantMembers : Pass<"elide-redundant-members", "mlir::ModuleOp"> {
+  let summary = "Prune struct members that are equal by construction";
+  let constructor = "zirgen::Zhlt::createElideRedundantMembersPass()";
+  let dependentDialects = ["zirgen::Zhlt::ZhltDialect"];
+}
+
 def HoistAllocs : Pass<"hoist-allocs", "mlir::ModuleOp"> {
   let summary = "Hoist alloc-only params to callers, then merge";
   let description = [{

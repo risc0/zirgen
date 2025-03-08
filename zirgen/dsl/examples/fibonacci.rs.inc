@@ -105,7 +105,6 @@ pub struct ComponentStruct {}
 #[derive(Copy, Clone, Debug)]
 pub struct RegStruct<'a> {
     pub _super: NondetRegStruct<'a>,
-    pub reg: NondetRegStruct<'a>,
     pub _layout: BoundLayout<'a, NondetRegLayout, Val>,
 }
 #[derive(Copy, Clone, Debug)]
@@ -115,14 +114,12 @@ pub struct GetCycleStruct {
 #[derive(Copy, Clone, Debug)]
 pub struct IsZeroStruct<'a> {
     pub _super: NondetRegStruct<'a>,
-    pub is_zero: NondetRegStruct<'a>,
     pub inv: NondetRegStruct<'a>,
     pub _layout: BoundLayout<'a, IsZeroLayout, Val>,
 }
 #[derive(Copy, Clone, Debug)]
 pub struct CycleCounterStruct<'a> {
     pub _super: NondetRegStruct<'a>,
-    pub cycle: NondetRegStruct<'a>,
     pub is_first_cycle: IsZeroStruct<'a>,
     pub _layout: BoundLayout<'a, CycleCounterLayout, Val>,
 }
@@ -252,8 +249,7 @@ pub fn back_reg<'a>(
     // Reg(<preamble>:5)
     let x2: NondetRegStruct = back_nondet_reg(ctx, distance0, layout1)?;
     return Ok(RegStruct {
-        _super: x2.clone(),
-        reg: x2,
+        _super: x2,
         _layout: layout1,
     });
 }
@@ -266,8 +262,7 @@ pub fn exec_reg<'a>(
     // Reg(<preamble>:6)
     eqz!((arg0 - x2._super), "Reg(<preamble>:6)");
     return Ok(RegStruct {
-        _super: x2.clone(),
-        reg: x2,
+        _super: x2,
         _layout: layout1,
     });
 }
@@ -308,7 +303,6 @@ pub fn exec_is_zero<'a>(
     eqz!(x11, "IsZero(zirgen/dsl/examples/fibonacci.zir:18)");
     return Ok(IsZeroStruct {
         _super: x3,
-        is_zero: x3,
         inv: x5,
         _layout: layout1,
     });
@@ -349,7 +343,6 @@ pub fn exec_cycle_counter<'a>(
     }
     return Ok(CycleCounterStruct {
         _super: x5,
-        cycle: x5,
         is_first_cycle: x6,
         _layout: layout0,
     });

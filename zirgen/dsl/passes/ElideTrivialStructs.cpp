@@ -97,7 +97,6 @@ struct ElideTrivialStructsPass : public ElideTrivialStructsBase<ElideTrivialStru
     });
 
     AttrTypeReplacer replacer;
-    DenseSet<Type> elided;
     replacer.addReplacement([&](StructType t) { return typeReplacer(replacer, t); });
     replacer.addReplacement([&](LayoutType t) { return typeReplacer(replacer, t); });
     replacer.addReplacement(attrReplacer);

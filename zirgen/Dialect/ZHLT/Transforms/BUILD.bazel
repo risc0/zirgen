@@ -33,6 +33,7 @@ cc_library(
     name = "passes",
     srcs = [
         "AnalyzeBuffers.cpp",
+        "ElideRedundantMembers.cpp",
         "GenerateSteps.cpp",
         "HoistAllocs.cpp",
         "LowerAssumeRange.cpp",
