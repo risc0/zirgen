@@ -19,6 +19,7 @@
 
 namespace zirgen::Zhlt {
 
+std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createElideRedundantMembersPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createHoistAllocsPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createStripTestsPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateStepsPass();

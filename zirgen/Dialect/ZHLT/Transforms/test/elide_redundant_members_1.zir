@@ -1,0 +1,8 @@
+// RUN: zirgen %s --emit=zhltopt | FileCheck %s
+
+// Test that we optimize away the reg member of Reg, which duplicates @super
+// CHECK: !zstruct$Reg = !zstruct.struct<Reg, <"@super": !zstruct$NondetReg, "@layout": !zlayout$Reg>>
+component Top() {
+  a := Reg(5);
+  b := Reg(a);
+}
