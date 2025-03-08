@@ -118,6 +118,7 @@ private:
   void printComponent(ComponentOp component) {
     if (done.count(component))
       return;
+    nameCounter = 0;
 
     outputSignalCounter = 0;
     os << "(begin-module " << canonicalizeIdentifier(component.getName().str()) << ")\n";
@@ -368,21 +369,24 @@ private:
       os << "; mark mux arm\n";
     }
 
-    AnySignal outSignal = signalize("mux_" + freshName(), mux.getType());
-    valuesToSignals.insert({mux.getOut(), outSignal});
+    // Optimization: if the mux result is never used, don't signalize it
+    if (!mux.getOut().use_empty()) {
+      AnySignal outSignal = signalize("mux_" + freshName(), mux.getType());
+      valuesToSignals.insert({mux.getOut(), outSignal});
 
-    SmallVector<Signal> outSignals = flatten(outSignal);
-    for (size_t i = 0; i < outSignals.size(); i++) {
-      os << "(assert (= " << outSignals[i].str();
-      for (size_t j = 0; j < armSignals.size(); j++) {
-        if (j != armSignals.size() - 1)
-          os << " (+";
-        os << " (* " << selectorSignals[j].str() << " " << armSignals[j][i].str() << ")";
+      SmallVector<Signal> outSignals = flatten(outSignal);
+      for (size_t i = 0; i < outSignals.size(); i++) {
+        os << "(assert (= " << outSignals[i].str();
+        for (size_t j = 0; j < armSignals.size(); j++) {
+          if (j != armSignals.size() - 1)
+            os << " (+";
+          os << " (* " << selectorSignals[j].str() << " " << armSignals[j][i].str() << ")";
+        }
+        for (size_t j = 0; j < armSignals.size(); j++) {
+          os << ")";
+        }
+        os << ")\n";
       }
-      for (size_t j = 0; j < armSignals.size(); j++) {
-        os << ")";
-      }
-      os << ")\n";
     }
     os << "; end mux\n";
   }
@@ -515,7 +519,6 @@ private:
   }
 
   void visitOp(DirectiveOp directive) {
-    os << "directive: " << directive->getName() << "\n";
     if (directive.getName() == "AssumeRange") {
       auto args = directive.getArgs();
       auto low = cast<Signal>(valuesToSignals.at(args[0]));
