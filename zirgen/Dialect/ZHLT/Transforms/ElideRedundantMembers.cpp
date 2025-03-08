@@ -61,7 +61,7 @@ struct ElideRedundantMembersPass : public ElideRedundantMembersBase<ElideRedunda
         for (size_t j = i + 1; j < members.size(); j++) {
           if (members[i] == members[j]) {
             LLVM_DEBUG(llvm::dbgs() << "optimizing member " << type.getFields()[j].name
-                                    << " of type " << component->getName());
+                                    << " of type " << component.getName() << "\n");
             membersDeleted++;
             merges.emplace_back(i, j);
           }
@@ -93,7 +93,7 @@ struct ElideRedundantMembersPass : public ElideRedundantMembersBase<ElideRedunda
     });
     getOperation().walk([&](PackOp pack) {
       if (mapping.contains(pack.getType())) {
-        for (auto merge : mapping.at(pack.getType()).merges) {
+        for (auto merge : llvm::reverse(mapping.at(pack.getType()).merges)) {
           pack->eraseOperand(merge.second);
         }
       }
