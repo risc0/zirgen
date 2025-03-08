@@ -6,15 +6,14 @@
 // to the @layout member of the result.
 
 // CHECK: (begin-module Top)
-// CHECK-NEXT: (output result__layout_x__super__super__super)
+// CHECK-NEXT: (output layout_x__super__super__super)
 // CHECK-NEXT: (assert (= x0 1))
-// CHECK-NEXT: (call [result__layout_x__super__super__super x1__super__super__super] RegWrapper [x0])
+// CHECK-NEXT: (call [layout_x__super__super__super ] RegWrapper [x0])
 // CHECK-NEXT: (end-module)
 
 // CHECK: (begin-module RegWrapper)
 // CHECK-NEXT: (input x2)
-// CHECK-NEXT: (output result__layout__super__super__super)
-// CHECK-NEXT: (output result__super__super__super)
+// CHECK-NEXT: (output layout__super__super__super)
 // CHECK-NOT: (output
 // CHECK: (end-module)
 

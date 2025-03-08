@@ -7,11 +7,15 @@
 // CHECK: (begin-module Foo)
 // CHECK-NEXT: (input x0__layout__super__super)
 // CHECK-NEXT: (input x0__super__super)
-// CHECK-NEXT: (output result__layout__super__super__super)
-// CHECK-NEXT: (output result__super__super__super)
+// CHECK-NEXT: (output layout__super__super__super)
 
 #[picus_analyze]
 component Foo(x: Reg) {
   // x@0 = 9;
   Reg(x@0)
+}
+
+component Top() {
+  x := Reg(5);
+  Foo(x)
 }

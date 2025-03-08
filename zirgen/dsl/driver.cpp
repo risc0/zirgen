@@ -187,6 +187,7 @@ int main(int argc, char* argv[]) {
   // layout output.
   // pm.addPass(zirgen::ZStruct::createOptimizeLayoutPass());
   pm.addPass(zirgen::Zhlt::createElideRedundantMembersPass());
+  pm.addPass(zirgen::dsl::createFieldDCEPass());
   pm.addPass(mlir::createCanonicalizerPass());
   pm.addPass(mlir::createCSEPass());
   if (failed(pm.run(typedModule.value()))) {

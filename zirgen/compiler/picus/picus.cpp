@@ -133,6 +133,11 @@ private:
     // The layout is an output
     if (auto layout = component.getLayout()) {
       AnySignal layoutSignal = cast<SignalStruct>(result).get("@layout");
+      if (!layoutSignal) {
+        // And it's still an output even if we prune the @layout member
+        layoutSignal = signalize("layout", layout.getType());
+        declareSignals(layoutSignal, SignalType::Output);
+      }
       valuesToSignals.insert({layout, layoutSignal});
     }
 
