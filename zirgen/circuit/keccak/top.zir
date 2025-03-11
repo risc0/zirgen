@@ -1,6 +1,6 @@
 // RUN: true
 
-import is_zero;
+import cycle_counter;
 import keccak;
 import sha2;
 
@@ -276,7 +276,6 @@ component ShaNextBlockCycle(back1: TopState) {
   topState
 }
 
-extern IsFirstCycle(): Val;
 extern GetPreimage(idx: Val): Val;
 extern NextPreimage(): Val;
 
@@ -474,10 +473,10 @@ component WrapOneHot(oneHot: OneHot<12>) {
 component Top() {
   global finalDigest: DigestReg;
 
-  isFirst := NondetReg(IsFirstCycle());
+  cycle := CycleCounter();
   cycleMux : WrapOneHot;
   controlState : ControlState;
-  controlState := if (isFirst) {
+  controlState := if (cycle.is_first_cycle) {
     controlState@1.cycleType = CycleTypeShutdown();
     ControlState(CycleTypeInit(), 0, 0, 0)
   } else {

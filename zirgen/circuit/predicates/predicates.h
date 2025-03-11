@@ -118,6 +118,7 @@ ReceiptClaim join(ReceiptClaim in1, ReceiptClaim in2);
 ReceiptClaim identity(ReceiptClaim in);
 ReceiptClaim resolve(ReceiptClaim cond, Assumption assum, DigestVal tail, DigestVal journal);
 
+Val readVal(llvm::ArrayRef<Val>& stream);
 DigestVal readSha(llvm::ArrayRef<Val>& stream, bool longDigest = false);
 void writeSha(DigestVal val, std::vector<Val>& stream);
 
