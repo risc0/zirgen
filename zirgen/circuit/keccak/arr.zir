@@ -4,24 +4,28 @@
 // Vector / List functions
 
 // Shifts + Rotates
+#[picus_inline]
 component RotateLeft<SIZE: Val>(in: Array<Val, SIZE>, n: Val) {
   for i : 0..SIZE {
     if (InRange(0, i - n, SIZE)) { in[i - n] } else { in[SIZE + i - n] }
   }
 }
 
+#[picus_inline]
 component RotateRight<SIZE: Val>(in: Array<Val, SIZE>, n: Val) {
   for i : 0..SIZE {
     if (InRange(0, i + n, SIZE)) { in[i + n] } else { in[i + n - SIZE] }
   }
 }
 
+#[picus_inline]
 component ShiftLeft<SIZE: Val>(in: Array<Val, SIZE>, n: Val) {
   for i : 0..SIZE {
     if (InRange(0, i - n, SIZE)) { in[i - n] } else { 0 }
   }
 }
 
+#[picus_inline]
 component ShiftRight<SIZE: Val>(in: Array<Val, SIZE>, n: Val) {
   for i : 0..SIZE {
     if (InRange(0, i + n, SIZE)) { in[i + n] } else { 0 }
