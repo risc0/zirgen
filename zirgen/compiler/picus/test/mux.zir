@@ -9,13 +9,11 @@
 // CHECK-NEXT: (assert (= (- 0 layout_first__super__super) 0))
 // CHECK-NEXT: (assert (= x0 (- 1 layout_first__super__super)))
 // CHECK-NEXT: ; begin mux
-// CHECK-NEXT: (assert (= (* x0 layout_x__super__super__super) (* x0 layout_x_arm0__super__super__super)))
 // CHECK-NEXT: (assert (= (- 7 layout_x_arm0__super__super__super) 0))
 // CHECK-NEXT: ; mark mux arm
-// CHECK-NEXT: (assert (= (* layout_first__super__super layout_x__super__super__super) (* layout_first__super__super layout_x_arm1__super__super__super)))
 // CHECK-NEXT: (assert (= (- 8 layout_x_arm1__super__super__super) 0))
 // CHECK-NEXT: ; mark mux arm
-// CHECK-NEXT: (assert (= mux_x1__super__super (+ (* x0 layout_x_arm0__super__super__super) (* layout_first__super__super layout_x_arm1__super__super__super))))
+// CHECK-NEXT: (assert (= layout_x__super__super__super (+ (* x0 layout_x_arm0__super__super__super) (* layout_first__super__super layout_x_arm1__super__super__super))))
 // CHECK-NEXT: ; end mux
 // CHECK-NEXT: (end-module)
 

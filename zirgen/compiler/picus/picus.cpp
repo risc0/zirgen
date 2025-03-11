@@ -93,6 +93,50 @@ bool isUsedOnce(Value val) {
   return val.hasOneUse() && !isa<SwitchOp>(val.getUses().begin()->getOwner());
 }
 
+class MuxDefCollector {
+public:
+  struct SelectedValue {
+    Value selector;
+    Value value;
+  };
+
+  // A list of definitions/aliases for a value "outside the mux" in different
+  // arms of the mux
+  using DefCollection = SmallVector<SelectedValue>;
+
+  // A mapping of all the captured values defined/aliased in a mux to their
+  // various definitions
+  using MuxMapping = DenseMap<Value, DefCollection>;
+
+  bool empty() const { return stack.empty(); }
+
+  void enterMux() {
+    stack.emplace_back();
+  }
+
+  MuxMapping exitMux() {
+    return stack.pop_back_val();
+  }
+
+  void nextArm(Value selector) {
+    currentSelector = selector;
+  }
+
+  void addDef(Value outer, Value inner) {
+    stack.back()[outer].push_back({currentSelector, inner});
+  }
+
+  void removeValue(Value value) {
+    stack.back().erase(value);
+  }
+
+private:
+  // Maintain a MuxMapping for each level of mux nesting during traversal
+  SmallVector<MuxMapping> stack;
+
+  Value currentSelector;
+};
+
 class PicusPrinter {
 public:
   PicusPrinter(llvm::raw_ostream& os) : os(os) {}
@@ -122,6 +166,7 @@ private:
     nameCounter = 0;
 
     outputSignalCounter = 0;
+    assert(muxDefCollector.empty());
     os << "(begin-module " << canonicalizeIdentifier(component.getName().str()) << ")\n";
 
     // Non-layout parameters are inputs
@@ -188,6 +233,7 @@ private:
               EqualZeroOp,
               Zhlt::BackOp,
               SwitchOp,
+              YieldOp,
               ArrayOp,
               PackOp,
               ReturnOp,
@@ -349,47 +395,55 @@ private:
       selectorSignals.push_back(cast<Signal>(valuesToSignals.at(selector)));
     }
 
-    SmallVector<SmallVector<Signal>> armSignals;
-
+    muxDefCollector.enterMux();
     for (Region& arm : mux.getArms()) {
-      // Probably need to "turn off" AliasLayoutOps, since different arms may
-      // write different values to the common super
+      muxDefCollector.nextArm(mux.getSelector()[arm.getRegionNumber()]);
       assert(arm.hasOneBlock());
       for (Operation& op : arm.front()) {
         visitOp(&op);
       }
-      // Collect values yielded by each arm
-      Value yielded = cast<YieldOp>(arm.front().getTerminator()).getValue();
-      AnySignal signal = valuesToSignals.at(yielded);
-      Type type = yielded.getType();
-      while (type != mux.getType()) {
-        signal = getSuperSignal(signal);
-        type = Zhlt::getSuperType(type);
-      }
-      armSignals.push_back(flatten(signal));
       os << "; mark mux arm\n";
     }
 
     // Optimization: if the mux result is never used, don't signalize it
-    if (!mux.getOut().use_empty()) {
+    if (mux.getOut().use_empty()) {
+      muxDefCollector.removeValue(mux.getOut());
+    } else {
       AnySignal outSignal = signalize("mux_" + freshName(), mux.getType());
       valuesToSignals.insert({mux.getOut(), outSignal});
+    }
 
-      SmallVector<Signal> outSignals = flatten(outSignal);
-      for (size_t i = 0; i < outSignals.size(); i++) {
-        os << "(assert (= " << outSignals[i].str();
+    for (auto [value, selectedValues] : muxDefCollector.exitMux()) {
+      // If a value isn't defined on all mux arms, it's value is undefined. This
+      // fact isn't reflected by emitting a linear combination, but we'll cross
+      // that bridge if and when we need to.
+      assert(selectedValues.size() == mux.getSelector().size());
+      SmallVector<SmallVector<Signal>> armSignals;
+      armSignals.reserve(selectedValues.size());
+      for (auto selVal : selectedValues) {
+        armSignals.push_back(flatten(valuesToSignals.at(selVal.value)));
+      }
+
+      SmallVector<Signal> valueSignals = flatten(valuesToSignals.at(value));
+      for (size_t i = 0; i < valueSignals.size(); i++) {
+        os << "(assert (= " << valueSignals[i].str();
         for (size_t j = 0; j < armSignals.size(); j++) {
           if (j != armSignals.size() - 1)
             os << " (+";
-          os << " (* " << selectorSignals[j].str() << " " << armSignals[j][i].str() << ")";
-        }
-        for (size_t j = 0; j < armSignals.size(); j++) {
-          os << ")";
-        }
-        os << ")\n";
+        os << " (* " << selectorSignals[j].str() << " " << armSignals[j][i].str() << ")";
       }
+      for (size_t j = 0; j < armSignals.size(); j++) {
+        os << ")";
+      }
+      os << ")\n";
     }
+  }
     os << "; end mux\n";
+  }
+
+  void visitOp(YieldOp yield) {
+    auto mux = cast<SwitchOp>(yield->getParentOp());
+    muxDefCollector.addDef(mux.getOut(), yield.getValue());
   }
 
   void visitOp(ArrayOp arr) {
@@ -486,27 +540,38 @@ private:
       x = x->getParentRegion();
     }
 
-    auto conditionalize = [&](Signal signal) {
-      if (interveningSelectors.empty()) {
-        os << signal.str();
-      } else {
-        for (Value s : interveningSelectors)
-          os << "(* " << cast<Signal>(valuesToSignals.at(s)).str() << " ";
-        os << signal.str();
-        for (size_t i = 0; i < interveningSelectors.size(); i++)
-          os << ")";
+    assert(interveningSelectors.size() <= 1);
+    if (interveningSelectors.empty()) {
+      auto lhsSignal = valuesToSignals.at(lhs);
+      auto rhsSignal = valuesToSignals.at(rhs);
+      for (auto [sl, sr] : llvm::zip(flatten(lhsSignal), flatten(rhsSignal))) {
+        os << "(assert (= " << sl.str() << " " << sr.str() << "))\n";
       }
-    };
-
-    auto lhsSignal = valuesToSignals.at(lhs);
-    auto rhsSignal = valuesToSignals.at(rhs);
-    for (auto [sl, sr] : llvm::zip(flatten(lhsSignal), flatten(rhsSignal))) {
-      os << "(assert (= ";
-      conditionalize(sl);
-      os << " ";
-      conditionalize(sr);
-      os << "))\n";
+    } else {
+      muxDefCollector.addDef(lhs, rhs);
     }
+
+    // auto conditionalize = [&](Signal signal) {
+    //   if (interveningSelectors.empty()) {
+    //     os << signal.str();
+    //   } else {
+    //     for (Value s : interveningSelectors)
+    //       os << "(* " << cast<Signal>(valuesToSignals.at(s)).str() << " ";
+    //     os << signal.str();
+    //     for (size_t i = 0; i < interveningSelectors.size(); i++)
+    //       os << ")";
+    //   }
+    // };
+
+    // auto lhsSignal = valuesToSignals.at(lhs);
+    // auto rhsSignal = valuesToSignals.at(rhs);
+    // for (auto [sl, sr] : llvm::zip(flatten(lhsSignal), flatten(rhsSignal))) {
+    //   os << "(assert (= ";
+    //   conditionalize(sl);
+    //   os << " ";
+    //   conditionalize(sr);
+    //   os << "))\n";
+    // }
   }
 
   void visitOp(Zhlt::BackOp back) {
@@ -666,6 +731,7 @@ private:
   std::queue<ComponentOp> workQueue;
   std::set<ComponentOp> done;
   llvm::DenseMap<Value, AnySignal> valuesToSignals;
+  MuxDefCollector muxDefCollector;
   unsigned nameCounter = 0;
   unsigned outputSignalCounter = 0;
 };
