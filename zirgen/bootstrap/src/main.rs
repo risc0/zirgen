@@ -678,6 +678,8 @@ impl Bootstrap {
         self.copy_file(&src_path, &rsa_path, "modpow65537_4096.blob");
         self.copy_file(&src_path, &ec_path, "ec_add_256.blob");
         self.copy_file(&src_path, &ec_path, "ec_double_256.blob");
+        self.copy_file(&src_path, &ec_path, "ec_add_384.blob");
+        self.copy_file(&src_path, &ec_path, "ec_double_384.blob");
         self.copy_file(&src_path, &zkos_bigint_v1compat, "modmul_256.blob");
         self.copy_file(&src_path, &zkos_bigint_v1compat, "mul_256.blob");
     }

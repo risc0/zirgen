@@ -59,6 +59,8 @@ BLOBS = [
     "modpow65537_4096",
     "ec_double_256",
     "ec_add_256",
+    "ec_double_384",
+    "ec_add_384",
     "extfield_deg2_add_256",
     "extfield_deg2_add_384",
     "extfield_deg2_mul_256",
@@ -97,6 +99,20 @@ genrule(
     outs = ["ec_add_256.blob"],
     exec_tools = [":bigint2c"],
     cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=ec_add --bitwidth 256 > $(OUTS)"
+)
+
+genrule(
+    name = "ec_double_384",
+    outs = ["ec_double_384.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=ec_double --bitwidth 384 > $(OUTS)"
+)
+
+genrule(
+    name = "ec_add_384",
+    outs = ["ec_add_384.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=ec_add --bitwidth 384 > $(OUTS)"
 )
 
 genrule(
