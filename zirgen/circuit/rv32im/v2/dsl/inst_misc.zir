@@ -29,14 +29,14 @@ component Misc0(cycle: Reg, inst_input: InstInput) {
   DoCycleTable(cycle);
   input := MiscInput(cycle, inst_input);
   misc_output := input.minor_onehot -> (
-    OpADD(input),
-    OpSUB(input),
-    OpXOR(input),
-    OpOR(input),
-    OpAND(input),
-    OpSLT(input),
-    OpSLTU(input),
-    OpADDI(input)
+    /*deterministic*/OpADD(input),
+    /*deterministic*/OpSUB(input),
+    /*deterministic*/OpXOR(input),
+    /*deterministic*/OpOR(input),
+    /*deterministic*/OpAND(input),
+    /*deterministic*/OpSLT(input),
+    /*deterministic*/OpSLTU(input),
+    /*deterministic*/OpADDI(input)
   );
   FinalizeMisc(cycle, input, misc_output)
 }
@@ -45,14 +45,14 @@ component Misc1(cycle: Reg, inst_input: InstInput) {
   DoCycleTable(cycle);
   input := MiscInput(cycle, inst_input);
   misc_output := input.minor_onehot -> (
-    OpXORI(input),
-    OpORI(input),
-    OpANDI(input),
-    OpSLTI(input),
-    OpSLTIU(input),
-    OpBEQ(input),
-    OpBNE(input),
-    OpBLT(input)
+    /*deterministic*/OpXORI(input),
+    /*deterministic*/OpORI(input),
+    /*deterministic*/OpANDI(input),
+    /*deterministic*/OpSLTI(input),
+    /*deterministic*/OpSLTIU(input),
+    /*deterministic (assuming IsZero)*/OpBEQ(input),
+    /*deterministic (assuming IsZero)*/OpBNE(input),
+    /*deterministic*/OpBLT(input)
   );
   FinalizeMisc(cycle, input, misc_output)
 }
@@ -61,14 +61,14 @@ component Misc2(cycle: Reg, inst_input: InstInput) {
   DoCycleTable(cycle);
   input := MiscInput(cycle, inst_input);
   misc_output := input.minor_onehot -> (
-    OpBGE(input),
-    OpBLTU(input),
-    OpBGEU(input),
-    OpJAL(input),
-    OpJALR(input),
-    OpLUI(input),
-    OpAUIPC(input),
-    OpECALL(input)
+    /*deterministic*/OpBGE(input),
+    /*deterministic*/OpBLTU(input),
+    /*deterministic*/OpBGEU(input),
+    /*deterministic*/OpJAL(input),
+    /*deterministic*/OpJALR(input),
+    /*deterministic*/OpLUI(input),
+    /*deterministic*/OpAUIPC(input),
+    /*deterministic*/OpECALL(input)
   );
   FinalizeMisc(cycle, input, misc_output)
 }

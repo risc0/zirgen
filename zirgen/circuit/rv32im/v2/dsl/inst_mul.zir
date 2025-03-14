@@ -43,33 +43,39 @@ component DoMul(in1: ValU32, in2: ValU32, sign1: Val, sign2: Val) {
   public high := mul.outHigh;
 }
 
+#[picus_analyze]
 component OpSLL(input: MulInput) {
   VerifyOpcodeF3F7(input.decoded, 0x33, 0x1, 0x00);
   shift_mul := DynPo2(input.rs2.low);
   DoMul(input.rs1, shift_mul, 0, 0).low
 }
 
+#[picus_analyze]
 component OpSLLI(input: MulInput) {
   VerifyOpcodeF3F7(input.decoded, 0x13, 0x1, 0x00);
   shift_mul := DynPo2(input.decoded.rs2);
   DoMul(input.rs1, shift_mul, 0, 0).low
 }
 
+#[picus_analyze]
 component OpMUL(input: MulInput) {
   VerifyOpcodeF3F7(input.decoded, 0x33, 0x0, 0x01);
   DoMul(input.rs1, input.rs2, 0, 0).low
 }
 
+#[picus_analyze]
 component OpMULH(input: MulInput) {
   VerifyOpcodeF3F7(input.decoded, 0x33, 0x1, 0x01);
   DoMul(input.rs1, input.rs2, 1, 1).high
 }
 
+#[picus_analyze]
 component OpMULHSU(input: MulInput) {
   VerifyOpcodeF3F7(input.decoded, 0x33, 0x2, 0x01);
   DoMul(input.rs1, input.rs2, 1, 0).high
 }
 
+#[picus_analyze]
 component OpMULHU(input: MulInput) {
   VerifyOpcodeF3F7(input.decoded, 0x33, 0x3, 0x01);
   DoMul(input.rs1, input.rs2, 0, 0).high

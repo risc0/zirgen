@@ -33,9 +33,11 @@ cc_library(
     name = "passes",
     srcs = [
         "AnalyzeBuffers.cpp",
+        "ElideRedundantMembers.cpp",
         "GenerateSteps.cpp",
         "HoistAllocs.cpp",
-        "LowerAssumeRange.cpp",
+        "HoistCommonMuxCode.cpp",
+        "LowerDirectives.cpp",
         "LowerFuncs.cpp",
         "OptimizeParWitgen.cpp",
         "OutlineIfs.cpp",

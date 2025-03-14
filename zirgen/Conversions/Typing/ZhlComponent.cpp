@@ -552,8 +552,8 @@ Zhlt::ComponentOp LoweringImpl::gen(ComponentOp component,
 
   for (NamedAttribute attr : component->getDiscardableAttrs()) {
     StringRef name = attr.getName();
-    if (name == "function" || name == "argument" || name == "generic" || name == "picus_analyze" ||
-        name == "picus_inline") {
+    if (name == "argument" || name == "extern" || name == "function" || name == "generic" ||
+        name == "picus_analyze" || name == "picus_inline") {
       ctor->setAttr(name, attr.getValue());
     } else {
       ctor->emitError() << "unknown attribute `" << name << "`";
@@ -1044,10 +1044,11 @@ Value LoweringImpl::expandLayoutMember(Location loc,
 }
 
 void LoweringImpl::gen(DirectiveOp directive, ComponentBuilder& cb) {
-  if (directive.getName() == "AliasLayout") {
+  StringRef name = directive.getName();
+  if (name == "AliasLayout") {
     if (directive.getArgs().size() != 2) {
       size_t args = directive.getArgs().size();
-      directive.emitError() << "'AliasLayout' directive expects two arguments, got " << args;
+      directive.emitError() << "'" << name << "' directive expects two arguments, got " << args;
     }
     Value left = asAliasableLayout(directive.getArgs()[0]);
     Value right = asAliasableLayout(directive.getArgs()[1]);
@@ -1059,21 +1060,43 @@ void LoweringImpl::gen(DirectiveOp directive, ComponentBuilder& cb) {
       directive.emitError() << "Unable to determine layout of " << directive.getArgs()[0];
     if (!right)
       directive.emitError() << "Unable to determine layout of " << directive.getArgs()[1];
-  } else if (directive.getName() == "AssumeRange") {
+  } else if (name == "AssertRange" || name == "AssumeRange") {
     if (directive.getArgs().size() != 3) {
       size_t args = directive.getArgs().size();
-      directive.emitError() << "'AssumeRange' directive expects three arguments, got " << args;
+      directive.emitError() << "'" << name << "' directive expects three arguments, got " << args;
     }
     SmallVector<Value> args;
     for (Value arg : directive.getArgs()) {
       arg = asValue(arg);
       if (!Zhlt::isCoercibleTo(arg.getType(), Zhlt::getValType(ctx))) {
-        emitError(arg.getLoc()) << "'AssumeRange' directive expects Val arguments, got "
+        emitError(arg.getLoc()) << "'" << name << "' directive expects Val arguments, got "
                                 << getTypeId(arg.getType());
       }
       args.push_back(coerceTo(arg, Zhlt::getValType(ctx)));
     }
-    builder.create<Zhlt::DirectiveOp>(directive->getLoc(), "AssumeRange", args);
+    builder.create<Zhlt::DirectiveOp>(directive->getLoc(), name, args);
+  } else if (name == "PicusHintEq") {
+    if (directive.getArgs().size() != 2) {
+      size_t args = directive.getArgs().size();
+      directive.emitError() << "'PicusHintEq' directive expects 1 argument, got " << args;
+    }
+    SmallVector<Value> args;
+    for (Value arg : directive.getArgs()) {
+      arg = asValue(arg);
+      if (!Zhlt::isCoercibleTo(arg.getType(), Zhlt::getValType(ctx))) {
+        emitError(arg.getLoc()) << "'PicusHintEq' directive expects Val arguments, got "
+                                << getTypeId(arg.getType());
+      }
+      args.push_back(coerceTo(arg, Zhlt::getValType(ctx)));
+    }
+    builder.create<Zhlt::DirectiveOp>(directive->getLoc(), "PicusHintEq", args);
+  } else if (name == "PicusInput") {
+    if (directive.getArgs().size() != 1) {
+      size_t args = directive.getArgs().size();
+      directive.emitError() << "'PicusInput' directive expects 1 argument, got " << args;
+    }
+    SmallVector<Value> args = {asValue(directive.getArgs()[0])};
+    builder.create<Zhlt::DirectiveOp>(directive->getLoc(), "PicusInput", args);
   } else {
     directive.emitError() << "Unknown compiler directive '" << directive.getName() << "'";
   }

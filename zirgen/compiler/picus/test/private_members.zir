@@ -1,0 +1,24 @@
+// RUN: zirgen %s --emit=picus | FileCheck %s
+
+// The `Complicated` module should have outputs only for the layout and super,
+// since the members `a`, `b`, and `c` are all private. Check that we only emit
+// the expected output signals.
+
+// CHECK: (begin-module Complicated)
+// CHECK-NEXT: (input {{x[0-9]+}})
+// CHECK-NEXT: (output layout_a__super__super)
+// CHECK-NEXT: (output layout_c__super__super)
+// CHECK-NOT: output
+// CHECK: (end-module)
+
+component Complicated(x: Val) {
+  a := Reg(x * x);
+  b := a * a;
+  c := Reg(b * b);
+  c * c
+}
+
+#[picus_analyze]
+component Top() {
+  Complicated(2)
+}

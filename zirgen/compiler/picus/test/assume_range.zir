@@ -1,17 +1,13 @@
 // RUN: zirgen %s --emit=picus | FileCheck %s
 
 // CHECK: (begin-module Sqrt)
-// CHECK-NEXT: (input x4)
-// CHECK-NEXT: (input x5)
-// CHECK-NEXT: (output result__layout__super__super__super)
-// CHECK-NEXT: (output result__super__super__super)
-// CHECK-NEXT: (assert (= x6 10000))
-// CHECK-NEXT: (assert (= x7 100))
-// CHECK-NEXT: (assert (= x8 0))
-// CHECK-NEXT: (assume (<= x8 x4))
-// CHECK-NEXT: (assume (< x4 x6))
-// CHECK-NEXT: (assume (<= x8 x5))
-// CHECK-NEXT: (assume (< x5 x7))
+// CHECK-NEXT: (input [[I1:x[0-9]+]])
+// CHECK-NEXT: (input [[I2:x[0-9]+]])
+// CHECK-NEXT: (output layout__super__super__super)
+// CHECK-NEXT: (assume (<= 0 [[I1]]))
+// CHECK-NEXT: (assume (< [[I1]] 10000))
+// CHECK-NEXT: (assume (<= 0 [[I2]]))
+// CHECK-NEXT: (assume (< [[I2]] 100))
 // CHECK-NOT: assume
 // CHECK: (end-module)
 

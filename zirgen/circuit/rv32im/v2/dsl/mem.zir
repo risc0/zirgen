@@ -74,6 +74,7 @@ component MemoryIO(memCycle: Val, addr: Val) {
   newTxn.addr = addr;
 }
 
+#[picus_inline]
 component IsRead(io: MemoryIO) {
   io.oldTxn.dataLow = io.newTxn.dataLow;
   io.oldTxn.dataHigh = io.newTxn.dataHigh;

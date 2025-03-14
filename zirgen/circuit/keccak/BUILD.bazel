@@ -93,3 +93,16 @@ filegroup(
         ":predicates",
     ],
 )
+
+genrule(
+    name = "picus_extract",
+    outs = ["keccak.picus"],
+    srcs = [":imports"],
+    exec_tools = ["//zirgen/dsl:zirgen"],
+    cmd = "$(location //zirgen/dsl:zirgen) zirgen/circuit/keccak/top.zir -I zirgen/circuit/keccak --emit=picus > $(OUTS)"
+)
+
+pkg_zip(
+    name = "picus_archive",
+    srcs = ["keccak.picus"],
+)

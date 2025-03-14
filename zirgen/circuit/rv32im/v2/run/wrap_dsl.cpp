@@ -224,6 +224,14 @@ auto reduce(std::array<T1, N> elems, T2 start, const BoundLayout<T3>& b, F f) {
 // All the extern handling
 #define INVOKE_EXTERN(ctx, name, ...) extern_##name(ctx, ##__VA_ARGS__)
 
+// TODO: release mode that removes assertions
+void extern_assert(ExecContext& ctx, Val condition, const std::string& message) {
+  if (condition != 0) {
+    std::cout << " failed: " << message << "\n";
+    std::exit(EXIT_FAILURE);
+  }
+}
+
 std::array<Val, 5> extern_getMemoryTxn(ExecContext& ctx, Val addr) {
   auto txn = ctx.stepHandler.getMemoryTxn(addr.asUInt32());
   return {txn.prevCycle, txn.prevVal & 0xffff, txn.prevVal >> 16, txn.val & 0xffff, txn.val >> 16};

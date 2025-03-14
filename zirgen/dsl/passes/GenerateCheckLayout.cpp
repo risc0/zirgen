@@ -43,7 +43,7 @@ struct EraseUnwantedDirectives : public OpRewritePattern<Zhlt::DirectiveOp> {
   using OpRewritePattern::OpRewritePattern;
 
   LogicalResult matchAndRewrite(Zhlt::DirectiveOp op, PatternRewriter& rewriter) const final {
-    if (op.getName() == "AssumeRange") {
+    if (op.getName() == "AssertRange" || op.getName() == "AssumeRange") {
       rewriter.eraseOp(op);
       return success();
     }

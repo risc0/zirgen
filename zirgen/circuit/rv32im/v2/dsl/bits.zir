@@ -2,11 +2,13 @@
 // RUN: zirgen --test %s
 
 // Assert that a given value is a bit
+#[picus_inline]
 function AssertBit(val: Val) {
   val * (1 - val) = 0;
 }
 
 // Set a register nodeterministically, and then verify it is a bit
+#[picus_inline]
 component NondetBitReg(val: Val) {
   reg := NondetReg(val);
   AssertBit(reg);
@@ -31,6 +33,7 @@ test_fails BitOutOfRange {
 }
 
 // Assert the a given value is a 2-bit number (i.e. 0-3)
+#[picus_inline]
 function AssertTwit(val: Val) {
   val * (1 - val) * (2 - val) * (3 - val) = 0;
 }
@@ -56,6 +59,7 @@ component NondetTwitReg(val: Val) {
 }
 
 // Set a register nodeterministically, and then verify it is a twit
+#[picus_inline]
 component NondetFakeTwitReg(val: Val) {
   reg0 := NondetBitReg(val & 1);
   reg1 := NondetBitReg((val & 2) / 2);
