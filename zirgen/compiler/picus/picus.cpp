@@ -110,25 +110,15 @@ public:
 
   bool empty() const { return stack.empty(); }
 
-  void enterMux() {
-    stack.emplace_back();
-  }
+  void enterMux() { stack.emplace_back(); }
 
-  MuxMapping exitMux() {
-    return stack.pop_back_val();
-  }
+  MuxMapping exitMux() { return stack.pop_back_val(); }
 
-  void nextArm(Value selector) {
-    currentSelector = selector;
-  }
+  void nextArm(Value selector) { currentSelector = selector; }
 
-  void addDef(Value outer, Value inner) {
-    stack.back()[outer].push_back({currentSelector, inner});
-  }
+  void addDef(Value outer, Value inner) { stack.back()[outer].push_back({currentSelector, inner}); }
 
-  void removeValue(Value value) {
-    stack.back().erase(value);
-  }
+  void removeValue(Value value) { stack.back().erase(value); }
 
 private:
   // Maintain a MuxMapping for each level of mux nesting during traversal
@@ -430,14 +420,14 @@ private:
         for (size_t j = 0; j < armSignals.size(); j++) {
           if (j != armSignals.size() - 1)
             os << " (+";
-        os << " (* " << selectorSignals[j].str() << " " << armSignals[j][i].str() << ")";
+          os << " (* " << selectorSignals[j].str() << " " << armSignals[j][i].str() << ")";
+        }
+        for (size_t j = 0; j < armSignals.size(); j++) {
+          os << ")";
+        }
+        os << ")\n";
       }
-      for (size_t j = 0; j < armSignals.size(); j++) {
-        os << ")";
-      }
-      os << ")\n";
     }
-  }
     os << "; end mux\n";
   }
 

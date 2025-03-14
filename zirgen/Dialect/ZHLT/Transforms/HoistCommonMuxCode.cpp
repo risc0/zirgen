@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
 
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
 #include "zirgen/Dialect/ZHLT/Transforms/PassDetail.h"
-#include "llvm/Support/Debug.h"
 #include "llvm/ADT/Statistic.h"
+#include "llvm/Support/Debug.h"
 
 #define DEBUG_TYPE "mux-hoisting"
 
@@ -32,17 +32,15 @@ bool isHoistable(Operation* op) {
   // effects, and never hoist any ops with regions, AliasLayoutOps or block
   // terminators.
   return op->getNumRegions() == 0 &&
-      !isa<LoadOp>(op) && // could be more precise by checking for writes within the block
-      !isa<AliasLayoutOp>(op) &&
-      !op->hasTrait<OpTrait::IsTerminator>() &&
-      llvm::all_of(op->getOperands(), [=](Value value) {
-        return value.getParentRegion() != op->getParentRegion();
-      });
+         !isa<LoadOp>(op) && // could be more precise by checking for writes within the block
+         !isa<AliasLayoutOp>(op) && !op->hasTrait<OpTrait::IsTerminator>() &&
+         llvm::all_of(op->getOperands(), [=](Value value) {
+           return value.getParentRegion() != op->getParentRegion();
+         });
 }
 
 bool compare(Operation* op1, Operation* op2) {
-  if (op1->getName() != op2->getName() ||
-      op1->getNumOperands() != op2->getNumOperands() ||
+  if (op1->getName() != op2->getName() || op1->getNumOperands() != op2->getNumOperands() ||
       op1->getAttrs().size() != op2->getAttrs().size())
     return false;
   for (auto [opn1, opn2] : llvm::zip(op1->getOperands(), op2->getOperands())) {

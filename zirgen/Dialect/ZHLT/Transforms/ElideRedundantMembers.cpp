@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
 
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
 #include "zirgen/Dialect/ZHLT/Transforms/PassDetail.h"
-#include "llvm/Support/Debug.h"
 #include "llvm/ADT/Statistic.h"
+#include "llvm/Support/Debug.h"
 
 #define DEBUG_TYPE "elide-redundant-members"
 
