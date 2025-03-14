@@ -1,0 +1,16 @@
+// RUN: zirgen %s --emit=zhltopt | FileCheck %s
+
+// Verify that we merge b with a and c with @super
+// CHECK: !zlayout$UnusedMembers = !zstruct.layout<UnusedMembers, <"@super": !zlayout$Reg, a: !zlayout$Reg>>
+// CHECK: !zstruct$UnusedMembers = !zstruct.struct<UnusedMembers, <"@super": !zstruct$Reg, a: !zstruct$Reg>>
+component UnusedMembers() {
+  public a := Reg(1);
+  public b := a;
+  public c := Reg(3);
+  c
+}
+
+component Top() {
+  x := UnusedMembers();
+  Log("%u", x.a + x.b + x.c + x);
+}

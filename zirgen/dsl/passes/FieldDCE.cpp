@@ -17,6 +17,7 @@
 #include "zirgen/Dialect/ZStruct/Transforms/RewritePatterns.h"
 #include "zirgen/dsl/passes/CommonRewrites.h"
 #include "zirgen/dsl/passes/PassDetail.h"
+#include "llvm/ADT/Statistic.h"
 
 using namespace zirgen::ZStruct;
 
@@ -26,6 +27,9 @@ namespace dsl {
 namespace {
 
 struct FieldDCEPass : public FieldDCEBase<FieldDCEPass> {
+  FieldDCEPass() = default;
+  FieldDCEPass(const FieldDCEPass& pass) {}
+
   void runOnOperation() override {
     auto* ctx = &getContext();
 
@@ -50,6 +54,7 @@ struct FieldDCEPass : public FieldDCEBase<FieldDCEPass> {
       BitVector eraseSet(ty.getFields().size());
       for (auto [idx, field] : llvm::enumerate(ty.getFields())) {
         if (!usedFields.contains(field.name)) {
+          ++membersPruned;
           eraseSet.set(idx);
         }
       }
@@ -88,6 +93,8 @@ struct FieldDCEPass : public FieldDCEBase<FieldDCEPass> {
                                               /*replaceLocs=*/false,
                                               /*replaceTypes=*/true);
   }
+
+  Statistic membersPruned{this, "membersPruned", "number of unused members pruned"};
 };
 
 } // namespace
