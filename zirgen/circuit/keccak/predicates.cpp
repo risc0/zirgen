@@ -27,13 +27,14 @@ template <typename Func>
 void addZirgenLift(Module& module, const std::string name, const std::string path, Func func) {
   auto circuit = getInterfaceZirgen(module.getModule().getContext(), path);
   for (size_t po2 = 14; po2 < 19; ++po2) {
+    size_t totalCycles = 1 << po2;
     module.addFunc<3>(name + "_" + std::to_string(po2),
                       {gbuf(recursion::kOutSize), ioparg(), ioparg()},
                       [&](Buffer out, ReadIopVal rootIop, ReadIopVal zirgenSeal) {
                         DigestVal root = rootIop.readDigests(1)[0];
                         VerifyInfo info = zirgen::verify::verify(zirgenSeal, po2, *circuit);
                         llvm::ArrayRef inStream(info.out);
-                        DigestVal outData = func(inStream);
+                        DigestVal outData = func(inStream, totalCycles);
                         std::vector<Val> outStream;
                         writeSha(outData, outStream);
                         doExtern("write", "", 0, outStream);
@@ -57,9 +58,15 @@ int main(int argc, char* argv[]) {
   llvm::cl::ParseCommandLineOptions(argc, argv, "keccak predicates");
 
   Module module;
-  addZirgenLift(module, "keccak_lift", keccakIR.getValue(), [](llvm::ArrayRef<Val>& inStream) {
-    return readSha(inStream);
-  });
+  addZirgenLift(module,
+                "keccak_lift",
+                keccakIR.getValue(),
+                [](llvm::ArrayRef<Val>& inStream, size_t expectedTotalCycles) {
+                  auto sha = readSha(inStream);
+                  Val totalCycles = readVal(inStream);
+                  eq(totalCycles, expectedTotalCycles);
+                  return sha;
+                });
 
   module.optimize();
   module.getModule().walk([&](mlir::func::FuncOp func) { zirgen::emitRecursion(outputDir, func); });

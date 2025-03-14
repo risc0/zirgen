@@ -1,0 +1,34 @@
+// RUN: true
+
+import is_zero;
+
+extern GetCycle(): Val;
+
+// RISC Zero STARKs are equivalent up to rotation of the trace. This component
+// counts cycles from zero up to the power of two, with constraints that
+// guarantee a unique "cycle zero."
+
+// It uses a global that stores the total number of cycles, which the verifier
+// should check matches the intended trace length. If the global doesn't match,
+// the verifier should reject, so assume that it matches. Then we either have a
+// cycle zero or we don't; if we do, then the next cycle must be 1, then 2, and
+// so on because of the constraint cycle = cycle@1 + 1. After total_cycles, we
+// have gone over the whole trace, which means the cycle before cycle 0 must be
+// total_cycles - 1. If we don't, then we always have that cycle = cycle@1. But
+// because the trace is cyclic, the cycle number must go down on some cycle, so
+// a constraint must have been violated.
+component CycleCounter() {
+  global total_cycles : NondetReg;
+
+  cycle := NondetReg(GetCycle());
+  public is_first_cycle := IsZero(cycle);
+
+  [is_first_cycle, 1-is_first_cycle] -> ({
+    // First cycle; previous cycle should be the last cycle.
+    cycle@1 = total_cycles - 1;
+  }, {
+    // Not first cycle; cycle number should advance by one for every row.
+    cycle = cycle@1 + 1;
+  });
+  cycle
+}

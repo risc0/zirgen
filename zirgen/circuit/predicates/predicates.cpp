@@ -25,7 +25,7 @@ using Zll::DigestKind;
 
 constexpr size_t kMaxInsnCycles = 2000; // TODO(flaub): update this with precise value.
 
-static Val readVal(llvm::ArrayRef<Val>& stream) {
+Val readVal(llvm::ArrayRef<Val>& stream) {
   assert(stream.size() >= 1);
   Val out = stream[0];
   stream = stream.drop_front();
