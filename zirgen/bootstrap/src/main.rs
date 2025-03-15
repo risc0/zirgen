@@ -115,25 +115,25 @@ enum Circuit {
 }
 
 #[derive(Parser)]
-#[clap(about, version, author)]
+#[command(about, version, author)]
 struct Args {
     /// Which circuit to bootstrap.
-    #[clap(value_enum)]
+    #[arg(value_enum)]
     circuit: Circuit,
 
     /// Output path for the generated circuit files.
     ///
-    /// When bootstapping the risc0 monorepo, this should be the path to the repo root.
-    #[clap(long)]
+    /// When bootstrapping the risc0 monorepo, this should be the path to the repo root.
+    #[arg(long)]
     output: Option<PathBuf>,
 
     /// Show what would have been done instead of actually doing it.
-    #[clap(long)]
+    #[arg(long)]
     dry_run: bool,
 
     /// Instead of installing, check to make sure installed files are
     /// up to date.  Exits with an error if they're not.
-    #[clap(long)]
+    #[arg(long)]
     check: bool,
 }
 
