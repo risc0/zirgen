@@ -57,15 +57,18 @@ component InstOutput(new_pc: ValU32, new_state: Val, new_mode: Val) {
   InstOutputBase(new_pc, new_state, new_mode, BigIntTopStateNull())
 }
 
+#[picus_inline]
 component VerifyOpcode(decoded: Decoder, opcode: Val) {
   decoded.opcode = opcode;
 }
 
+#[picus_inline]
 component VerifyOpcodeF3(decoded: Decoder, opcode: Val, func3: Val) {
   decoded.opcode = opcode;
   decoded.func3 = func3;
 }
 
+#[picus_inline]
 component VerifyOpcodeF3F7(decoded: Decoder, opcode: Val, func3: Val, func7: Val) {
   decoded.opcode = opcode;
   decoded.func3 = func3;

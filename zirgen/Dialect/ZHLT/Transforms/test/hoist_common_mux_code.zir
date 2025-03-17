@@ -1,0 +1,15 @@
+// RUN: zirgen %s --emit=zhltopt --debug-only=mux-hoisting 2>&1 | FileCheck %s
+
+extern IsFirstCycle() : Val;
+
+component Top() {
+  a := Reg(5);
+  first := NondetReg(IsFirstCycle());
+  // Check that a@1 gets hoisted
+  // CHECK: hoist: %22 = zhlt.back @Reg(1,
+  if (first) {
+    Reg(a@1)
+  } else {
+    Reg(a@1)
+  }
+}

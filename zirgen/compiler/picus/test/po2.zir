@@ -1,21 +1,11 @@
 // RUN: zirgen %s --emit=picus | FileCheck %s
 
-// CHECK: (prime-number 2013265921)
-// CHECK-NEXT: (begin-module Top)
-// CHECK-NEXT: (output result_a__super)
-// CHECK-NEXT: (output result_b__super)
-// CHECK-NEXT: (output result_c__super)
-// CHECK-NEXT: (output result_d__super)
-// CHECK-NEXT: (assert (= x0 2))
-// CHECK-NEXT: (assert (= x1 1))
-// CHECK-NEXT: (assert (= x2 4))
-// CHECK-NEXT: (assert (= x3 8))
-// CHECK-NEXT: (assert (= result_a__super x1))
-// CHECK-NEXT: (assert (= result_b__super x0))
-// CHECK-NEXT: (assert (= result_c__super x2))
-// CHECK-NEXT: (assert (= result_d__super x3))
-// CHECK-NEXT: (end-module)
-// CHECK-NOT: (begin-module Po2)
+// CHECK: (begin-module Top)
+// CHECK-DAG: (assert (= (- 1 layout_a__super__super) 0))
+// CHECK-DAG: (assert (= (- 2 layout_b__super__super) 0))
+// CHECK-DAG: (assert (= (- 4 layout_c__super__super) 0))
+// CHECK-DAG: (assert (= (- 8 layout_d__super__super) 0))
+// CHECK: (end-module)
 
 
 // Inline this component, so that the subscript index resolves to a compile-time
@@ -32,8 +22,8 @@ component Po2(n: Val) {
 
 #[picus_analyze]
 component Top() {
-  public a := Po2(0);
-  public b := Po2(1);
-  public c := Po2(2);
-  public d := Po2(3);
+  public a := Reg(Po2(0));
+  public b := Reg(Po2(1));
+  public c := Reg(Po2(2));
+  public d := Reg(Po2(3));
 }
