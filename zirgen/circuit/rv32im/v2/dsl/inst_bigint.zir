@@ -113,8 +113,8 @@ component BigIntStep(cycle: Reg, prev: BigIntState) {
   reg := reduce for i : 0..5 { regBits[i] * Po2(i) } init 0 with Add;
 
   coeffBits := for i : 0..3 { NondetBitReg((coeffReg & Po2(5 + i)) / Po2(5 + i)) };
-  // Val coeffVal = checkCoeff[0] + checkCoeff[1] * 2 + checkCoeff[2] * 4 - 4;
   coeff := reduce for i : 0..3 { coeffBits[i] * Po2(i) } init 0 with Add;
+  32 * coeff + reg = coeffReg;
 
   offset := loadInst.low;
 

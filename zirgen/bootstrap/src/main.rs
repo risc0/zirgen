@@ -566,7 +566,7 @@ impl Bootstrap {
     fn rv32im_v2(&'static self) {
         self.install_from_bazel(
             "//zirgen/circuit/rv32im/v2/dsl:codegen",
-            self.output_and("risc0/circuit/rv32im-v2"),
+            self.output_and("risc0/circuit/rv32im"),
             &[
                 Rule::copy("*.cpp", "kernels/cxx").base_suffix("-sys"),
                 Rule::copy("*.cpp.inc", "kernels/cxx").base_suffix("-sys"),
