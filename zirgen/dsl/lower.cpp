@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -403,6 +403,7 @@ void Impl::gen(ast::Component* c, SymbolTable& outerscope) {
     if (llvm::isa<ast::Block>(body)) {
       mlir::emitError(loc(c)) << "Unexpected block in extern";
     } else {
+      op->setAttr("extern", mlir::UnitAttr::get(&ctx));
       auto returnType = gen(c->getBody(), innerscope);
       auto ext = builder.create<ExternOp>(loc(c), name, returnType, mlir::ValueRange(paramvals));
       builder.create<SuperOp>(loc(c), ext);

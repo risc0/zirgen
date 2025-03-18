@@ -18,6 +18,12 @@
 include "mlir/Pass/PassBase.td"
 include "mlir/Rewrite/PassUtil.td"
 
+def ElideRedundantMembers : Pass<"elide-redundant-members", "mlir::ModuleOp"> {
+  let summary = "Prune struct members that are equal by construction";
+  let constructor = "zirgen::Zhlt::createElideRedundantMembersPass()";
+  let dependentDialects = ["zirgen::Zhlt::ZhltDialect"];
+}
+
 def HoistAllocs : Pass<"hoist-allocs", "mlir::ModuleOp"> {
   let summary = "Hoist alloc-only params to callers, then merge";
   let description = [{
@@ -30,6 +36,16 @@ def HoistAllocs : Pass<"hoist-allocs", "mlir::ModuleOp"> {
   }];
   let constructor = "zirgen::Zhlt::createHoistAllocsPass()";
   let dependentDialects = ["zirgen::Zhlt::ZhltDialect"];
+}
+
+def HoistCommonMuxCode : Pass<"hoist-from-mux", "mlir::ModuleOp"> {
+  let summary = "Hoist code shared across all mux arms out of the mux";
+  let constructor = "zirgen::Zhlt::createHoistCommonMuxCodePass()";
+  let dependentDialects = ["zirgen::Zhlt::ZhltDialect"];
+  let options = [
+    Option<"eager", "mux-hoist-eager", "bool", /*default=*/"false",
+           "If true, hoist code shared by 2 or more mux arms">,
+  ];
 }
 
 def StripTests : Pass<"strip-tests", "mlir::ModuleOp"> {
@@ -62,9 +78,9 @@ def StripAliasLayoutOps : Pass<"inline-layout", "mlir::ModuleOp"> {
   let dependentDialects = ["zirgen::Zhlt::ZhltDialect"];
 }
 
-def LowerAssumeRange : Pass<"lower-assume-range", "mlir::ModuleOp"> {
-  let summary = "Translate AssumeRange directives to assertions";
-  let constructor = "zirgen::Zhlt::createLowerAssumeRangePass()";
+def LowerDirectives : Pass<"lower-assume-range", "mlir::ModuleOp"> {
+  let summary = "Translate directives to lower level code";
+  let constructor = "zirgen::Zhlt::createLowerDirectivesPass()";
   let dependentDialects = ["zirgen::Zhlt::ZhltDialect"];
 }
 

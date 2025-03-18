@@ -18,6 +18,7 @@
 #include "mlir/Transforms/Passes.h"
 #include "zirgen/Dialect/ZHLT/IR/TypeUtils.h"
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
+#include "zirgen/Dialect/ZHLT/Transforms/Passes.h"
 #include "zirgen/Dialect/ZStruct/Transforms/Passes.h"
 #include "zirgen/dsl/passes/Passes.h"
 #include "llvm/ADT/TypeSwitch.h"
@@ -85,6 +86,47 @@ std::string canonicalizeIdentifier(std::string ident) {
   return ident;
 }
 
+// Determine if a value is used approximately once in the emitted *Picus code*.
+// Values are typically emitted where they are used, but may also be emitted
+// more times if they occur in a mux selector.
+bool isUsedOnce(Value val) {
+  return val.hasOneUse() && !isa<SwitchOp>(val.getUses().begin()->getOwner());
+}
+
+class MuxDefCollector {
+public:
+  struct SelectedValue {
+    Value selector;
+    Value value;
+  };
+
+  // A list of definitions/aliases for a value "outside the mux" in different
+  // arms of the mux
+  using DefCollection = SmallVector<SelectedValue>;
+
+  // A mapping of all the captured values defined/aliased in a mux to their
+  // various definitions
+  using MuxMapping = DenseMap<Value, DefCollection>;
+
+  bool empty() const { return stack.empty(); }
+
+  void enterMux() { stack.emplace_back(); }
+
+  MuxMapping exitMux() { return stack.pop_back_val(); }
+
+  void nextArm(Value selector) { currentSelector = selector; }
+
+  void addDef(Value outer, Value inner) { stack.back()[outer].push_back({currentSelector, inner}); }
+
+  void removeValue(Value value) { stack.back().erase(value); }
+
+private:
+  // Maintain a MuxMapping for each level of mux nesting during traversal
+  SmallVector<MuxMapping> stack;
+
+  Value currentSelector;
+};
+
 class PicusPrinter {
 public:
   PicusPrinter(llvm::raw_ostream& os) : os(os) {}
@@ -111,8 +153,10 @@ private:
   void printComponent(ComponentOp component) {
     if (done.count(component))
       return;
+    nameCounter = 0;
 
     outputSignalCounter = 0;
+    assert(muxDefCollector.empty());
     os << "(begin-module " << canonicalizeIdentifier(component.getName().str()) << ")\n";
 
     // Non-layout parameters are inputs
@@ -133,6 +177,11 @@ private:
     // The layout is an output
     if (auto layout = component.getLayout()) {
       AnySignal layoutSignal = cast<SignalStruct>(result).get("@layout");
+      if (!layoutSignal) {
+        // And it's still an output even if we prune the @layout member
+        layoutSignal = signalize("layout", layout.getType());
+        declareSignals(layoutSignal, SignalType::Output);
+      }
       valuesToSignals.insert({layout, layoutSignal});
     }
 
@@ -159,11 +208,13 @@ private:
     // the mapping between MLIR values and Picus signals. Because Picus doesn't
     // have control flow, MapOp/ReduceOp are unrolled.
     llvm::TypeSwitch<Operation*>(op)
-        .Case<InvOp, BitAndOp, ModOp, InRangeOp, ExternOp>([&](auto op) { visitNondetOp(op); })
+        .Case<BitAndOp, ExternOp, InRangeOp, InvOp, IsZeroOp, ModOp>(
+            [&](auto op) { visitNondetOp(op); })
         .Case<AddOp, SubOp, MulOp>([&](auto op) { visitBinaryPolyOp(op); })
         .Case<ConstOp,
               StringOp,
               VariadicPackOp,
+              NegOp,
               ExternOp,
               LoadOp,
               LookupOp,
@@ -172,6 +223,7 @@ private:
               EqualZeroOp,
               Zhlt::BackOp,
               SwitchOp,
+              YieldOp,
               ArrayOp,
               PackOp,
               ReturnOp,
@@ -186,15 +238,18 @@ private:
   // For nondeterministic operations, mark all results as fresh signals.
   void visitNondetOp(Operation* op) {
     for (Value result : op->getResults()) {
+      assert(result.getType() == Zhlt::getValType(ctx));
       Signal signal = Signal::get(ctx, freshName());
       valuesToSignals.insert({result, signal});
     }
   }
 
   void visitOp(ConstOp constant) {
+    // Optimization: instead of creating a fresh signal for a constant op, make
+    // a pseudosignal whose "name" is the constant literal. That way, every time
+    // the signal is printed, we end up inlining the literal instead.
     assert(constant.getCoefficients().size() == 1 && "not implemented");
-    auto signal = Signal::get(ctx, freshName());
-    os << "(assert (= " << signal.str() << " " << constant.getCoefficients()[0] << "))\n";
+    auto signal = Signal::get(ctx, std::to_string(constant.getCoefficients()[0]));
     valuesToSignals.insert({constant.getOut(), signal});
   }
 
@@ -235,19 +290,28 @@ private:
       llvm::errs() << "index: " << *subscript.getIndex().getDefiningOp() << "\n";
       return;
     }
-    uint64_t index = cast<PolynomialAttr>(results[0].get<Attribute>())[0];
+    uint64_t index = UINT64_MAX;
+    auto attr = results[0].get<Attribute>();
+    if (auto polyAttr = dyn_cast<PolynomialAttr>(attr)) {
+      index = polyAttr[0];
+    } else if (auto intAttr = dyn_cast<IntegerAttr>(attr)) {
+      index = getIndexVal(intAttr);
+    }
     auto subSignal = signal[index];
     valuesToSignals.insert({subscript.getOut(), subSignal});
   }
 
   void visitOp(ConstructOp construct) {
     workQueue.push(mod.lookupSymbol<ComponentOp>(construct.getCallee()));
-    AnySignal result = signalize(freshName(), construct.getOutType());
+    AnySignal layoutSignal;
+    if (auto layout = construct.getLayout()) {
+      layoutSignal = valuesToSignals.at(layout);
+    }
+    AnySignal result = signalize(freshName(), construct.getOutType(), /*layout=*/layoutSignal);
     valuesToSignals.insert({construct.getOut(), result});
 
     os << "(call [";
-    if (auto layout = construct.getLayout()) {
-      AnySignal layoutSignal = valuesToSignals.at(layout);
+    if (layoutSignal) {
       llvm::interleave(
           flatten(layoutSignal), os, [&](Signal s) { os << s.str(); }, " ");
       os << " ";
@@ -266,6 +330,21 @@ private:
     os << "])\n";
   }
 
+  void visitOp(NegOp neg) {
+    // Optimization: if the result is only used once, use a pseudosignal to
+    // inline the expression at the point of use instead of creating a dedicated
+    // signal.
+    std::string expr = "(- 0 " + cast<Signal>(valuesToSignals.at(neg.getIn())).str() + ")";
+
+    if (isUsedOnce(neg->getResult(0))) {
+      valuesToSignals.insert({neg.getOut(), Signal::get(ctx, expr)});
+    } else {
+      auto signal = Signal::get(ctx, freshName());
+      valuesToSignals.insert({neg.getOut(), signal});
+      os << "(assert (= " << signal.str() << " " << expr << "))\n";
+    }
+  }
+
   void visitBinaryPolyOp(Operation* op) {
     auto symbol = llvm::TypeSwitch<Operation*, const char*>(op)
                       .Case<AddOp>([](auto) { return "+"; })
@@ -276,23 +355,20 @@ private:
                         return nullptr;
                       });
 
-    auto signal = Signal::get(ctx, freshName());
-    valuesToSignals.insert({op->getResult(0), signal});
+    // Optimization: if the result is only used once, use a pseudosignal to
+    // inline the expression at the point of use instead of creating a dedicated
+    // signal.
+    std::string expr = "(" + std::string(symbol) + " " +
+                       cast<Signal>(valuesToSignals.at(op->getOperand(0))).str() + " " +
+                       cast<Signal>(valuesToSignals.at(op->getOperand(1))).str() + ")";
 
-    os << "(assert (= " << signal.str() << " (" << symbol << " ";
-    os << cast<Signal>(valuesToSignals.at(op->getOperand(0))).str() << " ";
-    os << cast<Signal>(valuesToSignals.at(op->getOperand(1))).str();
-    os << ")))\n";
-  }
-
-  void visitOp(SubOp sub) {
-    auto signal = Signal::get(ctx, freshName());
-    valuesToSignals.insert({sub.getOut(), signal});
-
-    os << "(assert (= " << signal.str() << " (- ";
-    os << cast<Signal>(valuesToSignals.at(sub.getLhs())).str() << " ";
-    os << cast<Signal>(valuesToSignals.at(sub.getRhs())).str();
-    os << ")))\n";
+    if (isUsedOnce(op->getResult(0))) {
+      valuesToSignals.insert({op->getResult(0), Signal::get(ctx, expr)});
+    } else {
+      auto signal = Signal::get(ctx, freshName());
+      valuesToSignals.insert({op->getResult(0), signal});
+      os << "(assert (= " << signal.str() << " " << expr << "))\n";
+    }
   }
 
   void visitOp(EqualZeroOp eqz) {
@@ -309,44 +385,55 @@ private:
       selectorSignals.push_back(cast<Signal>(valuesToSignals.at(selector)));
     }
 
-    SmallVector<SmallVector<Signal>> armSignals;
-
+    muxDefCollector.enterMux();
     for (Region& arm : mux.getArms()) {
-      // Probably need to "turn off" AliasLayoutOps, since different arms may
-      // write different values to the common super
+      muxDefCollector.nextArm(mux.getSelector()[arm.getRegionNumber()]);
       assert(arm.hasOneBlock());
       for (Operation& op : arm.front()) {
         visitOp(&op);
       }
-      // Collect values yielded by each arm
-      Value yielded = cast<YieldOp>(arm.front().getTerminator()).getValue();
-      AnySignal signal = valuesToSignals.at(yielded);
-      Type type = yielded.getType();
-      while (type != mux.getType()) {
-        signal = getSuperSignal(signal);
-        type = Zhlt::getSuperType(type);
-      }
-      armSignals.push_back(flatten(signal));
       os << "; mark mux arm\n";
     }
 
-    AnySignal outSignal = signalize("mux_" + freshName(), mux.getType());
-    valuesToSignals.insert({mux.getOut(), outSignal});
+    // Optimization: if the mux result is never used, don't signalize it
+    if (mux.getOut().use_empty()) {
+      muxDefCollector.removeValue(mux.getOut());
+    } else {
+      AnySignal outSignal = signalize("mux_" + freshName(), mux.getType());
+      valuesToSignals.insert({mux.getOut(), outSignal});
+    }
 
-    SmallVector<Signal> outSignals = flatten(outSignal);
-    for (size_t i = 0; i < outSignals.size(); i++) {
-      os << "(assert (= " << outSignals[i].str();
-      for (size_t j = 0; j < armSignals.size(); j++) {
-        if (j != armSignals.size() - 1)
-          os << " (+";
-        os << " (* " << selectorSignals[j].str() << " " << armSignals[j][i].str() << ")";
+    for (auto [value, selectedValues] : muxDefCollector.exitMux()) {
+      // If a value isn't defined on all mux arms, it's value is undefined. This
+      // fact isn't reflected by emitting a linear combination, but we'll cross
+      // that bridge if and when we need to.
+      assert(selectedValues.size() == mux.getSelector().size());
+      SmallVector<SmallVector<Signal>> armSignals;
+      armSignals.reserve(selectedValues.size());
+      for (auto selVal : selectedValues) {
+        armSignals.push_back(flatten(valuesToSignals.at(selVal.value)));
       }
-      for (size_t j = 0; j < armSignals.size(); j++) {
-        os << ")";
+
+      SmallVector<Signal> valueSignals = flatten(valuesToSignals.at(value));
+      for (size_t i = 0; i < valueSignals.size(); i++) {
+        os << "(assert (= " << valueSignals[i].str();
+        for (size_t j = 0; j < armSignals.size(); j++) {
+          if (j != armSignals.size() - 1)
+            os << " (+";
+          os << " (* " << selectorSignals[j].str() << " " << armSignals[j][i].str() << ")";
+        }
+        for (size_t j = 0; j < armSignals.size(); j++) {
+          os << ")";
+        }
+        os << ")\n";
       }
-      os << ")\n";
     }
     os << "; end mux\n";
+  }
+
+  void visitOp(YieldOp yield) {
+    auto mux = cast<SwitchOp>(yield->getParentOp());
+    muxDefCollector.addDef(mux.getOut(), yield.getValue());
   }
 
   void visitOp(ArrayOp arr) {
@@ -390,9 +477,10 @@ private:
   }
 
   void visitOp(GetGlobalLayoutOp get) {
-    // This is sound but presumably not complete?
+    // The globals have a single unique value that is shared with the verifier,
+    // so we can count on these always being deterministic.
     AnySignal signal = signalize(freshName(), get.getType());
-    declareSignals(signal, SignalType::Output);
+    declareSignals(signal, SignalType::AssumeDeterministic);
     valuesToSignals.insert({get.getOut(), signal});
   }
 
@@ -442,27 +530,38 @@ private:
       x = x->getParentRegion();
     }
 
-    auto conditionalize = [&](Signal signal) {
-      if (interveningSelectors.empty()) {
-        os << signal.str();
-      } else {
-        for (Value s : interveningSelectors)
-          os << "(* " << cast<Signal>(valuesToSignals.at(s)).str() << " ";
-        os << signal.str();
-        for (size_t i = 0; i < interveningSelectors.size(); i++)
-          os << ")";
+    assert(interveningSelectors.size() <= 1);
+    if (interveningSelectors.empty()) {
+      auto lhsSignal = valuesToSignals.at(lhs);
+      auto rhsSignal = valuesToSignals.at(rhs);
+      for (auto [sl, sr] : llvm::zip(flatten(lhsSignal), flatten(rhsSignal))) {
+        os << "(assert (= " << sl.str() << " " << sr.str() << "))\n";
       }
-    };
-
-    auto lhsSignal = valuesToSignals.at(lhs);
-    auto rhsSignal = valuesToSignals.at(rhs);
-    for (auto [sl, sr] : llvm::zip(flatten(lhsSignal), flatten(rhsSignal))) {
-      os << "(assert (= ";
-      conditionalize(sl);
-      os << " ";
-      conditionalize(sr);
-      os << "))\n";
+    } else {
+      muxDefCollector.addDef(lhs, rhs);
     }
+
+    // auto conditionalize = [&](Signal signal) {
+    //   if (interveningSelectors.empty()) {
+    //     os << signal.str();
+    //   } else {
+    //     for (Value s : interveningSelectors)
+    //       os << "(* " << cast<Signal>(valuesToSignals.at(s)).str() << " ";
+    //     os << signal.str();
+    //     for (size_t i = 0; i < interveningSelectors.size(); i++)
+    //       os << ")";
+    //   }
+    // };
+
+    // auto lhsSignal = valuesToSignals.at(lhs);
+    // auto rhsSignal = valuesToSignals.at(rhs);
+    // for (auto [sl, sr] : llvm::zip(flatten(lhsSignal), flatten(rhsSignal))) {
+    //   os << "(assert (= ";
+    //   conditionalize(sl);
+    //   os << " ";
+    //   conditionalize(sr);
+    //   os << "))\n";
+    // }
   }
 
   void visitOp(Zhlt::BackOp back) {
@@ -483,6 +582,20 @@ private:
       auto high = cast<Signal>(valuesToSignals.at(args[2]));
       os << "(assume (<= " << low.str() << " " << x.str() << "))\n";
       os << "(assume (< " << x.str() << " " << high.str() << "))\n";
+    } else if (directive.getName() == "AssertRange") {
+      auto args = directive.getArgs();
+      auto low = cast<Signal>(valuesToSignals.at(args[0]));
+      auto x = cast<Signal>(valuesToSignals.at(args[1]));
+      auto high = cast<Signal>(valuesToSignals.at(args[2]));
+      os << "(assert (<= " << low.str() << " " << x.str() << "))\n";
+      os << "(assert (< " << x.str() << " " << high.str() << "))\n";
+    } else if (directive.getName() == "PicusHintEq") {
+      auto leftSignal = cast<Signal>(valuesToSignals.at(directive.getArgs()[0]));
+      auto rightSignal = cast<Signal>(valuesToSignals.at(directive.getArgs()[1]));
+      os << "(assert (= " << leftSignal.str() << " " << rightSignal.str() << "))\n";
+    } else if (directive.getName() == "PicusInput") {
+      auto signal = valuesToSignals.at(directive.getArgs()[0]);
+      declareSignals(signal, SignalType::AssumeDeterministic, /*skipLayout=*/true);
     } else {
       directive->emitError("Cannot lower this directive to Picus");
     }
@@ -493,6 +606,7 @@ private:
     if (isa<ValType>(type) || isa<RefType>(type)) {
       return Signal::get(ctx, prefix);
     } else if (auto array = dyn_cast<ArrayLikeTypeInterface>(type)) {
+      assert(isa<ArrayType>(type) || !layout);
       SmallVector<AnySignal> elements;
       for (size_t i = 0; i < array.getSize(); i++) {
         std::string name = prefix + "_" + std::to_string(i);
@@ -528,12 +642,28 @@ private:
           AnySignal sublayout;
           if (auto strLayout = cast_if_present<SignalStruct>(layout)) {
             sublayout = strLayout.get(field.name);
+            // Mux members have their layouts wrapped in a structure with fields
+            // for each arm and the common super, whereas their values are only
+            // the common super. Navigate this extra indirection if necessary.
+            auto sublayoutCasted = llvm::dyn_cast_or_null<SignalStruct>(sublayout);
+            if (sublayoutCasted) {
+              bool isMux = false;
+              for (NamedAttribute field : sublayoutCasted) {
+                if (field.getName().strref().starts_with("arm")) {
+                  isMux = true;
+                }
+              }
+              if (isMux) {
+                sublayout = sublayoutCasted.get("@super");
+              }
+            }
           }
           fields.emplace_back(field.name, signalize(name, field.type, sublayout));
         }
       }
       return SignalStruct::get(ctx, fields);
     } else if (auto str = dyn_cast<LayoutType>(type)) {
+      assert(!layout);
       SmallVector<NamedAttribute> fields;
       for (auto field : str.getFields()) {
         std::string name = prefix + "_" + canonicalizeIdentifier(field.name.str());
@@ -556,8 +686,9 @@ private:
     return flattened;
   }
 
-  void declareSignals(AnySignal signal, SignalType type) {
-    visit(signal, [&](Signal s) { declareSignal(s, type); });
+  void declareSignals(AnySignal signal, SignalType type, bool skipLayout = false) {
+    visit(
+        signal, [&](Signal s) { declareSignal(s, type); }, /*visitedLayout=*/skipLayout);
   }
 
   void declareSignal(Signal signal, SignalType type) {
@@ -590,6 +721,7 @@ private:
   std::queue<ComponentOp> workQueue;
   std::set<ComponentOp> done;
   llvm::DenseMap<Value, AnySignal> valuesToSignals;
+  MuxDefCollector muxDefCollector;
   unsigned nameCounter = 0;
   unsigned outputSignalCounter = 0;
 };
@@ -600,6 +732,7 @@ void printPicus(ModuleOp mod, llvm::raw_ostream& os) {
   PassManager pm(mod->getContext());
   pm.addPass(zirgen::dsl::createGenerateBackPass());
   pm.addPass(zirgen::dsl::createInlineForPicusPass());
+  pm.addPass(zirgen::Zhlt::createHoistCommonMuxCodePass(/*eager=*/true));
   pm.addPass(createUnrollPass());
   pm.addPass(createCanonicalizerPass());
   if (failed(pm.run(mod))) {

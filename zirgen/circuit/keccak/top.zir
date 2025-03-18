@@ -232,7 +232,6 @@ component ExtractBits2(a: Array<Array<Val, 32>, 4>, e: Array<Array<Val, 32>, 4>,
   )
 }
 
-#[picus_analyze]
 component ShaNextBlockCycle(back1: TopState) {
   Log("ShaNextBlockCycle");
   // Extract current a + e values in packed format
@@ -330,8 +329,9 @@ component SFlatToBits(f: Array<Val, 16>) {
 }
 
 component ReadCycle(stateIn: TopState) {
-  load := for i : 0..100 { NondetReg(GetPreimage(i)) };
   Log("ReadCycle");
+  load := for i : 0..100 { NondetReg(GetPreimage(i)) };
+  PicusInput!(load);
   bits := SFlatToBits(stateIn.sflat);
   stateOut := TopState(bits, load, stateIn.sflat);
   for i : 0..100 {
@@ -434,6 +434,7 @@ component ShaNextBlock(prev: ControlState) {
     ControlState(CycleTypeExpand(), 0, 0, 0),
     {
       more := NondetReg(NextPreimage());
+      PicusInput!(more);
       AssertBit(more);
       if (more) {
         ControlState(CycleTypeRead(), 0, 0, 0)
@@ -445,6 +446,7 @@ component ShaNextBlock(prev: ControlState) {
 }
 
 component ComputeCurrentStep(prevMux: Array<Val, 12>, prev: ControlState) {
+  PicusHintEq!(reduce prevMux init 0 with Add, 1);
   prevMux -> (
     ControlState(CycleTypeShutdown(), 0, 0, 0),
     ControlState(CycleTypeSha(), 0, 0, 0),  // Read -> SHA
@@ -470,6 +472,7 @@ component WrapOneHot(oneHot: OneHot<12>) {
   for i : 0..12 { Reg(oneHot.bits[i]) }
 }
 
+#[picus_analyze]
 component Top() {
   global finalDigest: DigestReg;
 
@@ -489,17 +492,17 @@ component Top() {
   };
   curState: TopState;
   curState := cycleMux -> (
-    ShutdownCycle(curState@1),
-    ReadCycle(curState@1),
-    ExpandCycle(curState@1, controlState.subType),
-    WriteCycle(curState@1, curState@2),
-    KeccakRound0(curState@2, curState@1),
-    KeccakRound12<0>(curState@1, curState@3, curState@2, curState@1),
-    KeccakRound12<1>(curState@2, curState@4, curState@3, curState@1),
-    KeccakRound34<0>(curState@2, curState@1, curState@1, controlState.round),
-    KeccakRound34<1>(curState@3, curState@2, curState@1, controlState.round),
-    ShaCycle(curState@1, curState@2, controlState.round, controlState.block),
-    ShaNextBlockCycle(curState@1),
-    InitCycle()
+    /*Deterministic*/ ShutdownCycle(curState@1),
+    /*Deterministic*/ ReadCycle(curState@1),
+    /*Deterministic*/ ExpandCycle(curState@1, controlState.subType),
+    /*Deterministic*/ WriteCycle(curState@1, curState@2),
+    /*Deterministic*/ KeccakRound0(curState@2, curState@1),
+    /*Deterministic*/ KeccakRound12<0>(curState@1, curState@3, curState@2, curState@1),
+    /*Deterministic*/ KeccakRound12<1>(curState@2, curState@4, curState@3, curState@1),
+    /*Deterministic*/ KeccakRound34<0>(curState@2, curState@1, curState@1, controlState.round),
+    /*Deterministic*/ KeccakRound34<1>(curState@3, curState@2, curState@1, controlState.round),
+    /*Deterministic*/ ShaCycle(curState@1, curState@2, controlState.round, controlState.block),
+    /*Deterministic*/ ShaNextBlockCycle(curState@1),
+    /*Deterministic*/ InitCycle()
   );
 }

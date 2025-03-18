@@ -2,16 +2,10 @@
 
 // CHECK: (prime-number 2013265921)
 // CHECK-NEXT: (begin-module Top)
-// CHECK-NEXT: (output result__layout_a__super)
-// CHECK-NEXT: (output result__layout_b__super__super)
-// CHECK-NEXT: (output result_a__super)
-// CHECK-NEXT: (output result_b__super__super)
-// CHECK-NEXT: (assert (= x0 0))
-// CHECK-NEXT: (assert (= x1 (- x0 result__layout_b__super__super)))
-// CHECK-NEXT: (assert (= x1 0))
-// CHECK-NEXT: (assert (= result__layout_a__super result__layout_b__super__super))
-// CHECK-NEXT: (assert (= result_a__super result__layout_a__super))
-// CHECK-NEXT: (assert (= result_b__super__super result__layout_b__super__super))
+// CHECK-NEXT: (output layout_a__super)
+// CHECK-NEXT: (output layout_b__super__super)
+// CHECK-NEXT: (assert (= (- 0 layout_b__super__super) 0))
+// CHECK-NEXT: (assert (= layout_a__super layout_b__super__super))
 // CHECK-NEXT: (end-module)
 
 #[picus_analyze]

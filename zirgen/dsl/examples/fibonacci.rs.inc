@@ -96,46 +96,25 @@ impl risc0_zkp::layout::Component for _globalLayout {
     }
 }
 #[derive(Copy, Clone, Debug)]
-pub struct NondetRegStruct<'a> {
+pub struct NondetRegStruct {
     pub _super: Val,
-    pub _layout: BoundLayout<'a, NondetRegLayout, Val>,
 }
 #[derive(Copy, Clone, Debug)]
 pub struct ComponentStruct {}
 #[derive(Copy, Clone, Debug)]
-pub struct RegStruct<'a> {
-    pub _super: NondetRegStruct<'a>,
-    pub reg: NondetRegStruct<'a>,
-    pub _layout: BoundLayout<'a, NondetRegLayout, Val>,
-}
+pub struct LogStruct {}
 #[derive(Copy, Clone, Debug)]
 pub struct GetCycleStruct {
     pub _super: Val,
 }
 #[derive(Copy, Clone, Debug)]
-pub struct IsZeroStruct<'a> {
-    pub _super: NondetRegStruct<'a>,
-    pub is_zero: NondetRegStruct<'a>,
-    pub inv: NondetRegStruct<'a>,
-    pub _layout: BoundLayout<'a, IsZeroLayout, Val>,
+pub struct CycleCounterStruct {
+    pub _super: NondetRegStruct,
+    pub is_first_cycle: NondetRegStruct,
 }
 #[derive(Copy, Clone, Debug)]
-pub struct CycleCounterStruct<'a> {
-    pub _super: NondetRegStruct<'a>,
-    pub cycle: NondetRegStruct<'a>,
-    pub is_first_cycle: IsZeroStruct<'a>,
-    pub _layout: BoundLayout<'a, CycleCounterLayout, Val>,
-}
-#[derive(Copy, Clone, Debug)]
-pub struct TopStruct<'a> {
-    pub _super: ComponentStruct,
-    pub cycle: CycleCounterStruct<'a>,
-    pub first: IsZeroStruct<'a>,
-    pub d1: RegStruct<'a>,
-    pub d2: RegStruct<'a>,
-    pub d3: RegStruct<'a>,
-    pub terminate: IsZeroStruct<'a>,
-    pub _layout: BoundLayout<'a, TopLayout, Val>,
+pub struct TopStruct {
+    pub terminate: NondetRegStruct,
 }
 pub const LAYOUT__0: &CycleCounterLayout = &CycleCounterLayout {
     _super: &NondetRegLayout {
@@ -221,11 +200,10 @@ pub fn back_nondet_reg<'a>(
     ctx: &'a ExecContext,
     distance0: Index,
     layout1: BoundLayout<'a, NondetRegLayout, Val>,
-) -> Result<NondetRegStruct<'a>> {
+) -> Result<NondetRegStruct> {
     // builtin NondetReg
     let x2: NondetRegStruct = NondetRegStruct {
         _super: (layout1.map(|c| c._super)).load(ctx, distance0),
-        _layout: layout1,
     };
     return Ok(x2);
 }
@@ -233,11 +211,10 @@ pub fn exec_nondet_reg<'a>(
     ctx: &'a ExecContext,
     arg0: Val,
     layout1: BoundLayout<'a, NondetRegLayout, Val>,
-) -> Result<NondetRegStruct<'a>> {
+) -> Result<NondetRegStruct> {
     (layout1.map(|c| c._super)).store(ctx, arg0);
     let x2: NondetRegStruct = NondetRegStruct {
         _super: (layout1.map(|c| c._super)).load(ctx, 0),
-        _layout: layout1,
     };
     return Ok(x2);
 }
@@ -248,33 +225,25 @@ pub fn back_reg<'a>(
     ctx: &'a ExecContext,
     distance0: Index,
     layout1: BoundLayout<'a, NondetRegLayout, Val>,
-) -> Result<RegStruct<'a>> {
+) -> Result<NondetRegStruct> {
     // Reg(<preamble>:5)
     let x2: NondetRegStruct = back_nondet_reg(ctx, distance0, layout1)?;
-    return Ok(RegStruct {
-        _super: x2.clone(),
-        reg: x2,
-        _layout: layout1,
-    });
+    return Ok(x2);
 }
 pub fn exec_reg<'a>(
     ctx: &'a ExecContext,
     arg0: Val,
     layout1: BoundLayout<'a, NondetRegLayout, Val>,
-) -> Result<RegStruct<'a>> {
+) -> Result<NondetRegStruct> {
     let x2: NondetRegStruct = exec_nondet_reg(ctx, arg0, layout1)?;
     // Reg(<preamble>:6)
     eqz!((arg0 - x2._super), "Reg(<preamble>:6)");
-    return Ok(RegStruct {
-        _super: x2.clone(),
-        reg: x2,
-        _layout: layout1,
-    });
+    return Ok(x2);
 }
-pub fn exec_log<'a>(ctx: &'a ExecContext, arg0: &str, arg1: &[Val]) -> Result<ComponentStruct> {
-    // Log(<preamble>:26)
+pub fn exec_log<'a>(ctx: &'a ExecContext, arg0: &str, arg1: &[Val]) -> Result<LogStruct> {
+    // Log(<preamble>:25)
     invoke_extern!(ctx, log, arg0, arg1);
-    return Ok(ComponentStruct {});
+    return Ok(LogStruct {});
 }
 pub fn exec_get_cycle<'a>(ctx: &'a ExecContext) -> Result<GetCycleStruct> {
     // GetCycle(zirgen/dsl/examples/fibonacci.zir:2)
@@ -285,7 +254,7 @@ pub fn exec_is_zero<'a>(
     ctx: &'a ExecContext,
     arg0: Val,
     layout1: BoundLayout<'a, IsZeroLayout, Val>,
-) -> Result<IsZeroStruct<'a>> {
+) -> Result<NondetRegStruct> {
     // IsZero(zirgen/dsl/examples/fibonacci.zir:6)
     let x2: Val = exec_isz(ctx, arg0)?;
     let x3: NondetRegStruct = exec_nondet_reg(ctx, x2, (layout1.map(|c| c._super)))?;
@@ -306,18 +275,13 @@ pub fn exec_is_zero<'a>(
     // IsZero(zirgen/dsl/examples/fibonacci.zir:18)
     let x11: Val = exec_mul(ctx, x3._super, x5._super)?;
     eqz!(x11, "IsZero(zirgen/dsl/examples/fibonacci.zir:18)");
-    return Ok(IsZeroStruct {
-        _super: x3,
-        is_zero: x3,
-        inv: x5,
-        _layout: layout1,
-    });
+    return Ok(x3);
 }
 pub fn exec_cycle_counter<'a>(
     ctx: &'a ExecContext,
     layout0: BoundLayout<'a, CycleCounterLayout, Val>,
     global1: BufferRow<Val>,
-) -> Result<CycleCounterStruct<'a>> {
+) -> Result<CycleCounterStruct> {
     // CycleCounter(zirgen/dsl/examples/fibonacci.zir:28)
     let x2: BoundLayout<_globalLayout, _> = bind_layout!(LAYOUT_GLOBAL, global1);
     // CycleCounter(zirgen/dsl/examples/fibonacci.zir:29)
@@ -326,13 +290,13 @@ pub fn exec_cycle_counter<'a>(
     let x4: GetCycleStruct = exec_get_cycle(ctx)?;
     let x5: NondetRegStruct = exec_nondet_reg(ctx, x4._super, (layout0.map(|c| c._super)))?;
     // CycleCounter(zirgen/dsl/examples/fibonacci.zir:32)
-    let x6: IsZeroStruct = exec_is_zero(ctx, x5._super, (layout0.map(|c| c.is_first_cycle)))?;
+    let x6: NondetRegStruct = exec_is_zero(ctx, x5._super, (layout0.map(|c| c.is_first_cycle)))?;
     // CycleCounter(zirgen/dsl/examples/fibonacci.zir:34)
-    let x7: Val = exec_sub(ctx, Val::new(1), x6._super._super)?;
-    let x8: ComponentStruct;
-    if is_true(x6._super._super) {
-        let x9: ComponentStruct = exec_component(ctx)?;
-        x8 = x9;
+    let x7: Val = exec_sub(ctx, Val::new(1), x6._super)?;
+    let x8: ComponentStruct = exec_component(ctx)?;
+    let x9: ComponentStruct;
+    if is_true(x6._super) {
+        x9 = x8;
     } else if is_true(x7) {
         // CycleCounter(zirgen/dsl/examples/fibonacci.zir:39)
         let x10: NondetRegStruct = back_nondet_reg(ctx, 1, (layout0.map(|c| c._super)))?;
@@ -341,98 +305,81 @@ pub fn exec_cycle_counter<'a>(
             (x5._super - x11),
             "CycleCounter(zirgen/dsl/examples/fibonacci.zir:39)"
         );
-        // CycleCounter(zirgen/dsl/examples/fibonacci.zir:37)
-        let x12: ComponentStruct = exec_component(ctx)?;
-        x8 = x12;
+        x9 = x8;
     } else {
         bail!("Reached unreachable mux arm")
     }
     return Ok(CycleCounterStruct {
         _super: x5,
-        cycle: x5,
         is_first_cycle: x6,
-        _layout: layout0,
     });
 }
 pub fn exec_top<'a>(
     ctx: &'a ExecContext,
     layout0: BoundLayout<'a, TopLayout, Val>,
     global1: BufferRow<Val>,
-) -> Result<TopStruct<'a>> {
+) -> Result<TopStruct> {
     // Top(zirgen/dsl/examples/fibonacci.zir:44)
     let x2: BoundLayout<_globalLayout, _> = bind_layout!(LAYOUT_GLOBAL, global1);
     // Top(zirgen/dsl/examples/fibonacci.zir:49)
     let x3: CycleCounterStruct = exec_cycle_counter(ctx, (layout0.map(|c| c.cycle)), global1)?;
     // Top(zirgen/dsl/examples/fibonacci.zir:55)
-    let x4: Val = exec_sub(ctx, Val::new(1), x3.is_first_cycle._super._super)?;
-    let x5: RegStruct;
-    if is_true(x3.is_first_cycle._super._super) {
+    let x4: Val = exec_sub(ctx, Val::new(1), x3.is_first_cycle._super)?;
+    let x5: NondetRegStruct;
+    if is_true(x3.is_first_cycle._super) {
         // Top(zirgen/dsl/examples/fibonacci.zir:45)
-        let x6: RegStruct = back_reg(ctx, 0, (x2.map(|c| c.f0)))?;
+        let x6: NondetRegStruct = back_reg(ctx, 0, (x2.map(|c| c.f0)))?;
         x5 = x6;
     } else if is_true(x4) {
         // Top(zirgen/dsl/examples/fibonacci.zir:55)
-        let x7: RegStruct = back_reg(ctx, 1, (layout0.map(|c| c.d2)))?;
+        let x7: NondetRegStruct = back_reg(ctx, 1, (layout0.map(|c| c.d2)))?;
         x5 = x7;
     } else {
         bail!("Reached unreachable mux arm")
     }
-    let x8: RegStruct = exec_reg(ctx, x5._super._super, (layout0.map(|c| c.d1)))?;
+    let x8: NondetRegStruct = exec_reg(ctx, x5._super, (layout0.map(|c| c.d1)))?;
     // Top(zirgen/dsl/examples/fibonacci.zir:56)
-    let x9: Val = exec_sub(ctx, Val::new(1), x3.is_first_cycle._super._super)?;
-    let x10: RegStruct;
-    if is_true(x3.is_first_cycle._super._super) {
+    let x9: Val = exec_sub(ctx, Val::new(1), x3.is_first_cycle._super)?;
+    let x10: NondetRegStruct;
+    if is_true(x3.is_first_cycle._super) {
         // Top(zirgen/dsl/examples/fibonacci.zir:46)
-        let x11: RegStruct = back_reg(ctx, 0, (x2.map(|c| c.f1)))?;
+        let x11: NondetRegStruct = back_reg(ctx, 0, (x2.map(|c| c.f1)))?;
         x10 = x11;
     } else if is_true(x9) {
         // Top(zirgen/dsl/examples/fibonacci.zir:56)
-        let x12: RegStruct = back_reg(ctx, 1, (layout0.map(|c| c.d3)))?;
+        let x12: NondetRegStruct = back_reg(ctx, 1, (layout0.map(|c| c.d3)))?;
         x10 = x12;
     } else {
         bail!("Reached unreachable mux arm")
     }
-    let x13: RegStruct = exec_reg(ctx, x10._super._super, (layout0.map(|c| c.d2)))?;
+    let x13: NondetRegStruct = exec_reg(ctx, x10._super, (layout0.map(|c| c.d2)))?;
     // Top(zirgen/dsl/examples/fibonacci.zir:59)
-    let x14: Val = exec_add(ctx, x8._super._super, x13._super._super)?;
-    let x15: RegStruct = exec_reg(ctx, x14, (layout0.map(|c| c.d3)))?;
+    let x14: Val = exec_add(ctx, x8._super, x13._super)?;
+    let x15: NondetRegStruct = exec_reg(ctx, x14, (layout0.map(|c| c.d3)))?;
     // Top(zirgen/dsl/examples/fibonacci.zir:47)
-    let x16: RegStruct = back_reg(ctx, 0, (x2.map(|c| c.steps)))?;
+    let x16: NondetRegStruct = back_reg(ctx, 0, (x2.map(|c| c.steps)))?;
     // Top(zirgen/dsl/examples/fibonacci.zir:62)
-    let x17: Val = exec_sub(ctx, x3._super._super, x16._super._super)?;
+    let x17: Val = exec_sub(ctx, x3._super._super, x16._super)?;
     let x18: Val = exec_add(ctx, x17, Val::new(1))?;
-    let x19: IsZeroStruct = exec_is_zero(ctx, x18, (layout0.map(|c| c.terminate)))?;
+    let x19: NondetRegStruct = exec_is_zero(ctx, x18, (layout0.map(|c| c.terminate)))?;
     // Top(zirgen/dsl/examples/fibonacci.zir:63)
-    let x20: Val = exec_sub(ctx, Val::new(1), x19._super._super)?;
-    let x21: ComponentStruct;
-    if is_true(x19._super._super) {
+    let x20: Val = exec_sub(ctx, Val::new(1), x19._super)?;
+    let x21: ComponentStruct = exec_component(ctx)?;
+    let x22: ComponentStruct;
+    if is_true(x19._super) {
         // Top(zirgen/dsl/examples/fibonacci.zir:64)
-        let x22: RegStruct = exec_reg(ctx, x15._super._super, (x2.map(|c| c.f_last)))?;
-        let x23: RegStruct = back_reg(ctx, 0, (x2.map(|c| c.f_last)))?;
+        let x23: NondetRegStruct = exec_reg(ctx, x15._super, (x2.map(|c| c.f_last)))?;
+        let x24: NondetRegStruct = back_reg(ctx, 0, (x2.map(|c| c.f_last)))?;
         // Top(zirgen/dsl/examples/fibonacci.zir:65)
-        let x24: [Val] = [x23._super._super];
-        let x25: ComponentStruct = exec_log(ctx, "f_last = %u", &x24)?;
-        // Top(zirgen/dsl/examples/fibonacci.zir:63)
-        let x26: ComponentStruct = exec_component(ctx)?;
-        x21 = x26;
+        let x25: LogStruct = exec_log(ctx, "f_last = %u", &[x24._super])?;
+        x22 = x21;
     } else if is_true(x20) {
-        // Top(zirgen/dsl/examples/fibonacci.zir:66)
-        let x27: ComponentStruct = exec_component(ctx)?;
-        x21 = x27;
+        x22 = x21;
     } else {
         bail!("Reached unreachable mux arm")
     } // Top(zirgen/dsl/examples/fibonacci.zir:44)
-    let x28: ComponentStruct = exec_component(ctx)?;
-    return Ok(TopStruct {
-        _super: x28,
-        cycle: x3,
-        first: x3.is_first_cycle,
-        d1: x8,
-        d2: x13,
-        d3: x15,
-        terminate: x19,
-        _layout: layout0,
-    });
+    let x26: ComponentStruct = exec_component(ctx)?;
+    return Ok(TopStruct { terminate: x19 });
 }
 pub fn step_top<'a>(
     ctx: &'a ExecContext,
