@@ -19,6 +19,11 @@ permissions:
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  AUDITHUB_BASE_URL: ${{ secrets.AUDITHUB_BASE_URL }}
+  AUDITHUB_OIDC_CONFIGURATION_URL: ${{ secrets.AUDITHUB_OIDC_CONFIGURATION_URL }}
+  AUDITHUB_OIDC_CLIENT_ID: ${{ secrets.AUDITHUB_OIDC_CLIENT_ID }}
+  AUDITHUB_OIDC_CLIENT_SECRET: ${{ secrets.AUDITHUB_OIDC_CLIENT_SECRET }}
+  AUDITHUB_ORGANIZATION_ID: ${{ secrets.AUDITHUB_ORGANIZATION_ID }}
 
 jobs:
   check:
@@ -39,7 +44,7 @@ jobs:
       - run: cargo sort --workspace --check
       - uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: "3.12"
       - run: python license-check.py
 
   check-generated-zirgen:
@@ -142,6 +147,29 @@ jobs:
       - run: rzup install rust
       - run: cargo doc --no-deps --workspace
       - run: sccache --show-stats
+
+  keccak-determinism:
+    runs-on: [self-hosted, prod, cpu, Linux]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/bazelisk
+        with:
+          cache-key: picus
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+      - name: Verify Keccak circuit is deterministic
+        run: |
+          python3 -m venv .venv
+          source .venv/bin/activate
+          git clone https://github.com/Veridise/AuditHub-Client.git
+          cd AuditHub-Client
+          pip3 install poetry
+          poetry install
+          cd ..
+          bazelisk build //zirgen/circuit/keccak:picus_archive --config=ci
+          ./bazel/rules/zirgen/picus_verify.sh $(bazelisk cquery //zirgen/circuit/keccak:picus_archive --output=files) keccak.picus
+        shell: bash
 
   # see: https://github.com/orgs/community/discussions/26822
   main-status-check:

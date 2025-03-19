@@ -308,13 +308,8 @@ function Div(lhs: Val, rhs: Val) {
    reciprocal * lhs
 }
 
-#[picus_inline]
 extern Log(message: String, vals: Val...);
-
-#[picus_inline]
 extern Abort();
-
-#[picus_inline]
 extern Assert(x: Val, message: String);
 
 )";

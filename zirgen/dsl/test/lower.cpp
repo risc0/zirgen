@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -147,7 +147,7 @@ TEST(lower, Extern) {
 
   string expect =
       R"(module {
-  zhl.component @MyExtern {
+  zhl.component @MyExtern attributes {extern} {
     %0 = zhl.global "XType"
     %1 = zhl.parameter "x"(0) : %0
     %2 = zhl.global "YType"
