@@ -27,13 +27,11 @@ namespace zirgen::Zhlt {
 namespace {
 
 bool isHoistable(Operation* op) {
-  // Check if all of the operation's operands are defined outside of the mux. If
-  // they are, then we can probably hoist -- but make sure not to reorder side
-  // effects, and never hoist any ops with regions, AliasLayoutOps or block
-  // terminators.
-  return op->getNumRegions() == 0 &&
-         !isa<LoadOp>(op) && // could be more precise by checking for writes within the block
-         !isa<AliasLayoutOp>(op) && !op->hasTrait<OpTrait::IsTerminator>() &&
+  // Check that all of the operation's operands are defined outside of the mux.
+  // Also, we need to be careful not to reorder side effects; pure operations
+  // have no side effects, and backs with non-zero distance only read values
+  // written before the current cycle.
+  return (isPure(op) || (isa<BackOp>(op) && cast<BackOp>(op).getDistance().getZExtValue() != 0)) &&
          llvm::all_of(op->getOperands(), [=](Value value) {
            return value.getParentRegion() != op->getParentRegion();
          });
@@ -41,7 +39,8 @@ bool isHoistable(Operation* op) {
 
 bool compare(Operation* op1, Operation* op2) {
   if (op1->getName() != op2->getName() || op1->getNumOperands() != op2->getNumOperands() ||
-      op1->getAttrs().size() != op2->getAttrs().size())
+      op1->getAttrs().size() != op2->getAttrs().size() ||
+      op1->getResultTypes() != op2->getResultTypes())
     return false;
   for (auto [opn1, opn2] : llvm::zip(op1->getOperands(), op2->getOperands())) {
     if (opn1 != opn2)
