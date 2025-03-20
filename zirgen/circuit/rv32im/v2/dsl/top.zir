@@ -21,6 +21,7 @@ component MajorMinor(major: Val, minor: Val) {
 
 extern GetMajorMinor(): MajorMinor;
 
+#[picus_analyze]
 component Top() {
   // Global state
   global stateIn: DigestReg;
@@ -95,6 +96,7 @@ component Top() {
   inst_result.topState
 }
 
+#[picus_analyze]
 component Accum(topState: BigIntTopState, mix: Array<ExtVal, 1>) {
   BigIntAccum(topState, mix);
 }

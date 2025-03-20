@@ -82,7 +82,7 @@ component DoDiv(numer: ValU32, denom: ValU32, signed: Val, ones_comp: Val) {
     numNeg * (0x10000 - rem.low) + (1 - numNeg) * rem.low,
     numNeg * (0xffff - rem.high) + (1 - numNeg) * rem.high
   ));
-  // Decide if we need to swap order of 
+  // Decide if we need to swap order of
   // If non-zero, make sure 0 <= rem < denom
   if (isZero) {
     AssertEqU32(rem, numer);

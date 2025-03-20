@@ -71,7 +71,7 @@ component UnpackU32NondetBE(val: ValU32) {
   unpacked := UnpackNondet<32, 16>([val.low, val.high]);
   for o : 0..32 {
     j := o & 7;
-    i := (o - j) / 8; 
+    i := (o - j) / 8;
     unpacked[(3 - i) * 8 + j]
   }
 }
@@ -83,6 +83,7 @@ component VerifyUnpackU32LE(unpacked: Array<Val, 32>, orig: ValU32) {
   orig.high = packed[1];
 }
 
+#[picus_inline]
 component VerifyUnpackU32BE(unpacked: Array<Val, 32>, orig: ValU32) {
   packed := Pack<32, 8>(unpacked);
   for i : 0..32 { AssertBit(unpacked[i]); };
@@ -100,8 +101,8 @@ component ShaLoadState(cycle: Reg, prev: ShaState) {
   countZero := IsZero(prev.count);
   nextState := if (lastRound) {
     if (countZero) {
-      StateDecode() 
-    } else { 
+      StateDecode()
+    } else {
       StateShaLoadData()
     }
   } else {
@@ -191,9 +192,9 @@ component ShaStoreState(cycle: Reg, prev: ShaState, p4: ShaState, p68: ShaState)
   lastRound := IsZero(3 - prev.round);
   newCount := prev.count - lastRound;
   countZero := IsZero(newCount);
-  nextState := if (countZero) { 
-    StateDecode() 
-  } else { 
+  nextState := if (countZero) {
+    StateDecode()
+  } else {
     if (lastRound) {
       StateShaLoadData()
     } else {
