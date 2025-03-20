@@ -1045,6 +1045,7 @@ Value LoweringImpl::expandLayoutMember(Location loc,
 
 void LoweringImpl::gen(DirectiveOp directive, ComponentBuilder& cb) {
   StringRef name = directive.getName();
+  Location loc = directive->getLoc();
   if (name == "AliasLayout") {
     if (directive.getArgs().size() != 2) {
       size_t args = directive.getArgs().size();
@@ -1074,7 +1075,7 @@ void LoweringImpl::gen(DirectiveOp directive, ComponentBuilder& cb) {
       }
       args.push_back(coerceTo(arg, Zhlt::getValType(ctx)));
     }
-    builder.create<Zhlt::DirectiveOp>(directive->getLoc(), name, args);
+    builder.create<Zhlt::DirectiveOp>(loc, name, args);
   } else if (name == "PicusHintEq") {
     if (directive.getArgs().size() != 2) {
       size_t args = directive.getArgs().size();
@@ -1089,14 +1090,22 @@ void LoweringImpl::gen(DirectiveOp directive, ComponentBuilder& cb) {
       }
       args.push_back(coerceTo(arg, Zhlt::getValType(ctx)));
     }
-    builder.create<Zhlt::DirectiveOp>(directive->getLoc(), "PicusHintEq", args);
+    builder.create<Zhlt::DirectiveOp>(loc, "PicusHintEq", args);
   } else if (name == "PicusInput") {
     if (directive.getArgs().size() != 1) {
       size_t args = directive.getArgs().size();
       directive.emitError() << "'PicusInput' directive expects 1 argument, got " << args;
     }
     SmallVector<Value> args = {asValue(directive.getArgs()[0])};
-    builder.create<Zhlt::DirectiveOp>(directive->getLoc(), "PicusInput", args);
+    builder.create<Zhlt::DirectiveOp>(loc, "PicusInput", args);
+  } else if (name == "Unsatisfiable") {
+    if (directive.getArgs().size() != 0) {
+      size_t args = directive.getArgs().size();
+      directive.emitError() << "'PicusInput' directive expects 0 arguments, got " << args;
+    }
+    Value neg = builder.create<Zll::ConstOp>(loc, 2013265920);
+    auto constraint = builder.create<Zll::EqualZeroOp>(loc, neg);
+    constraint->setAttr("unsatisfiable", UnitAttr::get(ctx));
   } else {
     directive.emitError() << "Unknown compiler directive '" << directive.getName() << "'";
   }

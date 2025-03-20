@@ -1,0 +1,12 @@
+// RUN: not zirgen --test %s 2>&1 | FileCheck %s
+
+// CHECK: error: EqualZeroOp: Not zero: 2013265920
+
+component Top() {
+  Unsatisfiable!();
+  Reg(5)
+}
+
+test {
+  Top()
+}

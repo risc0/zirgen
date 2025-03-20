@@ -452,6 +452,13 @@ private:
   }
 
   void visitOp(EqualZeroOp eqz) {
+    // Skip emitting constraints flagged as unsatisfiable. Picus doesn't like
+    // unsatisfiable constraints, and omitting a constraint only increases the
+    // number of satisfying assignments so this is sound.
+    if (eqz->hasAttr("unsatisfiable")) {
+      return;
+    }
+
     os << "(assert (= ";
     os << cast<Signal>(valuesToSignals.at(eqz.getIn())).str();
     os << " 0))\n";
@@ -872,7 +879,7 @@ private:
 ; implementation of BabyBear extension field multiplication, so I hope I got it
 ; right!
 (assert (= NBETA (- 2013265921 11))) ; NBETA = p - 11
-(assert (= z0 (+ (* x0 y0) (* NBETA ((* x1 y3) + (* x2 y2) + (* x3 y1))))))
+(assert (= z0 (+ (* x0 y0) (* NBETA (+ (* x1 y3) (+ (* x2 y2) (* x3 y1)))))))
 (assert (= z1 (+ (* x0 y1) (+ (* x1 y0) (* NBETA (+ (* x2 y3) (* x3 y2)))))))
 (assert (= z2 (+ (* x0 y2) (+ (* x1 y1) (+ (* x2 y0) (* NBETA (* x3 y3)))))))
 (assert (= z3 (+ (* x0 y3) (+ (* x1 y2) (+ (* x2 y1) (* x3 y0))))))

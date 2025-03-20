@@ -1,0 +1,15 @@
+// RUN: zirgen %s --emit=picus | FileCheck %s
+
+// The unsatisfiable directive translates to nothing in Picus
+// CHECK: (prime-number 2013265921)
+// CHECK-NEXT: (begin-module Top)
+// CHECK-NEXT: (output layout__super__super__super)
+// CHECK-NEXT: (assert (= (- 5 layout__super__super__super) 0))
+// CHECK-NEXT: (end-module)
+
+
+#[picus_analyze]
+component Top() {
+  Unsatisfiable!();
+  Reg(5)
+}

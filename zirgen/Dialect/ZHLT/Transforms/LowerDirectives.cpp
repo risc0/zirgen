@@ -29,11 +29,11 @@ struct LowerDirectives : public OpRewritePattern<DirectiveOp> {
 
   LogicalResult matchAndRewrite(DirectiveOp directive, PatternRewriter& rewriter) const final {
     StringRef name = directive.getName();
+    Location loc = directive.getLoc();
     if (name == "AssumeRange" || name == "AssertRange") {
       // AssumeRange!(low, x, high);
       // -->
       // Assert(1 - InRange(low, x, high), "value out of range!");
-      Location loc = directive.getLoc();
       OperandRange args = directive.getArgs();
       Value message = rewriter.create<Zll::StringOp>(loc, "value out of range!");
       Value one = rewriter.create<Zll::ConstOp>(loc, 1);

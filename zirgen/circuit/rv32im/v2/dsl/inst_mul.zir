@@ -14,7 +14,7 @@ component MulInput(cycle: Reg, inst_input: InstInput) {
 }
 
 component IllegalMulOp(input: MulInput) {
-  0 = 1;
+  Unsatisfiable!();
   ValU32(0, 0)
 }
 

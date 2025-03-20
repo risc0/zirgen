@@ -23,7 +23,7 @@ component BigIntState(
 component BigIntInvalid() {
   // Log("BigIntInvalid");
 
-  0 = 1;
+  Unsatisfiable!();
   BigIntState(
     /*isEcall=*/0,
     /*mode=*/0,

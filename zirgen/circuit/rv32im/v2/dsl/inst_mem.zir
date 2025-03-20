@@ -36,12 +36,12 @@ component SplitWord(word: Val) {
 }
 
 component IllegalLoadOp(input: MemLoadInput) {
-  0 = 1;
+  Unsatisfiable!();
   ValU32(0, 0)
 }
 
 component IllegalStoreOp(input: MemStoreInput) {
-  0 = 1;
+  Unsatisfiable!();
   ValU32(0, 0)
 }
 
