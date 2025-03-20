@@ -102,6 +102,7 @@ component CondDenormed(cond: Val, a: DenormedValU32, b: DenormedValU32) {
       cond * a.high + (1 - cond) * b.high)
 }
 
+#[picus_inline]
 component AssertEqU32(x: ValU32, y: ValU32) {
   x.low = y.low;
   x.high = y.high;
