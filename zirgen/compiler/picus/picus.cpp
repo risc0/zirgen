@@ -226,6 +226,14 @@ private:
   void printComponent(ComponentOp component) {
     if (done.count(component))
       return;
+
+    llvm::StringSet<> specialCases = {"MakeExt", "ExtAdd", "ExtSub", "ExtMul", "ExtInv"};
+    if (specialCases.contains(component.getName())) {
+      printComponentSpecialCase(component);
+      done.insert(component);
+      return;
+    }
+
     nameCounter = 0;
 
     outputSignalCounter = 0;
@@ -783,6 +791,112 @@ private:
   MuxDefCollector muxDefCollector;
   unsigned nameCounter = 0;
   unsigned outputSignalCounter = 0;
+
+  void printComponentSpecialCase(ComponentOp component) {
+    StringRef name = component.getName();
+    if (name == "MakeExt") {
+      os << R"(; This module has a hand-written translation to Picus
+(begin-module MakeExt)
+(input x0)
+(output y0)
+(output y1)
+(output y2)
+(output y3)
+(assert (= y0 x0))
+(assert (= y1 0))
+(assert (= y2 0))
+(assert (= y3 0))
+(end-module)
+      )";
+    } else if (name == "ExtAdd") {
+      os << R"(; This module has a hand-written translation to Picus
+(begin-module ExtAdd)
+(input x0)
+(input x1)
+(input x2)
+(input x3)
+(input y0)
+(input y1)
+(input y2)
+(input y3)
+(output z0)
+(output z1)
+(output z2)
+(output z3)
+(assert (= z0 (+ x0 y0)))
+(assert (= z1 (+ x1 y1)))
+(assert (= z2 (+ x2 y2)))
+(assert (= z3 (+ x3 y3)))
+(end-module)
+      )";
+    } else if (name == "ExtSub") {
+      os << R"(; This module has a hand-written translation to Picus
+(begin-module ExtSub)
+(input x0)
+(input x1)
+(input x2)
+(input x3)
+(input y0)
+(input y1)
+(input y2)
+(input y3)
+(output z0)
+(output z1)
+(output z2)
+(output z3)
+(assert (= z0 (- x0 y0)))
+(assert (= z1 (- x1 y1)))
+(assert (= z2 (- x2 y2)))
+(assert (= z3 (- x3 y3)))
+(end-module)
+      )";
+    } else if (name == "ExtMul") {
+      os << R"(; This module has a hand-written translation to Picus
+(begin-module ExtMul)
+(input x0)
+(input x1)
+(input x2)
+(input x3)
+(input y0)
+(input y1)
+(input y2)
+(input y3)
+(output z0)
+(output z1)
+(output z2)
+(output z3)
+; use irreducible polynomial x^4 - 11
+; extension field multiplication always boils down to a closed form expression
+; over the arguments. If it looks like x^n - BETA, it has a relatively clean
+; form that looks something like a dot product of a permutation of y with some
+; factors of BETA thrown in. I translated this by hand from our Rust
+; implementation of BabyBear extension field multiplication, so I hope I got it
+; right!
+(assert (= NBETA (- 2013265921 11))) ; NBETA = p - 11
+(assert (= z0 (+ (* x0 y0) (* NBETA ((* x1 y3) + (* x2 y2) + (* x3 y1))))))
+(assert (= z1 (+ (* x0 y1) (+ (* x1 y0) (* NBETA (+ (* x2 y3) (* x3 y2)))))))
+(assert (= z2 (+ (* x0 y2) (+ (* x1 y1) (+ (* x2 y0) (* NBETA (* x3 y3)))))))
+(assert (= z3 (+ (* x0 y3) (+ (* x1 y2) (+ (* x2 y1) (* x3 y0))))))
+(end-module)
+      )";
+    } else if (name == "ExtInv") {
+      os << R"(; This module has a hand-written translation to Picus
+(begin-module ExtInv)
+(input x0)
+(input x1)
+(input x2)
+(input x3)
+(output y0)
+(output y1)
+(output y2)
+(output y3)
+(end-module)
+      )";
+    } else {
+      llvm_unreachable("unhandled special case component");
+    }
+    os << "\n";
+  }
 };
 
 } // namespace
