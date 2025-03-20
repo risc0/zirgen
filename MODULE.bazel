@@ -1,0 +1,97 @@
+# Copyright 2024 RISC Zero, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""The Zirgen Compiler"""
+
+module(
+    name = "zirgen",
+    repo_name = "risc0_zirgen",
+)
+
+bazel_dep(name = "rules_license", version = "0.0.7")
+bazel_dep(name = "rules_pkg", version = "1.0.1")
+bazel_dep(name = "bazel_skylib", version = "1.7.1")
+bazel_dep(name = "platforms", version = "0.0.10")
+
+bazel_dep(name = "googletest", version = "1.15.2", dev_dependency = True)
+
+# Generate compile_commands.json file for IDE integration
+# https://github.com/hedronvision/bazel-compile-commands-extractor
+# tip: use `bazel run @hedron_compile_commands//:refresh_all`
+bazel_dep(name = "hedron_compile_commands", dev_dependency = True)
+git_override(
+    module_name = "hedron_compile_commands",
+    remote = "https://github.com/hedronvision/bazel-compile-commands-extractor.git",
+    commit = "4f28899228fb3ad0126897876f147ca15026151e",
+)
+
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+# LLVM doesn't support bzlmod yet, so we have to pull it in the WORKSPACE way
+LLVM_COMMIT = "fea7b65f23632b42ff8f7e2595ac0641e2c1d214"
+LLVM_SHA256 = "7f8da8de897f20824e7d11204768ccb29a47419385bb6c9b3f5eccfd738d7510"
+http_archive(
+    name = "llvm-raw",
+    build_file_content = "# empty",
+    sha256 = LLVM_SHA256,
+    strip_prefix = "llvm-project-" + LLVM_COMMIT,
+    urls = ["https://github.com/llvm/llvm-project/archive/{commit}.tar.gz".format(commit = LLVM_COMMIT)],
+)
+
+http_archive(
+    name = "llvm_zlib",
+    build_file = "@llvm-raw//utils/bazel/third_party_build:zlib-ng.BUILD",
+    sha256 = "e36bb346c00472a1f9ff2a0a4643e590a254be6379da7cddd9daeb9a7f296731",
+    strip_prefix = "zlib-ng-2.0.7",
+    urls = [
+        "https://github.com/zlib-ng/zlib-ng/archive/refs/tags/2.0.7.zip",
+    ],
+)
+
+http_archive(
+    name = "llvm_zstd",
+    build_file = "@llvm-raw//utils/bazel/third_party_build:zstd.BUILD",
+    sha256 = "7c42d56fac126929a6a85dbc73ff1db2411d04f104fae9bdea51305663a83fd0",
+    strip_prefix = "zstd-1.5.2",
+    urls = [
+        "https://github.com/facebook/zstd/releases/download/v1.5.2/zstd-1.5.2.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "riscv_tests",
+    build_file = "//bazel/third_party:riscv_tests.BUILD",
+    sha256 = "831a91955287865f9c09bbb7102f7ba2987d86823fd7b67c8a62eff46e21a83c",
+    strip_prefix = "riscv-tests-a6ab6ae6008ffc2ea907ea9f6d2b8379583e7d56",
+    url = "https://github.com/riscv/riscv-tests/archive/a6ab6ae6008ffc2ea907ea9f6d2b8379583e7d56.zip",
+)
+
+http_archive(
+    name = "rules_conda",
+    patch_args = ["-p1"],
+    patches = ["//bazel/third_party/rules_conda:prefix.patch"],
+    sha256 = "9793f86162ec5cfb32a1f1f13f5bf776e2c06b243c4f1ee314b9ec870144220d",
+    url = "https://github.com/spietras/rules_conda/releases/download/0.1.0/rules_conda-0.1.0.zip",
+)
+
+HERMETIC_CC_TOOLCHAIN_VERSION = "v3.1.0"
+
+http_archive(
+    name = "hermetic_cc_toolchain",
+    sha256 = "df091afc25d73b0948ed371d3d61beef29447f690508e02bc24e7001ccc12d38",
+    urls = [
+        "https://mirror.bazel.build/github.com/uber/hermetic_cc_toolchain/releases/download/{0}/hermetic_cc_toolchain-{0}.tar.gz".format(HERMETIC_CC_TOOLCHAIN_VERSION),
+        "https://github.com/uber/hermetic_cc_toolchain/releases/download/{0}/hermetic_cc_toolchain-{0}.tar.gz".format(HERMETIC_CC_TOOLCHAIN_VERSION),
+    ],
+)

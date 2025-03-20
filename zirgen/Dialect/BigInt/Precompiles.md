@@ -16,7 +16,7 @@ namespace zirgen::BigInt {
 void genAdd128(mlir::OpBuilder& builder, mlir::Location loc) {
     auto lhs = builder.create<BigInt::LoadOp>(loc, 128, 11, 0);
     auto rhs = builder.create<BigInt::LoadOp>(loc, 128, 12, 0);
-    auto sum = builder.create<BigInt::AddOp>(loc, lhs, rhs);  
+    auto sum = builder.create<BigInt::AddOp>(loc, lhs, rhs);
     builder.create<BigInt::StoreOp>(loc, sum, 13, 0);
 }
 }
@@ -57,7 +57,7 @@ enum class Program {
 
 Make this option available by extending the arg parser's declaration:
 ```
-   
+
                clEnumValN(Program::Add128, "add128", "Add128")),
 ```
 
@@ -77,7 +77,7 @@ The `bigint2c` program can now compile our addition function into a "bibc" forma
 genrule(
     name = "add128",
     outs = ["add128.blob"],
-    exec_tools = [":bigint2c"],
+    tools = [":bigint2c"],
     cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=add128 --bitwidth 128 > $(OUTS)"
 )
 ```
