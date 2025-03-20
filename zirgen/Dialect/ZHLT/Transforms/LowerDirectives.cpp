@@ -48,14 +48,6 @@ struct LowerDirectives : public OpRewritePattern<DirectiveOp> {
       // compilation mode. Just erase it.
       rewriter.eraseOp(directive);
       return success();
-    } else if (name == "Unsatisfiable") {
-      // Unsatisfiable!();
-      // -->
-      // 0 = 1;
-      Value neg = rewriter.create<Zll::ConstOp>(loc, 2013265920);
-      rewriter.create<Zll::EqualZeroOp>(loc, neg);
-      rewriter.eraseOp(directive);
-      return success();
     } else {
       return failure();
     }

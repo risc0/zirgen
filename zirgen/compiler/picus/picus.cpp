@@ -466,6 +466,13 @@ private:
   }
 
   void visitOp(EqualZeroOp eqz) {
+    // Skip emitting constraints flagged as unsatisfiable. Picus doesn't like
+    // unsatisfiable constraints, and omitting a constraint only increases the
+    // number of satisfying assignments so this is sound.
+    if (eqz->hasAttr("unsatisfiable")) {
+      return;
+    }
+
     if (cast<ValType>(eqz.getIn().getType()).getExtended()) {
       for (AnySignal s : cast<SignalArray>(valuesToSignals.at(eqz.getIn()))) {
         os << "(assert (= " << cast<Signal>(s).str() << " 0))\n";
@@ -696,10 +703,6 @@ private:
     } else if (directive.getName() == "PicusInput") {
       auto signal = valuesToSignals.at(directive.getArgs()[0]);
       declareSignals(signal, SignalType::AssumeDeterministic, /*skipLayout=*/true);
-    } else if (directive.getName() == "Unsatisfiable") {
-      // Picus doesn't like unsatisfiable constraints, but it's also sound to
-      // omit a constraint from Picus. The unsatisfiable directive should
-      // translate to nothing.
     } else {
       directive->emitError("Cannot lower this directive to Picus");
     }
