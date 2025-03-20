@@ -21,6 +21,7 @@ component MajorMinor(major: Val, minor: Val) {
 
 extern GetMajorMinor(): MajorMinor;
 
+#[picus_analyze]
 component Top() {
   // Global state
   global stateIn: DigestReg;
