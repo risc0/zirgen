@@ -83,7 +83,7 @@ struct InlineForPicusPass : public InlineForPicusBase<InlineForPicusPass> {
       // Inline a specific set of constructors
       auto op = cast<Zhlt::ConstructOp>(call.call);
       auto callee = op.getCallee();
-      return callee == "Add" || callee == "BitAnd" || callee == "Component" ||
+      return callee == "Add" || callee == "BitAnd" || callee == "Component" || callee == "EqzExt" ||
              callee == "InRange" || callee == "Inv" || callee == "Isz" || callee == "Mod" ||
              callee == "Mul" || callee == "Neg" || callee == "NondetReg" || callee == "Sub" ||
              callee == "Val";
