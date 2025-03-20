@@ -166,7 +166,7 @@ jobs:
           poetry install
           cd ..
           bazelisk build //zirgen/circuit/keccak:picus_archive --config=ci
-          ./bazel/rules/zirgen/picus_verify.sh $(bazelisk cquery //zirgen/circuit/keccak:picus_archive --output=files) keccak.picus
+          ./bazel/rules/zirgen/picus_verify.sh $(bazelisk cquery //zirgen/circuit/keccak:picus_archive --output=files) keccak.picus 1194
         shell: bash
 
   # see: https://github.com/orgs/community/discussions/26822
