@@ -69,8 +69,20 @@ template <typename F> void visit(AnySignal signal, F f, bool visitedLayout = fal
 //  - For StructType or LayoutType, a SignalStruct with compatible members
 //  - for ArrayType or LayoutArrayType, a SignalArray with compatible elements
 bool compatibleWithType(AnySignal signal, Type type) {
-  if (isa<ValType>(type) || isa<RefType>(type)) {
-    return isa<Signal>(signal);
+  if (auto val = dyn_cast<ValType>(type)) {
+    if (val.getExtended()) {
+      auto arr = dyn_cast<SignalArray>(signal);
+      return arr && llvm::all_of(arr, [](AnySignal s) { return isa<Signal>(s); });
+    } else {
+      return isa<Signal>(signal);
+    }
+  } else if (auto ref = dyn_cast<RefType>(type)) {
+    if (ref.getElement().getExtended()) {
+      auto arr = dyn_cast<SignalArray>(signal);
+      return arr && llvm::all_of(arr, [](AnySignal s) { return isa<Signal>(s); });
+    } else {
+      return isa<Signal>(signal);
+    }
   } else if (auto t = dyn_cast<StructType>(type)) {
     auto s = dyn_cast<SignalStruct>(signal);
     if (!s)
@@ -351,7 +363,7 @@ private:
   }
 
   void visitOp(LoadOp load) {
-    auto signal = cast<Signal>(valuesToSignals.at(load.getRef()));
+    auto signal = valuesToSignals.at(load.getRef());
     valuesToSignals.insert({load.getOut(), signal});
   }
 
@@ -459,9 +471,15 @@ private:
       return;
     }
 
-    os << "(assert (= ";
-    os << cast<Signal>(valuesToSignals.at(eqz.getIn())).str();
-    os << " 0))\n";
+    if (cast<ValType>(eqz.getIn().getType()).getExtended()) {
+      for (AnySignal s : cast<SignalArray>(valuesToSignals.at(eqz.getIn()))) {
+        os << "(assert (= " << cast<Signal>(s).str() << " 0))\n";
+      }
+    } else {
+      os << "(assert (= ";
+      os << cast<Signal>(valuesToSignals.at(eqz.getIn())).str();
+      os << " 0))\n";
+    }
   }
 
   void visitOp(SwitchOp mux) {
@@ -690,8 +708,30 @@ private:
 
   // Constructs a fresh signal structure corresponding to the given type
   AnySignal signalize(std::string prefix, Type type, AnySignal layout = nullptr) {
-    if (isa<ValType>(type) || isa<RefType>(type)) {
-      return Signal::get(ctx, prefix);
+    if (auto val = dyn_cast<ValType>(type)) {
+      if (val.getExtended()) {
+        return SignalArray::get(type.getContext(),
+                                {
+                                    Signal::get(ctx, prefix + "0"),
+                                    Signal::get(ctx, prefix + "1"),
+                                    Signal::get(ctx, prefix + "2"),
+                                    Signal::get(ctx, prefix + "3"),
+                                });
+      } else {
+        return Signal::get(ctx, prefix);
+      }
+    } else if (auto ref = dyn_cast<RefType>(type)) {
+      if (ref.getElement().getExtended()) {
+        return SignalArray::get(type.getContext(),
+                                {
+                                    Signal::get(ctx, prefix + "0"),
+                                    Signal::get(ctx, prefix + "1"),
+                                    Signal::get(ctx, prefix + "2"),
+                                    Signal::get(ctx, prefix + "3"),
+                                });
+      } else {
+        return Signal::get(ctx, prefix);
+      }
     } else if (auto array = dyn_cast<ArrayLikeTypeInterface>(type)) {
       assert(isa<ArrayType>(type) || !layout);
       SmallVector<AnySignal> elements;

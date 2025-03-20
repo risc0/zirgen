@@ -1,0 +1,8 @@
+// RUN: zirgen %s --emit=picus
+
+#[picus_analyze]
+component Top() {
+  a := ExtReg(MakeExt(3));
+  b := ExtReg(MakeExt(5));
+  c := ExtReg(ExtAdd(a, b));
+}
