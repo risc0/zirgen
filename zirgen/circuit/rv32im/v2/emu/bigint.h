@@ -28,6 +28,7 @@ namespace zirgen::rv32im_v2 {
 
 struct BigIntState {
   uint32_t isEcall;
+  uint32_t mode;
   uint32_t pc;
   uint32_t polyOp;
   uint32_t coeff;
@@ -111,6 +112,7 @@ struct BigInt {
 
     BigInt bigint;
     bigint.state.isEcall = 1;
+    bigint.state.mode = ctx.load(MACHINE_REGS_WORD + REG_T0);
     bigint.state.pc = ctx.load(MACHINE_REGS_WORD + REG_T2) / 4 - 1;
     bigint.state.polyOp = 0;
     bigint.state.coeff = 0;

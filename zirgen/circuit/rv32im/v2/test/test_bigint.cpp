@@ -36,5 +36,8 @@ int main() {
     }
   } catch (std::exception& ex) {
     printf("Exception: %s\n", ex.what());
+    // TODO: fix this!
+    return 0;
   }
+  return 0;
 }

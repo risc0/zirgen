@@ -84,7 +84,7 @@ component IsForward(io: MemoryIO) {
   IsCycle(io.newTxn.cycle - io.oldTxn.cycle);
 }
 
-// A normal memory read, the most constrainted case
+// A normal memory read, the most constrained case
 component MemoryRead(cycle: Reg, addr: Val) {
   io := MemoryIO(2*cycle, addr);
   IsRead(io);
@@ -131,4 +131,3 @@ component MemoryGet(cycle: Reg, addr: Val, txnType: OneHot<3>) {
     MemoryPageOut(cycle, addr)
   )
 }
-

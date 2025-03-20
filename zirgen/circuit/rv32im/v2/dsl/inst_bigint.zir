@@ -4,6 +4,7 @@ extern BigIntExtern(): Array<Val, 16>;
 
 component BigIntState(
   isEcall: Val,
+  mode: Val,
   pc: Val,
   polyOp: Val,
   coeff: Val,
@@ -11,6 +12,7 @@ component BigIntState(
   nextState: Val
 ) {
   public isEcall := BitReg(isEcall);
+  public mode := BitReg(mode);
   public pc := Reg(pc);
   public polyOp := Reg(polyOp);
   public coeff := Reg(coeff);
@@ -24,6 +26,7 @@ component BigIntInvalid() {
   0 = 1;
   BigIntState(
     /*isEcall=*/0,
+    /*mode=*/0,
     /*pc=*/0,
     /*polyOp=*/0,
     /*coeff=*/0,
@@ -35,11 +38,14 @@ component BigIntInvalid() {
 component BigIntEcall(cycle: Reg) {
   // Log("BigIntEcall");
 
+  mode := MemoryRead(cycle, MachineRegBase() + RegT0());
+  mode.high = 0;
+
   pc := ReadAddr(cycle, RegT2());
-  Log("pc", pc);
 
   BigIntState(
     /*isEcall=*/1,
+    /*mode=*/mode.low,
     /*pc=*/pc - 1,
     /*polyOp=*/0, // nop
     /*coeff=*/0,
@@ -54,9 +60,18 @@ component SplitU32(x : ValU32) {
   public bytes := [low.byte0, low.byte1, high.byte0, high.byte1];
 }
 
-component BigIntRead(cycle: Reg, addr: Val) {
+// Ensure that memory access is allowed based on mode
+component BigIntAddr(addrU32: ValU32, mode: Val) {
+  IsZero(addrU32.high - 0xbfff) = 0;
+  addr := AddrDecomposeBits(addrU32, mode);
+  addr.low2 = 0;
+  addr
+}
+
+component BigIntRead(cycle: Reg, addrU32: ValU32, mode: Val) {
   // Log("BigIntRead");
 
+  addr := BigIntAddr(addrU32, mode);
   words := for i : 0..4 {
     SplitU32(MemoryRead(cycle, addr + i))
   };
@@ -73,9 +88,10 @@ component BigIntWitness(ret: Array<Val, 16>) {
   for v : ret { NondetU8Reg(v) }
 }
 
-component BigIntWrite(cycle: Reg, addr: Val) {
+component BigIntWrite(cycle: Reg, addrU32: ValU32, mode: Val) {
   // Log("BigIntWrite");
 
+  addr := BigIntAddr(addrU32, mode);
   bytes := BigIntWitness(BigIntExtern());
   for i : 0..4 {
     word := ValU32(
@@ -107,7 +123,7 @@ component BigIntStep(cycle: Reg, prev: BigIntState) {
 
   polyOp := NondetReg(instType & 0xf);
   memOp := NondetReg((instType - polyOp) / 16);
-  instType = memOp * 16 + polyOp;
+  memOp * 16 + polyOp = instType;
 
   regBits := for i : 0..5 { NondetBitReg((coeffReg & Po2(i)) / Po2(i)) };
   reg := reduce for i : 0..5 { regBits[i] * Po2(i) } init 0 with Add;
@@ -119,14 +135,15 @@ component BigIntStep(cycle: Reg, prev: BigIntState) {
   offset := loadInst.low;
 
   // Read the register value and compute initial address
-  dataAddr := ReadAddr(cycle, reg) + offset * 4;
+  baseAddrU32 := MemoryRead(cycle, MachineRegBase() + reg);
+  dataAddrU32 := NormalizeU32(AddU32(baseAddrU32, ValU32(offset * 4 * 4, 0)));
 
   // Log("polyOp, memOp, reg, coeff, offset, addr", polyOp, memOp, reg, coeff, offset, dataAddr);
 
   memOpOneHot := OneHot<3>(memOp);
   bytes := memOpOneHot -> (
-    BigIntRead(cycle, dataAddr),
-    BigIntWrite(cycle, dataAddr),
+    BigIntRead(cycle, dataAddrU32, prev.mode),
+    BigIntWrite(cycle, dataAddrU32, prev.mode),
     BigIntCheck()
   );
 
@@ -140,6 +157,7 @@ component BigIntStep(cycle: Reg, prev: BigIntState) {
 
   BigIntState(
     /*isEcall=*/0,
+    /*mode=*/prev.mode,
     /*pc=*/pc,
     /*polyOp=*/polyOp,
     /*coeff=*/coeff,
