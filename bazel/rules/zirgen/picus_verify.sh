@@ -2,6 +2,7 @@
 
 echo "path to zip file: " $1
 echo "path in zip file: " $2
+echo "project ID: " $3
 
 clean_up() {
   ARG=$?
@@ -12,12 +13,12 @@ clean_up() {
 trap clean_up EXIT
 
 VID=$(ah create-version-via-local-archive \
-    --project-id 1194 \
+    --project-id $3 \
     --name "$(date)" \
     --archive-path $1)
 ah start-picus-v2-task \
     --source $2 \
-    --project-id 1194 \
+    --project-id $3 \
     --version-id $VID \
     --solver multi-solver \
     --solver-timeout 2000 \
