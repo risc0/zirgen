@@ -423,6 +423,29 @@ Type getSuperType(Type ty, bool isLayout) {
   return {};
 }
 
+Type getLayoutType(Type valueType) {
+  if (isa<ValType>(valueType)) {
+    return nullptr;
+  } else if (auto strType = dyn_cast<StructType>(valueType)) {
+    auto layout = llvm::find_if(strType.getFields(), [](FieldInfo field) { return field.name == "@layout"; });
+    if (layout != strType.getFields().end()) {
+      return layout->type;
+    } else {
+      return nullptr;
+    }
+  } else if (auto arrType = dyn_cast<ArrayType>(valueType)) {
+    auto elemLayout = getLayoutType(arrType.getElement());
+    if (elemLayout) {
+      return LayoutArrayType::get(valueType.getContext(), elemLayout, arrType.getSize());
+    } else {
+      return nullptr;
+    }
+  } else {
+    llvm::errs() << "unsupported type: " << valueType << "\n";
+    return nullptr;
+  }
+}
+
 void extractArguments(llvm::MapVector<Type, size_t>& out, Type in) {
   if (auto array = dyn_cast<LayoutArrayType>(in)) {
     llvm::MapVector<Type, size_t> inner;

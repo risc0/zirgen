@@ -157,6 +157,9 @@ Zll::ValType getFieldTypeOfValType(Type valType);
 // Returns the type of this structure's "@super", if any.
 Type getSuperType(Type subType, bool isLayout = false);
 
+// Returns the type of this component's "@layout", if any.
+Type getLayoutType(Type valueType);
+
 // Returns the component ID of this component.
 std::string getTypeId(Type type);
 

@@ -63,6 +63,93 @@ template <typename F> void visit(AnySignal signal, F f, bool visitedLayout = fal
   }
 }
 
+// Check that the given signal is compatible with the given type. Inductively,
+// this means we have:
+//  - For ValType or RefType, a "basic" signal
+//  - For StructType or LayoutType, a SignalStruct with compatible members
+//  - for ArrayType or LayoutArrayType, a SignalArray with compatible elements
+bool compatibleWithType(AnySignal signal, Type type) {
+  if (isa<ValType>(type) || isa<RefType>(type)) {
+    return isa<Signal>(signal);
+  } else if (auto t = dyn_cast<StructType>(type)) {
+    auto s = dyn_cast<SignalStruct>(signal);
+    if (!s)
+      return false;
+    for (auto [sf, tf] : llvm::zip(s, t.getFields())) {
+      if (sf.getName() != tf.name || !compatibleWithType(sf.getValue(), tf.type))
+        return false;
+    }
+    return true;
+  } else if (auto t = dyn_cast<LayoutType>(type)) {
+    auto s = dyn_cast<SignalStruct>(signal);
+    if (!s)
+      return false;
+    for (auto [sf, tf] : llvm::zip(s, t.getFields())) {
+      if (sf.getName() != tf.name || !compatibleWithType(sf.getValue(), tf.type))
+        return false;
+    }
+    return true;
+  } else if (auto t = dyn_cast<ArrayLikeTypeInterface>(type)) {
+    auto s = dyn_cast<SignalArray>(signal);
+    if (!s)
+      return false;
+    for (auto se : s) {
+      if (!compatibleWithType(se, t.getElement()))
+        return false;
+    }
+    return true;
+  } else {
+    llvm_unreachable("unhandled type");
+    return false;
+  }
+}
+
+// Get the subsignal of the given signal corresponding to the supercomponent.
+AnySignal getSuperSignal(AnySignal signal) {
+  if (auto arr = dyn_cast<SignalArray>(signal)) {
+    SmallVector<AnySignal> supers;
+    for (auto elem : arr)
+      supers.push_back(getSuperSignal(elem));
+    return SignalArray::get(signal.getContext(), supers);
+  } else if (auto str = dyn_cast<SignalStruct>(signal)) {
+    return str.getNamed("@super")->getValue();
+  } else {
+    // Signal, nullptr, etc
+    return nullptr;
+  }
+}
+
+// attempt to find a subsignal of the given signal that is compatible with the
+// given type.
+// TODO: this is a pretty inefficient traversal. Optimize this if it turns out
+// to be important.
+AnySignal coerceLayoutSignal(AnySignal signal, Type type) {
+  if (!signal || !type) {
+    return nullptr;
+  }
+  if (compatibleWithType(signal, type)) {
+    return signal;
+  }
+
+  // First, try the signal of the supercomponent. This is necessary with muxes,
+  // where there is an extra "layer" in the layout that holds the mux arms.
+  AnySignal superSignal = getSuperSignal(signal);
+  if (superSignal) {
+    auto coerced = coerceLayoutSignal(superSignal, type);
+    if (coerced)
+      return coerced;
+  }
+
+  // Next, we may be looking at a layout used for a reduce expression. In this
+  // case, we want the layout corresponding to the final step of the reduction.
+  auto reduceSignal = dyn_cast<SignalArray>(signal);
+  if (reduceSignal) {
+    return coerceLayoutSignal(reduceSignal.getValue().back(), type);
+  }
+
+  return nullptr;
+}
+
 std::string canonicalizeIdentifier(std::string ident) {
   for (char& ch : ident) {
     if (ch == '$' || ch == '@' || ch == ' ' || ch == ':' || ch == '<' || ch == '>' || ch == ',') {
@@ -628,21 +715,7 @@ private:
           AnySignal sublayout;
           if (auto strLayout = cast_if_present<SignalStruct>(layout)) {
             sublayout = strLayout.get(field.name);
-            // Mux members have their layouts wrapped in a structure with fields
-            // for each arm and the common super, whereas their values are only
-            // the common super. Navigate this extra indirection if necessary.
-            auto sublayoutCasted = llvm::dyn_cast_or_null<SignalStruct>(sublayout);
-            if (sublayoutCasted) {
-              bool isMux = false;
-              for (NamedAttribute field : sublayoutCasted) {
-                if (field.getName().strref().starts_with("arm")) {
-                  isMux = true;
-                }
-              }
-              if (isMux) {
-                sublayout = sublayoutCasted.get("@super");
-              }
-            }
+            sublayout = coerceLayoutSignal(sublayout, Zhlt::getLayoutType(field.type));
           }
           fields.emplace_back(field.name, signalize(name, field.type, sublayout));
         }
