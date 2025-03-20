@@ -30,7 +30,7 @@ component ShaState(
 }
 
 component ShaInvalid() {
-  0 = 1;
+  Unsatisfiable!();
   ShaState(
     for i : 0..32 { 0 },
     for i : 0..32 { 0 },

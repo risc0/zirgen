@@ -29,11 +29,11 @@ struct LowerDirectives : public OpRewritePattern<DirectiveOp> {
 
   LogicalResult matchAndRewrite(DirectiveOp directive, PatternRewriter& rewriter) const final {
     StringRef name = directive.getName();
+    Location loc = directive.getLoc();
     if (name == "AssumeRange" || name == "AssertRange") {
       // AssumeRange!(low, x, high);
       // -->
       // Assert(1 - InRange(low, x, high), "value out of range!");
-      Location loc = directive.getLoc();
       OperandRange args = directive.getArgs();
       Value message = rewriter.create<Zll::StringOp>(loc, "value out of range!");
       Value one = rewriter.create<Zll::ConstOp>(loc, 1);
@@ -46,6 +46,14 @@ struct LowerDirectives : public OpRewritePattern<DirectiveOp> {
       // This is a no-op unless compiling with `--emit=picus`. Since this pass
       // is after picus emission in the compiler pipeline, we are in some other
       // compilation mode. Just erase it.
+      rewriter.eraseOp(directive);
+      return success();
+    } else if (name == "Unsatisfiable") {
+      // Unsatisfiable!();
+      // -->
+      // 0 = 1;
+      Value neg = rewriter.create<Zll::ConstOp>(loc, 2013265920);
+      rewriter.create<Zll::EqualZeroOp>(loc, neg);
       rewriter.eraseOp(directive);
       return success();
     } else {

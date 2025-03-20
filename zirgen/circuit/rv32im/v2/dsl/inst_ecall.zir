@@ -17,7 +17,7 @@ component ECallOutput(state: Val, s0: Val, s1: Val, s2: Val) {
 }
 
 component IllegalECall() {
-  0 = 1;
+  Unsatisfiable!();
   ECallOutput(0, 0, 0, 0)
 }
 
