@@ -60,18 +60,20 @@ component SplitU32(x : ValU32) {
   public bytes := [low.byte0, low.byte1, high.byte0, high.byte1];
 }
 
-component BigIntAddr(baseU32: DenormedValU32, wordOffset: Val, mode: Val) {
-    addrU32 := NormalizeU32(DenormedValU32(baseU32.low + wordOffset * 4, baseU32.high));
-    addr := AddrDecomposeBits(addrU32, mode);
-    addr.low2 = 0;
-    addr
+// Ensure that memory access is allowed based on mode
+component BigIntAddr(addrU32: ValU32, mode: Val) {
+  IsZero(addrU32.high - 0xbfff) = 0;
+  addr := AddrDecomposeBits(addrU32, mode);
+  addr.low2 = 0;
+  addr
 }
 
-component BigIntRead(cycle: Reg, addrU32: DenormedValU32, mode: Val) {
+component BigIntRead(cycle: Reg, addrU32: ValU32, mode: Val) {
   // Log("BigIntRead");
 
+  addr := BigIntAddr(addrU32, mode);
   words := for i : 0..4 {
-    SplitU32(MemoryRead(cycle, BigIntAddr(addrU32, i, mode)))
+    SplitU32(MemoryRead(cycle, addr + i))
   };
 
   [
@@ -86,16 +88,17 @@ component BigIntWitness(ret: Array<Val, 16>) {
   for v : ret { NondetU8Reg(v) }
 }
 
-component BigIntWrite(cycle: Reg, addrU32: DenormedValU32, mode: Val) {
+component BigIntWrite(cycle: Reg, addrU32: ValU32, mode: Val) {
   // Log("BigIntWrite");
 
+  addr := BigIntAddr(addrU32, mode);
   bytes := BigIntWitness(BigIntExtern());
   for i : 0..4 {
     word := ValU32(
       bytes[i * 4 + 0] + bytes[i * 4 + 1] * 0x100,
       bytes[i * 4 + 2] + bytes[i * 4 + 3] * 0x100
     );
-    MemoryWrite(cycle, BigIntAddr(addrU32, i, mode), word);
+    MemoryWrite(cycle, addr + i, word);
   };
   bytes
 }
@@ -120,7 +123,7 @@ component BigIntStep(cycle: Reg, prev: BigIntState) {
 
   polyOp := NondetReg(instType & 0xf);
   memOp := NondetReg((instType - polyOp) / 16);
-  instType = memOp * 16 + polyOp;
+  memOp * 16 + polyOp = instType;
 
   regBits := for i : 0..5 { NondetBitReg((coeffReg & Po2(i)) / Po2(i)) };
   reg := reduce for i : 0..5 { regBits[i] * Po2(i) } init 0 with Add;
@@ -133,7 +136,7 @@ component BigIntStep(cycle: Reg, prev: BigIntState) {
 
   // Read the register value and compute initial address
   baseAddrU32 := MemoryRead(cycle, MachineRegBase() + reg);
-  dataAddrU32 := AddU32(baseAddrU32, ValU32(offset * 4 * 4, 0));
+  dataAddrU32 := NormalizeU32(AddU32(baseAddrU32, ValU32(offset * 4 * 4, 0)));
 
   // Log("polyOp, memOp, reg, coeff, offset, addr", polyOp, memOp, reg, coeff, offset, dataAddr);
 
