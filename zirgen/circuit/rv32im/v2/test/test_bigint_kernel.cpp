@@ -46,6 +46,7 @@ inline void sys_bigint2(uint32_t* entry,
   uint32_t tmpSpace = entry[3] * 4;
 
   asm volatile("li a7, 5\n"
+               "li t0, 1\n"
                "mv t1, %0\n"
                "mv t2, %1\n"
                "mv t3, %2\n"
@@ -66,8 +67,8 @@ inline void sys_bigint2(uint32_t* entry,
                  "r"(a),
                  "r"(b),
                  "r"(c),
-                 "r"(d)                                                         // inputs
-               : "t1", "t2", "t3", "a0", "a1", "a2", "a3", "a4", "a7", "memory" // clobbers
+                 "r"(d)                                                               // inputs
+               : "t0", "t1", "t2", "t3", "a0", "a1", "a2", "a3", "a4", "a7", "memory" // clobbers
   );
 }
 
