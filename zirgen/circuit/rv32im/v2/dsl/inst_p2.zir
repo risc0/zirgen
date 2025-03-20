@@ -49,7 +49,7 @@ component PoseidonState(
 }
 
 component PoseidonInvalid() {
-  0 = 1;
+  Unsatisfiable!();
   opDef := PoseidonOpDef(
     /*hasState=*/0,
     /*stateAddr=*/0,
