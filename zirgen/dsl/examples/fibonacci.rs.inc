@@ -293,10 +293,10 @@ pub fn exec_cycle_counter<'a>(
     let x6: NondetRegStruct = exec_is_zero(ctx, x5._super, (layout0.map(|c| c.is_first_cycle)))?;
     // CycleCounter(zirgen/dsl/examples/fibonacci.zir:34)
     let x7: Val = exec_sub(ctx, Val::new(1), x6._super)?;
-    let x8: ComponentStruct = exec_component(ctx)?;
-    let x9: ComponentStruct;
+    let x8: ComponentStruct;
     if is_true(x6._super) {
-        x9 = x8;
+        let x9: ComponentStruct = exec_component(ctx)?;
+        x8 = x9;
     } else if is_true(x7) {
         // CycleCounter(zirgen/dsl/examples/fibonacci.zir:39)
         let x10: NondetRegStruct = back_nondet_reg(ctx, 1, (layout0.map(|c| c._super)))?;
@@ -305,7 +305,9 @@ pub fn exec_cycle_counter<'a>(
             (x5._super - x11),
             "CycleCounter(zirgen/dsl/examples/fibonacci.zir:39)"
         );
-        x9 = x8;
+        // CycleCounter(zirgen/dsl/examples/fibonacci.zir:37)
+        let x12: ComponentStruct = exec_component(ctx)?;
+        x8 = x12;
     } else {
         bail!("Reached unreachable mux arm")
     }
@@ -364,21 +366,24 @@ pub fn exec_top<'a>(
     let x19: NondetRegStruct = exec_is_zero(ctx, x18, (layout0.map(|c| c.terminate)))?;
     // Top(zirgen/dsl/examples/fibonacci.zir:63)
     let x20: Val = exec_sub(ctx, Val::new(1), x19._super)?;
-    let x21: ComponentStruct = exec_component(ctx)?;
-    let x22: ComponentStruct;
+    let x21: ComponentStruct;
     if is_true(x19._super) {
         // Top(zirgen/dsl/examples/fibonacci.zir:64)
-        let x23: NondetRegStruct = exec_reg(ctx, x15._super, (x2.map(|c| c.f_last)))?;
-        let x24: NondetRegStruct = back_reg(ctx, 0, (x2.map(|c| c.f_last)))?;
+        let x22: NondetRegStruct = exec_reg(ctx, x15._super, (x2.map(|c| c.f_last)))?;
+        let x23: NondetRegStruct = back_reg(ctx, 0, (x2.map(|c| c.f_last)))?;
         // Top(zirgen/dsl/examples/fibonacci.zir:65)
-        let x25: LogStruct = exec_log(ctx, "f_last = %u", &[x24._super])?;
-        x22 = x21;
+        let x24: LogStruct = exec_log(ctx, "f_last = %u", &[x23._super])?;
+        // Top(zirgen/dsl/examples/fibonacci.zir:63)
+        let x25: ComponentStruct = exec_component(ctx)?;
+        x21 = x25;
     } else if is_true(x20) {
-        x22 = x21;
+        // Top(zirgen/dsl/examples/fibonacci.zir:66)
+        let x26: ComponentStruct = exec_component(ctx)?;
+        x21 = x26;
     } else {
         bail!("Reached unreachable mux arm")
     } // Top(zirgen/dsl/examples/fibonacci.zir:44)
-    let x26: ComponentStruct = exec_component(ctx)?;
+    let x27: ComponentStruct = exec_component(ctx)?;
     return Ok(TopStruct { terminate: x19 });
 }
 pub fn step_top<'a>(
