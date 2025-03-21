@@ -85,111 +85,131 @@ component CmpOp(input: MiscInput, cond: Val) {
   MiscOutput(0, Denorm(ConstU32<0>()), new_pc)
 }
 
+#[picus_analyze]
 component OpADD(input: MiscInput) {
   VerifyOpcodeF3F7(input.decoded, 0x33, 0x0, 0x00);
   SimpleOp(input, AddU32(input.rs1, input.rs2))
 }
 
+// #[picus_analyze]
 component OpSUB(input: MiscInput) {
   VerifyOpcodeF3F7(input.decoded, 0x33, 0x0, 0x20);
   SimpleOp(input, SubU32(input.rs1, input.rs2))
 }
 
+// #[picus_analyze]
 component OpXOR(input: MiscInput) {
   VerifyOpcodeF3F7(input.decoded, 0x33, 0x4, 0x00);
   SimpleOp(input, Denorm(BitwiseXor(input.rs1, input.rs2)))
 }
 
+// #[picus_analyze]
 component OpOR(input: MiscInput) {
   VerifyOpcodeF3F7(input.decoded, 0x33, 0x6, 0x00);
   SimpleOp(input, Denorm(BitwiseOr(input.rs1, input.rs2)))
 }
 
+// #[picus_analyze]
 component OpAND(input: MiscInput) {
   VerifyOpcodeF3F7(input.decoded, 0x33, 0x7, 0x00);
   SimpleOp(input, Denorm(BitwiseAnd(input.rs1, input.rs2)))
 }
 
+// #[picus_analyze]
 component OpSLT(input: MiscInput) {
   VerifyOpcodeF3F7(input.decoded, 0x33, 0x2, 0x00);
   cmp := CmpLessThan(input.rs1, input.rs2);
   SimpleOp(input, DenormedValU32(cmp.is_less_than, 0))
 }
 
+// #[picus_analyze]
 component OpSLTU(input: MiscInput) {
   VerifyOpcodeF3F7(input.decoded, 0x33, 0x3, 0x00);
   cmp := CmpLessThanUnsigned(input.rs1, input.rs2);
   SimpleOp(input, DenormedValU32(cmp.is_less_than, 0))
 }
 
+// #[picus_analyze]
 component OpADDI(input: MiscInput) {
   VerifyOpcodeF3(input.decoded, 0x13, 0x0);
   SimpleOp(input, AddU32(input.rs1, input.decoded.immI))
 }
 
+// #[picus_analyze]
 component OpXORI(input: MiscInput) {
   VerifyOpcodeF3(input.decoded, 0x13, 0x4);
   SimpleOp(input, Denorm(BitwiseXor(input.rs1, input.decoded.immI)))
 }
 
+// #[picus_analyze]
 component OpORI(input: MiscInput) {
   VerifyOpcodeF3(input.decoded, 0x13, 0x6);
   SimpleOp(input, Denorm(BitwiseOr(input.rs1, input.decoded.immI)))
 }
 
+// #[picus_analyze]
 component OpANDI(input: MiscInput) {
   VerifyOpcodeF3(input.decoded, 0x13, 0x7);
   SimpleOp(input, Denorm(BitwiseAnd(input.rs1, input.decoded.immI)))
 }
 
+// #[picus_analyze]
 component OpSLTI(input: MiscInput) {
   VerifyOpcodeF3(input.decoded, 0x13, 0x2);
   cmp := CmpLessThan(input.rs1, input.decoded.immI);
   SimpleOp(input, DenormedValU32(cmp.is_less_than, 0))
 }
 
+// #[picus_analyze]
 component OpSLTIU(input: MiscInput) {
   VerifyOpcodeF3(input.decoded, 0x13, 0x3);
   cmp := CmpLessThanUnsigned(input.rs1, input.decoded.immI);
   SimpleOp(input, DenormedValU32(cmp.is_less_than, 0))
 }
 
+// #[picus_analyze]
 component OpBEQ(input: MiscInput) {
   VerifyOpcodeF3(input.decoded, 0x63, 0x0);
   cmp := CmpEqual(input.rs1, input.rs2);
   CmpOp(input, cmp.is_equal)
 }
 
+// #[picus_analyze]
 component OpBNE(input: MiscInput) {
   VerifyOpcodeF3(input.decoded, 0x63, 0x1);
   cmp := CmpEqual(input.rs1, input.rs2);
   CmpOp(input, 1 - cmp.is_equal)
 }
 
+// #[picus_analyze]
 component OpBLT(input: MiscInput) {
   VerifyOpcodeF3(input.decoded, 0x63, 0x4);
   cmp := CmpLessThan(input.rs1, input.rs2);
   CmpOp(input, cmp.is_less_than)
 }
 
+// #[picus_analyze]
 component OpBGE(input: MiscInput) {
   VerifyOpcodeF3(input.decoded, 0x63, 0x5);
   cmp := CmpLessThan(input.rs1, input.rs2);
   CmpOp(input, 1 - cmp.is_less_than)
 }
 
+// #[picus_analyze]
 component OpBLTU(input: MiscInput) {
   VerifyOpcodeF3(input.decoded, 0x63, 0x6);
   cmp := CmpLessThanUnsigned(input.rs1, input.rs2);
   CmpOp(input, cmp.is_less_than)
 }
 
+// #[picus_analyze]
 component OpBGEU(input: MiscInput) {
   VerifyOpcodeF3(input.decoded, 0x63, 0x7);
   cmp := CmpLessThanUnsigned(input.rs1, input.rs2);
   CmpOp(input, 1 - cmp.is_less_than)
 }
 
+// #[picus_analyze]
 component OpJAL(input: MiscInput) {
   VerifyOpcode(input.decoded, 0x6f);
   MiscOutput(1,
@@ -197,6 +217,7 @@ component OpJAL(input: MiscInput) {
     AddU32(input.pc_u32, input.decoded.immJ))
 }
 
+// #[picus_analyze]
 component OpJALR(input: MiscInput) {
   VerifyOpcodeF3(input.decoded, 0x67, 0x0);
   MiscOutput(1,
@@ -204,17 +225,20 @@ component OpJALR(input: MiscInput) {
     AddU32(input.rs1, input.decoded.immI))
 }
 
+// #[picus_analyze]
 component OpLUI(input: MiscInput) {
   VerifyOpcode(input.decoded, 0x37);
   SimpleOp(input, Denorm(input.decoded.immU))
 }
 
+// #[picus_analyze]
 component OpAUIPC(input: MiscInput) {
   VerifyOpcode(input.decoded, 0x17);
   SimpleOp(input, AddU32(input.pc_u32, input.decoded.immU))
 }
 
 // We currently implement ECALL as a busy loop (i.e. keep PC still)
+// #[picus_analyze]
 component OpECALL(input: MiscInput) {
   VerifyOpcodeF3F7(input.decoded, 0x73, 0x0, 0x00);
   MiscOutput(0, DenormedValU32(0, 0), AddU32(input.pc_u32, ValU32(0, 0)))

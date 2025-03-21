@@ -21,7 +21,7 @@ component MajorMinor(major: Val, minor: Val) {
 
 extern GetMajorMinor(): MajorMinor;
 
-#[picus_analyze]
+// #[picus_analyze]
 component Top() {
   // Global state
   global stateIn: DigestReg;
@@ -71,9 +71,9 @@ component Top() {
   // Now we split on major
   major_onehot := OneHot<13>(major);
   inst_result := major_onehot ->! (
-    /*minor mux arms are deterministic*/Misc0(cycle, inst_input),
-    /*minor mux arms are deterministic*/Misc1(cycle, inst_input),
-    /*minor mux arms are deterministic*/Misc2(cycle, inst_input),
+    Misc0(cycle, inst_input),
+    Misc1(cycle, inst_input),
+    Misc2(cycle, inst_input),
     Mul0(cycle, inst_input),
     Div0(cycle, inst_input),
     Mem0(cycle, inst_input),

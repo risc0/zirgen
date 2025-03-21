@@ -112,9 +112,9 @@ component MultiplySettings(aSigned: Val, bSigned: Val, cSigned: Val) {
 // 64 bits, divided into two 32 bit parts (outLow + outHigh).  We have settings
 // that determine if a, b, and c are to be treated as signed.
 component MultiplyAccumulate(a: ValU32, b: ValU32, c: ValU32, settings: MultiplySettings) {
-  AssumeRange!(0, settings.aSigned, 2);
-  AssumeRange!(0, settings.bSigned, 2);
-  AssumeRange!(0, settings.cSigned, 2);
+  // AssumeRange!(0, settings.aSigned, 2);
+  // AssumeRange!(0, settings.bSigned, 2);
+  // AssumeRange!(0, settings.cSigned, 2);
   // Expand both a and b
   ax := ExpandU32(a, settings.aSigned);
   bx := ExpandU32(b, settings.bSigned);
