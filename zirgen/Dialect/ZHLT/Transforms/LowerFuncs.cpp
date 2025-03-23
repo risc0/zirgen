@@ -86,7 +86,9 @@ struct RewriteCallPattern : public OpInterfaceRewritePattern<CallOpInterface> {
                                                callOp->getResultTypes(),
                                                targetSym,
                                                TypeAttr::get(target.getFunctionType()),
-                                               callOp.getArgOperands());
+                                               callOp.getArgOperands(),
+                                               ArrayAttr(),
+                                               ArrayAttr());
     return success();
   }
 };

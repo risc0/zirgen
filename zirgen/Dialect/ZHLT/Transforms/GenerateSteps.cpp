@@ -151,9 +151,9 @@ struct GenerateStepsPass : public GenerateStepsBase<GenerateStepsPass> {
     builder.create<ExecCallOp>(funcOp.getLoc(),
                                builder.getAttr<FlatSymbolRefAttr>(funcOp.getSymName()),
                                funcType,
+                               args,
                                funcOp.getInputSegmentSizes(),
-                               funcOp.getResultSegmentSizes(),
-                               args);
+                               funcOp.getResultSegmentSizes());
 
     builder.create<Zhlt::ReturnOp>(loc);
   }
