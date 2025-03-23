@@ -58,7 +58,7 @@ struct LowerDirectivesPass : public LowerDirectivesBase<LowerDirectivesPass> {
   void runOnOperation() override {
     RewritePatternSet patterns(&getContext());
     patterns.add<LowerDirectives>(&getContext());
-    if (applyPatternsAndFoldGreedily(getOperation(), std::move(patterns)).failed()) {
+    if (applyPatternsGreedily(getOperation(), std::move(patterns)).failed()) {
       signalPassFailure();
     }
   }

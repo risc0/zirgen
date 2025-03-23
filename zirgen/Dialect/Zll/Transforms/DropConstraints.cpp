@@ -42,7 +42,7 @@ struct DropConstraintsPass : public DropConstraintsBase<DropConstraintsPass> {
     auto ctx = &getContext();
     RewritePatternSet patterns(ctx);
     patterns.insert<RemoveEqualZero>(ctx);
-    if (applyPatternsAndFoldGreedily(getOperation(), std::move(patterns)).failed()) {
+    if (applyPatternsGreedily(getOperation(), std::move(patterns)).failed()) {
       return signalPassFailure();
     }
   }

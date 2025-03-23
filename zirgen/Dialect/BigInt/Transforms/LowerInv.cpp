@@ -50,7 +50,7 @@ struct LowerInvPass : public LowerInvBase<LowerInvPass> {
     auto ctx = &getContext();
     RewritePatternSet patterns(ctx);
     patterns.insert<ReplaceInv>(ctx);
-    if (applyPatternsAndFoldGreedily(getOperation(), std::move(patterns)).failed()) {
+    if (applyPatternsGreedily(getOperation(), std::move(patterns)).failed()) {
       return signalPassFailure();
     }
   }

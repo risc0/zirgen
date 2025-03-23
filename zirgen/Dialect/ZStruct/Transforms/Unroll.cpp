@@ -28,7 +28,7 @@ struct UnrollPass : public UnrollBase<UnrollPass> {
     RewritePatternSet patterns(ctx);
     patterns.insert<UnrollMaps>(ctx);
     patterns.insert<UnrollReduces>(ctx);
-    if (applyPatternsAndFoldGreedily(op, std::move(patterns)).failed()) {
+    if (applyPatternsGreedily(op, std::move(patterns)).failed()) {
       signalPassFailure();
     }
   }

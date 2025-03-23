@@ -84,7 +84,7 @@ struct BuffersToArgsPass : public BuffersToArgsBase<BuffersToArgsPass> {
     for (auto bufDesc : bufs.getBuffers()) {
       RewritePatternSet patterns(&getContext());
       patterns.add<GetBufferPattern>(&getContext(), bufDesc.getName());
-      if (applyPatternsAndFoldGreedily(getOperation(), std::move(patterns)).failed()) {
+      if (applyPatternsGreedily(getOperation(), std::move(patterns)).failed()) {
         getOperation()->emitError("Unable to apply buffers to args patterns");
         signalPassFailure();
       }

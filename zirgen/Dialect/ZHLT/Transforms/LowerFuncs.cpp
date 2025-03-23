@@ -96,7 +96,7 @@ struct LowerStepFuncsPass : public LowerStepFuncsBase<LowerStepFuncsPass> {
     RewritePatternSet patterns(&getContext());
     patterns.add<RewriteFuncPattern<StepFuncOp>>(&getContext());
     patterns.add<RewriteCallPattern<StepCallOp>>(&getContext());
-    if (applyPatternsAndFoldGreedily(getOperation(), std::move(patterns)).failed()) {
+    if (applyPatternsGreedily(getOperation(), std::move(patterns)).failed()) {
       getOperation().emitError("Unable to apply function patterns");
       signalPassFailure();
     }

@@ -89,7 +89,7 @@ struct GenerateStepsPass : public GenerateStepsBase<GenerateStepsPass> {
     RewritePatternSet patterns(&getContext());
     addAttachGlobalLayoutPattern(patterns, "global");
     addAttachGlobalLayoutPattern(patterns, "mix");
-    if (applyPatternsAndFoldGreedily(getOperation(), std::move(patterns)).failed()) {
+    if (applyPatternsGreedily(getOperation(), std::move(patterns)).failed()) {
       getOperation().emitError("Unable to apply layout patterns");
       signalPassFailure();
     }

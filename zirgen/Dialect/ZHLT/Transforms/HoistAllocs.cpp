@@ -404,7 +404,7 @@ struct HoistAllocsPass : public HoistAllocsBase<HoistAllocsPass> {
     RewritePatternSet patterns(ctx);
     patterns.insert<Hoist>(ctx, layouts);
     patterns.insert<Merge>(ctx, layouts);
-    if (applyPatternsAndFoldGreedily(mod, std::move(patterns)).failed()) {
+    if (applyPatternsGreedily(mod, std::move(patterns)).failed()) {
       signalPassFailure();
     }
     TypeMap replacements = rebuild(layouts);

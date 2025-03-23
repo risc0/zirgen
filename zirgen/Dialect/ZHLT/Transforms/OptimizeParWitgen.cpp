@@ -288,7 +288,7 @@ struct OptimizeParWitgenPass : public OptimizeParWitgenBase<OptimizeParWitgenPas
     patterns.insert<UnravelSwitchArrayResult>(ctx, /*benefit=*/0);
     patterns.insert<UnravelSwitchValResult>(ctx, /*benefit=*/0);
 
-    if (applyPatternsAndFoldGreedily(funcOp, std::move(patterns)).failed()) {
+    if (applyPatternsGreedily(funcOp, std::move(patterns)).failed()) {
       auto diag = getOperation()->emitError("unable to strip for witgen");
       signalPassFailure();
     }

@@ -60,7 +60,7 @@ struct InlineForPicusPass : public InlineForPicusBase<InlineForPicusPass> {
     // Convert backs with distance zero for inlining
     RewritePatternSet patterns(ctx);
     patterns.insert<ZeroDistanceBacksToCalls>(ctx);
-    if (applyPatternsAndFoldGreedily(mod, std::move(patterns)).failed()) {
+    if (applyPatternsGreedily(mod, std::move(patterns)).failed()) {
       signalPassFailure();
     }
 

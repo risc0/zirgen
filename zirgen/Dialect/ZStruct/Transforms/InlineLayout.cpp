@@ -75,7 +75,7 @@ struct InlineLayoutPass : public InlineLayoutBase<InlineLayoutPass> {
     LoadOp::getCanonicalizationPatterns(patterns, &getContext());
     StoreOp::getCanonicalizationPatterns(patterns, &getContext());
     FrozenRewritePatternSet frozenPatterns(std::move(patterns));
-    if (applyPatternsAndFoldGreedily(getOperation(), frozenPatterns).failed()) {
+    if (applyPatternsGreedily(getOperation(), frozenPatterns).failed()) {
       signalPassFailure();
     }
   }

@@ -170,7 +170,7 @@ Val CircuitInterfaceZirgen::compute_poly(llvm::ArrayRef<Val> u,
   }
 
   FrozenRewritePatternSet frozenPatterns(std::move(patterns));
-  LogicalResult rewriteResult = applyPatternsAndFoldGreedily(tapsWork, frozenPatterns);
+  LogicalResult rewriteResult = applyPatternsGreedily(tapsWork, frozenPatterns);
   assert(rewriteResult.succeeded() &&
          "Unable to apply patterns to generate wrapped zirgen verify function");
 

@@ -390,7 +390,7 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
 
     GreedyRewriteConfig config;
     config.maxIterations = 100;
-    if (applyPatternsAndFoldGreedily(topExtract, frozenPatterns, config).failed()) {
+    if (applyPatternsGreedily(topExtract, frozenPatterns, config).failed()) {
       topExtract->emitError("Could not generate check function");
       return ComponentOp();
     }
