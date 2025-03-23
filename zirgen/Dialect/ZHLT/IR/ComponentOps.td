@@ -315,7 +315,7 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
 
     /// Set the callee for this operation.
     void setCalleeFromCallable(mlir::CallInterfaceCallable callee) {
-      (*this)->setAttr("callee", callee.get<mlir::SymbolRefAttr>());
+      (*this)->setAttr("callee", llvm::cast<mlir::SymbolRefAttr>(callee));
     }
 
     ::mlir::Value getResult() { return getOperation()->getResult(0); }
@@ -531,7 +531,7 @@ class ZLooseCallOp<ZLooseFuncOp func, string mnemonic, list<Trait> childTraits =
 
     /// Set the callee for this operation.
     void setCalleeFromCallable(mlir::CallInterfaceCallable callee) {
-      (*this)->setAttr("callee", callee.get<mlir::SymbolRefAttr>());
+      (*this)->setAttr("callee", llvm::cast<mlir::SymbolRefAttr>(callee));
     }
   }];
   let assemblyFormat = [{
