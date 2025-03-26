@@ -75,11 +75,10 @@ class ZFuncOp<string aspectArg, list<Trait> childTraits = [], string mnemonic = 
   string aspect = aspectArg;
   string symPrefix = aspect # "$";
   code quotedSymPrefix = "\"" # symPrefix # "\"";
-  bit singleton = 0;
   let builders = [
     OpBuilder<
       !con(
-      !if(singleton, (ins), (ins CArg<"llvm::StringRef">:$componentId)), !con(
+      (ins CArg<"llvm::StringRef">:$componentId), !con(
          resultSnippets.builderTypeArgs,
          inputSnippets.builderTypeArgs)), [{
       llvm::SmallVector<mlir::Type> rawInputTypes;
@@ -91,7 +90,7 @@ class ZFuncOp<string aspectArg, list<Trait> childTraits = [], string mnemonic = 
          # [{
       mlir::FunctionType funcType = $_builder.getFunctionType(rawInputTypes, rawResultTypes);
       build($_builder, $_state, $_builder.getStringAttr( }] # quotedSymPrefix #
-              !if(singleton, "", "+ componentId") # [{ ),
+              [{+ componentId),
            funcType, inputSegmentSizes, resultSegmentSizes,
                            /*visibility=*/{}, /*argAttrs=*/{}, /*resAttrs=*/{});
     }]>
