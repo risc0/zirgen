@@ -94,7 +94,7 @@ struct ArrayMapToRangeMap : public OpRewritePattern<MapOp> {
   LogicalResult matchAndRewrite(MapOp op, PatternRewriter& rewriter) const final {
     TypedValue<ArrayLikeTypeInterface> array = op.getArray();
 
-    if (!isa<Zhlt::MagicOp>(array.getDefiningOp()))
+    if (array.getDefiningOp() && !isa<Zhlt::MagicOp>(array.getDefiningOp()))
       return rewriter.notifyMatchFailure(op, "array is not an argument");
 
     // Create a range to replace the argument array with
