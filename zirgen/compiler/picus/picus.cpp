@@ -63,20 +63,6 @@ template <typename F> void visit(AnySignal signal, F f, bool visitedLayout = fal
   }
 }
 
-AnySignal getSuperSignal(AnySignal signal) {
-  if (auto arr = dyn_cast<SignalArray>(signal)) {
-    SmallVector<AnySignal> supers;
-    for (auto elem : arr)
-      supers.push_back(getSuperSignal(elem));
-    return SignalArray::get(signal.getContext(), supers);
-  } else if (auto str = dyn_cast<SignalStruct>(signal)) {
-    return str.getNamed("@super")->getValue();
-  } else {
-    // Signal, nullptr, etc
-    return nullptr;
-  }
-}
-
 std::string canonicalizeIdentifier(std::string ident) {
   for (char& ch : ident) {
     if (ch == '$' || ch == '@' || ch == ' ' || ch == ':' || ch == '<' || ch == '>' || ch == ',') {
@@ -291,7 +277,7 @@ private:
       return;
     }
     uint64_t index = UINT64_MAX;
-    auto attr = results[0].get<Attribute>();
+    auto attr = cast<Attribute>(results[0]);
     if (auto polyAttr = dyn_cast<PolynomialAttr>(attr)) {
       index = polyAttr[0];
     } else if (auto intAttr = dyn_cast<IntegerAttr>(attr)) {

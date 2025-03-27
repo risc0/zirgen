@@ -529,7 +529,7 @@ struct GenerateBackPass : public GenerateBackBase<GenerateBackPass> {
       // arg1 = back distance, arg2 = optional layout
       assert(block->getNumArguments() == 1 || block->getNumArguments() == 2);
 
-      if (applyPatternsAndFoldGreedily(func, frozenPatterns).failed()) {
+      if (applyPatternsGreedily(func, frozenPatterns).failed()) {
         auto diag = func->emitError()
                     << "Unable to generate `back' function; required by the following locations:";
         for (auto usedBy : backsNeeded.getUses(op)) {
@@ -566,7 +566,7 @@ struct GenerateExecPass : public GenerateExecBase<GenerateExecPass> {
       IRMapping mapping;
       op.getBody().cloneInto(&func.getBody(), mapping);
 
-      if (applyPatternsAndFoldGreedily(func, frozenPatterns).failed()) {
+      if (applyPatternsGreedily(func, frozenPatterns).failed()) {
         func->emitError("Could not generate back function");
         signalPassFailure();
       }
@@ -614,7 +614,7 @@ struct GenerateCheckPass : public GenerateCheckBase<GenerateCheckPass> {
     builder.create<Zhlt::ReturnOp>(loc);
     GreedyRewriteConfig config;
     config.maxIterations = 100;
-    if (applyPatternsAndFoldGreedily(checkFuncOp, frozenPatterns, config).failed()) {
+    if (applyPatternsGreedily(checkFuncOp, frozenPatterns, config).failed()) {
       checkFuncOp->emitError("Could not generate check function");
       signalPassFailure();
     }
@@ -839,7 +839,7 @@ struct GenerateValidityTapsPass : public GenerateValidityTapsBase<GenerateValidi
       RewritePatternSet patterns(ctx);
       patterns.insert<TapifyLoadOp>(ctx, interp, tapIndex);
       FrozenRewritePatternSet frozenPatterns(std::move(patterns));
-      if (applyPatternsAndFoldGreedily(func, frozenPatterns).failed()) {
+      if (applyPatternsGreedily(func, frozenPatterns).failed()) {
         auto diag = func->emitError("Unable to generate `verify taps' function");
         signalPassFailure();
         return;

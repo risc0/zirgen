@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -390,7 +390,7 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
 
     GreedyRewriteConfig config;
     config.maxIterations = 100;
-    if (applyPatternsAndFoldGreedily(topExtract, frozenPatterns, config).failed()) {
+    if (applyPatternsGreedily(topExtract, frozenPatterns, config).failed()) {
       topExtract->emitError("Could not generate check function");
       return ComponentOp();
     }

@@ -103,7 +103,7 @@ struct GenerateCheckLayoutPass : public GenerateCheckLayoutBase<GenerateCheckLay
       // Now, inline everything and get rid of everything that's not a constraint.
       GreedyRewriteConfig config;
       config.maxIterations = 100;
-      if (applyPatternsAndFoldGreedily(func, frozenPatterns, config).failed()) {
+      if (applyPatternsGreedily(func, frozenPatterns, config).failed()) {
         func->emitError("Could not generate check function");
         signalPassFailure();
       }

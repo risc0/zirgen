@@ -233,7 +233,10 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
         TypeAttrOf<FunctionType>: $callee_type,
         DenseI32ArrayAttr: $input_segment_sizes,
         DenseI32ArrayAttr: $result_segment_sizes),
-        funcInputs);
+      !con(
+        funcInputs,
+        (ins OptionalAttr<DictArrayAttr>:$arg_attrs,
+          OptionalAttr<DictArrayAttr>:$res_attrs)));
    let results = funcResults;
 
    code builderSaveOperandSegmentSizes = !if(saveOperandSegmentSizes, [{
@@ -259,9 +262,9 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
                              mlir::ValueRange(rawInputValues).getTypes(), rawResultTypes);
           build($_builder, $_state, $_builder.getAttr<mlir::FlatSymbolRefAttr>(( }] # func.quotedSymPrefix # [{ + componentId).str()),
                 funcType,
+                rawInputValues,
                 inputSegmentSizes,
-                resultSegmentSizes,
-                rawInputValues);
+                resultSegmentSizes);
       }]>,
       // Build given a ZFuncOp.  In this case, we can infer result types
       // and only need operand values.
@@ -276,18 +279,18 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
           build($_builder, $_state,
                 $_builder.getAttr<mlir::FlatSymbolRefAttr>(component.getSymName()),
                 funcType,
+                rawInputValues,
                 inputSegmentSizes,
-                component.getResultSegmentSizes(),
-                rawInputValues);
+                component.getResultSegmentSizes());
        }]>,
        // Build fully specifying raw values and result types
        OpBuilder<(ins
          CArg<"::mlir::FlatSymbolRefAttr">:$callee,
          CArg<"::mlir::FunctionType">:$calleeType,
+         CArg<"::mlir::ValueRange">:$operands,
          CArg<"::llvm::ArrayRef<int32_t>">:$inputSegmentSizes,
-         CArg<"::llvm::ArrayRef<int32_t>">:$resultSegmentSizes,
-         CArg<"::mlir::ValueRange">:$operands), [{
-         build($_builder, $_state, calleeType.getResults(), operands, /*attrs=*/{});
+         CArg<"::llvm::ArrayRef<int32_t>">:$resultSegmentSizes), [{
+         build($_builder, $_state, calleeType.getResults(), operands);
          auto& props = $_state.getOrAddProperties<Properties>();
          props.callee = callee;
          props.callee_type = ::mlir::TypeAttr::get(calleeType);
@@ -312,7 +315,7 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
 
     /// Set the callee for this operation.
     void setCalleeFromCallable(mlir::CallInterfaceCallable callee) {
-      (*this)->setAttr("callee", callee.get<mlir::SymbolRefAttr>());
+      (*this)->setAttr("callee", llvm::cast<mlir::SymbolRefAttr>(callee));
     }
 
     ::mlir::Value getResult() { return getOperation()->getResult(0); }
@@ -492,7 +495,9 @@ class ZLooseCallOp<ZLooseFuncOp func, string mnemonic, list<Trait> childTraits =
    let arguments =
       (ins FlatSymbolRefAttr: $callee,
            TypeAttrOf<FunctionType>: $callee_type,
-           Variadic<AnyType>: $operands);
+           Variadic<AnyType>: $operands,
+           OptionalAttr<DictArrayAttr>:$arg_attrs,
+           OptionalAttr<DictArrayAttr>:$res_attrs);
    let results = (outs Variadic<AnyType>: $results);
    let builders = [
       // Build given a ZLooseFuncOp.  In this case, we can infer result types
@@ -505,7 +510,9 @@ class ZLooseCallOp<ZLooseFuncOp func, string mnemonic, list<Trait> childTraits =
                 funcType.getResults(),
                 $_builder.getAttr<mlir::FlatSymbolRefAttr>(component.getSymName()),
                 TypeAttr::get(funcType),
-                operands);
+                operands,
+                mlir::ArrayAttr(),
+                mlir::ArrayAttr());
        }]>];
   let extraClassDeclaration = [{
     /// Get the argument operands to the called function.
@@ -524,7 +531,7 @@ class ZLooseCallOp<ZLooseFuncOp func, string mnemonic, list<Trait> childTraits =
 
     /// Set the callee for this operation.
     void setCalleeFromCallable(mlir::CallInterfaceCallable callee) {
-      (*this)->setAttr("callee", callee.get<mlir::SymbolRefAttr>());
+      (*this)->setAttr("callee", llvm::cast<mlir::SymbolRefAttr>(callee));
     }
   }];
   let assemblyFormat = [{

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -86,7 +86,9 @@ struct RewriteCallPattern : public OpInterfaceRewritePattern<CallOpInterface> {
                                                callOp->getResultTypes(),
                                                targetSym,
                                                TypeAttr::get(target.getFunctionType()),
-                                               callOp.getArgOperands());
+                                               callOp.getArgOperands(),
+                                               ArrayAttr(),
+                                               ArrayAttr());
     return success();
   }
 };
@@ -96,7 +98,7 @@ struct LowerStepFuncsPass : public LowerStepFuncsBase<LowerStepFuncsPass> {
     RewritePatternSet patterns(&getContext());
     patterns.add<RewriteFuncPattern<StepFuncOp>>(&getContext());
     patterns.add<RewriteCallPattern<StepCallOp>>(&getContext());
-    if (applyPatternsAndFoldGreedily(getOperation(), std::move(patterns)).failed()) {
+    if (applyPatternsGreedily(getOperation(), std::move(patterns)).failed()) {
       getOperation().emitError("Unable to apply function patterns");
       signalPassFailure();
     }
