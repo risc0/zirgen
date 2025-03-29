@@ -33,21 +33,6 @@ def InferInputSegmentSizesOpInterface : OpInterface<"InferInputSegmentSizesOpInt
   ];
 }
 
-def InferOperandSegmentSizesOpInterface : OpInterface<"InferOperandSegmentSizesOpInterface"> {
-  let description = [{
-    Interface to infer the segment sizes of an operation with multiple variadic operands.
-
-    Typically such an operation would need to have an 'operandSegmentSizes' attribute that tracks
-    how many concrete operands are part of each declared operand. It is sometimes more
-    straightforward to automatically derive this from the operation itself, rather than storing,
-    updating, verifying, and by default printing this information as an attribute on the operation.
-  }];
-  let methods = [
-    InterfaceMethod<"use a dynamic 'getter' to define the operand segment sizes",
-      "::llvm::SmallVector<int32_t>", "getOperandSegmentSizes", (ins)>,
-  ];
-}
-
 def InferResultSegmentSizesOpInterface : OpInterface<"InferResultSegmentSizesOpInterface"> {
   let description = [{
     Interface to infer the segment sizes of an operation with multiple variadic results.
@@ -59,7 +44,7 @@ def InferResultSegmentSizesOpInterface : OpInterface<"InferResultSegmentSizesOpI
   }];
   let methods = [
     InterfaceMethod<"use a dynamic 'getter' to define the result segment sizes",
-      "::llvm::SmallVector<int32_t>", "getOperandSegmentSizes", (ins)>,
+      "::llvm::SmallVector<int32_t>", "getResultSegmentSizes", (ins)>,
   ];
 }
 

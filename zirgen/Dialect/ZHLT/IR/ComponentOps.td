@@ -61,6 +61,7 @@ class ZFuncOp<string aspectArg, list<Trait> childTraits = [], string mnemonic = 
 
     let traits = childTraits # [
       CallableOpInterface, FunctionOpInterface, IsolatedFromAbove, OpAsmOpInterface,
+       DeclareOpInterfaceMethods<InferResultSegmentSizesOpInterface>,
        PredOpTrait<"has valid ZFunc inputs", inputSubstSnippets.pred>,
        PredOpTrait<"has valid ZFunc outputs", resultSubstSnippets.pred>,
        HasParent<"::mlir::ModuleOp">];
@@ -148,10 +149,6 @@ class ZFuncOp<string aspectArg, list<Trait> childTraits = [], string mnemonic = 
        (void)setNameFn;
        }] # inputSubstSnippets.setValueNames # [{
     }
-
-    ::llvm::SmallVector<int32_t> getResultSegmentSizes() {
-      return ::llvm::SmallVector<int32_t>(getNumResults(), 1);
-    }
   }]
     # inputSubstSnippets.typeGetters
     # inputSubstSnippets.valueGetters
@@ -187,6 +184,10 @@ void $cppClass::print(mlir::OpAsmPrinter& p) {
                                                  getFunctionTypeAttrName(),
                                                  getArgAttrsAttrName(),
                                                  getResAttrsAttrName());
+}
+
+::llvm::SmallVector<int32_t> $cppClass::getResultSegmentSizes() {
+  return ::llvm::SmallVector<int32_t>(getNumResults(), 1);
 }
   }];
   let hasCustomAssemblyFormat = 1;
@@ -228,6 +229,7 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
 
    let traits = childTraits # [
        CallOpInterface,
+       DeclareOpInterfaceMethods<InferResultSegmentSizesOpInterface>,
        PredOpTrait<"Valid inputs", inputSubstSnippets.pred>,
        PredOpTrait<"Valid outputs", resultSubstSnippets.pred>];
 
@@ -318,15 +320,17 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
     }
 
     ::mlir::Value getResult() { return getOperation()->getResult(0); }
-
-    ::llvm::SmallVector<int32_t> getResultSegmentSizes() {
-      return {1};
-    }
   }]
     // Only need to add the type getters; value getters are generated automatically
     // by ODS due to their inclusion to "arguments" and "results".
     # inputSubstSnippets.typeGetters
     # resultSubstSnippets.typeGetters;
+
+  let extraClassDefinition = [{
+::llvm::SmallVector<int32_t> $cppClass::getResultSegmentSizes() {
+  return {1};
+}
+  }];
 
   let assemblyFormat = [{
     $callee `(` operands `)` `:` functional-type(operands, results) attr-dict
