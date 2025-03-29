@@ -43,6 +43,11 @@ SmallVector<int32_t> ComponentOp::getInputSegmentSizes() {
   return segmentSizes;
 }
 
+SmallVector<int32_t> ConstructOp::getInputSegmentSizes() {
+  auto sizes = (*this)->getAttrOfType<DenseI32ArrayAttr>("operandSegmentSizes");
+  return SmallVector<int32_t>(sizes.asArrayRef());
+}
+
 SmallVector<int32_t> CheckLayoutFuncOp::getInputSegmentSizes() {
   // TODO: this is trivial
   SmallVector<int32_t> segmentSizes(0);
@@ -55,29 +60,45 @@ SmallVector<int32_t> CheckFuncOp::getInputSegmentSizes() {
   return {};
 }
 
-SmallVector<int32_t> ExecFuncOp::getInputSegmentSizes() {
+static SmallVector<int32_t> getExecSegmentSizes(FunctionType funcType) {
   SmallVector<int32_t> segmentSizes(2);
-  ArrayRef<Type> inputTypes = getFunctionType().getInputs();
+  ArrayRef<Type> inputTypes = funcType.getInputs();
   if (!inputTypes.empty() && ZStruct::isLayoutType(inputTypes.back())) {
-    segmentSizes[0] = getFunctionType().getNumInputs() - 1;
+    segmentSizes[0] = funcType.getNumInputs() - 1;
     segmentSizes[1] = 1;
   } else {
-    segmentSizes[0] = getFunctionType().getNumInputs();
+    segmentSizes[0] = funcType.getNumInputs();
+    segmentSizes[1] = 0;
+  }
+  return segmentSizes;
+}
+
+SmallVector<int32_t> ExecFuncOp::getInputSegmentSizes() {
+  return getExecSegmentSizes(getFunctionType());
+}
+
+SmallVector<int32_t> ExecCallOp::getInputSegmentSizes() {
+  return getExecSegmentSizes(getCalleeType());
+}
+
+static SmallVector<int32_t> getBackSegmentSizes(FunctionType funcType) {
+  // TODO: BackOp doesn't really need this interface!
+  SmallVector<int32_t> segmentSizes(2);
+  segmentSizes[0] = 1;
+  if (funcType.getNumInputs() == 2) {
+    segmentSizes[1] = 1;
+  } else {
     segmentSizes[1] = 0;
   }
   return segmentSizes;
 }
 
 SmallVector<int32_t> BackFuncOp::getInputSegmentSizes() {
-  // TODO: BackOp doesn't really need this interface!
-  SmallVector<int32_t> segmentSizes(2);
-  segmentSizes[0] = 1;
-  if (getFunctionType().getNumInputs() == 2) {
-    segmentSizes[1] = 1;
-  } else {
-    segmentSizes[1] = 0;
-  }
-  return segmentSizes;
+  return getBackSegmentSizes(getFunctionType());
+}
+
+SmallVector<int32_t> BackCallOp::getInputSegmentSizes() {
+  return getBackSegmentSizes(getCalleeType());
 }
 
 mlir::LogicalResult MagicOp::verify() {

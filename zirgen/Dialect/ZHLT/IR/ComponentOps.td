@@ -231,7 +231,6 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
    let arguments = !con(
       (ins FlatSymbolRefAttr:$callee,
         TypeAttrOf<FunctionType>: $callee_type,
-        DenseI32ArrayAttr: $input_segment_sizes,
         DenseI32ArrayAttr: $result_segment_sizes),
       !con(
         funcInputs,
@@ -241,7 +240,7 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
 
    code builderSaveOperandSegmentSizes = !if(saveOperandSegmentSizes, [{
       $_state.addAttribute(AttrSizedOperandSegments::getOperandSegmentSizeAttr(),
-          props.input_segment_sizes);
+          $_builder.getDenseI32ArrayAttr(inputSegmentSizes));
    }], "");
 
    let builders = [
@@ -294,7 +293,6 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
          auto& props = $_state.getOrAddProperties<Properties>();
          props.callee = callee;
          props.callee_type = ::mlir::TypeAttr::get(calleeType);
-         props.input_segment_sizes = $_builder.getDenseI32ArrayAttr(inputSegmentSizes);
          props.result_segment_sizes = $_builder.getDenseI32ArrayAttr(resultSegmentSizes);
        }] # builderSaveOperandSegmentSizes>];
 
@@ -357,7 +355,7 @@ def ComponentOp : ZFuncOp</*aspect=*/"",
   }];
 }
 
-def ConstructOp : ZCallOp<ComponentOp, [AttrSizedOperandSegments]> {
+def ConstructOp : ZCallOp<ComponentOp, [AttrSizedOperandSegments, DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>]> {
   let opName = "construct";
 }
 
@@ -399,7 +397,7 @@ def ExecFuncOp : ZFuncOp<"exec", [DeclareOpInterfaceMethods<InferInputSegmentSiz
   let funcResults = (outs ZirType:$out);
 }
 
-def ExecCallOp : ZCallOp<ExecFuncOp, [AttrSizedOperandSegments]>;
+def ExecCallOp : ZCallOp<ExecFuncOp, [AttrSizedOperandSegments, DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>]>;
 
 def BackFuncOp : ZFuncOp<"back", [DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>]> {
   let summary = "Retrieves the value of a component based on its layout";
@@ -409,7 +407,7 @@ def BackFuncOp : ZFuncOp<"back", [DeclareOpInterfaceMethods<InferInputSegmentSiz
   let funcResults = (outs ZirType:$out);
 }
 
-def BackCallOp : ZCallOp<BackFuncOp, [MemoryEffects<[MemRead]>]>;
+def BackCallOp : ZCallOp<BackFuncOp, [MemoryEffects<[MemRead]>, DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>]>;
 
 
 // A FuncOp-like operation that has names associated with
