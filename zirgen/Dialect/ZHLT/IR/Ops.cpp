@@ -29,6 +29,57 @@ namespace zirgen::Zhlt {
 
 using namespace mlir;
 
+SmallVector<int32_t> ComponentOp::getInputSegmentSizes() {
+  SmallVector<int32_t> segmentSizes(2);
+  ArrayRef<Type> inputTypes = getFunctionType().getInputs();
+  Type lastType = inputTypes.empty() ? nullptr : inputTypes.back();
+  if (lastType && ZStruct::isLayoutType(lastType)) {
+    segmentSizes[0] = inputTypes.size() - 1;
+    segmentSizes[1] = 1;
+  } else {
+    segmentSizes[0] = inputTypes.size();
+    segmentSizes[1] = 0;
+  }
+  return segmentSizes;
+}
+
+SmallVector<int32_t> CheckLayoutFuncOp::getInputSegmentSizes() {
+  // TODO: this is trivial
+  SmallVector<int32_t> segmentSizes(0);
+  segmentSizes.push_back(getFunctionType().getNumInputs());
+  return segmentSizes;
+}
+
+SmallVector<int32_t> CheckFuncOp::getInputSegmentSizes() {
+  // TODO: this is trivial
+  return {};
+}
+
+SmallVector<int32_t> ExecFuncOp::getInputSegmentSizes() {
+  SmallVector<int32_t> segmentSizes(2);
+  ArrayRef<Type> inputTypes = getFunctionType().getInputs();
+  if (!inputTypes.empty() && ZStruct::isLayoutType(inputTypes.back())) {
+    segmentSizes[0] = getFunctionType().getNumInputs() - 1;
+    segmentSizes[1] = 1;
+  } else {
+    segmentSizes[0] = getFunctionType().getNumInputs();
+    segmentSizes[1] = 0;
+  }
+  return segmentSizes;
+}
+
+SmallVector<int32_t> BackFuncOp::getInputSegmentSizes() {
+  // TODO: BackOp doesn't really need this interface!
+  SmallVector<int32_t> segmentSizes(2);
+  segmentSizes[0] = 1;
+  if (getFunctionType().getNumInputs() == 2) {
+    segmentSizes[1] = 1;
+  } else {
+    segmentSizes[1] = 0;
+  }
+  return segmentSizes;
+}
+
 mlir::LogicalResult MagicOp::verify() {
   return emitError() << "a MagicOp is never valid";
 }

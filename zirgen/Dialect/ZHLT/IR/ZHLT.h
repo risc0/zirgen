@@ -65,6 +65,8 @@ void getZirgenBlockArgumentNames(mlir::FunctionOpInterface funcOp,
 
 } // namespace zirgen::Zhlt
 
+#include "zirgen/Dialect/ZHLT/IR/Interfaces.h.inc"
+
 #define GET_TYPEDEF_CLASSES
 #include "zirgen/Dialect/ZHLT/IR/Types.h.inc"
 

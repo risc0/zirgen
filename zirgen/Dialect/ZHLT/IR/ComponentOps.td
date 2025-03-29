@@ -16,12 +16,15 @@
 
 include "mlir/IR/OpBase.td"
 include "mlir/Interfaces/FunctionInterfaces.td"
+include "mlir/Interfaces/SideEffectInterfaces.td"
 include "mlir/IR/OpAsmInterface.td"
 include "mlir/Interfaces/CallInterfaces.td"
 include "zirgen/Dialect/ZHLT/IR/Dialect.td"
 include "zirgen/Dialect/ZHLT/IR/NamedVariadic.td"
 include "zirgen/Dialect/ZHLT/IR/Types.td"
 include "zirgen/Dialect/ZStruct/IR/Types.td"
+
+include "zirgen/Dialect/ZHLT/IR/Interfaces.td"
 
 def IsPoly : DeclareOpInterfaceMethods<PolyOp>;
 
@@ -65,7 +68,6 @@ class ZFuncOp<string aspectArg, list<Trait> childTraits = [], string mnemonic = 
   let arguments = (ins
     SymbolNameAttr:$sym_name,
     TypeAttrOf<FunctionType>: $function_type,
-    DenseI32ArrayAttr:$input_segment_sizes,
     DenseI32ArrayAttr:$result_segment_sizes,
     OptionalAttr<StrAttr>:$sym_visibility,
     OptionalAttr<DictArrayAttr>:$arg_attrs,
@@ -91,8 +93,7 @@ class ZFuncOp<string aspectArg, list<Trait> childTraits = [], string mnemonic = 
       mlir::FunctionType funcType = $_builder.getFunctionType(rawInputTypes, rawResultTypes);
       build($_builder, $_state, $_builder.getStringAttr( }] # quotedSymPrefix #
               [{+ componentId),
-           funcType, inputSegmentSizes, resultSegmentSizes,
-                           /*visibility=*/{}, /*argAttrs=*/{}, /*resAttrs=*/{});
+           funcType, resultSegmentSizes, /*visibility=*/{}, /*argAttrs=*/{}, /*resAttrs=*/{});
     }]>
   ];
   let regions = (region SizedRegion<1>:$body);
@@ -330,7 +331,9 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
 }
 
 // Base component that other aspects are generated from.
-def ComponentOp : ZFuncOp</*aspect=*/"",  [CodegenSkip], /*mnemonic=*/"component"> {
+def ComponentOp : ZFuncOp</*aspect=*/"",
+                          [CodegenSkip, DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>],
+                          /*mnemonic=*/"component"> {
   let symPrefix = "";
   let summary = "Component declaration";
   let funcInputs = (ins
@@ -358,7 +361,7 @@ def ConstructOp : ZCallOp<ComponentOp, [AttrSizedOperandSegments]> {
   let opName = "construct";
 }
 
-def CheckLayoutFuncOp : ZFuncOp<"check_layout", [CodegenSkip]> {
+def CheckLayoutFuncOp : ZFuncOp<"check_layout", [CodegenSkip, DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>]> {
   let summary = "An inlined collection of layout constraints from a circuit entry point";
   let description = [{
     This aspect contains all instances of AliasLayoutOp and all supporting
@@ -370,7 +373,7 @@ def CheckLayoutFuncOp : ZFuncOp<"check_layout", [CodegenSkip]> {
   let hasRegionVerifier = 1;
 }
 
-def CheckFuncOp : ZFuncOp<"check", [CodegenSkip]> {
+def CheckFuncOp : ZFuncOp<"check", [CodegenSkip, DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>]> {
   let summary = "An inlined version of a circuit-wide CheckFuncOp.";
   let description = [{
      This function checks all constraints in the circuit that (not including test constraints).
@@ -385,7 +388,7 @@ def CheckFuncOp : ZFuncOp<"check", [CodegenSkip]> {
   }];
 }
 
-def ExecFuncOp : ZFuncOp<"exec"> {
+def ExecFuncOp : ZFuncOp<"exec", [DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>]> {
   let summary = "Executes a component and fills the layout";
   let description = [{
      Also checks constraints unless the --circuit-ndebug option is specified,
@@ -398,7 +401,7 @@ def ExecFuncOp : ZFuncOp<"exec"> {
 
 def ExecCallOp : ZCallOp<ExecFuncOp, [AttrSizedOperandSegments]>;
 
-def BackFuncOp : ZFuncOp<"back"> {
+def BackFuncOp : ZFuncOp<"back", [DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>]> {
   let summary = "Retrieves the value of a component based on its layout";
   let funcInputs = (ins
       Index:$distance,
@@ -406,7 +409,7 @@ def BackFuncOp : ZFuncOp<"back"> {
   let funcResults = (outs ZirType:$out);
 }
 
-def BackCallOp : ZCallOp<BackFuncOp>;
+def BackCallOp : ZCallOp<BackFuncOp, [MemoryEffects<[MemRead]>]>;
 
 
 // A FuncOp-like operation that has names associated with
