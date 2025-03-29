@@ -68,7 +68,6 @@ class ZFuncOp<string aspectArg, list<Trait> childTraits = [], string mnemonic = 
   let arguments = (ins
     SymbolNameAttr:$sym_name,
     TypeAttrOf<FunctionType>: $function_type,
-    DenseI32ArrayAttr:$result_segment_sizes,
     OptionalAttr<StrAttr>:$sym_visibility,
     OptionalAttr<DictArrayAttr>:$arg_attrs,
     OptionalAttr<DictArrayAttr>:$res_attrs
@@ -93,7 +92,7 @@ class ZFuncOp<string aspectArg, list<Trait> childTraits = [], string mnemonic = 
       mlir::FunctionType funcType = $_builder.getFunctionType(rawInputTypes, rawResultTypes);
       build($_builder, $_state, $_builder.getStringAttr( }] # quotedSymPrefix #
               [{+ componentId),
-           funcType, resultSegmentSizes, /*visibility=*/{}, /*argAttrs=*/{}, /*resAttrs=*/{});
+           funcType, /*visibility=*/{}, /*argAttrs=*/{}, /*resAttrs=*/{});
     }]>
   ];
   let regions = (region SizedRegion<1>:$body);
@@ -148,6 +147,10 @@ class ZFuncOp<string aspectArg, list<Trait> childTraits = [], string mnemonic = 
        };
        (void)setNameFn;
        }] # inputSubstSnippets.setValueNames # [{
+    }
+
+    ::llvm::SmallVector<int32_t> getResultSegmentSizes() {
+      return ::llvm::SmallVector<int32_t>(getNumResults(), 1);
     }
   }]
     # inputSubstSnippets.typeGetters
@@ -230,8 +233,7 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
 
    let arguments = !con(
       (ins FlatSymbolRefAttr:$callee,
-        TypeAttrOf<FunctionType>: $callee_type,
-        DenseI32ArrayAttr: $result_segment_sizes),
+        TypeAttrOf<FunctionType>: $callee_type),
       !con(
         funcInputs,
         (ins OptionalAttr<DictArrayAttr>:$arg_attrs,
@@ -293,7 +295,6 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
          auto& props = $_state.getOrAddProperties<Properties>();
          props.callee = callee;
          props.callee_type = ::mlir::TypeAttr::get(calleeType);
-         props.result_segment_sizes = $_builder.getDenseI32ArrayAttr(resultSegmentSizes);
        }] # builderSaveOperandSegmentSizes>];
 
   let extraClassDeclaration = [{
@@ -317,6 +318,10 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
     }
 
     ::mlir::Value getResult() { return getOperation()->getResult(0); }
+
+    ::llvm::SmallVector<int32_t> getResultSegmentSizes() {
+      return {1};
+    }
   }]
     // Only need to add the type getters; value getters are generated automatically
     // by ODS due to their inclusion to "arguments" and "results".
