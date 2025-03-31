@@ -21,6 +21,7 @@ function TxKindPageOut() { 2 }
 extern MemoryDelta(addr: Val, cycle: Val, dataLow: Val, dataHigh: Val, count: Val);
 extern GetDiffCount(cycle: Val): Val;
 
+#[picus_inline]
 argument MemoryArg(count: Val, addr: Val, cycle: Val, data: ValU32) {
   public count := NondetReg(count);
   public addr := NondetReg(addr);
@@ -50,18 +51,21 @@ component MemoryTxnResult(prevCycle: Val, prevData: ValU32, data: ValU32) {
 // Peek at the past value of memory nondeterministically
 extern GetMemoryTxn(addr: Val): MemoryTxnResult;
 
+#[picus_inline]
 argument CycleArg(count: Val, cycle: Val) {
   public count := NondetReg(count);
   public cycle := NondetReg(cycle);
   LookupDelta(0, cycle, count);
 }
 
+#[picus_inline]
 component IsCycle(x: Val) {
   arg := CycleArg(1, x);
   arg.count = 1;
   arg.cycle = x;
 }
 
+#[picus_inline]
 component MemoryIO(memCycle: Val, addr: Val) {
   ret := GetMemoryTxn(addr);
   public oldTxn := MemoryArg(-1, addr, ret.prevCycle, ret.prevData);
@@ -80,6 +84,7 @@ component IsRead(io: MemoryIO) {
   io.oldTxn.dataHigh = io.newTxn.dataHigh;
 }
 
+#[picus_inline]
 component IsForward(io: MemoryIO) {
   IsCycle(io.newTxn.cycle - io.oldTxn.cycle);
 }
@@ -87,6 +92,17 @@ component IsForward(io: MemoryIO) {
 // A normal memory read, the most constrained case
 component MemoryRead(cycle: Reg, addr: Val) {
   io := MemoryIO(2*cycle, addr);
+  // The data read from memory is an input. The cycle on which the address was
+  // last read is deterministic, but this is a nonlocal argument not checked by
+  // Picus, so let Picus assume this as well. Furthermore, we have that memory
+  // values are always range-checked shorts by induction; there is a matching
+  // assumption in MemoryWrite that verifies that any values written to memory
+  // are in range. See the paper for details.
+  PicusInput!(io.oldTxn.cycle);
+  PicusInput!(io.newTxn.dataHigh);
+  PicusInput!(io.newTxn.dataLow);
+  AssertRange!(0, io.newTxn.dataHigh, 0x100);
+  AssertRange!(0, io.newTxn.dataLow, 0x100);
   IsRead(io);
   IsForward(io);
   GetData(io.newTxn, 0, 1)
@@ -95,6 +111,13 @@ component MemoryRead(cycle: Reg, addr: Val) {
 // A normal memory write
 component MemoryWrite(cycle: Reg, addr: Val, data: ValU32) {
   public io := MemoryIO(2*cycle + 1, addr);
+  // All values in memory must be properly range checked. Assuming that initial
+  // values in memory are in range, we can assume that any values read from
+  // memory are in the right range, as long as any values that we write back are
+  // always in range. Picus checks this "inductive step" because of the
+  // following assumptions.
+  AssumeRange!(0, data.high, 0x100);
+  AssumeRange!(0, data.low, 0x100);
   IsForward(io);
   io.newTxn.dataLow = data.low;
   io.newTxn.dataHigh = data.high;

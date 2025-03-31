@@ -6,6 +6,7 @@ import u32;
 // Decode an instruction
 // Largely done by starting at: https://github.com/jameslzhu/riscv-card/releases/download/latest/riscv-card.pdf
 
+#[picus_inline] // TODO: this eventually won't need to be inlined
 component Decoder(inst: ValU32) {
 
   // Retain a local copy of the instruction
@@ -34,12 +35,12 @@ component Decoder(inst: ValU32) {
   public opcode := NondetReg(inst.low & 0x7f);
 
   // Verify the components do in fact compose into the instructions
-  inst.high = _f7_6   * 0x8000 + 
-              _f7_45  * 0x2000 + 
+  inst.high = _f7_6   * 0x8000 +
+              _f7_45  * 0x2000 +
               _f7_23  * 0x0800 +
               _f7_01  * 0x0200 +
               _rs2_34 * 0x0080 +
-              _rs2_12 * 0x0020 + 
+              _rs2_12 * 0x0020 +
               _rs2_0  * 0x0010 +
               _rs1_34 * 0x0004 +
               _rs1_12 * 0x0001;

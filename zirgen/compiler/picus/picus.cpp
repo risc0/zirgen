@@ -260,7 +260,6 @@ private:
       AnySignal signal = signalize(freshName(), param.getType());
       declareSignals(signal, SignalType::Input);
       valuesToSignals.insert({param, signal});
-      workQueue.push(lookupConstructor(param.getType()));
     }
 
     // The result is an output
@@ -821,11 +820,6 @@ private:
     os << "(" << op << " " << signal.str() << ")\n";
   }
 
-  ComponentOp lookupConstructor(Type type) {
-    auto mangledName = mangledTypeName(type);
-    return mod.lookupSymbol<ComponentOp>(mangledName);
-  }
-
   std::string freshName() { return "x" + std::to_string(nameCounter++); }
 
   MLIRContext* ctx;
@@ -929,6 +923,7 @@ private:
 (output y3)
 (end-module)
     )";
+    os << "\n";
   }
 };
 
