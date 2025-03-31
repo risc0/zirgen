@@ -234,8 +234,7 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
        PredOpTrait<"Valid outputs", resultSubstSnippets.pred>];
 
    let arguments = !con(
-      (ins FlatSymbolRefAttr:$callee,
-        TypeAttrOf<FunctionType>: $callee_type),
+      (ins FlatSymbolRefAttr:$callee),
       !con(
         funcInputs,
         (ins OptionalAttr<DictArrayAttr>:$arg_attrs,
@@ -296,7 +295,6 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
          build($_builder, $_state, calleeType.getResults(), operands);
          auto& props = $_state.getOrAddProperties<Properties>();
          props.callee = callee;
-         props.callee_type = ::mlir::TypeAttr::get(calleeType);
        }] # builderSaveOperandSegmentSizes>];
 
   let extraClassDeclaration = [{
@@ -320,6 +318,10 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
     }
 
     ::mlir::Value getResult() { return getOperation()->getResult(0); }
+
+    ::mlir::FunctionType getCalleeType() {
+      return ::mlir::FunctionType::get(getContext(), getOperandTypes(), (*this)->getResultTypes());
+    }
   }]
     // Only need to add the type getters; value getters are generated automatically
     // by ODS due to their inclusion to "arguments" and "results".
