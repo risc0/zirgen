@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -64,6 +64,8 @@ void getZirgenBlockArgumentNames(mlir::FunctionOpInterface funcOp,
                                  mlir::OpAsmSetValueNameFn setNameFn);
 
 } // namespace zirgen::Zhlt
+
+#include "zirgen/Dialect/ZHLT/IR/Interfaces.h.inc"
 
 #define GET_TYPEDEF_CLASSES
 #include "zirgen/Dialect/ZHLT/IR/Types.h.inc"

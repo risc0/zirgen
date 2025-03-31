@@ -357,9 +357,9 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
     // Build a new function which takes in top layout and returns super
     // Basically the goal of this function is to extract the 'return' of Top
     // from the Top layout, it is called 'Top$extract'
-    SmallVector<Type> topExtractParams = {topFunc.getLayoutType()};
+    SmallVector<Type> topExtractParams = {};
     auto topExtract = builder.create<Zhlt::ComponentOp>(
-        loc, "Top$extract", retType, topExtractParams, LayoutType());
+        loc, "Top$extract", retType, topExtractParams, topFunc.getLayoutType());
     Block* block = topExtract.addEntryBlock();
     builder.setInsertionPointToStart(block);
 
@@ -409,9 +409,8 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
     builder.setInsertionPointToStart(block);
 
     // Body of function is: Call Top$extract, Build Accum, return
-    SmallVector<Value> topExtractCallParams = {block->getArgument(0)};
     auto callTopExtract =
-        builder.create<Zhlt::ConstructOp>(loc, topExtract, topExtractCallParams, Value());
+        builder.create<Zhlt::ConstructOp>(loc, topExtract, ValueRange(), block->getArgument(0));
     SmallVector<Value> userAccumArgs = {
         callTopExtract,
         block->getArgument(1),

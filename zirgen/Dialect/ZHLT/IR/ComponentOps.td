@@ -16,12 +16,15 @@
 
 include "mlir/IR/OpBase.td"
 include "mlir/Interfaces/FunctionInterfaces.td"
+include "mlir/Interfaces/SideEffectInterfaces.td"
 include "mlir/IR/OpAsmInterface.td"
 include "mlir/Interfaces/CallInterfaces.td"
 include "zirgen/Dialect/ZHLT/IR/Dialect.td"
 include "zirgen/Dialect/ZHLT/IR/NamedVariadic.td"
 include "zirgen/Dialect/ZHLT/IR/Types.td"
 include "zirgen/Dialect/ZStruct/IR/Types.td"
+
+include "zirgen/Dialect/ZHLT/IR/Interfaces.td"
 
 def IsPoly : DeclareOpInterfaceMethods<PolyOp>;
 
@@ -58,6 +61,7 @@ class ZFuncOp<string aspectArg, list<Trait> childTraits = [], string mnemonic = 
 
     let traits = childTraits # [
       CallableOpInterface, FunctionOpInterface, IsolatedFromAbove, OpAsmOpInterface,
+       DeclareOpInterfaceMethods<InferResultSegmentSizesOpInterface>,
        PredOpTrait<"has valid ZFunc inputs", inputSubstSnippets.pred>,
        PredOpTrait<"has valid ZFunc outputs", resultSubstSnippets.pred>,
        HasParent<"::mlir::ModuleOp">];
@@ -65,8 +69,6 @@ class ZFuncOp<string aspectArg, list<Trait> childTraits = [], string mnemonic = 
   let arguments = (ins
     SymbolNameAttr:$sym_name,
     TypeAttrOf<FunctionType>: $function_type,
-    DenseI32ArrayAttr:$input_segment_sizes,
-    DenseI32ArrayAttr:$result_segment_sizes,
     OptionalAttr<StrAttr>:$sym_visibility,
     OptionalAttr<DictArrayAttr>:$arg_attrs,
     OptionalAttr<DictArrayAttr>:$res_attrs
@@ -75,11 +77,10 @@ class ZFuncOp<string aspectArg, list<Trait> childTraits = [], string mnemonic = 
   string aspect = aspectArg;
   string symPrefix = aspect # "$";
   code quotedSymPrefix = "\"" # symPrefix # "\"";
-  bit singleton = 0;
   let builders = [
     OpBuilder<
       !con(
-      !if(singleton, (ins), (ins CArg<"llvm::StringRef">:$componentId)), !con(
+      (ins CArg<"llvm::StringRef">:$componentId), !con(
          resultSnippets.builderTypeArgs,
          inputSnippets.builderTypeArgs)), [{
       llvm::SmallVector<mlir::Type> rawInputTypes;
@@ -91,9 +92,8 @@ class ZFuncOp<string aspectArg, list<Trait> childTraits = [], string mnemonic = 
          # [{
       mlir::FunctionType funcType = $_builder.getFunctionType(rawInputTypes, rawResultTypes);
       build($_builder, $_state, $_builder.getStringAttr( }] # quotedSymPrefix #
-              !if(singleton, "", "+ componentId") # [{ ),
-           funcType, inputSegmentSizes, resultSegmentSizes,
-                           /*visibility=*/{}, /*argAttrs=*/{}, /*resAttrs=*/{});
+              [{+ componentId),
+           funcType, /*visibility=*/{}, /*argAttrs=*/{}, /*resAttrs=*/{});
     }]>
   ];
   let regions = (region SizedRegion<1>:$body);
@@ -185,6 +185,10 @@ void $cppClass::print(mlir::OpAsmPrinter& p) {
                                                  getArgAttrsAttrName(),
                                                  getResAttrsAttrName());
 }
+
+::llvm::SmallVector<int32_t> $cppClass::getResultSegmentSizes() {
+  return ::llvm::SmallVector<int32_t>(getNumResults(), 1);
+}
   }];
   let hasCustomAssemblyFormat = 1;
 }
@@ -225,14 +229,12 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
 
    let traits = childTraits # [
        CallOpInterface,
+       DeclareOpInterfaceMethods<InferResultSegmentSizesOpInterface>,
        PredOpTrait<"Valid inputs", inputSubstSnippets.pred>,
        PredOpTrait<"Valid outputs", resultSubstSnippets.pred>];
 
    let arguments = !con(
-      (ins FlatSymbolRefAttr:$callee,
-        TypeAttrOf<FunctionType>: $callee_type,
-        DenseI32ArrayAttr: $input_segment_sizes,
-        DenseI32ArrayAttr: $result_segment_sizes),
+      (ins FlatSymbolRefAttr:$callee),
       !con(
         funcInputs,
         (ins OptionalAttr<DictArrayAttr>:$arg_attrs,
@@ -241,7 +243,7 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
 
    code builderSaveOperandSegmentSizes = !if(saveOperandSegmentSizes, [{
       $_state.addAttribute(AttrSizedOperandSegments::getOperandSegmentSizeAttr(),
-          props.input_segment_sizes);
+          $_builder.getDenseI32ArrayAttr(inputSegmentSizes));
    }], "");
 
    let builders = [
@@ -293,9 +295,6 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
          build($_builder, $_state, calleeType.getResults(), operands);
          auto& props = $_state.getOrAddProperties<Properties>();
          props.callee = callee;
-         props.callee_type = ::mlir::TypeAttr::get(calleeType);
-         props.input_segment_sizes = $_builder.getDenseI32ArrayAttr(inputSegmentSizes);
-         props.result_segment_sizes = $_builder.getDenseI32ArrayAttr(resultSegmentSizes);
        }] # builderSaveOperandSegmentSizes>];
 
   let extraClassDeclaration = [{
@@ -319,11 +318,21 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
     }
 
     ::mlir::Value getResult() { return getOperation()->getResult(0); }
+
+    ::mlir::FunctionType getCalleeType() {
+      return ::mlir::FunctionType::get(getContext(), getOperandTypes(), (*this)->getResultTypes());
+    }
   }]
     // Only need to add the type getters; value getters are generated automatically
     // by ODS due to their inclusion to "arguments" and "results".
     # inputSubstSnippets.typeGetters
     # resultSubstSnippets.typeGetters;
+
+  let extraClassDefinition = [{
+::llvm::SmallVector<int32_t> $cppClass::getResultSegmentSizes() {
+  return {1};
+}
+  }];
 
   let assemblyFormat = [{
     $callee `(` operands `)` `:` functional-type(operands, results) attr-dict
@@ -331,7 +340,9 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
 }
 
 // Base component that other aspects are generated from.
-def ComponentOp : ZFuncOp</*aspect=*/"",  [CodegenSkip], /*mnemonic=*/"component"> {
+def ComponentOp : ZFuncOp</*aspect=*/"",
+                          [CodegenSkip, DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>],
+                          /*mnemonic=*/"component"> {
   let symPrefix = "";
   let summary = "Component declaration";
   let funcInputs = (ins
@@ -355,11 +366,11 @@ def ComponentOp : ZFuncOp</*aspect=*/"",  [CodegenSkip], /*mnemonic=*/"component
   }];
 }
 
-def ConstructOp : ZCallOp<ComponentOp, [AttrSizedOperandSegments]> {
+def ConstructOp : ZCallOp<ComponentOp, [AttrSizedOperandSegments, DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>]> {
   let opName = "construct";
 }
 
-def CheckLayoutFuncOp : ZFuncOp<"check_layout", [CodegenSkip]> {
+def CheckLayoutFuncOp : ZFuncOp<"check_layout", [CodegenSkip, DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>]> {
   let summary = "An inlined collection of layout constraints from a circuit entry point";
   let description = [{
     This aspect contains all instances of AliasLayoutOp and all supporting
@@ -371,7 +382,7 @@ def CheckLayoutFuncOp : ZFuncOp<"check_layout", [CodegenSkip]> {
   let hasRegionVerifier = 1;
 }
 
-def CheckFuncOp : ZFuncOp<"check", [CodegenSkip]> {
+def CheckFuncOp : ZFuncOp<"check", [CodegenSkip, DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>]> {
   let summary = "An inlined version of a circuit-wide CheckFuncOp.";
   let description = [{
      This function checks all constraints in the circuit that (not including test constraints).
@@ -386,7 +397,7 @@ def CheckFuncOp : ZFuncOp<"check", [CodegenSkip]> {
   }];
 }
 
-def ExecFuncOp : ZFuncOp<"exec"> {
+def ExecFuncOp : ZFuncOp<"exec", [DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>]> {
   let summary = "Executes a component and fills the layout";
   let description = [{
      Also checks constraints unless the --circuit-ndebug option is specified,
@@ -397,9 +408,9 @@ def ExecFuncOp : ZFuncOp<"exec"> {
   let funcResults = (outs ZirType:$out);
 }
 
-def ExecCallOp : ZCallOp<ExecFuncOp, [AttrSizedOperandSegments]>;
+def ExecCallOp : ZCallOp<ExecFuncOp, [AttrSizedOperandSegments, DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>]>;
 
-def BackFuncOp : ZFuncOp<"back"> {
+def BackFuncOp : ZFuncOp<"back", [DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>]> {
   let summary = "Retrieves the value of a component based on its layout";
   let funcInputs = (ins
       Index:$distance,
@@ -407,7 +418,7 @@ def BackFuncOp : ZFuncOp<"back"> {
   let funcResults = (outs ZirType:$out);
 }
 
-def BackCallOp : ZCallOp<BackFuncOp>;
+def BackCallOp : ZCallOp<BackFuncOp, [MemoryEffects<[MemRead]>, DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>]>;
 
 
 // A FuncOp-like operation that has names associated with

@@ -10,6 +10,7 @@ td_library(
         "Attrs.td",
         "ComponentOps.td",
         "Dialect.td",
+        "Interfaces.td",
         "NamedVariadic.td",
         "Ops.td",
         "Types.td",
@@ -23,6 +24,23 @@ td_library(
         "@llvm-project//mlir:OpBaseTdFiles",
         "@llvm-project//mlir:SideEffectInterfacesTdFiles",
     ],
+)
+
+gentbl_cc_library(
+    name = "InterfacesIncGen",
+    tbl_outs = [
+        (
+            ["-gen-op-interface-decls"],
+            "Interfaces.h.inc",
+        ),
+        (
+            ["-gen-op-interface-defs"],
+            "Interfaces.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = ":Interfaces.td",
+    deps = [":TdFiles"],
 )
 
 gentbl_cc_library(
@@ -132,6 +150,7 @@ cc_library(
         ":AttrsIncGen",
         ":ComponentOpsIncGen",
         ":DialectIncGen",
+        ":InterfacesIncGen",
         ":OpsIncGen",
         ":TypesIncGen",
         "//zirgen/Dialect/ZStruct/Analysis",
