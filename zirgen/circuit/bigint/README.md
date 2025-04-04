@@ -1,7 +1,7 @@
 These are the bigint programs we use for our algebraic precompiles, and the compiler code to generate them.
 
 In our system, BigInt programs are initially written as MLIR programs in the [bigint Dialect](../../Dialect/BigInt/Overview.md).
-Look in e.g. `rsa.cpp/.h` or `elliptic_curve.cpp/.h` for these programs in their original forms.
+Look in e.g. `field.cpp/.h` or `elliptic_curve.cpp/.h` for these programs in their original forms.
 
 Then, they are compiled into a BIBC (BigInt Byte Code) BLOB format by the `bigint2c.cpp` compiler.
 This is the format the RISC Zero zkVM can execute as a precompile or part of a precompile.

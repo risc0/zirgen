@@ -11,13 +11,11 @@ cc_library(
         "basic.cpp",
         "elliptic_curve.cpp",
         "field.cpp",
-        "rsa.cpp",
     ],
     hdrs = [
         "basic.h",
         "elliptic_curve.h",
         "field.h",
-        "rsa.h",
         "//zirgen/circuit/recursion",
         "//zirgen/circuit/rv32im/v1/edsl:rv32im",
     ],
@@ -56,7 +54,6 @@ cc_binary(
 )
 
 BLOBS = [
-    "modpow65537_4096",
     "ec_double_256",
     "ec_add_256",
     "ec_double_384",
@@ -75,17 +72,11 @@ BLOBS = [
     "modinv_384",
     "modmul_256",
     "modmul_384",
+    "modmul_4096",
     "modsub_256",
     "modsub_384",
     "mul_256",
 ]
-
-genrule(
-    name = "modpow65537_4096",
-    outs = ["modpow65537_4096.blob"],
-    exec_tools = [":bigint2c"],
-    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modpow65537 --bitwidth 4096 > $(OUTS)"
-)
 
 genrule(
     name = "ec_double_256",
@@ -211,6 +202,13 @@ genrule(
     outs = ["modmul_384.blob"],
     exec_tools = [":bigint2c"],
     cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modmul --bitwidth 384 > $(OUTS)"
+)
+
+genrule(
+    name = "modmul_4096",
+    outs = ["modmul_4096.blob"],
+    exec_tools = [":bigint2c"],
+    cmd = "$(location //zirgen/circuit/bigint:bigint2c) --program=modmul --bitwidth 4096 > $(OUTS)"
 )
 
 genrule(
