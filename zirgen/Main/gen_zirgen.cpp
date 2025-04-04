@@ -346,6 +346,7 @@ int main(int argc, char* argv[]) {
   pm.enableVerifier(true);
   zirgen::addAccumAndGlobalPasses(pm);
   //  pm.addPass(zirgen::ZStruct::createOptimizeLayoutPass());
+  pm.addPass(zirgen::Zhlt::createInlineRequiredPass());
   pm.addPass(zirgen::Zhlt::createElideRedundantMembersPass());
   pm.addPass(zirgen::dsl::createFieldDCEPass());
   pm.addPass(mlir::createCanonicalizerPass());

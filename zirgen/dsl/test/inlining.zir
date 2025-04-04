@@ -1,0 +1,29 @@
+// RUN: zirgen %s --emit=zhltopt | FileCheck %s
+
+// Test that basic builtin components get inlined.
+
+extern GetValue() : Val;
+
+// CHECK-LABEL: zhlt.component @Compute
+// CHECK-DAG: zll.inv
+// CHECK-DAG: zll.mul
+// CHECK-DAG: zll.bit_and
+// CHECK-DAG: zll.add
+// CHECK: }
+#[inline]
+component Compute(a: Val, b: Val) {
+  c := a * Inv(b);
+  d := b & c;
+  a + d
+}
+
+// CHECK-LABEL: zhlt.component @Top
+// CHECK-DAG: zstruct.load
+// CHECK-DAG: zstruct.store
+// CHECK-NOT: zhlt.construct @Compute
+// CHECK: }
+component Top() {
+  a := NondetReg(GetValue());
+  b := NondetReg(GetValue());
+  NondetReg(Compute(a, b))
+}

@@ -69,6 +69,7 @@ void Builtins::makeBuiltin(StringRef name,
                            const std::function<void(Location, ValueRange)>& buildBody) {
   Location loc = NameLoc::get(builder.getStringAttr("builtin " + name));
   auto op = builder.create<Zhlt::ComponentOp>(loc, name, valueType, constructParams, layoutType);
+  op->setAttr("inline", UnitAttr::get(ctx));
 
   OpBuilder::InsertionGuard insertionGuard(builder);
   builder.setInsertionPointToStart(op.addEntryBlock());

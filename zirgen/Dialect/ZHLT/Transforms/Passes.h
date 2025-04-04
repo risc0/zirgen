@@ -23,6 +23,7 @@ std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createElideRedundantMembers
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createHoistAllocsPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createHoistCommonMuxCodePass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createHoistCommonMuxCodePass(bool eager);
+std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createInlineRequiredPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createStripTestsPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateStepsPass();
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createStripAliasLayoutOpsPass();

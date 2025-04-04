@@ -6,7 +6,7 @@ component Top() {
   a := Reg(5);
   first := NondetReg(IsFirstCycle());
   // Check that a@1 gets hoisted
-  // CHECK: hoist: %22 = zhlt.back @Reg(1,
+  // CHECK: hoist: %{{[0-9]+}} = zhlt.back @Reg(1,
   if (first) {
     Reg(a@1)
   } else {

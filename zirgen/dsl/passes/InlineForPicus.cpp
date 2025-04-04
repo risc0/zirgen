@@ -69,7 +69,8 @@ struct InlineForPicusPass : public InlineForPicusBase<InlineForPicusPass> {
     auto profitabilityCb = [=](const Inliner::ResolvedCall& call) {
       // Inline any calls to components marked "picus_inline" or "extern"
       Operation* target = call.targetNode->getCallableRegion()->getParentOp();
-      if (target->hasAttr("picus_inline") || target->hasAttr("extern")) {
+      if (target->hasAttr("inline") || target->hasAttr("picus_inline") ||
+          target->hasAttr("extern")) {
         return true;
       }
 

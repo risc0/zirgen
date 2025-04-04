@@ -37,6 +37,7 @@ cc_library(
         "GenerateSteps.cpp",
         "HoistAllocs.cpp",
         "HoistCommonMuxCode.cpp",
+        "InlineRequired.cpp",
         "LowerDirectives.cpp",
         "LowerFuncs.cpp",
         "OptimizeParWitgen.cpp",

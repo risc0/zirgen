@@ -48,6 +48,11 @@ def HoistCommonMuxCode : Pass<"hoist-from-mux", "mlir::ModuleOp"> {
   ];
 }
 
+def InlineRequired : Pass<"inline-required", "mlir::ModuleOp"> {
+  let summary = "Inline externs and components tagged with the 'inline' attribute";
+  let constructor = "zirgen::Zhlt::createInlineRequiredPass()";
+}
+
 def StripTests : Pass<"strip-tests", "mlir::ModuleOp"> {
   let summary = "Strip all tests for smaller generated code.";
   let constructor = "zirgen::Zhlt::createStripTestsPass()";
