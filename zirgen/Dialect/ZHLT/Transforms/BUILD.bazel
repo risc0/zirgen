@@ -47,6 +47,7 @@ cc_library(
         "StripTests.cpp",
     ],
     hdrs = [
+        "BindLayouts.h",
         "Passes.h",
     ],
     deps = [

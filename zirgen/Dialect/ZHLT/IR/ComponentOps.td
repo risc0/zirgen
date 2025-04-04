@@ -298,6 +298,7 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
        }] # builderSaveOperandSegmentSizes>];
 
   let extraClassDeclaration = [{
+    using FuncOpTy = }] # func.cppClassName # [{;
     /// Get the argument operands to the called function.
     mlir::Operation::operand_range getArgOperands() {
       return getOperation()->getOperands();
