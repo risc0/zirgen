@@ -241,7 +241,7 @@ pub fn exec_reg<'a>(
     return Ok(x2);
 }
 pub fn exec_log<'a>(ctx: &'a ExecContext, arg0: &str, arg1: &[Val]) -> Result<LogStruct> {
-    // Log(<preamble>:25)
+    // Log(<preamble>:22)
     invoke_extern!(ctx, log, arg0, arg1);
     return Ok(LogStruct {});
 }
