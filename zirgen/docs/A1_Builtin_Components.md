@@ -66,6 +66,20 @@ vInv := NondetReg(Inv(v));
 v * vInv = 1;
 ```
 
+## Div
+
+```
+component Div(a: Val, b: Val) : Val;
+```
+
+The super of `Div` is a `Val` which is the result of dividing `a` by `b` in the
+finite field. This computation is nondeterministic, so to constrain it you might
+do the following:
+```
+quotient := NondetReg(a / b);
+quotient * b = a;
+```
+
 ## BitAnd
 
 ```

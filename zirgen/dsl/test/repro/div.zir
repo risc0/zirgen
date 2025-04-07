@@ -1,0 +1,11 @@
+// RUN: zirgen %s 2>&1 --emit=zstruct
+
+// Covers a bug where the Div component used a non-registerized inverse as part
+// of a constraint. This is never a valid constraint, and the intended semantics
+// of Div is to divide nondeterministically.
+
+component Top() {
+  a := NondetReg(1);
+  b := NondetReg(1);
+  c := NondetReg(a / b);
+}
