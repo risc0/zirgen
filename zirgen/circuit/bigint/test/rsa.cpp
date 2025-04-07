@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "zirgen/circuit/bigint/rsa.h"
 #include "zirgen/circuit/bigint/test/bibc.h"
+#include "zirgen/circuit/bigint/test/rsa_helper.h"
 
 #include <gtest/gtest.h>
 
@@ -23,13 +23,13 @@ using namespace zirgen::BigInt::test;
 TEST_F(BibcTest, RSA256) {
   mlir::OpBuilder builder(ctx);
   auto func = makeFunc("rsa_256", builder);
-  BigInt::makeRSAChecker(builder, func.getLoc(), 256);
+  BigInt::test::testMakeRSAChecker(builder, func.getLoc(), 256);
   lower();
 
   llvm::APInt N(64, 101);
   llvm::APInt S(64, 32766);
   llvm::APInt M(64, 53);
-  EXPECT_EQ(M, BigInt::RSA(N, S));
+  EXPECT_EQ(M, BigInt::test::testRSA(N, S));
   std::vector<llvm::APInt> inputs = {N, S, M};
 
   ZType a, b;
@@ -40,13 +40,13 @@ TEST_F(BibcTest, RSA256) {
 TEST_F(BibcTest, RSA3072) {
   mlir::OpBuilder builder(ctx);
   auto func = makeFunc("rsa_3072", builder);
-  BigInt::makeRSAChecker(builder, func.getLoc(), 3072);
+  BigInt::test::testMakeRSAChecker(builder, func.getLoc(), 3072);
   lower();
 
   llvm::APInt N(64, 22764235167642101);
   llvm::APInt S(64, 10116847215);
   llvm::APInt M(64, 14255570451702775);
-  EXPECT_EQ(M, BigInt::RSA(N, S));
+  EXPECT_EQ(M, BigInt::test::testRSA(N, S));
   std::vector<llvm::APInt> inputs = {N, S, M};
 
   ZType a, b;

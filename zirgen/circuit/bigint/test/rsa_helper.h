@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,16 +13,10 @@
 // limitations under the License.
 
 #include "mlir/IR/Builders.h"
-#include "mlir/IR/Location.h"
-#include "mlir/IR/Operation.h"
 #include "llvm/ADT/APInt.h"
 
-namespace zirgen::BigInt {
-
-void genModPow65537(mlir::OpBuilder& builder, mlir::Location loc, size_t bitwidth);
-// TODO: Unify our tests so we don't need separate codepaths for the RSA versions with & without
-// Loads & Stores
-void makeRSAChecker(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
-llvm::APInt RSA(llvm::APInt N, llvm::APInt S);
-
-} // namespace zirgen::BigInt
+namespace zirgen::BigInt::test {
+// RSA code for testing
+void testMakeRSAChecker(mlir::OpBuilder builder, mlir::Location loc, size_t bits);
+llvm::APInt testRSA(llvm::APInt N, llvm::APInt S);
+} // namespace zirgen::BigInt::test

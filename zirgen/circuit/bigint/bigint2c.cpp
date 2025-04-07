@@ -32,7 +32,6 @@
 #include "zirgen/circuit/bigint/basic.h"
 #include "zirgen/circuit/bigint/elliptic_curve.h"
 #include "zirgen/circuit/bigint/field.h"
-#include "zirgen/circuit/bigint/rsa.h"
 
 using namespace zirgen;
 namespace cl = llvm::cl;
@@ -42,7 +41,6 @@ cl::opt<std::string>
 
 namespace {
 enum class Program {
-  ModPow65537,
   EC_Double,
   EC_Add,
   ExtField_Deg2_Add,
@@ -61,8 +59,7 @@ enum class Program {
 static cl::opt<enum Program> program(
     "program",
     cl::desc("The program to compile"),
-    cl::values(clEnumValN(Program::ModPow65537, "modpow65537", "ModPow65537"),
-               clEnumValN(Program::EC_Double, "ec_double", "EC_Double"),
+    cl::values(clEnumValN(Program::EC_Double, "ec_double", "EC_Double"),
                clEnumValN(Program::EC_Add, "ec_add", "EC_Add"),
                clEnumValN(Program::ExtField_Deg2_Add, "extfield_deg2_add", "ExtField_Deg2_Add"),
                clEnumValN(Program::ExtField_Deg2_Mul, "extfield_deg2_mul", "ExtField_Deg2_Mul"),
@@ -446,9 +443,6 @@ int main(int argc, char* argv[]) {
   builder.setInsertionPointToStart(func.addEntryBlock());
 
   switch (program) {
-  case Program::ModPow65537:
-    zirgen::BigInt::genModPow65537(builder, loc, bitwidth);
-    break;
   case Program::EC_Double:
     zirgen::BigInt::EC::genECDouble(builder, loc, bitwidth);
     break;
