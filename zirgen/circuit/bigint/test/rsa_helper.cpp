@@ -38,8 +38,7 @@ void testMakeRSAChecker(OpBuilder builder, Location loc, size_t bits) {
   auto diff = builder.create<BigInt::SubOp>(loc, x, M);
   builder.create<BigInt::EqualZeroOp>(loc, diff);
 }
-  
-  
+
 // Used for testing, to compute expected outputs.
 // I verified this by comparing against:
 // pow(S, 65537, N) in python
