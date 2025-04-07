@@ -24,6 +24,20 @@ cc_library(
     ],
 )
 
+cc_library(
+    name = "rsa_helper",
+    srcs = [
+        "rsa_helper.cpp",
+    ],
+    hdrs = [
+        "rsa_helper.h",
+    ],
+    deps = [
+        "//zirgen/circuit/bigint:lib",
+        "//zirgen/Dialect/BigInt/IR",
+    ]
+)
+
 cc_test(
     name = "const_add",
     srcs = ["const_add.cpp"],
@@ -97,7 +111,10 @@ cc_test(
 cc_test(
     name = "rsa",
     srcs = ["rsa.cpp"],
-    deps = [":bibc_utils"],
+    deps = [
+        ":bibc_utils",
+        ":rsa_helper",
+    ],
     size = "small",
 )
 

@@ -16,5 +16,6 @@ cc_binary(
         "//zirgen/Dialect/BigInt/Transforms",
         "//zirgen/circuit/bigint:lib",
         "//zirgen/compiler/codegen",
+        "//zirgen/circuit/bigint/test:rsa_helper",
     ],
 )
