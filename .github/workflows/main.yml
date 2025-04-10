@@ -67,10 +67,8 @@ jobs:
       # TODO: check generated fib files once they generate properly
       #      - name: fib generated files up to date
       #        run: cargo bootstrap -- --check fib
-      #        continue-on-error: true
       - name: calculator generated files up to date
         run: cargo bootstrap -- --check calculator
-        continue-on-error: true
 
   bazel:
     runs-on: [self-hosted, prod, cpu, "${{ matrix.os }}"]
