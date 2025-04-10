@@ -13,6 +13,8 @@
 // limitations under the License.
 
 use std::{
+    cmp::min,
+    fmt::Write as _,
     io::{self, stdout, BufRead, BufReader, Read, Write},
     path::{Path, PathBuf},
     process::{exit, Command, Stdio},
@@ -178,6 +180,53 @@ fn strip_locations_and_whitespace(text: &str) -> Result<String> {
         .collect())
 }
 
+fn compare_stripped(a: &str, b: &str) -> Result<()> {
+    const PRE_CONTEXT_LEN: usize = 50;
+    const POST_CONTEXT_LEN: usize = 120;
+    if let Some(diff_pos) = a
+        .chars()
+        .zip(b.chars())
+        .position(|(a, b)| a != b)
+        .or_else(|| {
+            if a.len() == b.len() {
+                // EVerything is equal
+                None
+            } else {
+                // One is aprefix of the other.
+                Some(min(a.len(), b.len()))
+            }
+        })
+    {
+        let mut out = String::new();
+
+        let diff_pos = diff_pos.saturating_sub(PRE_CONTEXT_LEN);
+        let a_diff_end = min(a.len(), diff_pos + POST_CONTEXT_LEN);
+        let b_diff_end = min(b.len(), diff_pos + POST_CONTEXT_LEN);
+        let change_pos = PRE_CONTEXT_LEN + if diff_pos == 0 { 0 } else { 3 };
+        write!(&mut out, "Files differ!  Bazel generated:\n")?;
+        if diff_pos > 0 {
+            write!(&mut out, "...")?;
+        }
+        write!(&mut out, "{}", &a[diff_pos..a_diff_end])?;
+        if a_diff_end != a.len() {
+            write!(&mut out, "...")?;
+        }
+        write!(&mut out, "\n{:1$}^\nInstalled version:\n", "", change_pos)?;
+        if diff_pos > 0 {
+            write!(&mut out, "...")?;
+        }
+        write!(&mut out, "{}", &b[diff_pos..b_diff_end])?;
+        if b_diff_end != b.len() {
+            write!(&mut out, "...")?;
+        }
+        write!(&mut out, "\n")?;
+        write!(&mut out, "{:1$}^\n", "", change_pos)?;
+        bail!("{}", out)
+    } else {
+        Ok(())
+    }
+}
+
 fn cargo_fmt_circuit(circuit: &str, tgt_dir: &Option<PathBuf>, manifest: &Option<PathBuf>) {
     let tgt_dir = if let Some(ref tgt_dir) = tgt_dir {
         PathBuf::from(tgt_dir)
@@ -312,9 +361,7 @@ impl Bootstrap {
             // Things might change like line numbers or whitespace that don't have a functional impact.
             let src = strip_locations_and_whitespace(&String::from_utf8(src)?)?;
             let dst = strip_locations_and_whitespace(&String::from_utf8(dst)?)?;
-            if src != dst {
-                bail!("Text does not match")
-            }
+            compare_stripped(&src, &dst)?;
         } else if src != dst {
             bail!("Binary blobs do not match")
         }
