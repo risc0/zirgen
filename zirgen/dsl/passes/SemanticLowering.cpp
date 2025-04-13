@@ -14,6 +14,7 @@
 
 #include <functional>
 
+#include "mlir/Analysis/CallGraph.h"
 #include "mlir/Analysis/TopologicalSortUtils.h"
 #include "mlir/Dialect/Affine/IR/AffineOps.h"
 #include "mlir/Dialect/Arith/IR/Arith.h"
@@ -23,10 +24,14 @@
 #include "mlir/Pass/PassManager.h"
 #include "mlir/Transforms/CSE.h"
 #include "mlir/Transforms/GreedyPatternRewriteDriver.h"
+#include "mlir/Transforms/Inliner.h"
+#include "mlir/Transforms/InliningUtils.h"
+#include "llvm/ADT/SCCIterator.h"
 #include "llvm/ADT/TypeSwitch.h"
 
 #include "zirgen/Dialect/ZHLT/IR/TypeUtils.h"
 #include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
+#include "zirgen/Dialect/ZHLT/Transforms/BindLayouts.h"
 #include "zirgen/Dialect/ZStruct/IR/ZStruct.h"
 #include "zirgen/Dialect/ZStruct/Transforms/RewritePatterns.h"
 #include "zirgen/Dialect/Zll/IR/Interpreter.h"
@@ -49,40 +54,18 @@ namespace zirgen {
 namespace dsl {
 
 // Convert zhlt.construct to func.call on the component's "exec" function.
+template <typename ConstructLike>
 struct ConstructToCall : public OpRewritePattern<Zhlt::ConstructOp> {
+  using OpType = Zhlt::ConstructOp;
   using OpRewritePattern::OpRewritePattern;
 
   LogicalResult matchAndRewrite(Zhlt::ConstructOp op, PatternRewriter& rewriter) const final {
-    auto callOp = rewriter.create<Zhlt::ExecCallOp>(op->getLoc(),
-                                                    op.getCallee(),
-                                                    op.getType(),
-                                                    op.getConstructParam(),
-                                                    /*layout=*/op.getLayout());
-    rewriter.replaceOp(op, callOp.getResult());
-    return success();
-  }
-};
-
-// Inline zhlt.constructs for use in "check" functions.
-struct InlineCheckConstruct : public OpRewritePattern<Zhlt::ConstructOp> {
-  using OpRewritePattern::OpRewritePattern;
-
-  LogicalResult matchAndRewrite(Zhlt::ConstructOp op, PatternRewriter& rewriter) const final {
-    Zhlt::ComponentOp callable =
-        op->getParentOfType<ModuleOp>().lookupSymbol<Zhlt::ComponentOp>(op.getCallee());
-    if (!callable)
-      return rewriter.notifyMatchFailure(op, "failed to resolve symbol " + op.getCallee());
-
-    IRMapping mapping;
-    Region clonedBody;
-    callable.getBody().cloneInto(&clonedBody, mapping);
-    remapInlinedLocations(clonedBody.getBlocks(), op.getLoc());
-    Block* block = &clonedBody.front();
-    auto returnOp = cast<Zhlt::ReturnOp>(block->getTerminator());
-
-    rewriter.inlineBlockBefore(block, op, op.getOperands());
-    rewriter.replaceOp(op, returnOp->getOperands());
-    rewriter.eraseOp(returnOp);
+    auto callOp = rewriter.create<ConstructLike>(op->getLoc(),
+                                                 op.getCallee(),
+                                                 op.getType(),
+                                                 op.getConstructParam(),
+                                                 /*layout=*/op.getLayout());
+    rewriter.replaceOp(op, callOp->getResults());
     return success();
   }
 };
@@ -330,7 +313,7 @@ struct GenerateExecPass : public GenerateExecBase<GenerateExecPass> {
     auto* ctx = &getContext();
 
     RewritePatternSet patterns(ctx);
-    patterns.insert<ConstructToCall>(ctx);
+    patterns.insert<ConstructToCall<Zhlt::ExecCallOp>>(ctx);
     patterns.insert<BackToCall>(ctx);
     if (circuitNdebug)
       patterns.insert<EraseOp<EqualZeroOp>>(ctx);
@@ -357,77 +340,248 @@ struct GenerateExecPass : public GenerateExecBase<GenerateExecPass> {
   }
 };
 
+using PoisonFunc = void (*)(Operation* op, DenseSet<Operation*>& poisoned);
+
+// Propagate poison along chains of uses
+static void poisonUses(Operation* op, DenseSet<Operation*>& poisoned) {
+  if (poisoned.contains(op))
+    return;
+
+  poisoned.insert(op);
+  for (auto user : op->getUsers()) {
+    poisonUses(user, poisoned);
+  }
+  if (isa<ZStruct::YieldOp>(op)) {
+    poisonUses(op->getParentOp(), poisoned);
+  }
+}
+
+// Propagate poison along chains of defs
+static void poisonDefs(Operation* op, DenseSet<Operation*>& poisoned) {
+  if (poisoned.contains(op))
+    return;
+
+  poisoned.insert(op);
+  for (auto operand : op->getOperands()) {
+    if (auto operandOp = operand.getDefiningOp()) {
+      poisonDefs(operandOp, poisoned);
+    }
+  }
+}
+
 // Transform ComponentOps into constraint-checking functions.
 struct GenerateCheckPass : public GenerateCheckBase<GenerateCheckPass> {
+  // Create a check function that calls the composable check functions for all
+  // the relevant entry points. These will be flattened later.
   void
-  generateCheckFunc(OpBuilder& builder, StringRef checkFuncName, ArrayRef<StringAttr> callees) {
-    MLIRContext* ctx = builder.getContext();
+  generateCheckFuncs() {
+    mlir::ModuleOp mod = getOperation();
+
+    // Collect entry points for the whole circuit as well as each test.
+    std::map</*checkFuncName=*/std::string, /*callees=*/SmallVector<Zhlt::ComponentOp>> checkFuncs;
+    mod.walk([&](Zhlt::ComponentOp op) {
+      if (Zhlt::isEntryPoint(op)) {
+        StringRef name = op.getName();
+        name.consume_back("$accum");
+        checkFuncs[name.str()].push_back(op);
+      }
+    });
+
+    OpBuilder builder(&getContext());
+    BufferAnalysis& bufferAnalysis = getAnalysis<BufferAnalysis>();
+    auto loc = NameLoc::get(builder.getStringAttr("All Constraints"));
+
+    for (const auto& [name, callees] : checkFuncs) {
+      builder.setInsertionPointToEnd(mod.getBody());
+      auto checkFuncOp = builder.create<Zhlt::CheckFuncOp>(loc, name);
+      builder.setInsertionPointToStart(checkFuncOp.addEntryBlock());
+
+      // Create calls to the composable check functions for each entry point.
+      for (auto callee : callees) {
+        if (failed(bindLayoutsForEntryPoint<ComposableCheckCallOp>(callee, builder, bufferAnalysis))) {
+          signalPassFailure();
+        }
+      }
+
+      builder.create<ReturnOp>(loc);
+    }
+  }
+
+  void generateComposableCheckFuncs() {
+    MLIRContext* ctx = &getContext();
+    OpBuilder builder(ctx);
+
+    // Start by cloning each component into a composable check function. These
+    // are not yet legal, but they will be legalized momentarily.
+    getOperation().walk([&](Zhlt::ComponentOp op) {
+      builder.setInsertionPoint(op);
+
+      auto func = builder.create<ComposableCheckFuncOp>(op->getLoc(),
+                                                        op.getName(),
+                                                        op.getOutType(),
+                                                        op.getConstructParamTypes(),
+                                                        op.getLayoutType());
+      if (!isEntryPoint(op))
+        func.setPrivate();
+      IRMapping mapping;
+      op.getBody().cloneInto(&func.getBody(), mapping);
+      checkFunctions.push_back(func);
+    });
+
+    // Prune all non-constraint effects from the new check functions
     RewritePatternSet patterns(ctx);
-    patterns.insert<InlineCheckConstruct>(ctx);
     patterns.insert<BackToCall>(ctx);
     patterns.insert<EraseOp<StoreOp>>(ctx);
     patterns.insert<EraseOp<VariadicPackOp>>(ctx);
     patterns.insert<EraseOp<ExternOp>>(ctx);
     patterns.insert<EraseOp<AliasLayoutOp>>(ctx);
-    patterns.insert<EraseOp<Zhlt::MagicOp>>(ctx);
-    patterns.insert<InlineCalls>(ctx);
-    patterns.insert<SplitSwitchArms>(ctx);
-    patterns.insert<ReplaceYieldWithTerminator>(ctx);
-    ZStruct::SwitchOp::getCanonicalizationPatterns(patterns, ctx);
-    ZStruct::getUnrollPatterns(patterns, ctx);
-    Zll::EqualZeroOp::getCanonicalizationPatterns(patterns, ctx);
+    patterns.insert<ConstructToCall<ComposableCheckCallOp>>(ctx);
+    FrozenRewritePatternSet frozenPatterns(std::move(patterns));
+
+    for (auto checkFunc : checkFunctions) {
+      if (applyPatternsGreedily(checkFunc, frozenPatterns).failed()) {
+        getOperation()->emitError("Could not remove side effects from composable check function");
+        signalPassFailure();
+      }
+    }
+  }
+
+  void inlineForLegality(ComposableCheckFuncOp check, PoisonFunc poison) {
+    MLIRContext* ctx = &getContext();
+
+    // Use the 'poison' function to compute the set of operations in 'check'
+    // that are involved in nondeterministic computations and should be
+    // considered for inlining.
+    llvm::DenseSet<Operation *> poisoned;
+    check->walk([&](Operation* op) {
+      if (op != check && !ComposableCheckFuncOp::isLegalNestedOp(op)) {
+        poison(op, poisoned);
+      }
+    });
+
+    // If no operations are poisoned, there's no work to do.
+    if (poisoned.empty()) {
+      return;
+    }
+
+    // We've already pruned unused outputs, which means the return value is
+    // definitely used by the caller. If the return value is poisoned, we need
+    // to inline so that all illegal operations can be folded away.
+    InlinerInterface inlinerInterface(ctx);
+    auto ret = cast<ReturnOp>(check.getBody().back().getTerminator());
+    if (poisoned.contains(ret)) {
+      auto uses = check.getSymbolUses(getOperation());
+      for (SymbolTable::SymbolUse use : *uses) {
+        auto call = cast<CallOpInterface>(use.getUser());
+        LogicalResult result = inlineCall(inlinerInterface,
+                                          call,
+                                          check,
+                                          &check.getBody());
+        if (result.failed()) {
+          signalPassFailure();
+        }
+        call->erase();
+      }
+      check.erase();
+      return;
+    }
+
+    // Now inline any poisoned calls, so that we can hopefully fold away the
+    // illegal operations. Because we legalize in a topological order, the
+    // callees are already legalized. Thus, we can legalize in a single scan
+    // without iterating to a fixed point.
+    check->walk([&](ComposableCheckCallOp call) {
+      if (poisoned.contains(call)) {
+        auto callee = getOperation().lookupSymbol<ComposableCheckFuncOp>(call.getCallee());
+        LogicalResult result = inlineCall(inlinerInterface,
+                                          cast<CallOpInterface>(call.getOperation()),
+                                          cast<CallableOpInterface>(callee.getOperation()),
+                                          callee.getCallableRegion());
+        if (result.failed()) {
+          signalPassFailure();
+        }
+        call->erase();
+      }
+    });
+
+    // Finally, fold.
+    GreedyRewriteConfig config;
+    config.fold = true;
+    if (applyPatternsGreedily(check, {}, config).failed()) {
+      signalPassFailure();
+    }
+  }
+
+  void legalizeComposableCheckFuncs() {
+    // Flatten and prune so folding is more effective
+    MLIRContext* ctx = &getContext();
+    RewritePatternSet patterns(ctx);
+    patterns.insert<RemoveUnusedResults>(ctx);
+    patterns.insert<RemoveUnusedArguments>(ctx);
+    // patterns.insert<SplitSwitchArms>(ctx);
+    getUnrollPatterns(patterns, ctx);
 
     // Only try these if nothing else work, since they cause a lot of duplication.
     patterns.insert<UnravelSwitchPackResult>(ctx, /*benefit=*/0);
     patterns.insert<UnravelSwitchArrayResult>(ctx, /*benefit=*/0);
     patterns.insert<UnravelSwitchValResult>(ctx, /*benefit=*/0);
-
     FrozenRewritePatternSet frozenPatterns(std::move(patterns));
 
-    OpBuilder::InsertionGuard guard(builder);
-    auto loc = NameLoc::get(builder.getStringAttr("All Constraints"));
-    auto checkFuncOp = builder.create<Zhlt::CheckFuncOp>(loc, checkFuncName);
-    builder.setInsertionPointToStart(checkFuncOp.addEntryBlock());
+    for (auto checkFunc : checkFunctions) {
+      // If a check function is private and dead, just erase it now.
+      if (checkFunc.isPrivate() && checkFunc.symbolKnownUseEmpty(getOperation())) {
+        checkFunc->erase();
+        continue;
+      }
 
-    for (auto callee : callees) {
-      builder.create<func::CallOp>(loc, callee, /*results=*/TypeRange{});
+      if (applyPatternsGreedily(checkFunc, frozenPatterns).failed()) {
+        getOperation()->emitError("Could not remove side effects from composable check function");
+        signalPassFailure();
+      }
     }
 
-    // Now, inline everything and get rid of everything that's not a constraint.
-    builder.create<Zhlt::ReturnOp>(loc);
-    GreedyRewriteConfig config;
-    config.maxIterations = 100;
-    if (applyPatternsGreedily(checkFuncOp, frozenPatterns, config).failed()) {
-      checkFuncOp->emitError("Could not generate check function");
-      signalPassFailure();
+    // At this point, there may still be nondeterministic operations hanging
+    // around. Since constraints can only operate on polynomials, these must
+    // fold away with sufficient inlining. Here, we apply just enough inlining
+    // to get to that point.
+    const CallGraph& cg = getAnalysis<CallGraph>();
+    auto it = llvm::scc_begin(&cg);
+    while (!it.isAtEnd()) {
+      auto scc = *it;
+      assert(scc.size() == 1 && "without recursion, SCCs should always have size 1");
+      CallGraphNode* node = scc.at(0);
+
+      // Skip over the unused node representing calls external to the module.
+      if (node->isExternal()) {
+        ++it;
+        continue;
+      }
+
+      auto callable = dyn_cast<ComposableCheckFuncOp>(node->getCallableRegion()->getParentOp());
+      if (callable) {
+        // Nondeterministic computations are useful for witgen but cannot be
+        // used in constraints. All witgen side effects have already been
+        // pruned, which renders almost all nondet operations dead with enough
+        // inlining. Thus, inlining calls that use nondeterminism is almost
+        // sufficient.
+        inlineForLegality(callable, poisonUses);
+
+        // However, sometimes constants that occur in constraints are computed
+        // with nondeterministic operations on other constants. In that case, we
+        // may also need to inline calls in the def chain.
+        inlineForLegality(callable, poisonDefs);
+      }
+      ++it;
     }
   }
 
   void runOnOperation() override {
-    auto* ctx = &getContext();
-
-    OpBuilder builder(ctx);
-    mlir::ModuleOp mod = getOperation();
-    builder.setInsertionPointToEnd(mod.getBody());
-
-    std::map</*checkFuncName=*/std::string, /*callees=*/SmallVector<StringAttr>> checkFuncs;
-
-    mod.walk([&](Zhlt::StepFuncOp op) {
-      // Generate a circuit-wide constraint checker, plus one for teach t3est.
-      StringRef stepName = op.getName();
-      std::string checkName;
-      if (stepName.consume_front("step$test$")) {
-        stepName.consume_back("$accum");
-        checkName = ("test$" + stepName).str();
-      }
-
-      checkFuncs[checkName].push_back(op.getSymNameAttr());
-    });
-
-    for (const auto& [name, callees] : checkFuncs) {
-      generateCheckFunc(builder, name, callees);
-    }
+    generateComposableCheckFuncs();
+    generateCheckFuncs();
+    legalizeComposableCheckFuncs();
   }
+
+  SmallVector<ComposableCheckFuncOp> checkFunctions;
 };
 
 struct GenerateValidityRegsPass : public GenerateValidityRegsBase<GenerateValidityRegsPass> {
@@ -493,7 +647,7 @@ struct GenerateValidityRegsPass : public GenerateValidityRegsBase<GenerateValidi
 
     module.walk([&](Zhlt::CheckFuncOp checkFunc) {
       OpBuilder builder(checkFunc);
-      if (checkFunc.getSymName() != "check$")
+      if (checkFunc.getSymName() != "check$Top")
         return;
       auto func = builder.create<Zhlt::ValidityRegsFuncOp>(
           checkFunc.getLoc(),

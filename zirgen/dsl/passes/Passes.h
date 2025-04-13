@@ -17,29 +17,34 @@
 #include "mlir/Dialect/Func/IR/FuncOps.h"
 #include "mlir/IR/BuiltinOps.h"
 #include "mlir/Pass/Pass.h"
+#include "zirgen/Dialect/ZHLT/IR/ZHLT.h"
 
 namespace zirgen {
 namespace dsl {
 
+using namespace mlir;
+using namespace Zhlt;
+
 // Pass constructors
 std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>>
 createEraseUnusedAspectsPass(bool forTests = false);
-std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateBackPass();
-std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateExecPass();
-std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateLayoutPass();
-std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateCheckLayoutPass();
-std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateCheckPass();
-std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateTapsPass();
-std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateValidityRegsPass();
-std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateValidityTapsPass();
-std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateAccumPass();
-std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createGenerateGlobalsPass();
-std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createElideTrivialStructsPass();
-std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createInlineForPicusPass();
-std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createInlinePurePass();
-std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createFieldDCEPass();
-std::unique_ptr<mlir::OperationPass<mlir::ModuleOp>> createHoistInvariantsPass();
-std::unique_ptr<mlir::Pass> createTopologicalShufflePass();
+std::unique_ptr<OperationPass<ModuleOp>> createElideTrivialStructsPass();
+std::unique_ptr<OperationPass<ModuleOp>> createFieldDCEPass();
+std::unique_ptr<OperationPass<CheckFuncOp>> createFlattenCheckPass();
+std::unique_ptr<OperationPass<ModuleOp>> createGenerateAccumPass();
+std::unique_ptr<OperationPass<ModuleOp>> createGenerateBackPass();
+std::unique_ptr<OperationPass<ModuleOp>> createGenerateCheckLayoutPass();
+std::unique_ptr<OperationPass<ModuleOp>> createGenerateCheckPass();
+std::unique_ptr<OperationPass<ModuleOp>> createGenerateExecPass();
+std::unique_ptr<OperationPass<ModuleOp>> createGenerateGlobalsPass();
+std::unique_ptr<OperationPass<ModuleOp>> createGenerateLayoutPass();
+std::unique_ptr<OperationPass<ModuleOp>> createGenerateTapsPass();
+std::unique_ptr<OperationPass<ModuleOp>> createGenerateValidityRegsPass();
+std::unique_ptr<OperationPass<ModuleOp>> createGenerateValidityTapsPass();
+std::unique_ptr<OperationPass<ModuleOp>> createHoistInvariantsPass();
+std::unique_ptr<OperationPass<ModuleOp>> createInlineForPicusPass();
+std::unique_ptr<OperationPass<ModuleOp>> createInlinePurePass();
+std::unique_ptr<Pass> createTopologicalShufflePass();
 
 // Generate the code for registering passes.
 #define GEN_PASS_REGISTRATION

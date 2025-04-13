@@ -301,7 +301,7 @@ component ExtReg(v: ExtVal) {
    reg
 }
 
-#[picus_inline]
+#[inline]
 function Div(lhs: Val, rhs: Val) {
    lhs * Inv(rhs)
 }

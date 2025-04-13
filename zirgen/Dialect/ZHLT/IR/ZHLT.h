@@ -78,6 +78,14 @@ void getZirgenBlockArgumentNames(mlir::FunctionOpInterface funcOp,
 
 namespace zirgen::Zhlt {
 
+template <typename Aspect>
+ComponentOp getComponentOp(Aspect aspect) {
+  llvm::StringRef name = aspect.getSymName();
+  name.consume_front(aspect.getSymPrefix());
+  mlir::ModuleOp mod = aspect->template getParentOfType<mlir::ModuleOp>();
+  return mod.lookupSymbol<ComponentOp>(name);
+}
+
 /// True iff component represents a "starting point" of execution like Top,
 /// Accum, or a test.
 bool isEntryPoint(ComponentOp component);

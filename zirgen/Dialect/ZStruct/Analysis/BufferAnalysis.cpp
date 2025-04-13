@@ -63,6 +63,7 @@ BufferAnalysis::getLayoutAndBufferForArgument(mlir::BlockArgument layoutArg) {
   if (!sym)
     return {};
   StringRef componentName = sym.strref();
+  componentName.consume_front("comp_check$"); // TODO: delete after renaming comp_check
   componentName.consume_front("check$");
   componentName.consume_front("exec$");
   componentName.consume_back("$accum");

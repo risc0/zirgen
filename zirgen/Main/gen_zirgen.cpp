@@ -354,6 +354,7 @@ int main(int argc, char* argv[]) {
   zirgen::addTypingPasses(pm);
 
   pm.addPass(zirgen::dsl::createGenerateCheckPass());
+  pm.addNestedPass<zirgen::Zhlt::CheckFuncOp>(zirgen::dsl::createFlattenCheckPass());
   pm.addPass(zirgen::dsl::createInlinePurePass());
   pm.addPass(zirgen::dsl::createHoistInvariantsPass());
 

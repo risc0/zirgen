@@ -1,0 +1,24 @@
+component Record(x: Val, y: Val) {
+  public x := Reg(x);
+  public y := Reg(y);
+  public z := NondetReg(Inv(x));
+}
+
+component Foo(r: Record) {
+  Log("%u", r.x);
+}
+
+component Bar(r: Record) {
+  Log("%u", r.y);
+}
+
+component Top() {
+  r := Record(5, 6);
+  r.x * r.z = 1;
+  Foo(r);
+  Bar(r);
+}
+
+test {
+  Top()
+}

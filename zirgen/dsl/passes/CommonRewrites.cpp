@@ -18,6 +18,7 @@
 namespace zirgen {
 
 using namespace Zll;
+using namespace Zhlt;
 
 /// Remap locations from the inlined blocks with CallSiteLoc locations with the
 /// provided caller location.  Copied from mlir's InliningUtils.
@@ -248,6 +249,182 @@ LogicalResult ReplaceYieldWithTerminator::matchAndRewrite(YieldOp op, PatternRew
   }
 
   return failure();
+}
+
+static void updateOperandSegmentSizes(Operation* op, llvm::BitVector& unusedArguments) {
+  auto original = op->getAttrOfType<DenseI32ArrayAttr>("operandSegmentSizes");
+  if (!original)
+    return;
+
+  SmallVector<int32_t> segmentSizes(original.asArrayRef());
+  SmallVector<int32_t> cumulative(segmentSizes.size());
+  std::partial_sum(segmentSizes.begin(), segmentSizes.end(), cumulative.begin());
+
+  size_t segment = 0;
+  for (size_t i = 0; i < unusedArguments.size(); i++) {
+    if (cumulative[segment] <= i)
+      segment++;
+    if (unusedArguments[i])
+      segmentSizes[segment]--;
+  }
+
+  auto updated = DenseI32ArrayAttr::get(op->getContext(), segmentSizes);
+  op->setAttr("operandSegmentSizes", updated);
+}
+
+LogicalResult RemoveUnusedArguments::matchAndRewrite(ReturnOp ret, PatternRewriter& rewriter) const {
+  auto callee = dyn_cast<FunctionOpInterface>(ret->getParentOp());
+  if (!callee || !callee.isPrivate()) {
+    return failure();
+  }
+
+  Region* region = callee.getCallableRegion();
+  if (!region) {
+    return failure();
+  }
+
+  bool escapes = false;
+  llvm::BitVector unusedArguments = getUnusedArgumentIndices(region);
+  if (escapes || unusedArguments.none()) {
+    return failure();
+  }
+
+  SmallVector<Type> paramTypes = llvm::to_vector(callee.getArgumentTypes());
+
+  rewriter.startOpModification(callee);
+  callee.eraseArguments(unusedArguments);
+  rewriter.finalizeOpModification(callee);
+
+  auto uses = callee.getSymbolUses(callee->getParentOfType<ModuleOp>());
+  for (auto use : *uses) {
+    // Check that the user looks like a call to the function. It should:
+    //  1. be a call
+    //  2. to the right symbol
+    //  3. with arguments of the right type
+    auto caller = dyn_cast<CallOpInterface>(use.getUser());
+    if (!caller)
+      continue;
+
+    auto calledSymbol = dyn_cast<SymbolRefAttr>(caller.getCallableForCallee());
+    if (!calledSymbol || calledSymbol.getLeafReference() != callee.getName())
+      continue;
+
+    auto argTypes = caller.getArgOperands().getTypes();
+    if(argTypes.size() != paramTypes.size() || !llvm::all_of(llvm::zip(argTypes, paramTypes),
+        [](auto argPair) { return std::get<0>(argPair) == std::get<1>(argPair); }))
+      continue;
+
+    rewriter.startOpModification(caller);
+    assert(caller->getNumOperands() == paramTypes.size());
+    caller->eraseOperands(unusedArguments);
+    updateOperandSegmentSizes(caller, unusedArguments);
+    rewriter.finalizeOpModification(caller);
+  }
+
+  return success();
+}
+
+llvm::BitVector RemoveUnusedArguments::getUnusedArgumentIndices(Region* body) const {
+  llvm::BitVector unusedArgumentIndices(body->getNumArguments());
+  for (BlockArgument arg : body->getArguments()) {
+    if (arg.use_empty()) {
+      unusedArgumentIndices.set(arg.getArgNumber());
+    }
+  }
+  return unusedArgumentIndices;
+}
+
+LogicalResult RemoveUnusedResults::matchAndRewrite(ReturnOp ret, PatternRewriter& rewriter) const {
+  auto callee = dyn_cast<FunctionOpInterface>(ret->getParentOp());
+  if (!callee || !callee.isPrivate()) {
+    return failure();
+  }
+
+  Region* region = callee.getCallableRegion();
+  if (!region) {
+    return failure();
+  }
+
+  bool escapes = false;
+  llvm::BitVector unusedResults = getUnusedResultIndices(callee, &escapes);
+  if (escapes || unusedResults.none()) {
+    return failure();
+  }
+
+  rewriter.startOpModification(callee);
+  callee.eraseResults(unusedResults);
+  callee.getFunctionBody().back().getTerminator()->eraseOperands(unusedResults);
+  rewriter.finalizeOpModification(callee);
+
+  auto uses = callee.getSymbolUses(callee->getParentOfType<ModuleOp>());
+  for (auto use : *uses) {
+    Operation* caller = use.getUser();
+    auto argTypes = caller->getOperandTypes();
+    auto paramTypes = callee.getArgumentTypes();
+
+    // at this point, all
+    if(argTypes.size() != paramTypes.size() || !llvm::all_of(llvm::zip(argTypes, paramTypes),
+        [](auto argPair) { return std::get<0>(argPair) == std::get<1>(argPair); }))
+      continue;
+
+    // Remove unused results from the callers. This can't be done directly, so
+    // we "clone" the operation with the proper subset of the results and RAUW
+    // the old results with the new ones.
+    assert(caller->getNumRegions() == 0 && "not implemented");
+    Operation* newCaller = rewriter.create(caller->getLoc(), caller->getName().getIdentifier(), caller->getOperands(), callee->getResultTypes(), caller->getAttrs(), caller->getSuccessors());
+
+    size_t index = 0;
+    for (OpResult result : caller->getResults()) {
+      if (!unusedResults[result.getResultNumber()]) {
+        rewriter.replaceAllUsesWith(result, newCaller->getResult(index));
+      }
+      index++;
+    }
+    rewriter.eraseOp(caller);
+  }
+
+  return success();
+}
+
+llvm::BitVector RemoveUnusedResults::getUnusedResultIndices(FunctionOpInterface callee, bool* escapes) const {
+  auto funcType = cast<FunctionType>(callee.getFunctionType());
+  llvm::BitVector unusedResultIndices(funcType.getNumResults(), true);
+  auto uses = callee.getSymbolUses(callee->getParentOfType<ModuleOp>());
+  for (auto use : *uses) {
+    auto caller = dyn_cast<CallOpInterface>(use.getUser());
+    if (!caller) {
+      *escapes = true;
+      unusedResultIndices.reset();
+      break;
+    }
+    auto callerResultTypes = caller->getResultTypes();
+    auto calleeResultTypes = callee.getArgumentTypes();
+    if (callerResultTypes.size() != calleeResultTypes.size() ||
+        !llvm::all_of(llvm::zip(callerResultTypes, calleeResultTypes), [](auto argPair) {
+          return std::get<0>(argPair) == std::get<1>(argPair);
+        })) {
+      unusedResultIndices.reset();
+      break;
+    }
+
+    for (OpResult result : caller->getResults()) {
+      if (!result.use_empty())
+        unusedResultIndices[result.getResultNumber()] = false;
+    }
+  }
+  return unusedResultIndices;
+}
+
+LogicalResult RemoveUnusedSymbol::matchAndRewrite(SymbolOpInterface symbol, PatternRewriter& rewriter) const {
+  if (!symbol.isPrivate())
+    return failure();
+
+  auto uses = symbol.getSymbolUses(symbol->getParentOfType<ModuleOp>());
+  if (!uses || !uses->empty())
+    return failure();
+
+  rewriter.eraseOp(symbol);
+  return success();
 }
 
 } // namespace zirgen

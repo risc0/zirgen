@@ -214,6 +214,7 @@ int main(int argc, char* argv[]) {
   zirgen::addTypingPasses(pm);
 
   pm.addPass(zirgen::dsl::createGenerateCheckPass());
+  pm.addNestedPass<zirgen::Zhlt::CheckFuncOp>(zirgen::dsl::createFlattenCheckPass());
   if (genValidity) {
     pm.addPass(zirgen::dsl::createGenerateTapsPass());
     pm.addPass(zirgen::dsl::createGenerateValidityRegsPass());

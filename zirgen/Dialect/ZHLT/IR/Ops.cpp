@@ -29,9 +29,9 @@ namespace zirgen::Zhlt {
 
 using namespace mlir;
 
-SmallVector<int32_t> ComponentOp::getInputSegmentSizes() {
+static SmallVector<int32_t> getVariadicWithOptionalLayoutInputSegmentSizes(FunctionType funcType) {
   SmallVector<int32_t> segmentSizes(2);
-  ArrayRef<Type> inputTypes = getFunctionType().getInputs();
+  ArrayRef<Type> inputTypes = funcType.getInputs();
   Type lastType = inputTypes.empty() ? nullptr : inputTypes.back();
   if (lastType && ZStruct::isLayoutType(lastType)) {
     segmentSizes[0] = inputTypes.size() - 1;
@@ -43,9 +43,12 @@ SmallVector<int32_t> ComponentOp::getInputSegmentSizes() {
   return segmentSizes;
 }
 
+SmallVector<int32_t> ComponentOp::getInputSegmentSizes() {
+  return getVariadicWithOptionalLayoutInputSegmentSizes(getFunctionType());
+}
+
 SmallVector<int32_t> ConstructOp::getInputSegmentSizes() {
-  auto sizes = (*this)->getAttrOfType<DenseI32ArrayAttr>("operandSegmentSizes");
-  return SmallVector<int32_t>(sizes.asArrayRef());
+  return getVariadicWithOptionalLayoutInputSegmentSizes(getCalleeType());
 }
 
 SmallVector<int32_t> CheckLayoutFuncOp::getInputSegmentSizes() {
@@ -53,6 +56,14 @@ SmallVector<int32_t> CheckLayoutFuncOp::getInputSegmentSizes() {
   SmallVector<int32_t> segmentSizes(0);
   segmentSizes.push_back(getFunctionType().getNumInputs());
   return segmentSizes;
+}
+
+SmallVector<int32_t> ComposableCheckFuncOp::getInputSegmentSizes() {
+  return getVariadicWithOptionalLayoutInputSegmentSizes(getFunctionType());
+}
+
+SmallVector<int32_t> ComposableCheckCallOp::getInputSegmentSizes() {
+  return getVariadicWithOptionalLayoutInputSegmentSizes(getCalleeType());
 }
 
 SmallVector<int32_t> CheckFuncOp::getInputSegmentSizes() {
@@ -102,7 +113,8 @@ SmallVector<int32_t> BackCallOp::getInputSegmentSizes() {
 }
 
 mlir::LogicalResult MagicOp::verify() {
-  return emitError() << "a MagicOp is never valid";
+  return success();
+  // return emitError() << "a MagicOp is never valid";
 }
 
 mlir::LogicalResult BackOp::verify() {

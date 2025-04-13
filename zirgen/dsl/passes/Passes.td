@@ -147,6 +147,11 @@ def ElideTrivialStructs : Pass<"elide-trivial-structs", "mlir::ModuleOp"> {
   let dependentDialects = ["zirgen::ZStruct::ZStructDialect"];
 }
 
+def FlattenCheck : Pass<"flatten-check", "zirgen::Zhlt::CheckFuncOp"> {
+  let summary = "Fully inline and unroll check functions";
+  let constructor = "zirgen::dsl::createFlattenCheckPass()";
+}
+
 def InlineForPicus : Pass<"picus-inline", "mlir::ModuleOp"> {
   let summary = "Inlines common components for Picus";
   let constructor = "zirgen::dsl::createInlineForPicusPass()";

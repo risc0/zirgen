@@ -66,6 +66,37 @@ mlir::LogicalResult CheckLayoutFuncOp::verifyRegions() {
   });
 }
 
+bool ComposableCheckFuncOp::isLegalNestedOp(Operation* op) {
+  return llvm::isa<Zll::PolyOp,
+         Zll::IfOp,
+         Zll::TerminateOp,
+         Zll::EqualZeroOp,
+         Zhlt::ComposableCheckCallOp,
+         Zhlt::ReturnOp,
+         Zhlt::GetGlobalLayoutOp,
+         Zhlt::BackCallOp,
+         ZStruct::SwitchOp,
+         ZStruct::MapOp,
+         ZStruct::ReduceOp,
+         ZStruct::YieldOp,
+         ZStruct::GetBufferOp,
+         ZStruct::BindLayoutOp,
+         ZStruct::LookupOp,
+         ZStruct::LoadOp,
+         ZStruct::SubscriptOp,
+         ZStruct::PackOp, // TODO: delete?
+         ZStruct::ArrayOp, // TODO: delete?
+         arith::ConstantOp>(op);
+}
+
+mlir::LogicalResult ComposableCheckFuncOp::verifyRegions() {
+  return verifyRegion(*this, getBody(), [&](auto op) -> LogicalResult {
+    if (isLegalNestedOp(op))
+      return success();
+    return failure();
+  });
+}
+
 mlir::LogicalResult CheckFuncOp::verifyRegions() {
   return verifyRegion(*this, getBody(), [&](auto op) -> LogicalResult {
     if (llvm::isa<Zll::PolyOp,
@@ -74,6 +105,7 @@ mlir::LogicalResult CheckFuncOp::verifyRegions() {
                   Zll::EqualZeroOp,
                   Zhlt::ReturnOp,
                   Zhlt::GetGlobalLayoutOp,
+                  Zhlt::ComposableCheckCallOp,
                   ZStruct::GetBufferOp,
                   ZStruct::BindLayoutOp,
                   ZStruct::LookupOp,

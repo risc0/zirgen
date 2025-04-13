@@ -36,6 +36,7 @@ cc_library(
         "ElideTrivialStructs.cpp",
         "EraseUnusedAspects.cpp",
         "FieldDCE.cpp",
+        "FlattenCheck.cpp",
         "GenerateAccum.cpp",
         "GenerateCheckLayout.cpp",
         "GenerateGlobals.cpp",

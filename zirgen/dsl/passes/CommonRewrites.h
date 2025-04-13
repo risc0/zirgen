@@ -126,19 +126,39 @@ template <typename WrappedPattern> struct RewritePatternSuper {
                 "BaseClass must be either an OpRewritePattern or OpInterfaceRewritePattern");
 };
 
-// For any WrappedPattern, OnlyUnmuxed<WrappedPattern> works the same way as
-// WrappedPattern except that it only applies to operations that do not occur
-// lexically inside any muxes.
-template <typename WrappedPattern>
-struct OnlyUnmuxed : public RewritePatternSuper<WrappedPattern>::Type {
+// For any WrappedPattern, OnlyUnmuxed<OpTy, WrappedPattern> works the same way
+// as WrappedPattern except that it only applies to OpTy operations.
+template <typename OpTy, typename WrappedPattern>
+struct Only : public RewritePatternSuper<WrappedPattern>::Type {
   using OpType = typename WrappedPattern::OpType;
 
   template <typename... Args>
-  OnlyUnmuxed(MLIRContext* ctx, Args&&... args)
+  Only(MLIRContext* ctx, Args&&... args)
       : RewritePatternSuper<WrappedPattern>::Type(ctx), wrapped(ctx, std::forward<Args>(args)...) {}
 
   LogicalResult matchAndRewrite(OpType op, PatternRewriter& rewriter) const {
-    if (op->template getParentOfType<SwitchOp>())
+    if (!isa<OpTy>(op))
+      return rewriter.notifyMatchFailure(op, "not the right kind of op");
+    return wrapped.matchAndRewrite(op, rewriter);
+  }
+
+private:
+  WrappedPattern wrapped;
+};
+
+// For any WrappedPattern, OnlyUnmuxed<WrappedPattern> works the same way as
+// WrappedPattern except that it only applies to operations that occur lexically
+// inside of an AncestorTy operation.
+template <typename AncestorTy, typename WrappedPattern>
+struct OnlyIn : public RewritePatternSuper<WrappedPattern>::Type {
+  using OpType = typename WrappedPattern::OpType;
+
+  template <typename... Args>
+  OnlyIn(MLIRContext* ctx, Args&&... args)
+      : RewritePatternSuper<WrappedPattern>::Type(ctx), wrapped(ctx, std::forward<Args>(args)...) {}
+
+  LogicalResult matchAndRewrite(OpType op, PatternRewriter& rewriter) const {
+    if (!op->template getParentOfType<AncestorTy>())
       return rewriter.notifyMatchFailure(op, "occurs inside of a mux");
     // auto typedOp = cast<typename WrappedPattern::OpType>(op);
     return wrapped.matchAndRewrite(op, rewriter);
@@ -151,6 +171,7 @@ private:
 // Replace a "Back" inside an execution function to call the back
 // function.  Assumes it's within an "exec" or "check" function.
 struct BackToCall : public OpRewritePattern<Zhlt::BackOp> {
+  using OpType = Zhlt::BackOp;
   using OpRewritePattern::OpRewritePattern;
 
   LogicalResult matchAndRewrite(Zhlt::BackOp op, PatternRewriter& rewriter) const final {
@@ -163,6 +184,36 @@ struct BackToCall : public OpRewritePattern<Zhlt::BackOp> {
     rewriter.replaceOp(op, callOp);
     return success();
   }
+};
+
+struct RemoveUnusedArguments : public OpRewritePattern<Zhlt::ReturnOp> {
+  using OpType = FunctionOpInterface;
+  using OpRewritePattern::OpRewritePattern;
+
+  LogicalResult matchAndRewrite(Zhlt::ReturnOp ret, PatternRewriter& rewriter) const;
+
+private:
+  llvm::BitVector getUnusedArgumentIndices(Region* body) const;
+};
+
+struct RemoveUnusedResults : public OpRewritePattern<Zhlt::ReturnOp> {
+  using OpRewritePattern::OpRewritePattern;
+
+  LogicalResult matchAndRewrite(Zhlt::ReturnOp ret, PatternRewriter& rewriter) const;
+
+private:
+  // Examines all uses of this function's symbol to check if any of its results
+  // are unused. If any uses do not look like direct calls, then the function is
+  // assumed to "escape" (e.g. as by materializing a function pointer) and we
+  // conservatively assume all results are used.
+  llvm::BitVector getUnusedResultIndices(FunctionOpInterface callee, bool* escapes) const;
+};
+
+struct RemoveUnusedSymbol : public OpInterfaceRewritePattern<SymbolOpInterface> {
+  using OpType = SymbolOpInterface;
+  using OpInterfaceRewritePattern::OpInterfaceRewritePattern;
+
+  LogicalResult matchAndRewrite(SymbolOpInterface callee, PatternRewriter& rewriter) const;
 };
 
 } // namespace zirgen

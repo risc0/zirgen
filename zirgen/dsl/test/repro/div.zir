@@ -8,4 +8,5 @@ component Top() {
   a := NondetReg(1);
   b := NondetReg(1);
   c := NondetReg(a / b);
+  c * b = a;
 }

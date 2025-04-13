@@ -61,6 +61,7 @@ class ZFuncOp<string aspectArg, list<Trait> childTraits = [], string mnemonic = 
 
     let traits = childTraits # [
       CallableOpInterface, FunctionOpInterface, IsolatedFromAbove, OpAsmOpInterface,
+       DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>,
        DeclareOpInterfaceMethods<InferResultSegmentSizesOpInterface>,
        PredOpTrait<"has valid ZFunc inputs", inputSubstSnippets.pred>,
        PredOpTrait<"has valid ZFunc outputs", resultSubstSnippets.pred>,
@@ -185,11 +186,15 @@ void $cppClass::print(mlir::OpAsmPrinter& p) {
                                                  getArgAttrsAttrName(),
                                                  getResAttrsAttrName());
 }
-
 ::llvm::SmallVector<int32_t> $cppClass::getResultSegmentSizes() {
-  return ::llvm::SmallVector<int32_t>(getNumResults(), 1);
-}
-  }];
+   }]
+   // If funcResults has size 1, infer that all results are in that segment.
+   // Otherwise, guess 1 result is in each segment.
+   // This isn't fully general, but it covers all of our use cases.
+   # !if(!eq(!size(funcResults), 1),
+    "return ::llvm::SmallVector<int32_t>(1, getNumResults());",
+    "return ::llvm::SmallVector<int32_t>(getNumResults(), 1);")
+   # "}";
   let hasCustomAssemblyFormat = 1;
 }
 
@@ -229,6 +234,7 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
 
    let traits = childTraits # [
        CallOpInterface,
+       DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>,
        DeclareOpInterfaceMethods<InferResultSegmentSizesOpInterface>,
        PredOpTrait<"Valid inputs", inputSubstSnippets.pred>,
        PredOpTrait<"Valid outputs", resultSubstSnippets.pred>];
@@ -341,9 +347,7 @@ class ZCallOp<ZFuncOp func, list<Trait> childTraits = []>
 }
 
 // Base component that other aspects are generated from.
-def ComponentOp : ZFuncOp</*aspect=*/"",
-                          [CodegenSkip, DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>],
-                          /*mnemonic=*/"component"> {
+def ComponentOp : ZFuncOp</*aspect=*/"", [CodegenSkip], /*mnemonic=*/"component"> {
   let symPrefix = "";
   let summary = "Component declaration";
   let funcInputs = (ins
@@ -367,11 +371,11 @@ def ComponentOp : ZFuncOp</*aspect=*/"",
   }];
 }
 
-def ConstructOp : ZCallOp<ComponentOp, [AttrSizedOperandSegments, DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>]> {
+def ConstructOp : ZCallOp<ComponentOp, [AttrSizedOperandSegments]> {
   let opName = "construct";
 }
 
-def CheckLayoutFuncOp : ZFuncOp<"check_layout", [CodegenSkip, DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>]> {
+def CheckLayoutFuncOp : ZFuncOp<"check_layout", [CodegenSkip]> {
   let summary = "An inlined collection of layout constraints from a circuit entry point";
   let description = [{
     This aspect contains all instances of AliasLayoutOp and all supporting
@@ -383,7 +387,32 @@ def CheckLayoutFuncOp : ZFuncOp<"check_layout", [CodegenSkip, DeclareOpInterface
   let hasRegionVerifier = 1;
 }
 
-def CheckFuncOp : ZFuncOp<"check", [CodegenSkip, DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>]> {
+def ComposableCheckFuncOp : ZFuncOp<"comp_check", [CodegenSkip]> {
+  let summary = "A function that checks constraints for a single component";
+  let description = [{
+     This function checks all constraints added by a single component. Its parameters and results
+     are disaggregated (scalarized) as necessary in order to remove nondeterminism.
+  }];
+  let funcInputs = (ins
+      Variadic<ZirType>:$constructParam,
+      Optional<IsLayoutType>:$layout
+  );
+  let funcResults = (outs Variadic<ZirType>:$out);
+  let hasRegionVerifier = 1;
+  let extraClassDeclaration = extraZFuncClassDeclaration # [{
+    // Check if an operation can be nested inside a valid check function.
+    static bool isLegalNestedOp(::mlir::Operation* op);
+
+     // Ensures all constraints are less than or equal to the provided degree
+     mlir::LogicalResult verifyMaxDegree(size_t maxDegree);
+  }];
+}
+
+def ComposableCheckCallOp : ZCallOp<ComposableCheckFuncOp, [AttrSizedOperandSegments]> {
+  let opName = "comp_check";
+}
+
+def CheckFuncOp : ZFuncOp<"check", [CodegenSkip]> {
   let summary = "An inlined version of a circuit-wide CheckFuncOp.";
   let description = [{
      This function checks all constraints in the circuit that (not including test constraints).
@@ -398,7 +427,7 @@ def CheckFuncOp : ZFuncOp<"check", [CodegenSkip, DeclareOpInterfaceMethods<Infer
   }];
 }
 
-def ExecFuncOp : ZFuncOp<"exec", [DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>]> {
+def ExecFuncOp : ZFuncOp<"exec"> {
   let summary = "Executes a component and fills the layout";
   let description = [{
      Also checks constraints unless the --circuit-ndebug option is specified,
@@ -409,9 +438,9 @@ def ExecFuncOp : ZFuncOp<"exec", [DeclareOpInterfaceMethods<InferInputSegmentSiz
   let funcResults = (outs ZirType:$out);
 }
 
-def ExecCallOp : ZCallOp<ExecFuncOp, [AttrSizedOperandSegments, DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>]>;
+def ExecCallOp : ZCallOp<ExecFuncOp, [AttrSizedOperandSegments]>;
 
-def BackFuncOp : ZFuncOp<"back", [DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>]> {
+def BackFuncOp : ZFuncOp<"back"> {
   let summary = "Retrieves the value of a component based on its layout";
   let funcInputs = (ins
       Index:$distance,
@@ -419,7 +448,7 @@ def BackFuncOp : ZFuncOp<"back", [DeclareOpInterfaceMethods<InferInputSegmentSiz
   let funcResults = (outs ZirType:$out);
 }
 
-def BackCallOp : ZCallOp<BackFuncOp, [MemoryEffects<[MemRead]>, DeclareOpInterfaceMethods<InferInputSegmentSizesOpInterface>]>;
+def BackCallOp : ZCallOp<BackFuncOp, [MemoryEffects<[MemRead]>]>;
 
 
 // A FuncOp-like operation that has names associated with

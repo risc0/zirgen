@@ -386,7 +386,6 @@ pub fn validity_taps<'a>(
     let x10: ExtVal = get(ctx, taps0, 12, 0)?;
     let x11: MixState = trivial_constraint()?;
     // Top(zirgen/dsl/examples/fibonacci.zir:44)
-    // Top(zirgen/dsl/examples/fibonacci.zir:44)
     let x12: BoundLayout<_globalLayout, _> = bind_layout!(LAYOUT_GLOBAL, global2);
     // builtin Add
     // Top(zirgen/dsl/examples/fibonacci.zir:62)
@@ -398,6 +397,7 @@ pub fn validity_taps<'a>(
     // CycleCounter(zirgen/dsl/examples/fibonacci.zir:32)
     // Top(zirgen/dsl/examples/fibonacci.zir:49)
     let x15: ExtVal = (ExtVal::new(Val::new(1), Val::new(0), Val::new(0), Val::new(0)) - x4);
+    // All Constraints
     // IsZero(zirgen/dsl/examples/fibonacci.zir:14)
     let x16: MixState = and_eqz_ext(ctx, and_eqz_ext(ctx, x11, (x4 * x15))?, ((x3 * x5) - x15))?;
     // CycleCounter(zirgen/dsl/examples/fibonacci.zir:34)
@@ -415,6 +415,7 @@ pub fn validity_taps<'a>(
     let x18: ExtVal = (((x12.map(|c| c.f0)).map(|c| c._super)).load_unchecked(ctx, 0) * x4);
     // Top(zirgen/dsl/examples/fibonacci.zir:56)
     let x19: ExtVal = (((x12.map(|c| c.f1)).map(|c| c._super)).load_unchecked(ctx, 0) * x4);
+    // All Constraints
     // Reg(<preamble>:6)
     let x20: MixState = and_eqz_ext(
         ctx,
@@ -498,6 +499,7 @@ pub fn validity_regs<'a>(
     let x17: Val = ((((x3.map(|c| c.cycle)).map(|c| c._super)).map(|c| c._super)).load(ctx, 0)
         * ((((x3.map(|c| c.cycle)).map(|c| c.is_first_cycle)).map(|c| c.inv)).map(|c| c._super))
             .load(ctx, 0));
+    // All Constraints
     let x18: MixState = and_eqz(ctx, and_eqz(ctx, trivial_constraint()?, x16)?, (x17 - x15))?;
     // builtin Mul
     // IsZero(zirgen/dsl/examples/fibonacci.zir:16)
@@ -517,6 +519,7 @@ pub fn validity_regs<'a>(
         - ((((x3.map(|c| c.cycle)).map(|c| c.is_first_cycle)).map(|c| c._super))
             .map(|c| c._super))
         .load(ctx, 0));
+    // All Constraints
     let x22: MixState = and_cond(
         and_eqz(ctx, and_eqz(ctx, x18, x19)?, x20)?,
         x21,
@@ -543,6 +546,7 @@ pub fn validity_regs<'a>(
     let x28: Val = (((x3.map(|c| c.d3)).map(|c| c._super)).load_unchecked(ctx, 1) * x23);
     // Reg(<preamble>:6)
     let x29: Val = ((x27 + x28) - ((x3.map(|c| c.d2)).map(|c| c._super)).load(ctx, 0));
+    // All Constraints
     // Top(zirgen/dsl/examples/fibonacci.zir:59)
     let x30: MixState = and_eqz(
         ctx,
