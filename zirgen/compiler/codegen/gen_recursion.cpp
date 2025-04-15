@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 
 #include "zirgen/Dialect/Zll/IR/IR.h"
 #include "zirgen/circuit/recursion/encode.h"
+#include "zirgen/compiler/stats/OpStats.h"
 
 using namespace mlir;
 
@@ -28,16 +29,6 @@ namespace zirgen {
 #include "zirgen/compiler/codegen/Passes.h.inc"
 
 namespace {
-
-class EmitRecursionPass : public impl::EmitRecursionBase<EmitRecursionPass> {
-public:
-  EmitRecursionPass() = default;
-  EmitRecursionPass(StringRef dir) { this->outputDir = dir.str(); }
-  void runOnOperation() override {
-    recursion::EncodeStats stats;
-    emitRecursion(outputDir, getOperation(), &stats);
-  }
-};
 
 std::unique_ptr<llvm::raw_fd_ostream> openOutputFile(const std::string& path,
                                                      const std::string& name) {
@@ -49,6 +40,23 @@ std::unique_ptr<llvm::raw_fd_ostream> openOutputFile(const std::string& path,
   }
   return ofs;
 }
+
+class EmitRecursionPass : public impl::EmitRecursionBase<EmitRecursionPass> {
+public:
+  EmitRecursionPass() = default;
+  EmitRecursionPass(StringRef dir) { this->outputDir = dir.str(); }
+  void runOnOperation() override {
+    BogoCycleAnalysis bogoCycles;
+
+    if (bogoCycles.isEnabled()) {
+      auto ofs = openOutputFile(outputDir, getOperation().getName().str() + "-opstats.txt");
+      bogoCycles.printStatsIfRequired(getOperation(), *ofs);
+    }
+
+    recursion::EncodeStats stats;
+    emitRecursion(outputDir, getOperation(), &stats);
+  }
+};
 
 } // namespace
 
@@ -68,6 +76,12 @@ void emitRecursion(const std::string& path, func::FuncOp func, recursion::Encode
   auto debugOfs = openOutputFile(path, name + ".zkr.dbg");
   for (const auto& elem : locs) {
     *debugOfs << elem.first << " <- " << elem.second << "\n";
+  }
+
+  BogoCycleAnalysis bogoCycles;
+  if (bogoCycles.isEnabled()) {
+    auto ofs = openOutputFile(path, func.getName().str() + "-encoded-cycles.txt");
+    bogoCycles.printStatsFromMap(func.getContext(), stats->locs, *ofs);
   }
 }
 

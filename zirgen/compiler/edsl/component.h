@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ struct ConstructInfo {
   std::map<std::string, Buffer> labels;
   std::string typeName;
   std::map<std::string /* ident */, std::shared_ptr<ConstructInfo>> subcomponents;
-  SourceLoc loc;
+  mlir::LocationAttr loc;
 };
 
 // A context singleton used during component constructon
@@ -61,7 +61,8 @@ public:
   static void leaveMux();
 
   // Debug info
-  static void pushConstruct(llvm::StringRef ident, llvm::StringRef ty, SourceLoc loc = current());
+  static void
+  pushConstruct(llvm::StringRef ident, llvm::StringRef ty, mlir::Location loc = currentLoc());
   static void popConstruct();
   static std::shared_ptr<ConstructInfo> getCurConstruct();
   static void saveLabel(Buffer buf, llvm::StringRef label);
@@ -91,12 +92,13 @@ public:
 // A label for a component in the layout.
 class Label {
 public:
-  Label(SourceLoc loc = current()) : loc(loc) {}
+  Label(mlir::Location loc = currentLoc()) : loc(loc) {}
 
-  /* implicit */ Label(llvm::StringRef label, SourceLoc loc = current()) : label(label), loc(loc) {}
+  /* implicit */ Label(llvm::StringRef label, mlir::Location loc = currentLoc())
+      : label(label), loc(loc) {}
 
   // Numbered instance of something
-  Label(llvm::StringRef label, size_t index, SourceLoc loc = current())
+  Label(llvm::StringRef label, size_t index, mlir::Location loc = currentLoc())
       : label((label + "[" + std::to_string(index) + "]").str()), loc(loc) {}
 
   // Convert to a singular label
@@ -109,7 +111,7 @@ public:
     return genArray<Comp, N>(seq);
   }
 
-  SourceLoc getLoc() { return loc; }
+  mlir::Location getLoc() { return loc; }
 
 private:
   template <typename Comp, size_t N, size_t... Is>
@@ -118,7 +120,7 @@ private:
   }
 
   std::string label;
-  SourceLoc loc;
+  mlir::Location loc;
 };
 
 inline std::vector<const char*> Labels(std::initializer_list<const char*> labels) {

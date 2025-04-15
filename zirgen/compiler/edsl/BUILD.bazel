@@ -12,7 +12,6 @@ cc_library(
     hdrs = [
         "component.h",
         "edsl.h",
-        "source_loc.h",
     ],
     deps = [
         "//zirgen/Dialect/ZStruct/IR",

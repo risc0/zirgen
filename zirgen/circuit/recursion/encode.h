@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,6 +31,9 @@ struct EncodeStats {
   size_t totCycles = 0;
   size_t shaCycles = 0;
   size_t poseidon2Cycles = 0;
+
+  // Locations and the number of micro cycles used (= number of macro cycles * 3).
+  llvm::DenseMap<mlir::Location, /*cycles=*/size_t> locs;
 };
 
 std::vector<uint32_t> encode(HashType hashType,

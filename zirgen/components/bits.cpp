@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,14 +17,14 @@
 namespace zirgen {
 
 // Checks that a val is a bit.
-void isBit(Val val, SourceLoc loc) {
-  OverrideLocation local(loc);
+void isBit(Val val, Location loc) {
+  ScopedLocation local(loc);
   // The following constraint enforces that either val = 0 or val = 1
   eqz(val * (1 - val));
 }
 
-void isBits(Buffer buf, SourceLoc loc) {
-  OverrideLocation local(loc);
+void isBits(Buffer buf, Location loc) {
+  ScopedLocation local(loc);
   for (size_t i = 0; i < buf.size(); i++) {
     isBit(buf[i]);
   }

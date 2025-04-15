@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
 
 #include "fpext.h"
 
-using namespace risc0;
-
 namespace zirgen {
 
 FpExtRegImpl::FpExtRegImpl(llvm::StringRef source) {
@@ -24,8 +22,8 @@ FpExtRegImpl::FpExtRegImpl(llvm::StringRef source) {
   }
 }
 
-FpExt FpExtRegImpl::get(SourceLoc loc) {
-  OverrideLocation local(loc);
+FpExt FpExtRegImpl::get(mlir::Location loc) {
+  ScopedLocation local(loc);
   std::array<Val, kExtSize> arr;
   for (size_t i = 0; i < kExtSize; i++) {
     arr[i] = elems[i];
@@ -39,29 +37,29 @@ void FpExtRegImpl::set(CaptureFpExt rhs) {
   }
 }
 
-FpExt::FpExt(Val x, SourceLoc loc) {
-  OverrideLocation local(loc);
+FpExt::FpExt(Val x, mlir::Location loc) {
+  ScopedLocation local(loc);
   elems[0] = x;
   for (size_t i = 1; i < kExtSize; i++) {
     elems[i] = 0;
   }
 }
 
-FpExt::FpExt(std::array<Val, kExtSize> elems, risc0::SourceLoc loc) {
-  OverrideLocation local(loc);
+FpExt::FpExt(std::array<Val, kExtSize> elems, mlir::Location loc) {
+  ScopedLocation local(loc);
   for (size_t i = 0; i < kExtSize; i++) {
     this->elems[i] = elems[i];
   }
 }
 
-FpExt::FpExt(FpExtReg reg, risc0::SourceLoc loc) {
-  OverrideLocation local(loc);
+FpExt::FpExt(FpExtReg reg, mlir::Location loc) {
+  ScopedLocation local(loc);
   for (size_t i = 0; i < kExtSize; i++) {
     elems[i] = reg->elem(i);
   }
 }
 
-FpExt FpExt::fromVals(llvm::ArrayRef<Val> vals, risc0::SourceLoc loc) {
+FpExt FpExt::fromVals(llvm::ArrayRef<Val> vals, mlir::Location loc) {
   assert(vals.size() == kExtSize);
   std::array<Val, kExtSize> elems;
   std::copy(vals.begin(), vals.end(), elems.begin());
@@ -69,7 +67,7 @@ FpExt FpExt::fromVals(llvm::ArrayRef<Val> vals, risc0::SourceLoc loc) {
 }
 
 FpExt operator+(CaptureFpExt a, CaptureFpExt b) {
-  OverrideLocation local(a.loc);
+  ScopedLocation local(a.loc);
   std::array<Val, kExtSize> out;
   for (size_t i = 0; i < kExtSize; i++) {
     out[i] = a.ext.elem(i) + b.ext.elem(i);
@@ -78,7 +76,7 @@ FpExt operator+(CaptureFpExt a, CaptureFpExt b) {
 }
 
 FpExt operator-(CaptureFpExt a, CaptureFpExt b) {
-  OverrideLocation local(a.loc);
+  ScopedLocation local(a.loc);
   std::array<Val, kExtSize> out;
   for (size_t i = 0; i < kExtSize; i++) {
     out[i] = a.ext.elem(i) - b.ext.elem(i);
@@ -87,7 +85,7 @@ FpExt operator-(CaptureFpExt a, CaptureFpExt b) {
 }
 
 FpExt operator*(CaptureFpExt a, CaptureFpExt b) {
-  OverrideLocation local(a.loc);
+  ScopedLocation local(a.loc);
   std::array<Val, kExtSize> out;
   Val NBETA = -Val(11);
   // Rename the element arrays to something small for readability
@@ -108,14 +106,14 @@ FpExt operator*(CaptureFpExt a, CaptureFpExt b) {
 }
 
 void eq(CaptureFpExt a, CaptureFpExt b) {
-  OverrideLocation local(a.loc);
+  ScopedLocation local(a.loc);
   for (size_t i = 0; i < kExtSize; i++) {
     eq(a.ext.elem(i), b.ext.elem(i));
   }
 }
 
 FpExt inv(CaptureFpExt a) {
-  OverrideLocation local(a.loc);
+  ScopedLocation local(a.loc);
   Val BETA = 11;
 #define a(i) a.ext.elem(i)
 #if GOLDILOCKS
