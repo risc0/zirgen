@@ -427,7 +427,8 @@ Type getLayoutType(Type valueType) {
   if (isa<ValType>(valueType)) {
     return nullptr;
   } else if (auto strType = dyn_cast<StructType>(valueType)) {
-    auto layout = llvm::find_if(strType.getFields(), [](FieldInfo field) { return field.name == "@layout"; });
+    auto layout =
+        llvm::find_if(strType.getFields(), [](FieldInfo field) { return field.name == "@layout"; });
     if (layout != strType.getFields().end()) {
       return layout->type;
     } else {
