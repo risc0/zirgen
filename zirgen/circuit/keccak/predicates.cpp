@@ -16,6 +16,7 @@
 #include "zirgen/circuit/recursion/code.h"
 #include "zirgen/circuit/verify/wrap_zirgen.h"
 #include "zirgen/compiler/codegen/codegen.h"
+#include "zirgen/compiler/stats/OpStats.h"
 
 using namespace zirgen;
 using namespace zirgen::verify;
@@ -55,6 +56,7 @@ static cl::opt<std::string> keccakIR("keccak-ir",
 int main(int argc, char* argv[]) {
   llvm::InitLLVM y(argc, argv);
   registerEdslCLOptions();
+  registerOpStatsCLOptions();
   llvm::cl::ParseCommandLineOptions(argc, argv, "keccak predicates");
 
   Module module;

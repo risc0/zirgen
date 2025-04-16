@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -73,6 +73,8 @@ Val fold_eval(const std::vector<Val>& values, Val x) {
 }
 
 Val dynamic_pow(Val in, Val pow, size_t maxPow) {
+  ScopedLocation loc;
+
   Val out = 1;
   Val mul = in;
   for (size_t i = 0; i < log2Ceil(maxPow); i++) {
@@ -98,6 +100,8 @@ struct VerifyRoundInfo {
       , mix(iop.rngExtVal()) {}
 
   void verifyQuery(ReadIopVal& iop, Val* pos, Val* goal) const {
+    ScopedLocation loc;
+
     // Compute which group we are in
     Val group = *pos & (domain - 1);
     Val qout = (*pos - group) / domain;
@@ -117,6 +121,8 @@ struct VerifyRoundInfo {
 
 // Verify a FRI proof,
 void friVerify(ReadIopVal& iop, size_t deg, InnerVerify inner) {
+  ScopedLocation loc;
+
   size_t domain = deg * kInvRate;
   size_t origDomain = domain;
   std::vector<VerifyRoundInfo> rounds;

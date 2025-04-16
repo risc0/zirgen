@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,7 +37,6 @@ struct CppStreamEmitterImpl : CppStreamEmitter {
   void header(func::FuncOp func) {
     ofs << "// This code is automatically generated\n\n";
     ofs << "#include \"impl.h\"\n\n";
-    ofs << "using namespace risc0;\n\n";
     ofs << "namespace circuit::" << func.getName() << " {\n\n";
   }
 

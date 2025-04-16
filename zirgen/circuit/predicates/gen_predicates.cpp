@@ -19,6 +19,7 @@
 #include "zirgen/circuit/verify/wrap_rv32im.h"
 #include "zirgen/circuit/verify/wrap_zirgen.h"
 #include "zirgen/compiler/codegen/codegen.h"
+#include "zirgen/compiler/stats/OpStats.h"
 
 using namespace zirgen;
 using namespace zirgen::verify;
@@ -202,6 +203,7 @@ static cl::opt<std::string>
 int main(int argc, char* argv[]) {
   llvm::InitLLVM y(argc, argv);
   registerEdslCLOptions();
+  registerOpStatsCLOptions();
   llvm::cl::ParseCommandLineOptions(argc, argv, "gen_predicates edsl");
 
   Module module;
