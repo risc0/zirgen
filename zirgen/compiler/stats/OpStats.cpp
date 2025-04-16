@@ -396,6 +396,7 @@ void BogoCycleAnalysis::printStatsInternal(AsmState& asmState,
                                            double totCycles,
                                            LocStats& locStats,
                                            llvm::raw_ostream& os) {
+  const size_t kMaxLines = 100000;
   auto totLocStats = locStats.toVector();
 
   llvm::sort(totLocStats, llvm::less_second());
@@ -407,7 +408,10 @@ void BogoCycleAnalysis::printStatsInternal(AsmState& asmState,
                      (const char*)"Any",
                      (const char*)"Location");
 
+  size_t lineCount = 0;
   for (auto& [loc, stat] : llvm::reverse(totLocStats)) {
+    if (++lineCount > kMaxLines)
+      break;
     if (stat.flat)
       os << llvm::format("%9.5f%% ", stat.flat * 100. / totCycles);
     else

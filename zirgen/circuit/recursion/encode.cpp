@@ -207,8 +207,16 @@ struct Instructions {
 
   uint64_t addHalfsConst(uint32_t tot) { return addConst(tot & 0xffff, tot >> 16); }
 
-  uint64_t
-  addMicro(Value out, MicroOpcode opcode, uint64_t op0 = 0, uint64_t op1 = 0, uint64_t op2 = 0) {
+  uint64_t addMicro(Value out,
+                    MicroOpcode opcode,
+                    uint64_t op0 = 0,
+                    uint64_t op1 = 0,
+                    uint64_t op2 = 0,
+                    Location callerLoc = currentLoc()) {
+    std::optional<ScopedLocation> valueLoc;
+    if (out)
+      valueLoc.emplace(out.getLoc());
+    ScopedLocation loc(callerLoc);
     if (microUsed == 0) {
       data.emplace_back();
       data.back().opType = OpType::MICRO;
@@ -228,12 +236,7 @@ struct Instructions {
     }
 
     if (stats) {
-      if (out) {
-        ScopedLocation loc(out.getLoc());
-        stats->locs[currentLoc()]++;
-      } else {
-        stats->locs[currentLoc()]++;
-      }
+      stats->locs[currentLoc()]++;
     }
     return outId;
   }
@@ -244,8 +247,13 @@ struct Instructions {
     }
   }
 
-  uint64_t
-  addMacro(size_t outs, MacroOpcode opcode, uint64_t op0 = 0, uint64_t op1 = 0, uint64_t op2 = 0) {
+  uint64_t addMacro(size_t outs,
+                    MacroOpcode opcode,
+                    uint64_t op0 = 0,
+                    uint64_t op1 = 0,
+                    uint64_t op2 = 0,
+                    Location callerLoc = currentLoc()) {
+    ScopedLocation loc(callerLoc);
     finishMicros();
     data.emplace_back();
     data.back().opType = OpType::MACRO;
@@ -837,6 +845,8 @@ struct Instructions {
           }
         })
         .Case<Iop::ReadOp>([&](Iop::ReadOp op) {
+          ScopedLocation loc;
+
           size_t k = 0;
           size_t rep = 1;
           size_t demont = false;
