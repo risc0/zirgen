@@ -239,7 +239,7 @@ private:
     if (done.count(component))
       return;
 
-    llvm::StringSet<> specialCases = {"MakeExt", "ExtAdd", "ExtSub", "ExtMul", "ExtInv"};
+    llvm::StringSet<> specialCases = {"MakeExt", "ExtMul", "ExtInv"};
     if (specialCases.contains(component.getName())) {
       printComponentSpecialCase(component);
       done.insert(component);
@@ -447,19 +447,48 @@ private:
                         return nullptr;
                       });
 
-    // Optimization: if the result is only used once, use a pseudosignal to
-    // inline the expression at the point of use instead of creating a dedicated
-    // signal.
-    std::string expr = "(" + std::string(symbol) + " " +
-                       cast<Signal>(valuesToSignals.at(op->getOperand(0))).str() + " " +
-                       cast<Signal>(valuesToSignals.at(op->getOperand(1))).str() + ")";
+    assert(op->getNumOperands() == 2);
+    Value lhs = op->getOperand(0);
+    Value rhs = op->getOperand(1);
+    assert(op->getNumResults() == 1);
+    Value result = op->getResult(0);
+    assert(lhs.getType() == rhs.getType());
+    auto resultType = cast<ValType>(result.getType());
 
-    if (isUsedOnce(op->getResult(0))) {
-      valuesToSignals.insert({op->getResult(0), Signal::get(ctx, expr)});
+    if (resultType.getExtended() && isa<MulOp>(op)) {
+      // extension field multiplication is messy. We don't currently inline
+      // ExtMul, so we get away with not implementing this here for now.
+      assert(false && "not implemented");
+    }
+
+    auto doEltwiseOp = [&](Signal sl, Signal sr) {
+      // Optimization: if the result is only used once, use a pseudosignal to
+      // inline the expression at the point of use instead of creating a
+      // dedicated signal.
+      std::string expr = "(" + std::string(symbol) + " " + sl.str() + " " + sr.str() + ")";
+
+      if (isUsedOnce(op->getResult(0))) {
+        return Signal::get(ctx, expr);
+      } else {
+        auto signal = Signal::get(ctx, freshName());
+        os << "(assert (= " << signal.str() << " " << expr << "))\n";
+        return signal;
+      }
+    };
+
+    if (resultType.getExtended()) {
+      SmallVector<Signal> lhsSignals = flatten(valuesToSignals.at(lhs));
+      SmallVector<Signal> rhsSignals = flatten(valuesToSignals.at(rhs));
+      SmallVector<AnySignal> outSignals;
+      assert(lhsSignals.size() == rhsSignals.size());
+      for (auto [sl, sr] : llvm::zip(lhsSignals, rhsSignals)) {
+        outSignals.push_back(doEltwiseOp(sl, sr));
+      }
+      valuesToSignals.insert({result, SignalArray::get(ctx, outSignals)});
     } else {
-      auto signal = Signal::get(ctx, freshName());
-      valuesToSignals.insert({op->getResult(0), signal});
-      os << "(assert (= " << signal.str() << " " << expr << "))\n";
+      auto sl = cast<Signal>(valuesToSignals.at(lhs));
+      auto sr = cast<Signal>(valuesToSignals.at(rhs));
+      valuesToSignals.insert({result, doEltwiseOp(sl, sr)});
     }
   }
 
@@ -712,10 +741,10 @@ private:
       if (val.getExtended()) {
         return SignalArray::get(type.getContext(),
                                 {
-                                    Signal::get(ctx, prefix + "0"),
-                                    Signal::get(ctx, prefix + "1"),
-                                    Signal::get(ctx, prefix + "2"),
-                                    Signal::get(ctx, prefix + "3"),
+                                    Signal::get(ctx, prefix + "_c0"),
+                                    Signal::get(ctx, prefix + "_c1"),
+                                    Signal::get(ctx, prefix + "_c2"),
+                                    Signal::get(ctx, prefix + "_c3"),
                                 });
       } else {
         return Signal::get(ctx, prefix);
@@ -852,48 +881,6 @@ private:
 (assert (= y1 0))
 (assert (= y2 0))
 (assert (= y3 0))
-(end-module)
-      )";
-    } else if (name == "ExtAdd") {
-      os << R"(; This module has a hand-written translation to Picus
-(begin-module ExtAdd)
-(input x0)
-(input x1)
-(input x2)
-(input x3)
-(input y0)
-(input y1)
-(input y2)
-(input y3)
-(output z0)
-(output z1)
-(output z2)
-(output z3)
-(assert (= z0 (+ x0 y0)))
-(assert (= z1 (+ x1 y1)))
-(assert (= z2 (+ x2 y2)))
-(assert (= z3 (+ x3 y3)))
-(end-module)
-      )";
-    } else if (name == "ExtSub") {
-      os << R"(; This module has a hand-written translation to Picus
-(begin-module ExtSub)
-(input x0)
-(input x1)
-(input x2)
-(input x3)
-(input y0)
-(input y1)
-(input y2)
-(input y3)
-(output z0)
-(output z1)
-(output z2)
-(output z3)
-(assert (= z0 (- x0 y0)))
-(assert (= z1 (- x1 y1)))
-(assert (= z2 (- x2 y2)))
-(assert (= z3 (- x3 y3)))
 (end-module)
       )";
     } else if (name == "ExtMul") {
