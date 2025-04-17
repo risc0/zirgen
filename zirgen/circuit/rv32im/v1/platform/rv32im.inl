@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@
 //   aluB,      // Controls input B to ALU, RS2 or IMM
 //   aluOp,     // ALU operation, ADD, SUB, AND, OR, XOR
 //   setPC,     // What to write to PC
-//   setRD,     // What to write to rd regsister
+//   setRD,     // What to write to rd register
 //   rdEn,      // Enable write to rd
 //   next)      // Next major cycle type (or decode)
 //
