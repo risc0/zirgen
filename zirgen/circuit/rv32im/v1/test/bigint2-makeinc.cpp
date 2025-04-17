@@ -200,7 +200,7 @@ struct Flattener {
       flatten(atomsFlat[0], false, coeff);
       flatten(atomsFlat[1], true, coeff);
     } else {
-      llvm::errs() << "Invalid coefficent degree\n";
+      llvm::errs() << "Invalid coefficient degree\n";
       throw std::runtime_error("Invalid degree");
     }
   }
