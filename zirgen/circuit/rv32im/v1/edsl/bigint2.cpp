@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ void BigInt2CycleImpl::set(Top top) {
 
   IF(isFirstCycle) {
     NONDET { doExtern("syscallBigInt2Precompute", "", 0, {}); }
-    // If first cycle, do special initalization
+    // If first cycle, do special initialization
     ECallCycle ecall = body->majorMux->at<MajorType::kECall>();
     ECallBigInt2 ecallBigInt2 = ecall->minorMux->at<ECallType::kBigInt2>();
     instWordAddr->set(BACK(1, ecallBigInt2->readVerifyAddr->data().flat()) / kWordSize - 1);
