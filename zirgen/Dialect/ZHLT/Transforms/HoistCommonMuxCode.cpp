@@ -81,7 +81,10 @@ struct HoistCommonMuxCodePass : public HoistCommonMuxCodeBase<HoistCommonMuxCode
 
   void hoistForSpeed(SwitchOp mux) {
     // We're looking for operations shared in all mux arms, and all such
-    // operations must also be in the first mux arm.
+    // operations must also be in the first mux arm. Since we move operations
+    // in region 0 before the mux in `doHoist`, we use this iterator-based
+    // loop with a post-increment to keep track of which operation we're
+    // considering hoisting.
     auto it = mux.getRegion(0).op_begin();
     while (it != mux->getRegion(0).op_end()) {
       Operation& op = *(it++);

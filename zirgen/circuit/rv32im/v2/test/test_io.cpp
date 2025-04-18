@@ -50,5 +50,7 @@ int main() {
     std::cout << "What a fine day\n";
   } catch (std::exception& ex) {
     printf("Exception: %s\n", ex.what());
+    return -1;
   }
+  return 0;
 }

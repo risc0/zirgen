@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -357,9 +357,9 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
     // Build a new function which takes in top layout and returns super
     // Basically the goal of this function is to extract the 'return' of Top
     // from the Top layout, it is called 'Top$extract'
-    SmallVector<Type> topExtractParams = {topFunc.getLayoutType()};
+    SmallVector<Type> topExtractParams = {};
     auto topExtract = builder.create<Zhlt::ComponentOp>(
-        loc, "Top$extract", retType, topExtractParams, LayoutType());
+        loc, "Top$extract", retType, topExtractParams, topFunc.getLayoutType());
     Block* block = topExtract.addEntryBlock();
     builder.setInsertionPointToStart(block);
 
@@ -390,7 +390,7 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
 
     GreedyRewriteConfig config;
     config.maxIterations = 100;
-    if (applyPatternsAndFoldGreedily(topExtract, frozenPatterns, config).failed()) {
+    if (applyPatternsGreedily(topExtract, frozenPatterns, config).failed()) {
       topExtract->emitError("Could not generate check function");
       return ComponentOp();
     }
@@ -409,9 +409,8 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
     builder.setInsertionPointToStart(block);
 
     // Body of function is: Call Top$extract, Build Accum, return
-    SmallVector<Value> topExtractCallParams = {block->getArgument(0)};
     auto callTopExtract =
-        builder.create<Zhlt::ConstructOp>(loc, topExtract, topExtractCallParams, Value());
+        builder.create<Zhlt::ConstructOp>(loc, topExtract, ValueRange(), block->getArgument(0));
     SmallVector<Value> userAccumArgs = {
         callTopExtract,
         block->getArgument(1),

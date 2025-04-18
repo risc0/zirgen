@@ -383,6 +383,7 @@ size_t getShaStateCol() {
 std::vector<Back> getBigIntStateBacks(const BigIntState& state) {
   std::vector<Back> backs{
       {impl::kLayout_Top.instResult.arm12.state.isEcall._super.col, state.isEcall},
+      {impl::kLayout_Top.instResult.arm12.state.mode._super.col, state.mode},
       {impl::kLayout_Top.instResult.arm12.state.pc._super.col, state.pc},
       {impl::kLayout_Top.instResult.arm12.state.polyOp._super.col, state.polyOp},
       {impl::kLayout_Top.instResult.arm12.state.coeff._super.col, state.coeff},

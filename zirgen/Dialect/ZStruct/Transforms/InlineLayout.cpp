@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@ struct InlineLayoutPass : public InlineLayoutBase<InlineLayoutPass> {
     LoadOp::getCanonicalizationPatterns(patterns, &getContext());
     StoreOp::getCanonicalizationPatterns(patterns, &getContext());
     FrozenRewritePatternSet frozenPatterns(std::move(patterns));
-    if (applyPatternsAndFoldGreedily(getOperation(), frozenPatterns).failed()) {
+    if (applyPatternsGreedily(getOperation(), frozenPatterns).failed()) {
       signalPassFailure();
     }
   }

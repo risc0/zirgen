@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
 
 #include "zirgen/Dialect/IOP/IR/IR.h"
 #include "zirgen/Dialect/Zll/IR/Interpreter.h"
-#include "zirgen/circuit/bigint/rsa.h"
+#include "zirgen/circuit/bigint/test/rsa_helper.h"
 #include "zirgen/circuit/recursion/encode.h"
 #include "zirgen/compiler/codegen/codegen.h"
 #include "zirgen/compiler/zkp/hash.h"
@@ -152,7 +152,7 @@ int main(int argc, const char** argv) {
   builder.setInsertionPointToEnd(&inModule.getBodyRegion().front());
   auto inFunc = builder.create<func::FuncOp>(loc, "main", FunctionType::get(&context, {}, {}));
   builder.setInsertionPointToEnd(inFunc.addEntryBlock());
-  makeRSAChecker(builder, loc, numBits);
+  test::testMakeRSAChecker(builder, loc, numBits);
   builder.create<func::ReturnOp>(loc);
 
   PassManager pm(&context);
@@ -167,7 +167,7 @@ int main(int argc, const char** argv) {
   std::vector<APInt> values;
   values.push_back(randomTestInteger(numBits));
   values.push_back(randomTestInteger(numBits));
-  values.push_back(RSA(values[0], values[1]));
+  values.push_back(test::testRSA(values[0], values[1]));
   for (size_t i = 0; i < 3; i++) {
     errs() << "values[" << i << "] = " << toStr(values[i]) << "\n";
   }

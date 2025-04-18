@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -84,7 +84,7 @@ struct BuffersToArgsPass : public BuffersToArgsBase<BuffersToArgsPass> {
     for (auto bufDesc : bufs.getBuffers()) {
       RewritePatternSet patterns(&getContext());
       patterns.add<GetBufferPattern>(&getContext(), bufDesc.getName());
-      if (applyPatternsAndFoldGreedily(getOperation(), std::move(patterns)).failed()) {
+      if (applyPatternsGreedily(getOperation(), std::move(patterns)).failed()) {
         getOperation()->emitError("Unable to apply buffers to args patterns");
         signalPassFailure();
       }

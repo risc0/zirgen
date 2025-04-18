@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ struct InlinePurePass : public InlinePureBase<InlinePurePass> {
     FrozenRewritePatternSet frozenPatterns(std::move(patterns));
     GreedyRewriteConfig config;
     config.maxIterations = 100;
-    if (applyPatternsAndFoldGreedily(getOperation(), frozenPatterns, config).failed()) {
+    if (applyPatternsGreedily(getOperation(), frozenPatterns, config).failed()) {
       getOperation()->emitError("Couldn't apply optimization patterns");
       signalPassFailure();
     }

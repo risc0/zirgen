@@ -302,10 +302,7 @@ component ExtReg(v: ExtVal) {
 
 #[picus_inline]
 function Div(lhs: Val, rhs: Val) {
-   reciprocal := Inv(rhs);
-   reciprocal * rhs = 1;
-
-   reciprocal * lhs
+   lhs * Inv(rhs)
 }
 
 extern Log(message: String, vals: Val...);

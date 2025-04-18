@@ -39,5 +39,7 @@ int main() {
     }
   } catch (std::exception& ex) {
     printf("Exception: %s\n", ex.what());
+    return -1;
   }
+  return 0;
 }

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -89,7 +89,7 @@ struct GenerateStepsPass : public GenerateStepsBase<GenerateStepsPass> {
     RewritePatternSet patterns(&getContext());
     addAttachGlobalLayoutPattern(patterns, "global");
     addAttachGlobalLayoutPattern(patterns, "mix");
-    if (applyPatternsAndFoldGreedily(getOperation(), std::move(patterns)).failed()) {
+    if (applyPatternsGreedily(getOperation(), std::move(patterns)).failed()) {
       getOperation().emitError("Unable to apply layout patterns");
       signalPassFailure();
     }
@@ -151,9 +151,9 @@ struct GenerateStepsPass : public GenerateStepsBase<GenerateStepsPass> {
     builder.create<ExecCallOp>(funcOp.getLoc(),
                                builder.getAttr<FlatSymbolRefAttr>(funcOp.getSymName()),
                                funcType,
+                               args,
                                funcOp.getInputSegmentSizes(),
-                               funcOp.getResultSegmentSizes(),
-                               args);
+                               funcOp.getResultSegmentSizes());
 
     builder.create<Zhlt::ReturnOp>(loc);
   }
