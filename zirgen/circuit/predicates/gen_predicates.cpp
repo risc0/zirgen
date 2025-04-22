@@ -121,6 +121,32 @@ void addRv32imV2Lift(Module& module, const std::string name, const std::string& 
   }
 }
 
+void addRv32imV2LiftJoin(Module& module, const std::string name, const std::string& irPath) {
+  auto circuit = getInterfaceZirgen(module.getModule().getContext(), irPath);
+  for (size_t po2 = 14; po2 < 25; ++po2) {
+      module.addFunc<3>(name + "_" + std::to_string(po2),
+                        {gbuf(recursion::kOutSize), ioparg(), ioparg()},
+                        [&](Buffer out, ReadIopVal rootIop, ReadIopVal in) {
+                          // Read the control root.
+                          DigestVal root = rootIop.readDigests(1)[0];
+
+                          // Verify and extract the receipt claims.
+                          VerifyInfo info_left = zirgen::verify::verify(in, po2, *circuit);
+                          llvm::ArrayRef inStreamLeft(info_left.out);
+                          auto claim_left = ReceiptClaim::fromRv32imV2(inStreamLeft, po2);
+
+                          VerifyInfo info_right = zirgen::verify::verify(in, po2, *circuit);
+                          llvm::ArrayRef inStreamRight(info_right.out);
+                          auto claim_right = ReceiptClaim::fromRv32imV2(inStreamRight, po2);
+
+                          // Run the (join) logic to verify the claims and construct the output.
+                          auto outData = join(claim_left, claim_right);
+                          writeOutObj(out, outData);
+                          out.setDigest(0, root, "root");
+                        });
+  }
+}
+
 template <typename Func> void addJoin(Module& module, const std::string& name, Func func) {
   module.addFunc<4>(name,
                     {gbuf(recursion::kOutSize), ioparg(), ioparg(), ioparg()},
@@ -220,6 +246,7 @@ int main(int argc, char* argv[]) {
 
   addRv32imV1Lift(module, "lift", [](ReceiptClaim claim) { return claim; });
   addRv32imV2Lift(module, "lift_rv32im_v2", rv32imV2IR.getValue());
+  addRv32imV2LiftJoin(module, "lift_join_rv32im_v2", rv32imV2IR.getValue());
 
   addJoin(module, "join", [&](ReceiptClaim a, ReceiptClaim b) { return join(a, b); });
 
