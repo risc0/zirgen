@@ -26,3 +26,4 @@ jobs:
           linear-api-key: ${{ secrets.LINEAR_API_KEY }}
           linear-team-key: "ZIR"
           linear-created-issue-state-id: "bab82211-2372-4199-89d3-71f1246cee71" # in-progress
+
