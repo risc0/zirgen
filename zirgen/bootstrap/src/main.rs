@@ -203,7 +203,7 @@ fn compare_stripped(a: &str, b: &str) -> Result<()> {
         let a_diff_end = min(a.len(), diff_pos + POST_CONTEXT_LEN);
         let b_diff_end = min(b.len(), diff_pos + POST_CONTEXT_LEN);
         let change_pos = PRE_CONTEXT_LEN + if diff_pos == 0 { 0 } else { 3 };
-        write!(&mut out, "Files differ!  Bazel generated:\n")?;
+        writeln!(&mut out, "Files differ!  Bazel generated:")?;
         if diff_pos > 0 {
             write!(&mut out, "...")?;
         }
@@ -219,8 +219,8 @@ fn compare_stripped(a: &str, b: &str) -> Result<()> {
         if b_diff_end != b.len() {
             write!(&mut out, "...")?;
         }
-        write!(&mut out, "\n")?;
-        write!(&mut out, "{:1$}^\n", "", change_pos)?;
+        writeln!(&mut out)?;
+        writeln!(&mut out, "{:1$}^", "", change_pos)?;
         bail!("{}", out)
     } else {
         Ok(())
@@ -703,7 +703,6 @@ impl Bootstrap {
         let src_path = bazel_bin.join("zirgen/circuit/bigint");
         let ec_path = risc0_root.join("bigint2/src/ec");
         let field_path = risc0_root.join("bigint2/src/field");
-        let rsa_path = risc0_root.join("bigint2/src/rsa");
         let zkos_bigint_v1compat = risc0_root.join("zkos/v1compat/src/bigint_v1compat");
 
         self.copy_file(&src_path, &field_path, "extfield_deg2_add_256.blob");
