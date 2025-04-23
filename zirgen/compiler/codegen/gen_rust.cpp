@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -78,14 +78,7 @@ public:
   ~RustStreamEmitterImpl() = default;
 
   void emitStepFunc(const std::string& name, func::FuncOp func) override {
-    mustache tmpl;
-    // TODO: remove this hack once host-side recursion code is unified with rv32im.
-    bool isRecursion = func.getName() == "recursion";
-    if (isRecursion) {
-      tmpl = openTemplate("zirgen/compiler/codegen/cpp/recursion/step.tmpl.cpp");
-    } else {
-      tmpl = openTemplate("zirgen/compiler/codegen/cpp/step.tmpl.cpp");
-    }
+    mustache tmpl = openTemplate("zirgen/compiler/codegen/cpp/step.tmpl.cpp");
 
     FileContext ctx;
     for (auto [idx, arg] : llvm::enumerate(func.getArguments())) {
@@ -93,7 +86,7 @@ public:
     }
 
     list lines;
-    emitStepBlock(func.front(), ctx, lines, /*depth=*/0, isRecursion);
+    emitStepBlock(func.front(), ctx, lines, /*depth=*/0);
     Value retVal = func.front().getTerminator()->getOperand(0);
     lines.push_back(llvm::formatv("return {0};", ctx.use(retVal)).str());
 
@@ -196,53 +189,25 @@ public:
   }
 
 private:
-  void emitStepBlock(Block& block, FileContext& ctx, list& lines, size_t depth, bool isRecursion) {
+  void emitStepBlock(Block& block, FileContext& ctx, list& lines, size_t depth) {
     std::string indent(depth * 2, ' ');
     for (Operation& op : block.without_terminator()) {
       LLVM_DEBUG(llvm::dbgs() << "emitStepBlock: " << op << "\n");
       mlir::TypeSwitch<Operation*>(&op)
           .Case<NondetOp>([&](NondetOp op) {
             lines.push_back(indent + "{");
-            emitStepBlock(op.getInner().front(), ctx, lines, depth + 1, isRecursion);
+            emitStepBlock(op.getInner().front(), ctx, lines, depth + 1);
             lines.push_back(indent + "}");
           })
           .Case<IfOp>([&](IfOp op) {
             lines.push_back(indent +
                             llvm::formatv("if ({0} != 0) {{", ctx.use(op.getCond())).str());
-            emitStepBlock(op.getInner().front(), ctx, lines, depth + 1, isRecursion);
+            emitStepBlock(op.getInner().front(), ctx, lines, depth + 1);
             lines.push_back(indent + "}");
           })
-          .Case<ExternOp>([&](ExternOp op) {
-            // TODO: remove this hack once host-side recursion code is unified with rv32im.
-            if (isRecursion) {
-              emitExternRecursion(op, ctx, lines, depth);
-            } else {
-              emitExtern(op, ctx, lines, depth);
-            }
-          })
+          .Case<ExternOp>([&](ExternOp op) { emitExtern(op, ctx, lines, depth); })
           .Default(
               [&](Operation* op) { emitOperation(op, ctx, lines, depth, "Fp", FuncKind::Step); });
-    }
-  }
-
-  // TODO: remove this hack once host-side recursion code is unified with rv32im.
-  void emitExternRecursion(ExternOp op, FileContext& ctx, list& lines, size_t depth) {
-    std::string indent(depth * 2, ' ');
-    for (size_t i = 0; i < op.getIn().size(); i++) {
-      lines.push_back(
-          indent + llvm::formatv("host_args.at({0}) = {1};", i, ctx.use(op.getOperand(i))).str());
-    }
-    lines.push_back(indent + llvm::formatv("host(ctx, {0}, {1}, host_args.data(), {2}, "
-                                           "host_outs.data(), {3});",
-                                           escapeString(op.getName()),
-                                           escapeString(op.getExtra()),
-                                           op.getIn().size(),
-                                           op.getOut().size())
-                                 .str());
-    for (size_t i = 0; i < op.getOut().size(); i++) {
-      lines.push_back(
-          indent +
-          llvm::formatv("auto {0} = host_outs.at({1});", ctx.def(op.getResult(i)), i).str());
     }
   }
 
