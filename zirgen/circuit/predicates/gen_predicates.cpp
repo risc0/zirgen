@@ -121,7 +121,7 @@ void addRv32imV2Lift(Module& module, const std::string name, const std::string& 
   }
 }
 
-void addRv32imV2LiftJoin(Module& module, const std::string name, const std::string& irPath) {
+void addRv32imV2LiftJoin(Module& module, const std::string name, int n, const std::string& irPath) {
   auto circuit = getInterfaceZirgen(module.getModule().getContext(), irPath);
   for (size_t po2 = 14; po2 < 25; ++po2) {
       module.addFunc<3>(name + "_" + std::to_string(po2),
@@ -133,14 +133,17 @@ void addRv32imV2LiftJoin(Module& module, const std::string name, const std::stri
                           // Verify and extract the receipt claims.
                           VerifyInfo info_left = zirgen::verify::verify(in, po2, *circuit);
                           llvm::ArrayRef inStreamLeft(info_left.out);
-                          auto claim_left = ReceiptClaim::fromRv32imV2(inStreamLeft, po2);
+                          auto outData = ReceiptClaim::fromRv32imV2(inStreamLeft, po2);
 
-                          VerifyInfo info_right = zirgen::verify::verify(in, po2, *circuit);
-                          llvm::ArrayRef inStreamRight(info_right.out);
-                          auto claim_right = ReceiptClaim::fromRv32imV2(inStreamRight, po2);
+                          for (int i = 0; i < n; i++) {
+                              VerifyInfo info_right = zirgen::verify::verify(in, po2, *circuit);
+                              llvm::ArrayRef inStreamRight(info_right.out);
+                              auto claim_right = ReceiptClaim::fromRv32imV2(inStreamRight, po2);
 
-                          // Run the (join) logic to verify the claims and construct the output.
-                          auto outData = join(claim_left, claim_right);
+                              // Run the (join) logic to verify the claims and construct the output.
+                              outData = join(outData, claim_right);
+                          }
+
                           writeOutObj(out, outData);
                           out.setDigest(0, root, "root");
                         });
@@ -246,7 +249,16 @@ int main(int argc, char* argv[]) {
 
   addRv32imV1Lift(module, "lift", [](ReceiptClaim claim) { return claim; });
   addRv32imV2Lift(module, "lift_rv32im_v2", rv32imV2IR.getValue());
-  addRv32imV2LiftJoin(module, "lift_join_rv32im_v2", rv32imV2IR.getValue());
+  addRv32imV2LiftJoin(module, "lift_join_rv32im_v2", 1, rv32imV2IR.getValue());
+  addRv32imV2LiftJoin(module, "lift_join2_rv32im_v2", 2, rv32imV2IR.getValue());
+  addRv32imV2LiftJoin(module, "lift_join3_rv32im_v2", 3, rv32imV2IR.getValue());
+  addRv32imV2LiftJoin(module, "lift_join4_rv32im_v2", 4, rv32imV2IR.getValue());
+  addRv32imV2LiftJoin(module, "lift_join5_rv32im_v2", 5, rv32imV2IR.getValue());
+  addRv32imV2LiftJoin(module, "lift_join6_rv32im_v2", 6, rv32imV2IR.getValue());
+  addRv32imV2LiftJoin(module, "lift_join7_rv32im_v2", 7, rv32imV2IR.getValue());
+  addRv32imV2LiftJoin(module, "lift_join8_rv32im_v2", 8, rv32imV2IR.getValue());
+  addRv32imV2LiftJoin(module, "lift_join9_rv32im_v2", 9, rv32imV2IR.getValue());
+  addRv32imV2LiftJoin(module, "lift_join10_rv32im_v2", 10, rv32imV2IR.getValue());
 
   addJoin(module, "join", [&](ReceiptClaim a, ReceiptClaim b) { return join(a, b); });
 

@@ -1100,7 +1100,8 @@ void MixedPoseidon2ShaRng::mix(Instructions& insts, uint64_t digest) {
 
 } // namespace
 
-std::vector<uint32_t> encode(HashType hashType,
+std::vector<uint32_t> encode(std::string& name,
+                             HashType hashType,
                              mlir::Block* block,
                              llvm::DenseMap<Value, uint64_t>* toIdReturn,
                              EncodeStats* stats) {
@@ -1110,9 +1111,9 @@ std::vector<uint32_t> encode(HashType hashType,
   }
 
   insts.finalize();
-  llvm::errs() << "Actual cycles = " << insts.data.size() << "\n";
-  llvm::errs() << "SHA cycles = " << insts.shaUsed << "\n";
-  llvm::errs() << "Poseidon2 cycles = " << insts.poseidon2Used << "\n";
+  llvm::errs() << name << ", " << insts.data.size() << "\n";
+  //llvm::errs() << "SHA cycles = " << insts.shaUsed << "\n";
+  //llvm::errs() << "Poseidon2 cycles = " << insts.poseidon2Used << "\n";
   if (stats) {
     stats->totCycles = insts.data.size();
     stats->shaCycles = insts.shaUsed;
@@ -1183,8 +1184,8 @@ std::vector<uint32_t> encode(HashType hashType,
   return code;
 }
 
-std::vector<uint32_t> encode(HashType hashType, mlir::Block* block, EncodeStats* stats) {
-  return encode(hashType, block, /*toIdReturn=*/nullptr, stats);
+std::vector<uint32_t> encode(std::string& name, HashType hashType, mlir::Block* block, EncodeStats* stats) {
+  return encode(name, hashType, block, /*toIdReturn=*/nullptr, stats);
 }
 
 } // namespace zirgen::recursion

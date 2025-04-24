@@ -180,13 +180,16 @@ VerifyInfo verify(ReadIopVal& iop, size_t po2, const CircuitInterface& circuit) 
     auto x = dynamic_pow(kRouFwd[log2Ceil(domain)], idx, domain);
     std::map<unsigned, std::vector<Val>> rows;
     rows[/*REGISTER_GROUP_ACCUM*/ 0] = accumMerkle.verify(iop, idx);
-    rows[/*REGISTER_GROUP_CODE=*/1] = codeMerkle.verify(iop, idx);
+    // rows[/*REGISTER_GROUP_CODE=*/1] = codeMerkle.verify(iop, idx);
     rows[/*REGISTER_GROUP_DATA=*/2] = dataMerkle.verify(iop, idx);
     auto checkRow = checkMerkle.verify(iop, idx);
     Val curMix = 1;
     std::vector<Val> tot(comboU.size(), 0);
     for (auto [idx, group] : llvm::enumerate(tapSet.groups)) {
       for (const auto& reg : group.regs) {
+        if (idx == 1) {
+            continue;
+        }
         tot[reg.combo] = tot[reg.combo] + curMix * rows.at(idx)[reg.offset];
         curMix = curMix * mix;
       }

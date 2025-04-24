@@ -33,10 +33,11 @@ struct EncodeStats {
   size_t poseidon2Cycles = 0;
 };
 
-std::vector<uint32_t> encode(HashType hashType,
+std::vector<uint32_t> encode(std::string& name,
+                             HashType hashType,
                              mlir::Block* block,
                              llvm::DenseMap<mlir::Value, uint64_t>* toIdReturn = nullptr,
                              EncodeStats* stats = nullptr);
-std::vector<uint32_t> encode(HashType hashType, mlir::Block* block, EncodeStats* stats);
+std::vector<uint32_t> encode(std::string& name, HashType hashType, mlir::Block* block, EncodeStats* stats);
 
 } // namespace zirgen::recursion
