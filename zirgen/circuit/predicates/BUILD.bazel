@@ -28,6 +28,12 @@ ZKRS = [
 ] + [
     ("lift_rv32im_v2_" + str(po2))
     for po2 in range(14, 25)
+] + [("lift_join_rv32im_v2_" + str(po2))
+    for po2 in range(14, 25)
+] + [
+    ("lift_join" + str(n) + "_rv32im_v2_" + str(po2))
+    for po2 in range(14, 25)
+    for n in range(2, 11)
 ] + [
     "test_recursion_circuit",
     "join",

@@ -173,6 +173,25 @@ inline ArgumentInfo ioparg(std::string name = {}) {
   return ArgumentInfo{ArgumentType::IOP, Zll::BufferKind::Mutable, 0, name, 0};
 }
 
+class ReadIopVal {
+public:
+  ReadIopVal(mlir::Value value) : value(value) {}
+  mlir::Value getValue() const { return value; }
+
+  std::vector<Val> readBaseVals(size_t count, bool flip = false, SourceLoc loc = current());
+  std::vector<Val> readExtVals(size_t count, bool flip = false, SourceLoc loc = current());
+
+  // Read digests of the DigestKind::Default from the IOP stream.
+  std::vector<DigestVal> readDigests(size_t count, SourceLoc loc = current());
+  void commit(DigestVal digest, SourceLoc loc = current());
+  Val rngBits(uint32_t bits, SourceLoc loc = current());
+  Val rngBaseVal(SourceLoc loc = current());
+  Val rngExtVal(SourceLoc loc = current());
+
+private:
+  mlir::Value value;
+};
+
 class Module {
   friend NondetGuard;
   friend IfGuard;
@@ -193,6 +212,28 @@ public:
     auto f = endFunc(loc);
 
     for (size_t i = 0; i < N; i++) {
+      std::string argName = args[i].name;
+      if (!argName.empty()) {
+        f.setArgAttr(i, "zirgen.argName", builder.getStringAttr(argName));
+      }
+    }
+    return f;
+  }
+
+  template <typename F>
+  inline mlir::func::FuncOp addFuncVarArgs(const std::string& name,
+                                    std::vector<ArgumentInfo> args,
+                                    F func,
+                                    SourceLoc loc = current()) {
+    beginFunc(name, args, loc);
+    std::vector<ReadIopVal> vargs;
+    for (size_t i = 1; i < args.size(); i++) {
+      vargs.push_back(builder.getBlock()->getArgument(i));
+    }
+    func(builder.getBlock()->getArgument(0), vargs);
+    auto f = endFunc(loc);
+
+    for (size_t i = 0; i < args.size(); i++) {
       std::string argName = args[i].name;
       if (!argName.empty()) {
         f.setArgAttr(i, "zirgen.argName", builder.getStringAttr(argName));
@@ -228,9 +269,10 @@ public:
   void setPhases(mlir::func::FuncOp funcOp, llvm::ArrayRef<std::string> phases);
   void setProtocolInfo(ProtocolInfo info);
 
+  mlir::func::FuncOp endFunc(SourceLoc loc);
+
 private:
   void beginFunc(const std::string& name, const std::vector<ArgumentInfo>& args, SourceLoc loc);
-  mlir::func::FuncOp endFunc(SourceLoc loc);
   void pushIP(mlir::Block* block);
   void popIP();
   void runFunc(mlir::func::FuncOp func,
@@ -358,25 +400,6 @@ DigestVal taggedStruct(llvm::StringRef tag,
 DigestVal
 taggedListCons(llvm::StringRef tag, DigestVal head, DigestVal tail, SourceLoc loc = current());
 void assert_eq(DigestVal lhs, DigestVal rhs, SourceLoc loc = current());
-
-class ReadIopVal {
-public:
-  ReadIopVal(mlir::Value value) : value(value) {}
-  mlir::Value getValue() const { return value; }
-
-  std::vector<Val> readBaseVals(size_t count, bool flip = false, SourceLoc loc = current());
-  std::vector<Val> readExtVals(size_t count, bool flip = false, SourceLoc loc = current());
-
-  // Read digests of the DigestKind::Default from the IOP stream.
-  std::vector<DigestVal> readDigests(size_t count, SourceLoc loc = current());
-  void commit(DigestVal digest, SourceLoc loc = current());
-  Val rngBits(uint32_t bits, SourceLoc loc = current());
-  Val rngBaseVal(SourceLoc loc = current());
-  Val rngExtVal(SourceLoc loc = current());
-
-private:
-  mlir::Value value;
-};
 
 Val select(Val idx, llvm::ArrayRef<Val> in, SourceLoc loc = current());
 DigestVal select(Val idx, llvm::ArrayRef<DigestVal> in, SourceLoc loc = current());

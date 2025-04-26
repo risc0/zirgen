@@ -122,31 +122,39 @@ void addRv32imV2Lift(Module& module, const std::string name, const std::string& 
 }
 
 void addRv32imV2LiftJoin(Module& module, const std::string name, int n, const std::string& irPath) {
-  auto circuit = getInterfaceZirgen(module.getModule().getContext(), irPath);
-  for (size_t po2 = 14; po2 < 25; ++po2) {
-      module.addFunc<3>(name + "_" + std::to_string(po2),
-                        {gbuf(recursion::kOutSize), ioparg(), ioparg()},
-                        [&](Buffer out, ReadIopVal rootIop, ReadIopVal in) {
-                          // Read the control root.
-                          DigestVal root = rootIop.readDigests(1)[0];
+    auto circuit = getInterfaceZirgen(module.getModule().getContext(), irPath);
+    for (size_t po2 = 14; po2 < 25; ++po2) {
+        std::vector<ArgumentInfo> argument_infos;
+        argument_infos.push_back(gbuf(recursion::kOutSize));
+        argument_infos.push_back(ioparg());
+        for (int i = 0; i < n + 1; i++) {
+            argument_infos.push_back(ioparg());
+        }
+        module.addFuncVarArgs(
+            name + "_" + std::to_string(po2),
+            argument_infos,
+            [&](Buffer out, std::vector<ReadIopVal>& in) {
+              // Read the control root.
+              DigestVal root = in[0].readDigests(1)[0];
 
-                          // Verify and extract the receipt claims.
-                          VerifyInfo info_left = zirgen::verify::verify(in, po2, *circuit);
-                          llvm::ArrayRef inStreamLeft(info_left.out);
-                          auto outData = ReceiptClaim::fromRv32imV2(inStreamLeft, po2);
+              // Verify and extract the receipt claims.
+              VerifyInfo info_left = zirgen::verify::verify(in[1], po2, *circuit);
+              llvm::ArrayRef inStreamLeft(info_left.out);
+              auto outData = ReceiptClaim::fromRv32imV2(inStreamLeft, po2);
 
-                          for (int i = 0; i < n; i++) {
-                              VerifyInfo info_right = zirgen::verify::verify(in, po2, *circuit);
-                              llvm::ArrayRef inStreamRight(info_right.out);
-                              auto claim_right = ReceiptClaim::fromRv32imV2(inStreamRight, po2);
+              assert(in.size() == n + 2);
+              for (int i = 0; i < n; i++) {
+                  VerifyInfo info_right = zirgen::verify::verify(in[2 + i], po2, *circuit);
+                  llvm::ArrayRef inStreamRight(info_right.out);
+                  auto claim_right = ReceiptClaim::fromRv32imV2(inStreamRight, po2);
 
-                              // Run the (join) logic to verify the claims and construct the output.
-                              outData = join(outData, claim_right);
-                          }
+                  // Run the (join) logic to verify the claims and construct the output.
+                  outData = join(outData, claim_right);
+              }
 
-                          writeOutObj(out, outData);
-                          out.setDigest(0, root, "root");
-                        });
+              writeOutObj(out, outData);
+              out.setDigest(0, root, "root");
+            });
   }
 }
 
