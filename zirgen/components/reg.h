@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,12 +33,12 @@ public:
     CompContext::saveLabel(buf, label);
   }
   // The "source" parameter indicates the grouping of a RegImpl.
-  Val get(SourceLoc loc = current()) {
-    OverrideLocation guard(loc);
+  Val get(mlir::Location loc = currentLoc()) {
+    ScopedLocation guard(loc);
     return buf.getRegister(0, constructPath, loc);
   }
-  void set(Val in, SourceLoc loc = current()) {
-    OverrideLocation guard(loc);
+  void set(Val in, mlir::Location loc = currentLoc()) {
+    ScopedLocation guard(loc);
     buf.getRegister(0, constructPath, loc) = in;
   }
   Buffer raw() { return buf; }

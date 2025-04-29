@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ U32Val U32Val::underflowProtect() {
   return U32Val(0x100, 0xff, 0xff, 0xff);
 }
 
-void eq(U32Val a, U32Val b, SourceLoc loc) {
-  OverrideLocation local(loc);
+void eq(U32Val a, U32Val b, mlir::Location loc) {
+  ScopedLocation local(loc);
   for (size_t i = 0; i < 4; i++) {
     eq(a.bytes[i], b.bytes[i]);
   }

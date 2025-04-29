@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -51,6 +51,8 @@ MerkleTreeVerifier::MerkleTreeVerifier(std::string bufName,
                                        size_t queries,
                                        bool useExtension)
     : MerkleTreeParams(rowSize, colSize, queries, useExtension), top(topSize), bufName(bufName) {
+  ScopedLocation loc;
+
   auto topRec = iop.readDigests(topSize);
   top.insert(top.end(), topRec.begin(), topRec.end());
   for (size_t i = topSize; i-- > 1;) {
@@ -64,6 +66,8 @@ DigestVal MerkleTreeVerifier::getRoot() const {
 }
 
 std::vector<Val> MerkleTreeVerifier::verify(ReadIopVal& iop, Val idx) const {
+  ScopedLocation loc;
+
   std::vector<Val> out;
   if (useExtension) {
     out = iop.readExtVals(colSize);
