@@ -176,7 +176,7 @@ impl CircuitCoreDef<risc0_zkp::field::baby_bear::BabyBear> for CircuitImpl {}
 #[derive(Parser)]
 struct Args {
     /// Filename in which to write an output seal.
-    #[clap(long)]
+    #[arg(long)]
     seal: PathBuf,
 }
 
