@@ -355,8 +355,8 @@ std::optional<std::vector<uint64_t>> Runner::doExtern(llvm::StringRef name,
     // Division of two little-endian positive byte-limbed bigints. a = q * b + r.
     // Assumes a and b are both normalized with limbs in range [0, 255].
     // Throws if the quotient overflows BigInt::kByteWidth. Overflows will not happen if the
-    // numberator, a, is the result of a multiplication of two numbers less than the denomintor.
-    // The BigInt arithmatic circuit does not accept larger quotients.
+    // numberator, a, is the result of a multiplication of two numbers less than the denominator.
+    // The BigInt arithmetic circuit does not accept larger quotients.
     // Returns only the quotient value q as the BigInt circuit does not use the r value.
     std::vector<uint64_t> a = llvm::ArrayRef(fpArgs).slice(0, BigInt::kByteWidth * 2).vec();
     std::vector<uint64_t> b =
@@ -460,7 +460,7 @@ std::optional<std::vector<uint64_t>> Runner::doExtern(llvm::StringRef name,
   if (name == "syscallBigInt2Precompute") {
     // Get t1 = ptr to bibc
     uint32_t bibcAddr = loadU32(RegAddr::kT1) / 4;
-    // Presume bibc end where verify begins (TODO: support discontigous code)
+    // Presume bibc end where verify begins (TODO: support discontiguous code)
     uint32_t bibcEnd = loadU32(RegAddr::kT2) / 4;
     // Extract into array
     std::vector<uint32_t> data;
@@ -811,7 +811,7 @@ void Runner::generateCircuit() {
   if (module.computeMaxDegree("riscv") > kMaxDegree) {
     llvm::errs() << "Degree exceeded max degree " << kMaxDegree << "\n";
     module.dumpPoly("riscv");
-    throw(std::runtime_error("Maximum degree exceeeded"));
+    throw(std::runtime_error("Maximum degree exceeded"));
   }
 
   // module.dump();
