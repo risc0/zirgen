@@ -455,7 +455,7 @@ private:
   }
   bool stepDiv(InstType type, const DecodedInst& decoded) {
     uint32_t rs1 = context.loadReg(decoded.rs1);
-    uint32_t rs2 = context.loadReg(decoded.rs2);
+    uint32_t rs2 = (type == InstType::REMU ? context.loadReg(decoded.rs1) : context.loadReg(decoded.rs2));
     uint32_t immI = decoded.immI();
     uint32_t out = 0;
     switch (type) {
