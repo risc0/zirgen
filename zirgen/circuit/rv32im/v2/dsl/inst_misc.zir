@@ -3,12 +3,32 @@
 import inst;
 import is_zero;
 
+component SourceRegs(rs1: ValU32, rs2: ValU32) {
+  public rs1 := rs1;
+  public rs2 := rs2;
+}
+
 component MiscInput(cycle: Reg, inst_input: InstInput) {
   inst_input.state = StateDecode();
   public ii := inst_input;
   public decoded := DecodeInst(cycle, ii);
-  public rs1 := ReadReg(cycle, ii, decoded.rs1);
-  public rs2 := ReadReg(cycle, ii, decoded.rs2);
+  is_same_reg := NondetReg(Isz(decoded.rs1 - decoded.rs2));
+  // Verify is_same_reg is boolean
+  is_same_reg * (1 - is_same_reg) = 0;
+  source_regs := if (is_same_reg) {
+    // If is_same_reg, verify we really are the same reg, and read once
+    decoded.rs1 = decoded.rs2;
+    rboth := ReadReg(cycle, ii, decoded.rs1);
+    SourceRegs(rboth, rboth)
+  } else {
+    // Otherwise read twice, if we are the same reg, this will fail
+    // because on of the reads will happen on the same cycle
+    SourceRegs(
+      ReadReg(cycle, ii, decoded.rs1),
+      ReadReg(cycle, ii, decoded.rs2))
+  };
+  public rs1 := source_regs.rs1;
+  public rs2 := source_regs.rs2;
   ii
 }
 

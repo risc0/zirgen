@@ -266,9 +266,10 @@ template <typename Context> class RV32Emulator {
 private:
   FastDecodeTable decodeTable;
   Context& context;
+  bool v1Compat;
 
 public:
-  RV32Emulator(Context& context) : context(context) {}
+  RV32Emulator(Context& context, bool v1Compat = false) : context(context), v1Compat(v1Compat) {}
 
   // Run for a bounded number of steps
   bool run(size_t maxSteps) {
@@ -332,7 +333,12 @@ private:
     uint32_t rd = decoded.rd;
     uint32_t out = 0;
     uint32_t rs1 = context.loadReg(decoded.rs1);
-    uint32_t rs2 = context.loadReg(decoded.rs2);
+    uint32_t rs2;
+    if (!v1Compat && decoded.rs1 == decoded.rs2) {
+      rs2 = rs1;
+    } else {
+      rs2 = context.loadReg(decoded.rs2);
+    }
     uint32_t immI = decoded.immI();
     auto br_cond = [&](bool cond) {
       rd = 0;

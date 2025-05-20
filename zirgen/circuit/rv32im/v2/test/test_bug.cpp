@@ -14,6 +14,7 @@
 
 #include <iostream>
 
+#include "risc0/core/log.h"
 #include "zirgen/circuit/rv32im/v2/platform/constants.h"
 #include "zirgen/circuit/rv32im/v2/run/run.h"
 
@@ -23,7 +24,7 @@ const std::string kernelName = "zirgen/circuit/rv32im/v2/test/test_bug_kernel";
 
 int main() {
   try {
-    size_t cycles = 100000;
+    size_t cycles = 8192;
     TestIoHandler io;
 
     // Load image
@@ -32,7 +33,7 @@ int main() {
     auto segments = execute(image, io, cycles, cycles);
     // Do 'run' (preflight + expansion)
     for (const auto& segment : segments) {
-      runSegment(segment, cycles + 1000);
+      runSegment(segment, cycles);
     }
   } catch (std::exception& ex) {
     printf("Exception: %s\n", ex.what());
