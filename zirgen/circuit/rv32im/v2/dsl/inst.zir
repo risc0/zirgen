@@ -38,6 +38,35 @@ component ReadReg(cycle: Reg, input: InstInput, reg: Val) {
   MemoryRead(cycle, addr)
 }
 
+component SourceRegs(rs1: ValU32, rs2: ValU32) {
+  public rs1 := rs1;
+  public rs2 := rs2;
+}
+
+component ReadSourceRegs(cycle: Reg, ii: InstInput, decoded: DecodeInst) {
+  is_same_reg := NondetReg(Isz(decoded.rs1 - decoded.rs2));
+  // Verify is_same_reg is boolean
+  is_same_reg * (1 - is_same_reg) = 0;
+  source_regs := if (is_same_reg) {
+    // If is_same_reg, verify we really are the same reg, and read once
+    decoded.rs1 = decoded.rs2;
+    rboth := ReadReg(cycle, ii, decoded.rs1);
+    SourceRegs(rboth, rboth)
+  } else {
+    // Otherwise read twice, if we are the same reg, this will fail
+    // because one of the reads will happen on the same cycle
+    SourceRegs(
+      ReadReg(cycle, ii, decoded.rs1),
+      ReadReg(cycle, ii, decoded.rs2))
+  };
+  rs1Low := Reg(source_regs.rs1.low);
+  rs1High:= Reg(source_regs.rs1.high);
+  rs2Low := Reg(source_regs.rs2.low);
+  rs2High := Reg(source_regs.rs2.high);
+  public rs1 := ValU32(rs1Low, rs1High);
+  public rs2 := ValU32(rs2Low, rs2High);
+}
+
 component WriteRd(cycle: Reg, input: InstInput, decoded: Decoder, do_write: Val, write_data: ValU32) {
   isRd0 := IsZero(decoded.rd);
   do_write := (1 - isRd0) * do_write;

@@ -18,8 +18,9 @@ component MemStoreInput(cycle: Reg, inst_input: InstInput) {
   inst_input.state = StateDecode();
   public ii := inst_input;
   public decoded := DecodeInst(cycle, ii);
-  public rs1 := ReadReg(cycle, ii, decoded.rs1);
-  public rs2 := ReadReg(cycle, ii, decoded.rs2);
+  source_regs := ReadSourceRegs(cycle, ii, decoded);
+  public rs1 := source_regs.rs1;
+  public rs2 := source_regs.rs2;
   addr_u32 := NormalizeU32(AddU32(rs1, decoded.immS));
   public addr := AddrDecomposeBits(addr_u32, ii.mode);
   public data := MemoryRead(cycle, addr.addr);
