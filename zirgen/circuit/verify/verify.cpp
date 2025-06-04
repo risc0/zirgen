@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,6 +38,8 @@ template <typename T> T dbg(std::string fmt, T arg) {
 } // namespace
 
 VerifyInfo verify(ReadIopVal& iop, size_t po2, const CircuitInterface& circuit) {
+  ScopedLocation loc;
+
   VerifyInfo verifyInfo;
 
   // At the start of verification, add the version strings to the Fiat-Shamir transcript.
@@ -177,11 +179,22 @@ VerifyInfo verify(ReadIopVal& iop, size_t po2, const CircuitInterface& circuit) 
   }
   // Finally, do a FRI verification
   friVerify(iop, size, [&](ReadIopVal& iop, Val idx) {
+    ScopedLocation loc;
+
     auto x = dynamic_pow(kRouFwd[log2Ceil(domain)], idx, domain);
     std::map<unsigned, std::vector<Val>> rows;
-    rows[/*REGISTER_GROUP_ACCUM*/ 0] = accumMerkle.verify(iop, idx);
-    rows[/*REGISTER_GROUP_CODE=*/1] = codeMerkle.verify(iop, idx);
-    rows[/*REGISTER_GROUP_DATA=*/2] = dataMerkle.verify(iop, idx);
+    {
+      ScopedLocation loc;
+      rows[/*REGISTER_GROUP_ACCUM*/ 0] = accumMerkle.verify(iop, idx);
+    }
+    {
+      ScopedLocation loc;
+      rows[/*REGISTER_GROUP_CODE=*/1] = codeMerkle.verify(iop, idx);
+    }
+    {
+      ScopedLocation loc;
+      rows[/*REGISTER_GROUP_DATA=*/2] = dataMerkle.verify(iop, idx);
+    }
     auto checkRow = checkMerkle.verify(iop, idx);
     Val curMix = 1;
     std::vector<Val> tot(comboU.size(), 0);
@@ -219,6 +232,8 @@ VerifyInfo verifyRecursion(ReadIopVal& allowedRoot,
                            std::vector<ReadIopVal> seals,
                            std::vector<ReadIopVal> alloweds,
                            const CircuitInterface& circuit) {
+  ScopedLocation loc;
+
   VerifyInfo verifyInfo;
   verifyInfo.codeRoot = allowedRoot.readDigests(1)[0];
 

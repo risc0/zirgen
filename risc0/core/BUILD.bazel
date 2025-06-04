@@ -8,7 +8,6 @@ cc_library(
     hdrs = [
         "elf.h",
         "log.h",
-        "source_loc.h",
         "util.h",
     ],
     visibility = ["//visibility:public"],

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -136,8 +136,10 @@ struct Instructions {
   uint64_t padShaCountConst;
   uint64_t shaRngConsts;
   llvm::StringMap<uint64_t> tagConsts;
+  EncodeStats* stats = nullptr;
 
-  Instructions(HashType hashType) : hashType(hashType), nextOut(1), microUsed(0) {
+  Instructions(HashType hashType, EncodeStats* stats)
+      : hashType(hashType), nextOut(1), microUsed(0), stats(stats) {
     addMacro(/*outs=*/0, MacroOpcode::WOM_INIT);
     // Make: [0, 1, 0, 0], [0, 0, 1, 0], and [0, 0, 0, 1]
     fp4Rot1 = addConst(0, 1);
@@ -205,8 +207,16 @@ struct Instructions {
 
   uint64_t addHalfsConst(uint32_t tot) { return addConst(tot & 0xffff, tot >> 16); }
 
-  uint64_t
-  addMicro(Value out, MicroOpcode opcode, uint64_t op0 = 0, uint64_t op1 = 0, uint64_t op2 = 0) {
+  uint64_t addMicro(Value out,
+                    MicroOpcode opcode,
+                    uint64_t op0 = 0,
+                    uint64_t op1 = 0,
+                    uint64_t op2 = 0,
+                    Location callerLoc = currentLoc()) {
+    std::optional<ScopedLocation> valueLoc;
+    if (out)
+      valueLoc.emplace(out.getLoc());
+    ScopedLocation loc(callerLoc);
     if (microUsed == 0) {
       data.emplace_back();
       data.back().opType = OpType::MICRO;
@@ -224,6 +234,10 @@ struct Instructions {
     if (microUsed == 3) {
       microUsed = 0;
     }
+
+    if (stats) {
+      stats->locs[currentLoc()]++;
+    }
     return outId;
   }
 
@@ -233,8 +247,13 @@ struct Instructions {
     }
   }
 
-  uint64_t
-  addMacro(size_t outs, MacroOpcode opcode, uint64_t op0 = 0, uint64_t op1 = 0, uint64_t op2 = 0) {
+  uint64_t addMacro(size_t outs,
+                    MacroOpcode opcode,
+                    uint64_t op0 = 0,
+                    uint64_t op1 = 0,
+                    uint64_t op2 = 0,
+                    Location callerLoc = currentLoc()) {
+    ScopedLocation loc(callerLoc);
     finishMicros();
     data.emplace_back();
     data.back().opType = OpType::MACRO;
@@ -245,6 +264,8 @@ struct Instructions {
     uint64_t writeAddr = nextOut;
     data.back().writeAddr = writeAddr;
     nextOut += outs;
+    if (stats)
+      stats->locs[currentLoc()] += 3;
     return writeAddr;
   }
 
@@ -263,6 +284,8 @@ struct Instructions {
     uint64_t writeAddr = nextOut;
     data.back().writeAddr = writeAddr;
     nextOut += 1; // Write exactly one thing (evaluated point)
+    if (stats)
+      stats->locs[currentLoc()] += 3;
     return writeAddr;
   }
 
@@ -286,6 +309,8 @@ struct Instructions {
       data.back().data.poseidon2Mem.inputs[i] = inputs[i];
     }
     data.back().writeAddr = nextOut;
+    if (stats)
+      stats->locs[currentLoc()] += 3;
   }
 
   void addPoseidon2Full(uint64_t cycle) {
@@ -295,6 +320,8 @@ struct Instructions {
     data.back().opType = OpType::POSEIDON2_FULL;
     data.back().data.poseidon2Full.cycle = cycle;
     data.back().writeAddr = nextOut;
+    if (stats)
+      stats->locs[currentLoc()] += 3;
   }
 
   void addPoseidon2Partial() {
@@ -303,6 +330,8 @@ struct Instructions {
     data.emplace_back();
     data.back().opType = OpType::POSEIDON2_PARTIAL;
     data.back().writeAddr = nextOut;
+    if (stats)
+      stats->locs[currentLoc()] += 3;
   }
 
   uint64_t addPoseidon2Store(uint64_t doMont, uint64_t group) {
@@ -315,10 +344,13 @@ struct Instructions {
     uint64_t writeAddr = nextOut;
     data.back().writeAddr = writeAddr;
     nextOut += 8;
+    if (stats)
+      stats->locs[currentLoc()] += 3;
     return writeAddr;
   }
 
   void doShaInit() {
+    ScopedLocation loc;
     for (size_t i = 0; i < 4; i++) {
       shaUsed++;
       addMacro(/*outs=*/0, MacroOpcode::SHA_INIT, shaInit[3 - i], shaInit[3 - i + 4]);
@@ -326,6 +358,7 @@ struct Instructions {
   }
 
   void doShaLoad(llvm::ArrayRef<uint64_t> values, uint64_t subtype) {
+    ScopedLocation loc;
     for (size_t i = 0; i < 16; i++) {
       shaUsed++;
       addMacro(/*outs=*/0, MacroOpcode::SHA_LOAD, values[i], shaK[i], subtype);
@@ -333,12 +366,14 @@ struct Instructions {
   }
 
   void doShaMix() {
+    ScopedLocation loc;
     for (size_t i = 0; i < 48; i++) {
       shaUsed++;
       addMacro(/*outs=*/0, MacroOpcode::SHA_MIX, 0, shaK[16 + i]);
     }
   }
   uint64_t doShaFini() {
+    ScopedLocation loc;
     uint64_t out = nextOut;
     for (size_t i = 0; i < 4; i++) {
       shaUsed++;
@@ -349,6 +384,7 @@ struct Instructions {
   }
 
   uint64_t doSha(llvm::ArrayRef<uint64_t> values, uint64_t subtype) {
+    ScopedLocation loc;
     doShaInit();
     uint64_t ret = 0;
     for (size_t i = 0; i < values.size() / 16; i++) {
@@ -360,6 +396,7 @@ struct Instructions {
   }
 
   uint64_t doShaFold(uint64_t lhs, uint64_t rhs) {
+    ScopedLocation loc;
     std::vector<uint64_t> ids(16);
     for (size_t i = 0; i < 8; i++) {
       ids[i] = lhs + i;
@@ -369,6 +406,7 @@ struct Instructions {
   }
 
   uint64_t doIntoDigestShaBytes(llvm::ArrayRef<uint64_t> bytes) {
+    ScopedLocation loc;
     // We keep things in low / high form right until the end so that the final adds are
     // all contiguous since all the 'digest' stuff assumes digests are always contiguous.
     std::vector<uint64_t> low;
@@ -388,6 +426,7 @@ struct Instructions {
   }
 
   uint64_t doIntoDigestShaWords(llvm::ArrayRef<uint64_t> words) {
+    ScopedLocation loc;
     // We keep things in low / high form right until the end so that the final adds are
     // all contiguous since all the 'digest' stuff assumes digests are always contiguous.
     std::vector<uint64_t> low;
@@ -404,6 +443,7 @@ struct Instructions {
   }
 
   uint64_t doShaTag(llvm::StringRef tag) {
+    ScopedLocation loc;
     if (tagConsts.count(tag)) {
       return tagConsts.find(tag)->second;
     } else {
@@ -422,6 +462,7 @@ struct Instructions {
                           llvm::ArrayRef<uint64_t> digests,
                           llvm::ArrayRef<DigestKind> digestTypes,
                           llvm::ArrayRef<uint64_t> vals) {
+    ScopedLocation loc;
     std::vector<uint64_t> words;
 
     for (size_t i = 0; i < 8; i++) {
@@ -472,6 +513,7 @@ struct Instructions {
   // representation, with 16 bits in each of the two low components of an
   // extension field element.
   void taggedStructPushVals(std::vector<uint64_t>& words, llvm::ArrayRef<uint64_t> vals) {
+    ScopedLocation loc;
     // Get low 16 bits of each value (done in a loop for better packing)
     std::vector<uint64_t> lowVals;
     for (size_t i = 0; i < vals.size(); i++) {
@@ -489,6 +531,7 @@ struct Instructions {
   }
 
   std::pair<uint64_t, std::vector<uint64_t>> doHashCheckedBytes(uint64_t evalPt, uint64_t count) {
+    ScopedLocation loc;
     if (!count) {
       // Special case for 0 outputs
       return {doPoseidon2({}), {}};
@@ -519,6 +562,7 @@ struct Instructions {
 
   std::tuple<uint64_t, uint64_t, std::vector<uint64_t>> doHashCheckedBytesPublic(uint64_t evalPt,
                                                                                  uint64_t count) {
+    ScopedLocation loc;
     if (!count)
       throw std::runtime_error("Cannont publically hash empty checked bytes");
 
@@ -570,6 +614,7 @@ struct Instructions {
   }
 
   uint64_t doPoseidon2(llvm::ArrayRef<uint64_t> values) {
+    ScopedLocation loc;
     if (values.empty()) {
       auto psuite = poseidon2HashSuite();
       auto hashVal = psuite->hash(nullptr, 0);
@@ -634,6 +679,7 @@ struct Instructions {
   }
 
   uint64_t doIntoDigestPoseidon2(llvm::ArrayRef<uint64_t> words) {
+    ScopedLocation loc;
     // Do pointless adds to make all the words land in sequential spots
     uint64_t ret = nextOut;
     size_t pad = words.size() / 8 - 1;
@@ -646,6 +692,7 @@ struct Instructions {
   }
 
   void addInst(Operation& op) {
+    ScopedLocation loc(op.getLoc());
     TypeSwitch<Operation*>(&op)
         .Case<Zll::ExternOp>([&](Zll::ExternOp op) {
           if (op.getName() == "write") {
@@ -798,6 +845,8 @@ struct Instructions {
           }
         })
         .Case<Iop::ReadOp>([&](Iop::ReadOp op) {
+          ScopedLocation loc;
+
           size_t k = 0;
           size_t rep = 1;
           size_t demont = false;
@@ -984,6 +1033,7 @@ uint64_t ShaRng::generateFp(Instructions& insts) {
 }
 
 void ShaRng::mix(Instructions& insts, uint64_t digest) {
+  ScopedLocation loc;
   uint64_t xorOut = insts.nextOut;
   for (size_t i = 0; i < 8; i++) {
     // Xors and returns 2 shorts: [a, b, 0, 0] ^ [c, d, 0, 0] -> [a ^ c, b ^ d, 0, 0]
@@ -1022,6 +1072,7 @@ uint64_t Poseidon2Rng::generateFp(Instructions& insts) {
 }
 
 void Poseidon2Rng::mix(Instructions& insts, uint64_t digest) {
+  ScopedLocation loc;
   if (stateUsed != 0) {
     stateUsed = 0;
     mix(insts, 0);
@@ -1069,6 +1120,7 @@ void Poseidon2Rng::mix(Instructions& insts, uint64_t digest) {
 }
 
 void MixedPoseidon2ShaRng::mix(Instructions& insts, uint64_t digest) {
+  ScopedLocation loc;
   // For each element of the Poseidon2 hash, we convert it to a form usable by SHA.
   // This is done in stages so that macro ops are grouped together for efficiency
   // First, we 'and' things by 0xffff
@@ -1104,7 +1156,7 @@ std::vector<uint32_t> encode(HashType hashType,
                              mlir::Block* block,
                              llvm::DenseMap<Value, uint64_t>* toIdReturn,
                              EncodeStats* stats) {
-  Instructions insts(hashType);
+  Instructions insts(hashType, stats);
   for (Operation& op : block->without_terminator()) {
     insts.addInst(op);
   }
