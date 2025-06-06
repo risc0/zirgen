@@ -13,6 +13,10 @@ component OutputWord() { 0x3fffc090 }
 component InputWord() { 0x3fffc098 }
 component EcallDispatchWord() { 0x3fffc400 }
 component TrapDispatchWord() { 0x3fffc800 }
+// Word address where the root of the page tree is stored in memory.
+// Note that this address is above the highest addressable byte, using a 32-bit point
+// (0x3fffffff is the highest addressable byte). As a result, RISC-V memory operations cannot
+// address the root word.
 component RootWord() { 0x43fffff8 }
 
 component StateLoadRoot() { 0 }
