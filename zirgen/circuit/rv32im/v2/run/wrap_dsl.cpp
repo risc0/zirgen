@@ -400,6 +400,10 @@ size_t getIsTerminateGlobalCol() {
   return impl::kLayoutGlobal.isTerminate._super.col;
 }
 
+size_t getPovwNonceGlobalCol() {
+  return impl::kLayoutGlobal.povwNonce.values.at(0).low._super.col;
+}
+
 std::vector<Back> getBigIntStateBacks(const BigIntState& state) {
   std::vector<Back> backs{
       {impl::kLayout_Top.instResult.arm12.state.isEcall._super.col, state.isEcall},

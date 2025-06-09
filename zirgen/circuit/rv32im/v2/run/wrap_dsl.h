@@ -46,6 +46,7 @@ size_t getShutdownCycleGlobalCol();
 size_t getInputDigestGlobalCol();
 size_t getRngGlobalCol();
 size_t getIsTerminateGlobalCol();
+size_t getPovwNonceGlobalCol();
 
 void DslStep(StepHandler& stepHandler, ExecutionTrace& trace, size_t cycle);
 void DslStepAccum(StepHandler& stepHandler, ExecutionTrace& trace, size_t cycle);

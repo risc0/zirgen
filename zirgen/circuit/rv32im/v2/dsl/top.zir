@@ -34,6 +34,7 @@ component Top() {
   global termA1high: Reg;
   global rng: ExtReg;
   global shutdownCycle: Reg;
+  global povwNonce: DigestReg;
 
   // Top state
   cycle : Reg;
@@ -41,6 +42,12 @@ component Top() {
   next_pc_high : Reg;
   next_state : Reg;
   next_machine_mode : Reg;
+
+  // Bind povwNonce to 0
+  for i : 0..8 {
+    povwNonce.values[i].low = 0;
+    povwNonce.values[i].high = 0;
+  };
 
   // Registerize first cycle + cycle number
   is_first_cycle := NondetBitReg(IsFirstCycle());

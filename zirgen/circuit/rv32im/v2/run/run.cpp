@@ -211,6 +211,9 @@ ExecutionTrace runSegment(const Segment& segment, size_t segmentSize) {
     // Input digest
     trace.global.set(getInputDigestGlobalCol() + 2 * i, segment.input.words[i] & 0xffff);
     trace.global.set(getInputDigestGlobalCol() + 2 * i + 1, segment.input.words[i] >> 16);
+    // PoVW nonce
+    trace.global.set(getPovwNonceGlobalCol() + 2 * i, 0);
+    trace.global.set(getPovwNonceGlobalCol() + 2 * i + 1, 0);
   }
   // Set RNG
   for (size_t i = 0; i < 4; i++) {
