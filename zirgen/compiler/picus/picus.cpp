@@ -152,7 +152,6 @@ private:
       AnySignal signal = signalize(freshName(), param.getType());
       declareSignals(signal, SignalType::Input);
       valuesToSignals.insert({param, signal});
-      workQueue.push(lookupConstructor(param.getType()));
     }
 
     // The result is an output
