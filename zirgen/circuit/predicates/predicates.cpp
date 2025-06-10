@@ -227,11 +227,14 @@ UnionClaim unionFunc(Assumption left, Assumption right) {
 }
 
 ReceiptClaim ReceiptClaim::fromRv32imV2(llvm::ArrayRef<Val>& stream, size_t po2) {
+  // NOTE: Ordering of these read operations must match the layout of the circuit globals.
+  // This ordering can be found in the generated rv32im.cpp.inc file as _globalLayout
   DigestVal input = readSha(stream);
   Val isTerminate = readVal(stream);
   DigestVal output = readSha(stream);
+  /*DigestVal povwNonce =*/readSha(stream);
   /*Val rng =*/readExtVal(stream);
-  Val shutdownCycle = readVal(stream);
+  /*Val shutdownCycle =*/readVal(stream);
   DigestVal stateIn = readSha(stream);
   DigestVal stateOut = readSha(stream);
   Val termA0High = readVal(stream);
