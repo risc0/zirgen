@@ -232,7 +232,11 @@ ReceiptClaim ReceiptClaim::fromRv32imV2(llvm::ArrayRef<Val>& stream, size_t po2)
   DigestVal input = readSha(stream);
   Val isTerminate = readVal(stream);
   DigestVal output = readSha(stream);
+  // NOTE: povwNonce is not part of the rv32im claim, and its value does not matter for the validity
+  // of the ReceiptClaim. This nonce is used only for the PoVW accounting logic.
   /*DigestVal povwNonce =*/readSha(stream);
+  // NOTE: rng is not part of the claim, and is fully constrained by the circuit. It is included in
+  // the globals because putting it there made the circuit construction easier.
   /*Val rng =*/readExtVal(stream);
   /*Val shutdownCycle =*/readVal(stream);
   DigestVal stateIn = readSha(stream);
