@@ -357,7 +357,13 @@ PreflightTrace preflightSegment(const Segment& in, size_t segmentSize) {
       txn.prevCycle = preflightContext.prevCycle[txn.word];
     } else {
       // Otherwise, compute cycle diff and another diff
-      uint32_t diff = txn.cycle - txn.prevCycle;
+      if (txn.cycle == txn.prevCycle) {
+        std::cerr << "ACCESS ON SAME CYCLE\n";
+        std::cerr << "tnx.cycle = " << txn.cycle << "\n";
+        std::cerr << "addr = " << txn.word << "\n";
+        throw std::runtime_error("DIE");
+      }
+      uint32_t diff = txn.cycle - 1 - txn.prevCycle;
       ret.cycles[diff / 2].diffCount[diff % 2]++;
     }
 

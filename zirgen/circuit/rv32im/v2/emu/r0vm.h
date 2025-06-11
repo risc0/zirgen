@@ -201,7 +201,7 @@ template <typename Context> struct R0Context {
           i += 4;
           rlen -= 4;
         } else {
-          storeMem(SAFE_WRITE_WORD, 0);
+          storeMem(SAFE_WRITE_WORD + j, 0);
         }
       }
       if (rlen == 0) {

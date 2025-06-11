@@ -81,7 +81,7 @@ component IsRead(io: MemoryIO) {
 }
 
 component IsForward(io: MemoryIO) {
-  IsCycle(io.newTxn.cycle - io.oldTxn.cycle);
+  IsCycle(io.newTxn.cycle - 1 - io.oldTxn.cycle);
 }
 
 // A normal memory read, the most constrained case

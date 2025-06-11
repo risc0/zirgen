@@ -267,6 +267,16 @@ private:
   FastDecodeTable decodeTable;
   Context& context;
 
+  uint32_t loadRS2(const DecodedInst& decoded, uint32_t rs1) {
+    uint32_t rs2;
+    if (decoded.rs1 == decoded.rs2) {
+      rs2 = rs1;
+    } else {
+      rs2 = context.loadReg(decoded.rs2);
+    }
+    return rs2;
+  }
+
 public:
   RV32Emulator(Context& context) : context(context) {}
 
@@ -332,7 +342,7 @@ private:
     uint32_t rd = decoded.rd;
     uint32_t out = 0;
     uint32_t rs1 = context.loadReg(decoded.rs1);
-    uint32_t rs2 = context.loadReg(decoded.rs2);
+    uint32_t rs2 = loadRS2(decoded, rs1);
     uint32_t immI = decoded.immI();
     auto br_cond = [&](bool cond) {
       rd = 0;
@@ -424,7 +434,7 @@ private:
   }
   bool stepMul(InstType type, const DecodedInst& decoded) {
     uint32_t rs1 = context.loadReg(decoded.rs1);
-    uint32_t rs2 = context.loadReg(decoded.rs2);
+    uint32_t rs2 = loadRS2(decoded, rs1);
     uint32_t immI = decoded.immI();
     uint32_t out = 0;
     switch (type) {
@@ -455,7 +465,7 @@ private:
   }
   bool stepDiv(InstType type, const DecodedInst& decoded) {
     uint32_t rs1 = context.loadReg(decoded.rs1);
-    uint32_t rs2 = context.loadReg(decoded.rs2);
+    uint32_t rs2 = loadRS2(decoded, rs1);
     uint32_t immI = decoded.immI();
     uint32_t out = 0;
     switch (type) {
@@ -552,7 +562,7 @@ private:
 
   bool stepStore(InstType type, const DecodedInst& decoded) {
     uint32_t rs1 = context.loadReg(decoded.rs1);
-    uint32_t rs2 = context.loadReg(decoded.rs2);
+    uint32_t rs2 = loadRS2(decoded, rs1);
     uint32_t addr = rs1 + decoded.immS();
     uint32_t shift = 8 * (addr & 3);
     if (!context.checkDataStore(addr)) {

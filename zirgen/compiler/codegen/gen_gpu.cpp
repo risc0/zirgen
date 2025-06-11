@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,77 +60,31 @@ public:
       : ofs(ofs), suffix(suffix) {}
 
   void emitStepFunc(const std::string& name, func::FuncOp func) override {
-    // TODO: remove this hack once host-side recursion code is unified with rv32im.
-    bool isRecursion = func.getName() == "recursion";
-    if (isRecursion) {
-      emitStepFuncRecursion(name, func);
-    } else {
-      mustache tmpl = openTemplate("zirgen/compiler/codegen/gpu/step.tmpl" + suffix);
-
-      FileContext ctx;
-      std::stringstream ss;
-      for (auto arg : func.getArguments()) {
-        ctx.vars[arg] = llvm::formatv("arg{0}", arg.getArgNumber()).str();
-        ss << ", ";
-        if (suffix == ".metal") {
-          ss << "device ";
-        }
-        ss << "Fp* arg" << arg.getArgNumber();
-      }
-
-      list lines;
-      PoolsSet pools;
-      emitStepBlock(func.front(), ctx, lines, /*depth=*/0, isRecursion, pools);
-
-      tmpl.render(
-          object{
-              {"name", func.getName().str()},
-              {"args", ss.str()},
-              {"fn", "step_" + name},
-              {"body", lines},
-          },
-          ofs);
-    }
-  }
-
-  // TODO: remove this hack once host-side recursion code is unified with rv32im.
-  void emitStepFuncRecursion(const std::string& name, func::FuncOp func) {
-    if (name != "compute_accum" && name != "verify_accum") {
-      mustache tmpl = openTemplate("zirgen/compiler/codegen/gpu/recursion/step.tmpl" + suffix);
-      tmpl.render(object{}, ofs);
-      return;
-    }
-
-    mustache tmpl =
-        openTemplate("zirgen/compiler/codegen/gpu/recursion/step_" + name + ".tmpl" + suffix);
+    mustache tmpl = openTemplate("zirgen/compiler/codegen/gpu/step.tmpl" + suffix);
 
     FileContext ctx;
-    for (auto [argNum, arg] : llvm::enumerate(func.getArguments())) {
-      if (auto name = func.getArgAttrOfType<StringAttr>(argNum, "zirgen.argName")) {
-        ctx.vars[arg] = gpuMapName(name.str());
+    std::stringstream ss;
+    for (auto arg : func.getArguments()) {
+      ctx.vars[arg] = llvm::formatv("arg{0}", arg.getArgNumber()).str();
+      ss << ", ";
+      if (suffix == ".metal") {
+        ss << "device ";
       }
+      ss << "Fp* arg" << arg.getArgNumber();
     }
+
     list lines;
     PoolsSet pools;
-    emitStepBlock(func.front(), ctx, lines, /*depth=*/0, true, pools);
+    emitStepBlock(func.front(), ctx, lines, /*depth=*/0, pools);
 
-    std::string poolArgs;
-    for (std::string pool : pools) {
-      if (!poolArgs.empty()) {
-        poolArgs.append(", ");
-      }
-      std::string qualifier;
-      if (suffix == ".metal") {
-        qualifier = "device ";
-      }
-      poolArgs.append(llvm::formatv("{0}FpExt* {1}", qualifier, pool).str());
-    }
-
-    tmpl.render(object{{"name", func.getName().str()},
-                       {"fn", "step_" + name},
-                       {"body", lines},
-                       {"pools", poolArgs}},
-                ofs);
+    tmpl.render(
+        object{
+            {"name", func.getName().str()},
+            {"args", ss.str()},
+            {"fn", "step_" + name},
+            {"body", lines},
+        },
+        ofs);
   }
 
   void
@@ -139,13 +93,7 @@ public:
 
     auto circuitName = lookupModuleAttr<CircuitNameAttr>(func);
 
-    mustache tmpl;
-    bool isRecursion = func.getName() == "recursion";
-    if (isRecursion && suffix == ".cu") {
-      tmpl = openTemplate("zirgen/compiler/codegen/gpu/recursion/eval_check.tmpl" + suffix);
-    } else {
-      tmpl = openTemplate("zirgen/compiler/codegen/gpu/eval_check.tmpl" + suffix);
-    }
+    mustache tmpl = openTemplate("zirgen/compiler/codegen/gpu/eval_check.tmpl" + suffix);
 
     list funcProtos;
     list funcs;
@@ -251,82 +199,24 @@ public:
   }
 
 private:
-  void emitStepBlock(Block& block,
-                     FileContext& ctx,
-                     list& lines,
-                     size_t depth,
-                     bool isRecursion,
-                     PoolsSet& pools) {
+  void emitStepBlock(Block& block, FileContext& ctx, list& lines, size_t depth, PoolsSet& pools) {
     std::string indent(depth * 2, ' ');
     for (Operation& op : block.without_terminator()) {
       mlir::TypeSwitch<Operation*>(&op)
           .Case<NondetOp>([&](NondetOp op) {
             lines.push_back(indent + "{");
-            emitStepBlock(op.getInner().front(), ctx, lines, depth + 1, isRecursion, pools);
+            emitStepBlock(op.getInner().front(), ctx, lines, depth + 1, pools);
             lines.push_back(indent + "}");
           })
           .Case<IfOp>([&](IfOp op) {
             lines.push_back(indent +
                             llvm::formatv("if ({0} != 0) {{", ctx.use(op.getCond())).str());
-            emitStepBlock(op.getInner().front(), ctx, lines, depth + 1, isRecursion, pools);
+            emitStepBlock(op.getInner().front(), ctx, lines, depth + 1, pools);
             lines.push_back(indent + "}");
           })
-          .Case<ExternOp>([&](ExternOp op) {
-            // TODO: remove this hack once host-side recursion code is unified with rv32im.
-            if (isRecursion) {
-              emitExternRecursion(op, ctx, lines, depth, pools);
-            } else {
-              emitExtern(op, ctx, lines, depth);
-            }
-          })
-          .Default([&](Operation* op) {
-            if (isRecursion) {
-              emitStepOp(op, ctx, lines, depth);
-            } else {
-              emitOperation(op, ctx, lines, depth, "Fp", FuncKind::Step);
-            }
-          });
-    }
-  }
-
-  // TODO: remove this hack once host-side recursion code is unified with rv32im.
-  void
-  emitExternRecursion(ExternOp op, FileContext& ctx, list& lines, size_t depth, PoolsSet& pools) {
-    std::string indent(depth * 2, ' ');
-    std::string pool = op.getExtra().str();
-    pools.insert(pool);
-    if (op.getName() == "plonkWriteAccum") {
-      lines.push_back(indent + llvm::formatv("{0}[cycle] = FpExt({1}, {2}, {3}, {4});",
-                                             pool,
-                                             emitOperand(op, ctx, 0),
-                                             emitOperand(op, ctx, 1),
-                                             emitOperand(op, ctx, 2),
-                                             emitOperand(op, ctx, 3))
-                                   .str());
-    } else if (op.getName() == "plonkReadAccum") {
-      for (size_t i = 0; i < kBabyBearExtSize; i++) {
-        lines.push_back(
-            indent +
-            llvm::formatv("auto {0} = {1}[cycle].elems[{2}];", ctx.def(op.getResult(i)), pool, i)
-                .str());
-      }
-    } else {
-      for (size_t i = 0; i < op.getIn().size(); i++) {
-        lines.push_back(
-            indent + llvm::formatv("host_args.at({0}) = {1};", i, ctx.use(op.getOperand(i))).str());
-      }
-      lines.push_back(indent + llvm::formatv("host(ctx, {0}, {1}, host_args.data(), {2}, "
-                                             "host_outs.data(), {3});",
-                                             escapeString(op.getName()),
-                                             escapeString(op.getExtra()),
-                                             op.getIn().size(),
-                                             op.getOut().size())
-                                   .str());
-      for (size_t i = 0; i < op.getOut().size(); i++) {
-        lines.push_back(
-            indent +
-            llvm::formatv("auto {0} = host_outs.at({1});", ctx.def(op.getResult(i)), i).str());
-      }
+          .Case<ExternOp>([&](ExternOp op) { emitExtern(op, ctx, lines, depth); })
+          .Default(
+              [&](Operation* op) { emitOperation(op, ctx, lines, depth, "Fp", FuncKind::Step); });
     }
   }
 

@@ -179,7 +179,7 @@ component ECallHostReadWords(cycle: Reg, input: InstInput, ptrWord: Val, len: Va
   ];
   count := reduce doWord init 0 with Add;
   for i : 0..4 {
-    addr := Reg(doWord[i] * (ptrWord + i) + (1 - doWord[i]) * SafeWriteWord());
+    addr := Reg(doWord[i] * (ptrWord + i) + (1 - doWord[i]) * (SafeWriteWord() + i));
     MemoryWriteUnconstrained(cycle, addr);
   };
   newLenHighZero := IsZero(lenDecomp.high - count);
