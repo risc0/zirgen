@@ -43,12 +43,6 @@ component Top() {
   next_state : Reg;
   next_machine_mode : Reg;
 
-  // Bind povwNonce to 0
-  for i : 0..8 {
-    povwNonce.values[i].low = 0;
-    povwNonce.values[i].high = 0;
-  };
-
   // Registerize first cycle + cycle number
   is_first_cycle := NondetBitReg(IsFirstCycle());
   // If first cycle, verify we terminate, either way return cycle #
@@ -63,7 +57,7 @@ component Top() {
   high_pc := (1 - is_first_cycle) * next_pc_high@1;
   pc_u32 := ValU32(low_pc, high_pc);
   // Get state (init state == 0)
-  state := (1 - is_first_cycle) * next_state@1 + is_first_cycle * StateLoadRoot();
+  state := (1 - is_first_cycle) * next_state@1 + is_first_cycle * StateLoadPovwNonce();
   // Get machine mode (init mode == 1)
   machine_mode := (1 - is_first_cycle) * next_machine_mode@1 + is_first_cycle;
   // Now, guess major + minor
