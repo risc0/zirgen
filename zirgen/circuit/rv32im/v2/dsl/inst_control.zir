@@ -20,30 +20,26 @@ component ControlLoadRoot(cycle: Reg, input: InstInput) {
   global povwNonce : DigestReg;
   // Constrain state to StateLoadPovwNonce or StateLoadRoot.
   // In each of the two states, we load a digest-sized value from globals into memory.
-  // QUESTION: What happens when an if is not in {0, 1} ?
+  // TODO: Extract MemoryPageIn from if to somewhat reduce constraint count.
   isStateLoadPovwNonce := IsZero(input.state - StateLoadPovwNonce());
-  nextState := if (isStateLoadPovwNonce) {
-    input.state = StateLoadPovwNonce();
-    StateLoadRoot()
-  } else {
-    StatePoseidonEntry()
-  };
-  addr := if (isStateLoadPovwNonce) {
-    PovwNonceWord()
-  } else {
-    RootWord()
-  };
-  for i : 0..8 {
-    mem := MemoryPageIn(cycle, addr + i);
-    if (isStateLoadPovwNonce) {
+  if (isStateLoadPovwNonce) {
+    // "Read" the PoVW nonce into memory.
+    for i : 0..8 {
+      mem := MemoryPageIn(cycle, PovwNonceWord() + i);
       povwNonce.values[i].low = mem.low;
       povwNonce.values[i].high = mem.high;
-    } else {
+    };
+    InstOutput(ValU32(0, 0), StateLoadRoot(), 0)
+  } else {
+    input.state = StateLoadRoot();
+    // "Read" the page tree root into memory, then start verifying page-in ops.
+    for i : 0..8 {
+      mem := MemoryPageIn(cycle, RootWord() + i);
       stateIn.values[i].low = mem.low;
       stateIn.values[i].high = mem.high;
-    }
-  };
-  InstOutput(ValU32(0, 0), nextState, 0)
+    };
+    InstOutput(ValU32(0, 0), StatePoseidonEntry(), 0)
+  }
 }
 
 component ControlResume(cycle: Reg, ii: InstInput) {
