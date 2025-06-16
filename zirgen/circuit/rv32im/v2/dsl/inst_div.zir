@@ -65,8 +65,6 @@ component DoDiv(numer: ValU32, denom: ValU32, signed: Val, ones_comp: Val) {
   // The top bits should all be 0 or all be 1
   topBitType := NondetBitReg(1 - Isz(mul.outHigh.low));
   AssertEqU32(mul.outHigh, ValU32(0xffff * topBitType, 0xffff * topBitType));
-  // Check if denom is zero
-  isZero := IsZero(denom.low + denom.high);
   // Get top bit of numerator
   topNum := NondetBitReg((numer.high & 0x8000) / 0x8000);
   // Verify we got it right
@@ -83,14 +81,37 @@ component DoDiv(numer: ValU32, denom: ValU32, signed: Val, ones_comp: Val) {
     numNeg * (0x10000 - rem.low) + (1 - numNeg) * rem.low,
     numNeg * (0xffff - rem.high) + (1 - numNeg) * rem.high
   ));
-  // Decide if we need to swap order of 
-  // If non-zero, make sure 0 <= rem < denom
-  if (isZero) {
+  // Now we use nondet 'guess' to pick which subcase we are in:
+  // 1) Denom = 0
+  // 2) Signed overflow case
+  // 3) All other cases
+  // We verify our guess was right in the two special cases by
+  // constraining the input
+  isZero := NondetBitReg(Isz(denom.low + denom.high));
+  signedOverflowCase := NondetBitReg(
+    signed *
+    Isz(numer.low - 0) * Isz(numer.high - 0x8000) * 
+    Isz(denom.low - 0xffff) * Isz(denom.high - 0xffff)
+  );
+  lt := CmpLessThanUnsigned(remNormal, denomAbs);
+  [isZero, signedOverflowCase, 1 - isZero - signedOverflowCase] -> (
+  {
+    // isZero case
+    AssertEqU32(denom, ValU32(0, 0));
     AssertEqU32(rem, numer);
-  } else {
-    lt := CmpLessThanUnsigned(remNormal, denomAbs);
+    AssertEqU32(quot, ValU32(0xffff, 0xffff));
+  }, {
+    // signed overflow case
+    signed = 1;
+    AssertEqU32(numer, ValU32(0, 0x8000));
+    AssertEqU32(denom, ValU32(0xffff, 0xffff));
+    AssertEqU32(quot, ValU32(0, 0x8000));
+    AssertEqU32(rem, ValU32(0, 0));
+  }, {
+    // all other cases
+    topBitType = numNeg;
     lt.is_less_than = 1;
-  };
+  });
   DivideReturn(quot, rem)
 }
 
