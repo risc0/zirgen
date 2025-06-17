@@ -212,10 +212,8 @@ ExecutionTrace runSegment(const Segment& segment, size_t segmentSize) {
     trace.global.set(getInputDigestGlobalCol() + 2 * i, segment.input.words[i] & 0xffff);
     trace.global.set(getInputDigestGlobalCol() + 2 * i + 1, segment.input.words[i] >> 16);
     // PoVW nonce
-    // TODO: Use nonce value instead of 0
-    // There is an equvelent on the Rust side.
-    trace.global.set(getPovwNonceGlobalCol() + 2 * i, 0);
-    trace.global.set(getPovwNonceGlobalCol() + 2 * i + 1, 0);
+    trace.global.set(getPovwNonceGlobalCol() + 2 * i, segment.povwNonce[i] & 0xffff);
+    trace.global.set(getPovwNonceGlobalCol() + 2 * i + 1, segment.povwNonce[i] >> 16);
   }
   // Set RNG
   for (size_t i = 0; i < 4; i++) {
