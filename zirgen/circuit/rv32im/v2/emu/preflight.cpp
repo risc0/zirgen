@@ -182,8 +182,9 @@ struct PreflightContext {
     if (word >= 0x40000000) {
       if (pageMemory.count(word)) {
         val = pageMemory.at(word);
-      } else if (true /*FIXME: check nonce addr range*/) {
-        val = 0;
+      } else if (word < 0x44000008) {
+        // TODO(povw) extract const
+        val = segment.povwNonce.at(word - 0x44000000);
       } else {
         throw std::runtime_error("Invalid load from page memory");
       }
