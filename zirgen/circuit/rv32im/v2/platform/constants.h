@@ -118,8 +118,9 @@ constexpr uint32_t POSEIDON1 = 10;
 // State of 32 -> Decode (major / minor determined by instruction)
 // State 0-32-> major = 7 + state / 8, minor = state % 8
 
-constexpr uint32_t STATE_LOAD_ROOT = 0;
-constexpr uint32_t STATE_RESUME = 1;
+constexpr uint32_t STATE_LOAD_POVW_NONCE = 0;
+constexpr uint32_t STATE_LOAD_ROOT = 1;
+constexpr uint32_t STATE_RESUME = 2;
 constexpr uint32_t STATE_SUSPEND = 4;
 constexpr uint32_t STATE_STORE_ROOT = 5;
 constexpr uint32_t STATE_CONTROL_TABLE = 6;

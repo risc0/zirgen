@@ -29,6 +29,7 @@ size_t CYCLE_COST_MERKLE = 1 + // POSEIDON_PAGING
                            1;  // PoseidonDoOut
 
 size_t CYCLE_COST_EXTRA = 1 + // LOAD_ROOT
+                          1 + // LOAD_POVW_NONCE
                           1 + // POSEIDON_ENTRY
                           // Page reads
                           1 + // POSEIDON_PAGING

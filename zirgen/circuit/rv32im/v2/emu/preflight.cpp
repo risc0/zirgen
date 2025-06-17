@@ -95,18 +95,19 @@ struct PreflightContext {
                             uint32_t nextState,
                             uint32_t pc,
                             const std::vector<Back>& backs = {}) {
+    // sus
     cycleComplete(nextState, pc, 7 + curState / 8, curState % 8, backs);
   }
 
   void resume() {
-    cycleCompleteSpecial(STATE_RESUME, STATE_RESUME, pc);
+    cycleComplete(STATE_RESUME, pc, MajorType::CONTROL0, ControlMinorType::RESUME);
     if (debug) {
       std::cout << trace.cycles.size() << " Resume\n";
     }
     for (size_t i = 0; i < 8; i++) {
       store(INPUT_WORD + i, 0);
     }
-    cycleCompleteSpecial(STATE_RESUME, STATE_DECODE, pc);
+    cycleComplete(STATE_DECODE, pc, MajorType::CONTROL0, ControlMinorType::RESUME);
   }
 
   void suspend() {
@@ -181,6 +182,8 @@ struct PreflightContext {
     if (word >= 0x40000000) {
       if (pageMemory.count(word)) {
         val = pageMemory.at(word);
+      } else if (true /*nonce addr*/) {
+        val = 0;
       } else {
         throw std::runtime_error("Invalid load from page memory");
       }
@@ -254,7 +257,15 @@ struct PreflightContext {
     for (size_t i = 0; i < 8; i++) {
       load(rootAddr + i);
     }
-    cycleCompleteSpecial(STATE_LOAD_ROOT, STATE_POSEIDON_ENTRY, 0);
+    cycleComplete(STATE_POSEIDON_ENTRY, 0, 0, 0);
+  }
+
+  void readPovwNonce() {
+    size_t povwNonceAddr = 0x44000000; // TODO: Extract const
+    for (size_t i = 0; i < 8; i++) {
+      load(povwNonceAddr + i);
+    }
+    cycleComplete(STATE_LOAD_ROOT, 0, 0, 0);
   }
 
   void readNode(size_t idx) { p2DoNode(*this, idx, true); }
@@ -308,6 +319,7 @@ PreflightTrace preflightSegment(const Segment& in, size_t segmentSize) {
   R0Context<PreflightContext> r0Context(preflightContext);
   RV32Emulator<R0Context<PreflightContext>> emu(r0Context);
 
+  preflightContext.readPovwNonce();
   // Do page in
   preflightContext.readRoot();
   auto pages = pager.readPaging();
