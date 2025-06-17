@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
     // Load image
     auto image = MemoryImage::fromRawElf(argv[1]);
     // Do executions
-    // TODO: don't include the nonce as is
+    // TODO(povw): don't include the nonce as is
     auto segments = execute(image, io, cycles, cycles, zirgen::Digest::zero(), {1, 2, 3, 4, 5, 6, 7});
     // Do 'run' (preflight + expansion)
     for (const auto& segment : segments) {

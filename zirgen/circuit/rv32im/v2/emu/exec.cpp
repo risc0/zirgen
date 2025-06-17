@@ -121,7 +121,7 @@ std::vector<Segment> execute(MemoryImage& in,
       ret.back().segmentThreshold = segmentThreshold;
       ret.back().povwNonce = povwNonce(povwJobId, ret.size() - 1);
 
-      // TODO: remove this
+      // TODO(povw): remove this
       std::cout << "povwNonce for segment" << ret.size() - 1 << " :";
       for (const auto& elem : ret.back().povwNonce) {
         std::cout << elem << " ";
@@ -152,7 +152,7 @@ std::vector<Segment> execute(MemoryImage& in,
   ret.back().image = pager.commit();
   ret.back().isTerminate = true;
 
-  // TODO: remove this
+  // TODO(povw): remove this
   std::cout << "final povwNonce for segment" << ret.size() - 1 << " :";
   for (const auto& elem : ret.back().povwNonce) {
     std::cout << elem << " ";
