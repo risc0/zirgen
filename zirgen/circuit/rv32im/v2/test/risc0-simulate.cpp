@@ -29,14 +29,15 @@ int main(int argc, char* argv[]) {
   LOG(1, "File = " << argv[1]);
   try {
     size_t cycles = 10000;
+    std::array<uint32_t, 7> povwJobId = {1, 2, 3, 4, 5, 6, 7};
+    zirgen::Digest input = zirgen::Digest::zero();
 
     TestIoHandler io;
 
     // Load image
     auto image = MemoryImage::fromRawElf(argv[1]);
     // Do executions
-    // TODO(povw): don't include the nonce as is
-    auto segments = execute(image, io, cycles, cycles, zirgen::Digest::zero(), {1, 2, 3, 4, 5, 6, 7});
+    auto segments = execute(image, io, cycles, cycles, input, povwJobId);
     // Do 'run' (preflight + expansion)
     for (const auto& segment : segments) {
       runSegment(segment, cycles);
