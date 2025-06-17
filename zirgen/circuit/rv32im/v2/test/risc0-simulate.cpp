@@ -15,6 +15,7 @@
 #include "risc0/core/log.h"
 #include "zirgen/circuit/rv32im/v2/platform/constants.h"
 #include "zirgen/circuit/rv32im/v2/run/run.h"
+#include "zirgen/compiler/zkp/digest.h"
 
 using namespace zirgen::rv32im_v2;
 
@@ -34,7 +35,8 @@ int main(int argc, char* argv[]) {
     // Load image
     auto image = MemoryImage::fromRawElf(argv[1]);
     // Do executions
-    auto segments = execute(image, io, cycles, cycles);
+    // TODO: don't include the nonce as is
+    auto segments = execute(image, io, cycles, cycles, zirgen::Digest::zero(), {1, 2, 3, 4, 5, 6, 7});
     // Do 'run' (preflight + expansion)
     for (const auto& segment : segments) {
       runSegment(segment, cycles);
