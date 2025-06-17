@@ -179,12 +179,12 @@ struct PreflightContext {
   // Pass memory ops to pager + record
   uint32_t load(uint32_t word) {
     uint32_t val;
-    if (word >= 0x40000000) {
+    if (word >= MEMORY_END_WORD) {
       if (pageMemory.count(word)) {
         val = pageMemory.at(word);
-      } else if (word < 0x44000008) {
+      } else if (word < POVW_NONCE_END_WORD) {
         // TODO(povw) extract const
-        val = segment.povwNonce.at(word - 0x44000000);
+        val = segment.povwNonce.at(word - POVW_NONCE_START_WORD);
       } else {
         throw std::runtime_error("Invalid load from page memory");
       }
@@ -207,7 +207,7 @@ struct PreflightContext {
 
   void store(uint32_t word, uint32_t val) {
     uint32_t prevVal;
-    if (word >= 0x40000000) {
+    if (word >= MEMORY_END_WORD) {
       if (!pageMemory.count(word)) {
         throw std::runtime_error("Invalid write to page memory");
       }
@@ -262,7 +262,7 @@ struct PreflightContext {
   }
 
   void readPovwNonce() {
-    size_t povwNonceAddr = 0x44000000; // TODO: Extract const
+    size_t povwNonceAddr = POVW_NONCE_START_WORD;
     for (size_t i = 0; i < 8; i++) {
       load(povwNonceAddr + i);
     }
