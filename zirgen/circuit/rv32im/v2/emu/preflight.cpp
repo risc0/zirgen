@@ -100,14 +100,14 @@ struct PreflightContext {
   }
 
   void resume() {
-    cycleComplete(STATE_RESUME, pc, MajorType::CONTROL0, ControlMinorType::RESUME);
+    cycleCompleteSpecial(STATE_RESUME, STATE_RESUME, pc);
     if (debug) {
       std::cout << trace.cycles.size() << " Resume\n";
     }
     for (size_t i = 0; i < 8; i++) {
       store(INPUT_WORD + i, 0);
     }
-    cycleComplete(STATE_DECODE, pc, MajorType::CONTROL0, ControlMinorType::RESUME);
+    cycleCompleteSpecial(STATE_RESUME, STATE_DECODE, pc);
   }
 
   void suspend() {
@@ -182,7 +182,7 @@ struct PreflightContext {
     if (word >= 0x40000000) {
       if (pageMemory.count(word)) {
         val = pageMemory.at(word);
-      } else if (true /*nonce addr*/) {
+      } else if (true /*FIXME: check nonce addr range*/) {
         val = 0;
       } else {
         throw std::runtime_error("Invalid load from page memory");
@@ -257,7 +257,7 @@ struct PreflightContext {
     for (size_t i = 0; i < 8; i++) {
       load(rootAddr + i);
     }
-    cycleComplete(STATE_POSEIDON_ENTRY, 0, 0, 0);
+    cycleCompleteSpecial(STATE_LOAD_ROOT, STATE_POSEIDON_ENTRY, 0);
   }
 
   void readPovwNonce() {
@@ -265,7 +265,7 @@ struct PreflightContext {
     for (size_t i = 0; i < 8; i++) {
       load(povwNonceAddr + i);
     }
-    cycleComplete(STATE_LOAD_ROOT, 0, 0, 0);
+    cycleCompleteSpecial(STATE_LOAD_ROOT, STATE_LOAD_ROOT, 0);
   }
 
   void readNode(size_t idx) { p2DoNode(*this, idx, true); }
