@@ -20,21 +20,25 @@ namespace zirgen::predicates {
 
 constexpr size_t kDigestHalfs = 16;
 
-// NOTE: Does not enforce range checks on the byte-limbs of the U32. As a result, a single U32 value
-// may have many representations. No arithmatic should be done on the limbs that would require them
-// to be in a certain range.
-struct U32Reg {
+// Register type used to store the PC value.
+//
+// PC value is stored as 4 elements, which are expected to be bytes given by the host, although they
+// are not directly constrained to be within the byte range. When calling `pc.flat()`, these bytes
+// are combined into a single field element. Only the flattened value is used within the recursion
+// programs, in particular the join program, and for computation of the ReceiptClaim digest. As a
+// result, the PC reg effectively stored a single element with multiple possible representations.
+struct PCReg {
   constexpr static size_t size = 4;
   // Default constructor
-  U32Reg() = default;
+  PCReg() = default;
   // Construct via reading from a stream
-  U32Reg(llvm::ArrayRef<Val>& stream);
+  PCReg(llvm::ArrayRef<Val>& stream);
   // Write to an output
   void write(std::vector<Val>& stream);
 
   Val flat();
 
-  static U32Reg zero();
+  static PCReg zero();
 
 private:
 
@@ -42,7 +46,7 @@ private:
 };
 
 struct SystemState {
-  constexpr static size_t size = kDigestHalfs + U32Reg::size;
+  constexpr static size_t size = kDigestHalfs + PCReg::size;
   // Default constructor
   SystemState() = default;
   // Construct via reading from a stream
@@ -50,7 +54,7 @@ struct SystemState {
   // Digest into a single value
   DigestVal digest();
 
-  U32Reg pc;
+  PCReg pc;
   DigestVal memory;
 };
 

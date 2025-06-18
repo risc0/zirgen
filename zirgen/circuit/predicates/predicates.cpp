@@ -66,21 +66,21 @@ void writeSha(DigestVal val, std::vector<Val>& stream) {
   }
 }
 
-U32Reg::U32Reg(llvm::ArrayRef<Val>& stream) {
+PCReg::PCReg(llvm::ArrayRef<Val>& stream) {
   for (size_t i = 0; i < 4; i++) {
     val[i] = readVal(stream);
   }
 }
 
-U32Reg U32Reg::zero() {
-  U32Reg ret;
+PCReg PCReg::zero() {
+  PCReg ret;
   for (size_t i = 0; i < 4; i++) {
     ret.val[i] = 0;
   }
   return ret;
 }
 
-Val U32Reg::flat() {
+Val PCReg::flat() {
   Val tot = 0;
   Val mul = 1;
   for (size_t i = 0; i < 4; i++) {
@@ -90,7 +90,7 @@ Val U32Reg::flat() {
   return tot;
 }
 
-void U32Reg::write(std::vector<Val>& stream) {
+void PCReg::write(std::vector<Val>& stream) {
   for (size_t i = 0; i < 4; i++) {
     stream.push_back(val[i]);
   }
@@ -240,10 +240,10 @@ ReceiptClaim ReceiptClaim::fromRv32imV2(llvm::ArrayRef<Val>& stream, size_t po2)
   claim.input = input;
   claim.output = output;
 
-  claim.pre.pc = U32Reg::zero();
+  claim.pre.pc = PCReg::zero();
   claim.pre.memory = stateIn;
 
-  claim.post.pc = U32Reg::zero();
+  claim.post.pc = PCReg::zero();
   eqz(isTerminate * (1 - isTerminate));
   std::vector zeroVec(16, Val(0));
   DigestVal zeroHash = intoDigest(zeroVec, DigestKind::Sha256);
