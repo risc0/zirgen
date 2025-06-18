@@ -55,6 +55,8 @@ struct U64Val {
 
   // Construct via reading from a stream
   U64Val(llvm::ArrayRef<Val>& stream);
+  // Write to an output
+  void write(std::vector<Val>& stream);
 
   // Add this + x as unsigned 64-bit integers.
   U64Val add(U64Val& x);
@@ -77,6 +79,8 @@ struct U256Val {
 
   // Construct via reading from a stream
   U256Val(llvm::ArrayRef<Val>& stream);
+  // Write to an output
+  void write(std::vector<Val>& stream);
 
   // Add this + x as unsigned 256-bit integers.
   U256Val add(U256Val& x);

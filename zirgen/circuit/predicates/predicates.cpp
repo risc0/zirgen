@@ -122,6 +122,12 @@ U64Val U64Val::add(U64Val& x) {
   return U64Val(out);
 }
 
+void U64Val::write(std::vector<Val>& stream) {
+  for (size_t i = 0; i < U64Val::size; i++) {
+    stream.push_back(shorts[i]);
+  }
+}
+
 U256Val U256Val::zero() {
   return U256Val({Val(0),
                   Val(0),
@@ -180,6 +186,12 @@ U256Val U256Val::add(U256Val& x) {
   // Disallow overflows.
   eqz(carry);
   return U256Val(out);
+}
+
+void U256Val::write(std::vector<Val>& stream) {
+  for (size_t i = 0; i < U256Val::size; i++) {
+    stream.push_back(shorts[i]);
+  }
 }
 
 SystemState::SystemState(llvm::ArrayRef<Val>& stream, bool longDigest)
