@@ -66,21 +66,17 @@ void writeSha(DigestVal val, std::vector<Val>& stream) {
   }
 }
 
-PCReg::PCReg(llvm::ArrayRef<Val>& stream) {
+PCVal::PCVal(llvm::ArrayRef<Val>& stream) {
   for (size_t i = 0; i < 4; i++) {
     val[i] = readVal(stream);
   }
 }
 
-PCReg PCReg::zero() {
-  PCReg ret;
-  for (size_t i = 0; i < 4; i++) {
-    ret.val[i] = 0;
-  }
-  return ret;
+PCVal PCVal::zero() {
+  return PCVal({Val(0), Val(0), Val(0), Val(0)});
 }
 
-Val PCReg::flat() {
+Val PCVal::flat() {
   Val tot = 0;
   Val mul = 1;
   for (size_t i = 0; i < 4; i++) {
@@ -88,12 +84,6 @@ Val PCReg::flat() {
     mul = mul * 256;
   }
   return tot;
-}
-
-void PCReg::write(std::vector<Val>& stream) {
-  for (size_t i = 0; i < 4; i++) {
-    stream.push_back(val[i]);
-  }
 }
 
 SystemState::SystemState(llvm::ArrayRef<Val>& stream, bool longDigest)
@@ -240,10 +230,10 @@ ReceiptClaim ReceiptClaim::fromRv32imV2(llvm::ArrayRef<Val>& stream, size_t po2)
   claim.input = input;
   claim.output = output;
 
-  claim.pre.pc = PCReg::zero();
+  claim.pre.pc = PCVal::zero();
   claim.pre.memory = stateIn;
 
-  claim.post.pc = PCReg::zero();
+  claim.post.pc = PCVal::zero();
   eqz(isTerminate * (1 - isTerminate));
   std::vector zeroVec(16, Val(0));
   DigestVal zeroHash = intoDigest(zeroVec, DigestKind::Sha256);

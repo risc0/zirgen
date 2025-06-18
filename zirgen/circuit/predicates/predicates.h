@@ -27,18 +27,20 @@ constexpr size_t kDigestHalfs = 16;
 // are combined into a single field element. Only the flattened value is used within the recursion
 // programs, in particular the join program, and for computation of the ReceiptClaim digest. As a
 // result, the PC reg effectively stored a single element with multiple possible representations.
-struct PCReg {
+struct PCVal {
   constexpr static size_t size = 4;
-  // Default constructor
-  PCReg() = default;
-  // Construct via reading from a stream
-  PCReg(llvm::ArrayRef<Val>& stream);
-  // Write to an output
-  void write(std::vector<Val>& stream);
 
+  PCVal() = delete;
+
+  explicit PCVal(const std::array<Val, 4>& arr) : val(arr) {}
+
+  // Construct via reading from a stream
+  PCVal(llvm::ArrayRef<Val>& stream);
+
+  // Return the field elem representation of the PC value.
   Val flat();
 
-  static PCReg zero();
+  static PCVal zero();
 
 private:
 
@@ -46,22 +48,22 @@ private:
 };
 
 struct SystemState {
-  constexpr static size_t size = kDigestHalfs + PCReg::size;
+  constexpr static size_t size = kDigestHalfs + PCVal::size;
   // Default constructor
-  SystemState() = default;
+  SystemState() = delete;
   // Construct via reading from a stream
   SystemState(llvm::ArrayRef<Val>& stream, bool longDigest = false);
   // Digest into a single value
   DigestVal digest();
 
-  PCReg pc;
+  PCVal pc;
   DigestVal memory;
 };
 
 struct ReceiptClaim {
   constexpr static size_t size = 2 * kDigestHalfs + 2 * SystemState::size + 2;
   // Default constructor
-  ReceiptClaim() = default;
+  ReceiptClaim() = delete;
   // Construct via reading from a stream
   ReceiptClaim(llvm::ArrayRef<Val>& stream, bool longDigest = false);
   // Digest into a single value
