@@ -70,6 +70,28 @@ private:
   std::array<Val, 4> shorts;
 };
 
+struct U256Val {
+  constexpr static size_t size = 16;
+
+  U256Val() = delete;
+
+  // Construct via reading from a stream
+  U256Val(llvm::ArrayRef<Val>& stream);
+
+  // Add this + x as unsigned 256-bit integers.
+  U256Val add(U256Val& x);
+
+  static U256Val zero();
+  static U256Val one();
+
+private:
+  // Direct, unchecked construction of a U256Val.
+  explicit U256Val(const std::array<Val, 16>& arr) : shorts(arr) {}
+
+  // Representation of the 64-bit uint as 4 16-bit limbs, little-endian.
+  std::array<Val, 16> shorts;
+};
+
 struct SystemState {
   constexpr static size_t size = kDigestHalfs + PCVal::size;
   // Default constructor

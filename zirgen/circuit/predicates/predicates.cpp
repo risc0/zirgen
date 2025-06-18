@@ -122,6 +122,36 @@ U64Val U64Val::add(U64Val& x) {
   return U64Val(out);
 }
 
+U256Val U256Val::zero() {
+  return U256Val({Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)});
+}
+
+U256Val U256Val::one() {
+  return U256Val({Val(1), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)});
+}
+
+U256Val::U256Val(llvm::ArrayRef<Val>& stream) {
+  for (size_t i = 0; i < U256Val::size; i++) {
+    Val val = readVal(stream);
+    // Ensure that the read value is at most 16 bits.
+    eq(val, val & 0xffff);
+    shorts[i] = val;
+  }
+}
+
+U256Val U256Val::add(U256Val& x) {
+  std::array<Val, U256Val::size> out;
+  Val carry = 0;
+  for (size_t i = 0; i < U256Val::size; i++) {
+    Val val = shorts.at(i) + x.shorts.at(i) + carry;
+    out.at(i) = val & 0xffff;
+    carry = (val - out.at(i)) / 0x10000;
+  }
+  // Disallow overflows.
+  eqz(carry);
+  return U256Val(out);
+}
+
 SystemState::SystemState(llvm::ArrayRef<Val>& stream, bool longDigest)
     : pc(stream), memory(readSha(stream, longDigest)) {}
 
