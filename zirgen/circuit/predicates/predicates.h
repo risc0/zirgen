@@ -29,13 +29,12 @@ constexpr size_t kDigestHalfs = 16;
 // result, the PC reg effectively stored a single element with multiple possible representations.
 struct PCVal {
   constexpr static size_t size = 4;
-
-  PCVal() = delete;
-
-  explicit PCVal(const std::array<Val, 4>& arr) : val(arr) {}
-
+  // Default constructor
+  PCVal() = default;
   // Construct via reading from a stream
   PCVal(llvm::ArrayRef<Val>& stream);
+  // Write to an output
+  void write(std::vector<Val>& stream);
 
   // Return the field elem representation of the PC value.
   Val flat();
@@ -43,6 +42,8 @@ struct PCVal {
   static PCVal zero();
 
 private:
+  // Direct construction of a PCVal.
+  explicit PCVal(const std::array<Val, 4>& arr) : val(arr) {}
 
   std::array<Val, 4> val;
 };
@@ -50,9 +51,11 @@ private:
 struct SystemState {
   constexpr static size_t size = kDigestHalfs + PCVal::size;
   // Default constructor
-  SystemState() = delete;
+  SystemState() = default;
   // Construct via reading from a stream
   SystemState(llvm::ArrayRef<Val>& stream, bool longDigest = false);
+  // Write to an output
+  void write(std::vector<Val>& stream);
   // Digest into a single value
   DigestVal digest();
 
@@ -63,9 +66,11 @@ struct SystemState {
 struct ReceiptClaim {
   constexpr static size_t size = 2 * kDigestHalfs + 2 * SystemState::size + 2;
   // Default constructor
-  ReceiptClaim() = delete;
+  ReceiptClaim() = default;
   // Construct via reading from a stream
   ReceiptClaim(llvm::ArrayRef<Val>& stream, bool longDigest = false);
+  // Write to an output
+  void write(std::vector<Val>& stream);
   // Digest into a single value
   DigestVal digest();
 
