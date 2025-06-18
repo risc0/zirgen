@@ -67,7 +67,7 @@ void writeSha(DigestVal val, std::vector<Val>& stream) {
 }
 
 PCVal::PCVal(llvm::ArrayRef<Val>& stream) {
-  for (size_t i = 0; i < 4; i++) {
+  for (size_t i = 0; i < PCVal::size; i++) {
     val[i] = readVal(stream);
   }
 }
@@ -79,7 +79,7 @@ PCVal PCVal::zero() {
 Val PCVal::flat() {
   Val tot = 0;
   Val mul = 1;
-  for (size_t i = 0; i < 4; i++) {
+  for (size_t i = 0; i < PCVal::size; i++) {
     tot = tot + mul * val[i];
     mul = mul * 256;
   }
@@ -87,9 +87,39 @@ Val PCVal::flat() {
 }
 
 void PCVal::write(std::vector<Val>& stream) {
-  for (size_t i = 0; i < 4; i++) {
+  for (size_t i = 0; i < PCVal::size; i++) {
     stream.push_back(val[i]);
   }
+}
+
+U64Val U64Val::zero() {
+  return U64Val({Val(0), Val(0), Val(0), Val(0)});
+}
+
+U64Val U64Val::one() {
+  return U64Val({Val(1), Val(0), Val(0), Val(0)});
+}
+
+U64Val::U64Val(llvm::ArrayRef<Val>& stream) {
+  for (size_t i = 0; i < U64Val::size; i++) {
+    Val val = readVal(stream);
+    // Ensure that the read value is at most 16 bits.
+    eq(val, val & 0xffff);
+    shorts[i] = val;
+  }
+}
+
+U64Val U64Val::add(U64Val& x) {
+  std::array<Val, U64Val::size> out;
+  Val carry = 0;
+  for (size_t i = 0; i < U64Val::size; i++) {
+    Val val = shorts.at(i) + x.shorts.at(i) + carry;
+    out.at(i) = val & 0xffff;
+    carry = (val - out.at(i)) / 0x10000;
+  }
+  // Disallow overflows.
+  eqz(carry);
+  return U64Val(out);
 }
 
 SystemState::SystemState(llvm::ArrayRef<Val>& stream, bool longDigest)
