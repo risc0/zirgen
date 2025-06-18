@@ -123,11 +123,41 @@ U64Val U64Val::add(U64Val& x) {
 }
 
 U256Val U256Val::zero() {
-  return U256Val({Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)});
+  return U256Val({Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0)});
 }
 
 U256Val U256Val::one() {
-  return U256Val({Val(1), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0), Val(0)});
+  return U256Val({Val(1),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0)});
 }
 
 U256Val::U256Val(llvm::ArrayRef<Val>& stream) {

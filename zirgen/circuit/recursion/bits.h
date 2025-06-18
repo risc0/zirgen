@@ -34,7 +34,8 @@ namespace zirgen::recursion {
 //
 // Output:
 // * If operands[2] is 0, compute XOR: [a, b, 0, 0] ^ [c, d, 0, 0] -> [a ^ c, b ^ d, 0, 0]
-// * If operands[2] is 1, compute AND + combine: [a, b, 0, 0] & [c, d, 0, 0] -> [(a & c) + ((b & d) << 16), 0, 0, 0]
+// * If operands[2] is 1, compute AND + combine: [a, b, 0, 0] & [c, d, 0, 0] -> [(a & c) + ((b & d)
+// << 16), 0, 0, 0]
 struct BitOpShortsImpl : public CompImpl<BitOpShortsImpl> {
   BitOpShortsImpl(WomHeader header);
   void set(MacroInst inst, Val writeAddr);
@@ -63,8 +64,8 @@ using BitOpShorts = Comp<BitOpShortsImpl>;
 //
 // Output:
 //
-// A base field elem equal to the bitwise AND of the standard, reduced representations of two base field inputs.
-// [a, 0, 0, 0] & [b, 0, 0, 0] -> [a & b, 0, 0, 0]
+// A base field elem equal to the bitwise AND of the standard, reduced representations of two base
+// field inputs. [a, 0, 0, 0] & [b, 0, 0, 0] -> [a & b, 0, 0, 0]
 struct BitAndElemImpl : public CompImpl<BitAndElemImpl> {
   BitAndElemImpl(WomHeader header);
   void set(MacroInst inst, Val writeAddr);

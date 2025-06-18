@@ -138,7 +138,6 @@ std::vector<Segment> execute(MemoryImage& in,
 
       ret.back().input = input;
 
-
       execContext.segment = &ret.back();
       r0Context.resume();
     }
