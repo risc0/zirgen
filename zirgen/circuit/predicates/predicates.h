@@ -20,6 +20,9 @@ namespace zirgen::predicates {
 
 constexpr size_t kDigestHalfs = 16;
 
+// NOTE: Does not enforce range checks on the byte-limbs of the U32. As a result, a single U32 value
+// may have many representations. No arithmatic should be done on the limbs that would require them
+// to be in a certain range.
 struct U32Reg {
   constexpr static size_t size = 4;
   // Default constructor
@@ -33,6 +36,8 @@ struct U32Reg {
 
   static U32Reg zero();
 
+private:
+
   std::array<Val, 4> val;
 };
 
@@ -42,8 +47,6 @@ struct SystemState {
   SystemState() = default;
   // Construct via reading from a stream
   SystemState(llvm::ArrayRef<Val>& stream, bool longDigest = false);
-  // Write to an output
-  void write(std::vector<Val>& stream);
   // Digest into a single value
   DigestVal digest();
 
@@ -57,8 +60,6 @@ struct ReceiptClaim {
   ReceiptClaim() = default;
   // Construct via reading from a stream
   ReceiptClaim(llvm::ArrayRef<Val>& stream, bool longDigest = false);
-  // Write to an output
-  void write(std::vector<Val>& stream);
   // Digest into a single value
   DigestVal digest();
 

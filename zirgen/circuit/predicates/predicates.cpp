@@ -99,11 +99,6 @@ void U32Reg::write(std::vector<Val>& stream) {
 SystemState::SystemState(llvm::ArrayRef<Val>& stream, bool longDigest)
     : pc(stream), memory(readSha(stream, longDigest)) {}
 
-void SystemState::write(std::vector<Val>& stream) {
-  pc.write(stream);
-  writeSha(memory, stream);
-}
-
 DigestVal SystemState::digest() {
   return taggedStruct("risc0.SystemState", {memory}, {pc.flat()});
 }
@@ -115,15 +110,6 @@ ReceiptClaim::ReceiptClaim(llvm::ArrayRef<Val>& stream, bool longDigest)
     , sysExit(readVal(stream))
     , userExit(readVal(stream))
     , output(readSha(stream, longDigest)) {}
-
-void ReceiptClaim::write(std::vector<Val>& stream) {
-  writeSha(input, stream);
-  pre.write(stream);
-  post.write(stream);
-  stream.push_back(sysExit);
-  stream.push_back(userExit);
-  writeSha(output, stream);
-}
 
 DigestVal ReceiptClaim::digest() {
   return taggedStruct(
