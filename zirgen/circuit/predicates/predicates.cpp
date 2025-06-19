@@ -92,6 +92,13 @@ void PCVal::write(std::vector<Val>& stream) {
   }
 }
 
+U64Val::U64Val(uint64_t x) {
+  for (size_t i = 0; i < U64Val::size; i++) {
+    size_t shift = 16 * i;
+    shorts[i] = (x & (0xffff << shift)) >> shift;
+  }
+}
+
 U64Val U64Val::zero() {
   return U64Val({Val(0), Val(0), Val(0), Val(0)});
 }
@@ -104,7 +111,7 @@ U64Val::U64Val(llvm::ArrayRef<Val>& stream) {
   for (size_t i = 0; i < U64Val::size; i++) {
     Val val = readVal(stream);
     // Ensure that the read value is at most 16 bits.
-    eq(val, val & 0xffff);
+    zirgen::eq(val, val & 0xffff);
     shorts[i] = val;
   }
 }
@@ -120,6 +127,12 @@ U64Val U64Val::add(U64Val& x) {
   // Disallow overflows.
   eqz(carry);
   return U64Val(out);
+}
+
+void U64Val::eq(U64Val& a, U64Val& b) {
+  for (size_t i = 0; i < U64Val::size; i++) {
+    zirgen::eq(a.shorts.at(i), b.shorts.at(i));
+  }
 }
 
 void U64Val::write(std::vector<Val>& stream) {
@@ -170,7 +183,7 @@ U256Val::U256Val(llvm::ArrayRef<Val>& stream) {
   for (size_t i = 0; i < U256Val::size; i++) {
     Val val = readVal(stream);
     // Ensure that the read value is at most 16 bits.
-    eq(val, val & 0xffff);
+    zirgen::eq(val, val & 0xffff);
     shorts[i] = val;
   }
 }
@@ -186,6 +199,12 @@ U256Val U256Val::add(U256Val& x) {
   // Disallow overflows.
   eqz(carry);
   return U256Val(out);
+}
+
+void U256Val::eq(U256Val& a, U256Val& b) {
+  for (size_t i = 0; i < U256Val::size; i++) {
+    zirgen::eq(a.shorts.at(i), b.shorts.at(i));
+  }
 }
 
 void U256Val::write(std::vector<Val>& stream) {
@@ -246,6 +265,24 @@ void UnionClaim::write(std::vector<Val>& stream) {
 
 DigestVal UnionClaim::digest() {
   return taggedStruct("risc0.UnionClaim", {left, right}, {});
+}
+
+Work::Work(llvm::ArrayRef<Val>& stream) : nonceMin(stream), nonceMax(stream), value(stream) {}
+
+DigestVal Work::digest() {
+  std::vector<Val> vals;
+  write(vals);
+  return taggedStruct("risc0.Work", {}, vals);
+}
+
+void Work::write(std::vector<Val>& stream) {
+  nonceMin.write(stream);
+  nonceMax.write(stream);
+  value.write(stream);
+}
+
+ReceiptClaim identity(ReceiptClaim in) {
+  return in;
 }
 
 ReceiptClaim join(ReceiptClaim claim1, ReceiptClaim claim2) {
@@ -312,16 +349,37 @@ ReceiptClaim resolve(ReceiptClaim cond, Assumption assum, DigestVal tail, Digest
   return claimOut;
 }
 
-ReceiptClaim identity(ReceiptClaim in) {
-  // Make an empty output
-  return in;
-}
-
 UnionClaim unionFunc(Assumption left, Assumption right) {
   UnionClaim claim;
   claim.left = left.digest();
   claim.right = right.digest();
   return claim;
+}
+
+WorkClaim<ReceiptClaim> wrap_povw(size_t po2, U256Val nonce, ReceiptClaim claim) {
+  Work work(nonce, nonce, U64Val(1 << uint64_t(po2)));
+  return WorkClaim(claim, work);
+}
+
+WorkClaim<ReceiptClaim> join_povw(WorkClaim<ReceiptClaim> a, WorkClaim<ReceiptClaim> b) {
+  auto one = U256Val::one();
+  auto bNonceMinPlusOne = b.work.nonceMin.add(one);
+  U256Val::eq(a.work.nonceMax, bNonceMinPlusOne);
+
+  Work work(a.work.nonceMin, b.work.nonceMax, a.work.value.add(b.work.value));
+  auto claim = join(a.claim, b.claim);
+
+  return WorkClaim(claim, work);
+}
+
+WorkClaim<ReceiptClaim>
+resolve_povw(WorkClaim<ReceiptClaim> cond, Assumption assum, DigestVal tail, DigestVal journal) {
+  auto claim = resolve(cond.claim, assum, tail, journal);
+  return WorkClaim(claim, cond.work);
+}
+
+ReceiptClaim unwrap_povw(WorkClaim<ReceiptClaim> claim) {
+  return claim.claim;
 }
 
 ReceiptClaim ReceiptClaim::fromRv32imV2(llvm::ArrayRef<Val>& stream, size_t po2) {

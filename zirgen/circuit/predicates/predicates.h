@@ -53,6 +53,9 @@ struct U64Val {
 
   U64Val() = delete;
 
+  // Create a const-valued U64Val
+  U64Val(uint64_t x);
+
   // Construct via reading from a stream
   U64Val(llvm::ArrayRef<Val>& stream);
   // Write to an output
@@ -60,6 +63,8 @@ struct U64Val {
 
   // Add this + x as unsigned 64-bit integers.
   U64Val add(U64Val& x);
+
+  static void eq(U64Val& a, U64Val& b);
 
   static U64Val zero();
   static U64Val one();
@@ -84,6 +89,8 @@ struct U256Val {
 
   // Add this + x as unsigned 256-bit integers.
   U256Val add(U256Val& x);
+
+  static void eq(U256Val& a, U256Val& b);
 
   static U256Val zero();
   static U256Val one();
@@ -172,15 +179,69 @@ struct UnionClaim {
   DigestVal right;
 };
 
-// ReciptClaim lift(size_t po2, ReadIopVal seal);
+struct Work {
+  constexpr static size_t size = 2 * U256Val::size + U64Val::size;
+
+  Work() = delete;
+
+  explicit Work(U256Val nonceMin, U256Val nonceMax, U64Val value)
+      : nonceMin(nonceMin), nonceMax(nonceMax), value(value) {}
+
+  // Construct via reading from a stream
+  Work(llvm::ArrayRef<Val>& stream);
+  // Write to an output
+  void write(std::vector<Val>& stream);
+  // Digest into a single value
+  DigestVal digest();
+
+  // Lowest nonce in the range of used nonces, inclusive.
+  U256Val nonceMin;
+  // Highest nonce in the range of used nonces, inclusive.
+  U256Val nonceMax;
+  // Value of the proving work (e.g. cycles) accumulated.
+  U64Val value;
+};
+
+Val readVal(llvm::ArrayRef<Val>& stream);
+DigestVal readSha(llvm::ArrayRef<Val>& stream, bool longDigest = false);
+void writeSha(DigestVal val, std::vector<Val>& stream);
+
+template <typename Claim> struct WorkClaim {
+  constexpr static size_t size = Claim::size + Work::size;
+
+  WorkClaim() = delete;
+
+  explicit WorkClaim(Claim claim, Work work) : claim(claim), work(work) {}
+
+  // Construct via reading from a stream
+  WorkClaim(llvm::ArrayRef<Val>& stream, bool longDigest = false)
+      : claim(readSha(stream, longDigest)), work(stream) {}
+  // Write to an output
+  void write(std::vector<Val>& stream) {
+    writeSha(claim, stream);
+    work.write(stream);
+  }
+  // Digest into a single value
+  DigestVal digest() { return taggedStruct("risc0.WorkClaim", {claim, work.digest()}, {}); }
+
+  // The underlying claim.
+  //
+  // No restrictions are applied as to what claim type this commits to.
+  // In practice the PoVW recursion programs all operate over ReceiptClaim.
+  Claim claim;
+  // Work associated with proving this claim.
+  Work work;
+};
 
 ReceiptClaim join(ReceiptClaim in1, ReceiptClaim in2);
 ReceiptClaim identity(ReceiptClaim in);
 ReceiptClaim resolve(ReceiptClaim cond, Assumption assum, DigestVal tail, DigestVal journal);
 
-Val readVal(llvm::ArrayRef<Val>& stream);
-DigestVal readSha(llvm::ArrayRef<Val>& stream, bool longDigest = false);
-void writeSha(DigestVal val, std::vector<Val>& stream);
+WorkClaim<ReceiptClaim> wrap_povw(size_t po2, U256Val nonce, ReceiptClaim claim);
+WorkClaim<ReceiptClaim> join_povw(WorkClaim<ReceiptClaim> a, WorkClaim<ReceiptClaim> b);
+WorkClaim<ReceiptClaim>
+resolve_povw(WorkClaim<ReceiptClaim> cond, Assumption assum, DigestVal tail, DigestVal journal);
+ReceiptClaim unwrap_povw(WorkClaim<ReceiptClaim> claim);
 
 // Cannot be called "union" as that is a keyword.
 UnionClaim unionFunc(Assumption left, Assumption right);
