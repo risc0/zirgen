@@ -116,7 +116,7 @@ U64Val::U64Val(llvm::ArrayRef<Val>& stream) {
   }
 }
 
-U64Val U64Val::add(U64Val& x) {
+U64Val U64Val::add(const U64Val& x) {
   std::array<Val, U64Val::size> out;
   Val carry = 0;
   for (size_t i = 0; i < U64Val::size; i++) {
@@ -188,7 +188,7 @@ U256Val::U256Val(llvm::ArrayRef<Val>& stream) {
   }
 }
 
-U256Val U256Val::add(U256Val& x) {
+U256Val U256Val::add(const U256Val& x) {
   std::array<Val, U256Val::size> out;
   Val carry = 0;
   for (size_t i = 0; i < U256Val::size; i++) {
@@ -201,7 +201,7 @@ U256Val U256Val::add(U256Val& x) {
   return U256Val(out);
 }
 
-void U256Val::eq(U256Val& a, U256Val& b) {
+void U256Val::eq(const U256Val& a, const U256Val& b) {
   for (size_t i = 0; i < U256Val::size; i++) {
     zirgen::eq(a.shorts.at(i), b.shorts.at(i));
   }
@@ -362,9 +362,7 @@ WorkClaim<ReceiptClaim> wrap_povw(size_t po2, U256Val nonce, ReceiptClaim claim)
 }
 
 WorkClaim<ReceiptClaim> join_povw(WorkClaim<ReceiptClaim> a, WorkClaim<ReceiptClaim> b) {
-  auto one = U256Val::one();
-  auto bNonceMinPlusOne = b.work.nonceMin.add(one);
-  U256Val::eq(a.work.nonceMax, bNonceMinPlusOne);
+  U256Val::eq(a.work.nonceMax, b.work.nonceMin.add(U256Val::one()));
 
   Work work(a.work.nonceMin, b.work.nonceMax, a.work.value.add(b.work.value));
   auto claim = join(a.claim, b.claim);

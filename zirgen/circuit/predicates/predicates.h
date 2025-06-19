@@ -62,7 +62,7 @@ struct U64Val {
   void write(std::vector<Val>& stream);
 
   // Add this + x as unsigned 64-bit integers.
-  U64Val add(U64Val& x);
+  U64Val add(const U64Val& x);
 
   static void eq(U64Val& a, U64Val& b);
 
@@ -88,9 +88,9 @@ struct U256Val {
   void write(std::vector<Val>& stream);
 
   // Add this + x as unsigned 256-bit integers.
-  U256Val add(U256Val& x);
+  U256Val add(const U256Val& x);
 
-  static void eq(U256Val& a, U256Val& b);
+  static void eq(const U256Val& a, const U256Val& b);
 
   static U256Val zero();
   static U256Val one();
