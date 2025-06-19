@@ -84,6 +84,7 @@ struct MacroInstImpl : public CompImpl<MacroInstImpl> {
   MacroInstImpl();
 
   OneHot<MACRO_OPCODE_COUNT> opcode;
+  // Operands for the macro op. Each macro op has three operands.
   std::vector<Reg> operands;
 };
 using MacroInst = Comp<MacroInstImpl>;
