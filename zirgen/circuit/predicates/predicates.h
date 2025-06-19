@@ -215,14 +215,14 @@ template <typename Claim> struct WorkClaim {
 
   // Construct via reading from a stream
   WorkClaim(llvm::ArrayRef<Val>& stream, bool longDigest = false)
-      : claim(readSha(stream, longDigest)), work(stream) {}
+      : claim(stream, longDigest), work(stream) {}
   // Write to an output
   void write(std::vector<Val>& stream) {
-    writeSha(claim, stream);
+    claim.write(stream);
     work.write(stream);
   }
   // Digest into a single value
-  DigestVal digest() { return taggedStruct("risc0.WorkClaim", {claim, work.digest()}, {}); }
+  DigestVal digest() { return taggedStruct("risc0.WorkClaim", {claim.digest(), work.digest()}, {}); }
 
   // The underlying claim.
   //
@@ -233,8 +233,11 @@ template <typename Claim> struct WorkClaim {
   Work work;
 };
 
+template<typename Claim> Claim identity(Claim in) {
+  return in;
+}
+
 ReceiptClaim join(ReceiptClaim in1, ReceiptClaim in2);
-ReceiptClaim identity(ReceiptClaim in);
 ReceiptClaim resolve(ReceiptClaim cond, Assumption assum, DigestVal tail, DigestVal journal);
 
 WorkClaim<ReceiptClaim> wrap_povw(size_t po2, U256Val nonce, ReceiptClaim claim);
@@ -245,5 +248,7 @@ ReceiptClaim unwrap_povw(WorkClaim<ReceiptClaim> claim);
 
 // Cannot be called "union" as that is a keyword.
 UnionClaim unionFunc(Assumption left, Assumption right);
+
+std::pair<ReceiptClaim, U256Val> readReceiptClaimAndPovwNonce(llvm::ArrayRef<Val>& stream, size_t po2);
 
 } // namespace zirgen::predicates

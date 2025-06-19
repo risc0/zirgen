@@ -281,10 +281,6 @@ void Work::write(std::vector<Val>& stream) {
   value.write(stream);
 }
 
-ReceiptClaim identity(ReceiptClaim in) {
-  return in;
-}
-
 ReceiptClaim join(ReceiptClaim claim1, ReceiptClaim claim2) {
   // Make an empty output
   ReceiptClaim claimOut;
@@ -380,7 +376,7 @@ ReceiptClaim unwrap_povw(WorkClaim<ReceiptClaim> claim) {
   return claim.claim;
 }
 
-ReceiptClaim ReceiptClaim::fromRv32imV2(llvm::ArrayRef<Val>& stream, size_t po2) {
+std::pair<ReceiptClaim, U256Val> readReceiptClaimAndPovwNonce(llvm::ArrayRef<Val>& stream, size_t po2) {
   // NOTE: Ordering of these read operations must match the layout of the circuit globals.
   // This ordering can be found in the generated rv32im.cpp.inc file as _globalLayout
   DigestVal input = readSha(stream);
@@ -388,7 +384,7 @@ ReceiptClaim ReceiptClaim::fromRv32imV2(llvm::ArrayRef<Val>& stream, size_t po2)
   DigestVal output = readSha(stream);
   // NOTE: povwNonce is not part of the rv32im claim, and its value does not matter for the validity
   // of the ReceiptClaim. This nonce is used only for the PoVW accounting logic.
-  /*DigestVal povwNonce =*/readSha(stream);
+  U256Val povwNonce(stream);
   // NOTE: rng is not part of the claim, and is fully constrained by the circuit. It is included in
   // the globals because putting it there made the circuit construction easier.
   /*Val rng =*/readExtVal(stream);
@@ -423,7 +419,11 @@ ReceiptClaim ReceiptClaim::fromRv32imV2(llvm::ArrayRef<Val>& stream, size_t po2)
   claim.sysExit = (2 - 2 * isTerminate) + (isTerminate * termA0Low);
   claim.userExit = isTerminate * termA0High;
 
-  return claim;
+  return std::make_pair(claim, povwNonce);
+}
+
+ReceiptClaim ReceiptClaim::fromRv32imV2(llvm::ArrayRef<Val>& stream, size_t po2) {
+  return readReceiptClaimAndPovwNonce(stream, po2).first;
 }
 
 } // namespace zirgen::predicates
