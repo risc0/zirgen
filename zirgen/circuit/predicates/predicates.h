@@ -222,7 +222,9 @@ template <typename Claim> struct WorkClaim {
     work.write(stream);
   }
   // Digest into a single value
-  DigestVal digest() { return taggedStruct("risc0.WorkClaim", {claim.digest(), work.digest()}, {}); }
+  DigestVal digest() {
+    return taggedStruct("risc0.WorkClaim", {claim.digest(), work.digest()}, {});
+  }
 
   // The underlying claim.
   //
@@ -233,7 +235,7 @@ template <typename Claim> struct WorkClaim {
   Work work;
 };
 
-template<typename Claim> Claim identity(Claim in) {
+template <typename Claim> Claim identity(Claim in) {
   return in;
 }
 
@@ -249,6 +251,7 @@ ReceiptClaim unwrap_povw(WorkClaim<ReceiptClaim> claim);
 // Cannot be called "union" as that is a keyword.
 UnionClaim unionFunc(Assumption left, Assumption right);
 
-std::pair<ReceiptClaim, U256Val> readReceiptClaimAndPovwNonce(llvm::ArrayRef<Val>& stream, size_t po2);
+std::pair<ReceiptClaim, U256Val> readReceiptClaimAndPovwNonce(llvm::ArrayRef<Val>& stream,
+                                                              size_t po2);
 
 } // namespace zirgen::predicates

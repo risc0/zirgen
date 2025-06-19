@@ -376,7 +376,8 @@ ReceiptClaim unwrap_povw(WorkClaim<ReceiptClaim> claim) {
   return claim.claim;
 }
 
-std::pair<ReceiptClaim, U256Val> readReceiptClaimAndPovwNonce(llvm::ArrayRef<Val>& stream, size_t po2) {
+std::pair<ReceiptClaim, U256Val> readReceiptClaimAndPovwNonce(llvm::ArrayRef<Val>& stream,
+                                                              size_t po2) {
   // NOTE: Ordering of these read operations must match the layout of the circuit globals.
   // This ordering can be found in the generated rv32im.cpp.inc file as _globalLayout
   DigestVal input = readSha(stream);

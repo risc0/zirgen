@@ -138,7 +138,8 @@ void addRv32imV2LiftPovw(Module& module, const std::string name, const std::stri
   }
 }
 
-template <typename Claim, typename Func> void addJoin(Module& module, const std::string& name, Func func) {
+template <typename Claim, typename Func>
+void addJoin(Module& module, const std::string& name, Func func) {
   module.addFunc<4>(name,
                     {gbuf(recursion::kOutSize), ioparg(), ioparg(), ioparg()},
                     [&](Buffer out, ReadIopVal rootIop, ReadIopVal in1, ReadIopVal in2) {
@@ -152,7 +153,8 @@ template <typename Claim, typename Func> void addJoin(Module& module, const std:
                     });
 }
 
-template <typename Claim, typename Func> void addResolve(Module& module, const std::string& name, Func func) {
+template <typename Claim, typename Func>
+void addResolve(Module& module, const std::string& name, Func func) {
   module.addFunc<6>(name,
                     {gbuf(recursion::kOutSize), ioparg(), ioparg(), ioparg(), ioparg(), ioparg()},
                     [&](Buffer out,
@@ -179,7 +181,8 @@ template <typename Claim, typename Func> void addResolve(Module& module, const s
                     });
 }
 
-template <typename Claim, typename Func> void addUnary(Module& module, const std::string& name, Func func) {
+template <typename Claim, typename Func>
+void addUnary(Module& module, const std::string& name, Func func) {
   module.addFunc<3>(name,
                     {gbuf(recursion::kOutSize), ioparg(), ioparg()},
                     [&](Buffer out, ReadIopVal rootIop, ReadIopVal in) {
@@ -240,25 +243,36 @@ int main(int argc, char* argv[]) {
   addRv32imV2LiftPovw(module, "lift_rv32im_v2_povw", rv32imV2IR.getValue());
 
   addJoin<ReceiptClaim>(module, "join", [&](ReceiptClaim a, ReceiptClaim b) { return join(a, b); });
-  addJoin<WorkClaim<ReceiptClaim>>(module, "join_povw", [&](WorkClaim<ReceiptClaim> a, WorkClaim<ReceiptClaim> b) { return join_povw(a, b); });
-  addJoin<WorkClaim<ReceiptClaim>>(module, "join_unwrap_povw", [&](WorkClaim<ReceiptClaim> a, WorkClaim<ReceiptClaim> b) { return unwrap_povw(join_povw(a, b)); });
+  addJoin<WorkClaim<ReceiptClaim>>(
+      module, "join_povw", [&](WorkClaim<ReceiptClaim> a, WorkClaim<ReceiptClaim> b) {
+        return join_povw(a, b);
+      });
+  addJoin<WorkClaim<ReceiptClaim>>(
+      module, "join_unwrap_povw", [&](WorkClaim<ReceiptClaim> a, WorkClaim<ReceiptClaim> b) {
+        return unwrap_povw(join_povw(a, b));
+      });
 
   addResolve<ReceiptClaim>(
       module, "resolve", [&](ReceiptClaim a, Assumption b, DigestVal tail, DigestVal journal) {
         return resolve(a, b, tail, journal);
       });
   addResolve<WorkClaim<ReceiptClaim>>(
-      module, "resolve_povw", [&](WorkClaim<ReceiptClaim> a, Assumption b, DigestVal tail, DigestVal journal) {
+      module,
+      "resolve_povw",
+      [&](WorkClaim<ReceiptClaim> a, Assumption b, DigestVal tail, DigestVal journal) {
         return resolve_povw(a, b, tail, journal);
       });
   addResolve<WorkClaim<ReceiptClaim>>(
-      module, "resolve_unwrap_povw", [&](WorkClaim<ReceiptClaim> a, Assumption b, DigestVal tail, DigestVal journal) {
+      module,
+      "resolve_unwrap_povw",
+      [&](WorkClaim<ReceiptClaim> a, Assumption b, DigestVal tail, DigestVal journal) {
         return unwrap_povw(resolve_povw(a, b, tail, journal));
       });
 
   addUnary<ReceiptClaim>(module, "identity", [&](ReceiptClaim a) { return identity(a); });
 
-  addUnary<WorkClaim<ReceiptClaim>>(module, "unwrap_povw", [&](WorkClaim<ReceiptClaim> a) { return unwrap_povw(a); });
+  addUnary<WorkClaim<ReceiptClaim>>(
+      module, "unwrap_povw", [&](WorkClaim<ReceiptClaim> a) { return unwrap_povw(a); });
 
   addUnion(
       module, "union", [&](Assumption left, Assumption right) { return unionFunc(left, right); });
