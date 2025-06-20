@@ -10,6 +10,7 @@ on:
 permissions:
   pull-requests: write
   repository-projects: read
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -19,6 +20,9 @@ jobs:
   create-linear-issue-pr:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Find or create a Linear Issue
         uses: risc0/action-find-or-create-linear-issue@risc0
         with:
