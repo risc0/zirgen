@@ -380,6 +380,30 @@ size_t getShaStateCol() {
   return impl::kLayout_Top.instResult.arm11.state.stateInAddr._super.col;
 }
 
+size_t getStateInGlobalCol() {
+  return impl::kLayoutGlobal.stateIn.values.at(0).low._super.col;
+}
+
+size_t getShutdownCycleGlobalCol() {
+  return impl::kLayoutGlobal.shutdownCycle._super.col;
+}
+
+size_t getInputDigestGlobalCol() {
+  return impl::kLayoutGlobal.input.values.at(0).low._super.col;
+}
+
+size_t getRngGlobalCol() {
+  return impl::kLayoutGlobal.rng._super.col;
+}
+
+size_t getIsTerminateGlobalCol() {
+  return impl::kLayoutGlobal.isTerminate._super.col;
+}
+
+size_t getPovwNonceGlobalCol() {
+  return impl::kLayoutGlobal.povwNonce.values.at(0).low._super.col;
+}
+
 std::vector<Back> getBigIntStateBacks(const BigIntState& state) {
   std::vector<Back> backs{
       {impl::kLayout_Top.instResult.arm12.state.isEcall._super.col, state.isEcall},

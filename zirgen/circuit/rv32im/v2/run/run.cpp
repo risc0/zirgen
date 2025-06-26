@@ -203,22 +203,24 @@ ExecutionTrace runSegment(const Segment& segment, size_t segmentSize) {
   std::cout << "Segment paging count: " << segment.pagingCycles << "\n";
   ExecutionTrace trace(cycles, getDslParams());
   // Set globals:
-  // TODO: Don't hardcode column numbers
-  trace.global.set(37, segment.segmentThreshold);
+  trace.global.set(getShutdownCycleGlobalCol(), segment.segmentThreshold);
   for (size_t i = 0; i < 8; i++) {
     // State in
-    trace.global.set(38 + 2 * i, rootIn.words[i] & 0xffff);
-    trace.global.set(38 + 2 * i + 1, rootIn.words[i] >> 16);
+    trace.global.set(getStateInGlobalCol() + 2 * i, rootIn.words[i] & 0xffff);
+    trace.global.set(getStateInGlobalCol() + 2 * i + 1, rootIn.words[i] >> 16);
     // Input digest
-    trace.global.set(0 + 2 * i, segment.input.words[i] & 0xffff);
-    trace.global.set(0 + 2 * i + 1, segment.input.words[i] >> 16);
+    trace.global.set(getInputDigestGlobalCol() + 2 * i, segment.input.words[i] & 0xffff);
+    trace.global.set(getInputDigestGlobalCol() + 2 * i + 1, segment.input.words[i] >> 16);
+    // PoVW nonce
+    trace.global.set(getPovwNonceGlobalCol() + 2 * i, segment.povwNonce[i] & 0xffff);
+    trace.global.set(getPovwNonceGlobalCol() + 2 * i + 1, segment.povwNonce[i] >> 16);
   }
   // Set RNG
   for (size_t i = 0; i < 4; i++) {
-    trace.global.set(33 + i, preflightTrace.rng.elems[i]);
+    trace.global.set(getRngGlobalCol() + i, preflightTrace.rng.elems[i]);
   }
   // Set isTerminate
-  trace.global.set(16, segment.isTerminate);
+  trace.global.set(getIsTerminateGlobalCol(), segment.isTerminate);
   // Set stateful columns from 'top'
   for (size_t i = 0; i < cycles; i++) {
     const PreflightCycle& curCycle = preflightTrace.cycles[i];

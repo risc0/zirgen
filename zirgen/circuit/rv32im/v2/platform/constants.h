@@ -52,6 +52,13 @@ constexpr uint32_t OUTPUT_WORD = OUTPUT_ADDR / 4;
 constexpr uint32_t INPUT_ADDR = 0xffff0260;
 constexpr uint32_t INPUT_WORD = INPUT_ADDR / 4;
 
+constexpr uint32_t MEMORY_END_WORD = 0x40000000;
+constexpr uint32_t MERKLE_TREE_START_WORD = 0x40000000;
+constexpr uint32_t MERKLE_TREE_END_WORD = 0x44000000;
+// Starting word address for where the 8-word PoVW nonce is written to memory.
+constexpr uint32_t POVW_NONCE_START_WORD = 0x44000000;
+constexpr uint32_t POVW_NONCE_END_WORD = 0x44000008;
+
 constexpr uint32_t ECALL_DISPATCH_ADDR = 0xffff1000;
 constexpr uint32_t ECALL_DISPATCH_WORD = ECALL_DISPATCH_ADDR / 4;
 constexpr uint32_t TRAP_DISPATCH_ADDR = 0xffff2000;

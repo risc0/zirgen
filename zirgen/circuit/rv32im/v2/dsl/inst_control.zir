@@ -15,16 +15,32 @@ component IllegalControl() {
   InstOutput(ValU32(0, 0), 0, 0)
 }
 
+// TODO: rename this component
 component ControlLoadRoot(cycle: Reg, input: InstInput) {
   global stateIn : DigestReg;
-  input.state = StateLoadRoot();
-  // Verify page in
-  for i : 0..8 {
-    mem := MemoryPageIn(cycle, RootWord() + i);
-    stateIn.values[i].low = mem.low;
-    stateIn.values[i].high = mem.high;
-  };
-  InstOutput(ValU32(0, 0), StatePoseidonEntry(), 0)
+  global povwNonce : DigestReg;
+  // In each of the first two cycles, we load a digest-sized value from globals into memory.
+  // TODO: Extract MemoryPageIn from if to somewhat reduce constraint count.
+  if (1 - cycle) {
+    // "Read" the PoVW nonce into memory.
+    for i : 0..8 {
+      mem := MemoryPageIn(cycle, PovwNonceWord() + i);
+      povwNonce.values[i].low = mem.low;
+      povwNonce.values[i].high = mem.high;
+    };
+    InstOutput(ValU32(0, 0), StateLoadRoot(), 0)
+  } else {
+    // Assert that the current cycle number is 1, if not zero.
+    cycle = 1;
+    input.state = StateLoadRoot();
+    // "Read" the page tree root into memory, then start verifying page-in ops.
+    for i : 0..8 {
+      mem := MemoryPageIn(cycle, RootWord() + i);
+      stateIn.values[i].low = mem.low;
+      stateIn.values[i].high = mem.high;
+    };
+    InstOutput(ValU32(0, 0), StatePoseidonEntry(), 0)
+  }
 }
 
 component ControlResume(cycle: Reg, ii: InstInput) {
