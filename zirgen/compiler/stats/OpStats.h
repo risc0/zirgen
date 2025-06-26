@@ -33,11 +33,28 @@ public:
   // if the op-stqts
   void printStatsIfRequired(mlir::Operation* topOp, llvm::raw_ostream& os);
 
+  // Returns true if statistics are enabled.
+  bool isEnabled();
+
+  // Tally up and print out statistics for a raw location-to-cycles map
+  void printStatsFromMap(mlir::MLIRContext* ctx,
+                         llvm::DenseMap<mlir::Location, size_t> locs,
+                         llvm::raw_ostream& os);
+
 private:
+  class LocStats;
+
   template <typename OpT, size_t K, typename FpT> double getOrCalcBogoCycles();
+
+  void printStatsInternal(mlir::AsmState& asmState,
+                          double totCycles,
+                          LocStats& locStats,
+                          llvm::raw_ostream& os);
 
   // Bogo cycles measured for various operations
   std::map<std::pair</*opName=*/mlir::StringLiteral, /*fieldK=*/size_t>, double> bogoCycles;
+
+  llvm::DenseSet<mlir::OperationName> didWarnAbout;
 };
 
 void registerOpStatsCLOptions();
