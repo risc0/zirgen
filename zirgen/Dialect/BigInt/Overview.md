@@ -110,7 +110,7 @@ made to the witness values.
 
 One implementation of generating the BigInt witness is in [eval](IR/Eval.cpp).
 
-The ZKR implementation of verifying the BigInt witness is in [lower](IR/Lower.cpp).
+The ZKR implementation of verifying the BigInt witness is in [lower](Transforms/LowerReduce.cpp).
 
 An test of much of the end-to-end functionality of proving a RSA constraint is in [RSA test](IR/test/test.cpp).
 
