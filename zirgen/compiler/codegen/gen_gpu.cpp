@@ -604,12 +604,23 @@ private:
   }
 
   mustache openTemplate(const std::string& path) {
-    fs::path fs_path(path);
+    std::vector<std::string> searchPaths = {
+        "",
+        "external/zirgen/",
+    };
+    fs::path fs_path;
+    for (const auto& searchPath : searchPaths) {
+      fs_path = fs::path(searchPath + path);
+      llvm::errs().flush();
+      if (fs::exists(fs_path)) {
+        break;
+      }
+    }
     if (!fs::exists(fs_path)) {
       throw std::runtime_error(llvm::formatv("File does not exist: {0}", path));
     }
 
-    std::ifstream ifs(path);
+    std::ifstream ifs(fs_path);
     ifs.exceptions(std::ios_base::badbit | std::ios_base::failbit);
     std::string str(std::istreambuf_iterator<char>{ifs}, {});
     mustache tmpl(str);
