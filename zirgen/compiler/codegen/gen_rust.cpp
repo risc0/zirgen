@@ -27,6 +27,12 @@
 #include "llvm/Support/FormatVariadic.h"
 #include "llvm/include/llvm/ADT/StringExtras.h"
 
+#include "zirgen/compiler/codegen/cpp/poly.tmpl.cpp.h"
+#include "zirgen/compiler/codegen/cpp/step.tmpl.cpp.h"
+#include "zirgen/compiler/codegen/rust/info.tmpl.rs.h"
+#include "zirgen/compiler/codegen/rust/poly_ext_def.tmpl.rs.h"
+#include "zirgen/compiler/codegen/rust/taps.tmpl.rs.h"
+
 #define DEBUG_TYPE "codegen"
 
 using namespace mlir;
@@ -78,7 +84,7 @@ public:
   ~RustStreamEmitterImpl() = default;
 
   void emitStepFunc(const std::string& name, func::FuncOp func) override {
-    mustache tmpl = openTemplate("zirgen/compiler/codegen/cpp/step.tmpl.cpp");
+    mustache tmpl = configureTemplate(cpp_step_tmpl);
 
     FileContext ctx;
     for (auto [idx, arg] : llvm::enumerate(func.getArguments())) {
@@ -105,7 +111,7 @@ public:
                     size_t splitCount) override {
     MixPowAnalysis mixPows(func);
 
-    mustache tmpl = openTemplate("zirgen/compiler/codegen/cpp/poly.tmpl.cpp");
+    mustache tmpl = configureTemplate(cpp_poly_tmpl);
 
     list funcProtos;
     list funcs;
@@ -541,7 +547,7 @@ private:
 
 public:
   void emitPolyExtFunc(func::FuncOp func) override {
-    mustache tmpl = openTemplate("zirgen/compiler/codegen/rust/poly_ext_def.tmpl.rs");
+    mustache tmpl = configureTemplate(rust_poly_ext_def_tmpl);
 
     PolyContext ctx;
 
@@ -566,7 +572,7 @@ public:
   }
 
   void emitTaps(func::FuncOp func) override {
-    mustache tmpl = openTemplate("zirgen/compiler/codegen/rust/taps.tmpl.rs");
+    mustache tmpl = configureTemplate(rust_taps_tmpl);
 
     TapsAnalysis tapsAnalysis(func);
     const auto& tapSet = tapsAnalysis.getTapSet();
@@ -613,7 +619,7 @@ public:
   }
 
   void emitInfo(func::FuncOp func) override {
-    mustache tmpl = openTemplate("zirgen/compiler/codegen/rust/info.tmpl.rs");
+    mustache tmpl = configureTemplate(rust_info_tmpl);
 
     auto bufs = lookupModuleAttr<BuffersAttr>(func);
     size_t out_size = 0;
@@ -655,22 +661,8 @@ public:
   }
 
 private:
-  mustache openTemplate(const std::string& path) {
-    fs::path fs_path(path);
-    if (!fs::exists(fs_path)) {
-      if (fs::exists("../" + path)) {
-        // Some lit tests put us in the "zirgen" subdirectory, so try up
-        // one level.  TODO: Get rid of this lit test directory
-        // confusion
-        fs_path = fs::path("../" + path);
-      } else
-        throw std::runtime_error(llvm::formatv("File does not exist: {0}", path));
-    }
-
-    std::ifstream ifs(fs_path);
-    ifs.exceptions(std::ios_base::badbit | std::ios_base::failbit);
-    std::string str(std::istreambuf_iterator<char>{ifs}, {});
-    mustache tmpl(str);
+  mustache configureTemplate(const char* fileTemplate) {
+    mustache tmpl(fileTemplate);
     tmpl.set_custom_escape([](const std::string& str) { return str; });
     return tmpl;
   }

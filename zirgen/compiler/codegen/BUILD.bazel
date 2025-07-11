@@ -44,8 +44,8 @@ cc_library(
     hdrs = [
         "Passes.h",
         "codegen.h",
+        ":templates",
     ],
-    data = [":data"],
     deps = [
         ":PassesIncGen",
         ":protocol_info_const",
@@ -63,16 +63,16 @@ cc_library(
 )
 
 filegroup(
-    name = "data",
+    name = "templates",
     srcs = [
-        "cpp/poly.tmpl.cpp",
-        "cpp/step.tmpl.cpp",
-        "gpu/eval_check.tmpl.cu",
-        "gpu/eval_check.tmpl.metal",
-        "gpu/step.tmpl.cu",
-        "gpu/step.tmpl.metal",
-        "rust/info.tmpl.rs",
-        "rust/poly_ext_def.tmpl.rs",
-        "rust/taps.tmpl.rs",
+        "cpp/poly.tmpl.cpp.h",
+        "cpp/step.tmpl.cpp.h",
+        "gpu/eval_check.tmpl.cu.h",
+        "gpu/eval_check.tmpl.metal.h",
+        "gpu/step.tmpl.cu.h",
+        "gpu/step.tmpl.metal.h",
+        "rust/info.tmpl.rs.h",
+        "rust/poly_ext_def.tmpl.rs.h",
+        "rust/taps.tmpl.rs.h",
     ],
 )
