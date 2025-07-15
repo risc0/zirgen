@@ -105,7 +105,7 @@ def build_circuit(name, srcs = [], bin = None, deps = [], outs = None, data = []
     _build_circuit_rule(
         name = name,
         binary = bin,
-        data = ["@zirgen//zirgen/compiler/codegen:data"] + data,
+        data = data,
         outs = outs,
         extra_args = extra_args,
     )

@@ -25,11 +25,14 @@
 #include "llvm/Support/FormatVariadic.h"
 #include "llvm/include/llvm/ADT/StringExtras.h"
 
+#include "zirgen/compiler/codegen/gpu/eval_check.tmpl.cu.h"
+#include "zirgen/compiler/codegen/gpu/eval_check.tmpl.metal.h"
+#include "zirgen/compiler/codegen/gpu/step.tmpl.cu.h"
+#include "zirgen/compiler/codegen/gpu/step.tmpl.metal.h"
+
 using namespace mlir;
 using namespace kainjow::mustache;
 using namespace zirgen::Zll;
-
-namespace fs = std::filesystem;
 
 namespace zirgen {
 
@@ -60,7 +63,14 @@ public:
       : ofs(ofs), suffix(suffix) {}
 
   void emitStepFunc(const std::string& name, func::FuncOp func) override {
-    mustache tmpl = openTemplate("zirgen/compiler/codegen/gpu/step.tmpl" + suffix);
+    mustache tmpl;
+    if (suffix == ".cu") {
+      tmpl = configureTemplate(cu_step_tmpl);
+    } else if (suffix == ".metal") {
+      tmpl = configureTemplate(metal_step_tmpl);
+    } else {
+      throw std::runtime_error("Unsupported suffix for step function");
+    }
 
     FileContext ctx;
     std::stringstream ss;
@@ -93,7 +103,14 @@ public:
 
     auto circuitName = lookupModuleAttr<CircuitNameAttr>(func);
 
-    mustache tmpl = openTemplate("zirgen/compiler/codegen/gpu/eval_check.tmpl" + suffix);
+    mustache tmpl;
+    if (suffix == ".cu") {
+      tmpl = configureTemplate(cu_eval_check_tmpl);
+    } else if (suffix == ".metal") {
+      tmpl = configureTemplate(metal_eval_check_tmpl);
+    } else {
+      throw std::runtime_error("Unsupported suffix for poly function");
+    }
 
     list funcProtos;
     list funcs;
@@ -603,16 +620,8 @@ private:
     }
   }
 
-  mustache openTemplate(const std::string& path) {
-    fs::path fs_path(path);
-    if (!fs::exists(fs_path)) {
-      throw std::runtime_error(llvm::formatv("File does not exist: {0}", path));
-    }
-
-    std::ifstream ifs(path);
-    ifs.exceptions(std::ios_base::badbit | std::ios_base::failbit);
-    std::string str(std::istreambuf_iterator<char>{ifs}, {});
-    mustache tmpl(str);
+  mustache configureTemplate(const char* fileTemplate) {
+    mustache tmpl(fileTemplate);
     tmpl.set_custom_escape([](const std::string& str) { return str; });
     return tmpl;
   }

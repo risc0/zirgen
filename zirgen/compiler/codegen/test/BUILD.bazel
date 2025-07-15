@@ -5,7 +5,4 @@ filegroup(
     srcs = ["lit.site.cfg"],
 )
 
-glob_lit_tests(data = [
-    ":lit_cfg",
-    "//zirgen/compiler/codegen:data",
-])
+glob_lit_tests(data = [":lit_cfg"])
