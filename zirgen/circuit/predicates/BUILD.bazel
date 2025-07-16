@@ -23,9 +23,6 @@ cc_library(
 )
 
 ZKRS = [
-    ("lift_" + str(po2))
-    for po2 in range(14, 25)
-] + [
     ("lift_rv32im_v2_" + str(po2))
     for po2 in range(14, 25)
 ] + [

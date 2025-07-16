@@ -88,23 +88,6 @@ template <typename T> static void writeOutObj(Buffer out, T outData) {
   out.setDigest(1, outData.digest(), "outDigest");
 }
 
-template <typename Func> void addRv32imV1Lift(Module& module, const std::string& name, Func func) {
-  for (size_t po2 = 14; po2 < 25; ++po2) {
-    module.addFunc<3>(name + "_" + std::to_string(po2),
-                      {gbuf(recursion::kOutSize), ioparg(), ioparg()},
-                      [&](Buffer out, ReadIopVal rootIop, ReadIopVal rv32seal) {
-                        auto circuit = getInterfaceRV32IM();
-                        DigestVal root = rootIop.readDigests(1)[0];
-                        VerifyInfo info = verifyAndValidate(root, rv32seal, po2, *circuit);
-                        llvm::ArrayRef inStream(info.out);
-                        ReceiptClaim claim(inStream, true);
-                        auto outData = func(claim);
-                        writeOutObj(out, outData);
-                        out.setDigest(0, root, "root");
-                      });
-  }
-}
-
 void addRv32imV2Lift(Module& module, const std::string name, const std::string& irPath) {
   auto circuit = getInterfaceZirgen(module.getModule().getContext(), irPath);
   for (size_t po2 = 14; po2 < 25; ++po2) {
@@ -238,7 +221,6 @@ int main(int argc, char* argv[]) {
                       out.setDigest(1, claim, "claim");
                     });
 
-  addRv32imV1Lift(module, "lift", [](ReceiptClaim claim) { return claim; });
   addRv32imV2Lift(module, "lift_rv32im_v2", rv32imV2IR.getValue());
   addRv32imV2LiftPovw(module, "lift_rv32im_v2_povw", rv32imV2IR.getValue());
 
