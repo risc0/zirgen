@@ -95,7 +95,8 @@ void PCVal::write(std::vector<Val>& stream) {
 U64Val::U64Val(uint64_t x) {
   for (size_t i = 0; i < U64Val::size; i++) {
     size_t shift = 16 * i;
-    shorts[i] = (x & (0xffff << shift)) >> shift;
+    uint64_t shortx = (x & (uint64_t(0xffff) << shift)) >> shift;
+    shorts[i] = Val(shortx);
   }
 }
 
