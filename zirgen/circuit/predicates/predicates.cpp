@@ -358,7 +358,7 @@ WorkClaim<ReceiptClaim> wrap_povw(size_t po2, U256Val nonce, ReceiptClaim claim)
 }
 
 WorkClaim<ReceiptClaim> join_povw(WorkClaim<ReceiptClaim> a, WorkClaim<ReceiptClaim> b) {
-  U256Val::eq(a.work.nonceMax, b.work.nonceMin.add(U256Val::one()));
+  U256Val::eq(a.work.nonceMax.add(U256Val::one()), b.work.nonceMin);
 
   Work work(a.work.nonceMin, b.work.nonceMax, a.work.value.add(b.work.value));
   auto claim = join(a.claim, b.claim);
