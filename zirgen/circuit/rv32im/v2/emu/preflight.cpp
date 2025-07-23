@@ -183,7 +183,6 @@ struct PreflightContext {
       if (pageMemory.count(word)) {
         val = pageMemory.at(word);
       } else if (word < POVW_NONCE_END_WORD) {
-        // TODO(povw) extract const
         val = segment.povwNonce.at(word - POVW_NONCE_START_WORD);
       } else {
         throw std::runtime_error("Invalid load from page memory");
