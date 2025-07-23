@@ -95,7 +95,6 @@ struct PreflightContext {
                             uint32_t nextState,
                             uint32_t pc,
                             const std::vector<Back>& backs = {}) {
-    // sus
     cycleComplete(nextState, pc, 7 + curState / 8, curState % 8, backs);
   }
 
