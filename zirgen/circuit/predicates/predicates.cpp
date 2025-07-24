@@ -23,8 +23,6 @@ namespace zirgen::predicates {
 
 using Zll::DigestKind;
 
-// constexpr size_t kMaxInsnCycles = 2000; // TODO(flaub): update this with precise value.
-
 Val readVal(llvm::ArrayRef<Val>& stream) {
   assert(stream.size() >= 1);
   Val out = stream[0];
