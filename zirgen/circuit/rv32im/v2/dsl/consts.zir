@@ -22,7 +22,7 @@ component RootWord() { 0x43fffff8 }
 // The PoVW nonce is written to memory in order to bind the argument to the nonce.
 component PovwNonceWord() { 0x44000000 }
 
-component StateLoadRoot() { 0 }
+component StateLoadRootAndNonce() { 0 }
 component StateResume() { 1 }
 component StateSuspend() { 4 }
 component StateStoreRoot() { 5 }

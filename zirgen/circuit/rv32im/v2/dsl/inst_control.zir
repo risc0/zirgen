@@ -16,7 +16,7 @@ component IllegalControl() {
 }
 
 // TODO: rename this component
-component ControlLoadRoot(cycle: Reg, input: InstInput) {
+component ControlLoadRootAndNonce(cycle: Reg, input: InstInput) {
   global stateIn : DigestReg;
   global povwNonce : DigestReg;
   // In each of the first two cycles, we load a digest-sized value from globals into memory.
@@ -28,11 +28,11 @@ component ControlLoadRoot(cycle: Reg, input: InstInput) {
       povwNonce.values[i].low = mem.low;
       povwNonce.values[i].high = mem.high;
     };
-    InstOutput(ValU32(0, 0), StateLoadRoot(), 0)
+    InstOutput(ValU32(0, 0), StateLoadRootAndNonce(), 0)
   } else {
     // Assert that the current cycle number is 1, if not zero.
     cycle = 1;
-    input.state = StateLoadRoot();
+    input.state = StateLoadRootAndNonce();
     // "Read" the page tree root into memory, then start verifying page-in ops.
     for i : 0..8 {
       mem := MemoryPageIn(cycle, RootWord() + i);
@@ -188,7 +188,7 @@ component ControlDone(cycle: Reg, input: InstInput) {
 component Control0(cycle: Reg, inst_input: InstInput) {
   DoCycleTable(cycle);
   inst_input.minor_onehot -> (
-    ControlLoadRoot(cycle, inst_input),
+    ControlLoadRootAndNonce(cycle, inst_input),
     ControlResume(cycle, inst_input),
     ControlUserECALL(cycle, inst_input),
     ControlMRET(cycle, inst_input),
