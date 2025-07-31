@@ -23,16 +23,21 @@ cc_library(
 )
 
 ZKRS = [
-    ("lift_" + str(po2))
+    ("lift_rv32im_v2_" + str(po2))
     for po2 in range(14, 25)
 ] + [
-    ("lift_rv32im_v2_" + str(po2))
+    ("lift_rv32im_v2_povw_" + str(po2))
     for po2 in range(14, 25)
 ] + [
     "test_recursion_circuit",
     "join",
+    "join_povw",
+    "join_unwrap_povw",
     "resolve",
+    "resolve_povw",
+    "resolve_unwrap_povw",
     "identity",
+    "unwrap_povw",
     "union",
 ]
 

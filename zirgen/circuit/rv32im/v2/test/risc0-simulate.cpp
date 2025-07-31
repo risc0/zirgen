@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 #include "risc0/core/log.h"
 #include "zirgen/circuit/rv32im/v2/platform/constants.h"
 #include "zirgen/circuit/rv32im/v2/run/run.h"
+#include "zirgen/compiler/zkp/digest.h"
 
 using namespace zirgen::rv32im_v2;
 
@@ -28,13 +29,15 @@ int main(int argc, char* argv[]) {
   LOG(1, "File = " << argv[1]);
   try {
     size_t cycles = 10000;
+    std::array<uint32_t, 7> povwJobId = {1, 2, 3, 4, 5, 6, 7};
+    zirgen::Digest input = zirgen::Digest::zero();
 
     TestIoHandler io;
 
     // Load image
     auto image = MemoryImage::fromRawElf(argv[1]);
     // Do executions
-    auto segments = execute(image, io, cycles, cycles);
+    auto segments = execute(image, io, cycles, cycles, input, povwJobId);
     // Do 'run' (preflight + expansion)
     for (const auto& segment : segments) {
       runSegment(segment, cycles);

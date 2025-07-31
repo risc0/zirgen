@@ -447,8 +447,10 @@ component PoseidonPaging(cycle: Reg, mode: Val, prev: PoseidonState) {
   isLoad := modeSplit.bits[0] + modeSplit.bits[1] + modeSplit.bits[2];
   IsU24(curIdx);
   if (isLoad) {
+    // curIdx > prevIdx
     IsU24(curIdx - (prevIdx + 1));
   } else {
+    // curIdx < prevIdx
     IsU24(prevIdx - 1 - curIdx);
   };
   // Mode can only go up by 0 or 1 (reg since mode is deg 2)

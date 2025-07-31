@@ -114,7 +114,7 @@ component MemoryPageIn(cycle: Reg, addr: Val) {
   GetData(io.newTxn, 0, io.newTxn.cycle - io.oldTxn.cycle)
 }
 
-// Contrained like a write, but actually returns the value to it's page in
+// Constrained like a write, but actually returns the value to its page in
 // value, while returning it's prior state
 component MemoryPageOut(cycle: Reg, addr: Val) {
   io := MemoryIO(2*cycle, addr);

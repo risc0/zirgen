@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -84,6 +84,7 @@ struct MacroInstImpl : public CompImpl<MacroInstImpl> {
   MacroInstImpl();
 
   OneHot<MACRO_OPCODE_COUNT> opcode;
+  // Operands for the macro op. Each macro op has three operands.
   std::vector<Reg> operands;
 };
 using MacroInst = Comp<MacroInstImpl>;

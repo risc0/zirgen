@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ void BitOpShortsImpl::set(MacroInst inst, Val writeAddr) {
        inB->data()[0],
        inB->data()[1]);
   std::array<Val, 4> outO = {0, 0, 0, 0};
+  // Compute the bit-composition of the extension elem limbs, and the bitwise AND.
   for (size_t i = 0; i < 2; i++) {
     Val totA = 0;
     Val totB = 0;
@@ -43,10 +44,13 @@ void BitOpShortsImpl::set(MacroInst inst, Val writeAddr) {
       }
       totA = totA + bitsA[i * 16 + j] * bit;
       totB = totB + bitsB[i * 16 + j] * bit;
+      // Incrementally compute the bitwise AND.
       totO = totO + bitsA[i * 16 + j] * bitsB[i * 16 + j] * bit;
     }
+    // Confirm that the inputs are indeed 16-bit limbs.
     eq(totA, inA->data()[i]);
     eq(totB, inB->data()[i]);
+
     outO[i] = totO;
   }
   IF(inst->operands[2]) {
@@ -56,6 +60,7 @@ void BitOpShortsImpl::set(MacroInst inst, Val writeAddr) {
   }
   IF(1 - inst->operands[2]) {
     // XORs and returns 2 shorts: [a, b, 0, 0] ^ [c, d, 0, 0] -> [a ^ c, b ^ d, 0, 0]
+    // NOTE: a ^ b == a + b - 2 * (a & b)
     out->doWrite(writeAddr,
                  {inA->data()[0] + inB->data()[0] - 2 * outO[0],
                   inA->data()[1] + inB->data()[1] - 2 * outO[1],

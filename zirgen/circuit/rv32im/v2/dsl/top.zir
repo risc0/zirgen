@@ -34,6 +34,7 @@ component Top() {
   global termA1high: Reg;
   global rng: ExtReg;
   global shutdownCycle: Reg;
+  global povwNonce: DigestReg;
 
   // Top state
   cycle : Reg;
@@ -56,7 +57,7 @@ component Top() {
   high_pc := (1 - is_first_cycle) * next_pc_high@1;
   pc_u32 := ValU32(low_pc, high_pc);
   // Get state (init state == 0)
-  state := (1 - is_first_cycle) * next_state@1 + is_first_cycle * StateLoadRoot();
+  state := (1 - is_first_cycle) * next_state@1 + is_first_cycle * StateLoadRootAndNonce();
   // Get machine mode (init mode == 1)
   machine_mode := (1 - is_first_cycle) * next_machine_mode@1 + is_first_cycle;
   // Now, guess major + minor

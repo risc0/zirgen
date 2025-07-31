@@ -8350,7 +8350,7 @@ pub struct RootWordStruct {
     pub _super: Val,
 }
 #[derive(Copy, Clone, Debug)]
-pub struct StateLoadRootStruct {
+pub struct StateLoadRootAndNonceStruct {
     pub _super: Val,
 }
 #[derive(Copy, Clone, Debug)]
@@ -30267,8 +30267,8 @@ pub fn exec_root_word(ctx0: &ExecContext) -> Result<RootWordStruct> {
         _super: make_val!(1140850680),
     });
 }
-pub fn exec_state_load_root(ctx0: &ExecContext) -> Result<StateLoadRootStruct> {
-    return Ok(StateLoadRootStruct {
+pub fn exec_state_load_root(ctx0: &ExecContext) -> Result<StateLoadRootAndNonceStruct> {
+    return Ok(StateLoadRootAndNonceStruct {
         _super: make_val!(0),
     });
 }
@@ -37436,15 +37436,15 @@ pub fn exec_control_load_root(
     arg1: &InstInputStruct,
     layout2: BoundLayout<ControlLoadRootLayout, impl BufferRow<ValType = Val>>,
 ) -> Result<InstOutputStruct> {
-    // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:15)
+    // ControlLoadRootAndNonce(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:15)
     let x3: BoundLayout<_globalLayout, _> = bind_layout!(LAYOUT_GLOBAL, get_buffer!(ctx0, global));
-    // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:17)
-    let x4: StateLoadRootStruct = exec_state_load_root(ctx0)?;
+    // ControlLoadRootAndNonce(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:17)
+    let x4: StateLoadRootAndNonceStruct = exec_state_load_root(ctx0)?;
     eqz!(
         (arg1.state - x4._super),
-        "ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:17)"
+        "ControlLoadRootAndNonce(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:17)"
     );
-    // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:18)
+    // ControlLoadRootAndNonce(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:18)
     let x5: ComponentStruct8Array = map_layout(
         [
             make_val!(0),
@@ -37458,9 +37458,9 @@ pub fn exec_control_load_root(
         ],
         layout_lookup!(layout2, _0),
         |x6, x7| {
-            // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:16)
+            // ControlLoadRootAndNonce(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:16)
             let x8: DigestRegStruct = back_digest_reg(ctx0, 0, layout_lookup!(x3, state_in))?;
-            // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:20)
+            // ControlLoadRootAndNonce(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:20)
             let x9: RootWordStruct = exec_root_word(ctx0)?;
             let x10: Val = exec_add(ctx0, x9._super, x6)?;
             let x11: MemoryPageInStruct =
@@ -37468,14 +37468,14 @@ pub fn exec_control_load_root(
             let x12: FlatStruct = exec_flat(ctx0, &x11._super)?;
             eqz!(
                 (x8.values[u64::from(x6) as usize]._super._super - x12._super),
-                "ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:20)"
+                "ControlLoadRootAndNonce(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:20)"
             );
-            // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:18)
+            // ControlLoadRootAndNonce(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:18)
             let x13: ComponentStruct = exec_component(ctx0)?;
             return Ok(x13);
         },
     )?;
-    // ControlLoadRoot(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:22)
+    // ControlLoadRootAndNonce(zirgen/circuit/rv32im/v2/dsl/inst_control.zir:22)
     let x14: ValU32Struct = exec_val_u32(ctx0, make_val!(0), make_val!(0))?;
     let x15: StatePoseidonEntryStruct = exec_state_poseidon_entry(ctx0)?;
     let x16: InstOutputStruct = exec_inst_output(ctx0, &x14, x15._super, make_val!(0))?;
@@ -62031,7 +62031,7 @@ pub fn exec_top(
     let x23: Val = exec_sub(ctx0, make_val!(1), x15)?;
     let x24: RegStruct = back_reg(ctx0, 1, x4)?;
     let x25: Val = exec_mul(ctx0, x23, x24._super._super)?;
-    let x26: StateLoadRootStruct = exec_state_load_root(ctx0)?;
+    let x26: StateLoadRootAndNonceStruct = exec_state_load_root(ctx0)?;
     let x27: Val = exec_mul(ctx0, x15, x26._super)?;
     let x28: Val = exec_add(ctx0, x25, x27)?;
     // Top(zirgen/circuit/rv32im/v2/dsl/top.zir:51)

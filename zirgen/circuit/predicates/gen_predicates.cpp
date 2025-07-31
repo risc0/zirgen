@@ -88,23 +88,6 @@ template <typename T> static void writeOutObj(Buffer out, T outData) {
   out.setDigest(1, outData.digest(), "outDigest");
 }
 
-template <typename Func> void addRv32imV1Lift(Module& module, const std::string& name, Func func) {
-  for (size_t po2 = 14; po2 < 25; ++po2) {
-    module.addFunc<3>(name + "_" + std::to_string(po2),
-                      {gbuf(recursion::kOutSize), ioparg(), ioparg()},
-                      [&](Buffer out, ReadIopVal rootIop, ReadIopVal rv32seal) {
-                        auto circuit = getInterfaceRV32IM();
-                        DigestVal root = rootIop.readDigests(1)[0];
-                        VerifyInfo info = verifyAndValidate(root, rv32seal, po2, *circuit);
-                        llvm::ArrayRef inStream(info.out);
-                        ReceiptClaim claim(inStream, true);
-                        auto outData = func(claim);
-                        writeOutObj(out, outData);
-                        out.setDigest(0, root, "root");
-                      });
-  }
-}
-
 void addRv32imV2Lift(Module& module, const std::string name, const std::string& irPath) {
   auto circuit = getInterfaceZirgen(module.getModule().getContext(), irPath);
   for (size_t po2 = 14; po2 < 25; ++po2) {
@@ -121,21 +104,40 @@ void addRv32imV2Lift(Module& module, const std::string name, const std::string& 
   }
 }
 
-template <typename Func> void addJoin(Module& module, const std::string& name, Func func) {
+void addRv32imV2LiftPovw(Module& module, const std::string name, const std::string& irPath) {
+  auto circuit = getInterfaceZirgen(module.getModule().getContext(), irPath);
+  for (size_t po2 = 14; po2 < 25; ++po2) {
+    module.addFunc<3>(name + "_" + std::to_string(po2),
+                      {gbuf(recursion::kOutSize), ioparg(), ioparg()},
+                      [&](Buffer out, ReadIopVal rootIop, ReadIopVal seal) {
+                        DigestVal root = rootIop.readDigests(1)[0];
+                        VerifyInfo info = zirgen::verify::verify(seal, po2, *circuit);
+                        llvm::ArrayRef inStream(info.out);
+                        auto claimAndNonce = readReceiptClaimAndPovwNonce(inStream, po2);
+                        auto workClaim = wrap_povw(po2, claimAndNonce.second, claimAndNonce.first);
+                        writeOutObj(out, workClaim);
+                        out.setDigest(0, root, "root");
+                      });
+  }
+}
+
+template <typename Claim, typename Func>
+void addJoin(Module& module, const std::string& name, Func func) {
   module.addFunc<4>(name,
                     {gbuf(recursion::kOutSize), ioparg(), ioparg(), ioparg()},
                     [&](Buffer out, ReadIopVal rootIop, ReadIopVal in1, ReadIopVal in2) {
                       auto circuit = getInterfaceRecursion();
                       DigestVal root = rootIop.readDigests(1)[0];
-                      ReceiptClaim val1 = getRecursiveObj<ReceiptClaim>(root, in1, *circuit);
-                      ReceiptClaim val2 = getRecursiveObj<ReceiptClaim>(root, in2, *circuit);
+                      Claim val1 = getRecursiveObj<Claim>(root, in1, *circuit);
+                      Claim val2 = getRecursiveObj<Claim>(root, in2, *circuit);
                       auto outData = func(val1, val2);
                       writeOutObj(out, outData);
                       out.setDigest(0, root, "root");
                     });
 }
 
-template <typename Func> void addResolve(Module& module, const std::string& name, Func func) {
+template <typename Claim, typename Func>
+void addResolve(Module& module, const std::string& name, Func func) {
   module.addFunc<6>(name,
                     {gbuf(recursion::kOutSize), ioparg(), ioparg(), ioparg(), ioparg(), ioparg()},
                     [&](Buffer out,
@@ -146,7 +148,7 @@ template <typename Func> void addResolve(Module& module, const std::string& name
                         ReadIopVal journalIop) {
                       auto circuit = getInterfaceRecursion();
                       DigestVal root = rootIop.readDigests(1)[0];
-                      ReceiptClaim cond = getRecursiveObj<ReceiptClaim>(root, condIop, *circuit);
+                      Claim cond = getRecursiveObj<Claim>(root, condIop, *circuit);
                       Assumption assum = verifyAssumption(root, assumIop, *circuit);
 
                       // NOTE: readBaseVals is used here instead of readDigest
@@ -162,13 +164,14 @@ template <typename Func> void addResolve(Module& module, const std::string& name
                     });
 }
 
-template <typename Func> void addSingleton(Module& module, const std::string& name, Func func) {
+template <typename Claim, typename Func>
+void addUnary(Module& module, const std::string& name, Func func) {
   module.addFunc<3>(name,
                     {gbuf(recursion::kOutSize), ioparg(), ioparg()},
                     [&](Buffer out, ReadIopVal rootIop, ReadIopVal in) {
                       auto circuit = getInterfaceRecursion();
                       DigestVal root = rootIop.readDigests(1)[0];
-                      ReceiptClaim val = getRecursiveObj<ReceiptClaim>(root, in, *circuit);
+                      Claim val = getRecursiveObj<Claim>(root, in, *circuit);
                       auto outData = func(val);
                       writeOutObj(out, outData);
                       out.setDigest(0, root, "root");
@@ -218,17 +221,40 @@ int main(int argc, char* argv[]) {
                       out.setDigest(1, claim, "claim");
                     });
 
-  addRv32imV1Lift(module, "lift", [](ReceiptClaim claim) { return claim; });
   addRv32imV2Lift(module, "lift_rv32im_v2", rv32imV2IR.getValue());
+  addRv32imV2LiftPovw(module, "lift_rv32im_v2_povw", rv32imV2IR.getValue());
 
-  addJoin(module, "join", [&](ReceiptClaim a, ReceiptClaim b) { return join(a, b); });
+  addJoin<ReceiptClaim>(module, "join", [&](ReceiptClaim a, ReceiptClaim b) { return join(a, b); });
+  addJoin<WorkClaim<ReceiptClaim>>(
+      module, "join_povw", [&](WorkClaim<ReceiptClaim> a, WorkClaim<ReceiptClaim> b) {
+        return join_povw(a, b);
+      });
+  addJoin<WorkClaim<ReceiptClaim>>(
+      module, "join_unwrap_povw", [&](WorkClaim<ReceiptClaim> a, WorkClaim<ReceiptClaim> b) {
+        return unwrap_povw(join_povw(a, b));
+      });
 
-  addResolve(
+  addResolve<ReceiptClaim>(
       module, "resolve", [&](ReceiptClaim a, Assumption b, DigestVal tail, DigestVal journal) {
         return resolve(a, b, tail, journal);
       });
+  addResolve<WorkClaim<ReceiptClaim>>(
+      module,
+      "resolve_povw",
+      [&](WorkClaim<ReceiptClaim> a, Assumption b, DigestVal tail, DigestVal journal) {
+        return resolve_povw(a, b, tail, journal);
+      });
+  addResolve<WorkClaim<ReceiptClaim>>(
+      module,
+      "resolve_unwrap_povw",
+      [&](WorkClaim<ReceiptClaim> a, Assumption b, DigestVal tail, DigestVal journal) {
+        return unwrap_povw(resolve_povw(a, b, tail, journal));
+      });
 
-  addSingleton(module, "identity", [&](ReceiptClaim a) { return identity(a); });
+  addUnary<ReceiptClaim>(module, "identity", [&](ReceiptClaim a) { return identity(a); });
+
+  addUnary<WorkClaim<ReceiptClaim>>(
+      module, "unwrap_povw", [&](WorkClaim<ReceiptClaim> a) { return unwrap_povw(a); });
 
   addUnion(
       module, "union", [&](Assumption left, Assumption right) { return unionFunc(left, right); });

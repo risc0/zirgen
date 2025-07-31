@@ -13,9 +13,16 @@ component OutputWord() { 0x3fffc090 }
 component InputWord() { 0x3fffc098 }
 component EcallDispatchWord() { 0x3fffc400 }
 component TrapDispatchWord() { 0x3fffc800 }
+// Word address where the root of the page tree is stored in memory.
+// Note that this address is above the highest addressable byte, using a 32-bit point
+// (0x3fffffff is the highest addressable byte). As a result, RISC-V memory operations cannot
+// address the root word.
 component RootWord() { 0x43fffff8 }
+// Word address where the PoVW nonce is stored in memory.
+// The PoVW nonce is written to memory in order to bind the argument to the nonce.
+component PovwNonceWord() { 0x44000000 }
 
-component StateLoadRoot() { 0 }
+component StateLoadRootAndNonce() { 0 }
 component StateResume() { 1 }
 component StateSuspend() { 4 }
 component StateStoreRoot() { 5 }

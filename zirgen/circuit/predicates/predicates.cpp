@@ -23,8 +23,6 @@ namespace zirgen::predicates {
 
 using Zll::DigestKind;
 
-constexpr size_t kMaxInsnCycles = 2000; // TODO(flaub): update this with precise value.
-
 Val readVal(llvm::ArrayRef<Val>& stream) {
   assert(stream.size() >= 1);
   Val out = stream[0];
@@ -66,33 +64,151 @@ void writeSha(DigestVal val, std::vector<Val>& stream) {
   }
 }
 
-U32Reg::U32Reg(llvm::ArrayRef<Val>& stream) {
-  for (size_t i = 0; i < 4; i++) {
+PCVal::PCVal(llvm::ArrayRef<Val>& stream) {
+  for (size_t i = 0; i < PCVal::size; i++) {
     val[i] = readVal(stream);
   }
 }
 
-U32Reg U32Reg::zero() {
-  U32Reg ret;
-  for (size_t i = 0; i < 4; i++) {
-    ret.val[i] = 0;
-  }
-  return ret;
+PCVal PCVal::zero() {
+  return PCVal({Val(0), Val(0), Val(0), Val(0)});
 }
 
-Val U32Reg::flat() {
+Val PCVal::flat() {
   Val tot = 0;
   Val mul = 1;
-  for (size_t i = 0; i < 4; i++) {
+  for (size_t i = 0; i < PCVal::size; i++) {
     tot = tot + mul * val[i];
     mul = mul * 256;
   }
   return tot;
 }
 
-void U32Reg::write(std::vector<Val>& stream) {
-  for (size_t i = 0; i < 4; i++) {
+void PCVal::write(std::vector<Val>& stream) {
+  for (size_t i = 0; i < PCVal::size; i++) {
     stream.push_back(val[i]);
+  }
+}
+
+U64Val::U64Val(uint64_t x) {
+  for (size_t i = 0; i < U64Val::size; i++) {
+    size_t shift = 16 * i;
+    uint64_t shortx = (x & (uint64_t(0xffff) << shift)) >> shift;
+    shorts[i] = Val(shortx);
+  }
+}
+
+U64Val U64Val::zero() {
+  return U64Val({Val(0), Val(0), Val(0), Val(0)});
+}
+
+U64Val U64Val::one() {
+  return U64Val({Val(1), Val(0), Val(0), Val(0)});
+}
+
+U64Val::U64Val(llvm::ArrayRef<Val>& stream) {
+  for (size_t i = 0; i < U64Val::size; i++) {
+    Val val = readVal(stream);
+    // Ensure that the read value is at most 16 bits.
+    zirgen::eq(val, val & 0xffff);
+    shorts[i] = val;
+  }
+}
+
+U64Val U64Val::add(const U64Val& x) {
+  std::array<Val, U64Val::size> out;
+  Val carry = 0;
+  for (size_t i = 0; i < U64Val::size; i++) {
+    Val val = shorts.at(i) + x.shorts.at(i) + carry;
+    out.at(i) = val & 0xffff;
+    carry = (val - out.at(i)) / 0x10000;
+  }
+  // Disallow overflows.
+  eqz(carry);
+  return U64Val(out);
+}
+
+void U64Val::eq(U64Val& a, U64Val& b) {
+  for (size_t i = 0; i < U64Val::size; i++) {
+    zirgen::eq(a.shorts.at(i), b.shorts.at(i));
+  }
+}
+
+void U64Val::write(std::vector<Val>& stream) {
+  for (size_t i = 0; i < U64Val::size; i++) {
+    stream.push_back(shorts[i]);
+  }
+}
+
+U256Val U256Val::zero() {
+  return U256Val({Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0)});
+}
+
+U256Val U256Val::one() {
+  return U256Val({Val(1),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0),
+                  Val(0)});
+}
+
+U256Val::U256Val(llvm::ArrayRef<Val>& stream) {
+  for (size_t i = 0; i < U256Val::size; i++) {
+    Val val = readVal(stream);
+    // Ensure that the read value is at most 16 bits.
+    zirgen::eq(val, val & 0xffff);
+    shorts[i] = val;
+  }
+}
+
+U256Val U256Val::add(const U256Val& x) {
+  std::array<Val, U256Val::size> out;
+  Val carry = 0;
+  for (size_t i = 0; i < U256Val::size; i++) {
+    Val val = shorts.at(i) + x.shorts.at(i) + carry;
+    out.at(i) = val & 0xffff;
+    carry = (val - out.at(i)) / 0x10000;
+  }
+  // Disallow overflows.
+  eqz(carry);
+  return U256Val(out);
+}
+
+void U256Val::eq(const U256Val& a, const U256Val& b) {
+  for (size_t i = 0; i < U256Val::size; i++) {
+    zirgen::eq(a.shorts.at(i), b.shorts.at(i));
+  }
+}
+
+void U256Val::write(std::vector<Val>& stream) {
+  for (size_t i = 0; i < U256Val::size; i++) {
+    stream.push_back(shorts[i]);
   }
 }
 
@@ -148,6 +264,20 @@ void UnionClaim::write(std::vector<Val>& stream) {
 
 DigestVal UnionClaim::digest() {
   return taggedStruct("risc0.UnionClaim", {left, right}, {});
+}
+
+Work::Work(llvm::ArrayRef<Val>& stream) : nonceMin(stream), nonceMax(stream), value(stream) {}
+
+DigestVal Work::digest() {
+  std::vector<Val> vals;
+  write(vals);
+  return taggedStruct("risc0.Work", {}, vals);
+}
+
+void Work::write(std::vector<Val>& stream) {
+  nonceMin.write(stream);
+  nonceMax.write(stream);
+  value.write(stream);
 }
 
 ReceiptClaim join(ReceiptClaim claim1, ReceiptClaim claim2) {
@@ -214,11 +344,6 @@ ReceiptClaim resolve(ReceiptClaim cond, Assumption assum, DigestVal tail, Digest
   return claimOut;
 }
 
-ReceiptClaim identity(ReceiptClaim in) {
-  // Make an empty output
-  return in;
-}
-
 UnionClaim unionFunc(Assumption left, Assumption right) {
   UnionClaim claim;
   claim.left = left.digest();
@@ -226,12 +351,47 @@ UnionClaim unionFunc(Assumption left, Assumption right) {
   return claim;
 }
 
-ReceiptClaim ReceiptClaim::fromRv32imV2(llvm::ArrayRef<Val>& stream, size_t po2) {
+WorkClaim<ReceiptClaim> wrap_povw(size_t po2, U256Val nonce, ReceiptClaim claim) {
+  Work work(nonce, nonce, U64Val(1 << uint64_t(po2)));
+  return WorkClaim(claim, work);
+}
+
+WorkClaim<ReceiptClaim> join_povw(WorkClaim<ReceiptClaim> a, WorkClaim<ReceiptClaim> b) {
+  U256Val::eq(a.work.nonceMax.add(U256Val::one()), b.work.nonceMin);
+
+  Work work(a.work.nonceMin, b.work.nonceMax, a.work.value.add(b.work.value));
+  auto claim = join(a.claim, b.claim);
+
+  return WorkClaim(claim, work);
+}
+
+WorkClaim<ReceiptClaim>
+resolve_povw(WorkClaim<ReceiptClaim> cond, Assumption assum, DigestVal tail, DigestVal journal) {
+  auto claim = resolve(cond.claim, assum, tail, journal);
+  return WorkClaim(claim, cond.work);
+}
+
+ReceiptClaim unwrap_povw(WorkClaim<ReceiptClaim> claim) {
+  return claim.claim;
+}
+
+std::pair<ReceiptClaim, U256Val> readReceiptClaimAndPovwNonce(llvm::ArrayRef<Val>& stream,
+                                                              size_t po2) {
+  // NOTE: Ordering of these read operations must match the layout of the circuit globals.
+  // This ordering can be found in the generated rv32im.cpp.inc file as _globalLayout
   DigestVal input = readSha(stream);
   Val isTerminate = readVal(stream);
   DigestVal output = readSha(stream);
+  // NOTE: povwNonce is not part of the rv32im claim, and its value does not matter for the validity
+  // of the ReceiptClaim. This nonce is used only for the PoVW accounting logic.
+  U256Val povwNonce(stream);
+  // NOTE: rng is not part of the claim, and is fully constrained by the circuit. It is included in
+  // the globals because putting it there made the circuit construction easier.
   /*Val rng =*/readExtVal(stream);
-  Val shutdownCycle = readVal(stream);
+  // NOTE: shutdownCycle allows checking that splits occurs within a constrained range of cycles,
+  // near the end of the trace. This feature is not yet fully implemented. As a result, this value
+  // is unchecked.
+  /*Val shutdownCycle =*/readVal(stream);
   DigestVal stateIn = readSha(stream);
   DigestVal stateOut = readSha(stream);
   Val termA0High = readVal(stream);
@@ -247,10 +407,10 @@ ReceiptClaim ReceiptClaim::fromRv32imV2(llvm::ArrayRef<Val>& stream, size_t po2)
   claim.input = input;
   claim.output = output;
 
-  claim.pre.pc = U32Reg::zero();
+  claim.pre.pc = PCVal::zero();
   claim.pre.memory = stateIn;
 
-  claim.post.pc = U32Reg::zero();
+  claim.post.pc = PCVal::zero();
   eqz(isTerminate * (1 - isTerminate));
   std::vector zeroVec(16, Val(0));
   DigestVal zeroHash = intoDigest(zeroVec, DigestKind::Sha256);
@@ -262,7 +422,11 @@ ReceiptClaim ReceiptClaim::fromRv32imV2(llvm::ArrayRef<Val>& stream, size_t po2)
   claim.sysExit = (2 - 2 * isTerminate) + (isTerminate * termA0Low);
   claim.userExit = isTerminate * termA0High;
 
-  return claim;
+  return std::make_pair(claim, povwNonce);
+}
+
+ReceiptClaim ReceiptClaim::fromRv32imV2(llvm::ArrayRef<Val>& stream, size_t po2) {
+  return readReceiptClaimAndPovwNonce(stream, po2).first;
 }
 
 } // namespace zirgen::predicates

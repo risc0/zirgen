@@ -15,16 +15,39 @@ component IllegalControl() {
   InstOutput(ValU32(0, 0), 0, 0)
 }
 
-component ControlLoadRoot(cycle: Reg, input: InstInput) {
+component ControlLoadRootAndNonce(cycle: Reg, input: InstInput) {
   global stateIn : DigestReg;
-  input.state = StateLoadRoot();
-  // Verify page in
-  for i : 0..8 {
-    mem := MemoryPageIn(cycle, RootWord() + i);
-    stateIn.values[i].low = mem.low;
-    stateIn.values[i].high = mem.high;
+  global povwNonce : DigestReg;
+
+  // Constrain the input state to be StateLoadRootAndNonce and cycle to be 0 or 1.
+  input.state = StateLoadRootAndNonce();
+  cycle * (1 - cycle) = 0;
+
+  // In each of the first two cycles, we load a digest-sized value from globals into memory.
+  wordAddr := cycle * RootWord() + (1 - cycle) * PovwNonceWord();
+  mem := for i : 0..8 {
+    MemoryPageIn(cycle, wordAddr + i)
   };
-  InstOutput(ValU32(0, 0), StatePoseidonEntry(), 0)
+
+  if (1 - cycle) {
+    // In cycle 0, we "read" the PoVW nonce into memory.
+    for i : 0..8 {
+      mem[i].low = povwNonce.values[i].low;
+      mem[i].high = povwNonce.values[i].high;
+    };
+
+    // Setup the next cycle to repeat this component.
+    InstOutput(ValU32(0, 0), StateLoadRootAndNonce(), 0)
+  } else {
+    // In cycle 1, we "read" the page tree root into memory.
+    for i : 0..8 {
+      mem[i].low = stateIn.values[i].low;
+      mem[i].high = stateIn.values[i].high;
+    };
+
+    // Setup the next cycle to validate the page-in operations.
+    InstOutput(ValU32(0, 0), StatePoseidonEntry(), 0)
+  }
 }
 
 component ControlResume(cycle: Reg, ii: InstInput) {
@@ -172,7 +195,7 @@ component ControlDone(cycle: Reg, input: InstInput) {
 component Control0(cycle: Reg, inst_input: InstInput) {
   DoCycleTable(cycle);
   inst_input.minor_onehot -> (
-    ControlLoadRoot(cycle, inst_input),
+    ControlLoadRootAndNonce(cycle, inst_input),
     ControlResume(cycle, inst_input),
     ControlUserECALL(cycle, inst_input),
     ControlMRET(cycle, inst_input),

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -54,6 +54,12 @@ struct Segment {
   size_t pagingCycles;
   // Segement threshold
   size_t segmentThreshold;
+  // The nonce field for proof of verifiable worl (PoVW).
+  //
+  // The nonce is a 256-bit value that, set to be unique per segment when PoVW is enabled.
+  // It is written to the receipts global buffer, and bound to the memory argument. Limbs are
+  // little-endian when interpreted as an integer.
+  std::array<uint32_t, 8> povwNonce;
 };
 
 // Run the executor and returns a set of segments. The memory image passed in
@@ -62,6 +68,7 @@ std::vector<Segment> execute(MemoryImage& in,
                              HostIoHandler& io,
                              size_t segmentThreshold,
                              size_t maxCycles,
-                             Digest input = Digest::zero());
+                             Digest input = Digest::zero(),
+                             std::array<uint32_t, 7> povwJobId = {0, 0, 0, 0, 0, 0, 0});
 
 } // namespace zirgen::rv32im_v2

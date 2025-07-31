@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ size_t CYCLE_COST_MERKLE = 1 + // POSEIDON_PAGING
                            1;  // PoseidonDoOut
 
 size_t CYCLE_COST_EXTRA = 1 + // LOAD_ROOT
+                          1 + // LOAD_POVW_NONCE
                           1 + // POSEIDON_ENTRY
                           // Page reads
                           1 + // POSEIDON_PAGING

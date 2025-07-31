@@ -90,8 +90,20 @@ struct ExecContext {
 
 } // namespace
 
-std::vector<Segment> execute(
-    MemoryImage& in, HostIoHandler& io, size_t segmentThreshold, size_t maxCycles, Digest input) {
+// Construct a nonce for PoVW work, by combining a 224-bit job ID with a 32-bit segment index.
+std::array<uint32_t, 8> povwNonce(std::array<uint32_t, 7> povwJobId, uint32_t segmentIndex) {
+  std::array<uint32_t, 8> nonce;
+  std::copy(povwJobId.begin(), povwJobId.end(), nonce.begin() + 1);
+  nonce[0] = segmentIndex;
+  return nonce;
+}
+
+std::vector<Segment> execute(MemoryImage& in,
+                             HostIoHandler& io,
+                             size_t segmentThreshold,
+                             size_t maxCycles,
+                             Digest input,
+                             std::array<uint32_t, 7> povwJobId) {
   std::vector<Segment> ret;
   PagedMemory pager(in);
   ExecContext execContext(io, pager);
@@ -103,15 +115,22 @@ std::vector<Segment> execute(
   r0Context.resume();
   while (!r0Context.isDone() && execContext.userCycles < maxCycles) {
     if (execContext.physCycles + pager.getPagingCycles() >= segmentThreshold) {
+      // Finalize the segment that is ending.
       ret.back().suspendCycle = execContext.physCycles;
       ret.back().pagingCycles = pager.getPagingCycles();
       ret.back().segmentThreshold = segmentThreshold;
+      ret.back().povwNonce = povwNonce(povwJobId, ret.size() - 1);
+
       r0Context.suspend();
       ret.back().image = pager.commit();
       ret.back().isTerminate = false;
+
+      // Start a new segment.
       pager.clear();
       ret.emplace_back();
+
       ret.back().input = input;
+
       execContext.segment = &ret.back();
       r0Context.resume();
     }
@@ -120,9 +139,11 @@ std::vector<Segment> execute(
   ret.back().suspendCycle = execContext.physCycles;
   ret.back().pagingCycles = pager.getPagingCycles();
   ret.back().segmentThreshold = segmentThreshold;
+  ret.back().povwNonce = povwNonce(povwJobId, ret.size() - 1);
   r0Context.suspend();
   ret.back().image = pager.commit();
   ret.back().isTerminate = true;
+
   return ret;
 }
 

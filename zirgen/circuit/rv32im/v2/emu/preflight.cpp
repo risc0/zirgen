@@ -178,9 +178,11 @@ struct PreflightContext {
   // Pass memory ops to pager + record
   uint32_t load(uint32_t word) {
     uint32_t val;
-    if (word >= 0x40000000) {
+    if (word >= MEMORY_END_WORD) {
       if (pageMemory.count(word)) {
         val = pageMemory.at(word);
+      } else if (word < POVW_NONCE_END_WORD) {
+        val = segment.povwNonce.at(word - POVW_NONCE_START_WORD);
       } else {
         throw std::runtime_error("Invalid load from page memory");
       }
@@ -203,7 +205,7 @@ struct PreflightContext {
 
   void store(uint32_t word, uint32_t val) {
     uint32_t prevVal;
-    if (word >= 0x40000000) {
+    if (word >= MEMORY_END_WORD) {
       if (!pageMemory.count(word)) {
         throw std::runtime_error("Invalid write to page memory");
       }
@@ -257,6 +259,14 @@ struct PreflightContext {
     cycleCompleteSpecial(STATE_LOAD_ROOT, STATE_POSEIDON_ENTRY, 0);
   }
 
+  void readPovwNonce() {
+    size_t povwNonceAddr = POVW_NONCE_START_WORD;
+    for (size_t i = 0; i < 8; i++) {
+      load(povwNonceAddr + i);
+    }
+    cycleCompleteSpecial(STATE_LOAD_ROOT, STATE_LOAD_ROOT, 0);
+  }
+
   void readNode(size_t idx) { p2DoNode(*this, idx, true); }
   void readPage(size_t page) { p2DoPage(*this, page, true); }
   void readDone() { p2ReadDone(*this); }
@@ -308,6 +318,7 @@ PreflightTrace preflightSegment(const Segment& in, size_t segmentSize) {
   R0Context<PreflightContext> r0Context(preflightContext);
   RV32Emulator<R0Context<PreflightContext>> emu(r0Context);
 
+  preflightContext.readPovwNonce();
   // Do page in
   preflightContext.readRoot();
   auto pages = pager.readPaging();
