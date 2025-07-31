@@ -15,7 +15,6 @@ component IllegalControl() {
   InstOutput(ValU32(0, 0), 0, 0)
 }
 
-// TODO: rename this component
 component ControlLoadRootAndNonce(cycle: Reg, input: InstInput) {
   global stateIn : DigestReg;
   global povwNonce : DigestReg;
