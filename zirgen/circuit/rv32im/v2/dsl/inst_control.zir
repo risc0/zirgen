@@ -19,29 +19,33 @@ component ControlLoadRootAndNonce(cycle: Reg, input: InstInput) {
   global stateIn : DigestReg;
   global povwNonce : DigestReg;
 
-  // Constrain the input state to be StateLoadRootAndNonce.
+  // Constrain the input state to be StateLoadRootAndNonce and cycle to be 0 or 1.
   input.state = StateLoadRootAndNonce();
+  cycle * (1 - cycle) = 0;
 
   // In each of the first two cycles, we load a digest-sized value from globals into memory.
-  // In cycle 0, we "read" the PoVW nonce into memory.
-  // In cycle 1, we "read" the page tree root into memory.
   wordAddr := cycle * RootWord() + (1 - cycle) * PovwNonceWord();
-  for i : 0..8 {
-    mem := MemoryPageIn(cycle, wordAddr + i);
-    povwNonce.values[i].low = mem.low;
-    povwNonce.values[i].high = mem.high;
+  mem := for i : 0..8 {
+    MemoryPageIn(cycle, wordAddr + i)
   };
 
-  // Check the cycle number and setup the next cycle.
   if (1 - cycle) {
-    // Assert that the current cycle number is as expected.
-    cycle = 0;
-    // "Read" the PoVW nonce into memory.
+    // In cycle 0, we "read" the PoVW nonce into memory.
+    for i : 0..8 {
+      mem[i].low = povwNonce.values[i].low;
+      mem[i].high = povwNonce.values[i].high;
+    };
+
+    // Setup the next cycle to repeat this component.
     InstOutput(ValU32(0, 0), StateLoadRootAndNonce(), 0)
   } else {
-    // Assert that the current cycle number is as expected.
-    cycle = 1;
-    // "Read" the page tree root into memory, then start verifying page-in ops.
+    // In cycle 1, we "read" the page tree root into memory.
+    for i : 0..8 {
+      mem[i].low = stateIn.values[i].low;
+      mem[i].high = stateIn.values[i].high;
+    };
+
+    // Setup the next cycle to validate the page-in operations.
     InstOutput(ValU32(0, 0), StatePoseidonEntry(), 0)
   }
 }
