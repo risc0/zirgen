@@ -388,6 +388,9 @@ std::pair<ReceiptClaim, U256Val> readReceiptClaimAndPovwNonce(llvm::ArrayRef<Val
   // NOTE: rng is not part of the claim, and is fully constrained by the circuit. It is included in
   // the globals because putting it there made the circuit construction easier.
   /*Val rng =*/readExtVal(stream);
+  // NOTE: shutdownCycle allows checking that splits occurs within a constrained range of cycles,
+  // near the end of the trace. This feature is not yet fully implemented. As a result, this value
+  // is unchecked.
   /*Val shutdownCycle =*/readVal(stream);
   DigestVal stateIn = readSha(stream);
   DigestVal stateOut = readSha(stream);
