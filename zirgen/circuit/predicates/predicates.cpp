@@ -422,7 +422,7 @@ std::pair<ReceiptClaim, U256Val> readReceiptClaimAndPovwNonce(llvm::ArrayRef<Val
   // e.g. halted, paused, or system split) is set to termA0Low. Without this constraint, it is
   // possible for the RISC-V code to set sysExit to e.g. 2 when isTerminate is true, which is
   // semantically inconsistent in the v1 ReceiptClaim. This would require non-standard RISC-V
-  // kernel code, and so is mitigated by any program that uses the RISC Zero provided kernel.
+  // guest runtime, and so is mitigated by any program that uses the RISC Zero provided runtime.
   eqz(termA0Low * (1 - termA0Low));
 
   // isTerminate:
