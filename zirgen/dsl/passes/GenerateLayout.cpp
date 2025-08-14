@@ -255,6 +255,11 @@ struct GenerateLayoutPass : public GenerateLayoutBase<GenerateLayoutPass> {
         return;
 
       auto checkLayoutFunc = component.getAspect<CheckLayoutFuncOp>();
+      if (!checkLayoutFunc) {
+        llvm::errs() << "no CheckLayoutFuncOp detected for component "
+                     << component.getName() << ", did you run GenerateCheckLayoutPass?\n";
+        return;
+      }
       if (failed(solver.initializeAndRun(checkLayoutFunc)))
         assert(false && "an unexpected error occurred while solving the layout");
       LayoutGenerator layout(bufferName, solver);
