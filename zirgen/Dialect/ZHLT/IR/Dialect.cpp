@@ -116,7 +116,10 @@ std::string getTapsConstName() {
 
 bool isEntryPoint(ComponentOp component) {
   StringRef name = component.getName();
-  return (name.starts_with("test$") || name.ends_with("$accum") || name == "Top");
+  if (name.starts_with("test$") || name.ends_with("$accum") || name == "Top") {
+    return true;
+  }
+  return component->hasAttr("entry");
 }
 
 bool isBufferComponent(ComponentOp component) {

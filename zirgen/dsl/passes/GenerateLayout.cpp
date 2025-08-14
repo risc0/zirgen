@@ -289,6 +289,8 @@ private:
       return StringAttr::get(ctx, "test");
     else if (component.getName() == "Top")
       return StringAttr::get(ctx, "data");
+    else if (component->hasAttr("entry"))
+      return component.getNameAttr();
     else
       assert(!Zhlt::isBufferComponent(component));
     return {};

@@ -79,7 +79,7 @@ void getZirgenBlockArgumentNames(mlir::FunctionOpInterface funcOp,
 namespace zirgen::Zhlt {
 
 /// True iff component represents a "starting point" of execution like Top,
-/// Accum, or a test.
+/// Accum, or a test, or is marked with the `entry` attribute.
 bool isEntryPoint(ComponentOp component);
 
 /// True iff component is backed by a buffer, including all entry points and

@@ -46,7 +46,7 @@ struct TapMap {
     for (auto buf : bufs.getBuffers()) {
       if (buf.getName() == name) {
         if (!buf.getRegGroupId()) {
-          llvm::errs() << "Referenced arg arg " << ba << " refers to a non-tap buffer\n";
+          llvm::errs() << "Referenced arg " << ba << " refers to a non-tap buffer\n";
         } else {
           size_t regGroupId = *buf.getRegGroupId();
           regGroupIds[ba] = regGroupId;

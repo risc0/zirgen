@@ -1,6 +1,13 @@
 // RUN: zirgen-translate -zirgen-to-rust-taps --function=fib %s | FileCheck %s
 
 module attributes {
+  zll.buffers = #zll<buffers
+    ("accum", <1, mutable>, 0),
+    ("code", <1, mutable>, 1),
+    ("data", <1, mutable>, 2),
+    ("global", <1, global>),
+    ("mix", <1, global>)
+  >,
   zll.taps = #zll<taps
     // CHECK:      TapData {
     // CHECK-NEXT:     offset: 0
