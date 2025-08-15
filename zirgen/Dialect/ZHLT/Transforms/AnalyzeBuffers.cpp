@@ -32,8 +32,7 @@ static std::vector<std::string> globalBufferNames = {"global", "mix"};
 
 namespace {
 
-template <typename T>
-bool contains(std::vector<T>& vec, const T& item) {
+template <typename T> bool contains(std::vector<T>& vec, const T& item) {
   return std::find(vec.begin(), vec.end(), item) != vec.end();
 }
 

@@ -256,8 +256,8 @@ struct GenerateLayoutPass : public GenerateLayoutBase<GenerateLayoutPass> {
 
       auto checkLayoutFunc = component.getAspect<CheckLayoutFuncOp>();
       if (!checkLayoutFunc) {
-        llvm::errs() << "no CheckLayoutFuncOp detected for component "
-                     << component.getName() << ", did you run GenerateCheckLayoutPass?\n";
+        llvm::errs() << "no CheckLayoutFuncOp detected for component " << component.getName()
+                     << ", did you run GenerateCheckLayoutPass?\n";
         return;
       }
       if (failed(solver.initializeAndRun(checkLayoutFunc)))

@@ -15,11 +15,11 @@
 #include "mlir/IR/IRMapping.h"
 #include "mlir/Transforms/passes.h"
 
-#include "zirgen/compiler/codegen/codegen.h"
 #include "zirgen/Dialect/ZHLT/IR/Codegen.h"
-#include "zirgen/Dialect/Zll/Transforms/Passes.h"
 #include "zirgen/Dialect/ZStruct/Transforms/Passes.h"
+#include "zirgen/Dialect/Zll/Transforms/Passes.h"
 #include "zirgen/Main/Utils.h"
+#include "zirgen/compiler/codegen/codegen.h"
 
 using namespace mlir;
 using namespace zirgen::codegen;
@@ -95,7 +95,6 @@ void emitPoly(ModuleOp mod, StringRef circuitName, StringRef protocolInfo) {
   CodegenEmitter::StreamOutputGuard guard(rustCg, os.get());
   rustCg.emitModule(funcMod);
 }
-
 
 void emitDefs(CodegenEmitter& cg, ModuleOp mod, const Twine& filename, const Template& tmpl) {
   auto os = openOutput(filename.str());

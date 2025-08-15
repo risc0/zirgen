@@ -29,10 +29,10 @@
 #include "zirgen/Dialect/Zll/IR/IR.h"
 #include "zirgen/Dialect/Zll/IR/Interpreter.h"
 #include "zirgen/Dialect/Zll/Transforms/Passes.h"
-#include "zirgen/Main/Utils.h"
 #include "zirgen/Main/Main.h"
 #include "zirgen/Main/RunTests.h"
 #include "zirgen/Main/Target.h"
+#include "zirgen/Main/Utils.h"
 #include "zirgen/compiler/codegen/codegen.h"
 #include "zirgen/compiler/layout/viz.h"
 #include "zirgen/dsl/lower.h"
@@ -251,12 +251,21 @@ int main(int argc, char* argv[]) {
   // Create step functions
   mlir::ModuleOp stepFuncs = makeStepFuncs(*typedModule);
 
-  emitTarget(
-      RustCodegenTarget(circuitNameAttr), *typedModule, stepFuncs, codegen::getRustCodegenOpts(), stepSplitCount);
-  emitTarget(
-      CppCodegenTarget(circuitNameAttr), *typedModule, stepFuncs, codegen::getCppCodegenOpts(), stepSplitCount);
-  emitTarget(
-      CudaCodegenTarget(circuitNameAttr), *typedModule, stepFuncs, codegen::getCudaCodegenOpts(), stepSplitCount);
+  emitTarget(RustCodegenTarget(circuitNameAttr),
+             *typedModule,
+             stepFuncs,
+             codegen::getRustCodegenOpts(),
+             stepSplitCount);
+  emitTarget(CppCodegenTarget(circuitNameAttr),
+             *typedModule,
+             stepFuncs,
+             codegen::getCppCodegenOpts(),
+             stepSplitCount);
+  emitTarget(CudaCodegenTarget(circuitNameAttr),
+             *typedModule,
+             stepFuncs,
+             codegen::getCudaCodegenOpts(),
+             stepSplitCount);
 
   return 0;
 }
