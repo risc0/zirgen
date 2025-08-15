@@ -135,11 +135,10 @@ private:
   Value condenseArgument(Value layout, const RandomnessMap& randomness) {
     MLIRContext* ctx = builder.getContext();
     ValType valType = Zhlt::getValType(ctx);
-    ValType extValType = Zhlt::getExtValType(ctx);
 
     if (layout.getType() == Zhlt::getNondetRegLayoutType(ctx)) {
       // For a single register, compute r_a * a[i]
-      assert(randomness.pivot.getType() == extValType);
+      assert(randomness.pivot.getType() == Zhlt::getExtValType(ctx));
       Value r = randomness.pivot;
       Value colLayout = builder.create<LookupOp>(currentLoc(ctx), layout, "@super");
       Value colValue = builder.create<ZStruct::LoadOp>(currentLoc(ctx), colLayout, zeroDistance);

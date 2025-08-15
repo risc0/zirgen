@@ -3,13 +3,15 @@ package(
 )
 
 cc_library(
-    name = "Main",
+    name = "Utils",
     srcs = [
+        "Utils.cpp",
         "Main.cpp",
         "RunTests.cpp",
         "Target.cpp",
     ],
     hdrs = [
+        "Utils.h",
         "Main.h",
         "RunTests.h",
         "Target.cpp",
@@ -18,9 +20,11 @@ cc_library(
     deps = [
         "//risc0/core",
         "//risc0/fp",
+        "//zirgen/Dialect/ZHLT/IR:Codegen",
         "//zirgen/Dialect/ZHLT/Transforms:passes",
         "//zirgen/Dialect/ZStruct/Transforms:passes",
         "//zirgen/Dialect/Zll/Transforms:passes",
+        "//zirgen/compiler/codegen",
         "//zirgen/dsl",
         "//zirgen/dsl/passes",
         "@llvm-project//mlir:Debug",
@@ -34,9 +38,7 @@ cc_binary(
     deps = [
         "//risc0/core",
         "//zirgen/Conversions/Typing",
-        "//zirgen/Dialect/ZHLT/IR:Codegen",
-        "//zirgen/Main",
-        "//zirgen/compiler/codegen",
+        "//zirgen/Main:Utils",
         "//zirgen/compiler/layout",
     ],
 )

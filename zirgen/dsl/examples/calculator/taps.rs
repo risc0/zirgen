@@ -89,6 +89,5 @@ pub const TAPSET: &TapSet = &TapSet::<'static> {
     combos_count: 1,
     reg_count: 9,
     tot_combo_backs: 1,
-    // TODO: Generate these instead of hardcoding:
     group_names: &["accum", "code", "data"],
 };

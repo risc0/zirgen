@@ -56,7 +56,6 @@ pub const TAPSET: &TapSet = &TapSet::<'static> {
     combos_count: {{combos_count}},
     reg_count: {{reg_count}},
     tot_combo_backs: {{tot_combo_backs}},
-    // TODO: Generate these instead of hardcoding:
-    group_names: &["accum", "code", "data"],
+    group_names: &[{{#group_names}} "{{.}}", {{/group_names}}],
 };
 )";
