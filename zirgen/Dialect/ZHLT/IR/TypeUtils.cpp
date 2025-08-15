@@ -378,6 +378,7 @@ std::string getTypeId(Type ty) {
       .Default([&](auto) -> std::string {
         llvm::errs() << "Type: " << ty << "\n";
         assert(0 && "Unexpected type for getTypeId");
+        return "***INVALID***";
       });
 }
 
