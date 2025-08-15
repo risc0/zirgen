@@ -33,9 +33,6 @@ public:
 
   ZStruct::StructType getType() const {
     assert(members.size() == memberValues.size());
-    for (auto& field : members) {
-      assert(field.type);
-    }
     return builder.getType<ZStruct::StructType>(name, members);
   }
 
