@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #include "mlir/IR/IRMapping.h"
-#include "mlir/Transforms/passes.h"
+#include "mlir/Transforms/Passes.h"
 
 #include "zirgen/Dialect/ZHLT/IR/Codegen.h"
 #include "zirgen/Dialect/ZStruct/Transforms/Passes.h"
