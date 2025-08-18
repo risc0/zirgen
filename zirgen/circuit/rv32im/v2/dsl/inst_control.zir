@@ -69,20 +69,6 @@ component ControlResume(cycle: Reg, ii: InstInput) {
   }
 }
 
-component ControlUserECALL(cycle: Reg, input: InstInput) {
-  safeMode := Reg(input.mode);
-  pc_addr := AddrDecomposeBits(input.pc_u32, safeMode);
-  pc_addr.low2 = 0;
-  load_inst := MemoryRead(cycle, pc_addr);
-  load_inst.high = 0x0000;
-  load_inst.low = 0x0073;
-  input.state = StateDecode();
-  input.mode = 0;
-  new_pc_addr := MemoryRead(cycle, EcallDispatchWord());
-  MemoryWrite(cycle, MepcWord(), input.pc_u32);
-  InstOutput(new_pc_addr, StateDecode(), 1)
-}
-
 component ControlMRET(cycle: Reg, input: InstInput) {
   safeMode := Reg(input.mode);
   pc_addr := AddrDecomposeBits(input.pc_u32, safeMode);
@@ -192,12 +178,43 @@ component ControlDone(cycle: Reg, input: InstInput) {
   InstOutput(ValU32(0, 0), StateControlDone(), 1)
 }
 
+component ControlUserEcallOrFence(cycle: Reg, input: InstInput) {
+  // Minor 2 handles both USER_ECALL (EANY in user mode) and FENCE
+  // USER_ECALL comes from InsnKind::Eany with mode=0
+  // FENCE comes from InsnKind::Fence
+
+  input.state = StateDecode();
+
+  safeMode := Reg(input.mode);
+  pc_addr := AddrDecomposeBits(input.pc_u32, safeMode);
+  pc_addr.low2 = 0;
+  load_inst := MemoryRead(cycle, pc_addr);
+
+  is_fence := NondetBitReg(Isz((load_inst.low % 128) - 0x0f));
+
+  if (is_fence) {
+    // Per the spec, rd and rs1 are unused and are to be ignored (base implementations) or
+    // zeroed (standard implementations). The pragmatic choice here, given the available
+    // instruction decomposition, is a hybrid approach.
+    load_inst.low = 0x000f;
+    new_pc := NormalizeU32(AddU32(input.pc_u32, ConstU32<4>()));
+    InstOutput(new_pc, StateDecode(), input.mode)
+  } else {
+    input.mode = 0;
+    load_inst.low = 0x0073;
+    load_inst.high = 0x0000;
+    new_pc_addr := MemoryRead(cycle, EcallDispatchWord());
+    MemoryWrite(cycle, MepcWord(), input.pc_u32);
+    InstOutput(new_pc_addr, StateDecode(), 1)
+  }
+}
+
 component Control0(cycle: Reg, inst_input: InstInput) {
   DoCycleTable(cycle);
   inst_input.minor_onehot -> (
     ControlLoadRootAndNonce(cycle, inst_input),
     ControlResume(cycle, inst_input),
-    ControlUserECALL(cycle, inst_input),
+    ControlUserEcallOrFence(cycle, inst_input),
     ControlMRET(cycle, inst_input),
     ControlSuspend(cycle, inst_input),
     ControlStoreRoot(cycle, inst_input),
