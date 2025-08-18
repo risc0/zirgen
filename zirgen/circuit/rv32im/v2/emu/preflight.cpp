@@ -86,6 +86,8 @@ struct PreflightContext {
       }
     } else if (type == InstType::MRET) {
       cycleComplete(state, pc, MajorType::CONTROL0, ControlMinorType::MRET);
+    } else if (type == InstType::FENCE) {
+      cycleComplete(state, pc, MajorType::CONTROL0, ControlMinorType::FENCE);
     } else {
       cycleComplete(state, pc, getMajor(type), getMinor(type));
     }
