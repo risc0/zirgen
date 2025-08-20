@@ -416,6 +416,15 @@ std::pair<ReceiptClaim, U256Val> readReceiptClaimAndPovwNonce(llvm::ArrayRef<Val
   DigestVal zeroHash = intoDigest(zeroVec, DigestKind::Sha256);
   claim.post.memory = select(isTerminate, {stateOut, zeroHash});
 
+  // Constrain termA0Low to be either 0 or 1.
+  //
+  // Note that when isTerminate = 1, the system exit code (used to indicate whether the system is
+  // e.g. halted, paused, or system split) is set to termA0Low. Without this constraint, it is
+  // possible for the RISC-V code to set sysExit to e.g. 2 when isTerminate is true, which is
+  // semantically inconsistent in the v1 ReceiptClaim. This would require non-standard RISC-V
+  // guest runtime, and so is mitigated by any program that uses the RISC Zero provided runtime.
+  eqz(termA0Low * (1 - termA0Low));
+
   // isTerminate:
   // 0 -> 2
   // 1 -> termA0Low (0, 1)
