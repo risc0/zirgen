@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -255,6 +255,11 @@ struct GenerateLayoutPass : public GenerateLayoutBase<GenerateLayoutPass> {
         return;
 
       auto checkLayoutFunc = component.getAspect<CheckLayoutFuncOp>();
+      if (!checkLayoutFunc) {
+        llvm::errs() << "no CheckLayoutFuncOp detected for component " << component.getName()
+                     << ", did you run GenerateCheckLayoutPass?\n";
+        return;
+      }
       if (failed(solver.initializeAndRun(checkLayoutFunc)))
         assert(false && "an unexpected error occurred while solving the layout");
       LayoutGenerator layout(bufferName, solver);
@@ -289,6 +294,8 @@ private:
       return StringAttr::get(ctx, "test");
     else if (component.getName() == "Top")
       return StringAttr::get(ctx, "data");
+    else if (component->hasAttr("entry"))
+      return component.getNameAttr();
     else
       assert(!Zhlt::isBufferComponent(component));
     return {};

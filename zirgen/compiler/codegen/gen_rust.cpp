@@ -608,13 +608,20 @@ public:
     }
     comboBegin.push_back(std::to_string(comboBacks.size()));
 
+    // Get the names of all tap buffers.
+    list tapBufferNames;
+    for (auto& desc : lookupModuleAttr<BuffersAttr>(func).getTapBuffers()) {
+      tapBufferNames.push_back(desc.getName().str());
+    }
+
     tmpl.render(object{{"taps", taps},
                        {"combo_taps", comboBacks},
                        {"combo_begin", comboBegin},
                        {"group_begin", groupBegin},
                        {"combos_count", std::to_string(tapSet.combos.size())},
                        {"reg_count", std::to_string(totRegs)},
-                       {"tot_combo_backs", std::to_string(comboBacks.size())}},
+                       {"tot_combo_backs", std::to_string(comboBacks.size())},
+                       {"group_names", tapBufferNames}},
                 ofs);
   }
 

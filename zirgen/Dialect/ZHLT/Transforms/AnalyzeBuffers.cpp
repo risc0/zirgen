@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,10 +27,14 @@ using namespace zirgen::ZStruct;
 
 namespace zirgen::Zhlt {
 
-static llvm::StringLiteral tapBufferNames[] = {"accum", "code", "data"};
-static llvm::StringLiteral globalBufferNames[] = {"global", "mix"};
+static std::vector<std::string> tapBufferNames = {"accum", "code", "data"};
+static std::vector<std::string> globalBufferNames = {"global", "mix"};
 
 namespace {
+
+template <typename T> bool contains(std::vector<T>& vec, const T& item) {
+  return std::find(vec.begin(), vec.end(), item) != vec.end();
+}
 
 // If this is a top-level layout, return the buffer associated with it.
 StringRef getLayoutBuffer(ZStruct::GlobalConstOp globalConstOp) {
@@ -71,13 +75,17 @@ struct AnalyzeBuffersPass : public AnalyzeBuffersBase<AnalyzeBuffersPass> {
 
     llvm::MapVector<StringAttr, size_t> bufSizes;
 
-    // Compute how big these buffers need to be.  If we find any other buffers (like "test")
-    // we default them to kind BufferKind::Mutable.
+    // Compute how big these buffers need to be. Besides the special case of
+    // "test", we default any other buffers to be mutable tap buffers.
     getOperation()->walk([&](ZStruct::GlobalConstOp globalConstOp) {
       std::string name = getLayoutBuffer(globalConstOp).str();
       if (name.empty())
         // Not a layout
         return;
+      // Mark user-defined buffers as tap buffers.
+      if (!contains(tapBufferNames, name) && !contains(globalBufferNames, name) && name != "test") {
+        tapBufferNames.push_back(name);
+      }
       auto layoutAttr = globalConstOp.getConstant();
       getRegCount(getOperation(), layoutAttr, bufSizes[builder.getStringAttr(name)]);
     });
@@ -104,8 +112,10 @@ struct AnalyzeBuffersPass : public AnalyzeBuffersBase<AnalyzeBuffersPass> {
       bufSizes.erase(bufNameAttr);
     }
 
-    // Anything left is a non-tap buffer (like "test")
+    // At this point, the only thing left should be the "test" buffer.
+    assert(bufSizes.size() <= 1);
     for (auto [bufName, size] : bufSizes) {
+      assert(bufName == "test");
       bufs.push_back(builder.getAttr<BufferDescAttr>(
           bufName,
           builder.getType<BufferType>(/*element=*/builder.getType<ValType>(),

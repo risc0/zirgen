@@ -35,7 +35,7 @@ cc_binary(
         "//risc0/core",
         "//zirgen/Conversions/Typing",
         "//zirgen/Dialect/ZHLT/IR:Codegen",
-        "//zirgen/Main",
+        "//zirgen/Main:Utils",
         "//zirgen/compiler/codegen",
         "//zirgen/compiler/layout",
         "//zirgen/compiler/picus",

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,9 +33,6 @@ public:
 
   ZStruct::StructType getType() const {
     assert(members.size() == memberValues.size());
-    for (auto& field : members) {
-      assert(field.type);
-    }
     return builder.getType<ZStruct::StructType>(name, members);
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ struct TapMap {
     for (auto buf : bufs.getBuffers()) {
       if (buf.getName() == name) {
         if (!buf.getRegGroupId()) {
-          llvm::errs() << "Referenced arg arg " << ba << " refers to a non-tap buffer\n";
+          llvm::errs() << "Referenced arg " << ba << " refers to a non-tap buffer\n";
         } else {
           size_t regGroupId = *buf.getRegGroupId();
           regGroupIds[ba] = regGroupId;
