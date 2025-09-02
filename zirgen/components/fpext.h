@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ class FpExt;
 class FpExtRegImpl : public CompImpl<FpExtRegImpl> {
 public:
   FpExtRegImpl(llvm::StringRef source = "data");
-  FpExt get(risc0::SourceLoc loc = current());
+  FpExt get(mlir::Location loc = currentLoc());
   void set(CaptureFpExt rhs);
   Val elem(size_t i) { return elems[i]; }
 
@@ -44,13 +44,13 @@ using FpExtReg = Comp<FpExtRegImpl>;
 class FpExt {
 public:
   FpExt() = default;
-  FpExt(Val x, risc0::SourceLoc loc = current());
-  FpExt(std::array<Val, kExtSize> elems, risc0::SourceLoc loc = current());
-  FpExt(FpExtReg reg, risc0::SourceLoc loc = current());
+  FpExt(Val x, mlir::Location loc = currentLoc());
+  FpExt(std::array<Val, kExtSize> elems, mlir::Location loc = currentLoc());
+  FpExt(FpExtReg reg, mlir::Location loc = currentLoc());
   Val elem(size_t i) { return elems[i]; }
   std::array<Val, kExtSize> getElems() { return elems; }
   std::vector<Val> toVals() { return std::vector<Val>(elems.begin(), elems.end()); }
-  static FpExt fromVals(llvm::ArrayRef<Val> vals, SourceLoc loc = current());
+  static FpExt fromVals(llvm::ArrayRef<Val> vals, mlir::Location loc = currentLoc());
 
 private:
   std::array<Val, kExtSize> elems;
@@ -58,10 +58,10 @@ private:
 
 class CaptureFpExt {
 public:
-  CaptureFpExt(FpExt ext, risc0::SourceLoc loc = current()) : ext(ext), loc(loc) {}
-  CaptureFpExt(FpExtReg ext, risc0::SourceLoc loc = current()) : ext(ext, loc), loc(loc) {}
+  CaptureFpExt(FpExt ext, mlir::Location loc = currentLoc()) : ext(ext), loc(loc) {}
+  CaptureFpExt(FpExtReg ext, mlir::Location loc = currentLoc()) : ext(ext, loc), loc(loc) {}
   FpExt ext;
-  risc0::SourceLoc loc;
+  mlir::Location loc;
 };
 
 FpExt operator+(CaptureFpExt a, CaptureFpExt b);

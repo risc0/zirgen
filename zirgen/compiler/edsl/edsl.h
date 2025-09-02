@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,22 +22,58 @@
 #include "zirgen/Dialect/Zll/IR/IR.h"
 #include "zirgen/Dialect/Zll/IR/Interpreter.h"
 #include "zirgen/compiler/codegen/protocol_info_const.h"
-#include "zirgen/compiler/edsl/source_loc.h"
 
 namespace zirgen {
 
-using risc0::SourceLoc;
+/// TODO: Move to std::source_location when we're ok to require c++20 everywhere.
 
-SourceLoc checkCurrentLoc(SourceLoc loc);
+#ifdef __has_builtin
+#if __has_builtin(__builtin_FILE)
+#define FILE_EXPR __builtin_FILE()
+#else
+#define FILE_EXPR __FILE__
+#endif
+#else
+#define FILE_EXPR __FILE__
+#endif
 
-struct OverrideLocation {
-  OverrideLocation(SourceLoc loc);
-  ~OverrideLocation();
+#ifdef __has_builtin
+#if __has_builtin(__builtin_LINE)
+#define LINE_EXPR __builtin_LINE()
+#else
+#define LINE_EXPR __LINE__
+#endif
+#else
+#define LINE_EXPR __LINE__
+#endif
+
+#ifdef __has_builtin
+#if __has_builtin(__builtin_COLUMN)
+#define COLUMN_EXPR __builtin_COLUMN()
+#else
+#define COLUMN_EXPR 0
+#endif
+#else
+#define COLUMN_EXPR 0
+#endif
+
+/// Register an EDSL context; this must be called before doing anything like `current`.
+void registerEdslContext(mlir::MLIRContext* ctx);
+
+/// Get the "current" source location.  When used in default values, this effectively captures the
+/// call site of the function declaring the default value, which is very useful.
+mlir::Location
+currentLoc(const char* filename = FILE_EXPR, int line = LINE_EXPR, int column = COLUMN_EXPR);
+
+/// Generate CallSiteLocs while a location is in scope.
+struct ScopedLocation {
+public:
+  ScopedLocation(mlir::Location loc = zirgen::currentLoc());
+  ~ScopedLocation();
+
+private:
+  mlir::LocationAttr prevLoc;
 };
-
-inline SourceLoc current(SourceLoc loc = SourceLoc::current()) {
-  return checkCurrentLoc(loc);
-}
 
 class Val;
 class DigestVal;
@@ -53,9 +89,9 @@ class Val {
 public:
   Val() = default;
   Val(mlir::Value value) : value(value) {}
-  Val(uint64_t val, SourceLoc loc = current());
-  Val(llvm::ArrayRef<uint64_t> coeffs, SourceLoc loc = current());
-  Val(Register reg, SourceLoc loc = current());
+  Val(uint64_t val, mlir::Location loc = currentLoc());
+  Val(llvm::ArrayRef<uint64_t> coeffs, mlir::Location loc = currentLoc());
+  Val(Register reg, mlir::Location loc = currentLoc());
 
   mlir::Value getValue() const { return value; }
 
@@ -79,10 +115,10 @@ private:
 };
 
 struct CaptureIdx {
-  CaptureIdx(size_t idx, SourceLoc loc = current()) : idx(idx), loc(loc) {}
+  CaptureIdx(size_t idx, mlir::Location loc = currentLoc()) : idx(idx), loc(loc) {}
   size_t idx;
 
-  SourceLoc loc;
+  mlir::Location loc;
   mlir::Location getLoc();
 };
 
@@ -93,13 +129,13 @@ class Buffer {
 public:
   Buffer(mlir::Value buf) : buf(buf) {}
   size_t size() { return mlir::cast<Zll::BufferType>(buf.getType()).getSize(); }
-  Val get(size_t idx, llvm::StringRef ident, SourceLoc loc = current());
-  void set(size_t idx, Val x, llvm::StringRef ident, SourceLoc loc = current());
-  void setDigest(size_t idx, DigestVal x, llvm::StringRef ident, SourceLoc loc = current());
-  Buffer slice(size_t offset, size_t size, SourceLoc loc = current());
-  Register getRegister(size_t idx, llvm::StringRef ident = {}, SourceLoc loc = current());
+  Val get(size_t idx, llvm::StringRef ident, mlir::Location loc = currentLoc());
+  void set(size_t idx, Val x, llvm::StringRef ident, mlir::Location loc = currentLoc());
+  void setDigest(size_t idx, DigestVal x, llvm::StringRef ident, mlir::Location loc = currentLoc());
+  Buffer slice(size_t offset, size_t size, mlir::Location loc = currentLoc());
+  Register getRegister(size_t idx, llvm::StringRef ident = {}, mlir::Location loc = currentLoc());
   Register operator[](CaptureIdx idx) { return getRegister(idx.idx, {}, idx.loc); }
-  void labelLayout(llvm::ArrayRef<std::string> labels, SourceLoc loc = current()) const;
+  void labelLayout(llvm::ArrayRef<std::string> labels, mlir::Location loc = currentLoc()) const;
   mlir::Value getBuf() { return buf; }
 
 private:
@@ -118,18 +154,19 @@ private:
   template <class U> static int try_get(U obj, long) { return 0; }
 
 public:
-  CaptureVal(uint64_t val, SourceLoc loc = current()) : val(val, loc), loc(loc) {}
-  CaptureVal(Val val, SourceLoc loc = current()) : val(val), loc(loc) {}
-  CaptureVal(Register val, SourceLoc loc = current()) : val(val, loc), loc(loc), ident(val.ident) {}
+  CaptureVal(uint64_t val, mlir::Location loc = currentLoc()) : val(val, loc), loc(loc) {}
+  CaptureVal(Val val, mlir::Location loc = currentLoc()) : val(val), loc(loc) {}
+  CaptureVal(Register val, mlir::Location loc = currentLoc())
+      : val(val, loc), loc(loc), ident(val.ident) {}
 
   template <typename T,
             typename std::enable_if<
                 std::is_same<Val, decltype(try_get(*static_cast<T*>(nullptr), 0))>::value,
                 int>::type = 0>
-  CaptureVal(Comp<T> comp, SourceLoc loc = current()) : val(comp->get()), loc(loc) {}
+  CaptureVal(Comp<T> comp, mlir::Location loc = currentLoc()) : val(comp->get()), loc(loc) {}
 
   Val val;
-  SourceLoc loc;
+  mlir::Location loc;
   mlir::Value getValue() { return val.getValue(); }
   mlir::Location getLoc();
   std::string ident;
@@ -183,7 +220,7 @@ public:
   inline mlir::func::FuncOp addFunc(const std::string& name,
                                     std::array<ArgumentInfo, N> args,
                                     F func,
-                                    SourceLoc loc = current()) {
+                                    mlir::Location loc = currentLoc()) {
     beginFunc(name, std::vector<ArgumentInfo>(args.begin(), args.end()), loc);
     std::array<mlir::Value, N> vargs;
     for (size_t i = 0; i < N; i++) {
@@ -229,8 +266,9 @@ public:
   void setProtocolInfo(ProtocolInfo info);
 
 private:
-  void beginFunc(const std::string& name, const std::vector<ArgumentInfo>& args, SourceLoc loc);
-  mlir::func::FuncOp endFunc(SourceLoc loc);
+  void
+  beginFunc(const std::string& name, const std::vector<ArgumentInfo>& args, mlir::Location loc);
+  mlir::func::FuncOp endFunc(mlir::Location loc);
   void pushIP(mlir::Block* block);
   void popIP();
   void runFunc(mlir::func::FuncOp func,
@@ -272,18 +310,18 @@ std::vector<Val> doExtern(const std::string& name,
                           const std::string& extra,
                           size_t outSize,
                           llvm::ArrayRef<Val> in,
-                          SourceLoc loc = current());
+                          mlir::Location loc = currentLoc());
 
 class NondetGuard {
 public:
-  NondetGuard(SourceLoc loc = current());
+  NondetGuard(mlir::Location loc = currentLoc());
   ~NondetGuard();
   operator bool() { return true; }
 };
 
 class IfGuard {
 public:
-  IfGuard(Val cond, SourceLoc loc = current());
+  IfGuard(Val cond, mlir::Location loc = currentLoc());
   ~IfGuard();
   operator bool() { return true; }
 };
@@ -345,43 +383,45 @@ template <> struct LogPrep<DigestVal> {
   static void toLogVec(std::vector<Val>& out, DigestVal x) { out.push_back(Val(x.getValue())); }
 };
 
-DigestVal hash(llvm::ArrayRef<Val> inputs, bool flip = false, SourceLoc loc = current());
+DigestVal hash(llvm::ArrayRef<Val> inputs, bool flip = false, mlir::Location loc = currentLoc());
 DigestVal intoDigest(llvm::ArrayRef<Val> inputs,
                      Zll::DigestKind kind = Zll::DigestKind::Default,
-                     SourceLoc loc = current());
-std::vector<Val> fromDigest(DigestVal digest, size_t size, SourceLoc loc = current());
-DigestVal fold(DigestVal lhs, DigestVal rhs, SourceLoc loc = current());
+                     mlir::Location loc = currentLoc());
+std::vector<Val> fromDigest(DigestVal digest, size_t size, mlir::Location loc = currentLoc());
+DigestVal fold(DigestVal lhs, DigestVal rhs, mlir::Location loc = currentLoc());
 DigestVal taggedStruct(llvm::StringRef tag,
                        llvm::ArrayRef<DigestVal> digests,
                        llvm::ArrayRef<Val> vals,
-                       SourceLoc loc = current());
-DigestVal
-taggedListCons(llvm::StringRef tag, DigestVal head, DigestVal tail, SourceLoc loc = current());
-void assert_eq(DigestVal lhs, DigestVal rhs, SourceLoc loc = current());
+                       mlir::Location loc = currentLoc());
+DigestVal taggedListCons(llvm::StringRef tag,
+                         DigestVal head,
+                         DigestVal tail,
+                         mlir::Location loc = currentLoc());
+void assert_eq(DigestVal lhs, DigestVal rhs, mlir::Location loc = currentLoc());
 
 class ReadIopVal {
 public:
   ReadIopVal(mlir::Value value) : value(value) {}
   mlir::Value getValue() const { return value; }
 
-  std::vector<Val> readBaseVals(size_t count, bool flip = false, SourceLoc loc = current());
-  std::vector<Val> readExtVals(size_t count, bool flip = false, SourceLoc loc = current());
+  std::vector<Val> readBaseVals(size_t count, bool flip = false, mlir::Location loc = currentLoc());
+  std::vector<Val> readExtVals(size_t count, bool flip = false, mlir::Location loc = currentLoc());
 
   // Read digests of the DigestKind::Default from the IOP stream.
-  std::vector<DigestVal> readDigests(size_t count, SourceLoc loc = current());
-  void commit(DigestVal digest, SourceLoc loc = current());
-  Val rngBits(uint32_t bits, SourceLoc loc = current());
-  Val rngBaseVal(SourceLoc loc = current());
-  Val rngExtVal(SourceLoc loc = current());
+  std::vector<DigestVal> readDigests(size_t count, mlir::Location loc = currentLoc());
+  void commit(DigestVal digest, mlir::Location loc = currentLoc());
+  Val rngBits(uint32_t bits, mlir::Location loc = currentLoc());
+  Val rngBaseVal(mlir::Location loc = currentLoc());
+  Val rngExtVal(mlir::Location loc = currentLoc());
 
 private:
   mlir::Value value;
 };
 
-Val select(Val idx, llvm::ArrayRef<Val> in, SourceLoc loc = current());
-DigestVal select(Val idx, llvm::ArrayRef<DigestVal> in, SourceLoc loc = current());
+Val select(Val idx, llvm::ArrayRef<Val> in, mlir::Location loc = currentLoc());
+DigestVal select(Val idx, llvm::ArrayRef<DigestVal> in, mlir::Location loc = currentLoc());
 
-Val normalize(Val in, SourceLoc loc = current());
+Val normalize(Val in, mlir::Location loc = currentLoc());
 
 struct HashCheckedPublicOutput {
   DigestVal poseidon;

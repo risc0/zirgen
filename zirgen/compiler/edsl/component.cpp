@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -214,7 +214,9 @@ std::string demangle(std::string ident) {
 
 } // namespace
 
-void CompContext::pushConstruct(llvm::StringRef ident, llvm::StringRef mangledTy, SourceLoc loc) {
+void CompContext::pushConstruct(llvm::StringRef ident,
+                                llvm::StringRef mangledTy,
+                                mlir::Location loc) {
   std::string demangledTy = demangle(mangledTy.str());
 
   // Generate something a bit more readable out of excessive things like this:

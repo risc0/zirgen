@@ -52,6 +52,7 @@ struct OpStatsCLOptions {
           clEnumValN(SortOrder::Flat, "flat", "Uncombined"),
           clEnumValN(SortOrder::Any, "any", "Combined occurrences anywhere in call stack"),
           clEnumValN(SortOrder::Max, "max", "Maximum of all the metrics"))};
+  cl::opt<bool> flatCost{"op-stats-flat-cost", cl::desc("Count all operations as the same cost")};
 };
 
 llvm::ManagedStatic<OpStatsCLOptions> clOpts;
@@ -141,7 +142,9 @@ struct LocStat {
   bool operator<(const LocStat& rhs) const { return sortStat() < rhs.sortStat(); }
 };
 
-class LocStats {
+} // namespace
+
+class BogoCycleAnalysis::LocStats {
 public:
   void countLoc(Location loc, double c) {
     seenFlat.clear();
@@ -255,8 +258,6 @@ private:
   DenseSet<Location> seenFlat, seenInside, seenOutside, seenAny;
 };
 
-} // namespace
-
 // Calculate the number of bogocycles used for OpT with the given extension field.
 template <typename OpT, size_t K, typename FpT> double BogoCycleAnalysis::getOrCalcBogoCycles() {
   std::pair<mlir::StringLiteral, size_t> id = std::make_pair(OpT::getOperationName(), K);
@@ -287,6 +288,9 @@ template <typename OpT, size_t K, typename FpT> double BogoCycleAnalysis::getOrC
 }
 
 double BogoCycleAnalysis::getBogoCycles(Operation* op) {
+  if (clOpts->flatCost)
+    return 1;
+
   // Relative costs of operations, in bogocycles.
   return TypeSwitch<Operation*, double>(op)
       .Case<AddOp, SubOp, MulOp>([&](auto op) {
@@ -299,7 +303,34 @@ double BogoCycleAnalysis::getBogoCycles(Operation* op) {
       })
       .Case<AndEqzOp, AndCondOp>(
           [&](auto op) { return getOrCalcBogoCycles<decltype(op), 4, FpExt>(); })
-      .Default([](auto) { return 0; });
+      .Default([&](auto) {
+        // Unknown operations
+        if (didWarnAbout.insert(op->getName()).second) {
+          static llvm::DenseSet<mlir::OperationName> globalDidWarnAbout;
+          static llvm::sys::Mutex mu;
+
+          mu.lock();
+          if (globalDidWarnAbout.insert(op->getName()).second) {
+            llvm::errs() << "OpStats: Don't know how to estimate how long " << op->getName()
+                         << " takes\n";
+          }
+          mu.unlock();
+        }
+        return 0;
+      });
+}
+
+bool BogoCycleAnalysis::isEnabled() {
+  if (!clOpts.isConstructed()) {
+    throw(std::runtime_error("op-stats command line options must be registered"));
+  }
+
+  if (clOpts->sortOrder == SortOrder::Disabled) {
+    LLVM_DEBUG({ llvm::dbgs() << "BogoCycle operation statistics not requested"; });
+    return false;
+  }
+
+  return true;
 }
 
 void BogoCycleAnalysis::printStatsIfRequired(Operation* topOp, llvm::raw_ostream& os) {
@@ -324,6 +355,48 @@ void BogoCycleAnalysis::printStatsIfRequired(Operation* topOp, llvm::raw_ostream
     locStats.countLoc(op->getLoc(), c);
   });
 
+  OpPrintingFlags flags;
+  flags.enableDebugInfo(/*enable=*/true, /*prettyForm=*/true);
+
+  AsmState asmState(topOp, flags);
+  printStatsInternal(asmState, totCycles, locStats, os);
+}
+
+void BogoCycleAnalysis::printStatsFromMap(MLIRContext* ctx,
+                                          llvm::DenseMap<mlir::Location, size_t> locs,
+                                          llvm::raw_ostream& os) {
+  if (!clOpts.isConstructed()) {
+    throw(std::runtime_error("op-stats command line options must be registered"));
+  }
+
+  if (clOpts->sortOrder == SortOrder::Disabled) {
+    LLVM_DEBUG({ llvm::dbgs() << "BogoCycle operation statistics not requested"; });
+    return;
+  }
+
+  double totCycles = 0;
+  LocStats locStats;
+
+  for (auto& [loc, c] : locs) {
+    if (!c)
+      continue;
+
+    totCycles += c;
+    locStats.countLoc(loc, c);
+  }
+
+  OpPrintingFlags flags;
+  flags.enableDebugInfo(/*enable=*/true, /*prettyForm=*/true);
+
+  AsmState asmState(ctx, flags);
+  printStatsInternal(asmState, totCycles, locStats, os);
+}
+
+void BogoCycleAnalysis::printStatsInternal(AsmState& asmState,
+                                           double totCycles,
+                                           LocStats& locStats,
+                                           llvm::raw_ostream& os) {
+  const size_t kMaxLines = 100000;
   auto totLocStats = locStats.toVector();
 
   llvm::sort(totLocStats, llvm::less_second());
@@ -335,12 +408,10 @@ void BogoCycleAnalysis::printStatsIfRequired(Operation* topOp, llvm::raw_ostream
                      (const char*)"Any",
                      (const char*)"Location");
 
-  // Set us up to be able to
-  OpPrintingFlags flags;
-  flags.enableDebugInfo(/*enable=*/true, /*prettyForm=*/true);
-  AsmState asmState(topOp, flags);
-
+  size_t lineCount = 0;
   for (auto& [loc, stat] : llvm::reverse(totLocStats)) {
+    if (++lineCount > kMaxLines)
+      break;
     if (stat.flat)
       os << llvm::format("%9.5f%% ", stat.flat * 100. / totCycles);
     else

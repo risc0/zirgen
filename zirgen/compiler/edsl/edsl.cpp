@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 #include "zirgen/compiler/edsl/edsl.h"
 
 #include "mlir/Analysis/TopologicalSortUtils.h"
+#include "mlir/IR/Location.h"
 #include "mlir/Pass/PassManager.h"
 #include "mlir/Transforms/Passes.h"
 
@@ -36,6 +37,7 @@ bool gBackUnchecked = false;
 bool gBackUsed = false;
 
 Module* curModule = nullptr;
+MLIRContext* mlirContext = nullptr;
 
 OpBuilder& getBuilder() {
   assert(curModule);
@@ -43,69 +45,42 @@ OpBuilder& getBuilder() {
 }
 
 MLIRContext* getCtx() {
-  assert(curModule);
-  return curModule->getCtx();
+  if (curModule)
+    assert(mlirContext == curModule->getCtx());
+  return mlirContext;
 }
 
-Location toLoc(SourceLoc loc, StringRef ident = {}) {
-  LocationAttr inner;
-  if (loc.filename) {
-    auto id = StringAttr::get(getCtx(), loc.filename);
-    inner = FileLineColLoc::get(id, loc.line, loc.column);
-  } else {
-    inner = UnknownLoc::get(getCtx());
-  }
-
-  if (ident.empty()) {
-    return inner;
-  } else {
-    return NameLoc::get(StringAttr::get(getCtx(), ident), inner);
-  }
-}
-
-std::vector<SourceLoc>& getLocStack() {
-  static std::vector<SourceLoc> stack;
-  return stack;
+Location nameLoc(Location parent, StringRef ident) {
+  return NameLoc::get(getBuilder().getStringAttr(ident), parent);
 }
 
 } // namespace
+
+void registerEdslContext(mlir::MLIRContext* ctx) {
+  mlirContext = ctx;
+}
 
 Module* Module::getCurModule() {
   return curModule;
 }
 
-OverrideLocation::OverrideLocation(SourceLoc loc) {
-  getLocStack().push_back(loc);
-}
-
-OverrideLocation::~OverrideLocation() {
-  getLocStack().pop_back();
-}
-
-SourceLoc checkCurrentLoc(SourceLoc loc) {
-  if (getLocStack().empty()) {
-    return loc;
-  }
-  return getLocStack().back();
-}
-
-Val::Val(uint64_t val, SourceLoc loc) {
+Val::Val(uint64_t val, Location loc) {
   Type ty = ValType::getBaseType(getBuilder().getContext());
-  value = getBuilder().create<ConstOp>(toLoc(loc), ty, val);
+  value = getBuilder().create<ConstOp>(loc, ty, val);
 }
 
-Val::Val(llvm::ArrayRef<uint64_t> val, SourceLoc loc) {
+Val::Val(llvm::ArrayRef<uint64_t> val, Location loc) {
   assert(val.size() == kBabyBearExtSize);
   Type ty = ValType::get(getBuilder().getContext(), kFieldPrimeDefault, val.size());
-  value = getBuilder().create<ConstOp>(toLoc(loc), ty, val);
+  value = getBuilder().create<ConstOp>(loc, ty, val);
 }
 
-Val::Val(Register reg, SourceLoc loc) {
+Val::Val(Register reg, Location loc) {
   if (cast<BufferType>(reg.buf.getType()).getKind() == BufferKind::Global) {
-    value = getBuilder().create<GetGlobalOp>(toLoc(loc, reg.ident), reg.buf, 0);
+    value = getBuilder().create<GetGlobalOp>(nameLoc(loc, reg.ident), reg.buf, 0);
   } else {
     auto getOp =
-        getBuilder().create<GetOp>(toLoc(loc, reg.ident), reg.buf, 0, gBackDist, IntegerAttr());
+        getBuilder().create<GetOp>(nameLoc(loc, reg.ident), reg.buf, 0, gBackDist, IntegerAttr());
     if (gBackUnchecked) {
       getOp->setAttr("unchecked", UnitAttr::get(getOp.getContext()));
     }
@@ -116,56 +91,57 @@ Val::Val(Register reg, SourceLoc loc) {
 
 void Register::operator=(CaptureVal x) {
   if (cast<BufferType>(buf.getType()).getKind() == BufferKind::Global) {
-    getBuilder().create<SetGlobalOp>(toLoc(x.loc, x.ident), buf, 0, x.getValue());
+    getBuilder().create<SetGlobalOp>(nameLoc(x.loc, x.ident), buf, 0, x.getValue());
   } else {
-    getBuilder().create<SetOp>(toLoc(x.loc, x.ident), buf, 0, x.getValue());
+    getBuilder().create<SetOp>(nameLoc(x.loc, x.ident), buf, 0, x.getValue());
   }
 }
 
 mlir::Location CaptureIdx::getLoc() {
-  return toLoc(loc);
+  return loc;
 }
 
-Val Buffer::get(size_t idx, StringRef ident, SourceLoc loc) {
+Val Buffer::get(size_t idx, StringRef ident, Location loc) {
   if (cast<BufferType>(buf.getType()).getKind() == BufferKind::Global) {
-    return Val(getBuilder().create<GetGlobalOp>(toLoc(loc, ident), buf, 0));
+    return Val(getBuilder().create<GetGlobalOp>(nameLoc(loc, ident), buf, 0));
   } else {
-    return Val(getBuilder().create<GetOp>(toLoc(loc, ident), buf, idx, 0, IntegerAttr()));
+    return Val(getBuilder().create<GetOp>(nameLoc(loc, ident), buf, idx, 0, IntegerAttr()));
   }
 }
 
-void Buffer::set(size_t idx, Val x, StringRef ident, SourceLoc loc) {
+void Buffer::set(size_t idx, Val x, StringRef ident, Location loc) {
   if (cast<BufferType>(buf.getType()).getKind() == BufferKind::Global) {
-    getBuilder().create<SetGlobalOp>(toLoc(loc, ident), buf, idx, x.getValue());
+    getBuilder().create<SetGlobalOp>(nameLoc(loc, ident), buf, idx, x.getValue());
   } else {
-    getBuilder().create<SetOp>(toLoc(loc, ident), buf, idx, x.getValue());
+    getBuilder().create<SetOp>(nameLoc(loc, ident), buf, idx, x.getValue());
   }
 }
 
-void Buffer::setDigest(size_t idx, DigestVal x, StringRef ident, SourceLoc loc) {
+void Buffer::setDigest(size_t idx, DigestVal x, StringRef ident, Location loc) {
   if (cast<BufferType>(buf.getType()).getKind() != BufferKind::Global) {
     throw(std::runtime_error("Currently digests can only be stored in globals"));
   }
-  getBuilder().create<SetGlobalDigestOp>(toLoc(loc, ident), buf, idx, x.getValue());
+  getBuilder().create<SetGlobalDigestOp>(nameLoc(loc, ident), buf, idx, x.getValue());
 }
 
-Buffer Buffer::slice(size_t offset, size_t size, SourceLoc loc) {
-  return Buffer(getBuilder().create<SliceOp>(toLoc(loc), buf, offset, size));
+Buffer Buffer::slice(size_t offset, size_t size, Location loc) {
+  return Buffer(getBuilder().create<SliceOp>(loc, buf, offset, size));
 }
 
-Register Buffer::getRegister(size_t idx, StringRef ident, SourceLoc loc) {
+Register Buffer::getRegister(size_t idx, StringRef ident, Location loc) {
   if (idx >= cast<BufferType>(buf.getType()).getSize()) {
-    llvm::errs() << "Out of bounds index: " << loc.filename << ":" << loc.line << "\n";
+    llvm::errs() << "Out of bounds index: " << loc << "\n";
     throw std::runtime_error("OOB Index");
   }
-  return Register(getBuilder().create<SliceOp>(toLoc(loc), buf, idx, 1), ident);
+  return Register(getBuilder().create<SliceOp>(loc, buf, idx, 1), ident);
 }
 
 mlir::Location CaptureVal::getLoc() {
-  return toLoc(loc);
+  return loc;
 }
 
 Module::Module() : builder(&ctx) {
+  registerEdslContext(&ctx);
   ctx.getOrLoadDialect<ZllDialect>();
   ctx.getOrLoadDialect<Iop::IopDialect>();
   ctx.getOrLoadDialect<ZStruct::ZStructDialect>();
@@ -335,7 +311,7 @@ void Module::dumpStage(size_t stage, bool debug) {
 
 void Module::beginFunc(const std::string& name,
                        const std::vector<ArgumentInfo>& args,
-                       SourceLoc loc) {
+                       Location loc) {
   curModule = this;
   std::vector<Type> inTypes;
   for (auto ai : args) {
@@ -347,7 +323,7 @@ void Module::beginFunc(const std::string& name,
     }
   }
   auto funcType = FunctionType::get(&ctx, inTypes, {});
-  auto func = builder.create<func::FuncOp>(toLoc(loc), name, funcType);
+  auto func = builder.create<func::FuncOp>(loc, name, funcType);
   pushIP(func.addEntryBlock());
 }
 
@@ -400,8 +376,8 @@ void Module::setProtocolInfo(ProtocolInfo info) {
   setModuleAttr(getModule(), getBuilder().getAttr<ProtocolInfoAttr>(info));
 }
 
-mlir::func::FuncOp Module::endFunc(SourceLoc loc) {
-  auto returnOp = builder.create<func::ReturnOp>(toLoc(loc));
+mlir::func::FuncOp Module::endFunc(Location loc) {
+  auto returnOp = builder.create<func::ReturnOp>(loc);
   popIP();
   curModule = nullptr;
   return returnOp->getParentOfType<mlir::func::FuncOp>();
@@ -538,7 +514,7 @@ std::vector<Val> doExtern(const std::string& name,
                           const std::string& extra,
                           size_t outSize,
                           llvm::ArrayRef<Val> in,
-                          SourceLoc loc) {
+                          Location loc) {
   MLIRContext* ctx = getBuilder().getContext();
   std::vector<Type> outTypes;
   for (size_t i = 0; i < outSize; i++) {
@@ -548,7 +524,7 @@ std::vector<Val> doExtern(const std::string& name,
   for (auto& val : in) {
     inValues.push_back(val.getValue());
   }
-  auto op = getBuilder().create<ExternOp>(toLoc(loc), outTypes, inValues, name, extra);
+  auto op = getBuilder().create<ExternOp>(loc, outTypes, inValues, name, extra);
   std::vector<Val> outs;
   for (size_t i = 0; i < outSize; i++) {
     outs.emplace_back(op.getResult(i));
@@ -577,9 +553,9 @@ void emitLayoutInternal(std::shared_ptr<ConstructInfo> info) {
   }
 }
 
-NondetGuard::NondetGuard(SourceLoc loc) {
+NondetGuard::NondetGuard(Location loc) {
   assert(curModule);
-  auto nondetOp = getBuilder().create<NondetOp>(toLoc(loc));
+  auto nondetOp = getBuilder().create<NondetOp>(loc);
   Block* innerBlock = new Block();
   nondetOp.getInner().push_back(innerBlock);
   curModule->pushIP(innerBlock);
@@ -587,21 +563,21 @@ NondetGuard::NondetGuard(SourceLoc loc) {
 
 NondetGuard::~NondetGuard() {
   assert(curModule);
-  getBuilder().create<TerminateOp>(toLoc(SourceLoc()));
+  getBuilder().create<TerminateOp>(currentLoc());
   curModule->popIP();
 }
 
-IfGuard::IfGuard(Val cond, SourceLoc loc) {
+IfGuard::IfGuard(Val cond, Location loc) {
   assert(curModule);
   Block* innerBlock = new Block();
-  auto ifOp = getBuilder().create<IfOp>(toLoc(loc), cond.getValue());
+  auto ifOp = getBuilder().create<IfOp>(loc, cond.getValue());
   ifOp.getInner().push_back(innerBlock);
   curModule->pushIP(innerBlock);
 }
 
 IfGuard::~IfGuard() {
   assert(curModule);
-  getBuilder().create<TerminateOp>(toLoc(SourceLoc()));
+  getBuilder().create<TerminateOp>(currentLoc());
   curModule->popIP();
 }
 
@@ -617,31 +593,31 @@ void endBack() {
   gBackUnchecked = false;
 }
 
-DigestVal hash(llvm::ArrayRef<Val> inputs, bool flip, SourceLoc loc) {
+DigestVal hash(llvm::ArrayRef<Val> inputs, bool flip, Location loc) {
   std::vector<Value> vals;
   for (const auto& in : inputs) {
     vals.push_back(in.getValue());
   }
   Type digestType = DigestType::get(getBuilder().getContext(), DigestKind::Default);
-  Value out = getBuilder().create<HashOp>(toLoc(loc), digestType, flip, vals);
+  Value out = getBuilder().create<HashOp>(loc, digestType, flip, vals);
   return DigestVal(out);
 }
 
-DigestVal intoDigest(llvm::ArrayRef<Val> inputs, DigestKind kind, SourceLoc loc) {
+DigestVal intoDigest(llvm::ArrayRef<Val> inputs, DigestKind kind, Location loc) {
   std::vector<Value> vals;
   for (const auto& in : inputs) {
     vals.push_back(in.getValue());
   }
   auto digestType = DigestType::get(getBuilder().getContext(), kind);
-  Value out = getBuilder().create<IntoDigestOp>(toLoc(loc), digestType, vals);
+  Value out = getBuilder().create<IntoDigestOp>(loc, digestType, vals);
   return DigestVal(out);
 }
 
-std::vector<Val> fromDigest(DigestVal digest, size_t size, SourceLoc loc) {
+std::vector<Val> fromDigest(DigestVal digest, size_t size, Location loc) {
   auto& builder = getBuilder();
   Type valType = ValType::getBaseType(builder.getContext());
   std::vector<Type> types(size, valType);
-  auto fromOp = builder.create<FromDigestOp>(toLoc(loc), types, digest.getValue());
+  auto fromOp = builder.create<FromDigestOp>(loc, types, digest.getValue());
   std::vector<Val> vals;
   for (Value out : fromOp.getOut()) {
     vals.push_back(Val(out));
@@ -649,15 +625,15 @@ std::vector<Val> fromDigest(DigestVal digest, size_t size, SourceLoc loc) {
   return vals;
 }
 
-DigestVal fold(DigestVal lhs, DigestVal rhs, SourceLoc loc) {
-  Value out = getBuilder().create<HashFoldOp>(toLoc(loc), lhs.getValue(), rhs.getValue());
+DigestVal fold(DigestVal lhs, DigestVal rhs, Location loc) {
+  Value out = getBuilder().create<HashFoldOp>(loc, lhs.getValue(), rhs.getValue());
   return DigestVal(out);
 }
 
 DigestVal taggedStruct(llvm::StringRef tag,
                        llvm::ArrayRef<DigestVal> digests,
                        llvm::ArrayRef<Val> vals,
-                       SourceLoc loc) {
+                       Location loc) {
   std::vector<Value> digestVals;
   for (const auto& in : digests) {
     digestVals.push_back(in.getValue());
@@ -667,23 +643,23 @@ DigestVal taggedStruct(llvm::StringRef tag,
     valsVals.push_back(in.getValue());
   }
 
-  Value out = getBuilder().create<TaggedStructOp>(toLoc(loc), tag, digestVals, valsVals);
+  Value out = getBuilder().create<TaggedStructOp>(loc, tag, digestVals, valsVals);
   return DigestVal(out);
 }
 
-DigestVal taggedListCons(llvm::StringRef tag, DigestVal head, DigestVal tail, SourceLoc loc) {
+DigestVal taggedListCons(llvm::StringRef tag, DigestVal head, DigestVal tail, Location loc) {
   return taggedStruct(tag, {head, tail}, {}, loc);
 }
 
-void assert_eq(DigestVal lhs, DigestVal rhs, SourceLoc loc) {
-  getBuilder().create<HashAssertEqOp>(toLoc(loc), lhs.getValue(), rhs.getValue());
+void assert_eq(DigestVal lhs, DigestVal rhs, Location loc) {
+  getBuilder().create<HashAssertEqOp>(loc, lhs.getValue(), rhs.getValue());
 }
 
-std::vector<Val> ReadIopVal::readBaseVals(size_t count, bool flip, SourceLoc sloc) {
+std::vector<Val> ReadIopVal::readBaseVals(size_t count, bool flip, Location sloc) {
   auto& builder = getBuilder();
   Type valType = ValType::getBaseType(builder.getContext());
   std::vector<Type> types(count, valType);
-  auto readOp = builder.create<Iop::ReadOp>(toLoc(sloc), types, getValue(), flip);
+  auto readOp = builder.create<Iop::ReadOp>(sloc, types, getValue(), flip);
   std::vector<Val> out;
   for (size_t i = 0; i < count; i++) {
     out.emplace_back(readOp.getOuts()[i]);
@@ -691,11 +667,11 @@ std::vector<Val> ReadIopVal::readBaseVals(size_t count, bool flip, SourceLoc slo
   return out;
 }
 
-std::vector<Val> ReadIopVal::readExtVals(size_t count, bool flip, SourceLoc sloc) {
+std::vector<Val> ReadIopVal::readExtVals(size_t count, bool flip, Location sloc) {
   auto& builder = getBuilder();
   Type valType = ValType::getExtensionType(builder.getContext());
   std::vector<Type> types(count, valType);
-  auto readOp = builder.create<Iop::ReadOp>(toLoc(sloc), types, getValue(), flip);
+  auto readOp = builder.create<Iop::ReadOp>(sloc, types, getValue(), flip);
   std::vector<Val> out;
   for (size_t i = 0; i < count; i++) {
     out.emplace_back(readOp.getOuts()[i]);
@@ -703,11 +679,11 @@ std::vector<Val> ReadIopVal::readExtVals(size_t count, bool flip, SourceLoc sloc
   return out;
 }
 
-std::vector<DigestVal> ReadIopVal::readDigests(size_t count, SourceLoc sloc) {
+std::vector<DigestVal> ReadIopVal::readDigests(size_t count, Location sloc) {
   auto& builder = getBuilder();
   Type digestType = DigestType::get(builder.getContext(), DigestKind::Default);
   std::vector<Type> types(count, digestType);
-  auto readOp = builder.create<Iop::ReadOp>(toLoc(sloc), types, getValue(), false);
+  auto readOp = builder.create<Iop::ReadOp>(sloc, types, getValue(), false);
   std::vector<DigestVal> out;
   for (size_t i = 0; i < count; i++) {
     out.emplace_back(readOp.getOuts()[i]);
@@ -715,51 +691,51 @@ std::vector<DigestVal> ReadIopVal::readDigests(size_t count, SourceLoc sloc) {
   return out;
 }
 
-void ReadIopVal::commit(DigestVal digest, SourceLoc loc) {
-  getBuilder().create<Iop::CommitOp>(toLoc(loc), getValue(), digest.getValue());
+void ReadIopVal::commit(DigestVal digest, Location loc) {
+  getBuilder().create<Iop::CommitOp>(loc, getValue(), digest.getValue());
 }
 
-Val ReadIopVal::rngBits(uint32_t bits, SourceLoc loc) {
+Val ReadIopVal::rngBits(uint32_t bits, Location loc) {
   auto& builder = getBuilder();
   Type valType = ValType::getBaseType(builder.getContext());
-  return Val(builder.create<Iop::RngBitsOp>(toLoc(loc), valType, getValue(), bits));
+  return Val(builder.create<Iop::RngBitsOp>(loc, valType, getValue(), bits));
 }
 
-Val ReadIopVal::rngBaseVal(SourceLoc loc) {
+Val ReadIopVal::rngBaseVal(Location loc) {
   auto& builder = getBuilder();
   Type valType = ValType::getBaseType(builder.getContext());
-  return Val(builder.create<Iop::RngValOp>(toLoc(loc), valType, getValue()));
+  return Val(builder.create<Iop::RngValOp>(loc, valType, getValue()));
 }
 
-Val ReadIopVal::rngExtVal(SourceLoc loc) {
+Val ReadIopVal::rngExtVal(Location loc) {
   auto& builder = getBuilder();
   Type valType = ValType::getExtensionType(builder.getContext());
-  return Val(builder.create<Iop::RngValOp>(toLoc(loc), valType, getValue()));
+  return Val(builder.create<Iop::RngValOp>(loc, valType, getValue()));
 }
 
-Val select(Val idx, llvm::ArrayRef<Val> inputs, SourceLoc loc) {
+Val select(Val idx, llvm::ArrayRef<Val> inputs, Location loc) {
   auto& builder = getBuilder();
   std::vector<Value> vals;
   for (const auto& in : inputs) {
     vals.push_back(in.getValue());
   }
-  Value out = builder.create<SelectOp>(toLoc(loc), vals[0].getType(), idx.getValue(), vals);
+  Value out = builder.create<SelectOp>(loc, vals[0].getType(), idx.getValue(), vals);
   return out;
 }
 
-DigestVal select(Val idx, llvm::ArrayRef<DigestVal> inputs, SourceLoc loc) {
+DigestVal select(Val idx, llvm::ArrayRef<DigestVal> inputs, Location loc) {
   auto& builder = getBuilder();
   std::vector<Value> vals;
   for (const auto& in : inputs) {
     vals.push_back(in.getValue());
   }
-  Value out = builder.create<SelectOp>(toLoc(loc), vals[0].getType(), idx.getValue(), vals);
+  Value out = builder.create<SelectOp>(loc, vals[0].getType(), idx.getValue(), vals);
   return out;
 }
 
-Val normalize(Val in, SourceLoc loc) {
+Val normalize(Val in, Location loc) {
   auto& builder = getBuilder();
-  Value out = builder.create<NormalizeOp>(toLoc(loc), in.getValue(), 0, "");
+  Value out = builder.create<NormalizeOp>(loc, in.getValue(), 0, "");
   return out;
 }
 
@@ -768,6 +744,25 @@ void registerEdslCLOptions() {
   mlir::registerMLIRContextCLOptions();
   mlir::registerPassManagerCLOptions();
   mlir::registerDefaultTimingManagerCLOptions();
+}
+
+static LocationAttr currentLocation;
+
+Location currentLoc(const char* filename, int line, int column) {
+  Location loc = mlir::FileLineColRange::get(getCtx(), filename, line, column);
+
+  if (currentLocation)
+    return mlir::CallSiteLoc::get(/*callee=*/loc, /*caller=*/currentLocation);
+  else
+    return loc;
+}
+
+ScopedLocation::ScopedLocation(Location loc) : prevLoc(currentLocation) {
+  currentLocation = loc;
+}
+
+ScopedLocation::~ScopedLocation() {
+  currentLocation = prevLoc;
 }
 
 } // namespace zirgen

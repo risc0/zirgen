@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ template <> struct LogPrep<U32Val> {
   }
 };
 
-void eq(U32Val a, U32Val b, SourceLoc loc = SourceLoc::current());
+void eq(U32Val a, U32Val b, mlir::Location loc = currentLoc());
 
 class U32RegImpl : public CompImpl<U32RegImpl> {
 public:
