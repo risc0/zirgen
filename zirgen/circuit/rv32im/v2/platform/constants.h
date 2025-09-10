@@ -165,6 +165,7 @@ constexpr uint32_t SAFE_WRITE_WORD = 0x3fffc040;
 namespace ControlMinorType {
 constexpr uint32_t RESUME = 1;
 constexpr uint32_t USER_ECALL = 2;
+constexpr uint32_t FENCE = 2; // differentiated from ECALL by opcode
 constexpr uint32_t MRET = 3;
 } // namespace ControlMinorType
 
