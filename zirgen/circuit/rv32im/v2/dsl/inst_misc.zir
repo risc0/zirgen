@@ -204,7 +204,7 @@ component OpJALR(input: MiscInput) {
   lsb := NondetBitReg(unmasked.low & 1);
   AssertBit(lsb);
   masked := unmasked.low - lsb;
-  half := NondetReg(masked / 2);
+  half := NondetU16Reg(masked / 2);
   masked = 2 * half;
   MiscOutput(1,
     AddU32(input.pc_u32, ConstU32<4>()),
