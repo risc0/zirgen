@@ -12,7 +12,7 @@ env_logger = "0.11"
 lazy_static = "1.4"
 paste = "1.0"
 pretty_assertions = "1.4"
-rayon = "1.8"
+rayon = "1.11"
 risc0-core = { workspace = true }
 risc0-zkp = { workspace = true, default-features = false, features = ["prove"] }
 serial_test = "3.1"
