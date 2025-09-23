@@ -200,9 +200,14 @@ component OpJAL(input: MiscInput) {
 
 component OpJALR(input: MiscInput) {
   VerifyOpcodeF3(input.decoded, 0x67, 0x0);
+  unmasked := AddU32(input.rs1, input.decoded.immI);
+  lsb := NondetBitReg(unmasked.low & 1);
+  masked := unmasked.low - lsb;
+  half := NondetU16Reg(masked / 2);
+  masked = 2 * half;
   MiscOutput(1,
     AddU32(input.pc_u32, ConstU32<4>()),
-    AddU32(input.rs1, input.decoded.immI))
+    DenormedValU32(masked, unmasked.high))
 }
 
 component OpLUI(input: MiscInput) {
