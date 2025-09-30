@@ -14,6 +14,9 @@
 
 #include "zirgen/circuit/keccak/cpp/preflight.h"
 #include "zirgen/circuit/keccak/cpp/wrap_dsl.h"
+#include "zirgen/compiler/zkp/poseidon2.h"
+
+using cells_t = std::array<uint32_t, 24>;
 
 #include <arpa/inet.h>
 #include <array>
@@ -83,127 +86,25 @@ void chi_iota(keccak_t& s, uint32_t round) {
   s[0] ^= keccak_iota[round];
 }
 
-uint32_t sha_k[64] = {
-    0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
-    0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
-    0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
-    0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
-    0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
-    0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
-    0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
-    0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2};
-
-#define ROTLEFT(a, b) (((a) << (b)) | ((a) >> (32 - (b))))
-#define ROTRIGHT(a, b) (((a) >> (b)) | ((a) << (32 - (b))))
-#define CH(x, y, z) (((x) & (y)) ^ (~(x) & (z)))
-#define MAJ(x, y, z) (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
-#define EP0(x) (ROTRIGHT(x, 2) ^ ROTRIGHT(x, 13) ^ ROTRIGHT(x, 22))
-#define EP1(x) (ROTRIGHT(x, 6) ^ ROTRIGHT(x, 11) ^ ROTRIGHT(x, 25))
-#define SIG0(x) (ROTRIGHT(x, 7) ^ ROTRIGHT(x, 18) ^ ((x) >> 3))
-#define SIG1(x) (ROTRIGHT(x, 17) ^ ROTRIGHT(x, 19) ^ ((x) >> 10))
-
-#define SHA_ROUND_FUNC                                                                             \
-  uint32_t t1 = h + EP1(e) + CH(e, f, g) + sha_k[i] + w[i];                                        \
-  uint32_t t2 = EP0(a) + MAJ(a, b, c);                                                             \
-  h = g;                                                                                           \
-  g = f;                                                                                           \
-  f = e;                                                                                           \
-  e = d + t1;                                                                                      \
-  d = c;                                                                                           \
-  c = b;                                                                                           \
-  b = a;                                                                                           \
-  a = t1 + t2;
-
-using sha_state = std::array<uint32_t, 8>;
-
-struct sha_info {
-  sha_info() {
-    a.fill(0);
-    e.fill(0);
-    w.fill(0);
-  }
-  sha_info(const sha_state& state) {
-    a.fill(0);
-    e.fill(0);
-    w.fill(0);
-    for (size_t i = 0; i < 4; i++) {
-      a[7 - i] = state[i];
-      e[7 - i] = state[4 + i];
-    }
-  }
-  std::array<uint32_t, 8> a;
-  std::array<uint32_t, 8> e;
-  std::array<uint32_t, 8> w;
-};
-
-std::vector<sha_info> compute_sha_infos(sha_state& state, const uint32_t* data) {
-  uint32_t a = state[0];
-  uint32_t b = state[1];
-  uint32_t c = state[2];
-  uint32_t d = state[3];
-  uint32_t e = state[4];
-  uint32_t f = state[5];
-  uint32_t g = state[6];
-  uint32_t h = state[7];
-  uint32_t w[64];
-  std::vector<sha_info> out;
-  sha_info cur;
-  for (size_t i = 0; i < 64; i++) {
-    if (i < 16) {
-      w[i] = htonl(data[i]);
-    } else {
-      w[i] = SIG1(w[i - 2]) + w[i - 7] + SIG0(w[i - 15]) + w[i - 16];
-    }
-    SHA_ROUND_FUNC;
-    cur.a[i % 8] = a;
-    cur.e[i % 8] = e;
-    cur.w[i % 8] = w[i];
-    if (i % 8 == 7) {
-      out.push_back(cur);
-    }
-  }
-  state[0] += a;
-  state[1] += b;
-  state[2] += c;
-  state[3] += d;
-  state[4] += e;
-  state[5] += f;
-  state[6] += g;
-  state[7] += h;
-  out.emplace_back(state);
-  return out;
-}
-
-sha_state sha_init = {
-    0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19};
-
 struct ControlState {
   uint8_t cycleType;
   uint8_t subType;
-  uint8_t block;
   uint8_t round;
   uint32_t asWord() const {
-    return uint32_t(cycleType) | (uint32_t(subType) << 8) | (uint32_t(block) << 16) |
-           (uint32_t(round) << 24);
+    return uint32_t(cycleType) | (uint32_t(subType) << 8) | (uint32_t(round) << 16);
   }
-  static ControlState Shutdown() { return ControlState{0, 0, 0, 0}; }
-  static ControlState Read() { return ControlState{1, 0, 0, 0}; }
-  static ControlState Expand(uint8_t subtype) { return ControlState{2, subtype, 0, 0}; }
-  static ControlState Write() { return ControlState{3, 0, 0, 0}; }
-  static ControlState Keccak0(uint8_t round) { return ControlState{4, 0, 0, round}; }
-  static ControlState Keccak1(uint8_t round) { return ControlState{5, 0, 0, round}; }
-  static ControlState keccak(uint8_t round) { return ControlState{6, 0, 0, round}; }
-  static ControlState Keccak3(uint8_t round) { return ControlState{7, 0, 0, round}; }
-  static ControlState Keccak4(uint8_t round) { return ControlState{8, 0, 0, round}; }
-  static ControlState ShaIn(uint8_t block, uint8_t round) {
-    return ControlState{9, 0, block, round};
-  }
-  static ControlState ShaOut(uint8_t block, uint8_t round) {
-    return ControlState{9, 1, block, round};
-  }
-  static ControlState ShaNextBlockIn(uint8_t block) { return ControlState{10, 0, block, 0}; }
-  static ControlState ShaNextBlockOut(uint8_t block) { return ControlState{10, 1, block, 0}; }
-  static ControlState Init() { return ControlState{11, 0, 0, 0}; }
+  static ControlState Shutdown() { return ControlState{0, 0, 0}; }
+  static ControlState Read() { return ControlState{1, 0, 0}; }
+  static ControlState Expand(uint8_t subtype) { return ControlState{2, subtype, 0}; }
+  static ControlState Write() { return ControlState{3, 0, 0}; }
+  static ControlState Keccak0(uint8_t round) { return ControlState{4, 0, round}; }
+  static ControlState Keccak1(uint8_t round) { return ControlState{5, 0, round}; }
+  static ControlState keccak(uint8_t round) { return ControlState{6, 0, round}; }
+  static ControlState Keccak3(uint8_t round) { return ControlState{7, 0, round}; }
+  static ControlState Keccak4(uint8_t round) { return ControlState{8, 0, round}; }
+  static ControlState Poseidon2In(uint8_t round) { return ControlState{9, 0, round}; }
+  static ControlState Poseidon2Out(uint8_t round) { return ControlState{9, 1, round}; }
+  static ControlState Init() { return ControlState{10, 0, 0}; }
 };
 
 } // namespace
@@ -215,23 +116,33 @@ PreflightTrace preflightSegment(const std::vector<KeccakState>& inputs, size_t c
   uint32_t curPreimage = 0;
   uint32_t cycle = 0;
   auto addBits = [&](uint16_t col, uint32_t data, uint16_t len) {
-    assert(len % 32 == 0);
     ret.scatter.push_back({data, cycle, col, len, 1});
   };
+  auto addBytes = [&](uint16_t col, uint32_t data, uint16_t len) {
+    ret.scatter.push_back({data, cycle, col, len, 8});
+  };
   auto addShorts = [&](uint16_t col, uint32_t data, uint16_t len) {
-    assert(len % 2 == 0);
     ret.scatter.push_back({data, cycle, col, len, 16});
   };
-  auto addCycle = [&](const ControlState& cstate, uint32_t bits, uint32_t kflat, uint32_t sflat) {
+  auto addWords = [&](uint16_t col, uint32_t data, uint16_t len) {
+    ret.scatter.push_back({data, cycle, col, len, 32});
+  };
+  auto addCycle = [&](const ControlState& cstate, uint32_t bits, uint32_t kflat, uint32_t pflat, bool isBits = true) {
     uint32_t offset = ret.data.size();
     ret.data.push_back(cstate.asWord());
-    ret.scatter.push_back({offset, cycle, uint16_t(li.control), 4, 8});
     uint32_t onehot = 1 << cstate.cycleType;
     ret.data.push_back(onehot);
-    ret.scatter.push_back({offset + 1, cycle, uint16_t(li.ctypeOneHot), 12, 1});
-    addBits(li.bits, bits, 800);
+    ret.data.push_back(cycle);
+    addBytes(li.control, offset, 3);
+    addBits(li.ctypeOneHot, offset + 1, 11);
+    if (isBits) {
+      addBits(li.bits, bits, 800);
+    } else {
+      addWords(li.bits, bits, 800);
+    }
     addShorts(li.kflat, kflat, 100);
-    addShorts(li.sflat, sflat, 16);
+    addWords(li.pflat, pflat, 24);
+    addWords(li.cycleNum, offset + 2, 1);
     ret.curPreimage.push_back(curPreimage);
     cycle++;
   };
@@ -267,90 +178,77 @@ PreflightTrace preflightSegment(const std::vector<KeccakState>& inputs, size_t c
     uint32_t offset = ret.data.size();
     ret.data.insert(ret.data.end(), data.begin(), data.end());
     for (size_t i = 0; i < 64 - 50; i++) {
-      data.push_back(0); // Pad out sha blocks
+      data.push_back(0); // Pad out to 7 poseidon blocks
     }
     return offset;
   };
-  auto writeShaState = [&](const sha_state& state) {
+  auto writePFlat = [&](cells_t& cells) {
     uint32_t offset = ret.data.size();
-    for (size_t i = 0; i < 8; i++) {
-      ret.data.push_back(state[i]);
-    }
+    ret.data.insert(ret.data.end(), cells.begin(), cells.end());
     return offset;
   };
-  auto writeShaInfo = [&](const sha_info& info) {
-    uint32_t offset = ret.data.size();
-    for (size_t i = 0; i < 8; i++) {
-      ret.data.push_back(info.a[i]);
-    }
-    for (size_t i = 0; i < 8; i++) {
-      ret.data.push_back(info.e[i]);
-    }
-    for (size_t i = 0; i < 8; i++) {
-      ret.data.push_back(info.w[i]);
-    }
-    ret.data.push_back(0);
-    return offset;
-  };
+
   // 100 zeros @ offset zero (for whereever we need zero)
   uint32_t zeroOffset = ret.data.size();
   for (size_t i = 0; i < 100; i++) {
     ret.data.push_back(0);
   }
   // Initalize sha state (and current data offset)
-  sha_state currentSha = sha_init;
-  size_t sflatOffset = writeShaState(currentSha);
+  cells_t currentP2 = { 0 };
+  size_t pflatOffset = writePFlat(currentP2);
   // Do an initial 'init' cycle
-  addCycle(ControlState::Init(), zeroOffset, zeroOffset, sflatOffset);
+  addCycle(ControlState::Init(), zeroOffset, zeroOffset, pflatOffset);
   // Do each permutation
   for (size_t input = 0; input < inputs.size(); input++) {
     KeccakState kstate = inputs[input];
     std::vector<uint32_t> data;
     // Do 'read' cycle
     size_t kflatOffset = writeKFlat(data, kstate);
-    addCycle(ControlState::Read(), writeShaInfo(sha_info(currentSha)), kflatOffset, sflatOffset);
+    addCycle(ControlState::Read(), zeroOffset, kflatOffset, pflatOffset);
     curPreimage++;
-    // Sha and write all for blocks
-    for (size_t block = 0; block < 4; block++) {
-      auto infos = compute_sha_infos(currentSha, data.data() + 16 * block);
+    // Poseidon2 input
+    for (size_t round = 0; round < 7; round++) {
       for (size_t i = 0; i < 8; i++) {
-        addCycle(ControlState::ShaIn(block, i), writeShaInfo(infos[i]), kflatOffset, sflatOffset);
+        uint32_t word = data[round*8 + i];
+        currentP2[2*i] = word & 0xffff;
+        currentP2[2*i + 1] = word >> 16;
       }
-      sflatOffset = writeShaState(currentSha);
-      addCycle(
-          ControlState::ShaNextBlockIn(block), writeShaInfo(infos[8]), kflatOffset, sflatOffset);
+      zirgen::poseidonSponge(currentP2);
+      pflatOffset = writePFlat(currentP2);
+      addCycle(ControlState::Poseidon2In(round), zeroOffset, kflatOffset, pflatOffset);
     }
     // Expand
-    addCycle(ControlState::Expand(0), writeKeccak(kstate, false), kflatOffset, sflatOffset);
-    addCycle(ControlState::Expand(1), writeKeccak(kstate, true), kflatOffset, sflatOffset);
+    addCycle(ControlState::Expand(0), writeKeccak(kstate, false), kflatOffset, pflatOffset);
+    addCycle(ControlState::Expand(1), writeKeccak(kstate, true), kflatOffset, pflatOffset);
     // Now do the Keccack cycles
     for (size_t round = 0; round < 24; round++) {
       auto theta = theta_p1(kstate);
-      addCycle(ControlState::Keccak0(round), writeTheta(theta), kflatOffset, sflatOffset);
+      addCycle(ControlState::Keccak0(round), writeTheta(theta), kflatOffset, pflatOffset);
       theta_p2_rho_pi(kstate, theta);
-      addCycle(ControlState::Keccak1(round), writeKeccak(kstate, false), kflatOffset, sflatOffset);
-      addCycle(ControlState::keccak(round), writeKeccak(kstate, true), kflatOffset, sflatOffset);
+      addCycle(ControlState::Keccak1(round), writeKeccak(kstate, false), kflatOffset, pflatOffset);
+      addCycle(ControlState::keccak(round), writeKeccak(kstate, true), kflatOffset, pflatOffset);
       chi_iota(kstate, round);
-      addCycle(ControlState::Keccak3(round), writeKeccak(kstate, false), kflatOffset, sflatOffset);
-      addCycle(ControlState::Keccak4(round), writeKeccak(kstate, true), kflatOffset, sflatOffset);
+      addCycle(ControlState::Keccak3(round), writeKeccak(kstate, false), kflatOffset, pflatOffset);
+      addCycle(ControlState::Keccak4(round), writeKeccak(kstate, true), kflatOffset, pflatOffset);
     }
     // Do 'write' cycle
     kflatOffset = writeKFlat(data, kstate);
-    addCycle(ControlState::Write(), writeShaInfo(sha_info(currentSha)), kflatOffset, sflatOffset);
-    // Sha and write all for blocks
-    for (size_t block = 0; block < 4; block++) {
-      auto infos = compute_sha_infos(currentSha, data.data() + 16 * block);
+    addCycle(ControlState::Write(), zeroOffset, kflatOffset, pflatOffset);
+    // Poseidon2 output
+    for (size_t round = 0; round < 7; round++) {
       for (size_t i = 0; i < 8; i++) {
-        addCycle(ControlState::ShaOut(block, i), writeShaInfo(infos[i]), kflatOffset, sflatOffset);
+        uint32_t word = data[round*8 + i];
+        currentP2[2*i] = word & 0xffff;
+        currentP2[2*i + 1] = word >> 16;
       }
-      sflatOffset = writeShaState(currentSha);
-      addCycle(
-          ControlState::ShaNextBlockOut(block), writeShaInfo(infos[8]), kflatOffset, sflatOffset);
+      zirgen::poseidonSponge(currentP2);
+      pflatOffset = writePFlat(currentP2);
+      addCycle(ControlState::Poseidon2Out(round), zeroOffset, kflatOffset, pflatOffset);
     }
   }
   // Do 'shudown' cycles until we are done
   while (cycle < cycles) {
-    addCycle(ControlState::Shutdown(), zeroOffset, zeroOffset, sflatOffset);
+    addCycle(ControlState::Shutdown(), zeroOffset, zeroOffset, pflatOffset);
   }
 
   return ret;
@@ -360,6 +258,7 @@ void applyPreflight(ExecutionTrace& exec, const PreflightTrace& preflight) {
   for (const auto& info : preflight.scatter) {
     uint32_t innerCount = 32 / info.bitPerElem;
     uint32_t mask = (1 << (info.bitPerElem)) - 1;
+    if (info.bitPerElem == 32) { mask = 0xffffffff; }
     for (size_t i = 0; i < info.count; i++) {
       uint32_t word = preflight.data[info.dataOffset + (i / innerCount)];
       size_t j = i % innerCount;

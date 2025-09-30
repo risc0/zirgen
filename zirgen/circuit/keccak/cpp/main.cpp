@@ -12,8 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <iostream>
+
 #include "zirgen/circuit/keccak/cpp/wrap_dsl.h"
-#include "zirgen/compiler/zkp/sha256.h"
+#include "zirgen/compiler/zkp/poseidon2.h"
+
+using cells_t = std::array<uint32_t, 24>;
 
 /* The below implementation (up till the end of keccackf) is taken from:
    https://github.com/brainhub/SHA3IUF/blob/master/sha3.c
@@ -84,23 +88,26 @@ static void keccakf(uint64_t s[25]) {
   std::cout << "Final: " << round << ", s[0] = " << std::hex << s[0] << std::dec << "\n";
 }
 
-void ShaSingleKeccak(zirgen::Digest& digest, zirgen::keccak::KeccakState state) {
-  std::vector<uint32_t> toHash(64);
+void Poseidon2SingleKeccak(cells_t& p2State, zirgen::keccak::KeccakState state) {
+  std::vector<uint32_t> toHash(16 * 7);
   uint32_t* viewState = (uint32_t*)&state;
   for (size_t i = 0; i < 50; i++) {
-    toHash[i] = htonl(viewState[i]);
+    uint32_t word = viewState[i];
+    toHash[2*i] = word & 0xffff;
+    toHash[2*i + 1] = word >> 16;
   }
-  for (size_t i = 0; i < 4; i++) {
-    zirgen::impl::compress(digest, toHash.data() + i * 16);
+  for (size_t i = 0; i < 7; i++) {
+    for (size_t j = 0; j < 16; j++) {
+      p2State[j] = toHash[i * 16 + j]; 
+    }
+    zirgen::poseidonSponge(p2State);
   }
 }
 
-void DoTransaction(zirgen::Digest& digest, zirgen::keccak::KeccakState state) {
-  ShaSingleKeccak(digest, state);
-  std::cout << "After compressing input: " << digest << "\n";
+void DoTransaction(cells_t& p2State, zirgen::keccak::KeccakState state) {
+  Poseidon2SingleKeccak(p2State, state);
   keccakf(state.data());
-  ShaSingleKeccak(digest, state);
-  std::cout << "After compressing output: " << digest << "\n";
+  Poseidon2SingleKeccak(p2State, state);
 }
 
 int main() {
@@ -115,36 +122,35 @@ int main() {
   }
 
   // Compute what the circuit should say
-  zirgen::Digest digest = zirgen::impl::initState();
-  DoTransaction(digest, state);
+
+  cells_t pstate = { 0 };
+  DoTransaction(pstate, state);
 
   // Now run the circuit
-  size_t cycles = 200;
+  size_t cycles = 256;
   std::vector<KeccakState> inputs;
   inputs.push_back(state);
   // Do the preflight
   auto preflight = preflightSegment(inputs, cycles);
   // Make the execution trace
   auto trace = ExecutionTrace(cycles, getDslParams());
+  // Set final global to # of cycles
+  trace.global.set(8, cycles);
   // Apply the preflight (i.e. scatter)
   applyPreflight(trace, preflight);
   // Run backwords
   std::cout << "out.ctypeOneHot = " << getLayoutInfo().ctypeOneHot << "\n";
-  for (size_t i = cycles; i-- > 0;) {
+  //for (size_t i = cycles; i-- > 0;) {
+  for (size_t i = 0; i < cycles; i++) {
     StepHandler ctx(preflight, i);
-    std::cout << "Running cycle " << i << "\n";
     DslStep(ctx, trace, i);
   }
 
   // Make sure the results match
-  zirgen::Digest compare;
   for (size_t i = 0; i < 8; i++) {
-    uint32_t elem =
-        trace.global.get(2 * i).asUInt32() | (trace.global.get(2 * i + 1).asUInt32() << 16);
-    compare.words[i] = elem;
-  }
-  std::cout << "From circuit: " << compare << "\n";
-  if (compare != digest) {
-    throw std::runtime_error("Mismatch!\n");
+    if (trace.global.get(i).asUInt32() != pstate[i]) {
+      std::cout << "Mismatch at index " << i << ": " << trace.global.get(i).asUInt32() << " vs " << pstate[i] << "\n";
+      throw std::runtime_error("Mismatch!\n");
+    }
   }
 }
