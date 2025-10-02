@@ -46,7 +46,8 @@ public:
   Val compute_poly(llvm::ArrayRef<Val> u,
                    llvm::ArrayRef<Val> out,
                    llvm::ArrayRef<Val> accumMix,
-                   Val polyMix) const override;
+                   Val polyMix,
+                   Val z) const override;
   size_t out_size() const override { return bufs.getBuffer("global").getRegCount(); }
   size_t mix_size() const override { return bufs.getBuffer("mix").getRegCount(); }
   ProtocolInfo get_circuit_info() const override { return protocolInfo; }
@@ -130,7 +131,8 @@ private:
 Val CircuitInterfaceZirgen::compute_poly(llvm::ArrayRef<Val> u,
                                          llvm::ArrayRef<Val> out,
                                          llvm::ArrayRef<Val> accumMix,
-                                         Val polyMix) const {
+                                         Val polyMix,
+                                         Val z) const {
   MLIRContext* ctx = mod().getContext();
 
   // This is called in an EDSL context, so we need to bind the buffers correctly.
