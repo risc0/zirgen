@@ -286,7 +286,7 @@ component DigestReg(values: Array<Val, 8>) {
 
 component ShutdownCycle(stateIn: TopState) {
   Log("ShutdownCycle");
-  global finalDigest := DigestReg(for i : 0..8 { stateIn.pflat[i] });
+  global finalDigest := DigestReg(for i : 0..8 { stateIn.pflat[16 + i] });
   bits := for x : 0..800 { 0 };
   kflat := for x : 0..100 { 0 };
   TopState(bits, kflat, stateIn.pflat)

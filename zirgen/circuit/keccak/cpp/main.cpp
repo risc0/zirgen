@@ -148,9 +148,14 @@ int main() {
 
   // Make sure the results match
   for (size_t i = 0; i < 8; i++) {
-    if (trace.global.get(i).asUInt32() != pstate[i]) {
-      std::cout << "Mismatch at index " << i << ": " << trace.global.get(i).asUInt32() << " vs " << pstate[i] << "\n";
+    if (trace.global.get(i).asUInt32() != pstate[16 + i]) {
+      std::cout << "Mismatch at index " << i << ": " << trace.global.get(i).asUInt32() << " vs " << pstate[16 + i] << "\n";
       throw std::runtime_error("Mismatch!\n");
     }
   }
+  zirgen::Digest out;
+  for (size_t i = 0; i < 8; i++) {
+    out.words[i] = trace.global.get(i).asUInt32();
+  }
+  std::cout << "out = " << out << "\n";
 }
