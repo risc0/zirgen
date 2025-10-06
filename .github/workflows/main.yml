@@ -48,7 +48,7 @@ jobs:
       - run: python license-check.py
 
   check-generated-zirgen:
-    runs-on: [self-hosted, prod, Linux, cpu]
+    runs-on: [self-hosted, cluster, Linux, cpu]
     strategy:
         fail-fast: true
         matrix:
@@ -71,7 +71,7 @@ jobs:
         run: cargo bootstrap -- --check calculator
 
   bazel:
-    runs-on: [self-hosted, prod, cpu, "${{ matrix.os }}"]
+    runs-on: [self-hosted, cluster, cpu, "${{ matrix.os }}"]
     strategy:
       fail-fast: false
       matrix:
@@ -90,7 +90,7 @@ jobs:
         run: bazelisk test //... $CONFIG
 
   test:
-    runs-on: [self-hosted, prod, "${{ matrix.os }}", "${{ matrix.arch }}", "${{ matrix.device }}"]
+    runs-on: [self-hosted, cluster, "${{ matrix.os }}", "${{ matrix.arch }}", "${{ matrix.device }}"]
     strategy:
       fail-fast: false
       matrix:
@@ -102,7 +102,7 @@ jobs:
           - os: Linux
             arch: X64
             feature: cuda
-            device: nvidia_rtx_a5000
+            device: nvidia_rtx_4000_ada
           - os: macOS
             arch: ARM64
             feature: default
@@ -130,7 +130,7 @@ jobs:
       - run: sccache --show-stats
 
   doc:
-    runs-on: [self-hosted, prod, Linux, cpu]
+    runs-on: [self-hosted, cluster, Linux, cpu]
     env:
       RUST_BACKTRACE: full
       RISC0_BUILD_LOCKED: 1
@@ -147,7 +147,7 @@ jobs:
       - run: sccache --show-stats
 
   keccak-determinism:
-    runs-on: [self-hosted, prod, cpu, Linux]
+    runs-on: [self-hosted, cluster, cpu, Linux]
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/bazelisk
