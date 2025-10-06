@@ -61,7 +61,7 @@ jobs:
         with:
           cache-key: bootstrap
       - uses: risc0/risc0/.github/actions/rustup@a9d723e29a44563497220a998b5de4e03d9da049
-      - uses: risc0/risc0/.github/actions/sccache@1a373c71585766e4f6985b96c48389daaf69d528
+      - uses: risc0/risc0/.github/actions/sccache@76674c1a20d30fa901852374bddf27fc5d5785a6
         with:
           key: ${{ matrix.os }}-bootstrap
       # TODO: check generated fib files once they generate properly
@@ -116,7 +116,7 @@ jobs:
       - if: matrix.feature == 'cuda'
         uses: ./.github/actions/cuda
       - uses: risc0/risc0/.github/actions/rustup@a9d723e29a44563497220a998b5de4e03d9da049
-      - uses: risc0/risc0/.github/actions/sccache@1a373c71585766e4f6985b96c48389daaf69d528
+      - uses: risc0/risc0/.github/actions/sccache@76674c1a20d30fa901852374bddf27fc5d5785a6
         with:
           key: ${{ matrix.os }}-${{ matrix.feature }}
       - run: |
@@ -137,7 +137,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: risc0/risc0/.github/actions/rustup@a9d723e29a44563497220a998b5de4e03d9da049
-      - uses: risc0/risc0/.github/actions/sccache@1a373c71585766e4f6985b96c48389daaf69d528
+      - uses: risc0/risc0/.github/actions/sccache@76674c1a20d30fa901852374bddf27fc5d5785a6
       - run: |
           curl -L https://risczero.com/install | bash
           echo "$HOME/.risc0/bin" >> $GITHUB_PATH
