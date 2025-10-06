@@ -19,7 +19,7 @@ ah start-picus-v2-task \
     --source $2 \
     --project-id 1194 \
     --version-id $VID \
-    --solver cvc5-auto \
+    --solver cvc5-split \
     --solver-timeout 2000 \
     --assume-deterministic CycleCounter \
     --wait > picus_output.log
