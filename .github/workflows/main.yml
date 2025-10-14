@@ -33,7 +33,7 @@ jobs:
         with:
           # Full history is required by license-check.py
           fetch-depth: 0
-      - uses: risc0/risc0/.github/actions/rustup@a9d723e29a44563497220a998b5de4e03d9da049
+      - uses: risc0/risc0/.github/actions/rustup@76674c1a20d30fa901852374bddf27fc5d5785a6
       - name: Install cargo-sort
         uses: risc0/cargo-install@9f6037ed331dcf7da101461a20656273fa72abf0
         with:
@@ -48,7 +48,7 @@ jobs:
       - run: python license-check.py
 
   check-generated-zirgen:
-    runs-on: [self-hosted, prod, Linux, cpu]
+    runs-on: [self-hosted, cluster, Linux, cpu]
     strategy:
         fail-fast: true
         matrix:
@@ -60,8 +60,8 @@ jobs:
       - uses: ./.github/actions/bazelisk
         with:
           cache-key: bootstrap
-      - uses: risc0/risc0/.github/actions/rustup@a9d723e29a44563497220a998b5de4e03d9da049
-      - uses: risc0/risc0/.github/actions/sccache@1a373c71585766e4f6985b96c48389daaf69d528
+      - uses: risc0/risc0/.github/actions/rustup@76674c1a20d30fa901852374bddf27fc5d5785a6
+      - uses: risc0/risc0/.github/actions/sccache@76674c1a20d30fa901852374bddf27fc5d5785a6
         with:
           key: ${{ matrix.os }}-bootstrap
       # TODO: check generated fib files once they generate properly
@@ -71,7 +71,7 @@ jobs:
         run: cargo bootstrap -- --check calculator
 
   bazel:
-    runs-on: [self-hosted, prod, cpu, "${{ matrix.os }}"]
+    runs-on: [self-hosted, cluster, cpu, "${{ matrix.os }}"]
     strategy:
       fail-fast: false
       matrix:
@@ -90,7 +90,7 @@ jobs:
         run: bazelisk test //... $CONFIG
 
   test:
-    runs-on: [self-hosted, prod, "${{ matrix.os }}", "${{ matrix.arch }}", "${{ matrix.device }}"]
+    runs-on: [self-hosted, cluster, "${{ matrix.os }}", "${{ matrix.arch }}", "${{ matrix.device }}"]
     strategy:
       fail-fast: false
       matrix:
@@ -102,7 +102,7 @@ jobs:
           - os: Linux
             arch: X64
             feature: cuda
-            device: nvidia_rtx_a5000
+            device: nvidia_rtx_4000_ada
           - os: macOS
             arch: ARM64
             feature: default
@@ -115,8 +115,8 @@ jobs:
       - uses: actions/checkout@v4
       - if: matrix.feature == 'cuda'
         uses: ./.github/actions/cuda
-      - uses: risc0/risc0/.github/actions/rustup@a9d723e29a44563497220a998b5de4e03d9da049
-      - uses: risc0/risc0/.github/actions/sccache@1a373c71585766e4f6985b96c48389daaf69d528
+      - uses: risc0/risc0/.github/actions/rustup@76674c1a20d30fa901852374bddf27fc5d5785a6
+      - uses: risc0/risc0/.github/actions/sccache@76674c1a20d30fa901852374bddf27fc5d5785a6
         with:
           key: ${{ matrix.os }}-${{ matrix.feature }}
       - run: |
@@ -130,14 +130,14 @@ jobs:
       - run: sccache --show-stats
 
   doc:
-    runs-on: [self-hosted, prod, Linux, cpu]
+    runs-on: [self-hosted, cluster, Linux, cpu]
     env:
       RUST_BACKTRACE: full
       RISC0_BUILD_LOCKED: 1
     steps:
       - uses: actions/checkout@v4
-      - uses: risc0/risc0/.github/actions/rustup@a9d723e29a44563497220a998b5de4e03d9da049
-      - uses: risc0/risc0/.github/actions/sccache@1a373c71585766e4f6985b96c48389daaf69d528
+      - uses: risc0/risc0/.github/actions/rustup@76674c1a20d30fa901852374bddf27fc5d5785a6
+      - uses: risc0/risc0/.github/actions/sccache@76674c1a20d30fa901852374bddf27fc5d5785a6
       - run: |
           curl -L https://risczero.com/install | bash
           echo "$HOME/.risc0/bin" >> $GITHUB_PATH
@@ -147,7 +147,7 @@ jobs:
       - run: sccache --show-stats
 
   keccak-determinism:
-    runs-on: [self-hosted, prod, cpu, Linux]
+    runs-on: [self-hosted, cluster, cpu, Linux]
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/bazelisk
