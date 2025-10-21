@@ -49,6 +49,14 @@ static DigestVal readDigest(llvm::ArrayRef<Val>& stream, bool longDigest = false
   return out;
 }
 
+static DigestVal readShortDigest(llvm::ArrayRef<Val>& stream, bool longDigest = false) {
+  size_t digestSize = 8;
+  assert(stream.size() >= digestSize);
+  DigestVal out = intoDigest(stream.take_front(digestSize), DigestKind::Poseidon2);
+  stream = stream.drop_front(digestSize);
+  return out;
+}
+
 DigestVal readSha(llvm::ArrayRef<Val>& stream, bool longDigest) {
   size_t digestSize = (longDigest ? 32 : 16);
   assert(stream.size() >= digestSize);
@@ -436,6 +444,51 @@ std::pair<ReceiptClaim, U256Val> readReceiptClaimAndPovwNonce(llvm::ArrayRef<Val
 
 ReceiptClaim ReceiptClaim::fromRv32imV2(llvm::ArrayRef<Val>& stream, size_t po2) {
   return readReceiptClaimAndPovwNonce(stream, po2).first;
+}
+
+ReceiptClaim ReceiptClaim::fromRv32imV3(llvm::ArrayRef<Val>& stream, size_t po2) {
+  // Make a zeroHash
+  std::vector zeroVec(16, Val(0));
+  DigestVal zeroHash = intoDigest(zeroVec, DigestKind::Sha256);
+
+  // NOTE: Ordering of these read operations must match the layout of the circuit globals.
+  // This ordering can be found in cxx/rv32im/witness/witness.h in the Globals structure
+  DigestVal stateIn = readShortDigest(stream);
+  DigestVal stateOut = readShortDigest(stream);
+  Val isTerminate = readVal(stream);
+  Val termA0Low = readVal(stream);
+  Val termA0High = readVal(stream);
+  Val termA1Low = readVal(stream);
+  Val termA1High = readVal(stream);
+  DigestVal output = readSha(stream);
+  // TODO: Implement proper 'input' for V3
+  DigestVal input = zeroHash;
+
+  ReceiptClaim claim;
+  claim.input = input;
+  claim.output = output;
+  claim.pre.pc = PCVal::zero();
+  claim.pre.memory = stateIn;
+  claim.post.pc = PCVal::zero();
+  eqz(isTerminate * (1 - isTerminate));
+  claim.post.memory = select(isTerminate, {stateOut, zeroHash});
+
+  // Constrain termA0Low to be either 0 or 1.
+  //
+  // Note that when isTerminate = 1, the system exit code (used to indicate whether the system is
+  // e.g. halted, paused, or system split) is set to termA0Low. Without this constraint, it is
+  // possible for the RISC-V code to set sysExit to e.g. 2 when isTerminate is true, which is
+  // semantically inconsistent in the v1 ReceiptClaim. This would require non-standard RISC-V
+  // guest runtime, and so is mitigated by any program that uses the RISC Zero provided runtime.
+  eqz(termA0Low * (1 - termA0Low));
+
+  // isTerminate:
+  // 0 -> 2
+  // 1 -> termA0Low (0, 1)
+  claim.sysExit = (2 - 2 * isTerminate) + (isTerminate * termA0Low);
+  claim.userExit = isTerminate * termA0High;
+
+  return claim;
 }
 
 } // namespace zirgen::predicates
