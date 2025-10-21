@@ -49,10 +49,18 @@ static DigestVal readDigest(llvm::ArrayRef<Val>& stream, bool longDigest = false
   return out;
 }
 
-static DigestVal readShortDigest(llvm::ArrayRef<Val>& stream, bool longDigest = false) {
+static DigestVal readP2Digest(llvm::ArrayRef<Val>& stream, bool longDigest = false) {
   size_t digestSize = 8;
   assert(stream.size() >= digestSize);
-  DigestVal out = intoDigest(stream.take_front(digestSize), DigestKind::Poseidon2);
+  std::vector<Val> intoShorts;
+  for (size_t i = 0; i < 8; i++) {
+    Val low = stream[i] & 0xffff;
+    Val high = (stream[i] - low) / 0x10000;
+    intoShorts.push_back(low);
+    intoShorts.push_back(high);
+  }
+  llvm::ArrayRef<Val> shortStream(intoShorts.data(), intoShorts.size());
+  DigestVal out = intoDigest(shortStream, DigestKind::Sha256);
   stream = stream.drop_front(digestSize);
   return out;
 }
@@ -453,8 +461,8 @@ ReceiptClaim ReceiptClaim::fromRv32imV3(llvm::ArrayRef<Val>& stream, size_t po2)
 
   // NOTE: Ordering of these read operations must match the layout of the circuit globals.
   // This ordering can be found in cxx/rv32im/witness/witness.h in the Globals structure
-  DigestVal stateIn = readShortDigest(stream);
-  DigestVal stateOut = readShortDigest(stream);
+  DigestVal stateIn = readP2Digest(stream);
+  DigestVal stateOut = readP2Digest(stream);
   Val isTerminate = readVal(stream);
   Val termA0Low = readVal(stream);
   Val termA0High = readVal(stream);
