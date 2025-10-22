@@ -127,7 +127,11 @@ PreflightTrace preflightSegment(const std::vector<KeccakState>& inputs, size_t c
   auto addWords = [&](uint16_t col, uint32_t data, uint16_t len) {
     ret.scatter.push_back({data, cycle, col, len, 32});
   };
-  auto addCycle = [&](const ControlState& cstate, uint32_t bits, uint32_t kflat, uint32_t pflat, bool isBits = true) {
+  auto addCycle = [&](const ControlState& cstate,
+                      uint32_t bits,
+                      uint32_t kflat,
+                      uint32_t pflat,
+                      bool isBits = true) {
     uint32_t offset = ret.data.size();
     ret.data.push_back(cstate.asWord());
     uint32_t onehot = 1 << cstate.cycleType;
@@ -194,7 +198,7 @@ PreflightTrace preflightSegment(const std::vector<KeccakState>& inputs, size_t c
     ret.data.push_back(0);
   }
   // Initalize sha state (and current data offset)
-  cells_t currentP2 = { 0 };
+  cells_t currentP2 = {0};
   size_t pflatOffset = writePFlat(currentP2);
   // Do an initial 'init' cycle
   addCycle(ControlState::Init(), zeroOffset, zeroOffset, pflatOffset);
@@ -209,9 +213,9 @@ PreflightTrace preflightSegment(const std::vector<KeccakState>& inputs, size_t c
     // Poseidon2 input
     for (size_t round = 0; round < 7; round++) {
       for (size_t i = 0; i < 8; i++) {
-        uint32_t word = data[round*8 + i];
-        currentP2[2*i] = word & 0xffff;
-        currentP2[2*i + 1] = word >> 16;
+        uint32_t word = data[round * 8 + i];
+        currentP2[2 * i] = word & 0xffff;
+        currentP2[2 * i + 1] = word >> 16;
       }
       zirgen::poseidonSponge(currentP2);
       pflatOffset = writePFlat(currentP2);
@@ -237,9 +241,9 @@ PreflightTrace preflightSegment(const std::vector<KeccakState>& inputs, size_t c
     // Poseidon2 output
     for (size_t round = 0; round < 7; round++) {
       for (size_t i = 0; i < 8; i++) {
-        uint32_t word = data[round*8 + i];
-        currentP2[2*i] = word & 0xffff;
-        currentP2[2*i + 1] = word >> 16;
+        uint32_t word = data[round * 8 + i];
+        currentP2[2 * i] = word & 0xffff;
+        currentP2[2 * i + 1] = word >> 16;
       }
       zirgen::poseidonSponge(currentP2);
       pflatOffset = writePFlat(currentP2);
@@ -258,7 +262,9 @@ void applyPreflight(ExecutionTrace& exec, const PreflightTrace& preflight) {
   for (const auto& info : preflight.scatter) {
     uint32_t innerCount = 32 / info.bitPerElem;
     uint32_t mask = (1 << (info.bitPerElem)) - 1;
-    if (info.bitPerElem == 32) { mask = 0xffffffff; }
+    if (info.bitPerElem == 32) {
+      mask = 0xffffffff;
+    }
     for (size_t i = 0; i < info.count; i++) {
       uint32_t word = preflight.data[info.dataOffset + (i / innerCount)];
       size_t j = i % innerCount;

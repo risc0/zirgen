@@ -93,12 +93,12 @@ void Poseidon2SingleKeccak(cells_t& p2State, zirgen::keccak::KeccakState state) 
   uint32_t* viewState = (uint32_t*)&state;
   for (size_t i = 0; i < 50; i++) {
     uint32_t word = viewState[i];
-    toHash[2*i] = word & 0xffff;
-    toHash[2*i + 1] = word >> 16;
+    toHash[2 * i] = word & 0xffff;
+    toHash[2 * i + 1] = word >> 16;
   }
   for (size_t i = 0; i < 7; i++) {
     for (size_t j = 0; j < 16; j++) {
-      p2State[j] = toHash[i * 16 + j]; 
+      p2State[j] = toHash[i * 16 + j];
     }
     zirgen::poseidonSponge(p2State);
   }
@@ -123,7 +123,7 @@ int main() {
 
   // Compute what the circuit should say
 
-  cells_t pstate = { 0 };
+  cells_t pstate = {0};
   DoTransaction(pstate, state);
 
   // Now run the circuit
@@ -140,7 +140,6 @@ int main() {
   applyPreflight(trace, preflight);
   // Run backwords
   std::cout << "out.ctypeOneHot = " << getLayoutInfo().ctypeOneHot << "\n";
-  //for (size_t i = cycles; i-- > 0;) {
   for (size_t i = 0; i < cycles; i++) {
     StepHandler ctx(preflight, i);
     DslStep(ctx, trace, i);
@@ -149,7 +148,8 @@ int main() {
   // Make sure the results match
   for (size_t i = 0; i < 8; i++) {
     if (trace.global.get(i).asUInt32() != pstate[16 + i]) {
-      std::cout << "Mismatch at index " << i << ": " << trace.global.get(i).asUInt32() << " vs " << pstate[16 + i] << "\n";
+      std::cout << "Mismatch at index " << i << ": " << trace.global.get(i).asUInt32() << " vs "
+                << pstate[16 + i] << "\n";
       throw std::runtime_error("Mismatch!\n");
     }
   }
