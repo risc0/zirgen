@@ -17,6 +17,23 @@ cc_test(
 )
 
 cc_test(
+    name = "verify-v3",
+    size = "small",
+    srcs = [
+        "fri.cpp",
+        "merkle.cpp",
+        "verify-v3.cpp",
+    ],
+    data = ["proof.bin"],
+    deps = [
+        "//risc0/core/test:gtest_main",
+        "//zirgen/Dialect/ZHLT/IR",
+        "//zirgen/circuit/verify:lib",
+        "//zirgen/circuit/hello_v3:lib",
+    ],
+)
+
+cc_test(
     name = "verify-zirgen",
     size = "small",
     srcs = [

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,7 +32,8 @@ public:
   virtual Val compute_poly(llvm::ArrayRef<Val> u,
                            llvm::ArrayRef<Val> out,
                            llvm::ArrayRef<Val> accumMix,
-                           Val polyMix) const = 0;
+                           Val polyMix,
+                           Val z) const = 0;
   virtual size_t out_size() const = 0;
   virtual size_t mix_size() const = 0;
   virtual ProtocolInfo get_circuit_info() const = 0;
@@ -51,5 +52,25 @@ VerifyInfo verifyRecursion(ReadIopVal& allowedRoot,
                            std::vector<ReadIopVal> seals,
                            std::vector<ReadIopVal> alloweds,
                            const CircuitInterface& circuit);
+
+struct GroupInfoV3 {
+  size_t globalCount;
+  size_t mixCount;
+};
+
+class CircuitInterfaceV3 {
+public:
+  virtual ~CircuitInterfaceV3() {}
+  virtual const Zll::TapSet& getTaps() const = 0;
+  virtual const llvm::ArrayRef<GroupInfoV3> getGroupInfo() const = 0;
+  virtual Val computePolyExt(llvm::ArrayRef<Val> u,
+                             llvm::ArrayRef<Val> out,
+                             llvm::ArrayRef<Val> accumMix,
+                             Val polyMix,
+                             Val z) const = 0;
+};
+
+// Returns verified code root.
+void verifyV3(ReadIopVal& iop, size_t po2, const CircuitInterfaceV3& circuit);
 
 } // namespace zirgen::verify

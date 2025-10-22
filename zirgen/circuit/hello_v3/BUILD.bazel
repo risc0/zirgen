@@ -1,0 +1,24 @@
+load("//bazel/rules/zirgen:edsl-defs.bzl", "build_circuit")
+
+package(
+    default_visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "lib",
+    srcs = ["CircuitInterface.cpp"],
+    hdrs = ["CircuitInterface.h"],
+    deps = [
+        "//zirgen/circuit/verify:lib",
+    ],
+)
+
+build_circuit(
+    name = "predicates",
+    srcs = ["predicates.cpp"],
+    outs = ["hello_lift_12.zkr"],
+    deps = [
+        ":lib",
+        "//zirgen/circuit/predicates:lib",
+    ],
+)

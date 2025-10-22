@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,6 +33,132 @@ template <typename T> T dbg(std::string fmt, T arg) {
   if (kDebug)
     XLOG(fmt, arg);
   return arg;
+}
+
+template <typename F>
+void verifyValidity(ReadIopVal& iop,
+                    size_t po2,
+                    const Zll::TapSet& tapSet,
+                    F compute_poly,
+                    std::vector<Val>& mix,
+                    std::vector<Val>& globals,
+                    std::vector<MerkleTreeVerifier>& merkleVerifiers) {
+  size_t size = size_t(1) << po2;
+  size_t domain = size * kInvRate;
+
+  // Set the Fiat-Shamir parameter for mixing constraint polynomials
+  Val polyMix = dbg("polyMix: %u", iop.rngExtVal());
+
+  // Read check merkle root
+  MerkleTreeVerifier checkMerkle("check", iop, domain, kCheckSize, kQueries);
+
+  // Pick a random place to check the polynomial constaints at
+  Val Z = iop.rngExtVal();
+  if (kDebug)
+    XLOG("Z: %u", Z);
+
+  // Read the tap coefficents, hash them, and commit to them
+  auto coeffU = iop.readExtVals(tapSet.tapCount + kCheckSize, /*flip=*/true);
+  iop.commit(hash(coeffU, /*flip=*/true));
+
+  // Now, convert to evaluated tap values
+  Val backOne = kRouRev[po2];
+  std::vector<Val> evalU;
+  for (const auto& group : tapSet.groups) {
+    for (const auto& reg : group.regs) {
+      std::vector<Val> coeffs(coeffU.begin() + reg.tapPos,
+                              coeffU.begin() + reg.tapPos + reg.backs.size());
+      for (const auto& back : reg.backs) {
+        auto x = raisepow(backOne, back) * Z;
+        auto fx = poly_eval(coeffs, x);
+        evalU.push_back(fx);
+      }
+    }
+  }
+
+  // Compute the core polynomial
+  Val result = compute_poly(evalU, globals, mix, polyMix, Z);
+  if (kDebug)
+    XLOG("result: %u", result);
+
+  // Generate the check polynomial
+  Val check = 0;
+  size_t remap[4] = {0, 2, 1, 3};
+  for (size_t i = 0; i < 4; i++) {
+    Val zi = raisepow(Z, i);
+    size_t rmi = remap[i];
+    check = check + coeffU[tapSet.tapCount + rmi + 0] * zi * Val({1, 0, 0, 0});
+    check = check + coeffU[tapSet.tapCount + rmi + 4] * zi * Val({0, 1, 0, 0});
+    check = check + coeffU[tapSet.tapCount + rmi + 8] * zi * Val({0, 0, 1, 0});
+    check = check + coeffU[tapSet.tapCount + rmi + 12] * zi * Val({0, 0, 0, 1});
+  }
+  check = check * (raisepow(3 * Z, size) - 1);
+  if (kDebug)
+    XLOG("Check polynomial: %u", check);
+
+  // Make sure they match
+  eq(check, result);
+
+  // Set the Fiat-Shamir parameter for mixing DEEP polynomials (U)
+  Val deepMix = iop.rngExtVal();
+
+  // Make the mixed U polynomials
+  std::vector<std::vector<Val>> comboU;
+  for (size_t i = 0; i < tapSet.combos.size(); i++) {
+    comboU.emplace_back(tapSet.combos[i].backs.size(), 0);
+  }
+  Val curMix = 1;
+  for (const auto& group : tapSet.groups) {
+    for (const auto& reg : group.regs) {
+      for (size_t i = 0; i < reg.backs.size(); i++) {
+        comboU[reg.combo][i] = comboU[reg.combo][i] + curMix * coeffU[reg.tapPos + i];
+      }
+      curMix = curMix * deepMix;
+    }
+  }
+  // Handle check group
+  comboU.emplace_back(1, 0);
+  for (size_t i = 0; i < kCheckSize; i++) {
+    comboU.back()[0] = comboU.back()[0] + curMix * coeffU[tapSet.tapCount + i];
+    curMix = curMix * deepMix;
+  }
+  // Finally, do a FRI verification
+  friVerify(iop, size, [&](ReadIopVal& iop, Val idx) {
+    auto x = dynamic_pow(kRouFwd[log2Ceil(domain)], idx, domain);
+    std::map<unsigned, std::vector<Val>> rows;
+    for (size_t i = 0; i < merkleVerifiers.size(); i++) {
+      rows[i] = merkleVerifiers[i].verify(iop, idx);
+    }
+    auto checkRow = checkMerkle.verify(iop, idx);
+    Val curMix = 1;
+    std::vector<Val> tot(comboU.size(), 0);
+    for (auto [idx, group] : llvm::enumerate(tapSet.groups)) {
+      for (const auto& reg : group.regs) {
+        tot[reg.combo] = tot[reg.combo] + curMix * rows.at(idx)[reg.offset];
+        curMix = curMix * deepMix;
+      }
+    }
+    for (size_t i = 0; i < kCheckSize; i++) {
+      tot.back() = tot.back() + curMix * checkRow[i];
+      curMix = curMix * deepMix;
+    }
+    Val ret = 0;
+    for (const auto& combo : tapSet.combos) {
+      unsigned id = combo.combo;
+      for (size_t i = 0; i < comboU[id].size(); i++) {
+      }
+      Val num = tot[id] - poly_eval(comboU[id], x);
+      Val divisor = 1;
+      for (auto back : combo.backs) {
+        divisor = divisor * (x - Z * raisepow(backOne, back));
+      }
+      ret = ret + num * inv(divisor);
+    }
+    Val checkNum = tot.back() - comboU.back()[0];
+    Val checkDivisor = x - raisepow(Z, 4);
+    ret = ret + checkNum * inv(checkDivisor);
+    return ret;
+  });
 }
 
 } // namespace
@@ -99,119 +225,13 @@ VerifyInfo verify(ReadIopVal& iop, size_t po2, const CircuitInterface& circuit) 
   // Read accum merkle root
   MerkleTreeVerifier accumMerkle("accum", iop, domain, accumSize, kQueries);
 
-  // Set the Fiat-Shamir parameter for mixing constraint polynomials
-  Val polyMix = dbg("polyMix: %u", iop.rngExtVal());
-
-  // Read check merkle root
-  MerkleTreeVerifier checkMerkle("check", iop, domain, kCheckSize, kQueries);
-
-  // Pick a random place to check the polynomial constaints at
-  Val Z = iop.rngExtVal();
-  if (kDebug)
-    XLOG("Z: %u", Z);
-
-  // Read the tap coefficents, hash them, and commit to them
-  auto coeffU = iop.readExtVals(tapCount + kCheckSize, /*flip=*/true);
-  iop.commit(hash(coeffU, /*flip=*/true));
-
-  // Now, convert to evaluated tap values
-  Val backOne = kRouRev[po2];
-  std::vector<Val> evalU;
-  for (const auto& group : tapSet.groups) {
-    for (const auto& reg : group.regs) {
-      std::vector<Val> coeffs(coeffU.begin() + reg.tapPos,
-                              coeffU.begin() + reg.tapPos + reg.backs.size());
-      for (const auto& back : reg.backs) {
-        auto x = raisepow(backOne, back) * Z;
-        auto fx = poly_eval(coeffs, x);
-        evalU.push_back(fx);
-      }
-    }
-  }
-
-  // Compute the core polynomial
-  Val result = circuit.compute_poly(evalU, out, accumMix, polyMix);
-  if (kDebug)
-    XLOG("result: %u", result);
-
-  // Generate the check polynomial
-  Val check = 0;
-  size_t remap[4] = {0, 2, 1, 3};
-  for (size_t i = 0; i < 4; i++) {
-    Val zi = raisepow(Z, i);
-    size_t rmi = remap[i];
-    check = check + coeffU[tapCount + rmi + 0] * zi * Val({1, 0, 0, 0});
-    check = check + coeffU[tapCount + rmi + 4] * zi * Val({0, 1, 0, 0});
-    check = check + coeffU[tapCount + rmi + 8] * zi * Val({0, 0, 1, 0});
-    check = check + coeffU[tapCount + rmi + 12] * zi * Val({0, 0, 0, 1});
-  }
-  check = check * (raisepow(3 * Z, size) - 1);
-  if (kDebug)
-    XLOG("Check polynomial: %u", check);
-
-  // Make sure they match
-  eq(check, result);
-
-  // Set the Fiat-Shamir parameter for mixing DEEP polynomials (U)
-  Val mix = iop.rngExtVal();
-
-  // Make the mixed U polynomials
-  std::vector<std::vector<Val>> comboU;
-  for (size_t i = 0; i < tapSet.combos.size(); i++) {
-    comboU.emplace_back(tapSet.combos[i].backs.size(), 0);
-  }
-  Val curMix = 1;
-  for (const auto& group : tapSet.groups) {
-    for (const auto& reg : group.regs) {
-      for (size_t i = 0; i < reg.backs.size(); i++) {
-        comboU[reg.combo][i] = comboU[reg.combo][i] + curMix * coeffU[reg.tapPos + i];
-      }
-      curMix = curMix * mix;
-    }
-  }
-  // Handle check group
-  comboU.emplace_back(1, 0);
-  for (size_t i = 0; i < kCheckSize; i++) {
-    comboU.back()[0] = comboU.back()[0] + curMix * coeffU[tapCount + i];
-    curMix = curMix * mix;
-  }
-  // Finally, do a FRI verification
-  friVerify(iop, size, [&](ReadIopVal& iop, Val idx) {
-    auto x = dynamic_pow(kRouFwd[log2Ceil(domain)], idx, domain);
-    std::map<unsigned, std::vector<Val>> rows;
-    rows[/*REGISTER_GROUP_ACCUM*/ 0] = accumMerkle.verify(iop, idx);
-    rows[/*REGISTER_GROUP_CODE=*/1] = codeMerkle.verify(iop, idx);
-    rows[/*REGISTER_GROUP_DATA=*/2] = dataMerkle.verify(iop, idx);
-    auto checkRow = checkMerkle.verify(iop, idx);
-    Val curMix = 1;
-    std::vector<Val> tot(comboU.size(), 0);
-    for (auto [idx, group] : llvm::enumerate(tapSet.groups)) {
-      for (const auto& reg : group.regs) {
-        tot[reg.combo] = tot[reg.combo] + curMix * rows.at(idx)[reg.offset];
-        curMix = curMix * mix;
-      }
-    }
-    for (size_t i = 0; i < kCheckSize; i++) {
-      tot.back() = tot.back() + curMix * checkRow[i];
-      curMix = curMix * mix;
-    }
-    Val ret = 0;
-    for (const auto& combo : tapSet.combos) {
-      unsigned id = combo.combo;
-      for (size_t i = 0; i < comboU[id].size(); i++) {
-      }
-      Val num = tot[id] - poly_eval(comboU[id], x);
-      Val divisor = 1;
-      for (auto back : combo.backs) {
-        divisor = divisor * (x - Z * raisepow(backOne, back));
-      }
-      ret = ret + num * inv(divisor);
-    }
-    Val checkNum = tot.back() - comboU.back()[0];
-    Val checkDivisor = x - raisepow(Z, 4);
-    ret = ret + checkNum * inv(checkDivisor);
-    return ret;
-  });
+  auto computePoly = [&](llvm::ArrayRef<Val> u,
+                         llvm::ArrayRef<Val> out,
+                         llvm::ArrayRef<Val> accumMix,
+                         Val polyMix,
+                         Val z) { return circuit.compute_poly(u, out, accumMix, polyMix, z); };
+  std::vector<MerkleTreeVerifier> merkleVerifiers = {accumMerkle, codeMerkle, dataMerkle};
+  verifyValidity(iop, po2, tapSet, computePoly, accumMix, out, merkleVerifiers);
   return verifyInfo;
 }
 
@@ -237,6 +257,46 @@ VerifyInfo verifyRecursion(ReadIopVal& allowedRoot,
     }
   }
   return verifyInfo;
+}
+
+} // namespace zirgen::verify
+
+namespace zirgen::verify {
+
+void verifyV3(ReadIopVal& iop, size_t po2, const CircuitInterfaceV3& circuit) {
+  const Zll::TapSet& tapSet = circuit.getTaps();
+  size_t size = size_t(1) << po2;
+  size_t domain = size * kInvRate;
+  std::vector<Val> mix;
+  std::vector<Val> globals;
+  std::vector<MerkleTreeVerifier> merkleVerifiers;
+
+  for (size_t i = 0; i < circuit.getGroupInfo().size(); i++) {
+    const GroupInfoV3& group = circuit.getGroupInfo()[i];
+
+    // Draw Fiat-Shamir randomness for the group.
+    for (size_t j = 0; j < group.mixCount; j++) {
+      mix.push_back(iop.rngBaseVal());
+    }
+
+    // Read and commit to the globals for the group.
+    if (group.globalCount > 0) {
+      std::vector<Val> groupGlobals = iop.readBaseVals(group.globalCount);
+      globals.insert(globals.end(), groupGlobals.begin(), groupGlobals.end());
+      iop.commit(hash(groupGlobals));
+    }
+
+    // Read the merkle proof for the group from the IOP.
+    size_t columns = tapSet.groups.at(i).regs.size();
+    merkleVerifiers.emplace_back("group", iop, domain, columns, kQueries);
+  }
+
+  auto computePoly = [&](llvm::ArrayRef<Val> u,
+                         llvm::ArrayRef<Val> out,
+                         llvm::ArrayRef<Val> accumMix,
+                         Val polyMix,
+                         Val z) { return circuit.computePolyExt(u, out, accumMix, polyMix, z); };
+  verifyValidity(iop, po2, tapSet, computePoly, mix, globals, merkleVerifiers);
 }
 
 } // namespace zirgen::verify
