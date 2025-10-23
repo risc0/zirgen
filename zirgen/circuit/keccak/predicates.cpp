@@ -62,8 +62,18 @@ int main(int argc, char* argv[]) {
                 "keccak_lift",
                 keccakIR.getValue(),
                 [](llvm::ArrayRef<Val>& inStream, size_t expectedTotalCycles) {
-                  auto sha = readSha(inStream);
-                  Val totalCycles = readVal(inStream);
+                  // Here we have a poseidon hash (held as 8 Vals), and we want to convert
+                  // to a SHA style hash (16 halfs).
+                  std::vector<Val> expanded;
+                  for (size_t i = 0; i < 8; i++) {
+                    Val low = inStream[i] & 0xffff;
+                    Val high = (inStream[i] - low) / 0x10000;
+                    expanded.push_back(low);
+                    expanded.push_back(high);
+                  }
+                  llvm::ArrayRef<Val> stream = expanded;
+                  auto sha = readSha(stream);
+                  Val totalCycles = inStream[8];
                   eq(totalCycles, expectedTotalCycles);
                   return sha;
                 });
