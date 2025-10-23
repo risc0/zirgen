@@ -15,7 +15,7 @@ import poseidon2;
 //   Keccak cycles 1, 3: Keccak state, low bits, 5x5x32
 //   Keccak cycles 2, 4: Keccak state, high bits, 5x5x32
 //   The same 2 cycle state is also used by 'Expand'
-// For Poseidon2 rounds, the intermediate S-Box values 
+// For Poseidon2 rounds, the intermediate S-Box values
 //
 // kflat
 // -------
@@ -140,7 +140,6 @@ component DoSponge(stage0: Array<Val, 24>) {
   stage9 := DoExtRoundByIdx(stage8, 7);
   stage9
 }
-
 
 component Poseidon2Cycle(back1: TopState, round: Val) {
   Log("Poseidon2Cycle", round);
@@ -375,16 +374,16 @@ component Top() {
   };
   curState: TopState;
   curState := cycleMux -> (
-    /*Deterministic*/ ShutdownCycle(curState@1),
-    /*Deterministic*/ ReadCycle(curState@1),
-    /*Deterministic*/ ExpandCycle(curState@1, controlState.subType),
-    /*Deterministic*/ WriteCycle(curState@1, curState@2),
-    /*Deterministic*/ KeccakRound0(curState@2, curState@1),
-    /*Deterministic*/ KeccakRound12<0>(curState@1, curState@3, curState@2, curState@1),
-    /*Deterministic*/ KeccakRound12<1>(curState@2, curState@4, curState@3, curState@1),
-    /*Deterministic*/ KeccakRound34<0>(curState@2, curState@1, curState@1, controlState.round),
-    /*Deterministic*/ KeccakRound34<1>(curState@3, curState@2, curState@1, controlState.round),
-    /*Deterministic*/ Poseidon2Cycle(curState@1, controlState.round),
-    /*Deterministic*/ InitCycle()
+    ShutdownCycle(curState@1),
+    ReadCycle(curState@1),
+    ExpandCycle(curState@1, controlState.subType),
+    WriteCycle(curState@1, curState@2),
+    KeccakRound0(curState@2, curState@1),
+    KeccakRound12<0>(curState@1, curState@3, curState@2, curState@1),
+    KeccakRound12<1>(curState@2, curState@4, curState@3, curState@1),
+    KeccakRound34<0>(curState@2, curState@1, curState@1, controlState.round),
+    KeccakRound34<1>(curState@3, curState@2, curState@1, controlState.round),
+    Poseidon2Cycle(curState@1, controlState.round),
+    InitCycle()
   );
 }

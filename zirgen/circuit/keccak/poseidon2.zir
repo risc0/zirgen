@@ -30,7 +30,6 @@ component SBox(in: Val) {
   out
 }
 
-#[picus_inline]
 component DoIntRound(in: Array<Val, 24>, rc: Val) {
   x := in[0] + rc;
   sbox := SBox(x);
@@ -40,7 +39,7 @@ component DoIntRound(in: Array<Val, 24>, rc: Val) {
 
 #[picus_inline]
 component DoIntRounds(in: Array<Val, 24>) {
-  reduce for x : INT_ROUND_CONSTANTS() { x } init in with DoIntRound
+  reduce INT_ROUND_CONSTANTS() init in with DoIntRound
 }
 
 component MultiplyByCirculant(in: Array<Val, 4>) {
