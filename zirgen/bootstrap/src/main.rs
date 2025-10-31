@@ -15,12 +15,12 @@
 use std::{
     cmp::min,
     fmt::Write as _,
-    io::{self, stdout, BufRead, BufReader, Read, Write},
+    io::{self, BufRead, BufReader, Read, Write, stdout},
     path::{Path, PathBuf},
-    process::{exit, Command, Stdio},
+    process::{Command, Stdio, exit},
 };
 
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use clap::{Parser, ValueEnum};
 use glob::Pattern;
 use regex::Regex;
@@ -574,7 +574,9 @@ impl Bootstrap {
                 eprintln!("--check: All installed files match");
             }
         } else if *self.error.lock().unwrap() {
-            panic!("Please add an appropriate error message here if we have defererred errors during a non-check operation");
+            panic!(
+                "Please add an appropriate error message here if we have defererred errors during a non-check operation"
+            );
         }
     }
 
@@ -669,7 +671,7 @@ impl Bootstrap {
         let sys = Some(sys);
 
         self.copy_group(circuit, src, &rust, edsl::RUST_OUTPUTS, "src", "");
-        self.copy_group(circuit, src, &sys, edsl::CPP_OUTPUTS, "cxx", "rust_");
+        self.copy_group(circuit, src, &kernels, edsl::CPP_OUTPUTS, "cxx", "rust_");
         self.copy_group(circuit, src, &kernels, edsl::CUDA_OUTPUTS, "cuda", "");
         self.copy_group(circuit, src, &kernels, edsl::METAL_OUTPUTS, "metal", "");
 
