@@ -15,12 +15,12 @@
 use std::{
     cmp::min,
     fmt::Write as _,
-    io::{self, BufRead, BufReader, Read, Write, stdout},
+    io::{self, stdout, BufRead, BufReader, Read, Write},
     path::{Path, PathBuf},
-    process::{Command, Stdio, exit},
+    process::{exit, Command, Stdio},
 };
 
-use anyhow::{Result, bail};
+use anyhow::{bail, Result};
 use clap::{Parser, ValueEnum};
 use glob::Pattern;
 use regex::Regex;
