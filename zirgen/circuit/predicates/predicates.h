@@ -130,6 +130,7 @@ struct ReceiptClaim {
   DigestVal digest();
 
   static ReceiptClaim fromRv32imV2(llvm::ArrayRef<Val>& stream, size_t po2);
+  static ReceiptClaim fromRv32imV3(llvm::ArrayRef<Val>& stream, size_t po2);
 
   DigestVal input;
   SystemState pre;
