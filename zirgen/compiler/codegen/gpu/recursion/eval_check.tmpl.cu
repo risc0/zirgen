@@ -7,7 +7,6 @@
 namespace {{cppNamespace}} {
 
 constexpr size_t INV_RATE = 4;
-__constant__ FpExt poly_mix[{{num_mix_powers}}];
 
 static __device__ __forceinline__ FpExt poly_fp(uint32_t idx,
                                                 uint32_t size,
@@ -15,7 +14,8 @@ static __device__ __forceinline__ FpExt poly_fp(uint32_t idx,
                                                 const Fp* out,
                                                 const Fp* data,
                                                 const Fp* mix,
-                                                const Fp* accum) {
+                                                const Fp* accum,
+                                                const FxExt* poly_mix) {
   uint32_t mask = size - 1;
 {{#block}}
   {{.}}
@@ -30,10 +30,11 @@ __global__ void eval_check(Fp* check,
                            const Fp* out,
                            const Fp rou,
                            const uint32_t po2,
-                           const uint32_t domain) {
+                           const uint32_t domain,
+                           const FpExt* poly_mix) {
   uint32_t cycle = blockDim.x * blockIdx.x + threadIdx.x;
   if (cycle < domain) {
-    FpExt tot = poly_fp(cycle, domain, ctrl, out, data, mix, accum);
+    FpExt tot = poly_fp(cycle, domain, ctrl, out, data, mix, accum, poly_mix);
     Fp x = pow(rou, cycle);
     Fp y = pow(Fp(3) * x, 1 << po2);
     FpExt ret = tot * inv(y - Fp(1));

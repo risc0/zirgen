@@ -263,7 +263,7 @@ VerifyInfo verifyRecursion(ReadIopVal& allowedRoot,
 
 namespace zirgen::verify {
 
-void verifyV3(ReadIopVal& iop, size_t po2, const CircuitInterfaceV3& circuit) {
+std::vector<Val> verifyV3(ReadIopVal& iop, size_t po2, const CircuitInterfaceV3& circuit) {
   const Zll::TapSet& tapSet = circuit.getTaps();
   size_t size = size_t(1) << po2;
   size_t domain = size * kInvRate;
@@ -297,6 +297,7 @@ void verifyV3(ReadIopVal& iop, size_t po2, const CircuitInterfaceV3& circuit) {
                          Val polyMix,
                          Val z) { return circuit.computePolyExt(u, out, accumMix, polyMix, z); };
   verifyValidity(iop, po2, tapSet, computePoly, mix, globals, merkleVerifiers);
+  return globals;
 }
 
 } // namespace zirgen::verify

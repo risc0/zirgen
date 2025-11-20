@@ -16,7 +16,7 @@ glob_lit_tests(
         ":imports",
         "//zirgen/circuit/rv32im/shared/test:riscv_test_bins",
     ],
-    size_override = {"top.zir": "medium"},
+    size_override = {"top.zir": "large"},
     test_file_exts = ["zir"],
 )
 

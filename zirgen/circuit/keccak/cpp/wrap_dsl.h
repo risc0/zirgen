@@ -35,10 +35,11 @@ private:
 
 struct LayoutInfo {
   uint32_t bits;
-  uint32_t sflat;
+  uint32_t pflat;
   uint32_t kflat;
   uint32_t control;
   uint32_t ctypeOneHot;
+  uint32_t cycleNum;
 };
 
 LayoutInfo getLayoutInfo();

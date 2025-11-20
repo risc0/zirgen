@@ -112,8 +112,8 @@ struct MutableBufObj : public BufferObj {
   MutableBufObj(ExecContext& ctx, TraceGroup& group) : ctx(ctx), group(group) {}
   Val load(size_t col, size_t back) override {
     if (back > ctx.cycle) {
-      std::cerr << "Going back too far\n";
-      return 0;
+      std::cerr << "Going back too far: wrapping\n";
+      return group.get(ctx.cycle + group.getRows() - back, col);
     }
     return group.get(ctx.cycle - back, col);
   }
@@ -278,9 +278,10 @@ LayoutInfo getLayoutInfo() {
   LayoutInfo out;
   out.bits = impl::kLayout_Top.curState.bits[0]._super.col;
   out.kflat = impl::kLayout_Top.curState.kflat[0]._super.col;
-  out.sflat = impl::kLayout_Top.curState.sflat[0]._super.col;
+  out.pflat = impl::kLayout_Top.curState.pflat[0]._super.col;
   out.control = impl::kLayout_Top.controlState.cycleType._super.col;
   out.ctypeOneHot = impl::kLayout_Top.cycleMux._super[0]._super.col;
+  out.cycleNum = impl::kLayout_Top.cycle._super._super.col;
   return out;
 }
 

@@ -198,7 +198,6 @@ public:
       tmpl.render(
           object{
               {"decls", object{{"declFuncs", funcProtos}}},
-              {"num_mix_powers", std::to_string(mixPows.getPowersNeeded().size())},
               {"cppNamespace", circuitName.getCppNamespace()},
           },
           ofs);
@@ -208,7 +207,6 @@ public:
               {"defs", object{}},
               {"funcs", funcs},
               {"name", func.getName().str()},
-              {"num_mix_powers", std::to_string(mixPows.getPowersNeeded().size())},
               {"cppNamespace", circuitName.getCppNamespace()},
           },
           ofs);
@@ -533,7 +531,7 @@ private:
           for (mlir::Value arg : op.getOperands()) {
             ss << ", " << ctx.use(arg);
           }
-          ss << ");\n";
+          ss << ", poly_mix);\n";
         })
         .Case<GetOp>([&](GetOp op) {
           auto buf = emitOperand(op, ctx, 0);

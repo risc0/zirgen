@@ -27,11 +27,14 @@ EXTENSIONS = [
     ".rs",
 ]
 
-SKIP_DIRS = [
+SKIP_PATHS = [
     str(Path.cwd()) + "/risc0/cargo-risczero/templates/rust-starter",
     str(Path.cwd()) + "/risc0/sys/cxx/vendor",
     str(Path.cwd()) + "/risc0/zkvm/src/host/protos",
     str(Path.cwd()) + "/risc0/zkvm/src/host/server/exec",
+    str(Path.cwd()) + "/zirgen/dsl/examples/calculator/info.rs",
+    str(Path.cwd()) + "/zirgen/dsl/examples/calculator/poly_ext.rs",
+    str(Path.cwd()) + "/zirgen/dsl/examples/calculator/taps.rs",
 ]
 
 
@@ -77,7 +80,7 @@ def main():
     for path in tracked_files():
         if path.suffix in EXTENSIONS and ".inc" not in path.suffixes:
             skip = False
-            for path_start in SKIP_DIRS:
+            for path_start in SKIP_PATHS:
                 if str(path).startswith(path_start):
                     skip = True
                     break
