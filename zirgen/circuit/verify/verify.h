@@ -71,6 +71,6 @@ public:
 };
 
 // Returns verified code root.
-void verifyV3(ReadIopVal& iop, size_t po2, const CircuitInterfaceV3& circuit);
+std::vector<Val> verifyV3(ReadIopVal& iop, size_t po2, const CircuitInterfaceV3& circuit);
 
 } // namespace zirgen::verify

@@ -22,6 +22,7 @@ cc_library(
     deps = [
         "//risc0/core",
         "//risc0/fp",
+        "//zirgen/compiler/zkp",
     ],
 )
 

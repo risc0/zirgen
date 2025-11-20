@@ -1154,7 +1154,7 @@ void LoweringImpl::gen(MapOp map, ComponentBuilder& cb) {
 
 void LoweringImpl::gen(ReduceOp reduce, ComponentBuilder& cb) {
   Location loc = reduce.getLoc();
-  Value array = asValue(reduce.getArray());
+  Value array = coerceToArray(asValue(reduce.getArray()));
   Value init = asValue(reduce.getInit());
   auto typeName = asTypeName(reduce.getType());
   if (!typeName) {

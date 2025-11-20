@@ -28,19 +28,18 @@ namespace {{cppNamespace}}::cuda {
 {{#decls}}
 
 {{#declFuncs}}
-extern __device__ FpExt {{fn}}(uint32_t idx, uint32_t size{{args}});
+extern __device__ FpExt {{fn}}(uint32_t idx, uint32_t size{{args}}, const FpExt* poly_mix);
 {{/declFuncs}}
 
 constexpr size_t INV_RATE = 4;
-constexpr size_t kNumPolyMixPows = {{num_mix_powers}};
-extern __constant__ FpExt poly_mix[kNumPolyMixPows];
 
 {{/decls}}
 
 {{#funcs}}
 __device__ FpExt {{fn}}(uint32_t idx,
                         uint32_t size
-                        {{args}}) {
+                        {{args}},
+                        const FpExt *poly_mix) {
   uint32_t mask = size - 1;
 {{#block}}
   {{.}}

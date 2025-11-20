@@ -14,7 +14,6 @@ glob_lit_tests(
     data = [":imports"],
     size_override = {
         "top.zir": "medium",
-        "sha2.zir": "medium",
     },
     test_file_exts = ["zir"],
 )
