@@ -18,3 +18,8 @@ xz2 = "0.1.6"
 # Always optimize; otherwise bootstrap takes excessively long
 [profile.dev]
 opt-level = 3
+
+[profile.bootstrap]
+inherits = "release"
+lto = false
+incremental = true
