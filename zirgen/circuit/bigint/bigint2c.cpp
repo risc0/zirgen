@@ -18,7 +18,9 @@
 #include "llvm/Support/EndianStream.h"
 #include "llvm/Support/InitLLVM.h"
 #include "llvm/Support/NativeFormatting.h"
+#include "llvm/Support/raw_ostream.h"
 
+#include "mlir/IR/AsmState.h"
 #include "mlir/Dialect/Func/IR/FuncOps.h"
 #include "mlir/IR/DialectRegistry.h"
 #include "mlir/IR/MLIRContext.h"
@@ -38,6 +40,12 @@ namespace cl = llvm::cl;
 
 cl::opt<std::string>
     output("o", cl::desc("Specify output filename"), cl::value_desc("filename"), cl::Optional);
+
+cl::opt<std::string> dumpMlir(
+    "dump-mlir",
+    cl::desc("Write the generated MLIR to <file> (use '-' for stderr)"),
+    cl::value_desc("file"),
+    cl::init(""));
 
 namespace {
 enum class Program {
@@ -395,6 +403,33 @@ std::vector<uint32_t> polySplit(mlir::func::FuncOp func) {
       builder.create<BigInt::StoreOp>(func.getLoc(), kvp.first, kArenaTmp, kvp.second.atom.offset);
     }
   }
+
+  auto dumpFuncIfRequested = [&](mlir::func::FuncOp f) {
+    if (dumpMlir.empty()) {
+      return;
+    }
+    mlir::OpPrintingFlags flags;
+    flags.useLocalScope();
+    flags.enableDebugInfo(/*pretty=*/true);
+    auto emit = [&](llvm::raw_ostream& os) {
+      f.print(os, flags);
+      os << '\n';
+    };
+    if (dumpMlir == "-") {
+      emit(llvm::errs());
+      return;
+    }
+    std::error_code ec;
+    llvm::raw_fd_ostream file(dumpMlir, ec);
+    if (ec) {
+      llvm::errs() << "Failed to open '" << dumpMlir << "': " << ec.message() << "\n";
+      emit(llvm::errs());
+      return;
+    }
+    emit(file);
+  };
+  dumpFuncIfRequested(func);
+
   // Make into a flat buffer in the form of:
   // 0: size of witgen code
   // 1: size of verification code
@@ -496,8 +531,10 @@ int main(int argc, char* argv[]) {
 
   std::vector<uint32_t> flat = polySplit(func);
 
-  // Write blob to stdout or output file as raw bytes.
-  if (output.empty()) {
+  // Write blob to stdout or output file as raw bytes unless suppressed.
+  if (!dumpMlir.empty() && output.empty()) {
+    llvm::errs() << "Skipping bytecode emission because --dump-mlir was requested.\n";
+  } else if (output.empty()) {
     llvm::support::endian::write_array(
         llvm::outs(), llvm::ArrayRef(flat), llvm::endianness::little);
   } else {
