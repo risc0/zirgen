@@ -26,13 +26,13 @@ namespace {
 
 class Builder {
   std::unique_ptr<Program> output;
-  std::map<mlir::Operation*, size_t> oplocs;
+  std::map<std::pair<mlir::Operation*, size_t>, size_t> vallocs;
 
 public:
   Builder() : output(std::make_unique<Program>()) {}
   std::unique_ptr<Program> finish() { return std::move(output); }
   void enroll(mlir::Operation&);
-  size_t lookup(mlir::Operation&);
+  size_t lookup(mlir::Value);
   size_t lookup(mlir::Type);
   void emit(Op&);
   void emitBin(Op::Code, size_t type, mlir::Value lhs, mlir::Value rhs);
@@ -41,13 +41,17 @@ public:
 };
 
 void Builder::enroll(mlir::Operation& op) {
-  oplocs[&op] = output->ops.size();
+  for (mlir::OpResult val : op.getResults()) {
+    vallocs[std::make_pair(&op, val.getResultNumber())] = vallocs.size();
+  }
 }
 
-size_t Builder::lookup(mlir::Operation& op) {
-  auto iter = oplocs.find(&op);
-  if (iter == oplocs.end()) {
-    llvm::errs() << op << "\n";
+size_t Builder::lookup(mlir::Value val) {
+  auto opResult = mlir::cast<mlir::OpResult>(val);
+  auto op = val.getDefiningOp();
+  auto iter = vallocs.find(std::make_pair(op, opResult.getResultNumber()));
+  if (iter == vallocs.end()) {
+    llvm::errs() << val << "\n";
     throw std::runtime_error("Reference before definition failure");
   }
   return iter->second;
@@ -91,8 +95,8 @@ void Builder::emitBin(Op::Code code, size_t type, mlir::Value lhs, mlir::Value r
   Op op;
   op.code = code;
   op.type = type;
-  op.operandA = lookup(*lhs.getDefiningOp());
-  op.operandB = lookup(*rhs.getDefiningOp());
+  op.operandA = lookup(lhs);
+  op.operandB = lookup(rhs);
   emit(op);
 }
 
@@ -157,7 +161,7 @@ std::unique_ptr<Program> encode(mlir::func::FuncOp func) {
           newOp.code = Op::Store;
           newOp.type = builder.lookup(op.getIn().getType());
           newOp.operandA = op.getArena() << 16 | op.getOffset();
-          newOp.operandB = builder.lookup(*op.getIn().getDefiningOp());
+          newOp.operandB = builder.lookup(op.getIn());
           builder.emit(newOp);
         })
         .Case<AddOp>([&](auto op) {
@@ -180,14 +184,24 @@ std::unique_ptr<Program> encode(mlir::func::FuncOp func) {
           size_t type = builder.lookup(origOp.getResultTypes()[0]);
           builder.emitBin(Op::Quo, type, op.getLhs(), op.getRhs());
         })
+        .Case<NondetQuotRemOp>([&](auto op) {
+          // TODO(victor): Technically, the lhs and rhs have distinct types. In practice, these types are unused as far as I can tell.
+          size_t type = builder.lookup(origOp.getResultTypes()[0]);
+          builder.emitBin(Op::Div, type, op.getLhs(), op.getRhs());
+        })
         .Case<NondetInvOp>([&](auto op) {
           size_t type = builder.lookup(origOp.getResultTypes()[0]);
           builder.emitBin(Op::Inv, type, op.getLhs(), op.getRhs());
         })
+        .Case<NondetNormalizeOp>([&](auto op) {
+          // NOTE: op.operandB is unused. Here we set it equal to A.
+          size_t type = builder.lookup(origOp.getResultTypes()[0]);
+          builder.emitBin(Op::Norm, type, op.getVal(), op.getVal());
+        })
         .Case<EqualZeroOp>([&](auto op) {
           Op newOp{};
           newOp.code = Op::Eqz;
-          newOp.operandA = builder.lookup(*op.getIn().getDefiningOp());
+          newOp.operandA = builder.lookup(op.getIn());
           builder.emit(newOp);
         })
         .Case<InvOp>([&](auto op) {

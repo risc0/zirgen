@@ -46,12 +46,14 @@ struct Op {
     Con = 0x2,   // unary: constant index
     Load = 0x3,  // unary: constant index
     Store = 0x4, // unary: constant index
-    Add = 0x8,   // binary
-    Sub = 0x9,   // binary
-    Mul = 0xA,   // binary
-    Rem = 0xB,   // binary
-    Quo = 0xC,   // binary
-    Inv = 0xE,   // binary
+    Norm = 0x5,  // unary: bigint
+    Add = 0x8,   // binary: bigint, bigint
+    Sub = 0x9,   // binary: bigint, bigint
+    Mul = 0xA,   // binary: bigint, bigint
+    Rem = 0xB,   // binary: bigint, bigint
+    Quo = 0xC,   // binary: bigint, bigint
+    Inv = 0xE,   // binary: bigint, bigint
+    Div = 0xF,   // binary: bigint, bigint
   };
   uint32_t code;
   size_t type;

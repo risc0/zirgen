@@ -288,28 +288,31 @@ struct PolySplitState {
   }
 };
 
-Polynomial eval(DenseMap<Value, PolySplitState>& state, Operation* origOp) {
+Polynomial eval(DenseMap<Value, PolySplitState>& state, Value opResult) {
+  auto origOp = opResult.getDefiningOp();
   return TypeSwitch<Operation*, Polynomial>(origOp)
       .Case<BigInt::AddOp>([&](auto op) {
-        Polynomial evalLhs = eval(state, op.getLhs().getDefiningOp());
-        Polynomial evalRhs = eval(state, op.getRhs().getDefiningOp());
+        Polynomial evalLhs = eval(state, op.getLhs());
+        Polynomial evalRhs = eval(state, op.getRhs());
         return evalLhs + evalRhs;
       })
       .Case<BigInt::SubOp>([&](auto op) {
-        Polynomial evalLhs = eval(state, op.getLhs().getDefiningOp());
-        Polynomial evalRhs = eval(state, op.getRhs().getDefiningOp());
+        Polynomial evalLhs = eval(state, op.getLhs());
+        Polynomial evalRhs = eval(state, op.getRhs());
         return evalLhs - evalRhs;
       })
       .Case<BigInt::MulOp>([&](auto op) {
-        Polynomial evalLhs = eval(state, op.getLhs().getDefiningOp());
-        Polynomial evalRhs = eval(state, op.getRhs().getDefiningOp());
+        Polynomial evalLhs = eval(state, op.getLhs());
+        Polynomial evalRhs = eval(state, op.getRhs());
         return evalLhs * evalRhs;
       })
       .Case<BigInt::ConstOp,
             BigInt::LoadOp,
             BigInt::NondetRemOp,
             BigInt::NondetQuotOp,
-            BigInt::NondetInvOp>([&](auto op) { return Polynomial(PolyProd(state[op].atom)); })
+            BigInt::NondetNormalizeOp,
+            BigInt::NondetInvOp,
+            BigInt::NondetQuotRemOp>([&](auto op) { return Polynomial(PolyProd(state[opResult].atom)); })
       .Default([&](auto op) {
         llvm::errs() << "Invalid poly op: " << *op << "\n";
         throw std::runtime_error("Invalid op in split");
@@ -350,6 +353,32 @@ std::vector<uint32_t> polySplit(mlir::func::FuncOp func) {
             state[op.getRhs()].apply(PolySplitState(0, 1));
           }
         })
+        .Case<BigInt::NondetQuotRemOp>([&](auto op) {
+          for (auto i : {0, 1}) {
+            size_t size = (dyn_cast<BigInt::BigIntType>(op.getType(i)).getCoeffs() + 15) / 16;
+            auto opResult = op.getResult(i);
+            if (state[opResult].neededForEq && state[opResult].atom.arena == 0) {
+              state[opResult].atom = PolyAtom(kArenaTmp, offsetTmp, size, true);
+              offsetTmp += size;
+            }
+            if (state[opResult].neededForEq || state[opResult].neededForNondet) {
+              state[opResult].neededForNondet = 1;
+              state[op.getLhs()].apply(PolySplitState(0, 1));
+              state[op.getRhs()].apply(PolySplitState(0, 1));
+            }
+          }
+        })
+        .Case<BigInt::NondetNormalizeOp>([&](auto op) {
+          size_t size = (dyn_cast<BigInt::BigIntType>(op.getType()).getCoeffs() + 15) / 16;
+          if (state[op].neededForEq && state[op].atom.arena == 0) {
+            state[op].atom = PolyAtom(kArenaTmp, offsetTmp, size, true);
+            offsetTmp += size;
+          }
+          if (state[op].neededForEq || state[op].neededForNondet) {
+            state[op].neededForNondet = 1;
+            state[op.getVal()].apply(PolySplitState(0, 1));
+          }
+        })
         .Case<BigInt::AddOp, BigInt::SubOp, BigInt::MulOp>([&](auto op) {
           if (state[op].neededForEq || state[op].neededForNondet) {
             state[op.getLhs()].apply(state[op]);
@@ -381,18 +410,24 @@ std::vector<uint32_t> polySplit(mlir::func::FuncOp func) {
   for (auto& origOp : *block) {
     if (auto op = dyn_cast<BigInt::EqualZeroOp>(&origOp)) {
       // Compute the polynomial
-      Polynomial p = eval(state, op.getIn().getDefiningOp());
+      Polynomial p = eval(state, op.getIn());
       auto bit = dyn_cast<BigInt::BigIntType>(op.getIn().getType());
       flattener.flatten(p, bit);
     }
   }
   flattener.finalize();
-  // Now, destroy all the unneeded ops
+  // Now, destroy all the ops that are not needed for witness generation.
   for (auto& op : llvm::make_early_inc_range(llvm::reverse(*block))) {
     if (dyn_cast<BigInt::EqualZeroOp>(op)) {
       op.erase();
     }
-    if (op.getNumResults() == 1 && !state[op.getResult(0)].neededForNondet) {
+    bool neededForNondet = false;
+    for (auto res : op.getResults()) {
+      neededForNondet |= state[res].neededForNondet;
+    }
+    if (op.getNumResults() == 1 && !neededForNondet) {
+      // TODO: Because quot_rem has two results, it can be visited twice and deleted twice. The
+      // check on getNumResults is supposed to avoid this.
       op.erase();
     }
   }

@@ -24,12 +24,7 @@ void genMul(mlir::OpBuilder& builder, mlir::Location loc, size_t bitwidth) {
   auto rhs = builder.create<BigInt::LoadOp>(loc, bitwidth, 12, 0);
   auto prod = builder.create<BigInt::MulOp>(loc, lhs, rhs);
 
-  // Construct the constant 1
-  mlir::Type oneType = builder.getIntegerType(8);
-  auto oneAttr = builder.getIntegerAttr(oneType, 1); // value 1
-  auto one = builder.create<BigInt::ConstOp>(loc, oneAttr);
-
-  auto result = builder.create<BigInt::NondetQuotOp>(loc, prod, one);
+  auto result = builder.create<BigInt::NondetNormalizeOp>(loc, prod);
   auto diff = builder.create<BigInt::SubOp>(loc, prod, result);
   builder.create<BigInt::EqualZeroOp>(loc, diff);
 

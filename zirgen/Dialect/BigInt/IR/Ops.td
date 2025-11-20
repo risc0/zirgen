@@ -67,6 +67,18 @@ def NondetInvOp : BinaryOp<"nondet_inv", [DeclareOpInterfaceMethods<CodegenExprO
 def InvOp : BinaryOp<"inv", []> {}
 def ReduceOp : BinaryOp<"reduce", []> {}
 
+def NondetNormalizeOp: BigIntOp<"nondet_norm", [DeclareOpInterfaceMethods<CodegenExprOpInterface>, InferTypeOpAdaptor]> {
+  let arguments = (ins BigInt:$val);
+  let results = (outs BigInt:$out);
+  let assemblyFormat = [{ $val `:` type($val) `->` type($out) attr-dict }];
+}
+
+def NondetQuotRemOp: BigIntOp<"nondet_quot_rem", [DeclareOpInterfaceMethods<CodegenExprOpInterface>, InferTypeOpAdaptor]> {
+  let arguments = (ins BigInt:$lhs, BigInt:$rhs);
+  let results = (outs BigInt:$quo, BigInt:$rem);
+  let assemblyFormat = [{ $lhs `:` type($lhs) `,` $rhs `:` type($rhs) `->` type($quo) `,` type($rem) attr-dict }];
+}
+
 def EqualZeroOp : BigIntOp<"eqz", [DeclareOpInterfaceMethods<CodegenExprOpInterface>]> {
   let summary = "Require a number to be equal to zero, or fail";
   let arguments = (ins BigInt:$in);

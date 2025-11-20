@@ -30,13 +30,12 @@ namespace {
 struct ReplaceReduce : public OpRewritePattern<ReduceOp> {
   using OpRewritePattern::OpRewritePattern;
   LogicalResult matchAndRewrite(ReduceOp op, PatternRewriter& rewriter) const override {
-    auto quotOp = rewriter.create<NondetQuotOp>(op.getLoc(), op.getLhs(), op.getRhs());
-    auto remOp = rewriter.create<NondetRemOp>(op.getLoc(), op.getLhs(), op.getRhs());
-    auto remult = rewriter.create<MulOp>(op.getLoc(), quotOp, op.getRhs());
-    auto readd = rewriter.create<AddOp>(op.getLoc(), remult, remOp);
+    auto divOp = rewriter.create<NondetQuotRemOp>(op.getLoc(), op.getLhs(), op.getRhs());
+    auto remult = rewriter.create<MulOp>(op.getLoc(), divOp.getQuo(), op.getRhs());
+    auto readd = rewriter.create<AddOp>(op.getLoc(), remult, divOp.getRem());
     auto diff = rewriter.create<SubOp>(op.getLoc(), readd, op.getLhs());
     rewriter.create<EqualZeroOp>(op.getLoc(), diff);
-    rewriter.replaceOp(op, remOp);
+    rewriter.replaceOp(op, divOp.getRem());
     return success();
   }
 };

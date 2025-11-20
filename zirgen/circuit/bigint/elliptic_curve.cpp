@@ -118,8 +118,9 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
       loc, xR, prime); // Quot/Rem needs nonnegative inputs, so enforce positivity
   xR = builder.create<BigInt::AddOp>(
       loc, xR, prime); // Quot/Rem needs nonnegative inputs, so enforce positivity
-  Value k_x = builder.create<BigInt::NondetQuotOp>(loc, xR, prime);
-  xR = builder.create<BigInt::NondetRemOp>(loc, xR, prime);
+  auto div_x = builder.create<BigInt::NondetQuotRemOp>(loc, xR, prime);
+  Value k_x = div_x.getQuo();
+  xR = div_x.getRem();
 
   Value yR = builder.create<BigInt::MulOp>(loc, lambda, xR);
   yR = builder.create<BigInt::AddOp>(loc, yR, nu);
@@ -129,8 +130,9 @@ AffinePt add(OpBuilder builder, Location loc, const AffinePt& lhs, const AffineP
   // This is a prime^2 term for the original lambda * xR
   // A prime term (for the lhs.y in nu) was already included in the negation step
   yR = builder.create<BigInt::AddOp>(loc, yR, prime_sqr);
-  Value k_y = builder.create<BigInt::NondetQuotOp>(loc, yR, prime);
-  yR = builder.create<BigInt::NondetRemOp>(loc, yR, prime);
+  auto div_y = builder.create<BigInt::NondetQuotRemOp>(loc, yR, prime);
+  Value k_y = div_y.getQuo();
+  yR = div_y.getRem();
 
   // Verify xR
   Value x_check = builder.create<BigInt::SubOp>(loc, lambda_sqr, lhs.x());
@@ -294,10 +296,7 @@ AffinePt doub(OpBuilder builder, Location loc, const AffinePt& pt) {
   // Normalize to not overflow coefficient size
   // This method is expensive, adding ~25k cycles to secp256k1 EC Mul
   // I don't see a better way, but this seems like a good place to look for perf improvements
-  mlir::Type oneType = builder.getIntegerType(1);    // a `1` is bitwidth 1
-  auto oneAttr = builder.getIntegerAttr(oneType, 1); // value 1
-  auto one = builder.create<BigInt::ConstOp>(loc, oneAttr);
-  Value lambda_num_normal = builder.create<BigInt::NondetQuotOp>(loc, lambda_num, one);
+  Value lambda_num_normal = builder.create<BigInt::NondetNormalizeOp>(loc, lambda_num);
   builder.create<BigInt::EqualZeroOp>(
       loc, builder.create<BigInt::SubOp>(loc, lambda_num_normal, lambda_num));
 

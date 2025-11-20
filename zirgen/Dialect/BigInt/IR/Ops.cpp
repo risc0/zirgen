@@ -202,6 +202,44 @@ LogicalResult NondetInvOp::inferReturnTypes(MLIRContext* ctx,
   return success();
 }
 
+LogicalResult NondetQuotRemOp::inferReturnTypes(MLIRContext* ctx,
+                                            std::optional<Location> loc,
+                                            Adaptor adaptor,
+                                            SmallVectorImpl<Type>& out) {
+  auto lhsType = cast<BigIntType>(adaptor.getLhs().getType());
+  auto rhsType = cast<BigIntType>(adaptor.getRhs().getType());
+
+  // Infer type for quotient.
+  {
+    size_t outBits = lhsType.getMaxPosBits();
+    if (rhsType.getMinBits() > 0) {
+      outBits -= rhsType.getMinBits() - 1;
+    }
+    size_t coeffsWidth = ceilDiv(outBits, kBitsPerCoeff);
+    // TODO: We could be more clever on minBits, but probably doesn't matter
+    out.push_back(BigIntType::get(ctx,
+                                  /*coeffs=*/coeffsWidth,
+                                  /*maxPos=*/(1 << kBitsPerCoeff) - 1,
+                                  /*maxNeg=*/0,
+                                  /*minBits=*/0));
+  }
+
+  // Infer type for remainder.
+  {
+    auto outBits = lhsType.getMaxPosBits();
+    if (rhsType.getMaxPosBits() < outBits) {
+      outBits = rhsType.getMaxPosBits();
+    }
+    size_t coeffsWidth = ceilDiv(outBits, kBitsPerCoeff);
+    out.push_back(BigIntType::get(ctx,
+                                  /*coeffs=*/coeffsWidth,
+                                  /*maxPos=*/(1 << kBitsPerCoeff) - 1,
+                                  /*maxNeg=*/0,
+                                  /*minBits=*/0));
+  }
+  return success();
+}
+
 LogicalResult InvOp::inferReturnTypes(MLIRContext* ctx,
                                       std::optional<Location> loc,
                                       Adaptor adaptor,
@@ -227,6 +265,22 @@ LogicalResult ReduceOp::inferReturnTypes(MLIRContext* ctx,
     outBits = rhsType.getMaxPosBits();
   }
   size_t coeffsWidth = ceilDiv(outBits, kBitsPerCoeff);
+  out.push_back(BigIntType::get(ctx,
+                                /*coeffs=*/coeffsWidth,
+                                /*maxPos=*/(1 << kBitsPerCoeff) - 1,
+                                /*maxNeg=*/0,
+                                /*minBits=*/0));
+  return success();
+}
+
+LogicalResult NondetNormalizeOp::inferReturnTypes(MLIRContext* ctx,
+                                             std::optional<Location> loc,
+                                             Adaptor adaptor,
+                                             SmallVectorImpl<Type>& out) {
+  auto valType = cast<BigIntType>(adaptor.getVal().getType());
+  //auto rhsType = cast<BigIntType>(adaptor.getRhs().getType());
+  size_t coeffsWidth = ceilDiv(valType.getMaxPosBits(), kBitsPerCoeff);
+  // TODO: We could be more clever on minBits, but probably doesn't matter
   out.push_back(BigIntType::get(ctx,
                                 /*coeffs=*/coeffsWidth,
                                 /*maxPos=*/(1 << kBitsPerCoeff) - 1,
@@ -307,6 +361,24 @@ void NondetInvOp::emitExpr(codegen::CodegenEmitter& cg) {
       cg.getStringAttr("bigint_nondet_inv"),
       /*contextArgs=*/{"ctx"},
       {getLhs(), getRhs(), toConstantValue(cg, getContext(), getType().getCoeffs())});
+}
+
+void NondetQuotRemOp::emitExpr(codegen::CodegenEmitter& cg) {
+  cg.emitInvokeMacro(
+      cg.getStringAttr("bigint_nondet_quot_rem"),
+      /*contextArgs=*/{"ctx"},
+      {
+        getLhs(), getRhs(),
+        toConstantValue(cg, getContext(), cast<BigIntType>(getType(0)).getCoeffs()),
+        toConstantValue(cg, getContext(), cast<BigIntType>(getType(1)).getCoeffs())
+      });
+}
+
+void NondetNormalizeOp::emitExpr(codegen::CodegenEmitter& cg) {
+  cg.emitInvokeMacro(
+      cg.getStringAttr("bigint_nondet_norm"),
+      /*contextArgs=*/{"ctx"},
+      {getVal(), toConstantValue(cg, getContext(), getType().getCoeffs())});
 }
 
 void ConstOp::emitExpr(codegen::CodegenEmitter& cg) {
