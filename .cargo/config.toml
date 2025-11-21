@@ -1,2 +1,2 @@
 [alias]
-bootstrap = "run --profile=bootstrap --manifest-path zirgen/bootstrap/Cargo.toml --"
+bootstrap = "run --profile=bootstrap --manifest-path zirgen/bootstrap/Cargo.toml"
