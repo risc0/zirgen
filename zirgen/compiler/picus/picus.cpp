@@ -586,7 +586,7 @@ private:
       auto inputs = flatten(llvm::map_to_vector(args.slice(0, inputCount),
                                                 [&](Value v) { return valuesToSignals.at(v); }));
       auto outputs = flatten(llvm::map_to_vector(args.slice(inputCount, args.size() - inputCount),
-                                                [&](Value v) { return valuesToSignals.at(v); }));
+                                                 [&](Value v) { return valuesToSignals.at(v); }));
 
       // If there are no outputs, this directive adds no information.
       if (outputs.size() == 0)
