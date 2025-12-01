@@ -550,11 +550,10 @@ private:
   }
 
   void visitOp(Zhlt::BackOp back) {
-    size_t distance = back.getDistance().getZExtValue();
     AnySignal signal = signalize(freshName(), back.getType());
     // We cannot handle the zero-distance case this way, so we expect that
     // all zero-distance backs will have been converted & inlined already.
-    assert(distance > 0);
+    assert(back.getDistance().getZExtValue() > 0);
     declareSignals(signal, SignalType::AssumeDeterministic);
     valuesToSignals.insert({back.getOut(), signal});
   }

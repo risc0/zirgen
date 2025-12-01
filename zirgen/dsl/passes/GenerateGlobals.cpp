@@ -38,7 +38,7 @@ struct GenerateGlobalsPass : public GenerateGlobalsBase<GenerateGlobalsPass> {
     ModuleOp mod = getOperation();
 
     // compute layout type for all globals used by the program
-    StringAttrMap<StringAttrMap<ZStruct::LayoutType>> globalLayouts;
+    StringAttrMap<StringAttrMap<mlir::Type>> globalLayouts;
     mod.walk([&](Zhlt::GetGlobalLayoutOp op) {
       globalLayouts[op.getBufferAttr()].insert({op.getNameAttr(), op.getType()});
     });
