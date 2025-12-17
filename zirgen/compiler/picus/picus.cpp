@@ -550,11 +550,10 @@ private:
   }
 
   void visitOp(Zhlt::BackOp back) {
-    size_t distance = back.getDistance().getZExtValue();
     AnySignal signal = signalize(freshName(), back.getType());
     // We cannot handle the zero-distance case this way, so we expect that
     // all zero-distance backs will have been converted & inlined already.
-    assert(distance > 0);
+    assert(back.getDistance().getZExtValue() > 0);
     declareSignals(signal, SignalType::AssumeDeterministic);
     valuesToSignals.insert({back.getOut(), signal});
   }
@@ -581,6 +580,43 @@ private:
     } else if (directive.getName() == "PicusInput") {
       auto signal = valuesToSignals.at(directive.getArgs()[0]);
       declareSignals(signal, SignalType::AssumeDeterministic, /*skipLayout=*/true);
+    } else if (directive.getName() == "PicusDeterministicIf") {
+      auto args = directive.getArgs();
+      int64_t inputCount = cast<IntegerAttr>(directive->getAttr("input_count")).getInt();
+      auto inputs = flatten(llvm::map_to_vector(args.slice(0, inputCount),
+                                                [&](Value v) { return valuesToSignals.at(v); }));
+      auto outputs = flatten(llvm::map_to_vector(args.slice(inputCount, args.size() - inputCount),
+                                                 [&](Value v) { return valuesToSignals.at(v); }));
+
+      // If there are no outputs, this directive adds no information.
+      if (outputs.size() == 0)
+        return;
+
+      if (inputs.size() > 0) {
+        // This is the common case: if all inputs are deterministic, then all outputs
+        // are also deterministic.
+        os << "(assert (=> ";
+
+        auto all_deterministic = [&](ArrayRef<Signal> signals) {
+          for (size_t i = 0; i < signals.size() - 1; i++) {
+            os << "(&& (det " << signals[i].str() << ") ";
+          }
+          os << "(det " << signals[signals.size() - 1].str();
+          for (size_t i = 0; i < signals.size(); i++) {
+            os << ")";
+          }
+        };
+
+        all_deterministic(inputs);
+        os << " ";
+        all_deterministic(outputs);
+        os << "))\n";
+      } else {
+        // If there are no inputs, then the outputs are unconditionally deterministic.
+        for (Signal output : outputs) {
+          declareSignals(output, SignalType::AssumeDeterministic);
+        }
+      }
     } else {
       directive->emitError("Cannot lower this directive to Picus");
     }
@@ -668,6 +704,15 @@ private:
     SmallVector<Signal> flattened;
     visit(
         signal, [&](Signal s) { flattened.push_back(s); }, /*visitedLayout=*/skipLayout);
+    return flattened;
+  }
+
+  SmallVector<Signal> flatten(ArrayRef<AnySignal> signals, bool skipLayout = false) {
+    SmallVector<Signal> flattened;
+    for (AnySignal signal : signals) {
+      auto subFlattened = flatten(signal, skipLayout);
+      flattened.insert(flattened.end(), subFlattened.begin(), subFlattened.end());
+    }
     return flattened;
   }
 

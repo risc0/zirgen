@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ struct GenerateGlobalsPass : public GenerateGlobalsBase<GenerateGlobalsPass> {
     ModuleOp mod = getOperation();
 
     // compute layout type for all globals used by the program
-    StringAttrMap<StringAttrMap<ZStruct::LayoutType>> globalLayouts;
+    StringAttrMap<StringAttrMap<mlir::Type>> globalLayouts;
     mod.walk([&](Zhlt::GetGlobalLayoutOp op) {
       globalLayouts[op.getBufferAttr()].insert({op.getNameAttr(), op.getType()});
     });

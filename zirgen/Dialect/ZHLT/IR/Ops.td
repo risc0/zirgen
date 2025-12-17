@@ -40,7 +40,7 @@ def GetGlobalLayoutOp : ZhltOp<"get_global_layout", [Pure]> {
   let arguments = (ins
       DefaultValuedAttr<StrAttr, "\"global\"">:$buffer,
       StrAttr:$name);
-  let results = (outs LayoutType:$out);
+  let results = (outs IsLayoutType:$out);
   let builders = [
     OpBuilder<
       (ins "mlir::Type":$out, "llvm::StringRef":$name),
