@@ -124,7 +124,7 @@ static bool isIdempotent(Operation* op) {
          llvm::isa<PolyOp, EqualZeroOp, YieldOp, IfOp, TerminateOp, LoadOp>(op);
 }
 
-// Attempts to to unravel the use of the result of a switch operation
+// Attempts to unravel the use of the result of a switch operation
 // returning a StructType.  We generate an additional switch operation
 // with the same condition for each member of the structure, having
 // the switch operation only return that member.  Then, we add a pack
@@ -197,7 +197,7 @@ struct UnravelSwitchPackResult : public OpRewritePattern<SwitchOp> {
   }
 };
 
-// Attempts to to unravel the use of the result of a switch operation returning
+// Attempts to unravel the use of the result of a switch operation returning
 // an ArrayType. We generate an additional switch operation with the same
 // condition for each element of the array, having the switch operation only
 // return that member. Then, we add an array operation to reconstruct the array
