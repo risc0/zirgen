@@ -256,6 +256,6 @@ std::pair<ReceiptClaim, U256Val> readReceiptClaimAndPovwNonce(llvm::ArrayRef<Val
                                                               size_t po2);
 
 std::pair<ReceiptClaim, U256Val> readReceiptClaimV3AndPovwNonce(llvm::ArrayRef<Val>& stream,
-                                                              size_t po2);
+                                                                size_t po2);
 
 } // namespace zirgen::predicates

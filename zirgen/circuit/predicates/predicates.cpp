@@ -455,7 +455,7 @@ ReceiptClaim ReceiptClaim::fromRv32imV2(llvm::ArrayRef<Val>& stream, size_t po2)
 }
 
 ReceiptClaim ReceiptClaim::fromRv32imV3(llvm::ArrayRef<Val>& stream, size_t po2) {
-    return readReceiptClaimV3AndPovwNonce(stream, po2).first;
+  return readReceiptClaimV3AndPovwNonce(stream, po2).first;
 }
 
 std::pair<ReceiptClaim, U256Val> readReceiptClaimV3AndPovwNonce(llvm::ArrayRef<Val>& stream,
