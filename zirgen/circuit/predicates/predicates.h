@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -254,5 +254,8 @@ UnionClaim unionFunc(Assumption left, Assumption right);
 
 std::pair<ReceiptClaim, U256Val> readReceiptClaimAndPovwNonce(llvm::ArrayRef<Val>& stream,
                                                               size_t po2);
+
+std::pair<ReceiptClaim, U256Val> readReceiptClaimV3AndPovwNonce(llvm::ArrayRef<Val>& stream,
+                                                                size_t po2);
 
 } // namespace zirgen::predicates

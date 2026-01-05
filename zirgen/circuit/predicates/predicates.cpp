@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -455,6 +455,11 @@ ReceiptClaim ReceiptClaim::fromRv32imV2(llvm::ArrayRef<Val>& stream, size_t po2)
 }
 
 ReceiptClaim ReceiptClaim::fromRv32imV3(llvm::ArrayRef<Val>& stream, size_t po2) {
+  return readReceiptClaimV3AndPovwNonce(stream, po2).first;
+}
+
+std::pair<ReceiptClaim, U256Val> readReceiptClaimV3AndPovwNonce(llvm::ArrayRef<Val>& stream,
+                                                                size_t po2) {
   // Make a zeroHash
   std::vector zeroVec(16, Val(0));
   DigestVal zeroHash = intoDigest(zeroVec, DigestKind::Sha256);
@@ -469,6 +474,7 @@ ReceiptClaim ReceiptClaim::fromRv32imV3(llvm::ArrayRef<Val>& stream, size_t po2)
   Val termA1Low = readVal(stream);
   Val termA1High = readVal(stream);
   DigestVal output = readSha(stream);
+  U256Val povwNonce(stream);
   // TODO: Implement proper 'input' for V3
   DigestVal input = zeroHash;
 
@@ -496,7 +502,7 @@ ReceiptClaim ReceiptClaim::fromRv32imV3(llvm::ArrayRef<Val>& stream, size_t po2)
   claim.sysExit = (2 - 2 * isTerminate) + (isTerminate * termA0Low);
   claim.userExit = isTerminate * termA0High;
 
-  return claim;
+  return std::make_pair(claim, povwNonce);
 }
 
 } // namespace zirgen::predicates
