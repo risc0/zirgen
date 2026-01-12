@@ -299,7 +299,7 @@ void BigIntCycleImpl::set(Top top) {
       }
       // Stages 2 and 3 constrain the low carries to range [-2^15, 2^15).
       // Does so by splitting the value plus 2^15 into two bytes at adjacent indices.
-      // NOTE: This code is very repetative and could probably be condensed.
+      // NOTE: This code is very repetitive and could probably be condensed.
       IF(stage->at(2)) {
         IF(1 - stageOffset) {
           Val ci = c.at(i / 2);
@@ -472,7 +472,7 @@ void BigIntCycleImpl::set(Top top) {
 }
 
 void BigIntCycleImpl::onVerify() {
-  // When the multiplier contraint is active, use a randomized polynomial equality check to verify
+  // When the multiplier constraint is active, use a randomized polynomial equality check to verify
   // the correctness of the multiplication relation for the results calculated in NONDET.
   // This method is inspired by xJSnark section IV.B with the addition of randomization.
   // https://akosba.github.io/papers/xjsnark.pdf
