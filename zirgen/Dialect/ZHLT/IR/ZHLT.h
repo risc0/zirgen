@@ -73,6 +73,8 @@ void getZirgenBlockArgumentNames(mlir::FunctionOpInterface funcOp,
 #define GET_OP_CLASSES
 #include "zirgen/Dialect/ZHLT/IR/ComponentOps.h.inc"
 
+#undef GET_OP_CLASSES
+
 #define GET_OP_CLASSES
 #include "zirgen/Dialect/ZHLT/IR/Ops.h.inc"
 
