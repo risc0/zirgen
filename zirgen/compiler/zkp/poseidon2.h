@@ -38,7 +38,7 @@ public:
   void mix(const Digest& data) override;
   // Generate uniform bitsfrom the entropy pool
   uint32_t generateBits(size_t bits) override;
-  // Generate a BabbyBear value from the entropy pool
+  // Generate a BabyBear value from the entropy pool
   uint32_t generateFp() override;
 
   std::unique_ptr<IopRng> newOfThisType() override { return std::make_unique<Poseidon2Rng>(); }
