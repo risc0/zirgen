@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@
 #include "llvm/ADT/StringExtras.h"
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/InitLLVM.h"
+#include "llvm/Support/Path.h"
 #include "llvm/Support/SourceMgr.h"
 
 namespace cl = llvm::cl;
@@ -85,6 +86,10 @@ void openMainFile(llvm::SourceMgr& sourceManager, std::string filename) {
                                llvm::SourceMgr::DiagKind::DK_Error,
                                "could not open input file " + filename);
   sourceManager.AddNewSourceBuffer(std::move(*fileOrErr), mlir::SMLoc());
+}
+
+std::string getDefaultIncludeDir() {
+  return llvm::sys::path::parent_path(inputFilename).str();
 }
 
 std::string getCircuitName(StringRef inputFilename) {
@@ -153,7 +158,11 @@ int main(int argc, char* argv[]) {
   context.loadAllAvailableDialects();
 
   llvm::SourceMgr sourceManager;
-  sourceManager.setIncludeDirs(includeDirs);
+  std::vector<std::string> dirs(includeDirs.begin(), includeDirs.end());
+  if (dirs.empty()) {
+    dirs.push_back(getDefaultIncludeDir());
+  }
+  sourceManager.setIncludeDirs(dirs);
   mlir::SourceMgrDiagnosticHandler sourceMgrHandler(sourceManager, &context);
   openMainFile(sourceManager, inputFilename);
 
