@@ -30,6 +30,8 @@ use std::collections::VecDeque;
 
 pub const _GLOBAL_MIX: usize = 1;
 pub const GLOBAL_OUT: usize = 0;
+// Constant for the multiplier in validity check
+pub const VALIDITY_CHECK_MULTIPLIER: u32 = 3;
 
 pub struct CpuCircuitHal {
     from_user: VecDeque<Val>,
@@ -180,8 +182,7 @@ impl risc0_zkp::hal::CircuitHal<CpuHal<CircuitField>> for CpuCircuitHal {
             )
             .unwrap();
             let x = Val::ROU_FWD[po2 + EXP_PO2].pow(cycle);
-            // TODO: what is this magic number 3?
-            let y = (Val::new(3) * x).pow(1 << po2);
+            let y = (Val::new(VALIDITY_CHECK_MULTIPLIER) * x).pow(1 << po2);
             let ret = tot.tot * (y - Val::new(1)).inv();
 
             for i in 0..ExtVal::EXT_SIZE {
