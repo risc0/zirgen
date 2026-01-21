@@ -65,9 +65,7 @@ build_circuit(
     bin = "//zirgen/Main:gen_zirgen",
     data = ZIR_FILES,
     extra_args = [
-        "zirgen/circuit/rv32im/v2/dsl/top.zir",
-        "-I",
-        "zirgen/circuit/rv32im/v2/dsl",
+        "$(location :top.zir)",
         "--circuit-name=rv32im_v2",
         # "--step-split-count=" + str(SPLIT_STEP),
         "--validity-split-count=" + str(SPLIT_VALIDITY),
