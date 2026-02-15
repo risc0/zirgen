@@ -76,7 +76,7 @@ component ECallHostReadSetup(cycle: Reg, input: InstInput) {
   len.high = 0;
   // Get the 'returned' length
   newLen := NondetU16Reg(HostReadPrepare(fd.low, len.low));
-  // Verify it's less than or equal to the the input length
+  // Verify it's less than or equal to the input length
   diff := U16Reg(len.low - newLen);
   // Write back to A0
   MemoryWrite(cycle, MachineRegBase() + RegA0(), ValU32(newLen, 0));
@@ -109,7 +109,7 @@ component ECallHostWrite(cycle: Reg, input: InstInput) {
   len.high = 0;
   // Do write extern and get return length
   newLen := NondetU16Reg(HostWrite(fd.low, ptr, len.low));
-  // Verify it's less than or equal to the the input length
+  // Verify it's less than or equal to the input length
   diff := U16Reg(len.low - newLen);
   // Write back to A0
   MemoryWrite(cycle, MachineRegBase() + RegA0(), ValU32(newLen, 0));
