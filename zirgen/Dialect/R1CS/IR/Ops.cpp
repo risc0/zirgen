@@ -15,7 +15,7 @@
 #include "zirgen/Dialect/R1CS/IR/R1CS.h"
 
 #include "mlir/IR/Builders.h"
-//#include "mlir/IR/PatternMatch.h"
+// #include "mlir/IR/PatternMatch.h"
 
 #define GET_OP_CLASSES
 #include "zirgen/Dialect/R1CS/IR/Ops.cpp.inc"

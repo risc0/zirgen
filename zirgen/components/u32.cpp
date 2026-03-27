@@ -186,10 +186,18 @@ void U32Po2Impl::onVerify() {
   // Get the po2 value
   U32Val po2 = out->get();
   // Check that all the non-matching bytes are zero
-  IF(1 - topIs0) { eqz(po2.bytes[0]); }
-  IF(1 - topIs1) { eqz(po2.bytes[1]); }
-  IF(1 - topIs2) { eqz(po2.bytes[2]); }
-  IF(1 - topIs3) { eqz(po2.bytes[3]); }
+  IF(1 - topIs0) {
+    eqz(po2.bytes[0]);
+  }
+  IF(1 - topIs1) {
+    eqz(po2.bytes[1]);
+  }
+  IF(1 - topIs2) {
+    eqz(po2.bytes[2]);
+  }
+  IF(1 - topIs3) {
+    eqz(po2.bytes[3]);
+  }
   // Get the byte in question
   Val byte =
       topIs0 * po2.bytes[0] + topIs1 * po2.bytes[1] + topIs2 * po2.bytes[2] + topIs3 * po2.bytes[3];

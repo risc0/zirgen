@@ -103,7 +103,9 @@ Val ByteRegImpl::get() {
 }
 
 Val ByteRegImpl::set(Val in) {
-  NONDET { reg->set(in & 0xff); }
+  NONDET {
+    reg->set(in & 0xff);
+  }
   return (in - reg->get()) / 256;
 }
 
@@ -123,7 +125,9 @@ BytesSetupImpl::BytesSetupImpl(BytesHeader header, size_t useRegs)
 
 void BytesSetupImpl::set(Val isFirst, Val isLast) {
   size_t rem = 32768 % pairCount;
-  IF(isFirst) { body->at(0)->setInit(); }
+  IF(isFirst) {
+    body->at(0)->setInit();
+  }
   IF(1 - isFirst) {
     auto oldVals = BACK(1, body->at(pairCount - 1)->toVals());
     body->at(0)->setNext(oldVals);
