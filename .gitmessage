@@ -1,0 +1,28 @@
+ZIR-XXX: Brief description of changes
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# The first line should follow this format:
+#   ZIR-XXX: Brief description
+#
+# Where:
+#   - ZIR-XXX is the issue/task number (e.g., ZIR-123)
+#   - Followed by a colon and space
+#   - Then a concise description of the change
+#
+# Examples:
+#   ZIR-123: Add new feature for user authentication
+#   ZIR-456: Fix memory leak in connection pool
+#   ZIR-789: Update documentation for API endpoints
+#
+# After the first line, you can add additional details:
+#   - Why the change is needed
+#   - How it addresses the issue
+#   - Any breaking changes or migration notes
+#
+# Exceptions (these bypass the format check):
+#   - Merge commits (start with "Merge")
+#   - Revert commits (start with "Revert")
+#
+# See COMMIT_GUIDELINES.md for detailed information.
