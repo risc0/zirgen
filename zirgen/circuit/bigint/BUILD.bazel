@@ -21,11 +21,6 @@ cc_library(
     ],
     deps = [
         "//zirgen/Dialect/BigInt/IR",
-        "//zirgen/Dialect/BigInt/Transforms",
-        "//zirgen/Dialect/BigInt/Bytecode",
-        "//zirgen/circuit/recursion:lib",
-        "//zirgen/circuit/verify:lib",
-        "//zirgen/compiler/edsl",
     ],
 )
 
@@ -49,6 +44,7 @@ cc_binary(
         "//zirgen/Dialect/BigInt/IR",
         "//zirgen/Dialect/BigInt/Transforms",
         "@llvm-project//llvm:Support",
+        "@llvm-project//mlir:Transforms",
         "@llvm-project//mlir:MlirOptLib",
     ],
 )

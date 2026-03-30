@@ -57,7 +57,6 @@ cc_test(
     deps = [
         "//risc0/core/test:gtest_main",
         "//zirgen/Dialect/ZHLT/IR",
-        "//zirgen/dsl",
     ],
 )
 

@@ -15,7 +15,7 @@ cc_test(
     deps = [
         "//risc0/core/test:gtest_main",
         "//zirgen/circuit/recursion:lib",
-        "//zirgen/circuit/rv32im/v1/edsl:lib",
+        "//zirgen/circuit/rv32im/v1/platform",
         "//zirgen/circuit/verify:lib",
     ],
 )

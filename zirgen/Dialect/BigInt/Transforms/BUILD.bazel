@@ -44,6 +44,5 @@ cc_library(
         ":PassesIncGen",
         "//zirgen/Dialect/BigInt/IR",
         "//zirgen/Dialect/IOP/IR",
-        "@llvm-project//mlir:Transforms",
     ],
 )

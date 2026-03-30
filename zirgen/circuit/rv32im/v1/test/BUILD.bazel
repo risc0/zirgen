@@ -13,7 +13,9 @@ cc_binary(
     deps = [
         "//zirgen/Dialect/BigInt/IR",
         "//zirgen/Dialect/BigInt/Bytecode",
+        "//zirgen/Dialect/BigInt/Transforms",
         "//zirgen/circuit/bigint:lib",
+        "@llvm-project//mlir:Transforms",
     ],
 )
 
