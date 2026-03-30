@@ -94,7 +94,7 @@ cc_library(
         ":TypesIncGen",
         "//risc0/core",
         "//risc0/fp",
-        "//zirgen/Dialect/IOP/IR",
+        "//zirgen/Dialect/Zll/IR",
         "//zirgen/compiler/zkp",
         "@llvm-project//mlir:IR",
         "@llvm-project//mlir:InferTypeOpInterface",

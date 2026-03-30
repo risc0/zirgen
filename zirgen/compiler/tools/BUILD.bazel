@@ -37,6 +37,5 @@ cc_binary(
         "//zirgen/Dialect/R1CS/IR",
         "//zirgen/compiler/r1cs",
         "@llvm-project//mlir:AllTranslations",
-        "@llvm-project//mlir:MlirOptLib",
     ],
 )

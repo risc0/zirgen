@@ -17,7 +17,6 @@ cc_library(
     ],
     deps = [
         "//risc0/core/test:gtest_main",
-        "//zirgen/circuit/bigint:lib",
         "//zirgen/Dialect/BigInt/Bytecode",
         "//zirgen/Dialect/BigInt/IR",
         "//zirgen/Dialect/BigInt/Transforms",
@@ -33,7 +32,6 @@ cc_library(
         "rsa_helper.h",
     ],
     deps = [
-        "//zirgen/circuit/bigint:lib",
         "//zirgen/Dialect/BigInt/IR",
     ]
 )
