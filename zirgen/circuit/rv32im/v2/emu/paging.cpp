@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -106,24 +106,16 @@ size_t PagedMemory::getPagingCycles() {
 MemoryImage PagedMemory::commit() {
   MemoryImage ret;
   // Gather the original pages
-  for (auto& kvp : pageCache) {
-    ret.setPage(kvp.first, image.getPage(kvp.first));
-  }
+  for (auto& kvp : pageCache) { ret.setPage(kvp.first, image.getPage(kvp.first)); }
   std::vector<size_t> orderedIdx;
-  for (auto& kvp : stateTable) {
-    orderedIdx.push_back(kvp.first);
-  }
+  for (auto& kvp : stateTable) { orderedIdx.push_back(kvp.first); }
   std::sort(orderedIdx.begin(), orderedIdx.end());
   // Add minimal needed 'uncles'
   for (size_t idx : orderedIdx) {
     // If this is a leaf, break
-    if (idx >= MEMORY_SIZE_PAGES) {
-      break;
-    }
+    if (idx >= MEMORY_SIZE_PAGES) { break; }
     // Otherwise, add whichever child digest (if any) is not loaded
-    if (!stateTable.count(idx * 2)) {
-      ret.setDigest(idx * 2, image.getDigest(idx * 2));
-    }
+    if (!stateTable.count(idx * 2)) { ret.setDigest(idx * 2, image.getDigest(idx * 2)); }
     if (!stateTable.count(idx * 2 + 1)) {
       ret.setDigest(idx * 2 + 1, image.getDigest(idx * 2 + 1));
     }
@@ -157,9 +149,7 @@ PagingInfo PagedMemory::writePaging() {
   for (const auto& kvp : pageCache) {
     size_t page = kvp.first;
     uint32_t idx = MEMORY_SIZE_PAGES + page;
-    if (stateTable[idx] == PageState::DIRTY) {
-      ret.pages[page] = image.getPage(page);
-    }
+    if (stateTable[idx] == PageState::DIRTY) { ret.pages[page] = image.getPage(page); }
   }
   computePaging(ret);
   return ret;
@@ -177,12 +167,8 @@ void PagedMemory::fixupCosts(uint32_t idx, PageState goalState) {
     PageState& state = stateTable[idx];
     if (goalState > state) {
       if (idx < MEMORY_SIZE_PAGES) {
-        if (state == PageState::UNLOADED) {
-          pagingCycles += CYCLE_COST_MERKLE;
-        }
-        if (goalState == PageState::DIRTY) {
-          pagingCycles += CYCLE_COST_MERKLE;
-        }
+        if (state == PageState::UNLOADED) { pagingCycles += CYCLE_COST_MERKLE; }
+        if (goalState == PageState::DIRTY) { pagingCycles += CYCLE_COST_MERKLE; }
       }
       state = goalState;
     }
@@ -198,9 +184,7 @@ void PagedMemory::computePaging(PagingInfo& info) {
   for (auto it = info.nodes.rbegin(); it != info.nodes.rend(); ++it) {
     it->second.left = image.getDigest(2 * it->first);
     it->second.right = image.getDigest(2 * it->first + 1);
-    if (it->first != 1) {
-      info.nodes[it->first / 2];
-    }
+    if (it->first != 1) { info.nodes[it->first / 2]; }
   }
 }
 

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -59,24 +59,16 @@ BytePoly fromAPInt(APInt value, size_t coeffs) {
 namespace {
 BytePoly add(const BytePoly& lhs, const BytePoly& rhs) {
   BytePoly out(std::max(lhs.size(), rhs.size()));
-  for (size_t i = 0; i < lhs.size(); i++) {
-    out[i] += lhs[i];
-  }
-  for (size_t i = 0; i < rhs.size(); i++) {
-    out[i] += rhs[i];
-  }
+  for (size_t i = 0; i < lhs.size(); i++) { out[i] += lhs[i]; }
+  for (size_t i = 0; i < rhs.size(); i++) { out[i] += rhs[i]; }
   LLVM_DEBUG({ dbgs() << "add: " << toAPInt(out) << "\n"; });
   return out;
 }
 
 BytePoly sub(const BytePoly& lhs, const BytePoly& rhs) {
   BytePoly out(std::max(lhs.size(), rhs.size()));
-  for (size_t i = 0; i < lhs.size(); i++) {
-    out[i] += lhs[i];
-  }
-  for (size_t i = 0; i < rhs.size(); i++) {
-    out[i] -= rhs[i];
-  }
+  for (size_t i = 0; i < lhs.size(); i++) { out[i] += lhs[i]; }
+  for (size_t i = 0; i < rhs.size(); i++) { out[i] -= rhs[i]; }
   LLVM_DEBUG({ dbgs() << "sub: " << toAPInt(out) << "\n"; });
   return out;
 }
@@ -84,9 +76,7 @@ BytePoly sub(const BytePoly& lhs, const BytePoly& rhs) {
 BytePoly mul(const BytePoly& lhs, const BytePoly& rhs) {
   BytePoly out(lhs.size() + rhs.size() - 1);
   for (size_t i = 0; i < lhs.size(); i++) {
-    for (size_t j = 0; j < rhs.size(); j++) {
-      out[i + j] += lhs[i] * rhs[j];
-    }
+    for (size_t j = 0; j < rhs.size(); j++) { out[i + j] += lhs[i] * rhs[j]; }
   }
   LLVM_DEBUG({ dbgs() << "mul: " << toAPInt(out) << "\n"; });
   return out;
@@ -161,9 +151,7 @@ Digest computeDigest(std::vector<BytePoly> witness, size_t groupCount) {
     for (size_t j = 0; j < witness[i].size(); j += kCoeffsPerPoly) {
       for (size_t k = 0; k < kCoeffsPerPoly; k++) {
         cur[k] *= 256;
-        if (j + k < witness[i].size()) {
-          cur[k] += witness[i][j + k];
-        }
+        if (j + k < witness[i].size()) { cur[k] += witness[i][j + k]; }
       }
       group++;
       if (group == groupCount) {
@@ -176,9 +164,7 @@ Digest computeDigest(std::vector<BytePoly> witness, size_t groupCount) {
     }
   }
   if (group != 0) {
-    for (size_t k = 0; k < kCoeffsPerPoly; k++) {
-      words.push_back(cur[k]);
-    }
+    for (size_t k = 0; k < kCoeffsPerPoly; k++) { words.push_back(cur[k]); }
   }
   return poseidon2Hash(words.data(), words.size());
 }
@@ -261,17 +247,13 @@ EvalOutput eval(func::FuncOp inFunc, BigIntIO& io, bool computeZ) {
           int32_t carryOffset = op.getIn().getType().getCarryOffset();
           size_t carryBytes = op.getIn().getType().getCarryBytes();
           std::vector<BytePoly> carryPolys;
-          for (size_t i = 0; i < carryBytes; i++) {
-            carryPolys.emplace_back(coeffs);
-          };
+          for (size_t i = 0; i < carryBytes; i++) { carryPolys.emplace_back(coeffs); };
           int32_t carry = 0;
           for (size_t i = 0; i < coeffs; i++) {
             carry = (poly[i] + carry) / 256;
             uint32_t carryU = carry + carryOffset;
             carryPolys[0][i] = carryU & 0xff;
-            if (carryBytes > 1) {
-              carryPolys[1][i] = ((carryU >> 8) & 0xff);
-            }
+            if (carryBytes > 1) { carryPolys[1][i] = ((carryU >> 8) & 0xff); }
             if (carryBytes > 2) {
               carryPolys[2][i] = ((carryU >> 16) & 0xff);
               carryPolys[3][i] = ((carryU >> 16) & 0xff) * 4;
@@ -281,20 +263,14 @@ EvalOutput eval(func::FuncOp inFunc, BigIntIO& io, bool computeZ) {
           BytePoly bigCarry(coeffs);
           for (size_t i = 0; i < coeffs; i++) {
             bigCarry[i] = carryPolys[0][i];
-            if (carryBytes > 1) {
-              bigCarry[i] += 256 * carryPolys[1][i];
-            }
-            if (carryBytes > 2) {
-              bigCarry[i] += 65536 * carryPolys[2][i];
-            }
+            if (carryBytes > 1) { bigCarry[i] += 256 * carryPolys[1][i]; }
+            if (carryBytes > 2) { bigCarry[i] += 65536 * carryPolys[2][i]; }
             bigCarry[i] -= carryOffset;
           }
           for (size_t i = 0; i < coeffs; i++) {
             int32_t shouldBeZero = poly[i];
             shouldBeZero -= 256 * bigCarry[i];
-            if (i != 0) {
-              shouldBeZero += bigCarry[i - 1];
-            }
+            if (i != 0) { shouldBeZero += bigCarry[i - 1]; }
             if (shouldBeZero != 0) {
               errs() << "Invalid carry computation\n";
               throw std::runtime_error("CARRY");
@@ -322,9 +298,7 @@ EvalOutput eval(func::FuncOp inFunc, BigIntIO& io, bool computeZ) {
     // Now, compute the value of Z
     Poseidon2Rng rng;
     rng.mix(folded);
-    for (size_t i = 0; i < 4; i++) {
-      ret.z[i] = rng.generateFp();
-    }
+    for (size_t i = 0; i < 4; i++) { ret.z[i] = rng.generateFp(); }
   }
 
   return ret;
@@ -356,8 +330,7 @@ EvalOutput eval(func::FuncOp inFunc, ArrayRef<APInt> witnessValues) {
 namespace {
 
 void printPolys(llvm::raw_ostream& os, llvm::ArrayRef<BytePoly> polys) {
-  if (!polys.empty())
-    os << "  ";
+  if (!polys.empty()) os << "  ";
   interleave(
       polys,
       os,

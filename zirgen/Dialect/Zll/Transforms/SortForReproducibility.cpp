@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -58,8 +58,7 @@ struct SortForReproducibilityPass : public SortForReproducibilityBase<SortForRep
 
     std::function<StringRef(Operation*)> getPropInfo = [&](Operation* op) -> StringRef {
       auto propIt = propInfo.find(op);
-      if (propIt != propInfo.end())
-        return propIt->second;
+      if (propIt != propInfo.end()) return propIt->second;
 
       std::string props = op->getName().getStringRef().str();
       llvm::raw_string_ostream os(props);
@@ -71,20 +70,15 @@ struct SortForReproducibilityPass : public SortForReproducibilityBase<SortForRep
 
     std::function<bool(Operation & a, Operation & b)> operationCompare, cachedOperationCompare;
     operationCompare = [&](Operation& a, Operation& b) {
-      if (&a == &b)
-        return false;
+      if (&a == &b) return false;
 
       StringRef aInfo = getPropInfo(&a);
       StringRef bInfo = getPropInfo(&b);
-      if (aInfo != bInfo) {
-        return aInfo < bInfo;
-      }
+      if (aInfo != bInfo) { return aInfo < bInfo; }
 
       size_t aPos = argPositions.lookup(&a);
       size_t bPos = argPositions.lookup(&b);
-      if (aPos != bPos) {
-        return aPos < bPos;
-      }
+      if (aPos != bPos) { return aPos < bPos; }
 
       if (a.getNumOperands() != b.getNumOperands()) {
         return a.getNumOperands() < b.getNumOperands();
@@ -94,24 +88,20 @@ struct SortForReproducibilityPass : public SortForReproducibilityBase<SortForRep
       for (auto [aOperand, bOperand] : llvm::zip_equal(a.getOperands(), b.getOperands())) {
         auto aDefiner = llvm::dyn_cast<OpResult>(aOperand);
         auto bDefiner = llvm::dyn_cast<OpResult>(bOperand);
-        if (bool(aDefiner) != bool(bDefiner))
-          return bool(aDefiner) < bool(bDefiner);
+        if (bool(aDefiner) != bool(bDefiner)) return bool(aDefiner) < bool(bDefiner);
 
         if (aDefiner && bDefiner) {
           if (aDefiner.getResultNumber() != bDefiner.getResultNumber())
             return aDefiner.getResultNumber() < bDefiner.getResultNumber();
 
-          if (cachedOperationCompare(*aDefiner.getOwner(), *bDefiner.getOwner()))
-            return true;
-          if (cachedOperationCompare(*bDefiner.getOwner(), *aDefiner.getOwner()))
-            return false;
+          if (cachedOperationCompare(*aDefiner.getOwner(), *bDefiner.getOwner())) return true;
+          if (cachedOperationCompare(*bDefiner.getOwner(), *aDefiner.getOwner())) return false;
         }
 
         auto aArg = llvm::dyn_cast<BlockArgument>(aOperand);
         auto bArg = llvm::dyn_cast<BlockArgument>(bOperand);
 
-        if (bool(aArg) != bool(bArg))
-          return bool(aArg) < bool(bArg);
+        if (bool(aArg) != bool(bArg)) return bool(aArg) < bool(bArg);
 
         if (aArg && bArg) {
           if (aArg.getArgNumber() != bArg.getArgNumber())
@@ -137,10 +127,8 @@ struct SortForReproducibilityPass : public SortForReproducibilityBase<SortForRep
 
     getOperation()->walk([&](Block* inner) {
       auto shouldSort = [&](Operation* op) {
-        if (op->hasTrait<OpTrait::IsTerminator>())
-          return false;
-        if (isPure(op))
-          return true;
+        if (op->hasTrait<OpTrait::IsTerminator>()) return false;
+        if (isPure(op)) return true;
         return false;
       };
 
@@ -161,9 +149,7 @@ struct SortForReproducibilityPass : public SortForReproducibilityBase<SortForRep
                                          it);
         it = inner->getOperations().begin();
 
-        while (it != inner->getOperations().end() && shouldSort(&*it)) {
-          ++it;
-        }
+        while (it != inner->getOperations().end() && shouldSort(&*it)) { ++it; }
 
         Block sortBlock;
         // Move the sections of operations we *are* sorting into sortBlock

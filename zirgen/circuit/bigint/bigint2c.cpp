@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -106,12 +106,8 @@ struct PolyAtom {
   PolyAtom(uint32_t arena, uint32_t offset, uint32_t size, bool doWrite)
       : arena(arena), offset(offset), size(size), doWrite(doWrite) {}
   bool operator<(const PolyAtom& rhs) const {
-    if (arena != rhs.arena) {
-      return arena < rhs.arena;
-    }
-    if (offset != rhs.offset) {
-      return offset < rhs.offset;
-    }
+    if (arena != rhs.arena) { return arena < rhs.arena; }
+    if (offset != rhs.offset) { return offset < rhs.offset; }
     return size < rhs.size;
   }
 };
@@ -123,16 +119,12 @@ struct PolyProd {
   bool operator<(const PolyProd& rhs) const { return atoms < rhs.atoms; }
   size_t degree() const {
     size_t tot = 0;
-    for (const auto& atom : atoms) {
-      tot += atom.second;
-    }
+    for (const auto& atom : atoms) { tot += atom.second; }
     return tot;
   }
   PolyProd operator*(const PolyProd& rhs) const {
     PolyProd out = *this;
-    for (const auto& atom : rhs.atoms) {
-      out.atoms[atom.first] += atom.second;
-    }
+    for (const auto& atom : rhs.atoms) { out.atoms[atom.first] += atom.second; }
     return out;
   }
 };
@@ -143,9 +135,7 @@ struct Polynomial {
   Polynomial(PolyProd rhs) { terms[rhs] = 1; }
   size_t degree() const {
     size_t max = 0;
-    for (const auto& term : terms) {
-      max = std::max(max, term.first.degree());
-    }
+    for (const auto& term : terms) { max = std::max(max, term.first.degree()); }
     return max;
   }
   void normalize() {
@@ -159,17 +149,13 @@ struct Polynomial {
   }
   Polynomial operator+(const Polynomial& rhs) const {
     Polynomial out = *this;
-    for (const auto& term : rhs.terms) {
-      out.terms[term.first] += term.second;
-    }
+    for (const auto& term : rhs.terms) { out.terms[term.first] += term.second; }
     out.normalize();
     return out;
   }
   Polynomial operator-(const Polynomial& rhs) const {
     Polynomial out = *this;
-    for (const auto& term : rhs.terms) {
-      out.terms[term.first] -= term.second;
-    }
+    for (const auto& term : rhs.terms) { out.terms[term.first] -= term.second; }
     out.normalize();
     return out;
   }
@@ -229,9 +215,7 @@ struct Flattener {
   void flatten(const PolyProd& prod, int coeff) {
     std::vector<PolyAtom> atomsFlat;
     for (const auto& kvpAtom : prod.atoms) {
-      for (size_t i = 0; i < kvpAtom.second; i++) {
-        atomsFlat.push_back(kvpAtom.first);
-      }
+      for (size_t i = 0; i < kvpAtom.second; i++) { atomsFlat.push_back(kvpAtom.first); }
     }
     if (coeff > 3 || coeff < -3) {
       llvm::errs() << "TOOO: implement handing of high coefficients\n";
@@ -248,9 +232,7 @@ struct Flattener {
     }
   }
   void flatten(const Polynomial& poly, BigInt::BigIntType bit) {
-    for (const auto& kvp : poly.terms) {
-      flatten(kvp.first, kvp.second);
-    }
+    for (const auto& kvp : poly.terms) { flatten(kvp.first, kvp.second); }
     size_t carryCount = (bit.getCoeffs() + 15) / 16;
     for (size_t i = 0; i < carryCount; i++) {
       uint32_t common = MemOp::kNop << 28 | (carryCount - 1 - i);
@@ -381,12 +363,8 @@ std::vector<uint32_t> polySplit(mlir::func::FuncOp func) {
   flattener.finalize();
   // Now, destroy all the unneeded ops
   for (auto& op : llvm::make_early_inc_range(llvm::reverse(*block))) {
-    if (dyn_cast<BigInt::EqualZeroOp>(op)) {
-      op.erase();
-    }
-    if (op.getNumResults() == 1 && !state[op.getResult(0)].neededForNondet) {
-      op.erase();
-    }
+    if (dyn_cast<BigInt::EqualZeroOp>(op)) { op.erase(); }
+    if (op.getNumResults() == 1 && !state[op.getResult(0)].neededForNondet) { op.erase(); }
   }
   // Add in 'stores' for any tmp values
   OpBuilder builder(block->getTerminator());

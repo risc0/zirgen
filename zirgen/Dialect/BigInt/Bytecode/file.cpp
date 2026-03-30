@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -72,8 +72,7 @@ IOException::IOException(const char* file, const char* func, int line, const cha
                                         std::string(msg)) {}
 
 #define check(cond)                                                                                \
-  if (cond)                                                                                        \
-  throw IOException(__FILE__, __FUNCTION__, __LINE__, #cond)
+  if (cond) throw IOException(__FILE__, __FUNCTION__, __LINE__, #cond)
 
 #define MAGIC 0x63626962
 
@@ -153,24 +152,16 @@ void writeProgram(const Program& p, Writer& stream) {
   writeHeader(p, stream);
   // inputs referenced through 24-bit operand
   check(p.inputs.size() > 0x00FFFFFF);
-  for (auto& i : p.inputs) {
-    writeInput(i, stream);
-  }
+  for (auto& i : p.inputs) { writeInput(i, stream); }
   // types referenced through 12-bit operand
   check(p.types.size() > 0x00000FFF);
-  for (auto& t : p.types) {
-    writeType(t, stream);
-  }
+  for (auto& t : p.types) { writeType(t, stream); }
   // constants referenced through 24-bit operand
   check(p.constants.size() > 0x00FFFFFF);
-  for (uint64_t c : p.constants) {
-    writeU64(c, stream);
-  }
+  for (uint64_t c : p.constants) { writeU64(c, stream); }
   // op results referenced through 24-bit operand
   check(p.ops.size() > 0x00FFFFFF);
-  for (auto& o : p.ops) {
-    writeOp(o, stream);
-  }
+  for (auto& o : p.ops) { writeOp(o, stream); }
 }
 
 struct Teller : public Writer {
@@ -286,18 +277,10 @@ void readOp(Op& o, Reader& stream) {
 void readProgram(Program& p, Reader& stream) {
   p.clear();
   readHeader(p, stream);
-  for (size_t i = 0; i < p.inputs.size(); ++i) {
-    readInput(p.inputs[i], stream);
-  }
-  for (size_t i = 0; i < p.types.size(); ++i) {
-    readType(p.types[i], stream);
-  }
-  for (size_t i = 0; i < p.constants.size(); ++i) {
-    p.constants[i] = readU64(stream);
-  }
-  for (size_t i = 0; i < p.ops.size(); ++i) {
-    readOp(p.ops[i], stream);
-  }
+  for (size_t i = 0; i < p.inputs.size(); ++i) { readInput(p.inputs[i], stream); }
+  for (size_t i = 0; i < p.types.size(); ++i) { readType(p.types[i], stream); }
+  for (size_t i = 0; i < p.constants.size(); ++i) { p.constants[i] = readU64(stream); }
+  for (size_t i = 0; i < p.ops.size(); ++i) { readOp(p.ops[i], stream); }
 }
 
 struct FileReader : public Reader {

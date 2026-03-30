@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,12 +29,8 @@ struct MemTxnKey {
   uint32_t cycle;
   uint32_t data;
   bool operator<(const MemTxnKey& rhs) const {
-    if (addr != rhs.addr) {
-      return addr < rhs.addr;
-    }
-    if (cycle != rhs.cycle) {
-      return cycle < rhs.cycle;
-    }
+    if (addr != rhs.addr) { return addr < rhs.addr; }
+    if (cycle != rhs.cycle) { return cycle < rhs.cycle; }
     return data < rhs.data;
   }
 };
@@ -51,9 +47,7 @@ struct LookupTables {
       tableCycle[index] += count;
       return;
     }
-    if (tableU32 != 8 && tableU32 != 16) {
-      throw std::runtime_error("Invalid lookup table");
-    }
+    if (tableU32 != 8 && tableU32 != 16) { throw std::runtime_error("Invalid lookup table"); }
     if (index.asUInt32() >= (1U << tableU32)) {
       std::cerr << "LOOKUP ERROR: table = " << table.asUInt32() << ", index = " << index.asUInt32()
                 << "\n";
@@ -68,9 +62,7 @@ struct LookupTables {
 
   risc0::Fp lookupCurrent(risc0::Fp table, risc0::Fp index) {
     uint32_t tableU32 = table.asUInt32();
-    if (tableU32 != 8 && tableU32 != 16) {
-      throw std::runtime_error("Invalid lookup table");
-    }
+    if (tableU32 != 8 && tableU32 != 16) { throw std::runtime_error("Invalid lookup table"); }
     if (tableU32 == 8) {
       return tableU8[index.asUInt32()];
     } else {
@@ -182,9 +174,7 @@ struct ReplayHandler : public StepHandler {
   std::vector<uint32_t> bigIntWitness(uint32_t cycle) override {
     std::vector<uint32_t> ret;
     size_t extraPtr = preflight.cycles[cycle].extraPtr;
-    for (size_t i = 0; i < 16; i++) {
-      ret.push_back(preflight.extra[extraPtr + i]);
-    }
+    for (size_t i = 0; i < 16; i++) { ret.push_back(preflight.extra[extraPtr + i]); }
     return ret;
   }
 
@@ -278,17 +268,13 @@ ExecutionTrace runSegment(const Segment& segment, size_t segmentSize) {
   }
   tables.check();
   // 'Randomize' mix
-  for (size_t i = 0; i < trace.mix.getCols(); i++) {
-    trace.mix.set(i, i * i + 77);
-  }
+  for (size_t i = 0; i < trace.mix.getCols(); i++) { trace.mix.set(i, i * i + 77); }
   // Zero any undecided values in data
   trace.data.setUnset();
   // Do accum
   std::cout << "Doing accum\n";
   // Make final accum == 0
-  for (size_t i = 0; i < 4; i++) {
-    trace.accum.set(cycles - 1, trace.accum.getCols() - 4 + i, 0);
-  }
+  for (size_t i = 0; i < 4; i++) { trace.accum.set(cycles - 1, trace.accum.getCols() - 4 + i, 0); }
   for (size_t i = 0; i < cycles; i++) {
     ReplayHandler memory(preflightTrace, tables, i);
     DslStepAccum(memory, trace, i);

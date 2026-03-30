@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -170,9 +170,7 @@ public:
     // Now allocate any overflow for accumulation
     // Note, since we have one accum in the header, we only needs groups - 1
     // The final accum comes from the header
-    for (size_t i = 0; i < groups - 1; i++) {
-      accums.emplace_back("accum");
-    }
+    for (size_t i = 0; i < groups - 1; i++) { accums.emplace_back("accum"); }
     accums.emplace_back(header->accum);
     this->registerCallback(header->finalizePhase, &PlonkBodyImpl::onFinalize);
     this->registerCallback(header->verifyPhase, &PlonkBodyImpl::onVerify);
@@ -220,9 +218,7 @@ public:
       FpExt prod(Val(1));
       for (size_t j = 0; j < elemsPer; j++) {
         // Skip extra elements on final group as needed
-        if (i * elemsPer + j >= count) {
-          continue;
-        }
+        if (i * elemsPer + j >= count) { continue; }
         // Generate linear combinations over mixCoeffs
         auto elemVals = elems[i * elemsPer + j]->toVals();
         FpExt tot(Val(1));
@@ -270,9 +266,7 @@ public:
 
       // TODO: Change this to FpExt instead of Val when we support extension fields in Vals.
       FpExt prod = FpExt(Val(1));
-      for (size_t i = 0; i < groups; i++) {
-        prod = prod * lhsGroups[i] * inv(rhsGroups[i]);
-      }
+      for (size_t i = 0; i < groups; i++) { prod = prod * lhsGroups[i] * inv(rhsGroups[i]); }
       doExtern("plonkWriteAccum", header->name, 0, prod.toVals());
     }
   }

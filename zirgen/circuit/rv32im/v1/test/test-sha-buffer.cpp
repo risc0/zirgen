@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -58,15 +58,11 @@ extern "C" void start() {
   uint8_t out[8 * 4];
   sys_sha_buffer((uint32_t*)out, (uint32_t*)sha_init, (char*)test, 1);
   for (int i = 0; i < 8 * 4; i++) {
-    if (out[i] != golden1[i]) {
-      fail();
-    }
+    if (out[i] != golden1[i]) { fail(); }
   }
   sys_sha_buffer((uint32_t*)out, (uint32_t*)sha_init, (char*)test, 2);
   for (int i = 0; i < 8 * 4; i++) {
-    if (out[i] != golden2[i]) {
-      fail();
-    }
+    if (out[i] != golden2[i]) { fail(); }
   }
   sys_halt();
 }

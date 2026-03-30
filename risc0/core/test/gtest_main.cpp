@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@
 
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
-  if (const char* level = std::getenv("RISC0_LOG")) {
-    risc0::setLogLevel(std::atoi(level));
-  }
+  if (const char* level = std::getenv("RISC0_LOG")) { risc0::setLogLevel(std::atoi(level)); }
   return RUN_ALL_TESTS();
 }

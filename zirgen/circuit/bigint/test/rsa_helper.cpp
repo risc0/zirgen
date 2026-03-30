@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,9 +47,7 @@ APInt testRSA(APInt N, APInt S) {
   N = N.zext(2 * width);
   S = S.zext(2 * width);
   APInt cur = S;
-  for (size_t i = 0; i < 16; i++) {
-    cur = (cur * cur).urem(N);
-  }
+  for (size_t i = 0; i < 16; i++) { cur = (cur * cur).urem(N); }
   cur = (cur * S).urem(N);
   return cur.trunc(width);
 }

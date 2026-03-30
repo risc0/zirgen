@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,9 +41,7 @@ struct ExecContext {
   void resume() {}
   void suspend() {}
   void instruction(InstType type, const DecodedInst& decoded) {
-    if (debug) {
-      std::cout << "pc = " << pc << ", instType = " << instName(type) << "\n";
-    }
+    if (debug) { std::cout << "pc = " << pc << ", instType = " << instName(type) << "\n"; }
     userCycles++;
     physCycles++;
   }
@@ -51,15 +49,11 @@ struct ExecContext {
     physCycles++;
   }
   void p2Cycle(uint32_t cur, const P2State& state) {
-    if (debug) {
-      std::cout << "poseidon: " << state.nextState << "\n";
-    }
+    if (debug) { std::cout << "poseidon: " << state.nextState << "\n"; }
     physCycles++;
   }
   void shaCycle(uint32_t cur, const ShaState& state) {
-    if (debug) {
-      std::cout << "sha: " << state.nextState << "\n";
-    }
+    if (debug) { std::cout << "sha: " << state.nextState << "\n"; }
     physCycles++;
   }
 
@@ -148,17 +142,13 @@ std::vector<Segment> execute(MemoryImage& in,
 }
 
 void TestIoHandler::push_u32(uint32_t fd, uint32_t val) {
-  for (size_t i = 0; i < 4; i++) {
-    input[fd].push_back(val >> (i * 8));
-  }
+  for (size_t i = 0; i < 4; i++) { input[fd].push_back(val >> (i * 8)); }
 }
 
 uint32_t TestIoHandler::pop_u32(uint32_t fd) {
   uint32_t ret = 0;
   for (size_t i = 0; i < 4; i++) {
-    if (output[fd].empty()) {
-      throw std::runtime_error("Out of data in pop_u32");
-    }
+    if (output[fd].empty()) { throw std::runtime_error("Out of data in pop_u32"); }
     ret |= output[fd].front() << (i * 8);
     output[fd].pop_front();
   }
@@ -166,9 +156,7 @@ uint32_t TestIoHandler::pop_u32(uint32_t fd) {
 }
 
 uint32_t TestIoHandler::write(uint32_t fd, const uint8_t* data, uint32_t len) {
-  for (size_t i = 0; i < len; i++) {
-    output[fd].push_back(data[i]);
-  }
+  for (size_t i = 0; i < len; i++) { output[fd].push_back(data[i]); }
   return len;
 }
 

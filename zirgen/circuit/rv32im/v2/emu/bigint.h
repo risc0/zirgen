@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -70,9 +70,7 @@ template <typename Context> struct BigIntIO : public zirgen::BigInt::BigIntIO {
     std::vector<uint64_t> limbs64;
     for (size_t i = 0; i < count; i++) {
       std::array<uint32_t, 4> words;
-      for (size_t j = 0; j < 4; j++) {
-        words[j] = ctx.hostPeek(baseWord + i * 4 + j);
-      }
+      for (size_t j = 0; j < 4; j++) { words[j] = ctx.hostPeek(baseWord + i * 4 + j); }
       limbs64.push_back(uint64_t(words[0]) | ((uint64_t(words[1])) << 32));
       limbs64.push_back(uint64_t(words[2]) | ((uint64_t(words[3])) << 32));
     }
@@ -124,9 +122,7 @@ struct BigInt {
     uint32_t bibcSize = ctx.hostPeek(blobAddr);
 
     std::vector<uint32_t> code;
-    for (size_t i = 0; i < bibcSize; i++) {
-      code.push_back(ctx.hostPeek(bibcAddr + i));
-    }
+    for (size_t i = 0; i < bibcSize; i++) { code.push_back(ctx.hostPeek(bibcAddr + i)); }
 
     // Deserialize
     zirgen::BigInt::Bytecode::Program prog;
@@ -146,9 +142,7 @@ struct BigInt {
     BigIntIO io(ctx, bigint.polyWitness);
     zirgen::BigInt::eval(func, io, false);
 
-    while (bigint.state.nextState == STATE_BIGINT_STEP) {
-      bigint.step(ctx);
-    }
+    while (bigint.state.nextState == STATE_BIGINT_STEP) { bigint.step(ctx); }
   }
 
   template <typename Context> void step(Context& ctx) {
@@ -163,9 +157,7 @@ struct BigInt {
     case 0: { // read
       for (size_t i = 0; i < 4; i++) {
         uint32_t word = ctx.load(addr + i);
-        for (size_t j = 0; j < 4; j++) {
-          state.bytes[i * 4 + j] = (word >> (j * 8)) & 0xff;
-        }
+        for (size_t j = 0; j < 4; j++) { state.bytes[i * 4 + j] = (word >> (j * 8)) & 0xff; }
       }
     } break;
     case 1: { // write

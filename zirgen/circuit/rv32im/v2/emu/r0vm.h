@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -61,9 +61,7 @@ template <typename Context> struct R0Context {
   }
   void storeReg(uint32_t reg, uint32_t val) {
     uint32_t base = context.machineMode ? MACHINE_REGS_WORD : USER_REGS_WORD;
-    if (reg == 0) {
-      base += 64;
-    }
+    if (reg == 0) { base += 64; }
     context.store(base + reg, val);
   }
 
@@ -85,9 +83,7 @@ template <typename Context> struct R0Context {
 
   // Shared code used by both doTrap and doECALL
   void enterTrap(uint32_t addr) {
-    if (context.machineMode) {
-      throw std::runtime_error("Cannot trap in machine mode");
-    }
+    if (context.machineMode) { throw std::runtime_error("Cannot trap in machine mode"); }
     // Save PC + jump
     storeMem(MEPC_WORD, context.pc);
     context.pc = addr;
@@ -143,15 +139,9 @@ template <typename Context> struct R0Context {
   }
 
   uint32_t nextState(uint32_t ptr, uint32_t rlen) {
-    if (rlen == 0) {
-      return STATE_DECODE;
-    }
-    if (ptr % 4 != 0) {
-      return STATE_HOST_READ_BYTES;
-    }
-    if (rlen < 4) {
-      return STATE_HOST_READ_BYTES;
-    }
+    if (rlen == 0) { return STATE_DECODE; }
+    if (ptr % 4 != 0) { return STATE_HOST_READ_BYTES; }
+    if (rlen < 4) { return STATE_HOST_READ_BYTES; }
     return STATE_HOST_READ_WORDS;
   }
 
@@ -161,20 +151,14 @@ template <typename Context> struct R0Context {
     uint32_t fd = loadReg(REG_A0);
     uint32_t ptr = loadReg(REG_A1);
     uint32_t len = loadReg(REG_A2);
-    if (ptr + len < ptr) {
-      throw std::runtime_error("Invalid wrapping host read");
-    }
-    if (len > 1024) {
-      throw std::runtime_error("Invalid large host read");
-    }
+    if (ptr + len < ptr) { throw std::runtime_error("Invalid wrapping host read"); }
+    if (len > 1024) { throw std::runtime_error("Invalid large host read"); }
     uint32_t rlen = 0;
     std::vector<uint8_t> bytes(len);
     rlen = context.read(fd, bytes.data(), len);
     storeReg(REG_A0, rlen);
     uint32_t i = 0;
-    if (rlen == 0) {
-      context.pc += 4;
-    }
+    if (rlen == 0) { context.pc += 4; }
     context.ecallCycle(curState, nextState(ptr, rlen), ptr / 4, ptr % 4, rlen);
     curState = nextState(ptr, rlen);
     while (rlen > 0 && ptr % 4 != 0) {
@@ -182,9 +166,7 @@ template <typename Context> struct R0Context {
       ptr++;
       i++;
       rlen--;
-      if (rlen == 0) {
-        context.pc += 4;
-      }
+      if (rlen == 0) { context.pc += 4; }
       context.ecallCycle(curState, nextState(ptr, rlen), ptr / 4, ptr % 4, rlen);
       curState = nextState(ptr, rlen);
     }
@@ -193,9 +175,7 @@ template <typename Context> struct R0Context {
       for (size_t j = 0; j < 4; j++) {
         if (j < words) {
           uint32_t word = 0;
-          for (size_t k = 0; k < 4; k++) {
-            word |= bytes[i + k] << (8 * k);
-          }
+          for (size_t k = 0; k < 4; k++) { word |= bytes[i + k] << (8 * k); }
           storeMem(ptr / 4, word);
           ptr += 4;
           i += 4;
@@ -204,9 +184,7 @@ template <typename Context> struct R0Context {
           storeMem(SAFE_WRITE_WORD + j, 0);
         }
       }
-      if (rlen == 0) {
-        context.pc += 4;
-      }
+      if (rlen == 0) { context.pc += 4; }
       context.ecallCycle(curState, nextState(ptr, rlen), ptr / 4, ptr % 4, rlen);
       curState = nextState(ptr, rlen);
     }
@@ -215,9 +193,7 @@ template <typename Context> struct R0Context {
       ptr++;
       i++;
       rlen--;
-      if (rlen == 0) {
-        context.pc += 4;
-      }
+      if (rlen == 0) { context.pc += 4; }
       context.ecallCycle(curState, nextState(ptr, rlen), ptr / 4, ptr % 4, rlen);
       curState = nextState(ptr, rlen);
     }
@@ -229,9 +205,7 @@ template <typename Context> struct R0Context {
     uint32_t fd = loadReg(REG_A0);
     uint32_t ptr = loadReg(REG_A1);
     uint32_t len = loadReg(REG_A2);
-    if (ptr + len < ptr) {
-      throw std::runtime_error("Invalid wrapping host write");
-    }
+    if (ptr + len < ptr) { throw std::runtime_error("Invalid wrapping host write"); }
     if (len > 1024) {
       // Technically, this is a bit silly since host writes are free
       // But we probably need some bound, so now it's consistent
@@ -239,9 +213,7 @@ template <typename Context> struct R0Context {
     }
     uint32_t rlen = len;
     std::vector<uint8_t> bytes(len);
-    for (size_t i = 0; i < len; i++) {
-      bytes[i] = hostPeekByte(ptr + i);
-    }
+    for (size_t i = 0; i < len; i++) { bytes[i] = hostPeekByte(ptr + i); }
     rlen = context.write(fd, bytes.data(), len);
     storeReg(REG_A0, rlen);
     context.pc += 4;
@@ -299,19 +271,13 @@ template <typename Context> struct R0Context {
   // Memory access checking
   bool checkInstLoad(uint32_t addr) {
     uint32_t word = addr / 4;
-    if (word < ZERO_PAGE_END_WORD) {
-      return false;
-    }
-    if (!context.machineMode && word >= KERNEL_START_WORD) {
-      return false;
-    }
+    if (word < ZERO_PAGE_END_WORD) { return false; }
+    if (!context.machineMode && word >= KERNEL_START_WORD) { return false; }
     return true;
   }
   bool checkDataLoad(uint32_t addr) {
     uint32_t word = addr / 4;
-    if (context.machineMode) {
-      return true;
-    }
+    if (context.machineMode) { return true; }
     return word >= ZERO_PAGE_END_WORD && word < KERNEL_START_WORD;
   }
   bool checkDataStore(uint32_t addr) { return checkDataLoad(addr); }
@@ -326,9 +292,7 @@ template <typename Context> struct R0Context {
   }
 
   bool doMRET() {
-    if (!context.machineMode) {
-      throw std::runtime_error("Cannot MRET in user mode");
-    }
+    if (!context.machineMode) { throw std::runtime_error("Cannot MRET in user mode"); }
     // load PC
     context.pc = loadMem(MEPC_WORD) + 4;
     // Set machine mode

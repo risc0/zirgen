@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -118,25 +118,17 @@ LogicalResult MulOp::inferReturnTypes(MLIRContext* ctx,
                              (uint64_t)lhsType.getMaxNeg() * rhsType.getMaxNeg());
   // The next step can potentially overflow even 64 bits; but if we're already above 32 bits we'll
   // fail validation anyway. Therefore, skip this if we're above 32 bits
-  if (maxPos < (uint64_t)1 << 32) {
-    maxPos *= maxCoeffs;
-  }
+  if (maxPos < (uint64_t)1 << 32) { maxPos *= maxCoeffs; }
   // Clamp to size_t
-  if (maxPos > std::numeric_limits<size_t>::max()) {
-    maxPos = std::numeric_limits<size_t>::max();
-  }
+  if (maxPos > std::numeric_limits<size_t>::max()) { maxPos = std::numeric_limits<size_t>::max(); }
   // As with maxPos, this could overflow if size_t is 32 bits, so cast to 64 bits
   uint64_t maxNeg = std::max((uint64_t)lhsType.getMaxPos() * rhsType.getMaxNeg(),
                              (uint64_t)lhsType.getMaxNeg() * rhsType.getMaxPos());
   // The next step can potentially overflow even 64 bits; but if we're already above 32 bits we'll
   // fail validation anyway. Therefore, skip this if we're above 32 bits
-  if (maxNeg < (uint64_t)1 << 32) {
-    maxNeg *= maxCoeffs;
-  }
+  if (maxNeg < (uint64_t)1 << 32) { maxNeg *= maxCoeffs; }
   // Clamp to size_t
-  if (maxNeg > std::numeric_limits<size_t>::max()) {
-    maxNeg = std::numeric_limits<size_t>::max();
-  }
+  if (maxNeg > std::numeric_limits<size_t>::max()) { maxNeg = std::numeric_limits<size_t>::max(); }
   size_t minBits;
   if (lhsType.getMinBits() == 0 || rhsType.getMinBits() == 0) {
     // Note that this catches _both_ cases where the input might be zero _and_ cases where the input
@@ -156,9 +148,7 @@ LogicalResult NondetRemOp::inferReturnTypes(MLIRContext* ctx,
   auto lhsType = cast<BigIntType>(adaptor.getLhs().getType());
   auto rhsType = cast<BigIntType>(adaptor.getRhs().getType());
   auto outBits = lhsType.getMaxPosBits();
-  if (rhsType.getMaxPosBits() < outBits) {
-    outBits = rhsType.getMaxPosBits();
-  }
+  if (rhsType.getMaxPosBits() < outBits) { outBits = rhsType.getMaxPosBits(); }
   size_t coeffsWidth = ceilDiv(outBits, kBitsPerCoeff);
   out.push_back(BigIntType::get(ctx,
                                 /*coeffs=*/coeffsWidth,
@@ -175,9 +165,7 @@ LogicalResult NondetQuotOp::inferReturnTypes(MLIRContext* ctx,
   auto lhsType = cast<BigIntType>(adaptor.getLhs().getType());
   auto rhsType = cast<BigIntType>(adaptor.getRhs().getType());
   size_t outBits = lhsType.getMaxPosBits();
-  if (rhsType.getMinBits() > 0) {
-    outBits -= rhsType.getMinBits() - 1;
-  }
+  if (rhsType.getMinBits() > 0) { outBits -= rhsType.getMinBits() - 1; }
   size_t coeffsWidth = ceilDiv(outBits, kBitsPerCoeff);
   // TODO: We could be more clever on minBits, but probably doesn't matter
   out.push_back(BigIntType::get(ctx,
@@ -223,9 +211,7 @@ LogicalResult ReduceOp::inferReturnTypes(MLIRContext* ctx,
   auto lhsType = cast<BigIntType>(adaptor.getLhs().getType());
   auto rhsType = cast<BigIntType>(adaptor.getRhs().getType());
   auto outBits = lhsType.getMaxPosBits();
-  if (rhsType.getMaxPosBits() < outBits) {
-    outBits = rhsType.getMaxPosBits();
-  }
+  if (rhsType.getMaxPosBits() < outBits) { outBits = rhsType.getMaxPosBits(); }
   size_t coeffsWidth = ceilDiv(outBits, kBitsPerCoeff);
   out.push_back(BigIntType::get(ctx,
                                 /*coeffs=*/coeffsWidth,

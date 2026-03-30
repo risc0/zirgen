@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,14 +43,11 @@ namespace zirgen::codegen {
 void CodegenEmitter::emitModule(mlir::ModuleOp moduleOp) {
   emitTypeDefs(moduleOp);
 
-  for (auto& op : *moduleOp.getBody()) {
-    emitTopLevel(&op);
-  }
+  for (auto& op : *moduleOp.getBody()) { emitTopLevel(&op); }
 }
 
 void CodegenEmitter::emitTopLevel(Operation* op) {
-  if (op->hasTrait<CodegenSkipTrait>())
-    return;
+  if (op->hasTrait<CodegenSkipTrait>()) return;
 
   TypeSwitch<Operation*>(op)
       .Case<ModuleOp>([&](ModuleOp op) { emitModule(op); })
@@ -60,8 +57,7 @@ void CodegenEmitter::emitTopLevel(Operation* op) {
 }
 
 void CodegenEmitter::emitTopLevelDecl(Operation* op) {
-  if (op->hasTrait<CodegenSkipTrait>())
-    return;
+  if (op->hasTrait<CodegenSkipTrait>()) return;
 
   TypeSwitch<Operation*>(op)
       .Case<FunctionOpInterface>([&](FunctionOpInterface op) { emitFuncDecl(op); })
@@ -80,9 +76,7 @@ StringAttr CodegenEmitter::canonIdent(llvm::StringRef ident, IdentKind idt) {
 StringAttr CodegenEmitter::canonIdent(StringAttr identAttr, IdentKind idt) {
 
   auto& existing = canonIdents[std::make_pair(identAttr, idt)];
-  if (existing) {
-    return existing;
-  }
+  if (existing) { return existing; }
 
   StringRef ident = identAttr.strref();
   assert(!ident.empty());
@@ -122,9 +116,7 @@ void CodegenEmitter::resetValueNumbering() {
 }
 
 void CodegenEmitter::emitFuncDecl(FunctionOpInterface op) {
-  if (op->hasTrait<OpTrait::IsIsolatedFromAbove>()) {
-    resetValueNumbering();
-  }
+  if (op->hasTrait<OpTrait::IsIsolatedFromAbove>()) { resetValueNumbering(); }
   auto body = op.getCallableRegion();
   llvm::ArrayRef<std::string> contextArgs;
   if (opts.funcContextArgs.contains(op->getName().getStringRef())) {
@@ -143,10 +135,8 @@ void CodegenEmitter::emitFuncDecl(FunctionOpInterface op) {
     StringRef baseName;
     if (auto argNameAttr = op.getArgAttrOfType<StringAttr>(argNum, "zirgen.argName"))
       baseName = argNameAttr;
-    if (baseName.empty())
-      baseName = argValueNames.lookup(arg);
-    if (baseName.empty())
-      baseName = "arg";
+    if (baseName.empty()) baseName = argValueNames.lookup(arg);
+    if (baseName.empty()) baseName = "arg";
     argNames.push_back(getStringAttr((baseName + std::to_string(argNum)).str()));
   }
 
@@ -156,15 +146,11 @@ void CodegenEmitter::emitFuncDecl(FunctionOpInterface op) {
                                  argNames,
                                  llvm::cast<FunctionType>(op.getFunctionType()));
 
-  if (op->hasTrait<OpTrait::IsIsolatedFromAbove>()) {
-    resetValueNumbering();
-  }
+  if (op->hasTrait<OpTrait::IsIsolatedFromAbove>()) { resetValueNumbering(); }
 }
 
 void CodegenEmitter::emitFunc(FunctionOpInterface op) {
-  if (op->hasTrait<OpTrait::IsIsolatedFromAbove>()) {
-    resetValueNumbering();
-  }
+  if (op->hasTrait<OpTrait::IsIsolatedFromAbove>()) { resetValueNumbering(); }
   auto body = op.getCallableRegion();
 
   emitTypeDefs(op);
@@ -186,10 +172,8 @@ void CodegenEmitter::emitFunc(FunctionOpInterface op) {
     StringRef baseName;
     if (auto argNameAttr = op.getArgAttrOfType<StringAttr>(argNum, "zirgen.argName"))
       baseName = argNameAttr;
-    if (baseName.empty())
-      baseName = argValueNames.lookup(arg);
-    if (baseName.empty())
-      baseName = "arg";
+    if (baseName.empty()) baseName = argValueNames.lookup(arg);
+    if (baseName.empty()) baseName = "arg";
     argNames.push_back(getNewValueName(arg, baseName, /*owned=*/false));
   }
 
@@ -200,48 +184,36 @@ void CodegenEmitter::emitFunc(FunctionOpInterface op) {
                                 llvm::cast<FunctionType>(op.getFunctionType()),
                                 body);
 
-  if (op->hasTrait<OpTrait::IsIsolatedFromAbove>()) {
-    resetValueNumbering();
-  }
+  if (op->hasTrait<OpTrait::IsIsolatedFromAbove>()) { resetValueNumbering(); }
 }
 
 // Operator API; called from operators to output their parts.
 void CodegenEmitter::emitRegion(mlir::Region& region) {
-  for (Block& block : region) {
-    emitBlock(block);
-  }
+  for (Block& block : region) { emitBlock(block); }
 }
 
 void CodegenEmitter::emitBlock(mlir::Block& block) {
-  for (Operation& op : block) {
-    emitStatement(&op);
-  }
+  for (Operation& op : block) { emitStatement(&op); }
 }
 
 bool CodegenEmitter::inlineDepthLessThan(Operation* op, size_t n) {
-  if (!n)
-    return false;
+  if (!n) return false;
 
   for (auto operand : op->getOperands()) {
-    if (varNames.contains(operand))
-      return true;
+    if (varNames.contains(operand)) return true;
 
     Operation* definer = operand.getDefiningOp();
-    if (!inlineDepthLessThan(definer, n - 1))
-      return false;
+    if (!inlineDepthLessThan(definer, n - 1)) return false;
   }
   return true;
 }
 
 bool CodegenEmitter::shouldInlineConstant(Operation* op) {
-  if (op->hasTrait<CodegenNeverInlineOpTrait>())
-    return false;
+  if (op->hasTrait<CodegenNeverInlineOpTrait>()) return false;
 
-  if (op->hasTrait<CodegenAlwaysInlineOpTrait>())
-    return true;
+  if (op->hasTrait<CodegenAlwaysInlineOpTrait>()) return true;
 
-  if (!isPure(op) || op->getNumResults() != 1)
-    return false;
+  if (!isPure(op) || op->getNumResults() != 1) return false;
 
   // Rust only allows mutable references to be borrowed once at a
   // time.
@@ -250,24 +222,19 @@ bool CodegenEmitter::shouldInlineConstant(Operation* op) {
       }))
     return false;
 
-  if (op->hasOneUse() && inlineDepthLessThan(op, inlineDepth)) {
-    return true;
-  }
+  if (op->hasOneUse() && inlineDepthLessThan(op, inlineDepth)) { return true; }
 
-  if (!op->hasTrait<OpTrait::ConstantLike>())
-    return false;
+  if (!op->hasTrait<OpTrait::ConstantLike>()) return false;
 
   // If walking this type finds any types other than the type itself,
   // it's likely complicated, so we want to put it in its own
   // definition instead of of inlining it everywhere.
   Type type = op->getResult(0).getType();
   auto walkResult = type.walk([&](Type t) {
-    if (t != type)
-      return WalkResult::interrupt();
+    if (t != type) return WalkResult::interrupt();
     return WalkResult::advance();
   });
-  if (walkResult.wasInterrupted())
-    return false;
+  if (walkResult.wasInterrupted()) return false;
 
   return true;
 }
@@ -306,8 +273,7 @@ void CodegenEmitter::emitLoc(Location loc) {
   SmallVector<Location> calls;
   getCallStack(calls, loc);
 
-  if (calls.empty())
-    return;
+  if (calls.empty()) return;
 
   for (Location callLoc : calls) {
     if (!currentLocations.contains(callLoc)) {
@@ -320,8 +286,7 @@ void CodegenEmitter::emitLoc(Location loc) {
 }
 
 void CodegenEmitter::emitStatement(Operation* op) {
-  if (op->hasTrait<CodegenSkipTrait>())
-    return;
+  if (op->hasTrait<CodegenSkipTrait>()) return;
 
   // If it handles this case specially, let it do its thing.
   if (auto statementOp = dyn_cast<CodegenStatementOpInterface>(op)) {
@@ -468,8 +433,7 @@ void CodegenEmitter::emitLiteral(mlir::Type ty, mlir::Attribute value) {
     return;
   }
   if (auto codegenType = dyn_cast<CodegenTypeInterface>(ty)) {
-    if (succeeded(codegenType.emitLiteral(*this, value)))
-      return;
+    if (succeeded(codegenType.emitLiteral(*this, value))) return;
   }
   llvm::errs() << "Don't know how to emit type " << ty << " with value " << value
                << " (name = " << value.getAbstractAttribute().getName() << ")\n";
@@ -550,8 +514,7 @@ void CodegenEmitter::emitSwitchStatement(mlir::Value result,
   SmallVector<EmitArmPartFunc> emitArms;
   for (Block* arm : arms) {
     emitArms.push_back([=]() {
-      for (auto& op : arm->without_terminator())
-        emitStatement(&op);
+      for (auto& op : arm->without_terminator()) emitStatement(&op);
       Operation* termOp = arm->getTerminator();
       assert(termOp->hasTrait<OpTrait::ReturnLike>());
       assert(termOp->getOperands().size() == 1);
@@ -567,8 +530,7 @@ void CodegenEmitter::emitTypeDefs(Operation* op) {
     emitTypeDefs(subOp->getOperandTypes());
     emitTypeDefs(subOp->getResultTypes());
     for (auto attr : subOp->getAttrs()) {
-      if (auto tyAttr = dyn_cast<TypeAttr>(attr.getValue()))
-        emitTypeDefs(tyAttr.getValue());
+      if (auto tyAttr = dyn_cast<TypeAttr>(attr.getValue())) emitTypeDefs(tyAttr.getValue());
     }
   });
 }
@@ -576,9 +538,7 @@ void CodegenEmitter::emitTypeDefs(Operation* op) {
 void CodegenEmitter::emitTypeDefs(TypeRange tys) {
   for (auto genericTy : tys) {
     genericTy.walk([&](CodegenTypeInterface ty) {
-      if (types.count(ty)) {
-        return;
-      }
+      if (types.count(ty)) { return; }
 
       auto name = getTypeName(ty);
       if (auto oldTy = typeNames.lookup(name.getAttr())) {

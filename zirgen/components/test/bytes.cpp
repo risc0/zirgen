@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -99,9 +99,7 @@ void SetupStepImpl::set(Top top) {
 }
 
 void CheckStepImpl::set(Top top) {
-  for (size_t i = 0; i < 20; i++) {
-    bytes[i]->setExact(doExtern("getTestData", "", 1, {})[0]);
-  }
+  for (size_t i = 0; i < 20; i++) { bytes[i]->setExact(doExtern("getTestData", "", 1, {})[0]); }
 }
 
 void FiniStepImpl::set(Top top) {}
@@ -164,9 +162,7 @@ TEST(Bytes, Basic) {
   code[0 * codeSize + InstType::INIT] = 1;
   for (size_t i = 0; i < setupCount; i++) {
     code[(i + 1) * codeSize + InstType::SETUP] = 1;
-    if (i == setupCount - 1) {
-      code[(i + 1) * codeSize + 4] = 1;
-    }
+    if (i == setupCount - 1) { code[(i + 1) * codeSize + 4] = 1; }
   }
   for (size_t i = 0; i < checkCount; i++) {
     code[(i + 1 + setupCount) * codeSize + InstType::CHECK] = 1;

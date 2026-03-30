@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,15 +17,11 @@
 namespace zirgen::recursion {
 
 MicroInstImpl::MicroInstImpl() : opcode(Label("opcode"), "code") {
-  for (size_t i = 0; i < 3; i++) {
-    operands.emplace_back(Label("operand", i), "code");
-  }
+  for (size_t i = 0; i < 3; i++) { operands.emplace_back(Label("operand", i), "code"); }
 }
 
 MicroInstsImpl::MicroInstsImpl() {
-  for (size_t i = 0; i < 3; i++) {
-    insts.emplace_back(Label("inst", i));
-  }
+  for (size_t i = 0; i < 3; i++) { insts.emplace_back(Label("inst", i)); }
 }
 
 MacroInstImpl::MacroInstImpl()
@@ -42,9 +38,7 @@ MacroInstImpl::MacroInstImpl()
                      "set_global"}),
              "code",
              false) {
-  for (size_t i = 0; i < 3; i++) {
-    operands.emplace_back(Label("operand", i), "code");
-  }
+  for (size_t i = 0; i < 3; i++) { operands.emplace_back(Label("operand", i), "code"); }
 }
 
 Poseidon2MemInstImpl::Poseidon2MemInstImpl()
@@ -53,9 +47,7 @@ Poseidon2MemInstImpl::Poseidon2MemInstImpl()
     , keepUpperState(Label("keep_upper_state"), "code")
     , prepFull(Label("prep_full"), "code")
     , group(Label("group"), Labels({"g0", "g1", "g2"}), "code") {
-  for (size_t i = 0; i < 8; i++) {
-    inputs.emplace_back(Label("inputs", i), "code");
-  }
+  for (size_t i = 0; i < 8; i++) { inputs.emplace_back(Label("inputs", i), "code"); }
 }
 
 Poseidon2FullInstImpl::Poseidon2FullInstImpl()

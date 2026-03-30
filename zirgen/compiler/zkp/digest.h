@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,9 +28,7 @@ struct Digest {
 
   int cmp(Digest rhs) const {
     for (size_t i = 0; i < 8; i++) {
-      if (words[i] != rhs.words[i]) {
-        return words[i] < rhs.words[i] ? -1 : 1;
-      }
+      if (words[i] != rhs.words[i]) { return words[i] < rhs.words[i] ? -1 : 1; }
     }
     return 0;
   }

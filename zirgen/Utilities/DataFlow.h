@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -64,8 +64,7 @@ template <typename T, typename Self> struct LatticeValue {
   }
 
   ChangeResult reset() {
-    if (isUninitialized())
-      return ChangeResult::NoChange;
+    if (isUninitialized()) return ChangeResult::NoChange;
     value = Uninitialized{};
     return ChangeResult::Change;
   }
@@ -140,8 +139,7 @@ public:
     assert(ValueT::join(newValue, rhs) == newValue && "expected `join` to be monotonic");
 
     // Update the current optimistic value if something changed.
-    if (newValue == value)
-      return ChangeResult::NoChange;
+    if (newValue == value) return ChangeResult::NoChange;
 
     value = newValue;
     return ChangeResult::Change;
@@ -163,8 +161,7 @@ public:
     assert(ValueT::meet(newValue, rhs) == newValue && "expected `meet` to be monotonic");
 
     // Update the current optimistic value if something changed.
-    if (newValue == value)
-      return ChangeResult::NoChange;
+    if (newValue == value) return ChangeResult::NoChange;
 
     value = newValue;
     return ChangeResult::Change;
@@ -190,8 +187,7 @@ public:
 
   virtual LogicalResult initialize(Operation* top) override {
     WalkResult result = top->walk<WalkOrder::PreOrder>([&](Operation* op) {
-      if (failed(visitOperation(op)))
-        return WalkResult::interrupt();
+      if (failed(visitOperation(op))) return WalkResult::interrupt();
       return WalkResult::advance();
     });
     return success(!result.wasInterrupted());

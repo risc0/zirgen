@@ -1,11 +1,19 @@
 AlignOperands: true
 AllowShortFunctionsOnASingleLine: Inline
-AllowShortIfStatementsOnASingleLine: Never
+AllowShortIfStatementsOnASingleLine: WithoutElse
 AllowShortLambdasOnASingleLine: true
-AllowShortLoopsOnASingleLine: false
+AllowShortLoopsOnASingleLine: true
 BinPackArguments: false
 BinPackParameters: false
 BreakConstructorInitializersBeforeComma: true
 ColumnLimit: 100
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 PointerAlignment: Left
+# Treat IF and NONDET as statement-like macros similar to for-each loops
+ForEachMacros:
+  - IF
+  - NONDET
+# Keep single-line block statements on a single line
+AllowShortBlocksOnASingleLine: Always
+# Space before parentheses in control statements
+SpaceBeforeParens: ControlStatements

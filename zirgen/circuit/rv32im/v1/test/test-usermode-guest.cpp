@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,15 +34,9 @@ void ecall_entry() {
   // Should we make UserRegAddr be an address instead of a word # ?
   uint32_t userA0 = *reinterpret_cast<uint32_t*>(UserRegAddr::kA0 * 4);
   if (userA0 == 0) {
-    if (buf[0] != 17) {
-      fail();
-    }
-    if (buf[1] != 23) {
-      fail();
-    }
-    if (buf[2] != 5) {
-      fail();
-    }
+    if (buf[0] != 17) { fail(); }
+    if (buf[1] != 23) { fail(); }
+    if (buf[2] != 5) { fail(); }
     sys_halt();
   } else {
     buf[2] = userA0;

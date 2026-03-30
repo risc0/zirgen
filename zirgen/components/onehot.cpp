@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,32 +24,24 @@ OneHot::OneHot(Buffer buf, const std::vector<uint64_t>& options) : buf(buf), opt
 
 void OneHot::set(Val val) {
   NONDET {
-    for (size_t i = 0; i < buf.size(); i++) {
-      buf[i] = isz(val - options[i]);
-    }
+    for (size_t i = 0; i < buf.size(); i++) { buf[i] = isz(val - options[i]); }
   }
   isBits(buf);
   eq(get(), val);
   Val tot = 0;
-  for (size_t i = 0; i < buf.size(); i++) {
-    tot = tot + buf[i];
-  }
+  for (size_t i = 0; i < buf.size(); i++) { tot = tot + buf[i]; }
   eq(tot, 1);
 }
 
 Val OneHot::get() {
   Val tot = 0;
-  for (size_t i = 0; i < buf.size(); i++) {
-    tot = tot + options[i] * buf[i];
-  }
+  for (size_t i = 0; i < buf.size(); i++) { tot = tot + options[i] * buf[i]; }
   return tot;
 }
 
 Val OneHot::is(uint64_t val) {
   for (size_t i = 0; i < buf.size(); i++) {
-    if (options[i] == val) {
-      return buf[i];
-    }
+    if (options[i] == val) { return buf[i]; }
   }
   throw std::runtime_error("Invalid 'is' in onehot");
 }

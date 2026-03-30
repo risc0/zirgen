@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,16 +26,12 @@ inline void push_fp(std::vector<uint32_t>& iop, uint32_t val) {
 }
 
 inline void push_digest(std::vector<uint32_t>& iop, Digest digest) {
-  for (size_t i = 0; i < 8; i++) {
-    iop.push_back(digest.words[i]);
-  }
+  for (size_t i = 0; i < 8; i++) { iop.push_back(digest.words[i]); }
 }
 
 template <typename Func>
 void doAB(size_t outSize, const std::vector<uint32_t>& input, Func userFunc) {
-  if (system("which circom") != 0 || system("which snarkjs") != 0) {
-    return;
-  }
+  if (system("which circom") != 0 || system("which snarkjs") != 0) { return; }
   // Make MLIR for the function
   std::array<ArgumentInfo, 2> argTypes;
   argTypes[0] = gbuf(outSize);
@@ -64,8 +60,7 @@ void doAB(size_t outSize, const std::vector<uint32_t>& input, Func userFunc) {
   auto outBuf = interp.makeBuf(func.getArgument(0), outSize, Zll::BufferKind::Global);
   ReadIop riop(interp.getHashSuite().makeRng(), input.data(), input.size());
   interp.setIop(func.getArgument(1), &riop);
-  if (failed(interp.runBlock(func.front())))
-    FAIL() << "failed to evaluate block in interpreter";
+  if (failed(interp.runBlock(func.front()))) FAIL() << "failed to evaluate block in interpreter";
 
   // Print outputs
   for (size_t i = 0; i < outSize; i++) {

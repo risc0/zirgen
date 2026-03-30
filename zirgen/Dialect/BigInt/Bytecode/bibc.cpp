@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,18 +25,10 @@ void Program::clear() {
 }
 
 bool operator<(const Type& l, const Type& r) {
-  if (l.coeffs >= r.coeffs) {
-    return false;
-  }
-  if (l.maxPos >= r.maxPos) {
-    return false;
-  }
-  if (l.maxNeg >= r.maxNeg) {
-    return false;
-  }
-  if (l.minBits >= r.minBits) {
-    return false;
-  }
+  if (l.coeffs >= r.coeffs) { return false; }
+  if (l.maxPos >= r.maxPos) { return false; }
+  if (l.maxNeg >= r.maxNeg) { return false; }
+  if (l.minBits >= r.minBits) { return false; }
   return true;
 }
 

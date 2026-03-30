@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -80,8 +80,7 @@ std::string mangledTypeName(Type type) {
 
 Type getLeastCommonSuper(TypeRange components, bool isLayout) {
   // For types without layout, there is no common super layout
-  if (isLayout && components.empty())
-    return Type();
+  if (isLayout && components.empty()) return Type();
 
   assert(components.size() > 0);
   MLIRContext* ctx = components[0].getContext();
@@ -94,9 +93,7 @@ Type getLeastCommonSuper(TypeRange components, bool isLayout) {
       nextElemSuperChain.insert(type);
       type = getSuperType(type, isLayout);
     }
-    if (type == commonSuper) {
-      continue;
-    }
+    if (type == commonSuper) { continue; }
 
     // walk the old commonSuper's super chain until we find something in type's
     // super chain
@@ -117,30 +114,24 @@ Type getLeastCommonSuper(TypeRange components, bool isLayout) {
 }
 
 bool isCoercibleTo(Type src, Type dst, bool isLayout) {
-  if (auto variadic = dyn_cast<VariadicType>(dst)) {
-    dst = variadic.getElement();
-  }
+  if (auto variadic = dyn_cast<VariadicType>(dst)) { dst = variadic.getElement(); }
   while (src != dst) {
     Type newSrc = getSuperType(src, isLayout);
-    if (!newSrc)
-      break;
+    if (!newSrc) break;
     src = newSrc;
   }
-  if (src == dst)
-    return true;
+  if (src == dst) return true;
 
   if (auto srcArrayType = llvm::dyn_cast<ArrayLikeTypeInterface>(src)) {
     // Attempt to coerce arrays
     while (dst) {
       Type newDst = getSuperType(dst, isLayout);
-      if (!newDst)
-        break;
+      if (!newDst) break;
       dst = newDst;
     }
 
     auto dstArrayType = llvm::cast<ArrayLikeTypeInterface>(dst);
-    if (srcArrayType.getSize() != dstArrayType.getSize())
-      return false;
+    if (srcArrayType.getSize() != dstArrayType.getSize()) return false;
 
     if (llvm::isa<LayoutArrayType>(srcArrayType) || llvm::isa<ArrayType>(dstArrayType)) {
       // Cannot construct LayoutArrays at runtime.
@@ -243,9 +234,7 @@ Value coerceTo(Value value, Type type, OpBuilder& builder) {
 
 ArrayLikeTypeInterface getCoercibleArrayType(Type type) {
   while (type) {
-    if (auto arrayType = dyn_cast<ArrayLikeTypeInterface>(type)) {
-      return arrayType;
-    }
+    if (auto arrayType = dyn_cast<ArrayLikeTypeInterface>(type)) { return arrayType; }
     type = getSuperType(type);
   }
   return ArrayLikeTypeInterface();
@@ -311,13 +300,10 @@ LayoutBuilder::LayoutBuilder(OpBuilder& builder, StringAttr typeName)
 mlir::Value LayoutBuilder::addMember(Location loc, StringRef memberName, mlir::Type type) {
   assert(layoutPlaceholder);
   // If there is no layout type, return no layout value
-  if (!type)
-    return Value();
+  if (!type) return Value();
 
   for (auto member : members) {
-    if (member.name == memberName) {
-      llvm::errs() << "Duplicate name: " << memberName << "\n";
-    }
+    if (member.name == memberName) { llvm::errs() << "Duplicate name: " << memberName << "\n"; }
     assert(member.name != memberName && "adding layout member with duplicate name");
   }
   StringAttr memberNameAttr = builder.getStringAttr(memberName);
@@ -392,24 +378,18 @@ Type getSuperType(Type ty, bool isLayout) {
     fields = zType.getFields();
   }
   for (auto field : fields) {
-    if (field.name == "@super") {
-      return field.type;
-    }
+    if (field.name == "@super") { return field.type; }
   }
 
   // Arrays are 'covariate'
   if (auto aType = llvm::dyn_cast<ArrayType>(ty)) {
     Type innerSuper = getSuperType(aType.getElement());
-    if (!innerSuper) {
-      return componentType;
-    }
+    if (!innerSuper) { return componentType; }
     return ArrayType::get(ty.getContext(), innerSuper, aType.getSize());
   }
   if (auto aType = llvm::dyn_cast<LayoutArrayType>(ty)) {
     Type innerSuper = getSuperType(aType.getElement());
-    if (!innerSuper) {
-      return componentType;
-    }
+    if (!innerSuper) { return componentType; }
     return LayoutArrayType::get(ty.getContext(), innerSuper, aType.getSize());
   }
   // All other type have componentType as a supertype
@@ -428,9 +408,7 @@ void extractArguments(llvm::MapVector<Type, size_t>& out, Type in) {
   if (auto array = dyn_cast<LayoutArrayType>(in)) {
     llvm::MapVector<Type, size_t> inner;
     extractArguments(inner, array.getElement());
-    for (auto& kvp : inner) {
-      out[kvp.first] += kvp.second * array.getSize();
-    }
+    for (auto& kvp : inner) { out[kvp.first] += kvp.second * array.getSize(); }
   }
   if (auto layout = dyn_cast<LayoutType>(in)) {
     switch (layout.getKind()) {
@@ -438,8 +416,7 @@ void extractArguments(llvm::MapVector<Type, size_t>& out, Type in) {
       out[layout]++;
       return;
     case LayoutKind::Normal:
-      for (auto& field : layout.getFields())
-        extractArguments(out, field.type);
+      for (auto& field : layout.getFields()) extractArguments(out, field.type);
       break;
     case LayoutKind::MajorMux:
     case LayoutKind::Mux:

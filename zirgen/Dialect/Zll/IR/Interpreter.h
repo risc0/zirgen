@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -187,8 +187,7 @@ public:
 
   template <typename T> T evaluateConstantOfType(mlir::Value val) {
     auto res = evaluateConstant(val);
-    if (!res)
-      return T();
+    if (!res) return T();
     if (!llvm::isa<T>(res)) {
       mlir::emitError(val.getLoc()) << val << " evaluated as a constant " << res << "; expecting a "
                                     << llvm::getTypeName<T>();

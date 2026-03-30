@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,9 +25,7 @@ ShaRng::ShaRng() : poolUsed(0) {
 
 // Mix the hash into the entropy pool
 void ShaRng::mix(const Digest& data) {
-  for (size_t i = 0; i < 8; i++) {
-    pool0.words[i] ^= data.words[i];
-  }
+  for (size_t i = 0; i < 8; i++) { pool0.words[i] ^= data.words[i]; }
   step();
 }
 
@@ -54,9 +52,7 @@ void ShaRng::step() {
 }
 
 uint32_t ShaRng::generate() {
-  if (poolUsed == 8) {
-    step();
-  }
+  if (poolUsed == 8) { step(); }
   return pool0.words[poolUsed++];
 }
 

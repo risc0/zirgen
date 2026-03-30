@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -71,9 +71,7 @@ void test_multi_read() {
     for (size_t j = 0; j < 11; j++) {
       host_read(0, (uint32_t)(buf + i), sizes[j]);
       for (size_t k = 0; k < sizes[j]; k++) {
-        if (buf[i + k] != k) {
-          die();
-        }
+        if (buf[i + k] != k) { die(); }
       }
     }
   }

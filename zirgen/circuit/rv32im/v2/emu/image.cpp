@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,9 +33,7 @@ Digest hashPage(const uint32_t* data) {
     poseidonSponge(cells);
   }
   Digest out;
-  for (size_t i = 0; i < 8; i++) {
-    out.words[i] = cells[i];
-  }
+  for (size_t i = 0; i < 8; i++) { out.words[i] = cells[i]; }
   return out;
 }
 
@@ -48,9 +46,7 @@ Digest hashPair(const Digest& lhs, const Digest& rhs) {
   }
   poseidonSponge(cells);
   Digest out;
-  for (size_t i = 0; i < 8; i++) {
-    out.words[i] = cells[i];
-  }
+  for (size_t i = 0; i < 8; i++) { out.words[i] = cells[i]; }
   return out;
 }
 
@@ -71,18 +67,14 @@ MemoryImage MemoryImage::fromWords(const std::map<uint32_t, uint32_t>& words) {
   for (const auto& kvp : words) {
     uint32_t pageID = kvp.first / PAGE_SIZE_WORDS;
     if (pageID != curPageID) {
-      if (curPage) {
-        ret.setPage(curPageID, curPage);
-      }
+      if (curPage) { ret.setPage(curPageID, curPage); }
       curPage = std::make_shared<Page>();
       curPageID = pageID;
     }
     // printf("store(0x%08x, 0x%08x)\n", kvp.first, kvp.second);
     (*curPage)[kvp.first % PAGE_SIZE_WORDS] = kvp.second;
   }
-  if (curPage) {
-    ret.setPage(curPageID, curPage);
-  }
+  if (curPage) { ret.setPage(curPageID, curPage); }
   return ret;
 }
 
@@ -101,9 +93,7 @@ MemoryImage MemoryImage::fromRawElf(const std::string& elf) {
 PagePtr MemoryImage::getPage(size_t page) {
   // If page exists, return it
   auto it = pages.find(page);
-  if (it != pages.end()) {
-    return it->second;
-  }
+  if (it != pages.end()) { return it->second; }
   // Otherwise try an expand
   if (expandIfZero(MEMORY_SIZE_PAGES + page)) {
     pages[page] = zeroPage;
@@ -132,9 +122,7 @@ const Digest& MemoryImage::getDigest(size_t idx) const {
   const_cast<MemoryImage*>(this)->expandIfZero(idx);
   // Return digest if available
   auto it = digests.find(idx);
-  if (it != digests.end()) {
-    return it->second;
-  }
+  if (it != digests.end()) { return it->second; }
   // Otherwise fail
   throw std::runtime_error("Attempting to read unavailable digest");
 }
@@ -171,9 +159,7 @@ void MemoryImage::initZeros() {
 void MemoryImage::fixupDigests(size_t idx) {
   while (idx != 1) {
     size_t up = idx / 2;
-    if (!digests.count(2 * up) || !digests.count(2 * up + 1)) {
-      return;
-    }
+    if (!digests.count(2 * up) || !digests.count(2 * up + 1)) { return; }
     Digest left = digests.at(2 * up);
     Digest right = digests.at(2 * up + 1);
     digests[up] = hashPair(left, right);
@@ -189,9 +175,7 @@ bool MemoryImage::isZero(size_t idx) {
     idx /= 2;
     depth--;
   }
-  if (idx == 0) {
-    return false;
-  } // Failed to find a root at all
+  if (idx == 0) { return false; } // Failed to find a root at all
   return digests.at(idx) == zeroDigests[depth];
 }
 

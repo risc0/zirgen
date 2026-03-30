@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,16 +33,12 @@ size_t to_size_t(Val x) {
 
 Val4 operator+(const Val4& lhs, const Val4& rhs) {
   Val4 result;
-  for (size_t i = 0; i != 4; i++) {
-    result[i] = lhs[i] + rhs[i];
-  }
+  for (size_t i = 0; i != 4; i++) { result[i] = lhs[i] + rhs[i]; }
   return result;
 }
 Val4 operator-(const Val4& lhs, const Val4& rhs) {
   Val4 result;
-  for (size_t i = 0; i != 4; i++) {
-    result[i] = lhs[i] + rhs[i];
-  }
+  for (size_t i = 0; i != 4; i++) { result[i] = lhs[i] + rhs[i]; }
   return result;
 }
 Val4 operator*(const Val4& lhs, const Val4& rhs) {
@@ -65,8 +61,7 @@ Val4 operator*(const Val4& lhs, const Val4& rhs) {
 using Reg = size_t;
 
 #define LOAD(REF, BACK) Val(REF.buffer.at(*REF.layout))
-#define LOAD_AS_EXT(REF, BACK)                                                                     \
-  Val4 { LOAD(REF, BACK), 0, 0, 0 }
+#define LOAD_AS_EXT(REF, BACK) Val4{LOAD(REF, BACK), 0, 0, 0}
 #define LOAD_EXT(REF, BACK)                                                                        \
   Val4 {                                                                                           \
     REF.buffer.at(*REF.layout + 0), REF.buffer.at(*REF.layout + 1),                                \
@@ -143,9 +138,7 @@ template <typename C> auto subscript(size_t index, C container) -> typename C::v
 template <typename T, typename U, size_t N>
 std::array<U, N> map(std::array<T, N>& array, std::function<U(T)> f) {
   std::array<U, N> output;
-  for (size_t i = 0; i < N; i++) {
-    output[i] = f(array[i]);
-  }
+  for (size_t i = 0; i < N; i++) { output[i] = f(array[i]); }
   return output;
 }
 
@@ -164,9 +157,7 @@ std::array<U, N> map(std::array<T, N>& valueArray,
 template <typename T, typename U, size_t N>
 U reduce(std::array<T, N>& array, U init, std::function<U(U, T)> f) {
   U output = init;
-  for (T& element : array) {
-    output = f(output, element);
-  }
+  for (T& element : array) { output = f(output, element); }
   return output;
 }
 
@@ -186,7 +177,9 @@ struct Tap {
 };
 
 #define MAKE_TAP(BUF, INDEX, BACK)                                                                 \
-  Tap { .buffer = #BUF, .index = INDEX, .back = BACK }
+  Tap {                                                                                            \
+    .buffer = #BUF, .index = INDEX, .back = BACK                                                   \
+  }
 
 #define INVOKE_EXTERN(CTX, NAME, ...) externs.NAME(__VA_ARGS__)
 
@@ -225,9 +218,7 @@ static void log_impl(std::string& format, const Val* x) {
             u32val |= val << 24;
           }
         }
-        if (*p == 'e') {
-          isU32 = false;
-        }
+        if (*p == 'e') { isU32 = false; }
 
         if (isU32) {
           printf("%*x", len, u32val);

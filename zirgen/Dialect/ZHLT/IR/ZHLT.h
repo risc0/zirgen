@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -45,10 +45,8 @@ ContainerT snippetGetIndex(ContainerT container, llvm::ArrayRef<int32_t> segment
 
 inline bool
 isValidSegmentSizes(llvm::ArrayRef<int32_t> segmentSizes, ssize_t numRaw, size_t numSegmentSizes) {
-  if (segmentSizes.size() != numSegmentSizes)
-    return false;
-  if (std::accumulate(segmentSizes.begin(), segmentSizes.end(), 0) != numRaw)
-    return false;
+  if (segmentSizes.size() != numSegmentSizes) return false;
+  if (std::accumulate(segmentSizes.begin(), segmentSizes.end(), 0) != numRaw) return false;
   return true;
 }
 

@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -132,9 +132,7 @@ int main(int argc, char* argv[]) {
   auto ast = parser.parseModule();
   if (!ast) {
     const auto& errors = parser.getErrors();
-    for (const auto& error : errors) {
-      sourceManager.PrintMessage(llvm::errs(), error);
-    }
+    for (const auto& error : errors) { sourceManager.PrintMessage(llvm::errs(), error); }
     llvm::errs() << "parsing failed with " << errors.size() << " errors\n";
     return 1;
   }
@@ -145,9 +143,7 @@ int main(int argc, char* argv[]) {
   }
 
   std::optional<mlir::ModuleOp> zhlModule = zirgen::dsl::lower(context, sourceManager, ast.get());
-  if (!zhlModule) {
-    return 1;
-  }
+  if (!zhlModule) { return 1; }
 
   if (emitAction == Action::PrintZHL) {
     zhlModule->print(llvm::outs());
@@ -155,9 +151,7 @@ int main(int argc, char* argv[]) {
   }
 
   std::optional<mlir::ModuleOp> typedModule = zirgen::Typing::typeCheck(context, zhlModule.value());
-  if (!typedModule) {
-    return 1;
-  }
+  if (!typedModule) { return 1; }
 
   mlir::PassManager pm(&context);
   applyDefaultTimingPassManagerCLOptions(pm);
@@ -208,8 +202,7 @@ int main(int argc, char* argv[]) {
   }
 
   pm.clear();
-  if (!doTest)
-    pm.addPass(zirgen::Zhlt::createStripTestsPass());
+  if (!doTest) pm.addPass(zirgen::Zhlt::createStripTestsPass());
   zirgen::addTypingPasses(pm);
 
   pm.addPass(zirgen::dsl::createGenerateCheckPass());
@@ -276,9 +269,7 @@ int main(int argc, char* argv[]) {
     return 0;
   }
 
-  if (doTest) {
-    return zirgen::runTests(*typedModule);
-  }
+  if (doTest) { return zirgen::runTests(*typedModule); }
 
   // To generate code for step functions, we copy our module, flatten step functions and move the
   // buffers to arguments.

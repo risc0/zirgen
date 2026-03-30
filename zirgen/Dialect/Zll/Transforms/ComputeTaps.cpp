@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,8 +33,7 @@ struct TapMap {
   TapMap(BuffersAttr bufs) : bufs(bufs) {}
 
   uint32_t getRegGroupId(BlockArgument ba) {
-    if (regGroupIds.contains(ba))
-      return regGroupIds.at(ba);
+    if (regGroupIds.contains(ba)) return regGroupIds.at(ba);
 
     auto func = llvm::cast<mlir::FunctionOpInterface>(ba.getOwner()->getParentOp());
     auto name = func.getArgAttrOfType<StringAttr>(ba.getArgNumber(), "zirgen.argName");
@@ -89,9 +88,7 @@ struct ComputeTapsPass : public ComputeTapsBase<ComputeTapsPass> {
     });
 
     // Make sure none of our three hardcoded buffers are empty.
-    for (auto i : llvm::seq(3)) {
-      tapAttrs.push_back(TapAttr::get(&getContext(), i, 0, 0));
-    }
+    for (auto i : llvm::seq(3)) { tapAttrs.push_back(TapAttr::get(&getContext(), i, 0, 0)); }
 
     setModuleAttr(mod, TapsAttr::sortAndPad(tapAttrs, bufs));
 

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -137,7 +137,7 @@ void ComputeCycleImpl::set(Top top) {
   NONDET {
 #define OPC(id, mnemonic, opc, func3, func7, immFmt, aluA, aluB, aluOp, setPC, setRD, rdEn, next)  \
   if (id / kMinorMuxSize == major) {                                                               \
-    IF(minorSelect->at(id % kMinorMuxSize)) {                                                      \
+    IF (minorSelect->at(id % kMinorMuxSize)) {                                                     \
       control->set(decoder->imm##immFmt(), aluA, aluB, aluOp, next);                               \
     }                                                                                              \
   }
@@ -190,22 +190,18 @@ void ComputeCycleImpl::set(Top top) {
   // Check opcode, verify things done ND earlier, set new pc, set nextMajor, and write to RD
 #define OPC(id, mnemonic, opc, f3, f7, immFmt, aluA, aluB, aluOp, setPC, setRD, rdEn, next)        \
   if (id / kMinorMuxSize == major) {                                                               \
-    IF(minorSelect->at(id % kMinorMuxSize)) {                                                      \
+    IF (minorSelect->at(id % kMinorMuxSize)) {                                                     \
       eq(decoder->opcode(), opc * 4 + 3);                                                          \
-      if (f3 != -1) {                                                                              \
-        eq(decoder->func3(), f3);                                                                  \
-      }                                                                                            \
-      if (f7 != -1) {                                                                              \
-        eq(decoder->func7(), f7);                                                                  \
-      }                                                                                            \
+      if (f3 != -1) { eq(decoder->func3(), f3); }                                                  \
+      if (f7 != -1) { eq(decoder->func7(), f7); }                                                  \
       control->set(decoder->imm##immFmt(), aluA, aluB, aluOp, next);                               \
       body->pc->set(setPC);                                                                        \
       body->nextMajor->set(control->nextMajor);                                                    \
-      IF(rdEn*(1 - rdZero->isZero())) {                                                            \
+      IF (rdEn * (1 - rdZero->isZero())) {                                                         \
         XLOG("  Writing to rd=x%u, val = %w", decoder->rd(), setRD);                               \
         writeRD->doWrite(cycle, kRegisterOffset - 32 * userMode + decoder->rd(), setRD);           \
       }                                                                                            \
-      IF((1 - rdEn) + rdZero->isZero()) { writeRD->doNOP(); }                                      \
+      IF ((1 - rdEn) + rdZero->isZero()) { writeRD->doNOP(); }                                     \
     }                                                                                              \
   }
 #include "zirgen/circuit/rv32im/v1/platform/rv32im.inl"

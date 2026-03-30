@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -119,9 +119,7 @@ Instance::Instance(mlir::Type t, unsigned sz, size_t rows) : type(t), size(sz), 
 size_t Instance::popcount() const {
   size_t out = 0;
   for (size_t row = 0; row < presence.size(); ++row) {
-    if (presence[row]) {
-      ++out;
-    }
+    if (presence[row]) { ++out; }
   }
   return out;
 }
@@ -130,23 +128,13 @@ bool Instance::order(const Instance& left, const Instance& right) {
   auto lpop = left.popcount();
   auto rpop = right.popcount();
   // first, sort by popcount
-  if (lpop > rpop) {
-    return true;
-  }
-  if (lpop < rpop) {
-    return false;
-  }
+  if (lpop > rpop) { return true; }
+  if (lpop < rpop) { return false; }
   // if popcounts are equal, sort by type size
-  if (left.size > right.size) {
-    return true;
-  }
-  if (left.size < right.size) {
-    return false;
-  }
+  if (left.size > right.size) { return true; }
+  if (left.size < right.size) { return false; }
   // If popcounts and sizes are equal, sort by name to stabilize the ordering
-  if (typeName(left.type) > typeName(right.type)) {
-    return true;
-  }
+  if (typeName(left.type) > typeName(right.type)) { return true; }
   return false;
 }
 
@@ -179,9 +167,7 @@ void Column::merge(const Instance& inst) {
 }
 
 void Column::merge(const Column& col) {
-  for (auto& inst : col.instances) {
-    merge(inst);
-  }
+  for (auto& inst : col.instances) { merge(inst); }
 }
 
 bool Column::canAccept(const std::vector<Shape>& gapfill) {
@@ -191,15 +177,11 @@ bool Column::canAccept(const std::vector<Shape>& gapfill) {
   bool found = false;
   unsigned leftpos = 0;
   for (size_t row = 0; row < shapes.size(); ++row) {
-    if (!gapfill[row].present) {
-      continue;
-    }
+    if (!gapfill[row].present) { continue; }
     // Reject any match which would require us to insert padding in order
     // to prevent the merged column from disaligning.
     if (found) {
-      if (leftpos != shapes[row].size) {
-        return false;
-      }
+      if (leftpos != shapes[row].size) { return false; }
     } else {
       found = true;
       leftpos = shapes[row].size;
@@ -210,18 +192,14 @@ bool Column::canAccept(const std::vector<Shape>& gapfill) {
     // A better heuristic would measure the empty space present on the right
     // edge and accept any merge which reduces that total, even if it would
     // increase the overall width of the column.
-    if ((shapes[row].size + gapfill[row].size) > width) {
-      return false;
-    }
+    if ((shapes[row].size + gapfill[row].size) > width) { return false; }
   }
   return true;
 }
 
 MemberCount countFieldTypes(Layout& sl) {
   MemberCount out;
-  for (auto& field : sl.fields) {
-    out[field.type]++;
-  }
+  for (auto& field : sl.fields) { out[field.type]++; }
   return out;
 }
 
@@ -233,9 +211,7 @@ MemberCount overallCount(std::vector<MemberCount>& branches) {
       size_t c = iter.second;
       auto found = overall.find(t);
       if (found != overall.end()) {
-        if (c > found->second) {
-          found->second = c;
-        }
+        if (c > found->second) { found->second = c; }
       } else {
         overall.insert({t, c});
       }
@@ -265,9 +241,7 @@ void Process::tally(std::vector<MemberCount>& branchCounts,
 void Process::columnize(const InstanceTable& instances, ColumnTable& cols) {
   cols.clear();
   cols.reserve(instances.size());
-  for (size_t i = 0; i < instances.size(); ++i) {
-    cols.emplace_back(instances[i]);
-  }
+  for (size_t i = 0; i < instances.size(); ++i) { cols.emplace_back(instances[i]); }
 }
 
 void Process::fillGaps(ColumnTable& cols) {
@@ -288,9 +262,7 @@ void Process::fillGaps(ColumnTable& cols) {
     // the sorting order before we continue examining successive rows.
     size_t dest = i;
     size_t searchpop = cols[i].popcount;
-    while (dest > 0 && cols[dest - 1].popcount < searchpop) {
-      dest--;
-    }
+    while (dest > 0 && cols[dest - 1].popcount < searchpop) { dest--; }
     if (dest != i) {
       auto col = cols[i];
       cols.erase(std::next(cols.begin(), i));
@@ -343,9 +315,7 @@ std::vector<unsigned> Process::rowOffsets(InstanceTable& instances, size_t row) 
   std::vector<unsigned> out;
   unsigned offset = 0;
   for (auto& inst : instances) {
-    if (inst.presence[row]) {
-      out.push_back(offset);
-    }
+    if (inst.presence[row]) { out.push_back(offset); }
     offset += sizes[inst.type];
   }
   return out;
@@ -360,9 +330,7 @@ JobList Process::subalignments(BranchList& branches) {
     unsigned offset = 0;
     for (auto& fi : branches[row].fields) {
       mlir::Type t = fi.type;
-      if (auto at = mlir::dyn_cast<LayoutArrayType>(t)) {
-        t = at.getElement();
-      }
+      if (auto at = mlir::dyn_cast<LayoutArrayType>(t)) { t = at.getElement(); }
       if (auto st = mlir::dyn_cast<LayoutType>(t)) {
         alignments[offset].insert(st);
         offsets[st].insert(offset);
@@ -396,9 +364,7 @@ JobList Process::subalignments(BranchList& branches) {
     if (group->size() > 1) {
       std::vector<LayoutType> subjob;
       subjob.reserve(group->size());
-      for (LayoutType st : *group) {
-        subjob.push_back(st);
-      }
+      for (LayoutType st : *group) { subjob.push_back(st); }
       subjobs.push_back(subjob);
       group->clear();
     }
@@ -410,9 +376,7 @@ std::vector<mlir::Type> extractRow(InstanceTable& instances, size_t row) {
   // Return a sequence of types from one row in the instance table.
   std::vector<mlir::Type> out;
   for (auto& inst : instances) {
-    if (inst.presence[row]) {
-      out.push_back(inst.type);
-    }
+    if (inst.presence[row]) { out.push_back(inst.type); }
   }
   return out;
 }
@@ -423,9 +387,7 @@ void reorder(Layout& sl, const std::vector<mlir::Type>& typeOrder) {
   assert(sl.fields.size() == typeOrder.size());
   for (size_t i = 0; i < typeOrder.size(); ++i) {
     size_t j = i;
-    while (j < sl.fields.size() && sl.fields[j].type != typeOrder[i]) {
-      ++j;
-    }
+    while (j < sl.fields.size() && sl.fields[j].type != typeOrder[i]) { ++j; }
     if (j > i) {
       auto field = sl.fields[j];
       sl.fields.erase(std::next(sl.fields.begin(), j));
@@ -468,9 +430,7 @@ void Process::pad(Layout& sl, const std::vector<unsigned>& offsets, size_t lastA
     auto ctx = sl.fields[index].type.getContext();
     ValType vt = ValType::get(ctx, Zll::kFieldPrimeDefault, 1);
     mlir::Type t = RefType::get(ctx, vt);
-    if (size > 1) {
-      t = LayoutArrayType::get(ctx, t, size);
-    }
+    if (size > 1) { t = LayoutArrayType::get(ctx, t, size); }
     FieldInfo fi;
     fi.name = mlir::StringAttr::get(ctx, "@padding" + std::to_string(index));
     fi.type = t;
@@ -489,9 +449,7 @@ void Process::pad(BranchList& branches, InstanceTable& instances) {
     for (size_t i = 0; i < instances.size(); ++i) {
       if (instances[i].presence[row]) {
         ++col;
-        if (instances[i].popcount() > 1) {
-          lastAlignedCol = col;
-        }
+        if (instances[i].popcount() > 1) { lastAlignedCol = col; }
       }
     }
     // Insert padding as needed to align fields to the specified offsets.
@@ -504,9 +462,7 @@ void Process::align(BranchList& branches, Padding padding) {
   // Tally the occurrences of each type of field across all branches.
   std::vector<MemberCount> branchCounts;
   branchCounts.reserve(nrows);
-  for (auto& b : branches) {
-    branchCounts.emplace_back(countFieldTypes(b));
-  }
+  for (auto& b : branches) { branchCounts.emplace_back(countFieldTypes(b)); }
   // Create a table associating type instances with each branch.
   InstanceTable instances;
   tally(branchCounts, instances);
@@ -524,15 +480,11 @@ void Process::align(BranchList& branches, Padding padding) {
   // Reorder struct layouts to match the resulting presence rows.
   reorder(branches, instances);
   // Insert padding to prevent rightward columns from shifting left.
-  if (padding == Padding::Allow) {
-    pad(branches, instances);
-  }
+  if (padding == Padding::Allow) { pad(branches, instances); }
 }
 
 void Process::update(BranchList& branches, llvm::DenseMap<LayoutType, Layout>& structs) {
-  for (auto& b : branches) {
-    structs[b.original] = b;
-  }
+  for (auto& b : branches) { structs[b.original] = b; }
 }
 
 } // namespace
@@ -546,19 +498,13 @@ void improve(Circuit& circuit) {
     for (auto& fi : ul.fields) {
       if (auto st = mlir::dyn_cast<LayoutType>(fi.type)) {
         // Ignore non-struct members.
-        if (st.getKind() == LayoutKind::Mux || st.getKind() == LayoutKind::MajorMux) {
-          continue;
-        }
+        if (st.getKind() == LayoutKind::Mux || st.getKind() == LayoutKind::MajorMux) { continue; }
         // Ignore structs which have no fields.
-        if (st.getFields().empty()) {
-          continue;
-        }
+        if (st.getFields().empty()) { continue; }
         std::string id = st.getId().str();
         // A union may contain more than one instance of the same struct,
         // but we only need to sort its fields once.
-        if (typeIDs.find(id) != typeIDs.end()) {
-          continue;
-        }
+        if (typeIDs.find(id) != typeIDs.end()) { continue; }
         typeIDs.insert(id);
         branches.push_back(circuit.structs[st]);
       }
@@ -574,9 +520,7 @@ void improve(Circuit& circuit) {
       // Find the structure layouts for this group of type branches.
       BranchList subbranches;
       subbranches.reserve(job.size());
-      for (LayoutType st : job) {
-        subbranches.push_back(circuit.structs[st]);
-      }
+      for (LayoutType st : job) { subbranches.push_back(circuit.structs[st]); }
       // Create an alignment process and reorder the group of structs.
       Process sp(circuit.sizes, subbranches.size());
       sp.align(subbranches, Padding::Forbid);

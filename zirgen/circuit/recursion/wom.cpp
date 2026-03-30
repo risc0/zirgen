@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,9 +39,7 @@ std::vector<Val> WomPlonkElementImpl::toVals() {
 void WomPlonkElementImpl::setFromVals(std::vector<Val> vals) {
   assert(vals.size() == rawSize());
   addr->set(vals[0]);
-  for (size_t i = 0; i < kExtSize; i++) {
-    data[i]->set(vals[i + 1]);
-  }
+  for (size_t i = 0; i < kExtSize; i++) { data[i]->set(vals[i + 1]); }
 }
 
 void WomPlonkElementImpl::setNOP() {
@@ -50,16 +48,12 @@ void WomPlonkElementImpl::setNOP() {
 
 std::array<Val, kExtSize> WomPlonkElementImpl::dataVals() {
   std::array<Val, kExtSize> out;
-  for (size_t i = 0; i < out.size(); i++) {
-    out[i] = data[i]->get();
-  }
+  for (size_t i = 0; i < out.size(); i++) { out[i] = data[i]->get(); }
   return out;
 }
 
 void WomPlonkElementImpl::setData(llvm::ArrayRef<Val> d) {
-  for (size_t i = 0; i < kExtSize; i++) {
-    data[i]->set(d[std::min(i, d.size() - 1)]);
-  }
+  for (size_t i = 0; i < kExtSize; i++) { data[i]->set(d[std::min(i, d.size() - 1)]); }
 }
 
 void WomPlonkVerifierImpl::verify(WomPlonkElement a,
@@ -73,10 +67,8 @@ void WomPlonkVerifierImpl::verify(WomPlonkElement a,
   // Verify it is zero or one
   eqz(addrDiff * (1 - addrDiff));
   // If it's one, we don't verify anything, if it's 0 data must match
-  IF(1 - addrDiff) {
-    for (size_t i = 0; i < kExtSize; i++) {
-      eq(BACK(back, a->data[i]->get()), b->data[i]->get());
-    }
+  IF (1 - addrDiff) {
+    for (size_t i = 0; i < kExtSize; i++) { eq(BACK(back, a->data[i]->get()), b->data[i]->get()); }
   }
 }
 
@@ -133,9 +125,7 @@ WomExternHandler::doExtern(llvm::StringRef name,
       throw std::runtime_error("INVALID WOM WRITE");
     }
     std::array<uint64_t, kExtSize> data;
-    for (size_t i = 0; i < data.size(); i++) {
-      data[i] = args[1 + i]->getBaseFieldVal();
-    }
+    for (size_t i = 0; i < data.size(); i++) { data[i] = args[1 + i]->getBaseFieldVal(); }
     state[addr] = data;
     return std::vector<uint64_t>{};
   }

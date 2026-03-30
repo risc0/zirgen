@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,19 +27,16 @@ struct GetBufferPattern : public OpRewritePattern<ZStruct::GetBufferOp> {
   GetBufferPattern(MLIRContext* ctx, StringRef bufName) : OpRewritePattern(ctx), bufName(bufName) {}
 
   LogicalResult matchAndRewrite(GetBufferOp getBufOp, PatternRewriter& rewriter) const final {
-    if (getBufOp.getName() != bufName)
-      return failure();
+    if (getBufOp.getName() != bufName) return failure();
 
     auto funcOp = getBufOp->getParentOfType<FunctionOpInterface>();
-    if (!funcOp)
-      return failure();
+    if (!funcOp) return failure();
 
     // Search any existing arguments for one with the same name as the buffer
     Value bufArg;
     for (auto [argIdx, arg] : llvm::enumerate(funcOp.getArguments())) {
       auto argNameAttr = funcOp.getArgAttrOfType<StringAttr>(argIdx, "zirgen.argName");
-      if (!argNameAttr || argNameAttr != bufName)
-        continue;
+      if (!argNameAttr || argNameAttr != bufName) continue;
       assert(!bufArg && "Duplicate arg name?");
       bufArg = arg;
     }

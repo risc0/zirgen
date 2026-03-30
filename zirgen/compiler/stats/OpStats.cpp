@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -152,13 +152,11 @@ public:
     // Accumulate for any `FileLineColLoc` or `NameLoc`s that occur anywhere in the call chain
     loc->walk([&](Location subLoc) {
       if (llvm::isa<FileLineColLoc>(subLoc)) {
-        if (seenAny.insert(subLoc).second)
-          locs[subLoc].anyCum += c;
+        if (seenAny.insert(subLoc).second) locs[subLoc].anyCum += c;
       } else if (auto nameLoc = llvm::dyn_cast<NameLoc>(subLoc)) {
         // Strip out inner location, and just count name.
         nameLoc = NameLoc::get(nameLoc.getName());
-        if (seenAny.insert(nameLoc).second)
-          locs[nameLoc].anyCum += c;
+        if (seenAny.insert(nameLoc).second) locs[nameLoc].anyCum += c;
       }
       return WalkResult::advance();
     });
@@ -174,8 +172,7 @@ public:
         for (auto subLoc : fusedLoc.getLocations()) {
           AttrTypeReplacer replacer;
           replacer.addReplacement([&](LocationAttr replaceLoc) -> Attribute {
-            if (replaceLoc == fusedLoc)
-              return subLoc;
+            if (replaceLoc == fusedLoc) return subLoc;
             return replaceLoc;
           });
           workList.push_back(llvm::cast<Location>(replacer.replace(subLoc)));
@@ -189,9 +186,7 @@ public:
     // fused together, to ensure that the elements of the `flat`
     // column always sum up to 100%.
     double flatC = c / locList.size();
-    for (Location loc : locList) {
-      countLocImpl(loc, c, flatC);
-    }
+    for (Location loc : locList) { countLocImpl(loc, c, flatC); }
   }
 
   SmallVector<std::pair<Location, LocStat>> toVector() const {
@@ -224,24 +219,20 @@ private:
   }
 
   void countLocImpl(Location loc, double c, double flatC) {
-    if (seenFlat.insert(loc).second)
-      locs[loc].flat += flatC;
+    if (seenFlat.insert(loc).second) locs[loc].flat += flatC;
     if (auto callSiteLoc = llvm::dyn_cast<CallSiteLoc>(loc)) {
       SmallVector<Location> chain;
       getCallSiteChain(callSiteLoc, chain);
 
       for (auto idx : llvm::seq<size_t>(1, chain.size())) {
         auto insideLoc = makeCallChain(ArrayRef(chain).slice(0, idx));
-        if (seenInside.insert(insideLoc).second)
-          locs[insideLoc].insideCum += c;
+        if (seenInside.insert(insideLoc).second) locs[insideLoc].insideCum += c;
         auto outsideLoc = makeCallChain(ArrayRef(chain).slice(chain.size() - idx));
-        if (seenOutside.insert(outsideLoc).second)
-          locs[outsideLoc].outsideCum += c;
+        if (seenOutside.insert(outsideLoc).second) locs[outsideLoc].outsideCum += c;
       }
     } else {
       loc->walk([&](Location subLoc) {
-        if (loc == subLoc)
-          return WalkResult::advance();
+        if (loc == subLoc) return WalkResult::advance();
         countLocImpl(subLoc, c, flatC);
         return WalkResult::skip();
       });
@@ -261,9 +252,7 @@ private:
 template <typename OpT, size_t K, typename FpT> double BogoCycleAnalysis::getOrCalcBogoCycles() {
   std::pair<mlir::StringLiteral, size_t> id = std::make_pair(OpT::getOperationName(), K);
   auto it = bogoCycles.find(id);
-  if (it != bogoCycles.end()) {
-    return it->second;
-  }
+  if (it != bogoCycles.end()) { return it->second; }
 
   std::random_device rndDev;
   std::mt19937 rnd(rndDev());
@@ -271,9 +260,7 @@ template <typename OpT, size_t K, typename FpT> double BogoCycleAnalysis::getOrC
   auto f = runOp<OpT>();
 
   llvm::TimeRecord beginTime = llvm::TimeRecord::getCurrentTime(/*start=*/true);
-  for (size_t i = 0; i != kNumIter; ++i) {
-    val = f(val);
-  }
+  for (size_t i = 0; i != kNumIter; ++i) { val = f(val); }
   llvm::TimeRecord totTime = llvm::TimeRecord::getCurrentTime(/*start=*/false);
   totTime -= beginTime;
 
@@ -317,8 +304,7 @@ void BogoCycleAnalysis::printStatsIfRequired(Operation* topOp, llvm::raw_ostream
 
   topOp->walk([&](Operation* op) {
     double c = getBogoCycles(op);
-    if (!c)
-      return;
+    if (!c) return;
 
     totCycles += c;
     locStats.countLoc(op->getLoc(), c);

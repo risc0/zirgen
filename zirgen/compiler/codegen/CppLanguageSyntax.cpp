@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -71,8 +71,7 @@ void emitRawFuncDeclaration(CodegenEmitter& cg,
   cg << " " << funcName << "(";
   if (!contextArgDecls.empty()) {
     cg.interleaveComma(contextArgDecls, [&](auto contextArg) { cg << EmitPart(contextArg); });
-    if (!argNames.empty())
-      cg << ",";
+    if (!argNames.empty()) cg << ",";
   }
   cg.interleaveComma(zip(argNames, funcType.getInputs()), [&](auto vt) {
     auto argName = std::get<0>(vt);
@@ -115,13 +114,9 @@ void CppLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
 void CppLanguageSyntax::emitReturn(CodegenEmitter& cg, llvm::ArrayRef<CodegenValue> values) {
 
   cg << "return ";
-  if (values.size() > 1) {
-    cg << "std::make_tuple(";
-  }
+  if (values.size() > 1) { cg << "std::make_tuple("; }
   cg.interleaveComma(values);
-  if (values.size() > 1) {
-    cg << ")";
-  }
+  if (values.size() > 1) { cg << ")"; }
   cg << ";\n";
 }
 
@@ -164,8 +159,7 @@ void CppLanguageSyntax::emitCall(CodegenEmitter& cg,
   cg << callee << "(";
   if (!contextArgs.empty()) {
     cg.interleaveComma(contextArgs, [&](auto contextArg) { cg << EmitPart(contextArg); });
-    if (!args.empty())
-      cg << ",";
+    if (!args.empty()) cg << ",";
   }
   cg.interleaveComma(args);
   cg << ")";
@@ -176,14 +170,12 @@ void CppLanguageSyntax::emitInvokeMacro(CodegenEmitter& cg,
                                         llvm::ArrayRef<StringRef> contextArgs,
                                         llvm::ArrayRef<EmitPart> emitArgs) {
   cg << callee;
-  if (contextArgs.empty() && emitArgs.empty())
-    return;
+  if (contextArgs.empty() && emitArgs.empty()) return;
 
   cg << "(";
   if (!contextArgs.empty()) {
     cg.interleaveComma(contextArgs, [&](auto contextArg) { cg << EmitPart(contextArg); });
-    if (!emitArgs.empty())
-      cg << ",";
+    if (!emitArgs.empty()) cg << ",";
   }
   cg.interleaveComma(emitArgs);
   cg << ")";
@@ -195,8 +187,7 @@ std::string CppLanguageSyntax::canonIdent(llvm::StringRef ident, IdentKind kind)
   case IdentKind::Field:
   case IdentKind::Func: {
     std::string str = convertToCamelFromSnakeCase(ident);
-    if (!str.empty())
-      str[0] = llvm::toLower(str[0]);
+    if (!str.empty()) str[0] = llvm::toLower(str[0]);
     return str;
   }
   case IdentKind::Type:
@@ -274,8 +265,7 @@ void CppLanguageSyntax::emitMapConstruct(CodegenEmitter& cg,
                                          llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                                          mlir::Region& body) {
   cg << "map(" << array << ", ";
-  if (layout)
-    cg << *layout << ", ";
+  if (layout) cg << *layout << ", ";
   cg << "([&](";
   cg << cg.getTypeName(array.getType()) << "::value_type " << argNames[0];
   if (layout)
@@ -292,9 +282,7 @@ void CppLanguageSyntax::emitReduceConstruct(CodegenEmitter& cg,
                                             llvm::ArrayRef<CodegenIdent<IdentKind::Var>> argNames,
                                             mlir::Region& body) {
   cg << "reduce(" << array << ", " << init << ", ";
-  if (layout) {
-    cg << *layout << ", ";
-  }
+  if (layout) { cg << *layout << ", "; }
   cg << "([&](";
   cg << cg.getTypeName(init.getType()) << " " << argNames[0] << ", "
      << cg.getTypeName(array.getType()) << "::value_type " << argNames[1];

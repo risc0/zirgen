@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
 
 #include "mlir/IR/Types.h"
 #include "mlir/IR/Builders.h"
-//#include "mlir/IR/BuiltinTypes.h"
-//#include "mlir/IR/Diagnostics.h"
-//#include "mlir/IR/DialectImplementation.h"
-//#include "mlir/IR/PatternMatch.h"
-//#include "mlir/IR/StorageUniquerSupport.h"
-//#include "llvm/ADT/StringExtras.h"
-//#include "llvm/ADT/TypeSwitch.h"
+// #include "mlir/IR/BuiltinTypes.h"
+// #include "mlir/IR/Diagnostics.h"
+// #include "mlir/IR/DialectImplementation.h"
+// #include "mlir/IR/PatternMatch.h"
+// #include "mlir/IR/StorageUniquerSupport.h"
+// #include "llvm/ADT/StringExtras.h"
+// #include "llvm/ADT/TypeSwitch.h"
 
 namespace zirgen::R1CS {
 

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,10 +52,8 @@ void addRustSyntax(codegen::CodegenOptions& opts) {
     auto elemType = op.getRef().getType().getElement();
 
     cg << op.getRef() << ".load";
-    if (op->getAttr("unchecked"))
-      cg << "_unchecked";
-    if (elemType.getExtended())
-      cg << "_ext::<ExtVal>";
+    if (op->getAttr("unchecked")) cg << "_unchecked";
+    if (elemType.getExtended()) cg << "_ext::<ExtVal>";
     cg << "(ctx, " << op.getDistance() << ")";
   });
 
@@ -63,9 +61,7 @@ void addRustSyntax(codegen::CodegenOptions& opts) {
     auto elemType = op.getRef().getType().getElement();
 
     cg << op.getRef() << ".store";
-    if (elemType.getExtended()) {
-      cg << "_ext";
-    }
+    if (elemType.getExtended()) { cg << "_ext"; }
     cg << "(ctx, " << op.getVal() << ")";
   });
 }

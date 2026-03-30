@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,9 +20,7 @@ inline void fail() {
 
 inline void sys_log(const char* str) {
   unsigned len = 0;
-  while (str[len]) {
-    len++;
-  }
+  while (str[len]) { len++; }
 
   register uintptr_t t0 asm("t0") = 2; // SOFTWARE
   register uintptr_t a0 asm("a0") = 0; // nullptr

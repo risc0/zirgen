@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,9 +21,7 @@ namespace zirgen::rv32im_v1 {
 
 struct GlobalDigestImpl : public CompImpl<GlobalDigestImpl> {
   GlobalDigestImpl() {
-    for (size_t i = 0; i < kDigestWords; i++) {
-      words.emplace_back(Label("word", i), "out");
-    }
+    for (size_t i = 0; i < kDigestWords; i++) { words.emplace_back(Label("word", i), "out"); }
   }
 
   std::vector<U32Reg> words;

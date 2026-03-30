@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,9 +44,7 @@ std::unique_ptr<llvm::raw_fd_ostream> openOutputFile(const std::string& path,
   std::string filename = path + "/" + name;
   std::error_code ec;
   auto ofs = std::make_unique<llvm::raw_fd_ostream>(filename, ec);
-  if (ec) {
-    throw std::runtime_error("Unable to open file: " + filename);
-  }
+  if (ec) { throw std::runtime_error("Unable to open file: " + filename); }
   return ofs;
 }
 
@@ -62,13 +60,9 @@ void emitRecursion(const std::string& path, func::FuncOp func, recursion::Encode
   ofs->write(reinterpret_cast<const char*>(encoded.data()), encoded.size() * sizeof(uint32_t));
 
   std::map<uint64_t, mlir::Location> locs;
-  for (const auto& elem : toId) {
-    locs.emplace(elem.second, elem.first.getLoc());
-  }
+  for (const auto& elem : toId) { locs.emplace(elem.second, elem.first.getLoc()); }
   auto debugOfs = openOutputFile(path, name + ".zkr.dbg");
-  for (const auto& elem : locs) {
-    *debugOfs << elem.first << " <- " << elem.second << "\n";
-  }
+  for (const auto& elem : locs) { *debugOfs << elem.first << " <- " << elem.second << "\n"; }
 }
 
 std::unique_ptr<mlir::OperationPass<mlir::func::FuncOp>>

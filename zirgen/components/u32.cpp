@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,9 +17,7 @@
 namespace zirgen {
 
 U32RegImpl::U32RegImpl(llvm::StringRef source) {
-  for (size_t i = 0; i < 4; i++) {
-    bytes.emplace_back(Label("byte", i), source);
-  }
+  for (size_t i = 0; i < 4; i++) { bytes.emplace_back(Label("byte", i), source); }
 }
 
 U32Val U32Val::underflowProtect() {
@@ -28,34 +26,24 @@ U32Val U32Val::underflowProtect() {
 
 void eq(U32Val a, U32Val b, SourceLoc loc) {
   OverrideLocation local(loc);
-  for (size_t i = 0; i < 4; i++) {
-    eq(a.bytes[i], b.bytes[i]);
-  }
+  for (size_t i = 0; i < 4; i++) { eq(a.bytes[i], b.bytes[i]); }
 }
 
 void U32RegImpl::setZero() {
-  for (size_t i = 0; i < 4; i++) {
-    bytes[i]->set(0);
-  }
+  for (size_t i = 0; i < 4; i++) { bytes[i]->set(0); }
 }
 
 void U32RegImpl::set(U32Val in) {
-  for (size_t i = 0; i < 4; i++) {
-    bytes[i]->set(in.bytes[i]);
-  }
+  for (size_t i = 0; i < 4; i++) { bytes[i]->set(in.bytes[i]); }
 }
 
 void U32RegImpl::setWithFactor(U32Val in, Val factor) {
-  for (size_t i = 0; i < 4; i++) {
-    bytes[i]->set(in.bytes[i] * factor);
-  }
+  for (size_t i = 0; i < 4; i++) { bytes[i]->set(in.bytes[i] * factor); }
 }
 
 U32Val U32RegImpl::get() {
   U32Val out;
-  for (size_t i = 0; i < 4; i++) {
-    out.bytes[i] = bytes[i];
-  }
+  for (size_t i = 0; i < 4; i++) { out.bytes[i] = bytes[i]; }
   return out;
 }
 
@@ -87,47 +75,35 @@ Val U32RegImpl::getSmallUnsigned() {
 
 std::vector<Val> U32RegImpl::toVals() {
   std::vector<Val> out;
-  for (size_t i = 0; i < 4; i++) {
-    out.push_back(bytes[i]);
-  }
+  for (size_t i = 0; i < 4; i++) { out.push_back(bytes[i]); }
   return out;
 }
 
 void U32RegImpl::setFromVals(std::vector<Val> vals) {
-  for (size_t i = 0; i < 4; i++) {
-    bytes[i]->set(vals[i]);
-  }
+  for (size_t i = 0; i < 4; i++) { bytes[i]->set(vals[i]); }
 }
 
 U32Val operator+(U32Val a, U32Val b) {
   U32Val out;
-  for (size_t i = 0; i < 4; i++) {
-    out.bytes[i] = a.bytes[i] + b.bytes[i];
-  }
+  for (size_t i = 0; i < 4; i++) { out.bytes[i] = a.bytes[i] + b.bytes[i]; }
   return out;
 }
 
 U32Val operator-(U32Val a, U32Val b) {
   U32Val out;
-  for (size_t i = 0; i < 4; i++) {
-    out.bytes[i] = a.bytes[i] - b.bytes[i];
-  }
+  for (size_t i = 0; i < 4; i++) { out.bytes[i] = a.bytes[i] - b.bytes[i]; }
   return out;
 }
 
 U32Val operator*(Val scalar, U32Val a) {
   U32Val out;
-  for (size_t i = 0; i < 4; i++) {
-    out.bytes[i] = scalar * a.bytes[i];
-  }
+  for (size_t i = 0; i < 4; i++) { out.bytes[i] = scalar * a.bytes[i]; }
   return out;
 }
 
 U32Val operator&(U32Val a, U32Val b) {
   U32Val out;
-  for (size_t i = 0; i < 4; i++) {
-    out.bytes[i] = a.bytes[i] & b.bytes[i];
-  }
+  for (size_t i = 0; i < 4; i++) { out.bytes[i] = a.bytes[i] & b.bytes[i]; }
   return out;
 }
 
@@ -186,10 +162,10 @@ void U32Po2Impl::onVerify() {
   // Get the po2 value
   U32Val po2 = out->get();
   // Check that all the non-matching bytes are zero
-  IF(1 - topIs0) { eqz(po2.bytes[0]); }
-  IF(1 - topIs1) { eqz(po2.bytes[1]); }
-  IF(1 - topIs2) { eqz(po2.bytes[2]); }
-  IF(1 - topIs3) { eqz(po2.bytes[3]); }
+  IF (1 - topIs0) { eqz(po2.bytes[0]); }
+  IF (1 - topIs1) { eqz(po2.bytes[1]); }
+  IF (1 - topIs2) { eqz(po2.bytes[2]); }
+  IF (1 - topIs3) { eqz(po2.bytes[3]); }
   // Get the byte in question
   Val byte =
       topIs0 * po2.bytes[0] + topIs1 * po2.bytes[1] + topIs2 * po2.bytes[2] + topIs3 * po2.bytes[3];
@@ -199,9 +175,7 @@ void U32Po2Impl::onVerify() {
 
 void U32Po2Impl::set(Val in) {
   NONDET {
-    for (size_t i = 0; i < 5; i++) {
-      bits[i]->set((in & (1 << i)) / (1 << i));
-    }
+    for (size_t i = 0; i < 5; i++) { bits[i]->set((in & (1 << i)) / (1 << i)); }
     Val byte = (1 + 15 * bits[2]) * (1 + 3 * bits[1]) * (1 + bits[0]);
     Val top = 2 * bits[4] + bits[3];
     U32Val outVal = {
@@ -213,9 +187,7 @@ void U32Po2Impl::set(Val in) {
 
 Val U32Po2Impl::get() {
   Val tot = 0;
-  for (size_t i = 0; i < 5; i++) {
-    tot = tot + bits[i] * (1 << i);
-  }
+  for (size_t i = 0; i < 5; i++) { tot = tot + bits[i] * (1 << i); }
   return tot;
 }
 
@@ -239,9 +211,7 @@ void U32MulImpl::set(U32Val inA, U32Val inB, Val signedA, Val signedB) {
       int diag = 2 * i + p;
       for (int y = 0; y < 4; y++) {
         int x = diag - y;
-        if (x >= 4 || x < 0) {
-          continue;
-        }
+        if (x >= 4 || x < 0) { continue; }
         subTotal = subTotal + inA.bytes[x] * inB.bytes[y];
       }
       tot = tot + subTotal * (p ? 256 : 1);
@@ -256,9 +226,7 @@ void U32MulImpl::set(U32Val inA, U32Val inB, Val signedA, Val signedB) {
     }
     tot = outRegs[i * 3 + 0]->set(tot);
     tot = outRegs[i * 3 + 1]->set(tot);
-    if (i < 3) {
-      tot = outRegs[i * 3 + 2]->set(tot);
-    }
+    if (i < 3) { tot = outRegs[i * 3 + 2]->set(tot); }
     carry[i]->set(tot);
   }
 }

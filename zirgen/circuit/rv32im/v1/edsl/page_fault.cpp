@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -57,11 +57,11 @@ void PageFaultCycleImpl::set(Top top) {
   PageTableInfo info;
 
   isRootIndex->set(pageIndex - info.rootIndex);
-  IF(isRootIndex->isZero()) {
+  IF (isRootIndex->isZero()) {
     repeat->set(info.numRootEntries / 2);
     indexOffset->set((info.rootAddr - info.lastAddr) / kDigestWords);
   }
-  IF(1 - isRootIndex->isZero()) {
+  IF (1 - isRootIndex->isZero()) {
     repeat->set(kPageSize / (kBlockSize * kWordSize));
     indexOffset->set(0);
   }
@@ -71,7 +71,7 @@ void PageFaultCycleImpl::set(Top top) {
   stateOut->set(entryAddr);
   stateIn->set(kShaInitOffset);
 
-  IF(1 - isDone) {
+  IF (1 - isDone) {
     // Disallow the first 'null' page
     Val lowerBound = 1;
     Val upperBound = info.rootIndex + 1;
@@ -87,7 +87,7 @@ void PageFaultCycleImpl::set(Top top) {
     body->nextMajor->set(MajorType::kShaInit);
   }
 
-  IF(isDone) {
+  IF (isDone) {
     ltBound.set(0);
     gtBound.set(0);
     body->nextMajor->set(MajorType::kHalt);

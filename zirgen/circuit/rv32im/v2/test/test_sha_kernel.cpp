@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -77,12 +77,8 @@ static constexpr uint32_t SHA_INIT[8] = {
 };
 
 static constexpr uint8_t parseHex(char x) {
-  if (x >= 'a' && x <= 'f') {
-    return 10 + x - 'a';
-  }
-  if (x >= '0' && x <= '9') {
-    return x - '0';
-  }
+  if (x >= 'a' && x <= 'f') { return 10 + x - 'a'; }
+  if (x >= '0' && x <= '9') { return x - '0'; }
   die();
   return 0;
 }
@@ -92,9 +88,7 @@ void compareHex(uint32_t* words, const char* str) {
   for (size_t i = 0; i < 32; i++) {
     uint8_t highNibble = parseHex(*str++);
     uint8_t lowNibble = parseHex(*str++);
-    if (asBytes[i] != highNibble * 16 + lowNibble) {
-      die();
-    }
+    if (asBytes[i] != highNibble * 16 + lowNibble) { die(); }
   }
 }
 

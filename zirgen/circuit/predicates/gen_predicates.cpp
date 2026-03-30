@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -260,9 +260,7 @@ int main(int argc, char* argv[]) {
       module, "union", [&](Assumption left, Assumption right) { return unionFunc(left, right); });
 
   mlir::PassManager pm(module.getModule()->getContext());
-  if (failed(applyPassManagerCLOptions(pm))) {
-    exit(1);
-  }
+  if (failed(applyPassManagerCLOptions(pm))) { exit(1); }
   module.addOptimizationPasses(pm);
   pm.nest<mlir::func::FuncOp>().addPass(createEmitRecursionPass(outputDir));
 

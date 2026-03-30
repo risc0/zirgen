@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 #include "zirgen/Dialect/R1CS/IR/R1CS.h"
 
 #include "mlir/IR/Builders.h"
-//#include "mlir/IR/PatternMatch.h"
+// #include "mlir/IR/PatternMatch.h"
 
 #define GET_OP_CLASSES
 #include "zirgen/Dialect/R1CS/IR/Ops.cpp.inc"

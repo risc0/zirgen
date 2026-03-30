@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -57,12 +57,10 @@ template <typename T, typename U> static bool subtype_compare(const U& left, con
 }
 
 template <typename T> static bool vec_compare(const T& left, const T& right) {
-  if (left.size() != right.size())
-    return false;
+  if (left.size() != right.size()) return false;
 
   for (size_t i = 0; i < left.size(); i++) {
-    if (!(*left[i] == *right[i]))
-      return false;
+    if (!(*left[i] == *right[i])) return false;
   }
 
   return true;
@@ -71,8 +69,7 @@ template <typename T> static bool vec_compare(const T& left, const T& right) {
 Expression::Expression(Kind kind, SMLoc loc) : Node(std::move(loc)), kind(kind) {}
 
 bool operator==(const Expression& left, const Expression& right) {
-  if (left.getKind() != right.getKind())
-    return false;
+  if (left.getKind() != right.getKind()) return false;
 
   switch (left.getKind()) {
   case Expression::Kind::Literal:
@@ -110,8 +107,7 @@ bool operator==(const Expression& left, const Expression& right) {
 Statement::Statement(Kind kind, SMLoc loc) : Node(std::move(loc)), kind(kind) {}
 
 bool operator==(const Statement& left, const Statement& right) {
-  if (left.getKind() != right.getKind())
-    return false;
+  if (left.getKind() != right.getKind()) return false;
 
   switch (left.getKind()) {
   case Statement::Kind::Definition:
@@ -341,9 +337,7 @@ void Block::print(ostream& os) const {
   JSON::Dict dict(os);
   dict.attr_string("class", "Block");
   dict.attr_array("body", body);
-  if (value) {
-    dict.attr_dict("value", value);
-  }
+  if (value) { dict.attr_dict("value", value); }
 }
 
 bool Block::classof(const Expression* e) {
@@ -671,9 +665,7 @@ template <typename T> void Dict::attr_dict(StringRef k, T&& v) {
 template <typename T> void Dict::attr_array(StringRef k, T& v) {
   emit_key(k);
   Array a(out);
-  for (auto& e : v) {
-    a.emit_dict(e);
-  }
+  for (auto& e : v) { a.emit_dict(e); }
 }
 
 void Dict::emit_key(StringRef k) {

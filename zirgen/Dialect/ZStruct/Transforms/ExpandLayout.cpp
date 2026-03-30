@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -71,16 +71,13 @@ struct LayoutExpander {
       // Only expand structs and arrays
       return attr;
 
-    if (layouts.contains(attr)) {
-      return layouts.at(attr);
-    }
+    if (layouts.contains(attr)) { return layouts.at(attr); }
 
     // If we only have a couple of substructures, don't bother expanding this one.
     size_t numSubattrs = 0;
     constexpr size_t kMaxSubattrs = 3;
     if (!attr.walk([&](StructAttr structAttr) {
-               if (++numSubattrs > kMaxSubattrs)
-                 return WalkResult::interrupt();
+               if (++numSubattrs > kMaxSubattrs) return WalkResult::interrupt();
                return WalkResult::advance();
              })
              .wasInterrupted()) {

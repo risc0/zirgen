@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,11 +25,9 @@ public:
   virtual ~EmitZhlt() = default;
 
   mlir::LogicalResult emitDefs() {
-    if (failed(doValType()))
-      return mlir::failure();
+    if (failed(doValType())) return mlir::failure();
 
-    if (failed(doBuffers()))
-      return mlir::failure();
+    if (failed(doBuffers())) return mlir::failure();
 
     return mlir::success();
   }

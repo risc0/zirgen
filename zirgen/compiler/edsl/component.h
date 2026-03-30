@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -187,9 +187,7 @@ template <typename T> struct CompImpl : public std::enable_shared_from_this<T> {
   // for cases like allocatable components that might not be used
   // where they're defined.
   void saveLabel(llvm::StringRef label) {
-    if (label.empty()) {
-      return;
-    }
+    if (label.empty()) { return; }
     auto prev = CompContext::getCurConstruct();
     if (prev->subcomponents.count(label.str())) {
       llvm::errs() << "Duplicate label being copied to a new component: " << label << "\n";

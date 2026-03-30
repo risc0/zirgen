@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,8 +34,7 @@ raw_ostream& operator<<(raw_ostream& os, const LayoutDAG& layout) {
 
 const LayoutDAG& LayoutDAG::resolve() const {
   const LayoutDAG* layout = this;
-  while (const auto* ptr = std::get_if<LayoutDAG::Ptr>(layout))
-    layout = ptr->get();
+  while (const auto* ptr = std::get_if<LayoutDAG::Ptr>(layout)) layout = ptr->get();
   return *layout;
 }
 
@@ -58,8 +57,7 @@ LayoutDAG::Ptr LayoutDAG::lookup(StringAttr member) {
   const LayoutDAG& layout = resolve();
   const auto& base = std::get<AbstractStructure>(layout);
   for (auto field : base.fields) {
-    if (field.first == member)
-      return field.second;
+    if (field.first == member) return field.second;
   }
   llvm_unreachable("missing member of abstract struct");
   return nullptr;
@@ -98,12 +96,10 @@ LogicalResult LayoutDAG::unify(Ptr lhs, Ptr rhs) {
   assert(lhsResolved.getType() == rhsResolved.getType());
 
   // A layout trivially unifies with itself
-  if (&lhsResolved == &rhsResolved)
-    return success();
+  if (&lhsResolved == &rhsResolved) return success();
 
   // Different kinds of layouts cannot unify
-  if (lhsResolved.index() != rhsResolved.index())
-    return failure();
+  if (lhsResolved.index() != rhsResolved.index()) return failure();
 
   if (std::holds_alternative<AbstractRegister>(lhsResolved) &&
       std::holds_alternative<AbstractRegister>(rhsResolved)) {
@@ -111,15 +107,13 @@ LogicalResult LayoutDAG::unify(Ptr lhs, Ptr rhs) {
   } else if (auto* lhsArr = std::get_if<AbstractArray>(&lhsResolved);
              auto* rhsArr = std::get_if<AbstractArray>(&rhsResolved)) {
     for (size_t i = 0; i < lhsArr->elements.size(); i++) {
-      if (failed(unify(lhsArr->elements[i], rhsArr->elements[i])))
-        return failure();
+      if (failed(unify(lhsArr->elements[i], rhsArr->elements[i]))) return failure();
     }
   } else if (auto* lhsStr = std::get_if<AbstractStructure>(&lhsResolved);
              auto* rhsStr = std::get_if<AbstractStructure>(&rhsResolved)) {
     for (size_t i = 0; i < lhsStr->fields.size(); i++) {
       assert(lhsStr->fields[i].first == rhsStr->fields[i].first);
-      if (failed(unify(lhsStr->fields[i].second, rhsStr->fields[i].second)))
-        return failure();
+      if (failed(unify(lhsStr->fields[i].second, rhsStr->fields[i].second))) return failure();
     }
   } else {
     llvm_unreachable("unhandled case");
@@ -133,16 +127,14 @@ namespace {
 using Memo = std::map<LayoutDAG::Ptr, LayoutDAG::Ptr>;
 
 LayoutDAG::Ptr clone_helper(LayoutDAG::Ptr layout, Memo& memo) {
-  if (memo.count(layout))
-    return memo.at(layout);
+  if (memo.count(layout)) return memo.at(layout);
 
   LayoutDAG::Ptr result;
   if (auto* reg = std::get_if<AbstractRegister>(layout.get())) {
     result = std::make_shared<LayoutDAG>(*reg);
   } else if (auto* arr = std::get_if<AbstractArray>(layout.get())) {
     SmallVector<LayoutDAG::Ptr> elements;
-    for (auto element : arr->elements)
-      elements.push_back(clone_helper(element, memo));
+    for (auto element : arr->elements) elements.push_back(clone_helper(element, memo));
     result = std::make_shared<LayoutDAG>(AbstractArray{arr->type, elements});
   } else if (auto* str = std::get_if<AbstractStructure>(layout.get())) {
     SmallVector<std::pair<StringAttr, LayoutDAG::Ptr>> fields;
@@ -208,8 +200,7 @@ void LayoutDAGAnalysis::visitOp(SubscriptOp op) {
         getOrCreateFor<Lattice<ConstantValue>>(getProgramPointAfter(op), op.getIndex())->getValue();
     if (baseLayout->getValue().isDefined() && !indexValue.isUninitialized()) {
       Attribute indexAttr = indexValue.getConstantValue();
-      if (!indexAttr)
-        return;
+      if (!indexAttr) return;
       size_t index = extractIntAttr(indexAttr);
       LayoutDAG::Ptr sublayout = baseLayout->getValue().get()->subscript(index);
       auto* lattice = getOrCreate<Element>(op.getOut());

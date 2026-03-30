@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,9 +49,7 @@ TapsAnalysis::TapsAnalysis(Operation* op) : ctx(op->getContext()) {
   }
 
   tapSet.tapCount = tapAttrs.size();
-  if (tapAttrs.empty()) {
-    return;
-  }
+  if (tapAttrs.empty()) { return; }
   for (auto [index, backs] : llvm::enumerate(backCombos)) {
     auto backVec = llvm::to_vector(backs);
     auto comboAttr = comboToAttr(backVec);
@@ -63,8 +61,7 @@ TapsAnalysis::TapsAnalysis(Operation* op) : ctx(op->getContext()) {
   unsigned tapPos = 0;
   for (auto [regGroupId, regGroup] : backsByReg) {
     // Fill in any empty groups
-    while (tapSet.groups.size() < regGroupId)
-      tapSet.groups.emplace_back();
+    while (tapSet.groups.size() < regGroupId) tapSet.groups.emplace_back();
 
     auto& group = tapSet.groups.emplace_back();
     for (auto [reg, backs] : regGroup) {
@@ -76,9 +73,7 @@ TapsAnalysis::TapsAnalysis(Operation* op) : ctx(op->getContext()) {
   }
   assert(tapPos == tapAttrs.size());
 
-  for (auto [idx, tapAttr] : llvm::enumerate(tapAttrs)) {
-    tapIndex[tapAttr] = idx;
-  }
+  for (auto [idx, tapAttr] : llvm::enumerate(tapAttrs)) { tapIndex[tapAttr] = idx; }
 }
 
 mlir::ArrayAttr TapsAnalysis::comboToAttr(llvm::ArrayRef<unsigned> backs) {

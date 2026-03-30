@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -50,9 +50,7 @@ void tr_Record(std::string shape, T t, std::ostream& dest, std::queue<mlir::Type
   dest << "<" << id << ">" << id << "|{ |{";
   bool first = true;
   for (auto& field : t.getFields()) {
-    if (!first) {
-      dest << "|";
-    }
+    if (!first) { dest << "|"; }
     first = false;
     std::string name(field.name.getValue());
     // write the field name first as a "port name" we can use as
@@ -75,8 +73,7 @@ void tr_Record(std::string shape, T t, std::ostream& dest, std::queue<mlir::Type
   // don't bother pointing to Val; everything points to Val eventually
   for (auto& field : t.getFields()) {
     mlir::Type ft = field.type;
-    if (mlir::isa<ValType>(ft))
-      continue;
+    if (mlir::isa<ValType>(ft)) continue;
     dest << std::string(t.getId()) << ":";
     dest << std::string(field.name.getValue()) << " -> ";
     std::string tn = typeName(ft);
@@ -89,8 +86,7 @@ void tr_Root(mlir::Type root, std::ostream& dest) {
   std::queue<mlir::Type> worklist;
   for (worklist.push(root); !worklist.empty(); worklist.pop()) {
     mlir::Type t = worklist.front();
-    if (emitted.find(t) != emitted.end())
-      continue;
+    if (emitted.find(t) != emitted.end()) continue;
     emitted.insert(t);
     llvm::TypeSwitch<mlir::Type>(t)
         .Case<ValType>([&](ValType t) {
@@ -159,9 +155,7 @@ std::string SN::Emit(ArrayType t) {
   dest << nodeId << " [shape=record label=\"";
   ArrayBody(t, unions);
   dest << "\"]\n";
-  for (auto& iter : unions) {
-    Edge(nodeId, iter.first, Emit(iter.second));
-  }
+  for (auto& iter : unions) { Edge(nodeId, iter.first, Emit(iter.second)); }
   return nodeId;
 }
 
@@ -175,9 +169,7 @@ std::string SN::Emit(StructType t) {
   // close the outermost record
   dest << "\"]\n";
   // emit all the unions we linked to, with edges pointing at them
-  for (auto& iter : unions) {
-    Edge(nodeId, iter.first, Emit(iter.second));
-  }
+  for (auto& iter : unions) { Edge(nodeId, iter.first, Emit(iter.second)); }
   return nodeId;
 }
 
@@ -186,8 +178,7 @@ void SN::StructBody(StructType t, std::map<std::string, UnionType>& unions) {
   dest << t.getId().str();
   // special case: only one field and it is a Val
   auto fields = t.getFields();
-  if (0 == fields.size())
-    return;
+  if (0 == fields.size()) return;
   if (1 == fields.size() && mlir::isa<ValType>(fields[0].type)) {
     dest << ": Val";
     return;
@@ -196,8 +187,7 @@ void SN::StructBody(StructType t, std::map<std::string, UnionType>& unions) {
   dest << "|{|{";
   bool first = true;
   for (auto& field : fields) {
-    if (!first)
-      dest << "|";
+    if (!first) dest << "|";
     first = false;
     mlir::Type ft = field.type;
     BodyElement(ft, unions);
@@ -210,8 +200,7 @@ void SN::ArrayBody(ArrayType at, std::map<std::string, UnionType>& unions) {
   mlir::Type element = at.getElement();
   bool first = true;
   for (size_t i = 0; i < at.getSize(); ++i) {
-    if (!first)
-      dest << "|";
+    if (!first) dest << "|";
     first = false;
     dest << "\\[" << i << "\\]: ";
     BodyElement(element, unions);
@@ -249,8 +238,7 @@ std::string SN::Emit(UnionType t) {
   dest << "{rank=same ";
   bool first = true;
   for (auto edge : edges) {
-    if (!first)
-      dest << " -> ";
+    if (!first) dest << " -> ";
     first = false;
     dest << edge.second;
   }
@@ -259,16 +247,13 @@ std::string SN::Emit(UnionType t) {
   dest << id << " [shape=Mrecord label=\"";
   first = true;
   for (auto field : t.getFields()) {
-    if (!first)
-      dest << "|";
+    if (!first) dest << "|";
     first = false;
     dest << "<" << field.name.str() << ">" << field.name.str();
   }
   dest << "\"]\n";
   // Emit all the edges
-  for (auto iter : edges) {
-    Edge(id, iter.first, iter.second);
-  }
+  for (auto iter : edges) { Edge(id, iter.first, iter.second); }
   dest << "}\n";
   return id;
 }
@@ -308,8 +293,7 @@ std::string SN::LayoutUnion(LayoutType t) {
   dest << "{rank=same ";
   bool first = true;
   for (auto edge : edges) {
-    if (!first)
-      dest << " -> ";
+    if (!first) dest << " -> ";
     first = false;
     dest << edge.second;
   }
@@ -318,16 +302,13 @@ std::string SN::LayoutUnion(LayoutType t) {
   dest << id << " [shape=Mrecord label=\"";
   first = true;
   for (auto field : t.getFields()) {
-    if (!first)
-      dest << "|";
+    if (!first) dest << "|";
     first = false;
     dest << "<" << field.name.str() << ">" << field.name.str();
   }
   dest << "\"]\n";
   // Emit all the edges
-  for (auto iter : edges) {
-    Edge(id, iter.first, iter.second);
-  }
+  for (auto iter : edges) { Edge(id, iter.first, iter.second); }
   dest << "}\n";
   return id;
 }
@@ -342,9 +323,7 @@ std::string SN::LayoutStruct(LayoutType t) {
   // close the outermost record
   dest << "\"]\n";
   // emit all the unions we linked to, with edges pointing at them
-  for (auto& iter : unions) {
-    Edge(nodeId, iter.first, Emit(iter.second));
-  }
+  for (auto& iter : unions) { Edge(nodeId, iter.first, Emit(iter.second)); }
   return nodeId;
 }
 
@@ -353,8 +332,7 @@ void SN::LayoutBody(LayoutType t, std::map<std::string, LayoutType>& unions) {
   dest << t.getId().str();
   // special case: only one field and it is a Val
   auto fields = t.getFields();
-  if (0 == fields.size())
-    return;
+  if (0 == fields.size()) return;
   if (1 == fields.size() && mlir::isa<ValType>(fields[0].type)) {
     dest << ": Val";
     return;
@@ -363,8 +341,7 @@ void SN::LayoutBody(LayoutType t, std::map<std::string, LayoutType>& unions) {
   dest << "|{|{";
   bool first = true;
   for (auto& field : fields) {
-    if (!first)
-      dest << "|";
+    if (!first) dest << "|";
     first = false;
     mlir::Type ft = field.type;
     LayoutElement(ft, unions);
@@ -396,8 +373,7 @@ void SN::LayoutElement(mlir::Type ft, std::map<std::string, LayoutType>& unions)
 }
 
 void SN::Edge(std::string from_name, std::string from_port, std::string to) {
-  if (to.empty())
-    return;
+  if (to.empty()) return;
   dest << from_name << ":\"" << from_port << "\" -> " << to << "\n";
 }
 
@@ -459,15 +435,11 @@ LS::~LS() {
   dest << "<h2 id=\"type index\">Index</h2>\n";
   dest << "<h3>Muxes</h3>\n";
   dest << "<ul>\n";
-  for (auto& lt : muxes) {
-    dest << "<li>" << linkToName(lt) << "</li>\n";
-  }
+  for (auto& lt : muxes) { dest << "<li>" << linkToName(lt) << "</li>\n"; }
   dest << "</ul>\n";
   dest << "<h3>Components</h3>\n";
   dest << "<ul>\n";
-  for (auto& lt : comps) {
-    dest << "<li>" << linkToName(lt) << "</li>\n";
-  }
+  for (auto& lt : comps) { dest << "<li>" << linkToName(lt) << "</li>\n"; }
   dest << "</ul>\n";
   dest << "</body>\n";
   dest << "</html>\n";
@@ -484,9 +456,7 @@ size_t LS::measure(mlir::Type t) {
     return 0;
   }
   auto found = sizes.find(t);
-  if (found != sizes.end()) {
-    return found->second;
-  }
+  if (found != sizes.end()) { return found->second; }
   size_t regs = llvm::TypeSwitch<mlir::Type, size_t>(t)
                     .Case<RefType>([&](RefType rt) { return measureRef(rt); })
                     .Case<LayoutType>([&](LayoutType lt) {
@@ -518,18 +488,14 @@ size_t LS::measureRef(RefType rt) {
 size_t LS::measureUnion(LayoutType lt) {
   // union size is the max of the fields
   size_t regs = 0;
-  for (auto& field : lt.getFields()) {
-    regs = std::max(regs, measure(field.type));
-  }
+  for (auto& field : lt.getFields()) { regs = std::max(regs, measure(field.type)); }
   muxes.insert(lt);
   return regs;
 }
 
 size_t LS::measureStruct(LayoutType lt) {
   size_t regs = 0;
-  for (auto& field : lt.getFields()) {
-    regs += measure(field.type);
-  }
+  for (auto& field : lt.getFields()) { regs += measure(field.type); }
   comps.insert(lt);
   return regs;
 }
@@ -544,9 +510,7 @@ void LS::Emit(mlir::Type t) {
     return;
   }
   assert(sizes.contains(t));
-  if (emitted.contains(t)) {
-    return;
-  }
+  if (emitted.contains(t)) { return; }
   emitted.insert(t);
   llvm::TypeSwitch<mlir::Type>(t)
       .Case<RefType>([&](RefType rt) { EmitRef(rt); })
@@ -574,9 +538,7 @@ void LS::EmitRef(RefType rt) {
 void LS::EmitUnion(LayoutType lt) {
   // Collect the unwrapped types of the mux arms.
   std::vector<mlir::Type> arms;
-  for (auto& field : lt.getFields()) {
-    arms.push_back(unwrap(field.type));
-  }
+  for (auto& field : lt.getFields()) { arms.push_back(unwrap(field.type)); }
   size_t regs = sizes[lt];
   // populate a table with field names & types, sorted by offset
   // outer vector holds a column for each mux element
@@ -586,8 +548,7 @@ void LS::EmitUnion(LayoutType lt) {
   for (size_t col = 0; col < arms.size(); ++col) {
     table[col].resize(regs);
     auto subt = mlir::dyn_cast<LayoutType>(arms[col]);
-    if (!subt)
-      continue;
+    if (!subt) continue;
     size_t off = 0;
     for (auto& subf : subt.getFields()) {
       table[col][off] = subf.type;
@@ -606,9 +567,7 @@ void LS::EmitUnion(LayoutType lt) {
   dest << "<thead>\n";
   dest << "<tr><td>Offset</td>\n";
   // one column per mux element
-  for (auto arm : arms) {
-    dest << "<td>" << linkToName(arm) << "</td>\n";
-  }
+  for (auto arm : arms) { dest << "<td>" << linkToName(arm) << "</td>\n"; }
   dest << "</tr>\n";
   dest << "</thead>\n";
   dest << "<tbody>\n";
@@ -635,9 +594,7 @@ void LS::EmitUnion(LayoutType lt) {
   dest << "</tbody>\n";
   dest << "</table>\n";
   // Having printed the mux elements table, emit the arm components.
-  for (auto t : arms) {
-    Emit(t);
-  }
+  for (auto t : arms) { Emit(t); }
 }
 
 void LS::EmitStruct(LayoutType lt) {
@@ -691,9 +648,7 @@ void LS::EmitStruct(LayoutType lt) {
   dest << "</tbody>\n";
   dest << "</table>\n";
 
-  for (auto& field : lt.getFields()) {
-    Emit(field.type);
-  }
+  for (auto& field : lt.getFields()) { Emit(field.type); }
 }
 
 void LS::EmitArray(LayoutArrayType at) {
@@ -728,18 +683,14 @@ std::string LS::linkToName(mlir::Type t) {
 }
 
 mlir::Type LS::unwrap(mlir::Type t) {
-  if (!t)
-    return t;
+  if (!t) return t;
   auto lt = mlir::dyn_cast<LayoutType>(t);
-  if (!lt)
-    return t;
+  if (!lt) return t;
   // If the layout has a single field whose name is "@super", use that
   // field's type - but unwrap it first
-  if (lt.getFields().size() != 1)
-    return t;
+  if (lt.getFields().size() != 1) return t;
   auto& fi = lt.getFields()[0];
-  if (fi.name != "@super")
-    return t;
+  if (fi.name != "@super") return t;
   return unwrap(fi.type);
 }
 
@@ -750,9 +701,7 @@ std::string LS::hashcolor(mlir::Type t) {
   // of each color channel to get pastels, then get 18 bits of data from
   // the type name via rotate & xor.
   unsigned hash = 0x999999;
-  for (char c : typeName(t)) {
-    hash = c ^ (((hash << 7) & 0x0003FFFF) | ((hash >> 11) & 0x7F));
-  }
+  for (char c : typeName(t)) { hash = c ^ (((hash << 7) & 0x0003FFFF) | ((hash >> 11) & 0x7F)); }
   // Spread hash value across three color channels and convert to hex.
   char hex[] = "0123456789ABCDEF";
   std::string out = "#EEEEEE";
@@ -832,9 +781,7 @@ protected:
   }
 
   void printIndent() {
-    for (unsigned i = 0; i < indent; i++) {
-      os << "| ";
-    }
+    for (unsigned i = 0; i < indent; i++) { os << "| "; }
   }
 
   mlir::ModuleOp mod;
@@ -867,8 +814,7 @@ public:
 
 private:
   void print(RefAttr ref, size_t index) {
-    if (ref.getIndex() == index)
-      os << keyPath << "\n";
+    if (ref.getIndex() == index) os << keyPath << "\n";
   }
 
   void print(StructAttr str, size_t index) {

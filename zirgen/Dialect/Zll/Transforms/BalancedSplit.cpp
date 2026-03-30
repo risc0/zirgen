@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,8 +36,7 @@ struct Splitter {
 
   std::optional<size_t> getPartIndex(Operation* op) {
     for (const auto& [idx, part] : llvm::enumerate(partSets)) {
-      if (part.contains(op))
-        return idx;
+      if (part.contains(op)) return idx;
     }
     return std::nullopt;
   }
@@ -68,9 +67,7 @@ Splitter::Splitter(Block* origBlock, size_t nsplit)
     , builder(origBlock->getParentOp()->getContext()) {
   SmallVector<Operation*> ops;
   for (auto& op : origBlock->without_terminator()) {
-    if (!isInexpensive(&op)) {
-      ops.push_back(&op);
-    }
+    if (!isInexpensive(&op)) { ops.push_back(&op); }
   }
 
   for (size_t i : llvm::seq(nsplit)) {
@@ -89,8 +86,7 @@ void Splitter::addToPart(size_t i, Operation* op) {
 
 void Splitter::addSpill(Value value) {
   auto& typeSpilled = spilled[value.getType()];
-  if (typeSpilled.contains(value))
-    return;
+  if (typeSpilled.contains(value)) return;
   size_t index = typeSpilled.size();
   typeSpilled[value] = index;
   assert(typeSpilled.size() == index + 1);
@@ -101,11 +97,9 @@ void Splitter::calculateSpills() {
     for (Operation* op : partOps[i]) {
       for (Value arg : op->getOperands()) {
         auto operand = llvm::dyn_cast<OpResult>(arg);
-        if (!operand)
-          continue;
+        if (!operand) continue;
 
-        if (!llvm::isa<ValType>(operand.getType()))
-          continue;
+        if (!llvm::isa<ValType>(operand.getType())) continue;
 
         auto ownerIndex = getPartIndex(operand.getDefiningOp());
         if (ownerIndex && ownerIndex != i)
@@ -149,9 +143,7 @@ void Splitter::splitPart(size_t partNum, Block* dest) {
   for (Operation* op : partOps[partNum]) {
     op->moveBefore(dest, dest->end());
     builder.setInsertionPoint(op);
-    for (OpOperand& opArg : op->getOpOperands()) {
-      opArg.set(mapVal(opArg.get()));
-    }
+    for (OpOperand& opArg : op->getOpOperands()) { opArg.set(mapVal(opArg.get())); }
     for (Value result : op->getResults()) {
       // Use anything generated locally without having to reload it from spill
       locals[result] = result;
@@ -172,9 +164,7 @@ void Splitter::splitPart(size_t partNum, Block* dest) {
 
 std::string getSymbolBase(Operation* op) {
   while (op) {
-    if (auto funcOp = llvm::dyn_cast<FunctionOpInterface>(op)) {
-      return funcOp.getName().str();
-    }
+    if (auto funcOp = llvm::dyn_cast<FunctionOpInterface>(op)) { return funcOp.getName().str(); }
     op = op->getParentOp();
   }
 
@@ -186,8 +176,7 @@ std::string getSymbolBase(Operation* op) {
 void balancedSplitBlock(Block* block, size_t nsplit) {
   assert(nsplit > 0);
 
-  if (nsplit == 1)
-    return;
+  if (nsplit == 1) return;
 
   Location loc = block->getParentOp()->getLoc();
   ModuleOp mod = block->getParentOp()->getParentOfType<ModuleOp>();
@@ -259,9 +248,7 @@ struct BalancedSplitPass : public BalancedSplitBase<BalancedSplitPass> {
   void runOnOperation() override {
     getOperation()->walk([&](Block* block) {
       size_t numOps = block->getOperations().size();
-      if (numOps > maxOps) {
-        balancedSplitBlock(block, risc0::ceilDiv(numOps, maxOps));
-      }
+      if (numOps > maxOps) { balancedSplitBlock(block, risc0::ceilDiv(numOps, maxOps)); }
     });
   }
 

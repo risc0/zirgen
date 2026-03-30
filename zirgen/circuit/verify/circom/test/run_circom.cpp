@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -67,21 +67,15 @@ run_circom(func::FuncOp func, const std::vector<uint32_t>& iop, const std::strin
   int ret = system(("circom -l zirgen/circuit/verify/circom/include/ --r1cs --wasm --sym -o " +
                     tmp_path + " " + tmp_path + "/test.circom")
                        .c_str());
-  if (ret != 0) {
-    throw std::runtime_error("Unable to run circom");
-  }
+  if (ret != 0) { throw std::runtime_error("Unable to run circom"); }
   // Run snarkjs
   ret = system(("snarkjs wc " + tmp_path + "/test_js/test.wasm " + tmp_path + "/input.json " +
                 tmp_path + "/output.wtns")
                    .c_str());
-  if (ret != 0) {
-    throw std::runtime_error("Unable to run snarkjs");
-  }
+  if (ret != 0) { throw std::runtime_error("Unable to run snarkjs"); }
   // Convert witness to js
   ret = system(("snarkjs wej " + tmp_path + "/output.wtns " + tmp_path + "/output.json").c_str());
-  if (ret != 0) {
-    throw std::runtime_error("Unable to run snarkjs");
-  }
+  if (ret != 0) { throw std::runtime_error("Unable to run snarkjs"); }
 
   // Read the outputs
   std::vector<uint64_t> out;

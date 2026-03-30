@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ template <typename First, typename... Rest> struct MuxData<Comp<First>, Rest...>
   }
 
   template <size_t size, typename Func> void apply(OneHot<size> select, size_t which, Func func) {
-    IF(select->at(which)) { func(first->asComp()); }
+    IF (select->at(which)) { func(first->asComp()); }
     rest.apply(select, which + 1, func);
   }
 

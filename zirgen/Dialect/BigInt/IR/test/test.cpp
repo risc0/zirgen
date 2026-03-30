@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -168,9 +168,7 @@ int main(int argc, const char** argv) {
   values.push_back(randomTestInteger(numBits));
   values.push_back(randomTestInteger(numBits));
   values.push_back(test::testRSA(values[0], values[1]));
-  for (size_t i = 0; i < 3; i++) {
-    errs() << "values[" << i << "] = " << toStr(values[i]) << "\n";
-  }
+  for (size_t i = 0; i < 3; i++) { errs() << "values[" << i << "] = " << toStr(values[i]) << "\n"; }
   Digest expected = hashPublic(values);
   if (emitAction == Action::PrintBigInt) {
     llvm::outs() << inModule;
@@ -226,9 +224,7 @@ int main(int argc, const char** argv) {
 
   // Set up the IOP for interpretation
   std::vector<uint32_t> iopVals(/*control root=*/8 + /*z=*/4);
-  for (size_t i = 8; i < 8 + 4; i++) {
-    iopVals[i] = toMontgomery(retEval.z[i]);
-  }
+  for (size_t i = 8; i < 8 + 4; i++) { iopVals[i] = toMontgomery(retEval.z[i]); }
   auto readIop = std::make_unique<zirgen::ReadIop>(
       std::make_unique<Poseidon2Rng>(), iopVals.data(), iopVals.size());
 
@@ -236,9 +232,7 @@ int main(int argc, const char** argv) {
   CheckedBytesExternHandler externHandler;
   auto addBytes = [&](const std::vector<BigInt::BytePoly>& in) {
     for (size_t i = 0; i < in.size(); i++) {
-      for (size_t j = 0; j < in[i].size(); j++) {
-        externHandler.coeffs.push_back(in[i][j]);
-      }
+      for (size_t j = 0; j < in[i].size(); j++) { externHandler.coeffs.push_back(in[i][j]); }
       if (in[i].size() % BigInt::kCoeffsPerPoly != 0) {
         for (size_t j = in[i].size() % BigInt::kCoeffsPerPoly; j < BigInt::kCoeffsPerPoly; j++) {
           externHandler.coeffs.push_back(0);
@@ -268,9 +262,7 @@ int main(int argc, const char** argv) {
     std::vector<uint32_t> code = encode(recursion::HashType::POSEIDON2, &outFunc.front(), &toId);
     // 'Reverse' toId so that it is in execution order
     std::map<uint64_t, mlir::Value> toValue;
-    for (auto kvp : toId) {
-      toValue[kvp.second] = kvp.first;
-    }
+    for (auto kvp : toId) { toValue[kvp.second] = kvp.first; }
 
     AsmState asmState(outModule);
     for (auto [id, val] : toValue) {
@@ -295,9 +287,7 @@ int main(int argc, const char** argv) {
   Digest actual;
   for (size_t i = 0; i < 8; i++) {
     actual.words[i] = 0;
-    for (size_t j = 0; j < 2; j++) {
-      actual.words[i] |= outBuf[i * 2 + j][0] << (j * 16);
-    }
+    for (size_t j = 0; j < 2; j++) { actual.words[i] |= outBuf[i * 2 + j][0] << (j * 16); }
   }
   if (actual != expected) {
     errs() << "Hash mismatch\n";

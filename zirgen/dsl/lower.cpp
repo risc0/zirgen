@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -70,9 +70,7 @@ public:
 
       // If it's declared locally, remove the declaration so it can be replaced with the definition.
       auto iter = defs.find(n);
-      if (iter != defs.end()) {
-        defs.erase(iter);
-      }
+      if (iter != defs.end()) { defs.erase(iter); }
     }
     defs.insert({n, d});
   }
@@ -84,9 +82,7 @@ public:
   std::optional<Def> local(llvm::StringRef n) const {
     // Find a definition if it exists in this scope
     auto iter = defs.find(n);
-    if (iter != defs.end()) {
-      return iter->second;
-    }
+    if (iter != defs.end()) { return iter->second; }
     return std::nullopt;
   }
 
@@ -215,9 +211,7 @@ mlir::Value Impl::gen(ast::Expression* e, SymbolTable& symbols) {
         mlir::Value selector = gen(e->getSelector(), symbols);
         size_t numCases = e->getCases().size();
         auto switchOp = builder.create<SwitchOp>(loc(e), selector, numCases);
-        if (e->getIsMajor()) {
-          switchOp->setAttr("isMajor", builder.getUnitAttr());
-        }
+        if (e->getIsMajor()) { switchOp->setAttr("isMajor", builder.getUnitAttr()); }
         mlir::OpBuilder::InsertionGuard insertionGuard(builder);
         for (size_t i = 0; i < numCases; i++) {
           mlir::Block& block = switchOp.getCases()[i].emplaceBlock();
@@ -265,9 +259,7 @@ mlir::Value Impl::gen(ast::Expression* e, SymbolTable& symbols) {
 ValueVector Impl::gen(ast::Expression::ArrayRef vals, SymbolTable& symbols) {
   ValueVector out;
   out.reserve(vals.size());
-  for (auto& v : vals) {
-    out.push_back(gen(v.get(), symbols));
-  }
+  for (auto& v : vals) { out.push_back(gen(v.get(), symbols)); }
   return out;
 }
 
@@ -354,9 +346,7 @@ void Impl::gen(ast::Component* c, SymbolTable& outerscope) {
   if (ast::Component::Kind::Argument == c->getKind()) {
     op->setAttr("argument", mlir::UnitAttr::get(&ctx));
   }
-  if (c->getTypeParams().size()) {
-    op->setAttr("generic", mlir::UnitAttr::get(&ctx));
-  }
+  if (c->getTypeParams().size()) { op->setAttr("generic", mlir::UnitAttr::get(&ctx)); }
 
   for (ast::Attribute::Ptr attr : c->getAttributes()) {
     llvm::StringRef name = attr->getName();
@@ -421,9 +411,7 @@ void Impl::gen(ast::Component* c, SymbolTable& outerscope) {
 
 void Impl::genBlockBody(ast::Block* b, SymbolTable& symbols) {
   assert(b);
-  for (auto& s : b->getBody()) {
-    gen(s.get(), symbols);
-  }
+  for (auto& s : b->getBody()) { gen(s.get(), symbols); }
   ast::Expression* tail = b->getValue();
   auto result = gen(tail, symbols);
   builder.create<SuperOp>(loc(tail), result);
@@ -470,13 +458,9 @@ std::optional<mlir::ModuleOp> lower(MLIRContext& ctx, const llvm::SourceMgr& mgr
   SymbolTable symbols;
   mlir::ModuleOp out = Impl(ctx, mgr).gen(m, symbols);
 
-  if (mlir::failed(mlir::verify(out))) {
-    out->emitError("zhl module verification error");
-  }
+  if (mlir::failed(mlir::verify(out))) { out->emitError("zhl module verification error"); }
 
-  if (containsErrors) {
-    return std::optional<mlir::ModuleOp>();
-  }
+  if (containsErrors) { return std::optional<mlir::ModuleOp>(); }
 
   return out;
 }

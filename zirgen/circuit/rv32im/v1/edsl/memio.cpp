@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -42,9 +42,9 @@ void MemIOCycleImpl::set(Top top) {
   }
 
   // Nondeterministically set imm
-  NONDET{
+  NONDET {
 #define OPI(id, mnemonic, opc, f3, f7, immFmt, isRead, is8Bit, is16Bit, signExt)                   \
-  IF(minorSelect->at(id % kMinorMuxSize)) { immReg->set(decoder->imm##immFmt()); }
+  IF (minorSelect->at(id % kMinorMuxSize)) { immReg->set(decoder->imm##immFmt()); }
 #include "zirgen/circuit/rv32im/v1/platform/rv32im.inl"
   }
 
@@ -113,42 +113,36 @@ void MemIOCycleImpl::set(Top top) {
     uint32_t is32Bit = 1 - is8Bit - is16Bit;                                                       \
     uint32_t addrMask = is32Bit * 0 + is16Bit * 2 + is8Bit * 3;                                    \
     uint32_t count = 4 - addrMask;                                                                 \
-    IF(minorSelect->at(id % kMinorMuxSize)) {                                                      \
-      IF(is32Bit) { eq(lowBits->at(0), 1); }                                                       \
-      IF(is16Bit) { eq(lowBits->at(0) + lowBits->at(2), 1); }                                      \
+    IF (minorSelect->at(id % kMinorMuxSize)) {                                                     \
+      IF (is32Bit) { eq(lowBits->at(0), 1); }                                                      \
+      IF (is16Bit) { eq(lowBits->at(0) + lowBits->at(2), 1); }                                     \
       if (isRead) {                                                                                \
         for (size_t i = 0; i < 4; i++) {                                                           \
-          if ((i & addrMask) != i) {                                                               \
-            continue;                                                                              \
-          }                                                                                        \
-          IF(lowBits->at(i)) { highByte->set(loaded.bytes[i + 3 - addrMask]); }                    \
+          if ((i & addrMask) != i) { continue; }                                                   \
+          IF (lowBits->at(i)) { highByte->set(loaded.bytes[i + 3 - addrMask]); }                   \
         }                                                                                          \
         NONDET {                                                                                   \
           highBit->setExact((highByte & 0x80) / 0x80);                                             \
           lowBits2->setExact((highByte & 0x7f) * 2);                                               \
         }                                                                                          \
-        eqz(highBit*(1 - highBit));                                                                \
+        eqz(highBit * (1 - highBit));                                                              \
         eq(highByte, highBit * 0x80 + lowBits2 / 2);                                               \
         Val fillByte = signExt ? 255 * highBit : 0;                                                \
         U32Val extended = {0, 0, 0, 0};                                                            \
         for (size_t i = 0; i < count; i++) {                                                       \
           for (size_t j = 0; j < 4; j++) {                                                         \
-            if ((j & addrMask) != j) {                                                             \
-              continue;                                                                            \
-            }                                                                                      \
+            if ((j & addrMask) != j) { continue; }                                                 \
             extended.bytes[i] = extended.bytes[i] + lowBits->at(j) * loaded.bytes[j + i];          \
           }                                                                                        \
         }                                                                                          \
-        for (size_t i = count; i < 4; i++) {                                                       \
-          extended.bytes[i] = fillByte;                                                            \
-        }                                                                                          \
+        for (size_t i = count; i < 4; i++) { extended.bytes[i] = fillByte; }                       \
         buffer->set(extended);                                                                     \
         extended = buffer->get();                                                                  \
         XLOG("  fillByte = %4x, extended: %w", fillByte, extended);                                \
-        IF(1 - rdZero->isZero()) {                                                                 \
+        IF (1 - rdZero->isZero()) {                                                                \
           write->doWrite(cycle, kRegisterOffset - 32 * userMode + decoder->rd(), extended);        \
         }                                                                                          \
-        IF(rdZero->isZero()) { write->doNOP(); }                                                   \
+        IF (rdZero->isZero()) { write->doNOP(); }                                                  \
       } else {                                                                                     \
         highByte->setExact(0);                                                                     \
         highBit->setExact(0);                                                                      \
@@ -156,9 +150,7 @@ void MemIOCycleImpl::set(Top top) {
         U32Val writeVal;                                                                           \
         for (size_t i = 0; i < count; i++) {                                                       \
           for (size_t j = 0; j < 4; j++) {                                                         \
-            if ((j & addrMask) != j) {                                                             \
-              continue;                                                                            \
-            }                                                                                      \
+            if ((j & addrMask) != j) { continue; }                                                 \
             writeVal.bytes[i + j] =                                                                \
                 lowBits->at(j) * rs2.bytes[i] + (1 - lowBits->at(j)) * loaded.bytes[i + j];        \
           }                                                                                        \
@@ -167,12 +159,8 @@ void MemIOCycleImpl::set(Top top) {
         write->doWrite(cycle, addr, writeVal);                                                     \
       }                                                                                            \
       eq(decoder->opcode(), opc * 4 + 3);                                                          \
-      if (f3 != -1) {                                                                              \
-        eq(decoder->func3(), f3);                                                                  \
-      }                                                                                            \
-      if (f7 != -1) {                                                                              \
-        eq(decoder->func7(), f7);                                                                  \
-      }                                                                                            \
+      if (f3 != -1) { eq(decoder->func3(), f3); }                                                  \
+      if (f7 != -1) { eq(decoder->func7(), f7); }                                                  \
       immReg->set(decoder->imm##immFmt());                                                         \
     }                                                                                              \
   }

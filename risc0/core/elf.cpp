@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -78,28 +78,18 @@ uint32_t loadElf(const std::vector<uint8_t>& elfBytes,
       elfHeader.ei_magic[3] != 'F') {
     throw runtime_error("Invalid magic number");
   }
-  if (elfHeader.ei_class != 1) {
-    throw runtime_error("Not a 32 bit elf");
-  }
-  if (elfHeader.ei_data != 1) {
-    throw runtime_error("Not little endian");
-  }
+  if (elfHeader.ei_class != 1) { throw runtime_error("Not a 32 bit elf"); }
+  if (elfHeader.ei_data != 1) { throw runtime_error("Not little endian"); }
   if (elfHeader.ei_version != 1 || elfHeader.e_version != 1) {
     throw runtime_error("Invalid elf version");
   }
-  if (elfHeader.e_type != 2) {
-    throw runtime_error("Invalid elf type, must be executable");
-  }
-  if (elfHeader.e_machine != 0xf3) {
-    throw runtime_error("Invalid machine type, must be Risc-V");
-  }
+  if (elfHeader.e_type != 2) { throw runtime_error("Invalid elf type, must be executable"); }
+  if (elfHeader.e_machine != 0xf3) { throw runtime_error("Invalid machine type, must be Risc-V"); }
   if (elfHeader.e_entry % 4 != 0 || elfHeader.e_entry / 4 >= maxWord ||
       elfHeader.e_entry / 4 < minWord) {
     throw runtime_error("Invalid entry point");
   }
-  if (elfHeader.e_phnum > 256) {
-    throw runtime_error("Too many program headers");
-  }
+  if (elfHeader.e_phnum > 256) { throw runtime_error("Too many program headers"); }
   // Load the program headers
   progHeaders.resize(elfHeader.e_phnum);
   is.seekg(elfHeader.e_phoff, ios::beg);
@@ -114,9 +104,7 @@ uint32_t loadElf(const std::vector<uint8_t>& elfBytes,
       continue;
     }
     // Validate program header
-    if (phdr.p_vaddr % 4 != 0) {
-      throw runtime_error("Program header not aligned");
-    }
+    if (phdr.p_vaddr % 4 != 0) { throw runtime_error("Program header not aligned"); }
     if (phdr.p_vaddr / 4 < minWord) {
       throw runtime_error("Program header loads before valid region");
     }
@@ -130,9 +118,7 @@ uint32_t loadElf(const std::vector<uint8_t>& elfBytes,
     is.seekg(phdr.p_offset, ios::beg);
     // Load in memory 4 bytes at a time
     for (uint32_t i = 0; i < phdr.p_memsz; i += 4) {
-      if (memOut.count((phdr.p_vaddr + i) / 4)) {
-        throw runtime_error("Invalid overlapping data");
-      }
+      if (memOut.count((phdr.p_vaddr + i) / 4)) { throw runtime_error("Invalid overlapping data"); }
       if (i >= phdr.p_filesz) {
         // Past the file size, all zeros
         memOut[(phdr.p_vaddr + i) / 4] = 0;

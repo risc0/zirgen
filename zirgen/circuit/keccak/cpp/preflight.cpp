@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -51,18 +51,14 @@ using theta_b_t = std::array<uint64_t, 5>;
 
 theta_b_t theta_p1(const keccak_t& s) {
   theta_b_t b;
-  for (unsigned i = 0; i < 5; i++) {
-    b[i] = s[i] ^ s[i + 5] ^ s[i + 10] ^ s[i + 15] ^ s[i + 20];
-  }
+  for (unsigned i = 0; i < 5; i++) { b[i] = s[i] ^ s[i + 5] ^ s[i + 10] ^ s[i + 15] ^ s[i + 20]; }
   return b;
 }
 
 void theta_p2_rho_pi(keccak_t& s, const theta_b_t& bc) {
   for (unsigned i = 0; i < 5; i++) {
     uint64_t t = bc[(i + 4) % 5] ^ ROTL64(bc[(i + 1) % 5], 1);
-    for (unsigned j = 0; j < 25; j += 5) {
-      s[j + i] ^= t;
-    }
+    for (unsigned j = 0; j < 25; j += 5) { s[j + i] ^= t; }
   }
   uint64_t t1 = s[1];
   for (unsigned i = 0; i < 24; i++) {
@@ -76,12 +72,8 @@ void theta_p2_rho_pi(keccak_t& s, const theta_b_t& bc) {
 void chi_iota(keccak_t& s, uint32_t round) {
   uint64_t t[5];
   for (unsigned j = 0; j < 25; j += 5) {
-    for (unsigned i = 0; i < 5; i++) {
-      t[i] = s[j + i];
-    }
-    for (unsigned i = 0; i < 5; i++) {
-      s[j + i] ^= (~t[(i + 1) % 5]) & t[(i + 2) % 5];
-    }
+    for (unsigned i = 0; i < 5; i++) { t[i] = s[j + i]; }
+    for (unsigned i = 0; i < 5; i++) { s[j + i] ^= (~t[(i + 1) % 5]) & t[(i + 2) % 5]; }
   }
   s[0] ^= keccak_iota[round];
 }
@@ -156,9 +148,7 @@ PreflightTrace preflightSegment(const std::vector<KeccakState>& inputs, size_t c
       ret.data.push_back(theta[i]);
       ret.data.push_back(theta[i] >> 32);
     }
-    for (size_t i = 0; i < 20; i++) {
-      ret.data.push_back(0);
-    }
+    for (size_t i = 0; i < 20; i++) { ret.data.push_back(0); }
     return offset;
   };
   auto writeKeccak = [&](const keccak_t& s, bool high) {
@@ -194,9 +184,7 @@ PreflightTrace preflightSegment(const std::vector<KeccakState>& inputs, size_t c
 
   // 100 zeros @ offset zero (for whereever we need zero)
   uint32_t zeroOffset = ret.data.size();
-  for (size_t i = 0; i < 100; i++) {
-    ret.data.push_back(0);
-  }
+  for (size_t i = 0; i < 100; i++) { ret.data.push_back(0); }
   // Initalize sha state (and current data offset)
   cells_t currentP2 = {0};
   size_t pflatOffset = writePFlat(currentP2);
@@ -262,9 +250,7 @@ void applyPreflight(ExecutionTrace& exec, const PreflightTrace& preflight) {
   for (const auto& info : preflight.scatter) {
     uint32_t innerCount = 32 / info.bitPerElem;
     uint32_t mask = (1 << (info.bitPerElem)) - 1;
-    if (info.bitPerElem == 32) {
-      mask = 0xffffffff;
-    }
+    if (info.bitPerElem == 32) { mask = 0xffffffff; }
     for (size_t i = 0; i < info.count; i++) {
       uint32_t word = preflight.data[info.dataOffset + (i / innerCount)];
       size_t j = i % innerCount;

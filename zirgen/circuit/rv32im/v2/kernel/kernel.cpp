@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -103,28 +103,16 @@ inline uint32_t sys_exit(uint32_t code) {
 }
 
 inline uint32_t sys_read(uint32_t fd, uint32_t buf, uint32_t len) {
-  if (fd != 0) {
-    return -EBADF;
-  }
-  if (buf + len < buf) {
-    return -EINVAL;
-  }
-  if (buf < USER_START_ADDR || buf + len >= USER_END_ADDR) {
-    return -EFAULT;
-  }
+  if (fd != 0) { return -EBADF; }
+  if (buf + len < buf) { return -EINVAL; }
+  if (buf < USER_START_ADDR || buf + len >= USER_END_ADDR) { return -EFAULT; }
   return host_read(0, buf, len);
 }
 
 inline uint32_t sys_write(uint32_t fd, uint32_t buf, uint32_t len) {
-  if (fd != 1) {
-    return -EBADF;
-  }
-  if (buf + len < buf) {
-    return -EINVAL;
-  }
-  if (buf < USER_START_ADDR || buf + len >= USER_END_ADDR) {
-    return -EFAULT;
-  }
+  if (fd != 1) { return -EBADF; }
+  if (buf + len < buf) { return -EINVAL; }
+  if (buf < USER_START_ADDR || buf + len >= USER_END_ADDR) { return -EFAULT; }
   return host_write(1, buf, len);
 }
 

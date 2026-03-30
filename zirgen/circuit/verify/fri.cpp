@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,8 +20,7 @@
 namespace zirgen::verify {
 
 void rev_butterfly(Val* io, size_t po2) {
-  if (po2 == 0)
-    return;
+  if (po2 == 0) return;
   size_t half = 1 << (po2 - 1);
   Val step = kRouRev[po2];
   Val cur = 1;
@@ -40,9 +39,7 @@ void interpolate_ntt(std::vector<Val>& io) {
   size_t po2 = log2Ceil(io.size());
   rev_butterfly(io.data(), po2);
   Val norm = inv(io.size());
-  for (size_t i = 0; i < io.size(); i++) {
-    io[i] = io[i] * norm;
-  }
+  for (size_t i = 0; i < io.size(); i++) { io[i] = io[i] * norm; }
 }
 
 // A 32-bit reversal of bits
@@ -59,9 +56,7 @@ void bit_reverse(std::vector<Val>& io) {
   assert((size_t(1) << N) == io.size());
   for (size_t i = 0; i < io.size(); i++) {
     size_t ri = bitReverse(i) >> (32 - N);
-    if (i < ri) {
-      std::swap(io[i], io[ri]);
-    }
+    if (i < ri) { std::swap(io[i], io[ri]); }
   }
 }
 
@@ -139,9 +134,7 @@ void friVerify(ReadIopVal& iop, size_t deg, InnerVerify inner) {
     // Do the 'inner' verification for this index
     Val goal = inner(iop, pos);
     // Verify the per-round proofs
-    for (auto& round : rounds) {
-      round.verifyQuery(iop, &pos, &goal);
-    }
+    for (auto& round : rounds) { round.verifyQuery(iop, &pos, &goal); }
     // Do final verification
     Val x = dynamic_pow(gen, pos, deg * kInvRate);
     Val fx = poly_eval(finalCoeffs, x);

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -84,8 +84,7 @@ mlir::LogicalResult StringType::emitLiteral(zirgen::codegen::CodegenEmitter& cg,
                                             mlir::Attribute attr) const {
   // Only emit a literal if it's an unextended field element.
   auto strAttr = llvm::dyn_cast<StringAttr>(attr);
-  if (!strAttr)
-    return failure();
+  if (!strAttr) return failure();
 
   cg.emitEscapedString(strAttr.getValue());
   return success();
@@ -110,8 +109,7 @@ VariadicType::getTypeName(codegen::CodegenEmitter& cg) const {
 codegen::CodegenIdent<codegen::IdentKind::Type>
 BufferType::getTypeName(codegen::CodegenEmitter& cg) const {
   std::string name = stringifyBufferKind(getKind()).str();
-  if (getElement().getFieldK() > 1)
-    name += "Ext";
+  if (getElement().getFieldK() > 1) name += "Ext";
   name += "Buf";
 
   return cg.getStringAttr(name);

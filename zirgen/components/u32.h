@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,9 +44,7 @@ struct U32Val {
 
 template <> struct LogPrep<U32Val> {
   static void toLogVec(std::vector<Val>& out, U32Val x) {
-    for (size_t i = 0; i < kWordSize; i++) {
-      out.push_back(x.bytes[i]);
-    }
+    for (size_t i = 0; i < kWordSize; i++) { out.push_back(x.bytes[i]); }
   }
 };
 

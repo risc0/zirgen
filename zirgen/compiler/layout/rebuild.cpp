@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -45,16 +45,12 @@ private:
 };
 
 Builder::Builder(Circuit& circuit) : circuit(circuit) {
-  for (auto iter : circuit.sizes) {
-    (void)build(iter.first);
-  }
+  for (auto iter : circuit.sizes) { (void)build(iter.first); }
 }
 
 mlir::Type Builder::build(mlir::Type oldType) {
   auto found = oldToNew.find(oldType);
-  if (found != oldToNew.end()) {
-    return found->second;
-  }
+  if (found != oldToNew.end()) { return found->second; }
   mlir::Type newType = llvm::TypeSwitch<mlir::Type, mlir::Type>(oldType)
                            .Case<LayoutType, LayoutArrayType>([&](auto& at) { return build(at); })
                            .Default([&](auto& t) { return t; });
@@ -83,9 +79,7 @@ mlir::Type Builder::build(LayoutType& t) {
 
 mlir::Type Builder::buildStruct(LayoutType& st) {
   auto found = circuit.structs.find(st);
-  if (found == circuit.structs.end()) {
-    return st;
-  }
+  if (found == circuit.structs.end()) { return st; }
   Layout& sl = found->second;
   buildFields(sl.fields);
   auto kind = sl.original.getKind();
@@ -95,9 +89,7 @@ mlir::Type Builder::buildStruct(LayoutType& st) {
 
 mlir::Type Builder::buildUnion(LayoutType& ut) {
   auto found = circuit.unions.find(ut);
-  if (found == circuit.unions.end()) {
-    return ut;
-  }
+  if (found == circuit.unions.end()) { return ut; }
   Layout& ul = found->second;
   buildFields(ul.fields);
   auto kind = ul.original.getKind();
@@ -115,9 +107,7 @@ void Builder::buildFields(std::vector<FieldInfo>& fields) {
       break;
     }
   }
-  for (auto& fi : fields) {
-    fi.type = build(fi.type);
-  }
+  for (auto& fi : fields) { fi.type = build(fi.type); }
 }
 
 } // namespace

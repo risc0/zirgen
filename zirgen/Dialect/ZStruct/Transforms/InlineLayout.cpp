@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -66,8 +66,7 @@ struct InlineLayout : public OpRewritePattern<BindLayoutOp> {
 struct InlineLayoutPass : public InlineLayoutBase<InlineLayoutPass> {
   void runOnOperation() override {
     ModuleOp mod = llvm::dyn_cast<ModuleOp>(getOperation());
-    if (!mod)
-      mod = getOperation()->getParentOfType<ModuleOp>();
+    if (!mod) mod = getOperation()->getParentOfType<ModuleOp>();
     RewritePatternSet patterns(&getContext());
     patterns.add<InlineLayout>(&getContext(), mod);
     LookupOp::getCanonicalizationPatterns(patterns, &getContext());
@@ -75,9 +74,7 @@ struct InlineLayoutPass : public InlineLayoutBase<InlineLayoutPass> {
     LoadOp::getCanonicalizationPatterns(patterns, &getContext());
     StoreOp::getCanonicalizationPatterns(patterns, &getContext());
     FrozenRewritePatternSet frozenPatterns(std::move(patterns));
-    if (applyPatternsGreedily(getOperation(), frozenPatterns).failed()) {
-      signalPassFailure();
-    }
+    if (applyPatternsGreedily(getOperation(), frozenPatterns).failed()) { signalPassFailure(); }
   }
 };
 

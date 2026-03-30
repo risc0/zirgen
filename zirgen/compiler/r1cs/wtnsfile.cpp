@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,8 +27,7 @@ IOException::IOException(const char* file, const char* func, int line, const cha
                                         std::string(msg)) {}
 
 #define check(cond)                                                                                \
-  if (cond)                                                                                        \
-  throw IOException(__FILE__, __FUNCTION__, __LINE__, #cond)
+  if (cond) throw IOException(__FILE__, __FUNCTION__, __LINE__, #cond)
 
 namespace {
 
@@ -134,9 +133,7 @@ uint64_t Reader::seekTo(SectionType type) {
 
 bool Reader::isPresent(SectionType type) {
   for (auto& section : contents) {
-    if (section.type == type) {
-      return true;
-    }
+    if (section.type == type) { return true; }
   }
   return false;
 }
@@ -155,9 +152,7 @@ void Reader::readHeader() {
 void Reader::readWitness() {
   uint64_t capacity = seekTo(SectionType::Witness);
   wit.values.reserve(wit.header.nValues);
-  for (uint32_t i = 0; i < wit.header.nValues; ++i) {
-    wit.values.push_back(readBigint(capacity));
-  }
+  for (uint32_t i = 0; i < wit.header.nValues; ++i) { wit.values.push_back(readBigint(capacity)); }
   check(capacity != 0);
 }
 
@@ -194,9 +189,7 @@ Reader::Reader(FILE* stream, Witness& wit) : stream(stream), wit(wit) {
   // field size, without which we could not parse the other sections.
   readHeader();
   // If there is a witness values section, read it.
-  if (isPresent(SectionType::Witness)) {
-    readWitness();
-  }
+  if (isPresent(SectionType::Witness)) { readWitness(); }
   check(wit.values.size() != wit.header.nValues);
 }
 

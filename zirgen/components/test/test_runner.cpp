@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,9 +21,7 @@ using namespace Zll;
 void TestRunner::setup(ExternHandler* handler, std::vector<uint64_t> code) {
   steps = code.size() / codeSize;
   this->code = std::vector<Polynomial>(code.size());
-  for (size_t i = 0; i < this->code.size(); i++) {
-    this->code[i] = {code[i]};
-  }
+  for (size_t i = 0; i < this->code.size(); i++) { this->code[i] = {code[i]}; }
   module.setExternHandler(handler);
   out = std::vector<Polynomial>(outSize, {kFieldInvalid});
   data = std::vector<Polynomial>(dataSize * steps, {kFieldInvalid});
@@ -51,9 +49,7 @@ void TestRunner::dump() {
         llvm::errs() << "? ";
       } else {
         llvm::errs() << "{";
-        for (size_t k = 0; k < polynomial.size(); k++) {
-          llvm::errs() << polynomial[k] << ", ";
-        }
+        for (size_t k = 0; k < polynomial.size(); k++) { llvm::errs() << polynomial[k] << ", "; }
         llvm::errs() << "} ";
       }
     }

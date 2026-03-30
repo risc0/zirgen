@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,8 +36,7 @@ bool isReferenceType(CodegenValue value) {
   // TODO: This seems kludgy; maybe figure out some way to propagate whether it's already a
   // reference?
   auto blockArg = llvm::dyn_cast_if_present<BlockArgument>(value.getValue());
-  if (!blockArg)
-    return false;
+  if (!blockArg) return false;
   return llvm::isa<FunctionOpInterface>(blockArg.getOwner()->getParentOp());
 }
 
@@ -49,9 +48,7 @@ void RustLanguageSyntax::emitStructDefImpl(CodegenEmitter& cg,
                                            llvm::ArrayRef<mlir::Type> types,
                                            bool layout) {
   cg << "pub struct " << cg.getTypeName(ty);
-  if (!layout && typeNeedsLifetime(ty)) {
-    cg << "<'a>";
-  }
+  if (!layout && typeNeedsLifetime(ty)) { cg << "<'a>"; }
 
   cg << " {\n";
   assert(names.size() == types.size());
@@ -65,8 +62,7 @@ void RustLanguageSyntax::emitStructDefImpl(CodegenEmitter& cg,
       cg << "&'static " << cg.getTypeName(types[i]) << ",\n";
     } else {
       cg << cg.getTypeName(types[i]);
-      if (typeNeedsLifetime(types[i]) && !layout)
-        cg << "<'a>";
+      if (typeNeedsLifetime(types[i]) && !layout) cg << "<'a>";
       cg << ",\n";
     }
   }
@@ -79,10 +75,8 @@ bool RustLanguageSyntax::typeNeedsLifetime(mlir::Type ty) {
       typesNeedLifetime[ty] = true;
     else {
       auto walkResult = ty.walk([&](Type subTy) {
-        if (subTy == ty)
-          return WalkResult::advance();
-        if (typeNeedsLifetime(subTy))
-          return WalkResult::interrupt();
+        if (subTy == ty) return WalkResult::advance();
+        if (typeNeedsLifetime(subTy)) return WalkResult::interrupt();
         return WalkResult::skip();
       });
       typesNeedLifetime[ty] = walkResult.wasInterrupted();
@@ -105,8 +99,7 @@ void RustLanguageSyntax::emitSwitchStatement(CodegenEmitter& cg,
                                              llvm::ArrayRef<CodegenValue> conditions,
                                              llvm::ArrayRef<EmitArmPartFunc> emitArm) {
   cg << "let ";
-  if (Type(resultType).hasTrait<CodegenOnlyPassByReferenceTypeTrait>())
-    cg << "&'static ";
+  if (Type(resultType).hasTrait<CodegenOnlyPassByReferenceTypeTrait>()) cg << "&'static ";
   cg << resultName << ": " << cg.getTypeName(resultType) << ";\n";
   for (const auto& [cond, emitArm] : llvm::zip(conditions, emitArm)) {
     cg << "if is_true(" << cond << ") {\n";
@@ -142,8 +135,7 @@ void RustLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
 
   if (!contextArgDecls.empty()) {
     cg.interleaveComma(contextArgDecls, [&](auto contextArg) { cg << EmitPart(contextArg); });
-    if (!argNames.empty())
-      cg << ",";
+    if (!argNames.empty()) cg << ",";
   }
 
   cg.interleaveComma(zip(argNames, funcType.getInputs()), [&](auto nt) {
@@ -164,22 +156,16 @@ void RustLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
       else if (ty.hasTrait<CodegenPassByMutRefTypeTrait>())
         cg << "&mut ";
       cg << cg.getTypeName(ty);
-      if (typeNeedsLifetime(ty))
-        cg << "<'a>";
+      if (typeNeedsLifetime(ty)) cg << "<'a>";
     }
   });
   cg << ") -> Result<";
-  if (funcType.getNumResults() != 1) {
-    cg << "(";
-  }
+  if (funcType.getNumResults() != 1) { cg << "("; }
   cg.interleaveComma(funcType.getResults(), [&](auto ty) {
     cg << cg.getTypeName(ty);
-    if (typeNeedsLifetime(ty))
-      cg << "<'a>";
+    if (typeNeedsLifetime(ty)) cg << "<'a>";
   });
-  if (funcType.getNumResults() != 1) {
-    cg << ")";
-  }
+  if (funcType.getNumResults() != 1) { cg << ")"; }
 
   cg << "> {\n";
   cg.emitRegion(*body);
@@ -188,13 +174,9 @@ void RustLanguageSyntax::emitFuncDefinition(CodegenEmitter& cg,
 
 void RustLanguageSyntax::emitReturn(CodegenEmitter& cg, llvm::ArrayRef<CodegenValue> values) {
   cg << "return Ok(";
-  if (values.size() != 1) {
-    cg << "(";
-  }
+  if (values.size() != 1) { cg << "("; }
   cg.interleaveComma(values);
-  if (values.size() != 1) {
-    cg << ")";
-  }
+  if (values.size() != 1) { cg << ")"; }
   cg << ");\n";
 }
 
@@ -211,8 +193,7 @@ void RustLanguageSyntax::emitSaveResults(CodegenEmitter& cg,
       cg << " : BoundLayout<" << cg.getTypeName(types[0]) << ", _>";
     } else {
       cg << " : ";
-      if (Type(types[0]).hasTrait<CodegenOnlyPassByReferenceTypeTrait>())
-        cg << "&'static ";
+      if (Type(types[0]).hasTrait<CodegenOnlyPassByReferenceTypeTrait>()) cg << "&'static ";
       cg << cg.getTypeName(types[0]);
     }
     cg << " = " << emitExpression << ";\n";
@@ -246,8 +227,7 @@ void RustLanguageSyntax::emitCall(CodegenEmitter& cg,
   cg << callee << "(";
   if (!contextArgs.empty()) {
     cg.interleaveComma(contextArgs, [&](auto contextArg) { cg << EmitPart(contextArg); });
-    if (!args.empty())
-      cg << ",";
+    if (!args.empty()) cg << ",";
   }
   cg.interleaveComma(args, [&](auto arg) {
     Type ty = arg.getType();
@@ -270,8 +250,7 @@ void RustLanguageSyntax::emitInvokeMacro(CodegenEmitter& cg,
   cg << callee << "!" << (isItemsMacro ? "{" : "(");
   if (!contextArgs.empty()) {
     cg.interleaveComma(contextArgs, [&](auto contextArg) { cg << EmitPart(contextArg); });
-    if (!emitArgs.empty())
-      cg << ",";
+    if (!emitArgs.empty()) cg << ",";
   }
   cg.interleaveComma(emitArgs);
   cg << (isItemsMacro ? "}" : ")");
@@ -293,9 +272,7 @@ std::string RustLanguageSyntax::canonIdent(llvm::StringRef ident, IdentKind kind
   case IdentKind::Const: {
     std::string snake = convertToSnakeFromCamelCase(ident);
     std::string constName;
-    for (char c : snake) {
-      constName.push_back(llvm::toUpper(c));
-    }
+    for (char c : snake) { constName.push_back(llvm::toUpper(c)); }
     return constName;
   }
   }
@@ -338,15 +315,13 @@ void RustLanguageSyntax::emitArrayDef(CodegenEmitter& cg,
                                       size_t numElems) {
   cg << "pub type " << cg.getTypeName(ty);
   bool needsLifetime = !ty.hasTrait<CodegenLayoutTypeTrait>() && typeNeedsLifetime(elemType);
-  if (needsLifetime)
-    cg << "<'a>";
+  if (needsLifetime) cg << "<'a>";
   cg << " = [";
   if (elemType.hasTrait<CodegenOnlyPassByReferenceTypeTrait>() ||
       (ty.hasTrait<CodegenLayoutTypeTrait>()))
     cg << "&'static ";
   cg << cg.getTypeName(elemType);
-  if (needsLifetime)
-    cg << "<'a>";
+  if (needsLifetime) cg << "<'a>";
   cg << "; " << numElems << "];\n";
 }
 
@@ -370,11 +345,9 @@ void RustLanguageSyntax::emitMapConstruct(CodegenEmitter& cg,
     cg << "map_layout(";
   else
     cg << "map(";
-  if (detail::isReferenceType(array))
-    cg << "*";
+  if (detail::isReferenceType(array)) cg << "*";
   cg << array;
-  if (layout)
-    cg << ", " << *layout;
+  if (layout) cg << ", " << *layout;
   cg << ", |";
   cg.interleaveComma(argNames);
   cg << "| {\n";
@@ -393,14 +366,11 @@ void RustLanguageSyntax::emitReduceConstruct(CodegenEmitter& cg,
     cg << "reduce_layout(";
   else
     cg << "reduce(";
-  if (detail::isReferenceType(array))
-    cg << "*";
+  if (detail::isReferenceType(array)) cg << "*";
   cg << array << ", ";
-  if (detail::isReferenceType(init))
-    cg << "*";
+  if (detail::isReferenceType(init)) cg << "*";
   cg << init;
-  if (layout)
-    cg << ", " << *layout;
+  if (layout) cg << ", " << *layout;
   cg << ", |";
   cg.interleaveComma(argNames);
   cg << "| {\n";

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,9 +23,7 @@ using ShortVec = std::array<Val, 2>;
 
 static BitVec get(std::vector<Bit>& reg, size_t back) {
   BitVec ret;
-  for (size_t i = 0; i < 32; i++) {
-    ret[i] = BACK(back, reg[i]->get());
-  }
+  for (size_t i = 0; i < 32; i++) { ret[i] = BACK(back, reg[i]->get()); }
   return ret;
 }
 
@@ -53,9 +51,7 @@ static BitVec rightShift(BitVec in, size_t n) {
 
 static BitVec xor_(BitVec a, BitVec b) {
   BitVec ret;
-  for (size_t i = 0; i < 32; i++) {
-    ret[i] = a[i] + b[i] - 2 * a[i] * b[i];
-  }
+  for (size_t i = 0; i < 32; i++) { ret[i] = a[i] + b[i] - 2 * a[i] * b[i]; }
   return ret;
 }
 
@@ -70,9 +66,7 @@ static BitVec maj(BitVec a, BitVec b, BitVec c) {
 
 static BitVec ch(BitVec a, BitVec b, BitVec c) {
   BitVec ret;
-  for (size_t i = 0; i < 32; i++) {
-    ret[i] = a[i] * b[i] + (1 - a[i]) * c[i];
-  }
+  for (size_t i = 0; i < 32; i++) { ret[i] = a[i] * b[i] + (1 - a[i]) * c[i]; }
   return ret;
 }
 
@@ -80,18 +74,14 @@ static ShortVec flat(BitVec a) {
   ShortVec ret;
   for (size_t i = 0; i < 2; i++) {
     ret[i] = 0;
-    for (size_t j = 0; j < 16; j++) {
-      ret[i] = ret[i] + (1 << j) * a[i * 16 + j];
-    }
+    for (size_t j = 0; j < 16; j++) { ret[i] = ret[i] + (1 << j) * a[i * 16 + j]; }
   }
   return ret;
 }
 
 static ShortVec add(ShortVec a, ShortVec b) {
   ShortVec ret;
-  for (size_t i = 0; i < 2; i++) {
-    ret[i] = a[i] + b[i];
-  }
+  for (size_t i = 0; i < 2; i++) { ret[i] = a[i] + b[i]; }
   return ret;
 }
 
@@ -100,24 +90,16 @@ ShaCycleImpl::ShaCycleImpl(size_t major, RamHeader ramHeader) : major(major), ra
   e.resize(32);
   twits.resize(10);
   bytes.resize(22);
-  for (size_t i = 0; i < 10; i++) {
-    w.emplace_back(ShareBitWithRegister(), twits[i]->reg);
-  }
-  for (size_t i = 0; i < 22; i++) {
-    w.emplace_back(ShareBitWithRegister(), bytes[i]->reg);
-  }
+  for (size_t i = 0; i < 10; i++) { w.emplace_back(ShareBitWithRegister(), twits[i]->reg); }
+  for (size_t i = 0; i < 22; i++) { w.emplace_back(ShareBitWithRegister(), bytes[i]->reg); }
 }
 
 static Val toBits(std::vector<Bit> out, Val in, size_t offset) {
   NONDET {
-    for (size_t i = 0; i < 16; i++) {
-      out[i + offset]->set((in & (1 << i)) / (1 << i));
-    }
+    for (size_t i = 0; i < 16; i++) { out[i + offset]->set((in & (1 << i)) / (1 << i)); }
   }
   Val low16 = 0;
-  for (size_t i = 0; i < 16; i++) {
-    low16 = low16 + out[i + offset] * (1 << i);
-  }
+  for (size_t i = 0; i < 16; i++) { low16 = low16 + out[i + offset] * (1 << i); }
   Val carry = (in - low16) / (1 << 16);
   return carry;
 }
@@ -184,23 +166,23 @@ void ShaCycleImpl::setInit(Top top) {
   eqz(BACK(1, body->nextMajor->get()) - MajorType::kShaInit);
   Val isFromEcall = BACK(1, body->majorSelect->at(MajorType::kECall));
   Val isFromPageFault = BACK(1, body->majorSelect->at(MajorType::kPageFault));
-  IF(isFromEcall + isFromPageFault) {
+  IF (isFromEcall + isFromPageFault) {
     minor->set(0);
     count->set(4);
   }
-  IF(1 - isFromEcall - isFromPageFault) {
+  IF (1 - isFromEcall - isFromPageFault) {
     // Handle staying in the stage
     minor->set(BACK(1, minor->get()));
     count->set(BACK(1, count->get() - 1));
   }
   countZero->set(count);
   // Set next major type if switching stages
-  IF(countZero->isZero()) { body->nextMajor->set(MajorType::kShaLoad); }
-  IF(1 - countZero->isZero()) { body->nextMajor->set(body->majorSelect); }
+  IF (countZero->isZero()) { body->nextMajor->set(MajorType::kShaLoad); }
+  IF (1 - countZero->isZero()) { body->nextMajor->set(body->majorSelect); }
   // Keep PC the same
   body->pc->set(curPC);
   XLOG("SHA_INIT: major = %u, minor = %u, count = %u", major, minor, count);
-  IF(isFromEcall) {
+  IF (isFromEcall) {
     ECallCycle ecall = body->majorMux->at<MajorType::kECall>();
     ECallSha ecallSha = ecall->minorMux->at<ECallType::kSha>();
     io0->doRead(cycle, RegAddr::kA2);
@@ -219,7 +201,7 @@ void ShaCycleImpl::setInit(Top top) {
          data1 * kWordSize,
          repeat);
   }
-  IF(isFromPageFault) {
+  IF (isFromPageFault) {
     PageFaultCycle pageFault = body->majorMux->at<MajorType::kPageFault>();
     io0->doNOP();
     io1->doNOP();
@@ -237,7 +219,7 @@ void ShaCycleImpl::setInit(Top top) {
          data1 * kWordSize,
          repeat);
   }
-  IF(1 - isFromEcall - isFromPageFault) {
+  IF (1 - isFromEcall - isFromPageFault) {
     stateOut->set(BACK(1, stateOut->get()));
     stateIn->set(BACK(1, stateIn->get()));
     data0->set(BACK(1, data0->get()));
@@ -273,17 +255,17 @@ void ShaCycleImpl::setLoad(Top top) {
   eqz(BACK(1, body->nextMajor->get()) - MajorType::kShaLoad);
   Val isBackInit = BACK(1, body->majorSelect->at(MajorType::kShaInit));
   Val isBackMain = BACK(1, body->majorSelect->at(MajorType::kShaMain));
-  IF(isBackInit + isBackMain) {
+  IF (isBackInit + isBackMain) {
     minor->set(0);
     count->set(7);
   }
-  IF(1 - isBackInit - isBackMain) {
+  IF (1 - isBackInit - isBackMain) {
     Val newStage = BACK(1, countZero->isZero());
-    IF(newStage) {
+    IF (newStage) {
       minor->set(1);
       count->set(7);
     }
-    IF(1 - newStage) {
+    IF (1 - newStage) {
       // Handle staying in the stage
       minor->set(BACK(1, minor->get()));
       count->set(BACK(1, count->get() - 1));
@@ -292,11 +274,11 @@ void ShaCycleImpl::setLoad(Top top) {
 
   countZero->set(count);
   // Set next major type if switching stages
-  IF(countZero->isZero()) {
-    IF(1 - minor) { body->nextMajor->set(MajorType::kShaLoad); }
-    IF(minor) { body->nextMajor->set(MajorType::kShaMain); }
+  IF (countZero->isZero()) {
+    IF (1 - minor) { body->nextMajor->set(MajorType::kShaLoad); }
+    IF (minor) { body->nextMajor->set(MajorType::kShaMain); }
   }
-  IF(1 - countZero->isZero()) { body->nextMajor->set(body->majorSelect); }
+  IF (1 - countZero->isZero()) { body->nextMajor->set(body->majorSelect); }
   // Keep PC the same
   body->pc->set(curPC);
   stateOut->set(BACK(1, stateOut->get()));
@@ -319,11 +301,11 @@ void ShaCycleImpl::setLoad(Top top) {
        repeat);
 
   // First do the memory IO (if it's a read)
-  IF(1 - minor) {
+  IF (1 - minor) {
     io0->doRead(cycle, data0 + 7 - count, readOp->get());
     io1->doRead(cycle, kShaKOffset + 7 - count);
   }
-  IF(minor) {
+  IF (minor) {
     io0->doRead(cycle, data1 + 7 - count, readOp->get());
     io1->doRead(cycle, kShaKOffset + 15 - count);
   }
@@ -350,20 +332,20 @@ void ShaCycleImpl::setMain(Top top) {
   // Set the subtype + verify
   eqz(BACK(1, body->nextMajor->get()) - MajorType::kShaMain);
   Val newStage = BACK(1, countZero->isZero());
-  IF(newStage) {
+  IF (newStage) {
     Val isBackLoad = BACK(1, body->majorSelect->at(MajorType::kShaLoad));
-    IF(isBackLoad) {
+    IF (isBackLoad) {
       minor->set(0);
       count->set(47);
       repeat->set(BACK(1, repeat->get()));
     }
-    IF(1 - isBackLoad) {
+    IF (1 - isBackLoad) {
       minor->set(1);
       count->set(3);
       repeat->set(BACK(1, repeat->get() - 1));
     }
   }
-  IF(1 - newStage) {
+  IF (1 - newStage) {
     // Handle staying in the stage
     minor->set(BACK(1, minor->get()));
     count->set(BACK(1, count->get() - 1));
@@ -375,11 +357,11 @@ void ShaCycleImpl::setMain(Top top) {
   Val isFini = minor;
 
   // Decrement the repeat as necessary
-  IF(countZero->isZero()) {
-    IF(isMix) { finalStage->set(0); }
-    IF(isFini) { finalStage->set(1); }
+  IF (countZero->isZero()) {
+    IF (isMix) { finalStage->set(0); }
+    IF (isFini) { finalStage->set(1); }
   }
-  IF(1 - countZero->isZero()) { finalStage->set(0); }
+  IF (1 - countZero->isZero()) { finalStage->set(0); }
 
   stateIn->set(BACK(1, stateIn->get()));
   stateOut->set(BACK(1, stateOut->get()));
@@ -393,7 +375,7 @@ void ShaCycleImpl::setMain(Top top) {
   XLOG("SHA_MAIN: major = %u, minor = %u, count = %u, repeat = %u", major, minor, count, repeat);
 
   // First do the memory IO (if it's a read)
-  IF(isMix) {
+  IF (isMix) {
     io1->doRead(cycle, kShaKOffset + 63 - count);
     // XLOG("  k = %w", io1->data());
   }
@@ -401,12 +383,12 @@ void ShaCycleImpl::setMain(Top top) {
   // Now we compute and set w...
   computeW();
 
-  IF(isFini) { setCarry4(w, {0, 0}, wCarryLow, wCarryHigh); }
-  IF(isMix) { setCarry4(w, getShort(wRaw), wCarryLow, wCarryHigh); }
+  IF (isFini) { setCarry4(w, {0, 0}, wCarryLow, wCarryHigh); }
+  IF (isMix) { setCarry4(w, getShort(wRaw), wCarryLow, wCarryHigh); }
   // XLOG("  w = %w", toU32(w));
 
   // If we are writing, we need to do it now
-  IF(isFini) {
+  IF (isFini) {
     setCarry8(a, add(flat(get(a, 4)), flat(get(a, 68))), aCarryLow, aCarryHigh);
     setCarry8(e, add(flat(get(e, 4)), flat(get(e, 68))), eCarryLow, eCarryHigh);
   }
@@ -414,8 +396,8 @@ void ShaCycleImpl::setMain(Top top) {
   Val isVerify = mode;
   Val isWrite = 1 - mode;
 
-  IF(repeatZero->isZero()) {
-    IF(isVerify) {
+  IF (repeatZero->isZero()) {
+    IF (isVerify) {
       io0->doRead(cycle, stateOut + count);
       io1->doRead(cycle, stateOut + 4 + count);
       XLOG("  io0: [%10x] %w, a: %w", io0->addr() * kWordSize, io0->data(), toU32BE(a));
@@ -423,38 +405,38 @@ void ShaCycleImpl::setMain(Top top) {
       eq(io0->data().flat(), toU32BE(a).flat());
       eq(io1->data().flat(), toU32BE(e).flat());
     }
-    IF(isWrite) {
+    IF (isWrite) {
       io0->doWrite(cycle, stateOut + count, toU32BE(a));
       io1->doWrite(cycle, stateOut + 4 + count, toU32BE(e));
     }
   }
-  IF(1 - repeatZero->isZero()) {
+  IF (1 - repeatZero->isZero()) {
     io0->doNOP();
-    IF(isFini) { io1->doNOP(); }
+    IF (isFini) { io1->doNOP(); }
   }
 
   // Now we compute and set a + e
   computeAE();
-  IF(isMix) {
+  IF (isMix) {
     setCarry8(a, getShort(aRaw), aCarryLow, aCarryHigh);
     setCarry8(e, getShort(eRaw), eCarryLow, eCarryHigh);
   }
   // XLOG("  a: %w, e: %w", toU32BE(a), toU32BE(e));
 
-  IF(finalStage->get()) {
-    IF(repeatZero->isZero()) {
+  IF (finalStage->get()) {
+    IF (repeatZero->isZero()) {
       data0->set(BACK(1, data0->get()));
       data1->set(BACK(1, data1->get()));
       body->nextMajor->set(MajorType::kMuxSize);
     }
 
-    IF(1 - repeatZero->isZero()) {
+    IF (1 - repeatZero->isZero()) {
       data0->set(BACK(1, data0->get() + kBlockSize));
       data1->set(BACK(1, data1->get() + kBlockSize));
       body->nextMajor->set(MajorType::kShaLoad);
     }
   }
-  IF(1 - finalStage->get()) {
+  IF (1 - finalStage->get()) {
     data0->set(BACK(1, data0->get()));
     data1->set(BACK(1, data1->get()));
     body->nextMajor->set(MajorType::kShaMain);
@@ -469,9 +451,7 @@ void ShaCycleImpl::computeW() {
   auto s0 = xor_(rightRotate(w_15, 7), xor_(rightRotate(w_15, 18), rightShift(w_15, 3)));
   auto s1 = xor_(rightRotate(w_2, 17), xor_(rightRotate(w_2, 19), rightShift(w_2, 10)));
   auto w_0 = add(flat(w_16), add(flat(s0), add(flat(w_7), flat(s1))));
-  for (size_t i = 0; i < 2; i++) {
-    wRaw[i]->set(w_0[i]);
-  }
+  for (size_t i = 0; i < 2; i++) { wRaw[i]->set(w_0[i]); }
 }
 
 void ShaCycleImpl::computeAE() {

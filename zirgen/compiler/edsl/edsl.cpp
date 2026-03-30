@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -83,9 +83,7 @@ OverrideLocation::~OverrideLocation() {
 }
 
 SourceLoc checkCurrentLoc(SourceLoc loc) {
-  if (getLocStack().empty()) {
-    return loc;
-  }
+  if (getLocStack().empty()) { return loc; }
   return getLocStack().back();
 }
 
@@ -106,9 +104,7 @@ Val::Val(Register reg, SourceLoc loc) {
   } else {
     auto getOp =
         getBuilder().create<GetOp>(toLoc(loc, reg.ident), reg.buf, 0, gBackDist, IntegerAttr());
-    if (gBackUnchecked) {
-      getOp->setAttr("unchecked", UnitAttr::get(getOp.getContext()));
-    }
+    if (gBackUnchecked) { getOp->setAttr("unchecked", UnitAttr::get(getOp.getContext())); }
     value = getOp;
     gBackUsed = true;
   }
@@ -194,9 +190,7 @@ void Module::optimize(size_t stageCount) {
       opm.addPass(createSplitStagePass(i));
       opm.addPass(createCanonicalizerPass());
       opm.addPass(createCSEPass());
-      if (failed(pm.run(*stages[i]))) {
-        throw std::runtime_error("Failed to apply stage1 passes");
-      }
+      if (failed(pm.run(*stages[i]))) { throw std::runtime_error("Failed to apply stage1 passes"); }
     }
   }
 }
@@ -210,9 +204,7 @@ void Module::runFunc(StringRef name,
                      size_t startCycle,
                      size_t cycleCount) {
   auto func = module->lookupSymbol<func::FuncOp>(name);
-  if (!func) {
-    throw std::runtime_error(("Unable to find function: " + name).str());
-  }
+  if (!func) { throw std::runtime_error(("Unable to find function: " + name).str()); }
   runFunc(func, bufs, startCycle, cycleCount);
 }
 
@@ -223,9 +215,7 @@ void Module::runStage(size_t stage,
                       size_t cycleCount) {
   assert(stage < stages.size());
   auto func = stages[stage]->lookupSymbol<func::FuncOp>(name);
-  if (!func) {
-    throw std::runtime_error(("Unable to find function: " + name).str());
-  }
+  if (!func) { throw std::runtime_error(("Unable to find function: " + name).str()); }
   runFunc(func, bufs, startCycle, cycleCount);
 }
 
@@ -267,14 +257,11 @@ void Module::dumpPoly(StringRef name) {
     throw std::runtime_error("Failed to apply basic optimization passes");
   }
   auto func = module->lookupSymbol<func::FuncOp>(name);
-  if (!func) {
-    throw std::runtime_error(("Unable to find function: " + name).str());
-  }
+  if (!func) { throw std::runtime_error(("Unable to find function: " + name).str()); }
 
   DataFlowSolver solver;
   solver.load<Zll::DegreeAnalysis>();
-  if (failed(solver.initializeAndRun(func)))
-    throw std::runtime_error("Failed to calculate degree");
+  if (failed(solver.initializeAndRun(func))) throw std::runtime_error("Failed to calculate degree");
 
   Block* block = &func.front();
   Operation* cur = block->getTerminator();
@@ -357,28 +344,22 @@ void Module::setPhases(mlir::func::FuncOp funcOp, llvm::ArrayRef<std::string> ph
   for (auto [argIdx, buf] : llvm::enumerate(funcOp.getArguments())) {
     auto argName =
         llvm::dyn_cast_if_present<mlir::StringAttr>(funcOp.getArgAttr(argIdx, "zirgen.argName"));
-    if (!argName)
-      argName = builder.getStringAttr("arg" + std::to_string(argIdx));
+    if (!argName) argName = builder.getStringAttr("arg" + std::to_string(argIdx));
     auto arg = funcOp.getArgument(argIdx);
     auto ty = llvm::cast<BufferType>(arg.getType());
-    if (ty.getKind() != BufferKind::Global) {
-      tapBufs.push_back(argName.str());
-    }
+    if (ty.getKind() != BufferKind::Global) { tapBufs.push_back(argName.str()); }
   }
 
   // Now we can calculate reg group ids and construct our BufferDescAttrs.
   llvm::sort(tapBufs);
   llvm::StringMap<std::optional<size_t>> regGroupIds;
-  for (auto [idx, name] : llvm::enumerate(tapBufs)) {
-    regGroupIds[name] = idx;
-  }
+  for (auto [idx, name] : llvm::enumerate(tapBufs)) { regGroupIds[name] = idx; }
 
   llvm::SmallVector<BufferDescAttr> buffers;
   for (auto [argIdx, buf] : llvm::enumerate(funcOp.getArguments())) {
     auto argName =
         llvm::dyn_cast_if_present<mlir::StringAttr>(funcOp.getArgAttr(argIdx, "zirgen.argName"));
-    if (!argName)
-      argName = builder.getStringAttr("arg" + std::to_string(argIdx));
+    if (!argName) argName = builder.getStringAttr("arg" + std::to_string(argIdx));
     auto arg = funcOp.getArgument(argIdx);
     auto ty = llvm::cast<BufferType>(arg.getType());
 
@@ -389,9 +370,7 @@ void Module::setPhases(mlir::func::FuncOp funcOp, llvm::ArrayRef<std::string> ph
   setModuleAttr(funcOp, builder.getAttr<BuffersAttr>(buffers));
 
   llvm::SmallVector<mlir::StringAttr> steps;
-  for (auto phase : phases) {
-    steps.push_back(builder.getAttr<mlir::StringAttr>(phase));
-  }
+  for (auto phase : phases) { steps.push_back(builder.getAttr<mlir::StringAttr>(phase)); }
   setModuleAttr(funcOp, builder.getAttr<StepsAttr>(steps));
   setModuleAttr(funcOp, builder.getAttr<CircuitNameAttr>(funcOp.getName()));
 }
@@ -431,9 +410,7 @@ void Module::runFunc(func::FuncOp func,
   for (size_t i = 0; i < bufs.size(); i++) {
     Value arg = func.getArgument(i);
     auto type = dyn_cast<BufferType>(arg.getType());
-    if (!type) {
-      throw std::runtime_error("Function has non-buffer types");
-    }
+    if (!type) { throw std::runtime_error("Function has non-buffer types"); }
     if (bufs[i].empty()) {
       (void)interpreter.makeBuf(arg, type.getSize(), type.getKind());
       continue;
@@ -490,9 +467,7 @@ std::pair<DigestVal, std::vector<Val>> hashCheckedBytes(CaptureVal pt, size_t co
   getBuilder().createOrFold<HashCheckedBytesOp>(outputs, pt.getLoc(), pt.getValue(), count);
   DigestVal digest = outputs[0];
   std::vector<Val> evals;
-  for (size_t i = 1; i < outputs.size(); i++) {
-    evals.emplace_back(outputs[i]);
-  }
+  for (size_t i = 1; i < outputs.size(); i++) { evals.emplace_back(outputs[i]); }
   return {digest, evals};
 }
 
@@ -502,9 +477,7 @@ HashCheckedPublicOutput hashCheckedBytesPublic(CaptureVal pt, size_t count) {
   getBuilder().createOrFold<HashCheckedBytesPublicOp>(outputs, pt.getLoc(), pt.getValue(), count);
   out.poseidon = outputs[0];
   out.sha = outputs[1];
-  for (size_t i = 2; i < outputs.size(); i++) {
-    out.vals.emplace_back(outputs[i]);
-  }
+  for (size_t i = 2; i < outputs.size(); i++) { out.vals.emplace_back(outputs[i]); }
   return out;
 }
 
@@ -541,18 +514,12 @@ std::vector<Val> doExtern(const std::string& name,
                           SourceLoc loc) {
   MLIRContext* ctx = getBuilder().getContext();
   std::vector<Type> outTypes;
-  for (size_t i = 0; i < outSize; i++) {
-    outTypes.push_back(ValType::getBaseType(ctx));
-  }
+  for (size_t i = 0; i < outSize; i++) { outTypes.push_back(ValType::getBaseType(ctx)); }
   std::vector<Value> inValues;
-  for (auto& val : in) {
-    inValues.push_back(val.getValue());
-  }
+  for (auto& val : in) { inValues.push_back(val.getValue()); }
   auto op = getBuilder().create<ExternOp>(toLoc(loc), outTypes, inValues, name, extra);
   std::vector<Val> outs;
-  for (size_t i = 0; i < outSize; i++) {
-    outs.emplace_back(op.getResult(i));
-  }
+  for (size_t i = 0; i < outSize; i++) { outs.emplace_back(op.getResult(i)); }
   return outs;
 }
 
@@ -619,9 +586,7 @@ void endBack() {
 
 DigestVal hash(llvm::ArrayRef<Val> inputs, bool flip, SourceLoc loc) {
   std::vector<Value> vals;
-  for (const auto& in : inputs) {
-    vals.push_back(in.getValue());
-  }
+  for (const auto& in : inputs) { vals.push_back(in.getValue()); }
   Type digestType = DigestType::get(getBuilder().getContext(), DigestKind::Default);
   Value out = getBuilder().create<HashOp>(toLoc(loc), digestType, flip, vals);
   return DigestVal(out);
@@ -629,9 +594,7 @@ DigestVal hash(llvm::ArrayRef<Val> inputs, bool flip, SourceLoc loc) {
 
 DigestVal intoDigest(llvm::ArrayRef<Val> inputs, DigestKind kind, SourceLoc loc) {
   std::vector<Value> vals;
-  for (const auto& in : inputs) {
-    vals.push_back(in.getValue());
-  }
+  for (const auto& in : inputs) { vals.push_back(in.getValue()); }
   auto digestType = DigestType::get(getBuilder().getContext(), kind);
   Value out = getBuilder().create<IntoDigestOp>(toLoc(loc), digestType, vals);
   return DigestVal(out);
@@ -643,9 +606,7 @@ std::vector<Val> fromDigest(DigestVal digest, size_t size, SourceLoc loc) {
   std::vector<Type> types(size, valType);
   auto fromOp = builder.create<FromDigestOp>(toLoc(loc), types, digest.getValue());
   std::vector<Val> vals;
-  for (Value out : fromOp.getOut()) {
-    vals.push_back(Val(out));
-  }
+  for (Value out : fromOp.getOut()) { vals.push_back(Val(out)); }
   return vals;
 }
 
@@ -659,13 +620,9 @@ DigestVal taggedStruct(llvm::StringRef tag,
                        llvm::ArrayRef<Val> vals,
                        SourceLoc loc) {
   std::vector<Value> digestVals;
-  for (const auto& in : digests) {
-    digestVals.push_back(in.getValue());
-  }
+  for (const auto& in : digests) { digestVals.push_back(in.getValue()); }
   std::vector<Value> valsVals;
-  for (const auto& in : vals) {
-    valsVals.push_back(in.getValue());
-  }
+  for (const auto& in : vals) { valsVals.push_back(in.getValue()); }
 
   Value out = getBuilder().create<TaggedStructOp>(toLoc(loc), tag, digestVals, valsVals);
   return DigestVal(out);
@@ -685,9 +642,7 @@ std::vector<Val> ReadIopVal::readBaseVals(size_t count, bool flip, SourceLoc slo
   std::vector<Type> types(count, valType);
   auto readOp = builder.create<Iop::ReadOp>(toLoc(sloc), types, getValue(), flip);
   std::vector<Val> out;
-  for (size_t i = 0; i < count; i++) {
-    out.emplace_back(readOp.getOuts()[i]);
-  }
+  for (size_t i = 0; i < count; i++) { out.emplace_back(readOp.getOuts()[i]); }
   return out;
 }
 
@@ -697,9 +652,7 @@ std::vector<Val> ReadIopVal::readExtVals(size_t count, bool flip, SourceLoc sloc
   std::vector<Type> types(count, valType);
   auto readOp = builder.create<Iop::ReadOp>(toLoc(sloc), types, getValue(), flip);
   std::vector<Val> out;
-  for (size_t i = 0; i < count; i++) {
-    out.emplace_back(readOp.getOuts()[i]);
-  }
+  for (size_t i = 0; i < count; i++) { out.emplace_back(readOp.getOuts()[i]); }
   return out;
 }
 
@@ -709,9 +662,7 @@ std::vector<DigestVal> ReadIopVal::readDigests(size_t count, SourceLoc sloc) {
   std::vector<Type> types(count, digestType);
   auto readOp = builder.create<Iop::ReadOp>(toLoc(sloc), types, getValue(), false);
   std::vector<DigestVal> out;
-  for (size_t i = 0; i < count; i++) {
-    out.emplace_back(readOp.getOuts()[i]);
-  }
+  for (size_t i = 0; i < count; i++) { out.emplace_back(readOp.getOuts()[i]); }
   return out;
 }
 
@@ -740,9 +691,7 @@ Val ReadIopVal::rngExtVal(SourceLoc loc) {
 Val select(Val idx, llvm::ArrayRef<Val> inputs, SourceLoc loc) {
   auto& builder = getBuilder();
   std::vector<Value> vals;
-  for (const auto& in : inputs) {
-    vals.push_back(in.getValue());
-  }
+  for (const auto& in : inputs) { vals.push_back(in.getValue()); }
   Value out = builder.create<SelectOp>(toLoc(loc), vals[0].getType(), idx.getValue(), vals);
   return out;
 }
@@ -750,9 +699,7 @@ Val select(Val idx, llvm::ArrayRef<Val> inputs, SourceLoc loc) {
 DigestVal select(Val idx, llvm::ArrayRef<DigestVal> inputs, SourceLoc loc) {
   auto& builder = getBuilder();
   std::vector<Value> vals;
-  for (const auto& in : inputs) {
-    vals.push_back(in.getValue());
-  }
+  for (const auto& in : inputs) { vals.push_back(in.getValue()); }
   Value out = builder.create<SelectOp>(toLoc(loc), vals[0].getType(), idx.getValue(), vals);
   return out;
 }

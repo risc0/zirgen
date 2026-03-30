@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -361,9 +361,7 @@ using Cells = std::array<P254, kCells>;
 
 void addRoundConstants(Cells& cells, size_t round) {
   auto& roundConstants = getRoundConstants();
-  for (size_t i = 0; i < kCells; i++) {
-    cells[i] = cells[i] + roundConstants[round * kCells + i];
-  }
+  for (size_t i = 0; i < kCells; i++) { cells[i] = cells[i] + roundConstants[round * kCells + i]; }
 }
 
 P254 sbox(P254 x) {
@@ -373,9 +371,7 @@ P254 sbox(P254 x) {
 }
 
 void doFullSboxes(Cells& cells) {
-  for (size_t i = 0; i < kCells; i++) {
-    cells[i] = sbox(cells[i]);
-  }
+  for (size_t i = 0; i < kCells; i++) { cells[i] = sbox(cells[i]); }
 }
 
 void doPartialSboxes(Cells& cells) {
@@ -387,9 +383,7 @@ void multiplyByMds(Cells& cells) {
   Cells old_cells = cells;
   for (size_t i = 0; i < kCells; i++) {
     P254 tot;
-    for (size_t j = 0; j < kCells; j++) {
-      tot = tot + mds[i * kCells + j] * old_cells[j];
-    }
+    for (size_t j = 0; j < kCells; j++) { tot = tot + mds[i * kCells + j] * old_cells[j]; }
     cells[i] = tot;
   }
 }
@@ -470,9 +464,7 @@ Digest poseidon254Hash(const uint32_t* data, size_t size) {
       idx = 1;
     }
   }
-  if (idx != 1 || count != 0) {
-    poseidonMix(cells);
-  }
+  if (idx != 1 || count != 0) { poseidonMix(cells); }
   return cells[0].toDigest();
 }
 

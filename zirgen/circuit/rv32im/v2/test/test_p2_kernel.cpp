@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -55,9 +55,7 @@ void test_p2_basic() {
   uint32_t bufOut[8];
   do_poseidon2((uint32_t)0, (uint32_t)bufIn, (uint32_t)bufOut, PFLAG_IS_ELEM | 1);
   for (size_t i = 0; i < 8; i++) {
-    if (bufOut[i] != goal[i]) {
-      die();
-    }
+    if (bufOut[i] != goal[i]) { die(); }
   }
 }
 
@@ -69,9 +67,7 @@ void test_p2_short() {
   uint32_t bufOut[8];
   do_poseidon2((uint32_t)0, (uint32_t)bufIn, (uint32_t)bufOut, 1);
   for (size_t i = 0; i < 8; i++) {
-    if (bufOut[i] != goal[i]) {
-      die();
-    }
+    if (bufOut[i] != goal[i]) { die(); }
   }
 }
 
@@ -83,9 +79,7 @@ void test_p2_long() {
   uint32_t bufOut[8];
   do_poseidon2((uint32_t)0, (uint32_t)bufIn, (uint32_t)bufOut, PFLAG_IS_ELEM | 2);
   for (size_t i = 0; i < 8; i++) {
-    if (bufOut[i] != goal[i]) {
-      die();
-    }
+    if (bufOut[i] != goal[i]) { die(); }
   }
 }
 
@@ -101,9 +95,7 @@ void test_p2_continue() {
   do_poseidon2((uint32_t)bufState, (uint32_t)bufIn, (uint32_t)bufOut, PFLAG_IS_ELEM | 1);
   do_poseidon2((uint32_t)bufState, (uint32_t)(bufIn + 16), (uint32_t)bufOut, PFLAG_IS_ELEM | 1);
   for (size_t i = 0; i < 8; i++) {
-    if (bufOut[i] != goal[i]) {
-      die();
-    }
+    if (bufOut[i] != goal[i]) { die(); }
   }
 }
 

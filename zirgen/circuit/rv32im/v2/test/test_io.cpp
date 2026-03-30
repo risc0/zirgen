@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,9 +26,7 @@ struct RandomReadSizeHandler : public HostIoHandler {
   uint32_t write(uint32_t fd, const uint8_t* data, uint32_t len) override { return len; }
   uint32_t read(uint32_t fd, uint8_t* data, uint32_t len) override {
     std::cout << "DOING READ OF SIZE " << len << "\n";
-    for (size_t i = 0; i < len; i++) {
-      data[i] = i;
-    }
+    for (size_t i = 0; i < len; i++) { data[i] = i; }
     return len;
   }
 };

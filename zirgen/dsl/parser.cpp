@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -104,9 +104,7 @@ Module::Ptr Parser::parseModule() {
     case tok_test:
     case tok_test_fails: {
       Component::Ptr testMain = parseTest();
-      if (lexer.inMain()) {
-        components.push_back(testMain);
-      }
+      if (lexer.inMain()) { components.push_back(testMain); }
     } break;
     default:
       done = true;
@@ -115,9 +113,7 @@ Module::Ptr Parser::parseModule() {
   }
 
   Token lastToken = lexer.takeToken();
-  if (lastToken != tok_eof) {
-    error("unexpected input at end of file");
-  }
+  if (lastToken != tok_eof) { error("unexpected input at end of file"); }
 
   if (errors.empty()) {
     return make_shared<Module>(lexer.getLastLocation(), std::move(components));
@@ -127,8 +123,7 @@ Module::Ptr Parser::parseModule() {
 }
 
 Attribute::Vec Parser::parseOptionalAttributeList() {
-  if (lexer.peekToken() != tok_hash)
-    return {};
+  if (lexer.peekToken() != tok_hash) return {};
   lexer.takeToken();
 
   if (!lexer.takeTokenIf(tok_square_l)) {
@@ -139,9 +134,7 @@ Attribute::Vec Parser::parseOptionalAttributeList() {
   Attribute::Vec attributes;
 
   // Handle the case where there are no attributes
-  if (lexer.takeTokenIf(tok_paren_r)) {
-    return attributes;
-  }
+  if (lexer.takeTokenIf(tok_paren_r)) { return attributes; }
 
   Token token;
   do {
@@ -315,9 +308,7 @@ Block::Ptr Parser::parseBlock() {
           error("expected '(' after '!' in compiler directive");
         }
         Expression::Vec arguments;
-        if (lexer.peekToken() != tok_paren_r) {
-          arguments = parseExpressions();
-        }
+        if (lexer.peekToken() != tok_paren_r) { arguments = parseExpressions(); }
         lexer.takeToken();
         if (lexer.takeToken() != tok_semicolon) {
           error("expected semicolon after compiler directive");
@@ -461,9 +452,7 @@ Parameter::Vec Parser::parseParameters() {
   }
 
   // Handle the case where there are no parameters
-  if (lexer.takeTokenIf(tok_paren_r)) {
-    return {};
-  }
+  if (lexer.takeTokenIf(tok_paren_r)) { return {}; }
 
   Parameter::Vec params;
   Token token;
@@ -499,14 +488,10 @@ Parameter::Ptr Parser::parseParameter() {
   }
   Expression::Ptr type =
       matchExpression("Expected type annotation expression after parameter name");
-  if (!type) {
-    return nullptr;
-  }
+  if (!type) { return nullptr; }
   token = lexer.peekToken();
   bool isVariadic = (token == tok_variadic);
-  if (isVariadic) {
-    lexer.takeToken();
-  }
+  if (isVariadic) { lexer.takeToken(); }
 
   return make_shared<Parameter>(location, name, std::move(type), isVariadic);
 }
@@ -543,9 +528,7 @@ Expression::Ptr Parser::parseExpression(BinaryOpPrecedence precedence) {
     case tok_mux:
     case tok_dot:
     case tok_back:
-      if (leftExpr) {
-        error("unexpected expression");
-      }
+      if (leftExpr) { error("unexpected expression"); }
       leftExpr = parsePrimaryExpression();
       break;
 
@@ -556,9 +539,7 @@ Expression::Ptr Parser::parseExpression(BinaryOpPrecedence precedence) {
     case tok_times:
     case tok_div:
     case tok_mod:
-      if (!leftExpr) {
-        error("missing left operand for binary operator");
-      }
+      if (!leftExpr) { error("missing left operand for binary operator"); }
       leftExpr = parseBinaryOp(std::move(leftExpr), precedence);
       break;
 
@@ -582,8 +563,7 @@ Expression::Ptr Parser::parseExpression(BinaryOpPrecedence precedence) {
 
 Expression::Ptr Parser::matchExpression(std::string message) {
   auto expr = parseExpression();
-  if (!expr)
-    error(message);
+  if (!expr) error(message);
   return expr;
 }
 
@@ -638,9 +618,7 @@ Expression::Ptr Parser::parsePrimaryExpression() {
       // Sometimes a block may directly follow another primary expression that
       // it is not part of, for example in a map:
       //   for i : arr { ... }
-      if (!leftExpr) {
-        leftExpr = parseBlock();
-      }
+      if (!leftExpr) { leftExpr = parseBlock(); }
       done = true;
       break;
     case tok_minus:
@@ -660,9 +638,7 @@ Expression::Ptr Parser::parsePrimaryExpression() {
       }
       break;
     case tok_angle_l:
-      if (!leftExpr) {
-        error("missing base expression for specialization");
-      }
+      if (!leftExpr) { error("missing base expression for specialization"); }
       leftExpr = parseSpecialize(std::move(leftExpr));
       break;
     case tok_paren_l:
@@ -673,29 +649,21 @@ Expression::Ptr Parser::parsePrimaryExpression() {
       }
       break;
     case tok_mux:
-      if (!leftExpr) {
-        error("missing base expression for switch operation");
-      }
+      if (!leftExpr) { error("missing base expression for switch operation"); }
       leftExpr = parseSwitch(std::move(leftExpr));
       break;
     case tok_dot:
-      if (!leftExpr) {
-        error("missing base expression for member lookup");
-      }
+      if (!leftExpr) { error("missing base expression for member lookup"); }
       leftExpr = parseLookup(std::move(leftExpr));
       break;
     case tok_back:
-      if (!leftExpr) {
-        error("missing base expression for back operation");
-      }
+      if (!leftExpr) { error("missing base expression for back operation"); }
       leftExpr = parseBack(std::move(leftExpr));
       break;
     default:
       // Reached something that isn't part of the expression, so we're done
       done = true;
-      if (!leftExpr) {
-        error("expected a primary expression here");
-      }
+      if (!leftExpr) { error("expected a primary expression here"); }
     }
   }
 
@@ -840,9 +808,7 @@ ArrayLiteral::Ptr Parser::parseArrayLiteral() {
   SMLoc location = lexer.getLastLocation();
 
   Expression::Vec elements;
-  if (lexer.peekToken() != tok_square_r) {
-    elements = parseExpressions();
-  }
+  if (lexer.peekToken() != tok_square_r) { elements = parseExpressions(); }
 
   if (!lexer.takeTokenIf(tok_square_r)) {
     error("Expected a ']' at the end of an array literal");
@@ -940,9 +906,7 @@ Construct::Ptr Parser::parseConstruct(Expression::Ptr&& component) {
   SMLoc location = lexer.getLastLocation();
 
   Expression::Vec arguments;
-  if (lexer.peekToken() != tok_paren_r) {
-    arguments = parseExpressions();
-  }
+  if (lexer.peekToken() != tok_paren_r) { arguments = parseExpressions(); }
 
   if (!lexer.takeTokenIf(tok_paren_r)) {
     error("Expected a ')' after arguments in constructor expression");
@@ -1039,9 +1003,7 @@ Expression::Ptr Parser::parseNegate() {
 
   SMLoc location = lexer.getLastLocation();
   Expression::Ptr val = parsePrimaryExpression();
-  if (!val) {
-    error("expected expression after minus sign");
-  }
+  if (!val) { error("expected expression after minus sign"); }
 
   Ident::Ptr id = make_shared<Ident>(location, "Neg");
   Expression::Vec args;

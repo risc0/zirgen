@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -91,12 +91,10 @@ template <typename... T>::mlir::Value lookupNearestImplicitArg(mlir::Operation* 
   while (op) {
     for (auto& region : op->getRegions()) {
       for (auto arg : region.getArguments()) {
-        if (llvm::isa<T...>(arg.getType()))
-          return arg;
+        if (llvm::isa<T...>(arg.getType())) return arg;
       }
     }
-    if (op->hasTrait<mlir::OpTrait::IsIsolatedFromAbove>())
-      break;
+    if (op->hasTrait<mlir::OpTrait::IsIsolatedFromAbove>()) break;
     op = op->getParentOp();
   }
   return {};
@@ -109,12 +107,10 @@ template <template <typename T> class Trait>
   while (op) {
     for (auto& region : op->getRegions()) {
       for (auto arg : region.getArguments()) {
-        if (arg.getType().hasTrait<Trait>())
-          return arg;
+        if (arg.getType().hasTrait<Trait>()) return arg;
       }
     }
-    if (op->hasTrait<mlir::OpTrait::IsIsolatedFromAbove>())
-      break;
+    if (op->hasTrait<mlir::OpTrait::IsIsolatedFromAbove>()) break;
     op = op->getParentOp();
   }
   return {};
@@ -124,16 +120,14 @@ template <template <typename T> class Trait>
 // operation.  The attribute must define the `lookupModuleAttrName`
 // method to provide the name of the attribute.
 template <typename AttrT> AttrT lookupModuleAttr(mlir::Operation* op) {
-  while (!llvm::isa<mlir::ModuleOp>(op))
-    op = op->getParentOp();
+  while (!llvm::isa<mlir::ModuleOp>(op)) op = op->getParentOp();
   AttrT result = op->getAttrOfType<AttrT>(AttrT::lookupModuleAttrName());
   assert(result && "Missing expected module attribute");
   return result;
 }
 
 template <typename AttrT> void setModuleAttr(mlir::Operation* op, AttrT newValue) {
-  while (!llvm::isa<mlir::ModuleOp>(op))
-    op = op->getParentOp();
+  while (!llvm::isa<mlir::ModuleOp>(op)) op = op->getParentOp();
   op->setAttr(AttrT::lookupModuleAttrName(), newValue);
 }
 

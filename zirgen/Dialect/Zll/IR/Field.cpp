@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,9 +19,7 @@ namespace zirgen::Zll {
 
 uint64_t Field::Add(uint64_t a, uint64_t b) const {
   uint64_t o = a + b;
-  if (o < a || o >= prime) {
-    o -= prime;
-  }
+  if (o < a || o >= prime) { o -= prime; }
   return o;
 }
 
@@ -56,9 +54,7 @@ uint64_t Field::Inv(uint64_t a) const {
 
 static uint64_t getDegree(ExtensionField::FieldArg a) {
   for (size_t i = a.size() - 1; i > 0; i--) {
-    if (a[i] != 0) {
-      return i;
-    }
+    if (a[i] != 0) { return i; }
   }
   return 0;
 }
@@ -67,9 +63,7 @@ ExtensionField::FieldResult ExtensionField::Add(ExtensionField::FieldArg a,
                                                 ExtensionField::FieldArg b) const {
   ExtensionField::FieldResult c(a.begin(), a.end());
   c.resize(degree);
-  for (size_t i = 0; i < b.size(); i++) {
-    c[i] = subfield.Add(c[i], b[i]);
-  }
+  for (size_t i = 0; i < b.size(); i++) { c[i] = subfield.Add(c[i], b[i]); }
   return c;
 }
 
@@ -85,9 +79,7 @@ ExtensionField::FieldResult ExtensionField::Sub(ExtensionField::FieldArg a,
 
 ExtensionField::FieldResult ExtensionField::Mul(uint64_t a, ExtensionField::FieldArg b) const {
   ExtensionField::FieldResult c(degree);
-  for (size_t i = 0; i < degree; i++) {
-    c[i] = subfield.Mul(a, b[i]);
-  }
+  for (size_t i = 0; i < degree; i++) { c[i] = subfield.Mul(a, b[i]); }
   return c;
 }
 
@@ -108,9 +100,7 @@ ExtensionField::FieldResult ExtensionField::Mul(ExtensionField::FieldArg a,
 }
 
 ExtensionField::FieldResult ExtensionField::Inv(ExtensionField::FieldArg a) const {
-  if (getDegree(a) == 0) {
-    return {subfield.Inv(a[0])};
-  }
+  if (getDegree(a) == 0) { return {subfield.Inv(a[0])}; }
 
   // Work in a slightly larger extension field that can represent this field's
   // irreducible polynomial.
@@ -120,9 +110,7 @@ ExtensionField::FieldResult ExtensionField::Inv(ExtensionField::FieldArg a) cons
   ExtensionField::FieldResult r0 = getIrreduciblePolynomial();
   r0.push_back(subfield.prime - 1);
   ExtensionField::FieldResult r1(degree + 1);
-  for (size_t i = 0; i < degree; i++) {
-    r1[i] = a[i];
-  }
+  for (size_t i = 0; i < degree; i++) { r1[i] = a[i]; }
 
   while (getDegree(r1) > 0) {
     ExtensionField::FieldResult quot = Div(r0, r1);
@@ -138,26 +126,20 @@ ExtensionField::FieldResult ExtensionField::Inv(ExtensionField::FieldArg a) cons
 
 ExtensionField::FieldResult ExtensionField::Neg(ExtensionField::FieldArg a) const {
   ExtensionField::FieldResult b(degree);
-  for (size_t i = 0; i < degree; i++) {
-    b[i] = subfield.Sub(0, a[i]);
-  }
+  for (size_t i = 0; i < degree; i++) { b[i] = subfield.Sub(0, a[i]); }
   return b;
 }
 
 bool isInvalid(ExtensionField::FieldArg a) {
   for (size_t i = 0; i < a.size(); i++) {
-    if (a[i] == kFieldInvalid) {
-      return true;
-    }
+    if (a[i] == kFieldInvalid) { return true; }
   }
   return false;
 }
 
 bool isZero(ExtensionField::FieldArg a) {
   for (size_t i = 0; i < a.size(); i++) {
-    if (a[i] != 0) {
-      return false;
-    }
+    if (a[i] != 0) { return false; }
   }
   return true;
 }
@@ -165,9 +147,7 @@ bool isZero(ExtensionField::FieldArg a) {
 ExtensionField::FieldResult ExtensionField::BitAnd(ExtensionField::FieldArg a,
                                                    ExtensionField::FieldArg b) const {
   ExtensionField::FieldResult c(degree);
-  for (size_t i = 0; i < degree; i++) {
-    c[i] = a[i] & b[i];
-  }
+  for (size_t i = 0; i < degree; i++) { c[i] = a[i] & b[i]; }
   return c;
 }
 
@@ -175,9 +155,7 @@ ExtensionField::FieldResult ExtensionField::Mod(ExtensionField::FieldArg a,
                                                 ExtensionField::FieldArg b) const {
   ExtensionField::FieldResult c(degree);
   for (size_t i = 0; i < degree; i++) {
-    if (b[i] == 0) {
-      throw std::runtime_error("Invalid mod by zero");
-    }
+    if (b[i] == 0) { throw std::runtime_error("Invalid mod by zero"); }
     c[i] = a[i] % b[i];
   }
   return c;
@@ -219,12 +197,8 @@ ExtensionField::FieldResult ExtensionField::Div(ExtensionField::FieldArg a,
   // in the first step of Euclid's agorithm for finding multiplicative inverses.
   ExtensionField extension(subfield.prime, degree + 1);
   ExtensionField::FieldResult b2(degree + 1), r(degree + 1), q(degree + 1);
-  for (size_t i = 0; i <= aDegree; i++) {
-    r[i] = a[i];
-  }
-  for (size_t i = 0; i <= bDegree; i++) {
-    b2[i] = b[i];
-  }
+  for (size_t i = 0; i <= aDegree; i++) { r[i] = a[i]; }
+  for (size_t i = 0; i <= bDegree; i++) { b2[i] = b[i]; }
 
   uint64_t rDegree = aDegree;
   while (rDegree >= bDegree) {

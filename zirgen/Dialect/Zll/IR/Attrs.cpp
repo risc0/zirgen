@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,8 +29,7 @@ ParseResult parsePolynomialAttr(OpAsmParser& parser, PolynomialAttr& coefficient
   // Parse an array of integers as elements of an extension field. Note that
   // this does require square brackets, and also that extensions of degree 0
   // are not allowed.
-  if (parser.parseLSquare())
-    return failure();
+  if (parser.parseLSquare()) return failure();
   if (succeeded(parser.parseOptionalRSquare())) {
     SMLoc loc = parser.getCurrentLocation();
     parser.emitError(loc, "A field extension cannot have a degree of 0.");
@@ -38,14 +37,12 @@ ParseResult parsePolynomialAttr(OpAsmParser& parser, PolynomialAttr& coefficient
   }
   SmallVector<uint64_t, 4> data;
   if (failed(parser.parseCommaSeparatedList([&]() {
-        if (parser.parseInteger(elem))
-          return failure();
+        if (parser.parseInteger(elem)) return failure();
         data.push_back(elem);
         return success();
       })))
     return failure();
-  if (parser.parseRSquare())
-    return failure();
+  if (parser.parseRSquare()) return failure();
   assert(data.size() > 0);
   coefficientsAttr = PolynomialAttr::get(parser.getContext(), data);
   return success();
@@ -78,9 +75,7 @@ ParseResult parseField(AsmParser& p, FieldAttr& field) {
   }
 
   field = zirgen::Zll::getField(p.getContext(), id);
-  if (!field) {
-    return p.emitError(p.getCurrentLocation(), "Unknown field " + id);
-  }
+  if (!field) { return p.emitError(p.getCurrentLocation(), "Unknown field " + id); }
   return success();
 }
 
@@ -132,13 +127,11 @@ LogicalResult FieldAttr::verify(function_ref<InFlightDiagnostic()> emitError,
 llvm::SmallVector<BufferDescAttr> BuffersAttr::getTapBuffers() const {
   llvm::SmallVector<BufferDescAttr> tapBuffers;
   for (auto bufDesc : getBuffers()) {
-    if (!bufDesc.getRegGroupId())
-      continue;
+    if (!bufDesc.getRegGroupId()) continue;
 
     size_t regGroupId = *bufDesc.getRegGroupId();
 
-    if (tapBuffers.size() <= regGroupId)
-      tapBuffers.resize(regGroupId + 1);
+    if (tapBuffers.size() <= regGroupId) tapBuffers.resize(regGroupId + 1);
     tapBuffers[regGroupId] = bufDesc;
   }
   return tapBuffers;
@@ -146,8 +139,7 @@ llvm::SmallVector<BufferDescAttr> BuffersAttr::getTapBuffers() const {
 
 BufferDescAttr BuffersAttr::getBuffer(StringRef bufName) const {
   for (auto bufDesc : getBuffers()) {
-    if (bufDesc.getName() == bufName)
-      return bufDesc;
+    if (bufDesc.getName() == bufName) return bufDesc;
   }
   return {};
 }
@@ -184,8 +176,7 @@ LogicalResult BuffersAttr::verify(llvm::function_ref<::mlir::InFlightDiagnostic(
     if (bufNames.contains(buf.getName()))
       return emitError() << "Duplicate buffer name " << buf.getName() << "\n";
 
-    if (buf.getRegGroupId())
-      tapGroupIds.push_back(*buf.getRegGroupId());
+    if (buf.getRegGroupId()) tapGroupIds.push_back(*buf.getRegGroupId());
   }
 
   llvm::sort(tapGroupIds);
@@ -200,8 +191,7 @@ LogicalResult BuffersAttr::verify(llvm::function_ref<::mlir::InFlightDiagnostic(
 
 LogicalResult TapsAttr::verify(llvm::function_ref<::mlir::InFlightDiagnostic()> emitError,
                                ArrayRef<TapAttr> tapAttrs) {
-  if (tapAttrs.empty())
-    return emitError() << "TapsAttr must have at least one tap";
+  if (tapAttrs.empty()) return emitError() << "TapsAttr must have at least one tap";
   ssize_t curRegGroupId = -1;
   size_t curOffset = 0;
   size_t curBack = 0;
@@ -252,9 +242,7 @@ TapsAttr TapsAttr::sortAndPad(SmallVector<TapAttr> taps, BuffersAttr buffers) {
 
   // Calculate which registers have taps
   DenseMap</*regGroupId=*/size_t, DenseSet</*offset=*/size_t>> tapRegs;
-  for (auto tap : taps) {
-    tapRegs[tap.getRegGroupId()].insert(tap.getOffset());
-  }
+  for (auto tap : taps) { tapRegs[tap.getRegGroupId()].insert(tap.getOffset()); }
 
   // Add taps with back=0 for any registers missing taps
   for (auto buf : buffers.getTapBuffers()) {
@@ -262,8 +250,7 @@ TapsAttr TapsAttr::sortAndPad(SmallVector<TapAttr> taps, BuffersAttr buffers) {
     const auto& offsets = tapRegs[regGroupId];
 
     for (size_t i = 0; i < buf.getRegCount(); ++i)
-      if (!offsets.contains(i))
-        taps.push_back(TapAttr::get(ctx, regGroupId, i, 0));
+      if (!offsets.contains(i)) taps.push_back(TapAttr::get(ctx, regGroupId, i, 0));
   }
 
   // Sort and deduplicate

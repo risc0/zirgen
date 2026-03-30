@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,10 +47,8 @@ enum class FuncKind {
 
 // Apply fixups; apparently gpus use different names than cpus.
 std::string gpuMapName(std::string name) {
-  if (name == "code")
-    return "ctrl";
-  if (name == "global")
-    return "out";
+  if (name == "code") return "ctrl";
+  if (name == "global") return "out";
   return name;
 }
 
@@ -77,9 +75,7 @@ public:
     for (auto arg : func.getArguments()) {
       ctx.vars[arg] = llvm::formatv("arg{0}", arg.getArgNumber()).str();
       ss << ", ";
-      if (suffix == ".metal") {
-        ss << "device ";
-      }
+      if (suffix == ".metal") { ss << "device "; }
       ss << "Fp* arg" << arg.getArgNumber();
     }
 
@@ -134,8 +130,7 @@ public:
                 args += "Fp";
             })
             .Case<BufferType>([&](auto bufType) {
-              if (bufType.getKind() != BufferKind::Temporary)
-                args += "const ";
+              if (bufType.getKind() != BufferKind::Temporary) args += "const ";
               if (bufType.getElement().getFieldK() > 1)
                 args += "FpExt*";
               else
@@ -151,8 +146,7 @@ public:
 
       funcProtos.push_back(object{{"args", args}, {"fn", calledFunc.getName().str()}});
 
-      if (declsOnly || (curSplitIndex++ % splitCount) != splitIndex)
-        continue;
+      if (declsOnly || (curSplitIndex++ % splitCount) != splitIndex) continue;
 
       list lines;
       for (Operation& op : calledFunc.front().without_terminator()) {
@@ -186,9 +180,7 @@ public:
 
     if (!declsOnly && (curSplitIndex++ % splitCount) == splitIndex) {
       list lines;
-      for (Operation& op : func.front().without_terminator()) {
-        emitOp(&op, ctx, lines, mixPows);
-      }
+      for (Operation& op : func.front().without_terminator()) { emitOp(&op, ctx, lines, mixPows); }
       Value retVal = func.front().getTerminator()->getOperand(0);
       lines.push_back(llvm::formatv("return {0};", ctx.use(retVal)).str());
 
@@ -309,9 +301,7 @@ private:
           std::string inner((depth + 1) * 2, ' ');
           lines.push_back(indent + "{");
           std::string specifier;
-          if (suffix == ".metal") {
-            specifier = "device ";
-          }
+          if (suffix == ".metal") { specifier = "device "; }
           lines.push_back(inner + llvm::formatv("{2}auto& reg = {0}[{1} * steps + cycle];",
                                                 ctx.use(op->getOperand(0)),
                                                 emitIntAttr(op, "offset"),
@@ -501,9 +491,7 @@ private:
     const char* outType = "Fp";
     if (op->getNumResults() == 1) {
       auto valType = llvm::dyn_cast<ValType>(op->getResults()[0].getType());
-      if (valType && valType.getFieldK() > 1) {
-        outType = "FpExt";
-      }
+      if (valType && valType.getFieldK() > 1) { outType = "FpExt"; }
     }
 
     mlir::TypeSwitch<Operation*>(op)
@@ -528,9 +516,7 @@ private:
           auto out = ctx.def(op.getResult(0));
           ss << llvm::formatv("auto {0} = {1}(idx, size", out, op.getCallee()).str();
 
-          for (mlir::Value arg : op.getOperands()) {
-            ss << ", " << ctx.use(arg);
-          }
+          for (mlir::Value arg : op.getOperands()) { ss << ", " << ctx.use(arg); }
           ss << ", poly_mix);\n";
         })
         .Case<GetOp>([&](GetOp op) {

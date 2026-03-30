@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -62,9 +62,7 @@ cells_t multiply_by_m_int(const cells_t& in) {
   // Exploit the fact that off-diagonal entries of M_INT are all 1.
   uint64_t sum = 0;
   cells_t out{};
-  for (size_t i = 0; i < CELLS; i++) {
-    sum += in[i];
-  }
+  for (size_t i = 0; i < CELLS; i++) { sum += in[i]; }
   sum %= kBabyBearP;
   for (size_t i = 0; i < CELLS; i++) {
     out[i] = (sum + M_INT_DIAG_HZN[i] * uint64_t(in[i])) % kBabyBearP;
@@ -119,9 +117,7 @@ uint32_t sbox2(uint64_t in) {
 
 cells_t full_poseidon2_round(const cells_t& in, size_t idx) {
   cells_t out = add_round_constants_full(in, idx);
-  for (size_t i = 0; i < CELLS; i++) {
-    out[i] = sbox2(out[i]);
-  }
+  for (size_t i = 0; i < CELLS; i++) { out[i] = sbox2(out[i]); }
   return multiply_by_m_ext(out);
 }
 
@@ -138,15 +134,9 @@ cells_t poseidon2_mix(const cells_t& in) {
   // First linear layer.
   cur = multiply_by_m_ext(cur);
 
-  for (size_t i = 0; i < ROUNDS_HALF_FULL; i++) {
-    cur = full_poseidon2_round(cur, idx++);
-  }
-  for (size_t i = 0; i < ROUNDS_PARTIAL; i++) {
-    cur = partial_poseidon2_round(cur, idx++);
-  }
-  for (size_t i = 0; i < ROUNDS_HALF_FULL; i++) {
-    cur = full_poseidon2_round(cur, idx++);
-  }
+  for (size_t i = 0; i < ROUNDS_HALF_FULL; i++) { cur = full_poseidon2_round(cur, idx++); }
+  for (size_t i = 0; i < ROUNDS_PARTIAL; i++) { cur = partial_poseidon2_round(cur, idx++); }
+  for (size_t i = 0; i < ROUNDS_HALF_FULL; i++) { cur = full_poseidon2_round(cur, idx++); }
 
   return cur;
 }
@@ -164,15 +154,11 @@ Digest poseidon2Hash(const uint32_t* data, size_t size) {
   }
   if (curUsed != 0 || size == 0) {
     // If `size` is not an even multiple of 16, zero-pad
-    for (size_t loc = curUsed; loc < 16; loc++) {
-      cur[loc] = 0;
-    }
+    for (size_t loc = curUsed; loc < 16; loc++) { cur[loc] = 0; }
     cur = poseidon2_mix(cur);
   }
   Digest out;
-  for (size_t i = 0; i < 8; i++) {
-    out.words[i] = toMontgomery(cur[i]);
-  }
+  for (size_t i = 0; i < 8; i++) { out.words[i] = toMontgomery(cur[i]); }
   return out;
 }
 
@@ -184,9 +170,7 @@ Digest poseidon2HashPair(Digest x, Digest y) {
   }
   cur = poseidon2_mix(cur);
   Digest out;
-  for (size_t i = 0; i < 8; i++) {
-    out.words[i] = toMontgomery(cur[i]);
-  }
+  for (size_t i = 0; i < 8; i++) { out.words[i] = toMontgomery(cur[i]); }
   return out;
 }
 
@@ -195,17 +179,13 @@ void poseidonMultiplyByMExt(std::array<uint32_t, 24>& cells) {
 }
 
 void poseidonDoExtRound(std::array<uint32_t, 24>& cells, size_t idx) {
-  if (idx >= ROUNDS_HALF_FULL) {
-    idx += ROUNDS_PARTIAL;
-  };
+  if (idx >= ROUNDS_HALF_FULL) { idx += ROUNDS_PARTIAL; };
   cells = full_poseidon2_round(cells, idx);
 }
 
 void poseidonDoIntRounds(std::array<uint32_t, 24>& cells) {
   size_t idx = ROUNDS_HALF_FULL;
-  for (size_t i = 0; i < ROUNDS_PARTIAL; i++) {
-    cells = partial_poseidon2_round(cells, idx++);
-  }
+  for (size_t i = 0; i < ROUNDS_PARTIAL; i++) { cells = partial_poseidon2_round(cells, idx++); }
 }
 
 void poseidonSponge(std::array<uint32_t, 24>& cells) {
@@ -213,9 +193,7 @@ void poseidonSponge(std::array<uint32_t, 24>& cells) {
 }
 
 Poseidon2Rng::Poseidon2Rng() : pool_used(0) {
-  for (size_t i = 0; i < CELLS; i++) {
-    cells[i] = 0;
-  }
+  for (size_t i = 0; i < CELLS; i++) { cells[i] = 0; }
 }
 
 void Poseidon2Rng::mix(const Digest& data) {
@@ -242,9 +220,7 @@ uint32_t Poseidon2Rng::generateBits(size_t bits) {
   uint64_t val = generateFp();
   for (size_t i = 0; i < 3; i++) {
     uint64_t newVal = generateFp();
-    if (val == 0) {
-      val = newVal;
-    }
+    if (val == 0) { val = newVal; }
   }
   return and_mask & val;
 }

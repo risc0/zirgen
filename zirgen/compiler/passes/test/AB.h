@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -73,8 +73,7 @@ template <typename Func> void doInlineFpExtAB(const std::vector<uint32_t>& iopVa
   // interp2.setDebug(true);
   interp2.setExternHandler(&baseExternHandler);
   interp2.setIop(func.getArgument(0), readIop2.get());
-  if (failed(interp2.runBlock(func.front())))
-    FAIL() << "failed to evaluate block in interpreter";
+  if (failed(interp2.runBlock(func.front()))) FAIL() << "failed to evaluate block in interpreter";
   uint32_t out2 = readIop2->generateFp();
   readIop2->verifyComplete();
   llvm::errs() << "Out 2 = " << out2 << "\n";
@@ -84,9 +83,7 @@ template <typename Func> void doInlineFpExtAB(const std::vector<uint32_t>& iopVa
   for (mlir::Operation& op : func.front().without_terminator()) {
     opCounts[op.getName().getStringRef().str()]++;
   }
-  for (const auto& kvp : opCounts) {
-    llvm::errs() << kvp.first << ": " << kvp.second << "\n";
-  }
+  for (const auto& kvp : opCounts) { llvm::errs() << kvp.first << ": " << kvp.second << "\n"; }
 
   // Make sure results match
   ASSERT_EQ(out1, out2);

@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,9 +28,7 @@ struct UnrollPass : public UnrollBase<UnrollPass> {
     RewritePatternSet patterns(ctx);
     patterns.insert<UnrollMaps>(ctx);
     patterns.insert<UnrollReduces>(ctx);
-    if (applyPatternsGreedily(op, std::move(patterns)).failed()) {
-      signalPassFailure();
-    }
+    if (applyPatternsGreedily(op, std::move(patterns)).failed()) { signalPassFailure(); }
   }
 };
 

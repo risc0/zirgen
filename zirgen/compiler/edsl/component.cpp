@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,17 +46,13 @@ struct CallbackArm {
   Buffer cond;
   CallbackBlock inner;
   void emit() {
-    IF(cond[0]) { inner.emit(); }
+    IF (cond[0]) { inner.emit(); }
   }
 };
 
 void CallbackBlock::emit() {
-  for (auto& f : normal) {
-    f();
-  }
-  for (auto& arm : arms) {
-    arm->emit();
-  }
+  for (auto& f : normal) { f(); }
+  for (auto& arm : arms) { arm->emit(); }
 }
 
 struct CallbackStack {
@@ -93,9 +89,7 @@ void CompContext::init(std::vector<llvm::StringRef> phases) {
   gAllocState->stack.emplace_back();
   gCallbackState = new CallbackState;
   gCallbackState->phases.emplace_back("_alloc_finalize");
-  for (auto str : phases) {
-    gCallbackState->phases.emplace_back(str);
-  }
+  for (auto str : phases) { gCallbackState->phases.emplace_back(str); }
   gCallbackState->phases.emplace_back("_builtin_verify");
 }
 
@@ -126,9 +120,7 @@ void CompContext::fini(Val ret) {
       // the final component of the parent component.
       NONDET {
         for (auto& kvp : finalPools) {
-          for (auto& val : kvp.second) {
-            val->finalize();
-          }
+          for (auto& val : kvp.second) { val->finalize(); }
         }
       }
     });
@@ -165,9 +157,7 @@ void CompContext::enterArm(Buffer cond) {
   assert(gCallbackState);
   gAllocState->needsFlush = true;
   gAllocState->stack.push_back(gAllocState->stack.back());
-  for (auto& phase : gCallbackState->phases) {
-    phase.push(cond);
-  }
+  for (auto& phase : gCallbackState->phases) { phase.push(cond); }
 }
 
 void CompContext::leaveArm() {
@@ -179,16 +169,12 @@ void CompContext::leaveArm() {
       // the final component of the parent component.
       NONDET {
         for (auto& kvp : finalPools) {
-          for (auto& val : kvp.second) {
-            val->finalize();
-          }
+          for (auto& val : kvp.second) { val->finalize(); }
         }
       }
     });
   }
-  for (auto& phase : gCallbackState->phases) {
-    phase.pop();
-  }
+  for (auto& phase : gCallbackState->phases) { phase.pop(); }
   gAllocState->stack.pop_back();
 }
 
@@ -233,9 +219,7 @@ void CompContext::pushConstruct(llvm::StringRef ident, llvm::StringRef mangledTy
   tyIdent.consume_front("rv32im_v1::");
 
   size_t tmplPos = tyIdent.find('<');
-  if (tmplPos != llvm::StringRef::npos) {
-    tyIdent = tyIdent.substr(0, tmplPos);
-  }
+  if (tmplPos != llvm::StringRef::npos) { tyIdent = tyIdent.substr(0, tmplPos); }
   tyIdent.consume_back("Impl");
   // The type mess above will now be just "Mux".
 
@@ -275,12 +259,8 @@ void CompContext::popConstruct() {
     auto parent = curConstructs.back();
 
     for (auto [ident, info] : parent->subcomponents) {
-      if (info != cur) {
-        continue;
-      }
-      if (parent->labels.count(ident)) {
-        continue;
-      }
+      if (info != cur) { continue; }
+      if (parent->labels.count(ident)) { continue; }
       parent->labels.emplace(ident, cur->labels.begin()->second);
       parent->subcomponents.erase(ident);
       break;
@@ -298,9 +278,7 @@ void CompContext::saveLabel(Buffer buf, llvm::StringRef label) {
 
   if (label.empty()) {
     size_t idx = 0;
-    while (cur->labels.count(std::to_string(idx))) {
-      ++idx;
-    }
+    while (cur->labels.count(std::to_string(idx))) { ++idx; }
     cur->labels.emplace(std::to_string(idx), buf);
   }
 }

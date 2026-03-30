@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,33 +44,21 @@ struct CppStreamEmitterImpl : CppStreamEmitter {
   void footer(func::FuncOp func) { ofs << "}  // namespace circuit::" << func.getName() << "\n"; }
 
   void doIndent() {
-    for (size_t i = 0; i < indent; i++) {
-      ofs << "  ";
-    }
+    for (size_t i = 0; i < indent; i++) { ofs << "  "; }
   }
 
   void emitGeneric(const char* prefix, Operation* op) {
     doIndent();
-    if (op->getNumResults() > 0) {
-      ofs << "auto ";
-    }
-    if (op->getNumResults() > 1) {
-      ofs << "[";
-    }
+    if (op->getNumResults() > 0) { ofs << "auto "; }
+    if (op->getNumResults() > 1) { ofs << "["; }
     for (size_t i = 0; i < op->getNumResults(); i++) {
       std::string outName = "val" + std::to_string(nextVal++);
       names[op->getResult(i)] = outName;
       ofs << outName;
-      if (i != op->getNumResults() - 1) {
-        ofs << ", ";
-      }
+      if (i != op->getNumResults() - 1) { ofs << ", "; }
     }
-    if (op->getNumResults() > 1) {
-      ofs << "]";
-    }
-    if (op->getNumResults() > 0) {
-      ofs << " = ";
-    }
+    if (op->getNumResults() > 1) { ofs << "]"; }
+    if (op->getNumResults() > 0) { ofs << " = "; }
     ofs << prefix << "_" << op->getName().stripDialect() << "(";
     // Special case for get
     if (isa<GetOp>(op)) {
@@ -84,14 +72,10 @@ struct CppStreamEmitterImpl : CppStreamEmitter {
       ofs << ", ";
     }
     for (const char* attrName : {"coefficients", "value", "offset", "back", "tap"}) {
-      if (auto attr = op->getAttrOfType<IntegerAttr>(attrName)) {
-        ofs << attr.getUInt() << ", ";
-      }
+      if (auto attr = op->getAttrOfType<IntegerAttr>(attrName)) { ofs << attr.getUInt() << ", "; }
       if (auto attr = op->getAttrOfType<PolynomialAttr>(attrName)) {
         ofs << "{";
-        for (uint64_t elem : attr.asArrayRef()) {
-          ofs << elem << ", ";
-        }
+        for (uint64_t elem : attr.asArrayRef()) { ofs << elem << ", "; }
         ofs << "}, ";
       }
     }
@@ -119,9 +103,7 @@ struct CppStreamEmitterImpl : CppStreamEmitter {
     }
 
     indent++;
-    for (Operation& op : func.front().without_terminator()) {
-      emitGeneric(prefix, &op);
-    }
+    for (Operation& op : func.front().without_terminator()) { emitGeneric(prefix, &op); }
     auto retOp = cast<func::ReturnOp>(func.front().getTerminator());
     ofs << "  return " << names[retOp.getOperand(0)] << ";\n";
     ofs << "}\n";
@@ -137,9 +119,7 @@ struct CppStreamEmitterImpl : CppStreamEmitter {
     ofs << "    { // groups\n";
     size_t tapPos = 0;
     for (auto [groupId, regGroup] : llvm::enumerate(tapSet.groups)) {
-      if (groupId != 0) {
-        ofs << ",";
-      }
+      if (groupId != 0) { ofs << ","; }
       ofs << "    { // group " << groupId << "\n";
       ofs << "{\n";
       bool firstReg = true;
@@ -151,9 +131,7 @@ struct CppStreamEmitterImpl : CppStreamEmitter {
         }
         ofs << "{" << reg.offset << "," << reg.combo << "," << tapPos << ", {";
         for (size_t i = 0; i != reg.backs.size(); ++i) {
-          if (i != 0) {
-            ofs << ",";
-          }
+          if (i != 0) { ofs << ","; }
           ofs << reg.backs[i];
           tapPos++;
         }
@@ -165,9 +143,7 @@ struct CppStreamEmitterImpl : CppStreamEmitter {
     ofs << " { // combos\n";
     size_t comboIndex = 0;
     for (const auto& combo : tapSet.combos) {
-      if (comboIndex != 0) {
-        ofs << ",";
-      }
+      if (comboIndex != 0) { ofs << ","; }
       ofs << "{" << comboIndex << ", {";
       llvm::interleaveComma(combo.backs, ofs);
       ofs << "}}\n";

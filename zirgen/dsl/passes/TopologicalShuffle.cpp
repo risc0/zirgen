@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,15 +31,12 @@ struct TopologicalShufflePass : public TopologicalShuffleBase<TopologicalShuffle
   void moveUsesBefore(Operation* op, Operation* beforeOp, Block* origBlock) {
     while (op->getBlock() != origBlock) {
       op = op->getParentOp();
-      if (!op)
-        return;
+      if (!op) return;
     }
     op->moveBefore(beforeOp);
 
     op->walk([&](Operation* subOp) {
-      for (Operation* userOp : subOp->getUsers()) {
-        moveUsesBefore(userOp, beforeOp, origBlock);
-      }
+      for (Operation* userOp : subOp->getUsers()) { moveUsesBefore(userOp, beforeOp, origBlock); }
     });
   }
   void runOnOperation() override {

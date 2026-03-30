@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -53,12 +53,12 @@ void BitOpShortsImpl::set(MacroInst inst, Val writeAddr) {
 
     outO[i] = totO;
   }
-  IF(inst->operands[2]) {
+  IF (inst->operands[2]) {
     // AND and combine [a, b, 0, 0] & [c, d, 0, 0] -> [(a & c) + ((b & d) << 16), 0, 0, 0]
     out->doWrite(writeAddr, {outO[1] * 65536 + outO[0], 0, 0, 0});
     XLOG("  AND Result = %e", out->data());
   }
-  IF(1 - inst->operands[2]) {
+  IF (1 - inst->operands[2]) {
     // XORs and returns 2 shorts: [a, b, 0, 0] ^ [c, d, 0, 0] -> [a ^ c, b ^ d, 0, 0]
     // NOTE: a ^ b == a + b - 2 * (a & b)
     out->doWrite(writeAddr,

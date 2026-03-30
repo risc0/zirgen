@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,9 +47,7 @@ int main(int argc, char* argv[]) {
                     [&](Buffer out, Buffer codeRoot, ReadIopVal iop) {
                       auto circuit = verify::getInterfaceRecursion();
                       auto info = zirgen::verify::verify(iop, 18, *circuit);
-                      for (size_t i = 0; i < kOutSize; i++) {
-                        out[i] = info.out[i];
-                      }
+                      for (size_t i = 0; i < kOutSize; i++) { out[i] = info.out[i]; }
                       codeRoot.setDigest(0, info.codeRoot, "codeRoot");
                     });
   module.optimize();
@@ -98,7 +96,7 @@ int main(int argc, char* argv[]) {
   header_writer.exceptions(std::ofstream::failbit | std::ofstream::badbit);
   header_writer.open(outputDir + "/seal_format.rs");
 
-  header_writer << "// Copyright 2024 RISC Zero, Inc.\n";
+  header_writer << "// Copyright 2026 RISC Zero, Inc.\n";
   header_writer << "//\n";
   header_writer << "// Licensed under the Apache License, Version 2.0 (the \"License\");\n";
   header_writer << "// you may not use this file except in compliance with the License.\n";
@@ -123,9 +121,7 @@ int main(int argc, char* argv[]) {
   header_writer << "}\n";
   header_writer << "\n";
   header_writer << "pub(crate) const K_SEAL_TYPES: [IopType; K_SEAL_ELEMS] = [\n";
-  for (std::string line : body) {
-    header_writer << line;
-  }
+  for (std::string line : body) { header_writer << line; }
   header_writer << "];\n";
   header_writer.close();
 }

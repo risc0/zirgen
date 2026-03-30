@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -134,17 +134,14 @@ struct BufferizeTarget : public ConversionTarget {
     // Functions are legal if they have legal (non-composite) types.
     addDynamicallyLegalOp<func::FuncOp>([&](func::FuncOp func) -> bool {
       for (Type t : func.getArgumentTypes()) {
-        if (!tc.isLegal(t))
-          return false;
+        if (!tc.isLegal(t)) return false;
       }
       for (Type t : func.getResultTypes()) {
-        if (!tc.isLegal(t))
-          return false;
+        if (!tc.isLegal(t)) return false;
       }
       for (Block& block : func.getBody()) {
         for (Type t : block.getArgumentTypes()) {
-          if (!tc.isLegal(t))
-            return false;
+          if (!tc.isLegal(t)) return false;
         }
       }
       return true;
@@ -152,14 +149,10 @@ struct BufferizeTarget : public ConversionTarget {
     // Other ops are legal if their types are legal, otherwise they must be converted.
     markUnknownOpDynamicallyLegal([&](Operation* op) -> bool {
       for (Type t : op->getResultTypes()) {
-        if (!tc.isLegal(t)) {
-          return false;
-        }
+        if (!tc.isLegal(t)) { return false; }
       }
       for (Type t : op->getOperandTypes()) {
-        if (!tc.isLegal(t)) {
-          return false;
-        }
+        if (!tc.isLegal(t)) { return false; }
       }
       return true;
     });
@@ -226,9 +219,7 @@ struct ConvertLookup : public ConversionPattern {
     if (isa<StructType>(lookup.getBase().getType())) {
       auto t = cast<StructType>(lookup.getBase().getType());
       for (auto& field : t.getFields()) {
-        if (field.name == memberName) {
-          break;
-        }
+        if (field.name == memberName) { break; }
         index += calcBufferSize(field.type);
       }
     }
@@ -253,9 +244,7 @@ struct ConvertSubscript : public OpConversionPattern<SubscriptOp> {
     auto base = adaptor.getBase();
     size_t size = calcBufferSize(op.getOut().getType());
     IntegerAttr indexAttr = op.getIndexAsAttr();
-    if (!indexAttr) {
-      return rewriter.notifyMatchFailure(op, "failed to fold subscript index");
-    }
+    if (!indexAttr) { return rewriter.notifyMatchFailure(op, "failed to fold subscript index"); }
     size_t index = indexAttr.getInt() * size;
     rewriter.replaceOp(op, rewriter.create<SliceOp>(loc, base, index, size));
     return success();
@@ -341,9 +330,7 @@ struct ConvertFunc : public OpConversionPattern<func::FuncOp> {
     rewriter.startOpModification(func);
     func.setType(outFuncType);
     auto body = &func.getBody();
-    if (failed(rewriter.convertRegionTypes(body, *converter, &signature))) {
-      return failure();
-    }
+    if (failed(rewriter.convertRegionTypes(body, *converter, &signature))) { return failure(); }
     rewriter.finalizeOpModification(func);
     return success();
   }

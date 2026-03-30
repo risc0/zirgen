@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -88,8 +88,7 @@ std::pair<StringAttr, ZStruct::RefAttr> TransformLayout::getRefAttr(mlir::Value 
       if (auto funcOp =
               llvm::dyn_cast_if_present<FunctionOpInterface>(blockArg.getOwner()->getParentOp()))
         argName = funcOp.getArgAttrOfType<StringAttr>(argNum, "zirgen.argName");
-      if (!argName)
-        argName = builder.getStringAttr("arg" + std::to_string(argNum));
+      if (!argName) argName = builder.getStringAttr("arg" + std::to_string(argNum));
 
       return {argName,
               builder.getAttr<ZStruct::RefAttr>(
@@ -121,9 +120,7 @@ StringAttr TransformLayout::generateTypeName(StringRef origName) {
   std::string filtered;
   for (auto c : componentType) {
     if (c == '_' || c == '[' || c == ']' || c == ':') {
-      if (filtered.empty() || filtered.back() != '_') {
-        filtered.push_back('_');
-      }
+      if (filtered.empty() || filtered.back() != '_') { filtered.push_back('_'); }
     } else {
       filtered.push_back(c);
     }
@@ -146,9 +143,7 @@ StringAttr TransformLayout::generateTypeName(StringRef origName) {
 
 std::pair<StringRef, size_t> parseArray(StringRef name) {
   auto pos = name.find('[');
-  if (pos == StringRef::npos) {
-    return std::make_pair(StringRef{}, 0);
-  }
+  if (pos == StringRef::npos) { return std::make_pair(StringRef{}, 0); }
   StringRef rest = name.substr(pos + 1);
   size_t idx;
   bool failed = rest.consumeInteger(10, idx);
@@ -175,8 +170,7 @@ TransformLayout::rollUpArrays(SmallVector<std::pair<Type, NamedAttribute>> subAt
 
     auto& arr = arrays[name].second;
     auto& elemType = arrays[name].first;
-    if (arr.size() <= offset)
-      arr.resize(offset + 1);
+    if (arr.size() <= offset) arr.resize(offset + 1);
 
     assert((!arr[offset]) && "Duplicate array index");
     arr[offset] = subAttr.getValue();
@@ -235,20 +229,17 @@ std::pair<mlir::Attribute, mlir::Type>
 TransformLayout::transform(std::shared_ptr<ConstructInfo> info, StringAttr bufName) {
   SmallVector<std::pair<Type, NamedAttribute>> subAttrs;
 
-  if (!usedBufs.at(info.get()).contains(bufName))
-    return {};
+  if (!usedBufs.at(info.get()).contains(bufName)) return {};
 
   for (auto& [subident, buf] : info->labels) {
     auto [labelBufName, refAttr] = getRefAttr(buf.getBuf());
-    if (labelBufName != bufName)
-      continue;
+    if (labelBufName != bufName) continue;
     subAttrs.emplace_back(std::make_pair(refAttr.getType(),
                                          NamedAttribute(builder.getStringAttr(subident), refAttr)));
   }
   for (auto& [subident, subcomponent] : info->subcomponents) {
     auto [subAttr, subType] = transform(subcomponent, bufName);
-    if (!subAttr)
-      continue;
+    if (!subAttr) continue;
     subAttrs.emplace_back(
         std::make_pair(subType, NamedAttribute(builder.getStringAttr(subident), subAttr)));
   }
@@ -274,9 +265,7 @@ TransformLayout::transform(std::shared_ptr<ConstructInfo> info, StringAttr bufNa
     return {subAttr.second.getValue(), subAttr.first};
   }
 
-  if (!types.contains(fields)) {
-    types[fields] = generateTypeName(info->typeName);
-  }
+  if (!types.contains(fields)) { types[fields] = generateTypeName(info->typeName); }
 
   StringRef typeName = types[fields];
   ZStruct::LayoutType layoutType = builder.getType<ZStruct::LayoutType>(typeName, fields.fields);

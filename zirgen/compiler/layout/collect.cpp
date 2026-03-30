@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,8 +41,7 @@ Circuit::Circuit(mlir::ModuleOp mod) {
 }
 
 unsigned Circuit::visit(mlir::Type t) {
-  if (!t)
-    return 0;
+  if (!t) return 0;
   unsigned sz = llvm::TypeSwitch<mlir::Type, unsigned>(t)
                     .Case<RefType>([&](RefType x) { return visit(x); })
                     .Case<LayoutType>([&](LayoutType x) { return visit(x); })
@@ -87,9 +86,7 @@ unsigned Circuit::visitStruct(LayoutType st) {
   if (structs.find(st) == structs.end()) {
     unsigned elsz = 0;
     structs.insert({st, Layout(st)});
-    for (auto& field : st.getFields()) {
-      elsz += visit(field.type);
-    }
+    for (auto& field : st.getFields()) { elsz += visit(field.type); }
     return elsz;
   } else {
     return sizes[st];

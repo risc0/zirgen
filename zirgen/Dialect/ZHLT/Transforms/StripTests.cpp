@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,8 +35,7 @@ struct StripTestsPass : public StripTestsBase<StripTestsPass> {
       }
     }
 
-    for (auto op : toErase)
-      op->erase();
+    for (auto op : toErase) op->erase();
   }
 };
 

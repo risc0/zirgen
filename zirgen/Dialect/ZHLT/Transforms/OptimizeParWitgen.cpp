@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -57,12 +57,10 @@ struct UnravelSwitchPackResult : public OpRewritePattern<SwitchOp> {
 
   LogicalResult matchAndRewrite(SwitchOp op, PatternRewriter& rewriter) const final {
     // Don't bother unravelling if we don't need these results
-    if (op->use_empty())
-      return rewriter.notifyMatchFailure(op, "Unused");
+    if (op->use_empty()) return rewriter.notifyMatchFailure(op, "Unused");
 
     StructType ty = dyn_cast<StructType>(op.getType());
-    if (!ty)
-      return rewriter.notifyMatchFailure(op, "Not a struct return");
+    if (!ty) return rewriter.notifyMatchFailure(op, "Not a struct return");
 
     rewriter.setInsertionPointAfter(op);
     SmallVector<Value> splitFields;
@@ -113,12 +111,10 @@ struct UnravelSwitchArrayResult : public OpRewritePattern<SwitchOp> {
 
   LogicalResult matchAndRewrite(SwitchOp op, PatternRewriter& rewriter) const final {
     // Don't bother unravelling if we don't need these results
-    if (op->use_empty())
-      return failure();
+    if (op->use_empty()) return failure();
 
     ArrayType ty = dyn_cast<ArrayType>(op.getType());
-    if (!ty)
-      return failure();
+    if (!ty) return failure();
 
     rewriter.setInsertionPointAfter(op);
     SmallVector<Value> splitElements;
@@ -160,12 +156,10 @@ struct UnravelSwitchValResult : public OpRewritePattern<SwitchOp> {
 
   LogicalResult matchAndRewrite(SwitchOp op, PatternRewriter& rewriter) const final {
     // Don't bother if we don't need these results
-    if (op->use_empty())
-      return failure();
+    if (op->use_empty()) return failure();
 
     ValType ty = dyn_cast<ValType>(op.getType());
-    if (!ty)
-      return failure();
+    if (!ty) return failure();
 
     // If there's anything better ot be done like inlining or inner switch operations, deal with
     // those first.
@@ -247,8 +241,7 @@ struct EraseUselessExtern : public OpRewritePattern<Zll::ExternOp> {
   using OpRewritePattern::OpRewritePattern;
 
   LogicalResult matchAndRewrite(Zll::ExternOp op, PatternRewriter& rewriter) const final {
-    if (!op.use_empty())
-      return failure();
+    if (!op.use_empty()) return failure();
 
     rewriter.eraseOp(op);
     return success();
@@ -276,8 +269,7 @@ struct OptimizeParWitgenPass : public OptimizeParWitgenBase<OptimizeParWitgenPas
     patterns.insert<EraseOp<EqualZeroOp>>(ctx);
     patterns.insert<EraseUselessExtern>(ctx);
     ZStruct::getUnrollPatterns(patterns, ctx);
-    for (auto* dialect : ctx->getLoadedDialects())
-      dialect->getCanonicalizationPatterns(patterns);
+    for (auto* dialect : ctx->getLoadedDialects()) dialect->getCanonicalizationPatterns(patterns);
     for (RegisteredOperationName op : ctx->getRegisteredOperations())
       op.getCanonicalizationPatterns(patterns, ctx);
 

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,11 +47,9 @@ bool ComponentManager::isGeneric(Zhl::ComponentOp component) {
 }
 
 bool ComponentManager::isGeneric(StringRef name) {
-  if (name == "Array")
-    return true;
+  if (name == "Array") return true;
   ComponentOp c = getUnloweredComponent(name);
-  if (!c)
-    return false;
+  if (!c) return false;
   return isGeneric(c);
 }
 
@@ -93,9 +91,7 @@ ComponentManager::~ComponentManager() {}
 ComponentOp ComponentManager::getUnloweredComponent(StringRef name) {
   for (Operation& op : zhlModule.getBodyRegion().front()) {
     ComponentOp component = llvm::dyn_cast<ComponentOp>(&op);
-    if (component && component.getName() == name) {
-      return component;
-    }
+    if (component && component.getName() == name) { return component; }
   }
   return {};
 }
@@ -103,16 +99,12 @@ ComponentOp ComponentManager::getUnloweredComponent(StringRef name) {
 std::vector<ComponentManager::TypeInfo>::reverse_iterator
 ComponentManager::findIllegalRecursion(Zhl::ComponentOp component, ArrayRef<Attribute> typeArgs) {
   return std::find_if(componentStack.rbegin(), componentStack.rend(), [&](TypeInfo info) {
-    if (info.component.getName() != component.getName()) {
-      return false;
-    }
+    if (info.component.getName() != component.getName()) { return false; }
     for (size_t i = 0; i < info.typeArgs.size(); i++) {
       if (isa<PolynomialAttr>(typeArgs[i])) {
         // Treat all numbers as equal for the sake of detecting recursion
       } else if (auto type = dyn_cast<StringAttr>(typeArgs[i])) {
-        if (type != info.typeArgs[i]) {
-          return false;
-        }
+        if (type != info.typeArgs[i]) { return false; }
       } else {
         assert(false && "not implemented");
       }
@@ -135,8 +127,7 @@ Zhlt::ComponentOp ComponentManager::getComponent(Location requestedLoc,
     return {};
   } else {
     Zhlt::ComponentOp c = *genericBuiltin;
-    if (c)
-      return c;
+    if (c) return c;
   }
 
   auto component = getUnloweredComponent(name);
@@ -181,8 +172,7 @@ Zhlt::ComponentOp ComponentManager::getComponent(Location requestedLoc,
 void ComponentManager::gen() {
   bool containsErrors = false;
   for (ComponentOp c : zhlModule.getBodyRegion().front().getOps<ComponentOp>()) {
-    if (isGeneric(c))
-      continue;
+    if (isGeneric(c)) continue;
 
     try {
       getComponent(c.getLoc(), c.getName(), /*typeArgs=*/{});
@@ -191,9 +181,7 @@ void ComponentManager::gen() {
       containsErrors = true;
     }
   }
-  if (containsErrors) {
-    zhlModule.emitError("Module contains errors");
-  }
+  if (containsErrors) { zhlModule.emitError("Module contains errors"); }
 }
 
 mlir::FailureOr<Zhlt::ComponentOp> ComponentManager::genGenericBuiltin(
@@ -210,9 +198,7 @@ mlir::FailureOr<Zhlt::ComponentOp> ComponentManager::genGenericBuiltin(
       return emitError(loc, "array element parameter must be a type name");
     }
     auto elemCtor = lookupComponent(elementTypeName);
-    if (!elemCtor) {
-      return emitError(loc, "array element type must be defined");
-    }
+    if (!elemCtor) { return emitError(loc, "array element type must be defined"); }
 
     unsigned size = 0;
     if (isa<PolynomialAttr>(typeArgs[1])) {
@@ -221,9 +207,7 @@ mlir::FailureOr<Zhlt::ComponentOp> ComponentManager::genGenericBuiltin(
       return emitError(loc, "array size parameter must be an integer");
     }
 
-    if (size < 1) {
-      return emitError(loc, "array must have at least one element");
-    }
+    if (size < 1) { return emitError(loc, "array must have at least one element"); }
 
     auto arrayType = ZStruct::ArrayType::get(ctx, elemCtor.getOutType(), size);
     auto layoutType = elemCtor.getLayoutType()
@@ -247,11 +231,9 @@ mlir::Value ComponentManager::reconstructFromLayout(mlir::OpBuilder& builder,
                                                     size_t distance) {
 
   auto layoutType = llvm::dyn_cast<ZStruct::LayoutType>(layout.getType());
-  if (!layoutType)
-    return {};
+  if (!layoutType) return {};
   auto ctor = lookupComponent(layoutType.getId());
-  if (!ctor)
-    return {};
+  if (!ctor) return {};
   auto backOp =
       builder.create<Zhlt::BackOp>(loc, ctor.getOutType(), layoutType.getId(), distance, layout);
   return backOp;
@@ -264,9 +246,7 @@ std::optional<ModuleOp> typeCheck(MLIRContext& ctx, ModuleOp mod) {
   // they are emitted.
   bool containsErrors = false;
   ScopedDiagnosticHandler scopedHandler(&ctx, [&](Diagnostic& diagnostic) {
-    if (diagnostic.getSeverity() == DiagnosticSeverity::Error) {
-      containsErrors = true;
-    }
+    if (diagnostic.getSeverity() == DiagnosticSeverity::Error) { containsErrors = true; }
     return failure();
   });
 
@@ -275,13 +255,9 @@ std::optional<ModuleOp> typeCheck(MLIRContext& ctx, ModuleOp mod) {
 
   ModuleOp out = componentManager.zhltModule;
 
-  if (!containsErrors && failed(verify(out))) {
-    out->emitError("zhl module verification error");
-  }
+  if (!containsErrors && failed(verify(out))) { out->emitError("zhl module verification error"); }
 
-  if (containsErrors) {
-    return std::nullopt;
-  }
+  if (containsErrors) { return std::nullopt; }
   return out;
 }
 

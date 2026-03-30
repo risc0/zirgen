@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -159,9 +159,7 @@ public:
                                                 size_t outCount) override {
     if (name == "getTestData") {
       assert(outCount == 4);
-      if (data.size() == 0) {
-        return std::vector<uint64_t>{0, 0, 0, 0};
-      }
+      if (data.size() == 0) { return std::vector<uint64_t>{0, 0, 0, 0}; }
       auto ret = data.front();
       data.pop_front();
       return ret;
@@ -213,9 +211,7 @@ void runTest(std::deque<std::vector<uint64_t>> testData) {
   code[0 * codeSize + InstType::BYTES_INIT] = 1;
   for (size_t i = 0; i < setupCount; i++) {
     code[(i + 1) * codeSize + InstType::SETUP] = 1;
-    if (i == setupCount - 1) {
-      code[(i + 1) * codeSize + InstType::COUNT] = 1;
-    }
+    if (i == setupCount - 1) { code[(i + 1) * codeSize + InstType::COUNT] = 1; }
   }
   code[(setupCount + 1) * codeSize + InstType::RAM_INIT] = 1;
   for (size_t i = 0; i < checkCount; i++) {

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -100,42 +100,24 @@ inline uint32_t sys_exit(uint32_t code) {
 }
 
 inline uint32_t sys_read(uint32_t fd, uint32_t buf, uint32_t len) {
-  if (fd != 0) {
-    return -EBADF;
-  }
-  if (buf + len < buf) {
-    return -EINVAL;
-  }
-  if (buf < USER_START_ADDR || buf + len >= USER_END_ADDR) {
-    return -EFAULT;
-  }
+  if (fd != 0) { return -EBADF; }
+  if (buf + len < buf) { return -EINVAL; }
+  if (buf < USER_START_ADDR || buf + len >= USER_END_ADDR) { return -EFAULT; }
   // Fake out read for now
-  if (len != 4) {
-    die();
-  }
+  if (len != 4) { die(); }
   // Always read 5
   *reinterpret_cast<uint32_t*>(buf) = 5;
   return 4;
 }
 
 inline uint32_t sys_write(uint32_t fd, uint32_t buf, uint32_t len) {
-  if (fd != 1) {
-    return -EBADF;
-  }
-  if (buf + len < buf) {
-    return -EINVAL;
-  }
-  if (buf < USER_START_ADDR || buf + len >= USER_END_ADDR) {
-    return -EFAULT;
-  }
+  if (fd != 1) { return -EBADF; }
+  if (buf + len < buf) { return -EINVAL; }
+  if (buf < USER_START_ADDR || buf + len >= USER_END_ADDR) { return -EFAULT; }
   // Fake out write for now
-  if (len != 4) {
-    die();
-  }
+  if (len != 4) { die(); }
   // Make sure we write 100
-  if (*reinterpret_cast<uint32_t*>(buf) != 100) {
-    die();
-  }
+  if (*reinterpret_cast<uint32_t*>(buf) != 100) { die(); }
   return 4;
 }
 

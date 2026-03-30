@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -63,8 +63,7 @@ public:
               IfOp,
               CallableOpInterface>([&](auto op) { visitOp(op); })
         .Default([&](Operation* op) {
-          if (op->hasTrait<OpTrait::ReturnLike>())
-            return visitReturnLikeOp(op);
+          if (op->hasTrait<OpTrait::ReturnLike>()) return visitReturnLikeOp(op);
         });
     return success();
   }
