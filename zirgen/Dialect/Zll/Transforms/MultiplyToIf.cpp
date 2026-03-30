@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -53,16 +53,13 @@ struct Sinker {
   }
 
   void sinkConstraints(Block* block) {
-    for (EqualZeroOp eqzOp : block->getOps<EqualZeroOp>()) {
-      countFactors(eqzOp, eqzOp.getIn());
-    };
+    for (EqualZeroOp eqzOp : block->getOps<EqualZeroOp>()) { countFactors(eqzOp, eqzOp.getIn()); };
 
     for (;;) {
       Value bestFactor;
       size_t numBestFactor = 0;
       for (auto [k, v] : factorConstraints) {
-        if (v.size() <= 1)
-          continue;
+        if (v.size() <= 1) continue;
         if (v.size() > numBestFactor ||
             (v.size() == numBestFactor && factorOrder.at(k) < factorOrder.at(bestFactor))) {
           numBestFactor = v.size();
@@ -70,8 +67,7 @@ struct Sinker {
         }
       }
 
-      if (numBestFactor <= 1)
-        break;
+      if (numBestFactor <= 1) break;
       assert(bestFactor);
 
       SmallVector<EqualZeroOp> ops = llvm::to_vector(factorConstraints.at(bestFactor));

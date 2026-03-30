@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,9 +31,7 @@ int main() {
     // Do executions
     auto segments = execute(image, io, cycles, cycles);
     // Do 'run' (preflight + expansion)
-    for (const auto& segment : segments) {
-      runSegment(segment, cycles + 1000);
-    }
+    for (const auto& segment : segments) { runSegment(segment, cycles + 1000); }
   } catch (std::exception& ex) {
     printf("Exception: %s\n", ex.what());
     return -1;

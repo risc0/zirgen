@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -69,9 +69,7 @@ struct Runner::RecursionExternHandler : public WomExternHandler {
         offset += count;
         for (size_t i = 0; i < count; i++) {
           llvm::SmallVector<uint64_t, 4> poly(2);
-          for (size_t j = 0; j < 2; j++) {
-            poly[j] = uint64_t(arr[2 * i + j]);
-          }
+          for (size_t j = 0; j < 2; j++) { poly[j] = uint64_t(arr[2 * i + j]); }
           body.push_back(poly);
         }
       }
@@ -132,9 +130,7 @@ void Runner::setup(llvm::ArrayRef<uint32_t> code, llvm::ArrayRef<uint32_t> proof
   module.setExternHandler(handler.get());
   cycles = code.size() / kCodeSize;
   this->code = std::vector<Polynomial>(code.size());
-  for (size_t i = 0; i < this->code.size(); i++) {
-    this->code[i] = {code[i]};
-  }
+  for (size_t i = 0; i < this->code.size(); i++) { this->code[i] = {code[i]}; }
   out = std::vector<Polynomial>(kOutSize, Polynomial(1, kFieldInvalid));
   data = std::vector<Polynomial>(kDataSize * cycles, Polynomial(1, kFieldInvalid));
   mix = std::vector<Polynomial>(kMixSize, Polynomial(1, kFieldInvalid));

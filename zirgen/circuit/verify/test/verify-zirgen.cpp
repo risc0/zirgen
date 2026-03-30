@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -64,8 +64,7 @@ TEST(verify_zirgen, calculator) {
   ReadIop riop(std::move(rng), proof.data(), proof.size());
   interp.setIop(func.getArgument(0), &riop);
   // interp.setDebug(true);
-  if (failed(interp.runBlock(func.front())))
-    FAIL() << "failed to evaluate block in interpreter";
+  if (failed(interp.runBlock(func.front()))) FAIL() << "failed to evaluate block in interpreter";
 
   // Compute some stats
   std::map<std::string, size_t> opCounts;
@@ -96,7 +95,5 @@ TEST(verify_zirgen, calculator) {
   }
   std::cout << "Tot cycles = " << totCycles << "\n";
   std::cout << "Hash cycles = " << hashCycles << "\n";
-  for (const auto& kvp : opCounts) {
-    std::cout << kvp.first << ": " << kvp.second << "\n";
-  }
+  for (const auto& kvp : opCounts) { std::cout << kvp.first << ": " << kvp.second << "\n"; }
 }

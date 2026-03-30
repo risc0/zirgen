@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,9 +52,7 @@ std::optional<std::vector<uint64_t>> ExternHandler::doExtern(llvm::StringRef nam
     // Produce 'fake' coefficients for now via a PRNG
     assert(outCount == 16);
     std::vector<uint64_t> ret;
-    for (size_t i = 0; i < 16; i++) {
-      ret.push_back(coeffPRNG() & 0xff);
-    }
+    for (size_t i = 0; i < 16; i++) { ret.push_back(coeffPRNG() & 0xff); }
     return ret;
   }
   if (name == "configureInput") {
@@ -64,8 +62,7 @@ std::optional<std::vector<uint64_t>> ExternHandler::doExtern(llvm::StringRef nam
     //   extra = named input source (default = "")
     //   bytesPerElem = number of bytes of input per element
     auto fpArgs = asFpArray(args);
-    if (fpArgs.size() != 1)
-      throw std::runtime_error("wrong number of arguments to configureInput");
+    if (fpArgs.size() != 1) throw std::runtime_error("wrong number of arguments to configureInput");
     size_t bytesPerElem = fpArgs[0];
     inputBytesPerElem[extra] = bytesPerElem;
     return std::vector<uint64_t>{};
@@ -85,16 +82,14 @@ std::optional<std::vector<uint64_t>> ExternHandler::doExtern(llvm::StringRef nam
     auto& inputBytes = input[extra];
 
     auto fpArgs = asFpArray(args);
-    if (fpArgs.size() != 0)
-      throw std::runtime_error("wrong number of arguments to readInput");
+    if (fpArgs.size() != 0) throw std::runtime_error("wrong number of arguments to readInput");
 
     std::vector<uint64_t> ret;
 
     for (size_t i = 0; i != outCount; ++i) {
       uint64_t elem = 0;
       for (size_t byteIdx = 0; byteIdx != bytesPerElem; byteIdx++) {
-        if (inputBytes.empty())
-          throw std::runtime_error("readInput: input underrun");
+        if (inputBytes.empty()) throw std::runtime_error("readInput: input underrun");
         elem |= inputBytes.front() << (byteIdx * 8);
         inputBytes.pop_front();
       }
@@ -135,9 +130,7 @@ std::optional<std::vector<uint64_t>> ExternHandler::doExtern(llvm::StringRef nam
           auto poly = nextArg()->getVal();
           os << "[";
           for (size_t i = 0; i < poly.size(); i++) {
-            if (i) {
-              os << ", ";
-            }
+            if (i) { os << ", "; }
             os << poly[i];
           }
           os << "]";
@@ -157,14 +150,10 @@ std::optional<std::vector<uint64_t>> ExternHandler::doExtern(llvm::StringRef nam
           p++;
         } else if (*p == 'e') {
           uint64_t vals[kBabyBearExtSize];
-          for (auto& val : vals) {
-            val = nextArg()->getBaseFieldVal();
-          }
+          for (auto& val : vals) { val = nextArg()->getBaseFieldVal(); }
           os << "[";
           for (size_t i = 0; i < kBabyBearExtSize; ++i) {
-            if (i) {
-              os << ", ";
-            }
+            if (i) { os << ", "; }
             os << vals[i];
           }
           os << "]";
@@ -212,9 +201,7 @@ size_t Interpreter::getTotCycles() {
 
 size_t Interpreter::getBackCycle(size_t backDistance) {
   size_t cycle = getCycle();
-  if (totCycles && cycle < backDistance) {
-    cycle += totCycles;
-  }
+  if (totCycles && cycle < backDistance) { cycle += totCycles; }
   if (backDistance > cycle) {
     llvm::errs() << "Back distance " << backDistance << " too far, with no totCycles specified\n";
     abort();
@@ -242,9 +229,7 @@ Interpreter::BufferRef Interpreter::makeBuf(mlir::Value buffer, size_t size, Buf
 }
 
 Interpreter::BufferRef Interpreter::getNamedBuf(llvm::StringRef name) {
-  if (!namedBufs.count(name)) {
-    llvm::errs() << "Undefined buffer " << name << "\n";
-  }
+  if (!namedBufs.count(name)) { llvm::errs() << "Undefined buffer " << name << "\n"; }
   assert(namedBufs.count(name));
   return namedBufs[name].first;
 }
@@ -254,9 +239,7 @@ bool Interpreter::hasNamedBuf(llvm::StringRef name) {
 }
 
 size_t Interpreter::getNamedBufSize(llvm::StringRef name) {
-  if (!namedBufs.count(name)) {
-    llvm::errs() << "Undefined buffer " << name << "\n";
-  }
+  if (!namedBufs.count(name)) { llvm::errs() << "Undefined buffer " << name << "\n"; }
   assert(namedBufs.count(name));
   return namedBufs[name].second;
 }
@@ -385,9 +368,7 @@ void InterpVal::print(llvm::raw_ostream& os, AsmState& asmState) const {
 
 std::vector<uint64_t> asFpArray(llvm::ArrayRef<const Zll::InterpVal*> array) {
   std::vector<uint64_t> out;
-  for (const auto* val : array) {
-    out.push_back(val->getBaseFieldVal());
-  }
+  for (const auto* val : array) { out.push_back(val->getBaseFieldVal()); }
   return out;
 }
 
@@ -436,8 +417,7 @@ mlir::LogicalResult Interpreter::evaluate(OpEvaluator* eval) {
         llvm::dbgs() << "\n";
       };
 
-      if (failed(res))
-        llvm::dbgs() << "FAILED\n";
+      if (failed(res)) llvm::dbgs() << "FAILED\n";
     }
     llvm::errs() << "\n";
   });
@@ -506,8 +486,7 @@ FailureOr<SmallVector<Attribute>> Interpreter::runBlock(mlir::Block& block) {
   for (auto* eval : *blockEvaluators) {
     evaluator = eval;
     if (failed(evaluate(evaluator))) {
-      if (!gotErrorMsg && !getSilenceErrors())
-        eval->op->emitError() << "Evaluation error occured";
+      if (!gotErrorMsg && !getSilenceErrors()) eval->op->emitError() << "Evaluation error occured";
       return failure();
     }
   }
@@ -532,12 +511,9 @@ struct CallOpEvaluator : public OpEvaluator {
     }
 
     auto results = interp->runBlock(region->front());
-    if (failed(results))
-      return failure();
+    if (failed(results)) return failure();
     assert(results->size() == outputs.size());
-    for (auto [result, output] : zip_equal(*results, outputs)) {
-      output->setAttr(result);
-    }
+    for (auto [result, output] : zip_equal(*results, outputs)) { output->setAttr(result); }
 
     return success();
   }
@@ -608,9 +584,7 @@ OpEvaluator* Interpreter::getOpEvaluator(Operation* op) {
   SmallVector<const InterpVal*> inputs = llvm::to_vector(llvm::map_range(
       op->getOperands(), [&](auto val) -> const InterpVal* { return getOrCreateInterpVal(val); }));
 
-  if (auto evalOp = dyn_cast<EvalOp>(op)) {
-    return evalOp.getOpEvaluator(this, outputs, inputs);
-  }
+  if (auto evalOp = dyn_cast<EvalOp>(op)) { return evalOp.getOpEvaluator(this, outputs, inputs); }
 
   if (auto callOp = dyn_cast<CallOpInterface>(op)) {
     auto calleeName = llvm::cast<SymbolRefAttr>(callOp.getCallableForCallee());
@@ -629,9 +603,7 @@ OpEvaluator* Interpreter::getOpEvaluator(Operation* op) {
 
 InterpVal* Interpreter::getOrCreateInterpVal(mlir::Value val) {
   auto& v = vals[val];
-  if (!v) {
-    v = new (interpAlloc.Allocate<InterpVal>()) InterpVal();
-  }
+  if (!v) { v = new (interpAlloc.Allocate<InterpVal>()) InterpVal(); }
   return v;
 }
 
@@ -643,15 +615,11 @@ Interpreter::BlockEvaluators* Interpreter::getBlockEvaluators(mlir::Block& block
 
     // First allocate InterpVals for each input to aid in cache locality.
     for (Operation& op : block) {
-      for (auto input : op.getOperands()) {
-        getOrCreateInterpVal(input);
-      }
+      for (auto input : op.getOperands()) { getOrCreateInterpVal(input); }
     }
 
     // Now, generate evaluators for each operation.
-    for (Operation& op : block) {
-      blockEvals->emplace_back(getOpEvaluator(&op));
-    }
+    for (Operation& op : block) { blockEvals->emplace_back(getOpEvaluator(&op)); }
   }
 
   return blockEvals;

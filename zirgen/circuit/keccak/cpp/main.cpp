@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -56,13 +56,11 @@ static void keccakf(uint64_t s[25]) {
     std::cout << "Round: " << round << ", s[0] = " << std::hex << s[0] << std::dec << "\n";
 
     /* Theta */
-    for (i = 0; i < 5; i++)
-      bc[i] = s[i] ^ s[i + 5] ^ s[i + 10] ^ s[i + 15] ^ s[i + 20];
+    for (i = 0; i < 5; i++) bc[i] = s[i] ^ s[i + 5] ^ s[i + 10] ^ s[i + 15] ^ s[i + 20];
 
     for (i = 0; i < 5; i++) {
       t = bc[(i + 4) % 5] ^ SHA3_ROTL64(bc[(i + 1) % 5], 1);
-      for (j = 0; j < 25; j += 5)
-        s[j + i] ^= t;
+      for (j = 0; j < 25; j += 5) s[j + i] ^= t;
     }
 
     /* Rho Pi */
@@ -76,10 +74,8 @@ static void keccakf(uint64_t s[25]) {
 
     /* Chi */
     for (j = 0; j < 25; j += 5) {
-      for (i = 0; i < 5; i++)
-        bc[i] = s[j + i];
-      for (i = 0; i < 5; i++)
-        s[j + i] ^= (~bc[(i + 1) % 5]) & bc[(i + 2) % 5];
+      for (i = 0; i < 5; i++) bc[i] = s[j + i];
+      for (i = 0; i < 5; i++) s[j + i] ^= (~bc[(i + 1) % 5]) & bc[(i + 2) % 5];
     }
 
     /* Iota */
@@ -97,9 +93,7 @@ void Poseidon2SingleKeccak(cells_t& p2State, zirgen::keccak::KeccakState state) 
     toHash[2 * i + 1] = word >> 16;
   }
   for (size_t i = 0; i < 7; i++) {
-    for (size_t j = 0; j < 16; j++) {
-      p2State[j] = toHash[i * 16 + j];
-    }
+    for (size_t j = 0; j < 16; j++) { p2State[j] = toHash[i * 16 + j]; }
     zirgen::poseidonSponge(p2State);
   }
 }
@@ -154,8 +148,6 @@ int main() {
     }
   }
   zirgen::Digest out;
-  for (size_t i = 0; i < 8; i++) {
-    out.words[i] = trace.global.get(i).asUInt32();
-  }
+  for (size_t i = 0; i < 8; i++) { out.words[i] = trace.global.get(i).asUInt32(); }
   std::cout << "out = " << out << "\n";
 }

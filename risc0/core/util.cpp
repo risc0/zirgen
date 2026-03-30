@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,12 +37,8 @@ std::array<uint32_t, 2> divide_rv32im(uint32_t numer, uint32_t denom, uint32_t s
   uint32_t onesComp = (signType == 2);
   bool negNumer = signType && int32_t(numer) < 0;
   bool negDenom = signType == 1 && int32_t(denom) < 0;
-  if (negNumer) {
-    numer = -numer - onesComp;
-  }
-  if (negDenom) {
-    denom = -denom - onesComp;
-  }
+  if (negNumer) { numer = -numer - onesComp; }
+  if (negDenom) { denom = -denom - onesComp; }
   uint32_t quot;
   uint32_t rem;
   if (denom == 0) {
@@ -54,12 +50,8 @@ std::array<uint32_t, 2> divide_rv32im(uint32_t numer, uint32_t denom, uint32_t s
   }
   uint32_t quotNegOut = (negNumer ^ negDenom) - ((denom == 0) * negNumer);
   uint32_t remNegOut = negNumer;
-  if (quotNegOut) {
-    quot = -quot - onesComp;
-  }
-  if (remNegOut) {
-    rem = -rem - onesComp;
-  }
+  if (quotNegOut) { quot = -quot - onesComp; }
+  if (remNegOut) { rem = -rem - onesComp; }
   return {quot, rem};
 }
 

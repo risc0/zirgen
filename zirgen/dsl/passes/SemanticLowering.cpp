@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -145,18 +145,15 @@ struct UnravelSwitchPackResult : public OpRewritePattern<SwitchOp> {
 
   LogicalResult matchAndRewrite(SwitchOp op, PatternRewriter& rewriter) const final {
     // Don't bother unravelling if we don't need these results
-    if (op->use_empty())
-      return failure();
+    if (op->use_empty()) return failure();
 
     StructType ty = dyn_cast<StructType>(op.getType());
-    if (!ty)
-      return failure();
+    if (!ty) return failure();
 
     // Make sure all operations are ones we expect
     for (auto& region : op->getRegions()) {
       for (auto& nestedOp : region.getOps()) {
-        if (!isIdempotent(&nestedOp))
-          return failure();
+        if (!isIdempotent(&nestedOp)) return failure();
       }
     }
 
@@ -215,18 +212,15 @@ struct UnravelSwitchArrayResult : public OpRewritePattern<SwitchOp> {
 
   LogicalResult matchAndRewrite(SwitchOp op, PatternRewriter& rewriter) const final {
     // Don't bother unravelling if we don't need these results
-    if (op->use_empty())
-      return failure();
+    if (op->use_empty()) return failure();
 
     ArrayType ty = dyn_cast<ArrayType>(op.getType());
-    if (!ty)
-      return failure();
+    if (!ty) return failure();
 
     // Make sure all operations are ones we expect
     for (auto& region : op->getRegions()) {
       for (auto& nestedOp : region.getOps()) {
-        if (!isIdempotent(&nestedOp))
-          return failure();
+        if (!isIdempotent(&nestedOp)) return failure();
       }
     }
 
@@ -276,12 +270,10 @@ struct UnravelSwitchValResult : public OpRewritePattern<SwitchOp> {
 
   LogicalResult matchAndRewrite(SwitchOp op, PatternRewriter& rewriter) const final {
     // Don't bother if we don't need these results
-    if (op->use_empty())
-      return failure();
+    if (op->use_empty()) return failure();
 
     ValType ty = dyn_cast<ValType>(op.getType());
-    if (!ty)
-      return failure();
+    if (!ty) return failure();
 
     // If there's anything better ot be done like inlining or inner switch operations, deal with
     // those first.
@@ -356,9 +348,7 @@ struct ConstructToBack : public OpRewritePattern<Zhlt::ConstructOp> {
 
   LogicalResult matchAndRewrite(Zhlt::ConstructOp op, PatternRewriter& rewriter) const final {
     auto parent = op->getParentOfType<Zhlt::BackFuncOp>();
-    if (!parent) {
-      return failure();
-    }
+    if (!parent) { return failure(); }
 
     if (op.use_empty()) {
       // TODO: Find a better way to indicate that back functions have no effects.
@@ -382,9 +372,7 @@ struct BackBackToCall : public OpRewritePattern<Zhlt::BackOp> {
 
   LogicalResult matchAndRewrite(Zhlt::BackOp op, PatternRewriter& rewriter) const final {
     auto parent = op->getParentOfType<Zhlt::BackFuncOp>();
-    if (!parent) {
-      return failure();
-    }
+    if (!parent) { return failure(); }
 
     auto oldDistance = parent.getDistance();
     // TODO: unify distance types and just call op.getDistanceAttr().
@@ -410,9 +398,7 @@ struct AddLoadDistance : public OpRewritePattern<LoadOp> {
       return failure();
     }
     auto parent = op->getParentOfType<Zhlt::BackFuncOp>();
-    if (!parent) {
-      return failure();
-    }
+    if (!parent) { return failure(); }
     assert(parent.getSymName().starts_with("back$"));
     auto distanceArg = parent.getDistance();
     rewriter.startOpModification(op);
@@ -434,9 +420,7 @@ public:
       auto symName = backOp.getCalleeAttr().getAttr();
       auto [it, didInsert] = backsNeeded.try_emplace(symName);
       it->second.insert(backOp);
-      if (didInsert) {
-        added.push_back(module.lookupSymbol<Zhlt::ComponentOp>(symName));
-      }
+      if (didInsert) { added.push_back(module.lookupSymbol<Zhlt::ComponentOp>(symName)); }
     });
 
     // Any components which were called by zhlt.back also need to have
@@ -449,9 +433,7 @@ public:
           auto symName = construct.getCalleeAttr().getAttr();
           auto [it, didInsert] = backsNeeded.try_emplace(symName);
           it->second.insert(construct);
-          if (didInsert) {
-            newAdded.push_back(module.lookupSymbol<Zhlt::ComponentOp>(symName));
-          }
+          if (didInsert) { newAdded.push_back(module.lookupSymbol<Zhlt::ComponentOp>(symName)); }
         });
       }
 
@@ -495,9 +477,7 @@ struct GenerateBackPass : public GenerateBackBase<GenerateBackPass> {
     OpBuilder builder(ctx);
     // Generate "back" functions
     getOperation()->walk([&](Zhlt::ComponentOp op) {
-      if (!backsNeeded.backNeeded(op)) {
-        return;
-      }
+      if (!backsNeeded.backNeeded(op)) { return; }
 
       builder.setInsertionPoint(op);
 
@@ -532,9 +512,7 @@ struct GenerateBackPass : public GenerateBackBase<GenerateBackPass> {
       if (applyPatternsGreedily(func, frozenPatterns).failed()) {
         auto diag = func->emitError()
                     << "Unable to generate `back' function; required by the following locations:";
-        for (auto usedBy : backsNeeded.getUses(op)) {
-          diag.attachNote(usedBy->getLoc()) << "here";
-        }
+        for (auto usedBy : backsNeeded.getUses(op)) { diag.attachNote(usedBy->getLoc()) << "here"; }
 
         signalPassFailure();
       }
@@ -549,8 +527,7 @@ struct GenerateExecPass : public GenerateExecBase<GenerateExecPass> {
     RewritePatternSet patterns(ctx);
     patterns.insert<ConstructToCall>(ctx);
     patterns.insert<BackToCall>(ctx);
-    if (circuitNdebug)
-      patterns.insert<EraseOp<EqualZeroOp>>(ctx);
+    if (circuitNdebug) patterns.insert<EraseOp<EqualZeroOp>>(ctx);
     FrozenRewritePatternSet frozenPatterns(std::move(patterns));
 
     OpBuilder builder(ctx);
@@ -641,9 +618,7 @@ struct GenerateCheckPass : public GenerateCheckBase<GenerateCheckPass> {
       checkFuncs[checkName].push_back(op.getSymNameAttr());
     });
 
-    for (const auto& [name, callees] : checkFuncs) {
-      generateCheckFunc(builder, name, callees);
-    }
+    for (const auto& [name, callees] : checkFuncs) { generateCheckFunc(builder, name, callees); }
   }
 };
 
@@ -656,8 +631,7 @@ struct GenerateValidityRegsPass : public GenerateValidityRegsBase<GenerateValidi
                    Value polyMixArg) {
     for (Operation& origOp : block.without_terminator()) {
       Location opLoc = origOp.getLoc();
-      if (opLoc != loc)
-        opLoc = CallSiteLoc::get(loc, origOp.getLoc());
+      if (opLoc != loc) opLoc = CallSiteLoc::get(loc, origOp.getLoc());
 
       TypeSwitch<Operation*>(&origOp)
           .Case<EqualZeroOp>([&](EqualZeroOp op) {
@@ -710,8 +684,7 @@ struct GenerateValidityRegsPass : public GenerateValidityRegsBase<GenerateValidi
 
     module.walk([&](Zhlt::CheckFuncOp checkFunc) {
       OpBuilder builder(checkFunc);
-      if (checkFunc.getSymName() != "check$")
-        return;
+      if (checkFunc.getSymName() != "check$") return;
       auto func = builder.create<Zhlt::ValidityRegsFuncOp>(
           checkFunc.getLoc(),
           "validity_regs",
@@ -773,9 +746,7 @@ struct GenerateValidityTapsPass : public GenerateValidityTapsBase<GenerateValidi
     OpBuilder builder(ctx);
     auto bufs = Zll::lookupModuleAttr<Zll::BuffersAttr>(module);
     auto tapsOp = module.lookupSymbol<GlobalConstOp>(Zhlt::getTapsConstName());
-    if (!tapsOp) {
-      return;
-    }
+    if (!tapsOp) { return; }
     ArrayAttr taps = cast<ArrayAttr>(tapsOp.getConstant());
     auto groupNames =
         llvm::map_to_vector(bufs.getTapBuffers(), [&](auto bufDesc) { return bufDesc.getName(); });
@@ -832,8 +803,7 @@ struct GenerateValidityTapsPass : public GenerateValidityTapsBase<GenerateValidi
 
       IRMapping mapper;
       mapper.map(/*polyMix=*/regsFunc.getArgument(0), polyMixArg);
-      for (auto& op : regsFunc.getBody().front())
-        builder.clone(op, mapper);
+      for (auto& op : regsFunc.getBody().front()) builder.clone(op, mapper);
 
       Interpreter interp(ctx);
       RewritePatternSet patterns(ctx);
@@ -856,9 +826,7 @@ struct GenerateValidityTapsPass : public GenerateValidityTapsBase<GenerateValidi
       IRRewriter rewriter(builder);
       DominanceInfo domInfo;
       bool changed = true;
-      while (changed) {
-        eliminateCommonSubExpressions(rewriter, domInfo, func, &changed);
-      }
+      while (changed) { eliminateCommonSubExpressions(rewriter, domInfo, func, &changed); }
     });
   }
 };

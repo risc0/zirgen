@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -53,12 +53,8 @@ TEST(U32Normalize, basic) {
       []() {
         std::vector<Reg> inputs;
         std::vector<Reg> outputs;
-        for (size_t i = 0; i < 8; i++) {
-          inputs.emplace_back("code");
-        }
-        for (size_t i = 0; i < 4; i++) {
-          outputs.emplace_back("out");
-        }
+        for (size_t i = 0; i < 8; i++) { inputs.emplace_back("code"); }
+        for (size_t i = 0; i < 4; i++) { outputs.emplace_back("out"); }
 
         U32Val inA = {inputs[0], inputs[1], inputs[2], inputs[3]};
         U32Val inB = {inputs[4], inputs[5], inputs[6], inputs[7]};
@@ -69,9 +65,7 @@ TEST(U32Normalize, basic) {
 
         U32Val out = norm->getNormed();
 
-        for (size_t i = 0; i < 4; i++) {
-          outputs[i]->set(out.bytes[i]);
-        }
+        for (size_t i = 0; i < 4; i++) { outputs[i]->set(out.bytes[i]); }
       });
   // test.runner.module.dumpStage(0);
 
@@ -112,12 +106,8 @@ TEST(U32Mul, basic) {
       []() {
         std::vector<Reg> inputs;
         std::vector<Reg> outputs;
-        for (size_t i = 0; i < 10; i++) {
-          inputs.emplace_back("code");
-        }
-        for (size_t i = 0; i < 8; i++) {
-          outputs.emplace_back("out");
-        }
+        for (size_t i = 0; i < 10; i++) { inputs.emplace_back("code"); }
+        for (size_t i = 0; i < 8; i++) { outputs.emplace_back("out"); }
 
         U32Val inA = {inputs[0], inputs[1], inputs[2], inputs[3]};
         U32Val inB = {inputs[4], inputs[5], inputs[6], inputs[7]};

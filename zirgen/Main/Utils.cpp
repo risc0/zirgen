@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,9 +30,7 @@ std::unique_ptr<llvm::raw_ostream> openOutput(StringRef filename) {
   std::string path = (codegenCLOptions->outputDir + "/" + filename).str();
   std::error_code ec;
   auto ofs = std::make_unique<llvm::raw_fd_ostream>(path, ec);
-  if (ec) {
-    throw std::runtime_error("Unable to open file: " + path);
-  }
+  if (ec) { throw std::runtime_error("Unable to open file: " + path); }
   return ofs;
 }
 
@@ -129,9 +127,7 @@ void emitOps(CodegenEmitter& cg,
   size_t funcIdx = 0;
   for (auto& op : *mod.getBody()) {
     if (llvm::isa<OpT...>(&op)) {
-      if ((funcIdx % numSplit) == splitPart) {
-        cg.emitTopLevel(&op);
-      }
+      if ((funcIdx % numSplit) == splitPart) { cg.emitTopLevel(&op); }
       ++funcIdx;
     }
   }
@@ -144,9 +140,7 @@ void emitOpDecls(CodegenEmitter& cg, ModuleOp mod, const Twine& filename, const 
   *os << tmpl.header;
   CodegenEmitter::StreamOutputGuard guard(cg, os.get());
   for (auto& op : *mod.getBody()) {
-    if (llvm::isa<OpT...>(&op)) {
-      cg.emitTopLevelDecl(&op);
-    }
+    if (llvm::isa<OpT...>(&op)) { cg.emitTopLevelDecl(&op); }
   }
   *os << tmpl.footer;
 }

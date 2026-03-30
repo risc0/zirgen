@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -167,9 +167,7 @@ public:
 constexpr inline Fp pow(Fp x, size_t n) {
   Fp tot = 1;
   while (n != 0) {
-    if (n % 2 == 1) {
-      tot *= x;
-    }
+    if (n % 2 == 1) { tot *= x; }
     n = n / 2;
     x *= x;
   }

@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -91,9 +91,7 @@ void eqz(Val a, const char* loc) {
   }
 }
 void eqz(ExtVal a, const char* loc) {
-  for (size_t i = 0; i < EXT_SIZE; i++) {
-    eqz(a.elems[i], loc);
-  }
+  for (size_t i = 0; i < EXT_SIZE; i++) { eqz(a.elems[i], loc); }
 }
 
 // Define index type (used in back)
@@ -154,9 +152,7 @@ void store(ExecContext& ctx, BoundLayout<Reg> reg, Val val) {
 }
 
 void storeExt(ExecContext& ctx, BoundLayout<Reg> reg, ExtVal val) {
-  for (size_t i = 0; i < EXT_SIZE; i++) {
-    reg.buf->store(reg.layout->col + i, val.elems[i]);
-  }
+  for (size_t i = 0; i < EXT_SIZE; i++) { reg.buf->store(reg.layout->col + i, val.elems[i]); }
 }
 
 Val load(ExecContext& ctx, BoundLayout<Reg> reg, size_t back) {
@@ -165,9 +161,7 @@ Val load(ExecContext& ctx, BoundLayout<Reg> reg, size_t back) {
 
 ExtVal loadExt(ExecContext& ctx, BoundLayout<Reg> reg, size_t back) {
   std::array<Fp, EXT_SIZE> elems;
-  for (size_t i = 0; i < EXT_SIZE; i++) {
-    elems[i] = reg.buf->load(reg.layout->col + i, back);
-  }
+  for (size_t i = 0; i < EXT_SIZE; i++) { elems[i] = reg.buf->load(reg.layout->col + i, back); }
   return FpExt(elems[0], elems[1], elems[2], elems[3]);
 }
 
@@ -179,45 +173,35 @@ ExtVal loadExt(ExecContext& ctx, BoundLayout<Reg> reg, size_t back) {
 // Map + reduce support
 template <typename T1, typename F, size_t N> auto map(std::array<T1, N> a, F f) {
   std::array<decltype(f(a[0])), N> out;
-  for (size_t i = 0; i < N; i++) {
-    out[i] = f(a[i]);
-  }
+  for (size_t i = 0; i < N; i++) { out[i] = f(a[i]); }
   return out;
 }
 
 template <typename T1, typename T2, typename F, size_t N>
 auto map(std::array<T1, N> a, std::array<T2, N> b, F f) {
   std::array<decltype(f(a[0], b[0])), N> out;
-  for (size_t i = 0; i < N; i++) {
-    out[i] = f(a[i], b[i]);
-  }
+  for (size_t i = 0; i < N; i++) { out[i] = f(a[i], b[i]); }
   return out;
 }
 
 template <typename T1, typename T2, typename F, size_t N>
 auto map(std::array<T1, N> a, const BoundLayout<T2>& b, F f) {
   std::array<decltype(f(a[0], BoundLayout((*b.layout)[0], b.buf))), N> out;
-  for (size_t i = 0; i < N; i++) {
-    out[i] = f(a[i], BoundLayout((*b.layout)[i], b.buf));
-  }
+  for (size_t i = 0; i < N; i++) { out[i] = f(a[i], BoundLayout((*b.layout)[i], b.buf)); }
   return out;
 }
 
 template <typename T1, typename T2, typename F, size_t N>
 auto reduce(std::array<T1, N> elems, T2 start, F f) {
   T2 cur = start;
-  for (size_t i = 0; i < N; i++) {
-    cur = f(cur, elems[i]);
-  }
+  for (size_t i = 0; i < N; i++) { cur = f(cur, elems[i]); }
   return cur;
 }
 
 template <typename T1, typename T2, typename T3, typename F, size_t N>
 auto reduce(std::array<T1, N> elems, T2 start, const BoundLayout<T3>& b, F f) {
   T2 cur = start;
-  for (size_t i = 0; i < N; i++) {
-    cur = f(cur, elems[i], BoundLayout((*b.layout)[i], b.buf));
-  }
+  for (size_t i = 0; i < N; i++) { cur = f(cur, elems[i], BoundLayout((*b.layout)[i], b.buf)); }
   return cur;
 }
 
@@ -270,9 +254,7 @@ std::ostream& hex_word(std::ostream& os, uint32_t word) {
 void extern_log(ExecContext& ctx, const std::string& message, std::vector<Val> vals) {
   std::cout << "LOG: '" << message << "': ";
   for (size_t i = 0; i < vals.size(); i++) {
-    if (i != 0) {
-      std::cout << ", ";
-    }
+    if (i != 0) { std::cout << ", "; }
     hex_word(std::cout, vals[i].asUInt32());
   }
   std::cout << "\n";

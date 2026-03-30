@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,9 +24,7 @@ TraceGroup::TraceGroup(size_t rows, size_t cols)
 void TraceGroup::set(size_t row, size_t col, Fp val) {
   Fp& elem = vec[row * cols + col];
   if (elem != Fp::invalid() && elem != val) {
-    if (col == 5 && val == 0) {
-      return;
-    }
+    if (col == 5 && val == 0) { return; }
     std::cerr << "Invalid trace set: row = " << row << ", col = " << col << "\n";
     std::cerr << "Current = " << elem.asUInt32() << ", new = " << val.asUInt32() << "\n";
     throw std::runtime_error("Inconsistant set");
@@ -45,9 +43,7 @@ Fp TraceGroup::get(size_t row, size_t col) {
 
 void TraceGroup::setUnset() {
   for (size_t i = 0; i < vec.size(); i++) {
-    if (vec[i] == Fp::invalid()) {
-      vec[i] = 0;
-    }
+    if (vec[i] == Fp::invalid()) { vec[i] = 0; }
   }
 }
 

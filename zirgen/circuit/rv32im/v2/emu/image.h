@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,9 +31,7 @@ constexpr size_t MEMORY_SIZE_BYTES = size_t(1) << 32;
 // Compute the largest PO2 such that (1 << PO2) <= in
 inline size_t constexpr log2Floor(size_t in) {
   size_t po2 = 0;
-  while ((size_t(1) << (po2 + 1)) <= in) {
-    po2++;
-  }
+  while ((size_t(1) << (po2 + 1)) <= in) { po2++; }
   return po2;
 }
 

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -65,8 +65,7 @@ struct StatsPrinter {
   void printConstraintStats() {
     DataFlowSolver solver;
     solver.load<ZStruct::DegreeAnalysis>();
-    if (failed(solver.initializeAndRun(moduleOp)))
-      return;
+    if (failed(solver.initializeAndRun(moduleOp))) return;
 
     moduleOp.walk([&](Zhlt::CheckFuncOp check) {
       llvm::outs() << "constraints in check function:\n";
@@ -127,8 +126,7 @@ struct StatsPrinter {
 
     llvm::outs() << "\nConstraint locations:\n";
     for (auto [lco, count] : countsVec) {
-      if (count * 300 < totalConstraints)
-        break;
+      if (count * 300 < totalConstraints) break;
       llvm::outs() << llvm::format("%5d (%6.2f%%) ", count, count * 100.0 / totalConstraints);
       displayLoc(llvm::outs(), lco);
       llvm::outs() << "\n";
@@ -180,8 +178,7 @@ void StatsPrinter::printOpCounts(FunctionOpInterface funcOp) {
   StringAttr polyOpName = StringAttr::get(moduleOp.getContext(), "PolyOp (interface)");
   size_t tot_count = 0;
   funcOp.walk([&](Operation* op) {
-    if (op == funcOp)
-      return;
+    if (op == funcOp) return;
 
     ++tot_count;
 
@@ -194,8 +191,7 @@ void StatsPrinter::printOpCounts(FunctionOpInterface funcOp) {
     }
   });
 
-  if (!tot_count)
-    return;
+  if (!tot_count) return;
 
   StringAttr totalName = StringAttr::get(moduleOp.getContext(), "(total)");
   opCounts[totalName] = tot_count;

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -101,15 +101,11 @@ public:
   SetupStepImpl(SimpleHeader header) : plonk(header, 5, 4) {}
 
   void set(OneHot<InstType::COUNT> code) {
-    IF(1 - BACK(1, code->at(InstType::SETUP))) {
-      for (size_t i = 0; i < 5; i++) {
-        plonk->at(i)->set(i);
-      }
+    IF (1 - BACK(1, code->at(InstType::SETUP))) {
+      for (size_t i = 0; i < 5; i++) { plonk->at(i)->set(i); }
     }
-    IF(BACK(1, code->at(InstType::SETUP))) {
-      for (size_t i = 0; i < 5; i++) {
-        plonk->at(i)->set(5 + BACK(1, plonk->at(i)->get()));
-      }
+    IF (BACK(1, code->at(InstType::SETUP))) {
+      for (size_t i = 0; i < 5; i++) { plonk->at(i)->set(5 + BACK(1, plonk->at(i)->get())); }
     }
   }
 
@@ -123,9 +119,7 @@ public:
   CheckStepImpl(SimpleHeader header) : plonk(header, 5, 4) {}
 
   void set(OneHot<InstType::COUNT> code) {
-    for (size_t i = 0; i < 5; i++) {
-      plonk->at(i)->set(doExtern("getTestData", "", 1, {})[0]);
-    }
+    for (size_t i = 0; i < 5; i++) { plonk->at(i)->set(doExtern("getTestData", "", 1, {})[0]); }
   }
 
   PlonkBody<SimplePlookup, SimplePlookupVerifier, SimpleHeader> plonk;
@@ -213,12 +207,8 @@ TEST(Plonk, Basic) {
   size_t cycles = 1 + setupCount + checkCount + 1;
   std::vector<uint64_t> code(4 * cycles);
   code[0 * 4 + InstType::INIT] = 1;
-  for (size_t i = 0; i < setupCount; i++) {
-    code[(i + 1) * 4 + InstType::SETUP] = 1;
-  }
-  for (size_t i = 0; i < checkCount; i++) {
-    code[(i + 1 + setupCount) * 4 + InstType::CHECK] = 1;
-  }
+  for (size_t i = 0; i < setupCount; i++) { code[(i + 1) * 4 + InstType::SETUP] = 1; }
+  for (size_t i = 0; i < checkCount; i++) { code[(i + 1 + setupCount) * 4 + InstType::CHECK] = 1; }
   code[(cycles - 1) * 4 + InstType::FINI] = 1;
 
   // Make sure normal case works

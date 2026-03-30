@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -48,8 +48,7 @@ struct InlinePurePass : public InlinePureBase<InlinePurePass> {
     patterns.insert<NonLayout<CallOpInterface, InlineCalls>>(ctx);
     //    patterns.insert<NonLayout<ZStruct::SwitchOp, ZStruct::SplitSwitchArms>>(ctx);
 
-    for (auto* dialect : ctx->getLoadedDialects())
-      dialect->getCanonicalizationPatterns(patterns);
+    for (auto* dialect : ctx->getLoadedDialects()) dialect->getCanonicalizationPatterns(patterns);
     for (RegisteredOperationName op : ctx->getRegisteredOperations())
       op.getCanonicalizationPatterns(patterns, ctx);
 

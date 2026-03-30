@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,9 +24,7 @@ namespace zirgen::Iop {
 
 bool ReadOp::updateRanges(mlir::DenseMap<mlir::Value, BigIntRange>& ranges) {
   for (mlir::Value v : getOuts()) {
-    if (mlir::isa<Zll::ValType>(v.getType())) {
-      SET(v, BigIntRange::rangeP());
-    }
+    if (mlir::isa<Zll::ValType>(v.getType())) { SET(v, BigIntRange::rangeP()); }
   }
   return true;
 }
@@ -100,9 +98,7 @@ mlir::LogicalResult RngValOp::evaluate(Zll::Interpreter& interp,
                                        EvalAdaptor& adaptor) {
   size_t k = llvm::cast<Zll::ValType>(getOut().getType()).getFieldK();
   llvm::SmallVector<uint64_t, 4> poly;
-  for (size_t i = 0; i < k; i++) {
-    poly.push_back(adaptor.getIop()->getIop()->generateFp());
-  }
+  for (size_t i = 0; i < k; i++) { poly.push_back(adaptor.getIop()->getIop()->generateFp()); }
   outs[0]->setVal(poly);
   return mlir::success();
 }

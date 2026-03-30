@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,8 +47,7 @@ struct RandomnessMap {
       this->pivot = builder.create<LoadOp>(currentLoc(ctx), pivot, zeroDistance);
     } else if (auto pivotType = dyn_cast<LayoutType>(pivot.getType())) {
       for (auto field : pivotType.getFields()) {
-        if (field.name == "$offset")
-          continue;
+        if (field.name == "$offset") continue;
 
         Value member = builder.create<LookupOp>(currentLoc(ctx), pivot, field.name);
         map.insert({field.name, RandomnessMap(builder, member, zeroDistance)});
@@ -108,9 +107,7 @@ public:
 
     // If we have a non-multiple of 3 number of arguments, be sure to write
     // the last accumulator value into a register
-    if (accCount != 0) {
-      t = storeTemporarySum(t);
-    }
+    if (accCount != 0) { t = storeTemporarySum(t); }
 
     // If necessary, copy the ultimate accumulator value to the last column so
     // it is always in the same place for the next cycle. We also need to
@@ -146,8 +143,7 @@ private:
     } else if (auto layoutType = dyn_cast<LayoutType>(layout.getType())) {
       // for a LayoutType, sum condensations of non-count fields
       auto fields = layoutType.getFields();
-      if (layoutType.getKind() == LayoutKind::Argument)
-        fields = fields.drop_front();
+      if (layoutType.getKind() == LayoutKind::Argument) fields = fields.drop_front();
 
       Value v = builder.create<ConstOp>(currentLoc(ctx), valType, 0);
       for (auto field : fields) {
@@ -242,9 +238,7 @@ private:
     buildConstraintTerms(vPlusOffset, c);
 
     accCount++;
-    if (accCount == 3) {
-      storeTemporarySum(tNew);
-    }
+    if (accCount == 3) { storeTemporarySum(tNew); }
     return tNew;
   }
 
@@ -332,9 +326,7 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
     // Get the top + accum function or return nothing
     auto topFunc = module.lookupSymbol<ComponentOp>("Top");
     auto accumFunc = module.lookupSymbol<ComponentOp>("Accum");
-    if (!topFunc || !accumFunc) {
-      return ComponentOp();
-    }
+    if (!topFunc || !accumFunc) { return ComponentOp(); }
 
     // Do some type checking on Accum. Specifically, verify that:
     // Accum's first parameter is the 'super' (i.e. return) of Top
@@ -342,12 +334,8 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
     Type topComponentType = topFunc.getResultType();
     auto retType = zirgen::Zhlt::getSuperType(topComponentType);
     auto accumArgTypes = accumFunc.getArgumentTypes();
-    if (accumArgTypes.size() != 3) {
-      return ComponentOp();
-    }
-    if (accumArgTypes[0] != retType) {
-      return ComponentOp();
-    }
+    if (accumArgTypes.size() != 3) { return ComponentOp(); }
+    if (accumArgTypes[0] != retType) { return ComponentOp(); }
     auto mixArrayType = dyn_cast<ArrayType>(accumArgTypes[1]);
     if (!mixArrayType || mixArrayType.getElement() != Zhlt::getExtValType(ctx)) {
       return ComponentOp();
@@ -429,19 +417,15 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
       // Generate accum code for entry points like Top and tests, but don't get
       // stuck in a loop generating more accum code from the new accum code.
       llvm::StringRef baseName = component.getName();
-      if (baseName.ends_with("$accum") || !Zhlt::isEntryPoint(component))
-        return;
+      if (baseName.ends_with("$accum") || !Zhlt::isEntryPoint(component)) return;
 
       auto layoutType = component.getLayoutType();
-      if (!layoutType)
-        return;
+      if (!layoutType) return;
 
       KeyPath keyPath, cur;
       LayoutType majorType;
       int count = findMajorMux(majorType, keyPath, layoutType, cur);
-      if (count == 0) {
-        return;
-      }
+      if (count == 0) { return; }
       if (count != 1) {
         llvm::errs() << "Unable to find unique major mux for " << baseName << "\n";
         return signalPassFailure();
@@ -535,9 +519,7 @@ struct GenerateAccumPass : public GenerateAccumBase<GenerateAccumPass> {
     Value topLayout;
     for (const Key& key : keyPath) {
       if (auto ltype = dyn_cast<LayoutType>(cur.getType())) {
-        if (ltype.getId() == "Top") {
-          topLayout = cur;
-        }
+        if (ltype.getId() == "Top") { topLayout = cur; }
       }
       if (auto* strKey = std::get_if<mlir::StringRef>(&key)) {
         cur = builder.create<LookupOp>(currentLoc(ctx), cur, *strKey);
@@ -633,14 +615,11 @@ private:
   Type getRandomnessLayoutTypeFor(LayoutType type, bool isRoot) {
     MLIRContext* ctx = &getContext();
 
-    if (type == Zhlt::getNondetRegLayoutType(ctx)) {
-      return Zhlt::getExtRefType(ctx);
-    }
+    if (type == Zhlt::getNondetRegLayoutType(ctx)) { return Zhlt::getExtRefType(ctx); }
 
     // Add global randomness for all non-count members of type
     auto fields = type.getFields();
-    if (isRoot)
-      fields = fields.drop_front();
+    if (isRoot) fields = fields.drop_front();
 
     SmallVector<ZStruct::FieldInfo> members;
     for (auto field : fields) {
@@ -670,8 +649,7 @@ private:
     SmallVector<ZStruct::FieldInfo> members;
     mod.walk([&](ComponentOp component) {
       auto type = dyn_cast_or_null<LayoutType>(component.getLayoutType());
-      if (!type || type.getKind() != LayoutKind::Argument)
-        return;
+      if (!type || type.getKind() != LayoutKind::Argument) return;
 
       auto fieldName = StringAttr::get(ctx, type.getId());
       members.push_back({fieldName, getRandomnessLayoutTypeFor(type, true)});
@@ -696,9 +674,7 @@ private:
   // accum column for every three arguments, rounding up.
   size_t getAccumColumnCount(llvm::MapVector<Type, size_t>& argumentCounts) {
     size_t argumentSubcomponents = 0;
-    for (auto argument : argumentCounts) {
-      argumentSubcomponents += argument.second;
-    }
+    for (auto argument : argumentCounts) { argumentSubcomponents += argument.second; }
     return (argumentSubcomponents + 2) / 3;
   }
 };

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -85,9 +85,7 @@ private:
 };
 
 inline BigIntRange get(mlir::DenseMap<mlir::Value, BigIntRange>& map, mlir::Value value) {
-  if (!map.count(value)) {
-    map[value] = BigIntRange::rangeP();
-  }
+  if (!map.count(value)) { map[value] = BigIntRange::rangeP(); }
   return map[value];
 }
 

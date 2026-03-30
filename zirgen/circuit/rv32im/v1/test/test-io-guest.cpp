@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@
 extern "C" void start() {
   uint32_t input[2];
   uint32_t len = sys_io(input, 2, 0, 0, 0);
-  if (len != 8 || input[0] != 0x01020304 || input[1] != 0x05060708) {
-    fail();
-  }
+  if (len != 8 || input[0] != 0x01020304 || input[1] != 0x05060708) { fail(); }
   sys_halt();
 }

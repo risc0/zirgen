@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,9 +37,7 @@ struct SplitStagePass : public SplitStageBase<SplitStagePass> {
     Value result;
     for (Operation& op : llvm::make_early_inc_range(block->without_terminator())) {
       if (auto bop = dyn_cast<BarrierOp>(op)) {
-        if (curStage == stage) {
-          result = bop.getIn();
-        }
+        if (curStage == stage) { result = bop.getIn(); }
         curStage++;
         bop.erase();
       } else if (curStage != stage && op.getNumResults() == 0) {

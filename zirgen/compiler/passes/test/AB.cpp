@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,9 +27,7 @@ namespace zirgen::recursion {
 // Make a random set of iop values
 static std::vector<uint32_t> random_iop(size_t size) {
   std::vector<uint32_t> iopVals;
-  for (size_t i = 0; i < size; i++) {
-    iopVals.push_back(i * i + 17);
-  }
+  for (size_t i = 0; i < size; i++) { iopVals.push_back(i * i + 17); }
   return iopVals;
 }
 
@@ -72,9 +70,7 @@ TEST(AB, MultiOp) {
   doInlineFpExtAB(random_iop(kBabyBearExtSize * 2), [&](ReadIopVal iop) {
     std::vector<Val> in = iop.readExtVals(2);
     Val b = llvm::ArrayRef<uint64_t>({1, 2, 3, 4});
-    for (size_t i = 0; i < 2; i++) {
-      in[i] = in[i] * b + 77;
-    }
+    for (size_t i = 0; i < 2; i++) { in[i] = in[i] * b + 77; }
     in[0] = in[0] & in[1];
     DigestVal d = hash(in, true);
     DigestVal e = hash(in, false);

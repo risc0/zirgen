@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -94,9 +94,7 @@ int main(int argc, char* argv[]) {
 
   // Convert to MLIR representation
   auto op = zirgen::R1CS::lower(context, *sys.get());
-  if (!op) {
-    return 1;
-  }
+  if (!op) { return 1; }
 
   if (emitAction == Action::MLIR) {
     op->dump();

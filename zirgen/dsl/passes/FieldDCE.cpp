@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -73,8 +73,7 @@ struct FieldDCEPass : public FieldDCEBase<FieldDCEPass> {
       return TypeAttr::get(rewriteTypes.replace(typeAttr.getValue()));
     });
     rewriteTypes.addReplacement([&](StructType ty) -> std::optional<Type> {
-      if (!used.contains(ty))
-        return std::nullopt;
+      if (!used.contains(ty)) return std::nullopt;
       DenseSet<StringAttr> usedFields = used.at(ty);
 
       SmallVector<FieldInfo> newFields;

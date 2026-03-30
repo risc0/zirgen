@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -149,8 +149,7 @@ public:
 
       funcProtos.push_back(object{{"args", args}, {"fn", calledFunc.getName().str()}});
 
-      if ((curSplitIndex++ % splitCount) != splitIndex)
-        continue;
+      if ((curSplitIndex++ % splitCount) != splitIndex) continue;
 
       list lines;
       for (Operation& op : calledFunc.front().without_terminator()) {
@@ -221,26 +220,16 @@ private:
     std::string indent(depth * 2, ' ');
     std::stringstream ss;
 
-    if (op.getOut().size()) {
-      ss << "auto ";
-    }
-    if (op.getOut().size() > 1) {
-      ss << "[";
-    }
+    if (op.getOut().size()) { ss << "auto "; }
+    if (op.getOut().size() > 1) { ss << "["; }
 
     for (size_t i = 0; i < op.getOut().size(); i++) {
-      if (i) {
-        ss << ", ";
-      }
+      if (i) { ss << ", "; }
       ss << ctx.def(op.getResult(i));
     }
 
-    if (op.getOut().size() > 1) {
-      ss << "]";
-    }
-    if (op.getOut().size()) {
-      ss << " = ";
-    }
+    if (op.getOut().size() > 1) { ss << "]"; }
+    if (op.getOut().size()) { ss << " = "; }
 
     ss << "extern_";
     ss << op.getName();
@@ -250,9 +239,7 @@ private:
 
     ss << "(ctx, cycle, " << escapeString(op.getExtra()) << ", {";
     for (size_t i = 0; i < op.getIn().size(); i++) {
-      if (i) {
-        ss << ", ";
-      }
+      if (i) { ss << ", "; }
       ss << ctx.use(op.getOperand(i));
     }
     ss << "});";
@@ -271,9 +258,7 @@ private:
     const char* type = baseType;
     if (op->getNumResults() == 1) {
       auto valType = llvm::dyn_cast<ValType>(op->getResults()[0].getType());
-      if (valType && valType.getFieldK() > 1) {
-        type = "FpExt";
-      }
+      if (valType && valType.getFieldK() > 1) { type = "FpExt"; }
     }
     std::string indent(depth * 2, ' ');
     lines.push_back(indent + "// " + getLocString(op->getLoc()));
@@ -302,9 +287,7 @@ private:
               indent +
               llvm::formatv("auto {0} = {1}(cycle, steps, poly_mix", out, op.getCallee()).str();
 
-          for (mlir::Value arg : op.getOperands()) {
-            line += ", " + ctx.use(arg);
-          }
+          for (mlir::Value arg : op.getOperands()) { line += ", " + ctx.use(arg); }
           line += ");";
           lines.push_back(line);
         })
@@ -471,9 +454,7 @@ private:
   std::string emitPolynomialAttr(Operation* op, const char* attrName) {
     auto attr = op->getAttrOfType<PolynomialAttr>(attrName);
     std::string result = std::to_string(attr[0]);
-    for (ssize_t i = 1; i < attr.size(); i++) {
-      result += "," + std::to_string(attr[i]);
-    }
+    for (ssize_t i = 1; i < attr.size(); i++) { result += "," + std::to_string(attr[i]); }
     return result;
   }
 
@@ -554,9 +535,7 @@ public:
     size_t globalIdx = 0;
     for (auto arg : func.getArguments()) {
       if (auto bufType = llvm::dyn_cast<BufferType>(arg.getType())) {
-        if (bufType.getKind() == BufferKind::Global) {
-          ctx.args.vars[arg] = globalIdx++;
-        }
+        if (bufType.getKind() == BufferKind::Global) { ctx.args.vars[arg] = globalIdx++; }
       }
     }
 
@@ -602,9 +581,7 @@ public:
 
     for (auto combo : tapSet.combos) {
       comboBegin.push_back(std::to_string(comboBacks.size()));
-      for (unsigned back : combo.backs) {
-        comboBacks.push_back(std::to_string(back));
-      }
+      for (unsigned back : combo.backs) { comboBacks.push_back(std::to_string(back)); }
     }
     comboBegin.push_back(std::to_string(comboBacks.size()));
 

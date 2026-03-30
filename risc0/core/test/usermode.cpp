@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,11 +18,7 @@ int main() {
   unsigned char buf[10];
   read(0, buf, 10);
   int tot = 0;
-  for (size_t i = 0; i < 10; i++) {
-    tot += buf[i];
-  }
-  if (tot == 45) {
-    return 0;
-  }
+  for (size_t i = 0; i < 10; i++) { tot += buf[i]; }
+  if (tot == 45) { return 0; }
   return tot;
 }

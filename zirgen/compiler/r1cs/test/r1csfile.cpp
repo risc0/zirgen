@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,13 +34,9 @@ BigintLE big(uint32_t x) {
 }
 
 inline bool operator==(const BigintLE& x, const BigintLE& y) {
-  if (x.size() != y.size()) {
-    return false;
-  }
+  if (x.size() != y.size()) { return false; }
   for (size_t i = 0; i < x.size(); ++i) {
-    if (x[i] != y[i]) {
-      return false;
-    }
+    if (x[i] != y[i]) { return false; }
   }
   return true;
 }
@@ -149,9 +145,7 @@ TEST(r1csfile, example) {
   // Inspect the map section and validate its ID values
   std::vector<LabelID> map{0, 3, 10, 11, 12, 15, 324};
   EXPECT_EQ(sys->map.size(), map.size());
-  for (size_t i = 0; i < map.size(); ++i) {
-    EXPECT_EQ(sys->map[i], map[i]);
-  }
+  for (size_t i = 0; i < map.size(); ++i) { EXPECT_EQ(sys->map[i], map[i]); }
 }
 
 } // namespace zirgen::r1csfile

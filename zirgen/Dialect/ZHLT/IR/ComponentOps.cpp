@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -104,8 +104,7 @@ void addDegreeContext(InFlightDiagnostic& diag,
   for (Value contrib : degree.contributions) {
     auto contribDegree = solver.lookupState<ZStruct::DegreeAnalysis::Element>(contrib)->getValue();
     assert(contribDegree.get() <= degree.get());
-    if (contribDegree.get() == degree.get())
-      degreeIncreased = false;
+    if (contribDegree.get() == degree.get()) degreeIncreased = false;
     contribDegrees.push_back(contribDegree.get());
   }
 
@@ -135,16 +134,14 @@ void addDegreeContext(InFlightDiagnostic& diag,
 mlir::LogicalResult CheckFuncOp::verifyMaxDegree(size_t maxDegree) {
   DataFlowSolver solver;
   solver.load<ZStruct::DegreeAnalysis>();
-  if (failed(solver.initializeAndRun(*this)))
-    return failure();
+  if (failed(solver.initializeAndRun(*this))) return failure();
 
   LogicalResult res = success();
   this->walk([&](Zll::EqualZeroOp op) {
     auto point = solver.getProgramPointAfter(op);
     auto degree = solver.lookupState<ZStruct::DegreeAnalysis::Element>(point)->getValue();
     assert(degree.isDefined());
-    if (degree.get() <= maxDegree)
-      return;
+    if (degree.get() <= maxDegree) return;
 
     auto diag = op->emitError() << "Constraint degree " << degree.get()
                                 << " exceeds maximum degree " << maxDegree;

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,9 +28,7 @@ constexpr uint32_t expected[8] = {0xb38d5f18, //
 
 extern "C" void start() {
   for (int i = 0; i < 8; i++) {
-    if (sys_input(i) != expected[i]) {
-      fail();
-    }
+    if (sys_input(i) != expected[i]) { fail(); }
   }
   sys_halt();
 }

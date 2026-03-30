@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -117,9 +117,7 @@ TEST(RECURSION, RecurseRecurse) {
   auto add_proof = [&](size_t len) {
     std::cerr << "Extracting proof starting at " << (proof_ptr - proof.data()) << ", len=" << len
               << "\n";
-    for (size_t i = 0; i < len && i < 20; ++i) {
-      std::cerr << " " << proof_ptr[i];
-    }
+    for (size_t i = 0; i < len && i < 20; ++i) { std::cerr << " " << proof_ptr[i]; }
     std::cerr << "\n";
     proofs.emplace_back(proof_ptr, proof_ptr + len);
     proof_ptr += len;

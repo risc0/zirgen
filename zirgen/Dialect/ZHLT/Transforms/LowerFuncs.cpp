@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,8 +30,7 @@ struct RewriteFuncPattern : public OpInterfaceRewritePattern<FunctionOpInterface
   using OpInterfaceRewritePattern::OpInterfaceRewritePattern;
 
   LogicalResult matchAndRewrite(FunctionOpInterface funcOp, PatternRewriter& rewriter) const final {
-    if (llvm::isa<TargetFuncOpT>(funcOp))
-      return failure();
+    if (llvm::isa<TargetFuncOpT>(funcOp)) return failure();
 
     auto newFunc = rewriter.create<TargetFuncOpT>(
         funcOp.getLoc(),
@@ -45,13 +44,10 @@ struct RewriteFuncPattern : public OpInterfaceRewritePattern<FunctionOpInterface
       // Propagate argument names, if present.
       if (auto asmOp = llvm::dyn_cast<OpAsmOpInterface>(*funcOp)) {
         llvm::DenseMap<Value, /*index=*/size_t> argIndexes;
-        for (auto [idx, arg] : llvm::enumerate(funcOp.getArguments())) {
-          argIndexes[arg] = idx;
-        }
+        for (auto [idx, arg] : llvm::enumerate(funcOp.getArguments())) { argIndexes[arg] = idx; }
 
         asmOp.getAsmBlockArgumentNames(funcOp.getFunctionBody(), [&](Value val, StringRef name) {
-          if (!argIndexes.contains(val))
-            return;
+          if (!argIndexes.contains(val)) return;
           auto argNum = argIndexes.at(val);
           if (!newFunc.getArgAttr(argNum, "zirgen.argName")) {
             newFunc.setArgAttr(argNum, "zirgen.argName", rewriter.getStringAttr(name));
@@ -71,16 +67,13 @@ struct RewriteCallPattern : public OpInterfaceRewritePattern<CallOpInterface> {
   using OpInterfaceRewritePattern::OpInterfaceRewritePattern;
 
   LogicalResult matchAndRewrite(CallOpInterface callOp, PatternRewriter& rewriter) const final {
-    if (llvm::isa<TargetCallOpT>(callOp))
-      return failure();
+    if (llvm::isa<TargetCallOpT>(callOp)) return failure();
 
     auto targetSym = llvm::dyn_cast_if_present<FlatSymbolRefAttr>(
         llvm::dyn_cast_if_present<SymbolRefAttr>(callOp.getCallableForCallee()));
-    if (!targetSym)
-      return failure();
+    if (!targetSym) return failure();
     auto target = SymbolTable::lookupNearestSymbolFrom<FunctionOpInterface>(callOp, targetSym);
-    if (!target)
-      return failure();
+    if (!target) return failure();
 
     rewriter.replaceOpWithNewOp<TargetCallOpT>(callOp,
                                                callOp->getResultTypes(),

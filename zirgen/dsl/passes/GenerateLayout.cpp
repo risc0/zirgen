@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -83,9 +83,7 @@ public:
     computeSharedPrefixes(abstract, prefix, nullptr);
     for (const auto& kvp : prefixes) {
       // Check if final value matches key, in which case there is a unique parent
-      if (kvp.first == kvp.second.back()) {
-        continue;
-      }
+      if (kvp.first == kvp.second.back()) { continue; }
       // Other, add ret
       ret[idToPtr[kvp.second.back()]].push_back(idToPtr[kvp.first]);
     }
@@ -108,9 +106,7 @@ private:
     assert(lhs[0] == rhs[0]);
     size_t i = 0;
     while (i < std::min(lhs.size(), rhs.size())) {
-      if (lhs[i] != rhs[i]) {
-        break;
-      }
+      if (lhs[i] != rhs[i]) { break; }
       i++;
     }
     return Vec(lhs.begin(), lhs.begin() + i);
@@ -131,16 +127,12 @@ private:
     prefixes[id] = sharedPrefix(prefixes[id], prefix);
     // Descend for recursive types
     if (const auto* arr = std::get_if<AbstractArray>(abstract)) {
-      for (auto element : arr->elements) {
-        computeSharedPrefixes(element.get(), prefix, arm);
-      }
+      for (auto element : arr->elements) { computeSharedPrefixes(element.get(), prefix, arm); }
     } else if (const auto* str = std::get_if<AbstractStructure>(abstract)) {
       auto kind = str->type.getKind();
       bool isMux = (kind == LayoutKind::Mux || kind == LayoutKind::MajorMux);
       for (auto field : str->fields) {
-        if (isMux && field.first == "@super" && arm) {
-          ret[arm].push_back(field.second.get());
-        }
+        if (isMux && field.first == "@super" && arm) { ret[arm].push_back(field.second.get()); }
         if (isMux && StringRef(field.first.str()).starts_with("arm")) {
           computeSharedPrefixes(field.second.get(), prefix, field.second.get());
         } else {
@@ -161,8 +153,7 @@ struct LayoutGenerator {
 
   Attribute generate(CheckLayoutFuncOp component) {
     // Empty layout -> empty attribute
-    if (!component.getLayout())
-      return Attribute();
+    if (!component.getLayout()) return Attribute();
 
     // llvm::errs() << component << "\n";
     Memo memo;
@@ -180,9 +171,7 @@ private:
   // Materialize a concrete layout attribute from an abstract layout
   Attribute
   materialize(Ptr abstract, Memo& memo, size_t& allocator, const PreallocsResult& preallocs) {
-    if (auto memoized = memo.lookup(abstract)) {
-      return memoized;
-    }
+    if (auto memoized = memo.lookup(abstract)) { return memoized; }
     auto it = preallocs.find(abstract);
     if (it != preallocs.end()) {
       for (auto ptr : it->second) {
@@ -251,8 +240,7 @@ struct GenerateLayoutPass : public GenerateLayoutBase<GenerateLayoutPass> {
     module.walk([&](ComponentOp component) {
       builder.setInsertionPointToStart(module.getBody());
       StringAttr bufferName = getBufferName(component);
-      if (!bufferName)
-        return;
+      if (!bufferName) return;
 
       auto checkLayoutFunc = component.getAspect<CheckLayoutFuncOp>();
       if (!checkLayoutFunc) {

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -83,9 +83,7 @@ public:
     size_t pad = count / 8 - 1;
     for (size_t i = 0; i < 8; i++) {
       ret.push_back(x.words[i]);
-      for (size_t j = 0; j < pad; j++) {
-        ret.push_back(0);
-      }
+      for (size_t j = 0; j < pad; j++) { ret.push_back(0); }
     }
     return ret;
   }
@@ -119,9 +117,7 @@ public:
     size_t pad = count / 8 - 1;
     for (size_t i = 0; i < 8; i++) {
       ret.push_back(x.words[i]);
-      for (size_t j = 0; j < pad; j++) {
-        ret.push_back(0);
-      }
+      for (size_t j = 0; j < pad; j++) { ret.push_back(0); }
     }
     return ret;
   }

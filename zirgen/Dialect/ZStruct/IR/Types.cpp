@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,19 +38,13 @@ mlir::ParseResult parseFields(mlir::AsmParser& p, llvm::SmallVectorImpl<FieldInf
       mlir::AsmParser::Delimiter::LessGreater, [&]() -> mlir::ParseResult {
         bool isPrivate = false;
         std::string name;
-        if (p.parseKeywordOrString(&name) || p.parseColon()) {
-          return mlir::failure();
-        }
+        if (p.parseKeywordOrString(&name) || p.parseColon()) { return mlir::failure(); }
         if (name == "private") {
           isPrivate = true;
-          if (p.parseKeywordOrString(&name) || p.parseColon()) {
-            return mlir::failure();
-          }
+          if (p.parseKeywordOrString(&name) || p.parseColon()) { return mlir::failure(); }
         }
         mlir::Type type;
-        if (p.parseType(type)) {
-          return mlir::failure();
-        }
+        if (p.parseType(type)) { return mlir::failure(); }
         parameters.push_back(
             FieldInfo{mlir::StringAttr::get(p.getContext(), name), type, isPrivate});
         return mlir::success();
@@ -72,45 +66,28 @@ void printFields(mlir::AsmPrinter& p, llvm::ArrayRef<FieldInfo> fields) {
 }
 
 mlir::Type StructType::parse(mlir::AsmParser& p) {
-  if (p.parseLess()) {
-    return Type();
-  }
+  if (p.parseLess()) { return Type(); }
   std::string id;
-  if (p.parseKeywordOrString(&id) || p.parseComma()) {
-    return Type();
-  }
+  if (p.parseKeywordOrString(&id) || p.parseComma()) { return Type(); }
   llvm::SmallVector<FieldInfo, 4> parameters;
-  if (parseFields(p, parameters)) {
-    return Type();
-  }
-  if (p.parseGreater()) {
-    return Type();
-  }
+  if (parseFields(p, parameters)) { return Type(); }
+  if (p.parseGreater()) { return Type(); }
   return StructType::get(p.getContext(), id, parameters);
 }
 
 mlir::Type LayoutType::parse(mlir::AsmParser& p) {
-  if (p.parseLess()) {
-    return Type();
-  }
+  if (p.parseLess()) { return Type(); }
   std::string id;
-  if (p.parseKeywordOrString(&id)) {
-    return Type();
-  }
+  if (p.parseKeywordOrString(&id)) { return Type(); }
   LayoutKind kind = LayoutKind::Normal;
   StringRef strKind;
   if (succeeded(p.parseOptionalKeyword(&strKind, {"mux", "majormux", "argument", "major"}))) {
     kind = symbolizeEnum<LayoutKind>(strKind).value_or(LayoutKind::Normal);
   }
-  if (p.parseComma())
-    return Type();
+  if (p.parseComma()) return Type();
   llvm::SmallVector<FieldInfo, 4> parameters;
-  if (parseFields(p, parameters)) {
-    return Type();
-  }
-  if (p.parseGreater()) {
-    return Type();
-  }
+  if (parseFields(p, parameters)) { return Type(); }
+  if (p.parseGreater()) { return Type(); }
   return LayoutType::get(p.getContext(), id, parameters, kind);
 }
 
@@ -125,29 +102,19 @@ void StructType::print(mlir::AsmPrinter& p) const {
 void LayoutType::print(mlir::AsmPrinter& p) const {
   p << "<";
   p.printKeywordOrString(getId());
-  if (getKind() != LayoutKind::Normal) {
-    p << " " << stringifyLayoutKind(getKind());
-  }
+  if (getKind() != LayoutKind::Normal) { p << " " << stringifyLayoutKind(getKind()); }
   p << ", ";
   printFields(p, getFields());
   p << ">";
 }
 
 mlir::Type UnionType::parse(mlir::AsmParser& p) {
-  if (p.parseLess()) {
-    return Type();
-  }
+  if (p.parseLess()) { return Type(); }
   std::string id;
-  if (p.parseKeywordOrString(&id) || p.parseComma()) {
-    return Type();
-  }
+  if (p.parseKeywordOrString(&id) || p.parseComma()) { return Type(); }
   llvm::SmallVector<FieldInfo, 4> parameters;
-  if (parseFields(p, parameters)) {
-    return Type();
-  }
-  if (p.parseGreater()) {
-    return Type();
-  }
+  if (parseFields(p, parameters)) { return Type(); }
+  if (p.parseGreater()) { return Type(); }
   return get(p.getContext(), id, parameters);
 }
 
@@ -161,8 +128,7 @@ void UnionType::print(mlir::AsmPrinter& p) const {
 
 bool isLayoutType(mlir::Type container) {
   // A component without any registers may have a null layout type
-  if (!container)
-    return true;
+  if (!container) return true;
 
   auto walked = container.walk<mlir::WalkOrder::PreOrder>([&](mlir::Type t) {
     return llvm::TypeSwitch<mlir::Type, mlir::WalkResult>(t)
@@ -189,10 +155,8 @@ bool isRecordType(mlir::Type container) {
           }
 
           for (auto field : t.getFields()) {
-            if (field.name == "@layout")
-              continue;
-            if (!isRecordType(field.type))
-              return mlir::WalkResult::interrupt();
+            if (field.name == "@layout") continue;
+            if (!isRecordType(field.type)) return mlir::WalkResult::interrupt();
           }
 
           return mlir::WalkResult::skip();
@@ -312,14 +276,12 @@ LogicalResult LayoutType::verify(function_ref<InFlightDiagnostic()> emitError,
 LogicalResult LayoutArrayType::verify(function_ref<InFlightDiagnostic()> emitError,
                                       mlir::Type element,
                                       unsigned size) {
-  if (!size)
-    return emitError() << "Layout arrays may not be empty";
+  if (!size) return emitError() << "Layout arrays may not be empty";
   return success();
 }
 LogicalResult
 ArrayType::verify(function_ref<InFlightDiagnostic()> emitError, mlir::Type element, unsigned size) {
-  if (!size)
-    return emitError() << "Arrays may not be empty";
+  if (!size) return emitError() << "Arrays may not be empty";
   return success();
 }
 

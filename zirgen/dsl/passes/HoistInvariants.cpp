@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,9 +28,7 @@ namespace {
 
 size_t moveInvariantCode(Operation* parentOp) {
   SmallVector<Region*> regions;
-  for (auto& reg : parentOp->getRegions()) {
-    regions.push_back(&reg);
-  }
+  for (auto& reg : parentOp->getRegions()) { regions.push_back(&reg); }
   return moveLoopInvariantCode(
       regions,
       [&](Value value, Region*) {
@@ -45,8 +43,7 @@ size_t moveInvariantCode(Operation* parentOp) {
 struct HoistInvariantsPass : public HoistInvariantsBase<HoistInvariantsPass> {
   void runOnOperation() override {
     getOperation()->walk([&](Operation* op) {
-      if (llvm::isa<SwitchOp, Zll::IfOp, MapOp, ReduceOp>(op))
-        moveInvariantCode(op);
+      if (llvm::isa<SwitchOp, Zll::IfOp, MapOp, ReduceOp>(op)) moveInvariantCode(op);
     });
   }
 };

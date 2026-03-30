@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ void BigInt2CycleImpl::set(Top top) {
   // Get current instruction address (either from ecall or prev instruction
   Val isFirstCycle = BACK(1, body->majorSelect->at(MajorType::kECall));
 
-  IF(isFirstCycle) {
+  IF (isFirstCycle) {
     NONDET { doExtern("syscallBigInt2Precompute", "", 0, {}); }
     // If first cycle, do special initalization
     ECallCycle ecall = body->majorMux->at<MajorType::kECall>();
@@ -60,15 +60,11 @@ void BigInt2CycleImpl::set(Top top) {
     readInst->doNOP();
     polyOp->set(0);
     memOp->set(2);
-    for (size_t i = 0; i < 5; i++) {
-      checkReg[i]->set(0);
-    }
-    for (size_t i = 0; i < 3; i++) {
-      checkCoeff[i]->set(0);
-    }
+    for (size_t i = 0; i < 5; i++) { checkReg[i]->set(0); }
+    for (size_t i = 0; i < 3; i++) { checkCoeff[i]->set(0); }
     offset->set(0);
   }
-  IF(1 - isFirstCycle) {
+  IF (1 - isFirstCycle) {
     // Read & decode the instruction
     instWordAddr->set(BACK(1, instWordAddr->get()) + 1);
     readInst->doRead(cycle, instWordAddr);
@@ -77,9 +73,7 @@ void BigInt2CycleImpl::set(Top top) {
     NONDET {
       polyOp->set(instType & 0xf);
       memOp->set((instType - polyOp->get()) / 16);
-      for (size_t i = 0; i < 5; i++) {
-        checkReg[i]->set((coeffReg & (1 << i)) / (1 << i));
-      }
+      for (size_t i = 0; i < 5; i++) { checkReg[i]->set((coeffReg & (1 << i)) / (1 << i)); }
       for (size_t i = 0; i < 3; i++) {
         checkCoeff[i]->set((coeffReg & (1 << (5 + i))) / (1 << (5 + i)));
       }
@@ -88,13 +82,9 @@ void BigInt2CycleImpl::set(Top top) {
     offset->set(readInst->data().bytes[1] * 256 + readInst->data().bytes[0]);
   }
   Val reg = 0;
-  for (size_t i = 0; i < 5; i++) {
-    reg = reg + checkReg[i] * (1 << i);
-  }
+  for (size_t i = 0; i < 5; i++) { reg = reg + checkReg[i] * (1 << i); }
   Val coeff = 0;
-  for (size_t i = 0; i < 3; i++) {
-    coeff = coeff + checkCoeff[i] * (1 << i);
-  }
+  for (size_t i = 0; i < 3; i++) { coeff = coeff + checkCoeff[i] * (1 << i); }
   XLOG("BigInt2: instAddr = %x, polyOp=%u, memOp=%u, reg=%u, coeff+4=%u, offset=%u",
        instWordAddr * 4,
        polyOp,
@@ -108,31 +98,27 @@ void BigInt2CycleImpl::set(Top top) {
   Val addr = readRegAddr->data().flat() / 4 + offset * 4;
 
   // MemoryOp 0 (read)
-  IF(memOp->at(0)) {
+  IF (memOp->at(0)) {
     NONDET {
       doExtern("syscallBigInt2Witness", "", 16, {polyOp->get(), memOp->get(), reg, offset, coeff});
     }
     for (size_t i = 0; i < 4; i++) {
       io[i]->doRead(cycle, addr + i);
-      for (size_t j = 0; j < 4; j++) {
-        setByte(io[i]->data().bytes[j], i * 4 + j);
-      }
+      for (size_t j = 0; j < 4; j++) { setByte(io[i]->data().bytes[j], i * 4 + j); }
     }
   }
 
   // MemoryOp (1, 2) (write / check)
-  IF(memOp->at(1) + memOp->at(2)) {
+  IF (memOp->at(1) + memOp->at(2)) {
     NONDET {
       std::vector<Val> ret = doExtern(
           "syscallBigInt2Witness", "", 16, {polyOp->get(), memOp->get(), reg, offset, coeff});
-      for (size_t i = 0; i < 16; i++) {
-        setByte(ret[i], i);
-      }
+      for (size_t i = 0; i < 16; i++) { setByte(ret[i], i); }
     }
   }
 
   // Memory Op 1 (write)
-  IF(memOp->at(1)) {
+  IF (memOp->at(1)) {
     for (size_t i = 0; i < 4; i++) {
       io[i]->doWrite(
           cycle,
@@ -140,21 +126,19 @@ void BigInt2CycleImpl::set(Top top) {
           U32Val(getByte(i * 4 + 0), getByte(i * 4 + 1), getByte(i * 4 + 2), getByte(i * 4 + 3)));
     }
   }
-  IF(memOp->at(2)) {
-    for (size_t i = 0; i < 4; i++) {
-      io[i]->doNOP();
-    }
+  IF (memOp->at(2)) {
+    for (size_t i = 0; i < 4; i++) { io[i]->doNOP(); }
   }
 
   // Check is the instruction is a pure NOP + not first
   isLast->set(polyOp->at(0) * (1 - isFirstCycle));
   // If last, back to decoding
-  IF(isLast) {
+  IF (isLast) {
     body->nextMajor->set(MajorType::kMuxSize);
     body->pc->set(curPC + 4);
   }
   // Otherwise, next is also BigInt2 major
-  IF(1 - isLast) {
+  IF (1 - isLast) {
     body->nextMajor->set(MajorType::kBigInt2);
     body->pc->set(curPC);
   }
@@ -162,9 +146,7 @@ void BigInt2CycleImpl::set(Top top) {
 
 static FpExt extBack(FpExtReg in) {
   std::array<Val, kExtSize> oldVals;
-  for (size_t i = 0; i < 4; i++) {
-    oldVals[i] = UNCHECKED_BACK(1, in->elem(i));
-  }
+  for (size_t i = 0; i < 4; i++) { oldVals[i] = UNCHECKED_BACK(1, in->elem(i)); }
   return FpExt(oldVals);
 }
 
@@ -193,38 +175,38 @@ void BigInt2CycleImpl::onAccum() {
   }
   FpExt newPoly = oldPoly + deltaPoly;
 
-  IF(polyOp->at(0)) {
+  IF (polyOp->at(0)) {
     poly->set(zero);
     term->set(one);
     tot->set(zero);
   }
-  IF(polyOp->at(PolyOp::kOpShift)) {
+  IF (polyOp->at(PolyOp::kOpShift)) {
     poly->set(newPoly * powers[16]);
     term->set(oldTerm);
     tot->set(oldTot);
   }
-  IF(polyOp->at(PolyOp::kOpSetTerm)) {
+  IF (polyOp->at(PolyOp::kOpSetTerm)) {
     poly->set(zero);
     term->set(newPoly);
     tot->set(oldTot);
   }
-  IF(polyOp->at(PolyOp::kOpAddTot)) {
+  IF (polyOp->at(PolyOp::kOpAddTot)) {
     poly->set(zero);
     term->set(one);
     tmp->set(coeff * oldTerm);
     tot->set(oldTot + tmp * newPoly);
   }
-  IF(polyOp->at(PolyOp::kOpCarry1)) {
+  IF (polyOp->at(PolyOp::kOpCarry1)) {
     poly->set(oldPoly + (deltaPoly - negPoly) * c16k);
     term->set(oldTerm);
     tot->set(oldTot);
   }
-  IF(polyOp->at(PolyOp::kOpCarry2)) {
+  IF (polyOp->at(PolyOp::kOpCarry2)) {
     poly->set(oldPoly + deltaPoly * c256);
     term->set(oldTerm);
     tot->set(oldTot);
   }
-  IF(polyOp->at(PolyOp::kOpEqz)) {
+  IF (polyOp->at(PolyOp::kOpEqz)) {
     FpExt carryMul = powers[1] - c256;
     FpExt goalZero = oldTot + newPoly * carryMul;
     eqz(goalZero.elem(0));

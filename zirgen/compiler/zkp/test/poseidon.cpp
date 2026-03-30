@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,9 +20,7 @@ namespace zirgen {
 
 TEST(zkp, poseidon) {
   uint32_t input[16];
-  for (uint32_t i = 0; i < 16; i++) {
-    input[i] = i;
-  }
+  for (uint32_t i = 0; i < 16; i++) { input[i] = i; }
   Digest out = poseidonHash(input, 16);
 
   Digest goal = {toMontgomery(165799421),

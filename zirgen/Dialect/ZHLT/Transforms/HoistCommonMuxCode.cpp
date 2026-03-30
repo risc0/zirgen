@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,12 +44,10 @@ bool compare(Operation* op1, Operation* op2) {
       op1->getAttrs().size() != op2->getAttrs().size())
     return false;
   for (auto [opn1, opn2] : llvm::zip(op1->getOperands(), op2->getOperands())) {
-    if (opn1 != opn2)
-      return false;
+    if (opn1 != opn2) return false;
   }
   for (auto [attr1, attr2] : llvm::zip(op1->getAttrs(), op2->getAttrs())) {
-    if (attr1 != attr2)
-      return false;
+    if (attr1 != attr2) return false;
   }
   return true;
 }
@@ -92,9 +90,7 @@ struct HoistCommonMuxCodePass : public HoistCommonMuxCodeBase<HoistCommonMuxCode
         SmallVector<Operation*> toHoist;
         toHoist.reserve(mux.getArms().size());
         toHoist.push_back(&op);
-        if (shouldHoistForSpeed(mux, op, toHoist)) {
-          doHoist(mux, toHoist);
-        }
+        if (shouldHoistForSpeed(mux, op, toHoist)) { doHoist(mux, toHoist); }
       }
     }
   }
@@ -105,8 +101,7 @@ struct HoistCommonMuxCodePass : public HoistCommonMuxCodeBase<HoistCommonMuxCode
     // the first arm, and since it's hoistable in the first arm it must be
     // hoistable in all other arms, so skip these checks.
     return llvm::all_of(mux.getRegions(), [&](Region* region) {
-      if (region->getRegionNumber() == 0)
-        return true;
+      if (region->getRegionNumber() == 0) return true;
 
       return llvm::any_of(region->getOps(), [&](Operation& op2) {
         if (compare(&op, &op2)) {
@@ -130,9 +125,7 @@ struct HoistCommonMuxCodePass : public HoistCommonMuxCodeBase<HoistCommonMuxCode
           SmallVector<Operation*> toHoist;
           toHoist.reserve(mux.getArms().size());
           toHoist.push_back(&op);
-          if (shouldHoistForSize(mux, op, i, toHoist)) {
-            doHoist(mux, toHoist);
-          }
+          if (shouldHoistForSize(mux, op, i, toHoist)) { doHoist(mux, toHoist); }
         }
       }
     }

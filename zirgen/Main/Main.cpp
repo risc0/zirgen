@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -93,8 +93,7 @@ mlir::LogicalResult checkDegreeExceeded(mlir::ModuleOp module, size_t maxDegree)
     }
   });
 
-  if (degreeExceeded)
-    return mlir::failure();
+  if (degreeExceeded) return mlir::failure();
 
   return mlir::success();
 }

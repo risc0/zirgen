@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,54 +40,42 @@ struct LayoutTarget : public ConversionTarget {
   LayoutTarget(MLIRContext& ctx, TypeConverter& tc) : ConversionTarget(ctx) {
     addDynamicallyLegalOp<func::FuncOp>([&](func::FuncOp func) -> bool {
       for (Type t : func.getArgumentTypes()) {
-        if (!tc.isLegal(t))
-          return false;
+        if (!tc.isLegal(t)) return false;
       }
       for (Type t : func.getResultTypes()) {
-        if (!tc.isLegal(t))
-          return false;
+        if (!tc.isLegal(t)) return false;
       }
       for (Block& block : func.getBody()) {
         for (Type t : block.getArgumentTypes()) {
-          if (!tc.isLegal(t))
-            return false;
+          if (!tc.isLegal(t)) return false;
         }
       }
       return true;
     });
     addDynamicallyLegalOp<Zhlt::ComponentOp>([&](Zhlt::ComponentOp comp) -> bool {
       for (Type t : comp.getArgumentTypes()) {
-        if (!tc.isLegal(t))
-          return false;
+        if (!tc.isLegal(t)) return false;
       }
       for (Type t : comp.getResultTypes()) {
-        if (!tc.isLegal(t))
-          return false;
+        if (!tc.isLegal(t)) return false;
       }
       for (Block& block : comp.getBody()) {
         for (Type t : block.getArgumentTypes()) {
-          if (!tc.isLegal(t))
-            return false;
+          if (!tc.isLegal(t)) return false;
         }
       }
       return true;
     });
     markUnknownOpDynamicallyLegal([&](Operation* op) -> bool {
       for (Type t : op->getResultTypes()) {
-        if (!tc.isLegal(t)) {
-          return false;
-        }
+        if (!tc.isLegal(t)) { return false; }
       }
       for (Type t : op->getOperandTypes()) {
-        if (!tc.isLegal(t)) {
-          return false;
-        }
+        if (!tc.isLegal(t)) { return false; }
       }
       for (NamedAttribute attr : op->getAttrs()) {
         if (auto tyAttr = dyn_cast<TypeAttr>(attr.getValue())) {
-          if (!tc.isLegal(tyAttr.getValue())) {
-            return false;
-          }
+          if (!tc.isLegal(tyAttr.getValue())) { return false; }
         }
       }
       return true;
@@ -111,9 +99,7 @@ public:
         mlir::Type oldTy = tyAttr.getValue();
         mlir::Type newTy;
         if (auto ft = dyn_cast<FunctionType>(oldTy)) {
-          if (converter->isSignatureLegal(ft)) {
-            continue;
-          }
+          if (converter->isSignatureLegal(ft)) { continue; }
           // Make a new function type with converted operand & result types.
           MLIRContext* ctx = op->getContext();
           llvm::SmallVector<mlir::Type, 4> attparams;
@@ -128,9 +114,7 @@ public:
           }
           newTy = mlir::FunctionType::get(ctx, attparams, attresults);
         } else {
-          if (converter->isLegal(oldTy)) {
-            continue;
-          }
+          if (converter->isLegal(oldTy)) { continue; }
           newTy = converter->convertType(oldTy);
         }
         natt.setValue(mlir::TypeAttr::get(newTy));
@@ -193,9 +177,7 @@ struct ConvertFunc : public OpConversionPattern<func::FuncOp> {
     rewriter.startOpModification(func);
     func.setType(outFuncType);
     auto body = &func.getBody();
-    if (failed(rewriter.convertRegionTypes(body, *converter, &signature))) {
-      return failure();
-    }
+    if (failed(rewriter.convertRegionTypes(body, *converter, &signature))) { return failure(); }
     rewriter.finalizeOpModification(func);
     return success();
   }
@@ -233,9 +215,7 @@ struct ConvertComponent : public OpConversionPattern<Zhlt::ComponentOp> {
     rewriter.startOpModification(comp);
     comp.setType(outFuncType);
     auto body = &comp.getBody();
-    if (failed(rewriter.convertRegionTypes(body, *converter, &signature))) {
-      return failure();
-    }
+    if (failed(rewriter.convertRegionTypes(body, *converter, &signature))) { return failure(); }
     rewriter.finalizeOpModification(comp);
     return success();
   }

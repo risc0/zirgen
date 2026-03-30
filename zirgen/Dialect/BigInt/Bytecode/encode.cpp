@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -64,18 +64,10 @@ size_t Builder::lookup(mlir::Type opType) {
   // just linear scan the type table
   for (size_t i = 0; i < output->types.size(); ++i) {
     const Type& e = output->types[i];
-    if (t.coeffs != e.coeffs) {
-      continue;
-    }
-    if (t.maxPos != e.maxPos) {
-      continue;
-    }
-    if (t.maxNeg != e.maxNeg) {
-      continue;
-    }
-    if (t.minBits != e.minBits) {
-      continue;
-    }
+    if (t.coeffs != e.coeffs) { continue; }
+    if (t.maxPos != e.maxPos) { continue; }
+    if (t.maxNeg != e.maxNeg) { continue; }
+    if (t.minBits != e.minBits) { continue; }
     return i;
   }
   size_t typeIndex = output->types.size();
@@ -105,9 +97,7 @@ size_t Builder::def(const Input& input) {
 size_t Builder::def(const mlir::APInt& value) {
   size_t out = output->constants.size();
   size_t words = value.getNumWords();
-  for (size_t i = 0; i < words; ++i) {
-    output->constants.push_back(value.getRawData()[i]);
-  }
+  for (size_t i = 0; i < words; ++i) { output->constants.push_back(value.getRawData()[i]); }
   return out;
 }
 

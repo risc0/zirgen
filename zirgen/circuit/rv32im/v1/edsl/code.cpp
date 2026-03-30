@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,9 +21,7 @@ namespace zirgen::rv32im_v1 {
 SetupInfoImpl::SetupInfoImpl() : isLastSetup("code") {}
 
 RamLoadInfoImpl::RamLoadInfoImpl() : startAddr("code") {
-  for (size_t i = 0; i < kRamLoadStepIOCount * 2; i++) {
-    data.emplace_back("code");
-  }
+  for (size_t i = 0; i < kRamLoadStepIOCount * 2; i++) { data.emplace_back("code"); }
 }
 
 ResetInfoImpl::ResetInfoImpl()
@@ -57,19 +55,13 @@ std::vector<uint64_t> writeCode(size_t cycles) {
   std::map<uint32_t, uint32_t> data;
 
   // Setup 'k' for SHA
-  for (size_t i = 0; i < kShaKSize; i++) {
-    data[kShaKOffset + i] = kShaK[i];
-  }
+  for (size_t i = 0; i < kShaKSize; i++) { data[kShaKOffset + i] = kShaK[i]; }
 
   // Setup SHA-256 Init
-  for (size_t i = 0; i < kDigestWords; i++) {
-    data[kShaInitOffset + i] = kShaInit[i];
-  }
+  for (size_t i = 0; i < kDigestWords; i++) { data[kShaInitOffset + i] = kShaInit[i]; }
 
   // Setup SHA-256 Init
-  for (size_t i = 0; i < kDigestWords; i++) {
-    data[kZerosOffset + i] = 0;
-  }
+  for (size_t i = 0; i < kDigestWords; i++) { data[kZerosOffset + i] = 0; }
 
   // Zero fill data as needed to be divisible by kRamLoadStepIOCount
   auto it = data.begin();
@@ -78,14 +70,10 @@ std::vector<uint64_t> writeCode(size_t cycles) {
     size_t addr = it->first;
     // Make sure at least kRamLoadStepIOCount entries exist past it
     for (size_t i = 1; i < kRamLoadStepIOCount; i++) {
-      if (!data.count(addr + i)) {
-        data[addr + i] = 0;
-      }
+      if (!data.count(addr + i)) { data[addr + i] = 0; }
     }
     // Walk over the kRamLoadStepIOCount values (which now definitely exist)
-    for (size_t i = 0; i < kRamLoadStepIOCount; i++) {
-      it++;
-    }
+    for (size_t i = 0; i < kRamLoadStepIOCount; i++) { it++; }
   }
 
   size_t setupCount = BytesSetupImpl::setupCount(kSetupStepRegs);
@@ -126,9 +114,7 @@ std::vector<uint64_t> writeCode(size_t cycles) {
   // Setup
   for (size_t i = 0; i < setupCount; i++) {
     set(1 + StepType::BYTES_SETUP, 1);
-    if (i == setupCount - 1) {
-      set(infoOffset, 1);
-    }
+    if (i == setupCount - 1) { set(infoOffset, 1); }
     cycle++;
   }
   // RAM_INIT

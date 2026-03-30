@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,22 +24,18 @@ void remapInlinedLocations(iterator_range<Region::iterator> inlinedBlocks, Locat
     auto it = mappedLocations.find(op->getLoc());
     if (it == mappedLocations.end()) {
       Location newLoc = op->getLoc();
-      if (newLoc != callerLoc) {
-        newLoc = CallSiteLoc::get(op->getLoc(), callerLoc);
-      }
+      if (newLoc != callerLoc) { newLoc = CallSiteLoc::get(op->getLoc(), callerLoc); }
       it = mappedLocations.try_emplace(op->getLoc(), newLoc).first;
     }
     op->setLoc(it->second);
   };
-  for (auto& block : inlinedBlocks)
-    block.walk(remapOpLoc);
+  for (auto& block : inlinedBlocks) block.walk(remapOpLoc);
 }
 
 LogicalResult InlineCalls::matchAndRewrite(CallOpInterface callOp,
                                            PatternRewriter& rewriter) const {
   auto callable = callOp.getCallableForCallee();
-  if (!callable)
-    return rewriter.notifyMatchFailure(callOp, "Not a callable");
+  if (!callable) return rewriter.notifyMatchFailure(callOp, "Not a callable");
   if (!llvm::isa<SymbolRefAttr>(callable))
     return rewriter.notifyMatchFailure(callOp, "Callable isn't a symbol");
   auto callee = SymbolTable::lookupNearestSymbolFrom<CallableOpInterface>(

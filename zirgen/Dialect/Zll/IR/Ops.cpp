@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,9 +29,7 @@ mlir::ParseResult parseArrType(mlir::OpAsmParser& parser, llvm::SmallVectorImpl<
   if (parser.parseType(oneType) || parser.parseStar() || parser.parseInteger<size_t>(count)) {
     return mlir::failure();
   }
-  for (size_t i = 0; i < count; i++) {
-    out.push_back(oneType);
-  }
+  for (size_t i = 0; i < count; i++) { out.push_back(oneType); }
   return mlir::success();
 }
 
@@ -48,9 +46,7 @@ mlir::ParseResult parseSelectType(mlir::OpAsmParser& parser,
                                   mlir::Type& out,
                                   mlir::Type& idx,
                                   llvm::SmallVectorImpl<mlir::Type>& in) {
-  if (parseArrType(parser, in)) {
-    return mlir::failure();
-  }
+  if (parseArrType(parser, in)) { return mlir::failure(); }
   out = in[0];
   idx = in[0];
   return mlir::success();
@@ -84,9 +80,7 @@ static ExtensionField getExtensionField(Type ty) {
 
 static uint64_t integerFromAttr(Attribute attr) {
   auto polyAttr = dyn_cast<PolynomialAttr>(attr);
-  if (polyAttr && polyAttr.size() == 1) {
-    return polyAttr[0];
-  }
+  if (polyAttr && polyAttr.size() == 1) { return polyAttr[0]; }
   auto intAttr = cast<IntegerAttr>(attr);
   return intAttr.getUInt();
 }
@@ -103,18 +97,14 @@ static ArrayRef<uint64_t> polynomialFromAttr(Attribute attr) {
 }
 
 template <typename Func> static OpFoldResult tryFold1(Attribute operand, Func func) {
-  if (!operand) {
-    return OpFoldResult();
-  }
+  if (!operand) { return OpFoldResult(); }
   auto in = polynomialFromAttr(operand);
   auto out = func(in);
   return OpFoldResult(PolynomialAttr::get(operand.getContext(), out));
 }
 
 template <typename Func> static OpFoldResult tryFold2(Attribute lhs, Attribute rhs, Func func) {
-  if (!lhs || !rhs) {
-    return OpFoldResult();
-  }
+  if (!lhs || !rhs) { return OpFoldResult(); }
   auto lhsPoly = polynomialFromAttr(lhs);
   auto rhsPoly = polynomialFromAttr(rhs);
   auto out = func(lhsPoly, rhsPoly);
@@ -146,9 +136,7 @@ OpFoldResult InvOp::fold(FoldAdaptor adaptor) {
 }
 
 OpFoldResult AddOp::fold(FoldAdaptor adaptor) {
-  if (matchVal(adaptor.getRhs(), 0) && getLhs().getType() == getType()) {
-    return getLhs();
-  }
+  if (matchVal(adaptor.getRhs(), 0) && getLhs().getType() == getType()) { return getLhs(); }
   ExtensionField f = getExtensionField(getOut().getType());
   return tryFold2(adaptor.getLhs(),
                   adaptor.getRhs(),
@@ -156,12 +144,8 @@ OpFoldResult AddOp::fold(FoldAdaptor adaptor) {
 }
 
 OpFoldResult SubOp::fold(FoldAdaptor adaptor) {
-  if (matchVal(adaptor.getRhs(), 0) && getLhs().getType() == getType()) {
-    return getLhs();
-  }
-  if (getLhs() == getRhs()) {
-    return OpFoldResult(PolynomialAttr::get(getLhs().getContext(), 0));
-  }
+  if (matchVal(adaptor.getRhs(), 0) && getLhs().getType() == getType()) { return getLhs(); }
+  if (getLhs() == getRhs()) { return OpFoldResult(PolynomialAttr::get(getLhs().getContext(), 0)); }
   ExtensionField f = getExtensionField(getOut().getType());
   return tryFold2(adaptor.getLhs(),
                   adaptor.getRhs(),
@@ -169,12 +153,8 @@ OpFoldResult SubOp::fold(FoldAdaptor adaptor) {
 }
 
 OpFoldResult MulOp::fold(FoldAdaptor adaptor) {
-  if (matchVal(adaptor.getRhs(), 1) && getLhs().getType() == getType()) {
-    return getLhs();
-  }
-  if (matchVal(adaptor.getRhs(), 0)) {
-    return OpFoldResult(PolynomialAttr::get(getContext(), 0));
-  }
+  if (matchVal(adaptor.getRhs(), 1) && getLhs().getType() == getType()) { return getLhs(); }
+  if (matchVal(adaptor.getRhs(), 0)) { return OpFoldResult(PolynomialAttr::get(getContext(), 0)); }
   ExtensionField f = getExtensionField(getOut().getType());
   return tryFold2(adaptor.getLhs(),
                   adaptor.getRhs(),
@@ -197,14 +177,12 @@ OpFoldResult ModOp::fold(FoldAdaptor adaptor) {
 }
 
 OpFoldResult InRangeOp::fold(FoldAdaptor adaptor) {
-  if (!adaptor.getLow() || !adaptor.getMid() || !adaptor.getHigh())
-    return OpFoldResult();
+  if (!adaptor.getLow() || !adaptor.getMid() || !adaptor.getHigh()) return OpFoldResult();
 
   uint64_t low = integerFromAttr(adaptor.getLow());
   uint64_t mid = integerFromAttr(adaptor.getMid());
   uint64_t high = integerFromAttr(adaptor.getHigh());
-  if (low > high)
-    return {};
+  if (low > high) return {};
 
   ExtensionField f = getExtensionField(getOut().getType());
   auto out = (low <= mid && mid < high) ? f.One() : f.Zero();
@@ -230,9 +208,7 @@ LogicalResult IfOp::evaluate(Interpreter& interp,
                              llvm::ArrayRef<zirgen::Zll::InterpVal*> outs,
                              EvalAdaptor& adaptor) {
   Interpreter::PolynomialRef condVal = adaptor.getCond()->getVal();
-  if (!isZero(condVal)) {
-    return interp.runBlock(getInner().front());
-  }
+  if (!isZero(condVal)) { return interp.runBlock(getInner().front()); }
   return success();
 }
 
@@ -296,9 +272,7 @@ LogicalResult GetGlobalOp::evaluate(Interpreter& interp,
                                     llvm::ArrayRef<zirgen::Zll::InterpVal*> outs,
                                     EvalAdaptor& adaptor) {
   Interpreter::PolynomialRef val = adaptor.getBuf()->getBuf()[getOffset()];
-  if (isInvalid(val)) {
-    return emitError() << "GetGlobalOp: Read before write";
-  }
+  if (isInvalid(val)) { return emitError() << "GetGlobalOp: Read before write"; }
   outs[0]->setVal(val);
   return success();
 }
@@ -418,9 +392,7 @@ LogicalResult PowOp::evaluate(Interpreter& interp,
   Interpreter::PolynomialRef base = adaptor.getIn()->getVal();
   Interpreter::Polynomial result = field.One();
   uint32_t exp = getExponent();
-  for (size_t i = 0; i != exp; ++i) {
-    result = field.Mul(result, base);
-  }
+  for (size_t i = 0; i != exp; ++i) { result = field.Mul(result, base); }
   outs[0]->setVal(result);
   return success();
 }
@@ -455,19 +427,14 @@ LogicalResult ExternOp::evaluate(Interpreter& interp,
                                  llvm::ArrayRef<zirgen::Zll::InterpVal*> outs,
                                  EvalAdaptor& adaptor) {
   ExternHandler* handler = interp.getExternHandler();
-  if (!handler) {
-    return emitError() << "No extern handler set";
-  }
+  if (!handler) { return emitError() << "No extern handler set"; }
   // TODO: We used to flatten extension field elements here... is that necessary?
   size_t outCount = getNumResults();
   std::optional<std::vector<uint64_t>> outFp =
       handler->doExtern(getName(), getExtra(), adaptor.getIn(), outCount);
-  if (!outFp)
-    return failure();
+  if (!outFp) return failure();
   assert(outFp->size() == outCount);
-  for (size_t i = 0; i < getNumResults(); i++) {
-    outs[i]->setVal((*outFp)[i]);
-  }
+  for (size_t i = 0; i < getNumResults(); i++) { outs[i]->setVal((*outFp)[i]); }
   return success();
 }
 
@@ -475,9 +442,7 @@ LogicalResult HashOp::evaluate(Interpreter& interp,
                                llvm::ArrayRef<zirgen::Zll::InterpVal*> outs,
                                EvalAdaptor& adaptor) {
   size_t k = 0;
-  if (!getIn().empty()) {
-    k = cast<ValType>(getIn()[0].getType()).getFieldK();
-  }
+  if (!getIn().empty()) { k = cast<ValType>(getIn()[0].getType()).getFieldK(); }
   std::vector<uint32_t> vals(k * getIn().size());
   for (size_t i = 0; i < getIn().size(); i++) {
     auto poly = adaptor.getIn()[i]->getVal();
@@ -534,9 +499,7 @@ LogicalResult FromDigestOp::evaluate(Interpreter& interp,
     encoded = poseidon2HashSuite()->encode(digest, getOut().size());
     break;
   }
-  for (size_t i = 0; i < encoded.size(); i++) {
-    outs[i]->setVal(encoded[i]);
-  }
+  for (size_t i = 0; i < encoded.size(); i++) { outs[i]->setVal(encoded[i]); }
   return success();
 }
 
@@ -580,9 +543,7 @@ LogicalResult TaggedStructOp::evaluate(Interpreter& interp,
     words.push_back(0);
   }
   // Now push zeros until we hit the end of the block
-  while (words.size() % 16 != 15) {
-    words.push_back(0);
-  }
+  while (words.size() % 16 != 15) { words.push_back(0); }
   bitCount = (bitCount & 0x0000FFFF) << 16 | (bitCount & 0xFFFF0000) >> 16;
   bitCount = (bitCount & 0x00FF00FF) << 8 | (bitCount & 0xFF00FF00) >> 8;
   words.push_back(bitCount);
@@ -629,9 +590,7 @@ LogicalResult HashCheckedBytesOp::evaluate(Interpreter& interp,
   auto field = llvm::cast<ValType>(getOperation()->getResult(1).getType()).getExtensionField();
 
   ExternHandler* handler = interp.getExternHandler();
-  if (!handler) {
-    return emitError() << "No extern handler set";
-  }
+  if (!handler) { return emitError() << "No extern handler set"; }
 
   auto evalPt = adaptor.getEvalPt()->getVal();
   std::vector<uint32_t> coeffs;
@@ -644,9 +603,7 @@ LogicalResult HashCheckedBytesOp::evaluate(Interpreter& interp,
     auto result = field.Zero();
     auto currentPower = field.One();
     for (size_t j = 0; j < 16; j++) {
-      if ((*newCoeffs)[j] > 255) {
-        throw std::runtime_error("Coefficient fails range check");
-      }
+      if ((*newCoeffs)[j] > 255) { throw std::runtime_error("Coefficient fails range check"); }
       result = field.Add(result, field.Mul((*newCoeffs)[j], currentPower));
       currentPower = field.Mul(currentPower, evalPt);
       accumCoeffs[j] *= 256;
@@ -660,9 +617,7 @@ LogicalResult HashCheckedBytesOp::evaluate(Interpreter& interp,
       countAccumed = 0;
     }
   }
-  if (countAccumed != 0) {
-    coeffs.insert(coeffs.end(), accumCoeffs.begin(), accumCoeffs.end());
-  }
+  if (countAccumed != 0) { coeffs.insert(coeffs.end(), accumCoeffs.begin(), accumCoeffs.end()); }
   auto hashVal = psuite->hash(coeffs.data(), coeffs.size());
   outs[0]->setDigest(hashVal);
   return success();
@@ -680,9 +635,7 @@ LogicalResult HashCheckedBytesPublicOp::evaluate(Interpreter& interp,
   auto field = llvm::cast<ValType>(getOperation()->getResult(2).getType()).getExtensionField();
 
   ExternHandler* handler = interp.getExternHandler();
-  if (!handler) {
-    return emitError() << "No extern handler set";
-  }
+  if (!handler) { return emitError() << "No extern handler set"; }
 
   auto evalPt = adaptor.getEvalPt()->getVal();
   std::vector<uint32_t> coeffs;
@@ -693,9 +646,7 @@ LogicalResult HashCheckedBytesPublicOp::evaluate(Interpreter& interp,
     auto result = field.Zero();
     auto currentPower = field.One();
     for (size_t j = 0; j < 16; j++) {
-      if ((*newCoeffs)[j] > 255) {
-        throw std::runtime_error("Coefficient fails range check");
-      }
+      if ((*newCoeffs)[j] > 255) { throw std::runtime_error("Coefficient fails range check"); }
       result = field.Add(result, field.Mul((*newCoeffs)[j], currentPower));
       currentPower = field.Mul(currentPower, evalPt);
     }
@@ -707,13 +658,9 @@ LogicalResult HashCheckedBytesPublicOp::evaluate(Interpreter& interp,
   assert(coeffs.size() % 4 == 0);
   std::vector<uint32_t> coeffs2(coeffs.size() / 4);
   for (size_t i = 0; i < coeffs2.size(); i++) {
-    for (size_t j = 0; j < 4; j++) {
-      coeffs2[i] |= coeffs[4 * i + j] << (8 * j);
-    }
+    for (size_t j = 0; j < 4; j++) { coeffs2[i] |= coeffs[4 * i + j] << (8 * j); }
   }
-  while (coeffs2.size() % 16 != 0) {
-    coeffs2.push_back(0);
-  }
+  while (coeffs2.size() % 16 != 0) { coeffs2.push_back(0); }
   auto hashVal2 = shaHash(coeffs2.data(), coeffs2.size());
   outs[1]->setDigest(hashVal2);
   return success();
@@ -810,12 +757,8 @@ bool HashAssertEqOp::updateRanges(mlir::DenseMap<mlir::Value, BigIntRange>& rang
 }
 
 bool SelectOp::updateRanges(mlir::DenseMap<mlir::Value, BigIntRange>& ranges) {
-  if (!GET(getIdx()).inRangeP()) {
-    return false;
-  }
-  if (!mlir::isa<ValType>(getElems()[0].getType())) {
-    return true;
-  }
+  if (!GET(getIdx()).inRangeP()) { return false; }
+  if (!mlir::isa<ValType>(getElems()[0].getType())) { return true; }
   BigInt low = GET(getElems()[0]).getLow();
   BigInt high = GET(getElems()[0]).getHigh();
   for (size_t i = 1; i < getElems().size(); i++) {
@@ -884,13 +827,9 @@ template <class Op> struct RemoveSlicePattern : public OpRewritePattern<Op> {
 
   LogicalResult matchAndRewrite(Op op, PatternRewriter& rewriter) const override {
     auto buf = op.getBuf();
-    if (!buf) {
-      return failure();
-    }
+    if (!buf) { return failure(); }
     auto sliceOp = dyn_cast_or_null<SliceOp>(buf.getDefiningOp());
-    if (!sliceOp) {
-      return failure();
-    }
+    if (!sliceOp) { return failure(); }
     rewriter.modifyOpInPlace(op.getOperation(), [&]() {
       op->setOperand(0, sliceOp.getIn());
       op->setAttr("offset", rewriter.getUI32IntegerAttr(op.getOffset() + sliceOp.getOffset()));
@@ -923,9 +862,7 @@ template <class Op> struct RemoveBackPattern : public OpRewritePattern<Op> {
 
   LogicalResult matchAndRewrite(Op op, PatternRewriter& rewriter) const override {
     auto backOp = dyn_cast_or_null<BackOp>(op.getBuf().getDefiningOp());
-    if (!backOp) {
-      return failure();
-    }
+    if (!backOp) { return failure(); }
     rewriter.modifyOpInPlace(op.getOperation(), [&]() {
       op->setOperand(0, backOp.getIn());
       op->setAttr("back", rewriter.getUI32IntegerAttr(op.getBack() + backOp.getBack()));
@@ -1004,9 +941,7 @@ LogicalResult SliceOp::inferReturnTypes(MLIRContext* ctx,
   auto inType = cast<BufferType>(adaptor.getIn().getType());
   uint32_t offset = adaptor.getOffset();
   uint32_t size = adaptor.getSize();
-  if (offset + size > inType.getSize()) {
-    return failure();
-  }
+  if (offset + size > inType.getSize()) { return failure(); }
   auto outType = BufferType::get(ctx, inType.getElement(), size, inType.getKind());
   out.push_back(outType);
   return success();
@@ -1019,9 +954,7 @@ static LogicalResult inferTypes(MLIRContext* ctx, ValueRange vals, SmallVectorIm
   auto fieldK = vt.getFieldK();
   for (size_t i = 1; i < vals.size(); ++i) {
     vt = cast<ValType>(vals[i].getType());
-    if (vt.getFieldP() != fieldP) {
-      return failure();
-    }
+    if (vt.getFieldP() != fieldP) { return failure(); }
     fieldK = std::max(fieldK, vt.getFieldK());
   }
   out.push_back(ValType::get(ctx, fieldP, fieldK));
@@ -1196,9 +1129,7 @@ LogicalResult SetGlobalOp::verify() {
 
 LogicalResult SetGlobalDigestOp::verify() {
   // Verify that buffer is not global
-  if (cast<BufferType>(getBuf().getType()).getKind() != BufferKind::Global) {
-    return failure();
-  }
+  if (cast<BufferType>(getBuf().getType()).getKind() != BufferKind::Global) { return failure(); }
   return success();
 }
 
@@ -1208,9 +1139,7 @@ LogicalResult IntoDigestOp::verify() {
     return emitError() << "Values must be in base field";
   }
   // 16 elements is OK for either type of hash
-  if (getIn().size() == 16) {
-    return success();
-  }
+  if (getIn().size() == 16) { return success(); }
   // 32 (bytes) is also OK for Sha256
   if (cast<DigestType>(getOut().getType()).getKind() == DigestKind::Sha256 &&
       getIn().size() == 32) {
@@ -1226,13 +1155,9 @@ LogicalResult IntoDigestOp::verify() {
 
 LogicalResult FromDigestOp::verify() {
   // Verify inputs are Fp
-  if (cast<ValType>(getOut()[0].getType()).getFieldK() != 1) {
-    return failure();
-  }
+  if (cast<ValType>(getOut()[0].getType()).getFieldK() != 1) { return failure(); }
   // 16 elements is OK for either type of hash
-  if (getOut().size() == 16) {
-    return success();
-  }
+  if (getOut().size() == 16) { return success(); }
   // 32 (bytes) is also OK for Sha256
   if (cast<DigestType>(getIn().getType()).getKind() == DigestKind::Sha256 &&
       getOut().size() == 32) {
@@ -1260,9 +1185,7 @@ LogicalResult TaggedStructOp::verify() {
     }
   }
   // Verify there are less than 64k digest
-  if (getDigests().size() > 65535) {
-    return emitOpError() << "Too many digests";
-  }
+  if (getDigests().size() > 65535) { return emitOpError() << "Too many digests"; }
   return success();
 }
 

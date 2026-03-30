@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,9 +26,7 @@ std::vector<Val> peekBigInt(size_t regAddr) {
   bigint.reserve(BigInt::kByteWidth);
   for (size_t i = 0; i < BigInt::kWordWidth; i++) {
     U32Val word = ramPeek(addr + i);
-    for (Val byt : word.bytes) {
-      bigint.push_back(byt);
-    }
+    for (Val byt : word.bytes) { bigint.push_back(byt); }
   }
   return bigint;
 }
@@ -45,9 +43,7 @@ template <typename T> void logBigInt(std::string label, std::vector<T>& bigint) 
 
   std::vector<Val> vals;
   vals.reserve(bigint.size());
-  for (T limb : bigint) {
-    vals.push_back(limb);
-  }
+  for (T limb : bigint) { vals.push_back(limb); }
   doExtern("log", fmt, 0, vals);
 }
 
@@ -96,9 +92,7 @@ std::vector<Val> denormAdd(std::vector<Val>& a, std::vector<Val>& b) {
   }
   std::vector<Val> c;
   c.reserve(a.size());
-  for (size_t i = 0; i < a.size(); i++) {
-    c.push_back(a.at(i) + b.at(i));
-  }
+  for (size_t i = 0; i < a.size(); i++) { c.push_back(a.at(i) + b.at(i)); }
   // logBigInt("denormAdd", c);
   return c;
 }
@@ -111,9 +105,7 @@ std::vector<Val> denormSub(std::vector<Val>& a, std::vector<Val>& b) {
   }
   std::vector<Val> c;
   c.reserve(a.size());
-  for (size_t i = 0; i < a.size(); i++) {
-    c.push_back(a.at(i) - b.at(i));
-  }
+  for (size_t i = 0; i < a.size(); i++) { c.push_back(a.at(i) - b.at(i)); }
   // logBigInt("denormSub", c);
   return c;
 }
@@ -188,7 +180,7 @@ void BigIntCycleImpl::set(Top top) {
   // Set control registers.
   eqz(BACK(1, body->nextMajor->get()) - MajorType::kBigInt);
   Val isFirstCycle = BACK(1, body->majorSelect->at(MajorType::kECall));
-  IF(isFirstCycle) {
+  IF (isFirstCycle) {
     stageOffset->set(0);
     stage->set(0);
 
@@ -199,7 +191,7 @@ void BigIntCycleImpl::set(Top top) {
     Val op = BACK(1, ecallBigInt->readA1->data().flat());
     eqz(op);
   }
-  IF(1 - isFirstCycle) {
+  IF (1 - isFirstCycle) {
     stageOffset->set((1 - BACK(1, stage->at(0))) - BACK(1, stageOffset->get()));
     stage->set(BACK(1, stage->get()) + (1 - stageOffset));
   }
@@ -212,7 +204,7 @@ void BigIntCycleImpl::set(Top top) {
        finalize);
 
   // In stage zero, load the four io addresses for z, x, y, and N.
-  IF(stage->at(0)) {
+  IF (stage->at(0)) {
     io.at(0)->doRead(cycle, RegAddr::kA0);
     io.at(1)->doRead(cycle, RegAddr::kA2);
     io.at(2)->doRead(cycle, RegAddr::kA3);
@@ -220,7 +212,7 @@ void BigIntCycleImpl::set(Top top) {
   }
 
   // Fetch the read or write address.
-  IF(1 - stageOffset) {
+  IF (1 - stageOffset) {
     // Depending on the stage, fetch the I/O address from the ecall cycle.
     for (size_t i = 1; i < BigInt::kStages; i++) {
       RamReg* readAX;
@@ -242,7 +234,7 @@ void BigIntCycleImpl::set(Top top) {
         readAX = &io.at(0);
         break;
       }
-      IF(stage->at(i)) {
+      IF (stage->at(i)) {
         // NOTE: Dividing by word size here will result in a valid word address, in the range
         // [0, 2^26), only if the input is word-aligned (i.e. is a multiple of kWordSize) and in the
         // address-space range [0, 2^28).
@@ -250,11 +242,11 @@ void BigIntCycleImpl::set(Top top) {
       }
     }
   }
-  IF(stageOffset) { ioAddr->set(BACK(1, ioAddr->get())); }
+  IF (stageOffset) { ioAddr->set(BACK(1, ioAddr->get())); }
 
   // In stages 1-3, read an 4 words of input from memory.
   // Related to step 4 in the approach description.
-  IF(stage->at(1) + stage->at(2) + stage->at(3)) {
+  IF (stage->at(1) + stage->at(2) + stage->at(3)) {
     for (size_t i = 0; i < BigInt::kIoSize; i++) {
       io.at(i)->doRead(cycle, ioAddr + stageOffset * BigInt::kIoSize + i);
     }
@@ -289,19 +281,19 @@ void BigIntCycleImpl::set(Top top) {
     // Materialize the quotient, carry, or output values to bytes.
     // Related to steps 2 and 8 in the approach description.
     for (size_t i = 0; i < BigInt::kBytesSize; i++) {
-      IF(stage->at(0)) {
+      IF (stage->at(0)) {
         // Bytes in stage 0 are unused, but must be set.
         bytes.at(i)->set(0);
       }
-      IF(stage->at(1)) {
-        IF(1 - stageOffset) { bytes.at(i)->set(q.at(i)); }
-        IF(stageOffset) { bytes.at(i)->set(q.at(i + BigInt::kBytesSize)); }
+      IF (stage->at(1)) {
+        IF (1 - stageOffset) { bytes.at(i)->set(q.at(i)); }
+        IF (stageOffset) { bytes.at(i)->set(q.at(i + BigInt::kBytesSize)); }
       }
       // Stages 2 and 3 constrain the low carries to range [-2^15, 2^15).
       // Does so by splitting the value plus 2^15 into two bytes at adjacent indices.
       // NOTE: This code is very repetative and could probably be condensed.
-      IF(stage->at(2)) {
-        IF(1 - stageOffset) {
+      IF (stage->at(2)) {
+        IF (1 - stageOffset) {
           Val ci = c.at(i / 2);
           if (i % 2 == 0) {
             bytes.at(i)->set((ci + (1 << 15)) & 0xFF);
@@ -309,7 +301,7 @@ void BigIntCycleImpl::set(Top top) {
             bytes.at(i)->set(((ci + (1 << 15)) & 0xFF00) / 0x100);
           }
         }
-        IF(stageOffset) {
+        IF (stageOffset) {
           Val ci = c.at((i + BigInt::kBytesSize) / 2);
           if (i % 2 == 0) {
             bytes.at(i)->set((ci + (1 << 15)) & 0xFF);
@@ -318,8 +310,8 @@ void BigIntCycleImpl::set(Top top) {
           }
         }
       }
-      IF(stage->at(3)) {
-        IF(1 - stageOffset) {
+      IF (stage->at(3)) {
+        IF (1 - stageOffset) {
           Val ci = c.at((i + BigInt::kBytesSize * 2) / 2);
           if (i % 2 == 0) {
             bytes.at(i)->set((ci + (1 << 15)) & 0xFF);
@@ -327,7 +319,7 @@ void BigIntCycleImpl::set(Top top) {
             bytes.at(i)->set(((ci + (1 << 15)) & 0xFF00) / 0x100);
           }
         }
-        IF(stageOffset) {
+        IF (stageOffset) {
           Val ci = c.at((i + BigInt::kBytesSize * 3) / 2);
           if (i % 2 == 0) {
             bytes.at(i)->set((ci + (1 << 15)) & 0xFF);
@@ -336,9 +328,9 @@ void BigIntCycleImpl::set(Top top) {
           }
         }
       }
-      IF(stage->at(4)) {
-        IF(1 - stageOffset) { bytes.at(i)->set(z.at(i)); }
-        IF(stageOffset) { bytes.at(i)->set(z.at(i + BigInt::kBytesSize)); }
+      IF (stage->at(4)) {
+        IF (1 - stageOffset) { bytes.at(i)->set(z.at(i)); }
+        IF (stageOffset) { bytes.at(i)->set(z.at(i + BigInt::kBytesSize)); }
       }
     }
     // logBigInt("bytes", bytes);
@@ -350,15 +342,17 @@ void BigIntCycleImpl::set(Top top) {
       c.emplace_back(0);
       c.emplace_back(0);
 
-      IF(stage->at(2)) {
-        IF(1 - stageOffset) { carryHi.at(i)->set(c.at(i + BigInt::kByteWidth)); }
-        IF(stageOffset) { carryHi.at(i)->set(c.at(i + BigInt::kByteWidth + BigInt::kCarryHiSize)); }
+      IF (stage->at(2)) {
+        IF (1 - stageOffset) { carryHi.at(i)->set(c.at(i + BigInt::kByteWidth)); }
+        IF (stageOffset) {
+          carryHi.at(i)->set(c.at(i + BigInt::kByteWidth + BigInt::kCarryHiSize));
+        }
       }
-      IF(stage->at(3)) {
-        IF(1 - stageOffset) {
+      IF (stage->at(3)) {
+        IF (1 - stageOffset) {
           carryHi.at(i)->set(c.at(i + BigInt::kByteWidth + 2 * BigInt::kCarryHiSize));
         }
-        IF(stageOffset) {
+        IF (stageOffset) {
           carryHi.at(i)->set(c.at(i + BigInt::kByteWidth + 3 * BigInt::kCarryHiSize));
         }
       }
@@ -367,13 +361,13 @@ void BigIntCycleImpl::set(Top top) {
     // At stages 2 and 4, materialize the output values into the multiplier.
     for (size_t i = 0; i < BigInt::kMulBufferSize; i++) {
       // At stage 2 copy the denomalized reduction value r into the mulBuffer.
-      IF(stage->at(2)) {
-        IF(1 - stageOffset) { mulBuffer.at(i)->set(r.at(i)); }
-        IF(stageOffset) { mulBuffer.at(i)->set(r.at(i + BigInt::kMulBufferSize)); }
+      IF (stage->at(2)) {
+        IF (1 - stageOffset) { mulBuffer.at(i)->set(r.at(i)); }
+        IF (stageOffset) { mulBuffer.at(i)->set(r.at(i + BigInt::kMulBufferSize)); }
       }
-      IF(stage->at(4)) {
-        IF(1 - stageOffset) { mulBuffer.at(i)->set(denormZ.at(i)); }
-        IF(stageOffset) { mulBuffer.at(i)->set(denormZ.at(i + BigInt::kMulBufferSize)); }
+      IF (stage->at(4)) {
+        IF (1 - stageOffset) { mulBuffer.at(i)->set(denormZ.at(i)); }
+        IF (stageOffset) { mulBuffer.at(i)->set(denormZ.at(i + BigInt::kMulBufferSize)); }
       }
     }
   }
@@ -381,13 +375,13 @@ void BigIntCycleImpl::set(Top top) {
   // At stages 1 and 3, copy the inputs into the multiplier.
   for (size_t i = 0; i < BigInt::kMulInSize; i++) {
     // At stage 1, copy q from bytes to the first half of the mulBuffer.
-    IF(stage->at(1)) { mulBuffer.at(i)->set(bytes.at(i)); }
+    IF (stage->at(1)) { mulBuffer.at(i)->set(bytes.at(i)); }
     // At stage 3, copy x from io to the first half of the mulBuffer.
-    IF(stage->at(3)) {
+    IF (stage->at(3)) {
       mulBuffer.at(i)->set(BACK(2, io.at(i / kWordSize)->data().bytes.at(i % kWordSize)));
     }
     // Copy the second input, N in stage 1 and y in stage 3, from io into the mulBuffer.
-    IF(stage->at(1) + stage->at(3)) {
+    IF (stage->at(1) + stage->at(3)) {
       mulBuffer.at(i + BigInt::kMulInSize)
           ->set(io.at(i / kWordSize)->data().bytes.at(i % kWordSize));
     }
@@ -401,7 +395,7 @@ void BigIntCycleImpl::set(Top top) {
 
   // Check that the multiplication result combined with carries equals the output value.
   // Implements step 9, the carry checks.
-  IF(finalize) {
+  IF (finalize) {
     // Check the lower half of the carries.
     Val cIn(0);
     for (size_t i = 0; i < 2 * BigInt::kByteWidth - 1; i++) {
@@ -442,7 +436,7 @@ void BigIntCycleImpl::set(Top top) {
   }
 
   // In stage 4, write the output to memory.
-  IF(stage->at(4)) {
+  IF (stage->at(4)) {
     for (size_t i = 0; i < BigInt::kIoSize; i++) {
       size_t byteOffset = kWordSize * i;
       io.at(i)->doWrite(cycle,
@@ -461,11 +455,11 @@ void BigIntCycleImpl::set(Top top) {
   }
 
   // Set the next major cycle type and program counter.
-  IF(1 - finalize) {
+  IF (1 - finalize) {
     body->pc->set(curPC);
     body->nextMajor->set(MajorType::kBigInt);
   }
-  IF(finalize) {
+  IF (finalize) {
     body->pc->set(curPC + 4);
     body->nextMajor->set(MajorType::kMuxSize);
   }
@@ -477,7 +471,7 @@ void BigIntCycleImpl::onVerify() {
   // This method is inspired by xJSnark section IV.B with the addition of randomization.
   // https://akosba.github.io/papers/xjsnark.pdf
   // Implements steps 3 and 6, the multiplication checks.
-  IF(mulActive) {
+  IF (mulActive) {
     FpExt accumX(Val(0));
     FpExt accumY(Val(0));
 

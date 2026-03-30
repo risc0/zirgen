@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,13 +32,10 @@ bool isTrivial(Type t) {
   return TypeSwitch<Type, bool>(t)
       .Case<StructType, LayoutType>([&](auto type) {
         const auto& fields = type.getFields();
-        if (fields.size() != 1)
-          return false;
-        if (fields[0].name != "@super")
-          return false;
+        if (fields.size() != 1) return false;
+        if (fields[0].name != "@super") return false;
         Type superType = fields[0].type;
-        if (!llvm::isa<StructType, LayoutType>(superType))
-          return false;
+        if (!llvm::isa<StructType, LayoutType>(superType)) return false;
         return true;
       })
       .Default([&](auto) { return false; });
@@ -47,29 +44,22 @@ bool isTrivial(Type t) {
 template <typename T>
 AttrTypeReplacer::ReplaceFnResult<Type> typeReplacer(AttrTypeReplacer& replacer, T type) {
   const auto& fields = type.getFields();
-  if (fields.size() != 1)
-    return std::nullopt;
-  if (fields[0].name != "@super")
-    return std::nullopt;
+  if (fields.size() != 1) return std::nullopt;
+  if (fields[0].name != "@super") return std::nullopt;
   Type superType = fields[0].type;
-  if (!llvm::isa<StructType, LayoutType>(superType))
-    return std::nullopt;
+  if (!llvm::isa<StructType, LayoutType>(superType)) return std::nullopt;
   superType = replacer.replace(superType);
   return std::make_pair(superType, WalkResult::advance());
 }
 
 AttrTypeReplacer::ReplaceFnResult<StructAttr> attrReplacer(StructAttr attr) {
   for (;;) {
-    if (attr.getFields().size() != 1)
-      break;
-    if (!llvm::isa<StructType, LayoutType>(attr.getType()))
-      break;
-    if (attr.getFields().size() != 1)
-      break;
+    if (attr.getFields().size() != 1) break;
+    if (!llvm::isa<StructType, LayoutType>(attr.getType())) break;
+    if (attr.getFields().size() != 1) break;
 
     Attribute superAttr = attr.getFields().get("@super");
-    if (!superAttr || !llvm::isa<StructAttr>(superAttr))
-      break;
+    if (!superAttr || !llvm::isa<StructAttr>(superAttr)) break;
     attr = llvm::cast<StructAttr>(superAttr);
   }
 
@@ -80,18 +70,14 @@ struct ElideTrivialStructsPass : public ElideTrivialStructsBase<ElideTrivialStru
   void runOnOperation() override {
     DenseSet<Operation*> elideList;
     getOperation().walk([&](ZStruct::LookupOp lookupOp) {
-      if (lookupOp.getMember() != "@super")
-        return;
-      if (!isTrivial(lookupOp.getBase().getType()))
-        return;
+      if (lookupOp.getMember() != "@super") return;
+      if (!isTrivial(lookupOp.getBase().getType())) return;
 
       elideList.insert(lookupOp);
     });
     getOperation().walk([&](ZStruct::PackOp packOp) {
-      if (packOp.getMembers().size() != 1)
-        return;
-      if (!isTrivial(packOp.getType()))
-        return;
+      if (packOp.getMembers().size() != 1) return;
+      if (!isTrivial(packOp.getType())) return;
 
       elideList.insert(packOp);
     });

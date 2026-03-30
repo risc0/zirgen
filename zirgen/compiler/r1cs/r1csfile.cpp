@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,8 +35,7 @@ IOException::IOException(const char* file, const char* func, int line, const cha
                                         std::string(msg)) {}
 
 #define check(cond)                                                                                \
-  if (cond)                                                                                        \
-  throw IOException(__FILE__, __FUNCTION__, __LINE__, #cond)
+  if (cond) throw IOException(__FILE__, __FUNCTION__, __LINE__, #cond)
 
 namespace {
 
@@ -150,9 +149,7 @@ uint64_t Reader::seekTo(SectionType type) {
 
 bool Reader::isPresent(SectionType type) {
   for (auto& section : contents) {
-    if (section.type == type) {
-      return true;
-    }
+    if (section.type == type) { return true; }
   }
   return false;
 }
@@ -207,9 +204,7 @@ Combination Reader::readCombination(uint64_t& capacity) {
 void Reader::readMap() {
   uint64_t capacity = seekTo(SectionType::Map);
   sys.map.resize(sys.header.nWires);
-  for (uint32_t i = 0; i < sys.header.nWires; ++i) {
-    sys.map[i] = readU64(capacity);
-  }
+  for (uint32_t i = 0; i < sys.header.nWires; ++i) { sys.map[i] = readU64(capacity); }
   check(capacity != 0);
 }
 
@@ -246,14 +241,10 @@ Reader::Reader(FILE* stream, System& sys) : stream(stream), sys(sys) {
   // field size, without which we could not parse the other sections.
   readHeader();
   // If there is a constraints section, read it.
-  if (isPresent(SectionType::Constraints)) {
-    readConstraints();
-  }
+  if (isPresent(SectionType::Constraints)) { readConstraints(); }
   check(sys.constraints.size() != sys.header.nConstraints);
   // If there is a map section, read it.
-  if (isPresent(SectionType::Map)) {
-    readMap();
-  }
+  if (isPresent(SectionType::Map)) { readMap(); }
 }
 
 } // namespace

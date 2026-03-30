@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -45,33 +45,25 @@ extern "C" void start() {
   // Check multiplication of x and y.
   sys_bigint(result, x, y, mod);
   for (uint32_t i = 0; i < 8; i++) {
-    if (result[i] != xyModN[i]) {
-      fail();
-    }
+    if (result[i] != xyModN[i]) { fail(); }
   }
 
   // Check multiplication by 1.
   sys_bigint(result, x, one, mod);
   for (uint32_t i = 0; i < 8; i++) {
-    if (result[i] != x[i]) {
-      fail();
-    }
+    if (result[i] != x[i]) { fail(); }
   }
 
   // Check multiplication by 0.
   sys_bigint(result, x, zero, mod);
   for (uint32_t i = 0; i < 8; i++) {
-    if (result[i] != zero[i]) {
-      fail();
-    }
+    if (result[i] != zero[i]) { fail(); }
   }
 
   // Check multiplication with modulus of zero..
   sys_bigint(result, xHalf, yHalf, zero);
   for (uint32_t i = 0; i < 8; i++) {
-    if (result[i] != xyHalf[i]) {
-      fail();
-    }
+    if (result[i] != xyHalf[i]) { fail(); }
   }
   sys_halt();
 }

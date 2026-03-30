@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -64,12 +64,8 @@ template <typename T> struct ArrayRef {
 template <typename Iterator>
 std::ostream& stringify_collection(std::ostream& os, Iterator it, Iterator itEnd) {
   os << '[';
-  if (it != itEnd) {
-    os << *it++;
-  }
-  for (; it != itEnd; ++it) {
-    os << ", " << *it;
-  }
+  if (it != itEnd) { os << *it++; }
+  for (; it != itEnd; ++it) { os << ", " << *it; }
   os << ']';
   return os;
 }

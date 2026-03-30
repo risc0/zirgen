@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,9 +23,7 @@ using ShortVec = std::array<Val, 2>;
 
 static BitVec get(std::array<Bit, 32>& reg, size_t back) {
   BitVec ret;
-  for (size_t i = 0; i < 32; i++) {
-    ret[i] = BACK(back, reg[i]->get());
-  }
+  for (size_t i = 0; i < 32; i++) { ret[i] = BACK(back, reg[i]->get()); }
   return ret;
 }
 
@@ -53,9 +51,7 @@ static BitVec rightShift(BitVec in, size_t n) {
 
 static BitVec xor_(BitVec a, BitVec b) {
   BitVec ret;
-  for (size_t i = 0; i < 32; i++) {
-    ret[i] = a[i] + b[i] - 2 * a[i] * b[i];
-  }
+  for (size_t i = 0; i < 32; i++) { ret[i] = a[i] + b[i] - 2 * a[i] * b[i]; }
   return ret;
 }
 
@@ -70,9 +66,7 @@ static BitVec maj(BitVec a, BitVec b, BitVec c) {
 
 static BitVec ch(BitVec a, BitVec b, BitVec c) {
   BitVec ret;
-  for (size_t i = 0; i < 32; i++) {
-    ret[i] = a[i] * b[i] + (1 - a[i]) * c[i];
-  }
+  for (size_t i = 0; i < 32; i++) { ret[i] = a[i] * b[i] + (1 - a[i]) * c[i]; }
   return ret;
 }
 
@@ -80,18 +74,14 @@ static ShortVec flat(BitVec a) {
   ShortVec ret;
   for (size_t i = 0; i < 2; i++) {
     ret[i] = 0;
-    for (size_t j = 0; j < 16; j++) {
-      ret[i] = ret[i] + (1 << j) * a[i * 16 + j];
-    }
+    for (size_t j = 0; j < 16; j++) { ret[i] = ret[i] + (1 << j) * a[i * 16 + j]; }
   }
   return ret;
 }
 
 static ShortVec add(ShortVec a, ShortVec b) {
   ShortVec ret;
-  for (size_t i = 0; i < 2; i++) {
-    ret[i] = a[i] + b[i];
-  }
+  for (size_t i = 0; i < 2; i++) { ret[i] = a[i] + b[i]; }
   return ret;
 }
 
@@ -105,14 +95,10 @@ static ShortVec getShort(std::array<Reg, 2> regs) {
 
 static Val toBits(std::array<Bit, 32> out, Val in, size_t offset, size_t count) {
   NONDET {
-    for (size_t i = 0; i < count; i++) {
-      out[i + offset]->set((in & (1 << i)) / (1 << i));
-    }
+    for (size_t i = 0; i < count; i++) { out[i + offset]->set((in & (1 << i)) / (1 << i)); }
   }
   Val low = 0;
-  for (size_t i = 0; i < count; i++) {
-    low = low + out[i + offset] * (1 << i);
-  }
+  for (size_t i = 0; i < count; i++) { low = low + out[i + offset] * (1 << i); }
   Val carry = (in - low) / (1 << count);
   return carry;
 }
@@ -121,9 +107,7 @@ std::array<Val, kWordSize> toBytes(std::array<Val, 32> in) {
   std::array<Val, kWordSize> bytes;
   for (size_t i = 0; i < kWordSize; i++) {
     Val byte = 0;
-    for (size_t j = 0; j < 8; j++) {
-      byte = byte + in[i * 8 + j] * (1 << j);
-    }
+    for (size_t j = 0; j < 8; j++) { byte = byte + in[i * 8 + j] * (1 << j); }
     bytes[i] = byte;
   }
   return bytes;
@@ -184,7 +168,7 @@ void ShaCycleImpl::setLoad(MacroInst inst, Val writeAddr) {
   // XLOG("  SHA_LOAD");
   io0->doRead(inst->operands[0]);
   io1->doRead(inst->operands[1]);
-  IF(1 - inst->operands[2]) {
+  IF (1 - inst->operands[2]) {
     // Load the value montgomery encoded and reverse endian
     Val cur = kBabyBearToMontgomery * io0->data()[0];
     cur = toBits(w, cur, 24, 8);
@@ -210,8 +194,8 @@ void ShaCycleImpl::setLoad(MacroInst inst, Val writeAddr) {
     // top4 (unless it's == 4, in which case we set it to 0)
     NONDET {
       Val top4is4 = isz(top4 - 4);
-      IF(top4is4) { wCarryLow->set(0); }
-      IF(1 - top4is4) { wCarryLow->set(top4); }
+      IF (top4is4) { wCarryLow->set(0); }
+      IF (1 - top4is4) { wCarryLow->set(top4); }
     }
     // XLOG("cur = %u, top4 = %u, bot27 = %u, wCarryLow = %u",
     //          kBabyBearToMontgomery * io0->data()[0],
@@ -225,7 +209,7 @@ void ShaCycleImpl::setLoad(MacroInst inst, Val writeAddr) {
     // Also check the top bit
     eqz(w[7]);
   }
-  IF(inst->operands[2]) {
+  IF (inst->operands[2]) {
     setBE(w, getShort(io0));
     wCarryLow->set(0);
   }
@@ -267,9 +251,7 @@ void ShaCycleImpl::computeW() {
   auto s0 = xor_(rightRotate(w_15, 7), xor_(rightRotate(w_15, 18), rightShift(w_15, 3)));
   auto s1 = xor_(rightRotate(w_2, 17), xor_(rightRotate(w_2, 19), rightShift(w_2, 10)));
   auto w_0 = add(flat(w_16), add(flat(s0), add(flat(w_7), flat(s1))));
-  for (size_t i = 0; i < 2; i++) {
-    wRaw[i]->set(w_0[i]);
-  }
+  for (size_t i = 0; i < 2; i++) { wRaw[i]->set(w_0[i]); }
 }
 
 void ShaCycleImpl::computeAE() {

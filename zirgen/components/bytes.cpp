@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -42,11 +42,11 @@ void BytesPlonkElementImpl::setNext(std::vector<Val> vals) {
   Val oldLow = vals[1];
   NONDET {
     Val wrap = isz(oldLow - 254);
-    IF(1 - wrap) {
+    IF (1 - wrap) {
       high->set(oldHigh);
       low->set(oldLow + 2);
     }
-    IF(wrap) {
+    IF (wrap) {
       high->set(oldHigh + 1);
       low->set(0);
     }
@@ -78,13 +78,13 @@ void BytesPlonkVerifierImpl::verify(BytesPlonkElement a,
   // High byte can only move 0 or 1 forward
   eqz(diffHigh * (diffHigh - 1));
   // If high byte moves
-  IF(diffHigh) {
+  IF (diffHigh) {
     // New value is 0
     eqz(newLow);
     // Old value is 254 or 255
     eqz((oldLow - 255) * (oldLow - 254));
   }
-  IF(1 - diffHigh) {
+  IF (1 - diffHigh) {
     // Low moves forward 0, 1, or 2
     eqz(diffLow * (diffLow - 1) * (diffLow - 2));
   }
@@ -123,24 +123,20 @@ BytesSetupImpl::BytesSetupImpl(BytesHeader header, size_t useRegs)
 
 void BytesSetupImpl::set(Val isFirst, Val isLast) {
   size_t rem = 32768 % pairCount;
-  IF(isFirst) { body->at(0)->setInit(); }
-  IF(1 - isFirst) {
+  IF (isFirst) { body->at(0)->setInit(); }
+  IF (1 - isFirst) {
     auto oldVals = BACK(1, body->at(pairCount - 1)->toVals());
     body->at(0)->setNext(oldVals);
   }
-  for (size_t i = 1; i < rem; i++) {
-    body->at(i)->setNext(body->at(i - 1)->toVals());
-  }
-  IF(isLast) {
+  for (size_t i = 1; i < rem; i++) { body->at(i)->setNext(body->at(i - 1)->toVals()); }
+  IF (isLast) {
     for (size_t i = rem; i < pairCount; i++) {
       body->at(i)->high->set(0);
       body->at(i)->low->set(0);
     }
   }
-  IF(1 - isLast) {
-    for (size_t i = rem; i < pairCount; i++) {
-      body->at(i)->setNext(body->at(i - 1)->toVals());
-    }
+  IF (1 - isLast) {
+    for (size_t i = rem; i < pairCount; i++) { body->at(i)->setNext(body->at(i - 1)->toVals()); }
   }
 }
 

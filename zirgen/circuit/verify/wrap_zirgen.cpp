@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -98,9 +98,7 @@ struct TapifyGetOp : public OpRewritePattern<Zll::GetOp> {
 
   LogicalResult matchAndRewrite(Zll::GetOp op, PatternRewriter& rewriter) const final {
     auto tap = op->getAttrOfType<IntegerAttr>("tap");
-    if (!tap) {
-      return op->emitError("Missing tap");
-    }
+    if (!tap) { return op->emitError("Missing tap"); }
     rewriter.replaceOp(op, tapVals[tap.getUInt()].getValue());
     return success();
   }
@@ -115,8 +113,7 @@ struct TapifyGetGlobalOp : public OpRewritePattern<Zll::GetGlobalOp> {
       : OpRewritePattern(ctx), oldBuf(oldBuf), vals(vals) {}
 
   LogicalResult matchAndRewrite(Zll::GetGlobalOp op, PatternRewriter& rewriter) const final {
-    if (op.getBuf() != oldBuf)
-      return failure();
+    if (op.getBuf() != oldBuf) return failure();
     rewriter.replaceOp(op, vals[op.getOffset()].getValue());
     return success();
   }
@@ -155,12 +152,10 @@ Val CircuitInterfaceZirgen::compute_poly(llvm::ArrayRef<Val> u,
   for (auto [argNum, arg] : llvm::enumerate(FunctionOpInterface(tapsWork).getArguments())) {
     auto name =
         FunctionOpInterface(tapsWork).getArgAttrOfType<StringAttr>(argNum, "zirgen.argName");
-    if (!name)
-      continue;
+    if (!name) continue;
 
     auto buf = bufs.getBuffer(name);
-    if (!buf || !buf.isGlobal())
-      continue;
+    if (!buf || !buf.isGlobal()) continue;
 
     if (buf.getName() == "global") {
       patterns.add<TapifyGetGlobalOp>(ctx, arg, out);
@@ -183,8 +178,7 @@ Val CircuitInterfaceZirgen::compute_poly(llvm::ArrayRef<Val> u,
 
   // We substituted these values in, so map them to themselves
   for (auto buf : {u, out, accumMix}) {
-    for (auto val : buf)
-      mapping.map(val.getValue(), val.getValue());
+    for (auto val : buf) mapping.map(val.getValue(), val.getValue());
   }
 
   // We want to separate out constraint ops (and_eqz, and_cond) into
@@ -259,8 +253,7 @@ std::unique_ptr<CircuitInterface> getInterfaceZirgen(mlir::MLIRContext* ctx,
                                                      mlir::StringRef filename) {
   ParserConfig config(ctx);
   OwningOpRef<ModuleOp> mod = parseSourceFile<ModuleOp>(filename, config);
-  if (!mod)
-    return nullptr;
+  if (!mod) return nullptr;
   return std::make_unique<CircuitInterfaceZirgen>(std::move(mod));
 }
 

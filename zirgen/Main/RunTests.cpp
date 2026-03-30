@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -71,9 +71,7 @@ struct TestExternHandler : public zirgen::Zll::ExternHandler {
     }
   }
   void check(bool condition, llvm::StringRef error) {
-    if (!condition) {
-      throw std::runtime_error(error.str());
-    }
+    if (!condition) { throw std::runtime_error(error.str()); }
   }
 
   void divide(std::vector<uint64_t>& results, llvm::ArrayRef<uint64_t> args) {
@@ -149,9 +147,7 @@ struct TestExternHandler : public zirgen::Zll::ExternHandler {
       lookups[fpArgs[0]][fpArgs[1]] %= 15 * (1 << 27) + 1;
       if (lookups[fpArgs[0]][fpArgs[1]] == 0) {
         lookups[fpArgs[0]].erase(fpArgs[1]);
-        if (lookups[fpArgs[0]].size() == 0) {
-          lookups.erase(fpArgs[0]);
-        }
+        if (lookups[fpArgs[0]].size() == 0) { lookups.erase(fpArgs[0]); }
       }
     } else if (name == "LookupPeek") {
       auto fpArgs = asFpArray(args);
@@ -161,9 +157,7 @@ struct TestExternHandler : public zirgen::Zll::ExternHandler {
       auto it1 = lookups.find(fpArgs[0]);
       if (it1 != lookups.end()) {
         auto it2 = it1->second.find(fpArgs[1]);
-        if (it2 != it1->second.end()) {
-          ret = it2->second;
-        }
+        if (it2 != it1->second.end()) { ret = it2->second; }
       }
       results.push_back(ret);
     } else if (name == "Divide") {
@@ -203,9 +197,7 @@ struct TestExternHandler : public zirgen::Zll::ExternHandler {
     } else {
       // By default, let random externs pass
       // Fill with 0, 1, 2, ...
-      for (uint64_t i = 0; i != outCount; ++i) {
-        results.push_back(i);
-      }
+      for (uint64_t i = 0; i != outCount; ++i) { results.push_back(i); }
     }
     if (name != "Log" && name != "Assert") {
       interleaveComma(results, os);
@@ -301,13 +293,10 @@ int runTests(mlir::ModuleOp module) {
   for (zirgen::Zhlt::StepFuncOp stepFuncOp : module.getBody()->getOps<zirgen::Zhlt::StepFuncOp>()) {
     llvm::StringRef baseName = stepFuncOp.getName();
     baseName.consume_front("step$");
-    if (!baseName.starts_with("test$"))
-      continue;
-    if (baseName.ends_with("$accum"))
-      continue;
+    if (!baseName.starts_with("test$")) continue;
+    if (baseName.ends_with("$accum")) continue;
     bool expectFailure = baseName.starts_with("test$fail$");
-    if (!expectFailure)
-      assert(baseName.starts_with("test$succ$"));
+    if (!expectFailure) assert(baseName.starts_with("test$succ$"));
     llvm::StringRef testName =
         baseName.drop_front(strlen("test$fail$") /* == strlen("test$succ$") */);
     llvm::errs() << "Running " << testName << "\n";
@@ -326,9 +315,7 @@ int runTests(mlir::ModuleOp module) {
         interp.setNamedBuf(bufDesc.getName(), *newBuf, 0 /* no per-cycle offset */);
         if (bufDesc.getName() == "global") {
           auto globals = parseIntList(clOpts->testGlobals);
-          for (size_t i = 0; i < globals.size(); i++) {
-            (*newBuf)[i][0] = globals[i];
-          }
+          for (size_t i = 0; i < globals.size(); i++) { (*newBuf)[i][0] = globals[i]; }
         } else if (bufDesc.getName() == "mix") {
           std::default_random_engine generator;
           std::uniform_int_distribution<int> distribution(1, zirgen::Zll::kFieldPrimeDefault - 1);
@@ -393,9 +380,7 @@ int runTests(mlir::ModuleOp module) {
       for (auto [buf, bufDesc] : llvm::zip(bufs, allBufs)) {
         if (bufDesc.getName() == "test") {
           for (size_t i = 0; i < buf->size(); i++) {
-            if ((*buf)[i][0] == zirgen::Zll::kFieldInvalid) {
-              (*buf)[i][0] = 0;
-            }
+            if ((*buf)[i][0] == zirgen::Zll::kFieldInvalid) { (*buf)[i][0] = 0; }
           }
         }
       }
@@ -435,8 +420,7 @@ int runTests(mlir::ModuleOp module) {
             Polynomial& elem = buf->at(buf->size() - i);
             assert(elem.size() == 1);
             llvm::outs() << elem[0];
-            if (i != 1)
-              llvm::outs() << ", ";
+            if (i != 1) llvm::outs() << ", ";
           }
           llvm::outs() << "]\n";
         }

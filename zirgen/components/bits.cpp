@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,9 +25,7 @@ void isBit(Val val, SourceLoc loc) {
 
 void isBits(Buffer buf, SourceLoc loc) {
   OverrideLocation local(loc);
-  for (size_t i = 0; i < buf.size(); i++) {
-    isBit(buf[i]);
-  }
+  for (size_t i = 0; i < buf.size(); i++) { isBit(buf[i]); }
 }
 
 } // namespace zirgen

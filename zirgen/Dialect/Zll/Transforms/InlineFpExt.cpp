@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -59,9 +59,7 @@ struct Rewriter {
     assert(mapper.contains(orig));
     SmallVector<Value, 4> out(kExt, mapper.lookupOrNull(orig));
     if (doZero) {
-      for (size_t i = 1; i < kExt; i++) {
-        out[i] = zero;
-      }
+      for (size_t i = 1; i < kExt; i++) { out[i] = zero; }
     }
     return out;
   }
@@ -74,9 +72,7 @@ struct Rewriter {
     }
     auto in = expansions[op.getIn()];
     SmallVector<Value, 4> out;
-    for (size_t i = 0; i < kExt; i++) {
-      out.push_back(builder.create<Op>(op.getLoc(), in[i]));
-    }
+    for (size_t i = 0; i < kExt; i++) { out.push_back(builder.create<Op>(op.getLoc(), in[i])); }
     expansions[op.getOut()] = out;
   }
 
@@ -155,9 +151,7 @@ struct Rewriter {
     Value idx = mapper.lookupOrNull(op.getIdx());
     for (size_t i = 0; i < kExt; i++) {
       std::vector<Value> elems;
-      for (size_t j = 0; j < n; j++) {
-        elems.push_back(expansions[op.getElems()[j]][i]);
-      }
+      for (size_t j = 0; j < n; j++) { elems.push_back(expansions[op.getElems()[j]][i]); }
       out.push_back(builder.create<SelectOp>(op.getLoc(), fpType, idx, elems));
     }
     expansions[op.getOut()] = out;
@@ -240,9 +234,7 @@ struct Rewriter {
       return;
     }
     auto in = expansions[op.getIn()];
-    for (size_t i = 0; i < kExt; i++) {
-      builder.create<EqualZeroOp>(op.getLoc(), in[i]);
-    }
+    for (size_t i = 0; i < kExt; i++) { builder.create<EqualZeroOp>(op.getLoc(), in[i]); }
   }
 
   void doIopRngVal(Iop::RngValOp op) {

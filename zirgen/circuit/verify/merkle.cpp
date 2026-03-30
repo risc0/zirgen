@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,9 +36,7 @@ MerkleTreeParams::MerkleTreeParams(size_t rowSize,
   assert(1U << layers == rowSize);
   topLayer = 0;
   for (size_t i = 1; i < layers; i++) {
-    if ((1U << i) > queries) {
-      break;
-    }
+    if ((1U << i) > queries) { break; }
     topLayer = i;
   }
   topSize = 1 << topLayer;
@@ -53,9 +51,7 @@ MerkleTreeVerifier::MerkleTreeVerifier(std::string bufName,
     : MerkleTreeParams(rowSize, colSize, queries, useExtension), top(topSize), bufName(bufName) {
   auto topRec = iop.readDigests(topSize);
   top.insert(top.end(), topRec.begin(), topRec.end());
-  for (size_t i = topSize; i-- > 1;) {
-    top[i] = fold(top[i * 2], top[i * 2 + 1]);
-  }
+  for (size_t i = topSize; i-- > 1;) { top[i] = fold(top[i * 2], top[i * 2 + 1]); }
   iop.commit(top[1]);
 }
 
@@ -82,8 +78,7 @@ std::vector<Val> MerkleTreeVerifier::verify(ReadIopVal& iop, Val idx) const {
     cur = fold(lhs, rhs);
   }
   auto topDigest = select(idx - topSize, llvm::ArrayRef(top).slice(topSize, topSize));
-  if (kDebug)
-    XLOG("Merkle " + bufName + " expected: %h, calculated %h", topDigest, cur);
+  if (kDebug) XLOG("Merkle " + bufName + " expected: %h, calculated %h", topDigest, cur);
   assert_eq(cur, topDigest);
   return out;
 }

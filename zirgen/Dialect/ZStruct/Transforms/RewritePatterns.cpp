@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,8 +29,7 @@ LogicalResult UnrollMaps::matchAndRewrite(MapOp op, PatternRewriter& rewriter) c
   Block& innerBlock = op.getBody().front();
   auto innerValArg = innerBlock.getArgument(0);
   Value innerLayoutArg;
-  if (innerBlock.getNumArguments() > 1)
-    innerLayoutArg = innerBlock.getArgument(1);
+  if (innerBlock.getNumArguments() > 1) innerLayoutArg = innerBlock.getArgument(1);
 
   auto yieldOp = llvm::cast<ZStruct::YieldOp>(innerBlock.getTerminator());
   auto innerReturnVal = yieldOp.getValue();
@@ -47,9 +46,7 @@ LogicalResult UnrollMaps::matchAndRewrite(MapOp op, PatternRewriter& rewriter) c
       mapping.map(innerLayoutArg, inLayout);
     }
 
-    for (auto& innerOp : innerBlock.without_terminator()) {
-      rewriter.clone(innerOp, mapping);
-    }
+    for (auto& innerOp : innerBlock.without_terminator()) { rewriter.clone(innerOp, mapping); }
     mapped.push_back(mapping.lookupOrDefault(innerReturnVal));
   }
   auto unrolled = outType.materialize(op.getLoc(), mapped, rewriter);
@@ -65,8 +62,7 @@ LogicalResult UnrollReduces::matchAndRewrite(ReduceOp op, PatternRewriter& rewri
   auto innerLhsArg = innerBlock.getArgument(0);
   auto innerRhsArg = innerBlock.getArgument(1);
   Value innerLayoutArg;
-  if (innerBlock.getNumArguments() > 2)
-    innerLayoutArg = innerBlock.getArgument(2);
+  if (innerBlock.getNumArguments() > 2) innerLayoutArg = innerBlock.getArgument(2);
 
   auto yieldOp = llvm::cast<ZStruct::YieldOp>(innerBlock.getTerminator());
   auto innerReturnVal = yieldOp.getValue();
@@ -87,9 +83,7 @@ LogicalResult UnrollReduces::matchAndRewrite(ReduceOp op, PatternRewriter& rewri
       mapping.map(innerLayoutArg, inLayout);
     }
 
-    for (auto& innerOp : innerBlock.without_terminator()) {
-      rewriter.clone(innerOp, mapping);
-    }
+    for (auto& innerOp : innerBlock.without_terminator()) { rewriter.clone(innerOp, mapping); }
     reduced = mapping.lookup(innerReturnVal);
   }
   rewriter.replaceOp(op, reduced);
@@ -97,8 +91,7 @@ LogicalResult UnrollReduces::matchAndRewrite(ReduceOp op, PatternRewriter& rewri
 }
 
 LogicalResult SplitSwitchArms::matchAndRewrite(SwitchOp op, PatternRewriter& rewriter) const {
-  if (!op->use_empty())
-    return failure();
+  if (!op->use_empty()) return failure();
 
   rewriter.setInsertionPoint(op);
   for (auto [cond, arm] : llvm::zip(op.getSelector(), op.getArms())) {

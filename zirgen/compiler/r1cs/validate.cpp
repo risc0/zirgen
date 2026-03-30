@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -57,9 +57,7 @@ private:
 
 Impl::Impl(const wtnsfile::Witness& wtns) : prime(cvtint(wtns.header.prime)) {
   witvals.resize(wtns.values.size());
-  for (size_t i = 0; i < wtns.values.size(); ++i) {
-    witvals[i] = cvtint(wtns.values[i]);
-  }
+  for (size_t i = 0; i < wtns.values.size(); ++i) { witvals[i] = cvtint(wtns.values[i]); }
 }
 
 llvm::APInt Impl::sum(llvm::APInt lhs, llvm::APInt rhs) {
@@ -98,9 +96,7 @@ llvm::APInt Impl::eval(const r1csfile::Factor& factor) {
 
 llvm::APInt Impl::eval(const r1csfile::Combination& combination) {
   llvm::APInt out;
-  for (auto& factor : combination) {
-    out = sum(out, eval(factor));
-  }
+  for (auto& factor : combination) { out = sum(out, eval(factor)); }
   return out;
 }
 
@@ -124,9 +120,7 @@ void validate(const r1csfile::System& sys, const wtnsfile::Witness& wtns) {
   assert(sys.header.nWires == wtns.header.nValues);
   Impl validator(wtns);
   // Verify each constraint
-  for (auto& constraint : sys.constraints) {
-    validator.check(constraint);
-  }
+  for (auto& constraint : sys.constraints) { validator.check(constraint); }
 }
 
 } // namespace zirgen::R1CS

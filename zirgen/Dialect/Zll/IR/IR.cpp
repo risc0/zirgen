@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,13 +23,9 @@ namespace zirgen::Zll {
 // Trim filename to only include relative pathname
 llvm::StringRef trimFilename(llvm::StringRef fn) {
   auto pos = fn.rfind("/risc0/");
-  if (pos != llvm::StringRef::npos) {
-    fn = fn.substr(pos + strlen("/risc0/"));
-  }
+  if (pos != llvm::StringRef::npos) { fn = fn.substr(pos + strlen("/risc0/")); }
   pos = fn.rfind("/zirgen/");
-  if (pos != llvm::StringRef::npos) {
-    fn = fn.substr(pos + strlen("/zirgen/"));
-  }
+  if (pos != llvm::StringRef::npos) { fn = fn.substr(pos + strlen("/zirgen/")); }
   return fn;
 }
 
@@ -60,8 +56,7 @@ std::string getLocString(mlir::Location loc) {
   }
 
   for (auto& c : out) {
-    if (c == '\n' || c == '"' || c == '\r')
-      c = ' ';
+    if (c == '\n' || c == '"' || c == '\r') c = ' ';
   }
   return out;
 }

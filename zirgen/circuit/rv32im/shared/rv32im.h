@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -184,16 +184,12 @@ private:
     uint32_t opHigh = opcode >> 2;
     if (func3 < 0) {
       for (uint32_t f3 = 0; f3 < 8; f3++) {
-        for (uint32_t f7b = 0; f7b < 4; f7b++) {
-          table[(opHigh << 5) | (f7b << 3) | f3] = inst;
-        }
+        for (uint32_t f7b = 0; f7b < 4; f7b++) { table[(opHigh << 5) | (f7b << 3) | f3] = inst; }
       }
       return;
     }
     if (func7 < 0) {
-      for (uint32_t f7b = 0; f7b < 4; f7b++) {
-        table[(opHigh << 5) | (f7b << 3) | func3] = inst;
-      }
+      for (uint32_t f7b = 0; f7b < 4; f7b++) { table[(opHigh << 5) | (f7b << 3) | func3] = inst; }
       return;
     }
     table[map10(opcode, func3, func7)] = inst;
@@ -217,9 +213,7 @@ struct BaseContext {
   std::map<uint32_t, uint32_t> memory;
 
   BaseContext() : done(false), pc(0) {
-    for (size_t i = 0; i < 32; i++) {
-      regs[i] = 0;
-    }
+    for (size_t i = 0; i < 32; i++) { regs[i] = 0; }
   }
 
   // Let emulator decide when to stop
@@ -253,9 +247,7 @@ struct BaseContext {
   // Manage registers
   uint32_t loadReg(uint32_t reg) { return regs[reg]; }
   void storeReg(uint32_t reg, uint32_t val) {
-    if (reg) {
-      regs[reg] = val;
-    }
+    if (reg) { regs[reg] = val; }
   }
 
   // Manage memory
@@ -332,8 +324,7 @@ public:
       ret = context.doTrap(TrapCause::ILLEGAL_INSTRUCTION);
       break;
     }
-    if (ret)
-      context.endNormal(type, decoded);
+    if (ret) context.endNormal(type, decoded);
   }
 
 private:
@@ -347,9 +338,7 @@ private:
     uint32_t immI = decoded.immI();
     auto br_cond = [&](bool cond) {
       rd = 0;
-      if (cond) {
-        newPC = pc + decoded.immB();
-      }
+      if (cond) { newPC = pc + decoded.immB(); }
     };
     switch (type) {
     case InstType::ADD:
@@ -426,9 +415,7 @@ private:
     default:
       __builtin_unreachable();
     }
-    if (newPC % 4 != 0) {
-      return context.doTrap(TrapCause::INSTRUCTION_ADDRESS_MISALIGNED);
-    }
+    if (newPC % 4 != 0) { return context.doTrap(TrapCause::INSTRUCTION_ADDRESS_MISALIGNED); }
     context.storeReg(rd, out);
     context.setPC(newPC);
     return true;
@@ -516,41 +503,29 @@ private:
   bool stepLoad(InstType type, const DecodedInst& decoded) {
     uint32_t rs1 = context.loadReg(decoded.rs1);
     uint32_t addr = rs1 + decoded.immI();
-    if (!context.checkDataLoad(addr)) {
-      return context.doTrap(TrapCause::LOAD_ACCESS_FAULT);
-    }
+    if (!context.checkDataLoad(addr)) { return context.doTrap(TrapCause::LOAD_ACCESS_FAULT); }
     uint32_t data = context.loadMem(addr / 4);
     uint32_t out = 0;
     uint32_t shift = 8 * (addr & 3);
     switch (type) {
     case InstType::LB:
       out = (data >> shift) & 0xff;
-      if (out & 0x80) {
-        out |= 0xffffff00;
-      }
+      if (out & 0x80) { out |= 0xffffff00; }
       break;
     case InstType::LH:
-      if (addr & 0x1) {
-        return context.doTrap(TrapCause::LOAD_ADDRESS_MISALIGNED);
-      }
+      if (addr & 0x1) { return context.doTrap(TrapCause::LOAD_ADDRESS_MISALIGNED); }
       out = (data >> shift) & 0xffff;
-      if (out & 0x8000) {
-        out |= 0xffff0000;
-      }
+      if (out & 0x8000) { out |= 0xffff0000; }
       break;
     case InstType::LW:
-      if (addr & 0x3) {
-        return context.doTrap(TrapCause::LOAD_ADDRESS_MISALIGNED);
-      }
+      if (addr & 0x3) { return context.doTrap(TrapCause::LOAD_ADDRESS_MISALIGNED); }
       out = data;
       break;
     case InstType::LBU:
       out = (data >> shift) & 0xff;
       break;
     case InstType::LHU:
-      if (addr & 0x1) {
-        return context.doTrap(TrapCause::LOAD_ADDRESS_MISALIGNED);
-      }
+      if (addr & 0x1) { return context.doTrap(TrapCause::LOAD_ADDRESS_MISALIGNED); }
       out = (data >> shift) & 0xffff;
       break;
     default:
@@ -566,9 +541,7 @@ private:
     uint32_t rs2 = loadRS2(decoded, rs1);
     uint32_t addr = rs1 + decoded.immS();
     uint32_t shift = 8 * (addr & 3);
-    if (!context.checkDataStore(addr)) {
-      return context.doTrap(TrapCause::STORE_ACCESS_FAULT);
-    }
+    if (!context.checkDataStore(addr)) { return context.doTrap(TrapCause::STORE_ACCESS_FAULT); }
     uint32_t data = context.loadMem(addr / 4);
     switch (type) {
     case InstType::SB:
@@ -576,16 +549,12 @@ private:
       data |= (rs2 & 0xff) << shift;
       break;
     case InstType::SH:
-      if (addr & 0x1) {
-        return context.doTrap(TrapCause::STORE_ADDRESS_MISALIGNED);
-      }
+      if (addr & 0x1) { return context.doTrap(TrapCause::STORE_ADDRESS_MISALIGNED); }
       data ^= data & (0xffff << shift);
       data |= (rs2 & 0xffff) << shift;
       break;
     case InstType::SW:
-      if (addr & 0x3) {
-        return context.doTrap(TrapCause::STORE_ADDRESS_MISALIGNED);
-      }
+      if (addr & 0x3) { return context.doTrap(TrapCause::STORE_ADDRESS_MISALIGNED); }
       data = rs2;
       break;
     default:

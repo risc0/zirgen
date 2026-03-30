@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -90,19 +90,17 @@ Val TopImpl::set() {
   mux->doMux([&](auto inner) { inner->set(asComp()); });
 
   Val isActive = 0;
-  for (size_t i = 0; i < StepType::COUNT; i++) {
-    isActive = isActive + code->stepType->at(i);
-  }
+  for (size_t i = 0; i < StepType::COUNT; i++) { isActive = isActive + code->stepType->at(i); }
   // Compute halt state.  Note if the mux values aren't the right
   // types that 'casts' are likely to return nonsense, but it's no harm
   // since the output will be multiplied by zero.
   Val isBody = code->stepType->at(StepType::BODY);
-  IF(isBody) {
+  IF (isBody) {
     BodyStep body = mux->at<StepType::BODY>();
     Val isHalt = body->majorSelect->at(MajorType::kHalt);
     halted->set(isHalt);
   }
-  IF(isActive - isBody) { halted->set(0); }
+  IF (isActive - isBody) { halted->set(0); }
   return 1 - halted;
 }
 

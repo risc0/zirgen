@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -144,18 +144,12 @@ inline Digest shaHashInner(const uint32_t* data, size_t size) {
     }
   }
   // Clear rest of the block
-  for (size_t i = curWord; i < 16; i++) {
-    words[i] = 0;
-  }
+  for (size_t i = curWord; i < 16; i++) { words[i] = 0; }
 
   // Do final compression
-  if (curWord != 0) {
-    compress(state, words);
-  }
+  if (curWord != 0) { compress(state, words); }
 
-  for (size_t i = 0; i < 8; i++) {
-    state.words[i] = htonl(state.words[i]);
-  }
+  for (size_t i = 0; i < 8; i++) { state.words[i] = htonl(state.words[i]); }
 
   return state;
 }
@@ -170,20 +164,14 @@ inline Digest shaHash(const uint32_t* data, size_t size) {
 inline Digest shaHashPair(Digest x, Digest y) {
   // Copy both hash states into a single buffer
   uint32_t words[16];
-  for (size_t i = 0; i < 8; i++) {
-    words[i] = htonl(x.words[i]);
-  }
-  for (size_t i = 0; i < 8; i++) {
-    words[8 + i] = htonl(y.words[i]);
-  }
+  for (size_t i = 0; i < 8; i++) { words[i] = htonl(x.words[i]); }
+  for (size_t i = 0; i < 8; i++) { words[8 + i] = htonl(y.words[i]); }
 
   // Initialize state + compress
   Digest state = impl::initState();
   impl::compress(state, words);
 
-  for (size_t i = 0; i < 8; i++) {
-    state.words[i] = htonl(state.words[i]);
-  }
+  for (size_t i = 0; i < 8; i++) { state.words[i] = htonl(state.words[i]); }
 
   // Return the results
   return state;
@@ -225,9 +213,7 @@ inline Digest shaHash(const uint8_t* data, size_t size) {
   words[15] = bitSize & 0xffffffff;
   impl::compress(state, words);
 
-  for (size_t i = 0; i < 8; i++) {
-    state.words[i] = htonl(state.words[i]);
-  }
+  for (size_t i = 0; i < 8; i++) { state.words[i] = htonl(state.words[i]); }
 
   return state;
 }

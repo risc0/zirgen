@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,26 +46,20 @@ CellVals mulMExt(CellVals in) {
       out[4 * i + j] = to_add;
     }
   }
-  for (size_t i = 0; i < CELLS; i++) {
-    out[i] = out[i] + tmp_sums[i % 4];
-  }
+  for (size_t i = 0; i < CELLS; i++) { out[i] = out[i] + tmp_sums[i % 4]; }
   return out;
 }
 
 Poseidon2LoadImpl::Poseidon2LoadImpl(Code code, WomHeader header)
     : body(Label("wom_body"), header, 9, 4) {
-  for (size_t i = 0; i < 8; i++) {
-    ios.emplace_back();
-  }
+  for (size_t i = 0; i < 8; i++) { ios.emplace_back(); }
 }
 
 void Poseidon2LoadImpl::set(Code code, Val writeAddr) {
   auto inst = code->inst->at<size_t(OpType::POSEIDON2_LOAD)>();
   std::vector<Val> readVals;
   Val mul = inst->doMont * zirgen::kBabyBearFromMontgomery + (1 - inst->doMont) * 1;
-  for (size_t i = 0; i < 8; i++) {
-    readVals.push_back(ios[i]->doRead(inst->inputs[i])[0] * mul);
-  }
+  for (size_t i = 0; i < 8; i++) { readVals.push_back(ios[i]->doRead(inst->inputs[i])[0] * mul); }
   std::vector<Val> stateVals;
   CellVals in;
   for (size_t i = 0; i < CELLS; i++) {
@@ -156,12 +150,8 @@ CellVals mulMInt(CellVals in) {
   // Exploits the fact that off-diagonal entries of M_INT are all 1.
   Val sum = 0;
   CellVals out;
-  for (size_t i = 0; i < CELLS; i++) {
-    sum = sum + in[i];
-  }
-  for (size_t i = 0; i < CELLS; i++) {
-    out[i] = sum + M_INT_DIAG_HZN[i] * in[i];
-  }
+  for (size_t i = 0; i < CELLS; i++) { sum = sum + in[i]; }
+  for (size_t i = 0; i < CELLS; i++) { out[i] = sum + M_INT_DIAG_HZN[i] * in[i]; }
   return out;
 }
 
@@ -177,9 +167,7 @@ Val doSbox2(Reg tmp, Val in) {
 CellVals getConstsPartial(size_t round) {
   CellVals out;
   out[0] = ROUND_CONSTANTS[round * CELLS];
-  for (size_t i = 1; i < CELLS; i++) {
-    out[i] = 0;
-  }
+  for (size_t i = 1; i < CELLS; i++) { out[i] = 0; }
   return out;
 }
 
@@ -189,12 +177,8 @@ CellVals getConstsFull(OneHot<4> cycle, size_t add) {
     Val tot = 0;
     for (size_t j = 0; j < 4; j++) {
       size_t idx = 2 * j + add + 1;
-      if (idx == 4 || idx == 8) {
-        continue;
-      }
-      if (j >= 2) {
-        idx += ROUNDS_PARTIAL;
-      }
+      if (idx == 4 || idx == 8) { continue; }
+      if (j >= 2) { idx += ROUNDS_PARTIAL; }
       tot = tot + cycle->at(j) * ROUND_CONSTANTS[idx * CELLS + i];
     }
     out[i] = tot;
@@ -207,12 +191,8 @@ void Poseidon2FullImpl::set(Code code, Val writeAddr) {
   XLOG("POSEIDON2_FULL: %u", inst->cycle);
   CellVals sboxOut;
   // The initial mulMExt for cycle 0, happens at the end of the Load, not here
-  for (size_t i = 0; i < CELLS; i++) {
-    sboxOut[i] = BACK(1, output[i]->get());
-  }
-  for (size_t i = 0; i < CELLS; i++) {
-    sboxOut[i] = doSbox2(pre1[i], sboxOut[i]);
-  }
+  for (size_t i = 0; i < CELLS; i++) { sboxOut[i] = BACK(1, output[i]->get()); }
+  for (size_t i = 0; i < CELLS; i++) { sboxOut[i] = doSbox2(pre1[i], sboxOut[i]); }
   auto step1MExt = mulMExt(sboxOut);
   // XLOG("  1st mExt cycle %u: %u %u %u %u %u %u %u %u",
   //      inst->cycle,
@@ -279,9 +259,7 @@ void Poseidon2FullImpl::set(Code code, Val writeAddr) {
   //      sboxOut[23]);
 
   auto step2Consts = getConstsFull(inst->cycle, 1);
-  for (size_t i = 0; i < CELLS; i++) {
-    output[i]->set(step2MExt[i] + step2Consts[i]);
-  }
+  for (size_t i = 0; i < CELLS; i++) { output[i]->set(step2MExt[i] + step2Consts[i]); }
   /*
   for (size_t i = 0; i < 24; i++) {
     XLOG("  %u", output[i]);
@@ -295,9 +273,7 @@ void Poseidon2PartialImpl::set(Code code, Val writeAddr) {
   XLOG("POSEIDON2_PARTIAL");
   auto inst = code->inst->at<size_t(OpType::POSEIDON2_PARTIAL)>();
   CellVals in;
-  for (size_t i = 0; i < CELLS; i++) {
-    in[i] = BACK(1, output[i]->get());
-  }
+  for (size_t i = 0; i < CELLS; i++) { in[i] = BACK(1, output[i]->get()); }
   sboxIn[0]->set(in[0]);
   for (size_t j = 0; j < ROUNDS_PARTIAL; j++) {
     Val rd_in = BACK(0, sboxIn[j]->get());
@@ -352,9 +328,7 @@ void Poseidon2PartialImpl::set(Code code, Val writeAddr) {
 
 Poseidon2StoreImpl::Poseidon2StoreImpl(Code code, WomHeader header)
     : body(Label("wom_body"), header, 9, 4) {
-  for (size_t i = 0; i < 8; i++) {
-    ios.emplace_back();
-  }
+  for (size_t i = 0; i < 8; i++) { ios.emplace_back(); }
 }
 
 void Poseidon2StoreImpl::set(Code code, Val writeAddr) {
@@ -364,12 +338,8 @@ void Poseidon2StoreImpl::set(Code code, Val writeAddr) {
     toWrite[i % 8] = toWrite[i % 8] + inst->group->at(i / 8) * BACK(1, output[i]->get());
   }
   Val mul = inst->doMont * zirgen::kBabyBearToMontgomery + (1 - inst->doMont) * 1;
-  for (size_t i = 0; i < 8; i++) {
-    ios[i]->doWrite(writeAddr + i, {toWrite[i] * mul, 0, 0, 0});
-  }
-  for (size_t i = 0; i < 24; i++) {
-    output[i]->set(BACK(1, output[i]->get()));
-  }
+  for (size_t i = 0; i < 8; i++) { ios[i]->doWrite(writeAddr + i, {toWrite[i] * mul, 0, 0, 0}); }
+  for (size_t i = 0; i < 24; i++) { output[i]->set(BACK(1, output[i]->get())); }
   XLOG("POSEIDON2_OUTPUT: group(%u), doMont(%u)", inst->group, inst->doMont);
   // {
   //   // Interacting with ios[0]->data() directly causes problems, so recalculate

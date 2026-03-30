@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,8 +38,7 @@ struct ZeroDistanceBacksToCalls : public OpRewritePattern<Zhlt::BackOp> {
   using OpRewritePattern::OpRewritePattern;
 
   LogicalResult matchAndRewrite(Zhlt::BackOp back, PatternRewriter& rewriter) const {
-    if (back.getDistance().getZExtValue() > 0)
-      return failure();
+    if (back.getDistance().getZExtValue() > 0) return failure();
 
     auto distance =
         rewriter.create<mlir::arith::ConstantOp>(back->getLoc(), rewriter.getIndexAttr(0));
@@ -60,25 +59,19 @@ struct InlineForPicusPass : public InlineForPicusBase<InlineForPicusPass> {
     // Convert backs with distance zero for inlining
     RewritePatternSet patterns(ctx);
     patterns.insert<ZeroDistanceBacksToCalls>(ctx);
-    if (applyPatternsGreedily(mod, std::move(patterns)).failed()) {
-      signalPassFailure();
-    }
+    if (applyPatternsGreedily(mod, std::move(patterns)).failed()) { signalPassFailure(); }
 
     CallGraph& cg = getAnalysis<CallGraph>();
 
     auto profitabilityCb = [=](const Inliner::ResolvedCall& call) {
       // Inline any calls to components marked "picus_inline" or "extern"
       Operation* target = call.targetNode->getCallableRegion()->getParentOp();
-      if (target->hasAttr("picus_inline") || target->hasAttr("extern")) {
-        return true;
-      }
+      if (target->hasAttr("picus_inline") || target->hasAttr("extern")) { return true; }
 
       // All BackCallOps come from backs with distance 0 because of the rewrite
       // pattern, and these should all be inlined so we can do a more detailed
       // analysis of their determinism.
-      if (isa<Zhlt::BackCallOp>(call.call)) {
-        return true;
-      }
+      if (isa<Zhlt::BackCallOp>(call.call)) { return true; }
 
       // Inline a specific set of constructors
       auto op = cast<Zhlt::ConstructOp>(call.call);
@@ -98,8 +91,7 @@ struct InlineForPicusPass : public InlineForPicusBase<InlineForPicusPass> {
         mod, cg, *this, getAnalysisManager(), runPipelineHelper, config, profitabilityCb);
 
     // Run the inlining.
-    if (failed(inliner.doInlining()))
-      signalPassFailure();
+    if (failed(inliner.doInlining())) signalPassFailure();
   }
 };
 

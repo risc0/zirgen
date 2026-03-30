@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,9 +26,7 @@ public:
     for (size_t i = 0; i < size; i++) {
       bits.emplace_back(labels.empty() ? Label("hot", i) : Label(labels[i]), source);
     }
-    if (check) {
-      this->registerCallback("_builtin_verify", &OneHotImpl::onVerify);
-    }
+    if (check) { this->registerCallback("_builtin_verify", &OneHotImpl::onVerify); }
   }
 
   void onVerify() {
@@ -43,18 +41,14 @@ public:
 
   void set(Val val) {
     NONDET {
-      for (size_t i = 0; i < size; i++) {
-        bits[i]->set(isz(val - i));
-      }
+      for (size_t i = 0; i < size; i++) { bits[i]->set(isz(val - i)); }
     }
     eq(get(), val);
   }
 
   Val get() {
     Val tot = 0;
-    for (size_t i = 0; i < size; i++) {
-      tot = tot + i * bits[i];
-    }
+    for (size_t i = 0; i < size; i++) { tot = tot + i * bits[i]; }
     return tot;
   }
 

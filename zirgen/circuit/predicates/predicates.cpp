@@ -33,9 +33,7 @@ Val readVal(llvm::ArrayRef<Val>& stream) {
 static std::array<Val, 4> readExtVal(llvm::ArrayRef<Val>& stream) {
   assert(stream.size() >= 4);
   std::array<Val, 4> out;
-  for (size_t i = 0; i < 4; i++) {
-    out[i] = stream[i];
-  }
+  for (size_t i = 0; i < 4; i++) { out[i] = stream[i]; }
   stream = stream.drop_front(4);
   return out;
 }
@@ -75,15 +73,11 @@ DigestVal readSha(llvm::ArrayRef<Val>& stream, bool longDigest) {
 
 void writeSha(DigestVal val, std::vector<Val>& stream) {
   auto vals = fromDigest(val, 16);
-  for (size_t i = 0; i < 16; i++) {
-    stream.push_back(vals[i]);
-  }
+  for (size_t i = 0; i < 16; i++) { stream.push_back(vals[i]); }
 }
 
 PCVal::PCVal(llvm::ArrayRef<Val>& stream) {
-  for (size_t i = 0; i < PCVal::size; i++) {
-    val[i] = readVal(stream);
-  }
+  for (size_t i = 0; i < PCVal::size; i++) { val[i] = readVal(stream); }
 }
 
 PCVal PCVal::zero() {
@@ -101,9 +95,7 @@ Val PCVal::flat() {
 }
 
 void PCVal::write(std::vector<Val>& stream) {
-  for (size_t i = 0; i < PCVal::size; i++) {
-    stream.push_back(val[i]);
-  }
+  for (size_t i = 0; i < PCVal::size; i++) { stream.push_back(val[i]); }
 }
 
 U64Val::U64Val(uint64_t x) {
@@ -145,15 +137,11 @@ U64Val U64Val::add(const U64Val& x) {
 }
 
 void U64Val::eq(U64Val& a, U64Val& b) {
-  for (size_t i = 0; i < U64Val::size; i++) {
-    zirgen::eq(a.shorts.at(i), b.shorts.at(i));
-  }
+  for (size_t i = 0; i < U64Val::size; i++) { zirgen::eq(a.shorts.at(i), b.shorts.at(i)); }
 }
 
 void U64Val::write(std::vector<Val>& stream) {
-  for (size_t i = 0; i < U64Val::size; i++) {
-    stream.push_back(shorts[i]);
-  }
+  for (size_t i = 0; i < U64Val::size; i++) { stream.push_back(shorts[i]); }
 }
 
 U256Val U256Val::zero() {
@@ -217,15 +205,11 @@ U256Val U256Val::add(const U256Val& x) {
 }
 
 void U256Val::eq(const U256Val& a, const U256Val& b) {
-  for (size_t i = 0; i < U256Val::size; i++) {
-    zirgen::eq(a.shorts.at(i), b.shorts.at(i));
-  }
+  for (size_t i = 0; i < U256Val::size; i++) { zirgen::eq(a.shorts.at(i), b.shorts.at(i)); }
 }
 
 void U256Val::write(std::vector<Val>& stream) {
-  for (size_t i = 0; i < U256Val::size; i++) {
-    stream.push_back(shorts[i]);
-  }
+  for (size_t i = 0; i < U256Val::size; i++) { stream.push_back(shorts[i]); }
 }
 
 SystemState::SystemState(llvm::ArrayRef<Val>& stream, bool longDigest)

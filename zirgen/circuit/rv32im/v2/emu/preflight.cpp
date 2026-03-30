@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -102,38 +102,28 @@ struct PreflightContext {
 
   void resume() {
     cycleCompleteSpecial(STATE_RESUME, STATE_RESUME, pc);
-    if (debug) {
-      std::cout << trace.cycles.size() << " Resume\n";
-    }
-    for (size_t i = 0; i < 8; i++) {
-      store(INPUT_WORD + i, 0);
-    }
+    if (debug) { std::cout << trace.cycles.size() << " Resume\n"; }
+    for (size_t i = 0; i < 8; i++) { store(INPUT_WORD + i, 0); }
     cycleCompleteSpecial(STATE_RESUME, STATE_DECODE, pc);
   }
 
   void suspend() {
     pc = 0;
     cycleCompleteSpecial(STATE_SUSPEND, STATE_SUSPEND, 0);
-    for (size_t i = 0; i < 8; i++) {
-      load(OUTPUT_WORD + i);
-    }
+    for (size_t i = 0; i < 8; i++) { load(OUTPUT_WORD + i); }
     machineMode = 3;
     cycleCompleteSpecial(STATE_SUSPEND, STATE_POSEIDON_ENTRY, 0);
   }
 
   void instruction(InstType type, const DecodedInst& decoded) {
-    if (debug) {
-      std::cout << trace.cycles.size() << " Type: " << instName(type) << "\n";
-    }
+    if (debug) { std::cout << trace.cycles.size() << " Type: " << instName(type) << "\n"; }
     cycleCompleteInst(STATE_DECODE, pc, type);
     userCycle++;
     physCycles++;
   }
 
   void ecallCycle(uint32_t curState, uint32_t nextState, uint32_t s0, uint32_t s1, uint32_t s2) {
-    if (debug) {
-      std::cout << trace.cycles.size() << " ecallCycle\n";
-    }
+    if (debug) { std::cout << trace.cycles.size() << " ecallCycle\n"; }
     trace.extra.push_back(s0);
     trace.extra.push_back(s1);
     trace.extra.push_back(s2);
@@ -142,27 +132,21 @@ struct PreflightContext {
   }
 
   void p2Cycle(uint32_t curState, P2State p2) {
-    if (debug) {
-      std::cout << trace.cycles.size() << " p2Cycle\n";
-    }
+    if (debug) { std::cout << trace.cycles.size() << " p2Cycle\n"; }
     p2.write(trace.extra);
     cycleCompleteSpecial(curState, p2.nextState, pc);
     physCycles++;
   }
 
   void shaCycle(uint32_t curState, ShaState sha) {
-    if (debug) {
-      std::cout << trace.cycles.size() << " shaCycle\n";
-    }
+    if (debug) { std::cout << trace.cycles.size() << " shaCycle\n"; }
     sha.write(trace.extra);
     cycleCompleteSpecial(curState, sha.nextState, pc);
     physCycles++;
   }
 
   void bigintCycle(uint32_t curState, uint32_t nextState, BigIntState bigint) {
-    for (uint32_t byte : bigint.bytes) {
-      trace.extra.push_back(byte);
-    }
+    for (uint32_t byte : bigint.bytes) { trace.extra.push_back(byte); }
     cycleCompleteSpecial(curState, nextState, pc, getBigIntStateBacks(bigint));
     physCycles++;
   }
@@ -192,9 +176,7 @@ struct PreflightContext {
       val = pager.load(word);
     }
     MemoryTransaction txn;
-    if (!origValue.count(word)) {
-      origValue[word] = val;
-    }
+    if (!origValue.count(word)) { origValue[word] = val; }
     txn.word = word;
     txn.cycle = 2 * trace.cycles.size();
     txn.val = val;
@@ -208,9 +190,7 @@ struct PreflightContext {
   void store(uint32_t word, uint32_t val) {
     uint32_t prevVal;
     if (word >= MEMORY_END_WORD) {
-      if (!pageMemory.count(word)) {
-        throw std::runtime_error("Invalid write to page memory");
-      }
+      if (!pageMemory.count(word)) { throw std::runtime_error("Invalid write to page memory"); }
       prevVal = pageMemory[word];
       pageMemory[word] = val;
     } else {
@@ -231,20 +211,14 @@ struct PreflightContext {
 
   // Replay 'rlen'
   uint32_t write(uint32_t fd, const uint8_t* data, uint32_t len) {
-    if (curWrite >= segment.writeRecord.size()) {
-      throw std::runtime_error("Invalid segment");
-    }
+    if (curWrite >= segment.writeRecord.size()) { throw std::runtime_error("Invalid segment"); }
     return segment.writeRecord[curWrite++];
   }
 
   // Replay data
   uint32_t read(uint32_t fd, uint8_t* data, uint32_t len) {
-    if (curRead >= segment.readRecord.size()) {
-      throw std::runtime_error("Invalid segment");
-    }
-    if (segment.readRecord[curRead].size() > len) {
-      throw std::runtime_error("Invalid segment");
-    }
+    if (curRead >= segment.readRecord.size()) { throw std::runtime_error("Invalid segment"); }
+    if (segment.readRecord[curRead].size() > len) { throw std::runtime_error("Invalid segment"); }
     size_t rlen = segment.readRecord[curRead].size();
     memcpy(data, segment.readRecord[curRead].data(), rlen);
     curRead++;
@@ -255,17 +229,13 @@ struct PreflightContext {
 
   void readRoot() {
     size_t rootAddr = getDigestAddr(1);
-    for (size_t i = 0; i < 8; i++) {
-      load(rootAddr + i);
-    }
+    for (size_t i = 0; i < 8; i++) { load(rootAddr + i); }
     cycleCompleteSpecial(STATE_LOAD_ROOT, STATE_POSEIDON_ENTRY, 0);
   }
 
   void readPovwNonce() {
     size_t povwNonceAddr = POVW_NONCE_START_WORD;
-    for (size_t i = 0; i < 8; i++) {
-      load(povwNonceAddr + i);
-    }
+    for (size_t i = 0; i < 8; i++) { load(povwNonceAddr + i); }
     cycleCompleteSpecial(STATE_LOAD_ROOT, STATE_LOAD_ROOT, 0);
   }
 
@@ -279,9 +249,7 @@ struct PreflightContext {
 
   void writeRoot() {
     size_t rootAddr = getDigestAddr(1);
-    for (size_t i = 0; i < 8; i++) {
-      load(rootAddr + i);
-    }
+    for (size_t i = 0; i < 8; i++) { load(rootAddr + i); }
     cycleCompleteSpecial(STATE_STORE_ROOT, STATE_CONTROL_TABLE, 0);
   }
 
@@ -325,22 +293,16 @@ PreflightTrace preflightSegment(const Segment& in, size_t segmentSize) {
   preflightContext.readRoot();
   auto pages = pager.readPaging();
   p2PagingEntry(preflightContext, 0);
-  for (const auto& kvp : pages.nodes) {
-    preflightContext.readNode(kvp.first);
-  }
+  for (const auto& kvp : pages.nodes) { preflightContext.readNode(kvp.first); }
   preflightContext.machineMode = 1;
-  for (const auto& kvp : pages.pages) {
-    preflightContext.readPage(kvp.first);
-  }
+  for (const auto& kvp : pages.pages) { preflightContext.readPage(kvp.first); }
   preflightContext.machineMode = 2;
   preflightContext.readDone();
   preflightContext.physCycles = 0;
 
   // Run main execution
   r0Context.resume();
-  while (preflightContext.physCycles < in.suspendCycle) {
-    emu.step();
-  }
+  while (preflightContext.physCycles < in.suspendCycle) { emu.step(); }
   r0Context.suspend();
 
   // Do page out
@@ -423,12 +385,8 @@ PreflightTrace preflightSegment(const Segment& in, size_t segmentSize) {
           coeffs[1] = (txn.val >> 16) - (txn.prevVal >> 16);
           break;
         }
-        if (coeffs[0] < 0) {
-          coeffs[0] += risc0::Fp::P;
-        }
-        if (coeffs[1] < 0) {
-          coeffs[1] += risc0::Fp::P;
-        }
+        if (coeffs[0] < 0) { coeffs[0] += risc0::Fp::P; }
+        if (coeffs[1] < 0) { coeffs[1] += risc0::Fp::P; }
         cur = cur + powers[2 * j + 0] * risc0::FpExt(uint32_t(coeffs[0]));
         cur = cur + powers[2 * j + 1] * risc0::FpExt(uint32_t(coeffs[1]));
       }
@@ -436,9 +394,7 @@ PreflightTrace preflightSegment(const Segment& in, size_t segmentSize) {
     case STATE_POSEIDON_EXT_ROUND:
     case STATE_POSEIDON_INT_ROUND:
       // Write to extra
-      for (size_t i = 0; i < 4; i++) {
-        ret.extra[extraOffset + i] = cur.elems[i].asUInt32();
-      }
+      for (size_t i = 0; i < 4; i++) { ret.extra[extraOffset + i] = cur.elems[i].asUInt32(); }
       break;
     default:
       cur = risc0::FpExt(0);

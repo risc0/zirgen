@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -186,17 +186,13 @@ public:
                                     SourceLoc loc = current()) {
     beginFunc(name, std::vector<ArgumentInfo>(args.begin(), args.end()), loc);
     std::array<mlir::Value, N> vargs;
-    for (size_t i = 0; i < N; i++) {
-      vargs[i] = builder.getBlock()->getArgument(i);
-    }
+    for (size_t i = 0; i < N; i++) { vargs[i] = builder.getBlock()->getArgument(i); }
     std::apply(func, vargs);
     auto f = endFunc(loc);
 
     for (size_t i = 0; i < N; i++) {
       std::string argName = args[i].name;
-      if (!argName.empty()) {
-        f.setArgAttr(i, "zirgen.argName", builder.getStringAttr(argName));
-      }
+      if (!argName.empty()) { f.setArgAttr(i, "zirgen.argName", builder.getStringAttr(argName)); }
     }
     return f;
   }
@@ -309,9 +305,7 @@ template <typename T> struct LogPrep {
 
 template <typename T, size_t N> struct LogPrep<std::array<T, N>> {
   static void toLogVec(std::vector<Val>& out, std::array<T, N> x) {
-    for (size_t i = 0; i < N; i++) {
-      LogPrep<T>::toLogVec(out, x[i]);
-    }
+    for (size_t i = 0; i < N; i++) { LogPrep<T>::toLogVec(out, x[i]); }
   }
 };
 

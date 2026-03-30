@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,8 +30,7 @@ constexpr bool kDebug = false;
 
 // Version of XLOG that returns its single value, so it can be used inline like rust's dbg! macro.
 template <typename T> T dbg(std::string fmt, T arg) {
-  if (kDebug)
-    XLOG(fmt, arg);
+  if (kDebug) XLOG(fmt, arg);
   return arg;
 }
 
@@ -54,8 +53,7 @@ void verifyValidity(ReadIopVal& iop,
 
   // Pick a random place to check the polynomial constaints at
   Val Z = iop.rngExtVal();
-  if (kDebug)
-    XLOG("Z: %u", Z);
+  if (kDebug) XLOG("Z: %u", Z);
 
   // Read the tap coefficents, hash them, and commit to them
   auto coeffU = iop.readExtVals(tapSet.tapCount + kCheckSize, /*flip=*/true);
@@ -78,8 +76,7 @@ void verifyValidity(ReadIopVal& iop,
 
   // Compute the core polynomial
   Val result = compute_poly(evalU, globals, mix, polyMix, Z);
-  if (kDebug)
-    XLOG("result: %u", result);
+  if (kDebug) XLOG("result: %u", result);
 
   // Generate the check polynomial
   Val check = 0;
@@ -93,8 +90,7 @@ void verifyValidity(ReadIopVal& iop,
     check = check + coeffU[tapSet.tapCount + rmi + 12] * zi * Val({0, 0, 0, 1});
   }
   check = check * (raisepow(3 * Z, size) - 1);
-  if (kDebug)
-    XLOG("Check polynomial: %u", check);
+  if (kDebug) XLOG("Check polynomial: %u", check);
 
   // Make sure they match
   eq(check, result);
@@ -145,13 +141,10 @@ void verifyValidity(ReadIopVal& iop,
     Val ret = 0;
     for (const auto& combo : tapSet.combos) {
       unsigned id = combo.combo;
-      for (size_t i = 0; i < comboU[id].size(); i++) {
-      }
+      for (size_t i = 0; i < comboU[id].size(); i++) {}
       Val num = tot[id] - poly_eval(comboU[id], x);
       Val divisor = 1;
-      for (auto back : combo.backs) {
-        divisor = divisor * (x - Z * raisepow(backOne, back));
-      }
+      for (auto back : combo.backs) { divisor = divisor * (x - Z * raisepow(backOne, back)); }
       ret = ret + num * inv(divisor);
     }
     Val checkNum = tot.back() - comboU.back()[0];
@@ -218,9 +211,7 @@ VerifyInfo verify(ReadIopVal& iop, size_t po2, const CircuitInterface& circuit) 
 
   // Generate accum mixing data
   std::vector<Val> accumMix;
-  for (size_t i = 0; i < circuit.mix_size(); i++) {
-    accumMix.push_back(iop.rngBaseVal());
-  }
+  for (size_t i = 0; i < circuit.mix_size(); i++) { accumMix.push_back(iop.rngBaseVal()); }
 
   // Read accum merkle root
   MerkleTreeVerifier accumMerkle("accum", iop, domain, accumSize, kQueries);
@@ -275,9 +266,7 @@ std::vector<Val> verifyV3(ReadIopVal& iop, size_t po2, const CircuitInterfaceV3&
     const GroupInfoV3& group = circuit.getGroupInfo()[i];
 
     // Draw Fiat-Shamir randomness for the group.
-    for (size_t j = 0; j < group.mixCount; j++) {
-      mix.push_back(iop.rngBaseVal());
-    }
+    for (size_t j = 0; j < group.mixCount; j++) { mix.push_back(iop.rngBaseVal()); }
 
     // Read and commit to the globals for the group.
     if (group.globalCount > 0) {

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,17 +35,13 @@ struct ShaState {
 
   void write(std::vector<uint32_t>& out) {
     const uint32_t* data = reinterpret_cast<const uint32_t*>(this);
-    for (size_t i = 0; i < sizeof(ShaState) / 4; i++) {
-      out.push_back(data[i]);
-    }
+    for (size_t i = 0; i < sizeof(ShaState) / 4; i++) { out.push_back(data[i]); }
   }
 
   void read(const uint32_t* in, size_t count) {
     assert(count == sizeof(ShaState) / 4);
     uint32_t* data = reinterpret_cast<uint32_t*>(this);
-    for (size_t i = 0; i < count; i++) {
-      data[i] = in[i];
-    }
+    for (size_t i = 0; i < count; i++) { data[i] = in[i]; }
   }
 };
 
@@ -153,9 +149,7 @@ template <typename Context> void ShaECall(Context& context) {
       sha.a = oldA.back(4) + oldA.back(68);
       sha.e = oldE.back(4) + oldE.back(68);
       sha.w = 0;
-      if (i == 3) {
-        sha.count--;
-      }
+      if (i == 3) { sha.count--; }
       oldA.push(sha.a);
       oldE.push(sha.e);
       context.store(sha.stateOutAddr + 3 - i, htonl(sha.a));

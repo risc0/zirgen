@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -116,9 +116,7 @@ std::string getTapsConstName() {
 
 bool isEntryPoint(ComponentOp component) {
   StringRef name = component.getName();
-  if (name.starts_with("test$") || name.ends_with("$accum") || name == "Top") {
-    return true;
-  }
+  if (name.starts_with("test$") || name.ends_with("$accum") || name == "Top") { return true; }
   return component->hasAttr("entry");
 }
 
@@ -130,13 +128,11 @@ bool isBufferComponent(ComponentOp component) {
 void getZirgenBlockArgumentNames(mlir::FunctionOpInterface funcOp,
                                  mlir::Region& r,
                                  mlir::OpAsmSetValueNameFn setNameFn) {
-  if (r != funcOp.getFunctionBody())
-    return;
+  if (r != funcOp.getFunctionBody()) return;
 
   for (auto [argNum, arg] : llvm::enumerate(funcOp.getArguments())) {
     auto argName = funcOp.getArgAttrOfType<StringAttr>(argNum, "zirgen.argName");
-    if (argName)
-      setNameFn(arg, argName);
+    if (argName) setNameFn(arg, argName);
   }
 }
 

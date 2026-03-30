@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -56,17 +56,13 @@ void Decoder::operandsAB(size_t i, mlir::Value& lhs, mlir::Value& rhs) {
 
 void Decoder::operandA(size_t i, mlir::Value& val) {
   const Op& op = prog.ops[i];
-  if (op.operandA >= i) {
-    throw std::runtime_error("reference to undefined value");
-  }
+  if (op.operandA >= i) { throw std::runtime_error("reference to undefined value"); }
   val = polys[op.operandA];
 }
 
 void Decoder::operandB(size_t i, mlir::Value& val) {
   const Op& op = prog.ops[i];
-  if (op.operandB >= i) {
-    throw std::runtime_error("reference to undefined value");
-  }
+  if (op.operandB >= i) { throw std::runtime_error("reference to undefined value"); }
   val = polys[op.operandB];
 }
 
@@ -111,9 +107,7 @@ mlir::func::FuncOp decode(mlir::ModuleOp module, const Program& prog) {
       size_t base = op.operandA;
       size_t count = op.operandB;
       std::vector<uint64_t> words;
-      for (size_t i = 0; i < count; ++i) {
-        words.push_back(prog.constants[base + i]);
-      }
+      for (size_t i = 0; i < count; ++i) { words.push_back(prog.constants[base + i]); }
       mlir::APInt value(count * 64, mlir::ArrayRef<uint64_t>(words));
       mlir::Type t = state.type(op);
       auto attr = mlir::IntegerAttr::get(ctx, llvm::APSInt(value));

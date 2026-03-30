@@ -93,12 +93,10 @@ std::string getDefaultIncludeDir() {
 }
 
 std::string getCircuitName(StringRef inputFilename) {
-  if (!circuitName.empty())
-    return circuitName;
+  if (!circuitName.empty()) return circuitName;
 
   StringRef fn = StringRef(inputFilename).rsplit('/').second;
-  if (fn.empty())
-    fn = inputFilename;
+  if (fn.empty()) fn = inputFilename;
   fn.consume_back(".zir");
   return fn.str();
 }
@@ -159,9 +157,7 @@ int main(int argc, char* argv[]) {
 
   llvm::SourceMgr sourceManager;
   std::vector<std::string> dirs(includeDirs.begin(), includeDirs.end());
-  if (dirs.empty()) {
-    dirs.push_back(getDefaultIncludeDir());
-  }
+  if (dirs.empty()) { dirs.push_back(getDefaultIncludeDir()); }
   sourceManager.setIncludeDirs(dirs);
   mlir::SourceMgrDiagnosticHandler sourceMgrHandler(sourceManager, &context);
   openMainFile(sourceManager, inputFilename);
@@ -172,22 +168,16 @@ int main(int argc, char* argv[]) {
   auto ast = parser.parseModule();
   if (!ast) {
     const auto& errors = parser.getErrors();
-    for (const auto& error : errors) {
-      sourceManager.PrintMessage(llvm::errs(), error);
-    }
+    for (const auto& error : errors) { sourceManager.PrintMessage(llvm::errs(), error); }
     llvm::errs() << "parsing failed with " << errors.size() << " errors\n";
     return 1;
   }
 
   std::optional<mlir::ModuleOp> zhlModule = zirgen::dsl::lower(context, sourceManager, ast.get());
-  if (!zhlModule) {
-    return 1;
-  }
+  if (!zhlModule) { return 1; }
 
   std::optional<mlir::ModuleOp> typedModule = zirgen::Typing::typeCheck(context, zhlModule.value());
-  if (!typedModule) {
-    return 1;
-  }
+  if (!typedModule) { return 1; }
 
   mlir::PassManager pm(&context);
   applyDefaultTimingPassManagerCLOptions(pm);
@@ -210,8 +200,7 @@ int main(int argc, char* argv[]) {
 
   auto& checkPasses = pm.nest<zirgen::Zhlt::CheckFuncOp>();
   checkPasses.addPass(zirgen::ZStruct::createInlineLayoutPass());
-  if (multiplyIf)
-    checkPasses.addPass(zirgen::Zll::createIfToMultiplyPass());
+  if (multiplyIf) checkPasses.addPass(zirgen::Zll::createIfToMultiplyPass());
   checkPasses.addPass(mlir::createCanonicalizerPass());
   checkPasses.addPass(mlir::createCSEPass());
   if (multiplyIf) {
@@ -227,8 +216,7 @@ int main(int argc, char* argv[]) {
   }
 
   typedModule->walk([&](mlir::FunctionOpInterface op) {
-    if (op.getName().contains("test$"))
-      op.erase();
+    if (op.getName().contains("test$")) op.erase();
   });
 
   auto circuitName = getCircuitName(inputFilename);

@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -45,8 +45,7 @@ struct AttachGlobalLayoutPattern : public OpInterfaceRewritePattern<FunctionOpIn
     funcOp.walk([&](Zhlt::GetGlobalLayoutOp getGlobalOp) {
       ZStruct::GlobalConstOp constOp = globalLayoutOp;
 
-      if (getGlobalOp.getBuffer() != bufferName)
-        return;
+      if (getGlobalOp.getBuffer() != bufferName) return;
 
       if (!bindLayoutOp) {
         rewriter.setInsertionPointToStart(&funcOp.getFunctionBody().front());
@@ -81,9 +80,7 @@ struct GenerateStepsPass : public GenerateStepsBase<GenerateStepsPass> {
     SmallVector<CheckFuncOp> checkFuncs;
 
     getOperation().walk([&](ComponentOp component) {
-      if (Zhlt::isEntryPoint(component)) {
-        addStep(component);
-      }
+      if (Zhlt::isEntryPoint(component)) { addStep(component); }
     });
 
     RewritePatternSet patterns(&getContext());

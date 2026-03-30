@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -59,9 +59,7 @@ uint32_t sbox(uint64_t in) {
 
 cells_t full_round(const cells_t& in, size_t idx) {
   cells_t out = add_const(in, idx);
-  for (size_t i = 0; i < CELLS; i++) {
-    out[i] = sbox(out[i]);
-  }
+  for (size_t i = 0; i < CELLS; i++) { out[i] = sbox(out[i]); }
   return mul_mds(out);
 }
 
@@ -74,15 +72,9 @@ cells_t partial_round(const cells_t& in, size_t idx) {
 cells_t poseidon_mix(const cells_t& in) {
   cells_t cur = in;
   size_t idx = 0;
-  for (size_t i = 0; i < ROUNDS_HALF_FULL; i++) {
-    cur = full_round(cur, idx++);
-  }
-  for (size_t i = 0; i < ROUNDS_PARTIAL; i++) {
-    cur = partial_round(cur, idx++);
-  }
-  for (size_t i = 0; i < ROUNDS_HALF_FULL; i++) {
-    cur = full_round(cur, idx++);
-  }
+  for (size_t i = 0; i < ROUNDS_HALF_FULL; i++) { cur = full_round(cur, idx++); }
+  for (size_t i = 0; i < ROUNDS_PARTIAL; i++) { cur = partial_round(cur, idx++); }
+  for (size_t i = 0; i < ROUNDS_HALF_FULL; i++) { cur = full_round(cur, idx++); }
   return cur;
 }
 
@@ -97,13 +89,9 @@ Digest poseidonHash(const uint32_t* data, size_t size) {
       curUsed = 0;
     }
   }
-  if (curUsed != 0) {
-    cur = poseidon_mix(cur);
-  }
+  if (curUsed != 0) { cur = poseidon_mix(cur); }
   Digest out;
-  for (size_t i = 0; i < 8; i++) {
-    out.words[i] = toMontgomery(cur[i]);
-  }
+  for (size_t i = 0; i < 8; i++) { out.words[i] = toMontgomery(cur[i]); }
   return out;
 }
 
@@ -115,16 +103,12 @@ Digest poseidonHashPair(Digest x, Digest y) {
   }
   cur = poseidon_mix(cur);
   Digest out;
-  for (size_t i = 0; i < 8; i++) {
-    out.words[i] = toMontgomery(cur[i]);
-  }
+  for (size_t i = 0; i < 8; i++) { out.words[i] = toMontgomery(cur[i]); }
   return out;
 }
 
 PoseidonRng::PoseidonRng() : pool_used(0) {
-  for (size_t i = 0; i < CELLS; i++) {
-    cells[i] = 0;
-  }
+  for (size_t i = 0; i < CELLS; i++) { cells[i] = 0; }
 }
 
 void PoseidonRng::mix(const Digest& data) {
@@ -151,9 +135,7 @@ uint32_t PoseidonRng::generateBits(size_t bits) {
   uint64_t val = generateFp();
   for (size_t i = 0; i < 3; i++) {
     uint64_t newVal = generateFp();
-    if (val == 0) {
-      val = newVal;
-    }
+    if (val == 0) { val = newVal; }
   }
   return and_mask & val;
 }

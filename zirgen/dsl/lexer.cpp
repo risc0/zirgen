@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,9 +47,7 @@ Token Lexer::takeToken() {
 
   // End any imports
   while (c == 0) {
-    if (stack.empty()) {
-      return tok_eof;
-    }
+    if (stack.empty()) { return tok_eof; }
     this->source = stack.back();
     stack.pop_back();
     skipToNextToken();
@@ -139,9 +137,7 @@ Token Lexer::takeToken() {
 
     try {
       this->literal = std::stol(digitString, nullptr, base);
-    } catch (std::out_of_range const& ex) {
-      error("Literal value exceeds legal range");
-    }
+    } catch (std::out_of_range const& ex) { error("Literal value exceeds legal range"); }
     return tok_literal;
   }
 
@@ -155,9 +151,7 @@ Token Lexer::takeToken() {
       c = takeNextChar();
     }
 
-    if (c == '\n') {
-      error("String literals must be closed before the end of the line");
-    }
+    if (c == '\n') { error("String literals must be closed before the end of the line"); }
 
     return tok_string_literal;
   }
@@ -181,9 +175,7 @@ Token Lexer::takeToken() {
 
   if (c == '.') {
     if (takeNextChar() == '.') {
-      if (takeNextChar() == '.') {
-        return tok_variadic;
-      }
+      if (takeNextChar() == '.') { return tok_variadic; }
       unget();
       return tok_range;
     } else {
@@ -246,20 +238,14 @@ void Lexer::error(llvm::StringRef error) {
 
 void Lexer::skipWhitespace() {
   int c;
-  do {
-    c = takeNextChar();
-  } while (isspace(c));
+  do { c = takeNextChar(); } while (isspace(c));
   unget();
 }
 
 void Lexer::skipToEndOfLine() {
   int c;
-  do {
-    c = takeNextChar();
-  } while (c != '\n' && c != 0);
-  if (c == 0) {
-    unget();
-  }
+  do { c = takeNextChar(); } while (c != '\n' && c != 0);
+  if (c == 0) { unget(); }
 }
 
 void Lexer::skipToEndOfBlockComment() {

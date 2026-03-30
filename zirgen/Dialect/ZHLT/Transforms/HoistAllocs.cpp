@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,9 +41,7 @@ struct Layout {
   std::set<std::string> names;
   Layout() {}
   explicit Layout(LayoutType t) : fields(t.getFields()) {
-    for (auto& fi : fields) {
-      names.insert(fi.name.str());
-    }
+    for (auto& fi : fields) { names.insert(fi.name.str()); }
   }
   void erase(std::string name) {
     names.erase(name);
@@ -56,9 +54,7 @@ struct Layout {
     throw std::runtime_error("Failed to erase nonexistent field " + name);
   }
   void insert(std::string name, Type type) {
-    if (contains(name)) {
-      throw std::runtime_error("Failed to insert duplicate field " + name);
-    }
+    if (contains(name)) { throw std::runtime_error("Failed to insert duplicate field " + name); }
     names.insert(name);
     FieldInfo field;
     field.name = StringAttr::get(type.getContext(), name);
@@ -77,9 +73,7 @@ class rebuild {
   Type build(Type original) {
     // If this type has been rebuilt, use the new version instead.
     auto rebuilt = oldToNew.find(original);
-    if (rebuilt != oldToNew.end()) {
-      return rebuilt->second;
-    }
+    if (rebuilt != oldToNew.end()) { return rebuilt->second; }
     MLIRContext* ctx = original.getContext();
     if (LayoutType st = dyn_cast<LayoutType>(original)) {
       // If the type is a layout struct, rebuild it.
@@ -105,9 +99,7 @@ class rebuild {
 
 public:
   rebuild(LayoutMap& layouts) : layouts(layouts) {
-    for (auto& pair : layouts) {
-      build(pair.first);
-    }
+    for (auto& pair : layouts) { build(pair.first); }
   }
   operator TypeMap() { return oldToNew; }
 };
@@ -127,31 +119,24 @@ struct LayoutTarget : public ConversionTarget {
   LayoutTarget(MLIRContext& ctx, TypeConverter& tc) : ConversionTarget(ctx) {
     addDynamicallyLegalOp<Zhlt::ComponentOp>([&](Zhlt::ComponentOp comp) -> bool {
       for (Type t : comp.getArgumentTypes()) {
-        if (!tc.isLegal(t))
-          return false;
+        if (!tc.isLegal(t)) return false;
       }
       for (Type t : comp.getResultTypes()) {
-        if (!tc.isLegal(t))
-          return false;
+        if (!tc.isLegal(t)) return false;
       }
       for (Block& block : comp.getBody()) {
         for (Type t : block.getArgumentTypes()) {
-          if (!tc.isLegal(t))
-            return false;
+          if (!tc.isLegal(t)) return false;
         }
       }
       return true;
     });
     markUnknownOpDynamicallyLegal([&](Operation* op) -> bool {
       for (Type t : op->getResultTypes()) {
-        if (!tc.isLegal(t)) {
-          return false;
-        }
+        if (!tc.isLegal(t)) { return false; }
       }
       for (Type t : op->getOperandTypes()) {
-        if (!tc.isLegal(t)) {
-          return false;
-        }
+        if (!tc.isLegal(t)) { return false; }
       }
       return true;
     });
@@ -224,9 +209,7 @@ struct ConvertComponent : public OpConversionPattern<Zhlt::ComponentOp> {
     rewriter.startOpModification(comp);
     comp.setType(outFuncType);
     auto body = &comp.getBody();
-    if (failed(rewriter.convertRegionTypes(body, *converter, &signature))) {
-      return failure();
-    }
+    if (failed(rewriter.convertRegionTypes(body, *converter, &signature))) { return failure(); }
     rewriter.finalizeOpModification(comp);
     return success();
   }
@@ -267,9 +250,7 @@ struct Hoist : public OpRewritePattern<Zhlt::ComponentOp> {
     for (size_t argIndex = 0; argIndex != op.getConstructParam().size(); ++argIndex) {
       // Examine each parameter.
       Value argValue = body.getArgument(argIndex);
-      if (!usedOnlyInAlloc(argValue)) {
-        continue;
-      }
+      if (!usedOnlyInAlloc(argValue)) { continue; }
       Type regType = replaceArgUses(body, argValue, argIndex, rewriter);
       // Change the component's function signature; the parameter types are
       // duplicated.
@@ -281,9 +262,7 @@ struct Hoist : public OpRewritePattern<Zhlt::ComponentOp> {
       // corresponding argument value in a call to NondetReg before passing
       // it in, thereby matching the new type signature.
       op->getParentOfType<ModuleOp>().walk([&](Zhlt::ConstructOp cons) {
-        if (cons.getCallee() != op.getSymName()) {
-          return;
-        }
+        if (cons.getCallee() != op.getSymName()) { return; }
         auto loc = cons.getLoc();
         rewriter.setInsertionPoint(cons.getOperation());
         Value allocArg = cons.getOperands()[argIndex];
@@ -330,9 +309,7 @@ private:
       Operation* user = iter.getUser();
       iter++;
       auto owner = dyn_cast<Zhlt::ConstructOp>(user);
-      if (!regType) {
-        regType = owner->getResultTypes()[0];
-      }
+      if (!regType) { regType = owner->getResultTypes()[0]; }
       eraseStorage(owner, layouts);
       body.getArgument(argIndex).setType(regType);
       rewriter.replaceOp(owner, argValue);
@@ -364,29 +341,19 @@ struct Merge : public OpRewritePattern<Zhlt::ConstructOp> {
   LogicalResult matchAndRewrite(Zhlt::ConstructOp op, PatternRewriter& rewriter) const final {
     // If the target operation is a call to NondetReg, it may be a candidate
     // for merging; we will examine its argument value.
-    if (!isAlloc(op) || 2 != op.getOperands().size()) {
-      return failure();
-    }
+    if (!isAlloc(op) || 2 != op.getOperands().size()) { return failure(); }
     Operation* argOp = op.getOperands()[0].getDefiningOp();
-    if (!argOp) {
-      return failure();
-    }
+    if (!argOp) { return failure(); }
     // If the argument came from zstruct.lookup of @super, it may have been
     // the result of a previous allocation.
     LookupOp argLook = dyn_cast<LookupOp>(argOp);
-    if (!argLook || argLook.getMember() != "@super") {
-      return failure();
-    }
+    if (!argLook || argLook.getMember() != "@super") { return failure(); }
     // Examine the struct whose super value we are allocating; did it come
     // from a previous call to NondetReg?
     Value source = argLook.getBase();
-    if (!source.getDefiningOp()) {
-      return failure();
-    }
+    if (!source.getDefiningOp()) { return failure(); }
     auto lookBase = dyn_cast<Zhlt::ConstructOp>(source.getDefiningOp());
-    if (!lookBase || !isAlloc(lookBase)) {
-      return failure();
-    }
+    if (!lookBase || !isAlloc(lookBase)) { return failure(); }
     // We have passed the gauntlet: this operation is redundant and can be
     // replaced with the value provided to the super lookup operation. We
     // can also delete the storage provided in the layout structure.
@@ -404,13 +371,9 @@ struct HoistAllocsPass : public HoistAllocsBase<HoistAllocsPass> {
     RewritePatternSet patterns(ctx);
     patterns.insert<Hoist>(ctx, layouts);
     patterns.insert<Merge>(ctx, layouts);
-    if (applyPatternsGreedily(mod, std::move(patterns)).failed()) {
-      signalPassFailure();
-    }
+    if (applyPatternsGreedily(mod, std::move(patterns)).failed()) { signalPassFailure(); }
     TypeMap replacements = rebuild(layouts);
-    if (convert(mod, replacements).failed()) {
-      return signalPassFailure();
-    }
+    if (convert(mod, replacements).failed()) { return signalPassFailure(); }
   }
 
   LayoutMap collect(ModuleOp mod) {

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,8 +49,7 @@ struct Outliner {
   Outliner(MLIRContext* ctx) : builder(ctx) { builder.createBlock(&topRegion); }
 
   void ensureMapped(Value val) {
-    if (mapper.contains(val))
-      return;
+    if (mapper.contains(val)) return;
 
     if (auto opVal = llvm::dyn_cast<OpResult>(val)) {
       Operation* owner = opVal.getOwner();
@@ -65,9 +64,7 @@ struct Outliner {
   void insertCloned(Operation* op) { insertCloned(builder.getBlock(), op); }
 
   void insertCloned(Block* block, Operation* op) {
-    for (auto arg : op->getOperands()) {
-      ensureMapped(arg);
-    }
+    for (auto arg : op->getOperands()) { ensureMapped(arg); }
     Operation* cloned = op->cloneWithoutRegions(mapper);
     block->push_back(cloned);
 
@@ -80,9 +77,7 @@ struct Outliner {
     assert(newRegion.empty());
     Block* block = &newRegion.emplaceBlock();
 
-    for (auto& op : oldRegion.front()) {
-      insertCloned(block, &op);
-    }
+    for (auto& op : oldRegion.front()) { insertCloned(block, &op); }
   }
 };
 
@@ -94,9 +89,7 @@ struct OutlineIfsPass : public OutlineIfsBase<OutlineIfsPass> {
     funcOp.walk<WalkOrder::PostOrder>([&](IfOp ifOp) {
       Outliner outliner(&getContext());
 
-      for (auto& op : *ifOp.getBody()) {
-        outliner.insertCloned(&op);
-      }
+      for (auto& op : *ifOp.getBody()) { outliner.insertCloned(&op); }
 
       std::string newFuncName = (funcOp.getSymName() + "_" + std::to_string(idx++)).str();
       builder.setInsertionPointToEnd(getOperation().getBody());

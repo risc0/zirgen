@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,12 +22,8 @@
 namespace zirgen::rv32im_v1 {
 
 PCRegImpl::PCRegImpl() {
-  for (size_t i = 0; i < 3; i++) {
-    bytes.emplace_back(Label("bytes", i));
-  }
-  for (size_t i = 0; i < 2; i++) {
-    twits.emplace_back(Label("twits", i));
-  }
+  for (size_t i = 0; i < 3; i++) { bytes.emplace_back(Label("bytes", i)); }
+  for (size_t i = 0; i < 2; i++) { twits.emplace_back(Label("twits", i)); }
 }
 
 void PCRegImpl::set(Val val, size_t offset) {
@@ -74,17 +70,17 @@ void ResetStepImpl::set(Top top) {
   Val isOutput = top->code->stepInfo->at<StepType::RESET>()->isOutput;
   Val isFini = top->code->stepInfo->at<StepType::RESET>()->isFini;
 
-  IF(isInit) {
+  IF (isInit) {
     haltType->set(0);
     sysExitCode->set(0);
 
-    IF(first) {
+    IF (first) {
       for (size_t i = 0; i < kDigestWords / 2; i++) {
         imageIdWrites[i]->doPreLoad(
             cycle, info.rootAddr + i, global->pre->imageId->words[i]->get());
       }
     }
-    IF(1 - first) {
+    IF (1 - first) {
       for (size_t i = 0; i < kDigestWords / 2; i++) {
         imageIdWrites[i]->doPreLoad(cycle,
                                     info.rootAddr + kDigestWords / 2 + i,
@@ -96,13 +92,13 @@ void ResetStepImpl::set(Top top) {
     // If usermode is set correctly PC low 2 bits should be 00
     verifyPC->set(pc->getU32().bytes[0] / 4);
   }
-  IF(isOutput) {
+  IF (isOutput) {
     userMode->set(BACK(1, userMode->get()));
     haltType->set(0);
     verifyPC->set(0);
 
     pc->set(BACK(1, pc->get()));
-    IF(first) {
+    IF (first) {
       // Make sure we are in 'halted' state
       eq(BACK(1, body->majorSelect->get()), MajorType::kHalt);
       auto haltCycle = body->majorMux->at<MajorType::kHalt>();
@@ -115,7 +111,7 @@ void ResetStepImpl::set(Top top) {
         global->output->words[i]->set(word);
       }
     }
-    IF(1 - first) {
+    IF (1 - first) {
       auto haltCycle = body->majorMux->at<MajorType::kHalt>();
       Val addr = BACK(2, haltCycle->writeAddr->get());
       sysExitCode->set(BACK(1, sysExitCode->get()));
@@ -127,7 +123,7 @@ void ResetStepImpl::set(Top top) {
       }
     }
   }
-  IF(isFini) {
+  IF (isFini) {
     userMode->set(BACK(1, userMode->get()));
     sysExitCode->set(BACK(1, sysExitCode->get()));
     haltType->set(sysExitCode->get());
@@ -136,7 +132,7 @@ void ResetStepImpl::set(Top top) {
     // This toggle is used to set the post state imageId to 0 in the case of a halt/terminate.
     Val enablePostState = 1 - haltType->at(HaltType::kTerminate);
 
-    IF(first) {
+    IF (first) {
       // Set offset to 0 here to prevent adding default +4 offset to final value written to globals.
       pc->set(BACK(1, pc->get()), /*offset=*/0);
 
@@ -147,7 +143,7 @@ void ResetStepImpl::set(Top top) {
       U32Val pcAndUserMode = pc->getU32() + U32Val(BACK(1, userMode->get()), 0, 0, 0);
       global->post->pc->setWithFactor(pcAndUserMode, enablePostState);
     }
-    IF(1 - first) {
+    IF (1 - first) {
       pc->set(BACK(1, pc->get()));
 
       for (size_t i = 0; i < kDigestWords / 2; i++) {
@@ -169,14 +165,14 @@ void HaltCycleImpl::set(Top top) {
 
   eqz(BACK(1, body->nextMajor->get()) - MajorType::kHalt);
   Val isHalt = BACK(1, body->majorSelect->at(MajorType::kHalt));
-  IF(isHalt) {
+  IF (isHalt) {
     sysExitCode->set(BACK(1, sysExitCode->get()));
     userExitCode->set(BACK(1, userExitCode->get()));
     writeAddr->set(BACK(1, writeAddr->get()));
   }
 
   Val isFromEcall = BACK(1, body->majorSelect->at(MajorType::kECall));
-  IF(isFromEcall) {
+  IF (isFromEcall) {
     ECallCycle ecall = body->majorMux->at<MajorType::kECall>();
     Val isFromEcallHalt = BACK(1, ecall->minorSelect->at(ECallType::kHalt));
     eq(1, isFromEcallHalt);
@@ -195,7 +191,7 @@ void HaltCycleImpl::set(Top top) {
   }
 
   Val isFromPageFault = BACK(1, body->majorSelect->at(MajorType::kPageFault));
-  IF(isFromPageFault) {
+  IF (isFromPageFault) {
     sysExitCode->set(HaltType::kSystemSplit);
     userExitCode->set(0);
     writeAddr->set(kZerosOffset);
@@ -243,14 +239,14 @@ void BodyStepImpl::set(Top top) {
   NONDET {
     Val prevMajor = BACK(1, nextMajor->get());
     Val isDecode = isz(prevMajor - MajorType::kMuxSize);
-    IF(isDecode) {
+    IF (isDecode) {
       XLOG("%u: BODY pc: %10x", cycle, curPC);
       doExtern("trace", "", 0, {curPC});
       Val major = doExtern("getMajor", "", 1, {cycle, curPC})[0];
       majorSelect->set(major);
     }
-    IF(1 - isDecode) {
-      IF(1 - isz(prevMajor - MajorType::kHalt)) {
+    IF (1 - isDecode) {
+      IF (1 - isz(prevMajor - MajorType::kHalt)) {
         XLOG("%u: BODY pc: %10x, major = %u", cycle, curPC, prevMajor);
       }
       majorSelect->set(prevMajor);

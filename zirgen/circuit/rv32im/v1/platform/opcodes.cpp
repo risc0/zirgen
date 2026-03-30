@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,9 +31,7 @@ struct OpcodeTable {
   void addOpcode(
       uint32_t major, uint32_t minor, const char* mnemonic, int opcode, int func3, int func7) {
     OpcodeInfo leafData = {mnemonic, major, minor};
-    if (opcode == -1) {
-      throw std::runtime_error("Opcode must be specified");
-    }
+    if (opcode == -1) { throw std::runtime_error("Opcode must be specified"); }
     DecodeSwitch& stage1 = decode[opcode];
     if (func3 == -1) {
       stage1.leafData = leafData;
@@ -67,19 +65,13 @@ struct OpcodeTable {
   }
 
   OpcodeInfo resolve(uint32_t inst) {
-    if ((inst & 3) != 3) {
-      return OpcodeInfo();
-    }
+    if ((inst & 3) != 3) { return OpcodeInfo(); }
     uint32_t opcode = (inst & 0x7c) >> 2;
     DecodeSwitch& stage1 = decode[opcode];
-    if (stage1.isLeaf) {
-      return stage1.leafData;
-    }
+    if (stage1.isLeaf) { return stage1.leafData; }
     uint32_t func3 = (inst & 0x7000) >> 12;
     DecodeSwitch& stage2 = stage1.lower[func3];
-    if (stage2.isLeaf) {
-      return stage2.leafData;
-    }
+    if (stage2.isLeaf) { return stage2.leafData; }
     uint32_t func7 = inst >> 25;
     DecodeSwitch& stage3 = stage2.lower[func7];
     return stage3.leafData;

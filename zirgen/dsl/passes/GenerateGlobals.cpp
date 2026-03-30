@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -45,9 +45,7 @@ struct GenerateGlobalsPass : public GenerateGlobalsBase<GenerateGlobalsPass> {
 
     for (auto buffer : globalLayouts) {
       SmallVector<FieldInfo> members;
-      for (auto member : buffer.second) {
-        members.push_back({member.first, member.second});
-      }
+      for (auto member : buffer.second) { members.push_back({member.first, member.second}); }
 
       std::string name = "@" + buffer.first.str();
       auto layoutType = ZStruct::LayoutType::get(ctx, name, members);

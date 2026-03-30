@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -91,24 +91,20 @@ void MultiplyCycleImpl::set(Top top) {
 
   body->pc->set(curPC + 4);
   body->nextMajor->set(MajorType::kMuxSize);
-  IF(useHigh * (1 - rdZero->isZero())) {
+  IF (useHigh * (1 - rdZero->isZero())) {
     writeRd->doWrite(cycle, kRegisterOffset - 32 * userMode + decoder->rd(), mul->getHigh());
   }
-  IF((1 - useHigh) * (1 - rdZero->isZero())) {
+  IF ((1 - useHigh) * (1 - rdZero->isZero())) {
     writeRd->doWrite(cycle, kRegisterOffset - 32 * userMode + decoder->rd(), mul->getLow());
   }
-  IF(rdZero->isZero()) { writeRd->doNOP(); }
+  IF (rdZero->isZero()) { writeRd->doNOP(); }
 
   // Verify decoding
 #define OPM(id, mnemonic, opc, f3, f7, immFmt, useImm_, usePo2_, signedA_, signedB_, useHigh_)     \
-  IF(minorSelect->at(id % kMinorMuxSize)) {                                                        \
+  IF (minorSelect->at(id % kMinorMuxSize)) {                                                       \
     eq(decoder->opcode(), opc * 4 + 3);                                                            \
-    if (f3 != -1) {                                                                                \
-      eq(decoder->func3(), f3);                                                                    \
-    }                                                                                              \
-    if (f7 != -1) {                                                                                \
-      eq(decoder->func7(), f7);                                                                    \
-    }                                                                                              \
+    if (f3 != -1) { eq(decoder->func3(), f3); }                                                    \
+    if (f7 != -1) { eq(decoder->func7(), f7); }                                                    \
   }
 #include "zirgen/circuit/rv32im/v1/platform/rv32im.inl"
 }

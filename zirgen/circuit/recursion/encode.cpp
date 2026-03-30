@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -153,9 +153,7 @@ struct Instructions {
                               0x9b05688c,
                               0x1f83d9ab,
                               0x5be0cd19};
-    for (size_t i = 0; i < 8; i++) {
-      shaInit.push_back(addHalfsConst(shaInitVals[i]));
-    }
+    for (size_t i = 0; i < 8; i++) { shaInit.push_back(addHalfsConst(shaInitVals[i])); }
     uint32_t shaKVals[] = {0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1,
                            0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
                            0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786,
@@ -167,9 +165,7 @@ struct Instructions {
                            0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a,
                            0x5b9cca4f, 0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208,
                            0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2};
-    for (size_t i = 0; i < 64; i++) {
-      shaK.push_back(addHalfsConst(shaKVals[i]));
-    }
+    for (size_t i = 0; i < 64; i++) { shaK.push_back(addHalfsConst(shaKVals[i])); }
     ShaRng::setConstants(*this);
   }
 
@@ -213,24 +209,18 @@ struct Instructions {
       data.back().writeAddr = nextOut;
     }
     size_t outId = nextOut++;
-    if (out) {
-      toId[out] = outId;
-    }
+    if (out) { toId[out] = outId; }
     data.back().data.micro[microUsed].opcode = opcode;
     data.back().data.micro[microUsed].operands[0] = op0;
     data.back().data.micro[microUsed].operands[1] = op1;
     data.back().data.micro[microUsed].operands[2] = op2;
     microUsed++;
-    if (microUsed == 3) {
-      microUsed = 0;
-    }
+    if (microUsed == 3) { microUsed = 0; }
     return outId;
   }
 
   void finishMicros() {
-    while (microUsed) {
-      addMicro(Value(), MicroOpcode::CONST, 0, 0);
-    }
+    while (microUsed) { addMicro(Value(), MicroOpcode::CONST, 0, 0); }
   }
 
   uint64_t
@@ -282,9 +272,7 @@ struct Instructions {
     data.back().data.poseidon2Mem.keepUpperState = keepUpperState;
     data.back().data.poseidon2Mem.prepFull = prepFull;
     data.back().data.poseidon2Mem.group = group;
-    for (size_t i = 0; i < 8; i++) {
-      data.back().data.poseidon2Mem.inputs[i] = inputs[i];
-    }
+    for (size_t i = 0; i < 8; i++) { data.back().data.poseidon2Mem.inputs[i] = inputs[i]; }
     data.back().writeAddr = nextOut;
   }
 
@@ -381,9 +369,7 @@ struct Instructions {
       high.push_back(addMicro(Value(), MicroOpcode::MUL, high_sum, fp4Rot1));
     }
     uint64_t ret = nextOut;
-    for (size_t i = 0; i < 8; i++) {
-      addMicro(Value(), MicroOpcode::ADD, low[i], high[i]);
-    }
+    for (size_t i = 0; i < 8; i++) { addMicro(Value(), MicroOpcode::ADD, low[i], high[i]); }
     return ret;
   }
 
@@ -397,9 +383,7 @@ struct Instructions {
       high.push_back(addMicro(Value(), MicroOpcode::MUL, words[i * 2 + 1], fp4Rot1));
     }
     uint64_t ret = nextOut;
-    for (size_t i = 0; i < 8; i++) {
-      addMicro(Value(), MicroOpcode::ADD, low[i], high[i]);
-    }
+    for (size_t i = 0; i < 8; i++) { addMicro(Value(), MicroOpcode::ADD, low[i], high[i]); }
     return ret;
   }
 
@@ -424,9 +408,7 @@ struct Instructions {
                           llvm::ArrayRef<uint64_t> vals) {
     std::vector<uint64_t> words;
 
-    for (size_t i = 0; i < 8; i++) {
-      words.push_back(tag + i);
-    }
+    for (size_t i = 0; i < 8; i++) { words.push_back(tag + i); }
     for (size_t i = 0; i < digests.size(); i++) {
       auto kind = digestTypes[i];
       if (kind == DigestKind::Default) {
@@ -434,15 +416,11 @@ struct Instructions {
       }
       if (kind == DigestKind::Sha256) {
         // SHA-256 Vals are already in the correct representation.
-        for (size_t j = 0; j < 8; j++) {
-          words.push_back(digests[i] + j);
-        }
+        for (size_t j = 0; j < 8; j++) { words.push_back(digests[i] + j); }
       } else if (kind == DigestKind::Poseidon2) {
         // Poseidon2 vals need to be broken up into the word representation.
         std::vector<uint64_t> digestVals;
-        for (size_t j = 0; j < 8; j++) {
-          digestVals.push_back(digests[i] + j);
-        }
+        for (size_t j = 0; j < 8; j++) { digestVals.push_back(digests[i] + j); }
         taggedStructPushVals(words, digestVals);
       } else {
         throw std::runtime_error("Invalid kind for doTaggedStruct");
@@ -455,12 +433,8 @@ struct Instructions {
     size_t bitCount = words.size() * 32 + 16;
     uint32_t finalWord = 0x00800000 | digests.size();
     words.push_back(addHalfsConst(finalWord));
-    if (words.size() % 16 == 15) {
-      words.push_back(addConst(0));
-    }
-    while (words.size() % 16 != 15) {
-      words.push_back(addConst(0));
-    }
+    if (words.size() % 16 == 15) { words.push_back(addConst(0)); }
+    while (words.size() % 16 != 15) { words.push_back(addConst(0)); }
     bitCount = (bitCount & 0x0000FFFF) << 16 | (bitCount & 0xFFFF0000) >> 16;
     bitCount = (bitCount & 0x00FF00FF) << 8 | (bitCount & 0xFF00FF00) >> 8;
     words.push_back(addHalfsConst(bitCount));
@@ -519,8 +493,7 @@ struct Instructions {
 
   std::tuple<uint64_t, uint64_t, std::vector<uint64_t>> doHashCheckedBytesPublic(uint64_t evalPt,
                                                                                  uint64_t count) {
-    if (!count)
-      throw std::runtime_error("Cannont publically hash empty checked bytes");
+    if (!count) throw std::runtime_error("Cannont publically hash empty checked bytes");
 
     std::vector<uint64_t> evals;
     std::vector<uint64_t> bytes;
@@ -531,9 +504,7 @@ struct Instructions {
           addCheckedBytes(evalPt, /*keepCoeffs=*/0, /*keepUpperState=*/(i != 0), /*prepFull=*/0));
       uint64_t b0 = addPoseidon2Store(/*doMont=*/0, /*group=*/0);
       addPoseidon2Store(/*doMont=*/0, /*group=*/1);
-      for (size_t i = 0; i < 16; i++) {
-        bytes.push_back(b0 + i);
-      }
+      for (size_t i = 0; i < 16; i++) { bytes.push_back(b0 + i); }
       addPoseidon2Load(
           /*doMont=*/0,
           /*keepState*/ 1,
@@ -562,9 +533,7 @@ struct Instructions {
       }
       coeffs.push_back(tot);
     }
-    while (coeffs.size() % 16 != 0) {
-      coeffs.push_back(zero);
-    }
+    while (coeffs.size() % 16 != 0) { coeffs.push_back(zero); }
     auto sha = doSha(coeffs, 1);
     return {poseidon, sha, evals};
   }
@@ -574,9 +543,7 @@ struct Instructions {
       auto psuite = poseidon2HashSuite();
       auto hashVal = psuite->hash(nullptr, 0);
       std::vector<uint64_t> elems;
-      for (auto elem : hashVal.words) {
-        elems.push_back(addConst(elem));
-      }
+      for (auto elem : hashVal.words) { elems.push_back(addConst(elem)); }
       return doIntoDigestPoseidon2(elems);
     }
     uint64_t keepUpperState = 0;
@@ -695,8 +662,7 @@ struct Instructions {
             [&](EqualZeroOp op) { addMicro(Value(), MicroOpcode::EQ, toId[op.getIn()], 0); })
         .Case<HashOp>([&](HashOp op) {
           size_t k = 0;
-          if (!op.getIn().empty())
-            k = cast<ValType>(op.getIn()[0].getType()).getFieldK();
+          if (!op.getIn().empty()) k = cast<ValType>(op.getIn()[0].getType()).getFieldK();
           size_t size = op.getIn().size();
           std::vector<uint64_t> ids(k * size);
           for (size_t i = 0; i < size; i++) {
@@ -719,9 +685,7 @@ struct Instructions {
               }
             }
           }
-          while (ids.size() % 16 != 0) {
-            ids.push_back(0);
-          }
+          while (ids.size() % 16 != 0) { ids.push_back(0); }
           if (hashType == HashType::SHA256) {
             toId[op.getOut()] = doSha(ids, 0);
           } else if (hashType == HashType::POSEIDON2) {
@@ -732,9 +696,7 @@ struct Instructions {
         })
         .Case<IntoDigestOp>([&](IntoDigestOp op) {
           std::vector<uint64_t> inputs;
-          for (size_t i = 0; i < op.getIn().size(); i++) {
-            inputs.push_back(toId[op.getIn()[i]]);
-          }
+          for (size_t i = 0; i < op.getIn().size(); i++) { inputs.push_back(toId[op.getIn()[i]]); }
           auto kind = cast<DigestType>(op.getOut().getType()).getKind();
           if (kind == DigestKind::Default) {
             kind = (hashType == HashType::SHA256) ? DigestKind::Sha256 : DigestKind::Poseidon2;
@@ -785,17 +747,13 @@ struct Instructions {
             digestIds.push_back(toId[digest]);
             digestTypes.push_back(cast<DigestType>(digest.getType()).getKind());
           }
-          for (auto val : op.getVals()) {
-            valsIds.push_back(toId[val]);
-          }
+          for (auto val : op.getVals()) { valsIds.push_back(toId[val]); }
           toId[op.getOut()] = doTaggedStruct(tagDigest, digestIds, digestTypes, valsIds);
         })
         .Case<HashAssertEqOp>([&](HashAssertEqOp op) {
           uint64_t lhs = toId[op.getLhs()];
           uint64_t rhs = toId[op.getRhs()];
-          for (size_t i = 0; i < 8; i++) {
-            addMicro(Value(), MicroOpcode::EQ, lhs + i, rhs + i);
-          }
+          for (size_t i = 0; i < 8; i++) { addMicro(Value(), MicroOpcode::EQ, lhs + i, rhs + i); }
         })
         .Case<Iop::ReadOp>([&](Iop::ReadOp op) {
           size_t k = 0;
@@ -907,18 +865,14 @@ struct Instructions {
           Value evalPt = op.getEvalPt();
           uint64_t count = op.getEvalsCount();
           auto [poseidon, evals] = doHashCheckedBytes(toId[evalPt], count);
-          for (size_t i = 0; i < evals.size(); i++) {
-            toId[op.getEvaluations()[i]] = evals[i];
-          }
+          for (size_t i = 0; i < evals.size(); i++) { toId[op.getEvaluations()[i]] = evals[i]; }
           toId[op.getDigest()] = poseidon;
         })
         .Case<HashCheckedBytesPublicOp>([&](HashCheckedBytesPublicOp op) {
           Value evalPt = op.getEvalPt();
           uint64_t count = op.getEvalsCount();
           auto [poseidon, sha, evals] = doHashCheckedBytesPublic(toId[evalPt], count);
-          for (size_t i = 0; i < evals.size(); i++) {
-            toId[op.getEvaluations()[i]] = evals[i];
-          }
+          for (size_t i = 0; i < evals.size(); i++) { toId[op.getEvaluations()[i]] = evals[i]; }
           toId[op.getDigest()] = poseidon;
           toId[op.getPubDigest()] = sha;
         })
@@ -933,12 +887,8 @@ void ShaRng::setConstants(Instructions& insts) {
   auto pool0Digest = shaHash("Hello");
   auto pool1Digest = shaHash("World");
   insts.shaRngConsts = insts.nextOut;
-  for (size_t i = 0; i < 8; i++) {
-    insts.addHalfsConst(pool0Digest.words[i]);
-  }
-  for (size_t i = 0; i < 8; i++) {
-    insts.addHalfsConst(pool1Digest.words[i]);
-  }
+  for (size_t i = 0; i < 8; i++) { insts.addHalfsConst(pool0Digest.words[i]); }
+  for (size_t i = 0; i < 8; i++) { insts.addHalfsConst(pool1Digest.words[i]); }
 }
 
 ShaRng::ShaRng(Instructions& insts) {
@@ -954,9 +904,7 @@ void ShaRng::step(Instructions& insts) {
 }
 
 uint64_t ShaRng::generate(Instructions& insts) {
-  if (poolUsed == 8) {
-    step(insts);
-  }
+  if (poolUsed == 8) { step(insts); }
   return pool0 + (poolUsed++);
 }
 
@@ -974,9 +922,7 @@ uint64_t ShaRng::generateFp(Instructions& insts) {
   // Combine 6 U32 values to produce an FP
   std::vector<uint64_t> part_ids;
   // First we make the 6 parts
-  for (size_t i = 0; i < 6; i++) {
-    part_ids.push_back(generate(insts));
-  }
+  for (size_t i = 0; i < 6; i++) { part_ids.push_back(generate(insts)); }
   // We now these in 2 at a time to create a single uniformly distributed Fp
   insts.addMicro(Value(), MicroOpcode::MIX_RNG, part_ids[0], part_ids[1], 0);
   insts.addMicro(Value(), MicroOpcode::MIX_RNG, part_ids[2], part_ids[3], 1);
@@ -1029,9 +975,7 @@ void Poseidon2Rng::mix(Instructions& insts, uint64_t digest) {
   std::vector<uint64_t> digest_ids;
   uint64_t keepState = 0;
   if (digest != 0) {
-    for (size_t i = 0; i < 8; i++) {
-      digest_ids.push_back(digest + i);
-    }
+    for (size_t i = 0; i < 8; i++) { digest_ids.push_back(digest + i); }
     insts.addPoseidon2Load(/*doMont=*/1,
                            keepState,
                            /*keepUpperState=*/0,
@@ -1043,9 +987,7 @@ void Poseidon2Rng::mix(Instructions& insts, uint64_t digest) {
   if (!isInit) {
     for (size_t i = 0; i < 3; i++) {
       std::vector<uint64_t> prev_ids;
-      for (size_t j = 0; j < 8; j++) {
-        prev_ids.push_back(curState + i * 8 + j);
-      }
+      for (size_t j = 0; j < 8; j++) { prev_ids.push_back(curState + i * 8 + j); }
       insts.addPoseidon2Load(
           /*doMont=*/0,
           keepState,
@@ -1105,9 +1047,7 @@ std::vector<uint32_t> encode(HashType hashType,
                              llvm::DenseMap<Value, uint64_t>* toIdReturn,
                              EncodeStats* stats) {
   Instructions insts(hashType);
-  for (Operation& op : block->without_terminator()) {
-    insts.addInst(op);
-  }
+  for (Operation& op : block->without_terminator()) { insts.addInst(op); }
 
   insts.finalize();
   llvm::errs() << "Actual cycles = " << insts.data.size() << "\n";
@@ -1158,9 +1098,7 @@ std::vector<uint32_t> encode(HashType hashType,
       set(pos++, insts.data[cycle].data.poseidon2Mem.prepFull);
       set(pos + size_t(insts.data[cycle].data.poseidon2Mem.group), 1);
       pos += 3;
-      for (size_t i = 0; i < 8; i++) {
-        set(pos++, insts.data[cycle].data.poseidon2Mem.inputs[i]);
-      }
+      for (size_t i = 0; i < 8; i++) { set(pos++, insts.data[cycle].data.poseidon2Mem.inputs[i]); }
       break;
     case OpType::POSEIDON2_FULL:
       set(pos + insts.data[cycle].data.poseidon2Full.cycle, 1);
@@ -1177,9 +1115,7 @@ std::vector<uint32_t> encode(HashType hashType,
       assert(false);
     }
   }
-  if (toIdReturn) {
-    *toIdReturn = std::move(insts.toId);
-  }
+  if (toIdReturn) { *toIdReturn = std::move(insts.toId); }
   return code;
 }
 

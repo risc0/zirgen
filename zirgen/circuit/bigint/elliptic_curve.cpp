@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -588,9 +588,7 @@ void makeRepeatedECAddTest(mlir::OpBuilder builder, mlir::Location loc, size_t b
   AffinePt expected(xR, yR, curve);
   auto result = add(builder, loc, lhs, rhs);
   // iterate from 1 because the first repetition was already done
-  for (size_t rp = 1; rp < reps; rp++) {
-    result = add(builder, loc, result, rhs);
-  }
+  for (size_t rp = 1; rp < reps; rp++) { result = add(builder, loc, result, rhs); }
   result.validate_equal(builder, loc, expected);
 }
 
@@ -612,9 +610,7 @@ void makeRepeatedECDoubleTest(mlir::OpBuilder builder,
   AffinePt expected(xR, yR, curve);
   auto result = doub(builder, loc, inp);
   // iterate from 1 because the first repetition was already done
-  for (size_t rp = 1; rp < reps; rp++) {
-    result = doub(builder, loc, inp);
-  }
+  for (size_t rp = 1; rp < reps; rp++) { result = doub(builder, loc, inp); }
   result.validate_equal(builder, loc, expected);
 }
 

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -50,9 +50,7 @@ void OptimizeLayoutPass::runOnOperation() {
   // distribute the changes back into the type system
   auto replacements = layout::rebuild(circuit);
   // replace the original types with the improved versions
-  if (layout::convert(module, replacements).failed()) {
-    return signalPassFailure();
-  }
+  if (layout::convert(module, replacements).failed()) { return signalPassFailure(); }
 }
 
 std::unique_ptr<OperationPass<ModuleOp>> createOptimizeLayoutPass() {

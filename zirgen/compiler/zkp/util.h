@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,18 +37,14 @@ inline size_t constexpr roundUp(size_t a, size_t b) {
 /// Compute the smalled power `p` of x such that `x^p >= in`
 inline size_t constexpr nearestPoX(size_t in, size_t x) {
   size_t r = 1;
-  while (r < in) {
-    r *= x;
-  }
+  while (r < in) { r *= x; }
   return r;
 }
 
 /// Compute the smalled power `2` of x such that `2^p >= in`
 inline size_t constexpr nearestPo2(size_t in) {
   size_t r = 1;
-  while (r < in) {
-    r *= 2;
-  }
+  while (r < in) { r *= 2; }
   return r;
 }
 
@@ -66,9 +62,7 @@ inline size_t constexpr logXCeil(size_t in, size_t x) {
 /// Compute `ceil(log_2(in))`, i.e. find the smallest value `out` such that `2^out >= in`.
 inline size_t constexpr log2Ceil(size_t in) {
   size_t r = 0;
-  while ((size_t(1) << r) < in) {
-    r++;
-  }
+  while ((size_t(1) << r) < in) { r++; }
   return r;
 }
 

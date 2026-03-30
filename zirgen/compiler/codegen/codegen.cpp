@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -107,23 +107,17 @@ void optimizeSimple(ModuleOp module) {
   OpPassManager& opm = pm.nest<func::FuncOp>();
   opm.addPass(createCanonicalizerPass());
   opm.addPass(createCSEPass());
-  if (failed(pm.run(module))) {
-    throw std::runtime_error("Failed to apply stage1 passes");
-  }
+  if (failed(pm.run(module))) { throw std::runtime_error("Failed to apply stage1 passes"); }
 }
 
 void optimizeSplit(ModuleOp module, unsigned stage, const StageOptions& opts) {
   PassManager pm(module.getContext());
   OpPassManager& opm = pm.nest<func::FuncOp>();
   opm.addPass(Zll::createSplitStagePass(stage));
-  if (opts.addExtraPasses) {
-    opts.addExtraPasses(opm);
-  }
+  if (opts.addExtraPasses) { opts.addExtraPasses(opm); }
   opm.addPass(createCanonicalizerPass());
   opm.addPass(createCSEPass());
-  if (failed(pm.run(module))) {
-    throw std::runtime_error("Failed to apply stage1 passes");
-  }
+  if (failed(pm.run(module))) { throw std::runtime_error("Failed to apply stage1 passes"); }
 }
 
 void optimizePoly(ModuleOp module, const EmitCodeOptions& opts) {
@@ -133,9 +127,7 @@ void optimizePoly(ModuleOp module, const EmitCodeOptions& opts) {
   opm.addPass(createCanonicalizerPass());
   opm.addPass(createCSEPass());
   opm.addPass(Zll::createComputeTapsPass());
-  if (failed(pm.run(module))) {
-    throw std::runtime_error("Failed to apply stage1 passes");
-  }
+  if (failed(pm.run(module))) { throw std::runtime_error("Failed to apply stage1 passes"); }
 }
 
 llvm::StringRef getOutputDir() {
@@ -251,9 +243,7 @@ private:
     std::string filename = path + "/" + name;
     std::error_code ec;
     auto ofs = std::make_unique<llvm::raw_fd_ostream>(filename, ec);
-    if (ec) {
-      throw std::runtime_error("Unable to open file: " + filename);
-    }
+    if (ec) { throw std::runtime_error("Unable to open file: " + filename); }
     return ofs;
   }
 };
@@ -327,9 +317,7 @@ void emitCodeZirgenPoly(ModuleOp module, StringRef outputDir) {
   pm.addPass(mlir::createInlinerPass());
   pm.addPass(createCanonicalizerPass());
   pm.addPass(createCSEPass());
-  if (failed(pm.run(module))) {
-    throw std::runtime_error("Failed to apply stage1 passes");
-  }
+  if (failed(pm.run(module))) { throw std::runtime_error("Failed to apply stage1 passes"); }
 
   // Save as IR so we can generate predicates to verify the validity polynomial.
   emitter.emitIR("validity", module);
@@ -349,13 +337,10 @@ void emitCodeZirgenPoly(ModuleOp module, StringRef outputDir) {
   pm.addPass(Zll::createBalancedSplitPass(/*maxOps=*/1000));
   pm.addPass(createCanonicalizerPass());
   pm.addPass(createCSEPass());
-  if (failed(pm.run(module))) {
-    throw std::runtime_error("Failed to balanced split");
-  }
+  if (failed(pm.run(module))) { throw std::runtime_error("Failed to balanced split"); }
 
   module.walk([&](func::FuncOp func) {
-    if (SymbolTable::getSymbolVisibility(func) == SymbolTable::Visibility::Private)
-      return;
+    if (SymbolTable::getSymbolVisibility(func) == SymbolTable::Visibility::Private) return;
 
     emitter.emitPolyFunc("poly_fp", func);
     emitter.emitEvalCheck(".cu", ".cuh", func);

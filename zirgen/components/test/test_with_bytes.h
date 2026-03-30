@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -57,9 +57,7 @@ struct TestWithBytes {
     runner.setup(&handler, in);
     runner.runStage(0);
     Zll::Interpreter::Buffer out = runner.out;
-    if (dump) {
-      runner.dump();
-    }
+    if (dump) { runner.dump(); }
     runner.done();
     return out;
   }

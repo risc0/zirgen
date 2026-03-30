@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,8 +30,7 @@ struct RustEmitZhlt : public EmitZhlt {
     cg << CodegenIdent<IdentKind::Macro>(cg.getStringAttr("defineBufferList")) << "!{\n";
 
     cg << "all: [";
-    for (auto desc : bufs)
-      cg << CodegenIdent<IdentKind::Var>(desc.getName()) << ",";
+    for (auto desc : bufs) cg << CodegenIdent<IdentKind::Var>(desc.getName()) << ",";
     cg << "],\n";
 
     cg << "rows: [";
@@ -42,14 +41,12 @@ struct RustEmitZhlt : public EmitZhlt {
 
     cg << "taps: [";
     for (auto desc : bufs)
-      if (desc.getRegGroupId())
-        cg << CodegenIdent<IdentKind::Var>(desc.getName()) << ",";
+      if (desc.getRegGroupId()) cg << CodegenIdent<IdentKind::Var>(desc.getName()) << ",";
     cg << "],\n";
 
     cg << "globals: [";
     for (auto desc : bufs)
-      if (desc.isGlobal())
-        cg << CodegenIdent<IdentKind::Var>(desc.getName()) << ",";
+      if (desc.isGlobal()) cg << CodegenIdent<IdentKind::Var>(desc.getName()) << ",";
     cg << "],}\n";
 
     for (auto desc : bufs) {
@@ -92,21 +89,13 @@ LogicalResult EmitZhlt::doValType() {
   typeWalker.addWalk([&](ValType ty) { fields.insert(ty.getField()); });
 
   module.walk([&](Operation* op) {
-    for (Type ty : op->getOperandTypes()) {
-      typeWalker.walk(ty);
-    }
-    for (Type ty : op->getResultTypes()) {
-      typeWalker.walk(ty);
-    }
+    for (Type ty : op->getOperandTypes()) { typeWalker.walk(ty); }
+    for (Type ty : op->getResultTypes()) { typeWalker.walk(ty); }
   });
 
-  if (fields.empty()) {
-    fields.insert(Zll::getDefaultField(ctx));
-  }
+  if (fields.empty()) { fields.insert(Zll::getDefaultField(ctx)); }
 
-  if (fields.size() > 1) {
-    return emitError(UnknownLoc::get(ctx), "Ambiguous circuit field");
-  }
+  if (fields.size() > 1) { return emitError(UnknownLoc::get(ctx), "Ambiguous circuit field"); }
 
   auto field = *fields.begin();
 
@@ -119,8 +108,7 @@ LogicalResult EmitZhlt::doValType() {
 
 LogicalResult EmitZhlt::doBuffers() {
   auto bufs = Zll::lookupModuleAttr<BuffersAttr>(module);
-  if (failed(emitBufferList(bufs.getBuffers())))
-    return failure();
+  if (failed(emitBufferList(bufs.getBuffers()))) return failure();
 
   return success();
 }
@@ -144,8 +132,7 @@ std::unique_ptr<EmitZhlt> getEmitter(mlir::ModuleOp module, zirgen::codegen::Cod
 
 LogicalResult emitModule(mlir::ModuleOp module, zirgen::codegen::CodegenEmitter& cg) {
   auto emitter = getEmitter(module, cg);
-  if (failed(emitter->emitDefs()))
-    return failure();
+  if (failed(emitter->emitDefs())) return failure();
   cg.emitModule(module);
   return success();
 }

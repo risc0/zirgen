@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -65,8 +65,7 @@ struct GenerateTapsPass : public GenerateTapsBase<GenerateTapsPass> {
             .insert(distance);
         return WalkResult::advance();
       });
-      if (res.wasInterrupted())
-        return WalkResult::interrupt();
+      if (res.wasInterrupted()) return WalkResult::interrupt();
 
       res = check->walk([&](Zll::GetOp op) {
         auto bufOp = op.getBuf().getDefiningOp<GetBufferOp>();
@@ -79,14 +78,11 @@ struct GenerateTapsPass : public GenerateTapsBase<GenerateTapsPass> {
         getOps[std::make_tuple(bufOp.getNameAttr(), op.getOffset(), op.getBack())].push_back(op);
         return WalkResult::advance();
       });
-      if (res.wasInterrupted())
-        return WalkResult::interrupt();
+      if (res.wasInterrupted()) return WalkResult::interrupt();
       return WalkResult::advance();
     });
 
-    if (walkResult.wasInterrupted()) {
-      signalPassFailure();
-    }
+    if (walkResult.wasInterrupted()) { signalPassFailure(); }
 
     SmallVector<Zll::TapAttr> taps;
     for (auto tapBuf : bufs.getTapBuffers()) {

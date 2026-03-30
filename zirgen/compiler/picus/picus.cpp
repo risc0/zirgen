@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -51,8 +51,7 @@ template <typename F> void visit(AnySignal signal, F f, bool visitedLayout = fal
   } else if (auto s = dyn_cast<Signal>(signal)) {
     f(s);
   } else if (auto arr = dyn_cast<SignalArray>(signal)) {
-    for (auto elem : arr)
-      visit(elem, f, visitedLayout);
+    for (auto elem : arr) visit(elem, f, visitedLayout);
   } else if (auto str = dyn_cast<SignalStruct>(signal)) {
     for (auto field : str) {
       if (!visitedLayout || field.getName() != "@layout") {
@@ -122,9 +121,7 @@ public:
     this->mod = mod;
     os << "(prime-number 2013265921)\n";
     for (auto component : mod.getOps<ComponentOp>()) {
-      if (component->hasAttr("picus_analyze")) {
-        workQueue.push(component);
-      }
+      if (component->hasAttr("picus_analyze")) { workQueue.push(component); }
     }
 
     while (!workQueue.empty()) {
@@ -137,8 +134,7 @@ public:
 
 private:
   void printComponent(ComponentOp component) {
-    if (done.count(component))
-      return;
+    if (done.count(component)) return;
     nameCounter = 0;
 
     outputSignalCounter = 0;
@@ -147,8 +143,7 @@ private:
 
     // Non-layout parameters are inputs
     for (BlockArgument param : component.getConstructParam()) {
-      if (isa<StringType>(param.getType()) || isa<VariadicType>(param.getType()))
-        continue;
+      if (isa<StringType>(param.getType()) || isa<VariadicType>(param.getType())) continue;
       AnySignal signal = signalize(freshName(), param.getType());
       declareSignals(signal, SignalType::Input);
       valuesToSignals.insert({param, signal});
@@ -180,9 +175,7 @@ private:
           "This component has a trivial output. Did you mean to add the picus_inline attribute?");
     }
 
-    for (Operation& op : component.getBody().front()) {
-      visitOp(&op);
-    }
+    for (Operation& op : component.getBody().front()) { visitOp(&op); }
 
     os << "(end-module)\n\n";
     done.insert(component);
@@ -289,16 +282,13 @@ private:
   void visitOp(ConstructOp construct) {
     workQueue.push(mod.lookupSymbol<ComponentOp>(construct.getCallee()));
     AnySignal layoutSignal;
-    if (auto layout = construct.getLayout()) {
-      layoutSignal = valuesToSignals.at(layout);
-    }
+    if (auto layout = construct.getLayout()) { layoutSignal = valuesToSignals.at(layout); }
     AnySignal result = signalize(freshName(), construct.getOutType(), /*layout=*/layoutSignal);
     valuesToSignals.insert({construct.getOut(), result});
 
     os << "(call [";
     if (layoutSignal) {
-      llvm::interleave(
-          flatten(layoutSignal), os, [&](Signal s) { os << s.str(); }, " ");
+      llvm::interleave(flatten(layoutSignal), os, [&](Signal s) { os << s.str(); }, " ");
       os << " ";
     }
     llvm::interleave(
@@ -374,9 +364,7 @@ private:
     for (Region& arm : mux.getArms()) {
       muxDefCollector.nextArm(mux.getSelector()[arm.getRegionNumber()]);
       assert(arm.hasOneBlock());
-      for (Operation& op : arm.front()) {
-        visitOp(&op);
-      }
+      for (Operation& op : arm.front()) { visitOp(&op); }
       os << "; mark mux arm\n";
     }
 
@@ -403,13 +391,10 @@ private:
       for (size_t i = 0; i < valueSignals.size(); i++) {
         os << "(assert (= " << valueSignals[i].str();
         for (size_t j = 0; j < armSignals.size(); j++) {
-          if (j != armSignals.size() - 1)
-            os << " (+";
+          if (j != armSignals.size() - 1) os << " (+";
           os << " (* " << selectorSignals[j].str() << " " << armSignals[j][i].str() << ")";
         }
-        for (size_t j = 0; j < armSignals.size(); j++) {
-          os << ")";
-        }
+        for (size_t j = 0; j < armSignals.size(); j++) { os << ")"; }
         os << ")\n";
       }
     }
@@ -434,8 +419,7 @@ private:
   void visitOp(PackOp pack) {
     SmallVector<NamedAttribute> fields;
     for (auto [field, arg] : llvm::zip(pack.getOut().getType().getFields(), pack.getMembers())) {
-      if (field.isPrivate)
-        continue;
+      if (field.isPrivate) continue;
       AnySignal member = valuesToSignals.at(arg);
       fields.emplace_back(field.name, member);
     }
@@ -455,9 +439,7 @@ private:
     for (auto [outs, rets] : llvm::zip(outs, rets)) {
       // Skip emitting vacuous constraints (a = a). These can come from the same
       // layout occuring at different levels of nesting within an @super member.
-      if (outs != rets) {
-        os << "(assert (= " << outs.str() << " " << rets.str() << "))\n";
-      }
+      if (outs != rets) { os << "(assert (= " << outs.str() << " " << rets.str() << "))\n"; }
     }
   }
 
@@ -589,8 +571,7 @@ private:
                                                  [&](Value v) { return valuesToSignals.at(v); }));
 
       // If there are no outputs, this directive adds no information.
-      if (outputs.size() == 0)
-        return;
+      if (outputs.size() == 0) return;
 
       if (inputs.size() > 0) {
         // This is the common case: if all inputs are deterministic, then all outputs
@@ -602,9 +583,7 @@ private:
             os << "(&& (det " << signals[i].str() << ") ";
           }
           os << "(det " << signals[signals.size() - 1].str();
-          for (size_t i = 0; i < signals.size(); i++) {
-            os << ")";
-          }
+          for (size_t i = 0; i < signals.size(); i++) { os << ")"; }
         };
 
         all_deterministic(inputs);
@@ -613,9 +592,7 @@ private:
         os << "))\n";
       } else {
         // If there are no inputs, then the outputs are unconditionally deterministic.
-        for (Signal output : outputs) {
-          declareSignals(output, SignalType::AssumeDeterministic);
-        }
+        for (Signal output : outputs) { declareSignals(output, SignalType::AssumeDeterministic); }
       }
     } else {
       directive->emitError("Cannot lower this directive to Picus");
@@ -632,9 +609,7 @@ private:
       for (size_t i = 0; i < array.getSize(); i++) {
         std::string name = prefix + "_" + std::to_string(i);
         AnySignal sublayout;
-        if (auto arrLayout = cast_if_present<SignalArray>(layout)) {
-          sublayout = arrLayout[i];
-        }
+        if (auto arrLayout = cast_if_present<SignalArray>(layout)) { sublayout = arrLayout[i]; }
         elements.push_back(signalize(name, array.getElement(), sublayout));
       }
       return SignalArray::get(ctx, elements);
@@ -670,13 +645,9 @@ private:
             if (sublayoutCasted) {
               bool isMux = false;
               for (NamedAttribute field : sublayoutCasted) {
-                if (field.getName().strref().starts_with("arm")) {
-                  isMux = true;
-                }
+                if (field.getName().strref().starts_with("arm")) { isMux = true; }
               }
-              if (isMux) {
-                sublayout = sublayoutCasted.get("@super");
-              }
+              if (isMux) { sublayout = sublayoutCasted.get("@super"); }
             }
           }
           fields.emplace_back(field.name, signalize(name, field.type, sublayout));
@@ -702,8 +673,7 @@ private:
   // Returns a flattened list of all the signal names in a signal structure.
   SmallVector<Signal> flatten(AnySignal signal, bool skipLayout = false) {
     SmallVector<Signal> flattened;
-    visit(
-        signal, [&](Signal s) { flattened.push_back(s); }, /*visitedLayout=*/skipLayout);
+    visit(signal, [&](Signal s) { flattened.push_back(s); }, /*visitedLayout=*/skipLayout);
     return flattened;
   }
 
@@ -717,8 +687,7 @@ private:
   }
 
   void declareSignals(AnySignal signal, SignalType type, bool skipLayout = false) {
-    visit(
-        signal, [&](Signal s) { declareSignal(s, type); }, /*visitedLayout=*/skipLayout);
+    visit(signal, [&](Signal s) { declareSignal(s, type); }, /*visitedLayout=*/skipLayout);
   }
 
   void declareSignal(Signal signal, SignalType type) {

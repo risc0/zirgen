@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,9 +33,7 @@ int main(int argc, char* argv[]) {
     uint32_t entryPoint = risc0::loadElf(file, image);
     Runner runner(atoi(argv[2]), image, entryPoint);
     runner.run();
-    if (!runner.done()) {
-      throw std::runtime_error("Didn't get to ecall");
-    }
+    if (!runner.done()) { throw std::runtime_error("Didn't get to ecall"); }
   } catch (const std::runtime_error& err) {
     LOG(1, "Failed: " << err.what());
     exit(1);

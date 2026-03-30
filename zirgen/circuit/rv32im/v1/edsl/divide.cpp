@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -84,9 +84,7 @@ void DivideCycleImpl::set(Top top) {
 
   // Pick the input for the denominator and assign it
   U32Val inB = usePo2 * po2->getPo2() + (1 - usePo2) * rs2;
-  for (size_t i = 0; i < 4; i++) {
-    denom[i]->setExact(inB.bytes[i]);
-  }
+  for (size_t i = 0; i < 4; i++) { denom[i]->setExact(inB.bytes[i]); }
   // Now, run the nondet division computation
   NONDET {
     std::vector<Val> input(9);
@@ -105,17 +103,17 @@ void DivideCycleImpl::set(Top top) {
 
   // Set output
   rdZero->set(decoder->rd());
-  IF(useRem * (1 - rdZero->isZero())) {
+  IF (useRem * (1 - rdZero->isZero())) {
     writeRd->doWrite(cycle,
                      kRegisterOffset - 32 * userMode + decoder->rd(),
                      U32Val({rem[0], rem[1], rem[2], rem[3]}));
   }
-  IF((1 - useRem) * (1 - rdZero->isZero())) {
+  IF ((1 - useRem) * (1 - rdZero->isZero())) {
     writeRd->doWrite(cycle,
                      kRegisterOffset - 32 * userMode + decoder->rd(),
                      U32Val({quot[0], quot[1], quot[2], quot[3]}));
   }
-  IF(rdZero->isZero()) { writeRd->doNOP(); }
+  IF (rdZero->isZero()) { writeRd->doNOP(); }
 
   // Prepare next cycle
   body->pc->set(curPC + 4);
@@ -123,14 +121,10 @@ void DivideCycleImpl::set(Top top) {
 
   // Verify decoding
 #define OPD(id, mnemonic, opc, f3, f7, immFmt, useImm_, usePo2_, signedA_, signedB_, useHigh_)     \
-  IF(minorSelect->at(id % kMinorMuxSize)) {                                                        \
+  IF (minorSelect->at(id % kMinorMuxSize)) {                                                       \
     eq(decoder->opcode(), opc * 4 + 3);                                                            \
-    if (f3 != -1) {                                                                                \
-      eq(decoder->func3(), f3);                                                                    \
-    }                                                                                              \
-    if (f7 != -1) {                                                                                \
-      eq(decoder->func7(), f7);                                                                    \
-    }                                                                                              \
+    if (f3 != -1) { eq(decoder->func3(), f3); }                                                    \
+    if (f7 != -1) { eq(decoder->func7(), f7); }                                                    \
   }
 #include "zirgen/circuit/rv32im/v1/platform/rv32im.inl"
 }
@@ -176,8 +170,8 @@ void VerifyDivideCycleImpl::set(Top top) {
   mul->set(quotAbs->getNormed(), denomAbs->getNormed(), remAbs->getNormed());
   XLOG("  mul->getOut() = %w, denomRemCheck->carry = %u", mul->getOut(), denomRemCheck->getCarry());
   eq(mul->getOut(), numerAbs->getNormed());
-  IF(1 - denomZero->isZero()) { eq(denomRemCheck->getCarry(), 1); }
-  IF(denomZero->isZero()) {
+  IF (1 - denomZero->isZero()) { eq(denomRemCheck->getCarry(), 1); }
+  IF (denomZero->isZero()) {
     eq(rem, numer);
     eq(quot, U32Val(0xff, 0xff, 0xff, 0xff));
   }

@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -51,9 +51,7 @@ void CircomGenerator::emit(mlir::func::FuncOp func, bool encodeOutput) {
       }
     }
   }
-  if (outSize == 0) {
-    outs << "  signal output final_iop[3];\n";
-  }
+  if (outSize == 0) { outs << "  signal output final_iop[3];\n"; }
   outs << "  component iop_init = iop_init_impl();\n";
   curIop = "iop_init.iop";
 
@@ -110,9 +108,7 @@ void CircomGenerator::emit(mlir::func::FuncOp func, bool encodeOutput) {
       outs << ";\n";
     }
   }
-  if (outSize == 0) {
-    outs << "  final_iop <== " << curIop << ";\n";
-  }
+  if (outSize == 0) { outs << "  final_iop <== " << curIop << ";\n"; }
   emitFooter();
 }
 
@@ -202,9 +198,7 @@ void CircomGenerator::emit(NormalizeOp op) {
   outs << "  component comp_" << id << " = normalize_impl(" << op.getBits() << ");\n";
   BigInt low = op.getLow();
   BigInt addP = 0;
-  if (low < 0) {
-    addP = (BigInt(P - 1) - low) / P * P;
-  }
+  if (low < 0) { addP = (BigInt(P - 1) - low) / P * P; }
   outs << "  comp_" << id << ".in <== " << signal[op.getIn()] << " + " << addP.toStr() << ";\n";
   signal[op.getOut()] = "comp_" + std::to_string(id) + ".out";
 }

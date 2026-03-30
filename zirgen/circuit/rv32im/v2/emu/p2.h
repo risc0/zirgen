@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,17 +37,13 @@ struct P2State {
   void write(std::vector<uint32_t>& out) {
     zcheck.fill(0);
     const uint32_t* data = reinterpret_cast<const uint32_t*>(this);
-    for (size_t i = 0; i < sizeof(P2State) / 4; i++) {
-      out.push_back(data[i]);
-    }
+    for (size_t i = 0; i < sizeof(P2State) / 4; i++) { out.push_back(data[i]); }
   }
 
   void read(const uint32_t* in, size_t count) {
     assert(count == sizeof(P2State) / 4);
     uint32_t* data = reinterpret_cast<uint32_t*>(this);
-    for (size_t i = 0; i < count; i++) {
-      data[i] = in[i];
-    }
+    for (size_t i = 0; i < count; i++) { data[i] = in[i]; }
   }
 };
 
@@ -70,18 +66,14 @@ template <typename Context> void p2Rest(Context& context, P2State p2, uint32_t f
   };
   if (p2.hasState) { // If we have state, load it
     step(STATE_POSEIDON_LOAD_STATE, 0);
-    for (size_t i = 0; i < 8; i++) {
-      p2.cells[16 + i] = context.load(p2.stateAddr + i);
-    }
+    for (size_t i = 0; i < 8; i++) { p2.cells[16 + i] = context.load(p2.stateAddr + i); }
   }
   while (p2.count) { // While we have data to process
     // Do load
     step(STATE_POSEIDON_LOAD_IN, 0);
     if (p2.isElem) {
       for (size_t i = 0; i < 16; i++) {
-        if (i == 8) {
-          step(STATE_POSEIDON_LOAD_IN, 1);
-        }
+        if (i == 8) { step(STATE_POSEIDON_LOAD_IN, 1); }
         p2.cells[i] = context.load(p2.bufInAddr++);
       }
     } else {
@@ -113,16 +105,12 @@ template <typename Context> void p2Rest(Context& context, P2State p2, uint32_t f
       }
     }
   } else {
-    for (size_t i = 0; i < 8; i++) {
-      context.store(p2.bufOutAddr + i, p2.cells[i]);
-    }
+    for (size_t i = 0; i < 8; i++) { context.store(p2.bufOutAddr + i, p2.cells[i]); }
   }
   p2.bufInAddr = 0;
   if (p2.hasState) {
     step(STATE_POSEIDON_STORE_STATE, 0);
-    for (size_t i = 0; i < 8; i++) {
-      context.store(p2.stateAddr + i, p2.cells[16 + i]);
-    }
+    for (size_t i = 0; i < 8; i++) { context.store(p2.stateAddr + i, p2.cells[16 + i]); }
   }
   step(finalState, 0);
 }

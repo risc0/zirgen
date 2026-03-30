@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -70,16 +70,12 @@ struct FpExt {
 
   // Implement the addition/subtraction overloads
   constexpr FpExt operator+=(FpExt rhs) {
-    for (uint32_t i = 0; i < 4; i++) {
-      elems[i] += rhs.elems[i];
-    }
+    for (uint32_t i = 0; i < 4; i++) { elems[i] += rhs.elems[i]; }
     return *this;
   }
 
   constexpr FpExt operator-=(FpExt rhs) {
-    for (uint32_t i = 0; i < 4; i++) {
-      elems[i] -= rhs.elems[i];
-    }
+    for (uint32_t i = 0; i < 4; i++) { elems[i] -= rhs.elems[i]; }
     return *this;
   }
 
@@ -100,9 +96,7 @@ struct FpExt {
   // Implement the simple multiplication case by the subfield Fp
   // Fp * FpExt is done as a free function due to C++'s operator overloading rules.
   constexpr FpExt operator*=(Fp rhs) {
-    for (uint32_t i = 0; i < 4; i++) {
-      elems[i] *= rhs;
-    }
+    for (uint32_t i = 0; i < 4; i++) { elems[i] *= rhs; }
     return *this;
   }
 
@@ -135,9 +129,7 @@ struct FpExt {
   // Equality
   constexpr bool operator==(FpExt rhs) const {
     for (uint32_t i = 0; i < 4; i++) {
-      if (elems[i] != rhs.elems[i]) {
-        return false;
-      }
+      if (elems[i] != rhs.elems[i]) { return false; }
     }
     return true;
   }
@@ -156,9 +148,7 @@ constexpr inline FpExt operator*(Fp a, FpExt b) {
 constexpr inline FpExt pow(FpExt x, size_t n) {
   FpExt tot(1);
   while (n != 0) {
-    if (n % 2 == 1) {
-      tot *= x;
-    }
+    if (n % 2 == 1) { tot *= x; }
     n = n / 2;
     x *= x;
   }

@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,9 +26,7 @@ using namespace zirgen::Zll;
 TEST(verify_v3, hello) {
   // Read the seal if it exists
   FILE* file = fopen("zirgen/circuit/verify/test/proof.bin", "rb");
-  if (!file) {
-    FAIL() << "Failed to resolve the file containing the seal to verify\n";
-  }
+  if (!file) { FAIL() << "Failed to resolve the file containing the seal to verify\n"; }
   fseek(file, 0, SEEK_END);
   size_t size = ftell(file) / 4;
   fseek(file, 0, SEEK_SET);
@@ -59,8 +57,7 @@ TEST(verify_v3, hello) {
   auto rng = interp.getHashSuite().makeRng();
   ReadIop riop(std::move(rng), proof.data(), proof.size());
   interp.setIop(func.getArgument(0), &riop);
-  if (failed(interp.runBlock(func.front())))
-    FAIL() << "failed to evaluate block in interpreter";
+  if (failed(interp.runBlock(func.front()))) FAIL() << "failed to evaluate block in interpreter";
 
   // Compute some stats
   std::map<std::string, size_t> opCounts;
@@ -91,7 +88,5 @@ TEST(verify_v3, hello) {
   }
   std::cout << "Tot cycles = " << totCycles << "\n";
   std::cout << "Hash cycles = " << hashCycles << "\n";
-  for (const auto& kvp : opCounts) {
-    std::cout << kvp.first << ": " << kvp.second << "\n";
-  }
+  for (const auto& kvp : opCounts) { std::cout << kvp.first << ": " << kvp.second << "\n"; }
 }

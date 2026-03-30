@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,9 +30,7 @@ void WomFiniWrapperImpl::set(MacroInst inst, Val writeAddr) {
 }
 
 SetGlobalImpl::SetGlobalImpl(WomHeader header) : body(Label("wom_body"), header, 4, 3) {
-  for (size_t i = 0; i < kOutSize; i++) {
-    outRegs.emplace_back(Label("out", i), "out");
-  }
+  for (size_t i = 0; i < kOutSize; i++) { outRegs.emplace_back(Label("out", i), "out"); }
 }
 
 void SetGlobalImpl::set(MacroInst inst, Val writeAddr) {
@@ -42,7 +40,7 @@ void SetGlobalImpl::set(MacroInst inst, Val writeAddr) {
   select->set(inst->operands[1]);
 
   for (size_t index = 0; index != kOutDigests * 2; ++index) {
-    IF(select->at(index)) {
+    IF (select->at(index)) {
       for (size_t i = 0; i < kDigestWords / 2; ++i) {
         auto vals = regs[i]->doRead(inst->operands[0] + i);
         for (size_t j = 0; j < 2; ++j) {

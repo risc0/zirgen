@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,9 +27,7 @@ namespace zirgen::Zhlt {
 template <typename StructLikeType>
 StructLikeType dropMembers(StructLikeType type, ArrayRef<std::pair<size_t, size_t>> merges) {
   SmallVector<FieldInfo> fields(type.getFields());
-  for (auto merge : llvm::reverse(merges)) {
-    fields.erase(fields.begin() + merge.second);
-  }
+  for (auto merge : llvm::reverse(merges)) { fields.erase(fields.begin() + merge.second); }
   return StructLikeType::get(type.getContext(), type.getId(), fields);
 }
 
@@ -51,8 +49,7 @@ struct ElideRedundantMembersPass : public ElideRedundantMembersBase<ElideRedunda
     for (auto component : getOperation().getBodyRegion().getOps<ComponentOp>()) {
       auto ret = cast<ReturnOp>(component.getBody().back().getTerminator());
       auto pack = dyn_cast_if_present<PackOp>(ret.getValue().getDefiningOp());
-      if (!pack)
-        continue;
+      if (!pack) continue;
 
       StructType type = pack.getOut().getType();
       auto members = pack.getMembers();

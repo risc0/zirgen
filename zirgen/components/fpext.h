@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -72,9 +72,7 @@ FpExt inv(CaptureFpExt a);
 
 template <> struct LogPrep<FpExt> {
   static void toLogVec(std::vector<Val>& out, FpExt x) {
-    for (size_t i = 0; i < kExtSize; i++) {
-      out.push_back(x.elem(i));
-    }
+    for (size_t i = 0; i < kExtSize; i++) { out.push_back(x.elem(i)); }
   }
 };
 

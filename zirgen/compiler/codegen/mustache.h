@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -62,13 +62,9 @@ namespace mustache {
 
 template <typename string_type> string_type trim(const string_type& s) {
   auto it = s.begin();
-  while (it != s.end() && std::isspace(*it)) {
-    it++;
-  }
+  while (it != s.end() && std::isspace(*it)) { it++; }
   auto rit = s.rbegin();
-  while (rit.base() != it && std::isspace(*rit)) {
-    rit++;
-  }
+  while (rit.base() != it && std::isspace(*rit)) { rit++; }
   return {it, rit.base()};
 }
 
@@ -105,9 +101,7 @@ std::vector<string_type> split(const string_type& s, typename string_type::value
   std::vector<string_type> elems;
   std::basic_stringstream<typename string_type::value_type> ss(s);
   string_type item;
-  while (std::getline(ss, item, delim)) {
-    elems.push_back(item);
-  }
+  while (std::getline(ss, item, delim)) { elems.push_back(item); }
   return elems;
 }
 
@@ -309,28 +303,20 @@ public:
   void set(const string_type& name, const basic_data& var) {
     if (is_object()) {
       auto it = obj_->find(name);
-      if (it != obj_->end()) {
-        obj_->erase(it);
-      }
+      if (it != obj_->end()) { obj_->erase(it); }
       obj_->insert(std::pair<string_type, basic_data>{name, var});
     }
   }
   const basic_data* get(const string_type& name) const {
-    if (!is_object()) {
-      return nullptr;
-    }
+    if (!is_object()) { return nullptr; }
     const auto& it = obj_->find(name);
-    if (it == obj_->end()) {
-      return nullptr;
-    }
+    if (it == obj_->end()) { return nullptr; }
     return &it->second;
   }
 
   // List data
   void push_back(const basic_data& var) {
-    if (is_list()) {
-      list_->push_back(var);
-    }
+    if (is_list()) { list_->push_back(var); }
   }
   const basic_list<string_type>& list_value() const { return *list_; }
   bool is_empty_list() const { return is_list() && list_->empty(); }
@@ -397,16 +383,12 @@ public:
 
   virtual const basic_data<string_type>* get(const string_type& name) const override {
     // process {{.}} name
-    if (name.size() == 1 && name.at(0) == '.') {
-      return items_.front();
-    }
+    if (name.size() == 1 && name.at(0) == '.') { return items_.front(); }
     if (name.find('.') == string_type::npos) {
       // process normal name without having to split which is slower
       for (const auto& item : items_) {
         const auto var = item->get(name);
-        if (var) {
-          return var;
-        }
+        if (var) { return var; }
       }
       return nullptr;
     }
@@ -416,13 +398,9 @@ public:
       auto var = item;
       for (const auto& n : names) {
         var = var->get(n);
-        if (!var) {
-          break;
-        }
+        if (!var) { break; }
       }
-      if (var) {
-        return var;
-      }
+      if (var) { return var; }
     }
     return nullptr;
   }
@@ -430,9 +408,7 @@ public:
   virtual const basic_data<string_type>* get_partial(const string_type& name) const override {
     for (const auto& item : items_) {
       const auto var = item->get(name);
-      if (var) {
-        return var;
-      }
+      if (var) { return var; }
     }
     return nullptr;
   }
@@ -452,9 +428,7 @@ public:
   bool is_empty_or_contains_only_whitespace() const {
     for (const auto ch : data) {
       // don't look at newlines
-      if (ch != ' ' && ch != '\t') {
-        return false;
-      }
+      if (ch != ' ' && ch != '\t') { return false; }
     }
     return true;
   }
@@ -546,9 +520,7 @@ public:
 
   void walk_children(const walk_callback& callback) {
     for (auto& child : children) {
-      if (child.walk(callback) != walk_control::walk) {
-        break;
-      }
+      if (child.walk(callback) != walk_control::walk) { break; }
     }
   }
 
@@ -562,9 +534,7 @@ private:
     }
     for (auto& child : children) {
       control = child.walk(callback);
-      if (control == walk_control::stop) {
-        return control;
-      }
+      if (control == walk_control::stop) { return control; }
     }
     return control;
   }
@@ -640,17 +610,13 @@ private:
         }
 
         if (!parsed_whitespace) {
-          if (current_text.empty()) {
-            current_text_position = input_position;
-          }
+          if (current_text.empty()) { current_text_position = input_position; }
           current_text.append(1, input[input_position]);
           input_position++;
         }
       }
 
-      if (!parse_tag) {
-        continue;
-      }
+      if (!parse_tag) { continue; }
 
       // Find the next tag start delimiter
       const string_size_type tag_location_start = input_position;
@@ -663,9 +629,7 @@ private:
       const string_type& current_tag_delimiter_end{
           tag_is_unescaped_var ? brace_delimiter_end_unescaped : ctx.delim_set.end};
       const auto current_tag_delimiter_end_size = current_tag_delimiter_end.size();
-      if (tag_is_unescaped_var) {
-        ++tag_contents_location;
-      }
+      if (tag_is_unescaped_var) { ++tag_contents_location; }
       const string_size_type tag_location_end{
           input.find(current_tag_delimiter_end, tag_contents_location)};
       if (tag_location_end == string_type::npos) {
@@ -723,9 +687,7 @@ private:
     root_component.walk_children(
         [&error_message](component<string_type>& comp) ->
         typename component<string_type>::walk_control {
-          if (!comp.tag.is_section_begin()) {
-            return component<string_type>::walk_control::walk;
-          }
+          if (!comp.tag.is_section_begin()) { return component<string_type>::walk_control::walk; }
           if (comp.children.empty() || !comp.children.back().tag.is_section_end() ||
               comp.children.back().tag.name != comp.tag.name) {
             streamstring ss;
@@ -736,17 +698,13 @@ private:
           comp.children.pop_back(); // remove now useless end section component
           return component<string_type>::walk_control::walk;
         });
-    if (!error_message.empty()) {
-      return;
-    }
+    if (!error_message.empty()) { return; }
   }
 
   bool is_set_delimiter_valid(const string_type& delimiter) const {
     // "Custom delimiters may not contain whitespace or the equals sign."
     for (const auto ch : delimiter) {
-      if (ch == '=' || std::isspace(ch)) {
-        return false;
-      }
+      if (ch == '=' || std::isspace(ch)) { return false; }
     }
     return true;
   }
@@ -754,24 +712,16 @@ private:
   bool parse_set_delimiter_tag(const string_type& contents,
                                delimiter_set<string_type>& delimiter_set) const {
     // Smallest legal tag is "=X X="
-    if (contents.size() < 5) {
-      return false;
-    }
-    if (contents.back() != '=') {
-      return false;
-    }
+    if (contents.size() < 5) { return false; }
+    if (contents.back() != '=') { return false; }
     const auto contents_substr = trim(contents.substr(1, contents.size() - 2));
     const auto spacepos = contents_substr.find(' ');
-    if (spacepos == string_type::npos) {
-      return false;
-    }
+    if (spacepos == string_type::npos) { return false; }
     const auto nonspace = contents_substr.find_first_not_of(' ', spacepos + 1);
     assert(nonspace != string_type::npos);
     const string_type begin = contents_substr.substr(0, spacepos);
     const string_type end = contents_substr.substr(nonspace, contents_substr.size() - nonspace);
-    if (!is_set_delimiter_valid(begin) || !is_set_delimiter_valid(end)) {
-      return false;
-    }
+    if (!is_set_delimiter_valid(begin) || !is_set_delimiter_valid(end)) { return false; }
     delimiter_set.begin = begin;
     delimiter_set.end = end;
     return true;
@@ -863,9 +813,7 @@ public:
 
   using render_handler = std::function<void(const string_type&)>;
   void render(const basic_data<string_type>& data, const render_handler& handler) {
-    if (!is_valid()) {
-      return;
-    }
+    if (!is_valid()) { return; }
     context<string_type> ctx{&data};
     context_internal<string_type> context{ctx};
     render(handler, context);
@@ -894,9 +842,7 @@ private:
                                     return render_component(handler, ctx, comp);
                                   });
     // process the last line, but only for the top-level renderer
-    if (root_renderer) {
-      render_current_line(handler, ctx, nullptr);
-    }
+    if (root_renderer) { render_current_line(handler, ctx, nullptr); }
   }
 
   void render_current_line(const render_handler& handler,
@@ -912,9 +858,7 @@ private:
     }
     if (output) {
       handler(ctx.line_buffer.data);
-      if (comp) {
-        handler(comp->text);
-      }
+      if (comp) { handler(comp->text); }
     }
     ctx.line_buffer.clear();
   }
@@ -978,13 +922,9 @@ private:
           error_message_ = tmpl.error_message();
         } else {
           tmpl.render(handler, ctx, false);
-          if (!tmpl.is_valid()) {
-            error_message_ = tmpl.error_message();
-          }
+          if (!tmpl.is_valid()) { error_message_ = tmpl.error_message(); }
         }
-        if (!tmpl.is_valid()) {
-          return component<string_type>::walk_control::stop;
-        }
+        if (!tmpl.is_valid()) { return component<string_type>::walk_control::stop; }
       }
       break;
     case tag_type::set_delimiter:

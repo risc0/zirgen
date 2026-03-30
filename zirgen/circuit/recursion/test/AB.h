@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,9 +31,7 @@ template <size_t N = 2, typename Func>
 void doAB(HashType hashType, const std::vector<std::vector<uint32_t>>& proofs, Func userFunc) {
   std::array<ArgumentInfo, N> argTypes;
   argTypes[0] = gbuf(kOutSize);
-  for (size_t i = 1; i != N; ++i) {
-    argTypes[i] = ioparg();
-  }
+  for (size_t i = 1; i != N; ++i) { argTypes[i] = ioparg(); }
   assert(1 + proofs.size() == N);
   Module module;
   module.addFunc<N>("test", std::move(argTypes), userFunc);
@@ -67,8 +65,7 @@ void doAB(HashType hashType, const std::vector<std::vector<uint32_t>>& proofs, F
     riops.emplace_back(new ReadIop(std::move(rng), proof.data(), proof.size()));
     interp.setIop(func.getArgument(iopIndex++), &*riops.back());
   }
-  if (failed(interp.runBlock(func.front())))
-    FAIL() << "failed to evaluate block in interpreter";
+  if (failed(interp.runBlock(func.front()))) FAIL() << "failed to evaluate block in interpreter";
   auto directOut = outBuf[0];
 
   // Now encode it as microcode for the recursion circuit and run there
@@ -79,9 +76,7 @@ void doAB(HashType hashType, const std::vector<std::vector<uint32_t>>& proofs, F
 
   // 'Reverse' toId so that it is in execution order
   std::map<uint64_t, mlir::Value> toValue;
-  for (auto kvp : toId) {
-    toValue[kvp.second] = kvp.first;
-  }
+  for (auto kvp : toId) { toValue[kvp.second] = kvp.first; }
 
   // The circuit doesn't know how to distinguish different IOP
   // arguments to read from, so we have to put them in the order that

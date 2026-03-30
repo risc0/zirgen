@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,9 +22,7 @@ namespace zirgen::snark {
 TEST(SNARK, p254) {
   P254 x = 1234567;
   P254 pow20 = 1;
-  for (size_t i = 0; i < 20; i++) {
-    pow20 = pow20 * x;
-  }
+  for (size_t i = 0; i < 20; i++) { pow20 = pow20 * x; }
   assert(pow20 ==
          P254("9704507806522716394566620077678775344142006794597453436923221800576174385187"));
   assert(P254(pow20.toDigest()) == pow20);
@@ -54,9 +52,7 @@ TEST(SNARK, ArithAB) {
 
 TEST(SNARK, Hash) {
   std::vector<uint32_t> iop;
-  for (size_t i = 1; i <= 5; i++) {
-    push_fp(iop, i);
-  }
+  for (size_t i = 1; i <= 5; i++) { push_fp(iop, i); }
   doAB(5, iop, [&](Buffer out, ReadIopVal iop) {
     auto vals = iop.readBaseVals(5);
     auto digest1 = hash(vals);
@@ -65,9 +61,7 @@ TEST(SNARK, Hash) {
     iop.commit(digest3);
     out[0] = iop.rngBits(7);
     out[1] = iop.rngBaseVal();
-    for (size_t i = 0; i < 23; i++) {
-      vals.push_back(iop.rngBaseVal());
-    }
+    for (size_t i = 0; i < 23; i++) { vals.push_back(iop.rngBaseVal()); }
     iop.commit(hash(vals));
     out[2] = iop.rngBaseVal();
     Val a = iop.rngBaseVal();

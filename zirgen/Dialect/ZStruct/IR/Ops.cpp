@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,13 +40,10 @@ LogicalResult LookupOp::verify() {
             emitError() << "Bad type";
             return std::nullopt;
           });
-  if (!elements) {
-    return failure();
-  }
+  if (!elements) { return failure(); }
   Type outType = getOut().getType();
   for (auto& field : *elements) {
-    if (member != field.name)
-      continue;
+    if (member != field.name) continue;
 
     if (outType != field.type) {
       emitError() << "Field type " << field.type << " but out type " << outType << "\n";
@@ -73,8 +70,7 @@ LogicalResult SubscriptOp::inferReturnTypes(MLIRContext* ctx,
 namespace {
 
 Attribute derefConst(Operation* op, Attribute attr) {
-  if (!llvm::isa_and_present<SymbolRefAttr>(attr))
-    return attr;
+  if (!llvm::isa_and_present<SymbolRefAttr>(attr)) return attr;
 
   auto constOp =
       SymbolTable::lookupNearestSymbolFrom<GlobalConstOp>(op, llvm::cast<SymbolRefAttr>(attr));
@@ -89,8 +85,7 @@ Attribute derefConst(Operation* op, Attribute attr) {
 Attribute resolve(Operation* op, Attribute attr) {
   while (isa<SymbolRefAttr>(attr) || isa<BoundLayoutAttr>(attr)) {
     attr = derefConst(op, attr);
-    if (auto bound = dyn_cast<BoundLayoutAttr>(attr))
-      attr = bound.getLayout();
+    if (auto bound = dyn_cast<BoundLayoutAttr>(attr)) attr = bound.getLayout();
   }
   return attr;
 }
@@ -113,8 +108,7 @@ bool deepCmp(Attribute lhs, Attribute rhs, Operation* op) {
     return true;
   } else if (auto lArr = dyn_cast<ArrayAttr>(lhs); auto rArr = dyn_cast<ArrayAttr>(rhs)) {
     for (auto [lElem, rElem] : llvm::zip(lArr, rArr)) {
-      if (!deepCmp(lElem, rElem, op))
-        return false;
+      if (!deepCmp(lElem, rElem, op)) return false;
     }
     return true;
   } else {
@@ -125,8 +119,7 @@ bool deepCmp(Attribute lhs, Attribute rhs, Operation* op) {
 } // namespace
 
 OpFoldResult SubscriptOp::fold(FoldAdaptor adaptor) {
-  if (!adaptor.getIndex())
-    return nullptr;
+  if (!adaptor.getIndex()) return nullptr;
 
   size_t index;
   if (auto indexAttr = dyn_cast<IntegerAttr>(adaptor.getIndex()))
@@ -140,16 +133,12 @@ OpFoldResult SubscriptOp::fold(FoldAdaptor adaptor) {
   }
 
   if (auto arrayOp = getBase().getDefiningOp<ArrayOp>()) {
-    if (index < arrayOp.getElements().size()) {
-      return arrayOp.getElements()[index];
-    }
+    if (index < arrayOp.getElements().size()) { return arrayOp.getElements()[index]; }
   }
 
   if (Attribute base = derefConst(*this, adaptor.getBase())) {
     if (auto arrayAttr = llvm::dyn_cast_if_present<mlir::ArrayAttr>(adaptor.getBase())) {
-      if (index < arrayAttr.getValue().size()) {
-        return arrayAttr.getValue()[index];
-      }
+      if (index < arrayAttr.getValue().size()) { return arrayAttr.getValue()[index]; }
     }
 
     if (auto bufferAttr = dyn_cast_if_present<BoundLayoutAttr>(adaptor.getBase())) {
@@ -171,17 +160,14 @@ mlir::IntegerAttr SubscriptOp::getIndexAsAttr() {
   SmallVector<OpFoldResult, 4> foldResults;
   if (succeeded(indexOp->fold(foldResults))) {
     assert(foldResults.size() == 1);
-    if (auto attr = dyn_cast<Attribute>(foldResults[0])) {
-      return cast<mlir::IntegerAttr>(attr);
-    }
+    if (auto attr = dyn_cast<Attribute>(foldResults[0])) { return cast<mlir::IntegerAttr>(attr); }
   }
   return nullptr;
 }
 
 size_t SubscriptOp::getIndexUpperBound() {
   Operation* indexOp = getIndex().getDefiningOp();
-  if (!indexOp)
-    return 0;
+  if (!indexOp) return 0;
 
   // If the index is a constant, determine its exact value by folding
   SmallVector<OpFoldResult, 4> foldResults;
@@ -243,8 +229,7 @@ LogicalResult SubscriptOp::verify() {
 LogicalResult LoadOp::verify() {
   auto inElemType = cast<RefType>(getRef().getType()).getElement();
   auto outElemType = getOut().getType();
-  if (inElemType == outElemType)
-    return success();
+  if (inElemType == outElemType) return success();
 
   auto inValType = llvm::dyn_cast<ValType>(inElemType);
   auto outValType = llvm::dyn_cast<ValType>(inElemType);
@@ -301,13 +286,11 @@ LogicalResult PackOp::verify() {
 
 OpFoldResult PackOp::fold(FoldAdaptor adaptor) {
   auto fields = getType().getFields();
-  if (fields.size() != adaptor.getMembers().size())
-    return {};
+  if (fields.size() != adaptor.getMembers().size()) return {};
 
   SmallVector<NamedAttribute> fieldVals;
   for (auto [field, arg] : llvm::zip(getType().getFields(), adaptor.getMembers())) {
-    if (!arg)
-      return {};
+    if (!arg) return {};
 
     fieldVals.emplace_back(field.name, arg);
   }
@@ -321,16 +304,13 @@ struct LookupLayoutPattern : public OpRewritePattern<LookupOp> {
   using OpRewritePattern::OpRewritePattern;
   LogicalResult matchAndRewrite(LookupOp op, PatternRewriter& rewriter) const override {
     auto bindLayout = op.getBase().getDefiningOp<BindLayoutOp>();
-    if (!bindLayout)
-      return rewriter.notifyMatchFailure(op, "layout not from BindLayoutOp");
+    if (!bindLayout) return rewriter.notifyMatchFailure(op, "layout not from BindLayoutOp");
 
     auto layoutAttr = llvm::dyn_cast<StructAttr>(bindLayout.getLayout());
-    if (!layoutAttr)
-      return rewriter.notifyMatchFailure(op, "Layout not StructAttr");
+    if (!layoutAttr) return rewriter.notifyMatchFailure(op, "Layout not StructAttr");
 
     auto newLayout = layoutAttr.getFields().get(op.getMember());
-    if (!newLayout)
-      return rewriter.notifyMatchFailure(op, "Missing layout member");
+    if (!newLayout) return rewriter.notifyMatchFailure(op, "Missing layout member");
 
     rewriter.replaceOpWithNewOp<BindLayoutOp>(op, op.getType(), newLayout, bindLayout.getBuffer());
 
@@ -347,15 +327,12 @@ struct SubscriptLayoutPattern : public OpRewritePattern<SubscriptOp> {
     size_t idx = extractIntAttr(indexValue);
 
     auto bindLayout = op.getBase().getDefiningOp<BindLayoutOp>();
-    if (!bindLayout)
-      return rewriter.notifyMatchFailure(op, "layout not from BindLayoutOp");
+    if (!bindLayout) return rewriter.notifyMatchFailure(op, "layout not from BindLayoutOp");
 
     auto layoutAttr = llvm::dyn_cast<ArrayAttr>(bindLayout.getLayout());
-    if (!layoutAttr)
-      return rewriter.notifyMatchFailure(op, "Layout not ArrayAttr");
+    if (!layoutAttr) return rewriter.notifyMatchFailure(op, "Layout not ArrayAttr");
 
-    if (idx > layoutAttr.size())
-      return rewriter.notifyMatchFailure(op, "index out of range");
+    if (idx > layoutAttr.size()) return rewriter.notifyMatchFailure(op, "index out of range");
     auto newLayout = layoutAttr[idx];
     rewriter.replaceOpWithNewOp<BindLayoutOp>(op, op.getType(), newLayout, bindLayout.getBuffer());
 
@@ -372,17 +349,14 @@ struct LoadLayoutPattern : public OpRewritePattern<LoadOp> {
     size_t distance = extractIntAttr(distanceValue);
 
     auto bindLayout = op.getRef().getDefiningOp<BindLayoutOp>();
-    if (!bindLayout)
-      return rewriter.notifyMatchFailure(op, "layout not from BindLayoutOp");
+    if (!bindLayout) return rewriter.notifyMatchFailure(op, "layout not from BindLayoutOp");
 
     auto layoutAttr = llvm::dyn_cast<RefAttr>(bindLayout.getLayout());
-    if (!layoutAttr)
-      return rewriter.notifyMatchFailure(op, "Layout not RefAttr");
+    if (!layoutAttr) return rewriter.notifyMatchFailure(op, "Layout not RefAttr");
     size_t offset = layoutAttr.getIndex();
 
     auto bufType = llvm::dyn_cast<BufferType>(bindLayout.getBuffer().getType());
-    if (!bufType)
-      return rewriter.notifyMatchFailure(op, "binding not to a buffer");
+    if (!bufType) return rewriter.notifyMatchFailure(op, "binding not to a buffer");
 
     auto valType = llvm::cast<ValType>(op.getType());
 
@@ -407,8 +381,7 @@ struct LoadLayoutPattern : public OpRewritePattern<LoadOp> {
                                                  distance,
                                                  /*optional tap=*/IntegerAttr{});
         val = getOp;
-        if (op->getAttr("unchecked"))
-          getOp->setAttr("unchecked", rewriter.getUnitAttr());
+        if (op->getAttr("unchecked")) getOp->setAttr("unchecked", rewriter.getUnitAttr());
       }
       if (result) {
         if (!shiftOnce) {
@@ -433,17 +406,14 @@ struct StoreLayoutPattern : public OpRewritePattern<StoreOp> {
   using OpRewritePattern::OpRewritePattern;
   LogicalResult matchAndRewrite(StoreOp op, PatternRewriter& rewriter) const override {
     auto bindLayout = op.getRef().getDefiningOp<BindLayoutOp>();
-    if (!bindLayout)
-      return rewriter.notifyMatchFailure(op, "layout not from BindLayoutOp");
+    if (!bindLayout) return rewriter.notifyMatchFailure(op, "layout not from BindLayoutOp");
 
     auto layoutAttr = llvm::dyn_cast<RefAttr>(bindLayout.getLayout());
-    if (!layoutAttr)
-      return rewriter.notifyMatchFailure(op, "Layout not RefAttr");
+    if (!layoutAttr) return rewriter.notifyMatchFailure(op, "Layout not RefAttr");
     size_t offset = layoutAttr.getIndex();
 
     auto bufType = llvm::dyn_cast<BufferType>(bindLayout.getBuffer().getType());
-    if (!bufType)
-      return rewriter.notifyMatchFailure(op, "binding not to a buffer");
+    if (!bufType) return rewriter.notifyMatchFailure(op, "binding not to a buffer");
 
     if (bufType.getKind() == BufferKind::Global) {
       rewriter.replaceOpWithNewOp<Zll::SetGlobalOp>(
@@ -506,16 +476,13 @@ OpFoldResult LookupOp::fold(FoldAdaptor adaptor) {
     if (auto newOp = getBase().getDefiningOp<PackOp>()) {
       if (fields.size() == newOp->getNumOperands()) {
         for (size_t i = 0; i != newOp->getNumOperands(); ++i) {
-          if (fields[i].name == getMember()) {
-            foldedValue = newOp->getOperand(i);
-          }
+          if (fields[i].name == getMember()) { foldedValue = newOp->getOperand(i); }
         }
       }
     }
   });
 
-  if (foldedValue)
-    return foldedValue;
+  if (foldedValue) return foldedValue;
 
   if (Attribute base = derefConst(*this, adaptor.getBase())) {
     if (auto structAttr = dyn_cast_if_present<StructAttr>(adaptor.getBase())) {
@@ -602,11 +569,8 @@ LogicalResult SwitchOp::evaluate(Interpreter& interp,
   }
 
   auto interpOuts = interp.runBlock(getArms()[presentIndex].front());
-  if (failed(interpOuts))
-    return failure();
-  for (auto [out, interpOut] : llvm::zip(outs, *interpOuts)) {
-    out->setAttr(interpOut);
-  }
+  if (failed(interpOuts)) return failure();
+  for (auto [out, interpOut] : llvm::zip(outs, *interpOuts)) { out->setAttr(interpOut); }
   return success();
 }
 
@@ -615,9 +579,7 @@ LogicalResult SwitchOp::verify() {
     return emitOpError() << "switch op selector count " << getSelector().size()
                          << " must match arm count " << getArms().size() << "\n";
 
-  if (getRegions().empty()) {
-    return emitOpError() << "switch must contain at least one mux arm";
-  }
+  if (getRegions().empty()) { return emitOpError() << "switch must contain at least one mux arm"; }
 
   Type outType = getOut().getType();
   for (auto arm : getRegions()) {
@@ -664,8 +626,7 @@ struct RemoveStaticCondition : public OpRewritePattern<SwitchOp> {
       // constraints, but we need to keep AliasLayoutOps around until layout
       // generation.
       auto walkResult = op.walk([](AliasLayoutOp) { return WalkResult::interrupt(); });
-      if (walkResult.wasInterrupted())
-        return failure();
+      if (walkResult.wasInterrupted()) return failure();
 
       // We found the one true region; inline into parent.
       auto* region = op.getRegions()[trueIndex];
@@ -788,9 +749,7 @@ LogicalResult LoadOp::evaluate(Interpreter& interp,
   size_t offset = llvm::cast<RefAttr>(layoutAttr.getLayout()).getIndex();
   size_t distance = adaptor.getDistance()->getAttr<IntegerAttr>().getInt();
   size_t size = interp.getNamedBufSize(bufName);
-  if (size == 0 && distance != 0) {
-    return emitError() << "Cannot take back from global";
-  }
+  if (size == 0 && distance != 0) { return emitError() << "Cannot take back from global"; }
 
   if (distance > interp.getCycle() && !interp.getTotCycles()) {
     // TODO: Change this back to a throw once the DSL works enough that we can
@@ -865,16 +824,13 @@ LogicalResult BindLayoutOp::evaluate(Interpreter& interp,
                                      llvm::ArrayRef<zirgen::Zll::InterpVal*> outs,
                                      EvalAdaptor& adaptor) {
   auto getBufferOp = getBuffer().getDefiningOp<GetBufferOp>();
-  if (!getBufferOp)
-    return emitError() << "Missing buffer";
+  if (!getBufferOp) return emitError() << "Missing buffer";
 
   Attribute layoutAttr = getLayoutAttr();
   if (auto symAttr = llvm::dyn_cast<SymbolRefAttr>(layoutAttr)) {
     // Look up by symbol
     auto glob = SymbolTable::lookupNearestSymbolFrom<GlobalConstOp>(*this, symAttr);
-    if (!glob) {
-      return emitError() << "Unable to find symbol " << getLayout() << "\n";
-    }
+    if (!glob) { return emitError() << "Unable to find symbol " << getLayout() << "\n"; }
     layoutAttr = glob.getConstant();
   }
 
@@ -894,8 +850,7 @@ void BindLayoutOp::emitExpr(zirgen::codegen::CodegenEmitter& cg) {
 LogicalResult BindLayoutOp::verifySymbolUses(SymbolTableCollection& symbolTable) {
   if (auto symAttr = llvm::dyn_cast<FlatSymbolRefAttr>(getLayoutAttr())) {
     auto globalConstOp = symbolTable.lookupNearestSymbolFrom<GlobalConstOp>(*this, symAttr);
-    if (!globalConstOp)
-      return emitOpError() << "Cannot find global constant " << getLayoutAttr();
+    if (!globalConstOp) return emitOpError() << "Cannot find global constant " << getLayoutAttr();
     if (globalConstOp.getType() != getType())
       return emitOpError() << "Global symbol " << getLayoutAttr() << " type "
                            << globalConstOp.getType() << " does not match expected " << getType();
@@ -936,8 +891,7 @@ LogicalResult LoadOp::inferReturnTypes(MLIRContext* ctx,
                                        Adaptor adaptor,
                                        llvm::SmallVectorImpl<Type>& out) {
   auto refType = llvm::dyn_cast<RefType>(adaptor.getRef().getType());
-  if (!refType)
-    return failure();
+  if (!refType) return failure();
 
   out.push_back(refType.getElement());
   return success();

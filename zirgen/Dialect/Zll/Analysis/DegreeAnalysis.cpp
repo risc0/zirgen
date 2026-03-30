@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -156,8 +156,7 @@ void DegreeAnalysis::visitReturnLikeOp(Operation* op) {
   unsigned maxDegree = *std::max_element(operandDegrees.begin(), operandDegrees.end());
   propagateIfChanged(lattice, lattice->join(maxDegree));
 
-  for (Value operand : op->getOperands())
-    lattice->addContribution(operand);
+  for (Value operand : op->getOperands()) lattice->addContribution(operand);
 }
 
 } // namespace zirgen::Zll
