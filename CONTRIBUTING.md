@@ -104,7 +104,6 @@ If you prefer to install manually:
 1. Copy the hook:
    ```bash
    cp scripts/commit-msg .git/hooks/commit-msg
-   chmod +x .git/hooks/commit-msg
    ```
 
 2. Set up the commit message template (optional):
