@@ -17,9 +17,21 @@ __global__ void step_verify_accum(const Fp* ctrl,
   if (cycle >= count) {
     return;
   }
-{{#body}}
-  {{.}}
-{{/body}}
+  {
+    {
+#body
+    }
+  }
+  {
+    {
+      .
+    }
+  }
+  {
+    {
+      / body
+    }
+  }
 }
 
 } // namespace risc0::circuit::recursion
