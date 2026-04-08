@@ -12,9 +12,21 @@ __global__ void step_compute_accum(
   if (cycle >= count) {
     return;
   }
-{{#body}}
-  {{.}}
-{{/body}}
+  {
+    {
+#body
+    }
+  }
+  {
+    {
+      .
+    }
+  }
+  {
+    {
+      / body
+    }
+  }
 }
 
 } // namespace risc0::circuit::recursion
