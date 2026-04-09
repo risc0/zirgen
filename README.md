@@ -17,6 +17,12 @@ it's still a work in progress and has quite a few rough edges.
 
 [Language Overview](zirgen/docs/02_Conceptual_Overview.md)
 
+## Contributing
+
+If you're interested in contributing to Zirgen, please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on commit message format and development workflow.
+
+After cloning the repository, run `./scripts/setup-git-hooks.sh` to set up commit message validation.
+
 ## Included circuits
 
 * [The recursion circuit](/zirgen/circuit/recursion/)
