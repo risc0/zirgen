@@ -52,14 +52,27 @@ The repository includes a git hook that automatically validates commit messages.
 
 ### Setup
 
-The commit message template and validation hook are automatically configured when you clone the repository. If you need to set them up manually:
+After cloning the repository, run the setup script to install the git hooks and commit message template:
 
 ```bash
-# Set the commit message template
-git config commit.template .git/commit-msg-template
+./scripts/setup-git-hooks.sh
+```
 
-# Ensure the commit-msg hook is executable
+This script will:
+- Install the commit-msg validation hook
+- Configure the commit message template
+- Set up git to use these tools automatically
+
+If you need to set them up manually instead:
+
+```bash
+# Copy the commit-msg hook
+cp hooks/commit-msg .git/hooks/commit-msg
 chmod +x .git/hooks/commit-msg
+
+# Copy and configure the commit message template
+cp hooks/commit-msg-template .git/commit-msg-template
+git config commit.template .git/commit-msg-template
 ```
 
 ### Exceptions
