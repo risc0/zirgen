@@ -13,9 +13,23 @@ for important parts of your applications, or even to build entire other VMs that
 integrate into the RISC Zero ecosystem through proof composition. With that said,
 it's still a work in progress and has quite a few rough edges.
 
-[Getting Started](zirgen/docs/01_Getting_Started.md)
+## Documentation
 
-[Language Overview](zirgen/docs/02_Conceptual_Overview.md)
+### User Guides
+* [Getting Started](zirgen/docs/01_Getting_Started.md)
+* [Language Overview](zirgen/docs/02_Conceptual_Overview.md)
+
+### Developer Documentation
+* [Architecture](ARCHITECTURE.md) - Compiler structure and MLIR dialects
+* [Bazel Build Guide](docs/BAZEL_BUILD_GUIDE.md) - Building and testing
+* [Scripts Reference](docs/SCRIPTS_REFERENCE.md) - Development scripts
+* [Code Navigation](docs/CODE_NAVIGATION.md) - Finding your way around the codebase
+
+### Technical References
+* [Testing in RISC Zero](docs/TESTING_IN_RISC0.md) - Integration workflow
+* [Generating CUDA Kernels](docs/GENERATING_CUDA_KERNELS.md) - GPU codegen
+* [Multi-Stream Eval Check](docs/MULTI_STREAM_EVAL_CHECK.md) - Performance optimization
+* [AGENTS.md](AGENTS.md) - Detailed pipeline and codegen reference
 
 ## Contributing
 
