@@ -34,7 +34,9 @@ void PCRegImpl::set(Val val, size_t offset) {
   val = bytes[0]->set(val + offset);
   val = bytes[1]->set(val);
   val = bytes[2]->set(val);
-  NONDET { twits[0]->set(val & 3); }
+  NONDET {
+    twits[0]->set(val & 3);
+  }
   twits[1]->set((val - twits[0]->get()) / 4);
   Val top2 = twits[1];
   // Prevent PC from ever entering high 1/4 of RAM (system RAM)
@@ -91,7 +93,9 @@ void ResetStepImpl::set(Top top) {
                                     global->pre->imageId->words[kDigestWords / 2 + i]->get());
       }
     }
-    NONDET { userMode->set(global->pre->pc->get().bytes[0] & 1); }
+    NONDET {
+      userMode->set(global->pre->pc->get().bytes[0] & 1);
+    }
     pc->set(global->pre->pc->get().flat() - userMode);
     // If usermode is set correctly PC low 2 bits should be 00
     verifyPC->set(pc->getU32().bytes[0] / 4);
@@ -191,7 +195,9 @@ void HaltCycleImpl::set(Top top) {
     body->global->userExitCode->set(userCode);
 
     // Notify host of halt
-    NONDET { doExtern("halt", "", 0, {sysCode, curPC}); }
+    NONDET {
+      doExtern("halt", "", 0, {sysCode, curPC});
+    }
   }
 
   Val isFromPageFault = BACK(1, body->majorSelect->at(MajorType::kPageFault));
@@ -204,7 +210,9 @@ void HaltCycleImpl::set(Top top) {
     body->global->userExitCode->set(0);
 
     // Notify host of halt
-    NONDET { doExtern("halt", "", 0, {HaltType::kSystemSplit, curPC}); }
+    NONDET {
+      doExtern("halt", "", 0, {HaltType::kSystemSplit, curPC});
+    }
   }
 
   body->pc->set(curPC);

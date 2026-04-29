@@ -31,8 +31,12 @@ int main(int argc, char* argv[]) {
       [](Buffer control, Buffer out, Buffer data, Buffer mix, Buffer accum) {
         // Normal execution
         Register val = data[0];
-        IF(control[0]) { val = 1; }
-        IF(control[1]) { val = BACK(1, Val(val)) + BACK(2, Val(val)); }
+        IF(control[0]) {
+          val = 1;
+        }
+        IF(control[1]) {
+          val = BACK(1, Val(val)) + BACK(2, Val(val));
+        }
         IF(control[2]) {
           // TODO: Fix register equality via BufAccess
           out[0] = CaptureVal(val);
@@ -41,7 +45,9 @@ int main(int argc, char* argv[]) {
         barrier(1);
         barrier(1);
         barrier(1);
-        IF(control[0] + control[1] + control[2]) { accum[0] = 1; }
+        IF(control[0] + control[1] + control[2]) {
+          accum[0] = 1;
+        }
         barrier(1);
       });
 
