@@ -88,7 +88,9 @@ WomHeaderImpl::WomHeaderImpl()
 WomRegImpl::WomRegImpl() : elem(CompContext::allocateFromPool<impl::WomAlloc>("wom")->elem) {}
 
 std::array<Val, kExtSize> WomRegImpl::doRead(Val addr) {
-  NONDET { elem->setData(doExtern("womRead", "", kExtSize, {addr})); }
+  NONDET {
+    elem->setData(doExtern("womRead", "", kExtSize, {addr}));
+  }
   elem->addr->set(addr);
   return elem->dataVals();
 }
@@ -96,7 +98,9 @@ std::array<Val, kExtSize> WomRegImpl::doRead(Val addr) {
 void WomRegImpl::doWrite(Val addr, std::array<Val, kExtSize> data) {
   elem->addr->set(addr);
   elem->setData(data);
-  NONDET { doExtern("womWrite", "", 0, elem->toVals()); }
+  NONDET {
+    doExtern("womWrite", "", 0, elem->toVals());
+  }
 }
 
 void WomRegImpl::doNOP() {

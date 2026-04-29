@@ -158,7 +158,7 @@ impl<'a, L, E: Elem> BoundLayout<'a, L, E> {
     pub fn layout(&self) -> &'static L {
         self.layout
     }
-    pub fn buf(&self) -> BufferRow<E> {
+    pub fn buf(&self) -> BufferRow<'_, E> {
         self.buf
     }
 }
