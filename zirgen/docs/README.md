@@ -18,6 +18,9 @@ with Zirgen?
 4. [Components](04_Components.md)
 5. [Muxes](05_Muxes.md)
 6. [Built-in Components](A1_Builtin_Components.md)
+7. [Arrays and Loops](99_Arrays_and_Loops.md)
+8. [Backs](99_Backs.md)
+9. [Externs](99_Externs.md)
 
 ## Developer Documentation
 

@@ -205,3 +205,4 @@ they occur inside mux arms with selectors of degree 2 increases their degree to
 * $xz(z - 7)(z - 8)(z - 9) = 0$ (degree 5)
 
 [Prev](04_Components.md)
+[Next](99_Arrays_and_Loops.md)
