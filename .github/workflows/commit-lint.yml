@@ -1,0 +1,20 @@
+name: Commit Message Lint
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  commit-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check commit messages
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+          echo "Checking commits from $BASE to $HEAD"
+          bash scripts/check-commit-messages.sh "$BASE" "$HEAD"
