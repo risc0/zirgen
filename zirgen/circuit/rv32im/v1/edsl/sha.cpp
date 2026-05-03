@@ -129,11 +129,15 @@ static void setCarry4(std::vector<Bit> out, ShortVec in, Twit carryLow, Twit car
 
 static void setCarry8(std::vector<Bit> out, ShortVec in, Twit carryLow, Twit carryHigh) {
   Val carryLow8 = toBits(out, in[0], 0);
-  NONDET { carryLow->set(carryLow8 & 3); }
+  NONDET {
+    carryLow->set(carryLow8 & 3);
+  }
   Val carryLow1 = (carryLow8 - carryLow) / 4;
   eqz(carryLow1 * (1 - carryLow1));
   Val carryHigh8 = toBits(out, in[1] + carryLow8, 16);
-  NONDET { carryHigh->set(carryHigh8 & 3); }
+  NONDET {
+    carryHigh->set(carryHigh8 & 3);
+  }
   Val carryHigh1 = (carryHigh8 - carryHigh) / 4;
   eqz(carryHigh1 * (1 - carryHigh1));
 }
@@ -195,8 +199,12 @@ void ShaCycleImpl::setInit(Top top) {
   }
   countZero->set(count);
   // Set next major type if switching stages
-  IF(countZero->isZero()) { body->nextMajor->set(MajorType::kShaLoad); }
-  IF(1 - countZero->isZero()) { body->nextMajor->set(body->majorSelect); }
+  IF(countZero->isZero()) {
+    body->nextMajor->set(MajorType::kShaLoad);
+  }
+  IF(1 - countZero->isZero()) {
+    body->nextMajor->set(body->majorSelect);
+  }
   // Keep PC the same
   body->pc->set(curPC);
   XLOG("SHA_INIT: major = %u, minor = %u, count = %u", major, minor, count);
@@ -293,10 +301,16 @@ void ShaCycleImpl::setLoad(Top top) {
   countZero->set(count);
   // Set next major type if switching stages
   IF(countZero->isZero()) {
-    IF(1 - minor) { body->nextMajor->set(MajorType::kShaLoad); }
-    IF(minor) { body->nextMajor->set(MajorType::kShaMain); }
+    IF(1 - minor) {
+      body->nextMajor->set(MajorType::kShaLoad);
+    }
+    IF(minor) {
+      body->nextMajor->set(MajorType::kShaMain);
+    }
   }
-  IF(1 - countZero->isZero()) { body->nextMajor->set(body->majorSelect); }
+  IF(1 - countZero->isZero()) {
+    body->nextMajor->set(body->majorSelect);
+  }
   // Keep PC the same
   body->pc->set(curPC);
   stateOut->set(BACK(1, stateOut->get()));
@@ -376,10 +390,16 @@ void ShaCycleImpl::setMain(Top top) {
 
   // Decrement the repeat as necessary
   IF(countZero->isZero()) {
-    IF(isMix) { finalStage->set(0); }
-    IF(isFini) { finalStage->set(1); }
+    IF(isMix) {
+      finalStage->set(0);
+    }
+    IF(isFini) {
+      finalStage->set(1);
+    }
   }
-  IF(1 - countZero->isZero()) { finalStage->set(0); }
+  IF(1 - countZero->isZero()) {
+    finalStage->set(0);
+  }
 
   stateIn->set(BACK(1, stateIn->get()));
   stateOut->set(BACK(1, stateOut->get()));
@@ -401,8 +421,12 @@ void ShaCycleImpl::setMain(Top top) {
   // Now we compute and set w...
   computeW();
 
-  IF(isFini) { setCarry4(w, {0, 0}, wCarryLow, wCarryHigh); }
-  IF(isMix) { setCarry4(w, getShort(wRaw), wCarryLow, wCarryHigh); }
+  IF(isFini) {
+    setCarry4(w, {0, 0}, wCarryLow, wCarryHigh);
+  }
+  IF(isMix) {
+    setCarry4(w, getShort(wRaw), wCarryLow, wCarryHigh);
+  }
   // XLOG("  w = %w", toU32(w));
 
   // If we are writing, we need to do it now
@@ -430,7 +454,9 @@ void ShaCycleImpl::setMain(Top top) {
   }
   IF(1 - repeatZero->isZero()) {
     io0->doNOP();
-    IF(isFini) { io1->doNOP(); }
+    IF(isFini) {
+      io1->doNOP();
+    }
   }
 
   // Now we compute and set a + e
