@@ -21,6 +21,11 @@ echo "Installing commit-msg hook..."
 cp "$HOOKS_DIR/commit-msg" "$GIT_HOOKS_DIR/commit-msg"
 chmod +x "$GIT_HOOKS_DIR/commit-msg"
 
+# Copy prepare-commit-msg hook
+echo "Installing prepare-commit-msg hook..."
+cp "$HOOKS_DIR/prepare-commit-msg" "$GIT_HOOKS_DIR/prepare-commit-msg"
+chmod +x "$GIT_HOOKS_DIR/prepare-commit-msg"
+
 # Copy commit message template
 echo "Installing commit message template..."
 cp "$HOOKS_DIR/commit-msg-template" "$REPO_ROOT/.git/commit-msg-template"
@@ -34,6 +39,7 @@ echo "Git hooks setup complete!"
 echo ""
 echo "The following have been configured:"
 echo "  - commit-msg hook (validates ZIR-XXX: format)"
+echo "  - prepare-commit-msg hook (auto-prepends ZIR-000: to non-conforming messages)"
 echo "  - commit message template"
 echo ""
 echo "You can now make commits following the standardized format."
