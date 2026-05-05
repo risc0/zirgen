@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::{BufferRow, Buffers,CycleContext};
+use crate::{BufferRow, Buffers, CycleContext};
 use anyhow::Result;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use risc0_core::field::{Elem, ExtElem, RootsOfUnity};
 use risc0_zkp::adapter::MixState;
 use risc0_zkp::hal::cpu::{CpuBuffer, SyncSlice};
 use risc0_zkp::INV_RATE;
-
 
 pub fn run_serial<Val: Elem>(
     buffers: Buffers<&CpuBuffer<Val>, &CpuBuffer<Val>, ()>,

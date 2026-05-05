@@ -46,7 +46,9 @@ struct CallbackArm {
   Buffer cond;
   CallbackBlock inner;
   void emit() {
-    IF(cond[0]) { inner.emit(); }
+    IF(cond[0]) {
+      inner.emit();
+    }
   }
 };
 
