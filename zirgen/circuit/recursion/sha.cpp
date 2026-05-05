@@ -131,11 +131,15 @@ std::array<Val, kWordSize> toBytes(std::array<Val, 32> in) {
 
 static void setCarry(std::array<Bit, 32> out, ShortVec in, Twit carryLow, Twit carryHigh) {
   Val carryLow8 = toBits(out, in[0], 0, 16);
-  NONDET { carryLow->set(carryLow8 & 3); }
+  NONDET {
+    carryLow->set(carryLow8 & 3);
+  }
   Val carryLow1 = (carryLow8 - carryLow) / 4;
   eqz(carryLow1 * (1 - carryLow1));
   Val carryHigh8 = toBits(out, in[1] + carryLow8, 16, 16);
-  NONDET { carryHigh->set(carryHigh8 & 3); }
+  NONDET {
+    carryHigh->set(carryHigh8 & 3);
+  }
   Val carryHigh1 = (carryHigh8 - carryHigh) / 4;
   eqz(carryHigh1 * (1 - carryHigh1));
 }
@@ -210,8 +214,12 @@ void ShaCycleImpl::setLoad(MacroInst inst, Val writeAddr) {
     // top4 (unless it's == 4, in which case we set it to 0)
     NONDET {
       Val top4is4 = isz(top4 - 4);
-      IF(top4is4) { wCarryLow->set(0); }
-      IF(1 - top4is4) { wCarryLow->set(top4); }
+      IF(top4is4) {
+        wCarryLow->set(0);
+      }
+      IF(1 - top4is4) {
+        wCarryLow->set(top4);
+      }
     }
     // XLOG("cur = %u, top4 = %u, bot27 = %u, wCarryLow = %u",
     //          kBabyBearToMontgomery * io0->data()[0],

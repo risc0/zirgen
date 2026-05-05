@@ -526,7 +526,7 @@ public:
   // String literals
   template <size_t N>
   EmitPart(const char (&str)[N])
-      : emitFunc([str](CodegenEmitter& cg) { *cg.getOutputStream() << str; }){};
+      : emitFunc([str](CodegenEmitter& cg) { *cg.getOutputStream() << str; }) {};
 
   // References to a generated value.
   EmitPart(CodegenValue val) : emitFunc([val](CodegenEmitter& cg) { cg.emitValue(val); }) {}
@@ -538,7 +538,7 @@ public:
   // StringRefs must be explicitly converted so we don't accidentally
   // skip canonicalizing identifiers.
   explicit EmitPart(llvm::StringRef str)
-      : emitFunc([str](CodegenEmitter& cg) { *cg.getOutputStream() << str; }){};
+      : emitFunc([str](CodegenEmitter& cg) { *cg.getOutputStream() << str; }) {};
 
   void emit(CodegenEmitter& cg) { emitFunc(cg); }
 
@@ -558,8 +558,7 @@ inline CodegenEmitter& CodegenEmitter::operator<<(EmitPart emitPart) {
 
 template <typename Container, typename UnaryFunctor, typename T>
 void CodegenEmitter::interleaveComma(const Container& c, UnaryFunctor each_fn) {
-  llvm::interleave(
-      c, *getOutputStream(), [&](const T& elem) { each_fn(elem); }, ", ");
+  llvm::interleave(c, *getOutputStream(), [&](const T& elem) { each_fn(elem); }, ", ");
 }
 template <typename Container, typename T> void CodegenEmitter::interleaveComma(const Container& c) {
   llvm::interleave(

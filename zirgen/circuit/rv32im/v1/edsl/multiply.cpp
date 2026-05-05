@@ -97,7 +97,9 @@ void MultiplyCycleImpl::set(Top top) {
   IF((1 - useHigh) * (1 - rdZero->isZero())) {
     writeRd->doWrite(cycle, kRegisterOffset - 32 * userMode + decoder->rd(), mul->getLow());
   }
-  IF(rdZero->isZero()) { writeRd->doNOP(); }
+  IF(rdZero->isZero()) {
+    writeRd->doNOP();
+  }
 
   // Verify decoding
 #define OPM(id, mnemonic, opc, f3, f7, immFmt, useImm_, usePo2_, signedA_, signedB_, useHigh_)     \
