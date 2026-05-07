@@ -67,7 +67,9 @@ void ALUImpl::set(U32Val inA, U32Val inB, ComputeControl control) {
   aTop->set(inA);
   bTop->set(inB);
   regInB->set(inB);
-  NONDET { andVal->set(inA & inB); }
+  NONDET {
+    andVal->set(inA & inB);
+  }
   result->set(U32Val::underflowProtect() + control->mA * inA + control->mB * inB +
               control->mC * andVal->get());
   rTop->set(result->getNormed());
@@ -201,11 +203,13 @@ void ComputeCycleImpl::set(Top top) {
       control->set(decoder->imm##immFmt(), aluA, aluB, aluOp, next);                               \
       body->pc->set(setPC);                                                                        \
       body->nextMajor->set(control->nextMajor);                                                    \
-      IF(rdEn*(1 - rdZero->isZero())) {                                                            \
+      IF(rdEn * (1 - rdZero->isZero())) {                                                          \
         XLOG("  Writing to rd=x%u, val = %w", decoder->rd(), setRD);                               \
         writeRD->doWrite(cycle, kRegisterOffset - 32 * userMode + decoder->rd(), setRD);           \
       }                                                                                            \
-      IF((1 - rdEn) + rdZero->isZero()) { writeRD->doNOP(); }                                      \
+      IF((1 - rdEn) + rdZero->isZero()) {                                                          \
+        writeRD->doNOP();                                                                          \
+      }                                                                                            \
     }                                                                                              \
   }
 #include "zirgen/circuit/rv32im/v1/platform/rv32im.inl"
