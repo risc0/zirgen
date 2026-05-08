@@ -26,13 +26,9 @@ echo "Installing prepare-commit-msg hook..."
 cp "$HOOKS_DIR/prepare-commit-msg" "$GIT_HOOKS_DIR/prepare-commit-msg"
 chmod +x "$GIT_HOOKS_DIR/prepare-commit-msg"
 
-# Copy commit message template
-echo "Installing commit message template..."
-cp "$HOOKS_DIR/commit-msg-template" "$REPO_ROOT/.git/commit-msg-template"
-
-# Configure git to use the template
-echo "Configuring git to use commit message template..."
-git config commit.template "$REPO_ROOT/.git/commit-msg-template"
+# Configure git to use the tracked commit message template
+echo "Configuring commit message template..."
+git config commit.template "$HOOKS_DIR/commit-msg-template"
 
 echo ""
 echo "Git hooks setup complete!"
