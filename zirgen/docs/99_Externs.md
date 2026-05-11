@@ -68,7 +68,8 @@ of `PairVal` are assigned indices 0 and 1 sequentially.
 
 ## Standard externs
 
-The following externs are available in all circuits:
+The following externs are commonly used in tests and simulation. Each must be
+declared explicitly with `extern` before use:
 
 | Extern | Signature | Description |
 |--------|-----------|-------------|

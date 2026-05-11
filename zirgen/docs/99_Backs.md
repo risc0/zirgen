@@ -63,8 +63,27 @@ component PrevCount(first: Val) {
 }
 ```
 
-`c@1.a` gives the value of the `a` register two cycles back (one for `@1` on
-`c`, one because `prev` is itself `c@1`).
+`c@1.a` gives the value of the `a` register **one** cycle back — `@1` applies
+to `c`, so you read `a` from the `Count` instance from one cycle ago.
+
+To reach **two** cycles back, chain through `prev`. From `back_counter.zir`
+lines 41–43:
+
+```
+test prev_count {
+  first := NondetReg(Isz(GetCycle()));
+  c := PrevCount(first);
+  Output(c@1.prev.a);
+  // [0] Output(0) -> ()
+  // [1] Output(0) -> ()
+  // [2] Output(0) -> ()
+  // [3] Output(1) -> ()
+}
+```
+
+Here `c@1` is the previous cycle's `PrevCount`, and `.prev` is that
+`PrevCount`'s `prev` field — itself `c@1` inside that component, i.e. the
+`Count` from one cycle before that. So `.prev.a` reaches `a` two cycles back.
 
 ## Backs of arrays
 
