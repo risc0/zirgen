@@ -1,0 +1,43 @@
+#!/bin/bash
+# Git hook to auto-normalize commit messages by prepending 'ZIR-000: '
+# when the message lacks a ZIR- prefix. Runs before commit-msg validation.
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+
+# Skip for merge and squash sources — those messages are auto-generated
+if [ "$COMMIT_SOURCE" = "merge" ] || [ "$COMMIT_SOURCE" = "squash" ]; then
+    exit 0
+fi
+
+# Read the first non-comment, non-empty line
+FIRST_LINE=$(grep -v '^#' "$COMMIT_MSG_FILE" | grep -v '^[[:space:]]*$' | head -n 1)
+
+# Nothing to normalize if the message is empty
+if [ -z "$FIRST_LINE" ]; then
+    exit 0
+fi
+
+# Skip merge and revert commits (identified by conventional prefixes)
+if echo "$FIRST_LINE" | grep -qE "^(Merge|Revert) "; then
+    exit 0
+fi
+
+# Already conforming — nothing to do
+if echo "$FIRST_LINE" | grep -qE "^ZIR-[0-9]+: "; then
+    exit 0
+fi
+
+# Prepend 'ZIR-000: ' to the first line in-place using a temp file
+TMPFILE=$(mktemp)
+awk -v prefix="ZIR-000: " '
+    !done && /^[^#]/ && /[^[:space:]]/ {
+        print prefix $0
+        done = 1
+        next
+    }
+    { print }
+' "$COMMIT_MSG_FILE" > "$TMPFILE"
+mv "$TMPFILE" "$COMMIT_MSG_FILE"
+
+exit 0
