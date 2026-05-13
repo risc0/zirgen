@@ -30,7 +30,7 @@ fi
 
 # Prepend 'ZIR-000: ' to the first line in-place using a temp file
 TMPFILE=$(mktemp)
-awk -v prefix="ZIR-000: " -v first_line="$FIRST_LINE" '
+awk -v prefix="ZIR-000: " '
     !done && /^[^#]/ && /[^[:space:]]/ {
         print prefix $0
         done = 1
