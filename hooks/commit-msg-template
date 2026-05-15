@@ -1,0 +1,24 @@
+ZIR-XXX:
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# Commit Message Format:
+#   ZIR-XXX: Brief description of the change
+#
+# Requirements:
+#   - Start with ZIR- followed by issue number
+#   - Add colon and space after issue number
+#   - Write a clear, concise description in imperative mood
+#
+# Examples:
+#   ZIR-123: Add user authentication feature
+#   ZIR-456: Fix memory leak in connection pool
+#   ZIR-789: Update API documentation
+#
+# You can add additional details on subsequent lines after a blank line:
+#
+# ZIR-123: Add user authentication feature
+#
+# Implements OAuth2 authentication with JWT tokens.
+# Includes unit tests and integration tests.
