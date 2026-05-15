@@ -1,0 +1,24 @@
+#!/bin/bash
+# Git hook to normalize commit messages to ZIR-XXX: Description format.
+# Delegates to scripts/normalize-commit-msg.sh for reusable logic.
+
+COMMIT_MSG_FILE="$1"
+COMMIT_SOURCE="$2"
+
+# Skip normalization for merge, squash, and fixup commits created by git
+case "$COMMIT_SOURCE" in
+    merge|squash|commit)
+        exit 0
+        ;;
+esac
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+NORMALIZER="$REPO_ROOT/scripts/normalize-commit-msg.sh"
+
+if [ ! -x "$NORMALIZER" ]; then
+    echo "Warning: normalize-commit-msg.sh not found or not executable, skipping normalization." >&2
+    exit 0
+fi
+
+"$NORMALIZER" "$COMMIT_MSG_FILE"
