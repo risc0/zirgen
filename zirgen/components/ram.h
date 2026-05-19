@@ -16,6 +16,23 @@
 
 #include "zirgen/components/u32.h"
 
+/**
+ * @file ram.h
+ * @brief Word-addressed RAM with a PLONK-based read/write consistency argument.
+ *
+ * Memory accesses are recorded as (addr, cycle, memOp, data) tuples.  After all
+ * cycles execute, the tuples are sorted by (addr, cycle) and a local-consistency
+ * verifier confirms that reads return the most recent write to the same address.
+ *
+ * Public API summary:
+ *   - RamReg / RamRegImpl   — one memory transaction slot per circuit cycle
+ *   - RamHeader             — shared PLONK header; one per circuit
+ *   - RamBody               — allocates transaction slots for a group of cycles
+ *   - RamInit/Pass/Fini     — lifecycle helpers for the PLONK argument
+ *   - RamExternHandler      — C++ host implementation for RAM extern calls
+ *   - ramPeek()             — nondeterministic peek at a memory address (unconstrained)
+ */
+
 namespace zirgen {
 
 namespace MemoryOpType {
@@ -93,6 +110,17 @@ using RamInit = PlonkInit<RamHeader>;
 using RamPass = PlonkPass<RamHeader>;
 using RamFini = PlonkFini<impl::RamPlonkElement, RamHeader>;
 
+/**
+ * @brief One RAM transaction slot: records a single read, write, or page-IO operation.
+ *
+ * Each RamReg draws one slot from the RamBody pool and fills in the
+ * (addr, cycle, memOp, data) tuple during witness generation.  The PLONK
+ * argument later verifies consistency across all transactions.
+ *
+ * Typical usage:
+ *   U32Val val = ramReg->doRead(cycle, addr);
+ *   ramReg->doWrite(cycle, addr, data);
+ */
 class RamRegImpl : public CompImpl<RamRegImpl> {
 public:
   RamRegImpl();
@@ -114,6 +142,12 @@ private:
 
 using RamReg = Comp<RamRegImpl>;
 
+/**
+ * @brief Allocates `count` RamReg slots for a group of execution cycles.
+ *
+ * Unused slots are filled with NOP operations so the PLONK argument remains
+ * well-formed regardless of how many actual memory accesses occur.
+ */
 class RamBodyImpl : public CompImpl<RamBodyImpl> {
 public:
   // Make a table capable of holding 'count' memory IOs
@@ -125,6 +159,13 @@ private:
 
 using RamBody = Comp<RamBodyImpl>;
 
+/**
+ * @brief Host-side implementation of the RAM extern interface.
+ *
+ * Handles the plonkWrite/plonkRead extern calls that the PLONK argument
+ * generates, and provides loadU32/storeU32 helpers so subclasses can maintain
+ * an in-memory image of the RAM contents.
+ */
 class RamExternHandler : public PlonkExternHandler {
 public:
   RamExternHandler();

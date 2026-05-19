@@ -16,6 +16,24 @@
 
 #include "zirgen/components/reg.h"
 
+/**
+ * @file fpext.h
+ * @brief Extension-field element types and arithmetic for Zirgen circuits.
+ *
+ * Zirgen circuits operate over the BabyBear base field (or Goldilocks when the
+ * GOLDILOCKS macro is set).  Extension-field elements (degree-4 for BabyBear,
+ * degree-2 for Goldilocks) are needed for the PLONK accumulation argument and
+ * for FRI-related computations.
+ *
+ * Key types:
+ *   - FpExt        — an extension-field element (kExtSize coefficients)
+ *   - FpExtReg     — witness registers holding one extension-field element
+ *   - CaptureFpExt — wrapper that records source location for error reporting
+ *
+ * Arithmetic operators (+, -, *, inv, eq) are defined over CaptureFpExt so
+ * that source locations are propagated through constraint generation.
+ */
+
 namespace zirgen {
 
 #if GOLDILOCKS
@@ -28,6 +46,12 @@ class CaptureFpExt;
 
 class FpExt;
 
+/**
+ * @brief Witness register holding one extension-field element (kExtSize columns).
+ *
+ * Each coefficient of the extension element occupies one base-field register.
+ * Use get() to read, set() to write, and elem(i) to access individual coefficients.
+ */
 class FpExtRegImpl : public CompImpl<FpExtRegImpl> {
 public:
   FpExtRegImpl(llvm::StringRef source = "data");
@@ -41,6 +65,13 @@ private:
 
 using FpExtReg = Comp<FpExtRegImpl>;
 
+/**
+ * @brief A transient extension-field element (kExtSize Val coefficients).
+ *
+ * Does not allocate any witness columns.  Construct from a scalar Val (embeds
+ * into the base-field subring), from an explicit coefficient array, or from an
+ * FpExtReg.  Arithmetic is performed via CaptureFpExt operators.
+ */
 class FpExt {
 public:
   FpExt() = default;

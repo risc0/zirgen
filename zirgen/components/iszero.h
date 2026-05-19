@@ -19,6 +19,18 @@
 
 namespace zirgen {
 
+/**
+ * @brief Circuit component that tests whether a field element equals zero.
+ *
+ * Uses the standard zero-test trick: nondeterministically guess `isZero` ∈ {0,1}
+ * and `inv` (the multiplicative inverse when non-zero), then enforce:
+ *   - isZero * (1 - isZero) = 0   (isZero is a bit)
+ *   - val * inv = 1 - isZero       (inv is correct for non-zero val)
+ *   - isZero * val = 0             (val must be 0 when isZero = 1)
+ *
+ * Allocates two witness columns (isZeroBit, invVal).
+ * Use the IsZero alias (Comp<IsZeroImpl>) rather than IsZeroImpl directly.
+ */
 class IsZeroImpl : public CompImpl<IsZeroImpl> {
 public:
   // Sets a register value

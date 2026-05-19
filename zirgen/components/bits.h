@@ -18,8 +18,22 @@
 
 namespace zirgen {
 
-// A BitImpl is a single bit
+/**
+ * @brief Tag used to construct a BitImpl that reuses an existing Reg.
+ *
+ * Pass ShareBitWithRegister{} to the two-argument BitImpl constructor when a
+ * Reg has already been allocated and you only need the bit-constraint attached.
+ */
 struct ShareBitWithRegister {};
+
+/**
+ * @brief Circuit component constraining a witness register to {0, 1}.
+ *
+ * Allocates one register in the "data" pool and registers a verify callback
+ * that enforces:  reg * (1 - reg) = 0
+ *
+ * Prefer the Bit alias (Comp<BitImpl>) over using BitImpl directly.
+ */
 struct BitImpl : CompImpl<BitImpl> {
   BitImpl(llvm::StringRef source = "data") : reg(Label("bit"), source) {
     this->registerCallback("_builtin_verify", &BitImpl::onVerify);
@@ -41,6 +55,11 @@ struct BitImpl : CompImpl<BitImpl> {
 
 using Bit = Comp<BitImpl>;
 
+/**
+ * @brief Allocator token for a two-bit (twit) register drawn from the shared pool.
+ *
+ * TwitPrepareImpl fills the pool; TwitImpl draws from it.
+ */
 struct TwitAlloc : public AllocatableBase {
   TwitAlloc(Buffer buf, size_t id = 0) : AllocatableBase(id), buf(buf) {}
   Buffer buf;
@@ -48,6 +67,12 @@ struct TwitAlloc : public AllocatableBase {
   void saveLabel(llvm::StringRef label) override { CompContext::saveLabel(buf, label); }
 };
 
+/**
+ * @brief Pre-allocates `size` twit registers and adds them to the "twit" pool.
+ *
+ * Must be instantiated before any TwitImpl so that the pool is populated.
+ * Each register is range-checked to {0, 1, 2, 3} in the verify callback.
+ */
 template <size_t size> struct TwitPrepareImpl : public CompImpl<TwitPrepareImpl<size>> {
   TwitPrepareImpl() {
     for (size_t i = 0; i < size; i++) {
@@ -71,6 +96,12 @@ template <size_t size> struct TwitPrepareImpl : public CompImpl<TwitPrepareImpl<
 
 template <size_t size> using TwitPrepare = Comp<TwitPrepareImpl<size>>;
 
+/**
+ * @brief Circuit component holding a two-bit value constrained to {0, 1, 2, 3}.
+ *
+ * Draws one register from the "twit" pool populated by TwitPrepareImpl.
+ * Prefer the Twit alias (Comp<TwitImpl>) over using TwitImpl directly.
+ */
 class TwitImpl : public CompImpl<TwitImpl> {
 public:
   TwitImpl() : reg(Label("twit"), CompContext::allocateFromPool<TwitAlloc>("twit")->buf) {}
