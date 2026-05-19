@@ -18,6 +18,21 @@
 
 namespace zirgen {
 
+/**
+ * @brief Circuit component encoding an integer in [0, size) as a one-hot bit vector.
+ *
+ * Allocates `size` Bit registers.  The verify callback enforces:
+ *   - Each bit is in {0, 1}
+ *   - Exactly one bit equals 1  (sum = 1)
+ *
+ * Common usage is as the selector for a Mux<> — pass OneHot<N> to MuxImpl and
+ * only the arm whose index matches the hot bit will execute.
+ *
+ * set(val) writes the encoding for `val` nondeterministically and then
+ * constrains get() == val.  at(idx) returns the raw bit at position idx.
+ *
+ * Use the OneHot<N> alias (Comp<OneHotImpl<N>>) rather than OneHotImpl directly.
+ */
 template <size_t size> class OneHotImpl : public CompImpl<OneHotImpl<size>> {
 public:
   OneHotImpl(llvm::StringRef source = "data", bool check = true) : OneHotImpl({}, source, check) {}

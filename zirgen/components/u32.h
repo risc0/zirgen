@@ -17,9 +17,34 @@
 #include "zirgen/components/bytes.h"
 #include "zirgen/components/iszero.h"
 
+/**
+ * @file u32.h
+ * @brief 32-bit unsigned integer value and register types for Zirgen circuits.
+ *
+ * U32 arithmetic is represented as four byte-sized limbs (little-endian) so
+ * that each limb fits in a byte-range-checked register.  Many operations
+ * produce *denormalized* results (carries not propagated); use U32Normalize to
+ * reduce to a canonical form when needed.
+ *
+ * Key types:
+ *   - U32Val        — transient 32-bit value (four Val limbs, no witness column)
+ *   - U32Reg        — persistent 32-bit register (four ByteReg witness columns)
+ *   - U32Normalize  — normalizes a denormalized U32 into byte-range registers
+ *   - U32Mul        — full 32×32→64-bit signed/unsigned multiply
+ *   - U32MulAcc     — multiply-accumulate (A*B + C) with overflow check
+ *   - U32Po2        — computes 1 << p for a 5-bit exponent p ∈ [0, 31)
+ *   - TopBit        — extracts the sign/top bit from a normalized U32
+ *   - IsZeroU32     — tests whether a U32 value equals zero
+ */
+
 namespace zirgen {
 
-// A U32 value.  May be 'denormalized' (i.e. have unpropagated carry)
+/**
+ * @brief Transient 32-bit unsigned integer value (four Val limbs, little-endian).
+ *
+ * May be *denormalized*: limbs can exceed 255 when carries have not been
+ * propagated.  Use U32Normalize or U32Reg::set() to produce a canonical form.
+ */
 struct U32Val {
   U32Val() = default;
 
@@ -52,6 +77,14 @@ template <> struct LogPrep<U32Val> {
 
 void eq(U32Val a, U32Val b, SourceLoc loc = SourceLoc::current());
 
+/**
+ * @brief Witness register holding a normalized 32-bit unsigned integer.
+ *
+ * Backed by four ByteReg columns (one per byte, little-endian).  set() accepts
+ * a denormalized U32Val and normalizes it; get() returns a normalized U32Val.
+ * getSmallSigned()/getSmallUnsigned() return the flat value as a field element
+ * for use in field arithmetic when the value is known to be small.
+ */
 class U32RegImpl : public CompImpl<U32RegImpl> {
 public:
   static constexpr size_t rawSize() { return kWordSize; }

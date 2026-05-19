@@ -16,6 +16,27 @@
 
 #include "zirgen/components/onehot.h"
 
+/**
+ * @file mux.h
+ * @brief Template multiplexer component for selecting between circuit arms.
+ *
+ * MuxImpl<Arm0, Arm1, …> takes a OneHot<N> selector and instantiates one
+ * component of each arm type.  Only the arm whose bit is set contributes
+ * constraints; the others are skipped via CompContext::enterArm/leaveArm.
+ *
+ * Usage:
+ * @code
+ *   OneHot<2> sel = ...;
+ *   Mux<Comp<ArmA>, Comp<ArmB>> m(sel, ...constructor_args...);
+ *   m->at<0>()   // access the ArmA instance
+ *   m->doMux([](auto& arm) { arm->doSomething(); });
+ * @endcode
+ *
+ * Labels can optionally be provided to name the arms in the witness layout.
+ *
+ * Use the Mux<…> alias (Comp<MuxImpl<…>>) rather than MuxImpl directly.
+ */
+
 namespace zirgen {
 
 namespace impl {

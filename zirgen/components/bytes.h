@@ -16,6 +16,23 @@
 
 #include "zirgen/components/plonk.h"
 
+/**
+ * @file bytes.h
+ * @brief Byte-range-checked registers using a PLONK lookup argument.
+ *
+ * This file provides the building blocks for proving that a witness value lies
+ * in [0, 255].  The mechanism is a PLONK permutation argument over pairs of
+ * bytes (high + low), which halves the table size (2^16 entries instead of
+ * 2^8 entries each) and doubles throughput.
+ *
+ * Public API summary:
+ *   - ByteReg / ByteRegImpl  — a single byte-constrained register
+ *   - BytesHeader            — shared PLONK header; one per circuit
+ *   - BytesSetup             — populates the lookup table (setup cycles)
+ *   - BytesBody              — allocates byte registers for user data cycles
+ *   - BytesInit/Pass/Fini    — lifecycle helpers for the PLONK argument
+ */
+
 namespace zirgen {
 
 namespace impl {
@@ -70,6 +87,16 @@ using BytesInit = PlonkInit<BytesHeader>;
 using BytesPass = PlonkPass<BytesHeader>;
 using BytesFini = PlonkFini<impl::BytesPlonkElement, BytesHeader>;
 
+/**
+ * @brief A witness register constrained to hold a value in [0, 255].
+ *
+ * ByteRegImpl allocates a single register and registers it with the byte PLONK
+ * argument so the verifier can confirm the value is a valid byte.
+ *
+ * - get()      — returns the byte value (always in [0, 255])
+ * - set(Val)   — stores the low 8 bits; returns the remaining high bits
+ * - setExact() — stores a value that must already be exactly 8 bits
+ */
 class ByteRegImpl : public CompImpl<ByteRegImpl> {
 public:
   ByteRegImpl();
@@ -86,6 +113,13 @@ public:
 
 using ByteReg = Comp<ByteRegImpl>;
 
+/**
+ * @brief Populates the byte lookup table during setup cycles.
+ *
+ * Must be instantiated on each setup cycle (use setupCount() to determine how
+ * many cycles are required for a given register budget).  Call set() each
+ * cycle to advance the table.
+ */
 class BytesSetupImpl : public CompImpl<BytesSetupImpl> {
 public:
   // Calculate how many setup cycles we need for a given setup row size
@@ -103,6 +137,12 @@ private:
 
 using BytesSetup = Comp<BytesSetupImpl>;
 
+/**
+ * @brief Allocates `count` ByteReg slots for use during normal execution cycles.
+ *
+ * The allocated registers are placed in the allocator pool so that ByteReg
+ * instances can draw from them automatically.
+ */
 class BytesBodyImpl : public CompImpl<BytesBodyImpl> {
 public:
   // Make a table capable of holding 'count' elements, which get added to allocator

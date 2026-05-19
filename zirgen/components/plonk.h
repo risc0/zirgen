@@ -20,8 +20,37 @@
 
 #include <deque>
 
+/**
+ * @file plonk.h
+ * @brief Generic PLONK permutation argument infrastructure.
+ *
+ * Provides a reusable template framework for building PLONK-style lookup and
+ * permutation arguments.  The pattern is:
+ *
+ *  1. Define an Element type (the tuple written to the table per row) and a
+ *     Verifier type (stateful consistency check between consecutive sorted rows).
+ *  2. Instantiate a Header (derived from PlonkHeaderBase) shared across cycles.
+ *  3. For each cycle, instantiate exactly one of:
+ *       - PlonkInit   — first cycle: initialises the sorted element and accumulator
+ *       - PlonkBody   — normal cycles: writes `count` elements and accumulates
+ *       - PlonkPass   — inactive cycles: propagates the previous element unchanged
+ *       - PlonkFini   — last cycle: verifies the final sorted element and accumulator
+ *
+ * Concrete instantiations are in bytes.h (byte range check) and ram.h (RAM consistency).
+ *
+ * PlonkExternHandler is the C++ host-side implementation of the plonkWrite,
+ * plonkRead, plonkWriteAccum, and plonkReadAccum extern calls.
+ */
+
 namespace zirgen {
 
+/**
+ * @brief Shared state for a PLONK argument group: name, phase labels, and accumulators.
+ *
+ * Subclass this and pass the derived type as the Header template parameter to
+ * PlonkInit, PlonkBody, PlonkPass, and PlonkFini.  Override getCheckDirty() to
+ * return a non-zero value when dirty-flag checking is required (e.g. RAM writes).
+ */
 template <typename Element, typename Verifier> struct PlonkHeaderBase {
   PlonkHeaderBase(
       llvm::StringRef name,              // Name of this plonk group for use in extern calls
@@ -54,7 +83,13 @@ template <typename Element, typename Verifier> struct PlonkHeaderBase {
   std::vector<FpExtReg> mixers;
 };
 
-// PlonkInit should be activated on the first cycle.
+/**
+ * @brief Initialises the PLONK argument on the first execution cycle.
+ *
+ * Sets the sorted element to its initial sentinel value and seeds the
+ * extension-field accumulator to 1.  Must be paired with a PlonkFini on the
+ * last cycle and PlonkBody/PlonkPass on all cycles in between.
+ */
 template <typename Header> class PlonkInitImpl : public CompImpl<PlonkInitImpl<Header>> {
 public:
   PlonkInitImpl(Header header) : header(header) {
@@ -74,9 +109,13 @@ public:
 
 template <typename Header> using PlonkInit = Comp<PlonkInitImpl<Header>>;
 
-// When a plonk component doesn't actually do anything during a
-// cycle, for instance the RAM component during a "setup" step, it can
-// "pass" on filling in any data by using a PlonkPass.
+/**
+ * @brief Propagates the previous sorted element unchanged for idle cycles.
+ *
+ * Use when a circuit cycle does not contribute any elements to the PLONK table
+ * (e.g. a RAM "setup" cycle that fills the byte table but performs no memory ops).
+ * Writes the multiplicative identity to the accumulator for that cycle.
+ */
 template <typename Header> class PlonkPassImpl : public CompImpl<PlonkPassImpl<Header>> {
 public:
   PlonkPassImpl(Header header) : header(header) {
@@ -117,7 +156,13 @@ public:
 
 template <typename Header> using PlonkPass = Comp<PlonkPassImpl<Header>>;
 
-// PlonkFini should be activated on the last cycle.
+/**
+ * @brief Finalises the PLONK argument on the last execution cycle.
+ *
+ * Verifies that the last sorted element satisfies the consistency predicate and
+ * that the running accumulator has returned to 1 (i.e. the multiset of LHS
+ * elements equals the multiset of RHS elements).
+ */
 template <typename Element, typename Header>
 class PlonkFiniImpl : public CompImpl<PlonkFiniImpl<Element, Header>> {
 public:
@@ -140,13 +185,18 @@ public:
 template <typename Element, typename Verifier>
 using PlonkFini = Comp<PlonkFiniImpl<Element, Verifier>>;
 
-// Construct a 'PLONK' argument.
-// Basically each row/cycle considers a `count` of elements that the user
-// specifies.  Each of these is later reordered into some canonical form,
-// at which point we want to verify that 1) The reordered versions are
-// a permuation of the originals 2) The reordered versions has some sort
-// of local consistency (i.e. x' = x or x' = x + 1 for range check).
-// We template on the type of element
+/**
+ * @brief Normal-cycle body of a PLONK argument: writes and accumulates `count` elements.
+ *
+ * Each PlonkBody instance contributes `count` (LHS) elements to the unsorted
+ * table during finalize and reads back `count` (RHS) elements from the sorted
+ * table during verify.  The verifier checks local consistency between consecutive
+ * sorted elements (e.g. value unchanged for RAM reads, monotone for range checks).
+ *
+ * Accumulation is batched into groups of (maxDeg - 1) to stay within the
+ * circuit's polynomial degree bound; intermediate accumulators are stored in
+ * the "accum" buffer.  Use at(idx) to obtain the LHS Element at position idx.
+ */
 template <typename Element, typename Verifier, typename Header>
 class PlonkBodyImpl : public CompImpl<PlonkBodyImpl<Element, Verifier, Header>> {
 public:
@@ -315,6 +365,15 @@ public:
 template <typename Element, typename Verifier, typename Header>
 using PlonkBody = Comp<PlonkBodyImpl<Element, Verifier, Header>>;
 
+/**
+ * @brief Host-side handler for the plonkWrite/plonkRead/plonkWriteAccum/plonkReadAccum externs.
+ *
+ * Accumulates unsorted rows during the finalize phase (plonkWrite), sorts them
+ * (sort()), replays them in sorted order during verify (plonkRead), and manages
+ * the prefix-product accumulators (calcPrefixProducts, plonkWriteAccum/ReadAccum).
+ *
+ * Subclass this to implement concrete PLONK arguments (see RamExternHandler in ram.h).
+ */
 class PlonkExternHandler : public Zll::ExternHandler {
 public:
   std::optional<std::vector<uint64_t>> doExtern(llvm::StringRef name,
