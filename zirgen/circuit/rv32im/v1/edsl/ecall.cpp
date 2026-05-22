@@ -110,7 +110,9 @@ void ECallSoftwareImpl::set(Top top) {
   eqz(requireAlignedAddr->set(readOutputAddr->data().bytes[0] / 4));
   eqz(requireAlignedBytes->set(readOutputAddr->data().bytes[0] / 4));
 
-  NONDET { doExtern("syscallInit", "", 0, {readOutputWords->data().flat()}); }
+  NONDET {
+    doExtern("syscallInit", "", 0, {readOutputWords->data().flat()});
+  }
 
   body->pc->set(curPC);
   body->userMode->set(BACK(1, body->userMode->get()));
@@ -169,7 +171,9 @@ void ECallUserImpl::set(Top top) {
   U32Val newPC = readPC->doRead(cycle, kUserPC / 4);
   body->pc->set(newPC.flat());
   body->userMode->set(1);
-  NONDET { doExtern("setUserMode", "", 0, {1}); }
+  NONDET {
+    doExtern("setUserMode", "", 0, {1});
+  }
   body->nextMajor->set(MajorType::kMuxSize);
 }
 
@@ -186,7 +190,9 @@ void ECallMachineImpl::set(Top top) {
   U32Val newPC = readEntry->doRead(cycle, newEntry);
   body->pc->set(newPC.flat());
   body->userMode->set(0);
-  NONDET { doExtern("setUserMode", "", 0, {0}); }
+  NONDET {
+    doExtern("setUserMode", "", 0, {0});
+  }
   body->nextMajor->set(MajorType::kMuxSize);
 }
 
@@ -199,7 +205,9 @@ void ECallCycleImpl::set(Top top) {
   Val curPC = BACK(1, body->pc->get());
   Val userMode = BACK(1, body->userMode->get());
   // Load isTrap nondeterministically
-  NONDET { isTrap->set(doExtern("isTrap", "", 1, {})[0]); }
+  NONDET {
+    isTrap->set(doExtern("isTrap", "", 1, {})[0]);
+  }
   // isTrap can only be set when in user mode
   eqz((1 - userMode) * isTrap);
   // We should always be in 'decode'
@@ -224,7 +232,9 @@ void ECallCycleImpl::set(Top top) {
   }
   // Print if it's not in a halt loop
   NONDET {
-    IF(1 - isz(minorSelect - ECallType::kHalt)) { XLOG("  ecall, selector = %u", minorSelect); }
+    IF(1 - isz(minorSelect - ECallType::kHalt)) {
+      XLOG("  ecall, selector = %u", minorSelect);
+    }
   }
   // Call into selected code
   minorMux->doMux([&](auto inner) { inner->set(top); });
@@ -237,7 +247,9 @@ void TwitByteRegImpl::set(Val val) {
   for (size_t i = 0; i < 4; i++) {
     uint32_t po2 = 1 << (2 * i);
     uint32_t mask = 3 * po2;
-    NONDET { twits[i]->set((val & mask) / po2); }
+    NONDET {
+      twits[i]->set((val & mask) / po2);
+    }
     check = check + twits[i]->get() * po2;
   }
   eq(check, val);
@@ -292,7 +304,9 @@ void ECallCopyInCycleImpl::set(Top top) {
          outputWords);
   }
 
-  IF(1 - isFirstCycle) { outputWords->set(kIoChunkWords * (1 - chunksRemainingZ->isZero())); }
+  IF(1 - isFirstCycle) {
+    outputWords->set(kIoChunkWords * (1 - chunksRemainingZ->isZero()));
+  }
 
   IF(outputWords->at(0)) {
     // All done!
@@ -345,7 +359,9 @@ void ECallCopyInCycleImpl::set(Top top) {
       eq(io[ioReg]->cycle(), cycle);
       eq(io[ioReg]->addr(), writeAddr);
     }
-    IF(nopThisReg) { io[ioReg]->doNOP(); }
+    IF(nopThisReg) {
+      io[ioReg]->doNOP();
+    }
     // Verify input was bytes
     for (size_t i = 0; i < 4; i++) {
       size_t byteId = ioReg * 4 + i;

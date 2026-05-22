@@ -42,9 +42,11 @@ void MemIOCycleImpl::set(Top top) {
   }
 
   // Nondeterministically set imm
-  NONDET{
+  NONDET {
 #define OPI(id, mnemonic, opc, f3, f7, immFmt, isRead, is8Bit, is16Bit, signExt)                   \
-  IF(minorSelect->at(id % kMinorMuxSize)) { immReg->set(decoder->imm##immFmt()); }
+  IF(minorSelect->at(id % kMinorMuxSize)) {                                                        \
+    immReg->set(decoder->imm##immFmt());                                                           \
+  }
 #include "zirgen/circuit/rv32im/v1/platform/rv32im.inl"
   }
 
@@ -114,20 +116,26 @@ void MemIOCycleImpl::set(Top top) {
     uint32_t addrMask = is32Bit * 0 + is16Bit * 2 + is8Bit * 3;                                    \
     uint32_t count = 4 - addrMask;                                                                 \
     IF(minorSelect->at(id % kMinorMuxSize)) {                                                      \
-      IF(is32Bit) { eq(lowBits->at(0), 1); }                                                       \
-      IF(is16Bit) { eq(lowBits->at(0) + lowBits->at(2), 1); }                                      \
+      IF(is32Bit) {                                                                                \
+        eq(lowBits->at(0), 1);                                                                     \
+      }                                                                                            \
+      IF(is16Bit) {                                                                                \
+        eq(lowBits->at(0) + lowBits->at(2), 1);                                                    \
+      }                                                                                            \
       if (isRead) {                                                                                \
         for (size_t i = 0; i < 4; i++) {                                                           \
           if ((i & addrMask) != i) {                                                               \
             continue;                                                                              \
           }                                                                                        \
-          IF(lowBits->at(i)) { highByte->set(loaded.bytes[i + 3 - addrMask]); }                    \
+          IF(lowBits->at(i)) {                                                                     \
+            highByte->set(loaded.bytes[i + 3 - addrMask]);                                         \
+          }                                                                                        \
         }                                                                                          \
         NONDET {                                                                                   \
           highBit->setExact((highByte & 0x80) / 0x80);                                             \
           lowBits2->setExact((highByte & 0x7f) * 2);                                               \
         }                                                                                          \
-        eqz(highBit*(1 - highBit));                                                                \
+        eqz(highBit * (1 - highBit));                                                              \
         eq(highByte, highBit * 0x80 + lowBits2 / 2);                                               \
         Val fillByte = signExt ? 255 * highBit : 0;                                                \
         U32Val extended = {0, 0, 0, 0};                                                            \
@@ -148,7 +156,9 @@ void MemIOCycleImpl::set(Top top) {
         IF(1 - rdZero->isZero()) {                                                                 \
           write->doWrite(cycle, kRegisterOffset - 32 * userMode + decoder->rd(), extended);        \
         }                                                                                          \
-        IF(rdZero->isZero()) { write->doNOP(); }                                                   \
+        IF(rdZero->isZero()) {                                                                     \
+          write->doNOP();                                                                          \
+        }                                                                                          \
       } else {                                                                                     \
         highByte->setExact(0);                                                                     \
         highBit->setExact(0);                                                                      \

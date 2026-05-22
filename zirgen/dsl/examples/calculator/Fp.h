@@ -65,8 +65,7 @@ Val4 operator*(const Val4& lhs, const Val4& rhs) {
 using Reg = size_t;
 
 #define LOAD(REF, BACK) Val(REF.buffer.at(*REF.layout))
-#define LOAD_AS_EXT(REF, BACK)                                                                     \
-  Val4 { LOAD(REF, BACK), 0, 0, 0 }
+#define LOAD_AS_EXT(REF, BACK) Val4{LOAD(REF, BACK), 0, 0, 0}
 #define LOAD_EXT(REF, BACK)                                                                        \
   Val4 {                                                                                           \
     REF.buffer.at(*REF.layout + 0), REF.buffer.at(*REF.layout + 1),                                \
@@ -186,7 +185,9 @@ struct Tap {
 };
 
 #define MAKE_TAP(BUF, INDEX, BACK)                                                                 \
-  Tap { .buffer = #BUF, .index = INDEX, .back = BACK }
+  Tap {                                                                                            \
+    .buffer = #BUF, .index = INDEX, .back = BACK                                                   \
+  }
 
 #define INVOKE_EXTERN(CTX, NAME, ...) externs.NAME(__VA_ARGS__)
 
