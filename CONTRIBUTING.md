@@ -29,9 +29,7 @@ Ticket numbers come from the [Linear](https://linear.app) project. If you do not
 The repository ships tracked hook scripts in `.githooks/`. Run the installer once after cloning:
 
 ```sh
-bash scripts/install-hooks.sh
+bash .githooks/install.sh
 ```
 
-This symlinks `.githooks/commit-msg` and `.githooks/prepare-commit-msg` into `.git/hooks/`. The `commit-msg` hook rejects commits whose subject line does not match the convention. The `prepare-commit-msg` hook prepends `ZIR-000: ` to messages that lack a `ZIR-` prefix, giving you a reminder to fill in the ticket number before finalizing.
-
-The installer is idempotent — running it again is safe and will not overwrite manual customizations that are not symlinks.
+This sets `core.hooksPath` to `.githooks/` and `commit.template` to `.githooks/commit-msg-template`, so git finds the tracked hooks and pre-fills new commit messages with the required format. The `commit-msg` hook rejects commits whose subject line does not match the convention. The `prepare-commit-msg` hook prepends `ZIR-000: ` to messages that lack a `ZIR-` prefix, giving you a reminder to fill in the ticket number before finalizing.
