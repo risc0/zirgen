@@ -4,25 +4,20 @@
 
 COMMIT_MSG_FILE=$1
 
-# Read only the first line (subject line) of the commit message
-FIRST_LINE=$(head -n 1 "$COMMIT_MSG_FILE")
+# Read the first non-comment, non-empty line (consistent with prepare-commit-msg)
+FIRST_LINE=$(grep -v '^#' "$COMMIT_MSG_FILE" | grep -v '^[[:space:]]*$' | head -n 1)
 
 # Define the required pattern: ZIR-XXX: Description
 # Where XXX is one or more digits (must be at least 1)
 PATTERN="^ZIR-[0-9]+: .+"
 
-# Check if this is a merge commit (starts with "Merge")
-if echo "$FIRST_LINE" | grep -q "^Merge"; then
+# Nothing to validate if the message is empty
+if [ -z "$FIRST_LINE" ]; then
     exit 0
 fi
 
-# Check if this is a revert commit (starts with "Revert")
-if echo "$FIRST_LINE" | grep -q "^Revert"; then
-    exit 0
-fi
-
-# Skip validation for empty commits or comments
-if [ -z "$FIRST_LINE" ] || echo "$FIRST_LINE" | grep -q "^#"; then
+# Skip merge and revert commits (identified by conventional prefixes)
+if echo "$FIRST_LINE" | grep -qE "^(Merge|Revert) "; then
     exit 0
 fi
 
