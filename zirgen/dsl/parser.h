@@ -14,6 +14,12 @@
 
 #pragma once
 
+// Recursive-descent parser for the ZIR DSL grammar.
+//
+// Entry point: Parser::parseModule() returns an ast::Module or nullptr on error.
+// Use addPreamble() before calling parseModule() to inject builtin definitions.
+// Syntax errors are accumulated and accessible via getErrors().
+
 #include "zirgen/dsl/ast.h"
 #include "zirgen/dsl/lexer.h"
 

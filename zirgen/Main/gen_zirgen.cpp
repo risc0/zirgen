@@ -12,6 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Compiler driver for the zirgen circuit compiler.
+//
+// Orchestrates the full compilation pipeline: parse .zir source → lower to ZHL MLIR →
+// typecheck/monomorphize to ZHLT → optimization passes → emit validity polynomial
+// (eval_check, poly_ext, taps) via emitPoly → more passes → make step functions →
+// emit Rust/C++/CUDA targets via emitTarget.
+//
+// Usage: gen_zirgen [options] input.zir
+// Key options: --output-dir, --validity-split-count, --step-split-count,
+//              --max-degree, --protocol-info, --circuit-name, -I <include-dir>
+
 #include <fstream>
 #include <iostream>
 

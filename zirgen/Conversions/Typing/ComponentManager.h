@@ -28,10 +28,13 @@ namespace zirgen::Typing {
 // Returns std::nullopt if unsuccessful.
 std::optional<mlir::ModuleOp> typeCheck(mlir::MLIRContext&, mlir::ModuleOp);
 
-// ComponentManager manages the component collection when generating
-// typed components.  Callers can request a component and need not
-// know whether the component is built in or generated from a
-// zhl.component, or has some other special handling.
+// ComponentManager drives ZHL → ZHLT monomorphization. It is the central registry
+// for all component definitions during type-checking. When a caller requests
+// getComponent(name, typeArgs), ComponentManager checks whether a matching
+// Zhlt::ComponentOp already exists (looked up by mangled name), and if not,
+// instantiates it — either from a user-defined zhl.component (generic or concrete)
+// or from a built-in C++ handler. A component stack tracks in-progress
+// instantiations to detect illegal recursive generic expansion.
 class ComponentManager {
 public:
   Zhlt::ComponentOp
