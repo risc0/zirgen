@@ -31,6 +31,9 @@ namespace recursion {
 struct EncodeStats;
 }
 
+// Abstract interface for streaming Rust source output. Implementations write
+// witness-generation step functions, validity polynomial functions, tap tables,
+// and circuit-info constants to an underlying output stream.
 class RustStreamEmitter {
 public:
   virtual ~RustStreamEmitter() = default;
@@ -42,6 +45,9 @@ public:
   virtual void emitInfo(mlir::func::FuncOp func) = 0;
 };
 
+// Abstract interface for streaming GPU (CUDA/Metal) source output. Implementations
+// emit the eval_check validity kernel and witness-generation step functions,
+// using a liveness-based slot pool to minimize register pressure.
 class GpuStreamEmitter {
 public:
   virtual ~GpuStreamEmitter() = default;
