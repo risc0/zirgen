@@ -1,0 +1,40 @@
+name: Commit Message Lint
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  commit-lint:
+    name: Validate commit messages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate commit messages
+        run: |
+          BASE=${{ github.event.pull_request.base.sha }}
+          HEAD=${{ github.event.pull_request.head.sha }}
+
+          PATTERN='^(ZIR-[0-9]+: .+|Merge .+|Revert .+)'
+          FAILED=0
+
+          while IFS= read -r subject; do
+            if ! echo "$subject" | grep -qE "$PATTERN"; then
+              echo "FAIL: $subject"
+              FAILED=1
+            else
+              echo "OK:   $subject"
+            fi
+          done < <(git log --format="%s" "$BASE..$HEAD")
+
+          if [ "$FAILED" -ne 0 ]; then
+            echo ""
+            echo "One or more commit messages do not follow the required format."
+            echo "Expected: ZIR-XXX: Description"
+            echo "Merge and Revert commits are also accepted."
+            exit 1
+          fi
