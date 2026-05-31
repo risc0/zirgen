@@ -1,0 +1,30 @@
+#!/bin/bash
+# Enforces ZIR-XXX: commit message format.
+
+COMMIT_MSG_FILE=$1
+FIRST_LINE=$(head -n 1 "$COMMIT_MSG_FILE")
+
+# Allow merge and revert commits
+if echo "$FIRST_LINE" | grep -qE "^(Merge|Revert) "; then
+    exit 0
+fi
+
+# Skip empty messages or comment-only files
+if [ -z "$FIRST_LINE" ] || echo "$FIRST_LINE" | grep -q "^#"; then
+    exit 0
+fi
+
+if ! echo "$FIRST_LINE" | grep -qE "^ZIR-[0-9]+: .+"; then
+    echo "ERROR: Commit message must follow the format: ZIR-XXX: Description"
+    echo ""
+    echo "Examples:"
+    echo "  ZIR-123: Add user authentication"
+    echo "  ZIR-456: Fix memory leak in connection pool"
+    echo ""
+    echo "Your commit message (first line):"
+    echo "  $FIRST_LINE"
+    echo ""
+    exit 1
+fi
+
+exit 0
