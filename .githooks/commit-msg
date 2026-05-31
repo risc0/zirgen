@@ -1,0 +1,48 @@
+#!/bin/bash
+# Git hook to enforce standardized commit message format: ZIR-XXX: Description
+# This hook validates that commit messages follow the required format
+
+COMMIT_MSG_FILE=$1
+
+# Read only the first line (subject line) of the commit message
+FIRST_LINE=$(head -n 1 "$COMMIT_MSG_FILE")
+
+# Define the required pattern: ZIR-XXX: Description
+# Where XXX is one or more digits (must be at least 1)
+PATTERN="^ZIR-[0-9]+: .+"
+
+# Check if this is a merge commit (starts with "Merge")
+if echo "$FIRST_LINE" | grep -q "^Merge"; then
+    exit 0
+fi
+
+# Check if this is a revert commit (starts with "Revert")
+if echo "$FIRST_LINE" | grep -q "^Revert"; then
+    exit 0
+fi
+
+# Skip validation for empty commits or comments
+if [ -z "$FIRST_LINE" ] || echo "$FIRST_LINE" | grep -q "^#"; then
+    exit 0
+fi
+
+# Validate the commit message format (first line only)
+if ! echo "$FIRST_LINE" | grep -qE "$PATTERN"; then
+    echo "ERROR: Commit message does not follow the required format."
+    echo ""
+    echo "Expected format: ZIR-XXX: Description"
+    echo "  - ZIR-XXX where XXX is the issue/task number"
+    echo "  - Followed by a colon and space"
+    echo "  - Then a descriptive message"
+    echo ""
+    echo "Examples:"
+    echo "  ZIR-123: Add new feature for user authentication"
+    echo "  ZIR-456: Fix memory leak in connection pool"
+    echo ""
+    echo "Your commit message (first line):"
+    echo "$FIRST_LINE"
+    echo ""
+    exit 1
+fi
+
+exit 0
