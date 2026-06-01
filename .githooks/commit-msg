@@ -16,8 +16,11 @@ if [ -z "$FIRST_LINE" ]; then
     exit 0
 fi
 
-# Skip merge and revert commits (identified by conventional prefixes)
+# Skip merge, revert, and allowed infra/bot prefixes
 if echo "$FIRST_LINE" | grep -qE "^(Merge|Revert) "; then
+    exit 0
+fi
+if echo "$FIRST_LINE" | grep -qE "^(ci|chore): "; then
     exit 0
 fi
 
@@ -30,9 +33,13 @@ if ! echo "$FIRST_LINE" | grep -qE "$PATTERN"; then
     echo "  - Followed by a colon and space"
     echo "  - Then a descriptive message"
     echo ""
+    echo "Allowed bypass prefixes: ci:, chore:"
+    echo ""
     echo "Examples:"
     echo "  ZIR-123: Add new feature for user authentication"
     echo "  ZIR-456: Fix memory leak in connection pool"
+    echo "  ci: bump actions/checkout to v4"
+    echo "  chore: update dependency versions"
     echo ""
     echo "Your commit message (first line):"
     echo "$FIRST_LINE"

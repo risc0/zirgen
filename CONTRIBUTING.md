@@ -24,12 +24,12 @@ Merge commits (`Merge ...`) and revert commits (`Revert ...`) are exempt from th
 
 Ticket numbers come from the [Linear](https://linear.app) project. If you do not have access, ask a maintainer to create a ticket or use `ZIR-000`.
 
-## Installing the Git Hooks
+## Git Hooks
 
-The repository ships tracked hook scripts in `.githooks/`. Run the installer once after cloning:
+The repository ships tracked hook scripts in `.githooks/`. Opt in by running the setup script once after cloning:
 
 ```sh
-bash .githooks/install.sh
+bash scripts/setup-hooks.sh
 ```
 
-This sets `core.hooksPath` to `.githooks/` and `commit.template` to `.githooks/commit-msg-template`, so git finds the tracked hooks and pre-fills new commit messages with the required format. The `commit-msg` hook rejects commits whose subject line does not match the convention. The `prepare-commit-msg` hook prepends `ZIR-000: ` to messages that lack a `ZIR-` prefix, giving you a reminder to fill in the ticket number before finalizing.
+This sets `core.hooksPath` to `.githooks/` so git finds the tracked hooks. The `commit-msg` hook rejects commits whose subject line does not match the `ZIR-###:` convention (or an allowed bypass prefix). Merge commits and commits prefixed with `ci:` or `chore:` are exempt.
