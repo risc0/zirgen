@@ -56,7 +56,9 @@ template <typename First, typename... Rest> struct MuxData<Comp<First>, Rest...>
   }
 
   template <size_t size, typename Func> void apply(OneHot<size> select, size_t which, Func func) {
-    IF(select->at(which)) { func(first->asComp()); }
+    IF(select->at(which)) {
+      func(first->asComp());
+    }
     rest.apply(select, which + 1, func);
   }
 

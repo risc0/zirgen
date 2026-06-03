@@ -28,7 +28,7 @@ class WeierstrassCurve {
   //  y^2 = x^3 + a*x + b  (mod p)
 public:
   WeierstrassCurve(Value prime, Value a_coeff, Value b_coeff)
-      : _prime(prime), _a_coeff(a_coeff), _b_coeff(b_coeff){};
+      : _prime(prime), _a_coeff(a_coeff), _b_coeff(b_coeff) {};
   const Value& a() const { return _a_coeff; };
   const Value& b() const { return _b_coeff; };
   const Value& prime() const { return _prime; };
@@ -44,7 +44,7 @@ class AffinePt {
   // A point on a Weierstrass curve expressed in affine coordinates
 public:
   AffinePt(Value x_coord, Value y_coord, std::shared_ptr<WeierstrassCurve> curve)
-      : _x(x_coord), _y(y_coord), _curve(curve){};
+      : _x(x_coord), _y(y_coord), _curve(curve) {};
   const Value& x() const { return _x; };
   const Value& y() const { return _y; };
   const std::shared_ptr<WeierstrassCurve>& curve() const { return _curve; };

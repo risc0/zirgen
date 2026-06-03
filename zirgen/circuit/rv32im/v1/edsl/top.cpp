@@ -102,7 +102,9 @@ Val TopImpl::set() {
     Val isHalt = body->majorSelect->at(MajorType::kHalt);
     halted->set(isHalt);
   }
-  IF(isActive - isBody) { halted->set(0); }
+  IF(isActive - isBody) {
+    halted->set(0);
+  }
   return 1 - halted;
 }
 
