@@ -46,14 +46,27 @@ cycle := GetCycle();
 ```
 
 During simulation (the `--test` interpreter), the runtime provides default
-implementations: externs that return a value yield `0` (or a zero-initialized
-struct), and side-effecting externs print their arguments to stdout in a
-canonical format, e.g.:
+implementations for unknown externs: each output field is filled sequentially
+with `0, 1, 2, …` in declaration order, and side-effecting externs print their
+arguments to stdout in a canonical format. For example, given:
 
 ```
-[0] Output(5) -> ()
-[0] ReturnsVal() -> (0)
+extern ReturnsVal() : Val;
+extern ReturnsPair() : PairVal;   // PairVal has two Val fields: a, b
 ```
+
+the simulator produces:
+
+```
+[0] ReturnsVal() -> (0)
+[0] ReturnsPair() -> (0, 1)
+[0] Output(5) -> ()
+```
+
+`ReturnsVal` has one output field so it gets `0`; `ReturnsPair` has two fields
+so they get `0` and `1` respectively. Named externs such as `GetCycle` and
+`IsFirstCycle` have custom implementations (see below) and do not follow this
+default.
 
 ## Using Returned Values in Constraints
 
@@ -84,7 +97,13 @@ tests and circuits:
 | `GetCycle()` | `Val` | The index of the current row in the execution trace (0-based). |
 | `IsFirstCycle()` | `Val` | 1 on cycle 0, 0 otherwise. |
 | `Log(fmt, ...)` | — | Print a formatted message during simulation. |
-| `Isz(v)` | `Val` | 1 if `v == 0`, 0 otherwise (nondeterministic; must be constrained). |
+| `Output(v)` | — | Emit a value to the test output during simulation. |
+
+> **Note:** `Isz(v)` is **not** an extern. It is a built-in component compiled
+> directly to `Zll::IsZeroOp` and is always in scope without an `extern`
+> declaration. It returns 1 if `v == 0`, 0 otherwise, but because the result is
+> nondeterministic it must still be registerized with `NondetReg` before being
+> used in a constraint.
 
 ## Full Example
 
