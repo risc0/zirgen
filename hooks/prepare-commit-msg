@@ -1,0 +1,54 @@
+#!/bin/bash
+# Git hook to auto-normalize commit messages by prepending a ZIR ticket prefix.
+# Extracts the ticket number from the branch name (e.g. ZIR-123-my-feature ->
+# ZIR-123:), falling back to ZIR-000 when no ticket is found.
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+
+# Skip for merge, squash, and rebase sources — messages are auto-generated
+if [ "$COMMIT_SOURCE" = "merge" ] || [ "$COMMIT_SOURCE" = "squash" ] || [ "$COMMIT_SOURCE" = "rebase" ]; then
+    exit 0
+fi
+
+# Read the first non-comment, non-empty line
+FIRST_LINE=$(grep -v '^#' "$COMMIT_MSG_FILE" | grep -v '^[[:space:]]*$' | head -n 1)
+
+# Nothing to normalize if the message is empty
+if [ -z "$FIRST_LINE" ]; then
+    exit 0
+fi
+
+# Skip merge and revert commits (identified by conventional prefixes)
+if echo "$FIRST_LINE" | grep -qE "^(Merge|Revert) "; then
+    exit 0
+fi
+
+# Already conforming — nothing to do
+if echo "$FIRST_LINE" | grep -qE "^ZIR-[0-9]+: "; then
+    exit 0
+fi
+
+# Try to extract a ZIR ticket number from the current branch name.
+# Matches patterns like: ZIR-123, zir-123, or any prefix/suffix around it.
+BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null)
+TICKET=""
+if [ -n "$BRANCH" ]; then
+    TICKET=$(echo "$BRANCH" | grep -oiE 'ZIR-[0-9]+' | head -n 1 | tr '[:lower:]' '[:upper:]')
+fi
+
+PREFIX="${TICKET:-ZIR-000}"
+
+# Prepend '<PREFIX>: ' to the first line in-place using a temp file
+TMPFILE=$(mktemp)
+awk -v prefix="$PREFIX: " '
+    !done && /^[^#]/ && /[^[:space:]]/ {
+        print prefix $0
+        done = 1
+        next
+    }
+    { print }
+' "$COMMIT_MSG_FILE" > "$TMPFILE"
+mv "$TMPFILE" "$COMMIT_MSG_FILE"
+
+exit 0
