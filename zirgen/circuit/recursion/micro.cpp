@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -53,7 +53,9 @@ void MicroOpImpl::set(MicroInst inst, Val writeAddr, Reg extraPrev, size_t extra
   IF(decode->at(size_t(MicroOpcode::INV)) * operands[1]) {
     FpExt a = in0->doRead(operands[0]);
     in1->doNOP();
-    NONDET { out->doWrite(writeAddr, inv(a).getElems()); }
+    NONDET {
+      out->doWrite(writeAddr, inv(a).getElems());
+    }
     XLOG("INV: %e -> %e", a.getElems(), out->data());
     eq(FpExt(Val(1)), FpExt(in0->data()) * FpExt(out->data()));
   }
@@ -87,7 +89,9 @@ void MicroOpImpl::set(MicroInst inst, Val writeAddr, Reg extraPrev, size_t extra
     in0->doNOP();
     in1->doNOP();
     out->doWrite(writeAddr, {0, 0, 0, 0});
-    NONDET { auto vals = doExtern("readIOPHeader", "", 0, {operands[0], operands[1]}); }
+    NONDET {
+      auto vals = doExtern("readIOPHeader", "", 0, {operands[0], operands[1]});
+    }
   }
   IF(decode->at(size_t(MicroOpcode::READ_IOP_BODY))) {
     in0->doNOP();

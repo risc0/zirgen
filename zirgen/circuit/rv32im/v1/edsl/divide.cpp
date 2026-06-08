@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -115,7 +115,9 @@ void DivideCycleImpl::set(Top top) {
                      kRegisterOffset - 32 * userMode + decoder->rd(),
                      U32Val({quot[0], quot[1], quot[2], quot[3]}));
   }
-  IF(rdZero->isZero()) { writeRd->doNOP(); }
+  IF(rdZero->isZero()) {
+    writeRd->doNOP();
+  }
 
   // Prepare next cycle
   body->pc->set(curPC + 4);
@@ -176,7 +178,9 @@ void VerifyDivideCycleImpl::set(Top top) {
   mul->set(quotAbs->getNormed(), denomAbs->getNormed(), remAbs->getNormed());
   XLOG("  mul->getOut() = %w, denomRemCheck->carry = %u", mul->getOut(), denomRemCheck->getCarry());
   eq(mul->getOut(), numerAbs->getNormed());
-  IF(1 - denomZero->isZero()) { eq(denomRemCheck->getCarry(), 1); }
+  IF(1 - denomZero->isZero()) {
+    eq(denomRemCheck->getCarry(), 1);
+  }
   IF(denomZero->isZero()) {
     eq(rem, numer);
     eq(quot, U32Val(0xff, 0xff, 0xff, 0xff));

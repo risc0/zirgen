@@ -1,4 +1,4 @@
-// Copyright 2025 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -297,8 +297,7 @@ private:
 
     os << "(call [";
     if (layoutSignal) {
-      llvm::interleave(
-          flatten(layoutSignal), os, [&](Signal s) { os << s.str(); }, " ");
+      llvm::interleave(flatten(layoutSignal), os, [&](Signal s) { os << s.str(); }, " ");
       os << " ";
     }
     llvm::interleave(
@@ -702,8 +701,7 @@ private:
   // Returns a flattened list of all the signal names in a signal structure.
   SmallVector<Signal> flatten(AnySignal signal, bool skipLayout = false) {
     SmallVector<Signal> flattened;
-    visit(
-        signal, [&](Signal s) { flattened.push_back(s); }, /*visitedLayout=*/skipLayout);
+    visit(signal, [&](Signal s) { flattened.push_back(s); }, /*visitedLayout=*/skipLayout);
     return flattened;
   }
 
@@ -717,8 +715,7 @@ private:
   }
 
   void declareSignals(AnySignal signal, SignalType type, bool skipLayout = false) {
-    visit(
-        signal, [&](Signal s) { declareSignal(s, type); }, /*visitedLayout=*/skipLayout);
+    visit(signal, [&](Signal s) { declareSignal(s, type); }, /*visitedLayout=*/skipLayout);
   }
 
   void declareSignal(Signal signal, SignalType type) {
