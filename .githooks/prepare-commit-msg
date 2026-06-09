@@ -23,6 +23,11 @@ if echo "$FIRST_LINE" | grep -qE "^(Merge|Revert) "; then
     exit 0
 fi
 
+# Skip allowed infra/bot prefixes — consistent with commit-msg bypass
+if echo "$FIRST_LINE" | grep -qE "^(ci|chore): "; then
+    exit 0
+fi
+
 # Already conforming — nothing to do
 if echo "$FIRST_LINE" | grep -qE "^ZIR-[0-9]+: "; then
     exit 0
