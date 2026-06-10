@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -82,7 +82,9 @@ void RamPlonkVerifierImpl::verify(RamPlonkElement a,
   //      prevDirty);
 
   // Decide non-det if this is a new address
-  NONDET { isNewAddr->set(1 - isz(aAddr - b->addr)); }
+  NONDET {
+    isNewAddr->set(1 - isz(aAddr - b->addr));
+  }
   // Utility to check a given value is less that 2^26
   auto isValidDiff = [&](Val val) {
     for (size_t i = 0; i < 3; i++) {
@@ -108,7 +110,9 @@ void RamPlonkVerifierImpl::verify(RamPlonkElement a,
     // Cycle goes up by less than 2^25 and reads happen before writes on the same cycle
     isValidDiff(b->cycle * 3 + b->memOp - aCycle * 3 + aMemOp);
     // If 'b' is a read, it must have the same data as whatever 'a' had
-    IF(MemoryOpType::kWrite - b->memOp) { eq(aData, bData); }
+    IF(MemoryOpType::kWrite - b->memOp) {
+      eq(aData, bData);
+    }
   }
 
   Val isWrite = (MemoryOpType::kRead - b->memOp) * (MemoryOpType::kPageIo - b->memOp);
@@ -116,9 +120,15 @@ void RamPlonkVerifierImpl::verify(RamPlonkElement a,
   Val isPageIo = (MemoryOpType::kRead - b->memOp) * (MemoryOpType::kWrite - b->memOp);
 
   // Compute the dirty bit
-  IF(isPageIo) { dirty->set(0); }
-  IF(isWrite) { dirty->set(1); }
-  IF(isRead) { dirty->set(prevDirty); }
+  IF(isPageIo) {
+    dirty->set(0);
+  }
+  IF(isWrite) {
+    dirty->set(1);
+  }
+  IF(isRead) {
+    dirty->set(prevDirty);
+  }
 }
 
 void RamPlonkVerifierImpl::setInit() {
@@ -152,7 +162,9 @@ RamHeaderImpl::RamHeaderImpl(Reg checkDirty)
 RamRegImpl::RamRegImpl() : elem(CompContext::allocateFromPool<impl::RamAlloc>("ram")->elem) {}
 
 U32Val RamRegImpl::doRead(Val cycle, Val addr, Val op) {
-  NONDET { elem->data->setFromVals(doExtern("ramRead", "", 4, {addr, op})); }
+  NONDET {
+    elem->data->setFromVals(doExtern("ramRead", "", 4, {addr, op}));
+  }
   set(addr, cycle, op, elem->data->get());
   return elem->data->get();
 }

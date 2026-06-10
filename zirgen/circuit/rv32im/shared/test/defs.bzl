@@ -78,7 +78,7 @@ def compile_riscv_tests():
             )
             all_bins = all_bins + [test]
     native.filegroup(
-        name = "riscv_test_bins", 
+        name = "riscv_test_bins",
         srcs = all_bins,
         visibility = ["//visibility:public"],
     )

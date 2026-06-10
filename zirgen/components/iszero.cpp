@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,9 +23,13 @@ Val IsZeroImpl::set(Val val) {
   }
   // The following IF statements generate constraints to prove that isZeroBit was set correctly
   // based on val. Two constraints are generated: c1(isZeroBit, val) = isZeroBit * val
-  IF(isZeroBit) { eqz(val); }
+  IF(isZeroBit) {
+    eqz(val);
+  }
   // c2(isZeroBit, val) = (1 - isZeroBit) * (val*invVal - 1)
-  IF(1 - isZeroBit) { eq(val * invVal, 1); }
+  IF(1 - isZeroBit) {
+    eq(val * invVal, 1);
+  }
   // Each constraint must evaluate to 0, which enforces the following logic:
   // If isZeroBit is 1, c1 enforces that val == 0.
   // If isZeroBit is 0, c2 enforces that val is non-zero.

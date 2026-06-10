@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2026 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -241,31 +241,31 @@ So we verify that the taggedStruct uses below produce the same result
 TEST(RECURSION, taggedStruct) {
   using namespace llvm;
   std::string goal = "566573df13310440113eb4a81e9cb8ab7c1a96aa8ed7450885d06a0ac06b956a";
-  doAB(
-      HashType::POSEIDON2,
-      {{0x0699544a,
-        0x10740194,
-        0x5fcfb7ec,
-        0x24d402b4,
-        0x2c917c8c,
-        0x58576ff6,
-        0x6e6063c6,
-        0x3fa4a82d}},
-      [&](Buffer out, ReadIopVal iop) {
-        auto digest0 = iop.readDigests(1)[0];
-        auto digest1 = taggedStruct("digest1", {}, {1, 2013265920, 3});
-        auto digest2 = taggedStruct("digest2", {digest1, digest1}, {2013265920, 5});
-        auto digest3 =
-            taggedStruct("digest3", {digest1, digest2, digest1}, {6, 7, 2013265920, 9, 10});
-        auto digest4 = taggedStruct("digest4", {digest3, digest0, digest2}, {6, 2013265920, 9, 10});
-        std::vector<Val> bytes;
-        for (size_t i = 0; i < 32; i++) {
-          bytes.push_back(hexDigitValue(goal[2 * i]) * 16 + hexDigitValue(goal[2 * i + 1]));
-        }
-        auto goal = intoDigest(bytes, Zll::DigestKind::Sha256);
-        assert_eq(digest4, goal);
-        out.setDigest(0, digest4, "digest");
-      });
+  doAB(HashType::POSEIDON2,
+       {{0x0699544a,
+         0x10740194,
+         0x5fcfb7ec,
+         0x24d402b4,
+         0x2c917c8c,
+         0x58576ff6,
+         0x6e6063c6,
+         0x3fa4a82d}},
+       [&](Buffer out, ReadIopVal iop) {
+         auto digest0 = iop.readDigests(1)[0];
+         auto digest1 = taggedStruct("digest1", {}, {1, 2013265920, 3});
+         auto digest2 = taggedStruct("digest2", {digest1, digest1}, {2013265920, 5});
+         auto digest3 =
+             taggedStruct("digest3", {digest1, digest2, digest1}, {6, 7, 2013265920, 9, 10});
+         auto digest4 =
+             taggedStruct("digest4", {digest3, digest0, digest2}, {6, 2013265920, 9, 10});
+         std::vector<Val> bytes;
+         for (size_t i = 0; i < 32; i++) {
+           bytes.push_back(hexDigitValue(goal[2 * i]) * 16 + hexDigitValue(goal[2 * i + 1]));
+         }
+         auto goal = intoDigest(bytes, Zll::DigestKind::Sha256);
+         assert_eq(digest4, goal);
+         out.setDigest(0, digest4, "digest");
+       });
 }
 
 } // namespace zirgen::recursion
