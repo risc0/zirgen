@@ -1,0 +1,41 @@
+name: Commit Message Lint
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  commit-lint:
+    name: Validate commit messages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check commit messages
+        run: |
+          BASE=${{ github.event.pull_request.base.sha }}
+          HEAD=${{ github.event.pull_request.head.sha }}
+          PATTERN='^ZIR-[0-9]+: .+'
+          BYPASS='^(Merge |Revert |ci: |chore: )'
+
+          FAILED=0
+          while IFS= read -r msg; do
+            if echo "$msg" | grep -qE "$BYPASS"; then
+              continue
+            fi
+            if ! echo "$msg" | grep -qE "$PATTERN"; then
+              echo "BAD: $msg"
+              FAILED=1
+            fi
+          done < <(git log --format=%s "${BASE}..${HEAD}")
+
+          if [ "$FAILED" -eq 1 ]; then
+            echo ""
+            echo "One or more commit messages do not match the required format."
+            echo "Expected: ZIR-NNN: Description"
+            echo "Allowed bypass prefixes: Merge, Revert, ci:, chore:"
+            exit 1
+          fi
+          echo "All commit messages are valid."

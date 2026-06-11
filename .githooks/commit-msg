@@ -1,0 +1,50 @@
+#!/bin/bash
+# Git hook to enforce standardized commit message format: ZIR-XXX: Description
+# This hook validates that commit messages follow the required format
+
+COMMIT_MSG_FILE=$1
+
+# Read the first non-comment, non-empty line (consistent with prepare-commit-msg)
+FIRST_LINE=$(grep -v '^#' "$COMMIT_MSG_FILE" | grep -v '^[[:space:]]*$' | head -n 1)
+
+# Define the required pattern: ZIR-XXX: Description
+# Where XXX is one or more digits (must be at least 1)
+PATTERN="^ZIR-[0-9]+: .+"
+
+# Nothing to validate if the message is empty
+if [ -z "$FIRST_LINE" ]; then
+    exit 0
+fi
+
+# Skip merge, revert, and allowed infra/bot prefixes
+if echo "$FIRST_LINE" | grep -qE "^(Merge|Revert) "; then
+    exit 0
+fi
+if echo "$FIRST_LINE" | grep -qE "^(ci|chore): "; then
+    exit 0
+fi
+
+# Validate the commit message format (first line only)
+if ! echo "$FIRST_LINE" | grep -qE "$PATTERN"; then
+    echo "ERROR: Commit message does not follow the required format."
+    echo ""
+    echo "Expected format: ZIR-XXX: Description"
+    echo "  - ZIR-XXX where XXX is the issue/task number"
+    echo "  - Followed by a colon and space"
+    echo "  - Then a descriptive message"
+    echo ""
+    echo "Allowed bypass prefixes: ci:, chore:"
+    echo ""
+    echo "Examples:"
+    echo "  ZIR-123: Add new feature for user authentication"
+    echo "  ZIR-456: Fix memory leak in connection pool"
+    echo "  ci: bump actions/checkout to v4"
+    echo "  chore: update dependency versions"
+    echo ""
+    echo "Your commit message (first line):"
+    echo "$FIRST_LINE"
+    echo ""
+    exit 1
+fi
+
+exit 0
