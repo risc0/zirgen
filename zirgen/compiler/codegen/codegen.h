@@ -31,53 +31,77 @@ namespace recursion {
 struct EncodeStats;
 }
 
+/// Abstract interface for writing Rust source output for a circuit. Obtain a
+/// concrete instance via `createRustStreamEmitter`. The caller drives the
+/// emission sequence by calling each method in the required order.
 class RustStreamEmitter {
 public:
   virtual ~RustStreamEmitter() = default;
+  /// Emit a witness-generation step function.
   virtual void emitStepFunc(const std::string& name, mlir::func::FuncOp func) = 0;
+  /// Emit one split of the validity polynomial; `idx` is the split index,
+  /// `nsplit` is the total number of splits.
   virtual void
   emitPolyFunc(const std::string& fn, mlir::func::FuncOp func, size_t idx, size_t nsplit) = 0;
+  /// Emit the extension-field validity polynomial function.
   virtual void emitPolyExtFunc(mlir::func::FuncOp func) = 0;
+  /// Emit the tap set (column references used by the DEEP-ALI protocol).
   virtual void emitTaps(mlir::func::FuncOp func) = 0;
+  /// Emit protocol metadata constants (hash type, field size, etc.).
   virtual void emitInfo(mlir::func::FuncOp func) = 0;
 };
 
+/// Abstract interface for writing GPU (CUDA/Metal) source output for a circuit.
+/// Obtain a concrete instance via `createGpuStreamEmitter`.
 class GpuStreamEmitter {
 public:
   virtual ~GpuStreamEmitter() = default;
+  /// Emit one split of the validity polynomial.
+  /// When `declsOnly` is true, only emit declarations (for header files).
   virtual void
   emitPoly(mlir::func::FuncOp func, size_t idx, size_t nsplit, bool declsOnly = false) = 0;
+  /// Emit a witness-generation step function.
   virtual void emitStepFunc(const std::string& name, mlir::func::FuncOp func) = 0;
 };
 
+/// Abstract interface for writing C++ source output for a circuit.
+/// Obtain a concrete instance via `createCppStreamEmitter`.
 class CppStreamEmitter {
 public:
   virtual ~CppStreamEmitter() = default;
+  /// Emit the validity polynomial function.
   virtual void emitPoly(mlir::func::FuncOp func) = 0;
+  /// Emit the tap set.
   virtual void emitTaps(mlir::func::FuncOp func) = 0;
+  /// Emit include/forward-declaration boilerplate.
   virtual void emitHeader(mlir::func::FuncOp func) = 0;
 };
 
-// Options relating to a specific stage.
+/// Per-stage configuration for `emitCode`.
 struct StageOptions {
-  // Add any extra passes for this stage
+  /// Optional extra MLIR passes to run on this stage's module before emission.
   std::function<void(mlir::OpPassManager& opm)> addExtraPasses;
 
-  // If present, use this name for the output file instead of the name of the stage
+  /// If non-empty, write this stage's output to this filename instead of the
+  /// stage name.
   std::string outputFile;
 };
 
+/// Top-level options for `emitCode`. Callers can customize individual stages
+/// by populating the `stages` map keyed on stage name.
 struct EmitCodeOptions {
-  // Stages and their extra passes, indexed by stage name
   llvm::StringMap<StageOptions> stages;
 };
 
 namespace codegen {
 
+/// `LanguageSyntax` implementation for Rust code generation. Handles
+/// Rust-specific identifier casing, reference/clone semantics, lifetime
+/// annotations, `match` statements, and struct/array construction syntax.
 class RustLanguageSyntax : public LanguageSyntax {
 public:
-  // Mark the given macro as being invoked using curly braces instead of parentheses.
-  // This makes it so it can expand in non-expression contexts.
+  /// Mark `macroName` as an "items macro" that is invoked with `{ }` instead
+  /// of `( )`, allowing it to expand in statement position.
   void addItemsMacro(llvm::StringRef macroName);
 
 private:
@@ -171,6 +195,7 @@ private:
   bool typeNeedsLifetime(mlir::Type ty);
 };
 
+/// `LanguageSyntax` implementation for C++ code generation.
 struct CppLanguageSyntax : public LanguageSyntax {
   LanguageKind getLanguageKind() override { return LanguageKind::Cpp; }
 
@@ -256,6 +281,9 @@ private:
                          bool layout);
 };
 
+/// `LanguageSyntax` implementation for CUDA C++ code generation. Extends
+/// `CppLanguageSyntax` to emit `__device__ __forceinline__` qualifiers and
+/// CUDA-compatible constant/array representations.
 struct CudaLanguageSyntax : public CppLanguageSyntax {
   void
   emitConstDecl(CodegenEmitter& cg, CodegenIdent<IdentKind::Const> name, mlir::Type type) override;
@@ -281,29 +309,43 @@ struct CudaLanguageSyntax : public CppLanguageSyntax {
                            mlir::FunctionType funcType) override;
 };
 
-// Returns codegen options for emitting specific language variants,
-// including dialect-specific handlers for the dialects we use.
+/// Return a fully-configured `CodegenOptions` for emitting Rust source,
+/// including dialect-specific op lowering for all dialects used by zirgen.
 CodegenOptions getRustCodegenOpts();
+/// Return a fully-configured `CodegenOptions` for emitting C++ source.
 CodegenOptions getCppCodegenOpts();
+/// Return a fully-configured `CodegenOptions` for emitting CUDA C++ source.
 CodegenOptions getCudaCodegenOpts();
 
 } // namespace codegen
 
+/// Create a Rust stream emitter writing to `ofs`.
 std::unique_ptr<RustStreamEmitter> createRustStreamEmitter(llvm::raw_ostream& ofs);
+/// Create a GPU (CUDA/Metal) stream emitter writing to `ofs`.
+/// `suffix` selects the target language (e.g. "cu" or "metal").
 std::unique_ptr<GpuStreamEmitter> createGpuStreamEmitter(llvm::raw_ostream& ofs,
                                                          const std::string& suffix);
+/// Create a C++ stream emitter writing to `ofs`.
 std::unique_ptr<CppStreamEmitter> createCppStreamEmitter(llvm::raw_ostream& ofs);
 
+/// Lower `module` to source files in the output directory configured via
+/// `codegenCLOptions`. Stage outputs are controlled by `opts.stages`.
 void emitCode(mlir::ModuleOp module, const EmitCodeOptions& opts = {});
+/// Emit zirgen polynomial source files into `outputDir`.
 void emitCodeZirgenPoly(mlir::ModuleOp module, llvm::StringRef outputDir);
+/// Encode a recursion witness and emit source to `path`.
+/// If `stats` is non-null it is populated with encoding statistics.
 void emitRecursion(const std::string& path,
                    mlir::func::FuncOp func,
                    recursion::EncodeStats* stats = nullptr);
 
+/// Tracks variable name assignments for a single output file during lowering.
+/// Used to map MLIR `Value`s to their generated source names.
 struct FileContext {
   llvm::DenseMap<mlir::Value, std::string> vars;
   size_t next = 0;
 
+  /// Look up the generated name for an already-defined value.
   std::string use(mlir::Value value) const {
     auto it = vars.find(value);
     if (it == vars.end()) {
@@ -313,6 +355,7 @@ struct FileContext {
     return it->second;
   }
 
+  /// Assign a fresh generated name to `value` and return it.
   std::string def(mlir::Value value, const std::string& prefix = "x") {
     std::string name = prefix + std::to_string(next++);
     vars[value] = name;
@@ -320,8 +363,10 @@ struct FileContext {
   }
 };
 
+/// Escape a string literal for inclusion in generated source.
 std::string escapeString(llvm::StringRef str);
 
+/// Command-line options shared by all circuit codegen binaries.
 struct CodegenCLOptions {
   llvm::cl::opt<std::string> outputDir{"output-dir",
                                        llvm::cl::desc("Output directory"),
@@ -336,6 +381,7 @@ struct CodegenCLOptions {
 };
 
 extern llvm::ManagedStatic<CodegenCLOptions> codegenCLOptions;
+/// Register codegen command-line options with LLVM's option parser.
 void registerCodegenCLOptions();
 
 } // namespace zirgen
