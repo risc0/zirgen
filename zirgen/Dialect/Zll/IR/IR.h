@@ -26,6 +26,10 @@
 #include "zirgen/Dialect/Zll/IR/Field.h"
 #include "zirgen/Dialect/Zll/IR/Types.h"
 
+/// The Zll (Zero-knowledge Low-Level) dialect is the core MLIR dialect for
+/// representing ZK circuits in zirgen. It provides types for field elements,
+/// extension-field elements, buffers, digests, and IOPs, along with ops for
+/// arithmetic, buffer access, hashing, and proof-system interaction.
 namespace zirgen::Zll {
 class Interpreter;
 class InterpVal;
@@ -33,60 +37,90 @@ class OpEvaluator;
 class FieldAttr;
 class BufferType;
 
+/// Convenience factory for an unsigned 64-bit IntegerAttr.
 inline mlir::IntegerAttr getUI64Attr(mlir::MLIRContext* ctx, uint64_t val) {
   return mlir::IntegerAttr::get(mlir::IntegerType::get(ctx, 64, mlir::IntegerType::Unsigned), val);
 }
 
+/// Return a human-readable string representation of an MLIR location.
 std::string getLocString(mlir::Location loc);
 
+/// Return the FieldAttr for the default prime field used by the circuit.
 FieldAttr getDefaultField(mlir::MLIRContext* cxt);
 
+/// Return the FieldAttr for the prime field identified by `fieldName`.
 FieldAttr getField(mlir::MLIRContext* cxt, llvm::StringRef fieldName);
 
+/// @name Codegen op traits
+/// Op traits that influence how the codegen backend emits an operation.
+/// Attach these to op definitions in TableGen to control the emitted syntax.
+/// @{
+
+/// Op should be emitted as an infix binary expression (e.g. `a + b`).
 template <typename ConcreteType>
 struct CodegenInfixOpTrait : public mlir::OpTrait::TraitBase<ConcreteType, CodegenInfixOpTrait> {};
 
+/// Op carries MLIR properties that must be forwarded to the emitted call.
 template <typename ConcreteType>
 struct CodegenOpWithPropertiesTrait
     : public mlir::OpTrait::TraitBase<ConcreteType, CodegenOpWithPropertiesTrait> {};
 
+/// Op should be silently dropped during code generation (e.g. debug-only ops).
 template <typename ConcreteType>
 struct CodegenSkipTrait : public mlir::OpTrait::TraitBase<ConcreteType, CodegenSkipTrait> {};
 
+/// Op's result should always be inlined at every use site.
 template <typename ConcreteType>
 struct CodegenAlwaysInlineOpTrait
     : public mlir::OpTrait::TraitBase<ConcreteType, CodegenAlwaysInlineOpTrait> {};
 
+/// Op's result should never be inlined; always assigned to a local variable.
 template <typename ConcreteType>
 struct CodegenNeverInlineOpTrait
     : public mlir::OpTrait::TraitBase<ConcreteType, CodegenNeverInlineOpTrait> {};
 
+/// @}
+
+/// @name Codegen type traits
+/// Type traits that influence how codegen handles values of that type.
+/// @{
+
+/// Values of this type must be cloned when passed by value (Rust: `.clone()`).
 template <typename ConcreteType>
 struct CodegenNeedsCloneTypeTrait
     : public mlir::TypeTrait::TraitBase<ConcreteType, CodegenNeedsCloneTypeTrait> {};
 
+/// Values of this type must always be passed by (immutable) reference.
 template <typename ConcreteType>
 struct CodegenOnlyPassByReferenceTypeTrait
     : public mlir::TypeTrait::TraitBase<ConcreteType, CodegenOnlyPassByReferenceTypeTrait> {};
 
+/// Values of this type must be passed by mutable reference.
 template <typename ConcreteType>
 struct CodegenPassByMutRefTypeTrait
     : public mlir::TypeTrait::TraitBase<ConcreteType, CodegenPassByMutRefTypeTrait> {};
 
+/// This type is a layout type (holds buffer offsets, not runtime values).
 template <typename ConcreteType>
 struct CodegenLayoutTypeTrait
     : public mlir::TypeTrait::TraitBase<ConcreteType, CodegenLayoutTypeTrait> {};
 
+/// @}
+
+/// Op trait for ops that can be evaluated by the Zll interpreter using a
+/// simple value adaptor (all operands are scalar field elements).
 template <typename ConcreteType>
 class EvalOpAdaptor : public mlir::OpTrait::TraitBase<ConcreteType, EvalOpAdaptor> {};
 
+/// Op trait for ops that can be evaluated by the Zll interpreter and whose
+/// result type depends on the field in use.
 template <typename ConcreteType>
 class EvalOpFieldAdaptor : public mlir::OpTrait::TraitBase<ConcreteType, EvalOpFieldAdaptor> {};
 
-// lookupNearestImplicitArg looks up a block argument of the given
-// type in the nearest enclosing region of the given operation.  It
-// can be used to find e.g. a context argument that we don't want to
-// keep track of everywhere by building.
+/// Search enclosing regions for a block argument whose type matches one of the
+/// given types T... . Stops at isolated-from-above boundaries. Useful for
+/// locating implicit context arguments (e.g. IOP handles) without threading
+/// them through every op.
 template <typename... T>::mlir::Value lookupNearestImplicitArg(mlir::Operation* op) {
   while (op) {
     for (auto& region : op->getRegions()) {
@@ -102,8 +136,8 @@ template <typename... T>::mlir::Value lookupNearestImplicitArg(mlir::Operation* 
   return {};
 }
 
-// This version of lookupNearestImplicitArg finds a type with the given type instead of searching
-// for an exact type.
+/// Trait-based overload: search enclosing regions for a block argument whose
+/// type carries the given type trait (e.g. `CodegenPassByMutRefTypeTrait`).
 template <template <typename T> class Trait>
 ::mlir::Value lookupNearestImplicitArg(mlir::Operation* op) {
   while (op) {
@@ -120,9 +154,9 @@ template <template <typename T> class Trait>
   return {};
 }
 
-// Looks up an attribute in the module that is or encloses the given
-// operation.  The attribute must define the `lookupModuleAttrName`
-// method to provide the name of the attribute.
+/// Walk up the op's parent chain to find the enclosing ModuleOp and return the
+/// attribute of type `AttrT` stored on it. The attribute type must implement a
+/// static `lookupModuleAttrName()` method returning the attribute's name.
 template <typename AttrT> AttrT lookupModuleAttr(mlir::Operation* op) {
   while (!llvm::isa<mlir::ModuleOp>(op))
     op = op->getParentOp();
@@ -131,13 +165,15 @@ template <typename AttrT> AttrT lookupModuleAttr(mlir::Operation* op) {
   return result;
 }
 
+/// Set the module-level attribute of type `AttrT` on the enclosing ModuleOp.
 template <typename AttrT> void setModuleAttr(mlir::Operation* op, AttrT newValue) {
   while (!llvm::isa<mlir::ModuleOp>(op))
     op = op->getParentOp();
   op->setAttr(AttrT::lookupModuleAttrName(), newValue);
 }
 
-// Re-infer the return type of the given operation, in case its input types have changed.
+/// Re-infer the return type of `op` from its current operand types. Needed
+/// after mutating operands in-place during canonicalization passes.
 void reinferReturnType(mlir::InferTypeOpInterface op);
 
 } // namespace zirgen::Zll
