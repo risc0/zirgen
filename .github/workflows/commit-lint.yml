@@ -1,0 +1,39 @@
+name: Commit Message Lint
+
+on:
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  commit-lint:
+    name: Validate commit messages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check commit messages match ZIR-XXX: pattern
+        run: |
+          BASE=${{ github.event.pull_request.base.sha }}
+          HEAD=${{ github.event.pull_request.head.sha }}
+
+          PATTERN="^(ZIR-[0-9]+: |Merge |Revert )"
+          FAILED=0
+
+          while IFS= read -r line; do
+            if ! echo "$line" | grep -qE "$PATTERN"; then
+              echo "FAIL: $line"
+              FAILED=1
+            fi
+          done < <(git log --format="%s" "$BASE..$HEAD")
+
+          if [ "$FAILED" -eq 1 ]; then
+            echo ""
+            echo "One or more commit messages do not follow the required format."
+            echo "Expected: ZIR-XXX: Description"
+            echo "See CONTRIBUTING.md for details."
+            exit 1
+          fi
+
+          echo "All commit messages are valid."
