@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+commit_msg_file="$1"
+first_line=$(head -n1 "$commit_msg_file")
+
+# Allow merge and revert commits
+if echo "$first_line" | grep -qE "^(Merge |Revert )"; then
+  exit 0
+fi
+
+# Enforce ZIR-NNN: <non-empty description>
+if ! echo "$first_line" | grep -qE "^ZIR-[0-9]+: .+"; then
+  echo "ERROR: Commit message must match 'ZIR-NNN: description'" >&2
+  echo "  Got: $first_line" >&2
+  echo "  Run scripts/setup-hooks.sh to enable auto-normalization." >&2
+  exit 1
+fi

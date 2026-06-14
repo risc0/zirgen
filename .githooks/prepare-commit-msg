@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+commit_msg_file="$1"
+commit_source="${2:-}"
+
+# Skip for merge, squash, and template commits — those already have appropriate content
+case "$commit_source" in
+  merge|squash|template)
+    exit 0
+    ;;
+esac
+
+first_line=$(head -n1 "$commit_msg_file")
+
+# Already conforming or a bare merge/revert — nothing to do
+if echo "$first_line" | grep -qE "^(ZIR-[0-9]+: .+|Merge |Revert )"; then
+  exit 0
+fi
+
+# Prepend ZIR-000 placeholder so the editor shows the expected format
+tmp=$(mktemp)
+{
+  printf 'ZIR-000: %s\n' "$first_line"
+  tail -n +2 "$commit_msg_file"
+} > "$tmp" && mv "$tmp" "$commit_msg_file"
