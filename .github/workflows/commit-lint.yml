@@ -1,0 +1,29 @@
+name: Commit Lint
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  commit-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate commit messages
+        run: |
+          base="${{ github.event.pull_request.base.sha }}"
+          head="${{ github.event.pull_request.head.sha }}"
+
+          fail=0
+          while IFS=' ' read -r sha subject; do
+            if ! echo "$subject" | grep -qE "^(ZIR-[0-9]+: .+|Merge |Revert )"; then
+              echo "ERROR: $sha — invalid message: $subject"
+              echo "  Format must be: ZIR-NNN: description"
+              fail=1
+            fi
+          done < <(git log --format="%H %s" "${base}..${head}")
+
+          exit "$fail"
