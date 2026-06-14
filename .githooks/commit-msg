@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Enforces: ZIR-NNN: <non-empty description>
+# Exemptions: Merge commits and Revert commits
+
+MSG_FILE="$1"
+FIRST_LINE=$(head -1 "$MSG_FILE")
+
+# Allow Merge and Revert commits without a ticket prefix
+if echo "$FIRST_LINE" | grep -qE '^(Merge |Revert )'; then
+  exit 0
+fi
+
+# Require ZIR-NNN: followed by a non-empty description
+if ! echo "$FIRST_LINE" | grep -qE '^ZIR-[0-9]+: .+'; then
+  echo "ERROR: Commit message must start with 'ZIR-NNN: <description>'." >&2
+  echo "  Got: $FIRST_LINE" >&2
+  echo "  Use 'ZIR-000:' as a placeholder when no ticket exists." >&2
+  exit 1
+fi

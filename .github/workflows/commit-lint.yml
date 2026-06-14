@@ -1,0 +1,38 @@
+name: Commit Message Lint
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  lint-commits:
+    name: Validate commit messages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check commit message format
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+          FAILED=0
+
+          while IFS= read -r line; do
+            # Allow Merge and Revert commits without a ticket prefix
+            if echo "$line" | grep -qE '^(Merge |Revert )'; then
+              continue
+            fi
+            # Require ZIR-NNN: followed by a non-empty description (same rule as commit-msg hook)
+            if ! echo "$line" | grep -qE '^ZIR-[0-9]+: .+'; then
+              echo "FAIL: $line"
+              FAILED=1
+            fi
+          done < <(git log --format='%s' "$BASE".."$HEAD")
+
+          if [ "$FAILED" -ne 0 ]; then
+            echo "One or more commits do not follow the required format: 'ZIR-NNN: <description>'"
+            exit 1
+          fi
+          echo "All commit messages are valid."

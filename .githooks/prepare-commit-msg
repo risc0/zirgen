@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Prepends 'ZIR-000: ' to the first line when no ZIR-NNN: prefix is present.
+# Skips merge, squash, and template-sourced commits to avoid garbling them.
+
+MSG_FILE="$1"
+COMMIT_SOURCE="${2:-}"
+
+# Skip automated or pre-populated commit sources
+case "$COMMIT_SOURCE" in
+  merge|squash|template) exit 0 ;;
+esac
+
+FIRST_LINE=$(head -1 "$MSG_FILE")
+
+# Skip if prefix already present or it's a Merge/Revert commit
+if echo "$FIRST_LINE" | grep -qE '^(ZIR-[0-9]+: |Merge |Revert )'; then
+  exit 0
+fi
+
+# Prepend placeholder prefix
+awk 'NR==1 { print "ZIR-000: " $0; next } { print }' "$MSG_FILE" > "$MSG_FILE.tmp" && mv "$MSG_FILE.tmp" "$MSG_FILE"
