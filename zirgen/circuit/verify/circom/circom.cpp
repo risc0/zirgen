@@ -100,6 +100,11 @@ void CircomGenerator::emit(mlir::func::FuncOp func, bool encodeOutput) {
         });
   }
   if (encodeOutput) {
+    // Verify all out_tmp values are 16 bit
+    for (size_t i = 0; i < outSize; i++) {
+      outs << "  component out_tmp_bits_" << i << " = to_bits_exact(16);\n";
+      outs << "  out_tmp_bits_" << i << ".in <== out_tmp[" << i << "];\n";
+    }
     for (size_t i = 0; i < outSize / 8; i++) {
       P254 mul = 1;
       outs << "  out[" << i << "] <== 0 ";
