@@ -181,10 +181,9 @@ component ECallHostReadWords(cycle: Reg, input: InstInput, ptrWord: Val, len: Va
   for i : 0..4 {
     addr := Reg(doWord[i] * (ptrWord + i) + (1 - doWord[i]) * (SafeWriteWord() + i));
     writeVal := MemoryWriteUnconstrained(cycle, addr);
-    low16 := NondetU16Reg(writeVal.io.oldTxn.dataLow);
-    AliasLayout!(low16.arg.val, writeVal.io.oldTxn.dataLow);
-    high16 := NondetU16Reg(writeVal.io.oldTxn.dataHigh);
-    AliasLayout!(high16.arg.val, writeVal.io.oldTxn.dataHigh);
+    // Verify the host-provided word is a valid pair of u16s
+    U16Reg(writeVal.io.newTxn.dataLow);
+    U16Reg(writeVal.io.newTxn.dataHigh);
   };
   newLenHighZero := IsZero(lenDecomp.high - count);
   lenZero := Reg(newLenHighZero * (1 - lenDecomp.low2Nonzero));
