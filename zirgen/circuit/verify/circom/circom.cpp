@@ -100,10 +100,23 @@ void CircomGenerator::emit(mlir::func::FuncOp func, bool encodeOutput) {
         });
   }
   if (encodeOutput) {
-    // Verify all out_tmp values are 16 bit
+    // Verify out_tmp values are canonical, so that the packed outputs below have
+    // a unique decomposition.  The output consists of two 16 element digests:
+    // the first is a Poseidon2 digest (8 baby bear elements, each followed by a
+    // zero padding element), the second is a SHA-256 digest (16 half words).
+    assert(outSize == 32);
     for (size_t i = 0; i < outSize; i++) {
-      outs << "  component out_tmp_bits_" << i << " = to_bits_exact(16);\n";
-      outs << "  out_tmp_bits_" << i << ".in <== out_tmp[" << i << "];\n";
+      if (i < 16 && i % 2 == 1) {
+        outs << "  out_tmp[" << i << "] === 0;\n";
+      } else if (i < 16) {
+        outs << "  component out_tmp_bits_" << i << " = to_bits_exact(31);\n";
+        outs << "  out_tmp_bits_" << i << ".in <== out_tmp[" << i << "];\n";
+        outs << "  component out_tmp_valid_" << i << " = valid_baby_bear();\n";
+        outs << "  out_tmp_valid_" << i << ".in <== out_tmp_bits_" << i << ".out;\n";
+      } else {
+        outs << "  component out_tmp_bits_" << i << " = to_bits_exact(16);\n";
+        outs << "  out_tmp_bits_" << i << ".in <== out_tmp[" << i << "];\n";
+      }
     }
     for (size_t i = 0; i < outSize / 8; i++) {
       P254 mul = 1;
