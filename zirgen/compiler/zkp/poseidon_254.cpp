@@ -369,7 +369,8 @@ void addRoundConstants(Cells& cells, size_t round) {
 P254 sbox(P254 x) {
   auto x2 = x * x;
   auto x4 = x2 * x2;
-  return x4 * x4;
+  auto x6 = x4 * x2;
+  return x6 * x;
 }
 
 void doFullSboxes(Cells& cells) {
