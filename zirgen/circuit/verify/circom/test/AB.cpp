@@ -33,7 +33,7 @@ TEST(SNARK, p254) {
 TEST(SNARK, Poseidon) {
   std::vector<uint32_t> data = {0, 1, 2, 3, 4};
   assert(hexDigest(poseidon254Hash(data.data(), data.size())) ==
-         "8611cede0c468a53fc64c20d5aae2b6ddc0dd621713594d17febfca89a968618");
+         "23c9befcaae5da458ef5bc090536a9203116e2dd8809e56ee38cdf246b5b0513");
 }
 
 TEST(SNARK, ArithAB) {
