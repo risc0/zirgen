@@ -66,6 +66,10 @@ using BitOpShorts = Comp<BitOpShortsImpl>;
 //
 // A base field elem equal to the bitwise AND of the standard, reduced representations of two base
 // field inputs. [a, 0, 0, 0] & [b, 0, 0, 0] -> [a & b, 0, 0, 0]
+//
+// Each input is decomposed into 31 bits and the decomposition is constrained to be the canonical
+// one, i.e. the integer formed by the bits is less than the field prime P. Without that check every
+// input x < 2^31 - P has a second valid decomposition (x + P), which yields a different AND result.
 struct BitAndElemImpl : public CompImpl<BitAndElemImpl> {
   BitAndElemImpl(WomHeader header);
   void set(MacroInst inst, Val writeAddr);
@@ -76,6 +80,15 @@ struct BitAndElemImpl : public CompImpl<BitAndElemImpl> {
   WomReg out = Label("out");
   std::vector<Bit> bitsA;
   std::vector<Bit> bitsB;
+  // Witnesses used to prove that the bit decompositions are canonical; see verifyCanonical.
+  Twit topA = Label("top_a");
+  Twit topB = Label("top_b");
+
+private:
+  // Constrain the 31-bit integer given by `bits` to be less than the field prime.  `low27` must be
+  // the integer formed by bits 0-26 (the running sum from `set`, so that no new constraint
+  // subexpressions are introduced).
+  void verifyCanonical(const std::vector<Bit>& bits, Val low27, Twit top);
 };
 using BitAndElem = Comp<BitAndElemImpl>;
 

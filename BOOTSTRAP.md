@@ -25,6 +25,8 @@ updated too (Part B, step B9 does this), even if the circom circuit is unchanged
 | Host-read words not range checked | zirgen: `zirgen/circuit/rv32im/v2/dsl/inst_ecall.zir` (`ECallHostReadWords`) |
 | Non-canonical Groth16 output decomposition | zirgen: `zirgen/circuit/verify/circom/circom.cpp` (`CircomGenerator::emit`) |
 | Poseidon254 S-box `x^8` not a permutation | zirgen: `zirgen/compiler/zkp/poseidon_254.cpp`, `zirgen/circuit/verify/circom/include/risc0.circom`; **risc0**: `risc0/zkp/src/core/hash/poseidon_254/mod.rs`, `risc0/sys/kernels/zkp/cuda/supra/poseidon254.cuh`, `groth16_proof/groth16/risc0.circom` (see Part C) |
+| Recursion `BIT_AND_ELEM` accepts non-canonical bit decompositions | zirgen: `zirgen/circuit/recursion/bits.cpp` (see Part D) |
+| Recursion prover ZK noise rows all equal (one random value copied) | **risc0**: `risc0/circuit/recursion/src/prove/witgen.rs` (hand-written prover code, not generated) |
 
 The first two fixes live entirely in zirgen. The Poseidon254 S-box fix does not: the prover
 side of that hash is hand-written in risc0 (Rust and CUDA), and risc0 keeps its own copy of
@@ -242,16 +244,11 @@ which exercises rv32im proving, lift, join and identity_p254.
 cargo bootstrap -- verify --output ../risc0/
 ```
 
-This copies three files into risc0. Two of them need fixing up afterwards:
+This copies three files into risc0. One of them need fixing up afterwards:
 
 1. `groth16_proof/groth16/stark_verify.circom`: the circuit (stored in git LFS; the diff
    only shows the LFS pointer).
-2. `groth16_proof/groth16/risc0.circom`: **restore risc0's version**
-   (`git checkout groth16_proof/groth16/risc0.circom`). risc0 carries an intentional
-   divergence from zirgen in `inv_impl` (`var inv_res = inverse(in[0], P); out <-- inv_res;`
-   instead of `out <-- inverse(in[0], P);`), added with the CUDA Groth16 prover in
-   risc0 #3296, most likely for circom-witnesscalc's `build-circuit`. It does not change any
-   constraint. Only port `risc0.circom` changes that you actually made in zirgen.
+2. `groth16_proof/groth16/risc0.circom`: A header used by `stark_verify.circom`
 3. `risc0/groth16/src/seal_format.rs`: **delete it.** The bootstrap copies it to a stale
    path. The real file is `risc0/groth16/src/prove/seal_format.rs`. Diff the two to confirm
    the seal format did not change (only cosmetic differences are expected).
@@ -259,30 +256,7 @@ This copies three files into risc0. Two of them need fixing up afterwards:
 **The circom generator is nondeterministic.** Two builds of the same zirgen source produce
 different `stark_verify.circom` files: different CSE/normalization choices, different
 `iop[]` orderings, and different line counts (about 1M differing lines). Each is presumably
-equivalent, but it makes review of a security change impractical. The procedure used here
-keeps risc0's committed circuit and appends only the new lines:
-
-```
-# From the risc0 repo. The committed circom is in git LFS; get its object path:
-git lfs ls-files -l | grep stark_verify.circom      # shows the committed oid
-O=.git/lfs/objects/<aa>/<bb>/<full oid>              # committed circom
-B=$(cd ../zirgen && bazelisk info --config bootstrap_linux_amd64 bazel-bin)/zirgen/circuit/verify/circom/stark_verify.circom
-# (build it first: bazelisk build --config bootstrap_linux_amd64 //zirgen/circuit/verify/circom:circuit)
-
-grep "out_tmp_bits_\|out_tmp_valid_\|out_tmp\[[0-9]*\] === 0" "$B" > checks.lines
-N=$(grep -n "^  codeRoot <== comp_40.out;$" "$O" | cut -d: -f1)
-{ head -n "$N" "$O"; cat checks.lines; tail -n +$((N+1)) "$O"; } > groth16_proof/groth16/stark_verify.circom
-
-diff "$O" groth16_proof/groth16/stark_verify.circom | grep -c '^>'   # expect 72
-diff "$O" groth16_proof/groth16/stark_verify.circom | grep -c '^<'   # expect 0
-```
-
-The generator emits the new lines immediately after `codeRoot <== …` and before the
-`out[i] <== …` packing lines, in the same place in every build. Confirm the extracted lines
-are contiguous in `$B`, and that the grep pattern matches exactly the lines the generator
-change adds. For this backport it produced 72 lines (8 × 4 for even root words, 8 × 1 for
-padding, 16 × 2 for SHA halves). The resulting file has sha256
-`a0f6141b7b0ab35b9fb9566f96029b58f7189d705277744d72263590087a41e6`.
+equivalent, but it makes review of a security change impractical. 
 
 ### B2. Sanity check the new circuit on an honest proof (cheap, do this first)
 
@@ -594,6 +568,124 @@ receipt. The rv32im circuit, the lift/join control IDs and the control root are 
 
 ---
 
+## Part D — changing the recursion circuit itself
+
+This part was written while adding the `BIT_AND_ELEM` canonical-decomposition check
+(`zirgen/circuit/recursion/bits.cpp`). Changing the recursion circuit (anything under
+`zirgen/circuit/recursion/*.cpp`, as opposed to the recursion *programs*) is the widest
+change of all, because every artifact that verifies a recursion proof embeds the circuit's
+constraint polynomial:
+
+| What changes | Why |
+| --- | --- |
+| `risc0/circuit/recursion/src/{poly_ext.rs,taps.rs,info.rs,layout.rs.inc}` | generated circuit |
+| `risc0/circuit/recursion-sys/kernels/{cxx,cuda,metal}/*` | generated witgen/constraint kernels |
+| `recursion_zkr.zip`: `join*`, `resolve*`, `identity`, `union`, `unwrap_povw` | these programs verify recursion proofs (`wrap_recursion.cpp` includes the generated `poly_edsl.cpp` and `taps.cpp`) |
+| `lift_*` and `test_recursion_circuit` ZKRs | **unchanged** (they verify rv32im, or nothing) |
+| control IDs, `ALLOWED_CONTROL_ROOT`, `BN254_IDENTITY_CONTROL_ID` | hashes of the changed programs |
+| `stark_verify.circom` | it verifies the identity_p254 recursion proof, so a new ceremony and everything in Part B |
+| all four stability canaries, `ControlID.sol`, test receipt, selector | downstream of the above |
+
+Expect the rv32im kernels and the keccak ZKR/control IDs to be untouched.
+
+### D1. Test in zirgen and update the golden ZKR hashes
+
+```
+bazelisk test //zirgen/circuit/recursion/... //zirgen/circuit/verify/... \
+  //zirgen/circuit/predicates/... //zirgen/components/...
+```
+
+`//zirgen/circuit/predicates:golden_hashes_test` fails whenever a ZKR changes. Confirm the
+set of changed programs is the expected one (compare `bazel-bin/zirgen/circuit/predicates/
+actual_hashes.txt` against the hashes of the files inside risc0's current
+`recursion_zkr.zip`, not against `golden_hashes.txt`, which may already be stale: on this
+branch it still predated the rv32im fix), then
+`cp bazel-bin/zirgen/circuit/predicates/actual_hashes.txt zirgen/circuit/predicates/golden_hashes.txt`.
+
+`//zirgen/circuit/verify/circom/test:test` shells out to `circom` and `snarkjs`. Neither is
+installed here; the `circom` binary can be copied out of the `r0-prover-circom` image
+(`/usr/local/cargo/bin/circom`, circom 2.2.2) and `snarkjs@0.7.5` installed with npm into a
+scratch directory, then passed in with `--test_env=PATH=...`.
+
+`RECURSION.Recurse` and `RECURSION.RecurseRecurse` silently skip unless `/tmp/seal.r0` /
+`/tmp/recursion-seal.r0` exist; both expect rv32im **v1** seals and hardcoded lengths, so they
+are effectively dead. The risc0 end-to-end tests (A6) are the real coverage.
+
+### D2. Recursion cycle budget (the gotcha)
+
+Every recursion program must fit in `2^RECURSION_PO2 - ZK_CYCLES` = `2^18 - 1024` = 261,120
+rows (`Program::from_encoded` in `risc0/circuit/recursion/src/prove/program.rs` asserts
+this, and `cargo xtask bootstrap` panics there). `join_povw` was already at 261,112 rows,
+**8 rows under the limit**, before this change. Each constraint added to the circuit costs
+verifier cycles in every program that verifies a recursion proof (two proofs for the `join*`
+and `resolve*` programs).
+
+A first version of the canonicality check that re-summed the 27 low bits inside the
+constraint cost 22 rows per verified proof (44 for `join_povw`) and overflowed the budget.
+Reusing the running sum that the bit-decomposition already computes (so the constraint adds
+no new subexpressions beyond `top4 - top` and one multiply) costs 4 rows per proof, which
+leaves `join_povw` at exactly 261,120 rows: **zero margin**. Any further constraint added to
+the recursion circuit needs cycles reclaimed from `join_povw` first (or a bigger
+`RECURSION_PO2`, which doubles recursion proving time).
+
+To measure before bootstrapping anything into risc0:
+
+```
+bazelisk build //zirgen/circuit/predicates:gen_predicates
+# rows = bytes / 4 / 23 (RECURSION_CODE_SIZE)
+for f in bazel-bin/zirgen/circuit/predicates/*.zkr; do echo "$(( $(stat -c %s $f) / 92 )) $f"; done
+```
+
+### D3. Bootstrap the circuit, then Part A from A2
+
+```
+cargo bootstrap -- recursion --output ../risc0/
+cargo bootstrap -- predicates --output ../risc0/
+```
+
+then A3 (ZKR hash), A4 (`cargo xtask bootstrap`), A5 (canaries) and A6 (tests).
+
+Gotchas with `cargo bootstrap -- recursion`:
+
+- The tool wrote the C++ kernels to `risc0/circuit/recursion-sys/cxx/`, but risc0 keeps
+  them in `recursion-sys/kernels/cxx/`. Fixed in `zirgen/bootstrap/src/main.rs`
+  (`copy_edsl_style`); the CUDA and metal paths were already right.
+- It does not copy `kernels/cuda/eval_check.cuh`, which is hand-maintained in risc0 and
+  hardcodes `poly_mix[158]`. Check `NUM_POLY_MIX_POWERS` in the regenerated `info.rs` (or
+  `kNumPolyMixPows` in bazel's `eval_check.cuh`) and update the array size if it changed.
+  Adding two constraints here shifted the power list but kept the count at 158.
+- The metal kernels are compared byte-for-byte by `--check`, and the generator emits a
+  leading blank line that the committed files lack; harmless.
+- `--check` can be used to confirm that the generator at the *parent* commit reproduces
+  risc0's committed kernels before applying the change (`git stash`, check, `git stash pop`),
+  so that the resulting diff is attributable to the circuit change alone. It did here, up to
+  source-location comments and clang-format.
+- A full rebuild (about 2 minutes) happens every time bazel switches between the default and
+  `bootstrap_linux_amd64` configurations, because both write to the same `bazel-out/k8-opt`.
+
+### D4. Part B, from B1
+
+`stark_verify.circom` changes wholesale (it is a new constraint system, and the generator is
+nondeterministic anyway, so the splice procedure of the Groth16-output fix does not apply).
+Run B1 through B10. The `input.json` for B2 must come from the **new** Rust prover, i.e.
+after Part A is complete, as in Part C step 4.
+
+`risc0.circom` no longer needs restoring after B1: zirgen now carries risc0's `inv_impl`
+form, so the bootstrap copy is identical to the committed file. The stale `seal_format.rs`
+still has to be deleted (B1 item 3).
+
+Numbers for this change: the two new constraints took `stark_verify` from 6,052,250 to
+6,299,801 non-linear constraints (2^23 ptau still fits). The witgen and ceremony images
+build in about 6 minutes in parallel; the test ceremony took 32 minutes with the zkvm test
+suite running alongside it. Prover image tag used locally: `v2026-10-20.1`.
+
+After B7 the Groth16 and composite canaries move again (B8), the selector in
+`RiscZeroGroth16Verifier.t.sol` becomes the first 4 bytes of the new Groth16 digest, and
+`forge test` passes 35/35 against the regenerated `Groth16Verifier.sol`, `ControlID.sol` and
+`TestReceiptV3_1.sol` (B9).
+
+---
+
 ## Release checklist (not done for the local test run)
 
 - Run a real multi-party Groth16 ceremony (B5) with a chosen phase-1 transcript (B3), and
@@ -632,3 +724,7 @@ receipt. The rv32im circuit, the lift/join control IDs and the control root are 
 15. Run Groth16 tests with `--test-threads=1`; clean up orphaned prover containers.
 16. The Poseidon254 hash has four implementations (Rust, CUDA, zirgen C++, circom) that must
     be changed together, and risc0 keeps its own `risc0.circom` copy to patch by hand.
+17. Recursion programs must fit in `2^18 - 1024` rows; `join_povw` is at the limit, so any
+    new recursion-circuit constraint must be nearly free in the verifier (Part D2).
+18. `cargo bootstrap -- recursion` does not copy `eval_check.cuh` (check `poly_mix[N]`), and
+    `golden_hashes.txt` may already be stale; compare against risc0's zip instead (Part D).
