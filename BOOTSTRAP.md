@@ -679,6 +679,30 @@ Numbers for this change: the two new constraints took `stark_verify` from 6,052,
 build in about 6 minutes in parallel; the test ceremony took 32 minutes with the zkvm test
 suite running alongside it. Prover image tag used locally: `v2026-10-20.1`.
 
+**Setup used for the release.** This fix shipped with the single-party setup from B5 rather
+than a multi-party ceremony (decision taken 2026-10-22; a public ceremony can follow once the
+issues are disclosed). What makes that defensible:
+
+- `snarkjs zkey contribute` seeds its RNG from 64 bytes of `crypto.randomFillSync` (OS
+  CSPRNG) hashed together with the supplied entropy string, so the fixed `'Entropy'` in
+  `run_ceremony.sh` only adds to real randomness; the secret never left process memory.
+- The phase-1 file is byte-identical to PSE's published object (size 9,663,769,746 and S3
+  multipart ETag `3440c5420601ca0728b08566f0440625-1153` recomputed locally; sha256
+  `05085994c8aa34e4925585202e178e09fb8acc04e9565311751e8a04dec81cb1`). PSE publishes no
+  checksum for the truncated `ppot_0080_23.ptau`, so the ETag match is the provenance check.
+- `snarkjs zkey verify stark_verify.r1cs pot23.ptau stark_verify_final.zkey` passed (about 25
+  minutes, 32 GB node heap). Transcript kept as
+  `risc0/groth16_proof/groth16/zkey_verify_2026-10-20.1.txt`; the circuit hash begins
+  `ba40e9ac efed556e`, contribution #1 (`1st Contributor Name`) begins `a9ac9234 1c6e9ef9`,
+  and the beacon is the fixed `0102…1f` with 2^10 iterations.
+- Uploaded and verified byte-identical over public HTTPS:
+  `s3://risc0-artifacts/zkr/baa1f68627e1505c0780bee884251b99b8180c00c1bd6cf8e6ffe3cd0bbb8865.zip`
+  and `s3://risc0-artifacts/zkey/2026-10-20.1/stark_verify_final.zkey.gz` (gz sha256
+  `b69993d9dbb22e6c064b1f1b75da6e176c983e23d9b308664b91188f0479abf8`, pinned in
+  `prover.Dockerfile`; uncompressed zkey sha256
+  `2da7b0932f2a9f11500346351ddac71189ffe349bbb1bdf7ed7401fd43cf3c6d`). Keep the exact gz:
+  gzip output is not reproducible and the Dockerfile checksum pins it.
+
 After B7 the Groth16 and composite canaries move again (B8), the selector in
 `RiscZeroGroth16Verifier.t.sol` becomes the first 4 bytes of the new Groth16 digest, and
 `forge test` passes 35/35 against the regenerated `Groth16Verifier.sol`, `ControlID.sol` and
@@ -686,21 +710,70 @@ After B7 the Groth16 and composite canaries move again (B8), the selector in
 
 ---
 
-## Release checklist (not done for the local test run)
+## Part E — publishing the CUDA Groth16 component (rzup `risc0-groth16`)
 
-- Run a real multi-party Groth16 ceremony (B5) with a chosen phase-1 transcript (B3), and
-  redo B6–B10 with its zkey.
-- Upload `recursion_zkr.zip` to `s3://risc0-artifacts/zkr/<SHA256_HASH>.zip` (A3).
-- Upload `stark_verify_final.zkey.gz` to
-  `s3://risc0-artifacts/zkey/<yyyy-mm-dd.rev>/stark_verify_final.zkey.gz` and restore the
-  `ADD --checksum` line in `prover.Dockerfile` (B6).
-- Push `risczero/risc0-groth16-prover:v<yyyy-mm-dd.rev>` and update every consumer of the
-  tag.
-- Publish the `risc0-groth16` rzup component built from the new zkey (B10). Until then,
-  `rzup install risc0-groth16` fetches a component built from the old key.
-- Point `xtask/src/setup_groth16.rs` at the new zkey URL (it hardcodes the 2024-05-17 key).
-- Deploy the new Groth16 verifier. Its selector and control root differ from the deployed
-  v3.0 verifier's.
+The CUDA Groth16 prover (`risc0/groth16/src/prove/cuda.rs`) does not use the Docker image. It
+reads a rzup component `risc0-groth16` from `~/.risc0/extensions/v<ver>-risc0-groth16/`
+containing `stark_verify_final.zkey`, `stark_verify_graph.bin`, `preprocessed_coeffs.bin` and
+`fuzzed_msm_results.bin`, all produced by B10. `cuda.rs` pins the component version with
+`Version::new(..)`, so a new key means a new component version and a matching pin
+(0.1.0 → 0.2.0 for this change).
+
+Components live at `s3://risc0-artifacts/rzup/components/risc0-groth16/sha256/<sha256>` and
+are listed in a signed `distribution_manifest.json` beside them. rzup refuses an unsigned
+manifest. Publishing, with the rzup binary built from the risc0 repo (`cargo build --release
+-p rzup`; the `publish` feature is on by default):
+
+```
+rzup publish create-artifact --input ~/.risc0/extensions/v0.1.0-risc0-groth16   --output risc0-groth16-0.2.0.tar.xz             # files are stored relative to --input
+AWS_REGION=us-west-2 rzup publish upload risc0-groth16 0.2.0 --target-agnostic risc0-groth16-0.2.0.tar.xz
+rzup publish set-latest risc0-groth16 0.2.0        # RELEASE DAY ONLY
+```
+
+`upload` adds the release to the manifest and re-signs it; only `set-latest` moves the
+pointer, so uploading early is safe for existing users. The signing key is fetched from AWS
+Secrets Manager (`rzup-publish-key`, us-west-2) with ambient AWS credentials, which is why
+`AWS_REGION` must be set when the profile has none. Check the result with
+`rzup install risc0-groth16 <ver>` (verifies signature and hash) and the public manifest URL.
+
+For this change: `risc0-groth16-0.2.0.tar.xz` is 2,406,044,780 bytes, sha256
+`173354ab0bd18417ba1080a0094b4398098a62b9c7460ba1dc34988b2baa57e5`, uploaded 2026-10-22 with
+`latest_version` left at 0.1.0.
+
+## Versioning used for this release
+
+Non-circuit crates that changed go 3.0.x → 3.1.0 (zkvm, r0vm, cargo-risczero, build, groth16,
+zkp), circuit crates 4.0.x → 4.1.0 (recursion, rv32im, keccak and their `-sys` crates),
+`risc0-sys` 1.5.0 → 1.6.0 (Poseidon254 CUDA kernel), and crates whose normal dependencies
+moved get a patch bump (`risc0-binfmt` 3.0.6, `risc0-povw` 0.4.4; `bonsai-sdk` and
+`risc0-bigint2` only have dev-dependencies on bumped crates). 4.0.0 was not available: the
+circuit crates already used 4.0.x throughout the 3.0 line, and the next major in progress is
+5.0 (`release-5.0`, `5.0.0-rc.1` on crates.io; that line will not ship). risc0-ethereum goes
+to 3.1.0 to match (`VERSION` string, `Groth16V3_1 = 0x8b38038c` in `selector.rs`,
+`TestReceiptV3_1.sol`); the aggregation set-builder guest only records assumptions via
+`env::verify`, so its image ID and the SetInclusion selector are unaffected.
+
+Bumps are done with `cargo xtask update-crate-version --package <crate> --bump-minor` (or
+`--bump-patch`) per crate, then once with no arguments to sync `[workspace.dependencies]`,
+then `cargo xtask update-lock-files`. Also update `tools/smoke-test/**/Cargo.toml` and
+`TAG`/`VERSION` in `.github/workflows/release.yml`; `semver-baselines.lock` is refreshed by
+`cargo xtask semver-checks --update`. The client picks r0vm by exact crate version, then by
+`major.minor.0`, so 3.0.x clients never pick up the 3.1.0 r0vm.
+
+## Release checklist (status as of 2026-10-22)
+
+- [x] Decide the setup: single-party setup from B5, verified with `snarkjs zkey verify` (Part D4).
+- [x] Upload `recursion_zkr.zip` to `s3://risc0-artifacts/zkr/<SHA256_HASH>.zip` (A3).
+- [x] Upload `stark_verify_final.zkey.gz` to `s3://risc0-artifacts/zkey/2026-10-20.1/` and
+      restore the `ADD --checksum` line in `prover.Dockerfile` (B6).
+- [x] Point `xtask/src/setup_groth16.rs` at the new zkey URL.
+- [x] Publish rzup component `risc0-groth16` 0.2.0 (Part E) and pin it in `cuda.rs`.
+- [ ] `rzup publish set-latest risc0-groth16 0.2.0` on release day.
+- [ ] Push `risczero/risc0-groth16-prover:v2026-10-20.1` to Docker Hub (waiting on Docker Hub
+      access being returned from Boundless) and update every consumer of the tag (bonsai).
+- [ ] Publish r0vm 3.1.0 and cargo-risczero 3.1.0 through rzup; publish crates.
+- [ ] Deploy the new Groth16 verifier (selector `0x8b38038c`, control root `d09f033d…`) behind
+      the router and add it to `deployment.toml`.
 
 ## Gotcha summary
 
