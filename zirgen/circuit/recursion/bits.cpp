@@ -83,6 +83,12 @@ void BitAndElemImpl::set(MacroInst inst, Val writeAddr) {
   Val totA = 0;
   Val totB = 0;
   Val totO = 0;
+  // The running sums after bit 26, i.e. the integer formed by the low 27 bits of each input.  These
+  // are reused by verifyCanonical so that the canonicality check adds no new subexpressions to the
+  // constraint polynomial (the recursion programs that verify this circuit are close to their cycle
+  // budget).
+  Val lowA = 0;
+  Val lowB = 0;
   for (size_t j = 0; j < bitsA.size(); j++) {
     size_t bit = 1 << j;
 
@@ -93,9 +99,17 @@ void BitAndElemImpl::set(MacroInst inst, Val writeAddr) {
     totA = totA + bitsA[j] * bit;
     totB = totB + bitsB[j] * bit;
     totO = totO + bitsA[j] * bitsB[j] * bit;
+    if (j == 26) {
+      lowA = totA;
+      lowB = totB;
+    }
   }
   eq(totA, inA->data()[0]);
   eq(totB, inB->data()[0]);
+  // The equalities above hold in the field, so they only fix the decomposition modulo P.  Require
+  // the decompositions to be canonical so that the output is a function of the inputs.
+  verifyCanonical(bitsA, lowA, topA);
+  verifyCanonical(bitsB, lowB, topB);
 
   out->doWrite(writeAddr, {totO, 0, 0, 0});
   XLOG("BIT_AND_ELEM, reading from [%u, %u],  A = [%x, %x], B = [%x, %x], type = %u, Out=%x, "
@@ -109,6 +123,32 @@ void BitAndElemImpl::set(MacroInst inst, Val writeAddr) {
        inst->operands[2],
        totO,
        out->data());
+}
+
+void BitAndElemImpl::verifyCanonical(const std::vector<Bit>& bits, Val low27, Twit top) {
+  // Baby Bear's prime is P = 0x78000001 = 2^30 + 2^29 + 2^28 + 2^27 + 1 < 2^31.  A 31-bit integer
+  // is >= P exactly when bits 27-30 are all set and at least one of bits 0-26 is set.  Note that
+  // bit 31 does not exist here, since we only decompose into 31 bits.
+  static_assert(Zll::kFieldPrimeDefault == 0x78000001, "Canonicality check assumes Baby Bear");
+  assert(bits.size() == 31);
+  // Sum of the top 4 bits (0-4).  `low27` is the integer formed by bits 0-26, which is < 2^27 < P,
+  // so as a field element it is zero exactly when all of the low 27 bits are zero.
+  Val top4 = 0;
+  for (size_t i = 27; i < 31; i++) {
+    top4 = top4 + bits[i];
+  }
+  // Set the witness to top4, unless top4 == 4, in which case set it to 0.  Because `top` is a
+  // twit (constrained to 0-3) it can never equal 4, so the prover cannot cancel the first factor
+  // below when the top 4 bits are all set.
+  NONDET {
+    Val top4is4 = isz(top4 - 4);
+    IF(top4is4) { top->set(0); }
+    IF(1 - top4is4) { top->set(top4); }
+  }
+  // If top4 != 4, an honest witness makes the first factor zero.  If top4 == 4, the first factor
+  // is nonzero, so low27 must be zero, i.e. the low 27 bits are all zero and the value is exactly
+  // 2^30 + 2^29 + 2^28 + 2^27 = P - 1.  Either way the value is < P.
+  eqz((top4 - top) * low27);
 }
 
 } // namespace zirgen::recursion
