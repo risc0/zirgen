@@ -35,6 +35,12 @@ component Top() {
   global rng: ExtReg;
   global shutdownCycle: Reg;
   global povwNonce: DigestReg;
+  // The total number of rows in the trace.  The verifier checks that this is
+  // equal to 2^po2, and the first-cycle constraint below checks that the row
+  // preceding a first cycle (circularly) is the final row of the trace.  Together
+  // these ensure a trace contains exactly one execution (one first cycle), so
+  // that the memory argument cannot mix the memory transactions of two runs.
+  global totalCycles: Reg;
 
   // Top state
   cycle : Reg;
@@ -48,6 +54,8 @@ component Top() {
   // If first cycle, verify we terminate, either way return cycle #
   cycle := if (is_first_cycle) {
     next_state@1 = StateControlDone();
+    // The previous row (circularly) must be the last row of the trace
+    cycle@1 = totalCycles - 1;
     Reg(0)
   } else {
     Reg(cycle@1 + 1)

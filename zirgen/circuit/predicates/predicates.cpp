@@ -396,8 +396,15 @@ std::pair<ReceiptClaim, U256Val> readReceiptClaimAndPovwNonce(llvm::ArrayRef<Val
   DigestVal stateOut = readSha(stream);
   Val termA0High = readVal(stream);
   Val termA0Low = readVal(stream);
-  // Val termA1High = readVal(stream);
-  // Val termA1Low = readVal(stream);
+  /*Val termA1High =*/readVal(stream);
+  /*Val termA1Low =*/readVal(stream);
+  // The prover claims the total number of rows in the trace. The circuit requires that the row
+  // before every first-cycle row (circularly) has cycle number totalCycles - 1, so checking that
+  // totalCycles equals the trace length (2^po2) ensures that the trace contains exactly one
+  // execution. Without this check, a prover could place two executions in one trace and the
+  // memory argument could not distinguish their memory transactions.
+  Val totalCycles = readVal(stream);
+  eq(totalCycles, Val(size_t(1) << po2));
 
   // TODO(flaub): implement this once shutdownCycle is finished in the rv32im-v2 circuit
   // size_t segmentThreshold = (1 << po2) - kMaxInsnCycles;

@@ -27,10 +27,13 @@ updated too (Part B, step B9 does this), even if the circom circuit is unchanged
 | Poseidon254 S-box `x^8` not a permutation | zirgen: `zirgen/compiler/zkp/poseidon_254.cpp`, `zirgen/circuit/verify/circom/include/risc0.circom`; **risc0**: `risc0/zkp/src/core/hash/poseidon_254/mod.rs`, `risc0/sys/kernels/zkp/cuda/supra/poseidon254.cuh`, `groth16_proof/groth16/risc0.circom` (see Part C) |
 | Recursion `BIT_AND_ELEM` accepts non-canonical bit decompositions | zirgen: `zirgen/circuit/recursion/bits.cpp` (see Part D) |
 | Recursion prover ZK noise rows all equal (one random value copied) | **risc0**: `risc0/circuit/recursion/src/prove/witgen.rs` (hand-written prover code, not generated) |
+| A trace may contain more than one run (second `isFirstCycle` row) | zirgen: `zirgen/circuit/rv32im/v2/dsl/top.zir` (`totalCycles` global), `zirgen/circuit/predicates/predicates.cpp` (`readReceiptClaimAndPovwNonce`), `zirgen/circuit/rv32im/v2/run/run.cpp` (test harness); **risc0**: `risc0/circuit/rv32im/src/lib.rs` (`verify`, `RV32IM_SEAL_VERSION`), `risc0/circuit/rv32im/src/prove/witgen/mod.rs` (`build_global_vec`) |
 
 The first two fixes live entirely in zirgen. The Poseidon254 S-box fix does not: the prover
 side of that hash is hand-written in risc0 (Rust and CUDA), and risc0 keeps its own copy of
-`risc0.circom`, so those are real source changes in risc0 rather than generated output.
+`risc0.circom`, so those are real source changes in risc0 rather than generated output. The
+one-run-per-trace fix adds a public value, so the hand-written Rust verifier and prover in
+risc0 change too (see "What each fix does").
 
 Apart from the risc0 files listed above, everything in `risc0` and `risc0-ethereum` is
 generated output, a hash/ID/key derived from that output, a stability canary updated to
@@ -103,6 +106,27 @@ Grain-LFSR parameter generator seeds on field, S-box *type*, field size, `t`, `R
 4 R1CS constraints per S-box instead of 3, which took `stark_verify` from 5,677,093 to
 6,052,250 constraints (+6.6%), still far under the 2^23 ptau ceiling.
 
+**One run per trace.** The rv32im trace is circular and every run ends in `ControlDone`
+padding rows, so the only constraint on a first-cycle row (`next_state@1 = ControlDone`,
+`cycle = 0`) let a prover start a second run on any row after the first run's padding began.
+The memory argument keys records by address, timestamp and value only, so two runs with
+overlapping cycle numbers could consume each other's records and skip a guest's input checks.
+The fix adds a public value, `global totalCycles`, and in the `is_first_cycle` arm of `Top`
+requires `cycle@1 = totalCycles - 1` (the row before a first cycle, circularly, must be the
+last row of the trace). The constraint alone is not enough: two runs of exactly `N/2` rows
+each would still satisfy it with `totalCycles = N/2`. So every verifier also checks
+`totalCycles == 2^po2`: `risc0_circuit_rv32im::verify` does it in the `check_code` callback
+(which receives the po2 read from the seal), and `readReceiptClaimAndPovwNonce` in
+`predicates.cpp` does it in each `lift_rv32im_v2[_povw]_<po2>` program, where `po2` is a
+compile-time constant. `totalCycles` sorts last in the alphabetical global layout, so the 90
+existing offsets are unchanged and the new one is at offset 90; `OUTPUT_SIZE` becomes 91,
+`RV32IM_SEAL_VERSION` 2 → 3 and the protocol string `RV32IM:v2rev2___` → `RV32IM:v2rev3___`
+(the latter for good measure; the `segment_receipt_verifier_parameters_is_stable` canary
+moves because of it). The prover sets the global to `1 << po2` in `build_global_vec`; the
+zirgen harness sets it to the actual trace length since its tests run odd segment sizes.
+Adding a global also means the lift's `readVal` sequence must consume every preceding global
+in layout order (the two `termA1` values were previously left unread at the end of the stream).
+
 ## Prerequisites
 
 - Sibling checkouts: `zirgen/`, `risc0/`, `risc0-ethereum/` in the same directory.
@@ -151,26 +175,34 @@ a reviewable diff.
 
 ### A2. Regenerate the recursion ZKRs
 
-```
-cargo bootstrap -- predicates --output ../risc0/
-```
-
-This rewrites `risc0/circuit/recursion/src/recursion_zkr.zip` (the lift programs embed the
-rv32im verifier, so they change whenever the rv32im circuit does). This target builds from
-zirgen source directly and does not depend on A1 having run.
-
-### A3. Update the ZKR archive hash
+The lift programs embed the rv32im verifier, so they change whenever the rv32im circuit does.
+Build them in zirgen (this builds from zirgen source directly and does not depend on A1):
 
 ```
-shasum -a 256 risc0/circuit/recursion/src/recursion_zkr.zip
+bazelisk build //zirgen/circuit/predicates:gen_predicates
+ls bazel-out/k8-opt/bin/zirgen/circuit/predicates/*.zkr     # 32 programs
 ```
 
-Put the hash in `SHA256_HASH` in `risc0/circuit/recursion/build.rs`.
+(`bazelisk test //zirgen/circuit/predicates/...` builds the same files and runs
+`golden_hashes_test`, which fails whenever a ZKR changes; see D1 for updating it. The
+`bazel-bin` symlink may be absent, use `bazel-out/k8-opt/bin`.)
 
-`build.rs` uses the in-repo zip only if its hash matches `SHA256_HASH`; otherwise it
-downloads `https://risc0-artifacts.s3.us-west-2.amazonaws.com/zkr/<SHA256_HASH>.zip`. Local
-builds therefore work without uploading anything, but a release must upload the zip to that
-S3 path (crates.io builds do not have the zip).
+### A3. Pack the ZKRs into the risc0 crates
+
+Since risc0 3.1.0-rc.1 (#3820) the ZKRs ship inside two crates as git-LFS tarballs rather
+than as a zip downloaded from S3: `risc0/circuit/recursion-zkrs/src/zkrs.tar.xz` holds the
+`lift_*` programs and `risc0/circuit/recursion-control-zkrs/src/zkrs.tar.xz` everything else.
+From the risc0 root:
+
+```
+cargo xtask pack-zkrs ../zirgen/bazel-out/k8-opt/bin/zirgen/circuit/predicates
+```
+
+The packing uses fixed tar metadata, so packing unchanged programs reproduces the committed
+bytes: after an rv32im-only change `git status` must show only the `recursion-zkrs` tarball
+modified, not the control one. There is no longer a hash to update and nothing to upload to
+S3 for the ZKRs. (`cargo bootstrap -- predicates --output ../risc0/` still exists but only
+drops a `recursion_zkr.zip` into `risc0/circuit/recursion/src/`, which nothing reads now.)
 
 ### A4. Regenerate control IDs
 
@@ -222,6 +254,13 @@ which exercises rv32im proving, lift, join and identity_p254.
   `set(row:` does not find it. Such a message means the preflight/witgen actually disagree
   about a column. It is not a sign of a stale build or of the external `r0vm` being used.
   The C++ exception it throws typically surfaces as a SIGSEGV.
+- **A constraint failure in parallel witgen crashes instead of erroring.** The C++ `EQZ`
+  checks throw, and `risc0_circuit_rv32im_cpu_witgen` catches the exception and returns an
+  error string, but in `StepMode::Parallel` the other worker threads keep writing to buffers
+  that Rust then frees, so the process dies with `malloc(): ... corrupted` / SIGSEGV. Tests
+  that expect witgen to reject a tampered witness (for example
+  `total_cycles_mismatch_fails`) must use `StepMode::SeqForward` / `SeqReverse` through
+  `WitnessGenerator::new` directly.
 - **Do not `AliasLayout!` lookup-argument columns onto data columns.** Arguments (for
   example `ArgU16`) are hoisted out of muxes, so their slots are shared by every mux arm.
   Aliasing an argument's `val` onto a data column in one arm clobbers that column in every
@@ -763,7 +802,8 @@ then `cargo xtask update-lock-files`. Also update `tools/smoke-test/**/Cargo.tom
 ## Release checklist (status as of 2026-10-22)
 
 - [x] Decide the setup: single-party setup from B5, verified with `snarkjs zkey verify` (Part D4).
-- [x] Upload `recursion_zkr.zip` to `s3://risc0-artifacts/zkr/<SHA256_HASH>.zip` (A3).
+- [x] ~~Upload `recursion_zkr.zip` to S3~~ — obsolete since rc.1, the ZKRs ship inside the
+      `recursion-zkrs` crates (A3).
 - [x] Upload `stark_verify_final.zkey.gz` to `s3://risc0-artifacts/zkey/2026-10-20.1/` and
       restore the `ADD --checksum` line in `prover.Dockerfile` (B6).
 - [x] Point `xtask/src/setup_groth16.rs` at the new zkey URL.
@@ -772,8 +812,13 @@ then `cargo xtask update-lock-files`. Also update `tools/smoke-test/**/Cargo.tom
 - [ ] Push `risczero/risc0-groth16-prover:v2026-10-20.1` to Docker Hub (waiting on Docker Hub
       access being returned from Boundless) and update every consumer of the tag (bonsai).
 - [ ] Publish r0vm 3.1.0 and cargo-risczero 3.1.0 through rzup; publish crates.
-- [ ] Deploy the new Groth16 verifier (selector `0x8b38038c`, control root `d09f033d…`) behind
-      the router and add it to `deployment.toml`.
+- [x] Deploy the new Groth16 verifier (selector `0x8b38038c`, control root `d09f033d…`) behind
+      the router and add it to `deployment.toml` (done on all 7 testnets and 7 mainnets,
+      2026-10-27). **Superseded**: the one-run-per-trace fix (2026-11-04) changes the lift
+      ZKRs, hence the control root (now `e6feef13db7aed4a731c7b0852de1f5c89b137726073f625d05333184d3a551d`)
+      and the selector, so the verifier must be deployed and routed again as 3.1.0 (still
+      unreleased) and the `0x8b38038c` deployment estopped along with the pre-3.1 verifiers. No new ceremony: the recursion circuit, circom circuit,
+      verifying key, prover image and rzup `risc0-groth16` component are unchanged.
 
 ## Gotcha summary
 
@@ -781,7 +826,8 @@ then `cargo xtask update-lock-files`. Also update `tools/smoke-test/**/Cargo.tom
 2. Never `AliasLayout!` a lookup-argument column onto a data column.
 3. `NondetU16Reg` does not constrain equality; use `U16Reg`.
 4. `clang-format` missing means unformatted generated kernels and huge diffs.
-5. `build.rs` downloads the ZKR zip from S3 only when the local hash does not match.
+5. The ZKRs ship inside the `recursion-zkrs` crates as LFS tarballs; repack them with
+   `cargo xtask pack-zkrs` (A3). The old zip/S3 hash flow is gone.
 6. `cargo test --no-fail-fast`, or lib failures hide the other test targets.
 7. The `verify` bootstrap overwrites risc0's intentionally divergent `risc0.circom` and
    drops a stale `seal_format.rs`.
@@ -800,4 +846,7 @@ then `cargo xtask update-lock-files`. Also update `tools/smoke-test/**/Cargo.tom
 17. Recursion programs must fit in `2^18 - 1024` rows; `join_povw` is at the limit, so any
     new recursion-circuit constraint must be nearly free in the verifier (Part D2).
 18. `cargo bootstrap -- recursion` does not copy `eval_check.cuh` (check `poly_mix[N]`), and
-    `golden_hashes.txt` may already be stale; compare against risc0's zip instead (Part D).
+    `golden_hashes.txt` may already be stale; compare against risc0's tarballs instead (Part D).
+19. Adding an rv32im global changes `OUTPUT_SIZE` and so the seal layout: bump
+    `RV32IM_SEAL_VERSION`, set the global in both `build_global_vec` (risc0) and `run.cpp`
+    (zirgen), and read it in layout order in `readReceiptClaimAndPovwNonce`.
