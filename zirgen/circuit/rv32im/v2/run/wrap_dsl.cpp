@@ -388,6 +388,10 @@ size_t getShutdownCycleGlobalCol() {
   return impl::kLayoutGlobal.shutdownCycle._super.col;
 }
 
+size_t getTotalCyclesGlobalCol() {
+  return impl::kLayoutGlobal.totalCycles._super.col;
+}
+
 size_t getInputDigestGlobalCol() {
   return impl::kLayoutGlobal.input.values.at(0).low._super.col;
 }

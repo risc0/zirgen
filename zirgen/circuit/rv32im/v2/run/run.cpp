@@ -204,6 +204,7 @@ ExecutionTrace runSegment(const Segment& segment, size_t segmentSize) {
   ExecutionTrace trace(cycles, getDslParams());
   // Set globals:
   trace.global.set(getShutdownCycleGlobalCol(), segment.segmentThreshold);
+  trace.global.set(getTotalCyclesGlobalCol(), cycles);
   for (size_t i = 0; i < 8; i++) {
     // State in
     trace.global.set(getStateInGlobalCol() + 2 * i, rootIn.words[i] & 0xffff);
