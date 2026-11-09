@@ -255,7 +255,7 @@ CodegenIdent<IdentKind::Type> LayoutType::getTypeName(zirgen::codegen::CodegenEm
 mlir::LogicalResult LayoutType::emitLiteral(zirgen::codegen::CodegenEmitter& cg,
                                             mlir::Attribute value) const {
   if (auto symRef = llvm::dyn_cast<SymbolRefAttr>(value)) {
-    // Reference by symbolname to to a layout defined with a GlobalConstOp
+    // Reference by symbolname to a layout defined with a GlobalConstOp
     cg << CodegenIdent<IdentKind::Const>(symRef.getLeafReference());
     return mlir::success();
   }
@@ -344,7 +344,7 @@ void LayoutArrayType::emitTypeDefinition(zirgen::codegen::CodegenEmitter& cg) co
 mlir::LogicalResult LayoutArrayType::emitLiteral(zirgen::codegen::CodegenEmitter& cg,
                                                  mlir::Attribute value) const {
   if (auto symRef = llvm::dyn_cast<SymbolRefAttr>(value)) {
-    // Reference by symbolname to to a layout defined with a GlobalConstOp
+    // Reference by symbolname to a layout defined with a GlobalConstOp
     cg << CodegenIdent<IdentKind::Const>(symRef.getLeafReference());
     return mlir::success();
   }
