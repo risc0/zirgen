@@ -7,15 +7,17 @@ For the most part, users of RISC Zero should be writing their zkApps in Rust
 and using our RISC-V zkVM rather than building them directly in Zirgen.
 Sometimes, however, it is necessary or desirable to write parts of an
 application as an arithmetic circuit to integrate directly with our proof system
-and achieve better performance. In fact, we have an upcoming version of the zkVM
-circuit written in Zirgen! Zirgen will make it possible to build accelerators
-for important parts of your applications, or even to build entire other VMs that
-integrate into the RISC Zero ecosystem through proof composition. With that said,
-it's still a work in progress and has quite a few rough edges.
+and achieve better performance. The RISC Zero zkVM's own circuits are written in
+Zirgen. Zirgen makes it possible to build accelerators for important parts of
+your applications, or even to build entire other VMs that integrate into the
+RISC Zero ecosystem through proof composition. With that said, it's still a work
+in progress and has quite a few rough edges.
 
 [Getting Started](zirgen/docs/01_Getting_Started.md)
 
 [Language Overview](zirgen/docs/02_Conceptual_Overview.md)
+
+[Bootstrapping circuit changes into risc0 and risc0-ethereum](BOOTSTRAP.md)
 
 ## Included circuits
 
