@@ -1,3 +1,6 @@
+> [!WARNING]
+> This branch is no longer maintained. The current code is on [`main`](https://github.com/risc0/zirgen/tree/main).
+
 # Zirgen Circuit Compiler
 
 Zirgen is a compiler for a domain-specific language, also called "zirgen",
