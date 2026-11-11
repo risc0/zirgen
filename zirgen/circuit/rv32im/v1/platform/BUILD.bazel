@@ -23,6 +23,5 @@ cc_library(
     ],
     deps = [
         "//zirgen/compiler/zkp",
-        "//zirgen/components",
     ],
 )

@@ -55,7 +55,6 @@ cc_library(
     deps = [
         ":PassesIncGen",
         "//zirgen/Dialect/ZHLT/IR",
-        "//zirgen/Dialect/ZHLT/Transforms:passes",
         "//zirgen/Dialect/ZStruct/Analysis",
         "//zirgen/Dialect/ZStruct/IR",
         "//zirgen/Dialect/ZStruct/Transforms:passes",

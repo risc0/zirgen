@@ -50,9 +50,9 @@ cc_library(
     ],
     deps = [
         ":PassesIncGen",
-        "//zirgen/Dialect/ZHL/IR",
         "//zirgen/Dialect/ZHLT/IR",
         "//zirgen/Dialect/ZStruct/Analysis",
         "//zirgen/Dialect/ZStruct/Transforms:passes",
+        "@llvm-project//mlir:Transforms",
     ],
 )

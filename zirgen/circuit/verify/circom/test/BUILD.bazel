@@ -14,8 +14,6 @@ cc_test(
     data = ["//zirgen/circuit/verify/circom/include"],
     deps = [
         "//risc0/core/test:gtest_main",
-        "//zirgen/circuit/recursion:lib",
-        "//zirgen/circuit/verify:lib",
         "//zirgen/circuit/verify/circom",
         "//zirgen/compiler/edsl",
     ],

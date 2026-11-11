@@ -17,7 +17,6 @@ cc_library(
         "TapsAnalysis.h",
     ],
     deps = [
-        "//zirgen/Dialect/IOP/IR",
         "//zirgen/Dialect/Zll/IR",
         "//zirgen/Utilities",
     ],

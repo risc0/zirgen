@@ -32,6 +32,6 @@ cc_library(
         "//zirgen/circuit/recursion:lib",
         "//zirgen/compiler/codegen:protocol_info_const",
         "//zirgen/compiler/edsl",
-        "@llvm-project//mlir:TranslateLib",
+        "@llvm-project//mlir:ParseUtilities",
     ],
 )

@@ -20,12 +20,12 @@ cc_library(
     deps = [
         "//risc0/core",
         "//risc0/fp",
+        "//zirgen/Dialect/ZHL/IR",
         "//zirgen/Dialect/ZHLT/IR:Codegen",
         "//zirgen/Dialect/ZHLT/Transforms:passes",
         "//zirgen/Dialect/ZStruct/Transforms:passes",
         "//zirgen/Dialect/Zll/Transforms:passes",
         "//zirgen/compiler/codegen",
-        "//zirgen/dsl",
         "//zirgen/dsl/passes",
         "@llvm-project//mlir:Debug",
         "@llvm-project//mlir:FuncExtensions",
@@ -40,5 +40,6 @@ cc_binary(
         "//zirgen/Conversions/Typing",
         "//zirgen/Main:Utils",
         "//zirgen/compiler/layout",
+        "//zirgen/dsl",
     ],
 )
